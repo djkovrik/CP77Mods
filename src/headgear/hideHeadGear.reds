@@ -1,6 +1,5 @@
 @replaceMethod(EquipmentSystemPlayerData)
 public final func OnEquipProcessVisualTags(itemID: ItemID) -> Void {
-  Log("--- OnEquipProcessVisualTags");
   let itemEntity: wref<GameObject>;
   let transactionSystem: ref<TransactionSystem>;
   let areaType: gamedataEquipmentArea;
@@ -9,6 +8,7 @@ public final func OnEquipProcessVisualTags(itemID: ItemID) -> Void {
   transactionSystem = GameInstance.GetTransactionSystem(this.m_owner.GetGame());
   itemEntity = transactionSystem.GetItemInSlotByItemID(this.m_owner, itemID);
   areaType = EquipmentSystem.GetEquipAreaType(itemID);
+
   tag = this.GetVisualTagByAreaType(areaType);
   if NotEquals(tag, n"") && this.IsVisualTagActive(tag) {
     this.ClearItemAppearanceEvent(areaType);
@@ -41,7 +41,6 @@ public final func OnEquipProcessVisualTags(itemID: ItemID) -> Void {
 
 @replaceMethod(EquipmentSystemPlayerData)
 private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt addToInventory: Bool, opt blockActiveSlotsUpdate: Bool, opt forceEquipWeapon: Bool) -> Void {
-  Log("--- EquipItem");
   let i: Int32;
   let equipAreaIndex: Int32;
   let equipArea: SEquipArea;
@@ -144,7 +143,6 @@ private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt addToInventor
 
 @replaceMethod(PlayerPuppet)
 protected cb func OnItemAddedToSlot(evt: ref<ItemAddedToSlot>) -> Bool {
-  Log("--- OnItemAddedToSlot");
   let newApp: CName;
   let itemTDBID: TweakDBID;
   let paperdollEquipData: SPaperdollEquipData;
@@ -195,7 +193,6 @@ protected cb func OnItemAddedToSlot(evt: ref<ItemAddedToSlot>) -> Bool {
 
 @replaceMethod(EquipmentSystemPlayerData)
 private final func ResetItemAppearance(transactionSystem: ref<TransactionSystem>, area: gamedataEquipmentArea) -> Void {
-  Log("--- ResetItemAppearance");
   let paperdollEquipData: SPaperdollEquipData;
   let equipAreaIndex: Int32;
   let slotIndex: Int32;
@@ -211,21 +208,6 @@ private final func ResetItemAppearance(transactionSystem: ref<TransactionSystem>
   transactionSystem.ResetItemAppearance(this.m_owner, resetItemID);
 }
 
-@replaceMethod(EquipmentSystemPlayerData)
-private final func InitializeEquipment() -> Void {
-  Log("--- InitializeEquipment");
-  let ownerRecord: ref<Character_Record>;
-  let equipAreas: array<wref<EquipmentArea_Record>>;
-  let i: Int32;
-  ownerRecord = TweakDBInterface.GetCharacterRecord(this.m_owner.GetRecordID());
-  ownerRecord.EquipmentAreas(equipAreas);
-  i = 0;
-  while i < ArraySize(equipAreas) {
-    this.InitializeEquipmentArea(equipAreas[i]);
-    i += 1;
-  };
-}
-
 @replaceMethod(EquipmentSystem)
 private final const func GetHairSuffix(itemId: ItemID, owner: wref<GameObject>, suffixRecord: ref<ItemsFactoryAppearanceSuffixBase_Record>) -> String {
   Log("--- GetHairSuffix");
@@ -235,7 +217,7 @@ private final const func GetHairSuffix(itemId: ItemID, owner: wref<GameObject>, 
   characterCustomizationSystem = GameInstance.GetCharacterCustomizationSystem(owner.GetGame());
   isMountedToVehicle = VehicleComponent.IsMountedToVehicle(owner.GetGame(), owner.GetEntityID());
   
-  // DIRTY HACK! Fix vehicle tpp hair displaying, armor stats not working if mounted
+  // Dirty hack #1: break hair suffux for vehicle TPP view to fix hair displaying, armor stats not working if mounted
   if isMountedToVehicle {
     return "";
   };
@@ -260,4 +242,81 @@ private final const func GetHairSuffix(itemId: ItemID, owner: wref<GameObject>, 
     return "Bald";
   };
   return "Error";
+}
+
+// Dirty hack #2: equip/unequip head item on mount/dismount to fix hair displaying
+@addField(PlayerPuppet)
+let m_shouldTrackHeadItem: Bool;
+
+@addField(PlayerPuppet)
+let m_trackedHeadItemId: ItemID;
+
+@addMethod(PlayerPuppet)
+public func UnquipHeadItem() -> Void {
+  let equipmentSystem: ref<EquipmentSystemPlayerData>;
+  let activeItemId: ItemID;
+
+  if EquipmentSystem.HasItemInArea(this, gamedataEquipmentArea.Head) {
+    equipmentSystem = EquipmentSystem.GetData(GetPlayer(this.GetGame()));
+    activeItemId = EquipmentSystem.GetData(this).GetActiveItem(gamedataEquipmentArea.Head);
+    equipmentSystem.UnequipItem(activeItemId);
+    this.m_trackedHeadItemId = activeItemId;
+    this.m_shouldTrackHeadItem = true;
+  };
+}
+
+@addMethod(PlayerPuppet)
+public func ReEquipHeadItem() -> Void {
+  let equipmentSystem: ref<EquipmentSystemPlayerData>;
+
+  if NotEquals(this.m_trackedHeadItemId, null) && this.m_shouldTrackHeadItem {
+    equipmentSystem = EquipmentSystem.GetData(GetPlayer(this.GetGame()));
+    equipmentSystem.EquipItem(this.m_trackedHeadItemId);
+    this.m_shouldTrackHeadItem = false;
+  };
+}
+
+@replaceMethod(inkMotorcycleHUDGameController)
+protected cb func OnVehicleMounted() -> Bool {
+  let playerPuppet: wref<PlayerPuppet>;
+  let vehicle: wref<VehicleObject>;
+  let shouldConnect: Bool;
+  let bbSys: ref<BlackboardSystem>;
+  this.m_fluffBlinking = new inkAnimController();
+  this.m_fluffBlinking.Select(this.m_lowerfluff_L).Select(this.m_lowerfluff_R).Interpolate(n"transparency", ToVariant(0.25), ToVariant(1.00)).Duration(0.50).Interpolate(n"transparency", ToVariant(1.00), ToVariant(0.25)).Delay(0.55).Duration(0.50).Type(inkanimInterpolationType.Linear).Mode(inkanimInterpolationMode.EasyIn);
+  playerPuppet = (this.GetOwnerEntity() as PlayerPuppet);
+  vehicle = GetMountedVehicle(playerPuppet);
+  bbSys = GameInstance.GetBlackboardSystem(playerPuppet.GetGame());
+  if shouldConnect {
+    this.m_vehicleBlackboard = vehicle.GetBlackboard();
+    this.m_activeVehicleUIBlackboard = bbSys.Get(GetAllBlackboardDefs().UI_ActiveVehicleData);
+  };
+  if NotEquals(this.m_vehicleBlackboard, null) {
+    this.m_vehicleBBStateConectionId = this.m_vehicleBlackboard.RegisterListenerInt(GetAllBlackboardDefs().Vehicle.VehicleState, this, n"OnVehicleStateChanged");
+    this.m_speedBBConnectionId = this.m_vehicleBlackboard.RegisterListenerFloat(GetAllBlackboardDefs().Vehicle.SpeedValue, this, n"OnSpeedValueChanged");
+    this.m_gearBBConnectionId = this.m_vehicleBlackboard.RegisterListenerInt(GetAllBlackboardDefs().Vehicle.GearValue, this, n"OnGearValueChanged");
+    this.m_rpmValueBBConnectionId = this.m_vehicleBlackboard.RegisterListenerFloat(GetAllBlackboardDefs().Vehicle.RPMValue, this, n"OnRpmValueChanged");
+    this.m_leanAngleBBConnectionId = this.m_vehicleBlackboard.RegisterListenerFloat(GetAllBlackboardDefs().Vehicle.BikeTilt, this, n"OnLeanAngleChanged");
+    this.m_tppBBConnectionId = this.m_activeVehicleUIBlackboard.RegisterListenerBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsTPPCameraOn, this, n"OnCameraModeChanged");
+    this.m_playerStateBBConnectionId = this.m_activeVehicleUIBlackboard.RegisterListenerVariant(GetAllBlackboardDefs().UI_ActiveVehicleData.VehPlayerStateData, this, n"OnPlayerStateChanged");
+  };
+
+  playerPuppet.UnquipHeadItem();
+}
+
+@replaceMethod(inkMotorcycleHUDGameController)
+protected cb func OnVehicleUnmounted() -> Bool {
+  let playerPuppet: wref<PlayerPuppet>;
+  playerPuppet = (this.GetOwnerEntity() as PlayerPuppet);
+  if NotEquals(this.m_vehicleBlackboard, null) {
+    this.m_vehicleBlackboard.UnregisterListenerInt(GetAllBlackboardDefs().Vehicle.VehicleState, this.m_vehicleBBStateConectionId);
+    this.m_vehicleBlackboard.UnregisterListenerFloat(GetAllBlackboardDefs().Vehicle.SpeedValue, this.m_speedBBConnectionId);
+    this.m_vehicleBlackboard.UnregisterListenerInt(GetAllBlackboardDefs().Vehicle.GearValue, this.m_gearBBConnectionId);
+    this.m_vehicleBlackboard.UnregisterListenerFloat(GetAllBlackboardDefs().Vehicle.RPMValue, this.m_rpmValueBBConnectionId);
+    this.m_vehicleBlackboard.UnregisterListenerFloat(GetAllBlackboardDefs().Vehicle.BikeTilt, this.m_leanAngleBBConnectionId);
+    this.m_activeVehicleUIBlackboard.UnregisterListenerBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsTPPCameraOn, this.m_tppBBConnectionId);
+    this.m_activeVehicleUIBlackboard.UnregisterListenerVariant(GetAllBlackboardDefs().UI_ActiveVehicleData.VehPlayerStateData, this.m_playerStateBBConnectionId);
+  };
+
+  playerPuppet.ReEquipHeadItem();
 }
