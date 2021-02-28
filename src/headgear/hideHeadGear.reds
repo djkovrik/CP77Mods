@@ -252,7 +252,7 @@ let m_shouldTrackHeadItem: Bool;
 let m_trackedHeadItemId: ItemID;
 
 @addMethod(PlayerPuppet)
-public func UnquipHeadItem() -> Void {
+public func UnequipHeadItem() -> Void {
   let equipmentSystem: ref<EquipmentSystemPlayerData>;
   let activeItemId: ItemID;
 
@@ -266,7 +266,7 @@ public func UnquipHeadItem() -> Void {
 }
 
 @addMethod(PlayerPuppet)
-public func ReEquipHeadItem() -> Void {
+public func EquipHeadItem() -> Void {
   let equipmentSystem: ref<EquipmentSystemPlayerData>;
 
   if NotEquals(this.m_trackedHeadItemId, null) && this.m_shouldTrackHeadItem {
@@ -278,6 +278,7 @@ public func ReEquipHeadItem() -> Void {
 
 @replaceMethod(inkMotorcycleHUDGameController)
 protected cb func OnVehicleMounted() -> Bool {
+  Log("-- OnVehicleMounted");
   let playerPuppet: wref<PlayerPuppet>;
   let vehicle: wref<VehicleObject>;
   let shouldConnect: Bool;
@@ -301,11 +302,12 @@ protected cb func OnVehicleMounted() -> Bool {
     this.m_playerStateBBConnectionId = this.m_activeVehicleUIBlackboard.RegisterListenerVariant(GetAllBlackboardDefs().UI_ActiveVehicleData.VehPlayerStateData, this, n"OnPlayerStateChanged");
   };
 
-  playerPuppet.UnquipHeadItem();
+  playerPuppet.UnequipHeadItem();
 }
 
 @replaceMethod(inkMotorcycleHUDGameController)
 protected cb func OnVehicleUnmounted() -> Bool {
+  Log("-- OnVehicleUnmounted");
   let playerPuppet: wref<PlayerPuppet>;
   playerPuppet = (this.GetOwnerEntity() as PlayerPuppet);
   if NotEquals(this.m_vehicleBlackboard, null) {
@@ -318,5 +320,5 @@ protected cb func OnVehicleUnmounted() -> Bool {
     this.m_activeVehicleUIBlackboard.UnregisterListenerVariant(GetAllBlackboardDefs().UI_ActiveVehicleData.VehPlayerStateData, this.m_playerStateBBConnectionId);
   };
 
-  playerPuppet.ReEquipHeadItem();
+  playerPuppet.EquipHeadItem();
 }
