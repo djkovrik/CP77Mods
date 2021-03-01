@@ -1,3 +1,5 @@
+// --- CLEAR ITEM APPEARANCE WHEN ADDED TO HEAD SLOT --- 
+
 @replaceMethod(EquipmentSystemPlayerData)
 public final func OnEquipProcessVisualTags(itemID: ItemID) -> Void {
   let itemEntity: wref<GameObject>;
@@ -120,7 +122,7 @@ private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt addToInventor
   audioEventFoley.nameData = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(itemID)).AppearanceName();
   this.m_owner.QueueEvent(audioEventFoley);
   paperdollEquipData.equipArea = this.m_equipment.equipAreas[equipAreaIndex];
-  paperdollEquipData.equipped = NotEquals(this.m_equipment.equipAreas[equipAreaIndex].areaType, gamedataEquipmentArea.Head) ; // handle visibility
+  paperdollEquipData.equipped = NotEquals(this.m_equipment.equipAreas[equipAreaIndex].areaType, gamedataEquipmentArea.Head) ; // tweak visibility
   paperdollEquipData.placementSlot = placementSlot;
   paperdollEquipData.slotIndex = slotIndex;
   this.ApplyEquipGLPs(itemID);
@@ -139,73 +141,6 @@ private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt addToInventor
   if this.IsItemOfCategory(itemID, gamedataItemCategory.Cyberware) {
     this.CheckCyberjunkieAchievement();
   };
-}
-
-@replaceMethod(PlayerPuppet)
-protected cb func OnItemAddedToSlot(evt: ref<ItemAddedToSlot>) -> Bool {
-  let newApp: CName;
-  let itemTDBID: TweakDBID;
-  let paperdollEquipData: SPaperdollEquipData;
-  let equipmentData: ref<EquipmentSystemPlayerData>;
-  let equipmentBB: ref<IBlackboard>;
-  let equipSlot: SEquipSlot;
-  let itemType: gamedataItemCategory;
-  let itemRecord: ref<Item_Record>;
-  let itemID: ItemID;
-  let slotID: TweakDBID;
-  itemID = evt.GetItemID();
-  itemTDBID = ItemID.GetTDBID(itemID);
-  itemRecord = TweakDBInterface.GetItemRecord(itemTDBID);
-  slotID = evt.GetSlotID();
-  if NotEquals(itemRecord, null) && NotEquals(itemRecord.ItemCategory(), null) {
-    itemType = itemRecord.ItemCategory().Type();
-  };
-  if Equals(itemType, gamedataItemCategory.Weapon) {
-    newApp = TweakDBInterface.GetCName(itemTDBID + t".specific_player_appearance", n"");
-    if NotEquals(newApp, n"") {
-      GameInstance.GetTransactionSystem(this.GetGame()).ChangeItemAppearance(this, itemID, newApp);
-    };
-    if slotID == t"AttachmentSlots.WeaponRight" {
-      paperdollEquipData.equipArea.areaType = TweakDBInterface.GetItemRecord(itemTDBID).EquipArea().Type();
-      paperdollEquipData.equipArea.activeIndex = 0;
-      equipSlot.itemID = itemID;
-      ArrayPush(paperdollEquipData.equipArea.equipSlots, equipSlot);
-      paperdollEquipData.equipped = NotEquals(paperdollEquipData.equipArea.areaType, gamedataEquipmentArea.Head); // handle visibility
-      paperdollEquipData.placementSlot = EquipmentSystem.GetPlacementSlot(itemID);
-      equipmentBB = GameInstance.GetBlackboardSystem(this.GetGame()).Get(GetAllBlackboardDefs().UI_Equipment);
-      if NotEquals(equipmentBB, null) {
-        equipmentBB.SetVariant(GetAllBlackboardDefs().UI_Equipment.lastModifiedArea, ToVariant(paperdollEquipData));
-      };
-    };
-  } else {
-    if Equals(itemType, gamedataItemCategory.Clothing) {
-      equipmentData = EquipmentSystem.GetData(GetPlayer(this.GetGame()));
-      if NotEquals(equipmentData, null) {
-        equipmentData.OnEquipProcessVisualTags(itemID);
-      };
-    };
-  };
-  if slotID == t"AttachmentSlots.WeaponRight" || slotID == t"AttachmentSlots.WeaponLeft" {
-    EquipmentSystemPlayerData.UpdateArmSlot(this, evt.GetItemID(), false);
-  };
-  super.OnItemAddedToSlot(evt);
-}
-
-@replaceMethod(EquipmentSystemPlayerData)
-private final func ResetItemAppearance(transactionSystem: ref<TransactionSystem>, area: gamedataEquipmentArea) -> Void {
-  let paperdollEquipData: SPaperdollEquipData;
-  let equipAreaIndex: Int32;
-  let slotIndex: Int32;
-  let resetItemID: ItemID;
-  resetItemID = this.GetActiveItem(area);
-  equipAreaIndex = this.GetEquipAreaIndex(area);
-  slotIndex = this.GetSlotIndex(resetItemID);
-  paperdollEquipData.equipArea = this.m_equipment.equipAreas[equipAreaIndex];
-  paperdollEquipData.equipped = NotEquals(this.m_equipment.equipAreas[equipAreaIndex].areaType, gamedataEquipmentArea.Head); // handle visibility
-  paperdollEquipData.placementSlot = this.GetPlacementSlot(equipAreaIndex, slotIndex);
-  paperdollEquipData.slotIndex = slotIndex;
-  this.UpdateEquipmentUIBB(paperdollEquipData);
-  transactionSystem.ResetItemAppearance(this.m_owner, resetItemID);
 }
 
 @replaceMethod(EquipmentSystem)
@@ -244,15 +179,68 @@ private final const func GetHairSuffix(itemId: ItemID, owner: wref<GameObject>, 
   return "Error";
 }
 
-// Dirty hack #2: equip/unequip head item on mount/dismount to fix hair displaying
-@addField(PlayerPuppet)
+
+@replaceMethod(PlayerPuppet)
+protected cb func OnItemAddedToSlot(evt: ref<ItemAddedToSlot>) -> Bool {
+  let newApp: CName;
+  let itemTDBID: TweakDBID;
+  let paperdollEquipData: SPaperdollEquipData;
+  let equipmentData: ref<EquipmentSystemPlayerData>;
+  let equipmentBB: ref<IBlackboard>;
+  let equipSlot: SEquipSlot;
+  let itemType: gamedataItemCategory;
+  let itemRecord: ref<Item_Record>;
+  let itemID: ItemID;
+  let slotID: TweakDBID;
+  itemID = evt.GetItemID();
+  itemTDBID = ItemID.GetTDBID(itemID);
+  itemRecord = TweakDBInterface.GetItemRecord(itemTDBID);
+  slotID = evt.GetSlotID();
+  if NotEquals(itemRecord, null) && NotEquals(itemRecord.ItemCategory(), null) {
+    itemType = itemRecord.ItemCategory().Type();
+  };
+  if Equals(itemType, gamedataItemCategory.Weapon) {
+    newApp = TweakDBInterface.GetCName(itemTDBID + t".specific_player_appearance", n"");
+    if NotEquals(newApp, n"") {
+      GameInstance.GetTransactionSystem(this.GetGame()).ChangeItemAppearance(this, itemID, newApp);
+    };
+    if slotID == t"AttachmentSlots.WeaponRight" {
+      paperdollEquipData.equipArea.areaType = TweakDBInterface.GetItemRecord(itemTDBID).EquipArea().Type();
+      paperdollEquipData.equipArea.activeIndex = 0;
+      equipSlot.itemID = itemID;
+      ArrayPush(paperdollEquipData.equipArea.equipSlots, equipSlot);
+      paperdollEquipData.equipped = NotEquals(paperdollEquipData.equipArea.areaType, gamedataEquipmentArea.Head); // tweak visibility
+      paperdollEquipData.placementSlot = EquipmentSystem.GetPlacementSlot(itemID);
+      equipmentBB = GameInstance.GetBlackboardSystem(this.GetGame()).Get(GetAllBlackboardDefs().UI_Equipment);
+      if NotEquals(equipmentBB, null) {
+        equipmentBB.SetVariant(GetAllBlackboardDefs().UI_Equipment.lastModifiedArea, ToVariant(paperdollEquipData));
+      };
+    };
+  } else {
+    if Equals(itemType, gamedataItemCategory.Clothing) {
+      equipmentData = EquipmentSystem.GetData(GetPlayer(this.GetGame()));
+      if NotEquals(equipmentData, null) {
+        equipmentData.OnEquipProcessVisualTags(itemID);
+      };
+    };
+  };
+  if slotID == t"AttachmentSlots.WeaponRight" || slotID == t"AttachmentSlots.WeaponLeft" {
+    EquipmentSystemPlayerData.UpdateArmSlot(this, evt.GetItemID(), false);
+  };
+  super.OnItemAddedToSlot(evt);
+}
+
+// --- UNEQUIP/EQUIP HEAD ITEM ON VEHICLE MOUNT/DISMOUNT TO FIX HAIR DISPLAYING ---
+
+@addField(GameObject)
 let m_shouldTrackHeadItem: Bool;
 
-@addField(PlayerPuppet)
+@addField(GameObject)
 let m_trackedHeadItemId: ItemID;
 
-@addMethod(PlayerPuppet)
+@addMethod(GameObject)
 public func UnequipHeadItem() -> Void {
+  Log("-- UnequipHeadItem");
   let equipmentSystem: ref<EquipmentSystemPlayerData>;
   let activeItemId: ItemID;
 
@@ -265,27 +253,35 @@ public func UnequipHeadItem() -> Void {
   };
 }
 
-@addMethod(PlayerPuppet)
+@addMethod(GameObject)
 public func EquipHeadItem() -> Void {
+  Log("-- EquipHeadItem");
   let equipmentSystem: ref<EquipmentSystemPlayerData>;
+  let itemId: ItemID;
 
   if NotEquals(this.m_trackedHeadItemId, null) && this.m_shouldTrackHeadItem {
     equipmentSystem = EquipmentSystem.GetData(GetPlayer(this.GetGame()));
-    equipmentSystem.EquipItem(this.m_trackedHeadItemId);
+    itemId =  GameInstance.GetTransactionSystem(this.GetGame()).GetItemData(this, this.m_trackedHeadItemId).GetID();
+    equipmentSystem.EquipItem(itemId, false, false, false);
     this.m_shouldTrackHeadItem = false;
   };
 }
 
+@addMethod(GameObject)
+public func ReEquipItem() -> Void {
+  this.UnequipHeadItem();
+  this.EquipHeadItem();
+}
+
 @replaceMethod(inkMotorcycleHUDGameController)
 protected cb func OnVehicleMounted() -> Bool {
-  Log("-- OnVehicleMounted");
-  let playerPuppet: wref<PlayerPuppet>;
+  let playerPuppet: wref<GameObject>;
   let vehicle: wref<VehicleObject>;
   let shouldConnect: Bool;
   let bbSys: ref<BlackboardSystem>;
   this.m_fluffBlinking = new inkAnimController();
   this.m_fluffBlinking.Select(this.m_lowerfluff_L).Select(this.m_lowerfluff_R).Interpolate(n"transparency", ToVariant(0.25), ToVariant(1.00)).Duration(0.50).Interpolate(n"transparency", ToVariant(1.00), ToVariant(0.25)).Delay(0.55).Duration(0.50).Type(inkanimInterpolationType.Linear).Mode(inkanimInterpolationMode.EasyIn);
-  playerPuppet = (this.GetOwnerEntity() as PlayerPuppet);
+  playerPuppet = this.GetOwnerEntity() as GameObject;
   vehicle = GetMountedVehicle(playerPuppet);
   bbSys = GameInstance.GetBlackboardSystem(playerPuppet.GetGame());
   if shouldConnect {
@@ -302,14 +298,13 @@ protected cb func OnVehicleMounted() -> Bool {
     this.m_playerStateBBConnectionId = this.m_activeVehicleUIBlackboard.RegisterListenerVariant(GetAllBlackboardDefs().UI_ActiveVehicleData.VehPlayerStateData, this, n"OnPlayerStateChanged");
   };
 
-  playerPuppet.UnequipHeadItem();
+  playerPuppet.ReEquipItem();
 }
 
 @replaceMethod(inkMotorcycleHUDGameController)
 protected cb func OnVehicleUnmounted() -> Bool {
-  Log("-- OnVehicleUnmounted");
-  let playerPuppet: wref<PlayerPuppet>;
-  playerPuppet = (this.GetOwnerEntity() as PlayerPuppet);
+  let playerPuppet: wref<GameObject>;
+  playerPuppet = this.GetOwnerEntity() as GameObject;
   if NotEquals(this.m_vehicleBlackboard, null) {
     this.m_vehicleBlackboard.UnregisterListenerInt(GetAllBlackboardDefs().Vehicle.VehicleState, this.m_vehicleBBStateConectionId);
     this.m_vehicleBlackboard.UnregisterListenerFloat(GetAllBlackboardDefs().Vehicle.SpeedValue, this.m_speedBBConnectionId);
@@ -320,5 +315,56 @@ protected cb func OnVehicleUnmounted() -> Bool {
     this.m_activeVehicleUIBlackboard.UnregisterListenerVariant(GetAllBlackboardDefs().UI_ActiveVehicleData.VehPlayerStateData, this.m_playerStateBBConnectionId);
   };
 
-  playerPuppet.EquipHeadItem();
+  playerPuppet.ReEquipItem();
+}
+
+// --- RE-EQUIP HEAD HEAR ON INVENTORY OPENING ---
+
+@addField(gameuiInGameMenuGameController)
+let m_playerPuppet: ref<GameObject>;
+
+@replaceMethod(gameuiInGameMenuGameController)
+private final func RegisterInputListenersForPlayer(playerPuppet: ref<GameObject>) -> Void {
+  if playerPuppet.IsControlledByLocalPeer() {
+    playerPuppet.RegisterInputListener(this, n"OpenPauseMenu");
+    playerPuppet.RegisterInputListener(this, n"OpenMapMenu");
+    playerPuppet.RegisterInputListener(this, n"OpenCraftingMenu");
+    playerPuppet.RegisterInputListener(this, n"OpenJournalMenu");
+    playerPuppet.RegisterInputListener(this, n"OpenPerksMenu");
+    playerPuppet.RegisterInputListener(this, n"OpenInventoryMenu");
+    playerPuppet.RegisterInputListener(this, n"OpenHubMenu");
+    playerPuppet.RegisterInputListener(this, n"QuickSave");
+    playerPuppet.RegisterInputListener(this, n"FastForward_Hold");
+  };
+
+  this.m_playerPuppet = playerPuppet;
+}
+
+@replaceMethod(gameuiInGameMenuGameController)
+protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
+  let isPlayerLastUsedKBM: Bool;
+  if Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED) {
+    if Equals(ListenerAction.GetName(action), n"QuickSave") {
+      this.HandleQuickSave();
+    };
+  };
+  if Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED) {
+    if Equals(ListenerAction.GetName(action), n"OpenPauseMenu") {
+      this.SpawnMenuInstanceEvent(n"OnOpenPauseMenu");
+    } else {
+      if Equals(ListenerAction.GetName(action), n"OpenHubMenu") {
+        this.SpawnMenuInstanceEvent(n"OnOpenHubMenu");
+      };
+    };
+  };
+  if Equals(ListenerAction.GetName(action), n"OpenMapMenu") || Equals(ListenerAction.GetName(action), n"OpenCraftingMenu") || Equals(ListenerAction.GetName(action), n"OpenJournalMenu") || Equals(ListenerAction.GetName(action), n"OpenPerksMenu") || Equals(ListenerAction.GetName(action), n"OpenInventoryMenu") {
+    isPlayerLastUsedKBM = this.GetPlayerControlledObject().PlayerLastUsedKBM();
+    if Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_HOLD_COMPLETE) && !isPlayerLastUsedKBM || Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED) && isPlayerLastUsedKBM {
+      this.OpenShortcutMenu(ListenerAction.GetName(action));
+    };
+  };
+
+  if (Equals(ListenerAction.GetName(action), n"OpenInventoryMenu") || Equals(ListenerAction.GetName(action), n"OpenHubMenu")) && NotEquals(this.m_playerPuppet, null) {
+    this.m_playerPuppet.ReEquipItem();
+  };
 }
