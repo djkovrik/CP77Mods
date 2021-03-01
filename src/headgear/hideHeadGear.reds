@@ -1,3 +1,4 @@
+// Utils
 public static func IsTppHead(itemId: ItemID) -> Bool {
   return Equals(ItemID.GetTDBID(itemId), t"Items.PlayerMaTppHead") || Equals(ItemID.GetTDBID(itemId), t"Items.PlayerWaTppHead");
 }
@@ -14,10 +15,9 @@ public static func ShouldBeHidden(itemId: ItemID) -> Bool {
   return IsHeadGear(itemId) && !IsTppHead(itemId);
 }
 
+// Forced ClearItemAppearanceEvent for head item slot
 @replaceMethod(EquipmentSystemPlayerData)
 public final func OnEquipProcessVisualTags(itemID: ItemID) -> Void {
-  Log("--- OnEquipProcessVisualTags " + TDBID.ToStringDEBUG(ItemID.GetTDBID(itemID))
-    + " -> IsHeadGear: " + BoolToString(IsHeadGear(itemID)) + ", IsTppHead: " + BoolToString(IsTppHead(itemID)) + ", should display: " + BoolToString(ShouldBeDisplayed(itemID)));
   let itemEntity: wref<GameObject>;
   let transactionSystem: ref<TransactionSystem>;
   let areaType: gamedataEquipmentArea;
@@ -52,14 +52,15 @@ public final func OnEquipProcessVisualTags(itemID: ItemID) -> Void {
     };
   };
 
+  // clear here
   if ShouldBeHidden(itemID) {
     this.ClearItemAppearanceEvent(gamedataEquipmentArea.Head);
   };
 }
 
+// Tweaks head slot item visibility for SPaperdollEquipData
 @replaceMethod(EquipmentSystemPlayerData)
 private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt addToInventory: Bool, opt blockActiveSlotsUpdate: Bool, opt forceEquipWeapon: Bool) -> Void {
-  Log("--- EquipItem " + TDBID.ToStringDEBUG(ItemID.GetTDBID(itemID)));
   let i: Int32;
   let equipAreaIndex: Int32;
   let equipArea: SEquipArea;
@@ -139,7 +140,7 @@ private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt addToInventor
   audioEventFoley.nameData = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(itemID)).AppearanceName();
   this.m_owner.QueueEvent(audioEventFoley);
   paperdollEquipData.equipArea = this.m_equipment.equipAreas[equipAreaIndex];
-  paperdollEquipData.equipped = ShouldBeDisplayed(itemID); // tweak visibility
+  paperdollEquipData.equipped = ShouldBeDisplayed(itemID); // <- tweaks visibility here
   paperdollEquipData.placementSlot = placementSlot;
   paperdollEquipData.slotIndex = slotIndex;
   this.ApplyEquipGLPs(itemID);
@@ -160,33 +161,72 @@ private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt addToInventor
   };
 }
 
-@addField(PlayerPuppet)
+// Fields for tracking head item id
+@addField(GameObject)
 let m_trackedHeadItemId: ItemID;
 
-@addField(PlayerPuppet)
+@addField(GameObject)
 let m_shouldTrackHeadItem: Bool;
 
-@addMethod(PlayerPuppet)
-public func EquipHeadGear() -> Void {
+// Clears head item slot, THEORETICALLY fixes TPP hair displaying along with patched GetHairSuffix
+@addMethod(GameObject)
+public func ClearHeadGearSlot() -> Void {
   let transactionSystem: ref<TransactionSystem>;
-  let equipmentData: ref<EquipmentSystemPlayerData>;
-  transactionSystem = GameInstance.GetTransactionSystem(this.GetGame());
-
-  if NotEquals(this.m_trackedHeadItemId, null) {
-    transactionSystem.AddItemToSlot(this, t"AttachmentSlots.Head", this.m_trackedHeadItemId, true);
-    equipmentData = EquipmentSystem.GetData(GetPlayer(this.GetGame()));
-    equipmentData.OnEquipProcessVisualTags(this.m_trackedHeadItemId);
-  }
-}
-
-@addMethod(PlayerPuppet)
-public func UnequipHeadGear() -> Void {
-  let transactionSystem: ref<TransactionSystem>;
-  let equipmentData: ref<EquipmentSystemPlayerData>;
   transactionSystem = GameInstance.GetTransactionSystem(this.GetGame());
   transactionSystem.RemoveItemFromSlot(this, t"AttachmentSlots.Head");
 }
 
+// Re-Equip tracked head gear item
+@addMethod(GameObject)
+public func ReEquipHeadGear() -> Void {
+  let equipmentSystem: ref<EquipmentSystemPlayerData>;
+  let activeItemId: ItemID;
+  if EquipmentSystem.HasItemInArea(this, gamedataEquipmentArea.Head) {
+    equipmentSystem = EquipmentSystem.GetData(GetPlayer(this.GetGame()));
+    activeItemId = EquipmentSystem.GetData(this).GetActiveItem(gamedataEquipmentArea.Head);
+    equipmentSystem.UnequipItem(activeItemId);
+    //activeItemId =  GameInstance.GetTransactionSystem(this.GetGame()).GetItemData(this, this.m_trackedHeadItemId).GetID();
+    equipmentSystem.EquipItem(activeItemId, false, false, false);
+  };
+}
+
+// DIRTY HACK #1: breaks hair suffux for vehicle TPP view to fix hair displaying, armor stats not working if mounted
+@replaceMethod(EquipmentSystem)
+private final const func GetHairSuffix(itemId: ItemID, owner: wref<GameObject>, suffixRecord: ref<ItemsFactoryAppearanceSuffixBase_Record>) -> String {
+  let customizationState: ref<gameuiICharacterCustomizationState>;
+  let characterCustomizationSystem: ref<gameuiICharacterCustomizationSystem>;
+  let isMountedToVehicle: Bool;
+  characterCustomizationSystem = GameInstance.GetCharacterCustomizationSystem(owner.GetGame());
+  isMountedToVehicle = VehicleComponent.IsMountedToVehicle(owner.GetGame(), owner.GetEntityID());
+  
+  // This is not the best solution, I know :)
+  if isMountedToVehicle {
+    return "";
+  };
+
+  if (owner as PlayerPuppet) == null && !characterCustomizationSystem.HasCharacterCustomizationComponent(owner) {
+    return "Bald";
+  };
+  customizationState = characterCustomizationSystem.GetState();
+  if customizationState != null {
+    if customizationState.HasTag(n"Short") {
+      return "Short";
+    };
+    if customizationState.HasTag(n"Long") {
+      return "Long";
+    };
+    if customizationState.HasTag(n"Dreads") {
+      return "Dreads";
+    };
+    if customizationState.HasTag(n"Buzz") {
+      return "Buzz";
+    };
+    return "Bald";
+  };
+  return "Error";
+}
+
+// Tracks id for item equipped to head slot
 @replaceMethod(PlayerPuppet)
 protected cb func OnItemAddedToSlot(evt: ref<ItemAddedToSlot>) -> Bool {
   let newApp: CName;
@@ -201,8 +241,6 @@ protected cb func OnItemAddedToSlot(evt: ref<ItemAddedToSlot>) -> Bool {
   let slotID: TweakDBID;
   itemID = evt.GetItemID();
   itemTDBID = ItemID.GetTDBID(itemID);
-  Log("--- PlayerPuppet::OnItemAddedToSlot " + TDBID.ToStringDEBUG(itemTDBID)
-    + " -> IsHeadGear: " + BoolToString(IsHeadGear(itemID)) + ", IsTppHead: " + BoolToString(IsTppHead(itemID)) + ", should display: " + BoolToString(ShouldBeDisplayed(itemID)));
   itemRecord = TweakDBInterface.GetItemRecord(itemTDBID);
   slotID = evt.GetSlotID();
   if NotEquals(itemRecord, null) && NotEquals(itemRecord.ItemCategory(), null) {
@@ -218,7 +256,7 @@ protected cb func OnItemAddedToSlot(evt: ref<ItemAddedToSlot>) -> Bool {
       paperdollEquipData.equipArea.activeIndex = 0;
       equipSlot.itemID = itemID;
       ArrayPush(paperdollEquipData.equipArea.equipSlots, equipSlot);
-      paperdollEquipData.equipped = ShouldBeDisplayed(itemID); // tweak visibility
+      paperdollEquipData.equipped = ShouldBeDisplayed(itemID); // <- tweaks visibility here
       paperdollEquipData.placementSlot = EquipmentSystem.GetPlacementSlot(itemID);
       equipmentBB = GameInstance.GetBlackboardSystem(this.GetGame()).Get(GetAllBlackboardDefs().UI_Equipment);
       if NotEquals(equipmentBB, null) {
@@ -238,13 +276,14 @@ protected cb func OnItemAddedToSlot(evt: ref<ItemAddedToSlot>) -> Bool {
   };
     // Track head item
   if IsHeadGear(itemID) && !IsTppHead(itemID) {
-    Log("!!! Tracked item added: " + TDBID.ToStringDEBUG(ItemID.GetTDBID(itemID)));
+    // Log("Tracked item added: " + TDBID.ToStringDEBUG(ItemID.GetTDBID(itemID)));
     this.m_trackedHeadItemId = itemID;
     this.m_shouldTrackHeadItem = true;
   };
   super.OnItemAddedToSlot(evt);
 }
 
+// Untracks head gear when item uneqipped from head slot
 @replaceMethod(PlayerPuppet)
 protected cb func OnItemRemovedFromSlot(evt: ref<ItemRemovedFromSlot>) -> Bool {
   let newApp: CName;
@@ -274,56 +313,13 @@ protected cb func OnItemRemovedFromSlot(evt: ref<ItemRemovedFromSlot>) -> Bool {
     EquipmentSystemPlayerData.UpdateArmSlot(this, evt.GetItemID(), true);
   };
   if Equals(evt.GetSlotID(), t"AttachmentSlots.Head") && !IsTppHead(evt.GetItemID()) {
-      Log("!!! Tracked item removed: " + TDBID.ToStringDEBUG(ItemID.GetTDBID(evt.GetItemID())));
+      //Log("Tracked item removed: " + TDBID.ToStringDEBUG(ItemID.GetTDBID(evt.GetItemID())));
       this.m_shouldTrackHeadItem = false;
   };
   super.OnItemRemovedFromSlot(evt);
-
-  Log("--- PlayerPuppet::OnItemRemovedFromSlot " + TDBID.ToStringDEBUG(itemTDBID)
-    + " -> IsHeadGear: " + BoolToString(IsHeadGear(evt.GetItemID())) 
-    + ", IsTppHead: " + BoolToString(IsTppHead(evt.GetItemID())) + ", should display: " 
-    + BoolToString(ShouldBeDisplayed(evt.GetItemID()))
-  );
 }
 
-@replaceMethod(EquipmentSystem)
-private final const func GetHairSuffix(itemId: ItemID, owner: wref<GameObject>, suffixRecord: ref<ItemsFactoryAppearanceSuffixBase_Record>) -> String {
-  //Log("--- GetHairSuffix " + TDBID.ToStringDEBUG(ItemID.GetTDBID(itemId))
-  //  + " -> IsHeadGear: " + BoolToString(IsHeadGear(itemId)) + ", IsTppHead: " + BoolToString(IsTppHead(itemId)) + ", should display: " + BoolToString(ShouldBeDisplayed(itemId)));
-
-  let customizationState: ref<gameuiICharacterCustomizationState>;
-  let characterCustomizationSystem: ref<gameuiICharacterCustomizationSystem>;
-  let isMountedToVehicle: Bool;
-  characterCustomizationSystem = GameInstance.GetCharacterCustomizationSystem(owner.GetGame());
-  isMountedToVehicle = VehicleComponent.IsMountedToVehicle(owner.GetGame(), owner.GetEntityID());
-  
-  // Dirty hack: break hair suffux for vehicle TPP view to fix hair displaying, armor stats not working if mounted
-  if isMountedToVehicle {
-    return "";
-  };
-
-  if (owner as PlayerPuppet) == null && !characterCustomizationSystem.HasCharacterCustomizationComponent(owner) {
-    return "Bald";
-  };
-  customizationState = characterCustomizationSystem.GetState();
-  if customizationState != null {
-    if customizationState.HasTag(n"Short") {
-      return "Short";
-    };
-    if customizationState.HasTag(n"Long") {
-      return "Long";
-    };
-    if customizationState.HasTag(n"Dreads") {
-      return "Dreads";
-    };
-    if customizationState.HasTag(n"Buzz") {
-      return "Buzz";
-    };
-    return "Bald";
-  };
-  return "Error";
-}
-
+// Clears head slot when mounted to vehicle, should fix TPP bald head
 @replaceMethod(inkMotorcycleHUDGameController)
 protected cb func OnVehicleMounted() -> Bool {
   let playerPuppet: wref<PlayerPuppet>;
@@ -349,9 +345,10 @@ protected cb func OnVehicleMounted() -> Bool {
     this.m_playerStateBBConnectionId = this.m_activeVehicleUIBlackboard.RegisterListenerVariant(GetAllBlackboardDefs().UI_ActiveVehicleData.VehPlayerStateData, this, n"OnPlayerStateChanged");
   };
 
-  playerPuppet.UnequipHeadGear();
+  playerPuppet.ClearHeadGearSlot();
 }
 
+// Re-equips tracked head gear when unmounted
 @replaceMethod(inkMotorcycleHUDGameController)
 protected cb func OnVehicleUnmounted() -> Bool {
   let playerPuppet: wref<PlayerPuppet>;
@@ -366,5 +363,53 @@ protected cb func OnVehicleUnmounted() -> Bool {
     this.m_activeVehicleUIBlackboard.UnregisterListenerVariant(GetAllBlackboardDefs().UI_ActiveVehicleData.VehPlayerStateData, this.m_playerStateBBConnectionId);
   };
 
-  playerPuppet.EquipHeadGear();
+  playerPuppet.ReEquipHeadGear();
+}
+
+// DIRTY HACK #2: re-equips head gear on inventory opening
+@addField(gameuiInGameMenuGameController)
+let m_playerPuppet: ref<GameObject>;
+
+@replaceMethod(gameuiInGameMenuGameController)
+private final func RegisterInputListenersForPlayer(playerPuppet: ref<GameObject>) -> Void {
+  if playerPuppet.IsControlledByLocalPeer() {
+    playerPuppet.RegisterInputListener(this, n"OpenPauseMenu");
+    playerPuppet.RegisterInputListener(this, n"OpenMapMenu");
+    playerPuppet.RegisterInputListener(this, n"OpenCraftingMenu");
+    playerPuppet.RegisterInputListener(this, n"OpenJournalMenu");
+    playerPuppet.RegisterInputListener(this, n"OpenPerksMenu");
+    playerPuppet.RegisterInputListener(this, n"OpenInventoryMenu");
+    playerPuppet.RegisterInputListener(this, n"OpenHubMenu");
+    playerPuppet.RegisterInputListener(this, n"QuickSave");
+    playerPuppet.RegisterInputListener(this, n"FastForward_Hold");
+  };
+  this.m_playerPuppet = playerPuppet;
+}
+
+@replaceMethod(gameuiInGameMenuGameController)
+protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
+  let isPlayerLastUsedKBM: Bool;
+  if Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED) {
+    if Equals(ListenerAction.GetName(action), n"QuickSave") {
+      this.HandleQuickSave();
+    };
+  };
+  if Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED) {
+    if Equals(ListenerAction.GetName(action), n"OpenPauseMenu") {
+      this.SpawnMenuInstanceEvent(n"OnOpenPauseMenu");
+    } else {
+      if Equals(ListenerAction.GetName(action), n"OpenHubMenu") {
+        this.SpawnMenuInstanceEvent(n"OnOpenHubMenu");
+      };
+    };
+  };
+  if Equals(ListenerAction.GetName(action), n"OpenMapMenu") || Equals(ListenerAction.GetName(action), n"OpenCraftingMenu") || Equals(ListenerAction.GetName(action), n"OpenJournalMenu") || Equals(ListenerAction.GetName(action), n"OpenPerksMenu") || Equals(ListenerAction.GetName(action), n"OpenInventoryMenu") {
+    isPlayerLastUsedKBM = this.GetPlayerControlledObject().PlayerLastUsedKBM();
+    if Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_HOLD_COMPLETE) && !isPlayerLastUsedKBM || Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED) && isPlayerLastUsedKBM {
+      this.OpenShortcutMenu(ListenerAction.GetName(action));
+    };
+  };
+  if (Equals(ListenerAction.GetName(action), n"OpenInventoryMenu") || Equals(ListenerAction.GetName(action), n"OpenHubMenu")) && NotEquals(this.m_playerPuppet, null) {
+    this.m_playerPuppet.ReEquipHeadGear();
+  };
 }
