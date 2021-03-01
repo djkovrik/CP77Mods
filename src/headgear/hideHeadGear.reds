@@ -3,6 +3,14 @@ public static func L(str: String) -> Void {
   Log(str);
 }
 
+public static func PrintPlayerArmorValue(object: ref<GameObject>, label: String) -> Void {
+  let statsSystem: ref<StatsSystem>;
+  let armorValue: Float;
+  statsSystem = GameInstance.GetStatsSystem(object.GetGame());
+  armorValue = statsSystem.GetStatValue(Cast(object.GetEntityID()), gamedataStatType.Armor);
+  L(label + ": current armor value = " + FloatToString(armorValue));
+}
+
 public static func IsTppHead(itemId: ItemID) -> Bool {
   return Equals(ItemID.GetTDBID(itemId), t"Items.PlayerMaTppHead") || Equals(ItemID.GetTDBID(itemId), t"Items.PlayerWaTppHead");
 }
@@ -17,14 +25,6 @@ public static func ShouldBeDisplayed(itemId: ItemID) -> Bool {
 
 public static func ShouldBeHidden(itemId: ItemID) -> Bool {
   return IsHeadGear(itemId) && !IsTppHead(itemId);
-}
-
-public static func PrintPlayerArmorValue(object: ref<GameObject>, label: String) -> Void {
-  let armorValue: Float;
-  let statsSystem: ref<StatsSystem>;
-  statsSystem = GameInstance.GetStatsSystem(object.GetGame());
-  armorValue = statsSystem.GetStatValue(Cast(object.GetEntityID()), gamedataStatType.Armor);
-  L(label + ": current armor value = " + FloatToString(armorValue));
 }
 
 // Forced ClearItemAppearanceEvent for head item slot
@@ -68,9 +68,10 @@ public final func OnEquipProcessVisualTags(itemID: ItemID) -> Void {
   if ShouldBeHidden(itemID) {
     this.ClearItemAppearanceEvent(gamedataEquipmentArea.Head);
   };
+  PrintPlayerArmorValue(this.GetOwner(), "EquipmentSystemPlayerData::OnEquipProcessVisualTags");
 }
 
-// Tweaks head slot item visibility for SPaperdollEquipData
+// Adjust visibility for SPaperdollEquipData
 @replaceMethod(EquipmentSystemPlayerData)
 private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt addToInventory: Bool, opt blockActiveSlotsUpdate: Bool, opt forceEquipWeapon: Bool) -> Void {
   let i: Int32;
@@ -174,44 +175,26 @@ private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt addToInventor
   PrintPlayerArmorValue(this.GetOwner(), "EquipmentSystemPlayerData::EquipItem");
 }
 
-// Just track armor value after unequip
-@replaceMethod(EquipmentSystemPlayerData)
-private final func UnequipItem(itemID: ItemID) -> Void {
-  let equipAreaIndex: Int32;
-  let audioEventFoley: ref<AudioEvent>;
-  L("UnequipItem " + TDBID.ToStringDEBUG(ItemID.GetTDBID(itemID)));
-  if this.IsEquipped(itemID) {
-    equipAreaIndex = this.GetEquipAreaIndex(EquipmentSystem.GetEquipAreaType(itemID));
-    this.UnequipItem(equipAreaIndex, this.GetSlotIndex(itemID));
-    audioEventFoley = new AudioEvent();
-    audioEventFoley.eventName = n"unequipItem";
-    audioEventFoley.nameData = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(itemID)).AppearanceName();
-    this.m_owner.QueueEvent(audioEventFoley);
-  };
-  PrintPlayerArmorValue(this.GetOwner(), "EquipmentSystemPlayerData::UnequipItem");
-}
-
-// Fields for tracking head item id
-@addField(GameObject)
-let m_trackedHeadItemId: ItemID;
-
 // Clears head item slot, THEORETICALLY fixes TPP hair displaying along with patched GetHairSuffix
 @addMethod(GameObject)
 public func ClearHeadGearSlot() -> Void {
   let transactionSystem: ref<TransactionSystem>;
   transactionSystem = GameInstance.GetTransactionSystem(this.GetGame());
   transactionSystem.RemoveItemFromSlot(this, t"AttachmentSlots.Head");
-  PrintPlayerArmorValue(this, "GameObject::ClearHeadGearSlot");
 }
 
-// Re-Equip tracked head gear item
+// Reequip head gear item
 @addMethod(GameObject)
 public func ReEquipHeadGear() -> Void {
+  let activeItemId: ItemID;
   let equipmentSystem: ref<EquipmentSystemPlayerData>;
-  if NotEquals(this.m_trackedHeadItemId, null) {
-    equipmentSystem = EquipmentSystem.GetData(GetPlayer(this.GetGame()));
-    equipmentSystem.UnequipItem(this.m_trackedHeadItemId);
-    equipmentSystem.EquipItem(this.m_trackedHeadItemId);
+
+  equipmentSystem = EquipmentSystem.GetData(GetPlayer(this.GetGame()));
+  activeItemId = equipmentSystem.GetActiveItem(gamedataEquipmentArea.Head);
+
+  if NotEquals(activeItemId, null) {    
+    equipmentSystem.UnequipItem(activeItemId);
+    equipmentSystem.EquipItem(activeItemId);
   };
 }
 
@@ -224,7 +207,7 @@ private final const func GetHairSuffix(itemId: ItemID, owner: wref<GameObject>, 
   characterCustomizationSystem = GameInstance.GetCharacterCustomizationSystem(owner.GetGame());
   isMountedToVehicle = VehicleComponent.IsMountedToVehicle(owner.GetGame(), owner.GetEntityID());
   
-  // This is not the best solution, I know :)
+  // THIS IS BAD BUT IT WORKS =\
   if isMountedToVehicle {
     return "";
   };
@@ -251,7 +234,7 @@ private final const func GetHairSuffix(itemId: ItemID, owner: wref<GameObject>, 
   return "Error";
 }
 
-// Tracks id for item equipped to head slot
+// Just check armor when items added
 @replaceMethod(PlayerPuppet)
 protected cb func OnItemAddedToSlot(evt: ref<ItemAddedToSlot>) -> Bool {
   L("OnItemAddedToSlot: IsHead = " 
@@ -304,13 +287,41 @@ protected cb func OnItemAddedToSlot(evt: ref<ItemAddedToSlot>) -> Bool {
   if slotID == t"AttachmentSlots.WeaponRight" || slotID == t"AttachmentSlots.WeaponLeft" {
     EquipmentSystemPlayerData.UpdateArmSlot(this, evt.GetItemID(), false);
   };
-    // Track head item
-  if IsHeadGear(itemID) && !IsTppHead(itemID) {
-    L("Tracked item added: " + TDBID.ToStringDEBUG(ItemID.GetTDBID(itemID)));
-    this.m_trackedHeadItemId = itemID;
-  };
-  PrintPlayerArmorValue(this, "PlayerPuppet::OnItemAddedToSlot");
   super.OnItemAddedToSlot(evt);
+  PrintPlayerArmorValue(this, "PlayerPuppet::OnItemAddedToSlot");
+}
+
+// Just check armor when items removed
+@replaceMethod(PlayerPuppet)
+protected cb func OnItemRemovedFromSlot(evt: ref<ItemRemovedFromSlot>) -> Bool {
+  let newApp: CName;
+  let itemTDBID: TweakDBID;
+  let paperdollEquipData: SPaperdollEquipData;
+  let equipmentBB: ref<IBlackboard>;
+  let equipmentData: ref<EquipmentSystemPlayerData>;
+  let itemType: gamedataItemCategory;
+  let itemRecord: ref<Item_Record>;
+  itemRecord = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(evt.GetItemID()));
+  if NotEquals(itemRecord, null) && NotEquals(itemRecord.ItemCategory(), null) {
+    itemType = itemRecord.ItemCategory().Type();
+  };
+  if Equals(itemType, gamedataItemCategory.Weapon) {
+    if evt.GetSlotID() == t"AttachmentSlots.WeaponRight" {
+      itemTDBID = ItemID.GetTDBID(evt.GetItemID());
+      paperdollEquipData.equipArea.areaType = TweakDBInterface.GetItemRecord(itemTDBID).EquipArea().Type();
+      paperdollEquipData.equipped = false;
+      paperdollEquipData.placementSlot = EquipmentSystem.GetPlacementSlot(evt.GetItemID());
+      equipmentBB = GameInstance.GetBlackboardSystem(this.GetGame()).Get(GetAllBlackboardDefs().UI_Equipment);
+      if NotEquals(equipmentBB, null) {
+        equipmentBB.SetVariant(GetAllBlackboardDefs().UI_Equipment.lastModifiedArea, ToVariant(paperdollEquipData));
+      };
+    };
+  };
+  if evt.GetSlotID() == t"AttachmentSlots.WeaponRight" || evt.GetSlotID() == t"AttachmentSlots.WeaponLeft" {
+    EquipmentSystemPlayerData.UpdateArmSlot(this, evt.GetItemID(), true);
+  };
+  super.OnItemRemovedFromSlot(evt);
+  PrintPlayerArmorValue(this, "PlayerPuppet::OnItemRemovedFromSlot");
 }
 
 // Clears head slot when mounted to vehicle, should fix TPP bald head
@@ -343,7 +354,7 @@ protected cb func OnVehicleMounted() -> Bool {
   PrintPlayerArmorValue(playerPuppet, "OnVehicleMounted");
 }
 
-// Re-equips tracked head gear when unmounted
+// Reequips head gear when unmounted
 @replaceMethod(inkMotorcycleHUDGameController)
 protected cb func OnVehicleUnmounted() -> Bool {
   let playerPuppet: wref<PlayerPuppet>;
@@ -362,7 +373,7 @@ protected cb func OnVehicleUnmounted() -> Bool {
   PrintPlayerArmorValue(playerPuppet, "OnVehicleUnmounted");
 }
 
-// DIRTY HACK #2: re-equips head gear on inventory opening
+// DIRTY HACK #2: reequips head gear on inventory opening
 @addField(gameuiInGameMenuGameController)
 let m_playerPuppet: ref<GameObject>;
 
