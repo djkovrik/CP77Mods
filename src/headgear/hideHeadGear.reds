@@ -185,7 +185,7 @@ public func ClearHeadGearSlot() -> Void {
 
 // Reequip head gear item
 @addMethod(GameObject)
-public func ReEquipHeadGear() -> Void {
+public func ReequipHeadGear() -> Void {
   let activeItemId: ItemID;
   let equipmentSystem: ref<EquipmentSystemPlayerData>;
 
@@ -369,7 +369,7 @@ protected cb func OnVehicleUnmounted() -> Bool {
     this.m_activeVehicleUIBlackboard.UnregisterListenerVariant(GetAllBlackboardDefs().UI_ActiveVehicleData.VehPlayerStateData, this.m_playerStateBBConnectionId);
   };
 
-  playerPuppet.ReEquipHeadGear();
+  playerPuppet.ReequipHeadGear();
   PrintPlayerArmorValue(playerPuppet, "OnVehicleUnmounted");
 }
 
@@ -417,6 +417,24 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
     };
   };
   if (Equals(ListenerAction.GetName(action), n"OpenInventoryMenu") || Equals(ListenerAction.GetName(action), n"OpenHubMenu")) && NotEquals(this.m_playerPuppet, null) {
-    this.m_playerPuppet.ReEquipHeadGear();
+    this.m_playerPuppet.ReequipHeadGear();
   };
+}
+
+//Reequip head gear after loading completed to apply hidden headgear stats
+@replaceMethod(EquipmentSystem)
+private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
+  let data: ref<EquipmentSystemPlayerData>;
+  LogAssert(this.GetPlayerData(request.owner) == null, "[EquipmentSystem::OnPlayerAttach] Player already attached!");
+  if Equals(this.GetPlayerData(request.owner), null) {
+    data = new EquipmentSystemPlayerData();
+    data.SetOwner((request.owner as ScriptedPuppet));
+    ArrayPush(this.m_ownerData, data);
+    data.OnInitialize();
+  } else {
+    data = this.GetPlayerData(request.owner);
+  };
+  data.OnAttach();
+  this.Debug_SetupEquipmentSystemOverlay(request.owner);
+  request.owner.ReequipHeadGear();
 }
