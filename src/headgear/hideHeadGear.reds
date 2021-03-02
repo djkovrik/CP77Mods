@@ -6,11 +6,14 @@ public static func L(str: String) -> Void {
 public static func PrintPlayerArmorValue(object: ref<GameObject>, label: String) -> Void {
   let statsSystem: ref<StatsSystem>;
   let armorValue: Float;
+  let critChance: Float;
+  let critDamage: Float;
   statsSystem = GameInstance.GetStatsSystem(object.GetGame());
   armorValue = statsSystem.GetStatValue(Cast(object.GetEntityID()), gamedataStatType.Armor);
-  L(label + ": current armor value = " + FloatToString(armorValue));
+  critChance = statsSystem.GetStatValue(Cast(object.GetEntityID()), gamedataStatType.CritChance);
+  critDamage = statsSystem.GetStatValue(Cast(object.GetEntityID()), gamedataStatType.CritDamage);
+  L(label + ": armor  = " + FloatToString(armorValue) + ", crit chance = " + FloatToString(critChance)+ ", crit damage = " + FloatToString(critDamage));
 }
-
 public static func IsTppHead(itemId: ItemID) -> Bool {
   return Equals(ItemID.GetTDBID(itemId), t"Items.PlayerMaTppHead") || Equals(ItemID.GetTDBID(itemId), t"Items.PlayerWaTppHead");
 }
@@ -421,7 +424,7 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
   };
 }
 
-//Reequip head gear after loading completed to apply hidden headgear stats
+// DIRTY HACK #3: reequips head gear after loading completed to apply hidden headgear stats
 @replaceMethod(EquipmentSystem)
 private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
   let data: ref<EquipmentSystemPlayerData>;
