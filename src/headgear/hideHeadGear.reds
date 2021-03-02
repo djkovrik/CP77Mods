@@ -204,7 +204,7 @@ public func ClearHeadGearSlot() -> Void {
   transactionSystem.RemoveItemFromSlot(this, t"AttachmentSlots.Head");
 }
 
-// Reequip head gear item and print stats
+// Reequip headgear item
 @addMethod(GameObject)
 public func ReequipHeadGear() -> Void {
   let equipmentSystem: ref<EquipmentSystemPlayerData>;
@@ -227,15 +227,13 @@ public func ReequipHeadGear() -> Void {
     equipRequest.slotIndex = 0;
     equipRequest.itemID = activeItemId;
     equipmentSystem.OnEquipRequest(equipRequest);
-
-    PrintPlayerStats("ReequipHeadGear", this);
   };
 }
 
 
 // -- EquipmentSystem
 
-// DIRTY HACK: breaks hair suffux for vehicle TPP view to fix hair displaying, armor stats not working if mounted
+// DIRTY HACK: Breaks hair suffux for vehicle TPP view to fix hair displaying, armor stats not working if mounted
 @replaceMethod(EquipmentSystem)
 private final const func GetHairSuffix(itemId: ItemID, owner: wref<GameObject>, suffixRecord: ref<ItemsFactoryAppearanceSuffixBase_Record>) -> String {
   let customizationState: ref<gameuiICharacterCustomizationState>;
@@ -329,7 +327,6 @@ protected cb func OnItemAddedToSlot(evt: ref<ItemAddedToSlot>) -> Bool {
 // -- inkMotorcycleHUDGameController
 
 // Clears head slot when mounted to vehicle, should fix TPP bald head
-// Also print stats
 @replaceMethod(inkMotorcycleHUDGameController)
 protected cb func OnVehicleMounted() -> Bool {
   let playerPuppet: wref<PlayerPuppet>;
@@ -356,10 +353,9 @@ protected cb func OnVehicleMounted() -> Bool {
   };
 
   playerPuppet.ClearHeadGearSlot();
-  PrintPlayerStats("OnVehicleMounted", playerPuppet);
 }
 
-// Reequips head gear when unmounted and prints stats
+// Reequips headgear when unmounted
 @replaceMethod(inkMotorcycleHUDGameController)
 protected cb func OnVehicleUnmounted() -> Bool {
   let playerPuppet: wref<PlayerPuppet>;
@@ -375,10 +371,11 @@ protected cb func OnVehicleUnmounted() -> Bool {
   };
 
   playerPuppet.ReequipHeadGear();
-  PrintPlayerStats("OnVehicleUnmounted", playerPuppet);
 }
 
 // TESTING SECTION
+
+/*
 
 // Prints player stats after the game loaded
 @replaceMethod(PlayerPuppet)
@@ -436,19 +433,21 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
   };
 }
 
-// HARDCORE STATS TEST: constantly spams player stats to the game log
-@replaceMethod(PlayerPuppet)
-protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
-  if GameInstance.GetRuntimeInfo(this.GetGame()).IsMultiplayer() || GameInstance.GetPlayerSystem(this.GetGame()).IsCPOControlSchemeForced() {
-    this.OnActionMultiplayer(action, consumer);
-  };
-  if Equals(ListenerAction.GetName(action), n"IconicCyberware") && Equals(ListenerAction.GetType(action), this.DeductGameInputActionType()) && !this.CanCycleLootData() {
-    this.ActivateIconicCyberware();
-  } else {
-    if !GameInstance.GetBlackboardSystem(this.GetGame()).Get(GetAllBlackboardDefs().UI_PlayerStats).GetBool(GetAllBlackboardDefs().UI_PlayerStats.isReplacer) && Equals(ListenerAction.GetName(action), n"CallVehicle") && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED) {
-      this.ProcessCallVehicleAction(ListenerAction.GetType(action));
-    };
-  };
+// // HARDCORE STATS TEST: constantly prints player stats to the game log
+// @replaceMethod(PlayerPuppet)
+// protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
+//   if GameInstance.GetRuntimeInfo(this.GetGame()).IsMultiplayer() || GameInstance.GetPlayerSystem(this.GetGame()).IsCPOControlSchemeForced() {
+//     this.OnActionMultiplayer(action, consumer);
+//   };
+//   if Equals(ListenerAction.GetName(action), n"IconicCyberware") && Equals(ListenerAction.GetType(action), this.DeductGameInputActionType()) && !this.CanCycleLootData() {
+//     this.ActivateIconicCyberware();
+//   } else {
+//     if !GameInstance.GetBlackboardSystem(this.GetGame()).Get(GetAllBlackboardDefs().UI_PlayerStats).GetBool(GetAllBlackboardDefs().UI_PlayerStats.isReplacer) && Equals(ListenerAction.GetName(action), n"CallVehicle") && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED) {
+//       this.ProcessCallVehicleAction(ListenerAction.GetType(action));
+//     };
+//   };
 
-  PrintPlayerStats("NOW", this);
-}
+//   PrintPlayerStats("NOW", this);
+// }
+
+*/
