@@ -39,6 +39,7 @@ public static func PrintPlayerStats(where: String, object: ref<GameObject>) -> V
   L("Stats at " + where + " - armor: " + FloatToString(armorValue) + ", crit chance: " + FloatToString(critChance)+ ", crit damage: " + FloatToString(critDamage));
 }
 
+
 // -- EquipmentSystemPlayerData
 
 @replaceMethod(EquipmentSystemPlayerData)
@@ -203,7 +204,7 @@ public func ClearHeadGearSlot() -> Void {
   transactionSystem.RemoveItemFromSlot(this, t"AttachmentSlots.Head");
 }
 
-// Reequip head gear item
+// Reequip head gear item and print stats
 @addMethod(GameObject)
 public func ReequipHeadGear() -> Void {
   let equipmentSystem: ref<EquipmentSystemPlayerData>;
@@ -230,6 +231,7 @@ public func ReequipHeadGear() -> Void {
     PrintPlayerStats("ReequipHeadGear", this);
   };
 }
+
 
 // -- EquipmentSystem
 
@@ -269,9 +271,10 @@ private final const func GetHairSuffix(itemId: ItemID, owner: wref<GameObject>, 
   return "Error";
 }
 
+
 // -- PlayerPuppet
 
-// Print stats + tweak visibility
+// Tweak visibility
 @replaceMethod(PlayerPuppet)
 protected cb func OnItemAddedToSlot(evt: ref<ItemAddedToSlot>) -> Bool {
   L("OnItemAddedToSlot - " + ItemDump(evt.GetItemID()));
@@ -323,50 +326,10 @@ protected cb func OnItemAddedToSlot(evt: ref<ItemAddedToSlot>) -> Bool {
   super.OnItemAddedToSlot(evt);
 }
 
-// Print stats
-@replaceMethod(PlayerPuppet)
-protected cb func OnItemRemovedFromSlot(evt: ref<ItemRemovedFromSlot>) -> Bool {
-  L("OnItemRemovedFromSlot - " + ItemDump(evt.GetItemID()));
-  let newApp: CName;
-  let itemTDBID: TweakDBID;
-  let paperdollEquipData: SPaperdollEquipData;
-  let equipmentBB: ref<IBlackboard>;
-  let equipmentData: ref<EquipmentSystemPlayerData>;
-  let itemType: gamedataItemCategory;
-  let itemRecord: ref<Item_Record>;
-  itemRecord = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(evt.GetItemID()));
-  if NotEquals(itemRecord, null) && NotEquals(itemRecord.ItemCategory(), null) {
-    itemType = itemRecord.ItemCategory().Type();
-  };
-  if Equals(itemType, gamedataItemCategory.Weapon) {
-    if evt.GetSlotID() == t"AttachmentSlots.WeaponRight" {
-      itemTDBID = ItemID.GetTDBID(evt.GetItemID());
-      paperdollEquipData.equipArea.areaType = TweakDBInterface.GetItemRecord(itemTDBID).EquipArea().Type();
-      paperdollEquipData.equipped = false;
-      paperdollEquipData.placementSlot = EquipmentSystem.GetPlacementSlot(evt.GetItemID());
-      equipmentBB = GameInstance.GetBlackboardSystem(this.GetGame()).Get(GetAllBlackboardDefs().UI_Equipment);
-      if NotEquals(equipmentBB, null) {
-        equipmentBB.SetVariant(GetAllBlackboardDefs().UI_Equipment.lastModifiedArea, ToVariant(paperdollEquipData));
-      };
-    };
-  };
-  if evt.GetSlotID() == t"AttachmentSlots.WeaponRight" || evt.GetSlotID() == t"AttachmentSlots.WeaponLeft" {
-    EquipmentSystemPlayerData.UpdateArmSlot(this, evt.GetItemID(), true);
-  };
-  super.OnItemRemovedFromSlot(evt);
-}
-
-// Check player stats after the game loaded
-@replaceMethod(PlayerPuppet)
-protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpawn>) -> Bool {
-  this.SetInvisible(false);
-  GameInstance.GetGodModeSystem(this.GetGame()).RemoveGodMode(this.GetEntityID(), gameGodModeType.Invulnerable, n"GracePeriodAfterSpawn");
-  PrintPlayerStats("OnMakePlayerVisibleAfterSpawn", this);
-}
-
 // -- inkMotorcycleHUDGameController
 
 // Clears head slot when mounted to vehicle, should fix TPP bald head
+// Also print stats
 @replaceMethod(inkMotorcycleHUDGameController)
 protected cb func OnVehicleMounted() -> Bool {
   let playerPuppet: wref<PlayerPuppet>;
@@ -396,7 +359,7 @@ protected cb func OnVehicleMounted() -> Bool {
   PrintPlayerStats("OnVehicleMounted", playerPuppet);
 }
 
-// Reequips head gear when unmounted
+// Reequips head gear when unmounted and prints stats
 @replaceMethod(inkMotorcycleHUDGameController)
 protected cb func OnVehicleUnmounted() -> Bool {
   let playerPuppet: wref<PlayerPuppet>;
@@ -415,9 +378,17 @@ protected cb func OnVehicleUnmounted() -> Bool {
   PrintPlayerStats("OnVehicleUnmounted", playerPuppet);
 }
 
-// -- gameuiInGameMenuGameController
+// TESTING SECTION
 
-// Check player stats on inventory opening
+// Prints player stats after the game loaded
+@replaceMethod(PlayerPuppet)
+protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpawn>) -> Bool {
+  this.SetInvisible(false);
+  GameInstance.GetGodModeSystem(this.GetGame()).RemoveGodMode(this.GetEntityID(), gameGodModeType.Invulnerable, n"GracePeriodAfterSpawn");
+  PrintPlayerStats("OnMakePlayerVisibleAfterSpawn", this);
+}
+
+// Prints player stats when inventory or hub menu opened
 @addField(gameuiInGameMenuGameController)
 let m_playerPuppet: ref<GameObject>;
 
@@ -463,4 +434,21 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
   if (Equals(ListenerAction.GetName(action), n"OpenInventoryMenu") || Equals(ListenerAction.GetName(action), n"OpenHubMenu")) && NotEquals(this.m_playerPuppet, null) {
     PrintPlayerStats("OnInventoryOpened", this.m_playerPuppet);
   };
+}
+
+// HARDCORE STATS TEST: constantly spams player stats to the game log
+@replaceMethod(PlayerPuppet)
+protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
+  if GameInstance.GetRuntimeInfo(this.GetGame()).IsMultiplayer() || GameInstance.GetPlayerSystem(this.GetGame()).IsCPOControlSchemeForced() {
+    this.OnActionMultiplayer(action, consumer);
+  };
+  if Equals(ListenerAction.GetName(action), n"IconicCyberware") && Equals(ListenerAction.GetType(action), this.DeductGameInputActionType()) && !this.CanCycleLootData() {
+    this.ActivateIconicCyberware();
+  } else {
+    if !GameInstance.GetBlackboardSystem(this.GetGame()).Get(GetAllBlackboardDefs().UI_PlayerStats).GetBool(GetAllBlackboardDefs().UI_PlayerStats.isReplacer) && Equals(ListenerAction.GetName(action), n"CallVehicle") && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED) {
+      this.ProcessCallVehicleAction(ListenerAction.GetType(action));
+    };
+  };
+
+  PrintPlayerStats("NOW", this);
 }
