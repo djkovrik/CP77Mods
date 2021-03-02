@@ -43,7 +43,6 @@ public static func PrintPlayerStats(where: String, object: ref<GameObject>) -> V
 
 @replaceMethod(EquipmentSystemPlayerData)
 public final func OnEquipProcessVisualTags(itemID: ItemID) -> Void {
-  L("OnEquipProcessVisualTags - " + ItemDump(itemID));
   let itemEntity: wref<GameObject>;
   let transactionSystem: ref<TransactionSystem>;
   let areaType: gamedataEquipmentArea;
@@ -82,8 +81,6 @@ public final func OnEquipProcessVisualTags(itemID: ItemID) -> Void {
   if ShouldBeHidden(itemID) {
     this.ClearItemAppearanceEvent(gamedataEquipmentArea.Head);
   };
-
-  PrintPlayerStats("OnEquipProcessVisualTags", this.GetOwner());
 }
 
 @replaceMethod(EquipmentSystemPlayerData)
@@ -187,8 +184,6 @@ private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt addToInventor
   if this.IsItemOfCategory(itemID, gamedataItemCategory.Cyberware) {
     this.CheckCyberjunkieAchievement();
   };
-
-  PrintPlayerStats("EquipItem", this.GetOwner());
 }
 
 // Tweak IsItemHidden to check headgear
@@ -203,7 +198,6 @@ public final func IsItemHidden(id: ItemID) -> Bool {
 // Clear head item slot, theoretically fixes TPP hair displaying along with patched GetHairSuffix
 @addMethod(GameObject)
 public func ClearHeadGearSlot() -> Void {
-  L("ClearHeadGearSlot");
   let transactionSystem: ref<TransactionSystem>;
   transactionSystem = GameInstance.GetTransactionSystem(this.GetGame());
   transactionSystem.RemoveItemFromSlot(this, t"AttachmentSlots.Head");
@@ -212,15 +206,28 @@ public func ClearHeadGearSlot() -> Void {
 // Reequip head gear item
 @addMethod(GameObject)
 public func ReequipHeadGear() -> Void {
-  let activeItemId: ItemID;
   let equipmentSystem: ref<EquipmentSystemPlayerData>;
+  let activeItemId: ItemID;
+  let unequipRequest: ref<UnequipRequest>;
+  let equipRequest: ref<EquipRequest>;
 
   equipmentSystem = EquipmentSystem.GetData(GetPlayer(this.GetGame()));
   activeItemId = equipmentSystem.GetActiveItem(gamedataEquipmentArea.Head);
 
   if NotEquals(activeItemId, null) {    
-    equipmentSystem.UnequipItem(activeItemId);
-    equipmentSystem.EquipItem(activeItemId);
+    L("Detected head item: " + ToStr(activeItemId));
+    
+    unequipRequest = new UnequipRequest();
+    unequipRequest.slotIndex = 0;
+    unequipRequest.areaType = gamedataEquipmentArea.Head;
+    equipmentSystem.OnUnequipRequest(unequipRequest);
+
+    equipRequest = new EquipRequest();
+    equipRequest.slotIndex = 0;
+    equipRequest.itemID = activeItemId;
+    equipmentSystem.OnEquipRequest(equipRequest);
+
+    PrintPlayerStats("ReequipHeadGear", this);
   };
 }
 
@@ -314,8 +321,6 @@ protected cb func OnItemAddedToSlot(evt: ref<ItemAddedToSlot>) -> Bool {
     EquipmentSystemPlayerData.UpdateArmSlot(this, evt.GetItemID(), false);
   };
   super.OnItemAddedToSlot(evt);
-
-  PrintPlayerStats("OnItemAddedToSlot", this);
 }
 
 // Print stats
@@ -349,8 +354,6 @@ protected cb func OnItemRemovedFromSlot(evt: ref<ItemRemovedFromSlot>) -> Bool {
     EquipmentSystemPlayerData.UpdateArmSlot(this, evt.GetItemID(), true);
   };
   super.OnItemRemovedFromSlot(evt);
-
-  PrintPlayerStats("OnItemRemovedFromSlot", this);
 }
 
 // Check player stats after the game loaded
@@ -366,7 +369,6 @@ protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpaw
 // Clears head slot when mounted to vehicle, should fix TPP bald head
 @replaceMethod(inkMotorcycleHUDGameController)
 protected cb func OnVehicleMounted() -> Bool {
-  L("OnVehicleMounted call");
   let playerPuppet: wref<PlayerPuppet>;
   let vehicle: wref<VehicleObject>;
   let shouldConnect: Bool;
@@ -391,7 +393,6 @@ protected cb func OnVehicleMounted() -> Bool {
   };
 
   playerPuppet.ClearHeadGearSlot();
-  L("OnVehicleMounted completed");
   PrintPlayerStats("OnVehicleMounted", playerPuppet);
 }
 
@@ -411,7 +412,6 @@ protected cb func OnVehicleUnmounted() -> Bool {
   };
 
   playerPuppet.ReequipHeadGear();
-  L("OnVehicleUnmounted completed");
   PrintPlayerStats("OnVehicleUnmounted", playerPuppet);
 }
 
