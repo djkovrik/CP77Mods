@@ -1,6 +1,10 @@
 // -- UTILS
 public static func L(str: String) -> Void {
-  Log("> " + str);
+  // Log("> " + str);
+}
+
+public static func I(str: String) -> Void {
+  Log("! " + str);
 }
 
 public static func ToStr(itemId: ItemID) -> String {
@@ -36,7 +40,7 @@ public static func PrintPlayerStats(where: String, object: ref<GameObject>) -> V
   armorValue = statsSystem.GetStatValue(Cast(object.GetEntityID()), gamedataStatType.Armor);
   critChance = statsSystem.GetStatValue(Cast(object.GetEntityID()), gamedataStatType.CritChance);
   critDamage = statsSystem.GetStatValue(Cast(object.GetEntityID()), gamedataStatType.CritDamage);
-  L("Stats at " + where + " - armor: " + FloatToString(armorValue) + ", crit chance: " + FloatToString(critChance)+ ", crit damage: " + FloatToString(critDamage));
+  I("Stats at " + where + " - armor: " + FloatToString(armorValue) + ", crit chance: " + FloatToString(critChance)+ ", crit damage: " + FloatToString(critDamage));
 }
 
 
@@ -285,11 +289,12 @@ protected cb func OnItemAddedToSlot(evt: ref<ItemAddedToSlot>) -> Bool {
   super.OnItemAddedToSlot(evt);
 }
 
-// Prints player stats after the game loaded
+// Reequip headgear to make sure that all stats and mods applied
 @replaceMethod(PlayerPuppet)
 protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpawn>) -> Bool {
   this.SetInvisible(false);
   GameInstance.GetGodModeSystem(this.GetGame()).RemoveGodMode(this.GetEntityID(), gameGodModeType.Invulnerable, n"GracePeriodAfterSpawn");
+  this.ReequipHeadGear();
   PrintPlayerStats("OnMakePlayerVisibleAfterSpawn", this);
 }
 
@@ -345,7 +350,7 @@ protected cb func OnVehicleUnmounted() -> Bool {
 
 // -- TakeOverControlSystem
 
-// Fix hacked camera TPP view
+// Test fix bald head for hacked camera TPP view
 @replaceMethod(TakeOverControlSystem)
 private final const func EnablePlayerTPPRepresenation(enable: Bool) -> Void {
   let player: ref<PlayerPuppet>;
@@ -365,21 +370,49 @@ private final const func EnablePlayerTPPRepresenation(enable: Bool) -> Void {
   };
 }
 
-// HARDCORE STATS TESTING: constantly prints player stats to the game log
-@replaceMethod(PlayerPuppet)
-protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
-  if GameInstance.GetRuntimeInfo(this.GetGame()).IsMultiplayer() || GameInstance.GetPlayerSystem(this.GetGame()).IsCPOControlSchemeForced() {
-    this.OnActionMultiplayer(action, consumer);
-  };
-  if Equals(ListenerAction.GetName(action), n"IconicCyberware") && Equals(ListenerAction.GetType(action), this.DeductGameInputActionType()) && !this.CanCycleLootData() {
-    this.ActivateIconicCyberware();
-  } else {
-    if !GameInstance.GetBlackboardSystem(this.GetGame()).Get(GetAllBlackboardDefs().UI_PlayerStats).GetBool(GetAllBlackboardDefs().UI_PlayerStats.isReplacer) && Equals(ListenerAction.GetName(action), n"CallVehicle") && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED) {
-      this.ProcessCallVehicleAction(ListenerAction.GetType(action));
-    };
+// Test fix bald head for mirror TPP view
+@replaceMethod(InteractiveDevice)
+protected cb func OnPerformedAction(evt: ref<PerformedAction>) -> Bool {
+  let playerPuppet: ref<PlayerPuppet>;
+  let actionName: CName;
+  let currentContext: GetActionsContext;
+  let sDeviceAction: ref<ScriptableDeviceAction>;
+  super.OnPerformedAction(evt);
+  sDeviceAction = (evt.m_action as ScriptableDeviceAction);
+  if NotEquals(sDeviceAction, null) && this.GetDevicePS().HasActiveContext(gamedeviceRequestType.Direct) || this.GetDevicePS().HasActiveContext(gamedeviceRequestType.Remote) {
+    currentContext = this.GetDevicePS().GenerateContext(sDeviceAction.GetRequestType(), Device.GetInteractionClearance(), sDeviceAction.GetExecutor());
+    this.DetermineInteractionState(currentContext);
   };
 
-  PrintPlayerStats("NOW", this);
+  playerPuppet = (GameInstance.GetPlayerSystem(this.GetGame()).GetLocalPlayerControlledGameObject() as PlayerPuppet);
+  actionName = evt.m_action.actionName;
+
+  if NotEquals(playerPuppet, null) && Equals(actionName, n"ForceON") {
+    L("Device activated ");
+    playerPuppet.ClearHeadGearSlot();
+  } else {
+    if NotEquals(playerPuppet, null) && Equals(actionName, n"ForceOFF") {
+      L("Device deactivated");
+      playerPuppet.ReequipHeadGear();
+    };
+  };
 }
 
 
+// HARDCORE STATS TESTING: constantly prints player stats to the game log
+
+// @replaceMethod(PlayerPuppet)
+// protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
+//   if GameInstance.GetRuntimeInfo(this.GetGame()).IsMultiplayer() || GameInstance.GetPlayerSystem(this.GetGame()).IsCPOControlSchemeForced() {
+//     this.OnActionMultiplayer(action, consumer);
+//   };
+//   if Equals(ListenerAction.GetName(action), n"IconicCyberware") && Equals(ListenerAction.GetType(action), this.DeductGameInputActionType()) && !this.CanCycleLootData() {
+//     this.ActivateIconicCyberware();
+//   } else {
+//     if !GameInstance.GetBlackboardSystem(this.GetGame()).Get(GetAllBlackboardDefs().UI_PlayerStats).GetBool(GetAllBlackboardDefs().UI_PlayerStats.isReplacer) && Equals(ListenerAction.GetName(action), n"CallVehicle") && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED) {
+//       this.ProcessCallVehicleAction(ListenerAction.GetType(action));
+//     };
+//   };
+
+//   PrintPlayerStats("NOW", this);
+// }
