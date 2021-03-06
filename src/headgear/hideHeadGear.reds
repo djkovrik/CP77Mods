@@ -1,6 +1,6 @@
 // -- UTILS
 public static func L(str: String) -> Void {
-  //Log("> " + str);
+  Log("> " + str);
 }
 
 public static func ToStr(itemId: ItemID) -> String {
@@ -196,7 +196,7 @@ public final func IsItemHidden(id: ItemID) -> Bool {
 
 // -- GameObject
 
-// Clear head item slot, theoretically fixes TPP hair displaying
+// Clear head item slot to fix TPP hair displaying
 @addMethod(GameObject)
 public func ClearHeadGearSlot() -> Void {
   let transactionSystem: ref<TransactionSystem>;
@@ -229,6 +229,7 @@ public func ReequipHeadGear() -> Void {
     equipmentSystem.OnEquipRequest(equipRequest);
   };
 }
+
 
 // -- PlayerPuppet
 
@@ -284,6 +285,14 @@ protected cb func OnItemAddedToSlot(evt: ref<ItemAddedToSlot>) -> Bool {
   super.OnItemAddedToSlot(evt);
 }
 
+// Prints player stats after the game loaded
+@replaceMethod(PlayerPuppet)
+protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpawn>) -> Bool {
+  this.SetInvisible(false);
+  GameInstance.GetGodModeSystem(this.GetGame()).RemoveGodMode(this.GetEntityID(), gameGodModeType.Invulnerable, n"GracePeriodAfterSpawn");
+  PrintPlayerStats("OnMakePlayerVisibleAfterSpawn", this);
+}
+
 // -- inkMotorcycleHUDGameController
 
 // Clears head slot when mounted to vehicle, should fix TPP bald head
@@ -333,102 +342,44 @@ protected cb func OnVehicleUnmounted() -> Bool {
   playerPuppet.ReequipHeadGear();
 }
 
-// Fix headgear for hacked cameras TPP view
+
+// -- TakeOverControlSystem
+
+// Fix hacked camera TPP view
 @replaceMethod(TakeOverControlSystem)
 private final const func EnablePlayerTPPRepresenation(enable: Bool) -> Void {
   let player: ref<PlayerPuppet>;
   player = (GameInstance.GetPlayerSystem(this.GetGameInstance()).GetLocalPlayerControlledGameObject() as PlayerPuppet);
   if NotEquals(player, null) {
     if enable {
-      player.ClearHeadGearSlot();
       player.QueueEvent(new ActivateTPPRepresentationEvent());
+      player.ClearHeadGearSlot();
       GameInstance.GetAudioSystem(this.GetGameInstance()).SetBDCameraListenerOverride(true);
       GameObject.StartEffectEvent(player, n"camera_mask");
     } else {
-      player.ReequipHeadGear();
       player.QueueEvent(new DeactivateTPPRepresentationEvent());
+      player.ReequipHeadGear();
       GameInstance.GetAudioSystem(this.GetGameInstance()).SetBDCameraListenerOverride(false);
       GameObject.StopEffectEvent(player, n"camera_mask");
     };
   };
 }
 
-
-// TESTING SECTION
-
-/*
-
-// Prints player stats after the game loaded
+// HARDCORE STATS TESTING: constantly prints player stats to the game log
 @replaceMethod(PlayerPuppet)
-protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpawn>) -> Bool {
-  this.SetInvisible(false);
-  GameInstance.GetGodModeSystem(this.GetGame()).RemoveGodMode(this.GetEntityID(), gameGodModeType.Invulnerable, n"GracePeriodAfterSpawn");
-  PrintPlayerStats("OnMakePlayerVisibleAfterSpawn", this);
-}
-
-// Prints player stats when inventory or hub menu opened
-@addField(gameuiInGameMenuGameController)
-let m_playerPuppet: ref<GameObject>;
-
-@replaceMethod(gameuiInGameMenuGameController)
-private final func RegisterInputListenersForPlayer(playerPuppet: ref<GameObject>) -> Void {
-  if playerPuppet.IsControlledByLocalPeer() {
-    playerPuppet.RegisterInputListener(this, n"OpenPauseMenu");
-    playerPuppet.RegisterInputListener(this, n"OpenMapMenu");
-    playerPuppet.RegisterInputListener(this, n"OpenCraftingMenu");
-    playerPuppet.RegisterInputListener(this, n"OpenJournalMenu");
-    playerPuppet.RegisterInputListener(this, n"OpenPerksMenu");
-    playerPuppet.RegisterInputListener(this, n"OpenInventoryMenu");
-    playerPuppet.RegisterInputListener(this, n"OpenHubMenu");
-    playerPuppet.RegisterInputListener(this, n"QuickSave");
-    playerPuppet.RegisterInputListener(this, n"FastForward_Hold");
-  };
-  this.m_playerPuppet = playerPuppet;
-}
-
-@replaceMethod(gameuiInGameMenuGameController)
 protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
-  let isPlayerLastUsedKBM: Bool;
-  if Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED) {
-    if Equals(ListenerAction.GetName(action), n"QuickSave") {
-      this.HandleQuickSave();
+  if GameInstance.GetRuntimeInfo(this.GetGame()).IsMultiplayer() || GameInstance.GetPlayerSystem(this.GetGame()).IsCPOControlSchemeForced() {
+    this.OnActionMultiplayer(action, consumer);
+  };
+  if Equals(ListenerAction.GetName(action), n"IconicCyberware") && Equals(ListenerAction.GetType(action), this.DeductGameInputActionType()) && !this.CanCycleLootData() {
+    this.ActivateIconicCyberware();
+  } else {
+    if !GameInstance.GetBlackboardSystem(this.GetGame()).Get(GetAllBlackboardDefs().UI_PlayerStats).GetBool(GetAllBlackboardDefs().UI_PlayerStats.isReplacer) && Equals(ListenerAction.GetName(action), n"CallVehicle") && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED) {
+      this.ProcessCallVehicleAction(ListenerAction.GetType(action));
     };
   };
-  if Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED) {
-    if Equals(ListenerAction.GetName(action), n"OpenPauseMenu") {
-      this.SpawnMenuInstanceEvent(n"OnOpenPauseMenu");
-    } else {
-      if Equals(ListenerAction.GetName(action), n"OpenHubMenu") {
-        this.SpawnMenuInstanceEvent(n"OnOpenHubMenu");
-      };
-    };
-  };
-  if Equals(ListenerAction.GetName(action), n"OpenMapMenu") || Equals(ListenerAction.GetName(action), n"OpenCraftingMenu") || Equals(ListenerAction.GetName(action), n"OpenJournalMenu") || Equals(ListenerAction.GetName(action), n"OpenPerksMenu") || Equals(ListenerAction.GetName(action), n"OpenInventoryMenu") {
-    isPlayerLastUsedKBM = this.GetPlayerControlledObject().PlayerLastUsedKBM();
-    if Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_HOLD_COMPLETE) && !isPlayerLastUsedKBM || Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED) && isPlayerLastUsedKBM {
-      this.OpenShortcutMenu(ListenerAction.GetName(action));
-    };
-  };
-  if (Equals(ListenerAction.GetName(action), n"OpenInventoryMenu") || Equals(ListenerAction.GetName(action), n"OpenHubMenu")) && NotEquals(this.m_playerPuppet, null) {
-    PrintPlayerStats("OnInventoryOpened", this.m_playerPuppet);
-  };
+
+  PrintPlayerStats("NOW", this);
 }
 
-// // HARDCORE STATS TEST: constantly prints player stats to the game log
-// @replaceMethod(PlayerPuppet)
-// protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
-//   if GameInstance.GetRuntimeInfo(this.GetGame()).IsMultiplayer() || GameInstance.GetPlayerSystem(this.GetGame()).IsCPOControlSchemeForced() {
-//     this.OnActionMultiplayer(action, consumer);
-//   };
-//   if Equals(ListenerAction.GetName(action), n"IconicCyberware") && Equals(ListenerAction.GetType(action), this.DeductGameInputActionType()) && !this.CanCycleLootData() {
-//     this.ActivateIconicCyberware();
-//   } else {
-//     if !GameInstance.GetBlackboardSystem(this.GetGame()).Get(GetAllBlackboardDefs().UI_PlayerStats).GetBool(GetAllBlackboardDefs().UI_PlayerStats.isReplacer) && Equals(ListenerAction.GetName(action), n"CallVehicle") && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED) {
-//       this.ProcessCallVehicleAction(ListenerAction.GetType(action));
-//     };
-//   };
 
-//   PrintPlayerStats("NOW", this);
-// }
-
-*/
