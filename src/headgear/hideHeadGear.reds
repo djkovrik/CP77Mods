@@ -1,6 +1,6 @@
 // -- UTILS
 public static func L(str: String) -> Void {
-  Log("> " + str);
+  //Log("> " + str);
 }
 
 public static func ToStr(itemId: ItemID) -> String {
@@ -196,7 +196,7 @@ public final func IsItemHidden(id: ItemID) -> Bool {
 
 // -- GameObject
 
-// Clear head item slot, theoretically fixes TPP hair displaying along with patched GetHairSuffix
+// Clear head item slot, theoretically fixes TPP hair displaying
 @addMethod(GameObject)
 public func ClearHeadGearSlot() -> Void {
   let transactionSystem: ref<TransactionSystem>;
@@ -229,46 +229,6 @@ public func ReequipHeadGear() -> Void {
     equipmentSystem.OnEquipRequest(equipRequest);
   };
 }
-
-
-// -- EquipmentSystem
-
-// DIRTY HACK: Breaks hair suffux for vehicle TPP view to fix hair displaying, armor stats not working if mounted
-@replaceMethod(EquipmentSystem)
-private final const func GetHairSuffix(itemId: ItemID, owner: wref<GameObject>, suffixRecord: ref<ItemsFactoryAppearanceSuffixBase_Record>) -> String {
-  let customizationState: ref<gameuiICharacterCustomizationState>;
-  let characterCustomizationSystem: ref<gameuiICharacterCustomizationSystem>;
-  let isMountedToVehicle: Bool;
-  characterCustomizationSystem = GameInstance.GetCharacterCustomizationSystem(owner.GetGame());
-  isMountedToVehicle = VehicleComponent.IsMountedToVehicle(owner.GetGame(), owner.GetEntityID());
-  
-  // THIS IS BAD BUT IT WORKS =\
-  if isMountedToVehicle {
-    return "";
-  };
-
-  if (owner as PlayerPuppet) == null && !characterCustomizationSystem.HasCharacterCustomizationComponent(owner) {
-    return "Bald";
-  };
-  customizationState = characterCustomizationSystem.GetState();
-  if customizationState != null {
-    if customizationState.HasTag(n"Short") {
-      return "Short";
-    };
-    if customizationState.HasTag(n"Long") {
-      return "Long";
-    };
-    if customizationState.HasTag(n"Dreads") {
-      return "Dreads";
-    };
-    if customizationState.HasTag(n"Buzz") {
-      return "Buzz";
-    };
-    return "Bald";
-  };
-  return "Error";
-}
-
 
 // -- PlayerPuppet
 
@@ -372,6 +332,27 @@ protected cb func OnVehicleUnmounted() -> Bool {
 
   playerPuppet.ReequipHeadGear();
 }
+
+// Fix headgear for hacked cameras TPP view
+@replaceMethod(TakeOverControlSystem)
+private final const func EnablePlayerTPPRepresenation(enable: Bool) -> Void {
+  let player: ref<PlayerPuppet>;
+  player = (GameInstance.GetPlayerSystem(this.GetGameInstance()).GetLocalPlayerControlledGameObject() as PlayerPuppet);
+  if NotEquals(player, null) {
+    if enable {
+      player.ClearHeadGearSlot();
+      player.QueueEvent(new ActivateTPPRepresentationEvent());
+      GameInstance.GetAudioSystem(this.GetGameInstance()).SetBDCameraListenerOverride(true);
+      GameObject.StartEffectEvent(player, n"camera_mask");
+    } else {
+      player.ReequipHeadGear();
+      player.QueueEvent(new DeactivateTPPRepresentationEvent());
+      GameInstance.GetAudioSystem(this.GetGameInstance()).SetBDCameraListenerOverride(false);
+      GameObject.StopEffectEvent(player, n"camera_mask");
+    };
+  };
+}
+
 
 // TESTING SECTION
 
