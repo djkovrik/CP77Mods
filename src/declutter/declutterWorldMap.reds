@@ -1,43 +1,46 @@
-public class DeclutterWorldMapConfig {
+// -- CONFIG SECTION STARTS --
 
-  // Defines mappin variants which must be hidden
-  public static func IsVariantHidden(mappinVariant: gamedataMappinVariant) -> Bool {
-    return 
-      /* --- Gigs --- */
-      Equals(mappinVariant, gamedataMappinVariant.BountyHuntVariant) ||                 // Bounty Hunt
-      Equals(mappinVariant, gamedataMappinVariant.ClientInDistressVariant) ||           // Client in distress
-      Equals(mappinVariant, gamedataMappinVariant.SabotageVariant) ||                   // Sabotage
-      Equals(mappinVariant, gamedataMappinVariant.RetrievingVariant) ||                 // Search and recover
-      Equals(mappinVariant, gamedataMappinVariant.ThieveryVariant) ||                   // Thievery
+// Defines mappin variant visibility
+// COMMENTED = VISIBLE, UNCOMMENTED = HIDDEN
+// To comment or uncomment any line just add/remove double slash for the start of the line
+public static func ShouldHideThisOne(mappinVariant: gamedataMappinVariant) -> Bool {
+  return false;
+    /* --- Gigs --- */
+    //Equals(mappinVariant, gamedataMappinVariant.BountyHuntVariant) ||  // Bounty Hunt
+    //Equals(mappinVariant, gamedataMappinVariant.ClientInDistressVariant) ||  // Client in distress
+    //Equals(mappinVariant, gamedataMappinVariant.SabotageVariant) ||  // Sabotage
+    //Equals(mappinVariant, gamedataMappinVariant.RetrievingVariant) ||  // Search and recover
+    //Equals(mappinVariant, gamedataMappinVariant.ThieveryVariant) ||  // Thievery
 
-      /* --- Services --- */
-      Equals(mappinVariant, gamedataMappinVariant.ApartmentVariant) ||                  // Appartment
-      Equals(mappinVariant, gamedataMappinVariant.ServicePointBarVariant) ||            // Bar
-      Equals(mappinVariant, gamedataMappinVariant.ServicePointClothesVariant) ||        // Clothes
-      Equals(mappinVariant, gamedataMappinVariant.ServicePointDropPointVariant) ||      // Drop point
-      Equals(mappinVariant, gamedataMappinVariant.ServicePointFoodVariant) ||           // Food
-      Equals(mappinVariant, gamedataMappinVariant.ServicePointProstituteVariant) ||     // JoyToy
-      Equals(mappinVariant, gamedataMappinVariant.ServicePointJunkVariant) ||           // Junk shop
-      Equals(mappinVariant, gamedataMappinVariant.ServicePointMedsVariant) ||           // Medpoint
-      Equals(mappinVariant, gamedataMappinVariant.ServicePointMeleeTrainerVariant) ||   // Melee weapon vendor
-      Equals(mappinVariant, gamedataMappinVariant.ServicePointNetTrainerVariant) ||     // Netrunner
-      Equals(mappinVariant, gamedataMappinVariant.ServicePointRipperdocVariant) ||      // Ripperdoc
-      Equals(mappinVariant, gamedataMappinVariant.ServicePointGunsVariant) ||           // Weapon shop
+    /* --- Services --- */
+    Equals(mappinVariant, gamedataMappinVariant.ServicePointBarVariant) ||  // Bar
+    Equals(mappinVariant, gamedataMappinVariant.ServicePointDropPointVariant) ||  // Drop point
+    Equals(mappinVariant, gamedataMappinVariant.ServicePointFoodVariant) ||  // Food
+    Equals(mappinVariant, gamedataMappinVariant.ServicePointJunkVariant) ||  // Junk shop
+    Equals(mappinVariant, gamedataMappinVariant.ServicePointMedsVariant) ||  // Medpoint
+    //Equals(mappinVariant, gamedataMappinVariant.ServicePointClothesVariant) ||  // Clothes
+    //Equals(mappinVariant, gamedataMappinVariant.ServicePointProstituteVariant) ||  // JoyToy
+    //Equals(mappinVariant, gamedataMappinVariant.ServicePointMeleeTrainerVariant) ||  // Melee weapon vendor
+    //Equals(mappinVariant, gamedataMappinVariant.ServicePointNetTrainerVariant) ||  // Netrunner
+    //Equals(mappinVariant, gamedataMappinVariant.ServicePointRipperdocVariant) ||  // Ripperdoc
+    //Equals(mappinVariant, gamedataMappinVariant.ServicePointGunsVariant) ||  // Weapon shop
 
-      /* --- Criminal activities --- */
-      Equals(mappinVariant, gamedataMappinVariant.GangWatchVariant) ||                  // Assault in progress
-      Equals(mappinVariant, gamedataMappinVariant.HiddenStashVariant) ||                // Reported crime
-      Equals(mappinVariant, gamedataMappinVariant.OutpostVariant) ||                    // Suspected organized crime activity
+    /* --- Crime activities --- */
+    Equals(mappinVariant, gamedataMappinVariant.GangWatchVariant) ||  // Assault in progress
+    //Equals(mappinVariant, gamedataMappinVariant.HiddenStashVariant) ||  // Reported crime (aka NCPD scanner hustle quest)
+    //Equals(mappinVariant, gamedataMappinVariant.OutpostVariant) ||  // Suspected organized crime activity (aka boss skull)
 
-      /* --- Misc --- */
-      Equals(mappinVariant, gamedataMappinVariant.FastTravelVariant) ||                 // Fast travel
-      Equals(mappinVariant, gamedataMappinVariant.TarotVariant) ||                      // Tarot card
-      Equals(mappinVariant, gamedataMappinVariant.FixerVariant);                        // Fixer
-  }
-
-  // If true then markers will be hidden not just for world map but in-game too
-  public static func HideIngameAsWell() -> Bool = false
+    /* --- Misc --- */
+    //Equals(mappinVariant, gamedataMappinVariant.ApartmentVariant) ||  // Appartment
+    //Equals(mappinVariant, gamedataMappinVariant.FastTravelVariant) ||  // Fast travel
+    //Equals(mappinVariant, gamedataMappinVariant.TarotVariant) ||  // Tarot card
+    //Equals(mappinVariant, gamedataMappinVariant.VehicleVariant) ||  // Your vehicle
+    Equals(mappinVariant, gamedataMappinVariant.FixerVariant);  // Fixer
 }
+
+// -- CONFIG SECTION ENDS --
+
+// -- OVERRIDES
 
 // Hide on world map
 @replaceMethod(BaseWorldMapMappinController)
@@ -47,7 +50,7 @@ protected func UpdateVisibility() -> Void {
   let isHidden: Bool;
   questMappin = (this.m_mappin as QuestMappin);
   this.m_isCompletedPhase = Equals(this.m_mappin.GetPhase(), gamedataMappinPhase.CompletedPhase);
-  isHidden = DeclutterWorldMapConfig.IsVariantHidden(this.m_mappin.GetVariant());
+  isHidden = ShouldHideThisOne(this.m_mappin.GetVariant());
 
   if (isHidden) {
     this.GetRootWidget().SetVisible(false);  // Hide normal variant
@@ -62,34 +65,15 @@ protected func UpdateVisibility() -> Void {
   };
 }
 
-// // Hide ingame
-@replaceMethod(QuestMappinController)
-private func UpdateVisibility() -> Void {
-  let isTracked: Bool;
-  let isInQuestArea: Bool;
-  let showWhenClamped: Bool;
-  let shouldBeVisible: Bool;
-  isTracked = this.IsPlayerTracked();
-  isInQuestArea = this.m_questMappin != null && this.m_questMappin.IsInsideTrigger();
-  showWhenClamped = this.isCurrentlyClamped ? !this.m_shouldHideWhenClamped : true;
-
-  if DeclutterWorldMapConfig.HideIngameAsWell() {
-    shouldBeVisible = this.m_mappin.IsVisible() && showWhenClamped && !isInQuestArea && !DeclutterWorldMapConfig.IsVariantHidden(this.m_mappin.GetVariant());
-  } else {
-    shouldBeVisible = this.m_mappin.IsVisible() && showWhenClamped && !isInQuestArea;
-  };
-
-  this.SetRootVisible(shouldBeVisible);
-}
-
-// Remove onHover popup
+// Remove OnHover popup
 @replaceMethod(WorldMapMenuGameController)
 protected cb func OnHoverOverMappin(e: ref<inkPointerEvent>) -> Bool {
   let hoveredController: ref<BaseWorldMapMappinController>;
   let isHidden: Bool;
   hoveredController = (e.GetTarget().GetController() as BaseWorldMapMappinController);
+  // Log("Hovered over: " + VariantToString(hoveredController.m_mappin.GetVariant()));
   if NotEquals(hoveredController, null) && hoveredController.CanSelectMappin() {
-    isHidden = DeclutterWorldMapConfig.IsVariantHidden(hoveredController.m_mappin.GetVariant());
+    isHidden = ShouldHideThisOne(hoveredController.m_mappin.GetVariant());
     if !isHidden {
       this.SetSelectedMappin(hoveredController);
     };
@@ -97,7 +81,6 @@ protected cb func OnHoverOverMappin(e: ref<inkPointerEvent>) -> Bool {
 }
 
 /*
-
 // -- Getting mappin data
 public final static func VariantToString(mappinVariant: gamedataMappinVariant) -> String {
   switch mappinVariant {
@@ -241,5 +224,4 @@ public final static func VariantToString(mappinVariant: gamedataMappinVariant) -
       return "invalid";
   };
 }
-
 */
