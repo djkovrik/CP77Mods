@@ -13,19 +13,6 @@ public class DeclutterWorldMapConfig {
       //Equals(mappinVariant, gamedataMappinVariant.RetrievingVariant) ||  // Search and recover
       //Equals(mappinVariant, gamedataMappinVariant.ThieveryVariant) ||  // Thievery
 
-      /* --- Services --- */
-      Equals(mappinVariant, gamedataMappinVariant.ServicePointBarVariant) ||  // Bar
-      Equals(mappinVariant, gamedataMappinVariant.ServicePointDropPointVariant) ||  // Drop point
-      Equals(mappinVariant, gamedataMappinVariant.ServicePointFoodVariant) ||  // Food
-      Equals(mappinVariant, gamedataMappinVariant.ServicePointJunkVariant) ||  // Junk shop
-      Equals(mappinVariant, gamedataMappinVariant.ServicePointMedsVariant) ||  // Medpoint
-      //Equals(mappinVariant, gamedataMappinVariant.ServicePointClothesVariant) ||  // Clothes
-      //Equals(mappinVariant, gamedataMappinVariant.ServicePointProstituteVariant) ||  // JoyToy
-      //Equals(mappinVariant, gamedataMappinVariant.ServicePointMeleeTrainerVariant) ||  // Melee weapon vendor
-      //Equals(mappinVariant, gamedataMappinVariant.ServicePointNetTrainerVariant) ||  // Netrunner
-      //Equals(mappinVariant, gamedataMappinVariant.ServicePointRipperdocVariant) ||  // Ripperdoc
-      //Equals(mappinVariant, gamedataMappinVariant.ServicePointGunsVariant) ||  // Weapon shop
-
       /* --- Crime activities --- */
       Equals(mappinVariant, gamedataMappinVariant.GangWatchVariant) ||  // Assault in progress
       Equals(mappinVariant, gamedataMappinVariant.HiddenStashVariant) ||  // Reported crime (aka NCPD scanner hustle quest)
@@ -36,11 +23,27 @@ public class DeclutterWorldMapConfig {
       //Equals(mappinVariant, gamedataMappinVariant.FastTravelVariant) ||  // Fast travel
       //Equals(mappinVariant, gamedataMappinVariant.TarotVariant) ||  // Tarot card
       //Equals(mappinVariant, gamedataMappinVariant.VehicleVariant) ||  // Your vehicle
-      Equals(mappinVariant, gamedataMappinVariant.FixerVariant);  // Fixer
+      Equals(mappinVariant, gamedataMappinVariant.FixerVariant) ||  // Fixer
+
+      /* --- Services --- */
+      //Equals(mappinVariant, gamedataMappinVariant.ServicePointClothesVariant) ||  // Clothes
+      //Equals(mappinVariant, gamedataMappinVariant.ServicePointProstituteVariant) ||  // JoyToy
+      //Equals(mappinVariant, gamedataMappinVariant.ServicePointMeleeTrainerVariant) ||  // Melee weapon vendor
+      //Equals(mappinVariant, gamedataMappinVariant.ServicePointNetTrainerVariant) ||  // Netrunner
+      //Equals(mappinVariant, gamedataMappinVariant.ServicePointRipperdocVariant) ||  // Ripperdoc
+      //Equals(mappinVariant, gamedataMappinVariant.ServicePointGunsVariant) ||  // Weapon shop
+      Equals(mappinVariant, gamedataMappinVariant.ServicePointDropPointVariant) ||  // Drop point
+      Equals(mappinVariant, gamedataMappinVariant.ServicePointJunkVariant) ||  // Junk shop
+      Equals(mappinVariant, gamedataMappinVariant.ServicePointMedsVariant) ||  // Medpoint
+      Equals(mappinVariant, gamedataMappinVariant.ServicePointBarVariant) ||  // Bar
+      Equals(mappinVariant, gamedataMappinVariant.ServicePointFoodVariant);  // Food  <- the last active Equals line must end with ;
+ 
+      // Keep in mind that last uncommented Equals line must end with semicolon.
+      // So if you commented Food marker then replace last not commented || with ;
   }
 
-  // Replace true with false if you want to show vehicle buying quest mappins
-  public static func ShouldHideVehicleQuests() -> Bool = true
+  // Replace false with true if you want to hide vehicle buying quest mappins
+  public static func ShouldHideVehicleQuests() -> Bool = false
 }
 
 // -- CONFIG SECTION ENDS HERE --
