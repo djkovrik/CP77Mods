@@ -1,11 +1,12 @@
-// -- CONFIG SECTION STARTS HERE --
 public class DeclutterWorldMapConfig {
 
   // Defines mappin variant visibility
-  // COMMENTED = VISIBLE, UNCOMMENTED = HIDDEN
-  // To comment or uncomment any line just add/remove double slash for the start of the line
+  // To comment or uncomment any line just add/remove double slash at the start of the line
   public static func ShouldHideThisOne(mappinVariant: gamedataMappinVariant) -> Bool {
     return 
+      // -- CONFIG SECTION STARTS HERE --
+      // -- COMMENTED = VISIBLE, UNCOMMENTED = HIDDEN
+
       /* --- Gigs --- */
       //Equals(mappinVariant, gamedataMappinVariant.BountyHuntVariant) ||  // Bounty Hunt
       //Equals(mappinVariant, gamedataMappinVariant.ClientInDistressVariant) ||  // Client in distress
@@ -36,18 +37,15 @@ public class DeclutterWorldMapConfig {
       Equals(mappinVariant, gamedataMappinVariant.ServicePointJunkVariant) ||  // Junk shop
       Equals(mappinVariant, gamedataMappinVariant.ServicePointMedsVariant) ||  // Medpoint
       Equals(mappinVariant, gamedataMappinVariant.ServicePointBarVariant) ||  // Bar
-      Equals(mappinVariant, gamedataMappinVariant.ServicePointFoodVariant);  // Food  <- the last active Equals line must end with ;
- 
-      // Keep in mind that last uncommented Equals line must end with semicolon.
-      // So if you commented Food marker then replace last not commented || with ;
+      Equals(mappinVariant, gamedataMappinVariant.ServicePointFoodVariant) ||  // Food
+
+      // -- CONFIG SECTION ENDS HERE --
+
+      false;
   }
 
-  // Replace false with true if you want to hide vehicle buying quest mappins
-  public static func ShouldHideVehicleQuests() -> Bool = false
+  public static func ShouldHideVehicleQuests() -> Bool = true
 }
-
-// -- CONFIG SECTION ENDS HERE --
-
 
 // Check if quest related to vehicle
 @addMethod(WorldMapMenuGameController)
