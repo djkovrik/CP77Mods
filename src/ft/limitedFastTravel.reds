@@ -3,27 +3,36 @@ public static func HasTheSameId(point: ref<FastTravelPointData>, tdbID: TweakDBI
   return Equals(point.pointRecord, tdbID);
 }
 
-// public static func HasTheSameId(point: ref<FastTravelPointData>, tdbIdStr: String) -> Bool {
-//   return Equals(TDBID.ToStringDEBUG(point.pointRecord), tdbIdStr);
-// }
-
-
-// -- CONFIG SECTION STARTS HERE
-
-// Replace false with true to ignore IsFastTravelPointEnabled function and completely disable all fast travel points
-public static func ShouldDisableEverything() -> Bool {
-  return false;
-}
-
-// Defines the list of available fast travel points
-// You can comment and uncommend lines to change active fast travel points list
 public static func IsFastTravelPointEnabled(point: ref<FastTravelPointData>) -> Bool {
 
-  if ShouldDisableEverything() {
-    return false;
-  };
+  // -- CONFIG SECTION STARTS HERE
 
+  /*
+    Defines the list of available fast travel points.
+    To hide any fast travel point just put double slash at the start of the line.
+    For example, if you want to hide Nomad Camp point which defined by this line:
+
+      HasTheSameId(point, t"FastTravelPoints.bls_nth_dataterm_06") ||   // Northern Badlands, Nomad Camp
+    
+    then add // to make it look like this:
+
+      // HasTheSameId(point, t"FastTravelPoints.bls_nth_dataterm_06") ||   // Northern Badlands, Nomad Camp
+
+  */
   return
+    // --- Hideouts
+    HasTheSameId(point, t"FastTravelPoints.wat_lch_dataterm_10") ||   // Little China, Megabuilding H10: Atrium (V's appartment)
+    HasTheSameId(point, t"FastTravelPoints.wat_kab_dataterm_06") ||   // Kabuki, Charter St (near Judy's appartment)
+    HasTheSameId(point, t"FastTravelPoints.bls_nth_dataterm_06") ||   // Northern Badlands, Nomad Camp
+    
+    // --- No logic here, just FT points for the rest of the districts ---
+    HasTheSameId(point, t"FastTravelPoints.std_arr_dataterm_02") ||   // Arroyo, Megabuilding H6
+    HasTheSameId(point, t"FastTravelPoints.wbr_hil_dataterm_02") ||   // Charter Hill, Lele Park
+    HasTheSameId(point, t"FastTravelPoints.pac_cvi_dataterm_05") ||   // Coastview, Batty's Hotel
+    HasTheSameId(point, t"FastTravelPoints.cct_dtn_dataterm_03") ||   // Downtown, Skyline & Republic
+    HasTheSameId(point, t"FastTravelPoints.wat_nid_dataterm_01") ||   // Watson, Martin St
+    HasTheSameId(point, t"FastTravelPoints.hey_spr_dataterm_04") ||     // Wellsprings, Megabuilding H2, 
+
     // --- FT points with metro station ---
     HasTheSameId(point, t"FastTravelPoints.wbr_jpn_metro_ftp_02") ||  // Japantown, Metro: Japantown South
     HasTheSameId(point, t"FastTravelPoints.wbr_jpn_metro_ftp_01") ||  // Japantown, Metro: Monroe St
@@ -41,23 +50,13 @@ public static func IsFastTravelPointEnabled(point: ref<FastTravelPointData>) -> 
     HasTheSameId(point, t"FastTravelPoints.std_rcr_dataterm_09") ||   // Rancho Coronado, Mallagra & Manzanita
     HasTheSameId(point, t"FastTravelPoints.std_rcr_dataterm_08") ||   // Rancho Coronado, Tama Viewpoint
     HasTheSameId(point, t"FastTravelPoints.bls_sth_dataterm_10") ||   // Southern Badlands, Las Palapas Motel
-    HasTheSameId(point, t"FastTravelPoints.bls_sth_dataterm_06") ||   // Southern Badlands, Tango Tors Motel
+    HasTheSameId(point, t"FastTravelPoints.bls_sth_dataterm_06");     // Southern Badlands, Tango Tors Motel
 
-    // --- Hideouts
-    HasTheSameId(point, t"FastTravelPoints.wat_lch_dataterm_10") ||   // Little China, Megabuilding H10: Atrium (V's appartment)
-    HasTheSameId(point, t"FastTravelPoints.wat_kab_dataterm_06") ||   // Kabuki, Charter St (near Judy's appartment)
-    HasTheSameId(point, t"FastTravelPoints.bls_nth_dataterm_06") ||   // Northern Badlands, Nomad Camp
-    
-    // --- No logic here, just FT points for the rest of the districts ---
-    HasTheSameId(point, t"FastTravelPoints.std_arr_dataterm_02") ||   // Arroyo, Megabuilding H6
-    HasTheSameId(point, t"FastTravelPoints.wbr_hil_dataterm_02") ||   // Charter Hill, Lele Park
-    HasTheSameId(point, t"FastTravelPoints.pac_cvi_dataterm_05") ||   // Coastview, Batty's Hotel
-    HasTheSameId(point, t"FastTravelPoints.cct_dtn_dataterm_03") ||   // Downtown, Skyline & Republic
-    HasTheSameId(point, t"FastTravelPoints.wat_nid_dataterm_01") ||   // Watson, Martin St
-    HasTheSameId(point, t"FastTravelPoints.hey_spr_dataterm_04");     // Wellsprings, Megabuilding H2, 
+    // WARNING: if you disabled the last FT point in the list (Tango Tors Motel) then you must replace || with ; 
+    // for you current last active point in the list otherwise the script won't compile
+
+    // -- CONFIG SECTION ENDS HERE
 }
-
-// -- CONFIG SECTION ENDS HERE
 
 // -- Overrides
 @replaceMethod(FastTravelPointData)
@@ -88,34 +87,79 @@ private final func RegisterMappin() -> Void {
   };
 }
 
-// -- Logging
-// public static func FastTravelPointDataToString(data: ref<FastTravelPointData>) -> String {
-//   return GetLocalizedText(data.GetDistrictDisplayName())
-//     + ", " + GetLocalizedText(data.GetPointDisplayName())
-//     + ", id = " + TDBID.ToStringDEBUG(data.pointRecord);
-// }
-
-// @replaceMethod(FastTravelSystem)
-// private final func RegisterMappin(nodeData: ref<FastTravelPointData>) -> Void {
-//   let mappinData: MappinData;
-//   let transform: Transform;
-//   if !nodeData.ShouldShowMappinOnWorldMap() {
-//     return ;
-//   };
-//   mappinData.mappinType = t"Mappins.FastTravelStaticMappin";
-//   mappinData.variant = gamedataMappinVariant.FastTravelVariant;
-//   mappinData.active = true;
-//   nodeData.mappinID = GameInstance.GetMappinSystem(this.GetGameInstance()).RegisterFastTravelMappin(mappinData, nodeData);
-//   Log("RegisterMappin: " + FastTravelPointDataToString(nodeData));
-// }
-
-// @replaceMethod(DataTerm)
-// protected cb func OnInteractionActivated(evt: ref<InteractionEvent>) -> Bool {
-//   super.OnInteractionActivated(evt);
-//   if Equals(evt.eventType, gameinteractionsEInteractionEventType.EIET_activate) {
-//     if Equals(evt.layerData.tag, n"LogicArea") {
-//       this.RegisterFastTravelPoints();
-//     };
-//   };
-//   Log("INTERACTED: " + FastTravelPointDataToString(this.m_linkedFastTravelPoint));
-// }
+// ShortRange spawnProfile for Fast Travel mappin replaced with LongRange
+@replaceMethod(WorldMappinsContainerController)
+public func CreateMappinUIProfile(mappin: wref<IMappin>, mappinVariant: gamedataMappinVariant, customData: ref<MappinControllerCustomData>) -> MappinUIProfile {
+  let defaultWidgetResource: ResRef;
+  let defaultRuntimeProfile: TweakDBID;
+  let questMappin: wref<QuestMappin>;
+  let questAnimationRecord: ref<UIAnimation_Record>;
+  let stealthMappin: wref<StealthMappin>;
+  let gameplayRoleData: ref<GameplayRoleMappinData>;
+  gameplayRoleData = (mappin.GetScriptData() as GameplayRoleMappinData);
+  defaultRuntimeProfile = t"WorldMappinUIProfile.Default";
+  defaultWidgetResource = r"base\gameplay\gui\widgets\mappins\quest\default_mappin.inkwidget";
+  if mappin.IsExactlyA(n"gamemappinsStealthMappin") {
+    stealthMappin = (mappin as StealthMappin);
+    if stealthMappin.IsCrowdNPC() {
+      return MappinUIProfile.None();
+    };
+    return MappinUIProfile.Create(r"base\gameplay\gui\widgets\mappins\stealth\stealth_default_mappin.inkwidget", t"MappinUISpawnProfile.Stealth", t"WorldMappinUIProfile.Stealth");
+  };
+  if mappin.IsExactlyA(n"gamemappinsRemotePlayerMappin") {
+    return MappinUIProfile.Create(r"multi\gameplay\gui\widgets\world_mappins\remote_player_mappin.inkwidget", t"MappinUISpawnProfile.Always", defaultRuntimeProfile);
+  };
+  if mappin.IsExactlyA(n"gamemappinsPingSystemMappin") {
+    return MappinUIProfile.Create(r"multi\gameplay\gui\widgets\world_mappins\pingsystem_mappin.inkwidget", t"MappinUISpawnProfile.Always", defaultRuntimeProfile);
+  };
+  if mappin.IsExactlyA(n"gamemappinsInteractionMappin") {
+    return MappinUIProfile.Create(defaultWidgetResource, t"MappinUISpawnProfile.ShortRange", t"WorldMappinUIProfile.Interaction");
+  };
+  if mappin.IsExactlyA(n"gamemappinsPointOfInterestMappin") {
+    if MappinUIUtils.IsMappinServicePoint(mappinVariant) {
+      return MappinUIProfile.Create(defaultWidgetResource, t"MappinUISpawnProfile.ShortRange", t"WorldMappinUIProfile.ServicePoint");
+    };
+    if Equals(mappinVariant, gamedataMappinVariant.FixerVariant) {
+      return MappinUIProfile.Create(defaultWidgetResource, t"MappinUISpawnProfile.ShortRange", t"WorldMappinUIProfile.Fixer");
+    };
+    return MappinUIProfile.Create(defaultWidgetResource, t"MappinUISpawnProfile.ShortRange", defaultRuntimeProfile);
+  };
+  if Equals(mappinVariant, gamedataMappinVariant.QuickHackVariant) {
+    return MappinUIProfile.Create(r"base\gameplay\gui\widgets\mappins\interaction\quick_hack_mappin.inkwidget", t"MappinUISpawnProfile.ShortRange", t"WorldMappinUIProfile.QuickHack");
+  };
+  if Equals(mappinVariant, gamedataMappinVariant.PhoneCallVariant) {
+    return MappinUIProfile.Create(r"base\gameplay\gui\widgets\mappins\interaction\quick_hack_mappin.inkwidget", t"MappinUISpawnProfile.Always", defaultRuntimeProfile);
+  };
+  if Equals(mappinVariant, gamedataMappinVariant.VehicleVariant) {
+    return MappinUIProfile.Create(defaultWidgetResource, t"MappinUISpawnProfile.LongRange", t"WorldMappinUIProfile.Vehicle");
+  };
+  if gameplayRoleData != null {
+    if Equals(mappinVariant, gamedataMappinVariant.FocusClueVariant) {
+      return MappinUIProfile.Create(r"base\gameplay\gui\widgets\mappins\gameplay\gameplay_mappin.inkwidget", t"MappinUISpawnProfile.Always", t"WorldMappinUIProfile.FocusClue");
+    };
+    return MappinUIProfile.Create(r"base\gameplay\gui\widgets\mappins\gameplay\gameplay_mappin.inkwidget", t"MappinUISpawnProfile.Always", t"WorldMappinUIProfile.GameplayRole");
+  };
+  if Equals(mappinVariant, gamedataMappinVariant.FastTravelVariant) {
+    return MappinUIProfile.Create(defaultWidgetResource, t"MappinUISpawnProfile.LongRange", t"WorldMappinUIProfile.FastTravel"); // changed here
+  };
+  if Equals(mappinVariant, gamedataMappinVariant.ServicePointDropPointVariant) {
+    return MappinUIProfile.Create(defaultWidgetResource, t"MappinUISpawnProfile.ShortRange", t"WorldMappinUIProfile.DropPoint");
+  };
+  if mappin.IsQuestMappin() {
+    questMappin = (mappin as QuestMappin);
+    if NotEquals(questMappin, null) {
+      if questMappin.IsUIAnimation() {
+        questAnimationRecord = TweakDBInterface.GetUIAnimationRecord(questMappin.GetUIAnimationRecordID());
+        if ResRef.IsValid(questAnimationRecord.WidgetResource()) && NotEquals(questAnimationRecord.AnimationName(), n"") {
+          return MappinUIProfile.Create(questAnimationRecord.WidgetResource(), t"MappinUISpawnProfile.Always", defaultRuntimeProfile);
+        };
+      } else {
+        return MappinUIProfile.Create(defaultWidgetResource, t"MappinUISpawnProfile.Always", t"WorldMappinUIProfile.Quest");
+      };
+    };
+  };
+  if customData != null && (customData as TrackedMappinControllerCustomData) != null {
+    return MappinUIProfile.Create(defaultWidgetResource, t"MappinUISpawnProfile.Always", defaultRuntimeProfile);
+  };
+  return MappinUIProfile.Create(defaultWidgetResource, t"MappinUISpawnProfile.MediumRange", defaultRuntimeProfile);
+}
