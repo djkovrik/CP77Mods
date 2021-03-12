@@ -110,13 +110,19 @@ public func RemoveSilentModeEffect() -> Void {
 }
 
 @addMethod(GameObject)
-public func RefreshSilentModeState() -> Bool {
+public func RefreshSilentModeState(withNotification: Bool) -> Void {
   if this.IsSilentModeEnabled() {
-    this.ApplySilentModeEffect();
-    this.ShowCustomNotification(SilentModeHelper.GetSilentModeEnabledNotification());
+    if !this.IsInVehicle() {
+      this.ApplySilentModeEffect();
+    };
+    if withNotification {
+      this.ShowCustomNotification(SilentModeHelper.GetSilentModeEnabledNotification());
+    };
   } else {
     this.RemoveSilentModeEffect();
-    this.ShowCustomNotification(SilentModeHelper.GetSilentModeDisabledNotification());
+    if withNotification {
+      this.ShowCustomNotification(SilentModeHelper.GetSilentModeDisabledNotification());
+    };
   };
 }
 
@@ -125,7 +131,7 @@ public func ToggleSilentMode() -> Void {
   let isEnabled: Bool;
   isEnabled = this.IsSilentModeEnabled();
   this.SetSilentModeEnabled(!isEnabled);
-  this.RefreshSilentModeState();
+  this.RefreshSilentModeState(true);
 }
 
 // -- Overrides
@@ -195,7 +201,7 @@ protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpaw
   GameInstance.GetGodModeSystem(this.GetGame()).RemoveGodMode(this.GetEntityID(), gameGodModeType.Invulnerable, n"GracePeriodAfterSpawn");
   // setup silent mode after player loaded
   this.SetSilentModeEnabled(SilentModeHelper.GetSilentModeDefaultStateWhenLoaded());
-  this.RefreshSilentModeState();
+  this.RefreshSilentModeState(true);
 }
 
 @replaceMethod(PhoneDialerGameController)
@@ -247,6 +253,7 @@ private final func CallSelectedContact() -> Void {
 
 @replaceMethod(VehicleComponent)
 protected cb func OnMountingEvent(evt: ref<MountingEvent>) -> Bool {
+  Log("VehicleComponent::OnMountingEvent");
   let mountChild: ref<GameObject>;
   let PSvehicleDooropenRequest: ref<VehicleDoorOpen>;
   let vehicleNPCData: ref<AnimFeature_VehicleNPCData>;
@@ -255,6 +262,7 @@ protected cb func OnMountingEvent(evt: ref<MountingEvent>) -> Bool {
   mountChild = (GameInstance.FindEntityByID(this.GetVehicle().GetGame(), evt.request.lowLevelMountingInfo.childId) as GameObject);
   VehicleComponent.GetVehicleDataPackage(this.GetVehicle().GetGame(), this.GetVehicle(), vehicleDataPackage);
   if mountChild.IsPlayer() {
+    mountChild.RemoveSilentModeEffect();
     this.m_mountedPlayer = (mountChild as PlayerPuppet);
     VehicleComponent.QueueEventToAllPassengers(this.m_mountedPlayer.GetGame(), this.GetVehicle().GetEntityID(), PlayerMuntedToMyVehicle.Create(this.m_mountedPlayer));
     PlayerPuppet.ReevaluateAllBreathingEffects((mountChild as PlayerPuppet));
@@ -288,7 +296,6 @@ protected cb func OnMountingEvent(evt: ref<MountingEvent>) -> Bool {
     } else {
       this.DetermineShouldCrystalDomeBeOn(0.75);
     };
-    // mountChild.RemoveSilentModeEffect();
   };
   if !mountChild.IsPlayer() {
     if evt.request.mountData.isInstant {
@@ -326,6 +333,7 @@ protected cb func OnUnmountingEvent(evt: ref<UnmountingEvent>) -> Bool {
   mountChild = (GameInstance.FindEntityByID(this.GetVehicle().GetGame(), evt.request.lowLevelMountingInfo.childId) as GameObject);
   VehicleComponent.SetAnimsetOverrideForPassenger(mountChild, evt.request.lowLevelMountingInfo.parentId, evt.request.lowLevelMountingInfo.slotId.id, 0.00);
   if NotEquals(mountChild, null) && mountChild.IsPlayer() {
+    mountChild.RefreshSilentModeState(false);
     PlayerPuppet.ReevaluateAllBreathingEffects((mountChild as PlayerPuppet));
     this.ToggleScanningComponent(true);
     if this.GetVehicle().ShouldRegisterToHUD() {
@@ -356,7 +364,6 @@ protected cb func OnUnmountingEvent(evt: ref<UnmountingEvent>) -> Bool {
     this.DoPanzerCleanup();
     this.m_mountedPlayer = null;
     this.CleanUpRace();
-    mountChild.RefreshSilentModeState();
   };
   if NotEquals(mountChild, null) && VehicleComponent.GetNumberOfActivePassengers(mountChild.GetGame(), this.GetVehicle().GetEntityID(), activePassengers) {
     if activePassengers < 0 {
@@ -366,6 +373,19 @@ protected cb func OnUnmountingEvent(evt: ref<UnmountingEvent>) -> Bool {
 }
 
 // -- Replace some VehicleScene checks
+
+@replaceMethod(DefaultTransition)
+protected final const func IsNoCombatActionsForced(scriptInterface: ref<StateGameScriptInterface>) -> Bool {
+  //return PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"NoCombat") || PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"VehicleScene");
+  return PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"NoCombat") || scriptInterface.executionOwner.IsInVehicle();
+}
+
+@replaceMethod(RadialMenuHelper)
+public final static func IsWeaponsBlocked(target: wref<GameObject>) -> Bool {
+  //return PlayerGameplayRestrictions.HasRestriction(target, n"VehicleScene") || PlayerGameplayRestrictions.HasRestriction(target, n"NoCombat") || PlayerGameplayRestrictions.HasRestriction(target, n"FirearmsNoUnequipNoSwitch");
+  return target.IsInVehicle() || PlayerGameplayRestrictions.HasRestriction(target, n"NoCombat") || PlayerGameplayRestrictions.HasRestriction(target, n"FirearmsNoUnequipNoSwitch");
+}
+
 
 // @replaceMethod(PreventionSystem)
 // public final const func CanPreventionReactToInput() -> Bool {
@@ -411,12 +431,6 @@ protected cb func OnUnmountingEvent(evt: ref<UnmountingEvent>) -> Bool {
 //   return canInteract;
 // }
 
-@replaceMethod(DefaultTransition)
-protected final const func IsNoCombatActionsForced(scriptInterface: ref<StateGameScriptInterface>) -> Bool {
-  //return PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"NoCombat") || PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"VehicleScene");
-  return PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"NoCombat") || scriptInterface.executionOwner.IsInVehicle();
-}
-
 // @replaceMethod(DefaultTransition)
 // protected final const func IsDisplayingInputHintBlocked(scriptInterface: ref<StateGameScriptInterface>, actionName: CName) -> Bool {
 //   switch actionName {
@@ -461,8 +475,3 @@ protected final const func IsNoCombatActionsForced(scriptInterface: ref<StateGam
 //   return true;
 // }
 
-@replaceMethod(RadialMenuHelper)
-public final static func IsWeaponsBlocked(target: wref<GameObject>) -> Bool {
-  //return PlayerGameplayRestrictions.HasRestriction(target, n"VehicleScene") || PlayerGameplayRestrictions.HasRestriction(target, n"NoCombat") || PlayerGameplayRestrictions.HasRestriction(target, n"FirearmsNoUnequipNoSwitch");
-  return target.IsInVehicle() || PlayerGameplayRestrictions.HasRestriction(target, n"NoCombat") || PlayerGameplayRestrictions.HasRestriction(target, n"FirearmsNoUnequipNoSwitch");
-}
