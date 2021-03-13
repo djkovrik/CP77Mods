@@ -21,7 +21,7 @@ public class DeclutterWorldMapConfig {
 
       /* --- Misc --- */
       //Equals(mappinVariant, gamedataMappinVariant.ApartmentVariant) ||  // Appartment
-      //Equals(mappinVariant, gamedataMappinVariant.FastTravelVariant) ||  // Fast travel
+      Equals(mappinVariant, gamedataMappinVariant.FastTravelVariant) ||  // Fast travel
       //Equals(mappinVariant, gamedataMappinVariant.TarotVariant) ||  // Tarot card
       //Equals(mappinVariant, gamedataMappinVariant.VehicleVariant) ||  // Your vehicle
       Equals(mappinVariant, gamedataMappinVariant.FixerVariant) ||  // Fixer
@@ -44,6 +44,10 @@ public class DeclutterWorldMapConfig {
       false;
   }
 
+  // All mappins within ShowEverythingRange will be shown if ShouldShowLocally is true
+  public static func ShouldShowLocally() -> Bool = true
+  public static func ShowEverythingRange() -> Float = 250.0  // meters
+
   public static func ShouldHideVehicleQuests() -> Bool = true
 }
 
@@ -63,8 +67,10 @@ public func CreateMappinUIProfile(mappin: wref<IMappin>, mappinVariant: gamedata
   let isVehicleQuest: Bool;
   let isTracked: Bool;
   let widgetResource: ResRef;
+  let isInLocalRange: Bool;
 
-  isHidden = DeclutterWorldMapConfig.ShouldHideThisOne(mappin.GetVariant());
+  isInLocalRange = DeclutterWorldMapConfig.ShouldShowLocally() && Vector4.Distance(this.GetPlayerControlledObject().GetWorldPosition(), mappin.GetWorldPosition()) <= DeclutterWorldMapConfig.ShowEverythingRange();
+  isHidden = !isInLocalRange  && !this.IsFastTravelEnabled() && DeclutterWorldMapConfig.ShouldHideThisOne(mappin.GetVariant());
   isVehicleQuest = this.IsRelatedToVehicleQuest(mappin);
   isTracked = mappin.IsPlayerTracked();
 
