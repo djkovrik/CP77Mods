@@ -99,12 +99,14 @@ public func SetSilentModeEnabled(enabled: Bool) -> Void {
 
 @addMethod(GameObject)
 public func ApplySilentModeEffect() -> Void {
+  // TODO BETTER SOLUTION REQUIRED
   StatusEffectHelper.ApplyStatusEffect(this, t"GameplayRestriction.VehicleScene");
   PlayerGameplayRestrictions.PushForceRefreshInputHintsEventToPSM(this);
 }
 
 @addMethod(GameObject)
 public func RemoveSilentModeEffect() -> Void {
+  // TODO BETTER SOLUTION REQUIRED
   StatusEffectHelper.RemoveStatusEffect(this, t"GameplayRestriction.VehicleScene");
   PlayerGameplayRestrictions.PushForceRefreshInputHintsEventToPSM(this);
 }
@@ -387,6 +389,7 @@ public final static func IsWeaponsBlocked(target: wref<GameObject>) -> Bool {
 }
 
 
+// TODO Check this ones
 // @replaceMethod(PreventionSystem)
 // public final const func CanPreventionReactToInput() -> Bool {
 //   if Equals(this.m_player, null) {
@@ -474,4 +477,3 @@ public final static func IsWeaponsBlocked(target: wref<GameObject>) -> Bool {
 //   };
 //   return true;
 // }
-
