@@ -234,6 +234,41 @@ public func ReequipHeadGear() -> Void {
   };
 }
 
+// -- EquipmentSystem
+
+@replaceMethod(EquipmentSystem)
+private final const func GetHairSuffix(itemId: ItemID, owner: wref<GameObject>, suffixRecord: ref<ItemsFactoryAppearanceSuffixBase_Record>) -> String {
+  let customizationState: ref<gameuiICharacterCustomizationState>;
+  let characterCustomizationSystem: ref<gameuiICharacterCustomizationSystem>;
+  let isMountedToVehicle: Bool;
+  characterCustomizationSystem = GameInstance.GetCharacterCustomizationSystem(owner.GetGame());
+  isMountedToVehicle = VehicleComponent.IsMountedToVehicle(owner.GetGame(), owner.GetEntityID());
+  
+  // Dirty hack: break hair suffux for vehicle TPP view to fix hair displaying on save loading
+  if isMountedToVehicle {
+    return "";
+  };
+  if (owner as PlayerPuppet) == null && !characterCustomizationSystem.HasCharacterCustomizationComponent(owner) {
+    return "Bald";
+  };
+  customizationState = characterCustomizationSystem.GetState();
+  if customizationState != null {
+    if customizationState.HasTag(n"Short") {
+      return "Short";
+    };
+    if customizationState.HasTag(n"Long") {
+      return "Long";
+    };
+    if customizationState.HasTag(n"Dreads") {
+      return "Dreads";
+    };
+    if customizationState.HasTag(n"Buzz") {
+      return "Buzz";
+    };
+    return "Bald";
+  };
+  return "Error";
+}
 
 // -- PlayerPuppet
 
