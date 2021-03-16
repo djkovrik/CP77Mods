@@ -10,10 +10,6 @@ public class SilentModeHelper extends IScriptable {
 
   public static func GetSilentModeDefaultStateWhenLoaded() -> Bool = true
 
-  public static func GetEnabledId() -> String = "SilentModeEnabled"
-
-  public static func GetDisabledId() -> String = "SilentModeDisabled"
-
   private let m_modeTurnedOnContact: ref<ContactData>;
 
   private let m_modeTurnedOffContact: ref<ContactData>;
@@ -49,7 +45,7 @@ public class SilentModeHelper extends IScriptable {
       newContact.localizedName = this.GetSilentModeEnabledLabel();
       newContact.hash = 12345556;
     } else {
-      newContact.id = this.GetDisabledId();
+      newContact.id = "SilentModeDisabled";
       newContact.localizedName = this.GetSilentModeDisabledLabel();
       newContact.hash = 12345557;
     };
@@ -193,16 +189,18 @@ protected cb func OnGameAttached() -> Bool {
   this.GracePeriodAfterSpawn();
   StatusEffectHelper.RemoveStatusEffect(this, t"GameplayRestriction.FastForward");
   StatusEffectHelper.RemoveStatusEffect(this, t"GameplayRestriction.FastForwardCrouchLock");
+  // init helper
   this.m_silentModeHelper = new SilentModeHelper();
   this.m_silentModeHelper.Initialize();
+  // apply silent mode state
+  this.SetSilentModeEnabled(SilentModeHelper.GetSilentModeDefaultStateWhenLoaded());
 }
 
 @replaceMethod(PlayerPuppet)
 protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpawn>) -> Bool {
   this.SetInvisible(false);
   GameInstance.GetGodModeSystem(this.GetGame()).RemoveGodMode(this.GetEntityID(), gameGodModeType.Invulnerable, n"GracePeriodAfterSpawn");
-  // setup silent mode after player loaded
-  this.SetSilentModeEnabled(SilentModeHelper.GetSilentModeDefaultStateWhenLoaded());
+  // Refresh state and show notification
   this.RefreshSilentModeState(true);
 }
 
@@ -237,7 +235,7 @@ private final func CallSelectedContact() -> Void {
   contactData = item.GetContactData();
 
   if NotEquals(contactData, null) {
-    if NotEquals(contactData.id, SilentModeHelper.GetEnabledId()) && NotEquals(contactData.id, SilentModeHelper.GetDisabledId()) {
+    if NotEquals(contactData.id, "SilentModeEnabled") && NotEquals(contactData.id, "SilentModeDisabled") {
       // normal call
       callRequest = new questTriggerCallRequest();
       callRequest.addressee = StringToName(contactData.id);
@@ -328,6 +326,7 @@ protected cb func OnMountingEvent(evt: ref<MountingEvent>) -> Bool {
 
 @replaceMethod(VehicleComponent)
 protected cb func OnUnmountingEvent(evt: ref<UnmountingEvent>) -> Bool {
+  Log("VehicleComponent::OnUnmountingEvent");
   let mountChild: ref<GameObject>;
   let activePassengers: Int32;
   let turnedOn: Bool;
@@ -378,102 +377,95 @@ protected cb func OnUnmountingEvent(evt: ref<UnmountingEvent>) -> Bool {
 
 @replaceMethod(DefaultTransition)
 protected final const func IsNoCombatActionsForced(scriptInterface: ref<StateGameScriptInterface>) -> Bool {
-  //return PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"NoCombat") || PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"VehicleScene");
-  return PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"NoCombat") || scriptInterface.executionOwner.IsInVehicle();
+  return PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"NoCombat") || scriptInterface.executionOwner.IsInVehicle(); /* PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"VehicleScene") */
 }
 
 @replaceMethod(RadialMenuHelper)
 public final static func IsWeaponsBlocked(target: wref<GameObject>) -> Bool {
-  //return PlayerGameplayRestrictions.HasRestriction(target, n"VehicleScene") || PlayerGameplayRestrictions.HasRestriction(target, n"NoCombat") || PlayerGameplayRestrictions.HasRestriction(target, n"FirearmsNoUnequipNoSwitch");
-  return target.IsInVehicle() || PlayerGameplayRestrictions.HasRestriction(target, n"NoCombat") || PlayerGameplayRestrictions.HasRestriction(target, n"FirearmsNoUnequipNoSwitch");
+  return /* PlayerGameplayRestrictions.HasRestriction(target, n"VehicleScene") */ target.IsInVehicle() || PlayerGameplayRestrictions.HasRestriction(target, n"NoCombat") || PlayerGameplayRestrictions.HasRestriction(target, n"FirearmsNoUnequipNoSwitch");
 }
 
+@replaceMethod(PreventionSystem)
+public final const func CanPreventionReactToInput() -> Bool {
+  if Equals(this.m_player, null) {
+    return false;
+  };
+  if this.IsSystemDissabled() {
+    return false;
+  };
+  if EnumInt(this.m_playerHLS) > EnumInt(gamePSMHighLevel.SceneTier1) {
+    return false;
+  };
+  if PlayerGameplayRestrictions.HasRestriction(this.m_player, n"VehicleCombat") || this.m_player.IsInVehicle() /* PlayerGameplayRestrictions.HasRestriction(this.m_player, n"VehicleScene") */ {
+    return false;
+  };
+  return true;
+}
 
-// TODO Check this ones
-// @replaceMethod(PreventionSystem)
-// public final const func CanPreventionReactToInput() -> Bool {
-//   if Equals(this.m_player, null) {
-//     return false;
-//   };
-//   if this.IsSystemDissabled() {
-//     return false;
-//   };
-//   if EnumInt(this.m_playerHLS) > EnumInt(gamePSMHighLevel.SceneTier1) {
-//     return false;
-//   };
-//   //if PlayerGameplayRestrictions.HasRestriction(this.m_player, n"VehicleCombat") || PlayerGameplayRestrictions.HasRestriction(this.m_player, n"VehicleScene") {
-//   if PlayerGameplayRestrictions.HasRestriction(this.m_player, n"VehicleCombat") || this.m_player.IsInVehicle() {
-//     return false;
-//   };
-//   return true;
-// }
+@replaceMethod(QuickSlotsManager)
+protected final const func IsSelectingCombatItemPrevented() -> Bool {
+  return /* PlayerGameplayRestrictions.HasRestriction(this.m_Player, n"VehicleScene") */ this.m_Player.IsInVehicle() || PlayerGameplayRestrictions.HasRestriction(this.m_Player, n"NoCombat") || PlayerGameplayRestrictions.HasRestriction(this.m_Player, n"FirearmsNoUnequip") || PlayerGameplayRestrictions.HasRestriction(this.m_Player, n"NoCombat") || PlayerGameplayRestrictions.HasRestriction(this.m_Player, n"FirearmsNoSwitch");
+}
 
-// @replaceMethod(QuickSlotsManager)
-// protected final const func IsSelectingCombatItemPrevented() -> Bool {
-//   //return PlayerGameplayRestrictions.HasRestriction(this.m_Player, n"VehicleScene") || PlayerGameplayRestrictions.HasRestriction(this.m_Player, n"NoCombat") || PlayerGameplayRestrictions.HasRestriction(this.m_Player, n"FirearmsNoUnequip") || PlayerGameplayRestrictions.HasRestriction(this.m_Player, n"NoCombat") || PlayerGameplayRestrictions.HasRestriction(this.m_Player, n"FirearmsNoSwitch");
-//   return this.m_Player.IsInVehicle() || PlayerGameplayRestrictions.HasRestriction(this.m_Player, n"NoCombat") || PlayerGameplayRestrictions.HasRestriction(this.m_Player, n"FirearmsNoUnequip") || PlayerGameplayRestrictions.HasRestriction(this.m_Player, n"NoCombat") || PlayerGameplayRestrictions.HasRestriction(this.m_Player, n"FirearmsNoSwitch");
-// }
+@replaceMethod(InventoryGPRestrictionHelper)
+private final static func CanInteractByEquipmentArea(itemData: InventoryItemData, playerPuppet: wref<PlayerPuppet>) -> Bool {
+  let equipmentSystem: wref<EquipmentSystem>;
+  let canInteract: Bool;
+  equipmentSystem = (GameInstance.GetScriptableSystemsContainer(playerPuppet.GetGame()).Get(n"EquipmentSystem") as EquipmentSystem);
 
-// @replaceMethod(InventoryGPRestrictionHelper)
-// private final static func CanInteractByEquipmentArea(itemData: InventoryItemData, playerPuppet: wref<PlayerPuppet>) -> Bool {
-//   let equipmentSystem: wref<EquipmentSystem>;
-//   let canInteract: Bool;
-//   equipmentSystem = (GameInstance.GetScriptableSystemsContainer(playerPuppet.GetGame()).Get(n"EquipmentSystem") as EquipmentSystem);
+  if Equals(InventoryItemData.GetEquipmentArea(itemData), gamedataEquipmentArea.Consumable) {
+    canInteract = !PlayerGameplayRestrictions.HasRestriction(playerPuppet, n"FistFight");
+  } else {
+    if Equals(InventoryItemData.GetEquipmentArea(itemData), gamedataEquipmentArea.Weapon) {
+      canInteract = /* !PlayerGameplayRestrictions.HasRestriction(playerPuppet, n"VehicleScene") */ !playerPuppet.IsInVehicle() || PlayerGameplayRestrictions.HasRestriction(playerPuppet, n"NoCombat") || PlayerGameplayRestrictions.HasRestriction(playerPuppet, n"FirearmsNoUnequip") || PlayerGameplayRestrictions.HasRestriction(playerPuppet, n"FirearmsNoSwitch") || InventoryGPRestrictionHelper.BlockedBySceneTier(playerPuppet) || !equipmentSystem.GetPlayerData(playerPuppet).IsEquippable(InventoryItemData.GetGameItemData(itemData));
+    } else {
+      canInteract = true;
+    };
+  };
 
-//   if Equals(InventoryItemData.GetEquipmentArea(itemData), gamedataEquipmentArea.Consumable) {
-//     canInteract = !PlayerGameplayRestrictions.HasRestriction(playerPuppet, n"FistFight");
-//   } else {
-//     if Equals(InventoryItemData.GetEquipmentArea(itemData), gamedataEquipmentArea.Weapon) {
-//       //canInteract = !PlayerGameplayRestrictions.HasRestriction(playerPuppet, n"VehicleScene") || PlayerGameplayRestrictions.HasRestriction(playerPuppet, n"NoCombat") || PlayerGameplayRestrictions.HasRestriction(playerPuppet, n"FirearmsNoUnequip") || PlayerGameplayRestrictions.HasRestriction(playerPuppet, n"FirearmsNoSwitch") || InventoryGPRestrictionHelper.BlockedBySceneTier(playerPuppet) || !equipmentSystem.GetPlayerData(playerPuppet).IsEquippable(InventoryItemData.GetGameItemData(itemData));
-//       canInteract = !playerPuppet.IsInVehicle() || PlayerGameplayRestrictions.HasRestriction(playerPuppet, n"NoCombat") || PlayerGameplayRestrictions.HasRestriction(playerPuppet, n"FirearmsNoUnequip") || PlayerGameplayRestrictions.HasRestriction(playerPuppet, n"FirearmsNoSwitch") || InventoryGPRestrictionHelper.BlockedBySceneTier(playerPuppet) || !equipmentSystem.GetPlayerData(playerPuppet).IsEquippable(InventoryItemData.GetGameItemData(itemData));
-//     } else {
-//       canInteract = true;
-//     };
-//   };
+  return canInteract;
+}
 
-//   return canInteract;
-// }
+@replaceMethod(DefaultTransition)
+protected final const func IsDisplayingInputHintBlocked(scriptInterface: ref<StateGameScriptInterface>, actionName: CName) -> Bool {
+  switch actionName {
+    case n"RangedAttack":
+      return StatusEffectHelper.HasStatusEffectWithTag(scriptInterface.executionOwner, n"NoCombat") || !this.HasAnyValidWeaponAvailable(scriptInterface);
+    case n"Jump":
+      return StatusEffectHelper.HasStatusEffect(scriptInterface.executionOwner, t"GameplayRestriction.NoJump");
+    case n"Exit":
+      return /* PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"VehicleScene") */ scriptInterface.executionOwner.IsInVehicle();
+    case n"ToggleVehCamera":
+      return this.IsVehicleCameraChangeBlocked(scriptInterface);
+    case n"WeaponWheel":
+      return this.IsNoCombatActionsForced(scriptInterface) || this.IsVehicleExitCombatModeBlocked(scriptInterface);
+    case n"Dodge":
+      return this.IsInTier2Locomotion(scriptInterface) || PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"PhoneCall");
+    case n"SwitchItem":
+      return PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"NoCombat") || !EquipmentSystem.HasItemInArea(scriptInterface.executionOwner, gamedataEquipmentArea.Weapon);
+    case n"DropCarriedObject":
+      return PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"BodyCarryingNoDrop");
+    case n"QuickMelee":
+      return PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"NoQuickMelee");
+    default:
+      return false;
+  };
+}
 
-// @replaceMethod(DefaultTransition)
-// protected final const func IsDisplayingInputHintBlocked(scriptInterface: ref<StateGameScriptInterface>, actionName: CName) -> Bool {
-//   switch actionName {
-//     case n"RangedAttack":
-//       return StatusEffectHelper.HasStatusEffectWithTag(scriptInterface.executionOwner, n"NoCombat") || !this.HasAnyValidWeaponAvailable(scriptInterface);
-//     case n"Jump":
-//       return StatusEffectHelper.HasStatusEffect(scriptInterface.executionOwner, t"GameplayRestriction.NoJump");
-//     case n"Exit":
-//       //return PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"VehicleScene");
-//       return scriptInterface.executionOwner.IsInVehicle();
-//     case n"ToggleVehCamera":
-//       return this.IsVehicleCameraChangeBlocked(scriptInterface);
-//     case n"WeaponWheel":
-//       return this.IsNoCombatActionsForced(scriptInterface) || this.IsVehicleExitCombatModeBlocked(scriptInterface);
-//     case n"Dodge":
-//       return this.IsInTier2Locomotion(scriptInterface) || PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"PhoneCall");
-//     case n"SwitchItem":
-//       return PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"NoCombat") || !EquipmentSystem.HasItemInArea(scriptInterface.executionOwner, gamedataEquipmentArea.Weapon);
-//     case n"DropCarriedObject":
-//       return PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"BodyCarryingNoDrop");
-//     case n"QuickMelee":
-//       return PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"NoQuickMelee");
-//     default:
-//       return false;
-//   };
-// }
-
-// @replaceMethod(VehicleTransition)
-// protected final const func IsPlayerAllowedToExitVehicle(scriptInterface: ref<StateGameScriptInterface>) -> Bool {
-//   if PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"VehicleScene") {
-//     return false;
-//   };
-//   if PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"VehicleCombat") {
-//     return false;
-//   };
-//   if PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"VehicleBlockExit") {
-//     return false;
-//   };
-//   if this.IsInPhotoMode(scriptInterface) {
-//     return false;
-//   };
-//   return true;
-// }
+@replaceMethod(VehicleTransition)
+protected final const func IsPlayerAllowedToExitVehicle(scriptInterface: ref<StateGameScriptInterface>) -> Bool {
+  // POTENTIALLY BREAKS SOMETHING
+  // if PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"VehicleScene") {
+  //   return false;
+  // };
+  if PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"VehicleCombat") {
+    return false;
+  };
+  if PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"VehicleBlockExit") {
+    return false;
+  };
+  if this.IsInPhotoMode(scriptInterface) {
+    return false;
+  };
+  return true;
+}
