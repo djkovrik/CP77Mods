@@ -1,5 +1,5 @@
-static func GetVisibilityTypeFor(quality: gamedataQuality) -> Int32 {
-//  Here you can define visibility behavior for each item quality type.
+static func GetVisibilityTypeFor(quality: gamedataQuality, isShard: Bool) -> Int32 {
+//  Here you can define visibility behavior for loot and shard markers
 //  Visibility types:
 //    1 - visible through walls
 //    2 - visible for line of sight (like default in-game behavior)
@@ -14,8 +14,14 @@ static func GetVisibilityTypeFor(quality: gamedataQuality) -> Int32 {
   let markersVisibilityRare = 3;        // Blue
   let markersVisibilityUncommon = 3;    // Green
   let markersVisibilityCommon = 4;      // White
+
+  let markersVisibilityShard = 2;
   
 // --- Сonfiguration block ends here ---
+
+  if isShard {
+    return markersVisibilityShard;
+  }
 
   switch quality {
     case gamedataQuality.Iconic: return markersVisibilityIconic;
@@ -48,20 +54,20 @@ static func IsLootMarker(data: SDeviceMappinData) -> Bool {
     && (Equals(data.gameplayRole, EGameplayRole.Loot) || Equals(data.gameplayRole, EGameplayRole.NPC));
 }
 
-static func ShouldShowThroughWalls(quality: gamedataQuality) -> Bool {
-  return Equals(GetVisibilityTypeFor(quality), 1);
+static func ShouldShowThroughWalls(quality: gamedataQuality, isShard: Bool) -> Bool {
+  return Equals(GetVisibilityTypeFor(quality, isShard), 1);
 }
 
-static func ShouldShowLineOfSight(quality: gamedataQuality) -> Bool {
-  return Equals(GetVisibilityTypeFor(quality), 2);
+static func ShouldShowLineOfSight(quality: gamedataQuality, isShard: Bool) -> Bool {
+  return Equals(GetVisibilityTypeFor(quality, isShard), 2);
 }
 
-static func ShouldShowIfScannerActive(quality: gamedataQuality) -> Bool {
-  return Equals(GetVisibilityTypeFor(quality), 3);
+static func ShouldShowIfScannerActive(quality: gamedataQuality, isShard: Bool) -> Bool {
+  return Equals(GetVisibilityTypeFor(quality, isShard), 3);
 }
 
-static func ShouldHide(quality: gamedataQuality) -> Bool {
-  return Equals(GetVisibilityTypeFor(quality), 4);
+static func ShouldHide(quality: gamedataQuality, isShard: Bool) -> Bool {
+  return Equals(GetVisibilityTypeFor(quality, isShard), 4);
 }
 
 // -- Adds
@@ -81,8 +87,8 @@ public func IsScannerActive() -> Bool {
 @addMethod(GameplayRoleComponent)
 func EvaluateVisibilities() -> Void {
   let i: Int32;
-  let variant: gamedataMappinVariant;
   let quality: gamedataQuality;
+  let isShardMarker: Bool;
   let isLootMarker: Bool;
   let isScannerActive: Bool;
   let shouldShowLineOfSight: Bool;
@@ -98,9 +104,10 @@ func EvaluateVisibilities() -> Void {
 
       if isLootMarker {
         quality = this.m_mappins[i].visualStateData.m_quality;
-        shouldShowLineOfSight = ShouldShowLineOfSight(quality);
-        shouldShowIfScannerActive = ShouldShowIfScannerActive(quality);
-        shouldHide = ShouldHide(quality);
+        isShardMarker = Equals(this.m_mappins[i].visualStateData.m_textureID, t"MappinIcons.ShardMappin");
+        shouldShowLineOfSight = ShouldShowLineOfSight(quality, isShardMarker);
+        shouldShowIfScannerActive = ShouldShowIfScannerActive(quality, isShardMarker);
+        shouldHide = ShouldHide(quality, isShardMarker);
 
         if shouldHide {
           this.ToggleMappin(i, false);
@@ -156,12 +163,14 @@ protected cb func OnHUDInstruction(evt: ref<HUDInstruction>) -> Bool {
 private final func CreateRoleMappinData(data: SDeviceMappinData) -> ref<GameplayRoleMappinData> {
   let roleMappinData: ref<GameplayRoleMappinData>;
   let quality: gamedataQuality;
+  let isShard: Bool;
   quality = this.GetOwner().GetLootQuality();
+  isShard = this.GetOwner().IsShardContainer();
   roleMappinData = new GameplayRoleMappinData();
   roleMappinData.m_mappinVisualState = this.GetOwner().DeterminGameplayRoleMappinVisuaState(data);
   roleMappinData.m_isTagged = this.GetOwner().IsTaggedinFocusMode();
   roleMappinData.m_isQuest = this.GetOwner().IsQuest() || this.GetOwner().IsAnyClueEnabled() && !this.GetOwner().IsClueInspected();
-  roleMappinData.m_visibleThroughWalls = this.m_isForcedVisibleThroughWalls || this.GetOwner().IsObjectRevealed() || this.IsCurrentTarget() || ShouldShowThroughWalls(quality);
+  roleMappinData.m_visibleThroughWalls = this.m_isForcedVisibleThroughWalls || this.GetOwner().IsObjectRevealed() || this.IsCurrentTarget() || ShouldShowThroughWalls(quality, isShard);
   roleMappinData.m_range = this.GetOwner().DeterminGameplayRoleMappinRange(data);
   roleMappinData.m_isCurrentTarget = this.IsCurrentTarget();
   roleMappinData.m_gameplayRole = this.m_currentGameplayRole;
