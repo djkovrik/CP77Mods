@@ -126,6 +126,7 @@ private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt addToInventor
     this.SetLastUsedItem(itemID);
   } else {
     if this.IsItemOfCategory(itemID, gamedataItemCategory.Weapon) && forceEquipWeapon && this.CheckWeaponAgainstGameplayRestrictions(itemID) {
+      this.m_equipment.equipAreas[equipAreaIndex].equipSlots[slotIndex].itemID = itemID;
       this.SetSlotActiveItem(EquipmentManipulationRequestSlot.Right, itemID);
       this.UpdateEquipAreaActiveIndex(itemID);
       this.SetLastUsedItem(itemID);
@@ -299,14 +300,14 @@ protected cb func OnItemAddedToSlot(evt: ref<ItemAddedToSlot>) -> Bool {
       GameInstance.GetTransactionSystem(this.GetGame()).ChangeItemAppearance(this, itemID, newApp);
     };
     if slotID == t"AttachmentSlots.WeaponRight" {
-      paperdollEquipData.equipArea.areaType = TweakDBInterface.GetItemRecord(itemTDBID).EquipArea().Type();
-      paperdollEquipData.equipArea.activeIndex = 0;
-      equipSlot.itemID = itemID;
-      ArrayPush(paperdollEquipData.equipArea.equipSlots, equipSlot);
-      paperdollEquipData.equipped = ShouldBeDisplayed(itemID); // <- tweaks visibility here
-      paperdollEquipData.placementSlot = EquipmentSystem.GetPlacementSlot(itemID);
       equipmentBB = GameInstance.GetBlackboardSystem(this.GetGame()).Get(GetAllBlackboardDefs().UI_Equipment);
       if NotEquals(equipmentBB, null) {
+        paperdollEquipData.equipArea.areaType = TweakDBInterface.GetItemRecord(itemTDBID).EquipArea().Type();
+        paperdollEquipData.equipArea.activeIndex = 0;
+        equipSlot.itemID = itemID;
+        ArrayPush(paperdollEquipData.equipArea.equipSlots, equipSlot);
+        paperdollEquipData.equipped = true;
+        paperdollEquipData.placementSlot = EquipmentSystem.GetPlacementSlot(itemID);
         equipmentBB.SetVariant(GetAllBlackboardDefs().UI_Equipment.lastModifiedArea, ToVariant(paperdollEquipData));
       };
     };
