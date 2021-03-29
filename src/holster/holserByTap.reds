@@ -1,4 +1,3 @@
-
 @replaceMethod(UpperBodyEventsTransition)
 protected final func UpdateSwitchItem(timeDelta: Float, stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Bool {
   let notificationEvent: ref<UIInGameNotificationEvent>;
@@ -6,27 +5,30 @@ protected final func UpdateSwitchItem(timeDelta: Float, stateContext: ref<StateC
   holsterDelay = 0.25;
   notificationEvent = new UIInGameNotificationEvent();
   notificationEvent.m_notificationType = UIInGameNotificationType.ActionRestriction;
-  if PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"FirearmsNoSwitch") || PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"ShootingRangeCompetition") || PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"Fists") || stateContext.IsStateMachineActive(n"Consumable") || this.CheckEquipmentStateMachineState(stateContext, EEquipmentSide.Right, EEquipmentState.Equipping) {
+  if PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"FirearmsNoSwitch") || PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"ShootingRangeCompetition") || PlayerGameplayRestrictions.HasRestriction(scriptInterface.executionOwner, n"Fists") || stateContext.IsStateMachineActive(n"Consumable") || stateContext.IsStateMachineActive(n"CombatGadget") || this.CheckEquipmentStateMachineState(stateContext, EEquipmentSide.Right, EEquipmentState.Equipping) {
     return false;
   };
   if this.m_cyclePushed {
     this.m_cycleBlock += timeDelta;
-    if this.m_cycleBlock > 0.25 {
+    if this.m_cycleBlock > 0.50 {
       this.m_cycleBlock = 0.00;
       this.m_cyclePushed = false;
+      stateContext.SetPermanentBoolParameter(n"cyclePushed", this.m_cyclePushed, true);
     };
   };
-  if scriptInterface.IsActionJustPressed(n"NextWeapon") && !this.m_cyclePushed {
+  if scriptInterface.IsActionJustPressed(n"NextWeapon") && !this.m_cyclePushed && !this.m_switchPending && DefaultTransition.HasRightWeaponEquipped(scriptInterface) && this.CheckEquipmentStateMachineState(stateContext, EEquipmentSide.Right, EEquipmentState.Equipped) {
     this.SendEquipmentSystemWeaponManipulationRequest(scriptInterface, EquipmentManipulationAction.CycleNextWeaponWheelItem);
     this.m_cyclePushed = true;
+    stateContext.SetPermanentBoolParameter(n"cyclePushed", this.m_cyclePushed, true);
     return true;
   };
-  if scriptInterface.IsActionJustPressed(n"PreviousWeapon") && !this.m_cyclePushed {
+  if scriptInterface.IsActionJustPressed(n"PreviousWeapon") && !this.m_cyclePushed && !this.m_switchPending && DefaultTransition.HasRightWeaponEquipped(scriptInterface) && this.CheckEquipmentStateMachineState(stateContext, EEquipmentSide.Right, EEquipmentState.Equipped) {
     this.SendEquipmentSystemWeaponManipulationRequest(scriptInterface, EquipmentManipulationAction.CyclePreviousWeaponWheelItem);
     this.m_cyclePushed = true;
+    stateContext.SetPermanentBoolParameter(n"cyclePushed", this.m_cyclePushed, true);
     return true;
   };
-  if scriptInterface.IsActionJustTapped(n"SwitchItem") {
+  if scriptInterface.IsActionJustTapped(n"SwitchItem") && !this.m_cyclePushed {
     this.m_switchButtonPushed = true;
     this.m_counter += 1;
   };
