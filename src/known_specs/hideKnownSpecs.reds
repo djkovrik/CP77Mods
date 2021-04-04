@@ -1,4 +1,5 @@
 // -- Utils
+// check for recipe tag in tags array
 public static func HasRecipeTag(vendorItem: ref<VendorItem_Record>) -> Bool {
   let tags: array<CName>;
   let i: Int32;
@@ -22,7 +23,7 @@ public static func GetCraftedResultItemId(vendorItem: ref<VendorItem_Record>) ->
 
 // -- PlayerPuppet
 @addMethod(PlayerPuppet)
-public func IsPlayerKnowsTheRecipe(vendorItem: ref<VendorItem_Record>) -> Bool {
+public func IsRecipeKnown(vendorItem: ref<VendorItem_Record>) -> Bool {
   let craftingSystem: ref<CraftingSystem>;
   let recipes: array<ItemRecipe>;
   let targetId: TweakDBID;
@@ -36,9 +37,9 @@ public func IsPlayerKnowsTheRecipe(vendorItem: ref<VendorItem_Record>) -> Bool {
   while i < ArraySize(recipes) {
     if Equals(recipes[i].targetItem, targetId) {
       return true;
-    }
+    };
     i += 1;
-  }
+  };
 
   return false;
 }
@@ -53,14 +54,14 @@ private final const func PlayerCanBuy(itemStack: script_ref<SItemStack>) -> Bool
   let availablePrereq: wref<IPrereq_Record>;
   let vendorItem: wref<VendorItem_Record>;
   let itemData: wref<gameItemData>;
-  let isPlayerKnows: Bool;
+  let playerKnows: Bool;
   vendorItem = TweakDBInterface.GetVendorItemRecord(Deref(itemStack).vendorItemID);
   vendorItem.GenerationPrereqs(viewPrereqs);
   // Recipe and state check
   if HasRecipeTag(vendorItem) {
-    isPlayerKnows = GetPlayer(this.m_gameInstance).IsPlayerKnowsTheRecipe(vendorItem);
-    if isPlayerKnows {
-      Log("Known recipe detected, skipped: " + TDBID.ToStringDEBUG(vendorItem.Item().GetID()));
+    playerKnows = GetPlayer(this.m_gameInstance).IsRecipeKnown(vendorItem);
+    if playerKnows {
+      Log("Known recipe detected, skip: " + TDBID.ToStringDEBUG(vendorItem.Item().GetID()));
       return false;
     };
   };

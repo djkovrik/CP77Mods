@@ -2,6 +2,7 @@
 Powered by [redscript](https://github.com/jac3km4/redscript)
 
 #### Mods list:
+- [Hide Known Specs](https://www.nexusmods.com/cyberpunk2077/mods/2111 "Hide Known Specs")
 - [Declutter WorldMap](https://www.nexusmods.com/cyberpunk2077/mods/1930 "Declutter WorldMap")
 - [Limited Fast Travel](https://www.nexusmods.com/cyberpunk2077/mods/1889 "Limited Fast Travel")
 - [Loot Markers Visibility](https://www.nexusmods.com/cyberpunk2077/mods/1727 "Loot Markers Visibility")
