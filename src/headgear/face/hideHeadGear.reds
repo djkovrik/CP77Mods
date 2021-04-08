@@ -20,7 +20,7 @@ public static func IsTppHead(itemId: ItemID) -> Bool {
 }
 
 public static func IsHeadGear(itemId: ItemID) -> Bool {
-  return Equals(EquipmentSystem.GetEquipAreaType(itemId), gamedataEquipmentArea.Head);
+  return Equals(EquipmentSystem.GetEquipAreaType(itemId), gamedataEquipmentArea.Head) || Equals(EquipmentSystem.GetEquipAreaType(itemId), gamedataEquipmentArea.Face);
 }
 
 public static func ShouldBeDisplayed(itemId: ItemID) -> Bool {
@@ -85,6 +85,7 @@ public final func OnEquipProcessVisualTags(itemID: ItemID) -> Void {
   // Forced ClearItemAppearanceEvent for head slot
   if ShouldBeHidden(itemID) {
     this.ClearItemAppearanceEvent(gamedataEquipmentArea.Head);
+    this.ClearItemAppearanceEvent(gamedataEquipmentArea.Face);
   };
 }
 
@@ -281,6 +282,7 @@ protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpaw
   this.SetInvisible(false);
   GameInstance.GetGodModeSystem(this.GetGame()).RemoveGodMode(this.GetEntityID(), gameGodModeType.Invulnerable, n"GracePeriodAfterSpawn");
   this.ReequipGear(gamedataEquipmentArea.Head);
+  this.ReequipGear(gamedataEquipmentArea.Face);
   PrintPlayerStats("OnMakePlayerVisibleAfterSpawn", this);
 }
 
