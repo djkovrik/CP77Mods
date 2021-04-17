@@ -18,6 +18,8 @@ public static func IsFastTravelPointEnabled(point: ref<FastTravelPointData>) -> 
 
       // HasTheSameId(point, t"FastTravelPoints.bls_nth_dataterm_06") ||   // Northern Badlands, Nomad Camp
 
+    To show any hidden fast travel point just remove // from the start of the line.
+
   */
   return
     // --- Hideouts
@@ -42,6 +44,13 @@ public static func IsFastTravelPointEnabled(point: ref<FastTravelPointData>) -> 
     HasTheSameId(point, t"FastTravelPoints.hey_gle_metro_ftp_01") ||  // The Glen, Metro: Glen North
     HasTheSameId(point, t"FastTravelPoints.hey_gle_metro_ftp_02") ||  // The Glen, Metro: Glen South
     HasTheSameId(point, t"FastTravelPoints.hey_rey_metro_ftp_01") ||  // Vista Del Rey, Metro: Congress & MLK
+    HasTheSameId(point, t"FastTravelPoints.std_arr_metro_ftp_01") ||  // Arroyo, Metro: Wollesen St
+    HasTheSameId(point, t"FastTravelPoints.wbr_hil_metro_ftp_01") ||  // Charter Hill, Metro: Charter Hill
+    HasTheSameId(point, t"FastTravelPoints.pac_cvi_metro_ftp_01") ||  // Coastview, Metro: Stadium
+    HasTheSameId(point, t"FastTravelPoints.cct_cpz_metro_ftp_01") ||  // Corpo Plaza, Metro: Republic Way
+    HasTheSameId(point, t"FastTravelPoints.cct_dtn_metro_ftp_02") ||  // Downtown, Metro: Downtown - Alexander St
+    HasTheSameId(point, t"FastTravelPoints.std_rcr_metro_ftp_01") ||  // Rancho Coronado, Metro: Megabuilding H7
+    HasTheSameId(point, t"FastTravelPoints.hey_spr_metro_ftp_01") ||  // Wellsprings, Metro: Market St
 
     // --- FT points with bus stop ---
     HasTheSameId(point, t"FastTravelPoints.wbr_nok_dataterm_03") ||   // North Oak, Columbarium
@@ -90,27 +99,24 @@ private final func RegisterMappin() -> Void {
 // ShortRange spawnProfile for Fast Travel mappin replaced with LongRange
 @replaceMethod(WorldMappinsContainerController)
 public func CreateMappinUIProfile(mappin: wref<IMappin>, mappinVariant: gamedataMappinVariant, customData: ref<MappinControllerCustomData>) -> MappinUIProfile {
-  let defaultWidgetResource: ResRef;
-  let defaultRuntimeProfile: TweakDBID;
+  let gameplayRoleData: ref<GameplayRoleMappinData> = mappin.GetScriptData() as GameplayRoleMappinData;
+  let defaultRuntimeProfile: TweakDBID = t"WorldMappinUIProfile.Default";
+  let defaultWidgetResource: ResRef = r"base\\gameplay\\gui\\widgets\\mappins\\quest\\default_mappin.inkwidget";
+  let stealthMappin: wref<StealthMappin>;
   let questMappin: wref<QuestMappin>;
   let questAnimationRecord: ref<UIAnimation_Record>;
-  let stealthMappin: wref<StealthMappin>;
-  let gameplayRoleData: ref<GameplayRoleMappinData>;
-  gameplayRoleData = (mappin.GetScriptData() as GameplayRoleMappinData);
-  defaultRuntimeProfile = t"WorldMappinUIProfile.Default";
-  defaultWidgetResource = r"base\gameplay\gui\widgets\mappins\quest\default_mappin.inkwidget";
   if mappin.IsExactlyA(n"gamemappinsStealthMappin") {
-    stealthMappin = (mappin as StealthMappin);
+    stealthMappin = mappin as StealthMappin;
     if stealthMappin.IsCrowdNPC() {
       return MappinUIProfile.None();
     };
-    return MappinUIProfile.Create(r"base\gameplay\gui\widgets\mappins\stealth\stealth_default_mappin.inkwidget", t"MappinUISpawnProfile.Stealth", t"WorldMappinUIProfile.Stealth");
+    return MappinUIProfile.Create(r"base\\gameplay\\gui\\widgets\\mappins\\stealth\\stealth_default_mappin.inkwidget", t"MappinUISpawnProfile.Stealth", t"WorldMappinUIProfile.Stealth");
   };
   if mappin.IsExactlyA(n"gamemappinsRemotePlayerMappin") {
-    return MappinUIProfile.Create(r"multi\gameplay\gui\widgets\world_mappins\remote_player_mappin.inkwidget", t"MappinUISpawnProfile.Always", defaultRuntimeProfile);
+    return MappinUIProfile.Create(r"multi\\gameplay\\gui\\widgets\\world_mappins\\remote_player_mappin.inkwidget", t"MappinUISpawnProfile.Always", defaultRuntimeProfile);
   };
   if mappin.IsExactlyA(n"gamemappinsPingSystemMappin") {
-    return MappinUIProfile.Create(r"multi\gameplay\gui\widgets\world_mappins\pingsystem_mappin.inkwidget", t"MappinUISpawnProfile.Always", defaultRuntimeProfile);
+    return MappinUIProfile.Create(r"multi\\gameplay\\gui\\widgets\\world_mappins\\pingsystem_mappin.inkwidget", t"MappinUISpawnProfile.Always", defaultRuntimeProfile);
   };
   if mappin.IsExactlyA(n"gamemappinsInteractionMappin") {
     return MappinUIProfile.Create(defaultWidgetResource, t"MappinUISpawnProfile.ShortRange", t"WorldMappinUIProfile.Interaction");
@@ -125,29 +131,29 @@ public func CreateMappinUIProfile(mappin: wref<IMappin>, mappinVariant: gamedata
     return MappinUIProfile.Create(defaultWidgetResource, t"MappinUISpawnProfile.ShortRange", defaultRuntimeProfile);
   };
   if Equals(mappinVariant, gamedataMappinVariant.QuickHackVariant) {
-    return MappinUIProfile.Create(r"base\gameplay\gui\widgets\mappins\interaction\quick_hack_mappin.inkwidget", t"MappinUISpawnProfile.ShortRange", t"WorldMappinUIProfile.QuickHack");
+    return MappinUIProfile.Create(r"base\\gameplay\\gui\\widgets\\mappins\\interaction\\quick_hack_mappin.inkwidget", t"MappinUISpawnProfile.ShortRange", t"WorldMappinUIProfile.QuickHack");
   };
   if Equals(mappinVariant, gamedataMappinVariant.PhoneCallVariant) {
-    return MappinUIProfile.Create(r"base\gameplay\gui\widgets\mappins\interaction\quick_hack_mappin.inkwidget", t"MappinUISpawnProfile.Always", defaultRuntimeProfile);
+    return MappinUIProfile.Create(r"base\\gameplay\\gui\\widgets\\mappins\\interaction\\quick_hack_mappin.inkwidget", t"MappinUISpawnProfile.Always", defaultRuntimeProfile);
   };
   if Equals(mappinVariant, gamedataMappinVariant.VehicleVariant) {
     return MappinUIProfile.Create(defaultWidgetResource, t"MappinUISpawnProfile.LongRange", t"WorldMappinUIProfile.Vehicle");
   };
   if gameplayRoleData != null {
     if Equals(mappinVariant, gamedataMappinVariant.FocusClueVariant) {
-      return MappinUIProfile.Create(r"base\gameplay\gui\widgets\mappins\gameplay\gameplay_mappin.inkwidget", t"MappinUISpawnProfile.Always", t"WorldMappinUIProfile.FocusClue");
+      return MappinUIProfile.Create(r"base\\gameplay\\gui\\widgets\\mappins\\gameplay\\gameplay_mappin.inkwidget", t"MappinUISpawnProfile.Always", t"WorldMappinUIProfile.FocusClue");
     };
-    return MappinUIProfile.Create(r"base\gameplay\gui\widgets\mappins\gameplay\gameplay_mappin.inkwidget", t"MappinUISpawnProfile.Always", t"WorldMappinUIProfile.GameplayRole");
+    return MappinUIProfile.Create(r"base\\gameplay\\gui\\widgets\\mappins\\gameplay\\gameplay_mappin.inkwidget", t"MappinUISpawnProfile.Always", t"WorldMappinUIProfile.GameplayRole");
   };
   if Equals(mappinVariant, gamedataMappinVariant.FastTravelVariant) {
-    return MappinUIProfile.Create(defaultWidgetResource, t"MappinUISpawnProfile.LongRange", t"WorldMappinUIProfile.FastTravel"); // changed here
+    return MappinUIProfile.Create(defaultWidgetResource, t"MappinUISpawnProfile.LongRange", t"WorldMappinUIProfile.FastTravel");
   };
   if Equals(mappinVariant, gamedataMappinVariant.ServicePointDropPointVariant) {
     return MappinUIProfile.Create(defaultWidgetResource, t"MappinUISpawnProfile.ShortRange", t"WorldMappinUIProfile.DropPoint");
   };
   if mappin.IsQuestMappin() {
-    questMappin = (mappin as QuestMappin);
-    if NotEquals(questMappin, null) {
+    questMappin = mappin as QuestMappin;
+    if IsDefined(questMappin) {
       if questMappin.IsUIAnimation() {
         questAnimationRecord = TweakDBInterface.GetUIAnimationRecord(questMappin.GetUIAnimationRecordID());
         if ResRef.IsValid(questAnimationRecord.WidgetResource()) && NotEquals(questAnimationRecord.AnimationName(), n"") {
