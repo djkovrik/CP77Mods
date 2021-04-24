@@ -56,26 +56,20 @@ public func IsRelatedToVehicleQuest(mappin: wref<IMappin>) -> Bool {
   return NotEquals(mappinQuest, null) && Equals(mappinQuest.GetType(), gameJournalQuestType.VehicleQuest);
 }
 
-// Hide mappin
 @replaceMethod(WorldMapMenuGameController)
 public func CreateMappinUIProfile(mappin: wref<IMappin>, mappinVariant: gamedataMappinVariant, customData: ref<MappinControllerCustomData>) -> MappinUIProfile {
-  let isHidden: Bool;
-  let isVehicleQuest: Bool;
-  let isTracked: Bool;
-  let widgetResource: ResRef;
-
-  isHidden = DeclutterWorldMapConfig.ShouldHideThisOne(mappin.GetVariant());
-  isVehicleQuest = this.IsRelatedToVehicleQuest(mappin);
-  isTracked = mappin.IsPlayerTracked();
+  let isHidden: Bool = DeclutterWorldMapConfig.ShouldHideThisOne(mappin.GetVariant());
+  let isVehicleQuest: Bool = this.IsRelatedToVehicleQuest(mappin);
+  let isTracked: Bool = mappin.IsPlayerTracked();
+  let widgetResource: ResRef = r"base\\gameplay\\gui\\fullscreen\\world_map\\mappins\\default_mappin.inkwidget";
 
   if (isHidden && !isTracked) || (DeclutterWorldMapConfig.ShouldHideVehicleQuests() && isVehicleQuest && !isTracked) {
     return MappinUIProfile.None();
   };
 
-  widgetResource = r"base\gameplay\gui\fullscreen\world_map\mappins\default_mappin.inkwidget";
-  if NotEquals(customData, null) {
+  if IsDefined(customData) {
     if customData.IsA(n"gameuiWorldMapPlayerInitData") {
-      widgetResource = r"base\gameplay\gui\fullscreen\world_map\mappins\player_mappin.inkwidget";
+      widgetResource = r"base\\gameplay\\gui\\fullscreen\\world_map\\mappins\\player_mappin.inkwidget";
     };
   };
   return MappinUIProfile.Create(widgetResource, t"MappinUISpawnProfile.Always", t"MapMappinUIProfile.Default");

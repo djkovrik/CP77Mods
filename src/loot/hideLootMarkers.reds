@@ -1,80 +1,97 @@
-static func GetVisibilityTypeFor(quality: gamedataQuality, isShard: Bool, isIconic: Bool) -> Int32 {
-//  Here you can define visibility behavior for loot and shard markers
-//  Visibility types:
-//    1 - visible through walls
-//    2 - visible for line of sight (like default in-game behavior)
-//    3 - visible only when scanner is active
-//    4 - hidden
+enum MarkerVisibility { ThroughWalls = 0, LineOfSight = 1, Scanner = 2, Hidden = 3, Default = 4 }
 
-// --- Сonfiguration block starts here ---
+// Visibility types:
+//   * MarkerVisibility.ThroughWalls - visible through walls
+//   * MarkerVisibility.LineOfSight - visible when V sees it (very similar to default in-game behavior)
+//   * MarkerVisibility.Scanner - visible only when scanner is active 
+//   * MarkerVisibility.Hidden - not visible at all
+//   * MarkerVisibility.Default - means do not change default game behavior, this variant was added 
+//     just for scripting convenience so in most cases you probably want to use LineOfSight
 
-  let markersVisibilityIconic = 1;      // Gold + Unique
-  let markersVisibilityLegendary = 1;   // Gold
-  let markersVisibilityEpic = 2;        // Purple
-  let markersVisibilityRare = 3;        // Blue
-  let markersVisibilityUncommon = 3;    // Green
-  let markersVisibilityCommon = 4;      // White
+// -- CONFIG SECTION STARTS HERE --
+class LootConfig {
+  // Visibility for Iconic items
+  public static func Iconic() -> MarkerVisibility = MarkerVisibility.ThroughWalls
+  // Visibility for Legendary items (gold)
+  public static func Legendary() -> MarkerVisibility = MarkerVisibility.ThroughWalls
+  // Visibility for Epic items (purple)
+  public static func Epic() -> MarkerVisibility = MarkerVisibility.LineOfSight
+  // Visibility for Rate items (blue)
+  public static func Rare() -> MarkerVisibility = MarkerVisibility.Scanner
+  // Visibility for Uncommon items (green)
+  public static func Uncommon() -> MarkerVisibility = MarkerVisibility.Scanner
+  // Visibility for Common items (white)
+  public static func Common() -> MarkerVisibility = MarkerVisibility.Hidden
+  // Visibility for Shards
+  public static func Shards() -> MarkerVisibility = MarkerVisibility.LineOfSight
+}
 
-  let markersVisibilityShard = 2;
-  
-// --- Сonfiguration block ends here ---
+class WorldConfig {
+  // Replace false with true if you want to hide icons for containers where you can hide bodies
+  public static func HideBodyContainers() -> Bool = false
+  // Replace false with true if you want to hide icons for cameras
+  public static func HideCameras() -> Bool = false
+  // Replace false with true if you want to hide icons for distraction objects
+  public static func HideDistractions() -> Bool = false
+  // Replace false with true if you want to hide icons for explosive objects
+  public static func HideExplosives() -> Bool = false
+}
+// -- CONFIG SECTION ENDS HERE --
 
+public static func GetVisibilityTypeFor(data: SDeviceMappinData) -> MarkerVisibility {
+  let isShard: Bool = Equals(data.visualStateData.m_textureID, t"MappinIcons.ShardMappin");
+  let isIconic: Bool = data.visualStateData.m_isIconic;
+  let role: EGameplayRole = data.gameplayRole;
+  let quality: gamedataQuality = data.visualStateData.m_quality;
+
+  // Shard check
   if isShard {
-    return markersVisibilityShard;
+    return LootConfig.Shards();
   }
 
+  // Iconic check
   if isIconic {
-    return markersVisibilityIconic;
+    return LootConfig.Iconic();
   }
 
-  switch quality {
-    case gamedataQuality.Iconic: return markersVisibilityIconic;
-    case gamedataQuality.Legendary: return markersVisibilityLegendary;
-    case gamedataQuality.Epic: return markersVisibilityEpic;
-    case gamedataQuality.Rare: return markersVisibilityRare;
-    case gamedataQuality.Uncommon: return markersVisibilityUncommon;
-    case gamedataQuality.Common: return markersVisibilityCommon;
+  // Bodies check
+  if WorldConfig.HideBodyContainers() && Equals(role, EGameplayRole.HideBody) {
+    return MarkerVisibility.Hidden;
+  }
 
-    default: return markersVisibilityCommon;
+  // Camera check
+  if WorldConfig.HideCameras() && Equals(role, EGameplayRole.Alarm) {
+    return MarkerVisibility.Hidden;
+  }
+
+  // Distraction check
+  if WorldConfig.HideDistractions() && (Equals(role, EGameplayRole.Distract) || Equals(role, EGameplayRole.Fall)) {
+    return MarkerVisibility.Hidden;
+  }
+
+  // Explosive check
+  if WorldConfig.HideExplosives() && (Equals(role, EGameplayRole.ExplodeLethal) || Equals(role, EGameplayRole.ExplodeNoneLethal)) {
+    return MarkerVisibility.Hidden;
+  }
+
+  // Quality check
+  if Equals(data.visualStateData.m_textureID, t"MappinIcons.LootMappin") {
+    switch(quality) {
+      case gamedataQuality.Iconic: return LootConfig.Iconic();
+      case gamedataQuality.Legendary: return LootConfig.Legendary();
+      case gamedataQuality.Epic: return LootConfig.Epic();
+      case gamedataQuality.Rare: return LootConfig.Rare();
+      case gamedataQuality.Uncommon: return LootConfig.Uncommon();
+      case gamedataQuality.Common: return LootConfig.Common();
+
+      default: return MarkerVisibility.Default;
+    };
   };
+
+  return MarkerVisibility.Default;
 }
 
-// -- Utils
-static func ToString(quality: gamedataQuality) -> String {
-  return UIItemsHelper.QualityEnumToString(quality);
-}
-
-static func IsLootQuality(quality: gamedataQuality) -> Bool {
-  return Equals(quality, gamedataQuality.Iconic)
-    || Equals(quality, gamedataQuality.Legendary)
-    || Equals(quality, gamedataQuality.Epic)
-    || Equals(quality, gamedataQuality.Rare)
-    || Equals(quality, gamedataQuality.Uncommon)
-    || Equals(quality, gamedataQuality.Common);
-}
-
-static func IsLootMarker(data: SDeviceMappinData) -> Bool {
-  return IsLootQuality(data.visualStateData.m_quality) 
-    && (Equals(data.gameplayRole, EGameplayRole.Loot) || Equals(data.gameplayRole, EGameplayRole.NPC));
-}
-
-static func ShouldShowThroughWalls(quality: gamedataQuality, isShard: Bool, isIconic: Bool) -> Bool {
-  return Equals(GetVisibilityTypeFor(quality, isShard, isIconic), 1);
-}
-
-static func ShouldShowLineOfSight(quality: gamedataQuality, isShard: Bool, isIconic: Bool) -> Bool {
-  return Equals(GetVisibilityTypeFor(quality, isShard, isIconic), 2);
-}
-
-static func ShouldShowIfScannerActive(quality: gamedataQuality, isShard: Bool, isIconic: Bool) -> Bool {
-  return Equals(GetVisibilityTypeFor(quality, isShard, isIconic), 3);
-}
-
-static func ShouldHide(quality: gamedataQuality, isShard: Bool, isIconic: Bool) -> Bool {
-  return Equals(GetVisibilityTypeFor(quality, isShard, isIconic), 4);
-}
-
-// -- Adds
+// -- Add
 @addMethod(HUDManager)
 public func IsScannerActive() -> Bool {
   return Equals(this.m_activeMode, ActiveMode.FOCUS);
@@ -90,49 +107,42 @@ public func IsScannerActive() -> Bool {
 
 @addMethod(GameplayRoleComponent)
 func EvaluateVisibilities() -> Void {
-  let i: Int32;
-  let isLootMarker: Bool;
-  let quality: gamedataQuality;
-  let isIconic: Bool;
-  let isShardMarker: Bool;
-  let isScannerActive: Bool;
-  let shouldShowLineOfSight: Bool;
-  let shouldShowIfScannerActive: Bool;
-  let shouldHide: Bool;
+  let isScannerActive: Bool = this.IsScannerActive();
+  let i: Int32 = 0;
+  let visibility: MarkerVisibility;
 
-  isScannerActive = this.IsScannerActive();
-
-  i = 0;
   while i < ArraySize(this.m_mappins) {
-    if NotEquals(this.m_mappins[i].gameplayRole, EGameplayRole.UnAssigned) {
-      isLootMarker = IsLootMarker(this.m_mappins[i]);
+    if NotEquals(this.m_mappins[i].gameplayRole, IntEnum(0)) || NotEquals(this.m_mappins[i].gameplayRole, IntEnum(1)) {
+      visibility = GetVisibilityTypeFor(this.m_mappins[i]);
 
-      if isLootMarker {
-        quality = this.m_mappins[i].visualStateData.m_quality;
-        isIconic = this.m_mappins[i].visualStateData.m_isIconic;
-        isShardMarker = Equals(this.m_mappins[i].visualStateData.m_textureID, t"MappinIcons.ShardMappin");
-        shouldShowLineOfSight = ShouldShowLineOfSight(quality, isShardMarker, isIconic);
-        shouldShowIfScannerActive = ShouldShowIfScannerActive(quality, isShardMarker, isIconic);
-        shouldHide = ShouldHide(quality, isShardMarker, isIconic);
-
-        if shouldHide {
+      switch(visibility) {
+        case MarkerVisibility.ThroughWalls:
+          MarkersLog("> ThroughWalls for: " + ToStr(this.m_mappins[i]));
+          this.ToggleMappin(i, true);
+          break;
+        case MarkerVisibility.LineOfSight:
+          MarkersLog("> LineOfSight for: " + ToStr(this.m_mappins[i]));
+          this.ToggleMappin(i, true);
+          break;
+        case MarkerVisibility.Scanner:
+          MarkersLog("> Scanner for: " + ToStr(this.m_mappins[i]));
+          this.ToggleMappin(i, isScannerActive);
+          break;
+        case MarkerVisibility.Hidden:
+          MarkersLog("> Hidden for: " + ToStr(this.m_mappins[i]));
           this.ToggleMappin(i, false);
-        } else {
-          if shouldShowIfScannerActive {
-            this.ToggleMappin(i, isScannerActive);
-          } else {
-            if shouldShowLineOfSight {
-              this.ToggleMappin(i, true);
-            };
-          };
-        };
+          break;
+        case MarkerVisibility.Default:
+          MarkersLog("> Default for: " + ToStr(this.m_mappins[i]));
+          // do nothing
+          break;
       };
     };
     i += 1;
   };
 }
 
-// -- Overrides
+// -- Override
 @replaceMethod(GameplayRoleComponent)
 protected final func OnGameAttach() -> Void {
   this.m_currentGameplayRole = this.m_gameplayRole;
@@ -167,26 +177,78 @@ protected cb func OnHUDInstruction(evt: ref<HUDInstruction>) -> Bool {
 
 @replaceMethod(GameplayRoleComponent)
 private final func CreateRoleMappinData(data: SDeviceMappinData) -> ref<GameplayRoleMappinData> {
-  let roleMappinData: ref<GameplayRoleMappinData>;
-  let quality: gamedataQuality;
-  let isShard: Bool;
-  let isIconic: Bool;
-  quality = this.GetOwner().GetLootQuality();
-  isShard = this.GetOwner().IsShardContainer();
-  isIconic = this.GetOwner().GetIsIconic();
-  roleMappinData = new GameplayRoleMappinData();
+  let roleMappinData: ref<GameplayRoleMappinData> = new GameplayRoleMappinData();
   roleMappinData.m_mappinVisualState = this.GetOwner().DeterminGameplayRoleMappinVisuaState(data);
   roleMappinData.m_isTagged = this.GetOwner().IsTaggedinFocusMode();
   roleMappinData.m_isQuest = this.GetOwner().IsQuest() || this.GetOwner().IsAnyClueEnabled() && !this.GetOwner().IsClueInspected();
-  roleMappinData.m_visibleThroughWalls = this.m_isForcedVisibleThroughWalls || this.GetOwner().IsObjectRevealed() || this.IsCurrentTarget() || ShouldShowThroughWalls(quality, isShard, isIconic);
+  // roleMappinData.m_visibleThroughWalls = this.m_isForcedVisibleThroughWalls || this.GetOwner().IsObjectRevealed() || this.IsCurrentTarget();
+  roleMappinData.m_visibleThroughWalls = this.m_isForcedVisibleThroughWalls || this.GetOwner().IsObjectRevealed() || this.IsCurrentTarget() || Equals(GetVisibilityTypeFor(data), MarkerVisibility.ThroughWalls);
   roleMappinData.m_range = this.GetOwner().DeterminGameplayRoleMappinRange(data);
   roleMappinData.m_isCurrentTarget = this.IsCurrentTarget();
   roleMappinData.m_gameplayRole = this.m_currentGameplayRole;
   roleMappinData.m_braindanceLayer = this.GetOwner().GetBraindanceLayer();
-  roleMappinData.m_quality = quality;
+  roleMappinData.m_quality = this.GetOwner().GetLootQuality();
   roleMappinData.m_isIconic = this.GetOwner().GetIsIconic();
   roleMappinData.m_hasOffscreenArrow = this.HasOffscreenArrow();
   roleMappinData.m_isScanningCluesBlocked = this.GetOwner().IsAnyClueEnabled() && this.GetOwner().IsScaningCluesBlocked();
   roleMappinData.m_textureID = this.GetIconIdForMappinVariant(data.mappinVariant);
+  let showOnMiniMap: Bool;
+  if roleMappinData.m_isQuest && roleMappinData.m_textureID != t"MappinIcons.ShardMappin" || roleMappinData.m_isTagged {
+    showOnMiniMap = true;
+  } else {
+    if NotEquals(data.mappinVariant, gamedataMappinVariant.LootVariant) && (roleMappinData.m_isCurrentTarget || roleMappinData.m_visibleThroughWalls) {
+      showOnMiniMap = true;
+    } else {
+      showOnMiniMap = false;
+    };
+  };
+  roleMappinData.m_showOnMiniMap = showOnMiniMap;
   return roleMappinData;
+}
+
+// UTILS FOR DEBUGGING
+
+static func RoleToStr(role: EGameplayRole) -> String {
+  switch(role) {
+    case EGameplayRole.UnAssigned: return "UnAssigned";
+    case EGameplayRole.Alarm: return "Alarm";
+    case EGameplayRole.ControlNetwork: return "ControlNetwork";
+    case EGameplayRole.ControlOtherDevice: return "ControlOtherDevice";
+    case EGameplayRole.ControlSelf: return "ControlSelf";
+    case EGameplayRole.CutPower: return "CutPower";
+    case EGameplayRole.Distract: return "Distract";
+    case EGameplayRole.DropPoint: return "DropPoint";
+    case EGameplayRole.ExplodeLethal: return "ExplodeLethal";
+    case EGameplayRole.ExplodeNoneLethal: return "ExplodeNoneLethal";
+    case EGameplayRole.Fall: return "Fall";
+    case EGameplayRole.FastTravel: return "FastTravel";
+    case EGameplayRole.GrantInformation: return "GrantInformation";
+    case EGameplayRole.HazardWarning: return "HazardWarning";
+    case EGameplayRole.HideBody: return "HideBody";
+    case EGameplayRole.Loot: return "Loot";
+    case EGameplayRole.OpenPath: return "OpenPath";
+    case EGameplayRole.ClearPath: return "ClearPath";
+    case EGameplayRole.Push: return "Push";
+    case EGameplayRole.ServicePoint: return "ServicePoint";
+    case EGameplayRole.Shoot: return "Shoot";
+    case EGameplayRole.SpreadGas: return "SpreadGas";
+    case EGameplayRole.StoreItems: return "StoreItems";
+    case EGameplayRole.GenericRole: return "GenericRole";
+    case EGameplayRole.ClearPathAd: return "ClearPathAd";
+    case EGameplayRole.DistractVendingMachine: return "DistractVendingMachine";
+    case EGameplayRole.NPC: return "NPC";
+    case EGameplayRole.Clue: return "Clue";
+
+    default: return "Undefined";
+  }
+}
+
+static func ToStr(data: SDeviceMappinData) -> String {
+  return "role: " + RoleToStr(data.visualStateData.m_gameplayRole) 
+    + ", quality: " + UIItemsHelper.QualityEnumToString(data.visualStateData.m_quality)
+    + ", textureId: " + TDBID.ToStringDEBUG(data.visualStateData.m_textureID);
+}
+
+static func MarkersLog(str: String) -> Void {
+  // Log(str);
 }
