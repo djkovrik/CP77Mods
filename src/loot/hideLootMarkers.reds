@@ -27,14 +27,20 @@ class LootConfig {
 }
 
 class WorldConfig {
+  // Replace false with true if you want to hide icons for access points
+  public static func HideAccessPoints() -> Bool = false
   // Replace false with true if you want to hide icons for containers where you can hide bodies
   public static func HideBodyContainers() -> Bool = false
   // Replace false with true if you want to hide icons for cameras
   public static func HideCameras() -> Bool = false
+  // Replace false with true if you want to hide icons for doors
+  public static func HideDoors() -> Bool = false
   // Replace false with true if you want to hide icons for distraction objects
   public static func HideDistractions() -> Bool = false
   // Replace false with true if you want to hide icons for explosive objects
   public static func HideExplosives() -> Bool = false
+  // Replace false with true if you want to hide icons for misc network devices (computers, smart screens etc.)
+  public static func HideNetworking() -> Bool = false
 }
 // -- CONFIG SECTION ENDS HERE --
 
@@ -54,6 +60,11 @@ public static func GetVisibilityTypeFor(data: SDeviceMappinData) -> MarkerVisibi
     return LootConfig.Iconic();
   }
 
+  // Access point check
+  if WorldConfig.HideAccessPoints() && Equals(role, EGameplayRole.ControlNetwork) {
+    return MarkerVisibility.Hidden;
+  }
+
   // Bodies check
   if WorldConfig.HideBodyContainers() && Equals(role, EGameplayRole.HideBody) {
     return MarkerVisibility.Hidden;
@@ -64,6 +75,11 @@ public static func GetVisibilityTypeFor(data: SDeviceMappinData) -> MarkerVisibi
     return MarkerVisibility.Hidden;
   }
 
+  // Door check
+  if WorldConfig.HideDoors() && Equals(role, EGameplayRole.OpenPath) {
+    return MarkerVisibility.Hidden;
+  }
+
   // Distraction check
   if WorldConfig.HideDistractions() && (Equals(role, EGameplayRole.Distract) || Equals(role, EGameplayRole.Fall)) {
     return MarkerVisibility.Hidden;
@@ -71,6 +87,11 @@ public static func GetVisibilityTypeFor(data: SDeviceMappinData) -> MarkerVisibi
 
   // Explosive check
   if WorldConfig.HideExplosives() && (Equals(role, EGameplayRole.ExplodeLethal) || Equals(role, EGameplayRole.ExplodeNoneLethal)) {
+    return MarkerVisibility.Hidden;
+  }
+
+  // Networking check
+  if WorldConfig.HideNetworking() && (Equals(role, EGameplayRole.ControlSelf) || Equals(role, EGameplayRole.GrantInformation)) {
     return MarkerVisibility.Hidden;
   }
 
