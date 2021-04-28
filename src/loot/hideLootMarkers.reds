@@ -221,11 +221,6 @@ protected cb func OnHUDInstruction(evt: ref<HUDInstruction>) -> Bool {
 }
 
 @replaceMethod(GameplayRoleComponent)
-private final const func IsHighlightedInFocusMode() -> Bool {
-  return this.m_isHighlightedInFocusMode || Equals(this.m_gameplayRole, EGameplayRole.Loot);
-}
-
-@replaceMethod(GameplayRoleComponent)
 public final func HideRoleMappins() -> Void {
   let i: Int32 = 0;
   let invalidID: NewMappinID;
