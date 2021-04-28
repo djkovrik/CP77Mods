@@ -44,13 +44,37 @@ class WorldConfig {
 }
 
 class MiniMapConfig {
-  // Replace false with true if you want to hide unaggressive enemies on minimap
-  public static func HideEnemies() -> Bool = true
+  // Replace false with true for loot quality markers which you want to hide from minimap
+  // Keep in mind that LootConfig has priority over this so it works only for Scanner and Hidden visibility options
+  public static func HideLegendary() -> Bool = false
+  public static func HideEpic() -> Bool = false
+  public static func HideRare() -> Bool = false
+  public static func HideUncommon() -> Bool = false
+  public static func HideCommon() -> Bool = false
+  // Replace false with true if you want to hide enemies on minimap
+  public static func HideEnemies() -> Bool = false
 }
 // -- CONFIG SECTION ENDS HERE --
 
 
-// HIDE WORLDWIDE:
+// ----------------- UTILS-----------------
+
+static func IsLootQuality(quality: gamedataQuality) -> Bool {
+  return Equals(quality, gamedataQuality.Iconic)
+    || Equals(quality, gamedataQuality.Legendary)
+    || Equals(quality, gamedataQuality.Epic)
+    || Equals(quality, gamedataQuality.Rare)
+    || Equals(quality, gamedataQuality.Uncommon)
+    || Equals(quality, gamedataQuality.Common);
+}
+
+static func IsLootMarker(data: SDeviceMappinData) -> Bool {
+  return IsLootQuality(data.visualStateData.m_quality) && (Equals(data.gameplayRole, EGameplayRole.Loot) || Equals(data.gameplayRole, EGameplayRole.NPC));
+}
+
+
+// ----------------- HIDE WORLDWIDE -----------------
+
 public static func GetVisibilityTypeFor(data: SDeviceMappinData) -> MarkerVisibility {
   let isShard: Bool = Equals(data.visualStateData.m_textureID, t"MappinIcons.ShardMappin");
   let isIconic: Bool = data.visualStateData.m_isIconic;
@@ -72,7 +96,7 @@ public static func GetVisibilityTypeFor(data: SDeviceMappinData) -> MarkerVisibi
     return MarkerVisibility.Hidden;
   }
 
-  // Bodies check
+  // Body container check
   if WorldConfig.HideBodyContainers() && Equals(role, EGameplayRole.HideBody) {
     return MarkerVisibility.Hidden;
   }
@@ -111,15 +135,13 @@ public static func GetVisibilityTypeFor(data: SDeviceMappinData) -> MarkerVisibi
       case gamedataQuality.Rare: return LootConfig.Rare();
       case gamedataQuality.Uncommon: return LootConfig.Uncommon();
       case gamedataQuality.Common: return LootConfig.Common();
-
-      default: return MarkerVisibility.Default;
     };
   };
 
   return MarkerVisibility.Default;
 }
 
-// -- Add
+// -- Adds
 @addMethod(HUDManager)
 public func IsScannerActive() -> Bool {
   return Equals(this.m_activeMode, ActiveMode.FOCUS);
@@ -145,23 +167,18 @@ func EvaluateVisibilities() -> Void {
 
       switch(visibility) {
         case MarkerVisibility.ThroughWalls:
-          MarkersLog("> ThroughWalls for: " + ToStr(this.m_mappins[i]));
           this.ToggleMappin(i, true);
           break;
         case MarkerVisibility.LineOfSight:
-          MarkersLog("> LineOfSight for: " + ToStr(this.m_mappins[i]));
           this.ToggleMappin(i, true);
           break;
         case MarkerVisibility.Scanner:
-          MarkersLog("> Scanner for: " + ToStr(this.m_mappins[i]));
           this.ToggleMappin(i, isScannerActive);
           break;
         case MarkerVisibility.Hidden:
-          MarkersLog("> Hidden for: " + ToStr(this.m_mappins[i]));
           this.ToggleMappin(i, false);
           break;
         case MarkerVisibility.Default:
-          MarkersLog("> Default for: " + ToStr(this.m_mappins[i]));
           // do nothing
           break;
       };
@@ -170,7 +187,7 @@ func EvaluateVisibilities() -> Void {
   };
 }
 
-// -- Override
+// -- Overrides
 @replaceMethod(GameplayRoleComponent)
 protected final func OnGameAttach() -> Void {
   this.m_currentGameplayRole = this.m_gameplayRole;
@@ -204,37 +221,58 @@ protected cb func OnHUDInstruction(evt: ref<HUDInstruction>) -> Bool {
 }
 
 @replaceMethod(GameplayRoleComponent)
+private final const func IsHighlightedInFocusMode() -> Bool {
+  return this.m_isHighlightedInFocusMode || Equals(this.m_gameplayRole, EGameplayRole.Loot);
+}
+
+@replaceMethod(GameplayRoleComponent)
+public final func HideRoleMappins() -> Void {
+  let i: Int32 = 0;
+  let invalidID: NewMappinID;
+  while i < ArraySize(this.m_mappins) {
+    if Equals(this.m_mappins[i].gameplayRole, IntEnum(1l)) && Equals(this.m_mappins[i].gameplayRole, EGameplayRole.UnAssigned) {
+    } else {
+      if this.m_mappins[i].permanent && this.m_mappins[i].active {
+      } else {
+        if this.m_mappins[i].active || !this.m_mappins[i].active && NotEquals(this.m_mappins[i].id, invalidID) && !IsLootMarker(this.m_mappins[i]) {
+          this.m_isShowingMappins = false;
+          this.DeactivateSingleMappin(i);
+        };
+      };
+    };
+    i += 1;
+  };
+}
+
+@replaceMethod(GameplayRoleComponent)
 private final func CreateRoleMappinData(data: SDeviceMappinData) -> ref<GameplayRoleMappinData> {
-  let roleMappinData: ref<GameplayRoleMappinData> = new GameplayRoleMappinData();
+  let roleMappinData: ref<GameplayRoleMappinData>;
+  let quality: gamedataQuality;
+  let isShard: Bool;
+  let isIconic: Bool;
+  quality = this.GetOwner().GetLootQuality();
+  isShard = this.GetOwner().IsShardContainer();
+  isIconic = this.GetOwner().GetIsIconic();
+  roleMappinData = new GameplayRoleMappinData();
   roleMappinData.m_mappinVisualState = this.GetOwner().DeterminGameplayRoleMappinVisuaState(data);
   roleMappinData.m_isTagged = this.GetOwner().IsTaggedinFocusMode();
   roleMappinData.m_isQuest = this.GetOwner().IsQuest() || this.GetOwner().IsAnyClueEnabled() && !this.GetOwner().IsClueInspected();
-  // roleMappinData.m_visibleThroughWalls = this.m_isForcedVisibleThroughWalls || this.GetOwner().IsObjectRevealed() || this.IsCurrentTarget();
   roleMappinData.m_visibleThroughWalls = this.m_isForcedVisibleThroughWalls || this.GetOwner().IsObjectRevealed() || this.IsCurrentTarget() || Equals(GetVisibilityTypeFor(data), MarkerVisibility.ThroughWalls);
   roleMappinData.m_range = this.GetOwner().DeterminGameplayRoleMappinRange(data);
   roleMappinData.m_isCurrentTarget = this.IsCurrentTarget();
   roleMappinData.m_gameplayRole = this.m_currentGameplayRole;
   roleMappinData.m_braindanceLayer = this.GetOwner().GetBraindanceLayer();
-  roleMappinData.m_quality = this.GetOwner().GetLootQuality();
+  roleMappinData.m_quality = quality;
   roleMappinData.m_isIconic = this.GetOwner().GetIsIconic();
   roleMappinData.m_hasOffscreenArrow = this.HasOffscreenArrow();
   roleMappinData.m_isScanningCluesBlocked = this.GetOwner().IsAnyClueEnabled() && this.GetOwner().IsScaningCluesBlocked();
   roleMappinData.m_textureID = this.GetIconIdForMappinVariant(data.mappinVariant);
-  let showOnMiniMap: Bool;
-  if roleMappinData.m_isQuest && roleMappinData.m_textureID != t"MappinIcons.ShardMappin" || roleMappinData.m_isTagged {
-    showOnMiniMap = true;
-  } else {
-    if NotEquals(data.mappinVariant, gamedataMappinVariant.LootVariant) && (roleMappinData.m_isCurrentTarget || roleMappinData.m_visibleThroughWalls) {
-      showOnMiniMap = true;
-    } else {
-      showOnMiniMap = false;
-    };
-  };
-  roleMappinData.m_showOnMiniMap = showOnMiniMap;
   return roleMappinData;
 }
 
-// HIDE FOR MINIMAP:
+
+// ----------------- HIDE FOR MINIMAP -----------------
+
 @replaceMethod(MinimapStealthMappinController)
 protected func Update() -> Void {
   let gameObject: wref<GameObject> = this.m_stealthMappin.GetGameObject();
@@ -260,6 +298,7 @@ protected func Update() -> Void {
   let shouldShowVisionCone: Bool;
   let squadInCombat: Bool;
   let isOnSameFloor: Bool;
+  let lootToCheck: Uint32;
   if this.m_isDevice {
     this.m_isAggressive = NotEquals(attitude, EAIAttitude.AIA_Friendly);
     if this.m_isAggressive {
@@ -310,8 +349,19 @@ protected func Update() -> Void {
     };
   };
   // Hide enemies
-  if MiniMapConfig.HideEnemies() && NotEquals(attitude, EAIAttitude.AIA_Friendly) && this.m_isAlive {
+  if MiniMapConfig.HideEnemies() && this.m_isAlive && NotEquals(attitude, EAIAttitude.AIA_Friendly) {
     shouldShowMappin = false;
+  };
+  // Loot checks
+  if !this.m_isAlive {
+    lootToCheck = this.m_stealthMappin.GetHighestLootQuality();
+    if (MiniMapConfig.HideLegendary() && Equals(lootToCheck, 4u))
+      || (MiniMapConfig.HideEpic() && Equals(lootToCheck, 3u))
+      || (MiniMapConfig.HideRare() && Equals(lootToCheck, 2u))
+      || (MiniMapConfig.HideUncommon() && Equals(lootToCheck, 1u))
+      || (MiniMapConfig.HideCommon() && Equals(lootToCheck, 0u)) {
+        shouldShowMappin = false;
+      };
   };
   this.SetForceHide(!shouldShowMappin);
   if shouldShowMappin {
@@ -405,51 +455,4 @@ protected func Update() -> Void {
   this.m_wasSquadInCombat = this.m_isSquadInCombat;
   this.m_wasVisible = shouldShowMappin;
   super.Update();
-}
-
-
-// UTILS FOR DEBUGGING
-static func RoleToStr(role: EGameplayRole) -> String {
-  switch(role) {
-    case EGameplayRole.UnAssigned: return "UnAssigned";
-    case EGameplayRole.Alarm: return "Alarm";
-    case EGameplayRole.ControlNetwork: return "ControlNetwork";
-    case EGameplayRole.ControlOtherDevice: return "ControlOtherDevice";
-    case EGameplayRole.ControlSelf: return "ControlSelf";
-    case EGameplayRole.CutPower: return "CutPower";
-    case EGameplayRole.Distract: return "Distract";
-    case EGameplayRole.DropPoint: return "DropPoint";
-    case EGameplayRole.ExplodeLethal: return "ExplodeLethal";
-    case EGameplayRole.ExplodeNoneLethal: return "ExplodeNoneLethal";
-    case EGameplayRole.Fall: return "Fall";
-    case EGameplayRole.FastTravel: return "FastTravel";
-    case EGameplayRole.GrantInformation: return "GrantInformation";
-    case EGameplayRole.HazardWarning: return "HazardWarning";
-    case EGameplayRole.HideBody: return "HideBody";
-    case EGameplayRole.Loot: return "Loot";
-    case EGameplayRole.OpenPath: return "OpenPath";
-    case EGameplayRole.ClearPath: return "ClearPath";
-    case EGameplayRole.Push: return "Push";
-    case EGameplayRole.ServicePoint: return "ServicePoint";
-    case EGameplayRole.Shoot: return "Shoot";
-    case EGameplayRole.SpreadGas: return "SpreadGas";
-    case EGameplayRole.StoreItems: return "StoreItems";
-    case EGameplayRole.GenericRole: return "GenericRole";
-    case EGameplayRole.ClearPathAd: return "ClearPathAd";
-    case EGameplayRole.DistractVendingMachine: return "DistractVendingMachine";
-    case EGameplayRole.NPC: return "NPC";
-    case EGameplayRole.Clue: return "Clue";
-
-    default: return "Undefined";
-  }
-}
-
-static func ToStr(data: SDeviceMappinData) -> String {
-  return "role: " + RoleToStr(data.visualStateData.m_gameplayRole) 
-    + ", quality: " + UIItemsHelper.QualityEnumToString(data.visualStateData.m_quality)
-    + ", textureId: " + TDBID.ToStringDEBUG(data.visualStateData.m_textureID);
-}
-
-static func MarkersLog(str: String) -> Void {
-  // Log(str);
 }
