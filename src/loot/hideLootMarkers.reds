@@ -167,16 +167,16 @@ func EvaluateVisibilities() -> Void {
 
       switch(visibility) {
         case MarkerVisibility.ThroughWalls:
-          this.ToggleMappin(i, true);
+          this.ActivateSingleMappin(i);
           break;
         case MarkerVisibility.LineOfSight:
-          this.ToggleMappin(i, true);
+          this.ActivateSingleMappin(i);
           break;
         case MarkerVisibility.Scanner:
           this.ToggleMappin(i, isScannerActive);
           break;
         case MarkerVisibility.Hidden:
-          this.ToggleMappin(i, false);
+          this.DeactivateSingleMappin(i);
           break;
         case MarkerVisibility.Default:
           // do nothing
@@ -218,25 +218,6 @@ protected cb func OnHUDInstruction(evt: ref<HUDInstruction>) -> Bool {
   };
 
   this.EvaluateVisibilities();
-}
-
-@replaceMethod(GameplayRoleComponent)
-public final func HideRoleMappins() -> Void {
-  let i: Int32 = 0;
-  let invalidID: NewMappinID;
-  while i < ArraySize(this.m_mappins) {
-    if Equals(this.m_mappins[i].gameplayRole, IntEnum(1l)) && Equals(this.m_mappins[i].gameplayRole, EGameplayRole.UnAssigned) {
-    } else {
-      if this.m_mappins[i].permanent && this.m_mappins[i].active {
-      } else {
-        if this.m_mappins[i].active || !this.m_mappins[i].active && NotEquals(this.m_mappins[i].id, invalidID) && !IsLootMarker(this.m_mappins[i]) {
-          this.m_isShowingMappins = false;
-          this.DeactivateSingleMappin(i);
-        };
-      };
-    };
-    i += 1;
-  };
 }
 
 @replaceMethod(GameplayRoleComponent)
