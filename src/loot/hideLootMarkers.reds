@@ -45,7 +45,6 @@ class WorldConfig {
 
 class MiniMapConfig {
   // Replace false with true for loot quality markers which you want to hide from minimap
-  // Keep in mind that LootConfig has priority over this so it works only for Scanner and Hidden visibility options
   public static func HideLegendary() -> Bool = false
   public static func HideEpic() -> Bool = false
   public static func HideRare() -> Bool = false
@@ -53,27 +52,11 @@ class MiniMapConfig {
   public static func HideCommon() -> Bool = false
   // Replace false with true if you want to hide enemies on minimap
   public static func HideEnemies() -> Bool = false
+  // Replace false with true if you want to hide shards on minimap
+  public static func HideShards() -> Bool = false
 }
 // -- CONFIG SECTION ENDS HERE --
 
-
-// ----------------- UTILS-----------------
-
-static func IsLootQuality(quality: gamedataQuality) -> Bool {
-  return Equals(quality, gamedataQuality.Iconic)
-    || Equals(quality, gamedataQuality.Legendary)
-    || Equals(quality, gamedataQuality.Epic)
-    || Equals(quality, gamedataQuality.Rare)
-    || Equals(quality, gamedataQuality.Uncommon)
-    || Equals(quality, gamedataQuality.Common);
-}
-
-static func IsLootMarker(data: SDeviceMappinData) -> Bool {
-  return IsLootQuality(data.visualStateData.m_quality) && (Equals(data.gameplayRole, EGameplayRole.Loot) || Equals(data.gameplayRole, EGameplayRole.NPC));
-}
-
-
-// ----------------- HIDE WORLDWIDE -----------------
 
 public static func GetVisibilityTypeFor(data: SDeviceMappinData) -> MarkerVisibility {
   let isShard: Bool = Equals(data.visualStateData.m_textureID, t"MappinIcons.ShardMappin");
@@ -222,14 +205,7 @@ protected cb func OnHUDInstruction(evt: ref<HUDInstruction>) -> Bool {
 
 @replaceMethod(GameplayRoleComponent)
 private final func CreateRoleMappinData(data: SDeviceMappinData) -> ref<GameplayRoleMappinData> {
-  let roleMappinData: ref<GameplayRoleMappinData>;
-  let quality: gamedataQuality;
-  let isShard: Bool;
-  let isIconic: Bool;
-  quality = this.GetOwner().GetLootQuality();
-  isShard = this.GetOwner().IsShardContainer();
-  isIconic = this.GetOwner().GetIsIconic();
-  roleMappinData = new GameplayRoleMappinData();
+  let roleMappinData: ref<GameplayRoleMappinData> = new GameplayRoleMappinData();
   roleMappinData.m_mappinVisualState = this.GetOwner().DeterminGameplayRoleMappinVisuaState(data);
   roleMappinData.m_isTagged = this.GetOwner().IsTaggedinFocusMode();
   roleMappinData.m_isQuest = this.GetOwner().IsQuest() || this.GetOwner().IsAnyClueEnabled() && !this.GetOwner().IsClueInspected();
@@ -238,16 +214,61 @@ private final func CreateRoleMappinData(data: SDeviceMappinData) -> ref<Gameplay
   roleMappinData.m_isCurrentTarget = this.IsCurrentTarget();
   roleMappinData.m_gameplayRole = this.m_currentGameplayRole;
   roleMappinData.m_braindanceLayer = this.GetOwner().GetBraindanceLayer();
-  roleMappinData.m_quality = quality;
+  roleMappinData.m_quality = this.GetOwner().GetLootQuality();
   roleMappinData.m_isIconic = this.GetOwner().GetIsIconic();
   roleMappinData.m_hasOffscreenArrow = this.HasOffscreenArrow();
   roleMappinData.m_isScanningCluesBlocked = this.GetOwner().IsAnyClueEnabled() && this.GetOwner().IsScaningCluesBlocked();
   roleMappinData.m_textureID = this.GetIconIdForMappinVariant(data.mappinVariant);
+  roleMappinData.m_showOnMiniMap = this.ShouldShowOnMinimap(data, roleMappinData);
   return roleMappinData;
 }
 
+@addMethod(GameplayRoleComponent)
+private final func ShouldShowOnMinimap(data: SDeviceMappinData, roleMappinData: ref<GameplayRoleMappinData> ) -> Bool {
+  let quality: gamedataQuality = roleMappinData.m_quality;
 
-// ----------------- HIDE FOR MINIMAP -----------------
+  if MiniMapConfig.HideLegendary() && Equals(quality, gamedataQuality.Legendary) {
+    return false;
+  };
+
+  if MiniMapConfig.HideEpic() && Equals(quality, gamedataQuality.Epic) {
+    return false;
+  };
+
+  if MiniMapConfig.HideRare() && Equals(quality, gamedataQuality.Rare) {
+    return false;
+  };
+
+  if MiniMapConfig.HideUncommon() && Equals(quality, gamedataQuality.Uncommon) {
+    return false;
+  };
+
+  if MiniMapConfig.HideCommon() && Equals(quality, gamedataQuality.Common) {
+    return false;
+  };
+
+  if MiniMapConfig.HideShards() && Equals(roleMappinData.m_textureID, t"MappinIcons.ShardMappin") {
+    return false;
+  };
+
+  if Equals(data.mappinVariant, gamedataMappinVariant.LootVariant) {
+    return true;
+  }
+
+  let showOnMiniMap: Bool;
+
+  if roleMappinData.m_isQuest && roleMappinData.m_textureID != t"MappinIcons.ShardMappin" || roleMappinData.m_isTagged {
+    showOnMiniMap = true;
+  } else {
+    if roleMappinData.m_isCurrentTarget || roleMappinData.m_visibleThroughWalls || Equals(GetVisibilityTypeFor(data), MarkerVisibility.ThroughWalls) {
+      showOnMiniMap = true;
+    } else {
+      showOnMiniMap = false;
+    };
+  };
+
+  return showOnMiniMap;
+}
 
 @replaceMethod(MinimapStealthMappinController)
 protected func Update() -> Void {
