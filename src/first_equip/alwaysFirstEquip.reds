@@ -1,3 +1,46 @@
+@addField(PlayerPuppet)
+let m_skipFirstEquip: Bool;
+
+@addMethod(PlayerPuppet)
+public func SetSkipFirstEquip(skip: Bool) -> Void {
+  this.m_skipFirstEquip = skip;
+}
+
+@addMethod(PlayerPuppet)
+public func GetSkipFirstEquip() -> Bool {
+  return this.m_skipFirstEquip;
+}
+
+// Handle skip flags for different locomotion events
+@replaceMethod(LocomotionGroundEvents)
+public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  let event: Int32;
+  let playerPuppet: ref<PlayerPuppet>;
+  let animFeature: ref<AnimFeature_PlayerLocomotionStateMachine>;
+  super.OnEnter(stateContext, scriptInterface);
+  // Set skip flag after Climb or Ladder
+  event = scriptInterface.localBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.LocomotionDetailed);
+  if event == EnumInt(gamePSMDetailedLocomotionStates.Climb) || event == EnumInt(gamePSMDetailedLocomotionStates.Ladder) {
+    playerPuppet = scriptInterface.owner as PlayerPuppet;
+    if IsDefined(playerPuppet) {
+      playerPuppet.SetSkipFirstEquip(true);
+    };
+  };
+
+  stateContext.RemovePermanentBoolParameter(n"enteredFallFromAirDodge");
+  stateContext.SetPermanentIntParameter(n"currentNumberOfJumps", 0, true);
+  stateContext.SetPermanentIntParameter(n"currentNumberOfAirDodges", 0, true);
+  this.SetAudioParameter(n"RTPC_Vertical_Velocity", 0.00, scriptInterface);
+  DefaultTransition.UpdateAimAssist(stateContext, scriptInterface);
+  animFeature = new AnimFeature_PlayerLocomotionStateMachine();
+  animFeature.inAirState = false;
+  scriptInterface.SetAnimationParameterFeature(n"LocomotionStateMachine", animFeature);
+  this.SetBlackboardIntVariable(scriptInterface, GetAllBlackboardDefs().PlayerStateMachine.Fall, EnumInt(gamePSMFallStates.Default));
+  GameInstance.GetAudioSystem(scriptInterface.owner.GetGame()).NotifyGameTone(n"EnterOnGround");
+  this.StopEffect(scriptInterface, n"falling");
+  stateContext.SetConditionBoolParameter(n"JumpPressed", false, true);
+}
+
 @replaceMethod(EquipmentBaseTransition)
 protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScriptInterface>, stateContext: ref<StateContext>, stateMachineInstanceData: StateMachineInstanceData, item: ItemID) -> Void {
   let animFeature: ref<AnimFeature_EquipUnequipItem> = new AnimFeature_EquipUnequipItem();
@@ -10,13 +53,24 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
   let isInCombat: Bool = scriptInterface.localBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat) == EnumInt(gamePSMCombat.InCombat);
   let weaponEquipEvent: ref<WeaponEquipEvent>;
   let statsEvent: ref<UpdateWeaponStatsEvent>;
+  let playerPuppet: ref<PlayerPuppet>;
   if TweakDBInterface.GetBool(t"player.weapon.enableWeaponBlur", false) {
     this.GetBlurParametersFromWeapon(scriptInterface);
   };
+  
+  // If GetSkipFirstEquip then reset skip flag else play firstEquip
+  playerPuppet = scriptInterface.owner as PlayerPuppet;
   if !isInCombat {
-    weaponEquipAnimFeature.firstEquip = true;
-    stateContext.SetConditionBoolParameter(n"firstEquip", true, true);
-    // if weaponEquipAnimFeature.firstEquip = Equals(this.GetProcessedEquipmentManipulationRequest(stateMachineInstanceData, stateContext).equipAnim, gameEquipAnimationType.FirstEquip) || this.GetStaticBoolParameter("forceFirstEquip", false) || !firstEqSystem.HasPlayedFirstEquip(ItemID.GetTDBID(itemObject.GetItemID())) {
+    if IsDefined(playerPuppet) {
+      if Equals(playerPuppet.GetSkipFirstEquip(), true) {
+        playerPuppet.SetSkipFirstEquip(false);
+      } else {
+        weaponEquipAnimFeature.firstEquip = true;
+        stateContext.SetConditionBoolParameter(n"firstEquip", true, true);
+      };
+    };
+    //// Default game logic
+    // if Equals(this.GetProcessedEquipmentManipulationRequest(stateMachineInstanceData, stateContext).equipAnim, gameEquipAnimationType.FirstEquip) || this.GetStaticBoolParameter("forceFirstEquip", false) || !firstEqSystem.HasPlayedFirstEquip(ItemID.GetTDBID(itemObject.GetItemID())) {
     //   weaponEquipAnimFeature.firstEquip = true;
     //   stateContext.SetConditionBoolParameter(n"firstEquip", true, true);
     // };
