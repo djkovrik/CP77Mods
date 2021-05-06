@@ -8,9 +8,13 @@ public static func ShouldRunFirstEquip() -> Bool {
   let probability: Int32 = FirstEquipRandomizerConfig.PercentageProbability();
   let random: Int32 = RandRange(0, 100);
 
-  if probability < 0 || probability > 100 {
+  if probability < 0 {
     return false;
   };
+
+  if probability > 100 {
+    return true;
+  }
 
   return random <= probability;
 }
