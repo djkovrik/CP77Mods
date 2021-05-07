@@ -27,11 +27,11 @@ public func SetSkipFirstEquip(skip: Bool) -> Void {
 }
 
 @addMethod(PlayerPuppet)
-public func GetSkipFirstEquip() -> Bool {
+public func ShouldSkipFirstEquip() -> Bool {
   return this.m_skipFirstEquip;
 }
 
-// Handle skip flags for different locomotion events
+// Handle skip flag for different locomotion events
 @replaceMethod(LocomotionGroundEvents)
 public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
   let event: Int32;
@@ -62,6 +62,58 @@ public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateG
   stateContext.SetConditionBoolParameter(n"JumpPressed", false, true);
 }
 
+// Handle skip flag for body carrying events
+@replaceMethod(CarriedObjectEvents)
+protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  let hasWeaponEquipped: Bool = UpperBodyTransition.HasRangedWeaponEquipped(scriptInterface);
+  let carrying: Bool = scriptInterface.localBlackboard.GetBool(GetAllBlackboardDefs().PlayerStateMachine.Carrying);
+  let playerPuppet: ref<PlayerPuppet>;
+  let mountingInfo: MountingInfo = GameInstance.GetMountingFacility(scriptInterface.owner.GetGame()).GetMountingInfoSingleWithObjects(scriptInterface.owner);
+  let isNPCMounted: Bool = EntityID.IsDefined(mountingInfo.childId);
+  let attitude: EAIAttitude;
+  let slotId: MountingSlotId;
+  let mountEvent: ref<MountingRequest>;
+  let puppet: ref<gamePuppet>;
+  let workspotSystem: ref<WorkspotGameSystem>;
+  // Set flag if player and not carrying yet
+  playerPuppet = scriptInterface.executionOwner as PlayerPuppet;
+  if IsDefined(playerPuppet) && !carrying {
+    playerPuppet.SetSkipFirstEquip(hasWeaponEquipped);
+  };
+  if !isNPCMounted && !this.IsBodyDisposalOngoing(stateContext, scriptInterface) {
+    mountEvent = new MountingRequest();
+    slotId.id = n"leftShoulder";
+    mountingInfo.childId = scriptInterface.owner.GetEntityID();
+    mountingInfo.parentId = scriptInterface.executionOwner.GetEntityID();
+    mountingInfo.slotId = slotId;
+    mountEvent.lowLevelMountingInfo = mountingInfo;
+    GameInstance.GetMountingFacility(scriptInterface.executionOwner.GetGame()).Mount(mountEvent);
+    scriptInterface.owner as NPCPuppet.MountingStartDisableComponents();
+  };
+  workspotSystem = GameInstance.GetWorkspotSystem(scriptInterface.executionOwner.GetGame());
+  this.m_animFeature = new AnimFeature_Mounting();
+  this.m_animFeature.mountingState = 2;
+  this.UpdateCarryStylePickUpAndDropParams(stateContext, scriptInterface, false);
+  this.m_isFriendlyCarry = false;
+  this.m_forcedCarryStyle = gamePSMBodyCarryingStyle.Any;
+  puppet = scriptInterface.owner as gamePuppet;
+  if IsDefined(puppet) {
+    if IsDefined(workspotSystem) && !this.IsBodyDisposalOngoing(stateContext, scriptInterface) {
+      workspotSystem.StopNpcInWorkspot(puppet);
+    };
+    attitude = GameObject.GetAttitudeBetween(scriptInterface.owner, scriptInterface.executionOwner);
+    this.m_forcedCarryStyle = IntEnum(puppet.GetBlackboard().GetInt(GetAllBlackboardDefs().Puppet.ForcedCarryStyle));
+    if Equals(this.m_forcedCarryStyle, gamePSMBodyCarryingStyle.Friendly) || Equals(attitude, EAIAttitude.AIA_Friendly) && Equals(this.m_forcedCarryStyle, gamePSMBodyCarryingStyle.Any) {
+      this.m_isFriendlyCarry = true;
+    };
+    this.UpdateCarryStylePickUpAndDropParams(stateContext, scriptInterface, this.m_isFriendlyCarry);
+  };
+  scriptInterface.SetAnimationParameterFeature(n"Mounting", this.m_animFeature, scriptInterface.executionOwner);
+  scriptInterface.SetAnimationParameterFeature(n"Mounting", this.m_animFeature);
+  scriptInterface.owner as NPCPuppet.MountingStartDisableComponents();
+}
+
+// Control if firstEquip should be played
 @replaceMethod(EquipmentBaseTransition)
 protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScriptInterface>, stateContext: ref<StateContext>, stateMachineInstanceData: StateMachineInstanceData, item: ItemID) -> Void {
   let animFeature: ref<AnimFeature_EquipUnequipItem> = new AnimFeature_EquipUnequipItem();
@@ -83,7 +135,7 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
   playerPuppet = scriptInterface.owner as PlayerPuppet;
   if !isInCombat {
     if IsDefined(playerPuppet) {
-      if Equals(playerPuppet.GetSkipFirstEquip(), true) {
+      if Equals(playerPuppet.ShouldSkipFirstEquip(), true) {
         playerPuppet.SetSkipFirstEquip(false);
       } else {
         if playerPuppet.ShouldRunFirstEquip() {
