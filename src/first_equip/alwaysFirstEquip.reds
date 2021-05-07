@@ -2,8 +2,8 @@ public class FirstEquipConfig {
   // Setup the animation probability in percents, you can use values from 0 to 100 here
   // 0 means that animation never plays, 100 means that animations plays every time you equip a weapon
   public static func PercentageProbability() -> Int32 = 100
-  // Replace false with true if you want to disable firstEquip anims while in stealth mode
-  public static func DisableForStealthMode() -> Bool = false
+  // Replace false with true if you want see firstEquip animation while in stealth mode
+  public static func PlayInStealthMode() -> Bool = false
 }
 
 @addField(PlayerPuppet)
@@ -16,6 +16,7 @@ public func ShouldRunFirstEquip() -> Bool {
 
   if probability < 0 { return false; };
   if probability > 100 { return true; }
+  if !FirstEquipConfig.PlayInStealthMode() && this.m_inCrouch { return false; }
 
   return random <= probability;
 }
