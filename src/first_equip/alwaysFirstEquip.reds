@@ -1,11 +1,17 @@
+// --- CONFIG SECTION STARTS HERE:
+
 public class FirstEquipConfig {
-  // Setup the animation probability in percents, you can use values from 0 to 100 here
-  // 0 means that animation never plays, 100 means that animations plays every time you equip a weapon
-  public static func PercentageProbability() -> Int32 = 100
+  // Set the animation probability in percents, you can use values from 0 to 100 here
+  // 0 means that animation never plays, 100 means that animation always plays
+  public static func PercentageProbability() -> Int32 = 75
   // Replace false with true if you want see firstEquip animation while in stealth mode
-  public static func PlayInStealthMode() -> Bool = true
+  public static func PlayInStealthMode() -> Bool = false
 }
 
+// --- CONFIG SECTION ENDS HERE, DO NOT EDIT ANYTHING BELOW
+
+
+// -- New stuff:
 @addField(PlayerPuppet)
 let m_skipFirstEquip: Bool;
 
@@ -22,6 +28,18 @@ public func ShouldRunFirstEquip() -> Bool {
 }
 
 @addMethod(PlayerPuppet)
+public func HasRangedWeaponEquipped() -> Bool {
+  let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.GetGame());
+  let weapon: ref<WeaponObject> = transactionSystem.GetItemInSlot(this, t"AttachmentSlots.WeaponRight") as WeaponObject;
+  if IsDefined(weapon) {
+    if transactionSystem.HasTag(this, WeaponObject.GetRangedWeaponTag(), weapon.GetItemID()) {
+      return true;
+    };
+  };
+  return false;
+}
+
+@addMethod(PlayerPuppet)
 public func SetSkipFirstEquip(skip: Bool) -> Void {
   this.m_skipFirstEquip = skip;
 }
@@ -32,42 +50,33 @@ public func ShouldSkipFirstEquip() -> Bool {
 }
 
 
-// -- Handle skip flag for different locomotion events
-@replaceMethod(LocomotionGroundEvents)
+// -- Handle skip flag for locomotion events:
+@replaceMethod(LocomotionEventsTransition)
 public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
-  let event: Int32;
   let playerPuppet: ref<PlayerPuppet>;
-  let animFeature: ref<AnimFeature_PlayerLocomotionStateMachine>;
-  let hasWeaponEquipped: Bool = UpperBodyTransition.HasRangedWeaponEquipped(scriptInterface);
-  super.OnEnter(stateContext, scriptInterface);
-  // Set skip flag after Climb or Ladder
+  let event: Int32;
+  let flag = UpperBodyTransition.HasRangedWeaponEquipped(scriptInterface);
+  playerPuppet = scriptInterface.owner as PlayerPuppet;
   event = scriptInterface.localBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.LocomotionDetailed);
   if event == EnumInt(gamePSMDetailedLocomotionStates.Climb) || event == EnumInt(gamePSMDetailedLocomotionStates.Ladder) {
-    playerPuppet = scriptInterface.owner as PlayerPuppet;
     if IsDefined(playerPuppet) {
-      playerPuppet.SetSkipFirstEquip(hasWeaponEquipped);
+      playerPuppet.SetSkipFirstEquip(true);
     };
   };
 
-  stateContext.RemovePermanentBoolParameter(n"enteredFallFromAirDodge");
-  stateContext.SetPermanentIntParameter(n"currentNumberOfJumps", 0, true);
-  stateContext.SetPermanentIntParameter(n"currentNumberOfAirDodges", 0, true);
-  this.SetAudioParameter(n"RTPC_Vertical_Velocity", 0.00, scriptInterface);
-  DefaultTransition.UpdateAimAssist(stateContext, scriptInterface);
-  animFeature = new AnimFeature_PlayerLocomotionStateMachine();
-  animFeature.inAirState = false;
-  scriptInterface.SetAnimationParameterFeature(n"LocomotionStateMachine", animFeature);
-  this.SetBlackboardIntVariable(scriptInterface, GetAllBlackboardDefs().PlayerStateMachine.Fall, EnumInt(gamePSMFallStates.Default));
-  GameInstance.GetAudioSystem(scriptInterface.owner.GetGame()).NotifyGameTone(n"EnterOnGround");
-  this.StopEffect(scriptInterface, n"falling");
-  stateContext.SetConditionBoolParameter(n"JumpPressed", false, true);
+  let blockAimingFor: Float = this.GetStaticFloatParameter("softBlockAimingOnEnterFor", -1.00);
+  if blockAimingFor > 0.00 {
+    this.SoftBlockAimingForTime(stateContext, scriptInterface, blockAimingFor);
+  };
+  this.SetLocomotionParameters(stateContext, scriptInterface);
+  this.SetCollisionFilter(scriptInterface);
+  this.SetLocomotionCameraParameters(stateContext);
 }
 
-
-// -- Handle skip flag for body carrying events
+// -- Handle skip flag for body carrying events:
 @replaceMethod(CarriedObjectEvents)
 protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
-  let hasWeaponEquipped: Bool = UpperBodyTransition.HasRangedWeaponEquipped(scriptInterface);
+  let hasWeaponEquipped: Bool;
   let carrying: Bool = scriptInterface.localBlackboard.GetBool(GetAllBlackboardDefs().PlayerStateMachine.Carrying);
   let playerPuppet: ref<PlayerPuppet>;
   let mountingInfo: MountingInfo = GameInstance.GetMountingFacility(scriptInterface.owner.GetGame()).GetMountingInfoSingleWithObjects(scriptInterface.owner);
@@ -79,6 +88,7 @@ protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<Sta
   let workspotSystem: ref<WorkspotGameSystem>;
   // Set flag if player and not carrying yet
   playerPuppet = scriptInterface.executionOwner as PlayerPuppet;
+  hasWeaponEquipped = playerPuppet.HasRangedWeaponEquipped();
   if IsDefined(playerPuppet) && !carrying {
     playerPuppet.SetSkipFirstEquip(hasWeaponEquipped);
   };
@@ -116,17 +126,19 @@ protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<Sta
 }
 
 
-// -- Handle skip flag for device interaction events
+// -- Handle skip flag for interaction events:
 @replaceMethod(InteractiveDevice)
 protected cb func OnInteractionUsed(evt: ref<InteractionChoiceEvent>) -> Bool {
   let playerPuppet: ref<PlayerPuppet>;
   let className: CName;
+  let hasWeaponEquipped: Bool;
   // Set if player
   playerPuppet = evt.activator as PlayerPuppet;
   if IsDefined(playerPuppet) {
     className = evt.hotspot.GetClassName();
     if Equals(className, n"AccessPoint") || Equals(className, n"Computer") || Equals(className, n"Stillage") || Equals(className, n"WeakFence") {
-      playerPuppet.SetSkipFirstEquip(true);
+      hasWeaponEquipped = playerPuppet.HasRangedWeaponEquipped();
+      playerPuppet.SetSkipFirstEquip(hasWeaponEquipped);
     };
   };
   // Log("Interaction used: " + NameToString(evt.hotspot.GetClassName()));
@@ -134,7 +146,7 @@ protected cb func OnInteractionUsed(evt: ref<InteractionChoiceEvent>) -> Bool {
 }
 
 
-// -- Control if firstEquip should be played
+// -- Control if firstEquip should be played:
 @replaceMethod(EquipmentBaseTransition)
 protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScriptInterface>, stateContext: ref<StateContext>, stateMachineInstanceData: StateMachineInstanceData, item: ItemID) -> Void {
   let animFeature: ref<AnimFeature_EquipUnequipItem> = new AnimFeature_EquipUnequipItem();
