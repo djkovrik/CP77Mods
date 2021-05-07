@@ -1,5 +1,24 @@
+public class FirstEquipConfig {
+  // Setup the animation probability in percents, you can use values from 0 to 100 here
+  // 0 means that animation never plays, 100 means that animations plays every time you equip a weapon
+  public static func PercentageProbability() -> Int32 = 100
+  // Replace false with true if you want to disable firstEquip anims while in stealth mode
+  public static func DisableForStealthMode() -> Bool = false
+}
+
 @addField(PlayerPuppet)
 let m_skipFirstEquip: Bool;
+
+@addMethod(PlayerPuppet)
+public func ShouldRunFirstEquip() -> Bool {
+  let probability: Int32 = FirstEquipConfig.PercentageProbability();
+  let random: Int32 = RandRange(0, 100);
+
+  if probability < 0 { return false; };
+  if probability > 100 { return true; }
+
+  return random <= probability;
+}
 
 @addMethod(PlayerPuppet)
 public func SetSkipFirstEquip(skip: Bool) -> Void {
@@ -17,13 +36,14 @@ public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateG
   let event: Int32;
   let playerPuppet: ref<PlayerPuppet>;
   let animFeature: ref<AnimFeature_PlayerLocomotionStateMachine>;
+  let hasWeaponEquipped: Bool = UpperBodyTransition.HasRangedWeaponEquipped(scriptInterface);
   super.OnEnter(stateContext, scriptInterface);
   // Set skip flag after Climb or Ladder
   event = scriptInterface.localBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.LocomotionDetailed);
   if event == EnumInt(gamePSMDetailedLocomotionStates.Climb) || event == EnumInt(gamePSMDetailedLocomotionStates.Ladder) {
     playerPuppet = scriptInterface.owner as PlayerPuppet;
     if IsDefined(playerPuppet) {
-      playerPuppet.SetSkipFirstEquip(true);
+      playerPuppet.SetSkipFirstEquip(hasWeaponEquipped);
     };
   };
 
@@ -58,15 +78,17 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
     this.GetBlurParametersFromWeapon(scriptInterface);
   };
   
-  // If GetSkipFirstEquip then reset skip flag else play firstEquip
+  // If GetSkipFirstEquip then reset skip flag else if ShouldRunFirstEquip then play firstEquip
   playerPuppet = scriptInterface.owner as PlayerPuppet;
   if !isInCombat {
     if IsDefined(playerPuppet) {
       if Equals(playerPuppet.GetSkipFirstEquip(), true) {
         playerPuppet.SetSkipFirstEquip(false);
       } else {
-        weaponEquipAnimFeature.firstEquip = true;
-        stateContext.SetConditionBoolParameter(n"firstEquip", true, true);
+        if playerPuppet.ShouldRunFirstEquip() {
+          weaponEquipAnimFeature.firstEquip = true;
+          stateContext.SetConditionBoolParameter(n"firstEquip", true, true);
+        };
       };
     };
     //// Default game logic
