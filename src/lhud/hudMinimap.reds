@@ -2,7 +2,7 @@
 // Show minimap when player mounted to vehicle //
 /////////////////////////////////////////////////
 
-public class MinimapConfig {
+public class HudMinimapConfig {
   public static func Opacity() -> Float = 0.75 // You can tweak this in range from 0.0 to 1.0
 }
 
@@ -35,7 +35,7 @@ protected cb func OnInitialize() -> Bool {
   this.m_mountedTrackCallback = this.m_mountedTrackBlackboard.RegisterListenerBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted, this, n"OnMountedStateChanged");
   this.OnLocationUpdated(this.m_mapBlackboard.GetString(this.m_mapDefinition.currentLocation));
   this.m_messageCounterController = this.SpawnFromExternal(inkWidgetRef.Get(this.m_messageCounter), r"base\\gameplay\\gui\\widgets\\phone\\message_counter.inkwidget", n"messages") as inkCompoundWidget;
-  this.m_rootWidget.SetOpacity(MinimapConfig.Opacity());
+  this.m_rootWidget.SetOpacity(HudMinimapConfig.Opacity());
   this.DetermineCurrentVisibility();
 }
 
