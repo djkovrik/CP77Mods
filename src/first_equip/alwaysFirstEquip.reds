@@ -145,6 +145,32 @@ protected cb func OnInteractionUsed(evt: ref<InteractionChoiceEvent>) -> Bool {
   this.ExecuteAction(evt.choice, evt.activator, evt.layerData.tag);
 }
 
+// -- Handle skip flag for takedown events:
+@replaceMethod(gamestateMachineComponent)
+protected cb func OnStartTakedownEvent(startTakedownEvent: ref<StartTakedownEvent>) -> Bool {
+  let initData: ref<LocomotionTakedownInitData> = new LocomotionTakedownInitData();
+  let addEvent: ref<PSMAddOnDemandStateMachine> = new PSMAddOnDemandStateMachine();
+  let record1HitDamage: ref<Record1DamageInHistoryEvent> = new Record1DamageInHistoryEvent();
+  let instanceData: StateMachineInstanceData;
+  let playerPuppet: ref<PlayerPuppet>;
+  initData.target = startTakedownEvent.target;
+  initData.slideTime = startTakedownEvent.slideTime;
+  initData.actionName = startTakedownEvent.actionName;
+  instanceData.initData = initData;
+  addEvent.stateMachineName = n"LocomotionTakedown";
+  addEvent.instanceData = instanceData;
+  let owner: wref<Entity> = this.GetEntity();
+  owner.QueueEvent(addEvent);
+  if IsDefined(startTakedownEvent.target) {
+    record1HitDamage.source = owner as GameObject;
+    startTakedownEvent.target.QueueEvent(record1HitDamage);
+  };
+
+  playerPuppet = owner as PlayerPuppet;
+  if IsDefined(playerPuppet) {
+    playerPuppet.SetSkipFirstEquip(true);
+  };
+}
 
 // -- Control if firstEquip should be played:
 @replaceMethod(EquipmentBaseTransition)
