@@ -4,22 +4,21 @@
 
 import LimitedHudCommon.*
 
-/////////////////////////////////////////////////////////
-// Here you can configure widget visibility conditions //
-// (true means visible, false means hidden)            //
-/////////////////////////////////////////////////////////
+// Here you can configure widget visibility conditions
+// (true means visible, false means hidden)
 class MinimapModuleConfig {
+  // Visibility conditions
   public static func ShowInCombat() -> Bool = true
   public static func ShowInStealth() -> Bool = true
   public static func ShowInVehicle() -> Bool = true
   public static func ShowWithWeapon() -> Bool = true
   public static func ShowWithZoom() -> Bool = true
-  // Configure minimap widget opacity (range from 0.0 to 1.0)
+
+  // Minimap widget opacity
+  // Use value in range from 0.0 to 1.0
   public static func Opacity() -> Float = 0.75
 }
-/////////////////////////////////
-// DO NOT EDIT ANYTHING BELOW! //
-/////////////////////////////////
+// DO NOT EDIT ANYTHING BELOW!
 
 
 @addMethod(MinimapContainerController)
@@ -66,8 +65,8 @@ public func DetermineCurrentVisibility() -> Void {
 public func InitBBs(playerPuppet: ref<GameObject>) -> Void {
   this.m_playerPuppet_LHUD = playerPuppet as PlayerPuppet;
 
-  // Define blackboards
   if IsDefined(this.m_playerPuppet_LHUD) && this.m_playerPuppet_LHUD.IsControlledByLocalPeer() {
+    // Define blackboards
     this.m_playerStateMachineBlackboard_LHUD = this.GetPSMBlackboard(this.m_playerPuppet_LHUD);
     this.m_vehicleBlackboard_LHUD = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_ActiveVehicleData);
     this.m_weaponBlackboard_LHUD = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_EquipmentData);
