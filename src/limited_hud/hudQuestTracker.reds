@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////
-// Show world mappins depending on the module config //
+// Show quest tracker depending on the module config //
 ///////////////////////////////////////////////////////
 
 import LimitedHudCommon.*
@@ -8,7 +8,7 @@ import LimitedHudCommon.*
 // Here you can configure widget visibility conditions //
 // (true means visible, false means hidden)            //
 /////////////////////////////////////////////////////////
-class WorldMarkersModuleConfig {
+class QuestTrackerModuleConfig {
   public static func ShowInCombat() -> Bool = true
   public static func ShowInStealth() -> Bool = true
   public static func ShowInVehicle() -> Bool = true
@@ -21,32 +21,32 @@ class WorldMarkersModuleConfig {
 /////////////////////////////////
 
 
-@addMethod(WorldMappinsContainerController)
+@addMethod(QuestTrackerGameController)
 public func OnCombatStateChanged(newState: Int32) -> Void {
   this.DetermineCurrentVisibility();
 }
 
-@addMethod(WorldMappinsContainerController)
+@addMethod(QuestTrackerGameController)
 public func OnScannerStateChanged(value: Bool) -> Void {
   this.DetermineCurrentVisibility();
 }
 
-@addMethod(WorldMappinsContainerController)
+@addMethod(QuestTrackerGameController)
 public func OnMountedStateChanged(value: Bool) -> Void {
   this.DetermineCurrentVisibility();
 }
 
-@addMethod(WorldMappinsContainerController)
+@addMethod(QuestTrackerGameController)
 public func OnWeaponDataChanged(value: Variant) -> Bool {
   this.DetermineCurrentVisibility();
 }
 
-@addMethod(WorldMappinsContainerController)
+@addMethod(QuestTrackerGameController)
 public func OnZoomStateChanged(value: Float) -> Void {
   this.DetermineCurrentVisibility();
 }
 
-@addMethod(WorldMappinsContainerController)
+@addMethod(QuestTrackerGameController)
 public func DetermineCurrentVisibility() -> Void {
   // Basic checks
   let isCurrentStateCombat: Bool = Equals(this.m_playerStateMachineBlackboard_LHUD.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat), gamePSMCombat.InCombat);
@@ -56,19 +56,23 @@ public func DetermineCurrentVisibility() -> Void {
   let isWeaponUnsheathed: Bool = this.m_playerPuppet_LHUD.HasAnyWeaponEquipped_LHUD();
   let isZoomActive: Bool = (this.m_playerStateMachineBlackboard_LHUD.GetFloat(GetAllBlackboardDefs().PlayerStateMachine.ZoomLevel) > 1.0) && !isWeaponUnsheathed;
   // Bind to config
-  let showForCombat: Bool = isCurrentStateCombat && WorldMarkersModuleConfig.ShowInCombat();
-  let showForScanner: Bool =  isScannerEnabled && WorldMarkersModuleConfig.ShowWithScanner();
-  let showForStealth: Bool =  isCurrentStateStealth && WorldMarkersModuleConfig.ShowInStealth();
-  let showForVehicle: Bool =  isCurrentStateInVehicle && WorldMarkersModuleConfig.ShowInVehicle();
-  let showForWeapon: Bool = isWeaponUnsheathed && WorldMarkersModuleConfig.ShowWithWeapon();
-  let showForZoom: Bool =  isZoomActive && WorldMarkersModuleConfig.ShowWithZoom();
+  let showForCombat: Bool = isCurrentStateCombat && QuestTrackerModuleConfig.ShowInCombat();
+  let showForScanner: Bool =  isScannerEnabled && QuestTrackerModuleConfig.ShowWithScanner();
+  let showForStealth: Bool =  isCurrentStateStealth && QuestTrackerModuleConfig.ShowInStealth();
+  let showForVehicle: Bool =  isCurrentStateInVehicle && QuestTrackerModuleConfig.ShowInVehicle();
+  let showForWeapon: Bool = isWeaponUnsheathed && QuestTrackerModuleConfig.ShowWithWeapon();
+  let showForZoom: Bool =  isZoomActive && QuestTrackerModuleConfig.ShowWithZoom();
 
   // Set visibility
   let isVisible: Bool = showForCombat || showForScanner || showForStealth || showForVehicle || showForWeapon || showForZoom;
-  this.GetRootWidget().SetVisible(isVisible);
+  if isVisible {
+    this.GetRootWidget().SetOpacity(1.0);
+  } else {
+    this.GetRootWidget().SetOpacity(0.0);
+  };
 }
 
-@addMethod(WorldMappinsContainerController)
+@addMethod(QuestTrackerGameController)
 protected cb func OnPlayerAttach(playerPuppet: ref<GameObject>) -> Bool {
   this.m_playerPuppet_LHUD = playerPuppet as PlayerPuppet;
 
@@ -88,11 +92,11 @@ protected cb func OnPlayerAttach(playerPuppet: ref<GameObject>) -> Bool {
 
     this.DetermineCurrentVisibility();
   } else {
-    LHUDLog("WorldMappinsContainerController blackboards not defined!");
+    LHUDLog("QuestTrackerGameController blackboards not defined!");
   }
 }
 
-@addMethod(WorldMappinsContainerController)
+@addMethod(QuestTrackerGameController)
 protected cb func OnPlayerDetach(playerPuppet: ref<GameObject>) -> Bool {
   this.m_playerStateMachineBlackboard_LHUD.UnregisterListenerInt(GetAllBlackboardDefs().PlayerStateMachine.Combat, this.m_combatTrackingCallback_LHUD);
   this.m_scannerBlackboard_LHUD.UnregisterListenerBool(GetAllBlackboardDefs().UI_Scanner.UIVisible, this.m_scannerTrackingCallback_LHUD);
