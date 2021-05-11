@@ -3,19 +3,7 @@
 ///////////////////////////////////////////////////////
 
 import LimitedHudCommon.*
-
-// Here you can configure widget visibility conditions
-// (true means visible, false means hidden)
-class WorldMarkersModuleConfig {
-  public static func ShowInCombat() -> Bool = true
-  public static func ShowInStealth() -> Bool = true
-  public static func ShowInVehicle() -> Bool = false
-  public static func ShowWithScanner() -> Bool = true
-  public static func ShowWithWeapon() -> Bool = false
-  public static func ShowWithZoom() -> Bool = true
-}
-// DO NOT EDIT ANYTHING BELOW!
-
+import LimitedHudConfig.WorldMarkersModuleConfig
 
 @addMethod(WorldMappinsContainerController)
 public func OnCombatStateChanged(newState: Int32) -> Void {

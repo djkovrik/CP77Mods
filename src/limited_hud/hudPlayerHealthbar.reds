@@ -3,19 +3,7 @@
 ///////////////////////////////////////////////////////////////////////
 
 import LimitedHudCommon.*
-
-// Default healthbar visibility conditions: HP or memory not full, 
-// player has active quickhacks or buffs, combat mode activated
-
-// Here you can enable additional conditions
-// (true means visible, false means hidden)
-class PlayerHealthbarModuleConfig {
-  public static func ShowInStealth() -> Bool = false
-  public static func ShowWithWeapon() -> Bool = true
-  public static func ShowWithZoom() -> Bool = false
-}
-// DO NOT EDIT ANYTHING BELOW!
-
+import LimitedHudConfig.PlayerHealthbarModuleConfig
 
 @addMethod(healthbarWidgetGameController)
 public func OnWeaponDataChanged(value: Variant) -> Bool {

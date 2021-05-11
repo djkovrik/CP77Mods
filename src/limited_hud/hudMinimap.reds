@@ -3,22 +3,7 @@
 /////////////////////////////////////////////////
 
 import LimitedHudCommon.*
-
-// Here you can configure widget visibility conditions
-// (true means visible, false means hidden)
-class MinimapModuleConfig {
-  public static func ShowInCombat() -> Bool = false
-  public static func ShowInStealth() -> Bool = false
-  public static func ShowInVehicle() -> Bool = true
-  public static func ShowWithWeapon() -> Bool = false
-  public static func ShowWithZoom() -> Bool = true
-
-  // Minimap widget opacity
-  // Use value in range from 0.0 to 1.0
-  public static func Opacity() -> Float = 0.75
-}
-// DO NOT EDIT ANYTHING BELOW!
-
+import LimitedHudConfig.MinimapModuleConfig
 
 @addMethod(MinimapContainerController)
 public func OnCombatStateChanged(newState: Int32) -> Void {
