@@ -7,7 +7,7 @@ import LimitedHudCommon.*
 // Default healthbar visibility conditions: HP or memory not full, 
 // player has active quickhacks or buffs, combat mode activated
 
-// Here you can enable additional visibility conditions
+// Here you can enable additional conditions
 // (true means visible, false means hidden)
 class PlayerHealthbarModuleConfig {
   public static func ShowInStealth() -> Bool = true
