@@ -2,18 +2,7 @@
 // Show weapon roster and crouch indicator when weapon unsheathed  //
 /////////////////////////////////////////////////////////////////////
 
-@addMethod(PlayerPuppet)
-public func HasAnyWeaponEquippedRoster() -> Bool {
-  let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.GetGame());
-  let weapon: ref<WeaponObject> = transactionSystem.GetItemInSlot(this, t"AttachmentSlots.WeaponRight") as WeaponObject;
-  if IsDefined(weapon) {
-    if transactionSystem.HasTag(this, WeaponObject.GetMeleeWeaponTag(), weapon.GetItemID()) 
-      || transactionSystem.HasTag(this, WeaponObject.GetRangedWeaponTag(), weapon.GetItemID()) {
-        return true;
-    };
-  };
-  return false;
-}
+import LimitedHudCommon.*
 
 @addMethod(CrouchIndicatorGameController)
 public func ShowWidgets(show: Bool) -> Void {
@@ -26,12 +15,13 @@ public func ShowWidgets(show: Bool) -> Void {
   inkImageRef.SetVisible(this.m_container, show);
 }
 
+// -- Fixes
 @replaceMethod(CrouchIndicatorGameController)
 protected cb func OnPSMVisionStateChanged(value: Int32) -> Bool {
   let newState: gamePSMVision = IntEnum(value);
   switch newState {
     case gamePSMVision.Default:
-      if ItemID.IsValid(this.m_ActiveWeapon.weaponID) && this.m_Player.HasAnyWeaponEquippedRoster() {
+      if ItemID.IsValid(this.m_ActiveWeapon.weaponID) && this.m_Player.HasAnyWeaponEquipped_LHUD() {
         this.PlayUnfold();
       };
       break;
@@ -45,7 +35,7 @@ protected cb func OnPSMVisionStateChanged(value: Int32) -> Bool {
   let newState: gamePSMVision = IntEnum(value);
   switch newState {
     case gamePSMVision.Default:
-      if ItemID.IsValid(this.m_ActiveWeapon.weaponID) && this.m_Player.HasAnyWeaponEquippedRoster() {
+      if ItemID.IsValid(this.m_ActiveWeapon.weaponID) && this.m_Player.HasAnyWeaponEquipped_LHUD() {
         this.PlayUnfold();
       };
       break;
@@ -54,9 +44,11 @@ protected cb func OnPSMVisionStateChanged(value: Int32) -> Bool {
   };
 }
 
+
+// -- Show indicator on weapon unsheath
 @replaceMethod(CrouchIndicatorGameController)
 protected cb func OnWeaponDataChanged(value: Variant) -> Bool {
-  this.ShowWidgets(this.m_Player.HasAnyWeaponEquippedRoster());
+  this.ShowWidgets(this.m_Player.HasAnyWeaponEquipped_LHUD());
   this.m_BufferedRosterData = FromVariant(value);
   let currentData: SlotWeaponData = this.m_BufferedRosterData.weapon;
   let item: ref<gameItemData>;
@@ -81,7 +73,7 @@ protected cb func OnWeaponDataChanged(value: Variant) -> Bool {
 
 @replaceMethod(weaponRosterGameController)
 protected cb func OnWeaponDataChanged(value: Variant) -> Bool {
-  this.ShowWidgets(this.m_Player.HasAnyWeaponEquippedRoster());
+  this.ShowWidgets(this.m_Player.HasAnyWeaponEquipped_LHUD());
   this.m_BufferedRosterData = FromVariant(value);
   let currentData: SlotWeaponData = this.m_BufferedRosterData.weapon;
   let item: ref<gameItemData>;
