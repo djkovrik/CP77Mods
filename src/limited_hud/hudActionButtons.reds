@@ -7,10 +7,10 @@ import LimitedHudCommon.*
 // Here you can configure widget visibility conditions
 // (true means visible, false means hidden)
 class ActionButtonsModuleConfig {
-  public static func ShowInCombat() -> Bool = true
-  public static func ShowInStealth() -> Bool = true
+  public static func ShowInCombat() -> Bool = false
+  public static func ShowInStealth() -> Bool = false
   public static func ShowWithWeapon() -> Bool = true
-  public static func ShowWithZoom() -> Bool = true
+  public static func ShowWithZoom() -> Bool = false
 }
 // DO NOT EDIT ANYTHING BELOW!
 

@@ -10,9 +10,9 @@ import LimitedHudCommon.*
 // Here you can enable additional conditions
 // (true means visible, false means hidden)
 class PlayerHealthbarModuleConfig {
-  public static func ShowInStealth() -> Bool = true
+  public static func ShowInStealth() -> Bool = false
   public static func ShowWithWeapon() -> Bool = true
-  public static func ShowWithZoom() -> Bool = true
+  public static func ShowWithZoom() -> Bool = false
 }
 // DO NOT EDIT ANYTHING BELOW!
 

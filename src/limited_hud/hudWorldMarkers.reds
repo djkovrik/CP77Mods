@@ -9,9 +9,9 @@ import LimitedHudCommon.*
 class WorldMarkersModuleConfig {
   public static func ShowInCombat() -> Bool = true
   public static func ShowInStealth() -> Bool = true
-  public static func ShowInVehicle() -> Bool = true
+  public static func ShowInVehicle() -> Bool = false
   public static func ShowWithScanner() -> Bool = true
-  public static func ShowWithWeapon() -> Bool = true
+  public static func ShowWithWeapon() -> Bool = false
   public static func ShowWithZoom() -> Bool = true
 }
 // DO NOT EDIT ANYTHING BELOW!
