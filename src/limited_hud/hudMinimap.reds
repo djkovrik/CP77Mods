@@ -5,8 +5,26 @@
 import LimitedHudCommon.*
 import LimitedHudConfig.MinimapModuleConfig
 
+@addField(UI_SystemDef)
+public let IsMinimapToggled_LHUD: BlackboardID_Bool;
+
+@addField(MinimapContainerController)
+public let m_isMinimapToggled_LHUD: Bool;
+
+@addField(MinimapContainerController)
+public let m_minimapToggleBlackboard_LHUD: wref<IBlackboard>;
+
+@addField(MinimapContainerController)
+public let m_minimapToggleCallback_LHUD: Uint32;
+
 @addMethod(MinimapContainerController)
 public func OnCombatStateChanged(newState: Int32) -> Void {
+  this.DetermineCurrentVisibility();
+}
+
+@addMethod(MinimapContainerController)
+public func OnMinimapToggleChanged(value: Bool) -> Void {
+  this.m_isMinimapToggled_LHUD = value;
   this.DetermineCurrentVisibility();
 }
 
@@ -41,7 +59,7 @@ public func DetermineCurrentVisibility() -> Void {
   let showForZoom: Bool =  isZoomActive && MinimapModuleConfig.ShowWithZoom();
 
   // Set visibility
-  let isVisible: Bool = showForCombat || showForStealth || showForVehicle || showForWeapon || showForZoom;
+  let isVisible: Bool = showForCombat || showForStealth || showForVehicle || showForWeapon || showForZoom || this.m_isMinimapToggled_LHUD;
   this.GetRootWidget().SetVisible(isVisible);
 }
 
@@ -51,11 +69,13 @@ public func InitBBs(playerPuppet: ref<GameObject>) -> Void {
 
   if IsDefined(this.m_playerPuppet_LHUD) && this.m_playerPuppet_LHUD.IsControlledByLocalPeer() {
     // Define blackboards
+    this.m_minimapToggleBlackboard_LHUD = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_System);
     this.m_playerStateMachineBlackboard_LHUD = this.GetPSMBlackboard(this.m_playerPuppet_LHUD);
     this.m_vehicleBlackboard_LHUD = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_ActiveVehicleData);
     this.m_weaponBlackboard_LHUD = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_EquipmentData);
 
     // Define callbacks
+    this.m_minimapToggleCallback_LHUD = this.m_minimapToggleBlackboard_LHUD.RegisterListenerBool(GetAllBlackboardDefs().UI_System.IsMinimapToggled_LHUD, this, n"OnMinimapToggleChanged");
     this.m_combatTrackingCallback_LHUD = this.m_playerStateMachineBlackboard_LHUD.RegisterListenerInt(GetAllBlackboardDefs().PlayerStateMachine.Combat, this, n"OnCombatStateChanged");
     this.m_vehicleTrackingCallback_LHUD = this.m_vehicleBlackboard_LHUD.RegisterListenerBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted, this, n"OnMountedStateChanged");
     this.m_weaponTrackingCallback_LHUD = this.m_weaponBlackboard_LHUD.RegisterListenerVariant(GetAllBlackboardDefs().UI_EquipmentData.EquipmentData, this, n"OnWeaponDataChanged");
@@ -69,6 +89,7 @@ public func InitBBs(playerPuppet: ref<GameObject>) -> Void {
 
 @addMethod(MinimapContainerController)
 public func ClearBBs() -> Void {
+  this.m_minimapToggleBlackboard_LHUD.UnregisterListenerBool(GetAllBlackboardDefs().UI_System.IsMinimapToggled_LHUD, this.m_minimapToggleCallback_LHUD);
   this.m_playerStateMachineBlackboard_LHUD.UnregisterListenerInt(GetAllBlackboardDefs().PlayerStateMachine.Combat, this.m_combatTrackingCallback_LHUD);
   this.m_vehicleBlackboard_LHUD.UnregisterListenerBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted, this.m_vehicleTrackingCallback_LHUD);
   this.m_weaponBlackboard_LHUD.UnregisterListenerVariant(GetAllBlackboardDefs().UI_EquipmentData.EquipmentData, this.m_weaponTrackingCallback_LHUD);
@@ -105,4 +126,71 @@ protected cb func OnPlayerDetach(playerGameObject: ref<GameObject>) -> Bool {
     };
   };
   this.ClearBBs();
+}
+
+
+// UI_System.IsMinimapToggled
+
+// Register for minimap toggle actions
+@replaceMethod(HUDManager)
+protected final func RegisterToInput() -> Void {
+  this.GetPlayer().RegisterInputListener(this, n"QH_MoveLeft");
+  this.GetPlayer().RegisterInputListener(this, n"QH_MoveRight");
+  this.GetPlayer().RegisterInputListener(this, n"Ping");
+  this.GetPlayer().RegisterInputListener(this, n"OpenQuickHackPanel");
+  this.GetPlayer().RegisterInputListener(this, n"DescriptionChange");
+  this.GetPlayer().RegisterInputListener(this, n"ToggleMinimap");
+  this.m_stickInputListener = GameInstance.GetBlackboardSystem(this.GetGameInstance()).Get(GetAllBlackboardDefs().UI_QuickSlotsData).RegisterListenerVector4(GetAllBlackboardDefs().UI_QuickSlotsData.leftStick, this, n"OnStickInputChanged");
+}
+
+// Fire minimap toggle events here
+@replaceMethod(HUDManager)
+protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
+  let isReleased: Bool;
+  let isToggled: Bool;
+  let actionName: CName;
+  if this.IsHackingMinigameActive() {
+    return false;
+  };
+  isReleased = Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED);
+  actionName = ListenerAction.GetName(action);
+
+  if Equals(actionName, n"ToggleMinimap") && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED) {
+    LHUDLog("Toggle hotkey pressed");
+    isToggled = GameInstance.GetBlackboardSystem(this.GetGameInstance()).Get(GetAllBlackboardDefs().UI_System).GetBool(GetAllBlackboardDefs().UI_System.IsMinimapToggled_LHUD);
+    GameInstance.GetBlackboardSystem(this.GetGameInstance()).Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.IsMinimapToggled_LHUD, !isToggled, true);
+  };
+
+  if this.IsQuickHackPanelOpened() && !this.m_isQHackUIInputLocked {
+    if isReleased && !GameObject.IsCooldownActive(this.GetPlayer(), n"Qhack_targetChange_lock") {
+      switch actionName {
+        case n"QH_MoveLeft":
+          if isReleased {
+            this.JumpToNextTarget(false);
+          };
+          GameObject.StartCooldown(this.GetPlayer(), n"Qhack_targetChange_lock", 0.00);
+          break;
+        case n"QH_MoveRight":
+          if isReleased {
+            this.JumpToNextTarget(true);
+          };
+          GameObject.StartCooldown(this.GetPlayer(), n"Qhack_targetChange_lock", 0.00);
+          break;
+        default:
+      };
+    };
+  };
+  if ListenerAction.IsButtonJustPressed(action) {
+    switch actionName {
+      case n"Ping":
+        this.StartPulse();
+        break;
+      case n"DescriptionChange":
+        if this.IsQuickHackPanelOpened() {
+          this.SetQhuickHackDescriptionVisibility(!this.m_quickHackDescriptionVisible);
+        };
+        break;
+      default:
+    };
+  };
 }
