@@ -1,11 +1,16 @@
-// Always First Equip by hotkey
-
 class FirstEquipConfig {
-  public static func SlotNumber() -> Int32 = 1 // Use 1, 2 or 3
+  // Replace true with false if you want to disable slot tracking behavior
+  public static func TrackLastUsedSlot() -> Bool = true
+  // If TrackLastUsedSlot disabled then hotkey will use this one for equip request
+  // Use 1, 2 or 3
+  public static func SlotNumber() -> Int32 = 1
 }
 
 @addField(UI_SystemDef)
 public let IsFirstEquipPressed_eq: BlackboardID_Bool;
+
+@addField(UI_SystemDef)
+public let LastUsedSlot_eq: BlackboardID_Int;
 
 @addField(HotkeyItemController)
 public let m_playerPuppet_eq: ref<PlayerPuppet>;
@@ -42,6 +47,7 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
   let drawItemRequest: ref<DrawItemRequest>;
   let sheatheRequest: ref<EquipmentSystemWeaponManipulationRequest>;
   let equipmentSystem: ref<EquipmentSystem>;
+  let slotForHotkey: Int32;
 
   if IsDefined(this.m_playerPuppet_eq) && Equals(ListenerAction.GetName(action), n"FirstTimeEquip") {
     if this.m_playerPuppet_eq.HasRangedWeaponEquipped_eq() {
@@ -51,10 +57,14 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
       sheatheRequest.owner = this.m_playerPuppet_eq;
       equipmentSystem.QueueRequest(sheatheRequest);
     } else {
+      if FirstEquipConfig.TrackLastUsedSlot() {
+        slotForHotkey = GameInstance.GetBlackboardSystem(this.m_playerPuppet_eq.GetGame()).Get(GetAllBlackboardDefs().UI_System).GetInt(GetAllBlackboardDefs().UI_System.LastUsedSlot_eq);
+      } else {
+        slotForHotkey = FirstEquipConfig.SlotNumber() - 1;
+      };
       drawItemRequest = new DrawItemRequest();
-      drawItemRequest.itemID = EquipmentSystem.GetData(this.m_playerPuppet_eq).GetItemInEquipSlot(gamedataEquipmentArea.WeaponWheel, FirstEquipConfig.SlotNumber() - 1);
+      drawItemRequest.itemID = EquipmentSystem.GetData(this.m_playerPuppet_eq).GetItemInEquipSlot(gamedataEquipmentArea.WeaponWheel, slotForHotkey);
       drawItemRequest.owner = this.m_playerPuppet_eq;
-      drawItemRequest.equipAnimationType = gameEquipAnimationType.FirstEquip;
       GameInstance.GetBlackboardSystem(this.m_playerPuppet_eq.GetGame()).Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.IsFirstEquipPressed_eq, true, false);
       GameInstance.GetScriptableSystemsContainer(this.m_playerPuppet_eq.GetGame()).Get(n"EquipmentSystem").QueueRequest(drawItemRequest);
     }
@@ -80,4 +90,30 @@ public final const func HasPlayedFirstEquip(weaponID: TweakDBID) -> Bool {
     i += 1;
   };
   return false;
+}
+
+// Track last used slot
+@replaceMethod(DefaultTransition)
+protected final const func SendEquipmentSystemWeaponManipulationRequest(scriptInterface: ref<StateGameScriptInterface>, requestType: EquipmentManipulationAction, opt equipAnimType: gameEquipAnimationType) -> Void {
+  let eqs: ref<EquipmentSystem> = GameInstance.GetScriptableSystemsContainer(scriptInterface.executionOwner.GetGame()).Get(n"EquipmentSystem") as EquipmentSystem;
+  let request: ref<EquipmentSystemWeaponManipulationRequest> = new EquipmentSystemWeaponManipulationRequest();
+  request.owner = scriptInterface.executionOwner;
+  request.requestType = requestType;
+  if NotEquals(equipAnimType, gameEquipAnimationType.Default) {
+    request.equipAnimType = equipAnimType;
+  };
+
+  switch requestType {
+    case EquipmentManipulationAction.RequestWeaponSlot1:
+      GameInstance.GetBlackboardSystem(scriptInterface.executionOwner.GetGame()).Get(GetAllBlackboardDefs().UI_System).SetInt(GetAllBlackboardDefs().UI_System.LastUsedSlot_eq, 0, false);
+      break;
+    case EquipmentManipulationAction.RequestWeaponSlot2:
+      GameInstance.GetBlackboardSystem(scriptInterface.executionOwner.GetGame()).Get(GetAllBlackboardDefs().UI_System).SetInt(GetAllBlackboardDefs().UI_System.LastUsedSlot_eq, 1, false);
+      break;
+    case EquipmentManipulationAction.RequestWeaponSlot3:
+      GameInstance.GetBlackboardSystem(scriptInterface.executionOwner.GetGame()).Get(GetAllBlackboardDefs().UI_System).SetInt(GetAllBlackboardDefs().UI_System.LastUsedSlot_eq, 2, false);
+      break;
+  };
+
+  eqs.QueueRequest(request);
 }
