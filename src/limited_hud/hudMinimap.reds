@@ -23,6 +23,11 @@ public func OnCombatStateChanged(newState: Int32) -> Void {
 }
 
 @addMethod(MinimapContainerController)
+public func OnScannerStateChanged(value: Bool) -> Void {
+  this.DetermineCurrentVisibility();
+}
+
+@addMethod(MinimapContainerController)
 public func OnMinimapToggleChanged(value: Bool) -> Void {
   this.m_isMinimapToggled_LHUD = value;
   this.DetermineCurrentVisibility();
@@ -47,19 +52,21 @@ public func OnZoomStateChanged(value: Float) -> Void {
 public func DetermineCurrentVisibility() -> Void {
   // Basic checks
   let isCurrentStateCombat: Bool = Equals(this.m_playerStateMachineBlackboard_LHUD.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat), gamePSMCombat.InCombat);
+  let isScannerEnabled: Bool = this.m_scannerBlackboard_LHUD.GetBool(GetAllBlackboardDefs().UI_Scanner.UIVisible);
   let isCurrentStateStealth: Bool = Equals(this.m_playerStateMachineBlackboard_LHUD.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat), gamePSMCombat.Stealth);
   let isCurrentStateInVehicle: Bool = this.m_vehicleBlackboard_LHUD.GetBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted);
   let isWeaponUnsheathed: Bool = this.m_playerPuppet_LHUD.HasAnyWeaponEquipped_LHUD();
   let isZoomActive: Bool = (this.m_playerStateMachineBlackboard_LHUD.GetFloat(GetAllBlackboardDefs().PlayerStateMachine.ZoomLevel) > 1.0) && !isWeaponUnsheathed;
   // Bind to config
   let showForCombat: Bool = isCurrentStateCombat && MinimapModuleConfig.ShowInCombat();
+  let showForScanner: Bool =  isScannerEnabled && MinimapModuleConfig.ShowWithScanner();
   let showForStealth: Bool =  isCurrentStateStealth && MinimapModuleConfig.ShowInStealth();
   let showForVehicle: Bool =  isCurrentStateInVehicle && MinimapModuleConfig.ShowInVehicle();
   let showForWeapon: Bool = isWeaponUnsheathed && MinimapModuleConfig.ShowWithWeapon();
   let showForZoom: Bool =  isZoomActive && MinimapModuleConfig.ShowWithZoom();
 
   // Set visibility
-  let isVisible: Bool = showForCombat || showForStealth || showForVehicle || showForWeapon || showForZoom || this.m_isMinimapToggled_LHUD;
+  let isVisible: Bool = showForCombat || showForScanner || showForStealth || showForVehicle || showForWeapon || showForZoom || this.m_isMinimapToggled_LHUD;
   this.GetRootWidget().SetVisible(isVisible);
 }
 
@@ -71,12 +78,14 @@ public func InitBBs(playerPuppet: ref<GameObject>) -> Void {
     // Define blackboards
     this.m_minimapToggleBlackboard_LHUD = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_System);
     this.m_playerStateMachineBlackboard_LHUD = this.GetPSMBlackboard(this.m_playerPuppet_LHUD);
+    this.m_scannerBlackboard_LHUD = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_Scanner);
     this.m_vehicleBlackboard_LHUD = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_ActiveVehicleData);
     this.m_weaponBlackboard_LHUD = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_EquipmentData);
 
     // Define callbacks
     this.m_minimapToggleCallback_LHUD = this.m_minimapToggleBlackboard_LHUD.RegisterListenerBool(GetAllBlackboardDefs().UI_System.IsMinimapToggled_LHUD, this, n"OnMinimapToggleChanged");
     this.m_combatTrackingCallback_LHUD = this.m_playerStateMachineBlackboard_LHUD.RegisterListenerInt(GetAllBlackboardDefs().PlayerStateMachine.Combat, this, n"OnCombatStateChanged");
+    this.m_scannerTrackingCallback_LHUD = this.m_scannerBlackboard_LHUD.RegisterListenerBool(GetAllBlackboardDefs().UI_Scanner.UIVisible, this, n"OnScannerStateChanged");
     this.m_vehicleTrackingCallback_LHUD = this.m_vehicleBlackboard_LHUD.RegisterListenerBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted, this, n"OnMountedStateChanged");
     this.m_weaponTrackingCallback_LHUD = this.m_weaponBlackboard_LHUD.RegisterListenerVariant(GetAllBlackboardDefs().UI_EquipmentData.EquipmentData, this, n"OnWeaponDataChanged");
     this.m_zoomTrackingCallback_LHUD = this.m_playerStateMachineBlackboard_LHUD.RegisterListenerFloat(GetAllBlackboardDefs().PlayerStateMachine.ZoomLevel, this, n"OnZoomStateChanged");
@@ -91,6 +100,7 @@ public func InitBBs(playerPuppet: ref<GameObject>) -> Void {
 public func ClearBBs() -> Void {
   this.m_minimapToggleBlackboard_LHUD.UnregisterListenerBool(GetAllBlackboardDefs().UI_System.IsMinimapToggled_LHUD, this.m_minimapToggleCallback_LHUD);
   this.m_playerStateMachineBlackboard_LHUD.UnregisterListenerInt(GetAllBlackboardDefs().PlayerStateMachine.Combat, this.m_combatTrackingCallback_LHUD);
+  this.m_scannerBlackboard_LHUD.UnregisterListenerBool(GetAllBlackboardDefs().UI_Scanner.UIVisible, this.m_scannerTrackingCallback_LHUD);
   this.m_vehicleBlackboard_LHUD.UnregisterListenerBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted, this.m_vehicleTrackingCallback_LHUD);
   this.m_weaponBlackboard_LHUD.UnregisterListenerVariant(GetAllBlackboardDefs().UI_EquipmentData.EquipmentData, this.m_weaponTrackingCallback_LHUD);
   this.m_playerStateMachineBlackboard_LHUD.UnregisterListenerFloat(GetAllBlackboardDefs().PlayerStateMachine.ZoomLevel, this.m_zoomTrackingCallback_LHUD);
@@ -128,8 +138,6 @@ protected cb func OnPlayerDetach(playerGameObject: ref<GameObject>) -> Bool {
   this.ClearBBs();
 }
 
-
-// UI_System.IsMinimapToggled
 
 // Register for minimap toggle actions
 @replaceMethod(HUDManager)

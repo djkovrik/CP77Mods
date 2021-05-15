@@ -15,6 +15,7 @@ public class MinimapModuleConfig {
   public static func ShowInCombat() -> Bool = false
   public static func ShowInStealth() -> Bool = false
   public static func ShowInVehicle() -> Bool = true
+  public static func ShowWithScanner() -> Bool = false
   public static func ShowWithWeapon() -> Bool = false
   public static func ShowWithZoom() -> Bool = true
 
