@@ -6,6 +6,9 @@ public let m_playerPuppet_LHUD: wref<PlayerPuppet>;
 
 // --- Common blackboard declarations
 @addField(inkHUDGameController)
+public let m_braindanceBlackboard_LHUD: wref<IBlackboard>;
+
+@addField(inkHUDGameController)
 public let m_playerStateMachineBlackboard_LHUD: wref<IBlackboard>;
 
 @addField(inkHUDGameController)
@@ -19,6 +22,9 @@ public let m_weaponBlackboard_LHUD: wref<IBlackboard>;
 
 
 // --- Common callback declarations
+@addField(inkHUDGameController)
+public let m_braindanceTrackingCallback_LHUD: Uint32;
+
 @addField(inkHUDGameController)
 public let m_combatTrackingCallback_LHUD: Uint32;
 

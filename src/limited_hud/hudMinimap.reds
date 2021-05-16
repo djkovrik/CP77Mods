@@ -18,6 +18,11 @@ public let m_minimapToggleBlackboard_LHUD: wref<IBlackboard>;
 public let m_minimapToggleCallback_LHUD: Uint32;
 
 @addMethod(MinimapContainerController)
+public func OnBraindanceStateChanged(newState: Int32) -> Void {
+  this.DetermineCurrentVisibility();
+}
+
+@addMethod(MinimapContainerController)
 public func OnCombatStateChanged(newState: Int32) -> Void {
   this.DetermineCurrentVisibility();
 }
@@ -50,6 +55,12 @@ public func OnZoomStateChanged(value: Float) -> Void {
 
 @addMethod(MinimapContainerController)
 public func DetermineCurrentVisibility() -> Void {
+  // Check for braindance
+  if this.m_braindanceBlackboard_LHUD.GetBool(GetAllBlackboardDefs().Braindance.IsActive) {
+    this.GetRootWidget().SetVisible(false);
+    return;
+  };
+
   // Basic checks
   let isCurrentStateCombat: Bool = Equals(this.m_playerStateMachineBlackboard_LHUD.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat), gamePSMCombat.InCombat);
   let isScannerEnabled: Bool = this.m_scannerBlackboard_LHUD.GetBool(GetAllBlackboardDefs().UI_Scanner.UIVisible);
@@ -77,6 +88,7 @@ public func InitBBs(playerPuppet: ref<GameObject>) -> Void {
   if IsDefined(this.m_playerPuppet_LHUD) && this.m_playerPuppet_LHUD.IsControlledByLocalPeer() {
     // Define blackboards
     this.m_minimapToggleBlackboard_LHUD = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_System);
+    this.m_braindanceBlackboard_LHUD = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().Braindance);
     this.m_playerStateMachineBlackboard_LHUD = this.GetPSMBlackboard(this.m_playerPuppet_LHUD);
     this.m_scannerBlackboard_LHUD = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_Scanner);
     this.m_vehicleBlackboard_LHUD = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_ActiveVehicleData);
@@ -84,6 +96,7 @@ public func InitBBs(playerPuppet: ref<GameObject>) -> Void {
 
     // Define callbacks
     this.m_minimapToggleCallback_LHUD = this.m_minimapToggleBlackboard_LHUD.RegisterListenerBool(GetAllBlackboardDefs().UI_System.IsMinimapToggled_LHUD, this, n"OnMinimapToggleChanged");
+    this.m_braindanceTrackingCallback_LHUD = this.m_braindanceBlackboard_LHUD.RegisterListenerBool(GetAllBlackboardDefs().Braindance.IsActive, this, n"OnBraindanceStateChanged");
     this.m_combatTrackingCallback_LHUD = this.m_playerStateMachineBlackboard_LHUD.RegisterListenerInt(GetAllBlackboardDefs().PlayerStateMachine.Combat, this, n"OnCombatStateChanged");
     this.m_scannerTrackingCallback_LHUD = this.m_scannerBlackboard_LHUD.RegisterListenerBool(GetAllBlackboardDefs().UI_Scanner.UIVisible, this, n"OnScannerStateChanged");
     this.m_vehicleTrackingCallback_LHUD = this.m_vehicleBlackboard_LHUD.RegisterListenerBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted, this, n"OnMountedStateChanged");
@@ -99,6 +112,7 @@ public func InitBBs(playerPuppet: ref<GameObject>) -> Void {
 @addMethod(MinimapContainerController)
 public func ClearBBs() -> Void {
   this.m_minimapToggleBlackboard_LHUD.UnregisterListenerBool(GetAllBlackboardDefs().UI_System.IsMinimapToggled_LHUD, this.m_minimapToggleCallback_LHUD);
+  this.m_braindanceBlackboard_LHUD.UnregisterListenerBool(GetAllBlackboardDefs().Braindance.IsActive, this.m_braindanceTrackingCallback_LHUD);
   this.m_playerStateMachineBlackboard_LHUD.UnregisterListenerInt(GetAllBlackboardDefs().PlayerStateMachine.Combat, this.m_combatTrackingCallback_LHUD);
   this.m_scannerBlackboard_LHUD.UnregisterListenerBool(GetAllBlackboardDefs().UI_Scanner.UIVisible, this.m_scannerTrackingCallback_LHUD);
   this.m_vehicleBlackboard_LHUD.UnregisterListenerBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted, this.m_vehicleTrackingCallback_LHUD);
