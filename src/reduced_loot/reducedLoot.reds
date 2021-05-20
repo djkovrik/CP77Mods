@@ -1,7 +1,7 @@
 // --- Reduced Loot --- 
 public class ReducedLootConfig {
 
-  // --- Here you can enable the mod for global loot sources
+  // --- Here you can enable or disable the mod for global loot sources
   //     Replace true with false to prevent loot removal for category
   public static func EnableForContainers() -> Bool = true
   public static func EnableForNPCs() -> Bool = true
@@ -121,7 +121,9 @@ public static func IsJunk_L(data: ref<gameItemData>) -> Bool {
 }
 
 public static func IsShard_L(data: ref<gameItemData>) -> Bool {
-  return data.HasTag(n"Shard");
+  let type: gamedataItemType = data.GetItemType();
+  let typeValue: Int32 = GetItemTypeValue(type);
+  return typeValue == 28 && !data.HasTag(n"Quest");
 }
 
 public static func IsMod_L(data: ref<gameItemData>) -> Bool {
@@ -148,7 +150,7 @@ public static func IsWeapon_L(data: ref<gameItemData>) -> Bool {
 
 // Base checker here
 public static func CanLootThis(data: ref<gameItemData>) -> Bool {
-  Log("! checking " + UIItemsHelper.GetItemTypeKey(data.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(data)) + " " + IntToString(data.GetQuantity()));
+  LootLog("! checking " + UIItemsHelper.GetItemTypeKey(data.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(data)) + " " + IntToString(data.GetQuantity()));
 
   // Always enabled
   if data.HasTag(n"Quest") || data.HasTag(n"Cyberdeck") { 
@@ -176,6 +178,7 @@ public static func CanLootThis(data: ref<gameItemData>) -> Bool {
   return true;
 }
 
+
 // CONTAINERS
 
 @addMethod(gameLootContainerBase)
@@ -190,9 +193,9 @@ private func EvaluateLoot() -> Void {
       item = items[i];
 
       if CanLootThis(item) {
-        Log("+ kept for container " + UIItemsHelper.GetItemTypeKey(item.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(item)));
+        LootLog("+ kept for container " + UIItemsHelper.GetItemTypeKey(item.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(item)));
       } else {
-        Log("- removed for container " + UIItemsHelper.GetItemTypeKey(item.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(item)));
+        LootLog("- removed for container " + UIItemsHelper.GetItemTypeKey(item.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(item)));
         transactionSystem.RemoveItem(this, item.GetID(), item.GetQuantity());
       };
       i += 1;
@@ -210,7 +213,6 @@ protected cb func OnEvaluateLootQuality(evt: ref<EvaluateLootQualityEvent>) -> B
 }
 
 
-
 // NPCS
 @addMethod(ScriptedPuppet)
 private func EvaluateLoot() -> Void {
@@ -223,10 +225,10 @@ private func EvaluateLoot() -> Void {
     while i < ArraySize(items) {
       item = items[i];
       if !CanLootThis(item) {
-        Log("- removed for npc " + UIItemsHelper.GetItemTypeKey(item.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(item)));
+        LootLog("- removed for npc " + UIItemsHelper.GetItemTypeKey(item.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(item)));
         transactionSystem.RemoveItem(this, item.GetID(), item.GetQuantity());
       } else {
-        Log("+ kept for npc " + UIItemsHelper.GetItemTypeKey(item.GetItemType()) + " " +UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(item)));
+        LootLog("+ kept for npc " + UIItemsHelper.GetItemTypeKey(item.GetItemType()) + " " +UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(item)));
       };
       i += 1;
     };
@@ -429,6 +431,29 @@ public final static func DropWeaponFromSlot(obj: wref<GameObject>, slot: TweakDB
   };
 }
 
+// hack to remove extra added ammo
+@replaceMethod(ScriptedPuppet)
+protected cb func OnItemAddedEvent(evt: ref<ItemAddedEvent>) -> Bool {
+  let data: ref<gameItemData> = evt.itemData;
+  let transactionSystem: ref<TransactionSystem>;
+  let quality: gamedataQuality;
+
+  if ReducedLootConfig.EnableForNPCs() && !ReducedLootConfig.AllowAmmo() && IsAmmo_L(data) {
+    LootLog("Extra ammo detected! Removing...");
+    transactionSystem = GameInstance.GetTransactionSystem(this.GetGame());
+    transactionSystem.RemoveItem(this, data.GetID(), data.GetQuantity());
+  };
+
+  if this.HasValidLootQuality() {
+    quality = this.m_lootQuality;
+    this.EvaluateLootQuality();
+    if NotEquals(quality, this.m_lootQuality) {
+      this.RequestHUDRefresh();
+    };
+  };
+}
+
+
 // WORLD OBJECTS
 
 @replaceMethod(gameItemDropObject)
@@ -437,9 +462,9 @@ protected final func OnItemEntitySpawned(entID: EntityID) -> Void {
 
   if ReducedLootConfig.EnableForWorld() {
     if CanLootThis(data) {
-      Log("+ kept for world " + UIItemsHelper.GetItemTypeKey(data.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(data)));
+      LootLog("+ kept for world " + UIItemsHelper.GetItemTypeKey(data.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(data)));
     } else {
-      Log("- removed from world " + UIItemsHelper.GetItemTypeKey(data.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(data)));
+      LootLog("- removed from world " + UIItemsHelper.GetItemTypeKey(data.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(data)));
       EntityGameInterface.Destroy(this.GetEntity());
       return ;
     }
@@ -521,4 +546,8 @@ private final static func GetItemTypeValue(itemType: gamedataItemType) -> Int32 
     case gamedataItemType.Invalid: return 64;
   };
   return 0;
+}
+
+private static func LootLog(str: String) -> Void {
+  // Log(str);
 }
