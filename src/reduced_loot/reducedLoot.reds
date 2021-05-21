@@ -13,21 +13,21 @@ public class ReducedLootConfig {
   // --- Category checks for containers, NPCs and world loot objects
   //     Replace false with true to enable loot category or vice versa
   // --- IMPORTANT: disallowing Shards may break some minor quests 
-  //     like Assault in Progress so use at your own risk!
+  //     like Assault in Progress so do it at your own risk!
   public static func AllowAmmo() -> Bool = false
   public static func AllowClothing() -> Bool = true
-  public static func AllowConsumables() -> Bool = false
   public static func AllowCraftingMaterials() -> Bool = false
   public static func AllowCyberware() -> Bool = false
+  public static func AllowEdibles() -> Bool = false
   public static func AllowGrenades() -> Bool = false
-  public static func AllowHeals() -> Bool = false
+  public static func AllowHealings() -> Bool = false
   public static func AllowJunk() -> Bool = false
   public static func AllowMods() -> Bool = false
   public static func AllowMoney() -> Bool = false
   public static func AllowSchematics() -> Bool = false
   public static func AllowShards() -> Bool = true
   public static func AllowScripts() -> Bool = false
-  public static func AllowSkillBooks() -> Bool = false
+  public static func AllowSkillBooks() -> Bool = true
   public static func AllowWeapons() -> Bool = true
 
   // --- Quality checks
@@ -78,13 +78,13 @@ public static func IsAmmo_L(data: ref<gameItemData>) -> Bool {
   return typeValue == 7;
 }
 
-public static func IsConsumable_L(data: ref<gameItemData>) -> Bool {
+public static func IsEdible_L(data: ref<gameItemData>) -> Bool {
   let type: gamedataItemType = data.GetItemType();
   let typeValue: Int32 = GetItemTypeValue(type);
   return typeValue == 8 || typeValue == 11;
 }
 
-public static func IsHeal_L(data: ref<gameItemData>) -> Bool {
+public static func IsHealing_L(data: ref<gameItemData>) -> Bool {
   let type: gamedataItemType = data.GetItemType();
   let typeValue: Int32 = GetItemTypeValue(type);
   return typeValue == 9 || typeValue == 10;
@@ -162,10 +162,10 @@ public static func CanLootThis(data: ref<gameItemData>) -> Bool {
   if IsWeapon_L(data) { return ReducedLootConfig.AllowWeapons() && IsQualityAllowed_L(data); }
   if IsSchematics_L(data) { return ReducedLootConfig.AllowSchematics(); }
   if IsAmmo_L(data) { return ReducedLootConfig.AllowAmmo(); }
-  if IsConsumable_L(data) { return ReducedLootConfig.AllowConsumables(); }
+  if IsEdible_L(data) { return ReducedLootConfig.AllowEdibles(); }
   if IsCyberware_L(data) { return ReducedLootConfig.AllowCyberware(); }
   if IsGrenade_L(data) { return ReducedLootConfig.AllowGrenades(); }
-  if IsHeal_L(data) { return ReducedLootConfig.AllowHeals(); }
+  if IsHealing_L(data) { return ReducedLootConfig.AllowHealings(); }
   if IsCraftingMat_L(data) { return ReducedLootConfig.AllowCraftingMaterials(); }
   if IsJunk_L(data) { return ReducedLootConfig.AllowJunk(); }
   if IsMod_L(data) { return ReducedLootConfig.AllowMods(); }
@@ -456,12 +456,45 @@ protected cb func OnItemAddedEvent(evt: ref<ItemAddedEvent>) -> Bool {
 
 // WORLD OBJECTS
 
+@addField(PlayerPuppet)
+public let m_preventDestroyingItemId_L: ItemID;
+
+@addMethod(PlayerPuppet)
+public func GetPreventedId_L() -> ItemID {
+  return this.m_preventDestroyingItemId_L;
+}
+
+@addMethod(PlayerPuppet)
+public func PreventDestroying_L(id: ItemID) -> Void {
+  this.m_preventDestroyingItemId_L = id;
+}
+
+@replaceMethod(VendingMachine)
+protected func CreateDispenseRequest(shouldPay: Bool, item: ItemID) -> ref<DispenseRequest> {
+  let dispenseRequest: ref<DispenseRequest> = new DispenseRequest();
+  dispenseRequest.owner = this;
+  dispenseRequest.position = this.RandomizePosition();
+  dispenseRequest.shouldPay = shouldPay;
+  if ItemID.IsValid(item) {
+    dispenseRequest.itemID = item;
+    // Save vending item id to prevent removal
+    GetPlayer(this.GetGame()).PreventDestroying_L(item);
+  };
+  return dispenseRequest;
+}
+
 @replaceMethod(gameItemDropObject)
 protected final func OnItemEntitySpawned(entID: EntityID) -> Void {
+  let playerPuppet: ref<PlayerPuppet>;
   let data: ref<gameItemData> = this.GetItemObject().GetItemData();
+  let preventDestroying: Bool = false;
 
   if ReducedLootConfig.EnableForWorld() {
-    if CanLootThis(data) {
+    playerPuppet = GameInstance.GetPlayerSystem(this.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
+    if IsDefined(playerPuppet) {
+      preventDestroying = Equals(this.GetItemObject().GetItemID(), playerPuppet.GetPreventedId_L());
+    };
+    if CanLootThis(data) || preventDestroying {
       LootLog("+ kept for world " + UIItemsHelper.GetItemTypeKey(data.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(data)));
     } else {
       LootLog("- removed from world " + UIItemsHelper.GetItemTypeKey(data.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(data)));
