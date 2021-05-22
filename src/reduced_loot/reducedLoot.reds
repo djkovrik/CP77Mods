@@ -178,6 +178,15 @@ public static func CanLootThis(data: ref<gameItemData>) -> Bool {
   return true;
 }
 
+// Exclusion list for quests when world objects should be kept
+public static func KeepWorldPlacedForQuest_L(objectiveId: String) -> Bool {
+  return 
+    Equals(objectiveId, "01a_pick_weapon") ||
+    Equals(objectiveId, "01c_pick_up_reanimator") ||
+    Equals(objectiveId, "03_pick_up_katana") ||
+
+  false;
+}
 
 // CONTAINERS
 
@@ -438,7 +447,7 @@ protected cb func OnItemAddedEvent(evt: ref<ItemAddedEvent>) -> Bool {
   let transactionSystem: ref<TransactionSystem>;
   let quality: gamedataQuality;
 
-  if ReducedLootConfig.EnableForNPCs() && !ReducedLootConfig.AllowAmmo() && IsAmmo_L(data) {
+  if ReducedLootConfig.EnableForNPCs() && !ReducedLootConfig.AllowAmmo() && IsAmmo_L(data) && !this.IsPlayer() {
     LootLog("Extra ammo detected! Removing...");
     transactionSystem = GameInstance.GetTransactionSystem(this.GetGame());
     transactionSystem.RemoveItem(this, data.GetID(), data.GetQuantity());
@@ -487,14 +496,21 @@ protected func CreateDispenseRequest(shouldPay: Bool, item: ItemID) -> ref<Dispe
 protected final func OnItemEntitySpawned(entID: EntityID) -> Void {
   let playerPuppet: ref<PlayerPuppet>;
   let data: ref<gameItemData> = this.GetItemObject().GetItemData();
+  let journalManager: wref<JournalManager>;
+  let trackedObjective: wref<JournalQuestObjective>;
   let preventDestroying: Bool = false;
+  let shouldKeepForQuest: Bool = false;
 
   if ReducedLootConfig.EnableForWorld() {
     playerPuppet = GameInstance.GetPlayerSystem(this.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
     if IsDefined(playerPuppet) {
+      journalManager = GameInstance.GetJournalManager(playerPuppet.GetGame());
+      trackedObjective = journalManager.GetTrackedEntry() as JournalQuestObjective;
       preventDestroying = Equals(this.GetItemObject().GetItemID(), playerPuppet.GetPreventedId_L());
+      shouldKeepForQuest = KeepWorldPlacedForQuest_L(trackedObjective.GetId());
+      LootLog("!! Current quest objective: " + trackedObjective.GetId());
     };
-    if CanLootThis(data) || preventDestroying {
+    if CanLootThis(data) || preventDestroying || shouldKeepForQuest {
       LootLog("+ kept for world " + UIItemsHelper.GetItemTypeKey(data.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(data)));
     } else {
       LootLog("- removed from world " + UIItemsHelper.GetItemTypeKey(data.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(data)));
