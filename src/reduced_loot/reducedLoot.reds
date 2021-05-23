@@ -10,139 +10,143 @@ public class ReducedLootConfig {
   // --- Enable or disable held weapon drop for NPCs
   public static func AllowHeldWeaponDrop() -> Bool = false
 
-  // --- Category checks for containers, NPCs and world loot objects
-  //     Replace false with true to enable loot category or vice versa
+  // --- Loot category settings for containers, NPCs and world objects
+  // --- Category return number means drop probability in percents, 
+  //     where 0 equals never and 100 equals always
   // --- IMPORTANT: disallowing Shards may break some minor quests 
   //     like Assault in Progress so do it at your own risk!
-  public static func AllowAmmo() -> Bool = false
-  public static func AllowClothing() -> Bool = true
-  public static func AllowCraftingMaterials() -> Bool = false
-  public static func AllowCyberware() -> Bool = false
-  public static func AllowEdibles() -> Bool = false
-  public static func AllowGrenades() -> Bool = false
-  public static func AllowHealings() -> Bool = false
-  public static func AllowJunk() -> Bool = false
-  public static func AllowMods() -> Bool = false
-  public static func AllowMoney() -> Bool = false
-  public static func AllowSchematics() -> Bool = false
-  public static func AllowShards() -> Bool = true
-  public static func AllowScripts() -> Bool = false
-  public static func AllowSkillBooks() -> Bool = true
-  public static func AllowWeapons() -> Bool = true
+  public static func              Ammo() -> Int32 = 25
+  public static func CraftingMaterials() -> Int32 = 50
+  public static func         Cyberware() -> Int32 = 50
+  public static func           Edibles() -> Int32 = 50
+  public static func          Grenades() -> Int32 = 25
+  public static func          Healings() -> Int32 = 25
+  public static func              Junk() -> Int32 = 50
+  public static func              Mods() -> Int32 = 50
+  public static func             Money() -> Int32 = 25
+  public static func        Quickhacks() -> Int32 = 50
+  public static func        Schematics() -> Int32 = 75
+  public static func            Shards() -> Int32 = 100
+  public static func        SkillBooks() -> Int32 = 100
 
-  // --- Quality checks
-  //     Additionaly applied to all clothing and weapons checks
-  public static func AllowLegendary() -> Bool = true
-  public static func AllowIconic() -> Bool = true
-  public static func AllowEpic() -> Bool = true
-  public static func AllowRare() -> Bool = false
-  public static func AllowUncommon() -> Bool = false
-  public static func AllowCommon() -> Bool = false
+  // --- Quality checks for clothing and weapons
+  // --- Category return number means drop probability in percents, 
+  //     where 0 equals never and 100 equals always
+  public static func         Legendary() -> Int32 = 100
+  public static func              Epic() -> Int32 = 75
+  public static func              Rare() -> Int32 = 50
+  public static func          Uncommon() -> Int32 = 25
+  public static func            Common() -> Int32 = 0
 }
 
 //  --- Do not edit anything below!
 
 
 // Checks
-public static func IsQualityAllowed_L(data: ref<gameItemData>) -> Bool {
+public static func EquipmentQualityCheck_RL(data: ref<gameItemData>) -> Bool {
   if RPGManager.IsItemDataIconic(data) {
-    return ReducedLootConfig.AllowIconic();
+    return true;
   };
 
   let quality: gamedataQuality = RPGManager.GetItemDataQuality(data);
   switch quality {
-    case gamedataQuality.Legendary: return ReducedLootConfig.AllowLegendary();
-    case gamedataQuality.Iconic: return ReducedLootConfig.AllowIconic();
-    case gamedataQuality.Epic: return ReducedLootConfig.AllowEpic();
-    case gamedataQuality.Rare: return ReducedLootConfig.AllowRare();
-    case gamedataQuality.Uncommon: return ReducedLootConfig.AllowUncommon();
-    case gamedataQuality.Common: return ReducedLootConfig.AllowCommon();
+    case gamedataQuality.Legendary: return ProbabilityCheck_RL(ReducedLootConfig.Legendary());
+    case gamedataQuality.Epic: return ProbabilityCheck_RL(ReducedLootConfig.Epic());
+    case gamedataQuality.Rare: return ProbabilityCheck_RL(ReducedLootConfig.Rare());
+    case gamedataQuality.Uncommon: ProbabilityCheck_RL(ReducedLootConfig.Uncommon());
+    case gamedataQuality.Common: ProbabilityCheck_RL(ReducedLootConfig.Common());
   };
 
   return true;
 }
 
-public static func IsMoney_L(data: ref<gameItemData>) -> Bool {
+public static func ProbabilityCheck_RL(chosen: Int32) -> Bool {
+  let random: Int32 = RandRange(1, 100);
+  // RL("Random " + IntToString(random) + " compared with " + IntToString(chosen) + " returns " + BoolToString(random <= chosen));
+  return random <= chosen;
+}
+
+public static func IsMoney_RL(data: ref<gameItemData>) -> Bool {
   return Equals(data.GetID(), ItemID.FromTDBID(t"Items.money"));
 }
 
-public static func IsClothing_L(data: ref<gameItemData>) -> Bool {
+public static func IsClothing_RL(data: ref<gameItemData>) -> Bool {
   let type: gamedataItemType = data.GetItemType();
   let typeValue: Int32 = GetItemTypeValue(type);
   return typeValue >= 0 && typeValue <= 6;
 }
 
-public static func IsAmmo_L(data: ref<gameItemData>) -> Bool {
+public static func IsAmmo_RL(data: ref<gameItemData>) -> Bool {
   let type: gamedataItemType = data.GetItemType();
   let typeValue: Int32 = GetItemTypeValue(type);
   return typeValue == 7;
 }
 
-public static func IsEdible_L(data: ref<gameItemData>) -> Bool {
+public static func IsEdible_RL(data: ref<gameItemData>) -> Bool {
   let type: gamedataItemType = data.GetItemType();
   let typeValue: Int32 = GetItemTypeValue(type);
   return typeValue == 8 || typeValue == 11;
 }
 
-public static func IsHealing_L(data: ref<gameItemData>) -> Bool {
+public static func IsHealing_RL(data: ref<gameItemData>) -> Bool {
   let type: gamedataItemType = data.GetItemType();
   let typeValue: Int32 = GetItemTypeValue(type);
   return typeValue == 9 || typeValue == 10;
 }
 
-public static func IsSkillBook_L(data: ref<gameItemData>) -> Bool {
+public static func IsSkillBook_RL(data: ref<gameItemData>) -> Bool {
   let type: gamedataItemType = data.GetItemType();
   let typeValue: Int32 = GetItemTypeValue(type);
   return typeValue == 12;
 }
 
-public static func IsCyberware_L(data: ref<gameItemData>) -> Bool {
+public static func IsCyberware_RL(data: ref<gameItemData>) -> Bool {
   let type: gamedataItemType = data.GetItemType();
   let typeValue: Int32 = GetItemTypeValue(type);
   return typeValue >= 13 && typeValue <= 17;
 }
 
-public static func IsGrenade_L(data: ref<gameItemData>) -> Bool {
+public static func IsGrenade_RL(data: ref<gameItemData>) -> Bool {
   let type: gamedataItemType = data.GetItemType();
   let typeValue: Int32 = GetItemTypeValue(type);
   return typeValue == 22;
 }
 
-public static func IsCraftingMat_L(data: ref<gameItemData>) -> Bool {
+public static func IsCraftingMat_RL(data: ref<gameItemData>) -> Bool {
   let type: gamedataItemType = data.GetItemType();
   let typeValue: Int32 = GetItemTypeValue(type);
   return typeValue == 23;
 }
 
-public static func IsJunk_L(data: ref<gameItemData>) -> Bool {
+public static func IsJunk_RL(data: ref<gameItemData>) -> Bool {
   let type: gamedataItemType = data.GetItemType();
   let typeValue: Int32 = GetItemTypeValue(type);
-  return typeValue >= 24 && typeValue <= 27 && !IsMoney_L(data);
+  return typeValue >= 24 && typeValue <= 27 && !IsMoney_RL(data);
 }
 
-public static func IsShard_L(data: ref<gameItemData>) -> Bool {
+public static func IsShard_RL(data: ref<gameItemData>) -> Bool {
   let type: gamedataItemType = data.GetItemType();
   let typeValue: Int32 = GetItemTypeValue(type);
   return typeValue == 28 && !data.HasTag(n"Quest");
 }
 
-public static func IsMod_L(data: ref<gameItemData>) -> Bool {
+public static func IsMod_RL(data: ref<gameItemData>) -> Bool {
   let type: gamedataItemType = data.GetItemType();
   let typeValue: Int32 = GetItemTypeValue(type);
   return typeValue >= 29 && typeValue <= 42 && typeValue != 37;
 }
 
-public static func IsSchematics_L(data: ref<gameItemData>) -> Bool {
+public static func IsSchematics_RL(data: ref<gameItemData>) -> Bool {
   return data.HasTag(n"Recipe");
 }
 
-public static func IsScript_L(data: ref<gameItemData>) -> Bool {
+public static func IsQuickhack_RL(data: ref<gameItemData>) -> Bool {
   let type: gamedataItemType = data.GetItemType();
   let typeValue: Int32 = GetItemTypeValue(type);
   return typeValue == 37;
 }
 
-public static func IsWeapon_L(data: ref<gameItemData>) -> Bool {
+public static func IsWeapon_RL(data: ref<gameItemData>) -> Bool {
   let type: gamedataItemType = data.GetItemType();
   let typeValue: Int32 = GetItemTypeValue(type);
   return typeValue >= 43 && typeValue <= 62;
@@ -150,7 +154,7 @@ public static func IsWeapon_L(data: ref<gameItemData>) -> Bool {
 
 // Base checker here
 public static func CanLootThis(data: ref<gameItemData>) -> Bool {
-  LootLog("! checking " + UIItemsHelper.GetItemTypeKey(data.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(data)) + " " + IntToString(data.GetQuantity()));
+  RL("! checking " + UIItemsHelper.GetItemTypeKey(data.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(data)) + " " + IntToString(data.GetQuantity()));
 
   // Always enabled
   if data.HasTag(n"Quest") || data.HasTag(n"Cyberdeck") { 
@@ -158,28 +162,28 @@ public static func CanLootThis(data: ref<gameItemData>) -> Bool {
   };
 
   // Config checks
-  if IsClothing_L(data) { return ReducedLootConfig.AllowClothing() && IsQualityAllowed_L(data); }
-  if IsWeapon_L(data) { return ReducedLootConfig.AllowWeapons() && IsQualityAllowed_L(data); }
-  if IsSchematics_L(data) { return ReducedLootConfig.AllowSchematics(); }
-  if IsAmmo_L(data) { return ReducedLootConfig.AllowAmmo(); }
-  if IsEdible_L(data) { return ReducedLootConfig.AllowEdibles(); }
-  if IsCyberware_L(data) { return ReducedLootConfig.AllowCyberware(); }
-  if IsGrenade_L(data) { return ReducedLootConfig.AllowGrenades(); }
-  if IsHealing_L(data) { return ReducedLootConfig.AllowHealings(); }
-  if IsCraftingMat_L(data) { return ReducedLootConfig.AllowCraftingMaterials(); }
-  if IsJunk_L(data) { return ReducedLootConfig.AllowJunk(); }
-  if IsMod_L(data) { return ReducedLootConfig.AllowMods(); }
-  if IsMoney_L(data) { return ReducedLootConfig.AllowMoney(); }
-  if IsScript_L(data) { return ReducedLootConfig.AllowScripts(); }
-  if IsSkillBook_L(data) { return ReducedLootConfig.AllowSkillBooks(); }
-  if IsShard_L(data) { return ReducedLootConfig.AllowShards(); }
+  if IsClothing_RL(data) { return EquipmentQualityCheck_RL(data); }
+  if IsWeapon_RL(data) { return EquipmentQualityCheck_RL(data); }
+  if IsSchematics_RL(data) { return ProbabilityCheck_RL(ReducedLootConfig.Schematics()); }
+  if IsAmmo_RL(data) { return ProbabilityCheck_RL(ReducedLootConfig.Ammo()); }
+  if IsEdible_RL(data) { return ProbabilityCheck_RL(ReducedLootConfig.Edibles()); }
+  if IsCyberware_RL(data) { return ProbabilityCheck_RL(ReducedLootConfig.Cyberware()); }
+  if IsGrenade_RL(data) { return ProbabilityCheck_RL(ReducedLootConfig.Grenades()); }
+  if IsHealing_RL(data) { return ProbabilityCheck_RL(ReducedLootConfig.Healings()); }
+  if IsCraftingMat_RL(data) { return ProbabilityCheck_RL(ReducedLootConfig.CraftingMaterials()); }
+  if IsJunk_RL(data) { return ProbabilityCheck_RL(ReducedLootConfig.Junk()); }
+  if IsMod_RL(data) { return ProbabilityCheck_RL(ReducedLootConfig.Mods()); }
+  if IsMoney_RL(data) { return ProbabilityCheck_RL(ReducedLootConfig.Money()); }
+  if IsQuickhack_RL(data) { return ProbabilityCheck_RL(ReducedLootConfig.Quickhacks()); }
+  if IsSkillBook_RL(data) { return ProbabilityCheck_RL(ReducedLootConfig.SkillBooks()); }
+  if IsShard_RL(data) { return ProbabilityCheck_RL(ReducedLootConfig.Shards()); }
   
   // true for the rest to check what types are not covered yet
   return true;
 }
 
 // Exclusion list for quests when world objects should be kept
-public static func KeepWorldPlacedForQuest_L(objectiveId: String) -> Bool {
+public static func KeepWorldPlacedForQuest_RL(objectiveId: String) -> Bool {
   return 
     Equals(objectiveId, "01a_pick_weapon") ||
     Equals(objectiveId, "01c_pick_up_reanimator") ||
@@ -201,10 +205,10 @@ private func EvaluateLoot() -> Void {
     while i < ArraySize(items) {
       item = items[i];
 
-      if CanLootThis(item) {
-        LootLog("+ kept for container " + UIItemsHelper.GetItemTypeKey(item.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(item)));
+      if CanLootThis(item) || this.IsQuest() {
+        RL("+ kept for container " + UIItemsHelper.GetItemTypeKey(item.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(item)));
       } else {
-        LootLog("- removed for container " + UIItemsHelper.GetItemTypeKey(item.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(item)));
+        RL("- removed for container " + UIItemsHelper.GetItemTypeKey(item.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(item)));
         transactionSystem.RemoveItem(this, item.GetID(), item.GetQuantity());
       };
       i += 1;
@@ -233,11 +237,11 @@ private func EvaluateLoot() -> Void {
   if transactionSystem.GetItemList(this, items) {
     while i < ArraySize(items) {
       item = items[i];
-      if !CanLootThis(item) {
-        LootLog("- removed for npc " + UIItemsHelper.GetItemTypeKey(item.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(item)));
-        transactionSystem.RemoveItem(this, item.GetID(), item.GetQuantity());
+      if CanLootThis(item) || this.IsQuest() {
+        RL("+ kept for npc " + UIItemsHelper.GetItemTypeKey(item.GetItemType()) + " " +UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(item)));
       } else {
-        LootLog("+ kept for npc " + UIItemsHelper.GetItemTypeKey(item.GetItemType()) + " " +UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(item)));
+        RL("- removed for npc " + UIItemsHelper.GetItemTypeKey(item.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(item)));
+        transactionSystem.RemoveItem(this, item.GetID(), item.GetQuantity());
       };
       i += 1;
     };
@@ -332,7 +336,7 @@ public final static func ProcessLoot(self: wref<ScriptedPuppet>) -> Void {
       if ammoAmount > 0 {
         TS.GiveItemByTDBID(self, ammoToDrop[i], ammoAmount);
         if ReducedLootConfig.EnableForNPCs() {
-          if ReducedLootConfig.AllowAmmo() {
+          if ProbabilityCheck_RL(ReducedLootConfig.Ammo()) {
             self.DropAmmo();
           };
         } else {
@@ -447,8 +451,8 @@ protected cb func OnItemAddedEvent(evt: ref<ItemAddedEvent>) -> Bool {
   let transactionSystem: ref<TransactionSystem>;
   let quality: gamedataQuality;
 
-  if ReducedLootConfig.EnableForNPCs() && !ReducedLootConfig.AllowAmmo() && IsAmmo_L(data) && !this.IsPlayer() {
-    LootLog("Extra ammo detected! Removing...");
+  if ReducedLootConfig.EnableForNPCs() && !ProbabilityCheck_RL(ReducedLootConfig.Ammo()) && IsAmmo_RL(data) && !ScriptedPuppet.IsAlive(this) && !this.IsPlayer() {
+    RL("Extra ammo detected! Removing...");
     transactionSystem = GameInstance.GetTransactionSystem(this.GetGame());
     transactionSystem.RemoveItem(this, data.GetID(), data.GetQuantity());
   };
@@ -466,16 +470,16 @@ protected cb func OnItemAddedEvent(evt: ref<ItemAddedEvent>) -> Bool {
 // WORLD OBJECTS
 
 @addField(PlayerPuppet)
-public let m_preventDestroyingItemId_L: ItemID;
+public let m_preventDestroyingItemId_RL: ItemID;
 
 @addMethod(PlayerPuppet)
-public func GetPreventedId_L() -> ItemID {
-  return this.m_preventDestroyingItemId_L;
+public func GetPreventedId_RL() -> ItemID {
+  return this.m_preventDestroyingItemId_RL;
 }
 
 @addMethod(PlayerPuppet)
-public func PreventDestroying_L(id: ItemID) -> Void {
-  this.m_preventDestroyingItemId_L = id;
+public func PreventDestroying_RL(id: ItemID) -> Void {
+  this.m_preventDestroyingItemId_RL = id;
 }
 
 @replaceMethod(VendingMachine)
@@ -487,7 +491,7 @@ protected func CreateDispenseRequest(shouldPay: Bool, item: ItemID) -> ref<Dispe
   if ItemID.IsValid(item) {
     dispenseRequest.itemID = item;
     // Save vending item id to prevent removal
-    GetPlayer(this.GetGame()).PreventDestroying_L(item);
+    GetPlayer(this.GetGame()).PreventDestroying_RL(item);
   };
   return dispenseRequest;
 }
@@ -506,14 +510,14 @@ protected final func OnItemEntitySpawned(entID: EntityID) -> Void {
     if IsDefined(playerPuppet) {
       journalManager = GameInstance.GetJournalManager(playerPuppet.GetGame());
       trackedObjective = journalManager.GetTrackedEntry() as JournalQuestObjective;
-      preventDestroying = Equals(this.GetItemObject().GetItemID(), playerPuppet.GetPreventedId_L());
-      shouldKeepForQuest = KeepWorldPlacedForQuest_L(trackedObjective.GetId());
-      LootLog("!! Current quest objective: " + trackedObjective.GetId());
+      preventDestroying = Equals(this.GetItemObject().GetItemID(), playerPuppet.GetPreventedId_RL());
+      shouldKeepForQuest = KeepWorldPlacedForQuest_RL(trackedObjective.GetId());
+      RL("! Current quest objective: " + trackedObjective.GetId());
     };
     if CanLootThis(data) || preventDestroying || shouldKeepForQuest {
-      LootLog("+ kept for world " + UIItemsHelper.GetItemTypeKey(data.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(data)));
+      RL("+ kept for world " + UIItemsHelper.GetItemTypeKey(data.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(data)));
     } else {
-      LootLog("- removed from world " + UIItemsHelper.GetItemTypeKey(data.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(data)));
+      RL("- removed from world " + UIItemsHelper.GetItemTypeKey(data.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(data)));
       EntityGameInterface.Destroy(this.GetEntity());
       return ;
     }
@@ -597,6 +601,6 @@ private final static func GetItemTypeValue(itemType: gamedataItemType) -> Int32 
   return 0;
 }
 
-private static func LootLog(str: String) -> Void {
-  // Log(str);
+private static func RL(str: String) -> Void {
+  Log(str);
 }
