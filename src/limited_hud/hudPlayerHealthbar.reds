@@ -6,6 +6,12 @@ import LimitedHudCommon.*
 import LimitedHudConfig.PlayerHealthbarModuleConfig
 
 @addMethod(healthbarWidgetGameController)
+public func OnGlobalToggleChanged(value: Bool) -> Void {
+  this.m_isGlobalFlagToggled_LHUD = value;
+  this.ComputeHealthBarVisibility();
+}
+
+@addMethod(healthbarWidgetGameController)
 public func OnWeaponDataChanged(value: Variant) -> Bool {
   this.ComputeHealthBarVisibility();
 }
@@ -39,9 +45,11 @@ protected cb func OnPlayerAttach(playerGameObject: ref<GameObject>) -> Bool {
   this.m_playerPuppet_LHUD = playerGameObject as PlayerPuppet;
   if IsDefined(this.m_playerPuppet_LHUD) {
     // Define bbs
-    this.m_weaponBlackboard_LHUD = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_EquipmentData);
     this.m_playerStateMachineBlackboard_LHUD = this.GetPSMBlackboard(this.m_playerPuppet_LHUD);
+    this.m_systemBlackboard_LHUD = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_System);
+    this.m_weaponBlackboard_LHUD = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_EquipmentData);
     // Define callbacks
+    this.m_globalFlagCallback_LHUD = this.m_systemBlackboard_LHUD.RegisterListenerBool(GetAllBlackboardDefs().UI_System.IsGlobalFlagToggled_LHUD, this, n"OnGlobalToggleChanged");
     this.m_weaponTrackingCallback_LHUD = this.m_weaponBlackboard_LHUD.RegisterListenerVariant(GetAllBlackboardDefs().UI_EquipmentData.EquipmentData, this, n"OnWeaponDataChanged");
     this.m_zoomTrackingCallback_LHUD = this.m_playerStateMachineBlackboard_LHUD.RegisterListenerFloat(GetAllBlackboardDefs().PlayerStateMachine.ZoomLevel, this, n"OnZoomStateChanged");
   } else {
@@ -56,6 +64,7 @@ protected cb func OnPlayerDetach(playerGameObject: ref<GameObject>) -> Bool {
     this.m_foldingAnimProxy.Stop();
   };
   this.m_foldingAnimProxy = this.PlayLibraryAnimation(n"fold");
+  this.m_systemBlackboard_LHUD.UnregisterListenerBool(GetAllBlackboardDefs().UI_System.IsGlobalFlagToggled_LHUD, this.m_globalFlagCallback_LHUD);
   this.m_weaponBlackboard_LHUD.UnregisterListenerVariant(GetAllBlackboardDefs().UI_EquipmentData.EquipmentData, this.m_weaponTrackingCallback_LHUD);
   this.m_playerStateMachineBlackboard_LHUD.UnregisterListenerFloat(GetAllBlackboardDefs().PlayerStateMachine.ZoomLevel, this.m_zoomTrackingCallback_LHUD);
   this.m_playerPuppet_LHUD = null;
@@ -75,9 +84,16 @@ private final func ComputeHealthBarVisibility() -> Void {
   let isWeaponUnsheathed: Bool = this.m_playerPuppet_LHUD.HasAnyWeaponEquipped_LHUD();
   let isZoomActive: Bool = (this.m_playerStateMachineBlackboard_LHUD.GetFloat(GetAllBlackboardDefs().PlayerStateMachine.ZoomLevel) > 1.0) && !isWeaponUnsheathed;
   // Additional flags
+  let showForGlobalHotkey: Bool = this.m_isGlobalFlagToggled_LHUD && PlayerHealthbarModuleConfig.BindToGlobalHotkey();
   let showForStealth: Bool =  isInStealth && PlayerHealthbarModuleConfig.ShowInStealth();
   let showForWeapon: Bool = isWeaponUnsheathed && PlayerHealthbarModuleConfig.ShowWithWeapon();
   let showForZoom: Bool =  isZoomActive && PlayerHealthbarModuleConfig.ShowWithZoom();
+
+  let isVisible: Bool = showForGlobalHotkey || showForStealth || showForWeapon || showForZoom;
+
+  if !PlayerHealthbarModuleConfig.IsEnabled() {
+    isVisible = false;
+  };
 
   this.m_armorBar.SetVisible(isMultiplayer);
   this.UpdateGodModeVisibility();
@@ -86,7 +102,7 @@ private final func ComputeHealthBarVisibility() -> Void {
     this.HideRequest();
     return ;
   };
-  if !isMaxHP || areQuickhacksUsed || isMultiplayer || Equals(this.m_combatModePSM, gamePSMCombat.InCombat) || this.m_quickhacksMemoryPercent < 100.00 || this.m_buffsVisible || showForStealth || showForWeapon || showForZoom {
+  if !isMaxHP || areQuickhacksUsed || isMultiplayer || Equals(this.m_combatModePSM, gamePSMCombat.InCombat) || this.m_quickhacksMemoryPercent < 100.00 || this.m_buffsVisible || isVisible {
     this.ShowRequest();
   } else {
     this.HideRequest();

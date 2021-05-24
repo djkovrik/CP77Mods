@@ -3,8 +3,42 @@
 /////////////////////////////////////////////////////////////////////
 
 import LimitedHudCommon.*
+import LimitedHudConfig.CrouchAndWeaponRosterModuleConfig
 
 // ---------- CrouchIndicatorGameController
+
+@addMethod(CrouchIndicatorGameController)
+public func OnCombatStateChanged(newState: Int32) -> Void {
+  this.DetermineCurrentVisibility();
+}
+
+@addMethod(CrouchIndicatorGameController)
+public func OnGlobalToggleChanged(value: Bool) -> Void {
+  this.m_isGlobalFlagToggled_LHUD = value;
+  this.DetermineCurrentVisibility();
+}
+
+@addMethod(CrouchIndicatorGameController)
+public func DetermineCurrentVisibility() {
+  // Check if enabled
+  if !CrouchAndWeaponRosterModuleConfig.IsEnabled() {
+    return ;
+  };
+
+  // Check for braindance
+  if this.m_braindanceBlackboard_LHUD.GetBool(GetAllBlackboardDefs().Braindance.IsActive) {
+    this.ShowWidget(false);
+    return ;
+  };
+
+  // Basic checks
+  let isCurrentStateStealth: Bool = Equals(this.m_playerStateMachineBlackboard_LHUD.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat), gamePSMCombat.Stealth);
+  let isWeaponUnsheathed: Bool = this.m_playerPuppet_LHUD.HasAnyWeaponEquipped_LHUD();
+  let showForStealth = isCurrentStateStealth && CrouchAndWeaponRosterModuleConfig.ShowInStealth();
+  let showForGlobalHotkey: Bool = this.m_isGlobalFlagToggled_LHUD && CrouchAndWeaponRosterModuleConfig.BindToGlobalHotkey();
+  let isVisible: Bool = isWeaponUnsheathed || showForStealth || showForGlobalHotkey;
+  this.ShowWidget(isVisible);
+}
 
 @addMethod(CrouchIndicatorGameController)
 public func ShowWidget(show: Bool) -> Void {
@@ -17,7 +51,7 @@ public func ShowWidget(show: Bool) -> Void {
 
 @addMethod(CrouchIndicatorGameController)
 public func OnFoldFinished(proxy: ref<inkAnimProxy>) -> Bool {
-  this.ShowWidget(false);
+  this.DetermineCurrentVisibility();
 }
 
 @addMethod(CrouchIndicatorGameController)
@@ -27,7 +61,9 @@ public func OnUnfoldStarted(proxy: ref<inkAnimProxy>) -> Bool {
 
 @replaceMethod(CrouchIndicatorGameController)
 protected cb func OnInitialize() -> Bool {
-  // this.PlayInitFoldingAnim();
+  this.PlayInitFoldingAnim();
+  this.DetermineCurrentVisibility();
+
   inkWidgetRef.SetVisible(this.m_warningMessageWraper, false);
   this.m_damageTypeIndicator = inkWidgetRef.GetController(this.m_damageTypeRef) as DamageTypeIndicator;
   this.m_bbDefinition = GetAllBlackboardDefs().UIInteractions;
@@ -42,12 +78,29 @@ protected cb func OnInitialize() -> Bool {
 @replaceMethod(CrouchIndicatorGameController)
 protected cb func OnPlayerAttach(playerPuppet: ref<GameObject>) -> Bool {
   this.m_Player = playerPuppet as PlayerPuppet;
+  this.m_playerPuppet_LHUD = this.m_Player;
   this.m_InventoryManager = new InventoryDataManagerV2();
   this.m_InventoryManager.Initialize(this.m_Player);
   this.m_genderName = this.m_Player.GetResolvedGenderName();
   this.m_WeaponAreas = InventoryDataManagerV2.GetInventoryWeaponTypes();
   this.RegisterBB();
-  this.ShowWidget(this.m_Player.HasAnyWeaponEquipped_LHUD());
+  // Register BBs
+  this.m_braindanceBlackboard_LHUD = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().Braindance);
+  this.m_playerStateMachineBlackboard_LHUD = this.GetPSMBlackboard(this.m_playerPuppet_LHUD);
+  this.m_systemBlackboard_LHUD = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_System);
+  // Register callbacks
+  this.m_combatTrackingCallback_LHUD = this.m_playerStateMachineBlackboard_LHUD.RegisterListenerInt(GetAllBlackboardDefs().PlayerStateMachine.Combat, this, n"OnCombatStateChanged");
+  this.m_globalFlagCallback_LHUD = this.m_systemBlackboard_LHUD.RegisterListenerBool(GetAllBlackboardDefs().UI_System.IsGlobalFlagToggled_LHUD, this, n"OnGlobalToggleChanged");
+  this.DetermineCurrentVisibility();
+}
+
+@replaceMethod(CrouchIndicatorGameController)
+protected cb func OnPlayerDetach(playerPuppet: ref<GameObject>) -> Bool {
+  this.UnregisterBB();
+  // Unregister callbacks
+  this.m_playerStateMachineBlackboard_LHUD.UnregisterListenerInt(GetAllBlackboardDefs().PlayerStateMachine.Combat, this.m_combatTrackingCallback_LHUD);
+  this.m_systemBlackboard_LHUD.UnregisterListenerBool(GetAllBlackboardDefs().UI_System.IsGlobalFlagToggled_LHUD, this.m_globalFlagCallback_LHUD);
+  this.m_Player = null;
 }
 
 @replaceMethod(CrouchIndicatorGameController)
@@ -118,6 +171,38 @@ private final func PlayUnfold() -> Void {
 
 
 // ---------- weaponRosterGameController
+@addMethod(weaponRosterGameController)
+public func OnCombatStateChanged(newState: Int32) -> Void {
+  this.DetermineCurrentVisibility();
+}
+
+@addMethod(weaponRosterGameController)
+public func OnGlobalToggleChanged(value: Bool) -> Void {
+  this.m_isGlobalFlagToggled_LHUD = value;
+  this.DetermineCurrentVisibility();
+}
+
+@addMethod(weaponRosterGameController)
+public func DetermineCurrentVisibility() {
+  // Check if enabled
+  if !CrouchAndWeaponRosterModuleConfig.IsEnabled() {
+    return ;
+  };
+
+  // Check for braindance
+  if this.m_braindanceBlackboard_LHUD.GetBool(GetAllBlackboardDefs().Braindance.IsActive) {
+    this.ShowWidget(false);
+    return ;
+  };
+
+  // Basic checks
+  let isCurrentStateStealth: Bool = Equals(this.m_playerStateMachineBlackboard_LHUD.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat), gamePSMCombat.Stealth);
+  let isWeaponUnsheathed: Bool = this.m_playerPuppet_LHUD.HasAnyWeaponEquipped_LHUD();
+  let showForStealth = isCurrentStateStealth && CrouchAndWeaponRosterModuleConfig.ShowInStealth();
+  let showForGlobalHotkey: Bool = this.m_isGlobalFlagToggled_LHUD && CrouchAndWeaponRosterModuleConfig.BindToGlobalHotkey();
+  let isVisible: Bool = isWeaponUnsheathed || showForStealth || showForGlobalHotkey;
+  this.ShowWidget(isVisible);
+}
 
 @addMethod(weaponRosterGameController)
 public func ShowWidget(show: Bool) -> Void {
@@ -126,7 +211,7 @@ public func ShowWidget(show: Bool) -> Void {
 
 @addMethod(weaponRosterGameController)
 public func OnFoldFinished(proxy: ref<inkAnimProxy>) -> Bool {
-  this.ShowWidget(false);
+  this.DetermineCurrentVisibility();
 }
 
 @addMethod(weaponRosterGameController)
@@ -136,7 +221,8 @@ public func OnUnfoldStarted(proxy: ref<inkAnimProxy>) -> Bool {
 
 @replaceMethod(weaponRosterGameController)
 protected cb func OnInitialize() -> Bool {
-  // this.PlayInitFoldingAnim();
+  this.PlayInitFoldingAnim();
+  this.DetermineCurrentVisibility();
   inkWidgetRef.SetVisible(this.m_warningMessageWraper, false);
   this.m_damageTypeIndicator = inkWidgetRef.GetController(this.m_damageTypeRef) as DamageTypeIndicator;
   this.m_bbDefinition = GetAllBlackboardDefs().UIInteractions;
@@ -151,14 +237,32 @@ protected cb func OnInitialize() -> Bool {
 @replaceMethod(weaponRosterGameController)
 protected cb func OnPlayerAttach(playerPuppet: ref<GameObject>) -> Bool {
   this.m_Player = playerPuppet as PlayerPuppet;
+  this.m_playerPuppet_LHUD = this.m_Player;
   this.m_InventoryManager = new InventoryDataManagerV2();
   this.m_InventoryManager.Initialize(this.m_Player);
   this.m_genderName = this.m_Player.GetResolvedGenderName();
   this.m_WeaponAreas = InventoryDataManagerV2.GetInventoryWeaponTypes();
   this.RegisterBB();
-  this.ShowWidget(this.m_Player.HasAnyWeaponEquipped_LHUD());
+  if IsDefined(this.m_playerPuppet_LHUD) && this.m_playerPuppet_LHUD.IsControlledByLocalPeer() {
+    // Register BBs
+    this.m_braindanceBlackboard_LHUD = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().Braindance);
+    this.m_playerStateMachineBlackboard_LHUD = this.GetPSMBlackboard(this.m_playerPuppet_LHUD);
+    this.m_systemBlackboard_LHUD = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_System);
+    // Register callbacks
+    this.m_combatTrackingCallback_LHUD = this.m_playerStateMachineBlackboard_LHUD.RegisterListenerInt(GetAllBlackboardDefs().PlayerStateMachine.Combat, this, n"OnCombatStateChanged");
+    this.m_globalFlagCallback_LHUD = this.m_systemBlackboard_LHUD.RegisterListenerBool(GetAllBlackboardDefs().UI_System.IsGlobalFlagToggled_LHUD, this, n"OnGlobalToggleChanged");
+    this.DetermineCurrentVisibility();
+  };
 }
 
+@replaceMethod(weaponRosterGameController)
+protected cb func OnPlayerDetach(playerPuppet: ref<GameObject>) -> Bool {
+  this.UnregisterBB();
+  // Unregister callbacks
+  this.m_playerStateMachineBlackboard_LHUD.UnregisterListenerInt(GetAllBlackboardDefs().PlayerStateMachine.Combat, this.m_combatTrackingCallback_LHUD);
+  this.m_systemBlackboard_LHUD.UnregisterListenerBool(GetAllBlackboardDefs().UI_System.IsGlobalFlagToggled_LHUD, this.m_globalFlagCallback_LHUD);
+  this.m_Player = null;
+}
 
 @replaceMethod(weaponRosterGameController)
 protected cb func OnPSMVisionStateChanged(value: Int32) -> Bool {

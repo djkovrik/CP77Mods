@@ -1,105 +1,103 @@
-//////////////////////////////////////////////////////////////
-// Show action buttons panel depending on the module config //
-//////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+// Show vanilla hotkey hints depending on the module config //
+///////////////////////////////////////////////////////////////////////
 
 import LimitedHudCommon.*
-import LimitedHudConfig.ActionButtonsModuleConfig
+import LimitedHudConfig.HintsModuleConfig
 
-@addMethod(HotkeysWidgetController)
+@addMethod(InputHintManagerGameController)
 public func OnCombatStateChanged(newState: Int32) -> Void {
   this.DetermineCurrentVisibility();
 }
 
-@addMethod(HotkeysWidgetController)
+@addMethod(InputHintManagerGameController)
 public func OnGlobalToggleChanged(value: Bool) -> Void {
   this.m_isGlobalFlagToggled_LHUD = value;
   this.DetermineCurrentVisibility();
 }
 
-@addMethod(HotkeysWidgetController)
+@addMethod(InputHintManagerGameController)
+public func OnMountedStateChanged(value: Bool) -> Void {
+  this.DetermineCurrentVisibility();
+}
+
+@addMethod(InputHintManagerGameController)
 public func OnWeaponDataChanged(value: Variant) -> Bool {
   this.DetermineCurrentVisibility();
 }
 
-@addMethod(HotkeysWidgetController)
+@addMethod(InputHintManagerGameController)
 public func OnZoomStateChanged(value: Float) -> Void {
   this.DetermineCurrentVisibility();
 }
 
-@addMethod(HotkeysWidgetController)
+@addMethod(InputHintManagerGameController)
 public func DetermineCurrentVisibility() -> Void {
   // Check if enabled
-  if !ActionButtonsModuleConfig.IsEnabled() {
+  if !HintsModuleConfig.IsEnabled() {
     return ;
-  };
-
-  // Check for braindance
-  if this.m_braindanceBlackboard_LHUD.GetBool(GetAllBlackboardDefs().Braindance.IsActive) {
-    this.GetRootWidget().SetVisible(false);
-    return;
   };
 
   // Basic checks
   let isCurrentStateCombat: Bool = Equals(this.m_playerStateMachineBlackboard_LHUD.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat), gamePSMCombat.InCombat);
   let isCurrentStateStealth: Bool = Equals(this.m_playerStateMachineBlackboard_LHUD.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat), gamePSMCombat.Stealth);
+  let isCurrentStateInVehicle: Bool = this.m_vehicleBlackboard_LHUD.GetBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted);
   let isWeaponUnsheathed: Bool = this.m_playerPuppet_LHUD.HasAnyWeaponEquipped_LHUD();
   let isZoomActive: Bool = (this.m_playerStateMachineBlackboard_LHUD.GetFloat(GetAllBlackboardDefs().PlayerStateMachine.ZoomLevel) > 1.0) && !isWeaponUnsheathed;
   // Bind to config
-  let showForCombat: Bool = isCurrentStateCombat && ActionButtonsModuleConfig.ShowInCombat();
-  let showForGlobalHotkey: Bool = this.m_isGlobalFlagToggled_LHUD && ActionButtonsModuleConfig.BindToGlobalHotkey();
-  let showForStealth: Bool =  isCurrentStateStealth && ActionButtonsModuleConfig.ShowInStealth();
-  let showForWeapon: Bool = isWeaponUnsheathed && ActionButtonsModuleConfig.ShowWithWeapon();
-  let showForZoom: Bool =  isZoomActive && ActionButtonsModuleConfig.ShowWithZoom();
+  let showForCombat: Bool = isCurrentStateCombat && HintsModuleConfig.ShowInCombat();
+  let showForGlobalHotkey: Bool = this.m_isGlobalFlagToggled_LHUD && HintsModuleConfig.BindToGlobalHotkey();
+  let showForStealth: Bool =  isCurrentStateStealth && HintsModuleConfig.ShowInStealth();
+  let showForVehicle: Bool =  isCurrentStateInVehicle && HintsModuleConfig.ShowInVehicle();
+  let showForWeapon: Bool = isWeaponUnsheathed && HintsModuleConfig.ShowWithWeapon();
+  let showForZoom: Bool =  isZoomActive && HintsModuleConfig.ShowWithZoom();
 
   // Set visibility
-  let isVisible: Bool = showForCombat || showForGlobalHotkey || showForStealth || showForWeapon || showForZoom;
+  let isVisible: Bool = showForCombat || showForGlobalHotkey || showForStealth || showForVehicle || showForWeapon || showForZoom;
   this.GetRootWidget().SetVisible(isVisible);
 }
 
-@addMethod(HotkeysWidgetController)
-public func InitializeBBs(playerPuppet: ref<GameObject>) -> Bool {
+@addMethod(InputHintManagerGameController)
+public func InitBBs(playerPuppet: ref<GameObject>) -> Void {
   this.m_playerPuppet_LHUD = playerPuppet as PlayerPuppet;
 
   if IsDefined(this.m_playerPuppet_LHUD) && this.m_playerPuppet_LHUD.IsControlledByLocalPeer() {
     // Define blackboards
     this.m_playerStateMachineBlackboard_LHUD = this.GetPSMBlackboard(this.m_playerPuppet_LHUD);
     this.m_systemBlackboard_LHUD = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_System);
+    this.m_vehicleBlackboard_LHUD = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_ActiveVehicleData);
     this.m_weaponBlackboard_LHUD = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_EquipmentData);
 
     // Define callbacks
     this.m_combatTrackingCallback_LHUD = this.m_playerStateMachineBlackboard_LHUD.RegisterListenerInt(GetAllBlackboardDefs().PlayerStateMachine.Combat, this, n"OnCombatStateChanged");
     this.m_globalFlagCallback_LHUD = this.m_systemBlackboard_LHUD.RegisterListenerBool(GetAllBlackboardDefs().UI_System.IsGlobalFlagToggled_LHUD, this, n"OnGlobalToggleChanged");
+    this.m_vehicleTrackingCallback_LHUD = this.m_vehicleBlackboard_LHUD.RegisterListenerBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted, this, n"OnMountedStateChanged");
     this.m_weaponTrackingCallback_LHUD = this.m_weaponBlackboard_LHUD.RegisterListenerVariant(GetAllBlackboardDefs().UI_EquipmentData.EquipmentData, this, n"OnWeaponDataChanged");
     this.m_zoomTrackingCallback_LHUD = this.m_playerStateMachineBlackboard_LHUD.RegisterListenerFloat(GetAllBlackboardDefs().PlayerStateMachine.ZoomLevel, this, n"OnZoomStateChanged");
 
     this.DetermineCurrentVisibility();
   } else {
-    LHUDLog("HotkeysWidgetController blackboards not defined!");
+    LHUDLog("InputHintManagerGameController blackboards not defined!");
   }
 }
 
-@replaceMethod(HotkeysWidgetController)
-protected cb func OnPlayerAttach(playerPuppet: ref<GameObject>) -> Bool {
-  let controlledPuppet: wref<gamePuppetBase> = GetPlayer(this.m_gameInstance);
-  let controlledPuppetRecordID: TweakDBID;
-  if controlledPuppet != null {
-    this.InitializeBBs(controlledPuppet);
-    controlledPuppetRecordID = controlledPuppet.GetRecordID();
-    if controlledPuppetRecordID == t"Character.johnny_replacer" {
-      inkWidgetRef.SetMargin(this.m_hotkeysList, new inkMargin(84.00, 0.00, 0.00, 0.00));
-    } else {
-      inkWidgetRef.SetMargin(this.m_hotkeysList, new inkMargin(331.00, 0.00, 0.00, 0.00));
-    };
-  } else {
-    inkWidgetRef.SetMargin(this.m_hotkeysList, new inkMargin(331.00, 0.00, 0.00, 0.00));
-  };
-}
-
-@addMethod(HotkeysWidgetController)
-protected cb func OnPlayerDetach(playerPuppet: ref<GameObject>) -> Bool {
+@addMethod(InputHintManagerGameController)
+public func ClearBBs() -> Void {
   this.m_playerStateMachineBlackboard_LHUD.UnregisterListenerInt(GetAllBlackboardDefs().PlayerStateMachine.Combat, this.m_combatTrackingCallback_LHUD);
   this.m_systemBlackboard_LHUD.UnregisterListenerBool(GetAllBlackboardDefs().UI_System.IsGlobalFlagToggled_LHUD, this.m_globalFlagCallback_LHUD);
+  this.m_vehicleBlackboard_LHUD.UnregisterListenerBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted, this.m_vehicleTrackingCallback_LHUD);
   this.m_weaponBlackboard_LHUD.UnregisterListenerVariant(GetAllBlackboardDefs().UI_EquipmentData.EquipmentData, this.m_weaponTrackingCallback_LHUD);
   this.m_playerStateMachineBlackboard_LHUD.UnregisterListenerFloat(GetAllBlackboardDefs().PlayerStateMachine.ZoomLevel, this.m_zoomTrackingCallback_LHUD);
   this.m_playerPuppet_LHUD = null;
+}
+
+@addMethod(InputHintManagerGameController)
+protected cb func OnPlayerAttach(playerGameObject: ref<GameObject>) -> Bool {
+  this.InitBBs(playerGameObject);
+}
+
+@addMethod(InputHintManagerGameController)
+protected cb func OnPlayerDetach(playerGameObject: ref<GameObject>) -> Bool {
+let psmBlackboard: ref<IBlackboard> = this.GetPSMBlackboard(playerGameObject);
+  this.ClearBBs();
 }
