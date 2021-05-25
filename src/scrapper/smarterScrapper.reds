@@ -20,7 +20,7 @@ protected func ActionOn(owner: ref<GameObject>) -> Void {
   i = 0;
   while i < ArraySize(list) {
     if CanBeScrapped_mod(owner, list[i].GetID()) {
-      ItemActionsHelper.DisassembleItem(owner, list[i].GetID());
+      ItemActionsHelper.DisassembleItem(owner, list[i].GetID(), list[i].GetQuantity());
     };
     i += 1;
   };
@@ -83,7 +83,7 @@ protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
   if Equals(RPGManager.GetItemType(evt.itemID), gamedataItemType.Gen_Junk) && GameInstance.GetStatsSystem(this.GetGame()).GetStatValue(Cast(this.GetEntityID()), gamedataStatType.CanAutomaticallyDisassembleJunk) > 0.00 {
     // Scrapper check passed, dissasemble request here
     if CanBeScrapped_mod(this, evt.itemID) {
-      ItemActionsHelper.DisassembleItem(this, evt.itemID);
+      ItemActionsHelper.DisassembleItem(this, evt.itemID, evt.itemData.GetQuantity());
     };
   };
   if Equals(RPGManager.GetItemType(evt.itemID), gamedataItemType.Con_Ammo) {
