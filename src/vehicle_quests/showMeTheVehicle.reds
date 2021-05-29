@@ -67,10 +67,10 @@ public static func GetVehicleIcon(questId: String) -> ref<UIIcon_Record> {
     // Sport 2
     case "mizutani_shion": return TweakDBInterface.GetUIIconRecord(TDBID.Create("UIJournalIcons.v_sport2_mizutani_shion_player"));
     case "mizutani_shion_nomad": return TweakDBInterface.GetUIIconRecord(TDBID.Create("UIJournalIcons.v_sport2_mizutani_shion_nomad_player"));
-    case "quadra_type66_nomad_ncu": return TweakDBInterface.GetUIIconRecord(TDBID.Create("UIJournalIcons.v_sport2_quadra_type66_ncu_player"));
     case "quadra_type66": return TweakDBInterface.GetUIIconRecord(TDBID.Create("UIJournalIcons.v_sport2_quadra_type66_player"));
     case "quadra_type66_avenger": return TweakDBInterface.GetUIIconRecord(TDBID.Create("UIJournalIcons.v_sport2_quadra_type66_avenger_player"));
     case "quadra_type66_nomad": return TweakDBInterface.GetUIIconRecord(TDBID.Create("UIJournalIcons.v_sport2_quadra_type66_nomad_player"));
+    case "quadra_type66_nomad_ncu": return TweakDBInterface.GetUIIconRecord(TDBID.Create("UIJournalIcons.v_sport2_quadra_type66_ncu_player"));
     case "villefort_alvarado": return TweakDBInterface.GetUIIconRecord(TDBID.Create("UIJournalIcons.v_sport2_villefort_alvarado_player"));
     // Standard 2
     case "archer_quartz": return TweakDBInterface.GetUIIconRecord(TDBID.Create("UIJournalIcons.v_standard2_archer_quartz_player"));
