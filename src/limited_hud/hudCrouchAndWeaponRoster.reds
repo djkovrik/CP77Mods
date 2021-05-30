@@ -60,22 +60,6 @@ public func OnUnfoldStarted(proxy: ref<inkAnimProxy>) -> Bool {
 }
 
 @replaceMethod(CrouchIndicatorGameController)
-protected cb func OnInitialize() -> Bool {
-  this.PlayInitFoldingAnim();
-  this.DetermineCurrentVisibility();
-
-  inkWidgetRef.SetVisible(this.m_warningMessageWraper, false);
-  this.m_damageTypeIndicator = inkWidgetRef.GetController(this.m_damageTypeRef) as DamageTypeIndicator;
-  this.m_bbDefinition = GetAllBlackboardDefs().UIInteractions;
-  this.m_blackboard = this.GetBlackboardSystem().Get(this.m_bbDefinition);
-  this.m_UIBlackboard = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_EquipmentData);
-  this.m_hackingBlackboard = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_Hacking);
-  this.m_weaponBlackboard = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_ActiveWeaponData);
-  inkWidgetRef.SetVisible(this.m_smartLinkFirmwareOffline, false);
-  inkWidgetRef.SetVisible(this.m_smartLinkFirmwareOnline, false);
-}
-
-@replaceMethod(CrouchIndicatorGameController)
 protected cb func OnPlayerAttach(playerPuppet: ref<GameObject>) -> Bool {
   this.m_Player = playerPuppet as PlayerPuppet;
   this.m_playerPuppet_LHUD = this.m_Player;
@@ -217,21 +201,6 @@ public func OnFoldFinished(proxy: ref<inkAnimProxy>) -> Bool {
 @addMethod(weaponRosterGameController)
 public func OnUnfoldStarted(proxy: ref<inkAnimProxy>) -> Bool {
   this.ShowWidget(true);
-}
-
-@replaceMethod(weaponRosterGameController)
-protected cb func OnInitialize() -> Bool {
-  this.PlayInitFoldingAnim();
-  this.DetermineCurrentVisibility();
-  inkWidgetRef.SetVisible(this.m_warningMessageWraper, false);
-  this.m_damageTypeIndicator = inkWidgetRef.GetController(this.m_damageTypeRef) as DamageTypeIndicator;
-  this.m_bbDefinition = GetAllBlackboardDefs().UIInteractions;
-  this.m_blackboard = this.GetBlackboardSystem().Get(this.m_bbDefinition);
-  this.m_UIBlackboard = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_EquipmentData);
-  this.m_hackingBlackboard = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_Hacking);
-  this.m_weaponBlackboard = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_ActiveWeaponData);
-  inkWidgetRef.SetVisible(this.m_smartLinkFirmwareOffline, false);
-  inkWidgetRef.SetVisible(this.m_smartLinkFirmwareOnline, false);
 }
 
 @replaceMethod(weaponRosterGameController)

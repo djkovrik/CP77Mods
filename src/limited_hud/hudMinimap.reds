@@ -129,19 +129,7 @@ public func ClearBBs() -> Void {
 protected cb func OnPlayerAttach(playerGameObject: ref<GameObject>) -> Bool {
   this.InitializePlayer(playerGameObject);
   this.InitBBs(playerGameObject);
-}
-
-@replaceMethod(MinimapContainerController)
-protected cb func OnInitialize() -> Bool {
-  this.m_rootWidget = this.GetRootWidget();
-  let alphaInterpolator: ref<inkAnimTransparency>;
-  inkWidgetRef.SetOpacity(this.m_securityAreaVignetteWidget, 0.00);
-  this.m_mapDefinition = GetAllBlackboardDefs().UI_Map;
-  this.m_mapBlackboard = this.GetBlackboardSystem().Get(this.m_mapDefinition);
-  this.m_locationDataCallback = this.m_mapBlackboard.RegisterListenerString(this.m_mapDefinition.currentLocation, this, n"OnLocationUpdated");
-  this.OnLocationUpdated(this.m_mapBlackboard.GetString(this.m_mapDefinition.currentLocation));
-  this.m_messageCounterController = this.SpawnFromExternal(inkWidgetRef.Get(this.m_messageCounter), r"base\\gameplay\\gui\\widgets\\phone\\message_counter.inkwidget", n"messages") as inkCompoundWidget;
-  this.m_rootWidget.SetOpacity(MinimapModuleConfig.Opacity());
+  this.GetRootWidget().SetOpacity(MinimapModuleConfig.Opacity());
 }
 
 @replaceMethod(MinimapContainerController)
