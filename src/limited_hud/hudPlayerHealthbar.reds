@@ -79,6 +79,14 @@ private final func ComputeHealthBarVisibility() -> Void {
   let animFade: ref<inkAnimDef>;
   let isTemperatureSafe: Bool;
 
+  this.m_armorBar.SetVisible(isMultiplayer);
+  this.UpdateGodModeVisibility();
+  inkWidgetRef.SetVisible(this.m_quickhacksContainer, this.IsCyberdeckEquipped());
+  if NotEquals(this.m_currentVisionPSM, gamePSMVision.Default) {
+    this.HideRequest();
+    return ;
+  };
+
   // Additional conditions
   let isInStealth: Bool = Equals(this.m_combatModePSM, gamePSMCombat.Stealth);
   let isWeaponUnsheathed: Bool = this.m_playerPuppet_LHUD.HasAnyWeaponEquipped_LHUD();
@@ -88,21 +96,21 @@ private final func ComputeHealthBarVisibility() -> Void {
   let showForStealth: Bool =  isInStealth && PlayerHealthbarModuleConfig.ShowInStealth();
   let showForWeapon: Bool = isWeaponUnsheathed && PlayerHealthbarModuleConfig.ShowWithWeapon();
   let showForZoom: Bool =  isZoomActive && PlayerHealthbarModuleConfig.ShowWithZoom();
+  let showForHealthNotFull: Bool = !isMaxHP && PlayerHealthbarModuleConfig.ShowWhenHealthNotFull();
+  let showForMemoryNotFull: Bool = this.m_quickhacksMemoryPercent < 100.00 && PlayerHealthbarModuleConfig.ShowWhenMemoryNotFull();
+  let showForActiveBuffs: Bool = this.m_buffsVisible && PlayerHealthbarModuleConfig.ShowWhenBuffsActive();
+  let showForActiveQuickhacks: Bool = areQuickhacksUsed && PlayerHealthbarModuleConfig.ShowWhenQuickhacksActive();
+  let showForCombat: Bool = Equals(this.m_combatModePSM, gamePSMCombat.InCombat) && PlayerHealthbarModuleConfig.ShowInCombat();
 
-  let isVisible: Bool = showForGlobalHotkey || showForStealth || showForWeapon || showForZoom;
+  let defaultVisibility: Bool = !isMaxHP || this.m_quickhacksMemoryPercent < 100.00 || this.m_buffsVisible || areQuickhacksUsed || Equals(this.m_combatModePSM, gamePSMCombat.InCombat);
+  let moddedVisibility: Bool = showForHealthNotFull || showForMemoryNotFull || showForActiveBuffs || showForActiveQuickhacks || showForCombat || showForGlobalHotkey || showForStealth || showForWeapon || showForZoom;
+  let isVisible: Bool = defaultVisibility;
 
-  if !PlayerHealthbarModuleConfig.IsEnabled() {
-    isVisible = false;
+  if PlayerHealthbarModuleConfig.IsEnabled() {
+    isVisible = moddedVisibility;
   };
 
-  this.m_armorBar.SetVisible(isMultiplayer);
-  this.UpdateGodModeVisibility();
-  inkWidgetRef.SetVisible(this.m_quickhacksContainer, this.IsCyberdeckEquipped());
-  if NotEquals(this.m_currentVisionPSM, gamePSMVision.Default) {
-    this.HideRequest();
-    return ;
-  };
-  if !isMaxHP || areQuickhacksUsed || isMultiplayer || Equals(this.m_combatModePSM, gamePSMCombat.InCombat) || this.m_quickhacksMemoryPercent < 100.00 || this.m_buffsVisible || isVisible {
+  if isVisible {
     this.ShowRequest();
   } else {
     this.HideRequest();

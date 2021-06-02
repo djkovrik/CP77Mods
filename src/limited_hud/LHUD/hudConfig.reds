@@ -65,14 +65,17 @@ public class MinimapModuleConfig {
 }
 
 // -- Player healthbar module
-// -- Default healthbar visibility conditions: HP or memory not full, 
-//    player has active quickhacks or buffs, combat mode activated
-// -- This module adds additional conditions but does not replace the default ones
 public class PlayerHealthbarModuleConfig {
   // Main config
   public static func IsEnabled() -> Bool = true
   public static func BindToGlobalHotkey() -> Bool = false
-  // Visibility conditions
+  // Default in-game visibility conditions
+  public static func ShowWhenHealthNotFull() -> Bool = true
+  public static func ShowWhenMemoryNotFull() -> Bool = true
+  public static func ShowWhenBuffsActive() -> Bool = true
+  public static func ShowWhenQuickhacksActive() -> Bool = true
+  public static func ShowInCombat() -> Bool = true
+  // Additional visibility conditions
   public static func ShowInStealth() -> Bool = false
   public static func ShowWithWeapon() -> Bool = true
   public static func ShowWithZoom() -> Bool = false
