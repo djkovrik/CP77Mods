@@ -53,8 +53,8 @@ public static func EquipmentQualityCheck_RL(data: ref<gameItemData>) -> Bool {
     case gamedataQuality.Legendary: return ProbabilityCheck_RL(ReducedLootConfig.Legendary());
     case gamedataQuality.Epic: return ProbabilityCheck_RL(ReducedLootConfig.Epic());
     case gamedataQuality.Rare: return ProbabilityCheck_RL(ReducedLootConfig.Rare());
-    case gamedataQuality.Uncommon: ProbabilityCheck_RL(ReducedLootConfig.Uncommon());
-    case gamedataQuality.Common: ProbabilityCheck_RL(ReducedLootConfig.Common());
+    case gamedataQuality.Uncommon: return ProbabilityCheck_RL(ReducedLootConfig.Uncommon());
+    case gamedataQuality.Common: return ProbabilityCheck_RL(ReducedLootConfig.Common());
   };
 
   return true;
