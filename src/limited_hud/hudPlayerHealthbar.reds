@@ -101,9 +101,10 @@ private final func ComputeHealthBarVisibility() -> Void {
   let showForActiveBuffs: Bool = this.m_buffsVisible && PlayerHealthbarModuleConfig.ShowWhenBuffsActive();
   let showForActiveQuickhacks: Bool = areQuickhacksUsed && PlayerHealthbarModuleConfig.ShowWhenQuickhacksActive();
   let showForCombat: Bool = Equals(this.m_combatModePSM, gamePSMCombat.InCombat) && PlayerHealthbarModuleConfig.ShowInCombat();
+  let showForOutOfCombat: Bool = Equals(this.m_combatModePSM, gamePSMCombat.OutOfCombat) && PlayerHealthbarModuleConfig.ShowOutOfCombat();
 
   let defaultVisibility: Bool = !isMaxHP || this.m_quickhacksMemoryPercent < 100.00 || this.m_buffsVisible || areQuickhacksUsed || Equals(this.m_combatModePSM, gamePSMCombat.InCombat);
-  let moddedVisibility: Bool = showForHealthNotFull || showForMemoryNotFull || showForActiveBuffs || showForActiveQuickhacks || showForCombat || showForGlobalHotkey || showForStealth || showForWeapon || showForZoom;
+  let moddedVisibility: Bool = showForHealthNotFull || showForMemoryNotFull || showForActiveBuffs || showForActiveQuickhacks || showForCombat || showForOutOfCombat || showForGlobalHotkey || showForStealth || showForWeapon || showForZoom;
   let isVisible: Bool = defaultVisibility;
 
   if PlayerHealthbarModuleConfig.IsEnabled() {

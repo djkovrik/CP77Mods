@@ -51,6 +51,7 @@ public func DetermineCurrentVisibility() -> Void {
   // Basic checks
   let isBraindanceActive: Bool = this.m_braindanceBlackboard_LHUD.GetBool(GetAllBlackboardDefs().Braindance.IsActive);
   let isCurrentStateCombat: Bool = Equals(this.m_playerStateMachineBlackboard_LHUD.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat), gamePSMCombat.InCombat);
+  let isCurrentStateOutOfCombat: Bool = Equals(this.m_playerStateMachineBlackboard_LHUD.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat), gamePSMCombat.OutOfCombat);
   let isScannerEnabled: Bool = this.m_scannerBlackboard_LHUD.GetBool(GetAllBlackboardDefs().UI_Scanner.UIVisible);
   let isCurrentStateStealth: Bool = Equals(this.m_playerStateMachineBlackboard_LHUD.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat), gamePSMCombat.Stealth);
   let isCurrentStateInVehicle: Bool = this.m_vehicleBlackboard_LHUD.GetBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted);
@@ -58,6 +59,7 @@ public func DetermineCurrentVisibility() -> Void {
   let isZoomActive: Bool = (this.m_playerStateMachineBlackboard_LHUD.GetFloat(GetAllBlackboardDefs().PlayerStateMachine.ZoomLevel) > 1.0) && !isWeaponUnsheathed && !isScannerEnabled;
   // Bind to config
   let showForCombat: Bool = isCurrentStateCombat && WorldMarkersModuleConfig.ShowInCombat();
+  let showForOutOfCombat: Bool = isCurrentStateOutOfCombat && WorldMarkersModuleConfig.ShowOutOfCombat();
   let showForGlobalHotkey: Bool = this.m_isGlobalFlagToggled_LHUD && WorldMarkersModuleConfig.BindToGlobalHotkey();
   let showForScanner: Bool =  isScannerEnabled && WorldMarkersModuleConfig.ShowWithScanner();
   let showForStealth: Bool =  isCurrentStateStealth && WorldMarkersModuleConfig.ShowInStealth();
@@ -66,7 +68,7 @@ public func DetermineCurrentVisibility() -> Void {
   let showForZoom: Bool =  isZoomActive && WorldMarkersModuleConfig.ShowWithZoom();
 
   // Set visibility
-  let isVisible: Bool = isBraindanceActive || showForCombat || showForGlobalHotkey || showForScanner || showForStealth || showForVehicle || showForWeapon || showForZoom;
+  let isVisible: Bool = isBraindanceActive || showForCombat || showForOutOfCombat || showForGlobalHotkey || showForScanner || showForStealth || showForVehicle || showForWeapon || showForZoom;
   this.GetRootWidget().SetVisible(isVisible);
 }
 

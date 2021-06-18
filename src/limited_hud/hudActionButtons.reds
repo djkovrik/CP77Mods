@@ -41,18 +41,20 @@ public func DetermineCurrentVisibility() -> Void {
 
   // Basic checks
   let isCurrentStateCombat: Bool = Equals(this.m_playerStateMachineBlackboard_LHUD.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat), gamePSMCombat.InCombat);
+  let isCurrentStateOutOfCombat: Bool = Equals(this.m_playerStateMachineBlackboard_LHUD.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat), gamePSMCombat.OutOfCombat);
   let isCurrentStateStealth: Bool = Equals(this.m_playerStateMachineBlackboard_LHUD.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat), gamePSMCombat.Stealth);
   let isWeaponUnsheathed: Bool = this.m_playerPuppet_LHUD.HasAnyWeaponEquipped_LHUD();
   let isZoomActive: Bool = (this.m_playerStateMachineBlackboard_LHUD.GetFloat(GetAllBlackboardDefs().PlayerStateMachine.ZoomLevel) > 1.0) && !isWeaponUnsheathed;
   // Bind to config
   let showForCombat: Bool = isCurrentStateCombat && ActionButtonsModuleConfig.ShowInCombat();
+  let showForOutOfCombat: Bool = isCurrentStateOutOfCombat && ActionButtonsModuleConfig.ShowOutOfCombat();
   let showForGlobalHotkey: Bool = this.m_isGlobalFlagToggled_LHUD && ActionButtonsModuleConfig.BindToGlobalHotkey();
   let showForStealth: Bool =  isCurrentStateStealth && ActionButtonsModuleConfig.ShowInStealth();
   let showForWeapon: Bool = isWeaponUnsheathed && ActionButtonsModuleConfig.ShowWithWeapon();
   let showForZoom: Bool =  isZoomActive && ActionButtonsModuleConfig.ShowWithZoom();
 
   // Set visibility
-  let isVisible: Bool = showForCombat || showForGlobalHotkey || showForStealth || showForWeapon || showForZoom;
+  let isVisible: Bool = showForCombat || showForOutOfCombat || showForGlobalHotkey || showForStealth || showForWeapon || showForZoom;
   this.GetRootWidget().SetVisible(isVisible);
 }
 

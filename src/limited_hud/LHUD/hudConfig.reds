@@ -19,6 +19,7 @@ public class ActionButtonsModuleConfig {
   public static func BindToGlobalHotkey() -> Bool = false
   // Visibility conditions
   public static func ShowInCombat() -> Bool = false
+  public static func ShowOutOfCombat() -> Bool = false
   public static func ShowInStealth() -> Bool = false
   public static func ShowWithWeapon() -> Bool = true
   public static func ShowWithZoom() -> Bool = false
@@ -42,6 +43,7 @@ public class HintsModuleConfig {
   public static func BindToGlobalHotkey() -> Bool = false
   // Visibility conditions
   public static func ShowInCombat() -> Bool = false
+  public static func ShowOutOfCombat() -> Bool = false
   public static func ShowInStealth() -> Bool = false
   public static func ShowInVehicle() -> Bool = false
   public static func ShowWithWeapon() -> Bool = false
@@ -57,6 +59,7 @@ public class MinimapModuleConfig {
   public static func Opacity() -> Float = 0.75
   // Visibility conditions
   public static func ShowInCombat() -> Bool = false
+  public static func ShowOutOfCombat() -> Bool = false
   public static func ShowInStealth() -> Bool = false
   public static func ShowInVehicle() -> Bool = true
   public static func ShowWithScanner() -> Bool = false
@@ -75,6 +78,7 @@ public class PlayerHealthbarModuleConfig {
   public static func ShowWhenBuffsActive() -> Bool = true
   public static func ShowWhenQuickhacksActive() -> Bool = true
   public static func ShowInCombat() -> Bool = true
+  public static func ShowOutOfCombat() -> Bool = false
   // Additional visibility conditions
   public static func ShowInStealth() -> Bool = false
   public static func ShowWithWeapon() -> Bool = true
@@ -88,6 +92,7 @@ public class QuestTrackerModuleConfig {
   public static func BindToGlobalHotkey() -> Bool = true
   // Visibility conditions
   public static func ShowInCombat() -> Bool = false
+  public static func ShowOutOfCombat() -> Bool = false
   public static func ShowInStealth() -> Bool = false
   public static func ShowInVehicle() -> Bool = true
   public static func ShowWithScanner() -> Bool = false
@@ -102,6 +107,7 @@ public class WorldMarkersModuleConfig {
   public static func BindToGlobalHotkey() -> Bool = true
   // Visibility conditions
   public static func ShowInCombat() -> Bool = true
+  public static func ShowOutOfCombat() -> Bool = false
   public static func ShowInStealth() -> Bool = false
   public static func ShowInVehicle() -> Bool = false
   public static func ShowWithScanner() -> Bool = true

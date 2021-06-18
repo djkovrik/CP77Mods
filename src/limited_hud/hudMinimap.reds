@@ -57,6 +57,7 @@ public func DetermineCurrentVisibility() -> Void {
 
   // Basic checks
   let isCurrentStateCombat: Bool = Equals(this.m_playerStateMachineBlackboard_LHUD.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat), gamePSMCombat.InCombat);
+  let isCurrentStateOutOfCombat: Bool = Equals(this.m_playerStateMachineBlackboard_LHUD.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat), gamePSMCombat.OutOfCombat);
   let isCurrentStateStealth: Bool = Equals(this.m_playerStateMachineBlackboard_LHUD.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat), gamePSMCombat.Stealth);
   let isCurrentStateInVehicle: Bool = this.m_vehicleBlackboard_LHUD.GetBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted);
   let isScannerEnabled: Bool = this.m_scannerBlackboard_LHUD.GetBool(GetAllBlackboardDefs().UI_Scanner.UIVisible);
@@ -64,6 +65,7 @@ public func DetermineCurrentVisibility() -> Void {
   let isZoomActive: Bool = (this.m_playerStateMachineBlackboard_LHUD.GetFloat(GetAllBlackboardDefs().PlayerStateMachine.ZoomLevel) > 1.0) && !isWeaponUnsheathed;
   // Bind to config
   let showForCombat: Bool = isCurrentStateCombat && MinimapModuleConfig.ShowInCombat();
+  let showForOutOfCombat: Bool = isCurrentStateOutOfCombat && MinimapModuleConfig.ShowOutOfCombat();
   let showForGlobalHotkey: Bool = this.m_isGlobalFlagToggled_LHUD && MinimapModuleConfig.BindToGlobalHotkey();
   let showForMinimapHotkey: Bool = this.m_isMinimapToggled_LHUD;
   let showForScanner: Bool =  isScannerEnabled && MinimapModuleConfig.ShowWithScanner();
@@ -73,7 +75,7 @@ public func DetermineCurrentVisibility() -> Void {
   let showForZoom: Bool =  isZoomActive && MinimapModuleConfig.ShowWithZoom();
 
   // Set visibility
-  let isVisible: Bool = showForCombat || showForGlobalHotkey || showForMinimapHotkey || showForScanner || showForStealth || showForVehicle || showForWeapon || showForZoom;
+  let isVisible: Bool = showForCombat || showForOutOfCombat || showForGlobalHotkey || showForMinimapHotkey || showForScanner || showForStealth || showForVehicle || showForWeapon || showForZoom;
   
     // Check if enabled
   if MinimapModuleConfig.IsEnabled() {

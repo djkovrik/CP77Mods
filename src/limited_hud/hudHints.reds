@@ -40,12 +40,14 @@ public func DetermineCurrentVisibility() -> Void {
 
   // Basic checks
   let isCurrentStateCombat: Bool = Equals(this.m_playerStateMachineBlackboard_LHUD.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat), gamePSMCombat.InCombat);
+  let isCurrentStateOutOfCombat: Bool = Equals(this.m_playerStateMachineBlackboard_LHUD.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat), gamePSMCombat.OutOfCombat);
   let isCurrentStateStealth: Bool = Equals(this.m_playerStateMachineBlackboard_LHUD.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat), gamePSMCombat.Stealth);
   let isCurrentStateInVehicle: Bool = this.m_vehicleBlackboard_LHUD.GetBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted);
   let isWeaponUnsheathed: Bool = this.m_playerPuppet_LHUD.HasAnyWeaponEquipped_LHUD();
   let isZoomActive: Bool = (this.m_playerStateMachineBlackboard_LHUD.GetFloat(GetAllBlackboardDefs().PlayerStateMachine.ZoomLevel) > 1.0) && !isWeaponUnsheathed;
   // Bind to config
   let showForCombat: Bool = isCurrentStateCombat && HintsModuleConfig.ShowInCombat();
+  let showForOutOfCombat: Bool = isCurrentStateOutOfCombat && HintsModuleConfig.ShowOutOfCombat();
   let showForGlobalHotkey: Bool = this.m_isGlobalFlagToggled_LHUD && HintsModuleConfig.BindToGlobalHotkey();
   let showForStealth: Bool =  isCurrentStateStealth && HintsModuleConfig.ShowInStealth();
   let showForVehicle: Bool =  isCurrentStateInVehicle && HintsModuleConfig.ShowInVehicle();
@@ -53,7 +55,7 @@ public func DetermineCurrentVisibility() -> Void {
   let showForZoom: Bool =  isZoomActive && HintsModuleConfig.ShowWithZoom();
 
   // Set visibility
-  let isVisible: Bool = showForCombat || showForGlobalHotkey || showForStealth || showForVehicle || showForWeapon || showForZoom;
+  let isVisible: Bool = showForCombat || showForOutOfCombat || showForGlobalHotkey || showForStealth || showForVehicle || showForWeapon || showForZoom;
   this.GetRootWidget().SetVisible(isVisible);
 }
 
