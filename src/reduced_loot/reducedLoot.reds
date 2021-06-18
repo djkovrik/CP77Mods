@@ -25,7 +25,7 @@ public class ReducedLootConfig {
   public static func              Mods() -> Int32 = 50
   public static func             Money() -> Int32 = 25
   public static func        Quickhacks() -> Int32 = 50
-  public static func        Schematics() -> Int32 = 75
+  public static func        Schematics() -> Int32 = 100
   public static func            Shards() -> Int32 = 100
   public static func        SkillBooks() -> Int32 = 100
 
