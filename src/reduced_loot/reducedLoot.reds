@@ -62,7 +62,6 @@ public static func EquipmentQualityCheck_RL(data: ref<gameItemData>) -> Bool {
 
 public static func ProbabilityCheck_RL(chosen: Int32) -> Bool {
   let random: Int32 = RandRange(1, 100);
-  // RL("Random " + IntToString(random) + " compared with " + IntToString(chosen) + " returns " + BoolToString(random <= chosen));
   return random <= chosen;
 }
 
@@ -127,7 +126,7 @@ public static func IsJunk_RL(data: ref<gameItemData>) -> Bool {
 public static func IsShard_RL(data: ref<gameItemData>) -> Bool {
   let type: gamedataItemType = data.GetItemType();
   let typeValue: Int32 = GetItemTypeValue(type);
-  return typeValue == 28 && !data.HasTag(n"Quest");
+  return typeValue == 28;
 }
 
 public static func IsMod_RL(data: ref<gameItemData>) -> Bool {
@@ -178,18 +177,51 @@ public static func CanLootThis(data: ref<gameItemData>) -> Bool {
   if IsSkillBook_RL(data) { return ProbabilityCheck_RL(ReducedLootConfig.SkillBooks()); }
   if IsShard_RL(data) { return ProbabilityCheck_RL(ReducedLootConfig.Shards()); }
   
-  // true for the rest to check what types are not covered yet
-  return true;
+  return false;
 }
 
-// Exclusion list for quests when world objects should be kept
-public static func KeepWorldPlacedForQuest_RL(objectiveId: String) -> Bool {
+
+// Exclusion list for items
+public static func KeepForItemId_RL(id: TweakDBID) -> Bool {
   return 
+    // Quest related keycards
+    Equals(id, t"Keycards.q005_keycard") ||
+    Equals(id, t"Keycards.q103_afterlife_keycard_hades") ||
+    Equals(id, t"Keycards.q105_keycard_dollhouse_vip") ||
+    Equals(id, t"Keycards.q110_chapel_door_key") ||
+    Equals(id, t"Keycards.q112_parade_keycard") ||
+    Equals(id, t"Keycards.q114_arasaka_basement_sec_room_keycard") ||
+    Equals(id, t"Keycards.q115_garden_sec_room_card") ||
+    Equals(id, t"Keycards.q115_nest_keycard") ||
+    Equals(id, t"Keycards.q115_solo_keycard") ||
+    Equals(id, t"Keycards.q116_smasher_keycard") ||
+
+  false;
+}
+
+// Exclusion list for quest targets when world objects should be kept
+public static func KeepForQuestTarget_RL(objectiveId: String) -> Bool {
+  return 
+    // Tutorial
     Equals(objectiveId, "01a_pick_weapon") ||
     Equals(objectiveId, "01c_pick_up_reanimator") ||
     Equals(objectiveId, "03_pick_up_katana") ||
 
   false;
+}
+
+// Save flag for NPC held weapon drop
+@addField(gameItemData)
+public let m_wasHeld: Bool;
+
+@addMethod(gameItemData)
+public func SetHeldFlag() -> Void {
+  this.m_wasHeld = true;
+}
+
+@addMethod(gameItemData)
+public func GetHeldFlag() -> Bool {
+  return this.m_wasHeld;
 }
 
 // CONTAINERS
@@ -199,13 +231,25 @@ private func EvaluateLoot() -> Void {
   let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.GetGame());
   let items: array<wref<gameItemData>>;
   let item: wref<gameItemData>;
+  let journalManager: wref<JournalManager>;
+  let trackedObjective: wref<JournalQuestObjective>;
+  let shouldKeepForId: Bool = false;
+  let shouldKeepForQuest: Bool = false;
   let i: Int32 = 0;
 
+  journalManager = GameInstance.GetJournalManager(this.GetGame());
+  trackedObjective = journalManager.GetTrackedEntry() as JournalQuestObjective;
+
+  RL("> Container check:");
   if transactionSystem.GetItemList(this, items) {
     while i < ArraySize(items) {
       item = items[i];
-
-      if CanLootThis(item) || this.IsQuest() {
+      shouldKeepForId = KeepForItemId_RL(ItemID.GetTDBID(item.GetID()));
+      shouldKeepForQuest = KeepForQuestTarget_RL(trackedObjective.GetId());
+      RL("? Item TDBID: " + TDBID.ToStringDEBUG(ItemID.GetTDBID(item.GetID())));
+      RL("? Current quest objective: " + trackedObjective.GetId());
+      RL("? keep for id: " + BoolToString(shouldKeepForId) + ", keep for quest: " + BoolToString(shouldKeepForQuest));
+      if CanLootThis(item) || this.IsQuest()  || shouldKeepForId || shouldKeepForQuest {
         RL("+ kept for container " + UIItemsHelper.GetItemTypeKey(item.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(item)));
       } else {
         RL("- removed for container " + UIItemsHelper.GetItemTypeKey(item.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(item)));
@@ -232,13 +276,26 @@ private func EvaluateLoot() -> Void {
   let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.GetGame());
   let items: array<wref<gameItemData>>;
   let item: wref<gameItemData>;
+  let journalManager: wref<JournalManager>;
+  let trackedObjective: wref<JournalQuestObjective>;
+  let shouldKeepForId: Bool = false;
+  let shouldKeepForQuest: Bool = false;
   let i: Int32 = 0;
 
+  journalManager = GameInstance.GetJournalManager(this.GetGame());
+  trackedObjective = journalManager.GetTrackedEntry() as JournalQuestObjective;
+  
+  RL("> NPC check:");
   if transactionSystem.GetItemList(this, items) {
     while i < ArraySize(items) {
       item = items[i];
-      if CanLootThis(item) || this.IsQuest() {
-        RL("+ kept for npc " + UIItemsHelper.GetItemTypeKey(item.GetItemType()) + " " +UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(item)));
+      RL("? Item TDBID: " + TDBID.ToStringDEBUG(ItemID.GetTDBID(item.GetID())));
+      RL("? Current quest objective: " + trackedObjective.GetId());
+      shouldKeepForId = KeepForItemId_RL(ItemID.GetTDBID(item.GetID()));
+      shouldKeepForQuest = KeepForQuestTarget_RL(trackedObjective.GetId());
+      RL("? keep for id: " + BoolToString(shouldKeepForId) + ", keep for quest: " + BoolToString(shouldKeepForQuest));
+      if CanLootThis(item) || this.IsQuest() || shouldKeepForId || shouldKeepForQuest {
+        RL("+ kept for npc " + UIItemsHelper.GetItemTypeKey(item.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(item)));
       } else {
         RL("- removed for npc " + UIItemsHelper.GetItemTypeKey(item.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(item)));
         transactionSystem.RemoveItem(this, item.GetID(), item.GetQuantity());
@@ -295,6 +352,7 @@ public final static func ProcessLoot(self: wref<ScriptedPuppet>) -> Void {
       RPGManager.SetDroppedWeaponQuality(self, foundEquipment[i]);
       isBroken = RPGManager.BreakItem(self.GetGame(), self, foundEquipment[i].GetID());
       if !isBroken {
+        foundEquipment[i].SetHeldFlag();
         ScriptedPuppet.ScaleDroppedItem(foundEquipment[i], self);
         TS.GiveItemByItemData(self, foundEquipment[i]);
       };
@@ -388,6 +446,8 @@ public final static func DropHeldItems(self: wref<ScriptedPuppet>) -> Bool {
     leftItem = GameInstance.GetTransactionSystem(self.GetGame()).GetItemInSlot(self, slot);
     canLeftItemDrop = IsDefined(leftItem) && IsNameValid(TweakDBInterface.GetItemRecord(ItemID.GetTDBID(leftItem.GetItemID())).DropObject());
     if canLeftItemDrop || canRightItemDrop {
+      rightItem.GetItemData().SetHeldFlag();
+      leftItem.GetItemData().SetHeldFlag();
       self.DropWeapons();
       if IsDefined(rightItem) {
         ScriptedPuppet.ScaleDroppedItem(rightItem.GetItemData(), self);
@@ -418,6 +478,7 @@ public final static func DropItemFromSlot(obj: wref<GameObject>, slot: TweakDBID
   item = GameInstance.GetTransactionSystem(obj.GetGame()).GetItemInSlot(obj, slot);
   if IsDefined(item) {
     itemInSlotID = item.GetItemData().GetID();
+    item.GetItemData().SetHeldFlag();
   };
   if IsDefined(item) && NotEquals(RPGManager.GetItemType(itemInSlotID), gamedataItemType.Wea_Fists) && NotEquals(RPGManager.GetItemType(itemInSlotID), gamedataItemType.Cyb_StrongArms) && NotEquals(RPGManager.GetItemType(itemInSlotID), gamedataItemType.Cyb_MantisBlades) && NotEquals(RPGManager.GetItemType(itemInSlotID), gamedataItemType.Cyb_NanoWires) {
     (obj as ScriptedPuppet).DropWeapons();
@@ -452,7 +513,7 @@ protected cb func OnItemAddedEvent(evt: ref<ItemAddedEvent>) -> Bool {
   let quality: gamedataQuality;
 
   if ReducedLootConfig.EnableForNPCs() && !ProbabilityCheck_RL(ReducedLootConfig.Ammo()) && IsAmmo_RL(data) && !ScriptedPuppet.IsAlive(this) && !this.IsPlayer() {
-    RL("Extra ammo detected! Removing...");
+    RL("! Extra ammo detected! Removing...");
     transactionSystem = GameInstance.GetTransactionSystem(this.GetGame());
     transactionSystem.RemoveItem(this, data.GetID(), data.GetQuantity());
   };
@@ -503,18 +564,25 @@ protected final func OnItemEntitySpawned(entID: EntityID) -> Void {
   let journalManager: wref<JournalManager>;
   let trackedObjective: wref<JournalQuestObjective>;
   let preventDestroying: Bool = false;
+  let shouldKeepForId: Bool = false;
   let shouldKeepForQuest: Bool = false;
+  let shouldKeepBecauseWasHeld: Bool = false;
 
   if ReducedLootConfig.EnableForWorld() {
+    RL("> World check:");
     playerPuppet = GameInstance.GetPlayerSystem(this.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
     if IsDefined(playerPuppet) {
       journalManager = GameInstance.GetJournalManager(playerPuppet.GetGame());
       trackedObjective = journalManager.GetTrackedEntry() as JournalQuestObjective;
       preventDestroying = Equals(this.GetItemObject().GetItemID(), playerPuppet.GetPreventedId_RL());
-      shouldKeepForQuest = KeepWorldPlacedForQuest_RL(trackedObjective.GetId());
-      RL("! Current quest objective: " + trackedObjective.GetId());
+      shouldKeepForId = KeepForItemId_RL(ItemID.GetTDBID(data.GetID()));
+      shouldKeepForQuest = KeepForQuestTarget_RL(trackedObjective.GetId());
+      shouldKeepBecauseWasHeld = data.GetHeldFlag();
+      RL("? Item TDBID: " + TDBID.ToStringDEBUG(ItemID.GetTDBID(data.GetID())));
+      RL("? Current quest objective: " + trackedObjective.GetId());
+      RL("? keep for id: " + BoolToString(shouldKeepForId) + ", keep for quest: " + BoolToString(shouldKeepForQuest) + ", was held: " + BoolToString(shouldKeepBecauseWasHeld));
     };
-    if CanLootThis(data) || preventDestroying || shouldKeepForQuest {
+    if CanLootThis(data) || preventDestroying || shouldKeepForId || shouldKeepForQuest || shouldKeepBecauseWasHeld {
       RL("+ kept for world " + UIItemsHelper.GetItemTypeKey(data.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(data)));
     } else {
       RL("- removed from world " + UIItemsHelper.GetItemTypeKey(data.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(data)));
@@ -602,5 +670,5 @@ private final static func GetItemTypeValue(itemType: gamedataItemType) -> Int32 
 }
 
 private static func RL(str: String) -> Void {
-  Log(str);
+  // Log(str);
 }
