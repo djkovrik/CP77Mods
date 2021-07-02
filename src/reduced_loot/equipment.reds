@@ -182,10 +182,10 @@ public final static func DropItemFromSlot(obj: wref<GameObject>, slot: TweakDBID
     if RL_Checker.CanLootThis(item.GetItemData(), RL_LootSource.Held) {
       RLog("+ kept held weapon " + UIItemsHelper.GetItemTypeKey(item.GetItemData().GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(item.GetItemData())));
       item.GetItemData().SetShouldKeep_RL();
+      (obj as ScriptedPuppet).DropWeapons();
     } else {
       RLog("+ removed held weapon " + UIItemsHelper.GetItemTypeKey(item.GetItemData().GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(item.GetItemData())));
     };
-    (obj as ScriptedPuppet).DropWeapons();
   };
 }
 
@@ -204,10 +204,10 @@ public final static func DropWeaponFromSlot(obj: wref<GameObject>, slot: TweakDB
       if RL_Checker.CanLootThis(item.GetItemData(), RL_LootSource.Held) {
         RLog("+ kept held weapon " + UIItemsHelper.GetItemTypeKey(item.GetItemData().GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(item.GetItemData())));
         item.GetItemData().SetShouldKeep_RL();
+        (obj as ScriptedPuppet).DropWeapons();
       } else {
         RLog("+ removed held weapon " + UIItemsHelper.GetItemTypeKey(item.GetItemData().GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(item.GetItemData())));
       };
-      (obj as ScriptedPuppet).DropWeapons();
     };
   };
 }
