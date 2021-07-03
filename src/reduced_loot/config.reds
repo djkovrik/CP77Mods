@@ -8,10 +8,10 @@ public class Config {
   // -- Probability settings for weapons drop per quality and loot source
   public static func Weapon(source: RL_LootSource, quality: RL_LootQuality) -> Int32 {
     //    Quality ->  Common    Uncommon    Rare    Epic    Legendary  \  Source:
-    let cont =     [    0,         25,       50,     75,       100  ]; // <- Containers
-    let wrld =     [    0,         25,       50,     75,       100  ]; // <- World placed loot
-    let invt =     [    0,         25,       50,     75,       100  ]; // <- NPCs inventory
-    let held =     [    0,         25,       50,     75,       100  ]; // <- NPCs held weapons
+    let cont =     [    0,         0,        0,      0,        0    ]; // <- Containers
+    let wrld =     [    100,       100,      100,    100,      100  ]; // <- World placed loot
+    let invt =     [    100,       100,      100,    100,      100  ]; // <- NPCs inventory
+    let held =     [    0,         0,        0,      0,        100  ]; // <- NPCs held weapons
 
     switch source {
       case RL_LootSource.Container: return cont[RL_Converters.QualityToInt(quality)];

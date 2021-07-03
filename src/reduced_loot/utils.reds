@@ -93,6 +93,7 @@ public class RL_Utils {
 
   public static func ProbabilityCheck(chosen: Int32) -> Bool {
     let random: Int32 = RandRange(1, 100);
+    RLog("~ check "  + IntToString(chosen) + " against " + IntToString(random));
     return chosen >= random;
   }
 

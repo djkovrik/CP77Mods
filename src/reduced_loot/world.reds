@@ -26,27 +26,41 @@ protected final func OnItemEntitySpawned(entID: EntityID) -> Void {
   let preventDestroying: Bool = false;
   let shouldKeepForId: Bool = false;
   let shouldKeepForQuest: Bool = false;
-  let shouldKeepBecauseWasHeld: Bool = false;
+  let isHeldWeapon: Bool = false;
 
   playerPuppet = GameInstance.GetPlayerSystem(this.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
   if IsDefined(playerPuppet) {
-    RLog("> World check:");
     journalManager = GameInstance.GetJournalManager(playerPuppet.GetGame());
     trackedObjective = journalManager.GetTrackedEntry() as JournalQuestObjective;
     preventDestroying = Equals(this.GetItemObject().GetItemID(), playerPuppet.GetStoredId_RL());
     shouldKeepForId = RL_Exclusions.KeepForItemId(ItemID.GetTDBID(data.GetID()));
     shouldKeepForQuest = RL_Exclusions.KeepForQuestTarget(trackedObjective.GetId());
-    shouldKeepBecauseWasHeld = data.GetShouldKeep_RL();
-    RLog("? Item TDBID: " + TDBID.ToStringDEBUG(ItemID.GetTDBID(data.GetID())));
-    RLog("? Current quest objective: " + trackedObjective.GetId());
-    RLog("? keep for id: " + BoolToString(shouldKeepForId) + ", no destroy: " + BoolToString(preventDestroying) + ", keep for quest: " + BoolToString(shouldKeepForQuest) + ", was held: " + BoolToString(shouldKeepBecauseWasHeld));
-  };
-  if RL_Checker.CanLootThis(data, RL_LootSource.World) || preventDestroying || shouldKeepForId || shouldKeepForQuest || shouldKeepBecauseWasHeld {
-    RLog("+ kept for world " + UIItemsHelper.GetItemTypeKey(data.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(data)));
-  } else {
-    RLog("- removed from world " + UIItemsHelper.GetItemTypeKey(data.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(data)));
-    EntityGameInterface.Destroy(this.GetEntity());
-    return ;
+    isHeldWeapon = RL_Utils.IsWeapon(data) && data.GetShouldKeep_RL();
+
+    if isHeldWeapon {
+      RLog("> Held weapon check:");
+      RLog("? Item TDBID: " + TDBID.ToStringDEBUG(ItemID.GetTDBID(data.GetID())));
+      RLog("? keep for id: " + BoolToString(shouldKeepForId) + ", no destroy: " + BoolToString(preventDestroying) + ", keep for quest: " + BoolToString(shouldKeepForQuest) + ", was held: " + BoolToString(isHeldWeapon));
+      if RL_Checker.CanLootThis(data, RL_LootSource.Held) {
+        RLog("+ kept for world " + UIItemsHelper.GetItemTypeKey(data.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(data)));
+      } else {
+        RLog("- removed from world " + UIItemsHelper.GetItemTypeKey(data.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(data)));
+        EntityGameInterface.Destroy(this.GetEntity());
+        return ;
+      };
+    } else {
+      RLog("> World check:");
+      RLog("? Item TDBID: " + TDBID.ToStringDEBUG(ItemID.GetTDBID(data.GetID())));
+      RLog("? Current quest objective: " + trackedObjective.GetId());
+      RLog("? keep for id: " + BoolToString(shouldKeepForId) + ", no destroy: " + BoolToString(preventDestroying) + ", keep for quest: " + BoolToString(shouldKeepForQuest) + ", was held: " + BoolToString(isHeldWeapon));
+      if RL_Checker.CanLootThis(data, RL_LootSource.World) || preventDestroying || shouldKeepForId || shouldKeepForQuest {
+        RLog("+ kept for world " + UIItemsHelper.GetItemTypeKey(data.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(data)));
+      } else {
+        RLog("- removed from world " + UIItemsHelper.GetItemTypeKey(data.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(data)));
+        EntityGameInterface.Destroy(this.GetEntity());
+        return ;
+      };
+    };
   };
 
   this.SetQualityRangeInteractionLayerState(true);
