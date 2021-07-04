@@ -41,7 +41,7 @@ public final static func ProcessLoot(self: wref<ScriptedPuppet>) -> Void {
       if !isBroken {
         ScriptedPuppet.ScaleDroppedItem(foundEquipment[i], self);
         foundEquipment[i].SetShouldKeep_RL();
-        RLog("#1 set weapon was held for " + UIItemsHelper.GetItemTypeKey(itemData.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(itemData)));
+        RLog("#1 set weapon was held for " + ToStr(itemData));
         TS.GiveItemByItemData(self, foundEquipment[i]);
       };
       i += 1;
@@ -134,13 +134,13 @@ public final static func DropHeldItems(self: wref<ScriptedPuppet>) -> Bool {
       if IsDefined(rightItem) {
         ScriptedPuppet.ScaleDroppedItem(rightItem.GetItemData(), self);
         rightItem.GetItemData().SetShouldKeep_RL();
-        RLog("#2 set weapon was held for " + UIItemsHelper.GetItemTypeKey(rightItem.GetItemData().GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(rightItem.GetItemData())));
+        RLog("#2 set weapon was held for " + ToStr(rightItem.GetItemData()));
         result = true;
       };
       if IsDefined(leftItem) {
         ScriptedPuppet.ScaleDroppedItem(leftItem.GetItemData(), self);
         leftItem.GetItemData().SetShouldKeep_RL();
-        RLog("#2 set weapon was held for " + UIItemsHelper.GetItemTypeKey(leftItem.GetItemData().GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(leftItem.GetItemData())));
+        RLog("#2 set weapon was held for " + ToStr(leftItem.GetItemData()));
         result = true;
       };
       return true;
@@ -163,7 +163,7 @@ public final static func DropItemFromSlot(obj: wref<GameObject>, slot: TweakDBID
   };
   if IsDefined(item) && NotEquals(RPGManager.GetItemType(itemInSlotID), gamedataItemType.Wea_Fists) && NotEquals(RPGManager.GetItemType(itemInSlotID), gamedataItemType.Cyb_StrongArms) && NotEquals(RPGManager.GetItemType(itemInSlotID), gamedataItemType.Cyb_MantisBlades) && NotEquals(RPGManager.GetItemType(itemInSlotID), gamedataItemType.Cyb_NanoWires) {
     item.GetItemData().SetShouldKeep_RL();
-    RLog("#3 set weapon was held for " + UIItemsHelper.GetItemTypeKey(item.GetItemData().GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(item.GetItemData())));
+    RLog("#3 set weapon was held for " + ToStr(item.GetItemData()));
     (obj as ScriptedPuppet).DropWeapons();
   };
 }
@@ -179,7 +179,7 @@ public final static func DropWeaponFromSlot(obj: wref<GameObject>, slot: TweakDB
   if IsDefined(item) {
     isBroken = RPGManager.BreakItem(obj.GetGame(), obj, item.GetItemID());
     if !isBroken {
-      RLog("#4 set weapon was held for " + UIItemsHelper.GetItemTypeKey(item.GetItemData().GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(item.GetItemData())));
+      RLog("#4 set weapon was held for " + ToStr(item.GetItemData()));
       item.GetItemData().SetShouldKeep_RL();
       (obj as ScriptedPuppet).DropWeapons();
     };

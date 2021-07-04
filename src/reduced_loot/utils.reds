@@ -255,6 +255,15 @@ public class RL_Utils {
   }
 }
 
+public static func ToStr(data: ref<gameItemData>) -> String {
+  // let tdbid: TweakDBID = ItemID.GetTDBID(data.GetID());
+  // let itemRecord: ref<Item_Record> = TweakDBInterface.GetItemRecord(tdbid);
+  let itemType: String = UIItemsHelper.GetItemTypeKey(data.GetItemType());
+  let quantity: Int32 = data.GetQuantity();
+  let quality: String = UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(data));
+  return itemType + " [" + quantity + "]: " + quality;
+}
+
 public static func RLog(str: String) -> Void {
   Log(str);
 }

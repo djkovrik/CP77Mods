@@ -3,6 +3,11 @@ module ReducedLootMain
 import ReducedLootUtils.RL_Converters
 import ReducedLootTypes.*
 
+// -- Reduced Loot - Main config file
+//    Here you can edit drop probability for all loot categories
+//    Values defined in percents where 0 equals completely remove and 100 equals always drop
+
+//    WHILE YOU EDIT THE VALUES BELOW PLEASE PAY ATTENTION TO COMMAS, YOU SHOULD NOT DELETE IT
 public class Config {
 
   // -- Probability settings for weapons drop per quality and loot source
@@ -38,7 +43,7 @@ public class Config {
     }
   }
 
-  // -- Probability settings for remained loot categories based on source drop per loot category
+  // -- Probability settings for remained loot categories based on drop source per loot category
   public static func Misc(source: RL_LootSource, type: RL_LootType) -> Int32 {
     //    Source ->   Containers    World placed    NPCs inventory   \  Type:
     let ammo =    [       25,           25,              25       ]; // <- Ammo

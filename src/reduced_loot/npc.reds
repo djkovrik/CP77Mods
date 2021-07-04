@@ -16,8 +16,8 @@ private func EvaluateLoot() -> Void {
   trackedObjective = journalManager.GetTrackedEntry() as JournalQuestObjective;
   
   if transactionSystem.GetItemList(this, items) {
-    RLog("> NPC check:");
     while i < ArraySize(items) {
+      RLog("> NPC check:");
       item = items[i];
       shouldKeepForId = RL_Exclusions.KeepForItemId(ItemID.GetTDBID(item.GetID()));
       shouldKeepForQuest = RL_Exclusions.KeepForQuestTarget(trackedObjective.GetId());
@@ -25,9 +25,9 @@ private func EvaluateLoot() -> Void {
       RLog("? Current quest objective: " + trackedObjective.GetId());
       RLog("? keep for id: " + BoolToString(shouldKeepForId) + ", keep for quest: " + BoolToString(shouldKeepForQuest));
       if RL_Checker.CanLootThis(item, RL_LootSource.Puppet) || this.IsQuest() || shouldKeepForId || shouldKeepForQuest {
-        RLog("+ kept for npc " + UIItemsHelper.GetItemTypeKey(item.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(item)));
+        RLog("+ kept for npc " + ToStr(item));
       } else {
-        RLog("- removed for npc " + UIItemsHelper.GetItemTypeKey(item.GetItemType()) + " " + UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(item)));
+        RLog("- removed for npc " + ToStr(item));
         transactionSystem.RemoveItem(this, item.GetID(), item.GetQuantity());
       };
       i += 1;
