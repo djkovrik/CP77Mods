@@ -15,6 +15,10 @@ public class RL_Exclusions {
       Equals(id, t"Keycards.q115_nest_keycard") ||
       Equals(id, t"Keycards.q115_solo_keycard") ||
       Equals(id, t"Keycards.q116_smasher_keycard") ||
+      // Stadium Love
+      Equals(id, t"Items.Preset_MQ008_Nova") ||
+      // Space Oddity
+      Equals(id, t"Items.mq003_painting") ||
 
     false;
   }
@@ -26,7 +30,6 @@ public class RL_Exclusions {
       Equals(objectiveId, "01a_pick_weapon") ||
       Equals(objectiveId, "01c_pick_up_reanimator") ||
       Equals(objectiveId, "03_pick_up_katana") ||
-
     false;
   }
 }
