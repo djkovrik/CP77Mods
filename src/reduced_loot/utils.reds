@@ -11,12 +11,20 @@ public class RL_Checker {
 
     // Iconics check
     if RPGManager.IsItemDataIconic(data) || Equals(RPGManager.GetItemDataQuality(data), gamedataQuality.Iconic) {
+      RLog(">>> Iconic item detected: " + ToStr(data));
       return true;
     };
-    // Quest and cyberdeck check
-    if data.HasTag(n"Quest") || data.HasTag(n"Cyberdeck") { 
+    // Quest check
+    if data.HasTag(n"Quest") { 
+      RLog(">>> Quest item detected: " + ToStr(data));
       return true; 
     };
+    // Сyberdeck check
+    if data.HasTag(n"Cyberdeck") { 
+      RLog(">>> Cyberdeck detected: " + ToStr(data));
+      return true; 
+    };
+
     // Weapons check
     if Equals(RL_LootType.Weapon, type) {
       return RL_Utils.ProbabilityCheck(Config.Weapon(source, quality));
