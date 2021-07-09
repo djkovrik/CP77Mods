@@ -4,10 +4,12 @@ import ReducedLootUtils.RL_Converters
 import ReducedLootTypes.*
 
 // -- Reduced Loot - Main config file
-//    Here you can edit drop probability for all loot categories
-//    Values defined in percents where 0 equals completely remove and 100 equals always drop
+//    Here you can edit loot removal probability for all categories
+//    Values defined in percents where 0 equals always remove and 100 equals always drop
 
 //    WHILE YOU EDIT THE VALUES BELOW PLEASE PAY ATTENTION TO COMMAS, YOU SHOULD NOT DELETE IT
+
+// -- Reduced Loot Config version 1.0
 public class Config {
 
   // -- Probability settings for weapons drop per quality and loot source
