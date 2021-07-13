@@ -9,7 +9,7 @@ import ReducedLootTypes.*
 
 //    WHILE YOU EDIT THE VALUES BELOW PLEASE PAY ATTENTION TO COMMAS, YOU SHOULD NOT DELETE IT
 
-// -- Reduced Loot Config version 1.0
+// -- Reduced Loot Config version 1.1
 public class Config {
 
   // -- Probability settings for weapons drop per quality and loot source
@@ -70,7 +70,7 @@ public class Config {
       case RL_LootType.Edibles: return edib[RL_Converters.SourceToInt(source)];
       case RL_LootType.Grenades: return grnd[RL_Converters.SourceToInt(source)];
       case RL_LootType.Healings: return heal[RL_Converters.SourceToInt(source)];
-      case RL_LootType.Junk: return heal[RL_Converters.SourceToInt(source)];
+      case RL_LootType.Junk: return junk[RL_Converters.SourceToInt(source)];
       case RL_LootType.Mods: return mods[RL_Converters.SourceToInt(source)];
       case RL_LootType.Money: return moni[RL_Converters.SourceToInt(source)];
       case RL_LootType.Quickhacks: return hack[RL_Converters.SourceToInt(source)];
