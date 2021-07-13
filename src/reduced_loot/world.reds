@@ -27,6 +27,9 @@ protected final func OnItemEntitySpawned(entID: EntityID) -> Void {
   let shouldKeepForId: Bool = false;
   let shouldKeepForQuest: Bool = false;
   let isHeldWeapon: Bool = false;
+  let wasKept: Bool = false;
+  let wasRemoved: Bool = false;
+  let hash: String = this.GetSimpleHash_RL();
 
   playerPuppet = GameInstance.GetPlayerSystem(this.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
   if IsDefined(playerPuppet) {
@@ -36,6 +39,8 @@ protected final func OnItemEntitySpawned(entID: EntityID) -> Void {
     shouldKeepForId = RL_Exclusions.KeepForItemId(ItemID.GetTDBID(data.GetID()));
     shouldKeepForQuest = RL_Exclusions.KeepForQuestTarget(trackedObjective.GetId());
     isHeldWeapon = RL_Utils.IsWeapon(data) && data.GetShouldKeep_RL();
+    wasKept = playerPuppet.WasKept_RL(hash);
+    wasRemoved = playerPuppet.WasRemoved_RL(hash);
 
     if isHeldWeapon {
       RLog("> Held weapon check:");
@@ -53,10 +58,23 @@ protected final func OnItemEntitySpawned(entID: EntityID) -> Void {
       RLog("? Item TDBID: " + TDBID.ToStringDEBUG(ItemID.GetTDBID(data.GetID())));
       RLog("? Current quest objective: " + trackedObjective.GetId());
       RLog("? keep for id: " + BoolToString(shouldKeepForId) + ", no destroy: " + BoolToString(preventDestroying) + ", keep for quest: " + BoolToString(shouldKeepForQuest) + ", was held: " + BoolToString(isHeldWeapon));
-      if RL_Checker.CanLootThis(data, RL_LootSource.World) || preventDestroying || shouldKeepForId || shouldKeepForQuest {
+      
+      if wasRemoved {
+        RLog(">>> was previously removed from world " + ToStr(data));
+        EntityGameInterface.Destroy(this.GetEntity());
+        return ;
+      };
+
+      if wasKept {
+        RLog(">>> was previously kept for world " + ToStr(data));
+      };
+       
+      if RL_Checker.CanLootThis(data, RL_LootSource.World) || preventDestroying || shouldKeepForId || shouldKeepForQuest || wasKept {
         RLog("+ kept for world " + ToStr(data));
+        playerPuppet.SaveAsKept_RL(hash);
       } else {
         RLog("- removed from world " + ToStr(data));
+        playerPuppet.SaveAsRemoved_RL(hash);
         EntityGameInterface.Destroy(this.GetEntity());
         return ;
       };
@@ -66,4 +84,58 @@ protected final func OnItemEntitySpawned(entID: EntityID) -> Void {
   this.SetQualityRangeInteractionLayerState(true);
   this.EvaluateLootQualityEvent(entID);
   this.RequestHUDRefresh();
+}
+
+// -- EXPERIMENTAL HASH TRACKING
+public class TrackerConfig {
+  // Array size which triggers saved hashes clean
+  // 10k too much? too low? TODO: check
+  public static func CleanupThreshold() -> Int32 = 10000
+}
+
+@addMethod(gameItemDropObject)
+public func GetSimpleHash_RL() -> String {
+  return Vector4.ToString(this.GetWorldPosition());
+}
+
+@addField(PlayerPuppet)
+private let m_keptItemHashes_RL: array<String>;
+
+@addField(PlayerPuppet)
+private let m_removedItemHashes_RL: array<String>;
+
+@addField(PlayerPuppet)
+private let m_scheduleKeptCleanup: Bool;
+
+@addField(PlayerPuppet)
+private let m_scheduleRemovedCleanup: Bool;
+
+@addMethod(PlayerPuppet)
+public func SaveAsKept_RL(hash: String) -> Void {
+  if ArraySize(this.m_keptItemHashes_RL) > TrackerConfig.CleanupThreshold() {
+    ArrayClear(this.m_keptItemHashes_RL);
+  };
+  if !this.WasKept_RL(hash) {
+    ArrayPush(this.m_keptItemHashes_RL, hash);
+  };
+}
+
+@addMethod(PlayerPuppet)
+public func SaveAsRemoved_RL(hash: String) -> Void {
+  if ArraySize(this.m_removedItemHashes_RL) > TrackerConfig.CleanupThreshold()  {
+    ArrayClear(this.m_removedItemHashes_RL);
+  };
+  if !this.WasRemoved_RL(hash) {
+    ArrayPush(this.m_removedItemHashes_RL, hash);
+  };
+}
+
+@addMethod(PlayerPuppet)
+public func WasKept_RL(hash: String) -> Bool {
+  return ArrayContains(this.m_keptItemHashes_RL, hash);
+}
+
+@addMethod(PlayerPuppet)
+public func WasRemoved_RL(hash: String) -> Bool {
+  return ArrayContains(this.m_removedItemHashes_RL, hash);
 }

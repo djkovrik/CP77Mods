@@ -273,5 +273,5 @@ public static func ToStr(data: ref<gameItemData>) -> String {
 }
 
 public static func RLog(str: String) -> Void {
-  Log(str);
+  Log("[RL]: " + str);
 }
