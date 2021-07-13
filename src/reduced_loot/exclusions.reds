@@ -19,6 +19,8 @@ public class RL_Exclusions {
       Equals(id, t"Items.Preset_MQ008_Nova") ||
       // Space Oddity
       Equals(id, t"Items.mq003_painting") ||
+      // Sasquatch Hammer
+      Equals(id, t"Items.Preset_Hammer_Sasquatch") ||
 
     false;
   }
