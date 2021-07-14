@@ -21,11 +21,6 @@ public func OnZoomStateChanged(value: Float) -> Void {
   this.ComputeHealthBarVisibility();
 }
 
-@addMethod(inkHUDGameController)
-public func SetModuleVisibility(visible: Bool) -> Void {
-  this.m_moduleShown = visible;
-}
-
 @replaceMethod(healthbarWidgetGameController)
 protected cb func OnPlayerAttach(playerGameObject: ref<GameObject>) -> Bool {
   let controlledPuppet: wref<gamePuppetBase>;
@@ -85,7 +80,7 @@ private final func ComputeHealthBarVisibility() -> Void {
   let animFade: ref<inkAnimDef>;
   let isTemperatureSafe: Bool;
 
-  this.m_armorBar.SetVisible(true);
+  this.m_armorBar.SetVisible(isMultiplayer);
   this.UpdateGodModeVisibility();
   inkWidgetRef.SetVisible(this.m_quickhacksContainer, this.IsCyberdeckEquipped());
   if NotEquals(this.m_currentVisionPSM, gamePSMVision.Default) {
