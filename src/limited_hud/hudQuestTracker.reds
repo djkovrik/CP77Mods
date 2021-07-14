@@ -57,9 +57,10 @@ public func DetermineCurrentVisibility() -> Void {
   let isCurrentStateInVehicle: Bool = this.m_vehicleBlackboard_LHUD.GetBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted);
   let isWeaponUnsheathed: Bool = this.m_playerPuppet_LHUD.HasAnyWeaponEquipped_LHUD();
   let isZoomActive: Bool = (this.m_playerStateMachineBlackboard_LHUD.GetFloat(GetAllBlackboardDefs().PlayerStateMachine.ZoomLevel) > 1.0) && !isWeaponUnsheathed && !isScannerEnabled;
+  let outOfCombatAvailable: Bool = isCurrentStateOutOfCombat && !isScannerEnabled && !isCurrentStateInVehicle && !isWeaponUnsheathed && !isZoomActive;
   // Bind to config
   let showForCombat: Bool = isCurrentStateCombat && QuestTrackerModuleConfig.ShowInCombat();
-  let showForOutOfCombat: Bool = isCurrentStateOutOfCombat && QuestTrackerModuleConfig.ShowOutOfCombat();
+  let showForOutOfCombat: Bool = outOfCombatAvailable && QuestTrackerModuleConfig.ShowOutOfCombat();
   let showForGlobalHotkey: Bool = this.m_isGlobalFlagToggled_LHUD && QuestTrackerModuleConfig.BindToGlobalHotkey();
   let showForScanner: Bool =  isScannerEnabled && QuestTrackerModuleConfig.ShowWithScanner();
   let showForStealth: Bool =  isCurrentStateStealth && QuestTrackerModuleConfig.ShowInStealth();
