@@ -88,9 +88,7 @@ protected final func OnItemEntitySpawned(entID: EntityID) -> Void {
 
 // -- EXPERIMENTAL HASH TRACKING
 public class TrackerConfig {
-  // Array size which triggers saved hashes clean
-  // 10k too much? too low? TODO: check
-  public static func CleanupThreshold() -> Int32 = 10000
+  public static func CleanupThreshold() -> Int32 = 15000
 }
 
 @addMethod(gameItemDropObject)
@@ -112,30 +110,69 @@ private let m_scheduleRemovedCleanup: Bool;
 
 @addMethod(PlayerPuppet)
 public func SaveAsKept_RL(hash: String) -> Void {
-  if ArraySize(this.m_keptItemHashes_RL) > TrackerConfig.CleanupThreshold() {
-    ArrayClear(this.m_keptItemHashes_RL);
-  };
   if !this.WasKept_RL(hash) {
     ArrayPush(this.m_keptItemHashes_RL, hash);
+    RLog("?! kept hash " + hash + " saved, array size " + IntToString(ArraySize(this.m_keptItemHashes_RL)));
   };
 }
 
 @addMethod(PlayerPuppet)
 public func SaveAsRemoved_RL(hash: String) -> Void {
-  if ArraySize(this.m_removedItemHashes_RL) > TrackerConfig.CleanupThreshold()  {
-    ArrayClear(this.m_removedItemHashes_RL);
-  };
   if !this.WasRemoved_RL(hash) {
     ArrayPush(this.m_removedItemHashes_RL, hash);
+    RLog("?! removed hash" + hash + " saved, array size " + IntToString(ArraySize(this.m_removedItemHashes_RL)));
   };
 }
 
 @addMethod(PlayerPuppet)
 public func WasKept_RL(hash: String) -> Bool {
+  if this.m_scheduleKeptCleanup || ArraySize(this.m_keptItemHashes_RL) > TrackerConfig.CleanupThreshold() {
+    ArrayClear(this.m_keptItemHashes_RL);
+    this.m_scheduleKeptCleanup = false;
+    RLog("?! Kept hashes array cleared");
+  };
   return ArrayContains(this.m_keptItemHashes_RL, hash);
 }
 
 @addMethod(PlayerPuppet)
 public func WasRemoved_RL(hash: String) -> Bool {
+  if this.m_scheduleRemovedCleanup || ArraySize(this.m_removedItemHashes_RL) > TrackerConfig.CleanupThreshold()  {
+    ArrayClear(this.m_removedItemHashes_RL);
+    this.m_scheduleRemovedCleanup  = false;
+    RLog("?! Removed hashes array cleared");
+  };
   return ArrayContains(this.m_removedItemHashes_RL, hash);
+}
+
+@addMethod(PlayerPuppet)
+public func ScheduleHaschesCleanup_RL() -> Void {
+  this.m_scheduleKeptCleanup = true;
+  this.m_scheduleRemovedCleanup = true;
+  RLog("?! Hashes cleanup scheduled");
+}
+
+// Trigger cleanup on bed activation
+@addField(dialogWidgetGameController)
+private let m_lastSelectedHubTitle: String;
+
+@replaceMethod(dialogWidgetGameController)
+protected cb func OnDialogsSelectIndex(index: Int32) -> Bool {
+  let playerPuppet: ref<PlayerPuppet>;
+  // Save titles on interaction
+  if ArraySize(this.m_data.choiceHubs) > 0 {
+    this.m_lastSelectedHubTitle = this.m_data.choiceHubs[0].title;
+  }
+
+  this.m_selectedIndex = index;
+  super.OnDialogsSelectIndex(index);
+
+  // Check if hub title equals "Bed"
+  // TODO: need to find a better place for schedule calling cuz this one is dirty
+  if Equals(this.m_lastSelectedHubTitle, "LocKey#46418") && Equals(index, -1) {
+    this.m_lastSelectedHubTitle = "";
+    playerPuppet = this.GetPlayerControlledObject() as PlayerPuppet;
+    if IsDefined(playerPuppet) {
+      playerPuppet.ScheduleHaschesCleanup_RL();
+    };
+  };
 }
