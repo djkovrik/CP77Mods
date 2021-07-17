@@ -21,7 +21,8 @@ public class RL_Exclusions {
       Equals(id, t"Items.mq003_painting") ||
       // Sasquatch Hammer
       Equals(id, t"Items.Preset_Hammer_Sasquatch") ||
-
+      // Ozob's Nose
+      Equals(id, t"Items.GrenadeOzobsNose") ||
     false;
   }
 
