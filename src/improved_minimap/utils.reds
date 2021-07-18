@@ -4,12 +4,12 @@ import ImprovedMinimapMain.ZoomConfig
 
 public class ZoomCalc {
 
-  public static func GetForSpeed(speed: Int32) -> Int32 {
+  public static func GetForSpeed(speed: Int32) -> Float {
     if speed <= ZoomConfig.MinSpeed() { 
-      return ZoomConfig.MinZoom(); 
+      return Cast(ZoomConfig.MinZoom()); 
     };
     if speed >= ZoomConfig.MaxSpeed() { 
-      return ZoomConfig.MaxZoom(); 
+      return Cast(ZoomConfig.MaxZoom()); 
     };
 
     // Calculate zoom increase step based on min/max values
@@ -21,6 +21,10 @@ public class ZoomCalc {
     let zoomToAdd: Float = baseSpeed * step;
     let calculated: Float = Cast(ZoomConfig.MinZoom()) + zoomToAdd;
     // Round and return
-    return RoundMath(calculated);
+    return Cast(RoundMath(calculated));
   }
+}
+
+public static func IMZLog(message: String) -> Void {
+  Log("[IMZ]: " + message);
 }

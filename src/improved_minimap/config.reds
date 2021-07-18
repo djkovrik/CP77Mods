@@ -48,11 +48,11 @@ public class ZoomConfig {
   public static func MinZoom() -> Int32 = 80
 
   // Maximal zoom value
-  public static func MaxZoom() -> Int32 = 160
+  public static func MaxZoom() -> Int32 = 180
 
   // Speed threshold when zoom will start increasing from MinZoom
   public static func MinSpeed() -> Int32 = 10
 
   // Speed threshold when zoom will reach the value from MaxZoom
-  public static func MaxSpeed() -> Int32 = 100
+  public static func MaxSpeed() -> Int32 = 120
 }
