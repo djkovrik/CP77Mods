@@ -1,7 +1,12 @@
 import ImprovedMinimapMain.ZoomConfig
 import ImprovedMinimapUtil.*
 
-// Native zoom fields, magic happens here =^_^=
+// IF YOU READ THIS - THESE ARE A FEW DIRTY HACKS RIGHT HERE :(
+// Minimap widget reloading with new zoom values can be triggered only by a few events like combat mode, 
+// active zone or mount state change and vehicle minimap refreshed only with IsPlayerMounted change
+
+
+// Native zoom fields, magic happens here
 
 // In vehicle
 @addField(MinimapContainerController)
@@ -31,10 +36,16 @@ native let visionRadiusExterior: Float;
 // Fields
 
 @addField(MinimapContainerController)
-public let m_speedTrackingBlackboard: wref<IBlackboard>;
+public let m_UIBlackboard: wref<IBlackboard>;
+
+@addField(MinimapContainerController)
+public let m_isMountedBlackboard: wref<IBlackboard>;
 
 @addField(MinimapContainerController)
 public let m_speedTrackingCallback: Uint32;
+
+@addField(MinimapContainerController)
+public let m_isMountedTrackingCallback: Uint32;
 
 @addField(MinimapContainerController)
 public let m_playerInstance: ref<PlayerPuppet>;
@@ -42,34 +53,69 @@ public let m_playerInstance: ref<PlayerPuppet>;
 @addField(MinimapContainerController)
 public let m_currentInVehicleZoom: Float;
 
+@addField(MinimapContainerController)
+private let m_initialHackApplied: Bool;
+
+@addField(MinimapContainerController)
+private let m_currentZone: Int32;
+
+@addField(MinimapContainerController)
+private let m_zoneToSwap: Int32;
+
+// DIRTY HACK #1:
+// Swap IsPlayerMounted flag to trigger minimap refresh for dynamic zoom
 @addMethod(MinimapContainerController)
-protected cb func OnSpeedValueChanged(speed: Int32) -> Bool {
+private func SwapIsMountedFlag() -> Void {
+  let flag: Bool = this.m_isMountedBlackboard.GetBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted);
+  this.m_isMountedBlackboard.SetBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted, !flag, false);
+}
+
+@addMethod(MinimapContainerController)
+protected cb func OnSpeedValueChanged(speed: Float) -> Bool {
   let newZoom: Float = ZoomCalc.GetForSpeed(speed);
+  IMZLog("New zoom available: " + ToString(newZoom));
   if IsDefined(this.m_playerInstance) {
-    if NotEquals(this.m_currentInVehicleZoom, newZoom) && IsDefined(this.m_playerInstance) {
-      IMZLog("New zoom available: " + ToString(newZoom));
-      this.visionRadiusVehicle = newZoom;
-      this.visionRadiusCombat = newZoom;
-      this.visionRadiusQuestArea = newZoom;
-      this.visionRadiusSecurityArea = newZoom;
-      this.visionRadiusInterior = newZoom;
-      this.visionRadiusExterior = newZoom;
-      let flag = GameInstance.GetBlackboardSystem(this.m_playerInstance.GetGame()).Get(GetAllBlackboardDefs().UI_ActiveVehicleData).GetBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted);
-      GameInstance.GetBlackboardSystem(this.m_playerInstance.GetGame()).Get(GetAllBlackboardDefs().UI_ActiveVehicleData).SetBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted, !flag, false);
+    if NotEquals(this.m_currentInVehicleZoom, newZoom) && IsDefined(this.m_playerInstance) && speed > 0.0 {
+      this.HackAllZoomValues(newZoom);
+      this.SwapIsMountedFlag();
     };
   };
 }
 
 @addMethod(MinimapContainerController)
+protected cb func OnMountedStateChanged(value: Bool) -> Bool {
+  IMZLog("! OnMountedStateChanged " + ToString(value));
+}
+
+@addMethod(MinimapContainerController)
 func InitBBs(playerGameObject: ref<GameObject>) -> Void {
   this.m_playerInstance = playerGameObject as PlayerPuppet;
-  this.m_speedTrackingBlackboard = GameInstance.GetBlackboardSystem(playerGameObject.GetGame()).Get(GetAllBlackboardDefs().UI_System);
-  this.m_speedTrackingCallback = this.m_speedTrackingBlackboard.RegisterListenerInt(GetAllBlackboardDefs().UI_System.CurrentSpeed, this, n"OnSpeedValueChanged");
+  this.m_UIBlackboard = GameInstance.GetBlackboardSystem(playerGameObject.GetGame()).Get(GetAllBlackboardDefs().UI_System);
+  this.m_speedTrackingCallback = this.m_UIBlackboard.RegisterListenerFloat(GetAllBlackboardDefs().UI_System.CurrentSpeed, this, n"OnSpeedValueChanged");
+  this.m_isMountedBlackboard = GameInstance.GetBlackboardSystem(playerGameObject.GetGame()).Get(GetAllBlackboardDefs().UI_ActiveVehicleData);
+  this.m_isMountedTrackingCallback = this.m_isMountedBlackboard.RegisterListenerBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted, this, n"OnMountedStateChanged"); 
+}
+
+@addMethod(MinimapContainerController)
+func InitZoneVariables() -> Void {
+  this.m_currentZone = this.GetPSMBlackboard(this.m_playerInstance).GetInt(GetAllBlackboardDefs().PlayerStateMachine.Zones);
+  if this.m_currentZone != 3 {
+    this.m_zoneToSwap = 3;
+  } else {
+    this.m_zoneToSwap = 1;
+  };
+
+  // DIRTY HACK #2.1:
+  // Set faked current zone to prepare initial loading minimap refresh
+  // Sequential SetInt calls do not work (perhaps some delay required) so hack splitted into two parts
+  this.m_initialHackApplied = false;
+  this.GetPSMBlackboard(this.m_playerInstance).SetInt(GetAllBlackboardDefs().PlayerStateMachine.Zones, this.m_zoneToSwap, false);
 }
 
 @addMethod(MinimapContainerController)
 public func ClearBBs() -> Void {
-  this.m_speedTrackingBlackboard.UnregisterListenerInt(GetAllBlackboardDefs().UI_System.CurrentSpeed, this.m_speedTrackingCallback);
+  this.m_UIBlackboard.UnregisterListenerFloat(GetAllBlackboardDefs().UI_System.CurrentSpeed, this.m_speedTrackingCallback);
+  this.m_isMountedBlackboard.UnregisterListenerBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted, this.m_isMountedTrackingCallback);
 }
 
 // Overrides
@@ -84,19 +130,38 @@ protected cb func OnInitialize() -> Bool {
   this.m_locationDataCallback = this.m_mapBlackboard.RegisterListenerString(this.m_mapDefinition.currentLocation, this, n"OnLocationUpdated");
   this.OnLocationUpdated(this.m_mapBlackboard.GetString(this.m_mapDefinition.currentLocation));
   this.m_messageCounterController = this.SpawnFromExternal(inkWidgetRef.Get(this.m_messageCounter), r"base\\gameplay\\gui\\widgets\\phone\\message_counter.inkwidget", n"messages") as inkCompoundWidget;
-  
-  this.visionRadiusVehicle = 90.0;
-  this.visionRadiusCombat = 90.0;
-  this.visionRadiusQuestArea = 90.0;
-  this.visionRadiusSecurityArea = 90.0;
-  this.visionRadiusInterior = 90.0;
-  this.visionRadiusExterior = 90.0;
+  this.SetPreconfiguredZoomValues();
+}
+
+// Set native zoom values for MinimapContainerControllerm, yay ^_^
+@addMethod(MinimapContainerController)
+public func SetPreconfiguredZoomValues() -> Void {
+  this.visionRadiusVehicle = CastedValues.MinZoom();
+  this.visionRadiusCombat = CastedValues.Combat();
+  this.visionRadiusQuestArea = CastedValues.QuestArea();
+  this.visionRadiusSecurityArea = CastedValues.SecurityArea();
+  this.visionRadiusInterior = CastedValues.Interior();
+  this.visionRadiusExterior = CastedValues.Exterior();
+}
+
+// DIRTY HACK #3: 
+// Flatten all zoom values to prevent dynamic zoom flickering because of constant IsPlayerMounted swaps
+@addMethod(MinimapContainerController)
+public func HackAllZoomValues(value: Float) -> Void {
+  this.visionRadiusVehicle = value;
+  this.visionRadiusCombat = value;
+  this.visionRadiusQuestArea = value;
+  this.visionRadiusSecurityArea = value;
+  this.visionRadiusInterior = value;
+  this.visionRadiusExterior = value;
 }
 
 @replaceMethod(MinimapContainerController)
 protected cb func OnPlayerAttach(playerGameObject: ref<GameObject>) -> Bool {
   this.InitializePlayer(playerGameObject);
   this.InitBBs(playerGameObject);
+  this.InitZoneVariables();
+  playerGameObject.RegisterInputListener(this);
 }
 
 @replaceMethod(MinimapContainerController)
@@ -111,144 +176,15 @@ protected cb func OnPlayerDetach(playerGameObject: ref<GameObject>) -> Bool {
   this.ClearBBs();
 }
 
+// DIRTY HACK #2.2:
+// Restore faked current zone to force initial minimap refresh
+@addMethod(MinimapContainerController)
+protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
+  if !this.m_initialHackApplied {
+    this.m_initialHackApplied = true;
+    this.GetPSMBlackboard(this.m_playerInstance).SetInt(GetAllBlackboardDefs().PlayerStateMachine.Zones, this.m_currentZone, false);
+  };
+}
 
-
-/////
-
-// @replaceMethod(VehicleComponent)
-// protected cb func OnMountingEvent(evt: ref<MountingEvent>) -> Bool {
-//   IMZLog("OnMountingEvent");
-//   let PSvehicleDooropenRequest: ref<VehicleDoorOpen>;
-//   let vehicleDataPackage: wref<VehicleDataPackage_Record>;
-//   let vehicleNPCData: ref<AnimFeature_VehicleNPCData>;
-//   let vehicleRecord: ref<Vehicle_Record>;
-//   let mountChild: ref<GameObject> = GameInstance.FindEntityByID(this.GetVehicle().GetGame(), evt.request.lowLevelMountingInfo.childId) as GameObject;
-//   VehicleComponent.GetVehicleDataPackage(this.GetVehicle().GetGame(), this.GetVehicle(), vehicleDataPackage);
-//   if mountChild.IsPlayer() {
-//     this.m_mountedPlayer = mountChild as PlayerPuppet;
-//     VehicleComponent.QueueEventToAllPassengers(this.m_mountedPlayer.GetGame(), this.GetVehicle().GetEntityID(), PlayerMuntedToMyVehicle.Create(this.m_mountedPlayer));
-//     PlayerPuppet.ReevaluateAllBreathingEffects(mountChild as PlayerPuppet);
-//     if !this.GetVehicle().IsCrowdVehicle() {
-//       this.GetVehicle().GetDeviceLink().TriggerSecuritySystemNotification(this.GetVehicle().GetWorldPosition(), mountChild, ESecurityNotificationType.ALARM);
-//     };
-//     this.ToggleScanningComponent(false);
-//     if this.GetVehicle().GetHudManager().IsRegistered(this.GetVehicle().GetEntityID()) {
-//       this.RegisterToHUDManager(false);
-//     };
-//     this.RegisterInputListener();
-//     FastTravelSystem.AddFastTravelLock(n"InVehicle", this.GetVehicle().GetGame());
-//     this.m_mounted = true;
-//     this.m_ignoreAutoDoorClose = true;
-//     this.SetupListeners();
-//     this.DisableTargetingComponents();
-//     if EntityID.IsDefined(evt.request.mountData.mountEventOptions.entityID) {
-//       this.m_enterTime = vehicleDataPackage.Stealing() + vehicleDataPackage.SlideDuration();
-//     } else {
-//       this.m_enterTime = vehicleDataPackage.Entering() + vehicleDataPackage.SlideDuration();
-//     };
-//     this.DrivingStimuli(true);
-//     if Equals(evt.request.lowLevelMountingInfo.slotId.id, VehicleComponent.GetDriverSlotName()) {
-//       if IsDefined(this.GetVehicle() as TankObject) {
-//         this.TogglePlayerHitShapesForPanzer(this.m_mountedPlayer, false);
-//         this.ToggleTargetingSystemForPanzer(this.m_mountedPlayer, true);
-//       };
-//       this.SetSteeringLimitAnimFeature(1);
-//     };
-//     if evt.request.mountData.isInstant {
-//       this.DetermineShouldCrystalDomeBeOn(0.00);
-//     } else {
-//       this.DetermineShouldCrystalDomeBeOn(0.75);
-//     };
-//   };
-//   if !mountChild.IsPlayer() {
-//     if evt.request.mountData.isInstant {
-//       mountChild.QueueEvent(CreateDisableRagdollEvent());
-//     };
-//     vehicleNPCData = new AnimFeature_VehicleNPCData();
-//     VehicleComponent.GetVehicleNPCData(this.GetVehicle().GetGame(), mountChild, vehicleNPCData);
-//     AnimationControllerComponent.ApplyFeatureToReplicate(mountChild, n"VehicleNPCData", vehicleNPCData);
-//     AnimationControllerComponent.PushEventToReplicate(mountChild, n"VehicleNPCData");
-//     if mountChild.IsPuppet() && !this.GetVehicle().IsPlayerVehicle() && (IsHostileTowardsPlayer(mountChild) || (mountChild as ScriptedPuppet).IsAggressive()) {
-//       this.EnableTargetingComponents();
-//     };
-//   };
-//   if !evt.request.mountData.isInstant {
-//     PSvehicleDooropenRequest = new VehicleDoorOpen();
-//     PSvehicleDooropenRequest.slotID = this.GetVehicle().GetBoneNameFromSlot(evt.request.lowLevelMountingInfo.slotId.id);
-//     if EntityID.IsDefined(evt.request.mountData.mountEventOptions.entityID) {
-//       PSvehicleDooropenRequest.autoCloseTime = vehicleDataPackage.Stealing_open();
-//     } else {
-//       PSvehicleDooropenRequest.autoCloseTime = vehicleDataPackage.Normal_open();
-//     };
-//     if !this.GetPS().GetIsDestroyed() {
-//       PSvehicleDooropenRequest.shouldAutoClose = true;
-//     };
-//     GameInstance.GetPersistencySystem(this.GetVehicle().GetGame()).QueuePSEvent(this.GetPS().GetID(), this.GetPS().GetClassName(), PSvehicleDooropenRequest);
-//   };
-// }
-
-// @replaceMethod(VehicleComponent)
-// protected cb func OnUnmountingEvent(evt: ref<UnmountingEvent>) -> Bool {
-//   IMZLog("OnUnmountingEvent");
-//   let activePassengers: Int32;
-//   let engineOn: Bool;
-//   let turnedOn: Bool;
-//   let mountChild: ref<GameObject> = GameInstance.FindEntityByID(this.GetVehicle().GetGame(), evt.request.lowLevelMountingInfo.childId) as GameObject;
-//   VehicleComponent.SetAnimsetOverrideForPassenger(mountChild, evt.request.lowLevelMountingInfo.parentId, evt.request.lowLevelMountingInfo.slotId.id, 0.00);
-//   if IsDefined(mountChild) && mountChild.IsPlayer() {
-//       PlayerPuppet.ReevaluateAllBreathingEffects(mountChild as PlayerPuppet);
-//       this.ToggleScanningComponent(true);
-//       if this.GetVehicle().ShouldRegisterToHUD() {
-//         this.RegisterToHUDManager(true);
-//       };
-//       this.UnregisterInputListener();
-//       FastTravelSystem.RemoveFastTravelLock(n"InVehicle", this.GetVehicle().GetGame());
-//       this.m_mounted = false;
-//       this.UnregisterListeners();
-//       this.ToggleSiren(false, false);
-//       if this.m_broadcasting {
-//         this.DrivingStimuli(false);
-//       };
-//       if Equals(evt.request.lowLevelMountingInfo.slotId.id, n"seat_front_left") {
-//         turnedOn = this.GetVehicle().IsTurnedOn();
-//         engineOn = this.GetVehicle().IsEngineTurnedOn();
-//         if turnedOn {
-//           turnedOn = !turnedOn;
-//         };
-//         if engineOn {
-//           engineOn = !engineOn;
-//         };
-//         this.ToggleVehicleSystems(false, turnedOn, engineOn);
-//         this.GetVehicleControllerPS().SetState(vehicleEState.Default);
-//         this.SetSteeringLimitAnimFeature(0);
-//         this.m_ignoreAutoDoorClose = false;
-//       };
-//       this.DoPanzerCleanup();
-//       this.m_mountedPlayer = null;
-//       this.CleanUpRace();
-//     };
-//     if IsDefined(mountChild) && VehicleComponent.GetNumberOfActivePassengers(mountChild.GetGame(), this.GetVehicle().GetEntityID(), activePassengers) {
-//       if activePassengers <= 0 {
-//         this.DisableTargetingComponents();
-//       };
-//     };
-//   }
-
-// @replaceMethod(VehicleComponent)
-// protected cb func OnVehicleStartedMountingEvent(evt: ref<VehicleStartedMountingEvent>) -> Bool {
-//   IMZLog("OnVehicleStartedMountingEvent");
-//   if !evt.isMounting {
-//     this.SendVehicleStartedUnmountingEventToPS(evt.isMounting, evt.slotID, evt.character);
-//     if Equals(evt.slotID, n"seat_front_left") {
-//       this.ToggleVehicleSystems(false, true, true);
-//       this.GetVehicleControllerPS().SetState(vehicleEState.Default);
-//     };
-//   } else {
-//     this.GetVehicle().SendDelayedFinishedMountingEventToPS(evt.isMounting, evt.slotID, evt.character, evt.instant ? 0.00 : this.m_enterTime);
-//   };
-// }
-
-// @replaceMethod(VehicleComponent)
-// protected cb func OnVehicleStartedUnmountingEvent(evt: ref<VehicleStartedUnmountingEvent>) -> Bool {
-//   IMZLog("OnVehicleStartedUnmountingEvent");
-// }
+// TODO
+// 1. Restore zoom values on unmount event
