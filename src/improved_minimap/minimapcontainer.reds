@@ -1,7 +1,7 @@
 import ImprovedMinimapMain.ZoomConfig
 import ImprovedMinimapUtil.*
 
-// IF YOU READ THIS - THESE ARE A FEW DIRTY HACKS RIGHT HERE :(
+// IF YOU READ THIS - THERE ARE A FEW DIRTY HACKS RIGHT HERE :(
 // Minimap widget reloading with new zoom values can be triggered only by a few events like combat mode, 
 // active zone or mount state change and vehicle minimap refreshed only with IsPlayerMounted change
 
@@ -53,14 +53,8 @@ public let m_playerInstance: ref<PlayerPuppet>;
 @addField(MinimapContainerController)
 public let m_currentInVehicleZoom: Float;
 
-@addField(MinimapContainerController)
-private let m_initialHackApplied: Bool;
 
-@addField(MinimapContainerController)
-private let m_currentZone: Int32;
-
-@addField(MinimapContainerController)
-private let m_zoneToSwap: Int32;
+// Methods
 
 // DIRTY HACK #1:
 // Swap IsPlayerMounted flag to trigger minimap refresh for dynamic zoom
@@ -73,11 +67,15 @@ private func SwapIsMountedFlag() -> Void {
 @addMethod(MinimapContainerController)
 protected cb func OnSpeedValueChanged(speed: Float) -> Bool {
   let newZoom: Float = ZoomCalc.GetForSpeed(speed);
-  IMZLog("New zoom available: " + ToString(newZoom));
+  // IMZLog("New zoom available: " + ToString(newZoom));
   if IsDefined(this.m_playerInstance) {
     if NotEquals(this.m_currentInVehicleZoom, newZoom) && IsDefined(this.m_playerInstance) && speed > 0.0 {
       this.HackAllZoomValues(newZoom);
       this.SwapIsMountedFlag();
+    };
+    // Restore zoom values from config
+    if speed == 0.0 {
+      this.SetPreconfiguredZoomValues();
     };
   };
 }
@@ -94,22 +92,6 @@ func InitBBs(playerGameObject: ref<GameObject>) -> Void {
   this.m_speedTrackingCallback = this.m_UIBlackboard.RegisterListenerFloat(GetAllBlackboardDefs().UI_System.CurrentSpeed, this, n"OnSpeedValueChanged");
   this.m_isMountedBlackboard = GameInstance.GetBlackboardSystem(playerGameObject.GetGame()).Get(GetAllBlackboardDefs().UI_ActiveVehicleData);
   this.m_isMountedTrackingCallback = this.m_isMountedBlackboard.RegisterListenerBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted, this, n"OnMountedStateChanged"); 
-}
-
-@addMethod(MinimapContainerController)
-func InitZoneVariables() -> Void {
-  this.m_currentZone = this.GetPSMBlackboard(this.m_playerInstance).GetInt(GetAllBlackboardDefs().PlayerStateMachine.Zones);
-  if this.m_currentZone != 3 {
-    this.m_zoneToSwap = 3;
-  } else {
-    this.m_zoneToSwap = 1;
-  };
-
-  // DIRTY HACK #2.1:
-  // Set faked current zone to prepare initial loading minimap refresh
-  // Sequential SetInt calls do not work (perhaps some delay required) so hack splitted into two parts
-  this.m_initialHackApplied = false;
-  this.GetPSMBlackboard(this.m_playerInstance).SetInt(GetAllBlackboardDefs().PlayerStateMachine.Zones, this.m_zoneToSwap, false);
 }
 
 @addMethod(MinimapContainerController)
@@ -144,7 +126,7 @@ public func SetPreconfiguredZoomValues() -> Void {
   this.visionRadiusExterior = CastedValues.Exterior();
 }
 
-// DIRTY HACK #3: 
+// DIRTY HACK #2: 
 // Flatten all zoom values to prevent dynamic zoom flickering because of constant IsPlayerMounted swaps
 @addMethod(MinimapContainerController)
 public func HackAllZoomValues(value: Float) -> Void {
@@ -156,12 +138,13 @@ public func HackAllZoomValues(value: Float) -> Void {
   this.visionRadiusExterior = value;
 }
 
+// DIRTY HACK #3: trigger minimap refresh after the game loaded with faked zone
 @replaceMethod(MinimapContainerController)
 protected cb func OnPlayerAttach(playerGameObject: ref<GameObject>) -> Bool {
   this.InitializePlayer(playerGameObject);
   this.InitBBs(playerGameObject);
-  this.InitZoneVariables();
   playerGameObject.RegisterInputListener(this);
+  this.m_playerInstance.SetFakedZone();
 }
 
 @replaceMethod(MinimapContainerController)
@@ -175,16 +158,3 @@ protected cb func OnPlayerDetach(playerGameObject: ref<GameObject>) -> Bool {
   };
   this.ClearBBs();
 }
-
-// DIRTY HACK #2.2:
-// Restore faked current zone to force initial minimap refresh
-@addMethod(MinimapContainerController)
-protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
-  if !this.m_initialHackApplied {
-    this.m_initialHackApplied = true;
-    this.GetPSMBlackboard(this.m_playerInstance).SetInt(GetAllBlackboardDefs().PlayerStateMachine.Zones, this.m_currentZone, false);
-  };
-}
-
-// TODO
-// 1. Restore zoom values on unmount event
