@@ -12,7 +12,21 @@ protected func CreateDispenseRequest(shouldPay: Bool, item: ItemID) -> ref<Dispe
   if ItemID.IsValid(item) {
     dispenseRequest.itemID = item;
     // Always save spawned items
-    GetPlayer(this.GetGame()).StoreItemId_RL(item);
+    GetPlayer(this.GetGame()).StoreItemId_RL(ItemID.GetTDBID(item));
+  };
+  return dispenseRequest;
+}
+
+@replaceMethod(WeaponVendingMachine)
+protected func CreateDispenseRequest(shouldPay: Bool, item: ItemID) -> ref<DispenseRequest> {
+  let dispenseRequest: ref<DispenseRequest> = new DispenseRequest();
+  dispenseRequest.owner = this;
+  dispenseRequest.position = this.RandomizePosition();
+  dispenseRequest.shouldPay = shouldPay;
+  if ItemID.IsValid(item) {
+    dispenseRequest.itemID = ItemID.CreateQuery(ItemID.GetTDBID(item));
+    // Always save spawned items
+    GetPlayer(this.GetGame()).StoreItemId_RL(ItemID.GetTDBID(item));
   };
   return dispenseRequest;
 }
@@ -35,7 +49,7 @@ protected final func OnItemEntitySpawned(entID: EntityID) -> Void {
   if IsDefined(playerPuppet) {
     journalManager = GameInstance.GetJournalManager(playerPuppet.GetGame());
     trackedObjective = journalManager.GetTrackedEntry() as JournalQuestObjective;
-    preventDestroying = Equals(this.GetItemObject().GetItemID(), playerPuppet.GetStoredId_RL());
+    preventDestroying = Equals(ItemID.GetTDBID(this.GetItemObject().GetItemID()), playerPuppet.GetStoredId_RL());
     shouldKeepForId = RL_Exclusions.KeepForItemId(ItemID.GetTDBID(data.GetID()));
     shouldKeepForQuest = RL_Exclusions.KeepForQuestTarget(trackedObjective.GetId());
     isHeldWeapon = RL_Utils.IsWeapon(data) && data.GetShouldKeep_RL();
@@ -67,6 +81,10 @@ protected final func OnItemEntitySpawned(entID: EntityID) -> Void {
 
       if wasKept {
         RLog(">>> was previously kept for world " + ToStr(data));
+      };
+
+      if preventDestroying {
+        playerPuppet.ClearStoredId_RL();
       };
        
       if RL_Checker.CanLootThis(data, RL_LootSource.World) || preventDestroying || shouldKeepForId || shouldKeepForQuest || wasKept {

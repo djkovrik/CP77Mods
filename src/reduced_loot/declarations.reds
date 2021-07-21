@@ -14,14 +14,20 @@ public func GetShouldKeep_RL() -> Bool {
 }
 
 @addField(PlayerPuppet)
-public let m_savedItemId: ItemID;
+public let m_savedItemTdbId: TweakDBID;
 
 @addMethod(PlayerPuppet)
-public func GetStoredId_RL() -> ItemID {
-  return this.m_savedItemId;
+public func GetStoredId_RL() -> TweakDBID {
+  return this.m_savedItemTdbId;
 }
 
 @addMethod(PlayerPuppet)
-public func StoreItemId_RL(id: ItemID) -> Void {
-  this.m_savedItemId = id;
+public func StoreItemId_RL(id: TweakDBID) -> Void {
+  this.m_savedItemTdbId = id;
+}
+
+
+@addMethod(PlayerPuppet)
+public func ClearStoredId_RL() -> Void {
+  this.m_savedItemTdbId = t"";
 }
