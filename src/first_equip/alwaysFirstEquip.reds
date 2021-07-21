@@ -6,6 +6,8 @@ public class FirstEquipConfig {
   public static func PercentageProbability() -> Int32 = 75
   // Replace false with true if you want see firstEquip animation while in stealth mode
   public static func PlayInStealthMode() -> Bool = false
+  // Replace false with true if you want see firstEquip animation when weapon magazine is empty
+  public static func PlayWhenMagazineIsEmpty() -> Bool = false
 }
 
 // --- CONFIG SECTION ENDS HERE, DO NOT EDIT ANYTHING BELOW
@@ -16,7 +18,12 @@ public class FirstEquipConfig {
 let m_skipFirstEquip: Bool;
 
 @addMethod(PlayerPuppet)
-public func ShouldRunFirstEquip() -> Bool {
+public func ShouldRunFirstEquip(weapon: wref<WeaponObject>) -> Bool {
+
+  if WeaponObject.IsMagazineEmpty(weapon) && !FirstEquipConfig.PlayWhenMagazineIsEmpty() {
+    return false;
+  };
+
   let probability: Int32 = FirstEquipConfig.PercentageProbability();
   let random: Int32 = RandRange(0, 100);
 
@@ -197,7 +204,7 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
       if Equals(playerPuppet.ShouldSkipFirstEquip(), true) {
         playerPuppet.SetSkipFirstEquip(false);
       } else {
-        if playerPuppet.ShouldRunFirstEquip() {
+        if playerPuppet.ShouldRunFirstEquip(itemObject) {
           weaponEquipAnimFeature.firstEquip = true;
           stateContext.SetConditionBoolParameter(n"firstEquip", true, true);
         };
