@@ -193,7 +193,7 @@ protected cb func OnItemAddedEvent(evt: ref<ItemAddedEvent>) -> Bool {
   let transactionSystem: ref<TransactionSystem>;
   let quality: gamedataQuality;
 
-  if RL_Utils.IsAmmo(data) && !this.IsPlayer() {
+  if RL_Utils.IsAmmo(data) && !this.IsPlayer() && !this.IsVendor() {
     RLog("> Ammo check #2:");
     if RL_Checker.CanDropAmmo(RL_LootSource.Puppet) {
       RLog("+ ammo dropped: " + IntToString(data.GetQuantity()));
