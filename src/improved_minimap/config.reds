@@ -10,7 +10,7 @@ public class ZoomConfig {
 
   // -- BASE MINIMAP CONFIG --
 
-  // -- Default in-game zoom values:
+  // -- Default in-game zoom values for reference:
   //    Combat = 40.0
   //    QuestArea = 25.0
   //    SecurityArea = 40.0
@@ -19,20 +19,23 @@ public class ZoomConfig {
   //    Vehicle = 80.0
 
   // Zoom value for active combat mode
-  public static func Combat() -> Int32 = 50
+  public static func Combat() -> Int32 = 60
   
   // Zoom value for quest areas
-  public static func QuestArea() -> Int32 = 35
+  public static func QuestArea() -> Int32 = 40
   
   // Zoom value for restricted and dangerous areas
-  public static func SecurityArea() -> Int32 = 50
+  public static func SecurityArea() -> Int32 = 60
   
   // Zoom value for interiors
-  public static func Interior() -> Int32 = 35
+  public static func Interior() -> Int32 = 40
 
   // Zoom value for remained cases:
   // not in interior, not in vehicle, not in security area, no active combat
-  public static func Exterior() -> Int32 = 45
+
+  // For smoother zoom transitions I would recommend to use 
+  // the same value for SecurityArea and Exterior options
+  public static func Exterior() -> Int32 = 60
 
   
   // -- VEHICLE MINIMAP CONFIG --
@@ -48,7 +51,7 @@ public class ZoomConfig {
   public static func MinZoom() -> Int32 = 80
 
   // Maximal zoom value
-  public static func MaxZoom() -> Int32 = 160
+  public static func MaxZoom() -> Int32 = 140
 
   // Speed threshold when zoom will start increasing from MinZoom
   public static func MinSpeed() -> Int32 = 10

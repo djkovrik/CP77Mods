@@ -4,6 +4,8 @@ import ImprovedMinimapUtil.*
 // IF YOU READ THIS - THERE ARE A FEW DIRTY HACKS RIGHT HERE :(
 // Minimap widget reloading with new zoom values can be triggered only by a few events like combat mode, 
 // active zone or mount state change and vehicle minimap refreshed only with IsPlayerMounted change
+// So I constantly swap IsPlayerMounted flag while driving =\
+// And off-vehicle minimap refresh forced by swapping current active zone for player
 
 
 // Native zoom fields, magic happens here
