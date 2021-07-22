@@ -39,7 +39,7 @@ protected cb func OnUnmountingEvent(evt: ref<UnmountingEvent>) -> Bool {
     this.CleanUpRace();
     // DIRTY HACK #4: trigger minimap refreshing on unmounting with faked zone
     playerPuppet = mountChild as PlayerPuppet;
-    playerPuppet.SetFakedZone();
+    playerPuppet.SetFakedZone_IMZ();
   };
   if IsDefined(mountChild) && VehicleComponent.GetNumberOfActivePassengers(mountChild.GetGame(), this.GetVehicle().GetEntityID(), activePassengers) {
     if activePassengers <= 0 {

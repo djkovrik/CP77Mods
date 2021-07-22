@@ -2,10 +2,10 @@ import ImprovedMinimapMain.ZoomConfig
 import ImprovedMinimapUtil.ZoomCalc
 
 @addField(UI_SystemDef)
-let CurrentSpeed: BlackboardID_Float;
+let CurrentSpeed_IMZ: BlackboardID_Float;
 
 @addField(hudCarController)
-let m_UIBlackboard: wref<IBlackboard>;
+let m_UIBlackboard_IMZ: wref<IBlackboard>;
 
 @replaceMethod(hudCarController)
 protected cb func OnPlayerAttach(playerPuppet: ref<GameObject>) -> Bool {
@@ -19,7 +19,7 @@ protected cb func OnPlayerAttach(playerPuppet: ref<GameObject>) -> Bool {
     this.RegisterToVehicle(true);
     this.Reset();
   };
-  this.m_UIBlackboard = GameInstance.GetBlackboardSystem(playerPuppet.GetGame()).Get(GetAllBlackboardDefs().UI_System);
+  this.m_UIBlackboard_IMZ = GameInstance.GetBlackboardSystem(playerPuppet.GetGame()).Get(GetAllBlackboardDefs().UI_System);
 }
 
 @replaceMethod(hudCarController)
@@ -32,6 +32,6 @@ protected cb func OnSpeedValueChanged(speedValue: Float) -> Bool {
   // Push speed value update if dynamic zoom enabled
   if ZoomConfig.IsDynamicZoomEnabled() {
     resultingValue = ZoomCalc.RoundTo05(speedValue * multiplier);
-    this.m_UIBlackboard.SetFloat(GetAllBlackboardDefs().UI_System.CurrentSpeed, resultingValue);
+    this.m_UIBlackboard_IMZ.SetFloat(GetAllBlackboardDefs().UI_System.CurrentSpeed_IMZ, resultingValue);
   }
 }

@@ -38,22 +38,22 @@ native let visionRadiusExterior: Float;
 // Fields
 
 @addField(MinimapContainerController)
-public let m_UIBlackboard: wref<IBlackboard>;
+public let m_UIBlackboard_IMZ: wref<IBlackboard>;
 
 @addField(MinimapContainerController)
-public let m_isMountedBlackboard: wref<IBlackboard>;
+public let m_isMountedBlackboard_IMZ: wref<IBlackboard>;
 
 @addField(MinimapContainerController)
-public let m_speedTrackingCallback: Uint32;
+public let m_speedTrackingCallback_IMZ: Uint32;
 
 @addField(MinimapContainerController)
-public let m_isMountedTrackingCallback: Uint32;
+public let m_isMountedTrackingCallback_IMZ: Uint32;
 
 @addField(MinimapContainerController)
-public let m_playerInstance: ref<PlayerPuppet>;
+public let m_playerInstance_IMZ: ref<PlayerPuppet>;
 
 @addField(MinimapContainerController)
-public let m_currentInVehicleZoom: Float;
+public let m_currentInVehicleZoom_IMZ: Float;
 
 
 // Methods
@@ -61,45 +61,45 @@ public let m_currentInVehicleZoom: Float;
 // DIRTY HACK #1:
 // Swap IsPlayerMounted flag to trigger minimap refresh for dynamic zoom
 @addMethod(MinimapContainerController)
-private func SwapIsMountedFlag() -> Void {
-  let flag: Bool = this.m_isMountedBlackboard.GetBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted);
-  this.m_isMountedBlackboard.SetBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted, !flag, false);
+private func SwapIsMountedFlag_IMZ() -> Void {
+  let flag: Bool = this.m_isMountedBlackboard_IMZ.GetBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted);
+  this.m_isMountedBlackboard_IMZ.SetBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted, !flag, false);
 }
 
 @addMethod(MinimapContainerController)
-protected cb func OnSpeedValueChanged(speed: Float) -> Bool {
+protected cb func OnSpeedValueChanged_IMZ(speed: Float) -> Bool {
   let newZoom: Float = ZoomCalc.GetForSpeed(speed);
   // IMZLog("New zoom available: " + ToString(newZoom));
-  if IsDefined(this.m_playerInstance) {
-    if NotEquals(this.m_currentInVehicleZoom, newZoom) && IsDefined(this.m_playerInstance) && speed > 0.0 {
-      this.HackAllZoomValues(newZoom);
-      this.SwapIsMountedFlag();
+  if IsDefined(this.m_playerInstance_IMZ) {
+    if NotEquals(this.m_currentInVehicleZoom_IMZ, newZoom) && IsDefined(this.m_playerInstance_IMZ) && speed > 0.0 {
+      this.HackAllZoomValues_IMZ(newZoom);
+      this.SwapIsMountedFlag_IMZ();
     };
     // Restore zoom values from config
     if speed == 0.0 {
-      this.SetPreconfiguredZoomValues();
+      this.SetPreconfiguredZoomValues_IMZ();
     };
   };
 }
 
 @addMethod(MinimapContainerController)
-protected cb func OnMountedStateChanged(value: Bool) -> Bool {
+protected cb func OnMountedStateChanged_IMZ(value: Bool) -> Bool {
   IMZLog("! OnMountedStateChanged " + ToString(value));
 }
 
 @addMethod(MinimapContainerController)
-func InitBB_IMZ(playerGameObject: ref<GameObject>) -> Void {
-  this.m_playerInstance = playerGameObject as PlayerPuppet;
-  this.m_UIBlackboard = GameInstance.GetBlackboardSystem(playerGameObject.GetGame()).Get(GetAllBlackboardDefs().UI_System);
-  this.m_speedTrackingCallback = this.m_UIBlackboard.RegisterListenerFloat(GetAllBlackboardDefs().UI_System.CurrentSpeed, this, n"OnSpeedValueChanged");
-  this.m_isMountedBlackboard = GameInstance.GetBlackboardSystem(playerGameObject.GetGame()).Get(GetAllBlackboardDefs().UI_ActiveVehicleData);
-  this.m_isMountedTrackingCallback = this.m_isMountedBlackboard.RegisterListenerBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted, this, n"OnMountedStateChanged"); 
+func InitBBs_IMZ(playerGameObject: ref<GameObject>) -> Void {
+  this.m_playerInstance_IMZ = playerGameObject as PlayerPuppet;
+  this.m_UIBlackboard_IMZ = GameInstance.GetBlackboardSystem(playerGameObject.GetGame()).Get(GetAllBlackboardDefs().UI_System);
+  this.m_speedTrackingCallback_IMZ = this.m_UIBlackboard_IMZ.RegisterListenerFloat(GetAllBlackboardDefs().UI_System.CurrentSpeed_IMZ, this, n"OnSpeedValueChanged_IMZ");
+  this.m_isMountedBlackboard_IMZ = GameInstance.GetBlackboardSystem(playerGameObject.GetGame()).Get(GetAllBlackboardDefs().UI_ActiveVehicleData);
+  this.m_isMountedTrackingCallback_IMZ = this.m_isMountedBlackboard_IMZ.RegisterListenerBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted, this, n"OnMountedStateChanged_IMZ"); 
 }
 
 @addMethod(MinimapContainerController)
-public func ClearBB_IMZ() -> Void {
-  this.m_UIBlackboard.UnregisterListenerFloat(GetAllBlackboardDefs().UI_System.CurrentSpeed, this.m_speedTrackingCallback);
-  this.m_isMountedBlackboard.UnregisterListenerBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted, this.m_isMountedTrackingCallback);
+public func ClearBBs_IMZ() -> Void {
+  this.m_UIBlackboard_IMZ.UnregisterListenerFloat(GetAllBlackboardDefs().UI_System.CurrentSpeed_IMZ, this.m_speedTrackingCallback_IMZ);
+  this.m_isMountedBlackboard_IMZ.UnregisterListenerBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted, this.m_isMountedTrackingCallback_IMZ);
 }
 
 // Overrides
@@ -114,12 +114,12 @@ protected cb func OnInitialize() -> Bool {
   this.m_locationDataCallback = this.m_mapBlackboard.RegisterListenerString(this.m_mapDefinition.currentLocation, this, n"OnLocationUpdated");
   this.OnLocationUpdated(this.m_mapBlackboard.GetString(this.m_mapDefinition.currentLocation));
   this.m_messageCounterController = this.SpawnFromExternal(inkWidgetRef.Get(this.m_messageCounter), r"base\\gameplay\\gui\\widgets\\phone\\message_counter.inkwidget", n"messages") as inkCompoundWidget;
-  this.SetPreconfiguredZoomValues();
+  this.SetPreconfiguredZoomValues_IMZ();
 }
 
 // Set native zoom values for MinimapContainerControllerm, yay ^_^
 @addMethod(MinimapContainerController)
-public func SetPreconfiguredZoomValues() -> Void {
+public func SetPreconfiguredZoomValues_IMZ() -> Void {
   this.visionRadiusVehicle = CastedValues.MinZoom();
   this.visionRadiusCombat = CastedValues.Combat();
   this.visionRadiusQuestArea = CastedValues.QuestArea();
@@ -131,7 +131,7 @@ public func SetPreconfiguredZoomValues() -> Void {
 // DIRTY HACK #2: 
 // Flatten all zoom values to prevent dynamic zoom flickering because of constant IsPlayerMounted swaps
 @addMethod(MinimapContainerController)
-public func HackAllZoomValues(value: Float) -> Void {
+public func HackAllZoomValues_IMZ(value: Float) -> Void {
   this.visionRadiusVehicle = value;
   this.visionRadiusCombat = value;
   this.visionRadiusQuestArea = value;
@@ -144,9 +144,10 @@ public func HackAllZoomValues(value: Float) -> Void {
 @replaceMethod(MinimapContainerController)
 protected cb func OnPlayerAttach(playerGameObject: ref<GameObject>) -> Bool {
   this.InitializePlayer(playerGameObject);
-  this.InitBB_IMZ(playerGameObject);
+  // + IMZ: Initialize stuff
+  this.InitBBs_IMZ(playerGameObject);
   playerGameObject.RegisterInputListener(this);
-  this.m_playerInstance.SetFakedZone();
+  this.m_playerInstance_IMZ.SetFakedZone_IMZ();
 }
 
 @replaceMethod(MinimapContainerController)
@@ -158,5 +159,5 @@ protected cb func OnPlayerDetach(playerGameObject: ref<GameObject>) -> Bool {
       this.m_securityBlackBoardID = 0u;
     };
   };
-  this.ClearBB_IMZ();
+  this.ClearBBs_IMZ();
 }
