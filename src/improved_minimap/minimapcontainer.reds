@@ -88,7 +88,7 @@ protected cb func OnMountedStateChanged(value: Bool) -> Bool {
 }
 
 @addMethod(MinimapContainerController)
-func InitBBs(playerGameObject: ref<GameObject>) -> Void {
+func InitBB_IMZ(playerGameObject: ref<GameObject>) -> Void {
   this.m_playerInstance = playerGameObject as PlayerPuppet;
   this.m_UIBlackboard = GameInstance.GetBlackboardSystem(playerGameObject.GetGame()).Get(GetAllBlackboardDefs().UI_System);
   this.m_speedTrackingCallback = this.m_UIBlackboard.RegisterListenerFloat(GetAllBlackboardDefs().UI_System.CurrentSpeed, this, n"OnSpeedValueChanged");
@@ -97,7 +97,7 @@ func InitBBs(playerGameObject: ref<GameObject>) -> Void {
 }
 
 @addMethod(MinimapContainerController)
-public func ClearBBs() -> Void {
+public func ClearBB_IMZ() -> Void {
   this.m_UIBlackboard.UnregisterListenerFloat(GetAllBlackboardDefs().UI_System.CurrentSpeed, this.m_speedTrackingCallback);
   this.m_isMountedBlackboard.UnregisterListenerBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted, this.m_isMountedTrackingCallback);
 }
@@ -144,7 +144,7 @@ public func HackAllZoomValues(value: Float) -> Void {
 @replaceMethod(MinimapContainerController)
 protected cb func OnPlayerAttach(playerGameObject: ref<GameObject>) -> Bool {
   this.InitializePlayer(playerGameObject);
-  this.InitBBs(playerGameObject);
+  this.InitBB_IMZ(playerGameObject);
   playerGameObject.RegisterInputListener(this);
   this.m_playerInstance.SetFakedZone();
 }
@@ -158,5 +158,5 @@ protected cb func OnPlayerDetach(playerGameObject: ref<GameObject>) -> Bool {
       this.m_securityBlackBoardID = 0u;
     };
   };
-  this.ClearBBs();
+  this.ClearBB_IMZ();
 }
