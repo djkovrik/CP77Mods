@@ -50,6 +50,9 @@ public let m_speedTrackingCallback_IMZ: Uint32;
 public let m_isMountedTrackingCallback_IMZ: Uint32;
 
 @addField(MinimapContainerController)
+public let m_isActuallyMountedTrackingCallback_IMZ: Uint32;
+
+@addField(MinimapContainerController)
 public let m_playerInstance_IMZ: ref<PlayerPuppet>;
 
 @addField(MinimapContainerController)
@@ -88,18 +91,25 @@ protected cb func OnMountedStateChanged_IMZ(value: Bool) -> Bool {
 }
 
 @addMethod(MinimapContainerController)
+protected cb func OnActualMountedStateChanged_IMZ(value: Bool) -> Bool {
+  IMZLog("! OnActualMountedStateChanged " + ToString(value));
+}
+
+@addMethod(MinimapContainerController)
 func InitBBs_IMZ(playerGameObject: ref<GameObject>) -> Void {
   this.m_playerInstance_IMZ = playerGameObject as PlayerPuppet;
   this.m_UIBlackboard_IMZ = GameInstance.GetBlackboardSystem(playerGameObject.GetGame()).Get(GetAllBlackboardDefs().UI_System);
   this.m_speedTrackingCallback_IMZ = this.m_UIBlackboard_IMZ.RegisterListenerFloat(GetAllBlackboardDefs().UI_System.CurrentSpeed_IMZ, this, n"OnSpeedValueChanged_IMZ");
   this.m_isMountedBlackboard_IMZ = GameInstance.GetBlackboardSystem(playerGameObject.GetGame()).Get(GetAllBlackboardDefs().UI_ActiveVehicleData);
   this.m_isMountedTrackingCallback_IMZ = this.m_isMountedBlackboard_IMZ.RegisterListenerBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted, this, n"OnMountedStateChanged_IMZ"); 
+  this.m_isActuallyMountedTrackingCallback_IMZ = this.m_UIBlackboard_IMZ.RegisterListenerBool(GetAllBlackboardDefs().UI_System.IsMounted_IMZ, this, n"OnActualMountedStateChanged_IMZ"); 
 }
 
 @addMethod(MinimapContainerController)
 public func ClearBBs_IMZ() -> Void {
   this.m_UIBlackboard_IMZ.UnregisterListenerFloat(GetAllBlackboardDefs().UI_System.CurrentSpeed_IMZ, this.m_speedTrackingCallback_IMZ);
   this.m_isMountedBlackboard_IMZ.UnregisterListenerBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted, this.m_isMountedTrackingCallback_IMZ);
+  this.m_UIBlackboard_IMZ.UnregisterListenerBool(GetAllBlackboardDefs().UI_System.IsMounted_IMZ, this.m_isActuallyMountedTrackingCallback_IMZ);
 }
 
 // Overrides
