@@ -1,5 +1,3 @@
-module ReducedLootDeclarations
-
 @addField(gameItemData)
 public let m_shouldKeep: Bool;
 

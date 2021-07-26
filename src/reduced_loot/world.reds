@@ -1,6 +1,5 @@
 import ReducedLootExclusions.RL_Exclusions
 import ReducedLootTypes.RL_LootSource
-import ReducedLootDeclarations.*
 import ReducedLootUtils.*
 
 @replaceMethod(VendingMachine)

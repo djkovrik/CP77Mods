@@ -1,5 +1,4 @@
 import ReducedLootTypes.RL_LootSource
-import ReducedLootDeclarations.*
 import ReducedLootUtils.*
 
 @replaceMethod(ScriptedPuppet)
