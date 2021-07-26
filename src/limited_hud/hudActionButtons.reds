@@ -81,20 +81,12 @@ public func InitializeBBs(playerPuppet: ref<GameObject>) -> Bool {
   }
 }
 
-@replaceMethod(HotkeysWidgetController)
+@wrapMethod(HotkeysWidgetController)
 protected cb func OnPlayerAttach(playerPuppet: ref<GameObject>) -> Bool {
-  let controlledPuppet: wref<gamePuppetBase> = GetPlayer(this.m_gameInstance);
-  let controlledPuppetRecordID: TweakDBID;
-  if controlledPuppet != null {
-    this.InitializeBBs(controlledPuppet);
-    controlledPuppetRecordID = controlledPuppet.GetRecordID();
-    if controlledPuppetRecordID == t"Character.johnny_replacer" {
-      inkWidgetRef.SetMargin(this.m_hotkeysList, new inkMargin(84.00, 0.00, 0.00, 0.00));
-    } else {
-      inkWidgetRef.SetMargin(this.m_hotkeysList, new inkMargin(331.00, 0.00, 0.00, 0.00));
-    };
-  } else {
-    inkWidgetRef.SetMargin(this.m_hotkeysList, new inkMargin(331.00, 0.00, 0.00, 0.00));
+  wrappedMethod(playerPuppet);
+  let puppet: ref<PlayerPuppet> = playerPuppet as PlayerPuppet;
+  if IsDefined(puppet) {
+    this.InitializeBBs(puppet);
   };
 }
 

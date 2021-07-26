@@ -128,21 +128,15 @@ public func ClearBBs() -> Void {
   this.m_playerPuppet_LHUD = null;
 }
 
-@replaceMethod(MinimapContainerController)
+@wrapMethod(MinimapContainerController)
 protected cb func OnPlayerAttach(playerGameObject: ref<GameObject>) -> Bool {
-  this.InitializePlayer(playerGameObject);
+  wrappedMethod(playerGameObject);
   this.InitBBs(playerGameObject);
   this.GetRootWidget().SetOpacity(MinimapModuleConfig.Opacity());
 }
 
-@replaceMethod(MinimapContainerController)
+@wrapMethod(MinimapContainerController)
 protected cb func OnPlayerDetach(playerGameObject: ref<GameObject>) -> Bool {
-  let psmBlackboard: ref<IBlackboard> = this.GetPSMBlackboard(playerGameObject);
-  if IsDefined(psmBlackboard) {
-    if this.m_securityBlackBoardID > 0u {
-      psmBlackboard.UnregisterListenerVariant(GetAllBlackboardDefs().PlayerStateMachine.SecurityZoneData, this.m_securityBlackBoardID);
-      this.m_securityBlackBoardID = 0u;
-    };
-  };
+  wrappedMethod(playerGameObject);
   this.ClearBBs();
 }

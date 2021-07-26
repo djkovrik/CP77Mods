@@ -21,10 +21,9 @@ public func OnZoomStateChanged(value: Float) -> Void {
   this.ComputeHealthBarVisibility();
 }
 
-@replaceMethod(healthbarWidgetGameController)
+@wrapMethod(healthbarWidgetGameController)
 protected cb func OnPlayerAttach(playerGameObject: ref<GameObject>) -> Bool {
-  let controlledPuppet: wref<gamePuppetBase>;
-  let controlledPuppetRecordID: TweakDBID;
+  wrappedMethod(playerGameObject);
   // New stuff
   this.m_playerPuppet_LHUD = playerGameObject as PlayerPuppet;
   if IsDefined(this.m_playerPuppet_LHUD) {
@@ -39,32 +38,11 @@ protected cb func OnPlayerAttach(playerGameObject: ref<GameObject>) -> Bool {
   } else {
     LHUDLog("healthbarWidgetGameController blackboard not defined!");
   };
-
-  this.RegisterPSMListeners(playerGameObject);
-  if IsDefined(this.m_foldingAnimProxy) {
-    this.m_foldingAnimProxy.Stop();
-  };
-  this.m_foldingAnimProxy = this.PlayLibraryAnimation(n"unfold");
-  controlledPuppet = GetPlayer(this.m_gameInstance);
-  if controlledPuppet != null {
-    controlledPuppetRecordID = controlledPuppet.GetRecordID();
-    if controlledPuppetRecordID == t"Character.johnny_replacer" {
-      inkWidgetRef.SetVisible(this.m_levelUpRectangle, false);
-    } else {
-      inkWidgetRef.SetVisible(this.m_levelUpRectangle, true);
-    };
-  } else {
-    inkWidgetRef.SetVisible(this.m_levelUpRectangle, true);
-  };
 }
 
-@replaceMethod(healthbarWidgetGameController)
+@wrapMethod(healthbarWidgetGameController)
 protected cb func OnPlayerDetach(playerGameObject: ref<GameObject>) -> Bool {
-  this.UnregisterPSMListeners(playerGameObject);
-  if IsDefined(this.m_foldingAnimProxy) {
-    this.m_foldingAnimProxy.Stop();
-  };
-  this.m_foldingAnimProxy = this.PlayLibraryAnimation(n"fold");
+  wrappedMethod(playerGameObject);
   this.m_systemBlackboard_LHUD.UnregisterListenerBool(GetAllBlackboardDefs().UI_System.IsGlobalFlagToggled_LHUD, this.m_globalFlagCallback_LHUD);
   this.m_weaponBlackboard_LHUD.UnregisterListenerVariant(GetAllBlackboardDefs().UI_EquipmentData.EquipmentData, this.m_weaponTrackingCallback_LHUD);
   this.m_playerStateMachineBlackboard_LHUD.UnregisterListenerFloat(GetAllBlackboardDefs().PlayerStateMachine.ZoomLevel, this.m_zoomTrackingCallback_LHUD);

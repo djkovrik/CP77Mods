@@ -1,6 +1,6 @@
 // Hides TPP speedometer widget
-@replaceMethod(hudCarController)
+@wrapMethod(hudCarController)
 protected cb func OnInitialize() -> Bool {
-  this.PlayLibraryAnimation(n"intro");
+  wrappedMethod();
   this.GetRootWidget().SetOpacity(0.0);
 }

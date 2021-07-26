@@ -80,30 +80,20 @@ public func HasAnyWeaponEquipped_LHUD() -> Bool {
 // --- Common overrides
 
 // Register for hokey actions
-@replaceMethod(HUDManager)
+@wrapMethod(HUDManager)
 protected final func RegisterToInput() -> Void {
-  this.GetPlayer().RegisterInputListener(this, n"QH_MoveLeft");
-  this.GetPlayer().RegisterInputListener(this, n"QH_MoveRight");
-  this.GetPlayer().RegisterInputListener(this, n"Ping");
-  this.GetPlayer().RegisterInputListener(this, n"OpenQuickHackPanel");
-  this.GetPlayer().RegisterInputListener(this, n"DescriptionChange");
+  wrappedMethod();
   this.GetPlayer().RegisterInputListener(this, n"ToggleGlobal");
   this.GetPlayer().RegisterInputListener(this, n"ToggleMinimap");
-  this.m_stickInputListener = GameInstance.GetBlackboardSystem(this.GetGameInstance()).Get(GetAllBlackboardDefs().UI_QuickSlotsData).RegisterListenerVector4(GetAllBlackboardDefs().UI_QuickSlotsData.leftStick, this, n"OnStickInputChanged");
 }
 
 // Fire toggle events here
-@replaceMethod(HUDManager)
+@wrapMethod(HUDManager)
 protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
-  let isReleased: Bool;
-  let isToggled: Bool;
-  let actionName: CName;
-  if this.IsHackingMinigameActive() {
-    return false;
-  };
-  isReleased = Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED);
-  actionName = ListenerAction.GetName(action);
+  wrappedMethod(action, consumer);
 
+  let actionName: CName = ListenerAction.GetName(action);
+  let isToggled: Bool;
   if Equals(actionName, n"ToggleGlobal") && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED) {
     LHUDLog("Toggle global hotkey pressed");
     isToggled = GameInstance.GetBlackboardSystem(this.GetGameInstance()).Get(GetAllBlackboardDefs().UI_System).GetBool(GetAllBlackboardDefs().UI_System.IsGlobalFlagToggled_LHUD);
@@ -114,39 +104,6 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
     LHUDLog("Toggle minimap hotkey pressed");
     isToggled = GameInstance.GetBlackboardSystem(this.GetGameInstance()).Get(GetAllBlackboardDefs().UI_System).GetBool(GetAllBlackboardDefs().UI_System.IsMinimapToggled_LHUD);
     GameInstance.GetBlackboardSystem(this.GetGameInstance()).Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.IsMinimapToggled_LHUD, !isToggled, true);
-  };
-
-  if this.IsQuickHackPanelOpened() && !this.m_isQHackUIInputLocked {
-    if isReleased && !GameObject.IsCooldownActive(this.GetPlayer(), n"Qhack_targetChange_lock") {
-      switch actionName {
-        case n"QH_MoveLeft":
-          if isReleased {
-            this.JumpToNextTarget(false);
-          };
-          GameObject.StartCooldown(this.GetPlayer(), n"Qhack_targetChange_lock", 0.00);
-          break;
-        case n"QH_MoveRight":
-          if isReleased {
-            this.JumpToNextTarget(true);
-          };
-          GameObject.StartCooldown(this.GetPlayer(), n"Qhack_targetChange_lock", 0.00);
-          break;
-        default:
-      };
-    };
-  };
-  if ListenerAction.IsButtonJustPressed(action) {
-    switch actionName {
-      case n"Ping":
-        this.StartPulse();
-        break;
-      case n"DescriptionChange":
-        if this.IsQuickHackPanelOpened() {
-          this.SetQhuickHackDescriptionVisibility(!this.m_quickHackDescriptionVisible);
-        };
-        break;
-      default:
-    };
   };
 }
 

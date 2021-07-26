@@ -59,15 +59,9 @@ public func OnUnfoldStarted(proxy: ref<inkAnimProxy>) -> Bool {
   this.ShowWidget(true);
 }
 
-@replaceMethod(CrouchIndicatorGameController)
+@wrapMethod(CrouchIndicatorGameController)
 protected cb func OnPlayerAttach(playerPuppet: ref<GameObject>) -> Bool {
-  this.m_Player = playerPuppet as PlayerPuppet;
-  this.m_playerPuppet_LHUD = this.m_Player;
-  this.m_InventoryManager = new InventoryDataManagerV2();
-  this.m_InventoryManager.Initialize(this.m_Player);
-  this.m_genderName = this.m_Player.GetResolvedGenderName();
-  this.m_WeaponAreas = InventoryDataManagerV2.GetInventoryWeaponTypes();
-  this.RegisterBB();
+  wrappedMethod(playerPuppet);
   // Register BBs
   this.m_braindanceBlackboard_LHUD = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().Braindance);
   this.m_playerStateMachineBlackboard_LHUD = this.GetPSMBlackboard(this.m_playerPuppet_LHUD);
@@ -78,9 +72,9 @@ protected cb func OnPlayerAttach(playerPuppet: ref<GameObject>) -> Bool {
   this.DetermineCurrentVisibility();
 }
 
-@replaceMethod(CrouchIndicatorGameController)
+@wrapMethod(CrouchIndicatorGameController)
 protected cb func OnPlayerDetach(playerPuppet: ref<GameObject>) -> Bool {
-  this.UnregisterBB();
+  wrappedMethod(playerPuppet);
   // Unregister callbacks
   this.m_playerStateMachineBlackboard_LHUD.UnregisterListenerInt(GetAllBlackboardDefs().PlayerStateMachine.Combat, this.m_combatTrackingCallback_LHUD);
   this.m_systemBlackboard_LHUD.UnregisterListenerBool(GetAllBlackboardDefs().UI_System.IsGlobalFlagToggled_LHUD, this.m_globalFlagCallback_LHUD);
@@ -203,15 +197,10 @@ public func OnUnfoldStarted(proxy: ref<inkAnimProxy>) -> Bool {
   this.ShowWidget(true);
 }
 
-@replaceMethod(weaponRosterGameController)
+@wrapMethod(weaponRosterGameController)
 protected cb func OnPlayerAttach(playerPuppet: ref<GameObject>) -> Bool {
-  this.m_Player = playerPuppet as PlayerPuppet;
+  wrappedMethod(playerPuppet);
   this.m_playerPuppet_LHUD = this.m_Player;
-  this.m_InventoryManager = new InventoryDataManagerV2();
-  this.m_InventoryManager.Initialize(this.m_Player);
-  this.m_genderName = this.m_Player.GetResolvedGenderName();
-  this.m_WeaponAreas = InventoryDataManagerV2.GetInventoryWeaponTypes();
-  this.RegisterBB();
   if IsDefined(this.m_playerPuppet_LHUD) && this.m_playerPuppet_LHUD.IsControlledByLocalPeer() {
     // Register BBs
     this.m_braindanceBlackboard_LHUD = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().Braindance);
@@ -224,9 +213,9 @@ protected cb func OnPlayerAttach(playerPuppet: ref<GameObject>) -> Bool {
   };
 }
 
-@replaceMethod(weaponRosterGameController)
+@wrapMethod(weaponRosterGameController)
 protected cb func OnPlayerDetach(playerPuppet: ref<GameObject>) -> Bool {
-  this.UnregisterBB();
+  wrappedMethod(playerPuppet);
   // Unregister callbacks
   this.m_playerStateMachineBlackboard_LHUD.UnregisterListenerInt(GetAllBlackboardDefs().PlayerStateMachine.Combat, this.m_combatTrackingCallback_LHUD);
   this.m_systemBlackboard_LHUD.UnregisterListenerBool(GetAllBlackboardDefs().UI_System.IsGlobalFlagToggled_LHUD, this.m_globalFlagCallback_LHUD);
