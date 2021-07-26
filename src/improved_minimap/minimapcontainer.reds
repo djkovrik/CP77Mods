@@ -78,21 +78,21 @@ protected cb func OnSpeedValueChanged_IMZ(speed: Float) -> Bool {
       this.HackAllZoomValues_IMZ(newZoom);
       this.SwapIsMountedFlag_IMZ();
     };
-    // Restore zoom values from config
-    if speed == 0.0 {
-      this.SetPreconfiguredZoomValues_IMZ();
-    };
   };
 }
 
 @addMethod(MinimapContainerController)
 protected cb func OnMountedStateChanged_IMZ(value: Bool) -> Bool {
-  IMZLog("! OnMountedStateChanged " + ToString(value));
+  // IMZLog("! OnMountedStateChanged " + ToString(value));
 }
 
 @addMethod(MinimapContainerController)
 protected cb func OnActualMountedStateChanged_IMZ(value: Bool) -> Bool {
-  IMZLog("! OnActualMountedStateChanged " + ToString(value));
+  // IMZLog("! OnActualMountedStateChanged " + ToString(value));
+  if !value && IsDefined(this.m_playerInstance_IMZ) {
+    this.SetPreconfiguredZoomValues_IMZ();
+    this.m_playerInstance_IMZ.SetFakedZone_IMZ();
+  }
 }
 
 @addMethod(MinimapContainerController)
@@ -114,20 +114,13 @@ public func ClearBBs_IMZ() -> Void {
 
 // Overrides
 
-@replaceMethod(MinimapContainerController)
+@wrapMethod(MinimapContainerController)
 protected cb func OnInitialize() -> Bool {
-  let alphaInterpolator: ref<inkAnimTransparency>;
-  this.m_rootWidget = this.GetRootWidget();
-  inkWidgetRef.SetOpacity(this.m_securityAreaVignetteWidget, 0.00);
-  this.m_mapDefinition = GetAllBlackboardDefs().UI_Map;
-  this.m_mapBlackboard = this.GetBlackboardSystem().Get(this.m_mapDefinition);
-  this.m_locationDataCallback = this.m_mapBlackboard.RegisterListenerString(this.m_mapDefinition.currentLocation, this, n"OnLocationUpdated");
-  this.OnLocationUpdated(this.m_mapBlackboard.GetString(this.m_mapDefinition.currentLocation));
-  this.m_messageCounterController = this.SpawnFromExternal(inkWidgetRef.Get(this.m_messageCounter), r"base\\gameplay\\gui\\widgets\\phone\\message_counter.inkwidget", n"messages") as inkCompoundWidget;
+  wrappedMethod();
   this.SetPreconfiguredZoomValues_IMZ();
 }
 
-// Set native zoom values for MinimapContainerControllerm, yay ^_^
+// Set native zoom values for MinimapContainerController, yay ^_^
 @addMethod(MinimapContainerController)
 public func SetPreconfiguredZoomValues_IMZ() -> Void {
   this.visionRadiusVehicle = CastedValues.MinZoom();
@@ -150,24 +143,17 @@ public func HackAllZoomValues_IMZ(value: Float) -> Void {
   this.visionRadiusExterior = value;
 }
 
-// DIRTY HACK #3: trigger minimap refresh after the game loaded with faked zone
-@replaceMethod(MinimapContainerController)
+// DIRTY HACK #3: 
+// Trigger minimap refresh after the game loaded with faked zone
+@wrapMethod(MinimapContainerController)
 protected cb func OnPlayerAttach(playerGameObject: ref<GameObject>) -> Bool {
-  this.InitializePlayer(playerGameObject);
-  // + IMZ: Initialize stuff
+  wrappedMethod(playerGameObject);
   this.InitBBs_IMZ(playerGameObject);
-  playerGameObject.RegisterInputListener(this);
   this.m_playerInstance_IMZ.SetFakedZone_IMZ();
 }
 
-@replaceMethod(MinimapContainerController)
+@wrapMethod(MinimapContainerController)
 protected cb func OnPlayerDetach(playerGameObject: ref<GameObject>) -> Bool {
-  let psmBlackboard: ref<IBlackboard> = this.GetPSMBlackboard(playerGameObject);
-  if IsDefined(psmBlackboard) {
-    if this.m_securityBlackBoardID > 0u {
-      psmBlackboard.UnregisterListenerVariant(GetAllBlackboardDefs().PlayerStateMachine.SecurityZoneData, this.m_securityBlackBoardID);
-      this.m_securityBlackBoardID = 0u;
-    };
-  };
+  wrappedMethod(playerGameObject);
   this.ClearBBs_IMZ();
 }

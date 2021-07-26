@@ -7,31 +7,22 @@ let CurrentSpeed_IMZ: BlackboardID_Float;
 @addField(hudCarController)
 let m_UIBlackboard_IMZ: wref<IBlackboard>;
 
-@replaceMethod(hudCarController)
+@wrapMethod(hudCarController)
 protected cb func OnPlayerAttach(playerPuppet: ref<GameObject>) -> Bool {
-  this.m_psmBlackboard = this.GetPSMBlackboard(playerPuppet);
-  if IsDefined(this.m_psmBlackboard) {
-    this.m_PSM_BBID = this.m_psmBlackboard.RegisterDelayedListenerFloat(GetAllBlackboardDefs().PlayerStateMachine.ZoomLevel, this, n"OnZoomChange");
-  };
-  this.m_activeVehicle = GetMountedVehicle(this.GetPlayerControlledObject());
-  if IsDefined(this.m_activeVehicle) {
-    this.GetRootWidget().SetVisible(true);
-    this.RegisterToVehicle(true);
-    this.Reset();
-  };
+  wrappedMethod(playerPuppet);
   this.m_UIBlackboard_IMZ = GameInstance.GetBlackboardSystem(playerPuppet.GetGame()).Get(GetAllBlackboardDefs().UI_System);
 }
 
-@replaceMethod(hudCarController)
+@wrapMethod(hudCarController)
 protected cb func OnSpeedValueChanged(speedValue: Float) -> Bool {
-  let resultingValue: Float;
-  speedValue = AbsF(speedValue);
-  let multiplier: Float = GameInstance.GetStatsDataSystem(this.m_activeVehicle.GetGame()).GetValueFromCurve(n"vehicle_ui", speedValue, n"speed_to_multiplier");
-  inkTextRef.SetText(this.m_SpeedValue, IntToString(RoundMath(speedValue * multiplier)));
+  wrappedMethod(speedValue);
 
+  let resultingValue: Float;
+  let m: Float;
   // Push speed value update if dynamic zoom enabled
   if ZoomConfig.IsDynamicZoomEnabled() {
-    resultingValue = ZoomCalc.RoundTo05(speedValue * multiplier);
+    m = GameInstance.GetStatsDataSystem(this.m_activeVehicle.GetGame()).GetValueFromCurve(n"vehicle_ui", speedValue, n"speed_to_multiplier");
+    resultingValue = ZoomCalc.RoundTo05(speedValue * m);
     this.m_UIBlackboard_IMZ.SetFloat(GetAllBlackboardDefs().UI_System.CurrentSpeed_IMZ, resultingValue);
   }
 }

@@ -42,60 +42,34 @@ public func RestoreRealZone_IMZ() -> Void {
   this.GetPlayerStateMachineBlackboard().SetInt(GetAllBlackboardDefs().PlayerStateMachine.Zones, this.m_realZone_IMZ, false);
 }
 
-@replaceMethod(PlayerPuppet)
+@wrapMethod(PlayerPuppet)
 private final func OnEnterPublicZone() -> Void {
-  let psmEvent: ref<PSMPostponedParameterBool> = new PSMPostponedParameterBool();
-  psmEvent.id = n"InPublicZone";
-  psmEvent.value = true;
-  psmEvent.aspect = gamestateMachineParameterAspect.Permanent;
-  this.QueueEvent(psmEvent);
-  this.SetBlackboardIntVariable(GetAllBlackboardDefs().PlayerStateMachine.Zones, EnumInt(gamePSMZones.Public));
-  GameInstance.GetAudioSystem(this.GetGame()).NotifyGameTone(n"EnterPublic");
+  wrappedMethod();
   this.SaveActualZone_IMZ(gamePSMZones.Public);
 }
 
-@replaceMethod(PlayerPuppet)
+@wrapMethod(PlayerPuppet)
 private final func OnEnterSafeZone() -> Void {
-  let psmEvent: ref<PSMPostponedParameterBool> = new PSMPostponedParameterBool();
-  psmEvent.id = n"ForceEmptyHandsByZone";
-  psmEvent.value = true;
-  psmEvent.aspect = gamestateMachineParameterAspect.Permanent;
-  this.QueueEvent(psmEvent);
-  this.SetBlackboardIntVariable(GetAllBlackboardDefs().PlayerStateMachine.Zones, EnumInt(gamePSMZones.Safe));
-  GameInstance.GetAudioSystem(this.GetGame()).NotifyGameTone(n"EnterSafe");
+  wrappedMethod();
   this.SaveActualZone_IMZ(gamePSMZones.Safe);
 }
 
-@replaceMethod(PlayerPuppet)
+@wrapMethod(PlayerPuppet)
 private final func OnEnterRestrictedZone() -> Void {
-  this.SetBlackboardIntVariable(GetAllBlackboardDefs().PlayerStateMachine.Zones, EnumInt(gamePSMZones.Restricted));
-  GameInstance.GetAudioSystem(this.GetGame()).NotifyGameTone(n"EnterRestricted");
+  wrappedMethod();
   this.SaveActualZone_IMZ(gamePSMZones.Restricted);
 }
 
-@replaceMethod(PlayerPuppet)
+@wrapMethod(PlayerPuppet)
 private final func OnEnterDangerousZone() -> Void {
-  GameInstance.GetAudioSystem(this.GetGame()).NotifyGameTone(n"EnterDangerous");
-  this.SetBlackboardIntVariable(GetAllBlackboardDefs().PlayerStateMachine.Zones, EnumInt(gamePSMZones.Dangerous));
+  wrappedMethod();
   this.SaveActualZone_IMZ(gamePSMZones.Dangerous);
 }
 
-
-@replaceMethod(PlayerPuppet)
+@wrapMethod(PlayerPuppet)
 protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
-  // + Restore player zone if faked
+  wrappedMethod(action, consumer);
   if this.IsPlayerZoneFaked_IMZ() {
     this.RestoreRealZone_IMZ();
-  };
-  // +
-  if GameInstance.GetRuntimeInfo(this.GetGame()).IsMultiplayer() || GameInstance.GetPlayerSystem(this.GetGame()).IsCPOControlSchemeForced() {
-    this.OnActionMultiplayer(action, consumer);
-  };
-  if Equals(ListenerAction.GetName(action), n"IconicCyberware") && Equals(ListenerAction.GetType(action), this.DeductGameInputActionType()) && !this.CanCycleLootData() {
-    this.ActivateIconicCyberware();
-  } else {
-    if !GameInstance.GetBlackboardSystem(this.GetGame()).Get(GetAllBlackboardDefs().UI_PlayerStats).GetBool(GetAllBlackboardDefs().UI_PlayerStats.isReplacer) && Equals(ListenerAction.GetName(action), n"CallVehicle") && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED) {
-      this.ProcessCallVehicleAction(ListenerAction.GetType(action));
-    };
   };
 }
