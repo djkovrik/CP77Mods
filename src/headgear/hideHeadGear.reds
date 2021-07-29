@@ -1,92 +1,38 @@
-// -- UTILS
-public static func L(str: String) -> Void {
-  // Log("> " + str);
+// -- Determines what equipment slots should have hidden gear
+
+// -- To hide gear for chosen slot just uncomment slot line
+//    (by removing that doubled slash symbol from the start of the line)
+public static func ShouldHideSlot_HG(itemId: ItemID) -> Bool {
+  let equipArea: gamedataEquipmentArea = EquipmentSystem.GetEquipAreaType(itemId);
+
+  return
+    Equals(equipArea, gamedataEquipmentArea.Head) || 
+    // Equals(equipArea, gamedataEquipmentArea.Face) ||
+    // Equals(equipArea, gamedataEquipmentArea.Feet) || 
+    // Equals(equipArea, gamedataEquipmentArea.Legs) || 
+    // Equals(equipArea, gamedataEquipmentArea.InnerChest) || 
+    // Equals(equipArea, gamedataEquipmentArea.OuterChest) || 
+  false;
 }
 
-public static func I(str: String) -> Void {
-  // Log("! " + str);
-}
-
-public static func ToStr(itemId: ItemID) -> String {
-  return TDBID.ToStringDEBUG(ItemID.GetTDBID(itemId));
-}
-
-public static func ItemDump(itemId: ItemID) -> String {
-  return "IsHeadGear: " +  IsHeadGear(itemId) + ", IsTppHead: " + IsTppHead(itemId) + ", id: " + ToStr(itemId);
-}
-
-public static func IsTppHead(itemId: ItemID) -> Bool {
-  return Equals(ItemID.GetTDBID(itemId), t"Items.PlayerMaTppHead") || Equals(ItemID.GetTDBID(itemId), t"Items.PlayerWaTppHead");
-}
-
-public static func IsHeadGear(itemId: ItemID) -> Bool {
-  return Equals(EquipmentSystem.GetEquipAreaType(itemId), gamedataEquipmentArea.Head);
-}
-
-public static func ShouldBeDisplayed(itemId: ItemID) -> Bool {
-  return !IsHeadGear(itemId) || IsTppHead(itemId);
-}
-
-public static func ShouldBeHidden(itemId: ItemID) -> Bool {
-  return IsHeadGear(itemId) && !IsTppHead(itemId);
-}
-
-public static func PrintPlayerStats(where: String, object: ref<GameObject>) -> Void {
-  let statsSystem: ref<StatsSystem>;
-  let armorValue: Float;
-  let critChance: Float;
-  let critDamage: Float;
-  statsSystem = GameInstance.GetStatsSystem(object.GetGame());
-  armorValue = statsSystem.GetStatValue(Cast(object.GetEntityID()), gamedataStatType.Armor);
-  critChance = statsSystem.GetStatValue(Cast(object.GetEntityID()), gamedataStatType.CritChance);
-  critDamage = statsSystem.GetStatValue(Cast(object.GetEntityID()), gamedataStatType.CritDamage);
-  I("Stats at " + where + " - armor: " + FloatToString(armorValue) + ", crit chance: " + FloatToString(critChance)+ ", crit damage: " + FloatToString(critDamage));
-}
+// -- Do not edit anything below
 
 
 // -- EquipmentSystemPlayerData
 
-@replaceMethod(EquipmentSystemPlayerData)
+@wrapMethod(EquipmentSystemPlayerData)
 public final func OnEquipProcessVisualTags(itemID: ItemID) -> Void {
-  let i: Int32;
-  let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.m_owner.GetGame());
-  let itemEntity: wref<GameObject> = transactionSystem.GetItemInSlotByItemID(this.m_owner, itemID);
-  let areaType: gamedataEquipmentArea = EquipmentSystem.GetEquipAreaType(itemID);
-  let tag: CName = this.GetVisualTagByAreaType(areaType);
-  if NotEquals(tag, n"") && this.IsVisualTagActive(tag) {
-    this.ClearItemAppearanceEvent(areaType);
-  } else {
-    if IsDefined(itemEntity) {
-      i = 0;
-      while i < ArraySize(this.m_clothingSlotsInfo) {
-        if transactionSystem.MatchVisualTag(itemEntity, this.m_clothingSlotsInfo[i].visualTag, true) && !transactionSystem.IsSlotEmpty(this.m_owner, this.m_clothingSlotsInfo[i].equipSlot) {
-          this.ClearItemAppearanceEvent(this.m_clothingSlotsInfo[i].areaType);
-        };
-        i += 1;
-      };
-      if Equals(areaType, gamedataEquipmentArea.OuterChest) && this.IsPartialVisualTagActive(itemID, transactionSystem) {
-        this.m_isPartialVisualTagActive = true;
-        this.UpdateInnerChest(transactionSystem);
-      };
-      if (!this.IsUnderwearHidden() || Equals(areaType, gamedataEquipmentArea.UnderwearBottom)) && (ItemID.IsValid(this.GetActiveItem(gamedataEquipmentArea.Legs)) || this.IsVisualTagActive(n"hide_L1")) {
-        this.ClearItemAppearanceEvent(gamedataEquipmentArea.UnderwearBottom);
-      };
-      if this.IsBuildCensored() && (!this.IsUnderwearTopHidden() || Equals(areaType, gamedataEquipmentArea.UnderwearTop)) && (ItemID.IsValid(this.GetActiveItem(gamedataEquipmentArea.InnerChest)) || this.IsVisualTagActive(n"hide_T1")) {
-        this.ClearItemAppearanceEvent(gamedataEquipmentArea.UnderwearTop);
-      };
-    };
-  };
+  wrappedMethod(itemID);
 
-  // Forced ClearItemAppearanceEvent for head slot
-  if ShouldBeHidden(itemID) {
-    this.ClearItemAppearanceEvent(gamedataEquipmentArea.Head);
+  // Forced ClearItemAppearanceEvent if hidden
+  let equipArea_HG: gamedataEquipmentArea = EquipmentSystem.GetEquipAreaType(itemID);
+  if ShouldBeHidden_HG(itemID) {
+    this.ClearItemAppearanceEvent(equipArea_HG);
   };
 }
 
 @replaceMethod(EquipmentSystemPlayerData)
 private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt addToInventory: Bool, opt blockActiveSlotsUpdate: Bool, opt forceEquipWeapon: Bool) -> Void {
-  L("EquipItem - " + ItemDump(itemID));
-  let i: Int32;
   let audioEventFoley: ref<AudioEvent>;
   let audioEventFootwear: ref<AudioEvent>;
   let currentItem: ItemID;
@@ -166,7 +112,7 @@ private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt addToInventor
   audioEventFoley.nameData = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(itemID)).AppearanceName();
   this.m_owner.QueueEvent(audioEventFoley);
   paperdollEquipData.equipArea = this.m_equipment.equipAreas[equipAreaIndex];
-  paperdollEquipData.equipped = ShouldBeDisplayed(itemID); // <- tweaks visibility here
+  paperdollEquipData.equipped = ShouldBeDisplayed_HG(itemID); // <- tweaks visibility here
   paperdollEquipData.placementSlot = placementSlot;
   paperdollEquipData.slotIndex = slotIndex;
   this.ApplyEquipGLPs(itemID);
@@ -193,7 +139,7 @@ private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt addToInventor
 // Tweak IsItemHidden to check headgear
 @replaceMethod(EquipmentSystemPlayerData)
 public final func IsItemHidden(id: ItemID) -> Bool {
-  return ArrayContains(this.m_hiddenItems, id) || ShouldBeHidden(id);
+  return ArrayContains(this.m_hiddenItems, id) || ShouldBeHidden_HG(id);
 }
 
 
@@ -201,7 +147,7 @@ public final func IsItemHidden(id: ItemID) -> Bool {
 
 // Clear head item slot to fix TPP hair displaying
 @addMethod(GameObject)
-public func ClearHeadGearSlot() -> Void {
+public func ClearHeadGearSlot_HG() -> Void {
   let transactionSystem: ref<TransactionSystem>;
   transactionSystem = GameInstance.GetTransactionSystem(this.GetGame());
   transactionSystem.RemoveItemFromSlot(this, t"AttachmentSlots.Head");
@@ -209,7 +155,7 @@ public func ClearHeadGearSlot() -> Void {
 
 // Reequip headgear item
 @addMethod(GameObject)
-public func ReequipGear(area: gamedataEquipmentArea) -> Void {
+public func ReequipGear_HG(area: gamedataEquipmentArea) -> Void {
   let equipmentSystem: ref<EquipmentSystemPlayerData>;
   let activeItemId: ItemID;
   let slotIndex: Int32;
@@ -221,8 +167,6 @@ public func ReequipGear(area: gamedataEquipmentArea) -> Void {
   slotIndex = equipmentSystem.GetSlotIndex(activeItemId, area);
 
   if NotEquals(equipmentSystem, null) && NotEquals(activeItemId, null) {    
-    L("Detected head item: " + ToStr(activeItemId));
-    
     unequipRequest = new UnequipRequest();
     unequipRequest.slotIndex = slotIndex;
     unequipRequest.areaType = area;
@@ -235,15 +179,16 @@ public func ReequipGear(area: gamedataEquipmentArea) -> Void {
   };
 }
 
+
 // -- EquipmentSystem
 
 @replaceMethod(EquipmentSystem)
 private final const func GetHairSuffix(itemId: ItemID, owner: wref<GameObject>, suffixRecord: ref<ItemsFactoryAppearanceSuffixBase_Record>) -> String {
   let customizationState: ref<gameuiICharacterCustomizationState>;
   let characterCustomizationSystem: ref<gameuiICharacterCustomizationSystem> = GameInstance.GetCharacterCustomizationSystem(owner.GetGame());
-  let isMountedToVehicle: Bool = VehicleComponent.IsMountedToVehicle(owner.GetGame(), owner.GetEntityID());
   // Dirty hack: break hair suffux for vehicle TPP view to fix hair displaying on save loading
-  if isMountedToVehicle {
+  let playerPuppet_HG: ref<PlayerPuppet> = owner as PlayerPuppet;
+  if IsDefined(playerPuppet_HG) && playerPuppet_HG.GetIsMounted_HG() {
     return "";
   };
   if (owner as PlayerPuppet) == null && !characterCustomizationSystem.HasCharacterCustomizationComponent(owner) {
@@ -268,70 +213,49 @@ private final const func GetHairSuffix(itemId: ItemID, owner: wref<GameObject>, 
   return "Error";
 }
 
+
 // -- PlayerPuppet
 
-// Reequip headgear to make sure that all stats and mods applied
-@replaceMethod(PlayerPuppet)
-protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpawn>) -> Bool {
-  this.SetInvisible(false);
-  GameInstance.GetGodModeSystem(this.GetGame()).RemoveGodMode(this.GetEntityID(), gameGodModeType.Invulnerable, n"GracePeriodAfterSpawn");
-  this.ReequipGear(gamedataEquipmentArea.Head);
-  PrintPlayerStats("OnMakePlayerVisibleAfterSpawn", this);
+@addField(PlayerPuppet)
+public let m_isMounted_HG: Bool;
+
+@addMethod(PlayerPuppet)
+public func SetIsMounted_HG(mounted: Bool) -> Void {
+  this.m_isMounted_HG = mounted;
 }
 
-// -- inkMotorcycleHUDGameController
-
-// Clears head slot when mounted to vehicle, should fix TPP bald head
-@replaceMethod(inkMotorcycleHUDGameController)
-protected cb func OnVehicleMounted() -> Bool {
-  let bbSys: ref<BlackboardSystem>;
-  let playerPuppet: wref<PlayerPuppet>;
-  let shouldConnect: Bool;
-  let vehicle: wref<VehicleObject>;
-  this.m_fluffBlinking = new inkAnimController();
-  this.m_fluffBlinking.Select(this.m_lowerfluff_L).Select(this.m_lowerfluff_R).Interpolate(n"transparency", ToVariant(0.25), ToVariant(1.00)).Duration(0.50).Interpolate(n"transparency", ToVariant(1.00), ToVariant(0.25)).Delay(0.55).Duration(0.50).Type(inkanimInterpolationType.Linear).Mode(inkanimInterpolationMode.EasyIn);
-  playerPuppet = this.GetOwnerEntity() as PlayerPuppet;
-  vehicle = GetMountedVehicle(playerPuppet);
-  bbSys = GameInstance.GetBlackboardSystem(playerPuppet.GetGame());
-  if shouldConnect {
-    this.m_vehicleBlackboard = vehicle.GetBlackboard();
-    this.m_activeVehicleUIBlackboard = bbSys.Get(GetAllBlackboardDefs().UI_ActiveVehicleData);
-  };
-  if IsDefined(this.m_vehicleBlackboard) {
-    this.m_vehicleBBStateConectionId = this.m_vehicleBlackboard.RegisterListenerInt(GetAllBlackboardDefs().Vehicle.VehicleState, this, n"OnVehicleStateChanged");
-    this.m_speedBBConnectionId = this.m_vehicleBlackboard.RegisterListenerFloat(GetAllBlackboardDefs().Vehicle.SpeedValue, this, n"OnSpeedValueChanged");
-    this.m_gearBBConnectionId = this.m_vehicleBlackboard.RegisterListenerInt(GetAllBlackboardDefs().Vehicle.GearValue, this, n"OnGearValueChanged");
-    this.m_rpmValueBBConnectionId = this.m_vehicleBlackboard.RegisterListenerFloat(GetAllBlackboardDefs().Vehicle.RPMValue, this, n"OnRpmValueChanged");
-    this.m_leanAngleBBConnectionId = this.m_vehicleBlackboard.RegisterListenerFloat(GetAllBlackboardDefs().Vehicle.BikeTilt, this, n"OnLeanAngleChanged");
-    this.m_tppBBConnectionId = this.m_activeVehicleUIBlackboard.RegisterListenerBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsTPPCameraOn, this, n"OnCameraModeChanged");
-    this.m_playerStateBBConnectionId = this.m_activeVehicleUIBlackboard.RegisterListenerVariant(GetAllBlackboardDefs().UI_ActiveVehicleData.VehPlayerStateData, this, n"OnPlayerStateChanged");
-  };
-
-  if IsDefined(playerPuppet) {
-    playerPuppet.ClearHeadGearSlot();
-  };
+@addMethod(PlayerPuppet)
+public func GetIsMounted_HG() -> Bool {
+  return this.m_isMounted_HG;
 }
 
-// Reequips headgear when unmounted
-@replaceMethod(inkMotorcycleHUDGameController)
-protected cb func OnVehicleUnmounted() -> Bool {
-  let playerPuppet: wref<PlayerPuppet>;
-  playerPuppet = this.GetOwnerEntity() as PlayerPuppet;
-  if IsDefined(this.m_vehicleBlackboard) {
-    this.m_vehicleBlackboard.UnregisterListenerInt(GetAllBlackboardDefs().Vehicle.VehicleState, this.m_vehicleBBStateConectionId);
-    this.m_vehicleBlackboard.UnregisterListenerFloat(GetAllBlackboardDefs().Vehicle.SpeedValue, this.m_speedBBConnectionId);
-    this.m_vehicleBlackboard.UnregisterListenerInt(GetAllBlackboardDefs().Vehicle.GearValue, this.m_gearBBConnectionId);
-    this.m_vehicleBlackboard.UnregisterListenerFloat(GetAllBlackboardDefs().Vehicle.RPMValue, this.m_rpmValueBBConnectionId);
-    this.m_vehicleBlackboard.UnregisterListenerFloat(GetAllBlackboardDefs().Vehicle.BikeTilt, this.m_leanAngleBBConnectionId);
-    this.m_activeVehicleUIBlackboard.UnregisterListenerBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsTPPCameraOn, this.m_tppBBConnectionId);
-    this.m_activeVehicleUIBlackboard.UnregisterListenerVariant(GetAllBlackboardDefs().UI_ActiveVehicleData.VehPlayerStateData, this.m_playerStateBBConnectionId);
-  };
+// -- VehicleComponent
 
-  if IsDefined(playerPuppet) {
-    playerPuppet.ReequipGear(gamedataEquipmentArea.Head);
-  };
+@wrapMethod(VehicleComponent)
+protected cb func OnMountingEvent(evt: ref<MountingEvent>) -> Bool {
+  wrappedMethod(evt);
+
+  let mounted_HG: ref<GameObject> = GameInstance.FindEntityByID(this.GetVehicle().GetGame(), evt.request.lowLevelMountingInfo.childId) as GameObject;
+  let player_HG: ref<PlayerPuppet>;
+  if mounted_HG.IsPlayer() {
+    player_HG = mounted_HG as PlayerPuppet;
+    player_HG.ClearHeadGearSlot_HG();
+    player_HG.SetIsMounted_HG(true);
+  }
 }
 
+@wrapMethod(VehicleComponent)
+protected cb func OnUnmountingEvent(evt: ref<UnmountingEvent>) -> Bool {
+  wrappedMethod(evt);
+
+  let mounted_HG: ref<GameObject> = GameInstance.FindEntityByID(this.GetVehicle().GetGame(), evt.request.lowLevelMountingInfo.childId) as GameObject;
+  let player_HG: ref<PlayerPuppet>;
+  if mounted_HG.IsPlayer() {
+    player_HG = mounted_HG as PlayerPuppet;
+    player_HG.ReequipGear_HG(gamedataEquipmentArea.Head);
+    player_HG.SetIsMounted_HG(false);
+  }
+}
 
 // -- TakeOverControlSystem
 
@@ -342,12 +266,12 @@ private final const func EnablePlayerTPPRepresenation(enable: Bool) -> Void {
   if IsDefined(player) {
     if enable {
       player.QueueEvent(new ActivateTPPRepresentationEvent());
-      player.ClearHeadGearSlot();
+      player.ClearHeadGearSlot_HG();
       GameInstance.GetAudioSystem(this.GetGameInstance()).SetBDCameraListenerOverride(true);
       GameObject.StartEffectEvent(player, n"camera_mask");
     } else {
       player.QueueEvent(new DeactivateTPPRepresentationEvent());
-      player.ReequipGear(gamedataEquipmentArea.Head);
+      player.ReequipGear_HG(gamedataEquipmentArea.Head);
       GameInstance.GetAudioSystem(this.GetGameInstance()).SetBDCameraListenerOverride(false);
       GameObject.StopEffectEvent(player, n"camera_mask");
     };
@@ -355,29 +279,55 @@ private final const func EnablePlayerTPPRepresenation(enable: Bool) -> Void {
 }
 
 // Test fix bald head for mirror TPP view
-@replaceMethod(InteractiveDevice)
+@wrapMethod(InteractiveDevice)
 protected cb func OnPerformedAction(evt: ref<PerformedAction>) -> Bool {
-  let playerPuppet: ref<PlayerPuppet>;
-  let actionName: CName;
-  let currentContext: GetActionsContext;
-  let sDeviceAction: ref<ScriptableDeviceAction>;
-  super.OnPerformedAction(evt);
-  sDeviceAction = evt.m_action as ScriptableDeviceAction;
-  if IsDefined(sDeviceAction) && this.GetDevicePS().HasActiveContext(gamedeviceRequestType.Direct) || this.GetDevicePS().HasActiveContext(gamedeviceRequestType.Remote) {
-    currentContext = this.GetDevicePS().GenerateContext(sDeviceAction.GetRequestType(), Device.GetInteractionClearance(), sDeviceAction.GetExecutor());
-    this.DetermineInteractionState(currentContext);
-  };
+  wrappedMethod(evt);
 
-  playerPuppet = (GameInstance.GetPlayerSystem(this.GetGame()).GetLocalPlayerControlledGameObject() as PlayerPuppet);
-  actionName = evt.m_action.actionName;
+  let playerPuppet_HG: ref<PlayerPuppet>;
+  let actionName_HG: CName;
+  playerPuppet_HG = (GameInstance.GetPlayerSystem(this.GetGame()).GetLocalPlayerControlledGameObject() as PlayerPuppet);
+  actionName_HG = evt.m_action.actionName;
 
-  if IsDefined(playerPuppet) && Equals(actionName, n"ForceON") {
-    L("Device activated ");
-    playerPuppet.ClearHeadGearSlot();
+  if IsDefined(playerPuppet_HG) && Equals(actionName_HG, n"ForceON") {
+    playerPuppet_HG.ClearHeadGearSlot_HG();
   } else {
-    if IsDefined(playerPuppet) && Equals(actionName, n"ForceOFF") {
-      L("Device deactivated");
-      playerPuppet.ReequipGear(gamedataEquipmentArea.Head);
+    if IsDefined(playerPuppet_HG) && Equals(actionName_HG, n"ForceOFF") {
+      playerPuppet_HG.ReequipGear_HG(gamedataEquipmentArea.Head);
     };
   };
 }
+
+
+
+// Utils
+public static func IsTppHead_HG(itemId: ItemID) -> Bool {
+  return Equals(ItemID.GetTDBID(itemId), t"Items.PlayerMaTppHead") || Equals(ItemID.GetTDBID(itemId), t"Items.PlayerWaTppHead");
+}
+
+public static func ShouldBeDisplayed_HG(itemId: ItemID) -> Bool {
+  return !ShouldHideSlot_HG(itemId) || IsTppHead_HG(itemId);
+}
+
+public static func ShouldBeHidden_HG(itemId: ItemID) -> Bool {
+  return ShouldHideSlot_HG(itemId) && !IsTppHead_HG(itemId);
+}
+
+
+// // TESTING
+// @wrapMethod(PlayerPuppet)
+// protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
+//   wrappedMethod(action, consumer);
+//   PrintPlayerStats("NOW", this);
+// }
+
+// public static func PrintPlayerStats(where: String, object: ref<GameObject>) -> Void {
+//   let statsSystem: ref<StatsSystem>;
+//   let armorValue: Float;
+//   let critChance: Float;
+//   let critDamage: Float;
+//   statsSystem = GameInstance.GetStatsSystem(object.GetGame());
+//   armorValue = statsSystem.GetStatValue(Cast(object.GetEntityID()), gamedataStatType.Armor);
+//   critChance = statsSystem.GetStatValue(Cast(object.GetEntityID()), gamedataStatType.CritChance);
+//   critDamage = statsSystem.GetStatValue(Cast(object.GetEntityID()), gamedataStatType.CritDamage);
+//   Log("Stats from " + where + " - armor: " + FloatToString(armorValue) + ", crit chance: " + FloatToString(critChance)+ ", crit damage: " + FloatToString(critDamage));
+// }
