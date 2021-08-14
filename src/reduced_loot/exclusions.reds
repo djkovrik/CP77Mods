@@ -23,6 +23,9 @@ public class RL_Exclusions {
       Equals(id, t"Items.Preset_Hammer_Sasquatch") ||
       // Ozob's Nose
       Equals(id, t"Items.GrenadeOzobsNose") ||
+      // Talkin' 'Bout A Revolution
+      Equals(id, t"Items.sq026_judy_coffee") ||
+      Equals(id, t"Items.sq026_judy_sandwich") ||
     false;
   }
 
