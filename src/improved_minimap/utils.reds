@@ -13,6 +13,8 @@ public class CastedValues {
   public static func MaxZoom() -> Float = Cast(ZoomConfig.MaxZoom())
   public static func MinSpeed() -> Float = Cast(ZoomConfig.MinSpeed())
   public static func MaxSpeed() -> Float = Cast(ZoomConfig.MaxSpeed())
+
+  public static func Peek() -> Float = Cast(ZoomConfig.Peek())
 }
 
 public class ZoomCalc {

@@ -124,6 +124,16 @@ public func SetPreconfiguredZoomValues_IMZ() -> Void {
   this.m_playerInstance_IMZ.ForceMinimapRefreshWithFakeZone();
 }
 
+@addMethod(MinimapContainerController)
+public func SetPeekZoomValues_IMZ() -> Void {
+  this.visionRadiusCombat = CastedValues.Combat() + CastedValues.Peek();
+  this.visionRadiusQuestArea = CastedValues.QuestArea() + CastedValues.Peek();
+  this.visionRadiusSecurityArea = CastedValues.SecurityArea() + CastedValues.Peek();
+  this.visionRadiusInterior = CastedValues.Interior() + CastedValues.Peek();
+  this.visionRadiusExterior = CastedValues.Exterior() + CastedValues.Peek();
+  this.m_playerInstance_IMZ.ForceMinimapRefreshWithFakeZone();
+}
+
 // DIRTY HACK #2: 
 // Flatten all zoom values to prevent dynamic zoom flickering because of constant IsPlayerMounted swaps
 @addMethod(MinimapContainerController)
@@ -143,10 +153,22 @@ protected cb func OnPlayerAttach(playerGameObject: ref<GameObject>) -> Bool {
   wrappedMethod(playerGameObject);
   this.InitBBs_IMZ(playerGameObject);
   this.SetPreconfiguredZoomValues_IMZ();
+  playerGameObject.RegisterInputListener(this, n"UI_MinimapPeek");
 }
 
 @wrapMethod(MinimapContainerController)
 protected cb func OnPlayerDetach(playerGameObject: ref<GameObject>) -> Bool {
   wrappedMethod(playerGameObject);
   this.ClearBBs_IMZ();
+}
+
+@addMethod(MinimapContainerController)
+protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
+  let actionName: CName = ListenerAction.GetName(action);
+  if Equals(actionName, n"UI_MinimapPeek") && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED) {
+    this.SetPeekZoomValues_IMZ();
+  };
+  if Equals(actionName, n"UI_MinimapPeek") && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED) {
+    this.SetPreconfiguredZoomValues_IMZ();
+  };
 }

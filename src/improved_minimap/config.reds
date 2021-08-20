@@ -35,6 +35,10 @@ public class ZoomConfig {
   // the same value for SecurityArea and Exterior options
   public static func Exterior() -> Int32 = 60
 
+  // -- MINIMAP PEEK CONFIG
+
+  // Non-vehicle zoom increment when you hold the peek hotkey
+  public static func Peek() -> Int32 = 40
   
   // -- VEHICLE MINIMAP CONFIG --
 
