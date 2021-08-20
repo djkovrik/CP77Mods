@@ -12,11 +12,9 @@ public func CreateMappinUIProfile(mappin: wref<IMappin>, mappinVariant: gamedata
   let isVehicleQuest: Bool = this.IsRelatedToVehicleQuest(mappin);
   let isTracked: Bool = mappin.IsPlayerTracked();
   let widgetResource: ResRef = r"base\\gameplay\\gui\\fullscreen\\world_map\\mappins\\default_mappin.inkwidget";
-
   if isVehicleQuest && !isTracked {
     return MappinUIProfile.None();
   };
-
   if IsDefined(customData) {
     if customData.IsA(n"gameuiWorldMapPlayerInitData") {
       widgetResource = r"base\\gameplay\\gui\\fullscreen\\world_map\\mappins\\player_mappin.inkwidget";
