@@ -171,35 +171,15 @@ func EvaluateVisibilities() -> Void {
 }
 
 // -- Overrides
-@replaceMethod(GameplayRoleComponent)
-protected final func OnGameAttach() -> Void {
-  this.m_currentGameplayRole = this.m_gameplayRole;
-  this.DeterminGamplayRole();
-  this.InitializeQuickHackIndicator();
-  this.InitializePhoneCallIndicator();
+@wrapMethod(GameplayRoleComponent)
+protected cb func OnPostInitialize(evt: ref<entPostInitializeEvent>) -> Bool {
+  wrappedMethod(evt);
   this.m_hudManager = (GameInstance.GetScriptableSystemsContainer(this.GetOwner().GetGame()).Get(n"HUDManager") as HUDManager);
 }
 
-@replaceMethod(GameplayRoleComponent)
+@wrapMethod(GameplayRoleComponent)
 protected cb func OnHUDInstruction(evt: ref<HUDInstruction>) -> Bool {
-  if Equals(evt.braindanceInstructions.GetState(), InstanceState.ON) {
-    if this.GetOwner().IsBraindanceBlocked() || this.GetOwner().IsPhotoModeBlocked() {
-      this.m_isHighlightedInFocusMode = false;
-      this.HideRoleMappins();
-      return false;
-    };
-  };
-  this.m_isForcedVisibleThroughWalls = evt.iconsInstruction.isForcedVisibleThroughWalls;
-  if Equals(evt.iconsInstruction.GetState(), InstanceState.ON) {
-    this.m_isHighlightedInFocusMode = true;
-    this.ShowRoleMappins();
-  } else {
-    if evt.highlightInstructions.WasProcessed() {
-      this.m_isHighlightedInFocusMode = false;
-      this.HideRoleMappins();
-    };
-  };
-
+  wrappedMethod(evt);
   this.EvaluateVisibilities();
 }
 
@@ -272,6 +252,11 @@ private final func ShouldShowOnMinimap(data: SDeviceMappinData, roleMappinData: 
 
 @replaceMethod(MinimapStealthMappinController)
 protected func Update() -> Void {
+  let gameDevice: wref<Device>;
+  let hasItems: Bool;
+  let isOnSameFloor: Bool;
+  let shouldShowMappin: Bool;
+  let shouldShowVisionCone: Bool;
   let gameObject: wref<GameObject> = this.m_stealthMappin.GetGameObject();
   this.m_isAlive = this.m_stealthMappin.IsAlive();
   let isTagged: Bool = this.m_stealthMappin.IsTagged();
@@ -288,14 +273,8 @@ protected func Update() -> Void {
   let wasDetectionAboveZero: Bool = this.m_stealthMappin.WasDetectionAboveZero();
   let numberOfCombatantsAboveZero: Bool = this.m_stealthMappin.GetNumberOfCombatants() > 0u;
   let isUsingSenseCone: Bool = this.m_stealthMappin.IsUsingSenseCone();
-  this.m_isHacking = this.m_stealthMappin.HasHackingStatusEffect();
-  let gameDevice: wref<Device>;
-  let shouldShowMappin: Bool;
-  let hasItems: Bool;
-  let shouldShowVisionCone: Bool;
-  let squadInCombat: Bool;
-  let isOnSameFloor: Bool;
   let lootToCheck: Uint32;
+  this.m_isHacking = this.m_stealthMappin.HasHackingStatusEffect();
   if this.m_isDevice {
     this.m_isAggressive = NotEquals(attitude, EAIAttitude.AIA_Friendly);
     if this.m_isAggressive {
