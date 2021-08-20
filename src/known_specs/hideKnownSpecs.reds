@@ -48,14 +48,13 @@ public func IsRecipeKnown(vendorItem: ref<VendorItem_Record>) -> Bool {
 // -- Vendor
 @replaceMethod(Vendor)
 private final const func PlayerCanBuy(itemStack: script_ref<SItemStack>) -> Bool {
-  let filterTags: array<CName>;
-  let i: Int32;
-  let viewPrereqs: array<wref<IPrereq_Record>>;
   let availablePrereq: wref<IPrereq_Record>;
-  let vendorItem: wref<VendorItem_Record>;
-  let itemData: wref<gameItemData>;
+  let filterTags: array<CName>;
   let playerKnows: Bool;
-  vendorItem = TweakDBInterface.GetVendorItemRecord(Deref(itemStack).vendorItemID);
+  let i: Int32;
+  let itemData: wref<gameItemData>;
+  let viewPrereqs: array<wref<IPrereq_Record>>;
+  let vendorItem: wref<VendorItem_Record> = TweakDBInterface.GetVendorItemRecord(Deref(itemStack).vendorItemID);
   vendorItem.GenerationPrereqs(viewPrereqs);
   // Recipe and state check
   if HasRecipeTag(vendorItem) {
@@ -70,12 +69,12 @@ private final const func PlayerCanBuy(itemStack: script_ref<SItemStack>) -> Bool
     itemData = GameInstance.GetTransactionSystem(this.m_gameInstance).GetItemData(this.m_vendorObject, Deref(itemStack).itemID);
     availablePrereq = vendorItem.AvailabilityPrereq();
     Deref(itemStack).requirement = RPGManager.GetStockItemRequirement(vendorItem);
-    if NotEquals(availablePrereq, null) {
+    if IsDefined(availablePrereq) {
       Deref(itemStack).isAvailable = RPGManager.CheckPrereq(availablePrereq, GetPlayer(this.m_gameInstance));
     };
     i = 0;
     while i < ArraySize(filterTags) {
-      if NotEquals(itemData, null) && itemData.HasTag(filterTags[i]) {
+      if IsDefined(itemData) && itemData.HasTag(filterTags[i]) {
         return false;
       };
       i += 1;

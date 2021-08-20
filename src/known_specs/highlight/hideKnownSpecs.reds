@@ -59,7 +59,6 @@ private final func PopulateVendorInventory() -> Void {
   let localQuantity: Int32;
   let playerMoney: Int32;
   let specialOffers: array<InventoryItemData>;
-  let specialOffersSize: Int32;
   let storageItems: array<ref<gameItemData>>;
   let vendorInventory: array<InventoryItemData>;
   let vendorInventoryData: ref<VendorInventoryItemData>;
@@ -69,7 +68,6 @@ private final func PopulateVendorInventory() -> Void {
   if IsDefined(this.m_vendorUserData) {
     specialOffers = this.ConvertGameDataIntoInventoryData(this.m_VendorDataManager.GetVendorSpecialOffers(), this.m_VendorDataManager.GetVendorInstance(), true);
     vendorInventory = this.ConvertGameDataIntoInventoryData(this.m_VendorDataManager.GetVendorInventoryItems(), this.m_VendorDataManager.GetVendorInstance(), true);
-    specialOffersSize = ArraySize(specialOffers);
     vendorInventorySize = ArraySize(vendorInventory);
     if ArraySize(specialOffers) <= 0 {
       inkWidgetRef.SetVisible(this.m_specialOffersWrapper, false);
@@ -87,6 +85,7 @@ private final func PopulateVendorInventory() -> Void {
         vendorInventoryData.isKnownByPlayer = this.m_player.IsRecipeKnown(vendorInventory[i].GameItemData);
       };
       // +
+      this.m_InventoryManager.GetOrCreateInventoryItemSortData(vendorInventoryData.ItemData, this.m_uiScriptableSystem);
       vendorInventoryData.IsVendorItem = true;
       vendorInventoryData.IsEnoughMoney = playerMoney >= Cast(InventoryItemData.GetBuyPrice(vendorInventory[i]));
       vendorInventoryData.ComparisonState = this.GetComparisonState(vendorInventoryData.ItemData);
@@ -99,6 +98,7 @@ private final func PopulateVendorInventory() -> Void {
             InventoryItemData.SetQuantity(vendorInventoryData.ItemData, localQuantity - cacheItem.quantity);
             BuybackVendorInventoryData = new VendorInventoryItemData();
             BuybackVendorInventoryData.ItemData = vendorInventory[i];
+            this.m_InventoryManager.GetOrCreateInventoryItemSortData(BuybackVendorInventoryData.ItemData, this.m_uiScriptableSystem);
             BuybackVendorInventoryData.IsVendorItem = true;
             BuybackVendorInventoryData.IsEnoughMoney = playerMoney >= Cast(InventoryItemData.GetBuyPrice(vendorInventory[i]));
             BuybackVendorInventoryData.ComparisonState = this.GetComparisonState(vendorInventoryData.ItemData);
@@ -124,7 +124,8 @@ private final func PopulateVendorInventory() -> Void {
       j = 0;
       while j < ArraySize(storageItems) {
         vendorInventoryData = new VendorInventoryItemData();
-        vendorInventoryData.ItemData = this.m_InventoryManager.GetInventoryItemData(storageItems[j]);
+        this.m_InventoryManager.GetCachedInventoryItemData(storageItems[j], vendorInventoryData.ItemData);
+        this.m_InventoryManager.GetOrCreateInventoryItemSortData(vendorInventoryData.ItemData, this.m_uiScriptableSystem);
         InventoryItemData.SetIsVendorItem(vendorInventoryData.ItemData, true);
         vendorInventoryData.IsVendorItem = true;
         vendorInventoryData.IsEnoughMoney = true;
@@ -134,38 +135,38 @@ private final func PopulateVendorInventory() -> Void {
       };
     };
   };
+  this.m_vendorDataSource.Reset(items);
   this.m_vendorFilterManager.SortFiltersList();
   this.m_vendorFilterManager.InsertFilter(0, ItemFilterCategory.AllItems);
   this.SetFilters(this.m_vendorFiltersContainer, this.m_vendorFilterManager.GetIntFiltersList(), n"OnVendorFilterChange");
+  this.m_vendorItemsDataView.EnableSorting();
   this.m_vendorItemsDataView.SetFilterType(this.m_lastVendorFilter);
+  this.m_vendorItemsDataView.SetSortMode(this.m_vendorItemsDataView.GetSortMode());
+  this.m_vendorItemsDataView.DisableSorting();
   this.ToggleFilter(this.m_vendorFiltersContainer, EnumInt(this.m_lastVendorFilter));
   inkWidgetRef.SetVisible(this.m_vendorFiltersContainer, ArraySize(items) > 0);
-  this.m_vendorDataSource.Clear();
-  this.m_vendorDataSource.Reset(items);
   this.PlayLibraryAnimation(n"vendor_grid_show");
-  this.m_vendorItemsDataView.Sort();
 }
 
 @replaceMethod(VendorItemVirtualController)
-protected cb func OnSpawned(widget: ref<inkWidget>, userData: ref<IScriptable>) -> Bool {
-  let itemView: wref<InventoryItemDisplayController> = widget.GetController() as InventoryItemDisplayController;
+private final func UpdateControllerData() -> Void {
   if this.m_data.IsVendorItem {
-
+    // this.m_itemViewController.Setup(this.m_data.ItemData, ItemDisplayContext.Vendor, this.m_data.IsEnoughMoney);
     if this.m_data.isKnownByPlayer {
-      itemView.SetupHKS(this.m_data.ItemData, ItemDisplayContext.Vendor, this.m_data.IsEnoughMoney, true);
+      this.m_itemViewController.SetupHKS(this.m_data.ItemData, ItemDisplayContext.Vendor, this.m_data.IsEnoughMoney, true);
     } else {
-      itemView.Setup(this.m_data.ItemData, ItemDisplayContext.Vendor, this.m_data.IsEnoughMoney);
+      this.m_itemViewController.Setup(this.m_data.ItemData, ItemDisplayContext.Vendor, this.m_data.IsEnoughMoney);
     };
   } else {
-    itemView.Setup(this.m_data.ItemData, ItemDisplayContext.VendorPlayer);
+    this.m_itemViewController.Setup(this.m_data.ItemData, ItemDisplayContext.VendorPlayer);
   };
-  itemView.SetComparisonState(this.m_data.ComparisonState);
-  itemView.SetBuybackStack(this.m_data.IsBuybackStack);
+  this.m_itemViewController.SetComparisonState(this.m_data.ComparisonState);
+  this.m_itemViewController.SetBuybackStack(this.m_data.IsBuybackStack);
 }
 
 @addMethod(InventoryItemDisplayController)
 public func SetupHKS(itemData: InventoryItemData, displayContext: ItemDisplayContext, enoughMoney: Bool, knownByPlayer: Bool) -> Void {
-  this.m_itemDisplayContext = displayContext;
+  this.SetDisplayContext(displayContext, null);
   this.m_enoughMoney = enoughMoney;
   this.m_knownByPlayer = knownByPlayer;
   this.Setup(itemData);
