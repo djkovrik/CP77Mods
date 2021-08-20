@@ -13,8 +13,6 @@ protected cb func OnItemAddedEvent(evt: ref<ItemAddedEvent>) -> Bool {
     alreadyRead = this.IsShardRead(shardData);
   };
 
-  // Log("Title: " + GetLocalizedText(shardData.GetTitle()) + " was read: " + BoolToString(alreadyRead));
-
   // destroy entity if shard was read
   if alreadyRead {
     EntityGameInterface.Destroy(this.GetEntity());
