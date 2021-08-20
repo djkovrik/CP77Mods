@@ -40,6 +40,10 @@ public class RL_Checker {
   public static func CanDropAmmo(source: RL_LootSource) -> Bool {
     return RL_Utils.ProbabilityCheck(Config.Misc(source, RL_LootType.Ammo));
   }
+
+  public static func CanDropMods() -> Bool {
+    return RL_Utils.ProbabilityCheck(Config.Misc(RL_LootSource.Puppet, RL_LootType.Mods));
+  }
 }
 
 public class RL_Converters {

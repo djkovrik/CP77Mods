@@ -101,7 +101,7 @@ public final static func ProcessLoot(self: wref<ScriptedPuppet>) -> Void {
     randQuery = RandF();
     tempStat = GameInstance.GetStatsSystem(self.GetGame()).GetStatValue(Cast(GetPlayer(self.GetGame()).GetEntityID()), gamedataStatType.ScrapItemChance);
     tempPlayerLevel = GameInstance.GetStatsSystem(self.GetGame()).GetStatValue(Cast(GetPlayer(self.GetGame()).GetEntityID()), gamedataStatType.Level);
-    if tempStat >= rand {
+    if tempStat >= rand  && RL_Checker.CanDropMods() {
       if tempPlayerLevel < 20.00 {
         if randQuery <= 0.33 {
           GameInstance.GetTransactionSystem(self.GetGame()).GiveItemByItemQuery(self, t"Query.EarlyGameWeaponMods", 1u, 1u);
