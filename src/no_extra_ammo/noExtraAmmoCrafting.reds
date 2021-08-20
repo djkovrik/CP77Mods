@@ -42,7 +42,6 @@ private func CanAmmoBeCrafted_LHUD(id: TweakDBID) -> Bool {
 @replaceMethod(CraftingSystem)
 public final const func GetMaxCraftingAmount(itemData: wref<gameItemData>) -> Int32 {
   let currentQuantity: Int32;
-  let currentResult: Int32;
   let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.GetGameInstance());
   let requiredIngredients: array<IngredientData> = this.GetItemCraftingCost(itemData);
   let result: Int32 = 10000000;
@@ -66,7 +65,9 @@ public final const func GetMaxCraftingAmount(itemData: wref<gameItemData>) -> In
     let remainedCapacity: Int32 = limit - current;
     let remainedQuantity: Int32 = remainedCapacity / bulletAmount + 1;
 
-    if result > remainedQuantity { result = remainedQuantity; }
+    if result > remainedQuantity { 
+      result = remainedQuantity; 
+    };
   };
 
   return result;
