@@ -82,7 +82,7 @@ public final const func ShouldShowMappinInWorld() -> Bool {
 private final func RegisterMappin() -> Void {
   let mappinData: MappinData;
   if this.GetDevicePS().IsDisabled() {
-    return ;
+    return;
   };
   if !this.m_linkedFastTravelPoint.ShouldShowMappinInWorld() {
     this.DeactivateDevice(); // <- deactivates terminal if ft point is hidden
@@ -99,12 +99,12 @@ private final func RegisterMappin() -> Void {
 // ShortRange spawnProfile for Fast Travel mappin replaced with LongRange
 @replaceMethod(WorldMappinsContainerController)
 public func CreateMappinUIProfile(mappin: wref<IMappin>, mappinVariant: gamedataMappinVariant, customData: ref<MappinControllerCustomData>) -> MappinUIProfile {
+  let questAnimationRecord: ref<UIAnimation_Record>;
+  let questMappin: wref<QuestMappin>;
+  let stealthMappin: wref<StealthMappin>;
   let gameplayRoleData: ref<GameplayRoleMappinData> = mappin.GetScriptData() as GameplayRoleMappinData;
   let defaultRuntimeProfile: TweakDBID = t"WorldMappinUIProfile.Default";
   let defaultWidgetResource: ResRef = r"base\\gameplay\\gui\\widgets\\mappins\\quest\\default_mappin.inkwidget";
-  let stealthMappin: wref<StealthMappin>;
-  let questMappin: wref<QuestMappin>;
-  let questAnimationRecord: ref<UIAnimation_Record>;
   if mappin.IsExactlyA(n"gamemappinsStealthMappin") {
     stealthMappin = mappin as StealthMappin;
     if stealthMappin.IsCrowdNPC() {
@@ -136,12 +136,15 @@ public func CreateMappinUIProfile(mappin: wref<IMappin>, mappinVariant: gamedata
   if Equals(mappinVariant, gamedataMappinVariant.PhoneCallVariant) {
     return MappinUIProfile.Create(r"base\\gameplay\\gui\\widgets\\mappins\\interaction\\quick_hack_mappin.inkwidget", t"MappinUISpawnProfile.Always", defaultRuntimeProfile);
   };
-  if Equals(mappinVariant, gamedataMappinVariant.VehicleVariant) {
+  if Equals(mappinVariant, gamedataMappinVariant.VehicleVariant) || Equals(mappinVariant, gamedataMappinVariant.Zzz03_MotorcycleVariant) {
     return MappinUIProfile.Create(defaultWidgetResource, t"MappinUISpawnProfile.LongRange", t"WorldMappinUIProfile.Vehicle");
   };
   if gameplayRoleData != null {
     if Equals(mappinVariant, gamedataMappinVariant.FocusClueVariant) {
       return MappinUIProfile.Create(r"base\\gameplay\\gui\\widgets\\mappins\\gameplay\\gameplay_mappin.inkwidget", t"MappinUISpawnProfile.Always", t"WorldMappinUIProfile.FocusClue");
+    };
+    if Equals(mappinVariant, gamedataMappinVariant.LootVariant) {
+      return MappinUIProfile.Create(r"base\\gameplay\\gui\\widgets\\mappins\\gameplay\\gameplay_mappin.inkwidget", t"MappinUISpawnProfile.Always", t"WorldMappinUIProfile.Loot");
     };
     return MappinUIProfile.Create(r"base\\gameplay\\gui\\widgets\\mappins\\gameplay\\gameplay_mappin.inkwidget", t"MappinUISpawnProfile.Always", t"WorldMappinUIProfile.GameplayRole");
   };
