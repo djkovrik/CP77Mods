@@ -2,11 +2,10 @@
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
   this.GetRootWidget().SetScale(new Vector2(0.7, 0.7)); // Scale
-  this.GetRootWidget().SetOpacity(0.75);                 // Opacity
+  this.GetRootWidget().SetOpacity(0.75);                // Opacity
 }
 
-// -- If you want to reenable job updated notifications sound
-//    then just delete everything below these lines
+// -- If you want to reenable job updated notifications sound hen just delete everything below
 
 // Sound disabled below with commented lines
 @replaceMethod(JournalNotificationQueue)
@@ -25,7 +24,7 @@ private final func PushQuestNotification(questEntry: wref<JournalQuest>, state: 
       questAction.m_questEntry = questEntry;
       questAction.m_journalMgr = this.m_journalMgr;
       userData.action = questAction;
-      // userData.soundEvent = n"QuestNewPopup"; // New quest notification sound
+      // userData.soundEvent = n"QuestNewPopup";
       userData.soundAction = n"OnOpen";
       userData.animation = n"notification_new_quest_added";
       notificationData.time = this.m_showDuration;
@@ -35,7 +34,7 @@ private final func PushQuestNotification(questEntry: wref<JournalQuest>, state: 
       break;
     case gameJournalEntryState.Succeeded:
       userData.title = "UI-Notifications-QuestCompleted";
-      // userData.soundEvent = n"QuestSuccessPopup";  // Finished quest notification sound
+      // userData.soundEvent = n"QuestSuccessPopup";
       userData.soundAction = n"OnOpen";
       userData.animation = n"notification_quest_completed";
       userData.dontRemoveOnRequest = true;
@@ -46,7 +45,7 @@ private final func PushQuestNotification(questEntry: wref<JournalQuest>, state: 
       break;
     case gameJournalEntryState.Failed:
       userData.title = "LocKey#27566";
-      // userData.soundEvent = n"QuestFailedPopup";    // Failed quest notification sound
+      // userData.soundEvent = n"QuestFailedPopup";
       userData.soundAction = n"OnOpen";
       userData.animation = n"notification_quest_failed";
       userData.dontRemoveOnRequest = true;
@@ -56,7 +55,7 @@ private final func PushQuestNotification(questEntry: wref<JournalQuest>, state: 
       this.AddNewNotificationData(notificationData);
       break;
     default:
-      return ;
+      return;
   };
 }
 
@@ -67,11 +66,10 @@ private final func PushObjectiveQuestNotification(entry: wref<JournalEntry>) -> 
   let questAction: ref<TrackQuestNotificationAction>;
   let userData: ref<QuestUpdateNotificationViewData>;
   let currentEntry: wref<JournalEntry> = entry;
-  let objectiveEntry: wref<JournalQuestObjectiveBase> = entry as JournalQuestObjectiveBase;
   while parentQuestEntry == null {
     currentEntry = this.m_journalMgr.GetParentEntry(currentEntry);
     if !IsDefined(currentEntry) {
-      return ;
+      return;
     };
     parentQuestEntry = currentEntry as JournalQuest;
   };
@@ -80,7 +78,7 @@ private final func PushObjectiveQuestNotification(entry: wref<JournalEntry>) -> 
   userData.entryHash = this.m_journalMgr.GetEntryHash(parentQuestEntry);
   userData.text = parentQuestEntry.GetTitle(this.m_journalMgr);
   userData.title = "UI-Notifications-QuestUpdated";
-  // userData.soundEvent = n"QuestUpdatePopup";      // Updated quest notification sound
+  // userData.soundEvent = n"QuestUpdatePopup";
   userData.soundAction = n"OnOpen";
   userData.animation = n"notification_quest_updated";
   userData.canBeMerged = true;

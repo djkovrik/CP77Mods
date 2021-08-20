@@ -1,12 +1,10 @@
 // Keeps red highlight effect active only for NPCs under Ping effect, disables it for all other cases
 @replaceMethod(ScriptedPuppet)
 public const func GetCurrentOutline() -> EFocusOutlineType {
-  let playerPuppet: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(this.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
-  let outlineType: EFocusOutlineType;
   let attitude: EAIAttitude;
-
-  let hasPingEffect: Bool = StatusEffectHelper.HasStatusEffect(this, t"BaseStatusEffect.Ping");
-
+  let outlineType: EFocusOutlineType;
+  let playerPuppet: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(this.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
+  let hasPingEffect: Bool = StatusEffectSystem.ObjectHasStatusEffect(this, t"BaseStatusEffect.Ping");
   if this.IsQuest() {
     return EFocusOutlineType.QUEST;
   };

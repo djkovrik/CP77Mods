@@ -1,13 +1,26 @@
 @replaceMethod(SettingsSelectorController)
 public func Refresh() -> Void {
+  let i: Int32;
   let languageProvider: ref<inkLanguageOverrideProvider>;
   let modifiedSymbol: String;
+  let text: String;
+  let updatePolicy: ConfigVarUpdatePolicy;
   let wasModified: Bool;
-  let text: String = GetLocalizedTextByKey(this.m_SettingsEntry.GetDisplayName());
-  let updatePolicy: ConfigVarUpdatePolicy = this.m_SettingsEntry.GetUpdatePolicy();
+  let size: Int32 = this.m_SettingsEntry.GetDisplayNameKeysSize();
+  if size > 0 {
+    text = NameToString(this.m_SettingsEntry.GetDisplayName());
+    i = 0;
+    while i < size {
+      text = StrReplace(text, "%", GetLocalizedTextByKey(this.m_SettingsEntry.GetDisplayNameKey(i)));
+      i += 1;
+    };
+  } else {
+    text = GetLocalizedTextByKey(this.m_SettingsEntry.GetDisplayName());
+  };
+  updatePolicy = this.m_SettingsEntry.GetUpdatePolicy();
   if Equals(text, "") {
     // text = "<NOT LOCALIZED>" + NameToString(this.m_SettingsEntry.GetDisplayName());
-    text = "" + NameToString(this.m_SettingsEntry.GetDisplayName());  // <NOT LOCALIZED> removed
+    text = "" + NameToString(this.m_SettingsEntry.GetDisplayName());
   };
   if Equals(updatePolicy, ConfigVarUpdatePolicy.ConfirmationRequired) {
     modifiedSymbol = "*";
@@ -28,3 +41,4 @@ public func Refresh() -> Void {
   inkWidgetRef.SetVisible(this.m_ModifiedFlag, wasModified);
   inkTextRef.SetText(this.m_ModifiedFlag, modifiedSymbol);
 }
+

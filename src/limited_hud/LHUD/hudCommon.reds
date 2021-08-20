@@ -38,28 +38,28 @@ public let m_weaponBlackboard_LHUD: wref<IBlackboard>;
 
 // --- Common callback declarations
 @addField(inkGameController)
-public let m_braindanceTrackingCallback_LHUD: Uint32;
+public let m_braindanceTrackingCallback_LHUD: ref<CallbackHandle>;
 
 @addField(inkGameController)
-public let m_combatTrackingCallback_LHUD: Uint32;
+public let m_combatTrackingCallback_LHUD: ref<CallbackHandle>;
 
 @addField(inkGameController)
-public let m_globalFlagCallback_LHUD: Uint32;
+public let m_globalFlagCallback_LHUD: ref<CallbackHandle>;
 
 @addField(inkGameController)
-public let m_minimapToggleCallback_LHUD: Uint32;
+public let m_minimapToggleCallback_LHUD: ref<CallbackHandle>;
 
 @addField(inkGameController)
-public let m_scannerTrackingCallback_LHUD: Uint32;
+public let m_scannerTrackingCallback_LHUD: ref<CallbackHandle>;
 
 @addField(inkGameController)
-public let m_vehicleTrackingCallback_LHUD: Uint32;
+public let m_vehicleTrackingCallback_LHUD: ref<CallbackHandle>;
 
 @addField(inkGameController)
-public let m_weaponTrackingCallback_LHUD: Uint32;
+public let m_weaponTrackingCallback_LHUD: ref<CallbackHandle>;
 
 @addField(inkGameController)
-public let m_zoomTrackingCallback_LHUD: Uint32;
+public let m_zoomTrackingCallback_LHUD: ref<CallbackHandle>;
 
 
 // --- Common funcs
@@ -91,7 +91,6 @@ protected final func RegisterToInput() -> Void {
 @wrapMethod(HUDManager)
 protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
   wrappedMethod(action, consumer);
-
   let actionName: CName = ListenerAction.GetName(action);
   let isToggled: Bool;
   if Equals(actionName, n"ToggleGlobal") && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED) {

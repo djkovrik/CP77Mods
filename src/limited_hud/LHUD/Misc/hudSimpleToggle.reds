@@ -2,11 +2,12 @@
 
 /*
   Available keybind names and related hotkeys:
-    "brightness_settings" for 'Z' hotkey
-    "UI_Unequip" for 'U' hotkey
+    n"restore_default_settings" for 'F1' hotkey
+    n"brightness_settings" for 'Z' hotkey
+    n"UI_Unequip" for 'U' hotkey
 */
 
-public static func KeybindName_ToggleHUD() -> String = "brightness_settings"
+public static func KeybindName_ToggleHUD() -> CName = n"brightness_settings"
 
 public class ToggleHudEvent extends Event {}
 
@@ -20,10 +21,16 @@ protected cb func OnToggleHud(evt: ref<ToggleHudEvent>) -> Bool {
 }
 
 @wrapMethod(PlayerPuppet)
+protected cb func OnGameAttached() -> Bool {
+  wrappedMethod();
+  this.RegisterInputListener(this, KeybindName_ToggleHUD());
+}
+
+@wrapMethod(PlayerPuppet)
 protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
   wrappedMethod(action, consumer);
 
-  if ListenerAction.IsAction(action, Cast(KeybindName_ToggleHUD())) && ListenerAction.IsButtonJustReleased(action) {
+  if ListenerAction.IsAction(action, KeybindName_ToggleHUD()) && ListenerAction.IsButtonJustReleased(action) {
     GameInstance.GetUISystem(this.GetGame()).QueueEvent(new ToggleHudEvent());
   };
 }
