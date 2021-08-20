@@ -40,17 +40,14 @@ private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt addToInventor
   let cyberwareType: CName;
   let equipArea: SEquipArea;
   let equipAreaIndex: Int32;
-  let holsterItemID: ItemID;
   let i: Int32;
-  let itemEntity: wref<ItemObject>;
-  let packages: array<wref<GameplayLogicPackage_Record>>;
   let paperdollEquipData: SPaperdollEquipData;
   let placementSlot: TweakDBID;
   let transactionSystem: ref<TransactionSystem>;
   let weaponRecord: ref<WeaponItem_Record>;
   let itemData: wref<gameItemData> = RPGManager.GetItemData(this.m_owner.GetGame(), this.m_owner, itemID);
   if !this.IsEquippable(itemData) {
-    return ;
+    return;
   };
   if Equals(RPGManager.GetItemRecord(itemID).ItemType().Type(), gamedataItemType.Cyb_StrongArms) {
     this.HandleStrongArmsEquip(itemID);
@@ -60,7 +57,7 @@ private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt addToInventor
   currentItem = this.m_equipment.equipAreas[equipAreaIndex].equipSlots[slotIndex].itemID;
   currentItemData = RPGManager.GetItemData(this.m_owner.GetGame(), this.m_owner, currentItem);
   if IsDefined(currentItemData) && currentItemData.HasTag(n"UnequipBlocked") {
-    return ;
+    return;
   };
   if this.IsItemOfCategory(itemID, gamedataItemCategory.Weapon) && equipArea.activeIndex == slotIndex && this.CheckWeaponAgainstGameplayRestrictions(itemID) && !blockActiveSlotsUpdate {
     this.SetSlotActiveItem(EquipmentManipulationRequestSlot.Right, itemID);
@@ -131,8 +128,11 @@ private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt addToInventor
     transactionSystem.OnItemRemovedFromEquipmentSlot(this.m_owner, currentItem);
   };
   transactionSystem.OnItemAddedToEquipmentSlot(this.m_owner, itemID);
-  if this.IsItemOfCategory(itemID, gamedataItemCategory.Cyberware) {
+  if this.IsItemOfCategory(itemID, gamedataItemCategory.Cyberware) || Equals(equipArea.areaType, gamedataEquipmentArea.ArmsCW) {
     this.CheckCyberjunkieAchievement();
+  };
+  if EquipmentSystem.IsItemCyberdeck(itemID) {
+    PlayerPuppet.ChacheQuickHackListCleanup(this.m_owner);
   };
 }
 
@@ -141,6 +141,7 @@ private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt addToInventor
 public final func IsItemHidden(id: ItemID) -> Bool {
   return ArrayContains(this.m_hiddenItems, id) || ShouldBeHidden_HG(id);
 }
+
 
 
 // -- GameObject
@@ -268,12 +269,12 @@ private final const func EnablePlayerTPPRepresenation(enable: Bool) -> Void {
       player.QueueEvent(new ActivateTPPRepresentationEvent());
       player.ClearHeadGearSlot_HG();
       GameInstance.GetAudioSystem(this.GetGameInstance()).SetBDCameraListenerOverride(true);
-      GameObject.StartEffectEvent(player, n"camera_mask");
+      GameObjectEffectHelper.StartEffectEvent(player, n"camera_mask");
     } else {
       player.QueueEvent(new DeactivateTPPRepresentationEvent());
       player.ReequipGear_HG(gamedataEquipmentArea.Head);
       GameInstance.GetAudioSystem(this.GetGameInstance()).SetBDCameraListenerOverride(false);
-      GameObject.StopEffectEvent(player, n"camera_mask");
+      GameObjectEffectHelper.StopEffectEvent(player, n"camera_mask");
     };
   };
 }
