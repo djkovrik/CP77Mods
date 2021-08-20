@@ -30,7 +30,7 @@ protected func CreateDispenseRequest(shouldPay: Bool, item: ItemID) -> ref<Dispe
   return dispenseRequest;
 }
 
-@replaceMethod(gameItemDropObject)
+@wrapMethod(gameItemDropObject)
 protected final func OnItemEntitySpawned(entID: EntityID) -> Void {
   let playerPuppet: ref<PlayerPuppet>;
   let data: ref<gameItemData> = this.GetItemObject().GetItemData();
@@ -98,9 +98,7 @@ protected final func OnItemEntitySpawned(entID: EntityID) -> Void {
     };
   };
 
-  this.SetQualityRangeInteractionLayerState(true);
-  this.EvaluateLootQualityEvent(entID);
-  this.RequestHUDRefresh();
+  wrappedMethod(entID);
 }
 
 // -- EXPERIMENTAL HASH TRACKING
