@@ -1,7 +1,6 @@
 // -- Prevents auto disassembling for valuable junk by setting 
 //    the upper price threshold for Scrapper perk logic
 
-// -- Configure here:
 class SmarterScrapperConfig {
   // Skip items which price above this value
   public static func PriceThreshold() -> Int32 = 25
@@ -32,15 +31,21 @@ protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
   let drawItemRequest: ref<DrawItemRequest>;
   let entryString: String;
   let eqSystem: wref<EquipmentSystem>;
-  let fillHotkeySlotRequest: ref<AssignHotkeyIfEmptySlot>;
-  let isOverweight: Bool;
+  let itemData: wref<gameItemData>;
+  let itemLogDataData: ItemID;
   let itemName: String;
   let itemQuality: gamedataQuality;
+  let itemRecord: ref<Item_Record>;
+  let questSystem: ref<QuestsSystem>;
   let scalingMod: ref<gameStatModifierData>;
-  let itemData: wref<gameItemData> = evt.itemData;
-  let questSystem: ref<QuestsSystem> = GameInstance.GetQuestsSystem(this.GetGame());
-  let itemRecord: ref<Item_Record> = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(evt.itemID));
-  let itemLogDataData: ItemID = evt.itemID;
+  let shouldUpdateLog: Bool;
+  if !ItemID.IsValid(evt.itemID) {
+    return false;
+  };
+  itemData = evt.itemData;
+  questSystem = GameInstance.GetQuestsSystem(this.GetGame());
+  itemRecord = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(evt.itemID));
+  itemLogDataData = evt.itemID;
   if !itemRecord.IsSingleInstance() {
     this.UpdateInventoryWeight(RPGManager.GetItemWeight(itemData));
   };
@@ -51,7 +56,12 @@ protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
   };
   if IsDefined(itemData) {
     itemQuality = RPGManager.GetItemDataQuality(itemData);
-    if !itemData.HasTag(n"SkipActivityLog") && !itemData.HasTag(n"SkipActivityLogOnLoot") && !evt.flaggedAsSilent {
+    if itemData.HasTag(n"SkipActivityLog") || itemData.HasTag(n"SkipActivityLogOnLoot") || evt.flaggedAsSilent || itemData.HasTag(n"Currency") {
+      shouldUpdateLog = false;
+    } else {
+      shouldUpdateLog = true;
+    };
+    if shouldUpdateLog {
       itemName = UIItemsHelper.GetItemName(itemRecord, itemData);
       GameInstance.GetActivityLogSystem(this.GetGame()).AddLog(GetLocalizedText("UI-ScriptExports-Looted") + ": " + itemName);
     };
@@ -81,9 +91,10 @@ protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
     GameInstance.GetJournalManager(this.GetGame()).ChangeEntryState(entryString, "gameJournalOnscreen", gameJournalEntryState.Active, JournalNotifyOption.Notify);
   };
   if Equals(RPGManager.GetItemType(evt.itemID), gamedataItemType.Gen_Junk) && GameInstance.GetStatsSystem(this.GetGame()).GetStatValue(Cast(this.GetEntityID()), gamedataStatType.CanAutomaticallyDisassembleJunk) > 0.00 {
+    ItemActionsHelper.DisassembleItem(this, evt.itemID, GameInstance.GetTransactionSystem(this.GetGame()).GetItemQuantity(this, evt.itemID));
     // Scrapper check passed, dissasemble request here
     if CanBeScrapped_mod(this, evt.itemID) {
-      ItemActionsHelper.DisassembleItem(this, evt.itemID, evt.itemData.GetQuantity());
+      ItemActionsHelper.DisassembleItem(this, evt.itemID, GameInstance.GetTransactionSystem(this.GetGame()).GetItemQuantity(this, evt.itemID));
     };
   };
   if Equals(RPGManager.GetItemType(evt.itemID), gamedataItemType.Con_Ammo) {
