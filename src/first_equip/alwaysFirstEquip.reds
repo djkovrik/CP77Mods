@@ -58,89 +58,39 @@ public func ShouldSkipFirstEquip() -> Bool {
 
 
 // -- Handle skip flag for locomotion events:
-@replaceMethod(LocomotionEventsTransition)
+@wrapMethod(LocomotionEventsTransition)
 public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
-  let playerPuppet: ref<PlayerPuppet>;
-  let event: Int32;
-  let flag = UpperBodyTransition.HasRangedWeaponEquipped(scriptInterface);
-  playerPuppet = scriptInterface.owner as PlayerPuppet;
-  event = scriptInterface.localBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.LocomotionDetailed);
+  let playerPuppet: ref<PlayerPuppet> = scriptInterface.owner as PlayerPuppet;
+  let event: Int32 = scriptInterface.localBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.LocomotionDetailed);
   if event == EnumInt(gamePSMDetailedLocomotionStates.Climb) || event == EnumInt(gamePSMDetailedLocomotionStates.Ladder) {
     if IsDefined(playerPuppet) {
       playerPuppet.SetSkipFirstEquip(true);
     };
   };
 
-  let blockAimingFor: Float = this.GetStaticFloatParameter("softBlockAimingOnEnterFor", -1.00);
-  if blockAimingFor > 0.00 {
-    this.SoftBlockAimingForTime(stateContext, scriptInterface, blockAimingFor);
-  };
-  this.SetLocomotionParameters(stateContext, scriptInterface);
-  this.SetCollisionFilter(scriptInterface);
-  this.SetLocomotionCameraParameters(stateContext);
+  wrappedMethod(stateContext, scriptInterface);
 }
 
 // -- Handle skip flag for body carrying events:
-@replaceMethod(CarriedObjectEvents)
+@wrapMethod(CarriedObjectEvents)
 protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
-  let hasWeaponEquipped: Bool;
   let carrying: Bool = scriptInterface.localBlackboard.GetBool(GetAllBlackboardDefs().PlayerStateMachine.Carrying);
-  let playerPuppet: ref<PlayerPuppet>;
-  let mountingInfo: MountingInfo = GameInstance.GetMountingFacility(scriptInterface.owner.GetGame()).GetMountingInfoSingleWithObjects(scriptInterface.owner);
-  let isNPCMounted: Bool = EntityID.IsDefined(mountingInfo.childId);
-  let attitude: EAIAttitude;
-  let slotId: MountingSlotId;
-  let mountEvent: ref<MountingRequest>;
-  let puppet: ref<gamePuppet>;
-  let workspotSystem: ref<WorkspotGameSystem>;
+  let playerPuppet: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
+  let hasWeaponEquipped: Bool = playerPuppet.HasRangedWeaponEquipped();
   // Set flag if player and not carrying yet
-  playerPuppet = scriptInterface.executionOwner as PlayerPuppet;
-  hasWeaponEquipped = playerPuppet.HasRangedWeaponEquipped();
   if IsDefined(playerPuppet) && !carrying {
     playerPuppet.SetSkipFirstEquip(hasWeaponEquipped);
   };
-  if !isNPCMounted && !this.IsBodyDisposalOngoing(stateContext, scriptInterface) {
-    mountEvent = new MountingRequest();
-    slotId.id = n"leftShoulder";
-    mountingInfo.childId = scriptInterface.owner.GetEntityID();
-    mountingInfo.parentId = scriptInterface.executionOwner.GetEntityID();
-    mountingInfo.slotId = slotId;
-    mountEvent.lowLevelMountingInfo = mountingInfo;
-    GameInstance.GetMountingFacility(scriptInterface.executionOwner.GetGame()).Mount(mountEvent);
-    scriptInterface.owner as NPCPuppet.MountingStartDisableComponents();
-  };
-  workspotSystem = GameInstance.GetWorkspotSystem(scriptInterface.executionOwner.GetGame());
-  this.m_animFeature = new AnimFeature_Mounting();
-  this.m_animFeature.mountingState = 2;
-  this.UpdateCarryStylePickUpAndDropParams(stateContext, scriptInterface, false);
-  this.m_isFriendlyCarry = false;
-  this.m_forcedCarryStyle = gamePSMBodyCarryingStyle.Any;
-  puppet = scriptInterface.owner as gamePuppet;
-  if IsDefined(puppet) {
-    if IsDefined(workspotSystem) && !this.IsBodyDisposalOngoing(stateContext, scriptInterface) {
-      workspotSystem.StopNpcInWorkspot(puppet);
-    };
-    attitude = GameObject.GetAttitudeBetween(scriptInterface.owner, scriptInterface.executionOwner);
-    this.m_forcedCarryStyle = IntEnum(puppet.GetBlackboard().GetInt(GetAllBlackboardDefs().Puppet.ForcedCarryStyle));
-    if Equals(this.m_forcedCarryStyle, gamePSMBodyCarryingStyle.Friendly) || Equals(attitude, EAIAttitude.AIA_Friendly) && Equals(this.m_forcedCarryStyle, gamePSMBodyCarryingStyle.Any) {
-      this.m_isFriendlyCarry = true;
-    };
-    this.UpdateCarryStylePickUpAndDropParams(stateContext, scriptInterface, this.m_isFriendlyCarry);
-  };
-  scriptInterface.SetAnimationParameterFeature(n"Mounting", this.m_animFeature, scriptInterface.executionOwner);
-  scriptInterface.SetAnimationParameterFeature(n"Mounting", this.m_animFeature);
-  scriptInterface.owner as NPCPuppet.MountingStartDisableComponents();
+  wrappedMethod(stateContext, scriptInterface);
 }
 
-
 // -- Handle skip flag for interaction events:
-@replaceMethod(InteractiveDevice)
+@wrapMethod(InteractiveDevice)
 protected cb func OnInteractionUsed(evt: ref<InteractionChoiceEvent>) -> Bool {
-  let playerPuppet: ref<PlayerPuppet>;
+  let playerPuppet: ref<PlayerPuppet> = evt.activator as PlayerPuppet;
   let className: CName;
   let hasWeaponEquipped: Bool;
   // Set if player
-  playerPuppet = evt.activator as PlayerPuppet;
   if IsDefined(playerPuppet) {
     className = evt.hotspot.GetClassName();
     if Equals(className, n"AccessPoint") || Equals(className, n"Computer") || Equals(className, n"Stillage") || Equals(className, n"WeakFence") {
@@ -148,57 +98,36 @@ protected cb func OnInteractionUsed(evt: ref<InteractionChoiceEvent>) -> Bool {
       playerPuppet.SetSkipFirstEquip(hasWeaponEquipped);
     };
   };
-  // Log("Interaction used: " + NameToString(evt.hotspot.GetClassName()));
-  this.ExecuteAction(evt.choice, evt.activator, evt.layerData.tag);
+  wrappedMethod(evt);
 }
 
 // -- Handle skip flag for takedown events:
-@replaceMethod(gamestateMachineComponent)
+@wrapMethod(gamestateMachineComponent)
 protected cb func OnStartTakedownEvent(startTakedownEvent: ref<StartTakedownEvent>) -> Bool {
-  let initData: ref<LocomotionTakedownInitData> = new LocomotionTakedownInitData();
-  let addEvent: ref<PSMAddOnDemandStateMachine> = new PSMAddOnDemandStateMachine();
-  let record1HitDamage: ref<Record1DamageInHistoryEvent> = new Record1DamageInHistoryEvent();
-  let instanceData: StateMachineInstanceData;
-  let playerPuppet: ref<PlayerPuppet>;
-  initData.target = startTakedownEvent.target;
-  initData.slideTime = startTakedownEvent.slideTime;
-  initData.actionName = startTakedownEvent.actionName;
-  instanceData.initData = initData;
-  addEvent.stateMachineName = n"LocomotionTakedown";
-  addEvent.instanceData = instanceData;
-  let owner: wref<Entity> = this.GetEntity();
-  owner.QueueEvent(addEvent);
-  if IsDefined(startTakedownEvent.target) {
-    record1HitDamage.source = owner as GameObject;
-    startTakedownEvent.target.QueueEvent(record1HitDamage);
-  };
-
-  playerPuppet = owner as PlayerPuppet;
+  let playerPuppet: ref<PlayerPuppet> = this.GetEntity() as PlayerPuppet;
   if IsDefined(playerPuppet) {
     playerPuppet.SetSkipFirstEquip(true);
   };
+  wrappedMethod(startTakedownEvent);
 }
 
 // -- Control if firstEquip should be played:
 @replaceMethod(EquipmentBaseTransition)
 protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScriptInterface>, stateContext: ref<StateContext>, stateMachineInstanceData: StateMachineInstanceData, item: ItemID) -> Void {
+  let statsEvent: ref<UpdateWeaponStatsEvent>;
+  let weaponEquipEvent: ref<WeaponEquipEvent>;
   let animFeature: ref<AnimFeature_EquipUnequipItem> = new AnimFeature_EquipUnequipItem();
   let weaponEquipAnimFeature: ref<AnimFeature_EquipType> = new AnimFeature_EquipType();
-  let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(scriptInterface.executionOwner.GetGame());
-  let statSystem: ref<StatsSystem> = GameInstance.GetStatsSystem(scriptInterface.executionOwner.GetGame());
+  let transactionSystem: ref<TransactionSystem> = scriptInterface.GetTransactionSystem();
+  let statSystem: ref<StatsSystem> = scriptInterface.GetStatsSystem();
   let mappedInstanceData: InstanceDataMappedToReferenceName = this.GetMappedInstanceData(stateMachineInstanceData.referenceName);
   let firstEqSystem: ref<FirstEquipSystem> = FirstEquipSystem.GetInstance(scriptInterface.owner);
   let itemObject: wref<WeaponObject> = transactionSystem.GetItemInSlot(scriptInterface.executionOwner, TDBID.Create(mappedInstanceData.attachmentSlot)) as WeaponObject;
   let isInCombat: Bool = scriptInterface.localBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat) == EnumInt(gamePSMCombat.InCombat);
-  let weaponEquipEvent: ref<WeaponEquipEvent>;
-  let statsEvent: ref<UpdateWeaponStatsEvent>;
-  let playerPuppet: ref<PlayerPuppet>;
+  let playerPuppet: ref<PlayerPuppet> = scriptInterface.owner as PlayerPuppet;
   if TweakDBInterface.GetBool(t"player.weapon.enableWeaponBlur", false) {
     this.GetBlurParametersFromWeapon(scriptInterface);
   };
-  
-  // If GetSkipFirstEquip then reset skip flag else if ShouldRunFirstEquip then play firstEquip
-  playerPuppet = scriptInterface.owner as PlayerPuppet;
   if !isInCombat {
     if IsDefined(playerPuppet) {
       if Equals(playerPuppet.ShouldSkipFirstEquip(), true) {
@@ -210,8 +139,8 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
         };
       };
     };
-    //// Default game logic
-    // if Equals(this.GetProcessedEquipmentManipulationRequest(stateMachineInstanceData, stateContext).equipAnim, gameEquipAnimationType.FirstEquip) || this.GetStaticBoolParameter("forceFirstEquip", false) || !firstEqSystem.HasPlayedFirstEquip(ItemID.GetTDBID(itemObject.GetItemID())) {
+    // Default game logic
+    // if weaponEquipAnimFeature.firstEquip = Equals(this.GetProcessedEquipmentManipulationRequest(stateMachineInstanceData, stateContext).equipAnim, gameEquipAnimationType.FirstEquip) || this.GetStaticBoolParameterDefault("forceFirstEquip", false) || !firstEqSystem.HasPlayedFirstEquip(ItemID.GetTDBID(itemObject.GetItemID())) {
     //   weaponEquipAnimFeature.firstEquip = true;
     //   stateContext.SetConditionBoolParameter(n"firstEquip", true, true);
     // };
@@ -236,9 +165,9 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
     stateContext.SetPermanentBoolParameter(n"WeaponInSafe", false, true);
     stateContext.SetPermanentFloatParameter(n"TurnOffPublicSafeTimeStamp", EngineTime.ToFloat(GameInstance.GetSimTime(scriptInterface.owner.GetGame())), true);
   } else {
-    if DefaultTransition.GetParameterBool(n"InPublicZone", stateContext, true) {
+    if stateContext.GetBoolParameter(n"InPublicZone", true) {
     } else {
-      if DefaultTransition.GetParameterBool(n"WeaponInSafe", stateContext, true) {
+      if stateContext.GetBoolParameter(n"WeaponInSafe", true) {
         scriptInterface.SetAnimationParameterFloat(n"safe", 1.00);
       };
     };

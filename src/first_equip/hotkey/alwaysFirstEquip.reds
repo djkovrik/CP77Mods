@@ -27,11 +27,11 @@ public func HasRangedWeaponEquipped_eq() -> Bool {
   return false;
 }
 
-@replaceMethod(HotkeyItemController)
+@wrapMethod(HotkeyItemController)
 protected cb func OnPlayerAttach(playerPuppet: ref<GameObject>) -> Bool {
-  this.InitializeHotkeyItem();
-  this.m_playerPuppet_eq = playerPuppet as PlayerPuppet;
+  wrappedMethod(playerPuppet);
 
+  this.m_playerPuppet_eq = playerPuppet as PlayerPuppet;
   if IsDefined(this.m_playerPuppet_eq) {
     this.m_playerPuppet_eq.RegisterInputListener(this, n"FirstTimeEquip");
   };
@@ -49,7 +49,7 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
   let equipmentSystem: ref<EquipmentSystem>;
   let slotForHotkey: Int32;
 
-  if IsDefined(this.m_playerPuppet_eq) && Equals(ListenerAction.GetName(action), n"FirstTimeEquip") {
+  if IsDefined(this.m_playerPuppet_eq) && Equals(ListenerAction.GetName(action), n"FirstTimeEquip") && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED) {
     if this.m_playerPuppet_eq.HasRangedWeaponEquipped_eq() {
       sheatheRequest = new EquipmentSystemWeaponManipulationRequest();
       equipmentSystem = GameInstance.GetScriptableSystemsContainer(this.m_playerPuppet_eq.GetGame()).Get(n"EquipmentSystem") as EquipmentSystem;
@@ -93,16 +93,8 @@ public final const func HasPlayedFirstEquip(weaponID: TweakDBID) -> Bool {
 }
 
 // Track last used slot
-@replaceMethod(DefaultTransition)
-protected final const func SendEquipmentSystemWeaponManipulationRequest(scriptInterface: ref<StateGameScriptInterface>, requestType: EquipmentManipulationAction, opt equipAnimType: gameEquipAnimationType) -> Void {
-  let eqs: ref<EquipmentSystem> = GameInstance.GetScriptableSystemsContainer(scriptInterface.executionOwner.GetGame()).Get(n"EquipmentSystem") as EquipmentSystem;
-  let request: ref<EquipmentSystemWeaponManipulationRequest> = new EquipmentSystemWeaponManipulationRequest();
-  request.owner = scriptInterface.executionOwner;
-  request.requestType = requestType;
-  if NotEquals(equipAnimType, gameEquipAnimationType.Default) {
-    request.equipAnimType = equipAnimType;
-  };
-
+@wrapMethod(DefaultTransition)
+protected final const func SendEquipmentSystemWeaponManipulationRequest(const scriptInterface: ref<StateGameScriptInterface>, requestType: EquipmentManipulationAction, opt equipAnimType: gameEquipAnimationType) -> Void {
   switch requestType {
     case EquipmentManipulationAction.RequestWeaponSlot1:
       GameInstance.GetBlackboardSystem(scriptInterface.executionOwner.GetGame()).Get(GetAllBlackboardDefs().UI_System).SetInt(GetAllBlackboardDefs().UI_System.LastUsedSlot_eq, 0, false);
@@ -114,6 +106,5 @@ protected final const func SendEquipmentSystemWeaponManipulationRequest(scriptIn
       GameInstance.GetBlackboardSystem(scriptInterface.executionOwner.GetGame()).Get(GetAllBlackboardDefs().UI_System).SetInt(GetAllBlackboardDefs().UI_System.LastUsedSlot_eq, 2, false);
       break;
   };
-
-  eqs.QueueRequest(request);
+  wrappedMethod(scriptInterface, requestType, equipAnimType);
 }
