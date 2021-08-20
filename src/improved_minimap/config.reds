@@ -1,22 +1,20 @@
 module ImprovedMinimapMain
 
 // -- Here you can configure minimap zooom values and enable or disable
-// the mod features (for now the only feature is dynamic zoom)
+//    the mod features (for now the only feature is dynamic zoom)
 
-// -- Please keep in mind that values above 150-160 will cause the minimap 
-//    flickering, you can try to reduce it with minimap patch from CET
 
 public class ZoomConfig {
 
   // -- BASE MINIMAP CONFIG --
 
   // -- Default in-game zoom values for reference:
-  //    Combat = 40.0
-  //    QuestArea = 25.0
-  //    SecurityArea = 40.0
-  //    Interior = 25.0
-  //    Exterior = 35.0
-  //    Vehicle = 80.0
+  //    Combat = 40
+  //    QuestArea = 25
+  //    SecurityArea = 40
+  //    Interior = 25
+  //    Exterior = 35
+  //    Vehicle = 100
 
   // Zoom value for active combat mode
   public static func Combat() -> Int32 = 60
@@ -48,10 +46,10 @@ public class ZoomConfig {
   // starts and stops, and MinZoom and MaxZoom values define zoom range itself
 
   // Minimal zoom value
-  public static func MinZoom() -> Int32 = 80
+  public static func MinZoom() -> Int32 = 100
 
   // Maximal zoom value
-  public static func MaxZoom() -> Int32 = 140
+  public static func MaxZoom() -> Int32 = 160
 
   // Speed threshold when zoom will start increasing from MinZoom
   public static func MinSpeed() -> Int32 = 10

@@ -44,13 +44,13 @@ public let m_UIBlackboard_IMZ: wref<IBlackboard>;
 public let m_isMountedBlackboard_IMZ: wref<IBlackboard>;
 
 @addField(MinimapContainerController)
-public let m_speedTrackingCallback_IMZ: Uint32;
+public let m_speedTrackingCallback_IMZ: ref<CallbackHandle>;
 
 @addField(MinimapContainerController)
-public let m_isMountedTrackingCallback_IMZ: Uint32;
+public let m_isMountedTrackingCallback_IMZ: ref<CallbackHandle>;
 
 @addField(MinimapContainerController)
-public let m_isActuallyMountedTrackingCallback_IMZ: Uint32;
+public let m_isActuallyMountedTrackingCallback_IMZ: ref<CallbackHandle>;
 
 @addField(MinimapContainerController)
 public let m_playerInstance_IMZ: ref<PlayerPuppet>;
@@ -58,27 +58,26 @@ public let m_playerInstance_IMZ: ref<PlayerPuppet>;
 @addField(MinimapContainerController)
 public let m_currentInVehicleZoom_IMZ: Float;
 
-
 // Methods
 
 // DIRTY HACK #1:
 // Swap IsPlayerMounted flag to trigger minimap refresh for dynamic zoom
 @addMethod(MinimapContainerController)
-private func SwapIsMountedFlag_IMZ() -> Void {
-  let flag: Bool = this.m_isMountedBlackboard_IMZ.GetBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted);
-  this.m_isMountedBlackboard_IMZ.SetBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted, !flag, false);
+private func ForceZoomRefresh_IMZ() -> Void {
+  // let flag: Bool = this.m_isMountedBlackboard_IMZ.GetBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted);
+  // this.m_isMountedBlackboard_IMZ.SetBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted, !flag, false);
 }
 
 @addMethod(MinimapContainerController)
 protected cb func OnSpeedValueChanged_IMZ(speed: Float) -> Bool {
   let newZoom: Float = ZoomCalc.GetForSpeed(speed);
   // IMZLog("New zoom available: " + ToString(newZoom));
-  if IsDefined(this.m_playerInstance_IMZ) {
-    if NotEquals(this.m_currentInVehicleZoom_IMZ, newZoom) && IsDefined(this.m_playerInstance_IMZ) && speed > 0.0 {
-      this.HackAllZoomValues_IMZ(newZoom);
-      this.SwapIsMountedFlag_IMZ();
-    };
-  };
+  // if IsDefined(this.m_playerInstance_IMZ) {
+  //   if NotEquals(this.m_currentInVehicleZoom_IMZ, newZoom) && IsDefined(this.m_playerInstance_IMZ) && speed > 0.0 {
+  //     this.HackAllZoomValues_IMZ(newZoom);
+  //     this.ForceZoomRefresh_IMZ();
+  //   };
+  // };
 }
 
 @addMethod(MinimapContainerController)
@@ -91,7 +90,6 @@ protected cb func OnActualMountedStateChanged_IMZ(value: Bool) -> Bool {
   // IMZLog("! OnActualMountedStateChanged " + ToString(value));
   if !value && IsDefined(this.m_playerInstance_IMZ) {
     this.SetPreconfiguredZoomValues_IMZ();
-    this.m_playerInstance_IMZ.SetFakedZone_IMZ();
   }
 }
 
@@ -114,12 +112,6 @@ public func ClearBBs_IMZ() -> Void {
 
 // Overrides
 
-@wrapMethod(MinimapContainerController)
-protected cb func OnInitialize() -> Bool {
-  wrappedMethod();
-  this.SetPreconfiguredZoomValues_IMZ();
-}
-
 // Set native zoom values for MinimapContainerController, yay ^_^
 @addMethod(MinimapContainerController)
 public func SetPreconfiguredZoomValues_IMZ() -> Void {
@@ -129,6 +121,7 @@ public func SetPreconfiguredZoomValues_IMZ() -> Void {
   this.visionRadiusSecurityArea = CastedValues.SecurityArea();
   this.visionRadiusInterior = CastedValues.Interior();
   this.visionRadiusExterior = CastedValues.Exterior();
+  this.m_playerInstance_IMZ.ForceMinimapRefreshWithFakeZone();
 }
 
 // DIRTY HACK #2: 
@@ -149,7 +142,7 @@ public func HackAllZoomValues_IMZ(value: Float) -> Void {
 protected cb func OnPlayerAttach(playerGameObject: ref<GameObject>) -> Bool {
   wrappedMethod(playerGameObject);
   this.InitBBs_IMZ(playerGameObject);
-  this.m_playerInstance_IMZ.SetFakedZone_IMZ();
+  this.SetPreconfiguredZoomValues_IMZ();
 }
 
 @wrapMethod(MinimapContainerController)
