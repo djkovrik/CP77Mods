@@ -56,7 +56,7 @@ public class MinimapModuleConfig {
   public static func IsEnabled() -> Bool = true
   public static func BindToGlobalHotkey() -> Bool = true
   // Use value in range from 0.0 to 1.0
-  public static func Opacity() -> Float = 0.75
+  public static func Opacity() -> Float = 1.0
   // Visibility conditions
   public static func ShowInCombat() -> Bool = false
   public static func ShowOutOfCombat() -> Bool = false
