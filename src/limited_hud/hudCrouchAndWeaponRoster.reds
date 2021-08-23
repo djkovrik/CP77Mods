@@ -62,6 +62,7 @@ public func OnUnfoldStarted(proxy: ref<inkAnimProxy>) -> Bool {
 @wrapMethod(CrouchIndicatorGameController)
 protected cb func OnPlayerAttach(playerPuppet: ref<GameObject>) -> Bool {
   wrappedMethod(playerPuppet);
+  this.m_playerPuppet_LHUD = this.m_Player;
   // Register BBs
   this.m_braindanceBlackboard_LHUD = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().Braindance);
   this.m_playerStateMachineBlackboard_LHUD = this.GetPSMBlackboard(this.m_playerPuppet_LHUD);
