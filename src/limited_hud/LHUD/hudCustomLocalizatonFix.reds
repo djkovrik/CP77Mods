@@ -20,7 +20,7 @@ public func Refresh() -> Void {
   updatePolicy = this.m_SettingsEntry.GetUpdatePolicy();
   if Equals(text, "") {
     // text = "<NOT LOCALIZED>" + NameToString(this.m_SettingsEntry.GetDisplayName());
-    text = "" + NameToString(this.m_SettingsEntry.GetDisplayName());
+    text = NameToString(this.m_SettingsEntry.GetDisplayName());
   };
   if Equals(updatePolicy, ConfigVarUpdatePolicy.ConfirmationRequired) {
     modifiedSymbol = "*";
