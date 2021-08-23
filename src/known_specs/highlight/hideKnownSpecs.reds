@@ -24,6 +24,12 @@ public class inkOwnedLabel {
       parent.ReorderChild(ownedText, 0);
     };
   }
+  public static func RemoveOwnedLabel(parent: wref<inkCompoundWidget>) -> Void {
+    let ownedText: ref<inkText> = parent.GetWidgetByPathName(n"ownedText") as inkText;
+    if IsDefined(ownedText) {
+      parent.RemoveChildByName(n"ownedText");
+    };
+  }
 }
 
 @addMethod(PlayerPuppet)
@@ -45,9 +51,6 @@ public func IsRecipeKnown(itemData: wref<gameItemData>) -> Bool {
 
 @addField(VendorInventoryItemData)
 public let isKnownByPlayer: Bool;
-
-@addField(InventoryItemDisplayController)
-public let m_knownByPlayer: Bool;
 
 @replaceMethod(FullscreenVendorGameController)
 private final func PopulateVendorInventory() -> Void {
@@ -151,31 +154,15 @@ private final func PopulateVendorInventory() -> Void {
 @replaceMethod(VendorItemVirtualController)
 private final func UpdateControllerData() -> Void {
   if this.m_data.IsVendorItem {
-    // this.m_itemViewController.Setup(this.m_data.ItemData, ItemDisplayContext.Vendor, this.m_data.IsEnoughMoney);
+    this.m_itemViewController.Setup(this.m_data.ItemData, ItemDisplayContext.Vendor, this.m_data.IsEnoughMoney);
     if this.m_data.isKnownByPlayer {
-      this.m_itemViewController.SetupHKS(this.m_data.ItemData, ItemDisplayContext.Vendor, this.m_data.IsEnoughMoney, true);
+      inkOwnedLabel.AddOwnedLabel(this.GetRootCompoundWidget());
     } else {
-      this.m_itemViewController.Setup(this.m_data.ItemData, ItemDisplayContext.Vendor, this.m_data.IsEnoughMoney);
+      inkOwnedLabel.RemoveOwnedLabel(this.GetRootCompoundWidget());
     };
   } else {
     this.m_itemViewController.Setup(this.m_data.ItemData, ItemDisplayContext.VendorPlayer);
   };
   this.m_itemViewController.SetComparisonState(this.m_data.ComparisonState);
   this.m_itemViewController.SetBuybackStack(this.m_data.IsBuybackStack);
-}
-
-@addMethod(InventoryItemDisplayController)
-public func SetupHKS(itemData: InventoryItemData, displayContext: ItemDisplayContext, enoughMoney: Bool, knownByPlayer: Bool) -> Void {
-  this.SetDisplayContext(displayContext, null);
-  this.m_enoughMoney = enoughMoney;
-  this.m_knownByPlayer = knownByPlayer;
-  this.Setup(itemData);
-}
-
-@wrapMethod(InventoryItemDisplayController)
-protected func RefreshUI() -> Void {
-  wrappedMethod();
-  if this.m_knownByPlayer {
-    inkOwnedLabel.AddOwnedLabel(this.GetRootCompoundWidget());
-  }
 }

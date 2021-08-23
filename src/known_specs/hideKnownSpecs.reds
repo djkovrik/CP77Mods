@@ -60,7 +60,6 @@ private final const func PlayerCanBuy(itemStack: script_ref<SItemStack>) -> Bool
   if HasRecipeTag(vendorItem) {
     playerKnows = GetPlayer(this.m_gameInstance).IsRecipeKnown(vendorItem);
     if playerKnows {
-      Log("Known recipe detected, skip: " + TDBID.ToStringDEBUG(vendorItem.Item().GetID()));
       return false;
     };
   };
