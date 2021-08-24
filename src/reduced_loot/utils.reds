@@ -276,6 +276,6 @@ public static func ToStr(data: ref<gameItemData>) -> String {
   return itemType + " [" + quantity + "]: " + quality;
 }
 
-public static func RLog(str: String) -> Void {
-  Log("[RL]: " + str);
+public static func RLog(const str: script_ref<String>) -> Void {
+  LogChannel(n"DEBUG", "RL: " + str);
 }

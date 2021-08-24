@@ -35,9 +35,9 @@ private func EvaluateLoot() -> Void {
   };
 }
 
-@replaceMethod(gameLootContainerBase)
-protected cb func OnEvaluateLootQuality(evt: ref<EvaluateLootQualityEvent>) -> Bool {
-  this.EvaluateLootQuality();
+@wrapMethod(gameLootContainerBase)
+private final func EvaluateLootQuality() -> Bool {
+  let result: Bool = wrappedMethod();
   this.EvaluateLoot();
-  this.RequestHUDRefresh();
+  return result;
 }
