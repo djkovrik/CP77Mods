@@ -35,9 +35,15 @@ private func EvaluateLoot() -> Void {
   };
 }
 
-@wrapMethod(gameLootContainerBase)
-private final func EvaluateLootQuality() -> Bool {
-  let result: Bool = wrappedMethod();
+@replaceMethod(ScriptedPuppet)
+protected cb func OnEvaluateLootQuality(evt: ref<EvaluateLootQualityEvent>) -> Bool {
+  this.EvaluateLootQuality();
   this.EvaluateLoot();
-  return result;
+  this.RequestHUDRefresh();
+}
+
+@replaceMethod(ScriptedPuppet)
+protected final func EvaluateLootQualityTask(data: ref<ScriptTaskData>) -> Void {
+  this.EvaluateLootQuality();
+  this.EvaluateLoot();
 }
