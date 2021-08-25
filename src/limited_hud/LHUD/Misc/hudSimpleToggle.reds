@@ -1,4 +1,4 @@
-// kudos to psiberx for the events based approach sample
+// kudos to psiberx for redscript snippets
 
 /*
   Available keybind names and related hotkeys:
@@ -7,9 +7,26 @@
     n"UI_Unequip" for 'U' hotkey
 */
 
-public static func KeybindName_ToggleHUD() -> CName = n"brightness_settings"
+public static func KeybindName_ToggleHUD() -> String = "brightness_settings"
 
 public class ToggleHudEvent extends Event {}
+
+public class SimpleToggleGlobalInputListener {
+
+    private let m_uiSystem: ref<UISystem>;
+
+    public func SetUISystem(system: ref<UISystem>) -> Void {
+      this.m_uiSystem = system;
+    }
+
+    protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
+        LogChannel(n"DEBUG", ToString(ListenerAction.GetType(action)) + " " + NameToString(ListenerAction.GetName(action)));
+
+        if ListenerAction.IsAction(action, StringToName(KeybindName_ToggleHUD())) && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED)  {
+          this.m_uiSystem.QueueEvent(new ToggleHudEvent());
+        };
+    }
+}
 
 @addMethod(inkGameController)
 protected cb func OnToggleHud(evt: ref<ToggleHudEvent>) -> Bool {
@@ -20,17 +37,20 @@ protected cb func OnToggleHud(evt: ref<ToggleHudEvent>) -> Bool {
   };
 }
 
+@addField(PlayerPuppet)
+private let m_simpleToggleInputListener: ref<SimpleToggleGlobalInputListener>;
+
 @wrapMethod(PlayerPuppet)
 protected cb func OnGameAttached() -> Bool {
-  wrappedMethod();
-  this.RegisterInputListener(this, KeybindName_ToggleHUD());
+    wrappedMethod();
+    this.m_simpleToggleInputListener = new SimpleToggleGlobalInputListener();
+    this.m_simpleToggleInputListener.SetUISystem(GameInstance.GetUISystem(this.GetGame()));
+    this.RegisterInputListener(this.m_simpleToggleInputListener);
 }
 
 @wrapMethod(PlayerPuppet)
-protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
-  wrappedMethod(action, consumer);
-
-  if ListenerAction.IsAction(action, KeybindName_ToggleHUD()) && ListenerAction.IsButtonJustReleased(action) {
-    GameInstance.GetUISystem(this.GetGame()).QueueEvent(new ToggleHudEvent());
-  };
+protected cb func OnDetach() -> Bool {
+    wrappedMethod();
+    this.UnregisterInputListener(this.m_simpleToggleInputListener);
+    this.m_simpleToggleInputListener = null;
 }
