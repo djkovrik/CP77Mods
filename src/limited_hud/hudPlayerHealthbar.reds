@@ -73,14 +73,14 @@ private final func ComputeHealthBarVisibility() -> Void {
   let showForWeapon: Bool = isWeaponUnsheathed && PlayerHealthbarModuleConfig.ShowWithWeapon();
   let showForZoom: Bool =  isZoomActive && PlayerHealthbarModuleConfig.ShowWithZoom();
   let showForHealthNotFull: Bool = !isMaxHP && PlayerHealthbarModuleConfig.ShowWhenHealthNotFull();
-  let showForMemoryNotFull: Bool = this.m_quickhacksMemoryPercent < 100.00 && PlayerHealthbarModuleConfig.ShowWhenMemoryNotFull();
+  let showForMemoryNotFull: Bool = this.m_quickhacksMemoryPercent > 0.0 && this.m_quickhacksMemoryPercent < 100.0 && PlayerHealthbarModuleConfig.ShowWhenMemoryNotFull();
   let showForActiveBuffs: Bool = this.m_buffsVisible && PlayerHealthbarModuleConfig.ShowWhenBuffsActive();
   let showForActiveQuickhacks: Bool = areQuickhacksUsed && PlayerHealthbarModuleConfig.ShowWhenQuickhacksActive();
   let showForCombat: Bool = Equals(this.m_combatModePSM, gamePSMCombat.InCombat) && PlayerHealthbarModuleConfig.ShowInCombat();
   let showForOutOfCombat: Bool = isOutOfCombat && PlayerHealthbarModuleConfig.ShowOutOfCombat();
   let outOfCombatAvailable: Bool = showForOutOfCombat && !isInStealth && !isWeaponUnsheathed && !isZoomActive;
 
-  let defaultVisibility: Bool = !isMaxHP || areQuickhacksUsed || isMultiplayer || Equals(this.m_combatModePSM, gamePSMCombat.InCombat) || this.m_quickhacksMemoryPercent < 100.00 || this.m_buffsVisible;
+  let defaultVisibility: Bool = !isMaxHP || areQuickhacksUsed || isMultiplayer || Equals(this.m_combatModePSM, gamePSMCombat.InCombat) || (this.m_quickhacksMemoryPercent > 0.0 && this.m_quickhacksMemoryPercent < 100.0) || this.m_buffsVisible;
   let moddedVisibility: Bool = showForHealthNotFull || showForMemoryNotFull || showForActiveBuffs || showForActiveQuickhacks || showForCombat || outOfCombatAvailable || showForGlobalHotkey || showForStealth || showForWeapon || showForZoom;
   let isVisible: Bool = defaultVisibility;
 

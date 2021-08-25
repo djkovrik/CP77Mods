@@ -20,8 +20,6 @@ public class SimpleToggleGlobalInputListener {
     }
 
     protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
-        LogChannel(n"DEBUG", ToString(ListenerAction.GetType(action)) + " " + NameToString(ListenerAction.GetName(action)));
-
         if ListenerAction.IsAction(action, StringToName(KeybindName_ToggleHUD())) && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED)  {
           this.m_uiSystem.QueueEvent(new ToggleHudEvent());
         };
