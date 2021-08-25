@@ -15,6 +15,60 @@ public let LastUsedSlot_eq: BlackboardID_Int;
 @addField(HotkeyItemController)
 public let m_playerPuppet_eq: ref<PlayerPuppet>;
 
+public class FirstEquipGlobalInputListener {
+    private let m_player: ref<PlayerPuppet>;
+
+    public func SetPlayer(player: ref<PlayerPuppet>) -> Void {
+      this.m_player = player;
+    }
+
+    protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
+      let drawItemRequest: ref<DrawItemRequest>;
+      let sheatheRequest: ref<EquipmentSystemWeaponManipulationRequest>;
+      let equipmentSystem: ref<EquipmentSystem>;
+      let slotForHotkey: Int32;
+
+      if IsDefined(this.m_player) && Equals(ListenerAction.GetName(action), n"FirstTimeEquip") && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED) {
+        if this.m_player.HasRangedWeaponEquipped_eq() {
+          sheatheRequest = new EquipmentSystemWeaponManipulationRequest();
+          equipmentSystem = GameInstance.GetScriptableSystemsContainer(this.m_player.GetGame()).Get(n"EquipmentSystem") as EquipmentSystem;
+          sheatheRequest.requestType = EquipmentManipulationAction.UnequipWeapon;
+          sheatheRequest.owner = this.m_player;
+          equipmentSystem.QueueRequest(sheatheRequest);
+        } else {
+          if FirstEquipConfig.TrackLastUsedSlot() {
+            slotForHotkey = GameInstance.GetBlackboardSystem(this.m_player.GetGame()).Get(GetAllBlackboardDefs().UI_System).GetInt(GetAllBlackboardDefs().UI_System.LastUsedSlot_eq);
+          } else {
+            slotForHotkey = FirstEquipConfig.SlotNumber() - 1;
+          };
+          drawItemRequest = new DrawItemRequest();
+          drawItemRequest.itemID = EquipmentSystem.GetData(this.m_player).GetItemInEquipSlot(gamedataEquipmentArea.WeaponWheel, slotForHotkey);
+          drawItemRequest.owner = this.m_player;
+          GameInstance.GetBlackboardSystem(this.m_player.GetGame()).Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.IsFirstEquipPressed_eq, true, false);
+          GameInstance.GetScriptableSystemsContainer(this.m_player.GetGame()).Get(n"EquipmentSystem").QueueRequest(drawItemRequest);
+        }
+      };
+    }
+}
+
+@addField(PlayerPuppet)
+private let m_firstEquipGlobalInputListener: ref<FirstEquipGlobalInputListener>;
+
+@wrapMethod(PlayerPuppet)
+protected cb func OnGameAttached() -> Bool {
+    wrappedMethod();
+    this.m_firstEquipGlobalInputListener = new FirstEquipGlobalInputListener();
+    this.m_firstEquipGlobalInputListener.SetPlayer(this);
+    this.RegisterInputListener(this.m_firstEquipGlobalInputListener);
+}
+
+@wrapMethod(PlayerPuppet)
+protected cb func OnDetach() -> Bool {
+    wrappedMethod();
+    this.UnregisterInputListener(this.m_firstEquipGlobalInputListener);
+    this.m_firstEquipGlobalInputListener = null;
+}
+
 @addMethod(PlayerPuppet)
 public func HasRangedWeaponEquipped_eq() -> Bool {
   let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.GetGame());
@@ -25,50 +79,6 @@ public func HasRangedWeaponEquipped_eq() -> Bool {
     };
   };
   return false;
-}
-
-@wrapMethod(HotkeyItemController)
-protected cb func OnPlayerAttach(playerPuppet: ref<GameObject>) -> Bool {
-  wrappedMethod(playerPuppet);
-
-  this.m_playerPuppet_eq = playerPuppet as PlayerPuppet;
-  if IsDefined(this.m_playerPuppet_eq) {
-    this.m_playerPuppet_eq.RegisterInputListener(this, n"FirstTimeEquip");
-  };
-}
-
-@addMethod(HotkeyItemController)
-protected cb func OnPlayerDetach(playerPuppet: ref<GameObject>) -> Bool {
-  this.m_playerPuppet_eq.UnregisterInputListener(this);
-}
-
-@addMethod(HotkeyItemController)
-protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
-  let drawItemRequest: ref<DrawItemRequest>;
-  let sheatheRequest: ref<EquipmentSystemWeaponManipulationRequest>;
-  let equipmentSystem: ref<EquipmentSystem>;
-  let slotForHotkey: Int32;
-
-  if IsDefined(this.m_playerPuppet_eq) && Equals(ListenerAction.GetName(action), n"FirstTimeEquip") && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED) {
-    if this.m_playerPuppet_eq.HasRangedWeaponEquipped_eq() {
-      sheatheRequest = new EquipmentSystemWeaponManipulationRequest();
-      equipmentSystem = GameInstance.GetScriptableSystemsContainer(this.m_playerPuppet_eq.GetGame()).Get(n"EquipmentSystem") as EquipmentSystem;
-      sheatheRequest.requestType = EquipmentManipulationAction.UnequipWeapon;
-      sheatheRequest.owner = this.m_playerPuppet_eq;
-      equipmentSystem.QueueRequest(sheatheRequest);
-    } else {
-      if FirstEquipConfig.TrackLastUsedSlot() {
-        slotForHotkey = GameInstance.GetBlackboardSystem(this.m_playerPuppet_eq.GetGame()).Get(GetAllBlackboardDefs().UI_System).GetInt(GetAllBlackboardDefs().UI_System.LastUsedSlot_eq);
-      } else {
-        slotForHotkey = FirstEquipConfig.SlotNumber() - 1;
-      };
-      drawItemRequest = new DrawItemRequest();
-      drawItemRequest.itemID = EquipmentSystem.GetData(this.m_playerPuppet_eq).GetItemInEquipSlot(gamedataEquipmentArea.WeaponWheel, slotForHotkey);
-      drawItemRequest.owner = this.m_playerPuppet_eq;
-      GameInstance.GetBlackboardSystem(this.m_playerPuppet_eq.GetGame()).Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.IsFirstEquipPressed_eq, true, false);
-      GameInstance.GetScriptableSystemsContainer(this.m_playerPuppet_eq.GetGame()).Get(n"EquipmentSystem").QueueRequest(drawItemRequest);
-    }
-  };
 }
 
 @replaceMethod(FirstEquipSystem)
