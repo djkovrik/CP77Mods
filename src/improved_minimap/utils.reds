@@ -49,5 +49,5 @@ public class ZoomCalc {
 }
 
 public static func IMZLog(message: String) -> Void {
-  LogChannel(n"DEBUG", "IMZ: " + message);
+  // LogChannel(n"DEBUG", "IMZ: " + message);
 }
