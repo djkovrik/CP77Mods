@@ -2,12 +2,11 @@
 
 /*
   Available keybind names and related hotkeys:
-    n"restore_default_settings" for 'F1' hotkey
-    n"brightness_settings" for 'Z' hotkey
-    n"UI_Unequip" for 'U' hotkey
+    "restore_default_settings" for 'F1' hotkey
+    "UI_Unequip" for 'U' hotkey
 */
 
-public static func KeybindName_ToggleHUD() -> String = "brightness_settings"
+public static func KeybindName_ToggleHUD() -> String = "restore_default_settings"
 
 public class ToggleHudEvent extends Event {}
 

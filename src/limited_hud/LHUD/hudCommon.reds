@@ -77,36 +77,53 @@ public func HasAnyWeaponEquipped_LHUD() -> Bool {
 }
 
 
-// --- Common overrides
+// --- Register hotkeys
 
-// Register for hokey actions
-@wrapMethod(HUDManager)
-protected final func RegisterToInput() -> Void {
-  wrappedMethod();
-  this.GetPlayer().RegisterInputListener(this, n"ToggleGlobal");
-  this.GetPlayer().RegisterInputListener(this, n"ToggleMinimap");
+public class InputListenerLHUD {
+
+    private let m_blackBoardSystem: ref<BlackboardSystem>;
+
+    public func SetBBSystem(system: ref<BlackboardSystem>) -> Void {
+      this.m_blackBoardSystem = system;
+    }
+
+    protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
+      let actionName: CName = ListenerAction.GetName(action);
+      let isToggled: Bool;
+      if Equals(actionName, n"ToggleGlobal") && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED) {
+        LHUDLog("Toggle global hotkey pressed");
+        isToggled = this.m_blackBoardSystem.Get(GetAllBlackboardDefs().UI_System).GetBool(GetAllBlackboardDefs().UI_System.IsGlobalFlagToggled_LHUD);
+        this.m_blackBoardSystem.Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.IsGlobalFlagToggled_LHUD, !isToggled, true);
+      };
+
+      if Equals(actionName, n"ToggleMinimap") && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED) {
+        LHUDLog("Toggle minimap hotkey pressed");
+        isToggled = this.m_blackBoardSystem.Get(GetAllBlackboardDefs().UI_System).GetBool(GetAllBlackboardDefs().UI_System.IsMinimapToggled_LHUD);
+        this.m_blackBoardSystem.Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.IsMinimapToggled_LHUD, !isToggled, true);
+      };
+    }
 }
 
-// Fire toggle events here
-@wrapMethod(HUDManager)
-protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
-  wrappedMethod(action, consumer);
-  let actionName: CName = ListenerAction.GetName(action);
-  let isToggled: Bool;
-  if Equals(actionName, n"ToggleGlobal") && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED) {
-    LHUDLog("Toggle global hotkey pressed");
-    isToggled = GameInstance.GetBlackboardSystem(this.GetGameInstance()).Get(GetAllBlackboardDefs().UI_System).GetBool(GetAllBlackboardDefs().UI_System.IsGlobalFlagToggled_LHUD);
-    GameInstance.GetBlackboardSystem(this.GetGameInstance()).Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.IsGlobalFlagToggled_LHUD, !isToggled, true);
-  };
+@addField(PlayerPuppet)
+private let m_inputListenerLHUD: ref<InputListenerLHUD>;
 
-  if Equals(actionName, n"ToggleMinimap") && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED) {
-    LHUDLog("Toggle minimap hotkey pressed");
-    isToggled = GameInstance.GetBlackboardSystem(this.GetGameInstance()).Get(GetAllBlackboardDefs().UI_System).GetBool(GetAllBlackboardDefs().UI_System.IsMinimapToggled_LHUD);
-    GameInstance.GetBlackboardSystem(this.GetGameInstance()).Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.IsMinimapToggled_LHUD, !isToggled, true);
-  };
+@wrapMethod(PlayerPuppet)
+protected cb func OnGameAttached() -> Bool {
+    wrappedMethod();
+    this.m_inputListenerLHUD = new InputListenerLHUD();
+    this.m_inputListenerLHUD.SetBBSystem(GameInstance.GetBlackboardSystem(this.GetGame()));
+    this.RegisterInputListener(this.m_inputListenerLHUD);
 }
 
-// -- UTILS
+@wrapMethod(PlayerPuppet)
+protected cb func OnDetach() -> Bool {
+    wrappedMethod();
+    this.UnregisterInputListener(this.m_inputListenerLHUD);
+    this.m_inputListenerLHUD = null;
+}
+
+
+// --- Utils
 public static func LHUDLog(str: String) -> Void {
   Log("LHUD: " + str);
 }
