@@ -13,9 +13,9 @@ public func ForceMinimapRefreshWithFakeZone() -> Void {
   };
 
   this.GetPlayerStateMachineBlackboard().SetInt(GetAllBlackboardDefs().PlayerStateMachine.Zones, fakedZone, false);
-  let fakedEvent: ref<RestorePlayerZoneEvent> = new RestorePlayerZoneEvent();
-  fakedEvent.realZone = realZone;
-  GameInstance.GetDelaySystem(this.GetGame()).DelayEvent(this, fakedEvent, 0.1);
+  let event: ref<RestorePlayerZoneEvent> = new RestorePlayerZoneEvent();
+  event.realZone = realZone;
+  GameInstance.GetDelaySystem(this.GetGame()).DelayEvent(this, event, 0.1);
 }
 
 @addMethod(PlayerPuppet)
