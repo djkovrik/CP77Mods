@@ -49,11 +49,12 @@ public func DetermineCurrentVisibility() -> Void {
   };
 
   // Basic checks
-  let isBraindanceActive: Bool = this.m_braindanceBlackboard_LHUD.GetBool(GetAllBlackboardDefs().Braindance.IsActive);
-  let isCurrentStateCombat: Bool = Equals(this.m_playerStateMachineBlackboard_LHUD.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat), gamePSMCombat.InCombat);
-  let isCurrentStateOutOfCombat: Bool = Equals(this.m_playerStateMachineBlackboard_LHUD.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat), gamePSMCombat.OutOfCombat);
+  let currentState: gamePSMCombat = IntEnum(this.m_playerStateMachineBlackboard_LHUD.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat));
+  let isCurrentStateCombat: Bool = Equals(currentState, gamePSMCombat.InCombat);
+  let isCurrentStateOutOfCombat: Bool = Equals(currentState, gamePSMCombat.OutOfCombat) || Equals(currentState, gamePSMCombat.Default);
   let isScannerEnabled: Bool = this.m_scannerBlackboard_LHUD.GetBool(GetAllBlackboardDefs().UI_Scanner.UIVisible);
-  let isCurrentStateStealth: Bool = Equals(this.m_playerStateMachineBlackboard_LHUD.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat), gamePSMCombat.Stealth);
+  let isCurrentStateStealth: Bool = Equals(currentState, gamePSMCombat.Stealth);
+  let isBraindanceActive: Bool = this.m_braindanceBlackboard_LHUD.GetBool(GetAllBlackboardDefs().Braindance.IsActive);
   let isCurrentStateInVehicle: Bool = this.m_systemBlackboard_LHUD.GetBool(GetAllBlackboardDefs().UI_System.IsMounted_IMZ);
   let isWeaponUnsheathed: Bool = this.m_playerPuppet_LHUD.HasAnyWeaponEquipped_LHUD();
   let isZoomActive: Bool = (this.m_playerStateMachineBlackboard_LHUD.GetFloat(GetAllBlackboardDefs().PlayerStateMachine.ZoomLevel) > 1.0) && !isWeaponUnsheathed && !isScannerEnabled;

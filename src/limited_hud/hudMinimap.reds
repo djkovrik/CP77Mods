@@ -56,9 +56,10 @@ public func DetermineCurrentVisibility() -> Void {
   };
 
   // Basic checks
-  let isCurrentStateCombat: Bool = Equals(this.m_playerStateMachineBlackboard_LHUD.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat), gamePSMCombat.InCombat);
-  let isCurrentStateOutOfCombat: Bool = Equals(this.m_playerStateMachineBlackboard_LHUD.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat), gamePSMCombat.OutOfCombat);
-  let isCurrentStateStealth: Bool = Equals(this.m_playerStateMachineBlackboard_LHUD.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat), gamePSMCombat.Stealth);
+  let currentState: gamePSMCombat = IntEnum(this.m_playerStateMachineBlackboard_LHUD.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat));
+  let isCurrentStateCombat: Bool = Equals(currentState, gamePSMCombat.InCombat);
+  let isCurrentStateOutOfCombat: Bool = Equals(currentState, gamePSMCombat.OutOfCombat) || Equals(currentState, gamePSMCombat.Default);
+  let isCurrentStateStealth: Bool = Equals(currentState, gamePSMCombat.Stealth);
   let isCurrentStateInVehicle: Bool = this.m_vehicleBlackboard_LHUD.GetBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted);
   let isScannerEnabled: Bool = this.m_scannerBlackboard_LHUD.GetBool(GetAllBlackboardDefs().UI_Scanner.UIVisible);
   let isWeaponUnsheathed: Bool = this.m_playerPuppet_LHUD.HasAnyWeaponEquipped_LHUD();
