@@ -1,32 +1,11 @@
-@addField(GameplayMappinController)
-public let m_isScannerActive: Bool;
+import MutedMarkersConfig.WorldConfig
 
-@addMethod(GameplayMappinController)
-protected cb func OnScannerStateChangedEvent(evt: ref<ScannerStateChangedEvent>) -> Bool {
-  if NotEquals(this.m_isScannerActive, evt.isEnabled) {
-    this.m_isScannerActive = evt.isEnabled;
-    this.UpdateVisibility();
-  }
-}
-
-@replaceMethod(GameplayMappinController)
+// Hide vehicle icons
+@replaceMethod(QuestMappinController)
 private func UpdateVisibility() -> Void {
-  let data: ref<GameplayRoleMappinData> = this.GetVisualData();
-  let visibility: MarkerVisibility = GetVisibilityTypeFor(data);
-  if IsDefined(this.m_mappin) {
-    switch(visibility) {
-      case MarkerVisibility.ThroughWalls:
-        this.SetRootVisible(true);
-        break;
-      case MarkerVisibility.Default:
-        this.SetRootVisible(this.m_mappin.IsVisible());
-        break;
-      case MarkerVisibility.Scanner:
-        this.SetRootVisible(this.m_isScannerActive);
-        break;
-      case MarkerVisibility.Hidden:
-        this.SetRootVisible(false);
-        break;
-    };
-  };
+  let isInQuestArea: Bool = this.m_questMappin != null && this.m_questMappin.IsInsideTrigger();
+  let showWhenClamped: Bool = this.isCurrentlyClamped ? !this.m_shouldHideWhenClamped : true;
+  let shouldHideVehicle: Bool = WorldConfig.HideVehicles() && Equals(this.m_mappin.GetVariant(), gamedataMappinVariant.VehicleVariant);
+  let shouldBeVisible: Bool = this.m_mappin.IsVisible() && showWhenClamped && !isInQuestArea && !shouldHideVehicle;
+  this.SetRootVisible(shouldBeVisible);
 }

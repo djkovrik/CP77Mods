@@ -1,5 +1,16 @@
 import MutedMarkersConfig.MiniMapConfig
 
+// Hide shards
+@replaceMethod(BaseMinimapMappinController)
+protected cb func OnUpdate() -> Bool {
+  this.Update();
+  let data: ref<GameplayRoleMappinData> = this.m_mappin.GetScriptData() as GameplayRoleMappinData;
+  if data.m_isShard_MM && MiniMapConfig.HideShards() {
+    this.GetRootWidget().SetVisible(false);
+  };
+}
+
+// Hide enemies
 @replaceMethod(MinimapStealthMappinController)
 protected func Update() -> Void {
   let gameDevice: wref<Device>;
