@@ -1,63 +1,3 @@
-public class InjectRootHudGameControllerEvent extends Event {}
-
-@wrapMethod(MinimapContainerController)
-protected cb func OnPlayerAttach(playerGameObject: ref<GameObject>) -> Bool {
-  wrappedMethod(playerGameObject);
-  GameInstance.GetUISystem(playerGameObject.GetGame()).QueueEvent(new InjectRootHudGameControllerEvent());
-}
-
-@addMethod(inkGameController)
-protected cb func OnInjectRootHudGameController(evt: ref<InjectRootHudGameControllerEvent>) -> Bool {
-  if this.IsA(n"gameuiRootHudGameController") {
-    this.CaptureSlotsAndWidgets();
-    this.PrintCapturedSlotsAndWidgets();
-    this.AdjustWidgetsPositions();
-  };
-}
-
-// -- Slots
-@addField(inkGameController) let TopLeftMainSlot: ref<inkCompoundWidget>;
-@addField(inkGameController) let TopLeftSlot: ref<inkCompoundWidget>;
-@addField(inkGameController) let TopLeftSecondarySlot: ref<inkCompoundWidget>;
-@addField(inkGameController) let TopLeftPhoneSlot: ref<inkCompoundWidget>;
-@addField(inkGameController) let TopLeftRecordingSlot: ref<inkCompoundWidget>;
-@addField(inkGameController) let TopRightMainSlot: ref<inkCompoundWidget>;
-@addField(inkGameController) let TopRightSlot: ref<inkCompoundWidget>;
-@addField(inkGameController) let TopRightWantedSlot: ref<inkCompoundWidget>;
-@addField(inkGameController) let TopRightSummonSlot: ref<inkCompoundWidget>;
-@addField(inkGameController) let BottomCenterSlot: ref<inkCompoundWidget>;
-@addField(inkGameController) let BottomLeftSlot: ref<inkCompoundWidget>;
-@addField(inkGameController) let BottomLeftTopSlot: ref<inkCompoundWidget>;
-@addField(inkGameController) let BottomRightMainSlot: ref<inkCompoundWidget>;
-@addField(inkGameController) let InputHintSlot: ref<inkCompoundWidget>;
-@addField(inkGameController) let BottomRightSlot: ref<inkCompoundWidget>;
-@addField(inkGameController) let BottomRightHorizontalSlot: ref<inkCompoundWidget>;
-@addField(inkGameController) let TopCenterSlot: ref<inkCompoundWidget>;
-@addField(inkGameController) let LeftCenterSlot: ref<inkCompoundWidget>;
-@addField(inkGameController) let InputHintJohnnySlot: ref<inkCompoundWidget>;
-
-// -- Widgets
-@addField(inkGameController) let playerHealthBarRef: ref<inkWidget>;
-@addField(inkGameController) let cooldownRef: ref<inkWidget>;
-@addField(inkGameController) let phoneRef: ref<inkWidget>;
-@addField(inkGameController) let minimapRef: ref<inkWidget>;
-@addField(inkGameController) let questListRef: ref<inkWidget>;
-@addField(inkGameController) let wantedBarRef: ref<inkWidget>;
-@addField(inkGameController) let vehicleSummonNotificationRef: ref<inkWidget>;
-@addField(inkGameController) let dpadHintRef: ref<inkWidget>;
-@addField(inkGameController) let inputHintRef: ref<inkWidget>;
-@addField(inkGameController) let ammoCounterRef: ref<inkWidget>;
-@addField(inkGameController) let crouchIndicatorRef: ref<inkWidget>;
-@addField(inkGameController) let activityLogRef: ref<inkWidget>;
-@addField(inkGameController) let warningRef: ref<inkWidget>;
-@addField(inkGameController) let cursorDeviceRef: ref<inkWidget>;
-@addField(inkGameController) let bossHealthbarRef: ref<inkWidget>;
-@addField(inkGameController) let hudProgressBarRef: ref<inkWidget>;
-@addField(inkGameController) let oxygenbarRef: ref<inkWidget>;
-@addField(inkGameController) let vehicleScanWidgetRef: ref<inkWidget>;
-@addField(inkGameController) let carHudRef: ref<inkWidget>;
-@addField(inkGameController) let zoneAlertNotificationRef: ref<inkWidget>;
-@addField(inkGameController) let staminabarRef: ref<inkWidget>;
 
 @addMethod(inkGameController)
 func CaptureSlotsAndWidgets() -> Void {
@@ -96,46 +36,64 @@ func CaptureSlotsAndWidgets() -> Void {
   this.crouchIndicatorRef = root.GetWidgetByPath(inkWidgetPath.Build(n"BottomRightMain", n"BottomRight", n"BottomRightHorizontal", n"crouch_indicator")) as inkWidget;
   this.activityLogRef = root.GetWidgetByPath(inkWidgetPath.Build(n"activity_log")) as inkWidget;
   this.warningRef = root.GetWidgetByPath(inkWidgetPath.Build(n"warning")) as inkWidget;
-  this.cursorDeviceRef = root.GetWidgetByPath(inkWidgetPath.Build(n"cursor_device")) as inkWidget;
   this.bossHealthbarRef = root.GetWidgetByPath(inkWidgetPath.Build(n"boss_healthbar")) as inkWidget;
   this.hudProgressBarRef = root.GetWidgetByPath(inkWidgetPath.Build(n"hud_progress_bar")) as inkWidget;
   this.oxygenbarRef = root.GetWidgetByPath(inkWidgetPath.Build(n"oxygenbar")) as inkWidget;
-  this.vehicleScanWidgetRef = root.GetWidgetByPath(inkWidgetPath.Build(n"vehicle scan widget")) as inkWidget;
   this.carHudRef = root.GetWidgetByPath(inkWidgetPath.Build(n"car hud")) as inkWidget;
   this.zoneAlertNotificationRef = root.GetWidgetByPath(inkWidgetPath.Build(n"zone alert notification")) as inkWidget;
   this.staminabarRef = root.GetWidgetByPath(inkWidgetPath.Build(n"staminabar")) as inkWidget;
+  this.phoneCallRef = this.SearchForWidget(root, n"HUDMiddleWidget", n"PhoneCall") as inkWidget;
+  this.itemsNotificationsRef = this.LeftCenterSlot.GetWidget(0) as inkWidget;
+  this.journalNotificationsRef = this.LeftCenterSlot.GetWidget(1) as inkWidget;
+  this.levelUpNotificationRef = root.GetWidget(35) as inkWidget;
+  this.militechWarningRef = root.GetWidgetByPath(inkWidgetPath.Build(n"militech warning")) as inkWidget;
 
-  CHLog("Slots and widgets captured");
+  CHL("Slots and widgets captured");
 }
 
 @addMethod(inkGameController)
-func AdjustWidgetsPositions() -> Void {
-  // Minimap
-  // Wanted Bar
-  // Quest List
-  // Healthbar
-  // Cooldowns
-  // Phone
-  // Vehicle Summon
-  // DPad Hint
-  // Input Hint
-  // Ammo Counter
-  // Crouch Indicator
-  // Activity Log
-  // Warning
-  // Cursor device (wtf is this?)
-  // Boss Healthbar
-  // HUD Progress Bar
-  // Oxygenbar
-  // Staminabar
-  // Vehicle Scan
-  // Car Hud
-  // Zone Alert Notification
+private func SearchForWidget(node: ref<inkCompoundWidget>, first: CName, second: CName) -> ref<inkWidget> {
+  for compound in this.GetCompounds(node, first) {
+    let widget: ref<inkWidget> = compound.GetWidget(second);
+    if IsDefined(widget) {
+      return widget;
+    };
+  };
+  return null;
+}
+
+@addMethod(inkGameController)
+private func SearchForWidget(node: ref<inkCompoundWidget>, first: CName, second: CName, third: CName) -> ref<inkWidget> {
+  for compound1 in this.GetCompounds(node, first) {
+    for compound2 in this.GetCompounds(compound1, second) {
+      let widget: ref<inkWidget> = compound2.GetWidget(third);
+      if IsDefined(widget) {
+        return widget;
+      };
+    };
+  };
+  return null;
+}
+
+@addMethod(inkGameController)
+private func GetCompounds(root: ref<inkCompoundWidget>, first: CName) -> array<ref<inkCompoundWidget>> {
+  let result: array<ref<inkCompoundWidget>>;
+  let numChild: Int32 = root.GetNumChildren();
+  let compound: ref<inkCompoundWidget>;
+  let i: Int32 = 0;
+  while i < numChild {
+    compound = root.GetWidgetByIndex(i) as inkCompoundWidget;
+    if IsDefined(compound) && Equals(compound.GetName(), first) {
+      ArrayPush(result, compound);
+    };
+    i += 1;
+  };
+  return result;
 }
 
 @addMethod(inkGameController)
 func PrintCapturedSlotsAndWidgets() -> Void {
-  CHLog("Slots");
+  CHL("=== Slots ===");
   ToStr(this.TopLeftMainSlot);
   ToStr(this.TopLeftSlot);
   ToStr(this.TopLeftSecondarySlot);
@@ -155,7 +113,7 @@ func PrintCapturedSlotsAndWidgets() -> Void {
   ToStr(this.TopCenterSlot);
   ToStr(this.LeftCenterSlot);
   ToStr(this.InputHintJohnnySlot);
-  CHLog("Widgets");
+  CHL("=== Widgets ===");
   ToStr(this.playerHealthBarRef);
   ToStr(this.cooldownRef);
   ToStr(this.phoneRef);
@@ -169,20 +127,15 @@ func PrintCapturedSlotsAndWidgets() -> Void {
   ToStr(this.crouchIndicatorRef);
   ToStr(this.activityLogRef);
   ToStr(this.warningRef);
-  ToStr(this.cursorDeviceRef);
   ToStr(this.bossHealthbarRef);
   ToStr(this.hudProgressBarRef);
   ToStr(this.oxygenbarRef);
-  ToStr(this.vehicleScanWidgetRef);
   ToStr(this.carHudRef);
   ToStr(this.zoneAlertNotificationRef);
   ToStr(this.staminabarRef);
-}
-
-public static func ToStr(widget: ref<inkWidget>) -> Void {
-  CHLog(" - " + NameToString(widget.GetName()) + " / " + NameToString(widget.GetClassName()));
-}
-
-public static func CHLog(str: String) -> Void {
-  Log("[Custom HUD Layouts]: " + str);
+  ToStr(this.phoneCallRef);
+  ToStr(this.itemsNotificationsRef);
+  ToStr(this.journalNotificationsRef);
+  ToStr(this.militechWarningRef);
+  ToStr(this.levelUpNotificationRef);
 }
