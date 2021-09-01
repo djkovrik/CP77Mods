@@ -1,4 +1,20 @@
+// -- Set names for easier search
+@addMethod(ItemsNotificationQueue)
+protected cb func OnInitialize() -> Bool {
+  this.GetRootWidget().SetName(n"item notifications");
+}
 
+@addMethod(JournalNotificationQueue)
+protected cb func OnInitialize() -> Bool {
+  this.GetRootWidget().SetName(n"journal notifications");
+}
+
+@addMethod(LevelUpNotificationQueue)
+protected cb func OnInitialize() -> Bool {
+  this.GetRootWidget().SetName(n"level up notifications");
+}
+
+// -- Find widgets from gameuiRootHudGameController root
 @addMethod(inkGameController)
 func CaptureSlotsAndWidgets() -> Void {
   let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
@@ -43,9 +59,9 @@ func CaptureSlotsAndWidgets() -> Void {
   this.zoneAlertNotificationRef = root.GetWidgetByPath(inkWidgetPath.Build(n"zone alert notification")) as inkWidget;
   this.staminabarRef = root.GetWidgetByPath(inkWidgetPath.Build(n"staminabar")) as inkWidget;
   this.phoneCallRef = this.SearchForWidget(root, n"HUDMiddleWidget", n"PhoneCall") as inkWidget;
-  this.itemsNotificationsRef = this.LeftCenterSlot.GetWidget(0) as inkWidget;
-  this.journalNotificationsRef = this.LeftCenterSlot.GetWidget(1) as inkWidget;
-  this.levelUpNotificationRef = root.GetWidget(35) as inkWidget;
+  this.itemsNotificationsRef = this.SearchForWidget(root, n"LeftCenter", n"HUDSlotMiddleWidget", n"item notifications") as inkWidget;
+  this.journalNotificationsRef = this.SearchForWidget(root, n"LeftCenter",n"HUDSlotMiddleWidget", n"journal notifications") as inkWidget;
+  this.levelUpNotificationRef = this.SearchForWidget(root, n"HUDMiddleWidget", n"level up notifications") as inkWidget;
   this.militechWarningRef = root.GetWidgetByPath(inkWidgetPath.Build(n"militech warning")) as inkWidget;
 
   CHL("Slots and widgets captured");
@@ -136,6 +152,10 @@ func PrintCapturedSlotsAndWidgets() -> Void {
   ToStr(this.phoneCallRef);
   ToStr(this.itemsNotificationsRef);
   ToStr(this.journalNotificationsRef);
-  ToStr(this.militechWarningRef);
   ToStr(this.levelUpNotificationRef);
+  ToStr(this.militechWarningRef);
+}
+
+public static func ToStr(widget: ref<inkWidget>) -> Void {
+  CHL(NameToString(widget.GetName()) + " / " + NameToString(widget.GetClassName()));
 }

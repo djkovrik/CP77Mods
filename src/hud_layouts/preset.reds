@@ -1,4 +1,4 @@
-// Bottom Left
+// -- Bottom Left
 
 @addMethod(inkGameController)
 public func AdjustWidgetsPositions() -> Void {
@@ -11,7 +11,7 @@ public func AdjustWidgetsPositions() -> Void {
   // D-pad
   // Input Hunt
   // Ammo counter
-  // Weapin roster
+  // Weapon roster
   // Activity log
   // Warning
   // Boss healthbar

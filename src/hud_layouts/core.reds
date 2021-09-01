@@ -32,7 +32,7 @@ public class InjectRootHudGameControllerEvent extends Event {}
 @addField(inkGameController) let questListRef: ref<inkWidget>;                  // QuestTrackerGameController
 @addField(inkGameController) let wantedBarRef: ref<inkWidget>;                  // WantedBarGameController
 @addField(inkGameController) let vehicleSummonNotificationRef: ref<inkWidget>;  // VehicleSummonWidgetGameController
-@addField(inkGameController) let dpadHintRef: ref<inkWidget>;                   // DpadWheelGameController
+@addField(inkGameController) let dpadHintRef: ref<inkWidget>;                   // HotkeysWidgetController
 @addField(inkGameController) let inputHintRef: ref<inkWidget>;                  // InputHintManagerGameController
 @addField(inkGameController) let ammoCounterRef: ref<inkWidget>;                // weaponRosterGameController
 @addField(inkGameController) let crouchIndicatorRef: ref<inkWidget>;            // CrouchIndicatorGameController
@@ -44,7 +44,7 @@ public class InjectRootHudGameControllerEvent extends Event {}
 @addField(inkGameController) let carHudRef: ref<inkWidget>;                     // hudCarController
 @addField(inkGameController) let zoneAlertNotificationRef: ref<inkWidget>;      // ZoneAlertNotificationQueue
 @addField(inkGameController) let staminabarRef: ref<inkWidget>;                 // StaminabarWidgetGameController
-@addField(inkGameController) let phoneCallRef: ref<inkWidget>;                  // HudPhoneGameController + IncomingCallGameController
+@addField(inkGameController) let phoneCallRef: ref<inkWidget>;                  // IncomingCallGameController
 @addField(inkGameController) let itemsNotificationsRef: ref<inkWidget>;         // ItemsNotificationQueue
 @addField(inkGameController) let journalNotificationsRef: ref<inkWidget>;       // JournalNotificationQueue
 @addField(inkGameController) let levelUpNotificationRef: ref<inkWidget>;        // LevelUpNotificationQueue
@@ -63,10 +63,6 @@ protected cb func OnInjectRootHudGameControllerEvent(evt: ref<InjectRootHudGameC
     this.PrintCapturedSlotsAndWidgets();
     this.AdjustWidgetsPositions();
   };
-}
-
-public static func ToStr(widget: ref<inkWidget>) -> Void {
-  CHL(NameToString(widget.GetName()) + " / " + NameToString(widget.GetClassName()));
 }
 
 public static func CHL(str: String) -> Void {

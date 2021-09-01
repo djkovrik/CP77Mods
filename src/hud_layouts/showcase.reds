@@ -37,6 +37,25 @@ protected cb func OnDetach() -> Bool {
 
 @addMethod(inkGameController)
 protected cb func OnDisplayPresetEvent(evt: ref<DisplayPresetEvent>) -> Bool {
+
+  /* Showcase 1 */
+  this.ShowWantedBar();
+  this.ShowVehicleSummonNotification();
+  this.ShowActivityLog();
+  this.ShowWarningMessage("Warning message here");
+  this.ShowBossHealthbar();
+  this.ShowHUDProgressBar();
+  this.ShowOxygenBar();
+  this.ShowCarHUD();
+  this.ShowStaminaBar();
+  this.ShowItemsNotification();
+
+  /* Showcase 2 */
+  // this.ShowLevelUpNotification();
+  // this.ShowIncomingPhoneCall(n"panam");
+  // this.ShowJournalNotification();
+
+  /* All */
   // this.ShowWantedBar();
   // this.ShowVehicleSummonNotification();
   // this.ShowActivityLog();
@@ -44,9 +63,10 @@ protected cb func OnDisplayPresetEvent(evt: ref<DisplayPresetEvent>) -> Bool {
   // this.ShowBossHealthbar();
   // this.ShowHUDProgressBar();
   // this.ShowOxygenBar();
+  // this.ShowCarHUD();
   // this.ShowZoneAlertNotification();
   // this.ShowStaminaBar();
-  // this.ShowIncomingPhoneCall(n"unknown");
+  // this.ShowIncomingPhoneCall(n"panam");
   // this.ShowJournalNotification();
   // this.ShowItemsNotification();
   // this.ShowLevelUpNotification();
@@ -96,7 +116,7 @@ private func ShowBossHealthbar() -> Void {
     let controller = this as BossHealthBarGameController;
     controller.m_root.SetVisible(true);
     inkTextRef.SetText(controller.m_bossName, "Boss name");
-    controller.UpdateHealthValue(75);
+    controller.UpdateHealthValue(13);
     if IsDefined(controller.m_foldAnimation) {
       controller.m_foldAnimation.Stop();
     };
@@ -124,6 +144,18 @@ private func ShowOxygenBar() -> Void {
 }
 
 @addMethod(inkGameController)
+private func ShowCarHUD() -> Void {
+  if this.IsA(n"hudCarController") {
+    let controller = this as hudCarController;
+    controller.GetRootWidget().SetVisible(true);
+    controller.RegisterToVehicle(true);
+    controller.OnSpeedValueChanged(45.0);
+    controller.OnRpmValueChanged(2500.0);
+    inkTextRef.SetText(controller.m_SpeedValue, ToString(45));
+  };
+}
+
+@addMethod(inkGameController)
 private func ShowZoneAlertNotification() -> Void {
   if this.IsA(n"ZoneAlertNotificationQueue") {
     let controller = this as ZoneAlertNotificationQueue;
@@ -135,8 +167,8 @@ private func ShowZoneAlertNotification() -> Void {
 private func ShowStaminaBar() -> Void {
   if this.IsA(n"StaminabarWidgetGameController") {
     let controller = this as StaminabarWidgetGameController;
-    controller.m_currentStamina = 77.7;
-    controller.m_staminaPoolListener.OnStatPoolValueChanged(70.0, 77.7, 1.0);
+    controller.m_currentStamina = 87.7;
+    controller.m_staminaPoolListener.OnStatPoolValueChanged(70.0, 87.7, 11.0);
     controller.m_RootWidget.SetOpacity(1.00);
     controller.m_RootWidget.SetVisible(true);
   };
@@ -154,7 +186,11 @@ private func ShowIncomingPhoneCall(name: CName) -> Void {
 private func ShowJournalNotification() -> Void {
   if this.IsA(n"JournalNotificationQueue") {
     let controller = this as JournalNotificationQueue;
-    controller.OnNewLocationDiscovered(true);
+    controller.m_showDuration = 10.0;
+    let evt = new NCPDJobDoneEvent();
+    evt.levelXPAwarded = 100;
+    evt.streetCredXPAwarded = 100;
+    controller.OnNCPDJobDoneEvent(evt);
   };
 }
 
@@ -162,9 +198,10 @@ private func ShowJournalNotification() -> Void {
 private func ShowItemsNotification() -> Void {
   if this.IsA(n"ItemsNotificationQueue") {
     let controller = this as ItemsNotificationQueue;
+    controller.m_showDuration = 10.0;
+    controller.PushItemNotification(ItemID.FromTDBID(t"Items.Pants_03_rich_03"), n"epic");
     controller.PushXPNotification(100, 500, 400, n"XP", "LocKey#40364", gamedataProficiencyType.Level, 35, false);
     controller.PushCurrencyNotification(100, 1000u);
-    controller.PushItemNotification(ItemID.FromTDBID(t"Items.Pants_03_rich_03"), n"epic");
   };
 }
 
@@ -232,4 +269,19 @@ private func ShowMilitechWarning() -> Void {
     let controller = this as hudMilitechWarningGameController;
     controller.OnFact(1);
   };
+}
+
+@replaceMethod(activityLogEntryLogicController)
+protected cb func OnInitialize() -> Bool {
+  let size: Vector2;
+  this.m_available = true;
+  this.m_root = this.GetRootWidget() as inkText;
+  this.m_root.SetLetterCase(textLetterCase.UpperCase);
+  size = this.m_root.GetSize();
+  this.m_appearingAnim = new inkAnimController();
+  this.m_appearingAnim.Select(this.m_root).Interpolate(n"size", ToVariant(new Vector2(0.00, 0.00)), ToVariant(size)).Duration(1.0).Type(inkanimInterpolationType.Linear).Mode(inkanimInterpolationMode.EasyIn);
+  this.m_typingAnim = new inkAnimController();
+  this.m_typingAnim.Select(this.m_root).Interpolate(n"transparency", ToVariant(1.00), ToVariant(1.00)).Duration(0.00).Type(inkanimInterpolationType.Linear).Mode(inkanimInterpolationMode.EasyIn);
+  this.m_disappearingAnim = new inkAnimController();
+  this.m_disappearingAnim.Select(this.m_root).Interpolate(n"transparency", ToVariant(1.00), ToVariant(0.00)).Delay(10.00).Duration(1.0).Type(inkanimInterpolationType.Linear).Mode(inkanimInterpolationMode.EasyOut);
 }
