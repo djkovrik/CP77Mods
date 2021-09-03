@@ -40,7 +40,8 @@ public func AdjustWidgetsPositions() -> Void {
   // Car HUD
   // Zone alert
   // Stamina bar
-  // Phone call
+  // Phone avatar
+  this.phoneAvatarRef.SetTranslation(new Vector2(-10.0, 0.0));
   // Items notifications
   this.itemsNotificationsRef.SetTranslation(new Vector2(-80.0, -110.0));
   // Journal notifications
@@ -61,9 +62,6 @@ protected cb func OnInitialize() -> Bool {
   this.m_weaponBlackboard = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_ActiveWeaponData);
   inkWidgetRef.SetVisible(this.m_smartLinkFirmwareOffline, false);
   inkWidgetRef.SetVisible(this.m_smartLinkFirmwareOnline, false);
-  CHL(WidgetAsString(inkWidgetRef.Get(this.m_container)));
-  CHL(WidgetAsString(inkWidgetRef.Get(this.m_weaponName)));
-  CHL(WidgetAsString(inkWidgetRef.Get(this.m_container)));
 }
 
 @addMethod(weaponRosterGameController)

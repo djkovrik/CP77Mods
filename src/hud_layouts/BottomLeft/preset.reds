@@ -19,11 +19,13 @@ public func AdjustWidgetsPositions() -> Void {
   this.inputHintRef.SetTranslation(new Vector2(-25.0, -190.0));
   this.inputHintRef.Reparent(this.TopRightSlot);
   // Car HUD
-  this.carHudRef.SetTranslation(new Vector2(-20.0, -100.0));
+  this.carHudRef.SetTranslation(new Vector2(-10.0, -100.0));
   this.carHudRef.SetHAlign(inkEHorizontalAlign.Right);
   this.carHudRef.Reparent(this.TopRightSlot);
   // Items notifications
   this.itemsNotificationsRef.SetTranslation(new Vector2(-80.0, -110.0));
-  //Phone call
+  // Journal notifications
+  this.journalNotificationsRef.SetTranslation(new Vector2(25.0, 0.0));
+  // Phone avatar
   this.phoneAvatarRef.SetTranslation(new Vector2(-10.0, 0.0));
 }
