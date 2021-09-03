@@ -41,7 +41,8 @@ func CaptureSlotsAndWidgets() -> Void {
   // Widgets
   this.playerHealthBarRef = root.GetWidgetByPath(inkWidgetPath.Build(n"TopLeftMain", n"TopLeft", n"player_health_bar")) as inkWidget;
   this.cooldownRef = root.GetWidgetByPath(inkWidgetPath.Build(n"TopLeftMain", n"TopLeftSecondary", n"cooldown")) as inkWidget;
-  this.phoneRef = root.GetWidgetByPath(inkWidgetPath.Build(n"TopLeftMain", n"TopLeftPhone", n"phone")) as inkWidget;
+  this.phoneAvatarRef = root.GetWidgetByPath(inkWidgetPath.Build(n"TopLeftMain", n"TopLeftPhone", n"phone")) as inkWidget;
+  this.phoneControlRef = this.SearchForWidget(root, n"HUDMiddleWidget", n"PhoneCall") as inkWidget;
   this.minimapRef = root.GetWidgetByPath(inkWidgetPath.Build(n"TopRightMain", n"TopRight", n"minimap")) as inkWidget;
   this.questListRef = root.GetWidgetByPath(inkWidgetPath.Build(n"TopRightMain", n"TopRight", n"quest_list")) as inkWidget;
   this.wantedBarRef = root.GetWidgetByPath(inkWidgetPath.Build(n"TopRightMain", n"TopRightWanted", n"wanted_bar")) as inkWidget;
@@ -58,7 +59,6 @@ func CaptureSlotsAndWidgets() -> Void {
   this.carHudRef = root.GetWidgetByPath(inkWidgetPath.Build(n"car hud")) as inkWidget;
   this.zoneAlertNotificationRef = root.GetWidgetByPath(inkWidgetPath.Build(n"zone alert notification")) as inkWidget;
   this.staminabarRef = root.GetWidgetByPath(inkWidgetPath.Build(n"staminabar")) as inkWidget;
-  this.phoneCallRef = this.SearchForWidget(root, n"HUDMiddleWidget", n"PhoneCall") as inkWidget;
   this.itemsNotificationsRef = this.SearchForWidget(root, n"LeftCenter", n"HUDSlotMiddleWidget", n"item notifications") as inkWidget;
   this.journalNotificationsRef = this.SearchForWidget(root, n"LeftCenter",n"HUDSlotMiddleWidget", n"journal notifications") as inkWidget;
   this.levelUpNotificationRef = this.SearchForWidget(root, n"HUDMiddleWidget", n"level up notifications") as inkWidget;
@@ -132,7 +132,8 @@ func PrintCapturedSlotsAndWidgets() -> Void {
   CHL("=== Widgets ===");
   ToStr(this.playerHealthBarRef);
   ToStr(this.cooldownRef);
-  ToStr(this.phoneRef);
+  ToStr(this.phoneAvatarRef);
+  ToStr(this.phoneControlRef);
   ToStr(this.minimapRef);
   ToStr(this.questListRef);
   ToStr(this.wantedBarRef);
@@ -149,7 +150,6 @@ func PrintCapturedSlotsAndWidgets() -> Void {
   ToStr(this.carHudRef);
   ToStr(this.zoneAlertNotificationRef);
   ToStr(this.staminabarRef);
-  ToStr(this.phoneCallRef);
   ToStr(this.itemsNotificationsRef);
   ToStr(this.journalNotificationsRef);
   ToStr(this.levelUpNotificationRef);

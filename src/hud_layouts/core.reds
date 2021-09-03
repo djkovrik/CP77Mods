@@ -27,7 +27,8 @@ public class InjectRootHudGameControllerEvent extends Event {}
 // -- Widgets
 @addField(inkGameController) let playerHealthBarRef: ref<inkWidget>;            // healthbarWidgetGameController
 @addField(inkGameController) let cooldownRef: ref<inkWidget>;                   // inkCooldownGameController
-@addField(inkGameController) let phoneRef: ref<inkWidget>;                      // ?
+@addField(inkGameController) let phoneAvatarRef: ref<inkWidget>;                  // ?
+@addField(inkGameController) let phoneControlRef: ref<inkWidget>;           // IncomingCallGameController
 @addField(inkGameController) let minimapRef: ref<inkWidget>;                    // MinimapContainerController
 @addField(inkGameController) let questListRef: ref<inkWidget>;                  // QuestTrackerGameController
 @addField(inkGameController) let wantedBarRef: ref<inkWidget>;                  // WantedBarGameController
@@ -44,7 +45,6 @@ public class InjectRootHudGameControllerEvent extends Event {}
 @addField(inkGameController) let carHudRef: ref<inkWidget>;                     // hudCarController
 @addField(inkGameController) let zoneAlertNotificationRef: ref<inkWidget>;      // ZoneAlertNotificationQueue
 @addField(inkGameController) let staminabarRef: ref<inkWidget>;                 // StaminabarWidgetGameController
-@addField(inkGameController) let phoneCallRef: ref<inkWidget>;                  // IncomingCallGameController
 @addField(inkGameController) let itemsNotificationsRef: ref<inkWidget>;         // ItemsNotificationQueue
 @addField(inkGameController) let journalNotificationsRef: ref<inkWidget>;       // JournalNotificationQueue
 @addField(inkGameController) let levelUpNotificationRef: ref<inkWidget>;        // LevelUpNotificationQueue
