@@ -21,17 +21,16 @@ public func AdjustWidgetsPositions() -> Void {
   // D-pad
   this.dpadHintRef.SetTranslation(new Vector2(-30.0, -40.0));
   this.dpadHintRef.SetAnchor(inkEAnchor.BottomLeft);
+  this.dpadHintRef.SetAffectsLayoutWhenHidden(true);
   this.dpadHintRef.Reparent(this.BottomRightMainSlot);
 
   // Weapon roster
-  this.ammoCounterRef.SetTranslation(new Vector2(-180.0, -20.0));
-
+  this.ammoCounterRef.SetTranslation(new Vector2(-220.0, -20.0));
   // Crouch indicator
   this.BottomRightHorizontalSlot.SetAnchor(inkEAnchor.BottomLeft);
   this.BottomRightHorizontalSlot.SetChildOrder(inkEChildOrder.Backward);
   this.crouchIndicatorRef.SetTranslation(new Vector2(20.0, -15.0));
   this.BottomRightHorizontalSlot.Reparent(this.BottomLeftSlot);
-
   // Activity log
   // Warning
   // Boss healthbar
@@ -45,13 +44,37 @@ public func AdjustWidgetsPositions() -> Void {
   // Items notifications
   this.itemsNotificationsRef.SetTranslation(new Vector2(-80.0, -110.0));
   // Journal notifications
+  this.journalNotificationsRef.SetTranslation(new Vector2(25.0, 0.0));
   // Level Up notifications
   // Militech warning
 }
 
+// -- Hijack weapon roster to revert widgets order and folding animation directions
+
+// New widget defs for easier managing
+
+@addField(weaponRosterGameController)
+let weaponPanel_CHL: ref<inkHorizontalPanel>;
+
+@addField(weaponRosterGameController)
+let damageIndicator_CHL: ref<inkVerticalPanel>;
+
+@addField(weaponRosterGameController)
+let ammoWrapper_CHL: ref<inkHorizontalPanel>;
+
+@addField(weaponRosterGameController)
+let weaponHolder_CHL: ref<inkVerticalPanel>;
+
+@addField(weaponRosterGameController)
+let weaponName_CHL: ref<inkText>;
+
+
+// Init widgets with initial positions
+
 @replaceMethod(weaponRosterGameController)
 protected cb func OnInitialize() -> Bool {
   // this.PlayInitFoldingAnim();
+  this.InitWidgets();
   this.SetInitialWidgetPositions();
   inkWidgetRef.SetVisible(this.m_warningMessageWraper, false);
   this.m_damageTypeIndicator = inkWidgetRef.GetController(this.m_damageTypeRef) as DamageTypeIndicator;
@@ -65,18 +88,23 @@ protected cb func OnInitialize() -> Bool {
 }
 
 @addMethod(weaponRosterGameController)
-private func SetInitialWidgetPositions() -> Void {
-  inkWidgetRef.SetVisible(this.m_weaponIcon, true);
-  inkWidgetRef.SetVisible(this.m_weaponName, true);
-  inkWidgetRef.SetVisible(this.m_damageTypeRef, true);
-  inkWidgetRef.SetVisible(this.m_CurrentAmmoRef, true);
-  inkWidgetRef.SetVisible(this.m_AllAmmoRef, true);
-  inkWidgetRef.SetTranslation(this.m_weaponIcon, new Vector2(0.0, 0.0));
-  inkWidgetRef.SetTranslation(this.m_weaponName, new Vector2(0.0, 0.0));
-  inkWidgetRef.SetTranslation(this.m_damageTypeRef, new Vector2(0.0, 0.0));
-  inkWidgetRef.SetTranslation(this.m_CurrentAmmoRef, new Vector2(0.0, 0.0));
-  inkWidgetRef.SetTranslation(this.m_AllAmmoRef, new Vector2(0.0, 0.0));
+private func InitWidgets() -> Void {
+  this.weaponPanel_CHL = this.GetRootCompoundWidget().GetWidget(n"ammo_counter_and_the_holder/ammo_counter/weapon_wrapper") as inkHorizontalPanel;
+  this.damageIndicator_CHL = this.weaponPanel_CHL.GetWidget(n"damage_indicator") as inkVerticalPanel;
+  this.ammoWrapper_CHL = this.weaponPanel_CHL.GetWidget(n"ammo_wrapper") as inkHorizontalPanel;
+  this.weaponHolder_CHL = this.weaponPanel_CHL.GetWidget(n"weapon_holder") as inkVerticalPanel;
+  this.weaponName_CHL = this.GetRootCompoundWidget().GetWidget(n"ammo_counter_and_the_holder/ammo_counter/inkHorizontalPanelWidget2/weapon_name") as inkText;
 }
+
+@addMethod(weaponRosterGameController)
+private func SetInitialWidgetPositions() -> Void {
+  this.weaponPanel_CHL.SetChildOrder(inkEChildOrder.Backward);
+  this.weaponName_CHL.SetFontSize(24);
+  this.damageIndicator_CHL.SetTranslation(new Vector2(-20.0, 0.0));
+  this.weaponName_CHL.Reparent(this.weaponHolder_CHL);
+}
+
+// Custom fold and unfold animations
 
 @replaceMethod(weaponRosterGameController)
   private final func PlayFold() -> Void {
@@ -89,6 +117,10 @@ private func SetInitialWidgetPositions() -> Void {
     this.m_transitionAnimProxy = null;
   };
   // this.m_transitionAnimProxy = this.PlayLibraryAnimation(n"fold");
+  this.TranslationAnimation(this.weaponHolder_CHL, 0.0, -600.0, 1.0, 0.0, 0.0);
+  this.TranslationAnimation(this.weaponName_CHL, 0.0, -600.0, 1.0, 0.0, 0.0);
+  this.TranslationAnimation(this.ammoWrapper_CHL, 0.0, -600.0, 1.0, 0.0, 0.1);
+  this.TranslationAnimation(this.damageIndicator_CHL, -20.0, -600.0, 1.0, 0.0, 0.15);
 }
 
 @replaceMethod(weaponRosterGameController)
@@ -102,22 +134,37 @@ private final func PlayUnfold() -> Void {
     this.m_transitionAnimProxy = null;
   };
   // this.m_transitionAnimProxy = this.PlayLibraryAnimation(n"unfold");
+  this.TranslationAnimation(this.weaponHolder_CHL, -600.0, 0.0, 0.0, 1.0, 0.0);
+  this.TranslationAnimation(this.weaponName_CHL, -600.0, 0.0, 0.0, 1.0, 0.05);
+  this.TranslationAnimation(this.ammoWrapper_CHL, -600.0, 0.0, 0.0, 1.0, 0.1);
+  this.TranslationAnimation(this.damageIndicator_CHL, -600.0, -20.0, 0.0, 1.0, 0.15);
 }
 
 @addMethod(weaponRosterGameController)
-protected func TranslationAnimation(targetWidget: inkWidgetRef, startTranslation: Float, endTranslation: Float) -> ref<inkAnimProxy> {
+protected func TranslationAnimation(targetWidget: ref<inkWidget>, startTranslation: Float, endTranslation: Float, startAlpha: Float, endAlpha: Float, startDelay: Float) -> ref<inkAnimProxy> {
   let proxy: ref<inkAnimProxy>;
   let moveElementsAnimDef: ref<inkAnimDef> = new inkAnimDef();
   let translationInterpolator: ref<inkAnimTranslation> = new inkAnimTranslation();
-  translationInterpolator.SetType(inkanimInterpolationType.Linear);
-  translationInterpolator.SetMode(inkanimInterpolationMode.EasyIn);
+  translationInterpolator.SetType(inkanimInterpolationType.Exponential);
+  translationInterpolator.SetMode(inkanimInterpolationMode.EasyInOut);
   translationInterpolator.SetDirection(inkanimInterpolationDirection.FromTo);
   translationInterpolator.SetStartTranslation(new Vector2(startTranslation, 0.00));
   translationInterpolator.SetEndTranslation(new Vector2(endTranslation, 0.00));
   translationInterpolator.SetDuration(0.3);
+  translationInterpolator.SetStartDelay(startDelay);
   moveElementsAnimDef.AddInterpolator(translationInterpolator);
-  inkWidgetRef.SetVisible(targetWidget, true);
-  proxy = inkWidgetRef.PlayAnimation(targetWidget, moveElementsAnimDef);
-  proxy.RegisterToCallback(inkanimEventType.OnFinish, this, n"OnTranslationCompleted");
+
+  let alphaInterpolator: ref<inkAnimTransparency> = new inkAnimTransparency();
+  alphaInterpolator.SetStartTransparency(startAlpha);
+  alphaInterpolator.SetEndTransparency(endAlpha);
+  alphaInterpolator.SetDuration(0.4);
+  alphaInterpolator.SetStartDelay(startDelay);
+  alphaInterpolator.SetType(inkanimInterpolationType.Exponential);
+  alphaInterpolator.SetMode(inkanimInterpolationMode.EasyInOut);
+  moveElementsAnimDef.AddInterpolator(alphaInterpolator);
+
+  targetWidget.SetVisible(true);
+  proxy = targetWidget.PlayAnimation(moveElementsAnimDef);
+  // proxy.RegisterToCallback(inkanimEventType.OnFinish, this, n"OnTranslationCompleted");
   return proxy;
 }

@@ -60,7 +60,7 @@ protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpaw
 protected cb func OnInjectRootHudGameControllerEvent(evt: ref<InjectRootHudGameControllerEvent>) -> Bool {
   if this.IsA(n"gameuiRootHudGameController") {
     this.CaptureSlotsAndWidgets();
-    this.PrintCapturedSlotsAndWidgets();
+    // this.PrintCapturedSlotdsAndWidgets();
     this.AdjustWidgetsPositions();
   };
 }

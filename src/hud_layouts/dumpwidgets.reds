@@ -61,8 +61,8 @@ public static func BuildPrefix(str: String, level: Int32, counter: Int32) -> Str
 }
 
 public static func WidgetAsString(node: ref<inkWidget>) -> String {
-  return "[State: " + NameToString(node.GetState()) + ", visible: " + ToString(node.IsVisible()) + ", interactive: " 
-    + ToString(node.IsInteractive()) + ", affects layout when hidden: " + ToString(node.GetAffectsLayoutWhenHidden()) 
+  return "[Class: " + NameToString(node.GetClassName()) + ", name: " + NameToString(node.GetName()) + ", state: " + NameToString(node.GetState()) + ", visible: " 
+    + ToString(node.IsVisible()) + ", interactive: " + ToString(node.IsInteractive()) + ", affects layout when hidden: " + ToString(node.GetAffectsLayoutWhenHidden()) 
     + ", margin: " + ToString(node.GetMargin()) + ", padding: " + ToString(node.GetPadding()) + ", HAlign: " + ToString(node.GetHAlign()) 
     + ", VAlign: " + ToString(node.GetVAlign()) + ", anchor: " + ToString(node.GetAnchor()) 
     + ", anchor point: " + ToString(node.GetAnchorPoint()) + ", size rule: " + ToString(node.GetSizeRule()) + ", size coeff: " 
