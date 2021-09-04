@@ -1,4 +1,4 @@
-// -- Bottom Left
+// -- Everything Bottom Minimal
 
 @addMethod(inkGameController)
 public func AdjustWidgetsPositions() -> Void {
@@ -10,7 +10,7 @@ public func AdjustWidgetsPositions() -> Void {
   // Vehicle summon
   // D-pad
   // Input Hunt
-  // Ammo counter
+  // Crouch Indicator
   // Weapon roster
   // Activity log
   // Warning

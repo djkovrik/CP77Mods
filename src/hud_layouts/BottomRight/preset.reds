@@ -3,19 +3,17 @@
 @addMethod(inkGameController)
 public func AdjustWidgetsPositions() -> Void {
   // Input Hunt
-  this.inputHintRef.SetTranslation(new Vector2(10.0, 210.0));
+  this.inputHintRef.SetTranslation(new Vector2(0.0, 210.0));
   this.inputHintRef.Reparent(this.BottomRightSlot);
-
   // Minimap
   this.minimapRef.SetTranslation(new Vector2(25.0, 200.0));
   this.minimapRef.SetAnchor(inkEAnchor.BottomRight);
   this.minimapRef.Reparent(this.BottomRightSlot);
-
   // Wanted Bar
   this.wantedBarRef.SetTranslation(new Vector2(740.0, 20.0));
   this.wantedBarRef.Reparent(this.BottomCenterSlot);
-  // Healthbar
-  // Cooldowns
+  // Car hud
+  this.carHudRef.SetTranslation(new Vector2(0.0, -70.0));
   // Vehicle summon
   this.vehicleSummonNotificationRef.SetTranslation(new Vector2(30.0, 320.0));
   // D-pad
@@ -23,7 +21,6 @@ public func AdjustWidgetsPositions() -> Void {
   this.dpadHintRef.SetAnchor(inkEAnchor.BottomLeft);
   this.dpadHintRef.SetAffectsLayoutWhenHidden(true);
   this.dpadHintRef.Reparent(this.BottomRightMainSlot);
-
   // Weapon roster
   this.ammoCounterRef.SetTranslation(new Vector2(-220.0, -20.0));
   // Crouch indicator
@@ -31,22 +28,12 @@ public func AdjustWidgetsPositions() -> Void {
   this.BottomRightHorizontalSlot.SetChildOrder(inkEChildOrder.Backward);
   this.crouchIndicatorRef.SetTranslation(new Vector2(20.0, -15.0));
   this.BottomRightHorizontalSlot.Reparent(this.BottomLeftSlot);
-  // Activity log
-  // Warning
-  // Boss healthbar
-  // HUD progress
-  // Oxygen bar
-  // Car HUD
-  // Zone alert
-  // Stamina bar
   // Phone avatar
   this.phoneAvatarRef.SetTranslation(new Vector2(-10.0, 0.0));
   // Items notifications
   this.itemsNotificationsRef.SetTranslation(new Vector2(-80.0, -110.0));
   // Journal notifications
   this.journalNotificationsRef.SetTranslation(new Vector2(25.0, 0.0));
-  // Level Up notifications
-  // Militech warning
 }
 
 // -- Hijack weapon roster to revert widgets order and folding animation directions
@@ -66,6 +53,9 @@ let ammoWrapper_CHL: ref<inkHorizontalPanel>;
 let weaponHolder_CHL: ref<inkVerticalPanel>;
 
 @addField(weaponRosterGameController)
+let weaponIcon_CHL: ref<inkImage>;
+
+@addField(weaponRosterGameController)
 let weaponName_CHL: ref<inkText>;
 
 
@@ -75,7 +65,7 @@ let weaponName_CHL: ref<inkText>;
 protected cb func OnInitialize() -> Bool {
   // this.PlayInitFoldingAnim();
   this.InitWidgets();
-  this.SetInitialWidgetPositions();
+  this.SetWidgetsAppearance();
   inkWidgetRef.SetVisible(this.m_warningMessageWraper, false);
   this.m_damageTypeIndicator = inkWidgetRef.GetController(this.m_damageTypeRef) as DamageTypeIndicator;
   this.m_bbDefinition = GetAllBlackboardDefs().UIInteractions;
@@ -93,14 +83,22 @@ private func InitWidgets() -> Void {
   this.damageIndicator_CHL = this.weaponPanel_CHL.GetWidget(n"damage_indicator") as inkVerticalPanel;
   this.ammoWrapper_CHL = this.weaponPanel_CHL.GetWidget(n"ammo_wrapper") as inkHorizontalPanel;
   this.weaponHolder_CHL = this.weaponPanel_CHL.GetWidget(n"weapon_holder") as inkVerticalPanel;
+  this.weaponIcon_CHL = this.weaponHolder_CHL.GetWidget(n"weapon_icon") as inkImage;
   this.weaponName_CHL = this.GetRootCompoundWidget().GetWidget(n"ammo_counter_and_the_holder/ammo_counter/inkHorizontalPanelWidget2/weapon_name") as inkText;
 }
 
 @addMethod(weaponRosterGameController)
-private func SetInitialWidgetPositions() -> Void {
+private func SetWidgetsAppearance() -> Void {
   this.weaponPanel_CHL.SetChildOrder(inkEChildOrder.Backward);
   this.weaponName_CHL.SetFontSize(24);
   this.damageIndicator_CHL.SetTranslation(new Vector2(-20.0, 0.0));
+  this.weaponIcon_CHL.SetBrushMirrorType(inkBrushMirrorType.Both);
+  this.weaponIcon_CHL.SetRotation(180.0);
+  this.weaponIcon_CHL.SetHAlign(inkEHorizontalAlign.Left);
+  this.weaponIcon_CHL.SetAnchor(inkEAnchor.CenterLeft);
+  this.weaponIcon_CHL.SetFitToContent(true);
+  this.weaponName_CHL.SetHAlign(inkEHorizontalAlign.Right);
+  this.weaponName_CHL.SetAnchor(inkEAnchor.CenterRight);
   this.weaponName_CHL.Reparent(this.weaponHolder_CHL);
 }
 
@@ -157,7 +155,7 @@ protected func TranslationAnimation(targetWidget: ref<inkWidget>, startTranslati
   let alphaInterpolator: ref<inkAnimTransparency> = new inkAnimTransparency();
   alphaInterpolator.SetStartTransparency(startAlpha);
   alphaInterpolator.SetEndTransparency(endAlpha);
-  alphaInterpolator.SetDuration(0.4);
+  alphaInterpolator.SetDuration(0.3);
   alphaInterpolator.SetStartDelay(startDelay);
   alphaInterpolator.SetType(inkanimInterpolationType.Exponential);
   alphaInterpolator.SetMode(inkanimInterpolationMode.EasyInOut);
