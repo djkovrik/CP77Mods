@@ -1,4 +1,5 @@
 // -- Set names for easier search
+
 @addMethod(ItemsNotificationQueue)
 protected cb func OnInitialize() -> Bool {
   this.GetRootWidget().SetName(n"item notifications");
@@ -14,11 +15,14 @@ protected cb func OnInitialize() -> Bool {
   this.GetRootWidget().SetName(n"level up notifications");
 }
 
+
 // -- Find widgets from gameuiRootHudGameController root
+
 @addMethod(inkGameController)
 func CaptureSlotsAndWidgets() -> Void {
   let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
   // Slots
+  this.RootSlot = root;
   this.TopLeftMainSlot = root.GetWidgetByPath(inkWidgetPath.Build(n"TopLeftMain")) as inkCompoundWidget;
   this.TopLeftSlot = root.GetWidgetByPath(inkWidgetPath.Build(n"TopLeftMain", n"TopLeft")) as inkCompoundWidget;
   this.TopLeftSecondarySlot = root.GetWidgetByPath(inkWidgetPath.Build(n"TopLeftMain", n"TopLeftSecondary")) as inkCompoundWidget;
@@ -106,6 +110,9 @@ private func GetCompounds(root: ref<inkCompoundWidget>, first: CName) -> array<r
   };
   return result;
 }
+
+
+// -- Print initialized widgets
 
 @addMethod(inkGameController)
 func PrintCapturedSlotsAndWidgets() -> Void {

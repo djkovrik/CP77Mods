@@ -1,9 +1,11 @@
+// -- Enable or disable CET logs
 public static func EnableLoggingCET() -> Bool = true
 
 // -- Custom event to inject root hud widget
 public class InjectRootHudGameControllerEvent extends Event {}
 
 // -- Slots
+@addField(inkGameController) let RootSlot: ref<inkCompoundWidget>;
 @addField(inkGameController) let TopLeftMainSlot: ref<inkCompoundWidget>;
 @addField(inkGameController) let TopLeftSlot: ref<inkCompoundWidget>;
 @addField(inkGameController) let TopLeftSecondarySlot: ref<inkCompoundWidget>;
@@ -27,8 +29,8 @@ public class InjectRootHudGameControllerEvent extends Event {}
 // -- Widgets
 @addField(inkGameController) let playerHealthBarRef: ref<inkWidget>;            // healthbarWidgetGameController
 @addField(inkGameController) let cooldownRef: ref<inkWidget>;                   // inkCooldownGameController
-@addField(inkGameController) let phoneAvatarRef: ref<inkWidget>;                  // ?
-@addField(inkGameController) let phoneControlRef: ref<inkWidget>;           // IncomingCallGameController
+@addField(inkGameController) let phoneAvatarRef: ref<inkWidget>;                // HudPhoneGameController
+@addField(inkGameController) let phoneControlRef: ref<inkWidget>;               // IncomingCallGameController
 @addField(inkGameController) let minimapRef: ref<inkWidget>;                    // MinimapContainerController
 @addField(inkGameController) let questListRef: ref<inkWidget>;                  // QuestTrackerGameController
 @addField(inkGameController) let wantedBarRef: ref<inkWidget>;                  // WantedBarGameController
@@ -61,8 +63,67 @@ protected cb func OnInjectRootHudGameControllerEvent(evt: ref<InjectRootHudGameC
   if this.IsA(n"gameuiRootHudGameController") {
     this.CaptureSlotsAndWidgets();
     // this.PrintCapturedSlotdsAndWidgets();
+    this.CreateCustomSlots();
     this.AdjustWidgetsPositions();
   };
+}
+
+@addMethod(inkGameController)
+public func MakeHorizontalSlot(n: CName, m: inkMargin, h: inkEHorizontalAlign, v: inkEVerticalAlign, a: inkEAnchor, pnt: Vector2, pvt: Vector2) -> ref<inkHorizontalPanel> {
+  let slot: ref<inkHorizontalPanel> = new inkHorizontalPanel();
+  slot.SetName(n);
+  slot.SetFitToContent(true);
+  slot.SetInteractive(false);
+  slot.SetAffectsLayoutWhenHidden(false);
+  slot.SetMargin(m);
+  slot.SetHAlign(h);
+  slot.SetVAlign(v);
+  slot.SetAnchor(a);
+  slot.SetAnchorPoint(pnt);
+  slot.SetSizeRule(inkESizeRule.Fixed);
+  slot.SetSizeCoefficient(1.0);
+  slot.SetRenderTransformPivot(pvt);
+  slot.SetLayout(new inkWidgetLayout(m, m, h, v, a, pnt));
+  return slot;
+}
+
+@addMethod(inkGameController)
+public func MakeVerticalSlot(n: CName, m: inkMargin, h: inkEHorizontalAlign, v: inkEVerticalAlign, a: inkEAnchor, pnt: Vector2, pvt: Vector2) -> ref<inkVerticalPanel> {
+  let slot: ref<inkVerticalPanel> = new inkVerticalPanel();
+  slot.SetName(n);
+  slot.SetFitToContent(true);
+  slot.SetInteractive(false);
+  slot.SetAffectsLayoutWhenHidden(false);
+  slot.SetMargin(m);
+  slot.SetHAlign(h);
+  slot.SetVAlign(v);
+  slot.SetAnchor(a);
+  slot.SetAnchorPoint(pnt);
+  slot.SetSizeRule(inkESizeRule.Fixed);
+  slot.SetSizeCoefficient(1.0);
+  slot.SetRenderTransformPivot(pvt);
+  slot.SetLayout(new inkWidgetLayout(m, m, h, v, a, pnt));
+  return slot;
+}
+
+@addMethod(inkGameController)
+public func SetWidgetParams(widget: ref<inkWidget>, m: inkMargin, h: inkEHorizontalAlign, v: inkEVerticalAlign, a: inkEAnchor, pnt: Vector2, pvt: Vector2) -> Void {
+  widget.SetMargin(m);
+  widget.SetHAlign(h);
+  widget.SetVAlign(v);
+  widget.SetAnchor(a);
+  widget.SetAnchorPoint(pnt);
+  widget.SetRenderTransformPivot(pvt);
+  widget.SetLayout(new inkWidgetLayout(m, m, h, v, a, pnt));
+}
+
+@addMethod(inkGameController)
+protected func GetCurrentResolution() -> Vector2 {
+  let settings: ref<UserSettings> = GameInstance.GetSettingsSystem(this.GetPlayerControlledObject().GetGame());
+  let configVar: ref<ConfigVarListString> = settings.GetVar(n"/video/display", n"Resolution") as ConfigVarListString;
+  let resolution: String = configVar.GetValue();
+  let dimensions: array<String> = StrSplit(resolution, "x");
+  return new Vector2(StringToFloat(dimensions[0]), StringToFloat(dimensions[1]));
 }
 
 public static func CHL(str: String) -> Void {

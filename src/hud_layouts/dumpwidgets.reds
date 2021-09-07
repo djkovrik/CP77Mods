@@ -5,7 +5,7 @@ public class DumpWidgetTreeEvent extends Event {}
 @addMethod(inkGameController)
 protected cb func OnDumpWidgetTreeEvent(evt: ref<DumpWidgetTreeEvent>) -> Bool {
     if this.IsA(n"gameuiRootHudGameController") {
-        PrintWidgetsTree(this.GetRootCompoundWidget(), 0, 0);
+        PrintWidgetsTree(this.GetRootCompoundWidget(), 0);
     }
 }
 
@@ -48,8 +48,8 @@ native let logicController: ref<inkLogicController>;
 @addField(inkWidget)
 native let secondaryControllers: array<ref<inkLogicController>>;
 
-public static func BuildPrefix(str: String, level: Int32, counter: Int32) -> String {
-  let result: String = "[Nested: " + ToString(level) + " - index: " + ToString(counter) +  "]";
+public static func BuildPrefix(str: String, level: Int32) -> String {
+  let result: String = "[Nested: " + ToString(level) + "]";
   let i: Int32 = 0;
 
   while i < level {
@@ -71,11 +71,11 @@ public static func WidgetAsString(node: ref<inkWidget>) -> String {
     + ", rotation: " + ToString(node.GetRotation()) + ", translation: " + ToString(node.GetTranslation()) + "]";
 }
 
-public static func PrintWidgetsTree(node: ref<inkWidget>, level: Int32, counter: Int32) -> Void {
+public static func PrintWidgetsTree(node: ref<inkWidget>, level: Int32) -> Void {
   let currentLevel = level + 1;
   let str: String = "";
 
-  str += BuildPrefix("  ", currentLevel, counter);
+  str += BuildPrefix("  ", currentLevel);
   str += NameToString(node.GetName());
   str += " / ";
 
@@ -106,7 +106,7 @@ public static func PrintWidgetsTree(node: ref<inkWidget>, level: Int32, counter:
     let i: Int32 = 0;
 
     while i < numChild {
-      PrintWidgetsTree(compound.GetWidget(i), currentLevel, i);
+      PrintWidgetsTree(compound.GetWidget(i), currentLevel);
       i += 1;
     };
   };
