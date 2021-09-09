@@ -67,8 +67,6 @@ func CaptureSlotsAndWidgets() -> Void {
   this.journalNotificationsRef = this.SearchForWidget(root, n"LeftCenter",n"HUDSlotMiddleWidget", n"journal notifications") as inkWidget;
   this.levelUpNotificationRef = this.SearchForWidget(root, n"HUDMiddleWidget", n"level up notifications") as inkWidget;
   this.militechWarningRef = root.GetWidgetByPath(inkWidgetPath.Build(n"militech warning")) as inkWidget;
-
-  CHL("Slots and widgets captured");
 }
 
 @addMethod(inkGameController)
