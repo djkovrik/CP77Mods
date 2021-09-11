@@ -1,42 +1,128 @@
 // -- Bottom Right
 
+@addField(inkGameController)
+public let CustomBottomLeftVertical: ref<inkVerticalPanel>;
+
+@addField(inkGameController)
+public let CustomBottomRightVertical: ref<inkVerticalPanel>;
+
+@addField(inkGameController)
+public let CustomBottomRightMinimap: ref<inkHorizontalPanel>;
+
 @addMethod(inkGameController)
-public func AdjustWidgetsPositions() -> Void {
-  // Input Hunt
-  this.inputHintRef.SetTranslation(new Vector2(0.0, 210.0));
-  this.inputHintRef.Reparent(this.BottomRightSlot);
-  // Minimap
-  this.minimapRef.SetTranslation(new Vector2(25.0, 200.0));
-  this.minimapRef.SetAnchor(inkEAnchor.BottomRight);
-  this.minimapRef.Reparent(this.BottomRightSlot);
-  // Wanted Bar
-  this.wantedBarRef.SetTranslation(new Vector2(740.0, 20.0));
-  this.wantedBarRef.Reparent(this.BottomCenterSlot);
-  // Car hud
-  this.carHudRef.SetTranslation(new Vector2(0.0, -70.0));
-  // Vehicle summon
-  this.vehicleSummonNotificationRef.SetTranslation(new Vector2(30.0, 320.0));
-  // D-pad
-  this.dpadHintRef.SetTranslation(new Vector2(-30.0, -40.0));
-  this.dpadHintRef.SetAnchor(inkEAnchor.BottomLeft);
-  this.dpadHintRef.SetAffectsLayoutWhenHidden(true);
-  this.dpadHintRef.Reparent(this.BottomRightMainSlot);
-  // Weapon roster
-  this.ammoCounterRef.SetTranslation(new Vector2(-220.0, -20.0));
-  // Crouch indicator
-  this.BottomRightHorizontalSlot.SetAnchor(inkEAnchor.BottomLeft);
-  this.BottomRightHorizontalSlot.SetChildOrder(inkEChildOrder.Backward);
-  this.crouchIndicatorRef.SetTranslation(new Vector2(20.0, -15.0));
-  this.BottomRightHorizontalSlot.Reparent(this.BottomLeftSlot);
-  // Phone avatar
-  this.phoneAvatarRef.SetTranslation(new Vector2(-10.0, 0.0));
-  // Items notifications
-  this.itemsNotificationsRef.SetTranslation(new Vector2(-80.0, -110.0));
-  // Journal notifications
-  this.journalNotificationsRef.SetTranslation(new Vector2(25.0, 0.0));
+public func CreateCustomSlots() -> Void {
+  this.CustomBottomLeftVertical = this.MakeVerticalSlot(
+    n"CustomBottomLeftVertical",
+    new inkMargin(25.0, 25.0, 25.0, 25.0),
+    inkEHorizontalAlign.Left,
+    inkEVerticalAlign.Bottom,
+    inkEAnchor.BottomLeft,
+    new Vector2(0.0, 1.0),
+    new Vector2(0.0, 1.0)
+  );
+  this.CustomBottomLeftVertical.Reparent(this.RootSlot);
+
+  this.CustomBottomRightVertical = this.MakeVerticalSlot(
+    n"CustomBottomRightVertical",
+    new inkMargin(25.0, 25.0, 25.0, 25.0),
+    inkEHorizontalAlign.Right,
+    inkEVerticalAlign.Bottom,
+    inkEAnchor.BottomRight,
+    new Vector2(1.0, 1.0),
+    new Vector2(1.0, 1.0)
+  );
+  this.CustomBottomRightVertical.Reparent(this.RootSlot);
+
+  this.CustomBottomRightMinimap = this.MakeHorizontalSlot(
+    n"CustomBottomRightHorizontal",
+    new inkMargin(0.0, 0.0, 0.0, 0.0),
+    inkEHorizontalAlign.Right,
+    inkEVerticalAlign.Bottom,
+    inkEAnchor.BottomRight,
+    new Vector2(1.0, 1.0),
+    new Vector2(1.0, 1.0)
+  );
+
 }
 
-// -- Hijack weapon roster to revert widgets order and folding animation directions
+@addMethod(inkGameController)
+public func AdjustWidgetsPositions() -> Void {
+
+  this.SetWidgetParams(
+    this.BottomRightHorizontalSlot, 
+    new inkMargin(0.0, 0.0, 0.0, 0.0),
+    inkEHorizontalAlign.Left, 
+    inkEVerticalAlign.Bottom, 
+    inkEAnchor.BottomLeft, 
+    new Vector2(0.0, 1.0),
+    new Vector2(0.0, 1.0)
+  );
+  this.BottomRightHorizontalSlot.SetMargin(new inkMargin(0.0, 0.0, 0.0, 10.0));
+  this.BottomRightHorizontalSlot.SetChildOrder(inkEChildOrder.Backward);
+  this.BottomRightHorizontalSlot.Reparent(this.CustomBottomLeftVertical);
+  this.ammoCounterRef.SetTranslation(new Vector2(-this.ammoCounterRef.GetWidth() / 4.0, 0.0));
+
+  this.SetWidgetParams(
+    this.carHudRef, 
+    new inkMargin(25.0, 0.0, 0.0, 0.0),
+    inkEHorizontalAlign.Left, 
+    inkEVerticalAlign.Bottom, 
+    inkEAnchor.BottomLeft, 
+    new Vector2(0.0, 1.0),
+    new Vector2(0.0, 1.0)
+  );
+
+  this.SetWidgetParams(
+    this.vehicleSummonNotificationRef, 
+    new inkMargin(0.0, 0.0, 40.0, 0.0), 
+    inkEHorizontalAlign.Right, 
+    inkEVerticalAlign.Center, 
+    inkEAnchor.CenterRight, 
+    new Vector2(1.0, 1.0),
+    new Vector2(1.0, 1.0)
+  );
+  this.vehicleSummonNotificationRef.Reparent(this.RootSlot);
+
+  this.inputHintRef.SetMargin(new inkMargin(0.0, 0.0, 0.0, 40.0));
+  this.inputHintRef.Reparent(this.CustomBottomRightVertical);
+  this.CustomBottomRightMinimap.Reparent(this.CustomBottomRightVertical);
+
+  this.SetWidgetParams(
+    this.wantedBarRef, 
+    new inkMargin(0.0, 0.0, 0.0, 0.0),
+    inkEHorizontalAlign.Right, 
+    inkEVerticalAlign.Bottom, 
+    inkEAnchor.BottomRight, 
+    new Vector2(1.0, 1.0),
+    new Vector2(1.0, 1.0)
+  );
+  this.wantedBarRef.Reparent(this.CustomBottomRightMinimap);
+
+  this.SetWidgetParams(
+    this.minimapRef, 
+    new inkMargin(0.0, 0.0, 0.0, 0.0),
+    inkEHorizontalAlign.Right, 
+    inkEVerticalAlign.Bottom, 
+    inkEAnchor.BottomRight, 
+    new Vector2(1.0, 1.0),
+    new Vector2(1.0, 1.0)
+  );
+  this.minimapRef.Reparent(this.CustomBottomRightMinimap);
+
+  this.SetWidgetParams(
+    this.dpadHintRef, 
+    new inkMargin(25.0, 0.0, 25.0, 100.0),
+    inkEHorizontalAlign.Right, 
+    inkEVerticalAlign.Bottom, 
+    inkEAnchor.BottomCenter, 
+    new Vector2(-0.4, 1.0),
+    new Vector2(-0.4, 1.0)
+  );
+  this.dpadHintRef.Reparent(this.RootSlot);
+}
+
+
+// -- Hijack weapon roster to revert widgets order and replace folding animation
 
 // New widget defs for easier managing
 
@@ -89,20 +175,21 @@ private func InitWidgets() -> Void {
 
 @addMethod(weaponRosterGameController)
 private func SetWidgetsAppearance() -> Void {
-  this.weaponPanel_CHL.SetChildOrder(inkEChildOrder.Backward);
-  this.weaponName_CHL.SetFontSize(24);
   this.damageIndicator_CHL.SetTranslation(new Vector2(-20.0, 0.0));
+  this.weaponPanel_CHL.SetChildOrder(inkEChildOrder.Backward);
   this.weaponIcon_CHL.SetBrushMirrorType(inkBrushMirrorType.Both);
   this.weaponIcon_CHL.SetRotation(180.0);
   this.weaponIcon_CHL.SetHAlign(inkEHorizontalAlign.Left);
+  this.weaponIcon_CHL.SetContentHAlign(inkEHorizontalAlign.Left);
   this.weaponIcon_CHL.SetAnchor(inkEAnchor.CenterLeft);
-  this.weaponIcon_CHL.SetFitToContent(true);
+  this.weaponIcon_CHL.SetFitToContent(false);
+  this.weaponName_CHL.SetFontSize(24); 
   this.weaponName_CHL.SetHAlign(inkEHorizontalAlign.Right);
   this.weaponName_CHL.SetAnchor(inkEAnchor.CenterRight);
   this.weaponName_CHL.Reparent(this.weaponHolder_CHL);
 }
 
-// Custom fold and unfold animations
+// -- Custom fold and unfold animations
 
 @replaceMethod(weaponRosterGameController)
   private final func PlayFold() -> Void {
@@ -114,9 +201,8 @@ private func SetWidgetsAppearance() -> Void {
     this.m_transitionAnimProxy.Stop();
     this.m_transitionAnimProxy = null;
   };
-  // this.m_transitionAnimProxy = this.PlayLibraryAnimation(n"fold");
-  this.TranslationAnimation(this.weaponHolder_CHL, 0.0, -600.0, 1.0, 0.0, 0.0);
-  this.TranslationAnimation(this.weaponName_CHL, 0.0, -600.0, 1.0, 0.0, 0.0);
+  this.TranslationAnimation(this.weaponIcon_CHL, 0.0, -600.0, 1.0, 0.0, 0.0);
+  this.TranslationAnimation(this.weaponName_CHL, 0.0, -600.0, 1.0, 0.0, 0.05);
   this.TranslationAnimation(this.ammoWrapper_CHL, 0.0, -600.0, 1.0, 0.0, 0.1);
   this.TranslationAnimation(this.damageIndicator_CHL, -20.0, -600.0, 1.0, 0.0, 0.15);
 }
@@ -131,8 +217,7 @@ private final func PlayUnfold() -> Void {
     this.m_transitionAnimProxy.Stop();
     this.m_transitionAnimProxy = null;
   };
-  // this.m_transitionAnimProxy = this.PlayLibraryAnimation(n"unfold");
-  this.TranslationAnimation(this.weaponHolder_CHL, -600.0, 0.0, 0.0, 1.0, 0.0);
+  this.TranslationAnimation(this.weaponIcon_CHL, -600.0, 0.0, 0.0, 1.0, 0.0);
   this.TranslationAnimation(this.weaponName_CHL, -600.0, 0.0, 0.0, 1.0, 0.05);
   this.TranslationAnimation(this.ammoWrapper_CHL, -600.0, 0.0, 0.0, 1.0, 0.1);
   this.TranslationAnimation(this.damageIndicator_CHL, -600.0, -20.0, 0.0, 1.0, 0.15);
@@ -163,6 +248,5 @@ protected func TranslationAnimation(targetWidget: ref<inkWidget>, startTranslati
 
   targetWidget.SetVisible(true);
   proxy = targetWidget.PlayAnimation(moveElementsAnimDef);
-  // proxy.RegisterToCallback(inkanimEventType.OnFinish, this, n"OnTranslationCompleted");
   return proxy;
 }
