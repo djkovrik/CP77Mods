@@ -53,7 +53,7 @@ public func AdjustWidgetsPositions() -> Void {
   this.dpadHintRef.Reparent(this.BottomCenterSlot);
   this.inputHintRef.SetMargin(new inkMargin(0.0, 0.0, 30.0, 180.0));
   this.inputHintRef.Reparent(this.CustomBottomRight);
-  this.itemsNotificationsRef.SetMargin(new inkMargin(0.0, -80.0, 0.0, 0.0));
+  this.itemsNotificationsRef.SetMargin(new inkMargin(0.0, -100.0, 0.0, 0.0));
 
   this.SetWidgetParams(
     this.wantedBarRef, 
@@ -100,13 +100,14 @@ public func AdjustWidgetsPositions() -> Void {
   this.vehicleSummonNotificationRef.Reparent(this.RootSlot);
 }
 
+// Move compass and current time widgets to bottom of the minimap
 @wrapMethod(MinimapContainerController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
   let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
   let compass: ref<inkWidget> = root.GetWidget(n"MiniMapContainer/compassContainer");
   let timeText: ref<inkWidget> = root.GetWidget(n"location/unredMessagesGroup");
-  let timeTranslation: Float = root.GetWidth() - timeText.GetWidth() - 10.0;
+  let timeTranslation: Float = root.GetWidth() - timeText.GetWidth() - 40.0;
   let compassMarginLeft: Float = compass.GetWidth() / 2.5;
   let compassMarginTop: Float = compass.GetWidth() / 5;
   root.GetWidget(n"holder").SetVisible(false);
@@ -117,6 +118,7 @@ protected cb func OnInitialize() -> Bool {
   timeText.SetTranslation(new Vector2(timeTranslation, 0.0));
 }
 
+// Remove crime reported label from wanted bar widget
 @wrapMethod(WantedBarGameController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();

@@ -122,8 +122,6 @@ public func AdjustWidgetsPositions() -> Void {
 }
 
 
-// -- Hijack weapon roster to revert widgets order and replace folding animation
-
 // New widget defs for easier managing
 
 @addField(weaponRosterGameController)
@@ -145,7 +143,7 @@ let weaponIcon_CHL: ref<inkImage>;
 let weaponName_CHL: ref<inkText>;
 
 
-// Init widgets with initial positions
+// Adjust weapon roster to revert widgets order and replace folding animation
 
 @replaceMethod(weaponRosterGameController)
 protected cb func OnInitialize() -> Bool {
@@ -183,13 +181,14 @@ private func SetWidgetsAppearance() -> Void {
   this.weaponIcon_CHL.SetContentHAlign(inkEHorizontalAlign.Left);
   this.weaponIcon_CHL.SetAnchor(inkEAnchor.CenterLeft);
   this.weaponIcon_CHL.SetFitToContent(false);
-  this.weaponName_CHL.SetFontSize(24); 
+  this.weaponName_CHL.SetFontSize(22); 
   this.weaponName_CHL.SetHAlign(inkEHorizontalAlign.Right);
   this.weaponName_CHL.SetAnchor(inkEAnchor.CenterRight);
+  this.weaponName_CHL.SetMargin(new inkMargin(0.0, 30.0, 20.0, 0.0));
   this.weaponName_CHL.Reparent(this.weaponHolder_CHL);
 }
 
-// -- Custom fold and unfold animations
+// Custom fold and unfold animations
 
 @replaceMethod(weaponRosterGameController)
   private final func PlayFold() -> Void {
