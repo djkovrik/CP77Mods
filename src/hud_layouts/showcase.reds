@@ -149,9 +149,9 @@ private func ShowCarHUD() -> Void {
     let controller = this as hudCarController;
     controller.GetRootWidget().SetVisible(true);
     controller.RegisterToVehicle(true);
-    controller.OnSpeedValueChanged(45.0);
+    controller.OnSpeedValueChanged(145.0);
     controller.OnRpmValueChanged(2500.0);
-    inkTextRef.SetText(controller.m_SpeedValue, ToString(45));
+    inkTextRef.SetText(controller.m_SpeedValue, ToString(145));
   };
 }
 

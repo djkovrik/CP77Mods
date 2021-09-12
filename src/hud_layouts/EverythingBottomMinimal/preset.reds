@@ -1,53 +1,84 @@
 // -- Everything Bottom Minimal
 
+@addField(inkGameController)
+public let TestSlot: ref<inkHorizontalPanel>;
+
+@addField(inkGameController)
+public let BottomLeftMain: ref<inkHorizontalPanel>;
+
+@addField(inkGameController)
+public let BottomRightCarHud: ref<inkVerticalPanel>;
+
+@addField(inkGameController)
+public let m_vehicleName_CHL: ref<inkText>;
+
+@addMethod(inkGameController)
+public func CreateCustomSlots() -> Void {
+  this.TestSlot = this.MakeHorizontalSlot(
+    n"TestSlot",
+    new inkMargin(0.0, 0.0, 0.0, 0.0),
+    inkEHorizontalAlign.Center,
+    inkEVerticalAlign.Center,
+    inkEAnchor.Centered,
+    new Vector2(0.5, 0.5),
+    new Vector2(0.5, 0.5)
+  );
+  this.TestSlot.Reparent(this.RootSlot);
+
+  this.BottomLeftMain = this.MakeHorizontalSlot(
+    n"BottomLeftMain",
+    new inkMargin(0.0, 0.0, 0.0, 0.0),
+    inkEHorizontalAlign.Fill,
+    inkEVerticalAlign.Fill,
+    inkEAnchor.BottomLeft,
+    new Vector2(0.0, 1.0),
+    new Vector2(0.0, 1.0)
+  );
+  this.BottomLeftMain.Reparent(this.RootSlot);
+
+  this.BottomRightCarHud = this.MakeVerticalSlot(
+    n"BottomRightCarHud",
+    new inkMargin(0.0, 0.0, 0.0, 0.0),
+    inkEHorizontalAlign.Right,
+    inkEVerticalAlign.Fill,
+    inkEAnchor.BottomRight,
+    new Vector2(1.0, 1.0),
+    new Vector2(1.0, 1.0)
+  );
+  this.BottomRightCarHud.Reparent(this.RootSlot);
+}
+
+@addMethod(inkGameController)
+public func CreateCustomWidgets() {
+  this.m_vehicleName_CHL = new inkText();
+  this.m_vehicleName_CHL.SetName(n"chlVehicleName");
+  this.m_vehicleName_CHL.SetFontFamily("base\\gameplay\\gui\\fonts\\orbitron\\orbitron.inkfontfamily");
+  this.m_vehicleName_CHL.SetFontStyle(n"Medium");
+  this.m_vehicleName_CHL.SetFontSize(24);
+  this.m_vehicleName_CHL.SetLetterCase(textLetterCase.OriginalCase);
+  this.m_vehicleName_CHL.SetText("Vehicle name");
+  this.m_vehicleName_CHL.SetSize(200.0, 50.0);
+  this.SetWidgetParams(
+    this.m_vehicleName_CHL, 
+    new inkMargin(0.0, 0.0, 0.0, 0.0), 
+    inkEHorizontalAlign.Center, 
+    inkEVerticalAlign.Center, 
+    inkEAnchor.Centered, 
+    new Vector2(0.5, 0.5),
+    new Vector2(0.5, 0.5)
+  );
+  this.m_vehicleName_CHL.Reparent(this.TestSlot);
+}
+
 @addMethod(inkGameController)
 public func AdjustWidgetsPositions() -> Void {
-
-  this.dpadHintRef.Reparent(this.TopRightWantedSlot);
-  this.inputHintRef.Reparent(this.TopRightSlot);
-  this.carHudRef.Reparent(this.TopRightSlot);
-
-  // Wanted Bar
-  this.wantedBarRef.SetTranslation(new Vector2(250.0, 280.0));
-  this.wantedBarRef.SetScale(new Vector2(0.75, 0.75));
-  this.wantedBarRef.SetRotation(180.0);
-  this.wantedBarRef.Reparent(this.BottomLeftSlot);
-
-  // Quest List
-  this.questListRef.SetScale(new Vector2(0.85, 0.85));
-  this.questListRef.SetOpacity(0.8);
-  this.questListRef.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
-  this.questListRef.SetTranslation(new Vector2(-60.0, 240.0));
-  this.questListRef.SetHAlign(inkEHorizontalAlign.Left);
-  this.questListRef.SetVAlign(inkEVerticalAlign.Bottom);
-  this.questListRef.SetAnchor(inkEAnchor.BottomLeft);
-  this.questListRef.Reparent(this.BottomLeftTopSlot);
   // Minimap
-  this.minimapRef.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
-  this.minimapRef.SetTranslation(new Vector2(0.0, 35.0));
-  this.minimapRef.SetHAlign(inkEHorizontalAlign.Left);
-  this.minimapRef.SetVAlign(inkEVerticalAlign.Bottom);
-  this.minimapRef.SetAnchor(inkEAnchor.BottomLeft);
-  this.minimapRef.Reparent(this.BottomLeftSlot);
+  this.minimapRef.Reparent(this.BottomLeftMain);
+  // Wanted Bar
+  // Quest List
   // Healthbar
-  this.playerHealthBarRef.SetTranslation(new Vector2(-240.0, -90.0));
-  this.playerHealthBarRef.SetScale(new Vector2(0.9, 0.9));
-  this.playerHealthBarRef.SetOpacity(0.9);
-  this.playerHealthBarRef.Reparent(this.BottomRightSlot);
-
   // Crouch and Weapon roster
-  this.ammoCounterRef.SetTranslation(new Vector2(-220.0, 0.0));
-  this.crouchIndicatorRef.SetOpacity(0.8);
-  this.BottomRightHorizontalSlot.SetTranslation(new Vector2(30.0, 20.0));
-  this.BottomRightHorizontalSlot.SetHAlign(inkEHorizontalAlign.Left);
-  this.BottomRightHorizontalSlot.SetAnchor(inkEAnchor.BottomLeft);
-  this.BottomRightHorizontalSlot.SetChildOrder(inkEChildOrder.Backward);
-  this.BottomRightHorizontalSlot.SetScale(new Vector2(0.8, 0.8));
-  this.BottomRightHorizontalSlot.Reparent(this.BottomCenterSlot);
   // Stamina bar
-  this.staminabarRef.SetScale(new Vector2(0.9, 0.9));
-  this.staminabarRef.SetTranslation(new Vector2(297.0, -275.0));
-  this.staminabarRef.SetAnchor(inkEAnchor.BottomLeft);
   // Cooldowns
   // Vehicle summon
   // D-pad
@@ -58,67 +89,37 @@ public func AdjustWidgetsPositions() -> Void {
   // HUD progress
   // Oxygen bar
   // Car HUD
+  // let margins: inkMargin = this.carHudRef.GetMargin();
+  // this.carHudRef.SetTranslation(new Vector2(120.0, margins.bottom));
+  // this.SetWidgetParams(
+  //   this.carHudRef, 
+  //   new inkMargin(0.0, 0.0, 0.0, 0.0), 
+  //   inkEHorizontalAlign.Right, 
+  //   inkEVerticalAlign.Bottom, 
+  //   inkEAnchor.BottomRight, 
+  //   new Vector2(1.0, 1.0),
+  //   new Vector2(1.0, 1.0)
+  // );
+  this.carHudRef.Reparent(this.BottomRightCarHud);
   // Zone alert
   // Phone call
   // Items notifications
   // Journal notifications
   // Level Up notifications
   // Militech warning
-}
 
-// -- Hide elements
-
-@wrapMethod(MinimapContainerController)
-protected cb func OnInitialize() -> Bool {
-  wrappedMethod();
-  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
-  let compass: ref<inkWidget> = root.GetWidget(n"MiniMapContainer/compassContainer");
-  let timeText: ref<inkWidget> = root.GetWidget(n"location/unredMessagesGroup");
-  root.GetWidget(n"holder").SetVisible(false);
-  compass.SetMargin(new inkMargin(-40.0, -20.0, 0.0, 0.0));
-  compass.SetHAlign(inkEHorizontalAlign.Left);
-  compass.SetVAlign(inkEVerticalAlign.Bottom);
-  compass.SetAnchor(inkEAnchor.BottomLeft);
-  timeText.SetTranslation(new Vector2(340.0, 0.0));
-}
-
-@wrapMethod(QuestTrackerGameController)
-protected cb func OnInitialize() -> Bool {
-  wrappedMethod();
-  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
-  root.GetWidget(n"inkVerticalPanelWidget2/QuestTracker/Fluff/AnchorPoint").SetVisible(false);
-}
-
-@wrapMethod(WantedBarGameController)
-protected cb func OnInitialize() -> Bool {
-  wrappedMethod();
-  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
-  root.GetWidget(n"wanted_levels/attention").SetVisible(false);
+  this.RootSlot.RemoveChild(this.TopLeftMainSlot);
+  this.RootSlot.RemoveChild(this.TopRightMainSlot);
+  this.RootSlot.RemoveChild(this.BottomCenterSlot);
+  this.RootSlot.RemoveChild(this.BottomLeftSlot);
+  this.RootSlot.RemoveChild(this.BottomLeftTopSlot);
+  this.RootSlot.RemoveChild(this.BottomRightMainSlot);
+  this.RootSlot.RemoveChild(this.TopCenterSlot);
+  this.RootSlot.RemoveChild(this.LeftCenterSlot);
 }
 
 
-@wrapMethod(healthbarWidgetGameController)
-protected cb func OnInitialize() -> Bool {
-  wrappedMethod();
-  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
-  let buffs: ref<inkWidget> = root.GetWidget(n"buffsHolder/inkVerticalPanelWidget2/buffs");
-  root.GetWidget(n"buffsHolder/holder/holder_code").SetVisible(false);
-  root.GetWidget(n"buffsHolder/holder/holder_core").SetVisible(false);
-  root.GetWidget(n"buffsHolder/hpTextVert/hp_number_holder").SetVisible(false);
-  root.GetWidget(n"buffsHolder/hpbar_fluff").SetVisible(false);
-  buffs.SetScale(new Vector2(0.85, 0.85));
-  buffs.SetTranslation(new Vector2(-50.0, 0.0));
-}
-
-@wrapMethod(StaminabarWidgetGameController)
-protected cb func OnInitialize() -> Bool {
-  wrappedMethod();
-  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
-  let logo: ref<inkWidget> = root.GetWidget(n"staminaMain/stamina_logo");
-  logo.SetTranslation(new Vector2(0.0, -40.0));
-}
-
-// -- Hijack weapon roster to revert widgets order and folding animation directions
+//--  Adjust weapon roster to revert widgets order and replace folding animation
 
 // New widget defs for easier managing
 
@@ -140,12 +141,9 @@ let weaponIcon_CHL: ref<inkImage>;
 @addField(weaponRosterGameController)
 let weaponName_CHL: ref<inkText>;
 
-
-// Init widgets with initial positions
-
+// Init widgets and replace folding animations
 @replaceMethod(weaponRosterGameController)
 protected cb func OnInitialize() -> Bool {
-  // this.PlayInitFoldingAnim();
   this.InitWidgets();
   this.SetWidgetsAppearance();
   inkWidgetRef.SetVisible(this.m_warningMessageWraper, false);
@@ -171,16 +169,18 @@ private func InitWidgets() -> Void {
 
 @addMethod(weaponRosterGameController)
 private func SetWidgetsAppearance() -> Void {
-  this.weaponPanel_CHL.SetChildOrder(inkEChildOrder.Backward);
-  this.weaponName_CHL.SetFontSize(26);
   this.damageIndicator_CHL.SetTranslation(new Vector2(-20.0, 0.0));
+  this.weaponPanel_CHL.SetChildOrder(inkEChildOrder.Backward);
   this.weaponIcon_CHL.SetBrushMirrorType(inkBrushMirrorType.Both);
   this.weaponIcon_CHL.SetRotation(180.0);
   this.weaponIcon_CHL.SetHAlign(inkEHorizontalAlign.Left);
+  this.weaponIcon_CHL.SetContentHAlign(inkEHorizontalAlign.Left);
   this.weaponIcon_CHL.SetAnchor(inkEAnchor.CenterLeft);
-  this.weaponIcon_CHL.SetFitToContent(true);
+  this.weaponIcon_CHL.SetFitToContent(false);
+  this.weaponName_CHL.SetFontSize(22); 
   this.weaponName_CHL.SetHAlign(inkEHorizontalAlign.Right);
   this.weaponName_CHL.SetAnchor(inkEAnchor.CenterRight);
+  this.weaponName_CHL.SetMargin(new inkMargin(0.0, 30.0, 20.0, 0.0));
   this.weaponName_CHL.Reparent(this.weaponHolder_CHL);
 }
 
@@ -196,9 +196,8 @@ private func SetWidgetsAppearance() -> Void {
     this.m_transitionAnimProxy.Stop();
     this.m_transitionAnimProxy = null;
   };
-  // this.m_transitionAnimProxy = this.PlayLibraryAnimation(n"fold");
-  this.TranslationAnimation(this.weaponHolder_CHL, 0.0, -600.0, 1.0, 0.0, 0.0);
-  this.TranslationAnimation(this.weaponName_CHL, 0.0, -600.0, 1.0, 0.0, 0.0);
+  this.TranslationAnimation(this.weaponIcon_CHL, 0.0, -600.0, 1.0, 0.0, 0.0);
+  this.TranslationAnimation(this.weaponName_CHL, 0.0, -600.0, 1.0, 0.0, 0.05);
   this.TranslationAnimation(this.ammoWrapper_CHL, 0.0, -600.0, 1.0, 0.0, 0.1);
   this.TranslationAnimation(this.damageIndicator_CHL, -20.0, -600.0, 1.0, 0.0, 0.15);
 }
@@ -213,8 +212,7 @@ private final func PlayUnfold() -> Void {
     this.m_transitionAnimProxy.Stop();
     this.m_transitionAnimProxy = null;
   };
-  // this.m_transitionAnimProxy = this.PlayLibraryAnimation(n"unfold");
-  this.TranslationAnimation(this.weaponHolder_CHL, -600.0, 0.0, 0.0, 1.0, 0.0);
+  this.TranslationAnimation(this.weaponIcon_CHL, -600.0, 0.0, 0.0, 1.0, 0.0);
   this.TranslationAnimation(this.weaponName_CHL, -600.0, 0.0, 0.0, 1.0, 0.05);
   this.TranslationAnimation(this.ammoWrapper_CHL, -600.0, 0.0, 0.0, 1.0, 0.1);
   this.TranslationAnimation(this.damageIndicator_CHL, -600.0, -20.0, 0.0, 1.0, 0.15);
@@ -245,6 +243,96 @@ protected func TranslationAnimation(targetWidget: ref<inkWidget>, startTranslati
 
   targetWidget.SetVisible(true);
   proxy = targetWidget.PlayAnimation(moveElementsAnimDef);
-  // proxy.RegisterToCallback(inkanimEventType.OnFinish, this, n"OnTranslationCompleted");
   return proxy;
+}
+
+
+// -- Widget tweaks
+
+// Move compass and current time widgets to bottom of the minimap
+@wrapMethod(MinimapContainerController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+  let compass: ref<inkWidget> = root.GetWidget(n"MiniMapContainer/compassContainer");
+  let timeText: ref<inkWidget> = root.GetWidget(n"location/unredMessagesGroup");
+  let timeTranslation: Float = root.GetWidth() - timeText.GetWidth() - 40.0;
+  let compassMarginLeft: Float = compass.GetWidth() / 2.5;
+  let compassMarginTop: Float = compass.GetWidth() / 5;
+  root.GetWidget(n"holder").SetVisible(false);
+  compass.SetMargin(new inkMargin(-compassMarginLeft, -compassMarginTop, 0.0, 0.0));
+  compass.SetHAlign(inkEHorizontalAlign.Left);
+  compass.SetVAlign(inkEVerticalAlign.Bottom);
+  compass.SetAnchor(inkEAnchor.BottomLeft);
+  timeText.SetTranslation(new Vector2(timeTranslation, 0.0));
+}
+
+// -- New style for car hud
+
+@replaceMethod(hudCarController)
+protected cb func OnInitialize() -> Bool {
+  this.PlayLibraryAnimation(n"intro");
+  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+  let speedText: ref<inkText> = root.GetWidget(n"maindashcontainer/dynamic/speed_text") as inkText;
+  root.GetWidget(n"holder_code").SetVisible(false);
+  root.GetWidget(n"flufftext").SetVisible(false);
+  root.GetWidget(n"speed_fluff").SetVisible(false);
+  root.GetWidget(n"maindashcontainer/main").SetVisible(false);
+  root.GetWidget(n"maindashcontainer/dynamic/rpm_full").SetVisible(false);
+  speedText.SetFontSize(120);
+
+  CHL("Margins 1: " + ToString(this.GetRootWidget().GetMargin()));
+  CHL("Margins 2: " + ToString(this.GetRootCompoundWidget().GetMargin()));
+  CHL("Margins 3: " + ToString(speedText.GetMargin()));
+}
+
+// @wrapMethod(hudCarController)
+// protected cb func OnMountingEvent(evt: ref<MountingEvent>) -> Bool {
+//   wrappedMethod(evt);
+//   inkVehicleName.SetNameWidgetText(this.GetRootCompoundWidget(), "Vehicle name");
+// }
+
+
+
+
+
+
+
+
+// Remove quest tracker widget holder
+@wrapMethod(QuestTrackerGameController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+  root.GetWidget(n"inkVerticalPanelWidget2/QuestTracker/Fluff/AnchorPoint").SetVisible(false);
+}
+
+// Remove crime reported label from wanted bar widget
+@wrapMethod(WantedBarGameController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+  root.GetWidget(n"wanted_levels/attention").SetVisible(false);
+}
+
+
+// Scale widget size plus remove  widget holder and hp texts
+@wrapMethod(healthbarWidgetGameController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+  let buffs: ref<inkWidget> = root.GetWidget(n"buffsHolder/inkVerticalPanelWidget2/buffs");
+  root.GetWidget(n"buffsHolder/holder/holder_code").SetVisible(false);
+  root.GetWidget(n"buffsHolder/holder/holder_core").SetVisible(false);
+  root.GetWidget(n"buffsHolder/hpTextVert/hp_number_holder").SetVisible(false);
+  root.GetWidget(n"buffsHolder/hpbar_fluff").SetVisible(false);
+  buffs.SetScale(new Vector2(0.85, 0.85));
+  buffs.SetTranslation(new Vector2(-50.0, 0.0));
+}
+
+// ReMove text label for stamina bar widget
+@wrapMethod(StaminabarWidgetGameController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+  this.GetRootCompoundWidget().GetWidget(n"staminaMain/stamina_logo").SetVisible(false);
 }

@@ -1,6 +1,9 @@
 // -- Enable or disable CET logs
 public static func EnableLoggingCET() -> Bool = true
 
+@addField(inkWidget)
+public native let layout: inkWidgetLayout;
+
 // -- Custom event to inject root hud widget
 public class InjectRootHudGameControllerEvent extends Event {}
 
@@ -52,10 +55,16 @@ public class InjectRootHudGameControllerEvent extends Event {}
 @addField(inkGameController) let levelUpNotificationRef: ref<inkWidget>;        // LevelUpNotificationQueue
 @addField(inkGameController) let militechWarningRef: ref<inkWidget>;            // hudMilitechWarningGameController
 
+@addField(PlayerPuppet)
+public let m_initialized_CHL: Bool;
+
 @wrapMethod(PlayerPuppet)
 protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpawn>) -> Bool {
   wrappedMethod(evt);
-  GameInstance.GetUISystem(this.GetGame()).QueueEvent(new InjectRootHudGameControllerEvent());
+  if !this.m_initialized_CHL {
+    this.m_initialized_CHL = true;
+    GameInstance.GetUISystem(this.GetGame()).QueueEvent(new InjectRootHudGameControllerEvent());
+  };
 }
 
 @addMethod(inkGameController)
@@ -63,6 +72,7 @@ protected cb func OnInjectRootHudGameControllerEvent(evt: ref<InjectRootHudGameC
   if this.IsA(n"gameuiRootHudGameController") {
     this.CaptureSlotsAndWidgets();
     this.CreateCustomSlots();
+    this.CreateCustomWidgets();
     this.AdjustWidgetsPositions();
   };
 }
