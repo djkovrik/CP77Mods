@@ -1,106 +1,199 @@
 // -- Everything Bottom Minimal
 
+public static func CarHudVehicleNameColor() -> HDRColor = new HDRColor(1.18, 0.38, 0.345, 1.0)    // Default game red
+public static func CarHudSpeedTextColor() -> HDRColor = new HDRColor(0.368, 0.964, 1.0, 1.0)      // Default game blue
+
 @addField(inkGameController)
 public let TestSlot: ref<inkHorizontalPanel>;
 
 @addField(inkGameController)
-public let BottomLeftMain: ref<inkHorizontalPanel>;
+public let BottomLeftMinimap: ref<inkVerticalPanel>;
+
+@addField(inkGameController)
+public let BottomLeftWanted: ref<inkVerticalPanel>;
 
 @addField(inkGameController)
 public let BottomRightCarHud: ref<inkVerticalPanel>;
 
 @addField(inkGameController)
-public let m_vehicleName_CHL: ref<inkText>;
+public let BottomCenterPlayerStats: ref<inkVerticalPanel>;
 
 @addMethod(inkGameController)
-public func CreateCustomSlots() -> Void {
+public func CreateCustomWidgets() -> Void {
   this.TestSlot = this.MakeHorizontalSlot(
     n"TestSlot",
     new inkMargin(0.0, 0.0, 0.0, 0.0),
     inkEHorizontalAlign.Center,
     inkEVerticalAlign.Center,
     inkEAnchor.Centered,
-    new Vector2(0.5, 0.5),
-    new Vector2(0.5, 0.5)
+    new Vector2(0.0, 0.0),
+    new Vector2(0.0, 0.0)
   );
   this.TestSlot.Reparent(this.RootSlot);
 
-  this.BottomLeftMain = this.MakeHorizontalSlot(
-    n"BottomLeftMain",
-    new inkMargin(0.0, 0.0, 0.0, 0.0),
-    inkEHorizontalAlign.Fill,
-    inkEVerticalAlign.Fill,
+  this.BottomLeftMinimap = this.MakeVerticalSlot(
+    n"BottomLeftMinimap",
+    new inkMargin(25.0, 0.0, 10.0, 25.0),
+    inkEHorizontalAlign.Left,
+    inkEVerticalAlign.Bottom,
     inkEAnchor.BottomLeft,
     new Vector2(0.0, 1.0),
     new Vector2(0.0, 1.0)
   );
-  this.BottomLeftMain.Reparent(this.RootSlot);
+  this.BottomLeftMinimap.Reparent(this.RootSlot);
+
+  this.BottomLeftWanted = this.MakeVerticalSlot(
+    n"BottomLeftWanted",
+    new inkMargin(20.0, 0.0, 20.0, 20.0),
+    inkEHorizontalAlign.Left,
+    inkEVerticalAlign.Bottom,
+    inkEAnchor.BottomLeft,
+    new Vector2(1.5, -0.4),
+    new Vector2(1.5, -0.4)
+  );
+  this.BottomLeftWanted.SetRotation(180.0);
+  this.BottomLeftWanted.Reparent(this.RootSlot);
 
   this.BottomRightCarHud = this.MakeVerticalSlot(
     n"BottomRightCarHud",
-    new inkMargin(0.0, 0.0, 0.0, 0.0),
-    inkEHorizontalAlign.Right,
-    inkEVerticalAlign.Fill,
-    inkEAnchor.BottomRight,
+    new inkMargin(.0, 0.0, 30.0, 30.0),
+    inkEHorizontalAlign.Right, 
+    inkEVerticalAlign.Bottom, 
+    inkEAnchor.BottomRight, 
     new Vector2(1.0, 1.0),
     new Vector2(1.0, 1.0)
   );
+  this.BottomRightCarHud.SetAffectsLayoutWhenHidden(true);
   this.BottomRightCarHud.Reparent(this.RootSlot);
-}
 
-@addMethod(inkGameController)
-public func CreateCustomWidgets() {
-  this.m_vehicleName_CHL = new inkText();
-  this.m_vehicleName_CHL.SetName(n"chlVehicleName");
-  this.m_vehicleName_CHL.SetFontFamily("base\\gameplay\\gui\\fonts\\orbitron\\orbitron.inkfontfamily");
-  this.m_vehicleName_CHL.SetFontStyle(n"Medium");
-  this.m_vehicleName_CHL.SetFontSize(24);
-  this.m_vehicleName_CHL.SetLetterCase(textLetterCase.OriginalCase);
-  this.m_vehicleName_CHL.SetText("Vehicle name");
-  this.m_vehicleName_CHL.SetSize(200.0, 50.0);
-  this.SetWidgetParams(
-    this.m_vehicleName_CHL, 
-    new inkMargin(0.0, 0.0, 0.0, 0.0), 
+  this.BottomCenterPlayerStats = this.MakeVerticalSlot(
+    n"BottomCenterPlayerStats",
+    new inkMargin(20.0, 0.0, 20.0, 20.0),
     inkEHorizontalAlign.Center, 
-    inkEVerticalAlign.Center, 
-    inkEAnchor.Centered, 
-    new Vector2(0.5, 0.5),
-    new Vector2(0.5, 0.5)
+    inkEVerticalAlign.Bottom, 
+    inkEAnchor.BottomCenter, 
+    new Vector2(0.5, 1.0),
+    new Vector2(0.5, 1.0)
   );
-  this.m_vehicleName_CHL.Reparent(this.TestSlot);
+  this.BottomCenterPlayerStats.Reparent(this.RootSlot);
+
+
+  this.vehicleName_CHL = new inkText();
+  this.vehicleName_CHL.SetName(n"chlVehicleName");
+  this.vehicleName_CHL.SetSize(200.0, 50.0);
+  this.SetWidgetParams(
+    this.vehicleName_CHL, 
+    new inkMargin(0.0, 0.0, 0.0, 0.0), 
+    inkEHorizontalAlign.Left, 
+    inkEVerticalAlign.Bottom, 
+    inkEAnchor.BottomLeft, 
+    new Vector2(1.0, 1.0),
+    new Vector2(1.0, 1.0)
+  );
+  this.vehicleName_CHL.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+  this.vehicleName_CHL.SetFontStyle(n"Medium");
+  this.vehicleName_CHL.SetFontSize(24);
+  this.vehicleName_CHL.SetText("Vehicle name");
+  this.vehicleName_CHL.SetLetterCase(textLetterCase.OriginalCase);
+  this.vehicleName_CHL.SetTintColor(CarHudVehicleNameColor());
+  this.vehicleName_CHL.Reparent(this.BottomRightCarHud);
+
+  this.vehicleSpeed_CHL = new inkText();
+  this.vehicleSpeed_CHL.SetName(n"chlVehicleName");
+  this.vehicleSpeed_CHL.SetSize(200.0, 50.0);
+  this.SetWidgetParams(
+    this.vehicleSpeed_CHL, 
+    new inkMargin(0.0, 0.0, 0.0, 0.0), 
+    inkEHorizontalAlign.Left, 
+    inkEVerticalAlign.Bottom, 
+    inkEAnchor.BottomLeft, 
+    new Vector2(1.0, 1.0),
+    new Vector2(1.0, 1.0)
+  );
+  this.vehicleSpeed_CHL.SetFontFamily("base\\gameplay\\gui\\fonts\\industry\\industry.inkfontfamily");
+  this.vehicleSpeed_CHL.SetFontStyle(n"Medium");
+  this.vehicleSpeed_CHL.SetFontSize(72);
+  this.vehicleSpeed_CHL.SetText("123");
+  this.vehicleSpeed_CHL.SetLetterCase(textLetterCase.OriginalCase);
+  this.vehicleSpeed_CHL.SetTintColor(CarHudSpeedTextColor());
+  this.vehicleSpeed_CHL.Reparent(this.BottomRightCarHud);
 }
 
 @addMethod(inkGameController)
 public func AdjustWidgetsPositions() -> Void {
-  // Minimap
-  this.minimapRef.Reparent(this.BottomLeftMain);
-  // Wanted Bar
   // Quest List
-  // Healthbar
-  // Crouch and Weapon roster
+  this.SetWidgetParams(
+    this.questListRef, 
+    new inkMargin(25.0, 25.0, 0.0, 0.0),
+    inkEHorizontalAlign.Left,
+    inkEVerticalAlign.Center,
+    inkEAnchor.CenterLeft,
+    new Vector2(0.0, 0.0),
+    new Vector2(0.0, 0.0)
+  );
+  this.questListRef.SetScale(new Vector2(0.75, 0.75));
+  this.questListRef.Reparent(this.RootSlot);
+  // Minimap
+  this.SetWidgetParams(
+    this.minimapRef, 
+    new inkMargin(0.0, 0.0, 0.0, 0.0),
+    inkEHorizontalAlign.Left,
+    inkEVerticalAlign.Bottom,
+    inkEAnchor.BottomLeft,
+    new Vector2(0.0, 1.0),
+    new Vector2(0.0, 1.0)
+  );
+  this.minimapRef.Reparent(this.BottomLeftMinimap);
+  // Wanted Bar
+  this.SetWidgetParams(
+    this.wantedBarRef, 
+    new inkMargin(0.0, 0.0, 0.0, 0.0), 
+    inkEHorizontalAlign.Center, 
+    inkEVerticalAlign.Top, 
+    inkEAnchor.Centered, 
+    new Vector2(1.0, 0.75),
+    new Vector2(1.0, 0.75)
+  );
+  this.wantedBarRef.SetScale(new Vector2(0.5, 0.5));
+  this.wantedBarRef.Reparent(this.BottomLeftWanted);
   // Stamina bar
+  // Healthbar
+  this.SetWidgetParams(
+    this.playerHealthBarRef, 
+    new inkMargin(0.0, 0.0, 0.0, 0.0), 
+    inkEHorizontalAlign.Center,
+    inkEVerticalAlign.Center,
+    inkEAnchor.Centered,
+    new Vector2(0.5, 0.5),
+    new Vector2(0.5, 0.5)
+  );
+  this.playerHealthBarRef.SetScale(new Vector2(0.85, 0.85));
+  this.playerHealthBarRef.Reparent(this.BottomCenterPlayerStats);
+  // Oxygen bar
+  // Crouch and Weapon roster
   // Cooldowns
   // Vehicle summon
   // D-pad
   // Input Hunt
   // Crouch Indicator
   // Weapon roster
+  this.SetWidgetParams(
+    this.BottomRightHorizontalSlot, 
+    new inkMargin(0.0, 0.0, 0.0, 0.0),
+    inkEHorizontalAlign.Left, 
+    inkEVerticalAlign.Bottom, 
+    inkEAnchor.BottomLeft, 
+    new Vector2(0.0, 1.0),
+    new Vector2(0.0, 1.0)
+  );
+  this.BottomRightHorizontalSlot.SetMargin(new inkMargin(0.0, 0.0, 0.0, 10.0));
+  this.BottomRightHorizontalSlot.SetChildOrder(inkEChildOrder.Backward);
+  this.BottomRightHorizontalSlot.Reparent(this.BottomCenterPlayerStats);
+  this.ammoCounterRef.SetTranslation(new Vector2(-this.ammoCounterRef.GetWidth() / 4.0, 0.0));
   // Warning
   // HUD progress
-  // Oxygen bar
   // Car HUD
-  // let margins: inkMargin = this.carHudRef.GetMargin();
-  // this.carHudRef.SetTranslation(new Vector2(120.0, margins.bottom));
-  // this.SetWidgetParams(
-  //   this.carHudRef, 
-  //   new inkMargin(0.0, 0.0, 0.0, 0.0), 
-  //   inkEHorizontalAlign.Right, 
-  //   inkEVerticalAlign.Bottom, 
-  //   inkEAnchor.BottomRight, 
-  //   new Vector2(1.0, 1.0),
-  //   new Vector2(1.0, 1.0)
-  // );
-  this.carHudRef.Reparent(this.BottomRightCarHud);
+  this.RootSlot.RemoveChild(this.carHudRef);
   // Zone alert
   // Phone call
   // Items notifications
@@ -267,38 +360,6 @@ protected cb func OnInitialize() -> Bool {
   timeText.SetTranslation(new Vector2(timeTranslation, 0.0));
 }
 
-// -- New style for car hud
-
-@replaceMethod(hudCarController)
-protected cb func OnInitialize() -> Bool {
-  this.PlayLibraryAnimation(n"intro");
-  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
-  let speedText: ref<inkText> = root.GetWidget(n"maindashcontainer/dynamic/speed_text") as inkText;
-  root.GetWidget(n"holder_code").SetVisible(false);
-  root.GetWidget(n"flufftext").SetVisible(false);
-  root.GetWidget(n"speed_fluff").SetVisible(false);
-  root.GetWidget(n"maindashcontainer/main").SetVisible(false);
-  root.GetWidget(n"maindashcontainer/dynamic/rpm_full").SetVisible(false);
-  speedText.SetFontSize(120);
-
-  CHL("Margins 1: " + ToString(this.GetRootWidget().GetMargin()));
-  CHL("Margins 2: " + ToString(this.GetRootCompoundWidget().GetMargin()));
-  CHL("Margins 3: " + ToString(speedText.GetMargin()));
-}
-
-// @wrapMethod(hudCarController)
-// protected cb func OnMountingEvent(evt: ref<MountingEvent>) -> Bool {
-//   wrappedMethod(evt);
-//   inkVehicleName.SetNameWidgetText(this.GetRootCompoundWidget(), "Vehicle name");
-// }
-
-
-
-
-
-
-
-
 // Remove quest tracker widget holder
 @wrapMethod(QuestTrackerGameController)
 protected cb func OnInitialize() -> Bool {
@@ -326,13 +387,124 @@ protected cb func OnInitialize() -> Bool {
   root.GetWidget(n"buffsHolder/holder/holder_core").SetVisible(false);
   root.GetWidget(n"buffsHolder/hpTextVert/hp_number_holder").SetVisible(false);
   root.GetWidget(n"buffsHolder/hpbar_fluff").SetVisible(false);
-  buffs.SetScale(new Vector2(0.85, 0.85));
   buffs.SetTranslation(new Vector2(-50.0, 0.0));
 }
 
-// ReMove text label for stamina bar widget
+// Remove text label for stamina bar widget
 @wrapMethod(StaminabarWidgetGameController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
   this.GetRootCompoundWidget().GetWidget(n"staminaMain/stamina_logo").SetVisible(false);
 }
+
+// -- New speedometer widgets
+
+@addField(inkGameController)
+private let activeVehicle_CHL: wref<VehicleObject>;
+
+@addField(inkGameController)
+private let vehicleName_CHL: ref<inkText>;
+
+@addField(inkGameController)
+private let vehicleSpeed_CHL: ref<inkText>;
+
+@addField(inkGameController)
+private let speedBBConnectionId_CHL: ref<CallbackHandle>;
+
+@addField(inkGameController)
+private let tppBBConnectionId_CHL: ref<CallbackHandle>;
+
+@addField(inkGameController)
+private let isDriver_CHL: Bool;
+
+@replaceMethod(hudCarController)
+protected cb func OnInitialize() -> Bool {
+  this.PlayLibraryAnimation(n"intro");
+}
+
+@addMethod(inkGameController)
+protected cb func OnPlayerAttach(playerPuppet: ref<GameObject>) -> Bool {
+  if this.IsA(n"gameuiRootHudGameController") {
+    this.activeVehicle_CHL = GetMountedVehicle(this.GetPlayerControlledObject());
+    this.RegisterToVehicle(true);
+  };
+}
+
+@addMethod(inkGameController)
+protected cb func OnPlayerDetach(playerPuppet: ref<GameObject>) -> Bool {
+  if this.IsA(n"gameuiRootHudGameController") {
+    this.RegisterToVehicle(false);
+    this.activeVehicle_CHL = null;
+  };
+}
+
+@addMethod(inkGameController)
+protected cb func OnMountingEvent(evt: ref<MountingEvent>) -> Bool {
+  if this.IsA(n"gameuiRootHudGameController") {
+    this.activeVehicle_CHL = GetMountedVehicle(this.GetPlayerControlledObject());
+    let vehicleName: String = LocKeyToString(this.activeVehicle_CHL.GetRecord().DisplayName());
+    this.vehicleName_CHL.SetText(vehicleName);
+    this.isDriver_CHL = VehicleComponent.IsDriver(this.activeVehicle_CHL.GetGame(), this.GetPlayerControlledObject());
+    this.RegisterToVehicle(true);
+  };
+}
+
+@addMethod(inkGameController)
+protected cb func OnUnmountingEvent(evt: ref<UnmountingEvent>) -> Bool {
+  if this.IsA(n"gameuiRootHudGameController") {
+    this.vehicleName_CHL.SetText("");
+    this.RegisterToVehicle(false);
+    this.activeVehicle_CHL = null;
+  };
+}
+
+@addMethod(inkGameController)
+private final func RegisterToVehicle(register: Bool) -> Void {
+  if !this.IsA(n"gameuiRootHudGameController") {
+    return ;
+  };
+
+  let activeVehicleUIBlackboard: wref<IBlackboard>;
+  let vehicleBlackboard: wref<IBlackboard>;
+  let vehicle: ref<VehicleObject> = this.activeVehicle_CHL;
+  if vehicle == null {
+    return;
+  };
+  vehicleBlackboard = vehicle.GetBlackboard();
+  if IsDefined(vehicleBlackboard) {
+    if register {
+      this.speedBBConnectionId_CHL = vehicleBlackboard.RegisterListenerFloat(GetAllBlackboardDefs().Vehicle.SpeedValue, this, n"OnSpeedValueChanged");
+    } else {
+      vehicleBlackboard.UnregisterListenerFloat(GetAllBlackboardDefs().Vehicle.SpeedValue, this.speedBBConnectionId_CHL);
+    };
+  };
+  activeVehicleUIBlackboard = GameInstance.GetBlackboardSystem(vehicle.GetGame()).Get(GetAllBlackboardDefs().UI_ActiveVehicleData);
+  if IsDefined(activeVehicleUIBlackboard) {
+    if register {
+      this.tppBBConnectionId_CHL = activeVehicleUIBlackboard.RegisterListenerBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsTPPCameraOn, this, n"OnCameraModeChanged", true);
+    } else {
+      activeVehicleUIBlackboard.UnregisterListenerBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsTPPCameraOn, this.tppBBConnectionId_CHL);
+    };
+  };
+  this.BottomRightCarHud.SetVisible(register);
+}
+
+
+@addMethod(inkGameController)
+protected cb func OnSpeedValueChanged(speedValue: Float) -> Bool {
+  if this.IsA(n"gameuiRootHudGameController") {
+    speedValue = AbsF(speedValue);
+    let multiplier: Float = GameInstance.GetStatsDataSystem(this.activeVehicle_CHL.GetGame()).GetValueFromCurve(n"vehicle_ui", speedValue, n"speed_to_multiplier");
+    this.vehicleSpeed_CHL.SetText(IntToString(RoundMath(speedValue * multiplier)));
+  };
+}
+
+@addMethod(inkGameController)
+protected cb func OnCameraModeChanged(mode: Bool) -> Bool {
+  if this.IsA(n"gameuiRootHudGameController") {
+    if this.isDriver_CHL {
+      // this.BottomRightCarHud.SetVisible(mode);
+    };
+  };
+}
+

@@ -71,7 +71,6 @@ protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpaw
 protected cb func OnInjectRootHudGameControllerEvent(evt: ref<InjectRootHudGameControllerEvent>) -> Bool {
   if this.IsA(n"gameuiRootHudGameController") {
     this.CaptureSlotsAndWidgets();
-    this.CreateCustomSlots();
     this.CreateCustomWidgets();
     this.AdjustWidgetsPositions();
   };
@@ -124,15 +123,6 @@ public func SetWidgetParams(widget: ref<inkWidget>, m: inkMargin, h: inkEHorizon
   widget.SetAnchorPoint(pnt);
   widget.SetRenderTransformPivot(pvt);
   widget.SetLayout(new inkWidgetLayout(m, m, h, v, a, pnt));
-}
-
-@addMethod(inkGameController)
-protected func GetCurrentResolution() -> Vector2 {
-  let settings: ref<UserSettings> = GameInstance.GetSettingsSystem(this.GetPlayerControlledObject().GetGame());
-  let configVar: ref<ConfigVarListString> = settings.GetVar(n"/video/display", n"Resolution") as ConfigVarListString;
-  let resolution: String = configVar.GetValue();
-  let dimensions: array<String> = StrSplit(resolution, "x");
-  return new Vector2(StringToFloat(dimensions[0]), StringToFloat(dimensions[1]));
 }
 
 public static func CHL(str: String) -> Void {

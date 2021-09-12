@@ -41,18 +41,18 @@ protected cb func OnDisplayPresetEvent(evt: ref<DisplayPresetEvent>) -> Bool {
   /* Showcase 1 */
   this.ShowWantedBar();
   this.ShowVehicleSummonNotification();
-  this.ShowActivityLog();
-  this.ShowWarningMessage("Warning message here");
-  this.ShowBossHealthbar();
-  this.ShowHUDProgressBar();
-  this.ShowOxygenBar();
+  // this.ShowActivityLog();
+  // this.ShowWarningMessage("Warning message here");
+  // this.ShowBossHealthbar();
+  // this.ShowHUDProgressBar();
+  // this.ShowOxygenBar();
   this.ShowCarHUD();
   this.ShowStaminaBar();
-  this.ShowItemsNotification();
+  // this.ShowItemsNotification();
 
   /* Showcase 2 */
   // this.ShowLevelUpNotification();
-  // this.ShowIncomingPhoneCall(n"panam");
+  this.ShowIncomingPhoneCall(n"panam");
   // this.ShowJournalNotification();
 
   /* All */
