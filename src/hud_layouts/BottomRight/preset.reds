@@ -1,10 +1,5 @@
 // -- Bottom Right
 
-public static func CarHudVehicleNameColor() -> HDRColor = new HDRColor(1.18, 0.38, 0.345, 1.0)    // Default game red
-public static func CarHudSpeedTextColor() -> HDRColor = new HDRColor(0.368, 0.964, 1.0, 1.0)      // Default game blue
-public static func CarHudVehicleNameFontSize() -> Int32 = 24
-public static func CarHudSpeedLabelFontSize() -> Int32 = 68
-
 @addField(inkGameController)
 public let CustomBottomLeftVertical: ref<inkVerticalPanel>;
 
@@ -13,9 +8,6 @@ public let CustomBottomRightVertical: ref<inkVerticalPanel>;
 
 @addField(inkGameController)
 public let CustomBottomRightMinimap: ref<inkHorizontalPanel>;
-
-@addField(inkGameController)
-public let BottomLeftCarHud: ref<inkVerticalPanel>;
 
 @addMethod(inkGameController)
 public func CreateCustomWidgets() -> Void {
@@ -50,65 +42,7 @@ public func CreateCustomWidgets() -> Void {
     new Vector2(1.0, 1.0),
     new Vector2(1.0, 1.0)
   );
-
-  this.BottomLeftCarHud = this.MakeVerticalSlot(
-    n"BottomLeftCarHud",
-    new inkMargin(0.0, 0.0, 0.0, 10.0),
-    inkEHorizontalAlign.Left, 
-    inkEVerticalAlign.Bottom, 
-    inkEAnchor.BottomLeft, 
-    new Vector2(0.0, 1.0),
-    new Vector2(0.0, 1.0)
-  );
-  this.BottomLeftCarHud.SetAffectsLayoutWhenHidden(true);
-  this.BottomLeftCarHud.Reparent(this.CustomBottomLeftVertical);
-
-  this.InitializeSpeedometer();
 }
-
-@addMethod(inkGameController)
-private func InitializeSpeedometer() -> Void {
-  this.vehicleName_CHL = new inkText();
-  this.vehicleName_CHL.SetName(n"chlVehicleName");
-  this.vehicleName_CHL.SetSize(200.0, 50.0);
-  this.SetWidgetParams(
-    this.vehicleName_CHL, 
-    new inkMargin(0.0, 0.0, 0.0, 0.0), 
-    inkEHorizontalAlign.Left, 
-    inkEVerticalAlign.Bottom, 
-    inkEAnchor.BottomLeft, 
-    new Vector2(1.0, 1.0),
-    new Vector2(1.0, 1.0)
-  );
-  this.vehicleName_CHL.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-  this.vehicleName_CHL.SetFontStyle(n"Medium");
-  this.vehicleName_CHL.SetFontSize(CarHudVehicleNameFontSize());
-  this.vehicleName_CHL.SetText("Vehicle name");
-  this.vehicleName_CHL.SetLetterCase(textLetterCase.OriginalCase);
-  this.vehicleName_CHL.SetTintColor(CarHudVehicleNameColor());
-  this.vehicleName_CHL.Reparent(this.BottomLeftCarHud);
-
-  this.vehicleSpeed_CHL = new inkText();
-  this.vehicleSpeed_CHL.SetName(n"chlVehicleName");
-  this.vehicleSpeed_CHL.SetSize(200.0, 50.0);
-  this.SetWidgetParams(
-    this.vehicleSpeed_CHL, 
-    new inkMargin(0.0, 0.0, 0.0, 0.0), 
-    inkEHorizontalAlign.Left, 
-    inkEVerticalAlign.Bottom, 
-    inkEAnchor.BottomLeft, 
-    new Vector2(0.0, 1.0),
-    new Vector2(0.0, 1.0)
-  );
-  this.vehicleSpeed_CHL.SetFontFamily("base\\gameplay\\gui\\fonts\\industry\\industry.inkfontfamily");
-  this.vehicleSpeed_CHL.SetFontStyle(n"Medium");
-  this.vehicleSpeed_CHL.SetFontSize(CarHudSpeedLabelFontSize());
-  this.vehicleSpeed_CHL.SetText("123");
-  this.vehicleSpeed_CHL.SetLetterCase(textLetterCase.OriginalCase);
-  this.vehicleSpeed_CHL.SetTintColor(CarHudSpeedTextColor());
-  this.vehicleSpeed_CHL.Reparent(this.BottomLeftCarHud);
-}
-
 
 @addMethod(inkGameController)
 public func AdjustWidgetsPositions() -> Void {
@@ -127,7 +61,17 @@ public func AdjustWidgetsPositions() -> Void {
   this.BottomRightHorizontalSlot.Reparent(this.CustomBottomLeftVertical);
   this.ammoCounterRef.SetTranslation(new Vector2(-this.ammoCounterRef.GetWidth() / 4.0, 0.0));
 
-  this.RootSlot.RemoveChild(this.carHudRef);
+  let margin: inkMargin = this.carHudRef.GetMargin();
+  this.SetWidgetParams(
+    this.carHudRef, 
+    new inkMargin(0.0, 0.0, 0.0, 0.0), 
+    inkEHorizontalAlign.Center, 
+    inkEVerticalAlign.Bottom, 
+    inkEAnchor.BottomCenter, 
+    new Vector2(0.5, 0.5),
+    new Vector2(0.5, 0.5)
+  );
+  this.carHudRef.SetTranslation(new Vector2(-margin.left, margin.bottom / 2));
 
   this.SetWidgetParams(
     this.vehicleSummonNotificationRef, 
@@ -146,13 +90,14 @@ public func AdjustWidgetsPositions() -> Void {
 
   this.SetWidgetParams(
     this.wantedBarRef, 
-    new inkMargin(0.0, 0.0, 0.0, 0.0),
+    new inkMargin(20.0, 0.0, 0.0, 40.0),
     inkEHorizontalAlign.Right, 
     inkEVerticalAlign.Bottom, 
     inkEAnchor.BottomRight, 
     new Vector2(1.0, 1.0),
     new Vector2(1.0, 1.0)
   );
+  this.wantedBarRef.SetScale(new Vector2(0.5, 0.5));
   this.wantedBarRef.Reparent(this.CustomBottomRightMinimap);
 
   this.SetWidgetParams(
@@ -202,13 +147,14 @@ public func AdjustWidgetsPositions() -> Void {
 
   this.SetWidgetParams(
     this.dpadHintRef, 
-    new inkMargin(25.0, 0.0, 25.0, 100.0),
+    new inkMargin(0.0, 0.0, -100.0, 100.0),
     inkEHorizontalAlign.Right, 
     inkEVerticalAlign.Bottom, 
     inkEAnchor.BottomCenter, 
     new Vector2(-0.4, 1.0),
     new Vector2(-0.4, 1.0)
   );
+  this.dpadHintRef.SetScale(new Vector2(0.8, 0.8));
   this.dpadHintRef.Reparent(this.RootSlot);
 }
 
@@ -340,116 +286,3 @@ protected func TranslationAnimation(targetWidget: ref<inkWidget>, startTranslati
   proxy = targetWidget.PlayAnimation(moveElementsAnimDef);
   return proxy;
 }
-
-
-// -- New speedometer widgets
-
-@addField(inkGameController)
-private let activeVehicle_CHL: wref<VehicleObject>;
-
-@addField(inkGameController)
-private let vehicleName_CHL: ref<inkText>;
-
-@addField(inkGameController)
-private let vehicleSpeed_CHL: ref<inkText>;
-
-@addField(inkGameController)
-private let speedBBConnectionId_CHL: ref<CallbackHandle>;
-
-@addField(inkGameController)
-private let tppBBConnectionId_CHL: ref<CallbackHandle>;
-
-@addField(inkGameController)
-private let isDriver_CHL: Bool;
-
-@replaceMethod(hudCarController)
-protected cb func OnInitialize() -> Bool {
-  this.PlayLibraryAnimation(n"intro");
-}
-
-@addMethod(inkGameController)
-protected cb func OnPlayerAttach(playerPuppet: ref<GameObject>) -> Bool {
-  if this.IsA(n"gameuiRootHudGameController") {
-    this.activeVehicle_CHL = GetMountedVehicle(this.GetPlayerControlledObject());
-    this.RegisterToVehicle(true);
-  };
-}
-
-@addMethod(inkGameController)
-protected cb func OnPlayerDetach(playerPuppet: ref<GameObject>) -> Bool {
-  if this.IsA(n"gameuiRootHudGameController") {
-    this.RegisterToVehicle(false);
-    this.activeVehicle_CHL = null;
-  };
-}
-
-@addMethod(inkGameController)
-protected cb func OnMountingEvent(evt: ref<MountingEvent>) -> Bool {
-  if this.IsA(n"gameuiRootHudGameController") {
-    this.activeVehicle_CHL = GetMountedVehicle(this.GetPlayerControlledObject());
-    let vehicleName: String = LocKeyToString(this.activeVehicle_CHL.GetRecord().DisplayName());
-    this.vehicleName_CHL.SetText(vehicleName);
-    this.isDriver_CHL = VehicleComponent.IsDriver(this.activeVehicle_CHL.GetGame(), this.GetPlayerControlledObject());
-    this.RegisterToVehicle(true);
-  };
-}
-
-@addMethod(inkGameController)
-protected cb func OnUnmountingEvent(evt: ref<UnmountingEvent>) -> Bool {
-  if this.IsA(n"gameuiRootHudGameController") {
-    this.vehicleName_CHL.SetText("");
-    this.RegisterToVehicle(false);
-    this.activeVehicle_CHL = null;
-  };
-}
-
-@addMethod(inkGameController)
-private final func RegisterToVehicle(register: Bool) -> Void {
-  if !this.IsA(n"gameuiRootHudGameController") {
-    return ;
-  };
-
-  let activeVehicleUIBlackboard: wref<IBlackboard>;
-  let vehicleBlackboard: wref<IBlackboard>;
-  let vehicle: ref<VehicleObject> = this.activeVehicle_CHL;
-  if vehicle == null {
-    return;
-  };
-  vehicleBlackboard = vehicle.GetBlackboard();
-  if IsDefined(vehicleBlackboard) {
-    if register {
-      this.speedBBConnectionId_CHL = vehicleBlackboard.RegisterListenerFloat(GetAllBlackboardDefs().Vehicle.SpeedValue, this, n"OnSpeedValueChanged");
-    } else {
-      vehicleBlackboard.UnregisterListenerFloat(GetAllBlackboardDefs().Vehicle.SpeedValue, this.speedBBConnectionId_CHL);
-    };
-  };
-  activeVehicleUIBlackboard = GameInstance.GetBlackboardSystem(vehicle.GetGame()).Get(GetAllBlackboardDefs().UI_ActiveVehicleData);
-  if IsDefined(activeVehicleUIBlackboard) {
-    if register {
-      this.tppBBConnectionId_CHL = activeVehicleUIBlackboard.RegisterListenerBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsTPPCameraOn, this, n"OnCameraModeChanged", true);
-    } else {
-      activeVehicleUIBlackboard.UnregisterListenerBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsTPPCameraOn, this.tppBBConnectionId_CHL);
-    };
-  };
-  // this.BottomRightCarHud.SetVisible(register);
-}
-
-
-@addMethod(inkGameController)
-protected cb func OnSpeedValueChanged(speedValue: Float) -> Bool {
-  if this.IsA(n"gameuiRootHudGameController") {
-    speedValue = AbsF(speedValue);
-    let multiplier: Float = GameInstance.GetStatsDataSystem(this.activeVehicle_CHL.GetGame()).GetValueFromCurve(n"vehicle_ui", speedValue, n"speed_to_multiplier");
-    this.vehicleSpeed_CHL.SetText(IntToString(RoundMath(speedValue * multiplier)));
-  };
-}
-
-@addMethod(inkGameController)
-protected cb func OnCameraModeChanged(mode: Bool) -> Bool {
-  if this.IsA(n"gameuiRootHudGameController") {
-    if this.isDriver_CHL {
-      // this.BottomRightCarHud.SetVisible(mode);
-    };
-  };
-}
-
