@@ -5,9 +5,17 @@
 import LimitedHudCommon.*
 import LimitedHudConfig.MinimapModuleConfig
 
+// Track braindance state changing events
+public class BraindanceModeChangedEvent extends Event {
+  public let m_isActive: Bool;
+}
+
 @addMethod(MinimapContainerController)
-public func OnBraindanceStateChanged(newState: Int32) -> Void {
+public func OnBraindanceStateChanged(value: Bool) -> Void {
   this.DetermineCurrentVisibility();
+  let event: ref<BraindanceModeChangedEvent> = new BraindanceModeChangedEvent();
+  event.m_isActive = value;
+  GameInstance.GetUISystem(this.m_playerPuppet_LHUD.GetGame()).QueueEvent(event);
 }
 
 @addMethod(MinimapContainerController)
@@ -139,4 +147,16 @@ protected cb func OnPlayerAttach(playerGameObject: ref<GameObject>) -> Bool {
 protected cb func OnPlayerDetach(playerGameObject: ref<GameObject>) -> Bool {
   wrappedMethod(playerGameObject);
   this.ClearBBs();
+}
+
+@addMethod(inkGameController)
+protected cb func OnBraindanceModeChangedEvent(evt: ref<BraindanceModeChangedEvent>) -> Bool {
+  if this.IsA(n"gameuiRootHudGameController") {
+    let slot: ref<inkCompoundWidget> = this.GetRootCompoundWidget().GetWidgetByPath(inkWidgetPath.Build(n"TopRightMain", n"TopRight")) as inkCompoundWidget;
+    if evt.m_isActive {
+      slot.SetChildOrder(inkEChildOrder.Backward);
+    } else {
+      slot.SetChildOrder(inkEChildOrder.Forward);
+    };
+  };
 }
