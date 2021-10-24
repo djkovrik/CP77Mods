@@ -94,3 +94,10 @@ private final func ComputeHealthBarVisibility() -> Void {
     this.HideRequest();
   };
 }
+
+@wrapMethod(healthbarWidgetGameController)
+protected cb func OnInitialize() -> Bool {
+  this.m_moduleShown = false;
+  this.GetRootWidget().SetVisible(false);
+  wrappedMethod();
+}
