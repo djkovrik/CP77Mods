@@ -1,5 +1,6 @@
 import LimitedHudConfig.ActionButtonsModuleConfig
-import LimitedHudCommon.*
+import LimitedHudCommon.LHUDEvent
+import LimitedHudCommon.LHUDLog
 
 @addMethod(HotkeysWidgetController)
 protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
@@ -9,29 +10,35 @@ protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
 
 @addMethod(HotkeysWidgetController)
 public func DetermineCurrentVisibility() -> Void {
-  // Check if enabled
   if !ActionButtonsModuleConfig.IsEnabled() {
     return ;
   };
 
-  // Check for braindance
-  if this.l_isBraindanceActive {
+  if this.lhud_isBraindanceActive {
+    this.lhud_isVisibleNow = false;
     this.GetRootWidget().SetVisible(false);
-    return;
+    return ;
   };
 
-  // Bind to config
-  let showForGlobalHotkey: Bool = this.l_isGlobalFlagToggled && ActionButtonsModuleConfig.BindToGlobalHotkey();
-  let showForCombat: Bool = this.l_isCombatActive && ActionButtonsModuleConfig.ShowInCombat();
-  let showForOutOfCombat: Bool = this.l_isOutOfCombatActive && ActionButtonsModuleConfig.ShowOutOfCombat();
-  let showForStealth: Bool =  this.l_isStealthActive && ActionButtonsModuleConfig.ShowInStealth();
-  let showForWeapon: Bool = this.l_isWeaponUnsheathed && ActionButtonsModuleConfig.ShowWithWeapon();
-  let showForZoom: Bool =  this.l_isZoomActive && ActionButtonsModuleConfig.ShowWithZoom();
+  let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && ActionButtonsModuleConfig.BindToGlobalHotkey();
+  let showForCombat: Bool = this.lhud_isCombatActive && ActionButtonsModuleConfig.ShowInCombat();
+  let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && ActionButtonsModuleConfig.ShowOutOfCombat();
+  let showForStealth: Bool =  this.lhud_isStealthActive && ActionButtonsModuleConfig.ShowInStealth();
+  let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && ActionButtonsModuleConfig.ShowWithWeapon();
+  let showForZoom: Bool =  this.lhud_isZoomActive && ActionButtonsModuleConfig.ShowWithZoom();
 
-  // Set visibility
-  let isVisible: Bool = showForCombat || showForOutOfCombat || showForGlobalHotkey || showForStealth || showForWeapon || showForZoom;
-  if NotEquals(this.l_isVisibleNow, isVisible) {
-    this.l_isVisibleNow = isVisible;
+  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForWeapon || showForZoom;
+  if NotEquals(this.lhud_isVisibleNow, isVisible) {
+    this.lhud_isVisibleNow = isVisible;
     this.GetRootWidget().SetVisible(isVisible);
+  };
+}
+
+@wrapMethod(HotkeysWidgetController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+  if ActionButtonsModuleConfig.IsEnabled() {
+    this.lhud_isVisibleNow = false;
+    this.OnInitializeFinished();
   };
 }

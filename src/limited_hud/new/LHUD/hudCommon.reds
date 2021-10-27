@@ -2,7 +2,7 @@ module LimitedHudCommon
 
 // --- FIELDS AND TYPES
 
-// Event type for visibility condition events
+// Visibility condition event types
 enum LHUDEventType {
   GlobalHotkey = 1,
   MinimapHotkey = 2,
@@ -23,71 +23,70 @@ public class LHUDEvent extends Event {
 }
 
 // Visibility condition flags for inkGameController instances
-@addField(inkGameController) public let l_isGlobalFlagToggled: Bool;
-@addField(inkGameController) public let l_isMinimapFlagToggled: Bool;
-@addField(inkGameController) public let l_isBraindanceActive: Bool;
-@addField(inkGameController) public let l_isCombatActive: Bool;
-@addField(inkGameController) public let l_isOutOfCombatActive: Bool;
-@addField(inkGameController) public let l_isStealthActive: Bool;
-@addField(inkGameController) public let l_isScannerActive: Bool;
-@addField(inkGameController) public let l_isInVehicle: Bool;
-@addField(inkGameController) public let l_isWeaponUnsheathed: Bool;
-@addField(inkGameController) public let l_isZoomActive: Bool;
-@addField(inkGameController) public let l_isVisibleNow: Bool;
+@addField(inkGameController) public let lhud_isGlobalFlagToggled: Bool;
+@addField(inkGameController) public let lhud_isMinimapFlagToggled: Bool;
+@addField(inkGameController) public let lhud_isBraindanceActive: Bool;
+@addField(inkGameController) public let lhud_isCombatActive: Bool;
+@addField(inkGameController) public let lhud_isOutOfCombatActive: Bool;
+@addField(inkGameController) public let lhud_isStealthActive: Bool;
+@addField(inkGameController) public let lhud_isScannerActive: Bool;
+@addField(inkGameController) public let lhud_isInVehicle: Bool;
+@addField(inkGameController) public let lhud_isWeaponUnsheathed: Bool;
+@addField(inkGameController) public let lhud_isZoomActive: Bool;
+@addField(inkGameController) public let lhud_isVisibleNow: Bool;
 
 // Visibility condition flags for inkLogicController instances
-@addField(inkLogicController) public let l_isGlobalFlagToggled: Bool;
-@addField(inkLogicController) public let l_isMinimapFlagToggled: Bool;
-@addField(inkLogicController) public let l_isBraindanceActive: Bool;
-@addField(inkLogicController) public let l_isCombatActive: Bool;
-@addField(inkLogicController) public let l_isOutOfCombatActive: Bool;
-@addField(inkLogicController) public let l_isStealthActive: Bool;
-@addField(inkLogicController) public let l_isScannerActive: Bool;
-@addField(inkLogicController) public let l_isInVehicle: Bool;
-@addField(inkLogicController) public let l_isWeaponUnsheathed: Bool;
-@addField(inkLogicController) public let l_isZoomActive: Bool;
-@addField(inkLogicController) public let l_isVisibleNow: Bool;
+@addField(inkLogicController) public let lhud_isGlobalFlagToggled: Bool;
+@addField(inkLogicController) public let lhud_isMinimapFlagToggled: Bool;
+@addField(inkLogicController) public let lhud_isBraindanceActive: Bool;
+@addField(inkLogicController) public let lhud_isCombatActive: Bool;
+@addField(inkLogicController) public let lhud_isOutOfCombatActive: Bool;
+@addField(inkLogicController) public let lhud_isStealthActive: Bool;
+@addField(inkLogicController) public let lhud_isScannerActive: Bool;
+@addField(inkLogicController) public let lhud_isInVehicle: Bool;
+@addField(inkLogicController) public let lhud_isWeaponUnsheathed: Bool;
+@addField(inkLogicController) public let lhud_isZoomActive: Bool;
+@addField(inkLogicController) public let lhud_isVisibleNow: Bool;
 
 // Catch LHUDEvent inside inkGameController instances
 @addMethod(inkGameController)
 protected func ConsumeEvent(evt: ref<LHUDEvent>) -> Void {
-  // LHUDLog("ConsumeEvent " + ToString(evt.m_type) + " " + ToString(evt.m_isActive));
   switch(evt.m_type) {
     case LHUDEventType.GlobalHotkey: 
-      this.l_isGlobalFlagToggled = !this.l_isGlobalFlagToggled;
+      this.lhud_isGlobalFlagToggled = !this.lhud_isGlobalFlagToggled;
       break;
     case LHUDEventType.MinimapHotkey: 
-      this.l_isMinimapFlagToggled = !this.l_isMinimapFlagToggled;
+      this.lhud_isMinimapFlagToggled = !this.lhud_isMinimapFlagToggled;
       break;
     case LHUDEventType.Braindance: 
-      this.l_isBraindanceActive = evt.m_isActive;
+      this.lhud_isBraindanceActive = evt.m_isActive;
       break;
     case LHUDEventType.Combat: 
-      this.l_isCombatActive = evt.m_isActive;
-      this.l_isOutOfCombatActive = false;
-      this.l_isStealthActive = false;
+      this.lhud_isCombatActive = evt.m_isActive;
+      this.lhud_isOutOfCombatActive = false;
+      this.lhud_isStealthActive = false;
       break;
     case LHUDEventType.OutOfCombat: 
-      this.l_isCombatActive = false;
-      this.l_isOutOfCombatActive = evt.m_isActive;
-      this.l_isStealthActive = false;
+      this.lhud_isCombatActive = false;
+      this.lhud_isOutOfCombatActive = evt.m_isActive;
+      this.lhud_isStealthActive = false;
       break;
     case LHUDEventType.Stealth: 
-      this.l_isCombatActive = false;
-      this.l_isOutOfCombatActive = false;
-      this.l_isStealthActive = evt.m_isActive;
+      this.lhud_isCombatActive = false;
+      this.lhud_isOutOfCombatActive = false;
+      this.lhud_isStealthActive = evt.m_isActive;
       break; 
     case LHUDEventType.Scanner: 
-      this.l_isScannerActive = evt.m_isActive;
+      this.lhud_isScannerActive = evt.m_isActive;
       break;
     case LHUDEventType.InVehicle: 
-      this.l_isInVehicle = evt.m_isActive;
+      this.lhud_isInVehicle = evt.m_isActive;
       break;
     case LHUDEventType.Weapon: 
-      this.l_isWeaponUnsheathed = evt.m_isActive;
+      this.lhud_isWeaponUnsheathed = evt.m_isActive;
       break;
     case LHUDEventType.Zoom: 
-      this.l_isZoomActive = evt.m_isActive;
+      this.lhud_isZoomActive = evt.m_isActive;
       break;
     default:
       break;
@@ -97,43 +96,42 @@ protected func ConsumeEvent(evt: ref<LHUDEvent>) -> Void {
 // Catch LHUDEvent inside inkLogicController instances
 @addMethod(inkLogicController)
 protected func ConsumeEvent(evt: ref<LHUDEvent>) -> Void {
-  // LHUDLog("ConsumeEvent " + ToString(evt.m_type) + " " + ToString(evt.m_isActive));
   switch(evt.m_type) {
     case LHUDEventType.GlobalHotkey: 
-      this.l_isGlobalFlagToggled = !this.l_isGlobalFlagToggled;
+      this.lhud_isGlobalFlagToggled = !this.lhud_isGlobalFlagToggled;
       break;
     case LHUDEventType.MinimapHotkey: 
-      this.l_isMinimapFlagToggled = !this.l_isMinimapFlagToggled;
+      this.lhud_isMinimapFlagToggled = !this.lhud_isMinimapFlagToggled;
       break;
     case LHUDEventType.Braindance: 
-      this.l_isBraindanceActive = evt.m_isActive;
+      this.lhud_isBraindanceActive = evt.m_isActive;
       break;
     case LHUDEventType.Combat: 
-      this.l_isCombatActive = evt.m_isActive;
-      this.l_isOutOfCombatActive = false;
-      this.l_isStealthActive = false;
+      this.lhud_isCombatActive = evt.m_isActive;
+      this.lhud_isOutOfCombatActive = false;
+      this.lhud_isStealthActive = false;
       break;
     case LHUDEventType.OutOfCombat: 
-      this.l_isCombatActive = false;
-      this.l_isOutOfCombatActive = evt.m_isActive;
-      this.l_isStealthActive = false;
+      this.lhud_isCombatActive = false;
+      this.lhud_isOutOfCombatActive = evt.m_isActive;
+      this.lhud_isStealthActive = false;
       break;
     case LHUDEventType.Stealth: 
-      this.l_isCombatActive = false;
-      this.l_isOutOfCombatActive = false;
-      this.l_isStealthActive = evt.m_isActive;
+      this.lhud_isCombatActive = false;
+      this.lhud_isOutOfCombatActive = false;
+      this.lhud_isStealthActive = evt.m_isActive;
       break; 
     case LHUDEventType.Scanner: 
-      this.l_isScannerActive = evt.m_isActive;
+      this.lhud_isScannerActive = evt.m_isActive;
       break;
     case LHUDEventType.InVehicle: 
-      this.l_isInVehicle = evt.m_isActive;
+      this.lhud_isInVehicle = evt.m_isActive;
       break;
     case LHUDEventType.Weapon: 
-      this.l_isWeaponUnsheathed = evt.m_isActive;
+      this.lhud_isWeaponUnsheathed = evt.m_isActive;
       break;
     case LHUDEventType.Zoom: 
-      this.l_isZoomActive = evt.m_isActive;
+      this.lhud_isZoomActive = evt.m_isActive;
       break;
     default:
       break;
@@ -142,14 +140,14 @@ protected func ConsumeEvent(evt: ref<LHUDEvent>) -> Void {
 
 // --- UTILITY FUNCTIONS
 
-// Send LHUD event with player instance
+// Broadcast LHUD event
 @addMethod(PlayerPuppet)
 public func QueueEvent(type: LHUDEventType, active: Bool) -> Void {
   let evt: ref<LHUDEvent> = new LHUDEvent();
   evt.m_type = type;
   evt.m_isActive = active;
   GameInstance.GetUISystem(this.GetGame()).QueueEvent(evt);
-  // LHUDLog("Queue event " + ToString(type) + " " + ToString(active));
+  LHUDLog("Queue event " + ToString(type) + " " + ToString(active));
 }
 
 // Check if player has any weapon equipped
@@ -169,7 +167,7 @@ public func HasAnyWeaponEquipped_LHUD() -> Bool {
   return false;
 }
 
-// Print debug str to CET console
+// Print string to CET console
 public static func LHUDLog(str: String) -> Void {
   LogChannel(n"DEBUG", "LHUD: " + str);
 }
