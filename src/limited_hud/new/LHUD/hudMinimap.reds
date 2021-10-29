@@ -20,6 +20,7 @@ public func DetermineCurrentVisibility() -> Void {
   };
 
   let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && MinimapModuleConfig.BindToGlobalHotkey();
+  let showForMinimapHotkey: Bool = this.lhud_isMinimapFlagToggled;
   let showForCombat: Bool = this.lhud_isCombatActive && MinimapModuleConfig.ShowInCombat();
   let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && MinimapModuleConfig.ShowOutOfCombat();
   let showForStealth: Bool =  this.lhud_isStealthActive && MinimapModuleConfig.ShowInStealth();
@@ -28,7 +29,7 @@ public func DetermineCurrentVisibility() -> Void {
   let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && MinimapModuleConfig.ShowWithWeapon();
   let showForZoom: Bool =  this.lhud_isZoomActive && MinimapModuleConfig.ShowWithZoom();
 
-  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;
+  let isVisible: Bool = showForGlobalHotkey || showForMinimapHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;
   if NotEquals(this.lhud_isVisibleNow, isVisible) {
     this.lhud_isVisibleNow = isVisible;
     if isVisible {
@@ -39,9 +40,8 @@ public func DetermineCurrentVisibility() -> Void {
   };
 }
 
-@wrapMethod(MinimapContainerController)
+@addMethod(MinimapContainerController)
 protected cb func OnInitialize() -> Bool {
-  wrappedMethod();
   if MinimapModuleConfig.IsEnabled() {
     this.lhud_isVisibleNow = false;
     this.GetRootWidget().SetOpacity(0.0);

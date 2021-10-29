@@ -43,6 +43,7 @@ protected cb func OnInitialize() -> Bool {
   if WeaponRosterModuleConfig.IsEnabled() {
     this.lhud_isVisibleNow = this.m_Player.HasAnyWeaponEquipped_LHUD();
     this.OnInitializeFinished();
+    this.DetermineCurrentVisibility();
   };
 }
 

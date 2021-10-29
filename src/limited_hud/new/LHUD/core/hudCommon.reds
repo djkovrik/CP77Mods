@@ -37,7 +37,6 @@ public class LHUDEvent extends Event {
 
 // Visibility condition flags for inkLogicController instances
 @addField(inkLogicController) public let lhud_isGlobalFlagToggled: Bool;
-@addField(inkLogicController) public let lhud_isMinimapFlagToggled: Bool;
 @addField(inkLogicController) public let lhud_isBraindanceActive: Bool;
 @addField(inkLogicController) public let lhud_isCombatActive: Bool;
 @addField(inkLogicController) public let lhud_isOutOfCombatActive: Bool;
@@ -99,9 +98,6 @@ protected func ConsumeEvent(evt: ref<LHUDEvent>) -> Void {
   switch(evt.m_type) {
     case LHUDEventType.GlobalHotkey: 
       this.lhud_isGlobalFlagToggled = !this.lhud_isGlobalFlagToggled;
-      break;
-    case LHUDEventType.MinimapHotkey: 
-      this.lhud_isMinimapFlagToggled = !this.lhud_isMinimapFlagToggled;
       break;
     case LHUDEventType.Braindance: 
       this.lhud_isBraindanceActive = evt.m_isActive;

@@ -53,5 +53,6 @@ protected cb func OnInitialize() -> Bool {
   if PlayerHealthbarModuleConfig.IsEnabled() {
     this.m_moduleShown = false;
     this.GetRootWidget().SetVisible(false);
+    this.OnInitializeFinished();
   };
 }
