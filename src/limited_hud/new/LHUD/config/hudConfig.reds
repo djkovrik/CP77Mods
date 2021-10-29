@@ -98,23 +98,22 @@ public class QuestTrackerModuleConfig {
 }
 
 
-// // -- HEALTHBAR
-
-// public class PlayerHealthbarModuleConfig {
-//   public static func IsEnabled() -> Bool = true
-//   public static func BindToGlobalHotkey() -> Bool = false
-//   // Default in-game visibility conditions
-//   public static func ShowWhenHealthNotFull() -> Bool = true
-//   public static func ShowWhenMemoryNotFull() -> Bool = true
-//   public static func ShowWhenBuffsActive() -> Bool = true
-//   public static func ShowWhenQuickhacksActive() -> Bool = true
-//   public static func ShowInCombat() -> Bool = true
-//   public static func ShowOutOfCombat() -> Bool = false
-//   // Additional visibility conditions
-//   public static func ShowInStealth() -> Bool = false
-//   public static func ShowWithWeapon() -> Bool = true
-//   public static func ShowWithZoom() -> Bool = false
-// }
+// -- HEALTHBAR
+public class PlayerHealthbarModuleConfig {
+  public static func IsEnabled() -> Bool = true
+  public static func BindToGlobalHotkey() -> Bool = false
+  // Default in-game visibility conditions
+  public static func ShowWhenHealthNotFull() -> Bool = true
+  public static func ShowWhenMemoryNotFull() -> Bool = true
+  public static func ShowWhenBuffsActive() -> Bool = true
+  public static func ShowWhenQuickhacksActive() -> Bool = true
+  public static func ShowInCombat() -> Bool = true
+  // Additional visibility conditions
+  public static func ShowOutOfCombat() -> Bool = false
+  public static func ShowInStealth() -> Bool = false
+  public static func ShowWithWeapon() -> Bool = true
+  public static func ShowWithZoom() -> Bool = false
+}
 
 
 // // -- WORLD MARKERS
