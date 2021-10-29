@@ -31,9 +31,9 @@ public func DetermineCurrentVisibility() -> Void {
   if NotEquals(this.lhud_isVisibleNow, isVisible) {
     this.lhud_isVisibleNow = isVisible;
     if isVisible {
-      this.AnimateAlpha(this.GetRootWidget(), 1.0, 0.5);
+      this.AnimateAlpha(this.GetRootWidget(), 1.0, 0.3);
     } else {
-      this.AnimateAlpha(this.GetRootWidget(), 0.0, 0.5);
+      this.AnimateAlpha(this.GetRootWidget(), 0.0, 0.3);
     };
   };
 }
@@ -46,20 +46,4 @@ protected cb func OnInitialize() -> Bool {
     this.GetRootWidget().SetOpacity(0.0);
     this.OnInitializeFinished();
   };
-}
-
-@wrapMethod(EquipmentSystemPlayerData)
-public final func OnEquipmentSystemWeaponManipulationRequest(request: ref<EquipmentSystemWeaponManipulationRequest>) -> Void {
-  let targetItem: ItemID = this.GetItemIDfromEquipmentManipulationAction(request.requestType);
-  let isTargetRequestUnequip: Bool = this.IsEquipmentManipulationAnUnequipRequest(request.requestType);
-  let equipmentDataDef: ref<UI_EquipmentDataDef> = GetAllBlackboardDefs().UI_EquipmentData;
-  if !isTargetRequestUnequip {
-    GameInstance.GetBlackboardSystem(this.m_owner.GetGame()).Get(equipmentDataDef).SetBool(equipmentDataDef.HasWeaponEquipped, true);
-  } else {
-    if ItemID.IsValid(targetItem) {
-      GameInstance.GetBlackboardSystem(this.m_owner.GetGame()).Get(equipmentDataDef).SetBool(equipmentDataDef.HasWeaponEquipped, false);
-    };
-  };
-
-  wrappedMethod(request);
 }

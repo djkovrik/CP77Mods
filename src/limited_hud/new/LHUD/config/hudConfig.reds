@@ -28,17 +28,17 @@ public class ActionButtonsModuleConfig {
 }
 
 // -- CROUCH INDICATOR
-//    Keep in mind that the mod logic just makes indicator invisible when hidden, 
-//    if you want to completely remove it from HUD slot then just use
-//    Remove Crouch Indicator addon from optional files download section
+//    Keep in mind that the mod logic just makes indicator invisible when hidden, if you want 
+//    to completely remove it from HUD slot (and move weapon roster to bottom right corner) then 
+//    just use Remove Crouch Indicator addon from optional files download section
 public class CrouchIndicatorModuleConfig {
   public static func IsEnabled() -> Bool = true
   public static func BindToGlobalHotkey() -> Bool = true
 
   public static func ShowInCombat() -> Bool = false
   public static func ShowOutOfCombat() -> Bool = false
-  public static func ShowInStealth() -> Bool = false
-  public static func ShowWithWeapon() -> Bool = false
+  public static func ShowInStealth() -> Bool = true
+  public static func ShowWithWeapon() -> Bool = true
   public static func ShowWithZoom() -> Bool = false
 }
 

@@ -167,3 +167,21 @@ protected cb func OnInitializeFinished() -> Void {
   let manager: ref<HUDManager> = GameInstance.GetScriptableSystemsContainer(this.GetPlayerControlledObject().GetGame()).Get(n"HUDManager") as HUDManager;
   manager.blabockardsListenerLHUD.LaunchInitialStateEvents();
 }
+
+// -- SEND EVENTS FOR NEW BLACKBOARD VARIABLE
+
+@wrapMethod(EquipmentSystemPlayerData)
+public final func OnEquipmentSystemWeaponManipulationRequest(request: ref<EquipmentSystemWeaponManipulationRequest>) -> Void {
+  let targetItem: ItemID = this.GetItemIDfromEquipmentManipulationAction(request.requestType);
+  let isTargetRequestUnequip: Bool = this.IsEquipmentManipulationAnUnequipRequest(request.requestType);
+  let equipmentDataDef: ref<UI_EquipmentDataDef> = GetAllBlackboardDefs().UI_EquipmentData;
+  if !isTargetRequestUnequip {
+    GameInstance.GetBlackboardSystem(this.m_owner.GetGame()).Get(equipmentDataDef).SetBool(equipmentDataDef.HasWeaponEquipped, true);
+  } else {
+    if ItemID.IsValid(targetItem) {
+      GameInstance.GetBlackboardSystem(this.m_owner.GetGame()).Get(equipmentDataDef).SetBool(equipmentDataDef.HasWeaponEquipped, false);
+    };
+  };
+
+  wrappedMethod(request);
+}
