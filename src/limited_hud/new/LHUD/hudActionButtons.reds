@@ -1,6 +1,5 @@
 import LimitedHudConfig.ActionButtonsModuleConfig
 import LimitedHudCommon.LHUDEvent
-import LimitedHudCommon.LHUDLog
 
 @addMethod(HotkeysWidgetController)
 protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {

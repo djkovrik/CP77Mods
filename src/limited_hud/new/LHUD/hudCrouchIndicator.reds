@@ -1,6 +1,5 @@
 import LimitedHudConfig.CrouchIndicatorModuleConfig
 import LimitedHudCommon.LHUDEvent
-import LimitedHudCommon.LHUDLog
 
 @addMethod(CrouchIndicatorGameController)
 protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {

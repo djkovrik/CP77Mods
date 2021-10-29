@@ -1,6 +1,5 @@
 import LimitedHudConfig.WeaponRosterModuleConfig
 import LimitedHudCommon.LHUDEvent
-import LimitedHudCommon.LHUDLog
 
 @addMethod(weaponRosterGameController)
 protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {

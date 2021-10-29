@@ -1,6 +1,6 @@
 module LimitedHudConfig
 
-// -- Limited HUD config v2.0
+// -- Limited HUD v2.0 config
 
 // -- Here you can configure base Limited HUD modules
 
@@ -54,21 +54,18 @@ public class WeaponRosterModuleConfig {
   public static func ShowWithZoom() -> Bool = false
 }
 
+// -- HOTKEY HINTS
+public class HintsModuleConfig {
+  public static func IsEnabled() -> Bool = true
+  public static func BindToGlobalHotkey() -> Bool = false
 
-
-// // -- HOTKEY HINTS
-
-// public class HintsModuleConfig {
-//   public static func IsEnabled() -> Bool = true
-//   public static func BindToGlobalHotkey() -> Bool = false
-
-//   public static func ShowInCombat() -> Bool = false
-//   public static func ShowOutOfCombat() -> Bool = false
-//   public static func ShowInStealth() -> Bool = false
-//   public static func ShowInVehicle() -> Bool = false
-//   public static func ShowWithWeapon() -> Bool = false
-//   public static func ShowWithZoom() -> Bool = false
-// }
+  public static func ShowInCombat() -> Bool = false
+  public static func ShowOutOfCombat() -> Bool = false
+  public static func ShowInStealth() -> Bool = false
+  public static func ShowInVehicle() -> Bool = false
+  public static func ShowWithWeapon() -> Bool = false
+  public static func ShowWithZoom() -> Bool = false
+}
 
 
 // // -- MINIMAP
@@ -76,6 +73,22 @@ public class WeaponRosterModuleConfig {
 // public class MinimapModuleConfig {
 //   public static func Opacity() -> Float = 0.9
 
+//   public static func IsEnabled() -> Bool = true
+//   public static func BindToGlobalHotkey() -> Bool = true
+
+//   public static func ShowInCombat() -> Bool = false
+//   public static func ShowOutOfCombat() -> Bool = false
+//   public static func ShowInStealth() -> Bool = false
+//   public static func ShowInVehicle() -> Bool = true
+//   public static func ShowWithScanner() -> Bool = false
+//   public static func ShowWithWeapon() -> Bool = false
+//   public static func ShowWithZoom() -> Bool = true
+// }
+
+
+// // -- QUEST TRACKER
+
+// public class QuestTrackerModuleConfig {
 //   public static func IsEnabled() -> Bool = true
 //   public static func BindToGlobalHotkey() -> Bool = true
 
@@ -105,21 +118,6 @@ public class WeaponRosterModuleConfig {
 //   public static func ShowInStealth() -> Bool = false
 //   public static func ShowWithWeapon() -> Bool = true
 //   public static func ShowWithZoom() -> Bool = false
-// }
-
-// // -- QUEST TRACKER
-
-// public class QuestTrackerModuleConfig {
-//   public static func IsEnabled() -> Bool = true
-//   public static func BindToGlobalHotkey() -> Bool = true
-
-//   public static func ShowInCombat() -> Bool = false
-//   public static func ShowOutOfCombat() -> Bool = false
-//   public static func ShowInStealth() -> Bool = false
-//   public static func ShowInVehicle() -> Bool = true
-//   public static func ShowWithScanner() -> Bool = false
-//   public static func ShowWithWeapon() -> Bool = false
-//   public static func ShowWithZoom() -> Bool = true
 // }
 
 
