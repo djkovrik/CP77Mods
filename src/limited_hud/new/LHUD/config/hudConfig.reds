@@ -67,39 +67,35 @@ public class HintsModuleConfig {
   public static func ShowWithZoom() -> Bool = false
 }
 
+// -- MINIMAP
+public class MinimapModuleConfig {
+  public static func Opacity() -> Float = 0.9
 
-// // -- MINIMAP
+  public static func IsEnabled() -> Bool = true
+  public static func BindToGlobalHotkey() -> Bool = true
 
-// public class MinimapModuleConfig {
-//   public static func Opacity() -> Float = 0.9
+  public static func ShowInCombat() -> Bool = false
+  public static func ShowOutOfCombat() -> Bool = false
+  public static func ShowInStealth() -> Bool = false
+  public static func ShowInVehicle() -> Bool = true
+  public static func ShowWithScanner() -> Bool = false
+  public static func ShowWithWeapon() -> Bool = false
+  public static func ShowWithZoom() -> Bool = true
+}
 
-//   public static func IsEnabled() -> Bool = true
-//   public static func BindToGlobalHotkey() -> Bool = true
+// -- QUEST TRACKER
+public class QuestTrackerModuleConfig {
+  public static func IsEnabled() -> Bool = true
+  public static func BindToGlobalHotkey() -> Bool = true
 
-//   public static func ShowInCombat() -> Bool = false
-//   public static func ShowOutOfCombat() -> Bool = false
-//   public static func ShowInStealth() -> Bool = false
-//   public static func ShowInVehicle() -> Bool = true
-//   public static func ShowWithScanner() -> Bool = false
-//   public static func ShowWithWeapon() -> Bool = false
-//   public static func ShowWithZoom() -> Bool = true
-// }
-
-
-// // -- QUEST TRACKER
-
-// public class QuestTrackerModuleConfig {
-//   public static func IsEnabled() -> Bool = true
-//   public static func BindToGlobalHotkey() -> Bool = true
-
-//   public static func ShowInCombat() -> Bool = false
-//   public static func ShowOutOfCombat() -> Bool = false
-//   public static func ShowInStealth() -> Bool = false
-//   public static func ShowInVehicle() -> Bool = true
-//   public static func ShowWithScanner() -> Bool = false
-//   public static func ShowWithWeapon() -> Bool = false
-//   public static func ShowWithZoom() -> Bool = true
-// }
+  public static func ShowInCombat() -> Bool = false
+  public static func ShowOutOfCombat() -> Bool = false
+  public static func ShowInStealth() -> Bool = false
+  public static func ShowInVehicle() -> Bool = true
+  public static func ShowWithScanner() -> Bool = false
+  public static func ShowWithWeapon() -> Bool = false
+  public static func ShowWithZoom() -> Bool = true
+}
 
 
 // // -- HEALTHBAR
