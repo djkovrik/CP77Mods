@@ -55,41 +55,6 @@ protected func AnimateSize(targetWidget: wref<inkWidget>, startSize: Vector2, en
 }
 
 @addMethod(inkGameController)
-protected func AnimateAlpha(targetWidget: wref<inkWidget>, endAlpha: Float, duration: Float) -> ref<inkAnimProxy> {
-  let proxy: ref<inkAnimProxy>;
-  let moveElementsAnimDef: ref<inkAnimDef> = new inkAnimDef();
-  let transparencyInterpolator: ref<inkAnimTransparency> = new inkAnimTransparency();
-  transparencyInterpolator.SetType(inkanimInterpolationType.Linear);
-  transparencyInterpolator.SetMode(inkanimInterpolationMode.EasyIn);
-  transparencyInterpolator.SetDirection(inkanimInterpolationDirection.To);
-  transparencyInterpolator.SetEndTransparency(endAlpha);
-  transparencyInterpolator.SetDuration(duration);
-  moveElementsAnimDef.AddInterpolator(transparencyInterpolator);
-  proxy = targetWidget.PlayAnimation(moveElementsAnimDef);
-  proxy.RegisterToCallback(inkanimEventType.OnStart, this, n"OnAlphaStarted");
-  proxy.RegisterToCallback(inkanimEventType.OnFinish, this, n"OnAlphaCompleted");
-  return proxy;
-}
-
-@addMethod(inkGameController)
-protected func AnimateAlpha(targetWidget: wref<inkWidget>, startAlpha: Float, endAlpha: Float, duration: Float) -> ref<inkAnimProxy> {
-  let proxy: ref<inkAnimProxy>;
-  let moveElementsAnimDef: ref<inkAnimDef> = new inkAnimDef();
-  let transparencyInterpolator: ref<inkAnimTransparency> = new inkAnimTransparency();
-  transparencyInterpolator.SetType(inkanimInterpolationType.Linear);
-  transparencyInterpolator.SetMode(inkanimInterpolationMode.EasyIn);
-  transparencyInterpolator.SetDirection(inkanimInterpolationDirection.FromTo);
-  transparencyInterpolator.SetStartTransparency(startAlpha);
-  transparencyInterpolator.SetEndTransparency(endAlpha);
-  transparencyInterpolator.SetDuration(duration);
-  moveElementsAnimDef.AddInterpolator(transparencyInterpolator);
-  proxy = targetWidget.PlayAnimation(moveElementsAnimDef);
-  proxy.RegisterToCallback(inkanimEventType.OnStart, this, n"OnAlphaStarted");
-  proxy.RegisterToCallback(inkanimEventType.OnFinish, this, n"OnAlphaCompleted");
-  return proxy;
-}
-
-@addMethod(inkGameController)
 protected func AnimateColor(targetWidget: ref<inkWidget>, startColor: HDRColor, endColor: HDRColor, duration: Float) -> ref<inkAnimProxy> {
   let proxy: ref<inkAnimProxy>;
   let colorElementsAnimDef: ref<inkAnimDef> = new inkAnimDef();
@@ -107,13 +72,36 @@ protected func AnimateColor(targetWidget: ref<inkWidget>, startColor: HDRColor, 
   return proxy;
 }
 
-/**
+@addMethod(inkGameController)
+protected func AnimateAlpha(targetWidget: wref<inkWidget>, endAlpha: Float, duration: Float) -> ref<inkAnimProxy> {
+  let proxy: ref<inkAnimProxy>;
+  let moveElementsAnimDef: ref<inkAnimDef> = new inkAnimDef();
+  let transparencyInterpolator: ref<inkAnimTransparency> = new inkAnimTransparency();
+  transparencyInterpolator.SetType(inkanimInterpolationType.Linear);
+  transparencyInterpolator.SetMode(inkanimInterpolationMode.EasyIn);
+  transparencyInterpolator.SetDirection(inkanimInterpolationDirection.To);
+  transparencyInterpolator.SetEndTransparency(endAlpha);
+  transparencyInterpolator.SetDuration(duration);
+  moveElementsAnimDef.AddInterpolator(transparencyInterpolator);
+  proxy = targetWidget.PlayAnimation(moveElementsAnimDef);
+  proxy.RegisterToCallback(inkanimEventType.OnStart, this, n"OnAlphaStarted");
+  proxy.RegisterToCallback(inkanimEventType.OnFinish, this, n"OnAlphaCompleted");
+  return proxy;
+}
 
-  Callback:
-
-  @addMethod(TargetClass)
-  protected cb func OnColorStarted(anim: ref<inkAnimProxy>) -> Bool {
-    // do stuff
-  }
-
-*/
+@addMethod(inkLogicController)
+protected func AnimateAlpha(targetWidget: wref<inkWidget>, endAlpha: Float, duration: Float) -> ref<inkAnimProxy> {
+  let proxy: ref<inkAnimProxy>;
+  let moveElementsAnimDef: ref<inkAnimDef> = new inkAnimDef();
+  let transparencyInterpolator: ref<inkAnimTransparency> = new inkAnimTransparency();
+  transparencyInterpolator.SetType(inkanimInterpolationType.Linear);
+  transparencyInterpolator.SetMode(inkanimInterpolationMode.EasyIn);
+  transparencyInterpolator.SetDirection(inkanimInterpolationDirection.To);
+  transparencyInterpolator.SetEndTransparency(endAlpha);
+  transparencyInterpolator.SetDuration(duration);
+  moveElementsAnimDef.AddInterpolator(transparencyInterpolator);
+  proxy = targetWidget.PlayAnimation(moveElementsAnimDef);
+  proxy.RegisterToCallback(inkanimEventType.OnStart, this, n"OnAlphaStarted");
+  proxy.RegisterToCallback(inkanimEventType.OnFinish, this, n"OnAlphaCompleted");
+  return proxy;
+}

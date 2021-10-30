@@ -22,6 +22,10 @@ public class LHUDEvent extends Event {
   public let m_type: LHUDEventType;
 }
 
+// Blackboard flags for global and minimap toggles
+@addField(UI_SystemDef) public let IsGlobalFlagToggled_LHUD: BlackboardID_Bool;
+@addField(UI_SystemDef) public let IsMinimapToggled_LHUD: BlackboardID_Bool;
+
 // Visibility condition flags for inkGameController instances
 @addField(inkGameController) public let lhud_isGlobalFlagToggled: Bool;
 @addField(inkGameController) public let lhud_isMinimapFlagToggled: Bool;
@@ -52,10 +56,10 @@ public class LHUDEvent extends Event {
 protected func ConsumeEvent(evt: ref<LHUDEvent>) -> Void {
   switch(evt.m_type) {
     case LHUDEventType.GlobalHotkey: 
-      this.lhud_isGlobalFlagToggled = !this.lhud_isGlobalFlagToggled;
+      this.lhud_isGlobalFlagToggled = evt.m_isActive;
       break;
     case LHUDEventType.MinimapHotkey: 
-      this.lhud_isMinimapFlagToggled = !this.lhud_isMinimapFlagToggled;
+      this.lhud_isMinimapFlagToggled = evt.m_isActive;
       break;
     case LHUDEventType.Braindance: 
       this.lhud_isBraindanceActive = evt.m_isActive;
@@ -97,7 +101,7 @@ protected func ConsumeEvent(evt: ref<LHUDEvent>) -> Void {
 protected func ConsumeEvent(evt: ref<LHUDEvent>) -> Void {
   switch(evt.m_type) {
     case LHUDEventType.GlobalHotkey: 
-      this.lhud_isGlobalFlagToggled = !this.lhud_isGlobalFlagToggled;
+      this.lhud_isGlobalFlagToggled = evt.m_isActive;
       break;
     case LHUDEventType.Braindance: 
       this.lhud_isBraindanceActive = evt.m_isActive;
@@ -143,7 +147,7 @@ public func QueueEvent(type: LHUDEventType, active: Bool) -> Void {
   evt.m_type = type;
   evt.m_isActive = active;
   GameInstance.GetUISystem(this.GetGame()).QueueEvent(evt);
-  LHUDLog("Queue event " + ToString(type) + " " + ToString(active));
+  // LHUDLog("Queue event " + ToString(type) + " " + ToString(active));
 }
 
 // Check if player has any weapon equipped

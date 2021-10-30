@@ -14,12 +14,16 @@ public class LHUDInputListener {
   // Listen for ToggleGlobal and ToggleMinimap actions and send LHUD events
   protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
     let actionName: CName = ListenerAction.GetName(action);
+    let blackBoard: ref<IBlackboard> = GameInstance.GetBlackboardSystem(this.playerInstance.GetGame()).Get(GetAllBlackboardDefs().UI_System);
+    let isToggled: Bool;
     if Equals(actionName, n"ToggleGlobal") && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED) {
-      this.playerInstance.QueueEvent(LHUDEventType.GlobalHotkey, true);
+      isToggled = blackBoard.GetBool(GetAllBlackboardDefs().UI_System.IsGlobalFlagToggled_LHUD);
+      blackBoard.SetBool(GetAllBlackboardDefs().UI_System.IsGlobalFlagToggled_LHUD, !isToggled, true);
     };
 
     if Equals(actionName, n"ToggleMinimap") && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED) {
-      this.playerInstance.QueueEvent(LHUDEventType.MinimapHotkey, true);
+      isToggled = blackBoard.GetBool(GetAllBlackboardDefs().UI_System.IsMinimapToggled_LHUD);
+      blackBoard.SetBool(GetAllBlackboardDefs().UI_System.IsMinimapToggled_LHUD, !isToggled, true);
     };
   }
 }
@@ -30,20 +34,23 @@ public let HasWeaponEquipped: BlackboardID_Bool;
 
 // Blackboards listener class
 public class LHUDBlackboardsListener {
-  private let playerInstance: wref<PlayerPuppet>;       // Player instance weak reference
-  private let bbDefs: ref<AllBlackboardDefinitions>;    // All blackboard definitions reference
-  private let braindanceBlackboard: ref<IBlackboard>;   // Braindance blackboard reference
-  private let scannerBlackboard: ref<IBlackboard>;      // Scanner blackboard reference
-  private let stateMachineBlackboard: ref<IBlackboard>; // Player state machine blackboard reference
-  private let vehicleBlackboard: ref<IBlackboard>;      // Vehicle blackboard reference
-  private let weaponBlackboard: ref<IBlackboard>;       // Active weapon blackboard reference
+  private let playerInstance: wref<PlayerPuppet>;         // Player instance weak reference
+  private let bbDefs: ref<AllBlackboardDefinitions>;      // All blackboard definitions reference
+  private let braindanceBlackboard: ref<IBlackboard>;     // Braindance blackboard reference
+  private let scannerBlackboard: ref<IBlackboard>;        // Scanner blackboard reference
+  private let stateMachineBlackboard: ref<IBlackboard>;   // Player state machine blackboard reference
+  private let vehicleBlackboard: ref<IBlackboard>;        // Vehicle blackboard reference
+  private let uiSystemBlackboard: ref<IBlackboard>;       // UI system blackboard reference
+  private let weaponBlackboard: ref<IBlackboard>;         // Active weapon blackboard reference
 
-  private let braindanceCallback: ref<CallbackHandle>;  // Ref for registered braindance callback
-  private let scannerCallback: ref<CallbackHandle>;     // Ref for registered scanner callback
-  private let psmCallback: ref<CallbackHandle>;         // Ref for registered player state callback
-  private let vehicleCallback: ref<CallbackHandle>;     // Ref for registered vehicle mount callback
-  private let weaponCallback: ref<CallbackHandle>;      // Ref for registered weapon state callback
-  private let zoomCallback: ref<CallbackHandle>;        // Ref for registered zoom value callback
+  private let globalHotkeyCallback: ref<CallbackHandle>;  // Ref for registered braindance callback
+  private let minimapHotkeyCallback: ref<CallbackHandle>; // Ref for registered braindance callback
+  private let braindanceCallback: ref<CallbackHandle>;    // Ref for registered braindance callback
+  private let scannerCallback: ref<CallbackHandle>;       // Ref for registered scanner callback
+  private let psmCallback: ref<CallbackHandle>;           // Ref for registered player state callback
+  private let vehicleCallback: ref<CallbackHandle>;       // Ref for registered vehicle mount callback
+  private let weaponCallback: ref<CallbackHandle>;        // Ref for registered weapon state callback
+  private let zoomCallback: ref<CallbackHandle>;          // Ref for registered zoom value callback
 
   // Initialise blackboards
   public func InitializeData(player: ref<PlayerPuppet>) -> Void {
@@ -53,11 +60,14 @@ public class LHUDBlackboardsListener {
     this.scannerBlackboard =  GameInstance.GetBlackboardSystem(player.GetGame()).Get(this.bbDefs.UI_Scanner);
     this.stateMachineBlackboard = GameInstance.GetBlackboardSystem(player.GetGame()).GetLocalInstanced(player.GetEntityID(), this.bbDefs.PlayerStateMachine);
     this.vehicleBlackboard =  GameInstance.GetBlackboardSystem(player.GetGame()).Get(this.bbDefs.UI_ActiveVehicleData);
+    this.uiSystemBlackboard =  GameInstance.GetBlackboardSystem(player.GetGame()).Get(this.bbDefs.UI_System);
     this.weaponBlackboard =  GameInstance.GetBlackboardSystem(player.GetGame()).Get(this.bbDefs.UI_EquipmentData);
   }
 
   // Register listeners
   public func RegisterListeners() -> Void {
+    this.globalHotkeyCallback = this.uiSystemBlackboard.RegisterListenerBool(this.bbDefs.UI_System.IsGlobalFlagToggled_LHUD, this, n"OnGlobalToggle");
+    this.minimapHotkeyCallback = this.uiSystemBlackboard.RegisterListenerBool(this.bbDefs.UI_System.IsMinimapToggled_LHUD, this, n"OnMinimapToggle");
     this.braindanceCallback = this.braindanceBlackboard.RegisterListenerBool(this.bbDefs.Braindance.IsActive, this, n"OnBraindanceToggle");
     this.scannerCallback = this.scannerBlackboard.RegisterListenerBool(this.bbDefs.UI_Scanner.UIVisible, this, n"OnScannerToggle");
     this.psmCallback = this.stateMachineBlackboard.RegisterListenerInt(this.bbDefs.PlayerStateMachine.Combat, this, n"OnCombatStateChanged");
@@ -68,6 +78,8 @@ public class LHUDBlackboardsListener {
 
   // Unregister listeners
   public func UnregisterListeners() -> Void {
+    this.uiSystemBlackboard.UnregisterListenerBool(this.bbDefs.UI_System.IsGlobalFlagToggled_LHUD, this.globalHotkeyCallback);
+    this.uiSystemBlackboard.UnregisterListenerBool(this.bbDefs.UI_System.IsMinimapToggled_LHUD, this.minimapHotkeyCallback);
     this.braindanceBlackboard.UnregisterListenerBool(this.bbDefs.Braindance.IsActive, this.braindanceCallback);
     this.scannerBlackboard.UnregisterListenerBool(this.bbDefs.UI_Scanner.UIVisible, this.scannerCallback);
     this.stateMachineBlackboard.UnregisterListenerInt(this.bbDefs.PlayerStateMachine.Combat, this.psmCallback);
@@ -80,6 +92,16 @@ public class LHUDBlackboardsListener {
   public func LaunchInitialStateEvents() -> Void {
     this.OnCombatStateChanged(this.stateMachineBlackboard.GetInt(this.bbDefs.PlayerStateMachine.Combat));
     this.OnWeaponStateChanged(this.playerInstance.HasAnyWeaponEquipped_LHUD());
+  }
+
+  // Global hotkey bb callback
+  protected cb func OnGlobalToggle(value: Bool) -> Bool {
+    this.playerInstance.QueueEvent(LHUDEventType.GlobalHotkey, value);
+  }
+
+  // Minimap hotkey bb callback
+  protected cb func OnMinimapToggle(value: Bool) -> Bool {
+    this.playerInstance.QueueEvent(LHUDEventType.MinimapHotkey, value);
   }
 
   // Braindance bb callback

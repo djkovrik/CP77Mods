@@ -116,22 +116,50 @@ public class PlayerHealthbarModuleConfig {
 }
 
 
-// // -- WORLD MARKERS
-// //    Here you can configure different world markers behavior
+// -- WORLD MARKERS
+//    Here you can configure different world markers behavior
 
-// // -- Loot markers behavior
+// -- Quest markers
+public class WorldMarkersModuleConfigQuest {
+  public static func IsEnabled() -> Bool = true
+  public static func BindToGlobalHotkey() -> Bool = false
+
+  public static func ShowInCombat() -> Bool = false
+  public static func ShowOutOfCombat() -> Bool = false
+  public static func ShowInStealth() -> Bool = false
+  public static func ShowInVehicle() -> Bool = false
+  public static func ShowWithScanner() -> Bool = true
+  public static func ShowWithWeapon() -> Bool = false
+  public static func ShowWithZoom() -> Bool = false
+}
+
+// -- Owned vehicle markers
+public class WorldMarkersModuleConfigVehicles {
+  public static func IsEnabled() -> Bool = true
+  public static func BindToGlobalHotkey() -> Bool = false
+
+  public static func ShowInVehicle() -> Bool = false
+  public static func ShowWithScanner() -> Bool = true
+  public static func ShowWithZoom() -> Bool = false
+}
+
+// --Place Of Interest markers 
+//   aka fast travel points, fixers, vendors and all kinds of services
+public class WorldMarkersModuleConfigPOI {
+  public static func IsEnabled() -> Bool = true
+  public static func BindToGlobalHotkey() -> Bool = true
+
+  public static func ShowInCombat() -> Bool = false
+  public static func ShowOutOfCombat() -> Bool = false
+  public static func ShowInStealth() -> Bool = false
+  public static func ShowInVehicle() -> Bool = false
+  public static func ShowWithScanner() -> Bool = false
+  public static func ShowWithWeapon() -> Bool = false
+  public static func ShowWithZoom() -> Bool = false
+}
+
+// // -- Loot markers
 // public class WorldMarkersModuleConfigLoot {
-
-// }
-
-// // -- Quest markers
-// public class WorldMarkersModuleConfigQuest {
-
-// }
-
-// // --Place Of Interest markers behavior 
-// //   (vendors, fast travel points and other kinds of place related markers)
-// public class WorldMarkersModuleConfigPOI {
 
 // }
 
