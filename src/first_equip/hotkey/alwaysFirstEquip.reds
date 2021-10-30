@@ -105,16 +105,47 @@ public final const func HasPlayedFirstEquip(weaponID: TweakDBID) -> Bool {
 // Track last used slot
 @wrapMethod(DefaultTransition)
 protected final const func SendEquipmentSystemWeaponManipulationRequest(const scriptInterface: ref<StateGameScriptInterface>, requestType: EquipmentManipulationAction, opt equipAnimType: gameEquipAnimationType) -> Void {
+  let blackboard: ref<IBlackboard> = GameInstance.GetBlackboardSystem(scriptInterface.executionOwner.GetGame()).Get(GetAllBlackboardDefs().UI_System);
+  let lastUsedSlot: Int32 = GameInstance.GetBlackboardSystem(scriptInterface.executionOwner.GetGame()).Get(GetAllBlackboardDefs().UI_System).GetInt(GetAllBlackboardDefs().UI_System.LastUsedSlot_eq);
+  let newLastUsedSlot: Int32 = lastUsedSlot;
   switch requestType {
     case EquipmentManipulationAction.RequestWeaponSlot1:
-      GameInstance.GetBlackboardSystem(scriptInterface.executionOwner.GetGame()).Get(GetAllBlackboardDefs().UI_System).SetInt(GetAllBlackboardDefs().UI_System.LastUsedSlot_eq, 0, false);
+      newLastUsedSlot = 0;
       break;
     case EquipmentManipulationAction.RequestWeaponSlot2:
-      GameInstance.GetBlackboardSystem(scriptInterface.executionOwner.GetGame()).Get(GetAllBlackboardDefs().UI_System).SetInt(GetAllBlackboardDefs().UI_System.LastUsedSlot_eq, 1, false);
+      newLastUsedSlot = 1;
       break;
     case EquipmentManipulationAction.RequestWeaponSlot3:
-      GameInstance.GetBlackboardSystem(scriptInterface.executionOwner.GetGame()).Get(GetAllBlackboardDefs().UI_System).SetInt(GetAllBlackboardDefs().UI_System.LastUsedSlot_eq, 2, false);
+      newLastUsedSlot = 2;
+      break;
+    case EquipmentManipulationAction.RequestWeaponSlot4:
+      newLastUsedSlot = 3;
+      break;
+    case EquipmentManipulationAction.CycleNextWeaponWheelItem:
+      newLastUsedSlot = GetNextSlotIndex(lastUsedSlot);
+      break;
+    case EquipmentManipulationAction.CyclePreviousWeaponWheelItem:
+      newLastUsedSlot = GetPreviousSlotIndex(lastUsedSlot);
       break;
   };
+  blackboard.SetInt(GetAllBlackboardDefs().UI_System.LastUsedSlot_eq, newLastUsedSlot, false);
   wrappedMethod(scriptInterface, requestType, equipAnimType);
+}
+
+public static func GetNextSlotIndex(current: Int32) -> Int32 {
+  switch current {
+    case 0: return 1;
+    case 1: return 2;
+    case 2: return 3;
+    default: return 0;
+  };
+}
+
+public static func GetPreviousSlotIndex(current: Int32) -> Int32 {
+  switch current {
+    case 3: return 2;
+    case 2: return 1;
+    case 1: return 0;
+    default: return 3;
+  };
 }
