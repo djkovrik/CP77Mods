@@ -20,22 +20,22 @@ public class ActionButtonsModuleConfig {
   public static func IsEnabled() -> Bool = true
   public static func BindToGlobalHotkey() -> Bool = false
 
-  public static func ShowInCombat() -> Bool = false
+  public static func ShowInCombat() -> Bool = true
   public static func ShowOutOfCombat() -> Bool = false
-  public static func ShowInStealth() -> Bool = false
+  public static func ShowInStealth() -> Bool = true
   public static func ShowWithWeapon() -> Bool = true
   public static func ShowWithZoom() -> Bool = false
 }
 
 // -- CROUCH INDICATOR
-//    Keep in mind that the mod logic just makes indicator invisible when hidden, if you want 
-//    to completely remove it from HUD slot (and move weapon roster to bottom right corner) then 
-//    just use Remove Crouch Indicator addon from optional files download section
+//    Keep in mind that the mod logic just makes indicator invisible, if you want 
+//    to completely remove it from HUD slot (and move weapon roster to bottom right corner) 
+//    then just use Remove Crouch Indicator addon from optional files download section
 public class CrouchIndicatorModuleConfig {
   public static func IsEnabled() -> Bool = true
   public static func BindToGlobalHotkey() -> Bool = false
 
-  public static func ShowInCombat() -> Bool = false
+  public static func ShowInCombat() -> Bool = true
   public static func ShowOutOfCombat() -> Bool = false
   public static func ShowInStealth() -> Bool = true
   public static func ShowWithWeapon() -> Bool = true
@@ -47,7 +47,7 @@ public class WeaponRosterModuleConfig {
   public static func IsEnabled() -> Bool = true
   public static func BindToGlobalHotkey() -> Bool = false
 
-  public static func ShowInCombat() -> Bool = false
+  public static func ShowInCombat() -> Bool = true
   public static func ShowOutOfCombat() -> Bool = false
   public static func ShowInStealth() -> Bool = true
   public static func ShowWithWeapon() -> Bool = true
@@ -69,6 +69,7 @@ public class HintsModuleConfig {
 
 // -- MINIMAP
 public class MinimapModuleConfig {
+  // You can use values from 0.0 to 1.0 here
   public static func Opacity() -> Float = 0.9
 
   public static func IsEnabled() -> Bool = true
@@ -97,8 +98,7 @@ public class QuestTrackerModuleConfig {
   public static func ShowWithZoom() -> Bool = true
 }
 
-
-// -- HEALTHBAR
+// -- PLAYER HEALTHBAR
 public class PlayerHealthbarModuleConfig {
   public static func IsEnabled() -> Bool = true
   public static func BindToGlobalHotkey() -> Bool = false
@@ -117,37 +117,26 @@ public class PlayerHealthbarModuleConfig {
 
 
 // -- WORLD MARKERS
-//    Here you can configure different world markers behavior
+//    Here you can configure visibility behavior for different world marker types
 
-// -- Quest markers
+// ---- Quest markers -check
 public class WorldMarkersModuleConfigQuest {
   public static func IsEnabled() -> Bool = true
   public static func BindToGlobalHotkey() -> Bool = false
 
   public static func ShowInCombat() -> Bool = false
-  public static func ShowOutOfCombat() -> Bool = false
+  public static func ShowOutOfCombat() -> Bool = true
   public static func ShowInStealth() -> Bool = false
   public static func ShowInVehicle() -> Bool = false
-  public static func ShowWithScanner() -> Bool = true
+  public static func ShowWithScanner() -> Bool = false
   public static func ShowWithWeapon() -> Bool = false
   public static func ShowWithZoom() -> Bool = false
 }
 
-// -- Owned vehicle markers
-public class WorldMarkersModuleConfigVehicles {
+// ---- Loot and shards markers -check
+public class WorldMarkersModuleConfigLoot {
   public static func IsEnabled() -> Bool = true
   public static func BindToGlobalHotkey() -> Bool = false
-
-  public static func ShowInVehicle() -> Bool = false
-  public static func ShowWithScanner() -> Bool = true
-  public static func ShowWithZoom() -> Bool = false
-}
-
-// --Place Of Interest markers 
-//   aka fast travel points, fixers, vendors and all kinds of services
-public class WorldMarkersModuleConfigPOI {
-  public static func IsEnabled() -> Bool = true
-  public static func BindToGlobalHotkey() -> Bool = true
 
   public static func ShowInCombat() -> Bool = false
   public static func ShowOutOfCombat() -> Bool = false
@@ -158,25 +147,42 @@ public class WorldMarkersModuleConfigPOI {
   public static func ShowWithZoom() -> Bool = false
 }
 
-// // -- Loot markers
-// public class WorldMarkersModuleConfigLoot {
+// ---- Place Of Interest markers  -check
+//      Contains Fast Travel points, fixers, vendors and all kinds of services
+public class WorldMarkersModuleConfigPOI {
+  public static func IsEnabled() -> Bool = true
+  public static func BindToGlobalHotkey() -> Bool = false
 
-// }
+  public static func ShowInCombat() -> Bool = false
+  public static func ShowOutOfCombat() -> Bool = false
+  public static func ShowInStealth() -> Bool = false
+  public static func ShowInVehicle() -> Bool = false
+  public static func ShowWithScanner() -> Bool = false
+  public static func ShowWithWeapon() -> Bool = false
+  public static func ShowWithZoom() -> Bool = false
+}
 
-// // --Combat related enemy markers
-// //   (alert icon, healthbar, enemy type and other markers above enemy head)
-// public class WorldMarkersModuleConfigCombat {
+// ---- Combat markers -check
+//      Contains all combat and enemy related markers (grenades, enemy combat type, healthbar, arrow and alert markers)
+public class WorldMarkersModuleConfigCombat {
+  public static func IsEnabled() -> Bool = true
+  public static func BindToGlobalHotkey() -> Bool = false
 
-// }
+  public static func ShowInCombat() -> Bool = false
+  public static func ShowOutOfCombat() -> Bool = false
+  public static func ShowInStealth() -> Bool = false
+  public static func ShowInVehicle() -> Bool = false
+  public static func ShowWithScanner() -> Bool = false
+  public static func ShowWithWeapon() -> Bool = false
+  public static func ShowWithZoom() -> Bool = false
+}
 
-// For compatibility with my Muted Markers mod set IsEnabled option to false
-// public static func IsEnabled() -> Bool = true
-// public static func BindToGlobalHotkey() -> Bool = true
+// ---- Owned vehicle markers -check
+public class WorldMarkersModuleConfigVehicles {
+  public static func IsEnabled() -> Bool = true
+  public static func BindToGlobalHotkey() -> Bool = false
 
-// public static func ShowInCombat() -> Bool = true
-// public static func ShowOutOfCombat() -> Bool = false
-// public static func ShowInStealth() -> Bool = false
-// public static func ShowInVehicle() -> Bool = false
-// public static func ShowWithScanner() -> Bool = true
-// public static func ShowWithWeapon() -> Bool = false
-// public static func ShowWithZoom() -> Bool = true
+  public static func ShowInVehicle() -> Bool = false
+  public static func ShowWithScanner() -> Bool = false
+  public static func ShowWithZoom() -> Bool = false
+}
