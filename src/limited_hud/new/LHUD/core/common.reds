@@ -53,7 +53,7 @@ public class LHUDEvent extends Event {
 
 // Catch LHUDEvent inside inkGameController instances
 @addMethod(inkGameController)
-protected func ConsumeEvent(evt: ref<LHUDEvent>) -> Void {
+protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
   switch(evt.m_type) {
     case LHUDEventType.GlobalHotkey: 
       this.lhud_isGlobalFlagToggled = evt.m_isActive;
@@ -98,7 +98,7 @@ protected func ConsumeEvent(evt: ref<LHUDEvent>) -> Void {
 
 // Catch LHUDEvent inside inkLogicController instances
 @addMethod(inkLogicController)
-protected func ConsumeEvent(evt: ref<LHUDEvent>) -> Void {
+protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
   switch(evt.m_type) {
     case LHUDEventType.GlobalHotkey: 
       this.lhud_isGlobalFlagToggled = evt.m_isActive;
@@ -142,7 +142,7 @@ protected func ConsumeEvent(evt: ref<LHUDEvent>) -> Void {
 
 // Broadcast LHUD event
 @addMethod(PlayerPuppet)
-public func QueueEvent(type: LHUDEventType, active: Bool) -> Void {
+public func QueueLHUDEvent(type: LHUDEventType, active: Bool) -> Void {
   let evt: ref<LHUDEvent> = new LHUDEvent();
   evt.m_type = type;
   evt.m_isActive = active;

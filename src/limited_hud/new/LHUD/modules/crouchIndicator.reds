@@ -3,7 +3,7 @@ import LimitedHudCommon.LHUDEvent
 
 @addMethod(CrouchIndicatorGameController)
 protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
-  this.ConsumeEvent(evt);
+  this.ConsumeLHUDEvent(evt);
   this.DetermineCurrentVisibility();
 }
 
@@ -30,9 +30,9 @@ public func DetermineCurrentVisibility() -> Void {
   if NotEquals(this.lhud_isVisibleNow, isVisible) {
     this.lhud_isVisibleNow = isVisible;
     if isVisible {
-      this.AnimateAlpha(this.GetRootWidget(), 1.0, 0.3);
+      this.AnimateAlphaLHUD(this.GetRootWidget(), 1.0, 0.3);
     } else {
-      this.AnimateAlpha(this.GetRootWidget(), 0.0, 0.3);
+      this.AnimateAlphaLHUD(this.GetRootWidget(), 0.0, 0.3);
     };
   };
 }

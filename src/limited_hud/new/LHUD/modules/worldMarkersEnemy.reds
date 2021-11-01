@@ -5,7 +5,7 @@ import LimitedHudCommon.LHUDEvent
 
 @addMethod(StealthMappinController)
 protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
-  this.ConsumeEvent(evt);
+  this.ConsumeLHUDEvent(evt);
   this.DetermineCurrentVisibility();
 }
 
@@ -41,7 +41,7 @@ private final func ShouldDisableMappin() -> Bool {
 
 @addMethod(NameplateVisualsLogicController)
 protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
-  this.ConsumeEvent(evt);
+  this.ConsumeLHUDEvent(evt);
   this.DetermineCurrentVisibility();
 }
 

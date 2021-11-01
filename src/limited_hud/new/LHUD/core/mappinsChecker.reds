@@ -55,7 +55,6 @@ public class MappinChecker {
   public static func IsLootMarker(mappin: wref<IMappin>) -> Bool {
     let variant: gamedataMappinVariant = mappin.GetVariant();
     let data: ref<GameplayRoleMappinData> = mappin.GetScriptData() as GameplayRoleMappinData;
-    let role: EGameplayRole = data.m_gameplayRole;
 
     if Equals(data.m_textureID, t"MappinIcons.ShardMappin") {
       return true;

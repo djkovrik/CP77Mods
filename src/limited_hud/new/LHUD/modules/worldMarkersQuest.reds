@@ -2,13 +2,14 @@ import LimitedHudConfig.WorldMarkersModuleConfigQuest
 import LimitedHudConfig.WorldMarkersModuleConfigVehicles
 import LimitedHudConfig.WorldMarkersModuleConfigPOI
 import LimitedHudConfig.WorldMarkersModuleConfigCombat
+import LimitedHudConfig.WorldMarkersModuleConfigLoot
 import LimitedHudMappinChecker.MappinChecker
 import LimitedHudCommon.LHUDEvent
 import LimitedHudCommon.LHUDLog
 
 @addMethod(QuestMappinController)
 protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
-  this.ConsumeEvent(evt);
+  this.ConsumeLHUDEvent(evt);
   this.UpdateVisibility();
 }
 
@@ -29,6 +30,21 @@ private func UpdateVisibility() -> Void {
     let showForScanner: Bool =  this.lhud_isScannerActive && WorldMarkersModuleConfigQuest.ShowWithScanner();
     let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && !this.lhud_isCombatActive && WorldMarkersModuleConfigQuest.ShowWithWeapon();
     let showForZoom: Bool =  this.lhud_isZoomActive && WorldMarkersModuleConfigQuest.ShowWithZoom();
+    let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;
+    this.lhud_isVisibleNow = shouldBeVisible && isVisible;
+    this.SetRootVisible(this.lhud_isVisibleNow);
+    return ;
+  };
+  // ---- Loot
+  if WorldMarkersModuleConfigLoot.IsEnabled() && MappinChecker.IsLootMarker(this.m_mappin) {
+    let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && WorldMarkersModuleConfigLoot.BindToGlobalHotkey();
+    let showForCombat: Bool = this.lhud_isCombatActive && WorldMarkersModuleConfigLoot.ShowInCombat();
+    let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && WorldMarkersModuleConfigLoot.ShowOutOfCombat();
+    let showForStealth: Bool =  this.lhud_isStealthActive && WorldMarkersModuleConfigLoot.ShowInStealth();
+    let showForVehicle: Bool =  this.lhud_isInVehicle && WorldMarkersModuleConfigLoot.ShowInVehicle();
+    let showForScanner: Bool =  this.lhud_isScannerActive && WorldMarkersModuleConfigLoot.ShowWithScanner();
+    let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && !this.lhud_isCombatActive && WorldMarkersModuleConfigLoot.ShowWithWeapon();
+    let showForZoom: Bool =  this.lhud_isZoomActive && WorldMarkersModuleConfigLoot.ShowWithZoom();
     let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;
     this.lhud_isVisibleNow = shouldBeVisible && isVisible;
     this.SetRootVisible(this.lhud_isVisibleNow);
@@ -81,13 +97,20 @@ private func UpdateVisibility() -> Void {
   this.lhud_isVisibleNow = shouldBeVisible;
   this.SetRootVisible(shouldBeVisible);
   let data: ref<GameplayRoleMappinData> = this.m_mappin.GetScriptData() as GameplayRoleMappinData;
-  LHUDLog("Missed quest mappin! Variant: " + ToString(this.m_mappin.GetVariant()) + ", role: " + ToString(data.m_gameplayRole)  + ", visibility: " + ToString(this.lhud_isVisibleNow));
+  LHUDLog("Missed mappin! Variant: " + ToString(this.m_mappin.GetVariant()) + ", role: " + ToString(data.m_gameplayRole)  + ", visibility: " + ToString(this.lhud_isVisibleNow));
 }
 
 @wrapMethod(QuestMappinController)
 protected cb func OnInitialize() -> Bool {
+  // set to true for initial loading
+  this.lhud_isOutOfCombatActive = true;
   wrappedMethod();
   this.lhud_isVisibleNow = false;
   this.SetRootVisible(false);
   this.UpdateVisibility();
+}
+
+@replaceMethod(GameplayMappinController)
+private func UpdateVisibility() -> Void {
+  super.UpdateVisibility();
 }

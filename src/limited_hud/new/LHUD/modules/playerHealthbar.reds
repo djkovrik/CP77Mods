@@ -3,7 +3,7 @@ import LimitedHudCommon.LHUDEvent
 
 @addMethod(healthbarWidgetGameController)
 protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
-  this.ConsumeEvent(evt);
+  this.ConsumeLHUDEvent(evt);
   this.ComputeHealthBarVisibility();
 }
 

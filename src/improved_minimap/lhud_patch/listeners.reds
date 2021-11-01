@@ -71,7 +71,8 @@ public class LHUDBlackboardsListener {
     this.braindanceCallback = this.braindanceBlackboard.RegisterListenerBool(this.bbDefs.Braindance.IsActive, this, n"OnBraindanceToggle");
     this.scannerCallback = this.scannerBlackboard.RegisterListenerBool(this.bbDefs.UI_Scanner.UIVisible, this, n"OnScannerToggle");
     this.psmCallback = this.stateMachineBlackboard.RegisterListenerInt(this.bbDefs.PlayerStateMachine.Combat, this, n"OnCombatStateChanged");
-    this.vehicleCallback = this.vehicleBlackboard.RegisterListenerBool(this.bbDefs.UI_ActiveVehicleData.IsPlayerMounted, this, n"OnMountedStateChanged");
+    // this.vehicleCallback = this.vehicleBlackboard.RegisterListenerBool(this.bbDefs.UI_ActiveVehicleData.IsPlayerMounted, this, n"OnMountedStateChanged");
+    this.vehicleCallback = this.uiSystemBlackboard.RegisterListenerBool(this.bbDefs.UI_System.IsMounted_IMZ, this, n"OnMountedStateChanged");
     this.weaponCallback = this.weaponBlackboard.RegisterListenerBool(this.bbDefs.UI_EquipmentData.HasWeaponEquipped, this, n"OnWeaponStateChanged");
     this.zoomCallback = this.stateMachineBlackboard.RegisterListenerFloat(this.bbDefs.PlayerStateMachine.ZoomLevel, this, n"OnZoomChanged");
   }
@@ -83,7 +84,8 @@ public class LHUDBlackboardsListener {
     this.braindanceBlackboard.UnregisterListenerBool(this.bbDefs.Braindance.IsActive, this.braindanceCallback);
     this.scannerBlackboard.UnregisterListenerBool(this.bbDefs.UI_Scanner.UIVisible, this.scannerCallback);
     this.stateMachineBlackboard.UnregisterListenerInt(this.bbDefs.PlayerStateMachine.Combat, this.psmCallback);
-    this.vehicleBlackboard.UnregisterListenerBool(this.bbDefs.UI_ActiveVehicleData.IsPlayerMounted, this.vehicleCallback);
+    // this.vehicleBlackboard.UnregisterListenerBool(this.bbDefs.UI_ActiveVehicleData.IsPlayerMounted, this.vehicleCallback);
+    this.uiSystemBlackboard.UnregisterListenerBool(this.bbDefs.UI_System.IsMounted_IMZ, this.vehicleCallback);
     this.weaponBlackboard.UnregisterListenerBool(this.bbDefs.UI_EquipmentData.HasWeaponEquipped, this.weaponCallback);
     this.stateMachineBlackboard.UnregisterListenerFloat(this.bbDefs.PlayerStateMachine.ZoomLevel, this.zoomCallback);
   }

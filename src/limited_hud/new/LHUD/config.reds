@@ -119,21 +119,24 @@ public class PlayerHealthbarModuleConfig {
 // -- WORLD MARKERS
 //    Here you can configure visibility behavior for different world marker types
 
-// ---- Quest markers -check
+// ---- Quest markers
 public class WorldMarkersModuleConfigQuest {
   public static func IsEnabled() -> Bool = true
-  public static func BindToGlobalHotkey() -> Bool = false
+  public static func BindToGlobalHotkey() -> Bool = true
 
   public static func ShowInCombat() -> Bool = false
-  public static func ShowOutOfCombat() -> Bool = true
+  public static func ShowOutOfCombat() -> Bool = false
   public static func ShowInStealth() -> Bool = false
   public static func ShowInVehicle() -> Bool = false
-  public static func ShowWithScanner() -> Bool = false
+  public static func ShowWithScanner() -> Bool = true
   public static func ShowWithWeapon() -> Bool = false
-  public static func ShowWithZoom() -> Bool = false
+  public static func ShowWithZoom() -> Bool = true
 }
 
-// ---- Loot and shards markers -check
+// ---- Loot and shards markers
+//      Keep in mind that each option here just enables vanilla visibility
+//      behavior for loot markers and does not make it always visible
+//      You can use my Muted Markers mod for more precise tweaks
 public class WorldMarkersModuleConfigLoot {
   public static func IsEnabled() -> Bool = true
   public static func BindToGlobalHotkey() -> Bool = false
@@ -142,12 +145,12 @@ public class WorldMarkersModuleConfigLoot {
   public static func ShowOutOfCombat() -> Bool = false
   public static func ShowInStealth() -> Bool = false
   public static func ShowInVehicle() -> Bool = false
-  public static func ShowWithScanner() -> Bool = false
+  public static func ShowWithScanner() -> Bool = true
   public static func ShowWithWeapon() -> Bool = false
-  public static func ShowWithZoom() -> Bool = false
+  public static func ShowWithZoom() -> Bool = true
 }
 
-// ---- Place Of Interest markers  -check
+// ---- Place Of Interest markers
 //      Contains Fast Travel points, fixers, vendors and all kinds of services
 public class WorldMarkersModuleConfigPOI {
   public static func IsEnabled() -> Bool = true
@@ -156,33 +159,34 @@ public class WorldMarkersModuleConfigPOI {
   public static func ShowInCombat() -> Bool = false
   public static func ShowOutOfCombat() -> Bool = false
   public static func ShowInStealth() -> Bool = false
-  public static func ShowInVehicle() -> Bool = false
-  public static func ShowWithScanner() -> Bool = false
+  public static func ShowInVehicle() -> Bool = true
+  public static func ShowWithScanner() -> Bool = true
   public static func ShowWithWeapon() -> Bool = false
-  public static func ShowWithZoom() -> Bool = false
+  public static func ShowWithZoom() -> Bool = true
 }
 
-// ---- Combat markers -check
-//      Contains all combat and enemy related markers (grenades, enemy combat type, healthbar, arrow and alert markers)
+// ---- Combat markers
+//      Contains all combat and enemy related markers 
+//      (grenades, enemy combat type, healthbar, arrow and alert markers)
 public class WorldMarkersModuleConfigCombat {
   public static func IsEnabled() -> Bool = true
   public static func BindToGlobalHotkey() -> Bool = false
 
-  public static func ShowInCombat() -> Bool = false
+  public static func ShowInCombat() -> Bool = true
   public static func ShowOutOfCombat() -> Bool = false
-  public static func ShowInStealth() -> Bool = false
+  public static func ShowInStealth() -> Bool = true
   public static func ShowInVehicle() -> Bool = false
   public static func ShowWithScanner() -> Bool = false
-  public static func ShowWithWeapon() -> Bool = false
+  public static func ShowWithWeapon() -> Bool = true
   public static func ShowWithZoom() -> Bool = false
 }
 
-// ---- Owned vehicle markers -check
+// ---- Owned vehicle markers
 public class WorldMarkersModuleConfigVehicles {
   public static func IsEnabled() -> Bool = true
   public static func BindToGlobalHotkey() -> Bool = false
 
   public static func ShowInVehicle() -> Bool = false
   public static func ShowWithScanner() -> Bool = false
-  public static func ShowWithZoom() -> Bool = false
+  public static func ShowWithZoom() -> Bool = true
 }
