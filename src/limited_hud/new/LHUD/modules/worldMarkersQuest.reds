@@ -3,6 +3,7 @@ import LimitedHudConfig.WorldMarkersModuleConfigVehicles
 import LimitedHudConfig.WorldMarkersModuleConfigPOI
 import LimitedHudConfig.WorldMarkersModuleConfigCombat
 import LimitedHudConfig.WorldMarkersModuleConfigLoot
+import LimitedHudConfig.WorldMarkersModuleConfigDevices
 import LimitedHudMappinChecker.MappinChecker
 import LimitedHudCommon.LHUDEvent
 import LimitedHudCommon.LHUDLog
@@ -82,7 +83,7 @@ private func UpdateVisibility() -> Void {
     let showForCombat: Bool = this.lhud_isCombatActive && WorldMarkersModuleConfigCombat.ShowInCombat();
     let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && WorldMarkersModuleConfigCombat.ShowOutOfCombat();
     let showForStealth: Bool =  this.lhud_isStealthActive && WorldMarkersModuleConfigCombat.ShowInStealth();
-    let showForVehicle: Bool =  this.lhud_isInVehicle && WorldMarkersModuleConfigPOI.ShowInVehicle();
+    let showForVehicle: Bool =  this.lhud_isInVehicle && WorldMarkersModuleConfigCombat.ShowInVehicle();
     let showForScanner: Bool =  this.lhud_isScannerActive && WorldMarkersModuleConfigCombat.ShowWithScanner();
     let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && !this.lhud_isCombatActive && WorldMarkersModuleConfigCombat.ShowWithWeapon();
     let showForZoom: Bool =  this.lhud_isZoomActive && WorldMarkersModuleConfigCombat.ShowWithZoom();
@@ -93,11 +94,19 @@ private func UpdateVisibility() -> Void {
       return ;
     };
   };
+  // ---- Devices and interactions
+  if WorldMarkersModuleConfigDevices.IsEnabled() && MappinChecker.IsDeviceInteraction(this.m_mappin) {
+    let showForScanner: Bool =  this.lhud_isScannerActive && WorldMarkersModuleConfigDevices.ShowWithScanner();
+    let isVisible: Bool = showForScanner && shouldBeVisible;
+    this.lhud_isVisibleNow = isVisible;
+    this.SetRootVisible(this.lhud_isVisibleNow);
+    return ;
+  };
 
   this.lhud_isVisibleNow = shouldBeVisible;
   this.SetRootVisible(shouldBeVisible);
-  let data: ref<GameplayRoleMappinData> = this.m_mappin.GetScriptData() as GameplayRoleMappinData;
-  LHUDLog("Missed mappin! Variant: " + ToString(this.m_mappin.GetVariant()) + ", role: " + ToString(data.m_gameplayRole)  + ", visibility: " + ToString(this.lhud_isVisibleNow));
+  // let data: ref<GameplayRoleMappinData> = this.m_mappin.GetScriptData() as GameplayRoleMappinData;
+  // LHUDLog("Missed mappin! Variant: " + ToString(this.m_mappin.GetVariant()) + ", role: " + ToString(data.m_gameplayRole)  + ", visibility: " + ToString(this.lhud_isVisibleNow));
 }
 
 @wrapMethod(QuestMappinController)

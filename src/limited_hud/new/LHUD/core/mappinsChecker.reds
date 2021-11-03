@@ -35,6 +35,7 @@ public class MappinChecker {
 
     return 
          Equals(variant, gamedataMappinVariant.FastTravelVariant) 
+      || Equals(variant, gamedataMappinVariant.ConversationVariant)
       || Equals(variant, gamedataMappinVariant.FixerVariant)
       || Equals(variant, gamedataMappinVariant.ServicePointBarVariant)
       || Equals(variant, gamedataMappinVariant.ServicePointClothesVariant)
@@ -70,7 +71,28 @@ public class MappinChecker {
     let variant: gamedataMappinVariant = mappin.GetVariant();
 
     return 
-      Equals(variant, gamedataMappinVariant.GrenadeVariant) 
-      || false;
+       Equals(variant, gamedataMappinVariant.GrenadeVariant) 
+    || false;
+  }
+
+  public static func IsDeviceInteraction(mappin: wref<IMappin>) -> Bool {
+    let variant: gamedataMappinVariant = mappin.GetVariant();
+    let data: ref<GameplayRoleMappinData> = mappin.GetScriptData() as GameplayRoleMappinData;
+    let role: EGameplayRole = data.m_gameplayRole;
+
+
+    return 
+       Equals(role, EGameplayRole.ControlNetwork)
+    || Equals(role, EGameplayRole.HideBody)
+    || Equals(role, EGameplayRole.Alarm)
+    || Equals(role, EGameplayRole.OpenPath)
+    || Equals(role, EGameplayRole.Distract)
+    || Equals(role, EGameplayRole.Fall)
+    || Equals(role, EGameplayRole.ExplodeLethal)
+    || Equals(role, EGameplayRole.ExplodeNoneLethal)
+    || Equals(role, EGameplayRole.GrantInformation)
+    || Equals(role, EGameplayRole.ControlSelf)
+    || Equals(role, EGameplayRole.Alarm)
+    || false;
   }
 }

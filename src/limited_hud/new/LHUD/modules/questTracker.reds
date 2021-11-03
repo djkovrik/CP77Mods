@@ -14,8 +14,8 @@ public func DetermineCurrentVisibility() -> Void {
   };
 
   if this.lhud_isBraindanceActive {
-    this.lhud_isVisibleNow = false;
-    this.GetRootWidget().SetVisible(false);
+    this.lhud_isVisibleNow = true;
+    this.AnimateAlphaLHUD(this.GetRootWidget(), 1.0, 0.3);
     return ;
   };
 

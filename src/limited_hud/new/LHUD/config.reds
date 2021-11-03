@@ -190,3 +190,10 @@ public class WorldMarkersModuleConfigVehicles {
   public static func ShowWithScanner() -> Bool = false
   public static func ShowWithZoom() -> Bool = true
 }
+
+// ---- Devices and interactions
+//      Contains network devices, hide body containers, distractions and explosives
+public class WorldMarkersModuleConfigDevices{
+  public static func IsEnabled() -> Bool = true
+  public static func ShowWithScanner() -> Bool = true
+}
