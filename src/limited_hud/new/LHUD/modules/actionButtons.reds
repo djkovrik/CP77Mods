@@ -13,12 +13,6 @@ public func DetermineCurrentVisibility() -> Void {
     return ;
   };
 
-  if this.lhud_isBraindanceActive {
-    this.lhud_isVisibleNow = false;
-    this.GetRootWidget().SetVisible(false);
-    return ;
-  };
-
   let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && ActionButtonsModuleConfig.BindToGlobalHotkey();
   let showForCombat: Bool = this.lhud_isCombatActive && ActionButtonsModuleConfig.ShowInCombat();
   let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && ActionButtonsModuleConfig.ShowOutOfCombat();
