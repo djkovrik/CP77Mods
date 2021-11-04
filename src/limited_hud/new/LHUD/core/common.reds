@@ -138,6 +138,19 @@ protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
   };
 }
 
+// Swap top right slot child order for braindance mode
+@addMethod(inkGameController)
+protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
+  if this.IsA(n"gameuiRootHudGameController") && Equals(evt.m_type, LHUDEventType.Braindance) {
+    let slot: ref<inkCompoundWidget> = this.GetRootCompoundWidget().GetWidgetByPath(inkWidgetPath.Build(n"TopRightMain", n"TopRight")) as inkCompoundWidget;
+    if evt.m_isActive {
+      slot.SetChildOrder(inkEChildOrder.Backward);
+    } else {
+      slot.SetChildOrder(inkEChildOrder.Forward);
+    };
+  };
+}
+
 // --- UTILITY FUNCTIONS
 
 // Broadcast LHUD event
