@@ -88,11 +88,9 @@ private func UpdateVisibility() -> Void {
     let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && !this.lhud_isCombatActive && WorldMarkersModuleConfigCombat.ShowWithWeapon();
     let showForZoom: Bool =  this.lhud_isZoomActive && WorldMarkersModuleConfigCombat.ShowWithZoom();
     let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;
-    if NotEquals(this.lhud_isVisibleNow, isVisible) {
-      this.lhud_isVisibleNow = shouldBeVisible && isVisible;
-      this.SetRootVisible(this.lhud_isVisibleNow);
-      return ;
-    };
+    this.lhud_isVisibleNow = shouldBeVisible && isVisible;
+    this.SetRootVisible(this.lhud_isVisibleNow);
+    return ;
   };
   // ---- Devices and interactions
   if WorldMarkersModuleConfigDevices.IsEnabled() && MappinChecker.IsDeviceInteraction(this.m_mappin) {
