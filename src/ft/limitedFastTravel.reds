@@ -86,6 +86,7 @@ private final func RegisterMappin() -> Void {
   };
   if !this.m_linkedFastTravelPoint.ShouldShowMappinInWorld() {
     this.DeactivateDevice(); // <- deactivates terminal if ft point is hidden
+    EntityGameInterface.Destroy(this.GetEntity()); // <- destroy terminal entity
     return ;
   };
   if !this.IsMappinRegistered() {
