@@ -1,4 +1,16 @@
 private class SleevesConfig {
+  public static func Exclude(itemID: ItemID) -> Bool {
+    let id: TweakDBID = ItemID.GetTDBID(itemID);
+    return
+      // You can add item records below:
+      Equals(id, t"Items.Q101_Recovery_Bandage_Outfit") ||  // Bandage Wrapping
+      Equals(id, t"Items.Jacket_01_basic_02") ||            // Biker Vibe Composite-Lined Crystaljock Bomber
+      Equals(id, t"Items.SQ030_Diving_Suit") ||             // Judy's Diving Suit
+      Equals(id, t"Items.sq030_diving_suit_female") ||      // Judy's Diving Suit
+      Equals(id, t"Items.sq030_diving_suit_male") ||        // Judy's Diving Suit
+      Equals(id, t"Items.SQ030_Diving_Suit_NoShoes") ||     // Judy's Diving Suit
+      false;
+  }
   public static func TargetSlots() -> array<gamedataEquipmentArea> = [
     // gamedataEquipmentArea.Head,
     // gamedataEquipmentArea.Face,
@@ -19,6 +31,9 @@ private class SleevesConfig {
 // -- Swap substrings inside item appearance name
 @addMethod(EquipmentSystemPlayerData)
 private func SwapItemAppearance(itemID: ItemID, from: String, to: String) -> Void {
+  if SleevesConfig.Exclude(itemID) {
+    return ;
+  };
   let ts: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.m_owner.GetGame());
   let appearanceString: String = ToString(ts.GetItemAppearance(this.m_owner, itemID));
   let newAppearanceString: String;
