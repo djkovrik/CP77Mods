@@ -210,3 +210,10 @@ public final func OnEquipmentSystemWeaponManipulationRequest(request: ref<Equipm
 
   wrappedMethod(request);
 }
+
+@wrapMethod(RadialWheelController)
+private final func DisarmPlayer() -> Void {
+  let equipmentDataDef: ref<UI_EquipmentDataDef> = GetAllBlackboardDefs().UI_EquipmentData;
+  GameInstance.GetBlackboardSystem(this.GetPlayerControlledObject().GetGame()).Get(equipmentDataDef).SetBool(equipmentDataDef.HasWeaponEquipped, false);
+  wrappedMethod();
+}
