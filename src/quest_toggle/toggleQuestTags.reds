@@ -1,5 +1,15 @@
-// Here you can change new button hint label, just replace text in quotes with your own
 class ToggleQuestTagStrings {
+  
+  // Here you can change the hotkey, by default it's mouse right button and (Pad_Y_TRIANGLE for controller)
+  
+  // Some options which you can try:
+  // - "activate_secondary" equals to RightMouse and Pad_Y_TRIANGLE
+  // - "prior_sub_menu" equals to 8 and Pad_LeftTrigger   <- recommended for controller users
+  // - "next_sub_menu" equals to 9 and Pad_RightTrigger
+
+  public static func Hotkey() -> String = "activate_secondary"
+  
+  // Button hint label text
   public static func Toggle() -> String = "Toggle quest tag"
 }
 
@@ -13,9 +23,9 @@ class ToggleQuestTagStrings {
 private func UpdateHintsVisibility(shouldShow: Bool, opt evt: ref<ItemDisplayHoverOverEvent>) {
   let text: String = ToggleQuestTagStrings.Toggle();
   if shouldShow {
-    this.m_buttonHintsController.AddButtonHint(n"activate_secondary", text);
+    this.m_buttonHintsController.AddButtonHint(StringToName(ToggleQuestTagStrings.Hotkey()), text);
   } else {
-    this.m_buttonHintsController.RemoveButtonHint(n"activate_secondary");
+    this.m_buttonHintsController.RemoveButtonHint(StringToName(ToggleQuestTagStrings.Hotkey()));
   };
 }
 
@@ -47,7 +57,7 @@ private func ToggleQuestTag() -> Void {
 // Handle activate_secondary hotkey click
 @wrapMethod(BackpackMainGameController)
 protected cb func OnPostOnRelease(evt: ref<inkPointerEvent>) -> Bool {
-  if evt.IsAction(n"activate_secondary") && IsDefined(this.m_lastItemHoverOverEvent) {
+  if evt.IsAction(StringToName(ToggleQuestTagStrings.Hotkey())) && IsDefined(this.m_lastItemHoverOverEvent) {
     this.ToggleQuestTag();
     this.RefreshUI();
   };
@@ -64,9 +74,9 @@ private func UpdateHintsVisibility(shouldShow: Bool, opt evt: ref<inkPointerEven
   let itemData: InventoryItemData = controller.GetItemData();
   let text: String = ToggleQuestTagStrings.Toggle();
   if shouldShow {
-    this.m_buttonHintsController.AddButtonHint(n"activate_secondary", text);
+    this.m_buttonHintsController.AddButtonHint(StringToName(ToggleQuestTagStrings.Hotkey()), text);
   } else {
-    this.m_buttonHintsController.RemoveButtonHint(n"activate_secondary");
+    this.m_buttonHintsController.RemoveButtonHint(StringToName(ToggleQuestTagStrings.Hotkey()));
   };
 }
 
@@ -104,7 +114,7 @@ private func ToggleQuestTag(evt: ref<inkPointerEvent>) -> Void {
 @wrapMethod(gameuiInventoryGameController)
 protected cb func OnEquipmentClick(evt: ref<inkPointerEvent>) -> Bool {
   wrappedMethod(evt);
-  if evt.IsAction(n"activate_secondary") {
+  if evt.IsAction(StringToName(ToggleQuestTagStrings.Hotkey())) {
     this.ToggleQuestTag(evt);
     this.RefreshUI();
   };
