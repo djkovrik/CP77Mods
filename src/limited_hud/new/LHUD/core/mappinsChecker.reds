@@ -95,4 +95,8 @@ public class MappinChecker {
     || Equals(role, EGameplayRole.Alarm)
     || false;
   }
+
+  public static func IsTracked(mappin: wref<IMappin>) -> Bool {
+    return mappin.IsPlayerTracked();
+  }
 }

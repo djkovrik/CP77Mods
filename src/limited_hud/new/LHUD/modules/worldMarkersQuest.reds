@@ -72,7 +72,8 @@ private func UpdateVisibility() -> Void {
     let showForScanner: Bool =  this.lhud_isScannerActive && WorldMarkersModuleConfigPOI.ShowWithScanner();
     let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && !this.lhud_isCombatActive && WorldMarkersModuleConfigPOI.ShowWithWeapon();
     let showForZoom: Bool =  this.lhud_isZoomActive && WorldMarkersModuleConfigPOI.ShowWithZoom();
-    let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;
+    let showIfTracked: Bool = WorldMarkersModuleConfigPOI.AlwaysShowTrackedMarker() && MappinChecker.IsTracked(this.m_mappin);
+    let isVisible: Bool = showIfTracked || showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;
     this.lhud_isVisibleNow = shouldBeVisible && isVisible;
     this.SetRootVisible(this.lhud_isVisibleNow);
     return ;

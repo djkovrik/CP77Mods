@@ -1,4 +1,5 @@
 module LimitedHudAnimators
+
 @addMethod(inkGameController)
 protected func AnimateAlphaLHUD(targetWidget: wref<inkWidget>, endAlpha: Float, duration: Float) -> ref<inkAnimProxy> {
   let proxy: ref<inkAnimProxy>;

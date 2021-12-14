@@ -1,6 +1,6 @@
 module LimitedHudConfig
 
-// -- Limited HUD v2.0 config
+// -- Limited HUD v2.4 config
 
 // -- Here you can configure base Limited HUD modules
 
@@ -163,6 +163,8 @@ public class WorldMarkersModuleConfigPOI {
   public static func ShowWithScanner() -> Bool = true
   public static func ShowWithWeapon() -> Bool = false
   public static func ShowWithZoom() -> Bool = true
+
+  public static func AlwaysShowTrackedMarker() -> Bool = false
 }
 
 // ---- Combat markers
