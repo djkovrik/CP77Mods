@@ -51,6 +51,11 @@ public static func IsFastTravelPointEnabled(point: ref<FastTravelPointData>) -> 
     HasTheSameId(point, t"FastTravelPoints.cct_dtn_metro_ftp_02") ||  // Downtown, Metro: Downtown - Alexander St
     HasTheSameId(point, t"FastTravelPoints.std_rcr_metro_ftp_01") ||  // Rancho Coronado, Metro: Megabuilding H7
     HasTheSameId(point, t"FastTravelPoints.hey_spr_metro_ftp_01") ||  // Wellsprings, Metro: Market St
+    HasTheSameId(point, t"FastTravelPoints.wat_lch_metro_ftp_03") ||  // Little China, Metro: Zocalo
+    HasTheSameId(point, t"FastTravelPoints.wat_lch_metro_ftp_04") ||  // Little China, Metro: Ellison Street
+    HasTheSameId(point, t"FastTravelPoints.hey_gle_metro_ftp_03") ||  // The Glen, Metro: Ebunike
+    HasTheSameId(point, t"FastTravelPoints.cct_cpz_metro_ftp_03") ||  // Corpo Plaza, Metro: Memorial Park
+
 
     // --- FT points with bus stop ---
     HasTheSameId(point, t"FastTravelPoints.wbr_nok_dataterm_03") ||   // North Oak, Columbarium
