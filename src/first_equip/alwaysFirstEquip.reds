@@ -34,7 +34,7 @@ public class IdleBreakConfig {
 let m_skipFirstEquip: Bool;
 
 @addMethod(PlayerPuppet)
-public func ShouldRunFirstEquip(weapon: wref<WeaponObject>) -> Bool {
+public func ShouldRunFirstEquip_EQ(weapon: wref<WeaponObject>) -> Bool {
   if WeaponObject.IsMagazineEmpty(weapon) && !FirstEquipConfig.PlayWhenMagazineIsEmpty() {
     return false;
   };
@@ -52,7 +52,7 @@ public func ShouldRunFirstEquip(weapon: wref<WeaponObject>) -> Bool {
 }
 
 @addMethod(PlayerPuppet)
-public func ShouldRunIdleBreak() -> Bool {
+public func ShouldRunIdleBreak_EQ() -> Bool {
   let probability: Int32 = IdleBreakConfig.AnimationProbability();
   let random: Int32 = RandRange(0, 100);
 
@@ -222,13 +222,15 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
   };
 
   // New logic
-  if IsDefined(playerPuppet) {
-    if Equals(playerPuppet.ShouldSkipFirstEquip(), true) {
-      playerPuppet.SetSkipFirstEquip(false);
-    } else {
-      if playerPuppet.ShouldRunFirstEquip(itemObject) {
-        weaponEquipAnimFeature.firstEquip = true;
-        stateContext.SetConditionBoolParameter(n"firstEquip", true, true);
+  if !isInCombat || FirstEquipConfig.PlayInCombatMode() {
+    if IsDefined(playerPuppet) {
+      if Equals(playerPuppet.ShouldSkipFirstEquip(), true) {
+        playerPuppet.SetSkipFirstEquip(false);
+      } else {
+        if playerPuppet.ShouldRunFirstEquip_EQ(itemObject) {
+          weaponEquipAnimFeature.firstEquip = true;
+          stateContext.SetConditionBoolParameter(n"firstEquip", true, true);
+        };
       };
     };
   };
@@ -304,7 +306,7 @@ protected final func OnTick(timeDelta: Float, stateContext: ref<StateContext>, s
       timePassed = currentTime - this.m_savedIdleTimestamp > IdleBreakConfig.AnimationCheckPeriod();
       if timePassed && playerStandsStill {
         this.m_savedIdleTimestamp = currentTime;
-        if player.ShouldRunIdleBreak() {
+        if player.ShouldRunIdleBreak_EQ() {
           scriptInterface.PushAnimationEvent(n"IdleBreak");
         };
       };
