@@ -1,41 +1,69 @@
-// --- CONFIG SECTION STARTS HERE:
+// --- CONFIG SECTION STARTS HERE
 
+// -- Controls weapon firsEquip animation which 
+//    usually appears when you equip any weapon for a first time
 public class FirstEquipConfig {
   // Set the animation probability in percents, you can use values from 0 to 100 here
   // 0 means that animation never plays, 100 means that animation always plays
   public static func PercentageProbability() -> Int32 = 75
+  // Replace false with true if you want see firstEquip animation while in combat mode
+  public static func PlayInCombatMode() -> Bool = false
   // Replace false with true if you want see firstEquip animation while in stealth mode
   public static func PlayInStealthMode() -> Bool = false
   // Replace false with true if you want see firstEquip animation when weapon magazine is empty
   public static func PlayWhenMagazineIsEmpty() -> Bool = false
 }
 
+// -- Controls weapon IdleBreak animation which 
+//    sometimes appears when V stands still with unsheathed weapon
+public class IdleBreakConfig {
+  // Replace true with false if you want to disable this feature and restore default weapon idle behavior
+  public static func IsFeatureEnabled() -> Bool = true
+  // Set the animation probability in percents, you can use values from 0 to 100 here
+  // 0 means that animation never plays, 100 means that animation always plays
+  public static func AnimationProbability() -> Int32 = 15
+  // Animation checks period in seconds, each check decides if animation should be played 
+  // based on probability value from AnimationProbability option
+  public static func AnimationCheckPeriod() -> Float = 5.0
+}
+
 // --- CONFIG SECTION ENDS HERE, DO NOT EDIT ANYTHING BELOW
 
 
-// -- New stuff:
 @addField(PlayerPuppet)
 let m_skipFirstEquip: Bool;
 
 @addMethod(PlayerPuppet)
 public func ShouldRunFirstEquip(weapon: wref<WeaponObject>) -> Bool {
-
   if WeaponObject.IsMagazineEmpty(weapon) && !FirstEquipConfig.PlayWhenMagazineIsEmpty() {
     return false;
   };
+
+  if !FirstEquipConfig.PlayInCombatMode() && this.m_inCombat { return false; }
+  if !FirstEquipConfig.PlayInStealthMode() && this.m_inCrouch { return false; }
 
   let probability: Int32 = FirstEquipConfig.PercentageProbability();
   let random: Int32 = RandRange(0, 100);
 
   if probability < 0 { return false; };
   if probability > 100 { return true; }
-  if !FirstEquipConfig.PlayInStealthMode() && this.m_inCrouch { return false; }
 
   return random <= probability;
 }
 
 @addMethod(PlayerPuppet)
-public func HasRangedWeaponEquipped() -> Bool {
+public func ShouldRunIdleBreak() -> Bool {
+  let probability: Int32 = IdleBreakConfig.AnimationProbability();
+  let random: Int32 = RandRange(0, 100);
+
+  if probability < 0 { return false; };
+  if probability > 100 { return true; }
+
+  return random <= probability;
+}
+
+@addMethod(PlayerPuppet)
+public func HasRangedWeaponEquipped_EQ() -> Bool {
   let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.GetGame());
   let weapon: ref<WeaponObject> = transactionSystem.GetItemInSlot(this, t"AttachmentSlots.WeaponRight") as WeaponObject;
   if IsDefined(weapon) {
@@ -56,8 +84,7 @@ public func ShouldSkipFirstEquip() -> Bool {
   return this.m_skipFirstEquip;
 }
 
-
-// -- Handle skip flag for locomotion events:
+// -- Handle skip flag for locomotion events
 @replaceMethod(LocomotionEventsTransition)
 public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
   let playerPuppet: ref<PlayerPuppet>;
@@ -80,7 +107,7 @@ public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateG
   this.SetLocomotionCameraParameters(stateContext, scriptInterface);
 }
 
-// -- Handle skip flag for body carrying events:
+// -- Handle skip flag for body carrying events
 @replaceMethod(CarriedObjectEvents)
 protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
   let hasWeaponEquipped: Bool;
@@ -95,7 +122,7 @@ protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<Sta
   let isNPCMounted: Bool = EntityID.IsDefined(mountingInfo.childId);
   // Set flag if player and not carrying yet
   playerPuppet = scriptInterface.executionOwner as PlayerPuppet;
-  hasWeaponEquipped = playerPuppet.HasRangedWeaponEquipped();
+  hasWeaponEquipped = playerPuppet.HasRangedWeaponEquipped_EQ();
   if IsDefined(playerPuppet) && !carrying {
     playerPuppet.SetSkipFirstEquip(hasWeaponEquipped);
   };
@@ -132,7 +159,7 @@ protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<Sta
   (scriptInterface.owner as NPCPuppet).MountingStartDisableComponents();
 }
 
-// -- Handle skip flag for interaction events:
+// -- Handle skip flag for interaction events
 @replaceMethod(InteractiveDevice)
 protected cb func OnInteractionUsed(evt: ref<InteractionChoiceEvent>) -> Bool {
   let playerPuppet: ref<PlayerPuppet>;
@@ -143,14 +170,14 @@ protected cb func OnInteractionUsed(evt: ref<InteractionChoiceEvent>) -> Bool {
   if IsDefined(playerPuppet) {
     className = evt.hotspot.GetClassName();
     if Equals(className, n"AccessPoint") || Equals(className, n"Computer") || Equals(className, n"Stillage") || Equals(className, n"WeakFence") {
-      hasWeaponEquipped = playerPuppet.HasRangedWeaponEquipped();
+      hasWeaponEquipped = playerPuppet.HasRangedWeaponEquipped_EQ();
       playerPuppet.SetSkipFirstEquip(hasWeaponEquipped);
     };
   };
   this.ExecuteAction(evt.choice, evt.activator, evt.layerData.tag);
 }
 
-// -- Handle skip flag for takedown events:
+// -- Handle skip flag for takedown events
 @replaceMethod(gamestateMachineComponent)
 protected cb func OnStartTakedownEvent(startTakedownEvent: ref<StartTakedownEvent>) -> Bool {
   let instanceData: StateMachineInstanceData;
@@ -176,7 +203,7 @@ protected cb func OnStartTakedownEvent(startTakedownEvent: ref<StartTakedownEven
   };
 }
 
-// -- Control if firstEquip should be played:
+// -- Control if firstEquip should be played
 @replaceMethod(EquipmentBaseTransition)
 protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScriptInterface>, stateContext: ref<StateContext>, stateMachineInstanceData: StateMachineInstanceData, item: ItemID) -> Void {
   let statsEvent: ref<UpdateWeaponStatsEvent>;
@@ -193,23 +220,26 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
   if TweakDBInterface.GetBool(t"player.weapon.enableWeaponBlur", false) {
     this.GetBlurParametersFromWeapon(scriptInterface);
   };
-  if !isInCombat {
-    if IsDefined(playerPuppet) {
-      if Equals(playerPuppet.ShouldSkipFirstEquip(), true) {
-        playerPuppet.SetSkipFirstEquip(false);
-      } else {
-        if playerPuppet.ShouldRunFirstEquip(itemObject) {
-          weaponEquipAnimFeature.firstEquip = true;
-          stateContext.SetConditionBoolParameter(n"firstEquip", true, true);
-        };
+
+  // New logic
+  if IsDefined(playerPuppet) {
+    if Equals(playerPuppet.ShouldSkipFirstEquip(), true) {
+      playerPuppet.SetSkipFirstEquip(false);
+    } else {
+      if playerPuppet.ShouldRunFirstEquip(itemObject) {
+        weaponEquipAnimFeature.firstEquip = true;
+        stateContext.SetConditionBoolParameter(n"firstEquip", true, true);
       };
     };
-    //// Default game logic
-    // if Equals(this.GetProcessedEquipmentManipulationRequest(stateMachineInstanceData, stateContext).equipAnim, gameEquipAnimationType.FirstEquip) || this.GetStaticBoolParameter("forceFirstEquip", false) || !firstEqSystem.HasPlayedFirstEquip(ItemID.GetTDBID(itemObject.GetItemID())) {
-    //   weaponEquipAnimFeature.firstEquip = true;
-    //   stateContext.SetConditionBoolParameter(n"firstEquip", true, true);
-    // };
   };
+
+  // // Default game logic
+  // if !isInCombat {
+  //   if Equals(this.GetProcessedEquipmentManipulationRequest(stateMachineInstanceData, stateContext).equipAnim, gameEquipAnimationType.FirstEquip) || this.GetStaticBoolParameter("forceFirstEquip", false) || !firstEqSystem.HasPlayedFirstEquip(ItemID.GetTDBID(itemObject.GetItemID())) {
+  //     weaponEquipAnimFeature.firstEquip = true;
+  //     stateContext.SetConditionBoolParameter(n"firstEquip", true, true);
+  //   };
+  // };
   animFeature.stateTransitionDuration = statSystem.GetStatValue(Cast(itemObject.GetEntityID()), gamedataStatType.EquipDuration);
   animFeature.itemState = 1;
   animFeature.itemType = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(item)).ItemType().AnimFeatureIndex();
@@ -237,4 +267,67 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
       };
     };
   };
+}
+
+
+// -- IdleBreak animation
+
+@addField(ReadyEvents)
+private let m_savedIdleTimestamp: Float;
+
+@wrapMethod(ReadyEvents)
+protected final func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  wrappedMethod(stateContext, scriptInterface);
+  this.m_savedIdleTimestamp = this.m_timeStamp;
+}
+
+@replaceMethod(ReadyEvents)
+protected final func OnTick(timeDelta: Float, stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  let animFeature: ref<AnimFeature_WeaponHandlingStats>;
+  let ownerID: EntityID;
+  let statsSystem: ref<StatsSystem>;
+  let gameInstance: GameInstance = scriptInterface.GetGame();
+  let currentTime: Float = EngineTime.ToFloat(GameInstance.GetSimTime(gameInstance));
+  let behindCover: Bool = NotEquals(GameInstance.GetSpatialQueriesSystem(gameInstance).GetPlayerObstacleSystem().GetCoverDirection(scriptInterface.executionOwner), IntEnum(0l));
+  let player: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
+  let playerStandsStill: Bool;
+  let timePassed: Bool;
+
+  if behindCover {
+    this.m_timeStamp = currentTime;
+    stateContext.SetPermanentFloatParameter(n"TurnOffPublicSafeTimeStamp", this.m_timeStamp, true);
+  };
+  // New logic
+  if IdleBreakConfig.IsFeatureEnabled() {
+    if IsDefined(player) {
+      playerStandsStill = WeaponTransition.GetPlayerSpeed(scriptInterface) < 0.10 && stateContext.IsStateActive(n"Locomotion", n"stand");
+      timePassed = currentTime - this.m_savedIdleTimestamp > IdleBreakConfig.AnimationCheckPeriod();
+      if timePassed && playerStandsStill {
+        this.m_savedIdleTimestamp = currentTime;
+        if player.ShouldRunIdleBreak() {
+          scriptInterface.PushAnimationEvent(n"IdleBreak");
+        };
+      };
+    };
+  } else {
+    // Default game logic
+    if WeaponTransition.GetPlayerSpeed(scriptInterface) < 0.10 && stateContext.IsStateActive(n"Locomotion", n"stand") {
+      if scriptInterface.localBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat) != EnumInt(gamePSMCombat.InCombat) && !behindCover {
+        if this.m_timeStamp + this.GetStaticFloatParameterDefault("timeBetweenIdleBreaks", 20.00) <= currentTime {
+          scriptInterface.PushAnimationEvent(n"IdleBreak");
+          this.m_timeStamp = currentTime;
+        };
+      };
+    };
+  };
+
+  if this.IsHeavyWeaponEmpty(scriptInterface) && !stateContext.GetBoolParameter(n"requestHeavyWeaponUnequip", true) {
+    stateContext.SetPermanentBoolParameter(n"requestHeavyWeaponUnequip", true, true);
+  };
+  statsSystem = GameInstance.GetStatsSystem(gameInstance);
+  ownerID = scriptInterface.ownerEntityID;
+  animFeature = new AnimFeature_WeaponHandlingStats();
+  animFeature.weaponRecoil = statsSystem.GetStatValue(Cast(ownerID), gamedataStatType.RecoilAnimation);
+  animFeature.weaponSpread = statsSystem.GetStatValue(Cast(ownerID), gamedataStatType.SpreadAnimation);
+  scriptInterface.SetAnimationParameterFeature(n"WeaponHandlingData", animFeature, scriptInterface.executionOwner);
 }
