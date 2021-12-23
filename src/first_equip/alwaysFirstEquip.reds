@@ -30,11 +30,23 @@ public class IdleBreakConfig {
 // --- CONFIG SECTION ENDS HERE, DO NOT EDIT ANYTHING BELOW
 
 
+// -- Flag which controls if firstEquip animation must be skipped
 @addField(PlayerPuppet)
 let m_skipFirstEquip: Bool;
 
 @addMethod(PlayerPuppet)
-public func ShouldRunFirstEquip_EQ(weapon: wref<WeaponObject>) -> Bool {
+public func SetSkipFirstEquip_eq(skip: Bool) -> Void {
+  this.m_skipFirstEquip = skip;
+}
+
+@addMethod(PlayerPuppet)
+public func ShouldSkipFirstEquip_eq() -> Bool {
+  return this.m_skipFirstEquip;
+}
+
+// -- Checks if firstEquip animation must be played depending on config 
+@addMethod(PlayerPuppet)
+public func ShouldRunFirstEquip_eq(weapon: wref<WeaponObject>) -> Bool {
   if WeaponObject.IsMagazineEmpty(weapon) && !FirstEquipConfig.PlayWhenMagazineIsEmpty() {
     return false;
   };
@@ -51,8 +63,9 @@ public func ShouldRunFirstEquip_EQ(weapon: wref<WeaponObject>) -> Bool {
   return random <= probability;
 }
 
+// -- Checks if IdleBreak animation must be played depending on config 
 @addMethod(PlayerPuppet)
-public func ShouldRunIdleBreak_EQ() -> Bool {
+public func ShouldRunIdleBreak_eq() -> Bool {
   let probability: Int32 = IdleBreakConfig.AnimationProbability();
   let random: Int32 = RandRange(0, 100);
 
@@ -62,8 +75,9 @@ public func ShouldRunIdleBreak_EQ() -> Bool {
   return random <= probability;
 }
 
+// -- Checks if player has any ranged weapon equipped
 @addMethod(PlayerPuppet)
-public func HasRangedWeaponEquipped_EQ() -> Bool {
+public func HasRangedWeaponEquipped_eq() -> Bool {
   let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.GetGame());
   let weapon: ref<WeaponObject> = transactionSystem.GetItemInSlot(this, t"AttachmentSlots.WeaponRight") as WeaponObject;
   if IsDefined(weapon) {
@@ -74,17 +88,7 @@ public func HasRangedWeaponEquipped_EQ() -> Bool {
   return false;
 }
 
-@addMethod(PlayerPuppet)
-public func SetSkipFirstEquip(skip: Bool) -> Void {
-  this.m_skipFirstEquip = skip;
-}
-
-@addMethod(PlayerPuppet)
-public func ShouldSkipFirstEquip() -> Bool {
-  return this.m_skipFirstEquip;
-}
-
-// -- Handle skip flag for locomotion events
+// -- Handles skip flag for locomotion events
 @replaceMethod(LocomotionEventsTransition)
 public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
   let playerPuppet: ref<PlayerPuppet>;
@@ -94,7 +98,7 @@ public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateG
   event = scriptInterface.localBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.LocomotionDetailed);
   if event == EnumInt(gamePSMDetailedLocomotionStates.Climb) || event == EnumInt(gamePSMDetailedLocomotionStates.Ladder) {
     if IsDefined(playerPuppet) {
-      playerPuppet.SetSkipFirstEquip(true);
+      playerPuppet.SetSkipFirstEquip_eq(true);
     };
   };
 
@@ -107,7 +111,7 @@ public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateG
   this.SetLocomotionCameraParameters(stateContext, scriptInterface);
 }
 
-// -- Handle skip flag for body carrying events
+// -- Handles skip flag for body carrying events
 @replaceMethod(CarriedObjectEvents)
 protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
   let hasWeaponEquipped: Bool;
@@ -122,9 +126,9 @@ protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<Sta
   let isNPCMounted: Bool = EntityID.IsDefined(mountingInfo.childId);
   // Set flag if player and not carrying yet
   playerPuppet = scriptInterface.executionOwner as PlayerPuppet;
-  hasWeaponEquipped = playerPuppet.HasRangedWeaponEquipped_EQ();
+  hasWeaponEquipped = playerPuppet.HasRangedWeaponEquipped_eq();
   if IsDefined(playerPuppet) && !carrying {
-    playerPuppet.SetSkipFirstEquip(hasWeaponEquipped);
+    playerPuppet.SetSkipFirstEquip_eq(hasWeaponEquipped);
   };
   if !isNPCMounted && !this.IsBodyDisposalOngoing(stateContext, scriptInterface) {
     mountEvent = new MountingRequest();
@@ -159,7 +163,7 @@ protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<Sta
   (scriptInterface.owner as NPCPuppet).MountingStartDisableComponents();
 }
 
-// -- Handle skip flag for interaction events
+// -- Handles skip flag for interaction events
 @replaceMethod(InteractiveDevice)
 protected cb func OnInteractionUsed(evt: ref<InteractionChoiceEvent>) -> Bool {
   let playerPuppet: ref<PlayerPuppet>;
@@ -170,14 +174,14 @@ protected cb func OnInteractionUsed(evt: ref<InteractionChoiceEvent>) -> Bool {
   if IsDefined(playerPuppet) {
     className = evt.hotspot.GetClassName();
     if Equals(className, n"AccessPoint") || Equals(className, n"Computer") || Equals(className, n"Stillage") || Equals(className, n"WeakFence") {
-      hasWeaponEquipped = playerPuppet.HasRangedWeaponEquipped_EQ();
-      playerPuppet.SetSkipFirstEquip(hasWeaponEquipped);
+      hasWeaponEquipped = playerPuppet.HasRangedWeaponEquipped_eq();
+      playerPuppet.SetSkipFirstEquip_eq(hasWeaponEquipped);
     };
   };
   this.ExecuteAction(evt.choice, evt.activator, evt.layerData.tag);
 }
 
-// -- Handle skip flag for takedown events
+// -- Handles skip flag for takedown events
 @replaceMethod(gamestateMachineComponent)
 protected cb func OnStartTakedownEvent(startTakedownEvent: ref<StartTakedownEvent>) -> Bool {
   let instanceData: StateMachineInstanceData;
@@ -199,11 +203,12 @@ protected cb func OnStartTakedownEvent(startTakedownEvent: ref<StartTakedownEven
   };
   playerPuppet = owner as PlayerPuppet;
   if IsDefined(playerPuppet) {
-    playerPuppet.SetSkipFirstEquip(true);
+    playerPuppet.SetSkipFirstEquip_eq(true);
   };
 }
 
-// -- Control if firstEquip should be played
+// -- Controls if firstEquip should be played
+// -- Allows firstEquip in combat if PlayInCombatMode option enabled
 @replaceMethod(EquipmentBaseTransition)
 protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScriptInterface>, stateContext: ref<StateContext>, stateMachineInstanceData: StateMachineInstanceData, item: ItemID) -> Void {
   let statsEvent: ref<UpdateWeaponStatsEvent>;
@@ -224,10 +229,10 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
   // New logic
   if !isInCombat || FirstEquipConfig.PlayInCombatMode() {
     if IsDefined(playerPuppet) {
-      if Equals(playerPuppet.ShouldSkipFirstEquip(), true) {
-        playerPuppet.SetSkipFirstEquip(false);
+      if Equals(playerPuppet.ShouldSkipFirstEquip_eq(), true) {
+        playerPuppet.SetSkipFirstEquip_eq(false);
       } else {
-        if playerPuppet.ShouldRunFirstEquip_EQ(itemObject) {
+        if playerPuppet.ShouldRunFirstEquip_eq(itemObject) {
           weaponEquipAnimFeature.firstEquip = true;
           stateContext.SetConditionBoolParameter(n"firstEquip", true, true);
         };
@@ -274,15 +279,18 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
 
 // -- IdleBreak animation
 
+// -- Timestamp field to control the mod logic periods
 @addField(ReadyEvents)
 private let m_savedIdleTimestamp: Float;
 
+// -- Set initial m_savedIdleTimestamp value
 @wrapMethod(ReadyEvents)
 protected final func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
   wrappedMethod(stateContext, scriptInterface);
   this.m_savedIdleTimestamp = this.m_timeStamp;
 }
 
+// -- Checks if AnimationCheckPeriod passed and IdleBreak must be triggered
 @replaceMethod(ReadyEvents)
 protected final func OnTick(timeDelta: Float, stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
   let animFeature: ref<AnimFeature_WeaponHandlingStats>;
@@ -306,7 +314,7 @@ protected final func OnTick(timeDelta: Float, stateContext: ref<StateContext>, s
       timePassed = currentTime - this.m_savedIdleTimestamp > IdleBreakConfig.AnimationCheckPeriod();
       if timePassed && playerStandsStill {
         this.m_savedIdleTimestamp = currentTime;
-        if player.ShouldRunIdleBreak_EQ() {
+        if player.ShouldRunIdleBreak_eq() {
           scriptInterface.PushAnimationEvent(n"IdleBreak");
         };
       };
