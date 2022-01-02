@@ -44,7 +44,8 @@ public class ZoomCalc {
   public static func RoundTo05(value: Float) -> Float {
     let doubled: Float = value * 2.0;
     let rounded: Int32 = RoundF(doubled);
-    return Cast(rounded) / 2.0;
+    let casted: Float = Cast(rounded);
+    return casted / 2.0;
   }
 }
 
