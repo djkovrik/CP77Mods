@@ -60,9 +60,6 @@ public let LastUsedSlot_eq: BlackboardID_Int;
 @addField(HotkeyItemController)
 public let playerPuppet_eq: ref<PlayerPuppet>;
 
-@addField(PlayerPuppet)
-private let firstEquipGlobalInputListener: ref<FirstEquipGlobalInputListener>;
-
 
 // --- CUSTOM HOTKEY
 
@@ -114,21 +111,21 @@ public class FirstEquipGlobalInputListener {
 }
 
 @addField(PlayerPuppet)
-private let firstEquipGlobalInputListener: ref<FirstEquipGlobalInputListener>;
+private let m_firstEquipGlobalInputListener: ref<FirstEquipGlobalInputListener>;
 
 @wrapMethod(PlayerPuppet)
 protected cb func OnGameAttached() -> Bool {
     wrappedMethod();
-    this.firstEquipGlobalInputListener = new FirstEquipGlobalInputListener();
-    this.firstEquipGlobalInputListener.SetPlayer(this);
-    this.RegisterInputListener(this.firstEquipGlobalInputListener);
+    this.m_firstEquipGlobalInputListener = new FirstEquipGlobalInputListener();
+    this.m_firstEquipGlobalInputListener.SetPlayer(this);
+    this.RegisterInputListener(this.m_firstEquipGlobalInputListener);
 }
 
 @wrapMethod(PlayerPuppet)
 protected cb func OnDetach() -> Bool {
     wrappedMethod();
-    this.UnregisterInputListener(this.firstEquipGlobalInputListener);
-    this.firstEquipGlobalInputListener = null;
+    this.UnregisterInputListener(this.m_firstEquipGlobalInputListener);
+    this.m_firstEquipGlobalInputListener = null;
 }
 
 
