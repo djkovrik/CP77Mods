@@ -583,8 +583,10 @@ protected final func OnTick(timeDelta: Float, stateContext: ref<StateContext>, s
     };
     // Single tap
     if Equals(this.customHotkeyState_eq, FirstEquipHotkeyState.TAPPED) {
-      this.savedIdleTimestamp_eq = currentTime;
-      scriptInterface.PushAnimationEvent(n"IdleBreak");
+      if IdleBreakConfig.BindToHotkey() {
+        this.savedIdleTimestamp_eq = currentTime;
+        scriptInterface.PushAnimationEvent(n"IdleBreak");
+      };
       this.customHotkeyState_eq = FirstEquipHotkeyState.IDLE;
     } else {
       // Hold started
