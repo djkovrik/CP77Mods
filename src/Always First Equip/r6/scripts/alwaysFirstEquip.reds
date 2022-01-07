@@ -343,16 +343,16 @@ public final const func HasPlayedFirstEquip(weaponID: TweakDBID) -> Bool {
   let isHotkeyPressed: Bool = GameInstance.GetBlackboardSystem(this.GetGameInstance()).Get(GetAllBlackboardDefs().UI_System).GetBool(GetAllBlackboardDefs().UI_System.FirstEquipRequested_eq);
   let i: Int32 = 0;
 
-  // Return true if firstEquip blocked
-  if !player.ShouldRunFirstEquip_eq(weapon) {
-    return true;
-  }
-
   // Return false if hotkey pressed
   if isHotkeyPressed && FirstEquipConfig.BindToHotkey() {
     GameInstance.GetBlackboardSystem(this.GetGameInstance()).Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.FirstEquipRequested_eq, false, false);
     return false;
   };
+
+  // Return true if firstEquip blocked
+  if !player.ShouldRunFirstEquip_eq(weapon) {
+    return true;
+  }
 
   // Default logic
   while i < ArraySize(this.m_equipDataArray) {
@@ -503,6 +503,10 @@ private let weaponObjectID_eq: TweakDBID;
 @addField(ReadyEvents)
 private let isHeldActive_eq: Bool;
 
+// Flag to request weapon ready state
+@addField(ReadyEvents)
+private let readyStateRequested_eq: Bool;
+
 @wrapMethod(ReadyEvents)
 protected final func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
   wrappedMethod(stateContext, scriptInterface);
@@ -512,6 +516,7 @@ protected final func OnEnter(stateContext: ref<StateContext>, scriptInterface: r
   this.safeAnimFeature_eq = new AnimFeature_SafeAction();
   this.weaponObjectID_eq = TweakDBInterface.GetWeaponItemRecord(ItemID.GetTDBID(DefaultTransition.GetActiveWeapon(scriptInterface).GetItemID())).GetID();
   this.isHeldActive_eq = false;
+  this.readyStateRequested_eq = false;
   // Register custom hotkey listener
   scriptInterface.executionOwner.RegisterInputListener(this, n"FirstTimeEquip");
 }
@@ -554,6 +559,12 @@ protected final func OnTick(timeDelta: Float, stateContext: ref<StateContext>, s
 
     // EQ(s"OnTick: pressed = \(pressed), released = \(released), hold = \(hold), state = \(ToString(this.customHotkeyState_eq))");
 
+    // Force weapon ready state if requested
+    if this.readyStateRequested_eq {
+      this.readyStateRequested_eq = false;
+      scriptInterface.SetAnimationParameterFloat(n"safe", 0.0);
+    };
+
     // Action detected when in IDLE state -> PREPARING
     if Equals(this.customHotkeyState_eq, FirstEquipHotkeyState.IDLE) && pressed {
       this.customHotkeyState_eq = FirstEquipHotkeyState.PREPARING;
@@ -578,8 +589,8 @@ protected final func OnTick(timeDelta: Float, stateContext: ref<StateContext>, s
 
     // RUN ANIMATIONS
     if Equals(this.customHotkeyState_eq, FirstEquipHotkeyState.PREPARING) {
-      // Move weapon to unsafe position when hotkey clicked
-      scriptInterface.SetAnimationParameterFloat(n"safe", 0.0);
+      // Switch weapon state to ready when hotkey clicked
+      this.readyStateRequested_eq = true;
     };
     // Single tap
     if Equals(this.customHotkeyState_eq, FirstEquipHotkeyState.TAPPED) {
@@ -604,6 +615,8 @@ protected final func OnTick(timeDelta: Float, stateContext: ref<StateContext>, s
         this.safeAnimFeature_eq.triggerHeld = false;
         this.customHotkeyState_eq = FirstEquipHotkeyState.IDLE;
         this.isHeldActive_eq = false;
+        // Switch weapon state to ready when SafeAction completed
+        this.readyStateRequested_eq = true;
         stateContext.SetConditionFloatParameter(n"ForceSafeTimeStampToAutoUnequip", stateContext.GetConditionFloat(n"ForceSafeTimeStampToAutoUnequip") + this.GetStaticFloatParameterDefault("addedTimeToAutoUnequipAfterSafeAction", 0.00), true);
       };
     };
