@@ -1,3 +1,5 @@
+import CustomMarkers.Config.*
+
 // Set custom data for worldmap mappin popup
 @replaceMethod(WorldMapTooltipController)
 public func SetData(data: WorldMapTooltipData, menu: ref<WorldMapMenuGameController>) -> Void {
@@ -38,7 +40,7 @@ public func SetData(data: WorldMapTooltipData, menu: ref<WorldMapMenuGameControl
   let player: wref<GameObject> = menu.GetPlayer();
   let playerLevel: Int32 = RoundMath(GameInstance.GetStatsSystem(player.GetGame()).GetStatValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatType.Level));
   if data.controller != null && data.mappin != null && journalManager != null && player != null {
-    // Custom data for popup
+    // Set custom title and description
     let mappinData = data.mappin.GetScriptData() as GameplayRoleMappinData;
     if IsDefined(mappinData) && mappinData.m_isMappinCustom {
       titleStr = mappinData.m_customMappinTitle;
@@ -155,6 +157,12 @@ public func SetData(data: WorldMapTooltipData, menu: ref<WorldMapMenuGameControl
     inputOpenJournalStr = GetLocalizedText("UI-PanelNames-JOURNAL");
     inputZoomTo = menu.CanZoomToMappin(data.controller);
     inputZoomToStr = GetLocalizedText("Gameplay-InputHints-DeviceControl-ZoomIn");
+
+    // Set custom hint for deletion
+    if IsDefined(mappinData) && mappinData.m_isMappinCustom {
+      inputZoomTo = true;
+      inputZoomToStr = CustomMarkersConfig.DeleteLabel();
+    };
   };
   inkWidgetRef.SetVisible(this.m_collectionCountContainer, data.isCollection);
   if data.isCollection {
@@ -166,6 +174,7 @@ public func SetData(data: WorldMapTooltipData, menu: ref<WorldMapMenuGameControl
     isTrackedQuest = false;
     recommendedLvlVisible = false;
   };
+  
   inkTextRef.SetText(this.m_titleText, titleStr);
   inkTextRef.SetText(this.m_descText, descStr);
   inkWidgetRef.SetVisible(this.m_trackedQuestContainer, isTrackedQuest);

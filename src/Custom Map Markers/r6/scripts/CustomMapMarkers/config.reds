@@ -9,14 +9,13 @@ public class CustomMarkersConfig {
 
   public static func TypeLabel() -> String = "Select marker icon:"
 
+  public static func DeleteLabel() -> String = "Delete"
+
   public static func IconColorActive() -> HDRColor = Colors.BaseGreen()
 
   public static func IconColorInactive() -> HDRColor = Colors.BaseGray()
 }
 
 // TODO:
-// - tint worldmap icons
-// - tracking
-// - hits
-// - persist created markers
 // - localization (codeware)?
+// - persist created markers
