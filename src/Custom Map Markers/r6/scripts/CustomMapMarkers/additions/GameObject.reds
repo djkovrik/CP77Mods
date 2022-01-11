@@ -1,4 +1,4 @@
-
+import Codeware.Localization.*
 import CustomMarkers.Core.*
 
 @addMethod(GameObject)
@@ -16,6 +16,7 @@ public func ShowCustomNotification(text: String) -> Void {
 public func AddCustomMappin(title: String, description: String, texturePart: CName) -> Void {
   let position: Vector4 = this.GetWorldPosition();
   let roleMappinData: ref<GameplayRoleMappinData> = new GameplayRoleMappinData();
+  let mappinAddedMessage: String = LocalizationSystem.GetInstance(this.GetGame()).GetText("CustomMarkers-MappinAddedMessage");
   roleMappinData.m_mappinVisualState = EMappinVisualState.Available;
   roleMappinData.m_isTagged = false;
   roleMappinData.m_isQuest = false;
@@ -45,7 +46,7 @@ public func AddCustomMappin(title: String, description: String, texturePart: CNa
 
   GameInstance.GetMappinSystem(this.GetGame()).RegisterMappin(mappinData, position);
   L(s"Registered mappin at position \(ToString(position)) as \(NameToString(texturePart))");
-  this.ShowCustomNotification("New mappin added");
+  this.ShowCustomNotification(mappinAddedMessage);
 }
 
 @addMethod(GameObject)

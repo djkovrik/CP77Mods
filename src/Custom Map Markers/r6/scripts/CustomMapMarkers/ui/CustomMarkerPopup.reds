@@ -1,6 +1,7 @@
 module CustomMarkers.UI
 
 import Codeware.UI.*
+import Codeware.Localization.*
 import CustomMarkers.Config.*
 import CustomMarkers.Core.*
 import CustomMarkers.UI.*
@@ -17,8 +18,11 @@ public class CustomMarkerPopup extends InGamePopup {
 
   private let m_selectedIcon: CName;
 
+  private let m_translator: wref<LocalizationSystem>;
+
   protected cb func OnCreate() -> Void {
 		super.OnCreate();
+    this.m_translator = LocalizationSystem.GetInstance(this.GetGame());
     this.CreateWidgets();
     this.SetupInitialLayout();
 	}
@@ -100,7 +104,7 @@ public class CustomMarkerPopup extends InGamePopup {
     // TOP PANEL: input with text label
 
     // Text label
-    let textInputLabel: ref<inkText> = this.CreateTextLabel(CustomMarkersConfig.DescriptionLabel());
+    let textInputLabel: ref<inkText> = this.CreateTextLabel(this.m_translator.GetText("CustomMarkers-DescriptionLabel"));
     textInputLabel.SetMargin(new inkMargin(0.0, 0.0, 0.0, 10.0));
     // Input field
     this.m_input = HubTextInput.Create();
@@ -136,7 +140,7 @@ public class CustomMarkerPopup extends InGamePopup {
       ArrayPush(this.m_icons, newIcon);
     };
     // Text label
-    let selectIconLabel: ref<inkText> = this.CreateTextLabel(CustomMarkersConfig.TypeLabel());
+    let selectIconLabel: ref<inkText> = this.CreateTextLabel(this.m_translator.GetText("CustomMarkers-PickIconLabel"));
     // Middle panel
     let middlePanel: ref<inkVerticalPanel> = new inkVerticalPanel();
     middlePanel.SetFitToContent(true);
@@ -151,11 +155,11 @@ public class CustomMarkerPopup extends InGamePopup {
     // BOTTOM PANNEL
 
     // Buttons
-    let buttonCancel: ref<MarkerPopupButton> = this.CreateButton(n"buttonCancel", "Cancel");
+    let buttonCancel: ref<MarkerPopupButton> = this.CreateButton(n"buttonCancel", GetLocalizedText("Gameplay-Devices-Interactions-Cancel"));
     let buttonCancelContainer: ref<inkHorizontalPanel> = new inkHorizontalPanel();
     buttonCancelContainer.SetMargin(new inkMargin(10.0, 10.0, 10.0, 0.0));
     buttonCancel.Reparent(buttonCancelContainer);
-    let buttonOk: ref<MarkerPopupButton> = this.CreateButton(n"buttonOk", "OK");
+    let buttonOk: ref<MarkerPopupButton> = this.CreateButton(n"buttonOk", GetLocalizedText("Gameplay-Devices-Interactions-Ok"));
     let buttonOkContainer: ref<inkHorizontalPanel> = new inkHorizontalPanel();
     buttonOkContainer.SetMargin(new inkMargin(10.0, 10.0, 10.0, 0.0));
     buttonOk.Reparent(buttonOkContainer);
@@ -240,7 +244,7 @@ public class CustomMarkerPopup extends InGamePopup {
     let button: ref<MarkerPopupButton> = MarkerPopupButton.Create();
     button.SetName(name);
     button.SetText(text);
-    button.SetWidth(275.0);
+    button.SetWidth(300.0);
     button.SetScale(0.75);
     button.RegisterToCallback(n"OnClick", this, n"OnClick");
     return button;

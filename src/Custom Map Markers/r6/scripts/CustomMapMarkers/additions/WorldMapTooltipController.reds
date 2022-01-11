@@ -1,3 +1,4 @@
+import Codeware.Localization.*
 import CustomMarkers.Config.*
 
 // Set custom data for worldmap mappin popup
@@ -161,7 +162,7 @@ public func SetData(data: WorldMapTooltipData, menu: ref<WorldMapMenuGameControl
     // Set custom hint for deletion
     if IsDefined(mappinData) && mappinData.m_isMappinCustom {
       inputZoomTo = true;
-      inputZoomToStr = CustomMarkersConfig.DeleteLabel();
+      inputZoomToStr = LocalizationSystem.GetInstance(player.GetGame()).GetText("CustomMarkers-ButtonLabelDelete");
     };
   };
   inkWidgetRef.SetVisible(this.m_collectionCountContainer, data.isCollection);

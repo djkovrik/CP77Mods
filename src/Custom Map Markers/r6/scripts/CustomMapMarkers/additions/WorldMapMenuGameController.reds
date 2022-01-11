@@ -1,10 +1,24 @@
+import Codeware.Localization.*
 import CustomMarkers.Config.*
 import CustomMarkers.Core.*
 import CustomMarkers.UI.*
 
+// Initialize localization system
+@addField(WorldMapMenuGameController)
+protected let m_translator: ref<LocalizationSystem>;
+
+@wrapMethod(WorldMapMenuGameController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+  this.m_translator = LocalizationSystem.GetInstance(this.m_player.GetGame());
+  L(s"Custom Map Markers initialized. Your game language code: \(ToString(this.m_translator.GetInterfaceLanguage()))");
+}
+
+
+// Catch marker creation events
 @addMethod(WorldMapMenuGameController)
 protected cb func OnRequestMarkerCreationEvent(evt: ref<RequestMarkerCreationEvent>) -> Bool {
-  this.m_player.AddCustomMappin(CustomMarkersConfig.Title(), evt.m_description, evt.m_texturePart);
+  this.m_player.AddCustomMappin(this.m_translator.GetText("CustomMarkers-MarkerTitle"), evt.m_description, evt.m_texturePart);
   // TODO does not actually return to game
   this.m_menuEventDispatcher.SpawnEvent(n"OnCloseHubMenu");
 }
