@@ -3,7 +3,7 @@ module CustomMarkers.UI
 import Codeware.UI.*
 import Codeware.Localization.*
 import CustomMarkers.Config.*
-import CustomMarkers.Core.*
+import CustomMarkers.Common.*
 import CustomMarkers.UI.*
 
 public class CustomMarkerPopup extends InGamePopup {

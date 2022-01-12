@@ -1,4 +1,4 @@
-module CustomMarkers.Core
+module CustomMarkers.Common
 
 public class Colors {
   // Base colors

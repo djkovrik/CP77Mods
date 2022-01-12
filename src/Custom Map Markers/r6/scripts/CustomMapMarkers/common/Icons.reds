@@ -1,4 +1,4 @@
-module CustomMarkers.Core
+module CustomMarkers.Common
 
 public class Icons {
   public static func Array() -> array<CName> = [

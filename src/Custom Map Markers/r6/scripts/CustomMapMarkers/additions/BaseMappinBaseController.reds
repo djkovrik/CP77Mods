@@ -50,6 +50,7 @@ protected func Update() -> Void {
   this.SetForceHide(!shouldShowMappin);
 }
 
+// Custom marker helper method
 @addMethod(BaseMappinBaseController)
 protected func SetCustomMarkerIcon(mappin: ref<IMappin>, image: inkImageRef) -> Void {
   let mappinData: ref<GameplayRoleMappinData>;
@@ -62,6 +63,7 @@ protected func SetCustomMarkerIcon(mappin: ref<IMappin>, image: inkImageRef) -> 
   };
 }
 
+// Custom tint helper method
 @addMethod(BaseMappinBaseController)
 protected func SetCustomMarkerTint(mappin: ref<IMappin>, image: inkImageRef) -> Void {
   let mappinData: ref<GameplayRoleMappinData>;

@@ -1,4 +1,5 @@
 module CustomMarkers.UI
+
 import Codeware.UI.*
 
 public class MarkerPopupButton extends SimpleButton {

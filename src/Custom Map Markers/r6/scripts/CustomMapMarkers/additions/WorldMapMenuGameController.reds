@@ -1,24 +1,28 @@
 import Codeware.Localization.*
-import CustomMarkers.Config.*
-import CustomMarkers.Core.*
+import CustomMarkers.System.*
+import CustomMarkers.Common.*
 import CustomMarkers.UI.*
 
-// Initialize localization system
+@addField(WorldMapMenuGameController)
+protected let m_customMarkerSystem: ref<CustomMarkerSystem>;
+
 @addField(WorldMapMenuGameController)
 protected let m_translator: ref<LocalizationSystem>;
 
 @wrapMethod(WorldMapMenuGameController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
-  this.m_translator = LocalizationSystem.GetInstance(this.m_player.GetGame());
-  L(s"Custom Map Markers initialized. Your game language code: \(ToString(this.m_translator.GetInterfaceLanguage()))");
-}
 
+  let container: ref<ScriptableSystemsContainer> = GameInstance.GetScriptableSystemsContainer(this.m_player.GetGame());
+  this.m_customMarkerSystem = container.Get(n"CustomMarkers.System.CustomMarkerSystem") as CustomMarkerSystem; // Don't forget the namespace if you're using modules
+  this.m_translator = LocalizationSystem.GetInstance(this.m_player.GetGame());
+  this.m_customMarkerSystem.RestorePersistedMappins();
+}
 
 // Catch marker creation events
 @addMethod(WorldMapMenuGameController)
 protected cb func OnRequestMarkerCreationEvent(evt: ref<RequestMarkerCreationEvent>) -> Bool {
-  this.m_player.AddCustomMappin(this.m_translator.GetText("CustomMarkers-MarkerTitle"), evt.m_description, evt.m_texturePart);
+   this.m_customMarkerSystem.AddCustomMappin(this.m_translator.GetText("CustomMarkers-MarkerTitle"), evt.m_description, evt.m_texturePart, true);
   // TODO does not actually return to game
   this.m_menuEventDispatcher.SpawnEvent(n"OnCloseHubMenu");
 }
@@ -40,7 +44,7 @@ private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
       mappin = this.selectedMappin.GetMappin();
       mappinData = mappin.GetScriptData() as GameplayRoleMappinData;
       if IsDefined(mappinData) && mappinData.m_isMappinCustom {
-        this.m_player.DeleteCustomMappin(mappin.GetWorldPosition());
+        this.m_customMarkerSystem.DeleteCustomMappin(mappin.GetWorldPosition());
         this.PlaySound(n"MapPin", n"OnDelete");
       };
     };

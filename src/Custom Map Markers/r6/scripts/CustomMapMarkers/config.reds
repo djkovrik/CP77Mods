@@ -1,5 +1,6 @@
 module CustomMarkers.Config
-import CustomMarkers.Core.*
+
+import CustomMarkers.Common.*
 
 public class CustomMarkersConfig {
   public static func IconColorActive() -> HDRColor = Colors.BaseGreen()

@@ -1,4 +1,5 @@
 module CustomMarkers.Localization
+
 import Codeware.Localization.*
 
 public class English extends ModLocalizationPackage {
