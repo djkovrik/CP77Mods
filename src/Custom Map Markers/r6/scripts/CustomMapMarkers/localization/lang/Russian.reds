@@ -8,6 +8,8 @@ public class Russian extends ModLocalizationPackage {
     this.Text("CustomMarkers-DescriptionLabel", "Введите описание маркера:");
     this.Text("CustomMarkers-PickIconLabel", "Выберите иконку:");
     this.Text("CustomMarkers-ButtonLabelDelete", "Удалить");
-    this.Text("CustomMarkers-MappinAddedMessage", "Новый маркер добавлен");
+    this.Text("CustomMarkers-AddedMessage", "Новый маркер добавлен");
+    this.Text("CustomMarkers-LimitMessage", "Вы достигли максимального количества маркеров");
+    this.Text("CustomMarkers-AlreadyExists", "Маркер на этой позиции уже установлен");
   }
 }

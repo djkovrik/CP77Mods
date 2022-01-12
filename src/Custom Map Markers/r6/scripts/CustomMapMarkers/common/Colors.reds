@@ -8,7 +8,7 @@ public class Colors {
   public static func BaseOrange() -> HDRColor = new HDRColor(1.0, 0.5, 0.0, 1.0)
   public static func BaseWhite() -> HDRColor = new HDRColor(1.0, 1.0, 1.0, 1.0)
   public static func BaseBlack() -> HDRColor = new HDRColor(0.0, 0.0, 0.0, 1.0)
-  public static func BaseGray() -> HDRColor = new HDRColor(0.5, 0.5, 0.5, 0.5)
+  public static func BaseGrey() -> HDRColor = new HDRColor(0.5, 0.5, 0.5, 0.5)
   // Colors from the default in game theme
   public static func MainRed() -> HDRColor = new HDRColor(1.1761, 0.3809, 0.3476, 1.0)
   public static func MainBlue() -> HDRColor = new HDRColor(0.368627, 0.964706, 1.0, 1.0)

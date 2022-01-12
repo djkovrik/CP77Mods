@@ -2,6 +2,7 @@ module CustomMarkers.System
 
 import Codeware.Localization.*
 import CustomMarkers.Common.*
+import CustomMarkers.Config.*
 
 public class CustomMappinData {
   public let position: Vector4; // persistent
@@ -30,15 +31,25 @@ public class CustomMarkerSystem extends ScriptableSystem {
     this.AddCustomMappin(title, description, texturePart, position, persist);
   }
 
-  // TODO total mappins limit?
-  // TODO check if mappin at position already exists?
   public func AddCustomMappin(title: String, description: String, texturePart: CName, position: Vector4, persist: Bool) -> Void {
-    let mappinData: MappinData = this.CreateMappinData(title, description, texturePart, position);
+    let mappinData: MappinData;
+
+    if ArraySize(this.m_mappins) > CustomMarkersConfig.MaximumAvailableMarkers() {
+      this.ShowCustomNotification(this.m_translator.GetText("CustomMarkers-LimitMessage"));
+      return ;
+    };
+
+    if this.IsMarkerExists(position) {
+      this.ShowCustomNotification(this.m_translator.GetText("CustomMarkers-AlreadyExists"));
+      return ;
+    };
+
+    mappinData = this.CreateMappinData(title, description, texturePart, position);
     this.m_mappinSystem.RegisterMappin(mappinData, position);
     if persist {
       this.AddPersistedMappin(description, texturePart, position);
     };
-    this.ShowCustomNotification(this.m_translator.GetText("CustomMarkers-MappinAddedMessage"));
+    this.ShowCustomNotification(this.m_translator.GetText("CustomMarkers-AddedMessage"));
     L(s"Registered mappin at position \(ToString(position)) as \(NameToString(texturePart))");
   }
 
@@ -131,5 +142,14 @@ public class CustomMarkerSystem extends ScriptableSystem {
     onScreenMessage.message = text;
     onScreenMessage.duration = 2.00;
     blackboard.SetVariant(blackboardDef.OnscreenMessage, ToVariant(onScreenMessage), true);
+  }
+
+  private func IsMarkerExists(position: Vector4) -> Bool {
+    for mappin in this.m_mappins {
+      if Equals(mappin.position, position) {
+        return true;
+      };
+    };
+    return false;
   }
 }

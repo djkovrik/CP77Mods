@@ -8,6 +8,8 @@ public class English extends ModLocalizationPackage {
     this.Text("CustomMarkers-DescriptionLabel", "Enter new marker description:");
     this.Text("CustomMarkers-PickIconLabel", "Select marker icon:");
     this.Text("CustomMarkers-ButtonLabelDelete", "Delete");
-    this.Text("CustomMarkers-MappinAddedMessage", "New mappin added");
+    this.Text("CustomMarkers-AddedMessage", "New mappin added");
+    this.Text("CustomMarkers-LimitMessage", "You have reached the markers limit");
+    this.Text("CustomMarkers-AlreadyExists", "Marker at this position already exists");
   }
 }
