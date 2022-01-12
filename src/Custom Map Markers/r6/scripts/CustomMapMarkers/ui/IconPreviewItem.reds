@@ -14,17 +14,15 @@ public class IconPreviewItem extends inkCustomController {
 
 	protected let m_margin: inkMargin;
 
-	protected let m_useSounds: Bool;
+	protected let m_tintActive: HDRColor;
 
-	protected let m_isDisabled: Bool;
+	protected let m_tintInactive: HDRColor;
+
+	protected let m_useSounds: Bool;
 
 	protected let m_isHovered: Bool;
 
 	protected let m_isPressed: Bool;
-
-	protected let m_tintActive: HDRColor;
-
-	protected let m_tintInactive: HDRColor;
 
 	public static func Create(atlasResource: ResRef, texturePart: CName, margin: inkMargin, active: HDRColor, inactive: HDRColor) -> ref<IconPreviewItem> {
 		let self: ref<IconPreviewItem> = new IconPreviewItem();
@@ -45,8 +43,6 @@ public class IconPreviewItem extends inkCustomController {
 
 	protected cb func OnInitialize() -> Void {
 		this.RegisterListeners();
-		this.ApplyDisabledState();
-		this.ApplyHoveredState();
 	}
 
 	protected func CreateWidgets() -> Void {
@@ -85,43 +81,19 @@ public class IconPreviewItem extends inkCustomController {
 		this.RegisterToCallback(n"OnRelease", this, n"OnRelease");
 	}
 
-	protected func ApplyDisabledState() -> Void {
-
+	public func Tint() -> Void {
+		this.m_icon.SetTintColor(this.m_tintActive);
 	}
 
-	protected func ApplyHoveredState() -> Void {
-
-	}
-
-	protected func ApplyPressedState() -> Void {
-
-	}
-
-	protected func SetDisabledState(isDisabled: Bool) -> Void {
-		if !Equals(this.m_isDisabled, isDisabled) {
-			this.m_isDisabled = isDisabled;
-
-			if this.m_isDisabled {
-				this.m_isPressed = false;
-			}
-
-			this.ApplyDisabledState();
-			this.ApplyHoveredState();
-			this.ApplyPressedState();
-		}
+	public func Dim() -> Void {
+		this.m_icon.SetTintColor(this.m_tintInactive);
 	}
 
 	protected func SetHoveredState(isHovered: Bool) -> Void {
 		if !Equals(this.m_isHovered, isHovered) {
 			this.m_isHovered = isHovered;
-
 			if !this.m_isHovered {
 				this.m_isPressed = false;
-			}
-
-			if !this.m_isDisabled {
-				this.ApplyHoveredState();
-				this.ApplyPressedState();
 			}
 		}
 	}
@@ -129,10 +101,6 @@ public class IconPreviewItem extends inkCustomController {
 	protected func SetPressedState(isPressed: Bool) -> Void {
 		if !Equals(this.m_isPressed, isPressed) {
 			this.m_isPressed = isPressed;
-
-			if !this.m_isDisabled {
-				this.ApplyPressedState();
-			}
 		}
 	}
 
@@ -153,13 +121,11 @@ public class IconPreviewItem extends inkCustomController {
 	protected cb func OnRelease(evt: ref<inkPointerEvent>) -> Bool {
 		if evt.IsAction(n"click") {
 			if this.m_isPressed {
-				if !this.m_isDisabled {
-					if this.m_useSounds {
-						this.PlaySound(n"Button", n"OnPress");
-					}
-
-					this.CallCustomCallback(n"OnClick");
+				if this.m_useSounds {
+					this.PlaySound(n"Button", n"OnPress");
 				}
+
+				this.CallCustomCallback(n"OnClick");
 
 				this.SetPressedState(false);
 			}
@@ -171,10 +137,6 @@ public class IconPreviewItem extends inkCustomController {
 	}
 
 	public func GetState() -> inkEButtonState {
-		if this.m_isDisabled {
-			return inkEButtonState.Disabled;
-		}
-
 		if this.m_isPressed {
 			return inkEButtonState.Press;
 		}
@@ -186,20 +148,12 @@ public class IconPreviewItem extends inkCustomController {
 		return inkEButtonState.Normal;
 	}
 
-	public func IsEnabled() -> Bool {
-		return !this.m_isDisabled;
-	}
-
-	public func IsDisabled() -> Bool {
-		return this.m_isDisabled;
-	}
-
 	public func IsHovered() -> Bool {
-		return this.m_isHovered && !this.m_isDisabled;
+		return this.m_isHovered;
 	}
 
 	public func IsPressed() -> Bool {
-		return this.m_isPressed && !this.m_isDisabled;
+		return this.m_isPressed;
 	}
 
 	public func SetName(name: CName) -> Void {
@@ -234,19 +188,7 @@ public class IconPreviewItem extends inkCustomController {
 		this.m_root.SetWidth(width);
 	}
 
-	public func SetDisabled(isDisabled: Bool) -> Void {
-		this.SetDisabledState(isDisabled);
-	}
-
 	public func ToggleSounds(useSounds: Bool) -> Void {
 		this.m_useSounds = useSounds;
-	}
-
-	public func Tint() -> Void {
-		this.m_icon.SetTintColor(this.m_tintActive);
-	}
-
-	public func Dim() -> Void {
-		this.m_icon.SetTintColor(this.m_tintInactive);
 	}
 }

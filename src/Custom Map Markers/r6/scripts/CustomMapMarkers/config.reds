@@ -13,6 +13,7 @@ public class CustomMarkersConfig {
 
 /**
   Available colors:
+
     Colors.BaseYellow()
     Colors.BaseGreen()
     Colors.BaseDarkGreen()
@@ -29,6 +30,6 @@ public class CustomMarkersConfig {
   * Main prefix means that color related to the game color theme.
 
   ** You can use custom color as well, just adjust values for Custom color inside 
-     common\Colords.reds and use Colors.Custom() as an option.
+     CustomMapMarkers\common\Colords.reds and use Colors.Custom() as an option.
 
 */

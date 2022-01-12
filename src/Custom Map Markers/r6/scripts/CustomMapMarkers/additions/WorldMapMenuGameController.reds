@@ -14,17 +14,22 @@ protected cb func OnInitialize() -> Bool {
   wrappedMethod();
 
   let container: ref<ScriptableSystemsContainer> = GameInstance.GetScriptableSystemsContainer(this.m_player.GetGame());
-  this.m_customMarkerSystem = container.Get(n"CustomMarkers.System.CustomMarkerSystem") as CustomMarkerSystem; // Don't forget the namespace if you're using modules
+  this.m_customMarkerSystem = container.Get(n"CustomMarkers.System.CustomMarkerSystem") as CustomMarkerSystem;
   this.m_translator = LocalizationSystem.GetInstance(this.m_player.GetGame());
-  this.m_customMarkerSystem.RestorePersistedMappins();
 }
 
-// Catch marker creation events
+// Catch marker creation requests
 @addMethod(WorldMapMenuGameController)
 protected cb func OnRequestMarkerCreationEvent(evt: ref<RequestMarkerCreationEvent>) -> Bool {
-   this.m_customMarkerSystem.AddCustomMappin(this.m_translator.GetText("CustomMarkers-MarkerTitle"), evt.m_description, evt.m_texturePart, true);
-  // TODO does not actually return to game
-  this.m_menuEventDispatcher.SpawnEvent(n"OnCloseHubMenu");
+  this.m_customMarkerSystem.AddCustomMappin(this.m_translator.GetText("CustomMarkers-MarkerTitle"), evt.m_description, evt.m_texturePart, true);
+  this.m_menuEventDispatcher.SpawnEvent(n"OnNewMarkerAdded");
+}
+
+// Double call to navigate map -> hub_menu -> back to game
+@addMethod(MenuScenario_HubMenu)
+protected cb func OnNewMarkerAdded() -> Bool {
+  this.GotoIdleState();
+  this.GotoIdleState();
 }
 
 @wrapMethod(WorldMapMenuGameController)

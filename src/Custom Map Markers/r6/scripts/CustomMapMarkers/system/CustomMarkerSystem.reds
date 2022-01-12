@@ -10,6 +10,7 @@ public class CustomMappinData {
   public let type: CName; // persistent
 }
 
+// Custom ScriptableSystem which holds all markers related stuff
 public class CustomMarkerSystem extends ScriptableSystem {
 
   private let m_mappinSystem: ref<MappinSystem>;
@@ -32,24 +33,22 @@ public class CustomMarkerSystem extends ScriptableSystem {
   }
 
   public func AddCustomMappin(title: String, description: String, texturePart: CName, position: Vector4, persist: Bool) -> Void {
-    let mappinData: MappinData;
-
     if ArraySize(this.m_mappins) > CustomMarkersConfig.MaximumAvailableMarkers() {
-      this.ShowCustomNotification(this.m_translator.GetText("CustomMarkers-LimitMessage"));
+      this.ShowCustomWarning(this.m_translator.GetText("CustomMarkers-LimitMessage"));
       return ;
     };
 
     if this.IsMarkerExists(position) {
-      this.ShowCustomNotification(this.m_translator.GetText("CustomMarkers-AlreadyExists"));
+      this.ShowCustomWarning(this.m_translator.GetText("CustomMarkers-AlreadyExists"));
       return ;
     };
 
-    mappinData = this.CreateMappinData(title, description, texturePart, position);
+    let mappinData: MappinData = this.CreateMappinData(title, description, texturePart, position);
     this.m_mappinSystem.RegisterMappin(mappinData, position);
     if persist {
       this.AddPersistedMappin(description, texturePart, position);
     };
-    this.ShowCustomNotification(this.m_translator.GetText("CustomMarkers-AddedMessage"));
+    this.ShowCustomMessage(this.m_translator.GetText("CustomMarkers-AddedMessage"));
     L(s"Registered mappin at position \(ToString(position)) as \(NameToString(texturePart))");
   }
 
@@ -134,7 +133,7 @@ public class CustomMarkerSystem extends ScriptableSystem {
     return mappinData;
   }
 
-  private func ShowCustomNotification(text: String) -> Void {
+  private func ShowCustomMessage(text: String) -> Void {
     let onScreenMessage: SimpleScreenMessage;
     let blackboardDef = GetAllBlackboardDefs().UI_Notifications;
     let blackboard = GameInstance.GetBlackboardSystem(this.GetGameInstance()).Get(blackboardDef);
@@ -142,6 +141,13 @@ public class CustomMarkerSystem extends ScriptableSystem {
     onScreenMessage.message = text;
     onScreenMessage.duration = 2.00;
     blackboard.SetVariant(blackboardDef.OnscreenMessage, ToVariant(onScreenMessage), true);
+  }
+
+  private func ShowCustomWarning(text: String) -> Void {
+    let evt: ref<UIInGameNotificationEvent> = new UIInGameNotificationEvent();
+    evt.m_isCustom = true;
+    evt.m_text = text;
+    GameInstance.GetUISystem(this.GetGameInstance()).QueueEvent(evt);
   }
 
   private func IsMarkerExists(position: Vector4) -> Bool {

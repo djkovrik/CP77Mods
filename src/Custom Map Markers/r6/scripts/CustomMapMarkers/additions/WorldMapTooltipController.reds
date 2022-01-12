@@ -158,8 +158,7 @@ public func SetData(data: WorldMapTooltipData, menu: ref<WorldMapMenuGameControl
     inputOpenJournalStr = GetLocalizedText("UI-PanelNames-JOURNAL");
     inputZoomTo = menu.CanZoomToMappin(data.controller);
     inputZoomToStr = GetLocalizedText("Gameplay-InputHints-DeviceControl-ZoomIn");
-
-    // Set custom hint for deletion
+    // Set custom hint for delete command
     if IsDefined(mappinData) && mappinData.m_isMappinCustom {
       inputZoomTo = true;
       inputZoomToStr = LocalizationSystem.GetInstance(player.GetGame()).GetText("CustomMarkers-ButtonLabelDelete");
