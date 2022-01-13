@@ -3,7 +3,7 @@ module CustomMarkers.Config
 import CustomMarkers.Common.*
 
 public class CustomMarkersConfig {
-  // Maximum available markers
+  // Markers amount threshold
   public static func MaximumAvailableMarkers() -> Int32 = 20
   // Primary marker color
   public static func IconColorActive() -> HDRColor = Colors.BaseGreen()
@@ -27,9 +27,9 @@ public class CustomMarkersConfig {
     Colors.MainYellow()
     Colors.MainGold()
 
-  * Main prefix means that color related to the game color theme.
+  * Main prefix means that color related to the game default color theme.
 
   ** You can use custom color as well, just adjust values for Custom color inside 
-     CustomMapMarkers\common\Colords.reds and use Colors.Custom() as an option.
+     CustomMapMarkers\common\Colors.reds and use Colors.Custom() as an option.
 
 */

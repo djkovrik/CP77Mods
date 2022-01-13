@@ -4,6 +4,7 @@ import Codeware.Localization.*
 import CustomMarkers.Common.*
 import CustomMarkers.Config.*
 
+// TODO add keywords with redscript update
 public class CustomMappinData {
   public let position: Vector4; // persistent
   public let description: CName; // persistent
@@ -62,6 +63,10 @@ public class CustomMarkerSystem extends ScriptableSystem {
         L(s"Unregistered mappin at position \(ToString(position))");
       };
     };
+  }
+
+  public func GetCustomMappins() -> array<ref<CustomMappinData>> {
+    return this.m_mappins;
   }
 
   private func AddPersistedMappin(description: String, type: CName, position: Vector4) -> Void {

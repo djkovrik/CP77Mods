@@ -163,6 +163,7 @@ public func SetData(data: WorldMapTooltipData, menu: ref<WorldMapMenuGameControl
       inputZoomTo = true;
       inputZoomToStr = LocalizationSystem.GetInstance(player.GetGame()).GetText("CustomMarkers-ButtonLabelDelete");
     };
+    //
   };
   inkWidgetRef.SetVisible(this.m_collectionCountContainer, data.isCollection);
   if data.isCollection {
