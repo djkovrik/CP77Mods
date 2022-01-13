@@ -1,7 +1,7 @@
 module CustomMarkers.Common
 
 public class Icons {
-  public static func Array() -> array<CName> = [
+  public static func Row1() -> array<CName> = [
     n"asterix", 
     n"codex_character",
     n"map_bounty",
@@ -10,5 +10,15 @@ public class Icons {
     n"Techie",
     n"Solo",
     n"Netrunner"
+  ]
+  public static func Row2() -> array<CName> = [
+    n"GetIn", 
+    n"Allow",
+    n"devil_horns",
+    n"Cool",
+    n"Reflex",
+    n"LifepathCorpo",
+    n"LifepathNomad",
+    n"LifepathStreetKid"
   ]
 }

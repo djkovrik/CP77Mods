@@ -122,21 +122,35 @@ public class CustomMarkerPopup extends InGamePopup {
 
     // MIDDLE PANEL: label and horizontal icons list
 
-    // Icons panel
-    let iconsPanel: ref<inkHorizontalPanel> = new inkHorizontalPanel();
-    iconsPanel.SetFitToContent(true);
-		iconsPanel.SetHAlign(inkEHorizontalAlign.Center);
-		iconsPanel.SetVAlign(inkEVerticalAlign.Center);
-		iconsPanel.SetAnchor(inkEAnchor.Centered);
-		iconsPanel.SetMargin(new inkMargin(0.0, 50.0, 0.0, 0.0));
-    let iconNames: array<CName> = Icons.Array();
+    // Icons panel 1
+    let iconsPanel1: ref<inkHorizontalPanel> = new inkHorizontalPanel();
+    iconsPanel1.SetFitToContent(true);
+		iconsPanel1.SetHAlign(inkEHorizontalAlign.Center);
+		iconsPanel1.SetVAlign(inkEVerticalAlign.Center);
+		iconsPanel1.SetAnchor(inkEAnchor.Centered);
+		iconsPanel1.SetMargin(new inkMargin(0.0, 50.0, 0.0, 0.0));
+    let iconNames1: array<CName> = Icons.Row1();
     let atlasResource: ResRef = r"base\\gameplay\\gui\\common\\icons\\mappin_icons.inkatlas";
     let newIcon: ref<IconPreviewItem>;
     let margin: inkMargin = new inkMargin(20.0, 0.0, 0.0, 0.0);
-    for name in iconNames {
+    for name in iconNames1 {
       newIcon = IconPreviewItem.Create(atlasResource, name, margin, CustomMarkersConfig.IconColorActive(), CustomMarkersConfig.IconColorInactive());
       newIcon.RegisterToCallback(n"OnClick", this, n"OnClick");
-      newIcon.Reparent(iconsPanel);
+      newIcon.Reparent(iconsPanel1);
+      ArrayPush(this.m_icons, newIcon);
+    };
+    // Icons panel 2
+    let iconsPanel2: ref<inkHorizontalPanel> = new inkHorizontalPanel();
+    iconsPanel2.SetFitToContent(true);
+		iconsPanel2.SetHAlign(inkEHorizontalAlign.Center);
+		iconsPanel2.SetVAlign(inkEVerticalAlign.Center);
+		iconsPanel2.SetAnchor(inkEAnchor.Centered);
+		iconsPanel2.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+    let iconNames2: array<CName> = Icons.Row2();
+    for name in iconNames2 {
+      newIcon = IconPreviewItem.Create(atlasResource, name, margin, CustomMarkersConfig.IconColorActive(), CustomMarkersConfig.IconColorInactive());
+      newIcon.RegisterToCallback(n"OnClick", this, n"OnClick");
+      newIcon.Reparent(iconsPanel2);
       ArrayPush(this.m_icons, newIcon);
     };
     // Text label
@@ -149,7 +163,8 @@ public class CustomMarkerPopup extends InGamePopup {
 		middlePanel.SetAnchor(inkEAnchor.CenterLeft);
     // Reparent
     selectIconLabel.Reparent(middlePanel);
-    iconsPanel.Reparent(middlePanel);
+    iconsPanel1.Reparent(middlePanel);
+    iconsPanel2.Reparent(middlePanel);
     middlePanel.Reparent(commonPanel);
 
     // BOTTOM PANNEL
@@ -157,18 +172,30 @@ public class CustomMarkerPopup extends InGamePopup {
     // Buttons
     let buttonCancel: ref<MarkerPopupButton> = this.CreateButton(n"buttonCancel", GetLocalizedText("Gameplay-Devices-Interactions-Cancel"));
     let buttonCancelContainer: ref<inkHorizontalPanel> = new inkHorizontalPanel();
-    buttonCancelContainer.SetMargin(new inkMargin(10.0, 10.0, 10.0, 0.0));
+    buttonCancelContainer.SetMargin(new inkMargin(5.0, 5.0, 5.0, 0.0));
+
+    buttonCancelContainer.SetFitToContent(true);
+		buttonCancelContainer.SetHAlign(inkEHorizontalAlign.Right);
+		buttonCancelContainer.SetVAlign(inkEVerticalAlign.Center);
+		buttonCancelContainer.SetAnchor(inkEAnchor.CenterRight);
+
     buttonCancel.Reparent(buttonCancelContainer);
     let buttonOk: ref<MarkerPopupButton> = this.CreateButton(n"buttonOk", GetLocalizedText("Gameplay-Devices-Interactions-Ok"));
     let buttonOkContainer: ref<inkHorizontalPanel> = new inkHorizontalPanel();
-    buttonOkContainer.SetMargin(new inkMargin(10.0, 10.0, 10.0, 0.0));
+    buttonOkContainer.SetMargin(new inkMargin(5.0, 5.0, 5.0, 0.0));
+
+    buttonOkContainer.SetFitToContent(true);
+		buttonOkContainer.SetHAlign(inkEHorizontalAlign.Right);
+		buttonOkContainer.SetVAlign(inkEVerticalAlign.Center);
+		buttonOkContainer.SetAnchor(inkEAnchor.CenterRight);
+
     buttonOk.Reparent(buttonOkContainer);
     // Bottom panel
     let bottomPanel: ref<inkHorizontalPanel> = new inkHorizontalPanel();
     bottomPanel.SetFitToContent(true);
-		bottomPanel.SetHAlign(inkEHorizontalAlign.Center);
+		bottomPanel.SetHAlign(inkEHorizontalAlign.Fill);
 		bottomPanel.SetVAlign(inkEVerticalAlign.Center);
-		bottomPanel.SetAnchor(inkEAnchor.Centered);
+		bottomPanel.SetAnchor(inkEAnchor.Fill);
 		bottomPanel.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
     buttonCancelContainer.Reparent(bottomPanel);
     buttonOkContainer.Reparent(bottomPanel);
