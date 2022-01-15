@@ -47,7 +47,7 @@ public class CustomMarkerPopup extends InGamePopup {
 
   protected cb func OnClick(widget: wref<inkWidget>) -> Bool {
     let name: CName = widget.GetName();
-    let nameString: String = ToString(name);
+    let nameString: String = NameToString(name);
     this.PlaySound(n"Button", n"OnPress");
     if StrContains(nameString, "button") {
       this.HandleButtonClick(name);
@@ -67,6 +67,7 @@ public class CustomMarkerPopup extends InGamePopup {
         evt.m_texturePart = this.m_selectedIcon;
         this.m_uiSystem.QueueEvent(evt);
       } else {
+        L("You have not entered marker description");
       };
     };
 
@@ -75,7 +76,6 @@ public class CustomMarkerPopup extends InGamePopup {
 
   private func HandleIconClick(name: CName) -> Void {
     this.m_selectedIcon = name;
-
     for icon in this.m_icons {
       if Equals(this.m_selectedIcon, icon.GetName()) {
         icon.Tint();
@@ -98,7 +98,7 @@ public class CustomMarkerPopup extends InGamePopup {
 		commonPanel.SetHAlign(inkEHorizontalAlign.Center);
 		commonPanel.SetVAlign(inkEVerticalAlign.Center);
 		commonPanel.SetAnchor(inkEAnchor.Centered);
-		commonPanel.SetPadding(new inkMargin(50.0, 50.0, 50.0, 50.0));
+    commonPanel.SetMargin(new inkMargin(50.0, 50.0, 50.0, 50.0));
     commonPanel.Reparent(root);
 
     // TOP PANEL: input with text label
@@ -110,10 +110,6 @@ public class CustomMarkerPopup extends InGamePopup {
     this.m_input = HubTextInput.Create();
     // Top panel
     let topPanel: ref<inkVerticalPanel> = new inkVerticalPanel();
-    topPanel.SetFitToContent(true);
-		topPanel.SetHAlign(inkEHorizontalAlign.Left);
-		topPanel.SetVAlign(inkEVerticalAlign.Center);
-		topPanel.SetAnchor(inkEAnchor.TopLeft);
 		topPanel.SetMargin(new inkMargin(0.0, 0.0, 0.0, 25.0));
     // Reparent
     textInputLabel.Reparent(topPanel);
@@ -124,10 +120,6 @@ public class CustomMarkerPopup extends InGamePopup {
 
     // Icons panel 1
     let iconsPanel1: ref<inkHorizontalPanel> = new inkHorizontalPanel();
-    iconsPanel1.SetFitToContent(true);
-		iconsPanel1.SetHAlign(inkEHorizontalAlign.Center);
-		iconsPanel1.SetVAlign(inkEVerticalAlign.Center);
-		iconsPanel1.SetAnchor(inkEAnchor.Centered);
 		iconsPanel1.SetMargin(new inkMargin(0.0, 50.0, 0.0, 0.0));
     let iconNames1: array<CName> = Icons.Row1();
     let atlasResource: ResRef = r"base\\gameplay\\gui\\common\\icons\\mappin_icons.inkatlas";
@@ -141,11 +133,6 @@ public class CustomMarkerPopup extends InGamePopup {
     };
     // Icons panel 2
     let iconsPanel2: ref<inkHorizontalPanel> = new inkHorizontalPanel();
-    iconsPanel2.SetFitToContent(true);
-		iconsPanel2.SetHAlign(inkEHorizontalAlign.Center);
-		iconsPanel2.SetVAlign(inkEVerticalAlign.Center);
-		iconsPanel2.SetAnchor(inkEAnchor.Centered);
-		iconsPanel2.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
     let iconNames2: array<CName> = Icons.Row2();
     for name in iconNames2 {
       newIcon = IconPreviewItem.Create(atlasResource, name, margin, CustomMarkersConfig.IconColorActive(), CustomMarkersConfig.IconColorInactive());
@@ -157,10 +144,6 @@ public class CustomMarkerPopup extends InGamePopup {
     let selectIconLabel: ref<inkText> = this.CreateTextLabel(this.m_translator.GetText("CustomMarkers-PickIconLabel"));
     // Middle panel
     let middlePanel: ref<inkVerticalPanel> = new inkVerticalPanel();
-    middlePanel.SetFitToContent(true);
-		middlePanel.SetHAlign(inkEHorizontalAlign.Left);
-		middlePanel.SetVAlign(inkEVerticalAlign.Center);
-		middlePanel.SetAnchor(inkEAnchor.CenterLeft);
     // Reparent
     selectIconLabel.Reparent(middlePanel);
     iconsPanel1.Reparent(middlePanel);
@@ -171,34 +154,12 @@ public class CustomMarkerPopup extends InGamePopup {
 
     // Buttons
     let buttonCancel: ref<MarkerPopupButton> = this.CreateButton(n"buttonCancel", GetLocalizedText("Gameplay-Devices-Interactions-Cancel"));
-    let buttonCancelContainer: ref<inkHorizontalPanel> = new inkHorizontalPanel();
-    buttonCancelContainer.SetMargin(new inkMargin(5.0, 5.0, 5.0, 0.0));
-
-    buttonCancelContainer.SetFitToContent(true);
-		buttonCancelContainer.SetHAlign(inkEHorizontalAlign.Right);
-		buttonCancelContainer.SetVAlign(inkEVerticalAlign.Center);
-		buttonCancelContainer.SetAnchor(inkEAnchor.CenterRight);
-
-    buttonCancel.Reparent(buttonCancelContainer);
     let buttonOk: ref<MarkerPopupButton> = this.CreateButton(n"buttonOk", GetLocalizedText("Gameplay-Devices-Interactions-Ok"));
-    let buttonOkContainer: ref<inkHorizontalPanel> = new inkHorizontalPanel();
-    buttonOkContainer.SetMargin(new inkMargin(5.0, 5.0, 5.0, 0.0));
 
-    buttonOkContainer.SetFitToContent(true);
-		buttonOkContainer.SetHAlign(inkEHorizontalAlign.Right);
-		buttonOkContainer.SetVAlign(inkEVerticalAlign.Center);
-		buttonOkContainer.SetAnchor(inkEAnchor.CenterRight);
-
-    buttonOk.Reparent(buttonOkContainer);
     // Bottom panel
     let bottomPanel: ref<inkHorizontalPanel> = new inkHorizontalPanel();
-    bottomPanel.SetFitToContent(true);
-		bottomPanel.SetHAlign(inkEHorizontalAlign.Fill);
-		bottomPanel.SetVAlign(inkEVerticalAlign.Center);
-		bottomPanel.SetAnchor(inkEAnchor.Fill);
-		bottomPanel.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
-    buttonCancelContainer.Reparent(bottomPanel);
-    buttonOkContainer.Reparent(bottomPanel);
+    buttonCancel.Reparent(bottomPanel);
+    buttonOk.Reparent(bottomPanel);
     bottomPanel.Reparent(commonPanel);
     
     root.Reparent(this.m_container);
@@ -263,7 +224,7 @@ public class CustomMarkerPopup extends InGamePopup {
 		label.SetVerticalAlignment(textVerticalAlignment.Top);
 		label.SetAnchor(inkEAnchor.TopLeft);
 		label.SetLetterCase(textLetterCase.OriginalCase);
-		label.SetTintColor(ThemeColors.Bittersweet());
+		label.SetTintColor(Colors.MainRed());
     return label;
   }
 

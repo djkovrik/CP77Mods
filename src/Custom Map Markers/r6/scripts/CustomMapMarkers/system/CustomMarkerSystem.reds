@@ -34,12 +34,12 @@ public class CustomMarkerSystem extends ScriptableSystem {
   }
 
   public func AddCustomMappin(title: String, description: String, texturePart: CName, position: Vector4, persist: Bool) -> Void {
-    if ArraySize(this.m_mappins) > CustomMarkersConfig.MaximumAvailableMarkers() {
+    if ArraySize(this.m_mappins) > CustomMarkersConfig.MaximumAvailableMarkers() && persist {
       this.ShowCustomWarning(this.m_translator.GetText("CustomMarkers-LimitMessage"));
       return ;
     };
 
-    if this.IsMarkerExists(position) {
+    if this.IsMarkerExists(position) && persist {
       this.ShowCustomWarning(this.m_translator.GetText("CustomMarkers-AlreadyExists"));
       return ;
     };

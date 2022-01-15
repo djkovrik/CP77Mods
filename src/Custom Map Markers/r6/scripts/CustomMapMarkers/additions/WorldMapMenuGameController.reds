@@ -29,13 +29,6 @@ protected cb func OnRequestMarkerCreationEvent(evt: ref<RequestMarkerCreationEve
   this.m_menuEventDispatcher.SpawnEvent(n"OnNewMarkerAdded");
 }
 
-// Double call to navigate map -> hub_menu -> back to game
-@addMethod(MenuScenario_HubMenu)
-protected cb func OnNewMarkerAdded() -> Bool {
-  this.GotoIdleState();
-  this.GotoIdleState();
-}
-
 // Move-to-player hotkey now cycles custom mappins as well
 @addMethod(WorldMapMenuGameController)
 private func CycleBetweenMappins() -> Void {
@@ -64,6 +57,7 @@ private func MoveFromCustomToPlayer() -> Void {
   };
 }
 
+// Attach to mouse middle button clicks
 @replaceMethod(WorldMapMenuGameController)
 private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
   let inFreeCam: Bool = Equals(this.m_cameraMode, gameuiEWorldMapCameraMode.Free);
