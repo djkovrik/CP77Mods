@@ -126,6 +126,7 @@ private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
                         };
                       } else {
                         if e.IsAction(n"world_map_menu_zoom_to_mappin") {
+                          // Default game logic for selected mappin
                           if this.HasSelectedMappin() && this.CanZoomToMappin(this.selectedMappin) {
                             this.PlaySound(n"Button", n"OnPress");
                             this.ZoomToMappin(this.selectedMappin);
@@ -183,12 +184,12 @@ private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
 }
 
 // Disable click-to-zoom for custom mappins
-@replaceMethod(WorldMapMenuGameController)
+@wrapMethod(WorldMapMenuGameController)
 public final func CanZoomToMappin(controller: wref<BaseWorldMapMappinController>) -> Bool {
   let mappinData: ref<GameplayRoleMappinData> = this.selectedMappin.GetMappin().GetScriptData() as GameplayRoleMappinData;
-  if IsDefined(mappinData) {
-    return this.isZoomToMappinEnabled && !mappinData.m_isMappinCustom;
-  } else {
-    return this.isZoomToMappinEnabled;
+  if IsDefined(mappinData) && mappinData.m_isMappinCustom {
+    return false;
   };
+
+  return wrappedMethod(controller);
 }
