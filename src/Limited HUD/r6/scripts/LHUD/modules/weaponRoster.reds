@@ -25,8 +25,12 @@ public func DetermineCurrentVisibility() -> Void {
     this.lhud_isVisibleNow = isVisible;
     if isVisible {
       this.PlayUnfold();
+      this.AnimateAlphaLHUD(this.m_smartLinkFirmwareOffline, 1.0, 0.3);
+      this.AnimateAlphaLHUD(this.m_smartLinkFirmwareOnline, 1.0, 0.3);
     } else {
       this.PlayFold();
+      this.AnimateAlphaLHUD(this.m_smartLinkFirmwareOffline, 0.0, 0.3);
+      this.AnimateAlphaLHUD(this.m_smartLinkFirmwareOnline, 0.0, 0.3);
     };
   };
 }
