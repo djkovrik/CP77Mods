@@ -8,6 +8,8 @@ class FirstEquipConfig {
   public static func PlayInStealthMode() -> Bool = false
   // Replace false with true if you want see firstEquip animation when weapon magazine is empty
   public static func PlayWhenMagazineIsEmpty() -> Bool = false
+  // Replace false with true if you want see firstEquip animation while sprinting
+  public static func PlayWhileSprinting() -> Bool = false
 
 
   // -- Hotkey config
@@ -40,25 +42,25 @@ class IdleBreakConfig {
 // --- NEW FIELDS
 
 @addField(PlayerPuppet)
-private let skipFirstEquip_eq: Bool;
+private let skipFirstEquipEQ: Bool;
 
 @addField(UI_SystemDef)
-public let FirstEquipRequested_eq: BlackboardID_Bool;
+public let FirstEquipRequestedEQ: BlackboardID_Bool;
 
 @addField(UI_SystemDef)
-public let HotkeyPressed_eq: BlackboardID_Bool;
+public let HotkeyPressedEQ: BlackboardID_Bool;
 
 @addField(UI_SystemDef)
-public let HotkeyReleased_eq: BlackboardID_Bool;
+public let HotkeyReleasedEQ: BlackboardID_Bool;
 
 @addField(UI_SystemDef)
-public let HotkeyHold_eq: BlackboardID_Bool;
+public let HotkeyHoldEQ: BlackboardID_Bool;
 
 @addField(UI_SystemDef)
-public let LastUsedSlot_eq: BlackboardID_Int;
+public let LastUsedSlotEQ: BlackboardID_Int;
 
 @addField(HotkeyItemController)
-public let playerPuppet_eq: ref<PlayerPuppet>;
+public let playerPuppetEQ: ref<PlayerPuppet>;
 
 
 // --- CUSTOM HOTKEY
@@ -88,24 +90,24 @@ public class FirstEquipGlobalInputListener {
 
         // EQ(s"pressed = \(pressed), released = \(released), hold = \(hold)");
 
-        if this.m_player.HasRangedWeaponEquipped_eq() {
+        if this.m_player.HasRangedWeaponEquippedEQ() {
           // If weapon equipped set flags
-          GameInstance.GetBlackboardSystem(this.m_player.GetGame()).Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.HotkeyPressed_eq, pressed, false);
-          GameInstance.GetBlackboardSystem(this.m_player.GetGame()).Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.HotkeyReleased_eq, released, false);
-          GameInstance.GetBlackboardSystem(this.m_player.GetGame()).Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.HotkeyHold_eq, hold, false);
+          GameInstance.GetBlackboardSystem(this.m_player.GetGame()).Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.HotkeyPressedEQ, pressed, false);
+          GameInstance.GetBlackboardSystem(this.m_player.GetGame()).Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.HotkeyReleasedEQ, released, false);
+          GameInstance.GetBlackboardSystem(this.m_player.GetGame()).Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.HotkeyHoldEQ, hold, false);
         } else {
           // If no weapon equipped then run firstEquip
           if FirstEquipConfig.TrackLastUsedSlot() {
-            slotForHotkey = GameInstance.GetBlackboardSystem(this.m_player.GetGame()).Get(GetAllBlackboardDefs().UI_System).GetInt(GetAllBlackboardDefs().UI_System.LastUsedSlot_eq);
+            slotForHotkey = GameInstance.GetBlackboardSystem(this.m_player.GetGame()).Get(GetAllBlackboardDefs().UI_System).GetInt(GetAllBlackboardDefs().UI_System.LastUsedSlotEQ);
           } else {
             slotForHotkey = FirstEquipConfig.DefaultSlotNumber() - 1;
           };
           drawItemRequest = new DrawItemRequest();
           drawItemRequest.itemID = EquipmentSystem.GetData(this.m_player).GetItemInEquipSlot(gamedataEquipmentArea.WeaponWheel, slotForHotkey);
           drawItemRequest.owner = this.m_player;
-          GameInstance.GetBlackboardSystem(this.m_player.GetGame()).Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.FirstEquipRequested_eq, true, false);
+          GameInstance.GetBlackboardSystem(this.m_player.GetGame()).Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.FirstEquipRequestedEQ, true, false);
           GameInstance.GetScriptableSystemsContainer(this.m_player.GetGame()).Get(n"EquipmentSystem").QueueRequest(drawItemRequest);
-        }
+        };
       };
     }
 }
@@ -133,7 +135,7 @@ protected cb func OnDetach() -> Bool {
 
 // Checks if firstEquip animation must be played depending on config 
 @addMethod(PlayerPuppet)
-public func ShouldRunFirstEquip_eq(weapon: wref<WeaponObject>) -> Bool {
+public func ShouldRunFirstEquipEQ(weapon: wref<WeaponObject>) -> Bool {
   if WeaponObject.IsMagazineEmpty(weapon) && !FirstEquipConfig.PlayWhenMagazineIsEmpty() {
     return false;
   };
@@ -141,10 +143,13 @@ public func ShouldRunFirstEquip_eq(weapon: wref<WeaponObject>) -> Bool {
   if !FirstEquipConfig.PlayInCombatMode() && this.m_inCombat { return false; }
   if !FirstEquipConfig.PlayInStealthMode() && this.m_inCrouch { return false; }
 
+  let isSprinting: Bool = Equals(PlayerPuppet.GetCurrentLocomotionState(this), gamePSMLocomotionStates.Sprint);
+  if !FirstEquipConfig.PlayWhileSprinting() && isSprinting { return false; }
+
   let probability: Int32 = FirstEquipConfig.PercentageProbability();
   let random: Int32 = RandRange(0, 100);
 
-  if probability < 0 { return false; };
+  if probability < 0 { return false; }
   if probability > 100 { return true; }
 
   return random <= probability;
@@ -152,11 +157,11 @@ public func ShouldRunFirstEquip_eq(weapon: wref<WeaponObject>) -> Bool {
 
 // Checks if IdleBreak animation must be played depending on config 
 @addMethod(PlayerPuppet)
-public func ShouldRunIdleBreak_eq() -> Bool {
+public func ShouldRunIdleBreakEQ() -> Bool {
   let probability: Int32 = IdleBreakConfig.AnimationProbability();
   let random: Int32 = RandRange(0, 100);
 
-  if probability < 0 { return false; };
+  if probability < 0 { return false; }
   if probability > 100 { return true; }
 
   return random <= probability;
@@ -164,7 +169,7 @@ public func ShouldRunIdleBreak_eq() -> Bool {
 
 // Checks if player has any ranged weapon equipped
 @addMethod(PlayerPuppet)
-public func HasRangedWeaponEquipped_eq() -> Bool {
+public func HasRangedWeaponEquippedEQ() -> Bool {
   let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.GetGame());
   let weapon: ref<WeaponObject> = transactionSystem.GetItemInSlot(this, t"AttachmentSlots.WeaponRight") as WeaponObject;
   if IsDefined(weapon) {
@@ -197,13 +202,13 @@ public static func GetPreviousSlotIndex(current: Int32) -> Int32 {
 
 // Flag which controls if firstEquip animation must be skipped
 @addMethod(PlayerPuppet)
-public func SetSkipFirstEquip_eq(skip: Bool) -> Void {
-  this.skipFirstEquip_eq = skip;
+public func SetSkipFirstEquipEQ(skip: Bool) -> Void {
+  this.skipFirstEquipEQ = skip;
 }
 
 @addMethod(PlayerPuppet)
-public func ShouldSkipFirstEquip_eq() -> Bool {
-  return this.skipFirstEquip_eq;
+public func ShouldSkipFirstEquipEQ() -> Bool {
+  return this.skipFirstEquipEQ;
 }
 
 public static func EQ(str: String) -> Void {
@@ -223,7 +228,7 @@ public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateG
   event = scriptInterface.localBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.LocomotionDetailed);
   if event == EnumInt(gamePSMDetailedLocomotionStates.Climb) || event == EnumInt(gamePSMDetailedLocomotionStates.Ladder) {
     if IsDefined(playerPuppet) {
-      playerPuppet.SetSkipFirstEquip_eq(true);
+      playerPuppet.SetSkipFirstEquipEQ(true);
     };
   };
 
@@ -251,9 +256,9 @@ protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<Sta
   let isNPCMounted: Bool = EntityID.IsDefined(mountingInfo.childId);
   // Set flag if player and not carrying yet
   playerPuppet = scriptInterface.executionOwner as PlayerPuppet;
-  hasWeaponEquipped = playerPuppet.HasRangedWeaponEquipped_eq();
+  hasWeaponEquipped = playerPuppet.HasRangedWeaponEquippedEQ();
   if IsDefined(playerPuppet) && !carrying {
-    playerPuppet.SetSkipFirstEquip_eq(hasWeaponEquipped);
+    playerPuppet.SetSkipFirstEquipEQ(hasWeaponEquipped);
   };
   if !isNPCMounted && !this.IsBodyDisposalOngoing(stateContext, scriptInterface) {
     mountEvent = new MountingRequest();
@@ -299,8 +304,8 @@ protected cb func OnInteractionUsed(evt: ref<InteractionChoiceEvent>) -> Bool {
   if IsDefined(playerPuppet) {
     className = evt.hotspot.GetClassName();
     if Equals(className, n"AccessPoint") || Equals(className, n"Computer") || Equals(className, n"Stillage") || Equals(className, n"WeakFence") {
-      hasWeaponEquipped = playerPuppet.HasRangedWeaponEquipped_eq();
-      playerPuppet.SetSkipFirstEquip_eq(hasWeaponEquipped);
+      hasWeaponEquipped = playerPuppet.HasRangedWeaponEquippedEQ();
+      playerPuppet.SetSkipFirstEquipEQ(hasWeaponEquipped);
     };
   };
   this.ExecuteAction(evt.choice, evt.activator, evt.layerData.tag);
@@ -328,7 +333,7 @@ protected cb func OnStartTakedownEvent(startTakedownEvent: ref<StartTakedownEven
   };
   playerPuppet = owner as PlayerPuppet;
   if IsDefined(playerPuppet) {
-    playerPuppet.SetSkipFirstEquip_eq(true);
+    playerPuppet.SetSkipFirstEquipEQ(true);
   };
 }
 
@@ -340,19 +345,19 @@ public final const func HasPlayedFirstEquip(weaponID: TweakDBID) -> Bool {
   let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.GetGameInstance());
   let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(this.GetGameInstance()).GetLocalPlayerMainGameObject() as PlayerPuppet;
   let weapon: wref<WeaponObject> = transactionSystem.GetItemInSlot(player, t"AttachmentSlots.WeaponRight") as WeaponObject;
-  let isHotkeyPressed: Bool = GameInstance.GetBlackboardSystem(this.GetGameInstance()).Get(GetAllBlackboardDefs().UI_System).GetBool(GetAllBlackboardDefs().UI_System.FirstEquipRequested_eq);
+  let isHotkeyPressed: Bool = GameInstance.GetBlackboardSystem(this.GetGameInstance()).Get(GetAllBlackboardDefs().UI_System).GetBool(GetAllBlackboardDefs().UI_System.FirstEquipRequestedEQ);
   let i: Int32 = 0;
 
   // Return false if hotkey pressed
   if isHotkeyPressed && FirstEquipConfig.BindToHotkey() {
-    GameInstance.GetBlackboardSystem(this.GetGameInstance()).Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.FirstEquipRequested_eq, false, false);
+    GameInstance.GetBlackboardSystem(this.GetGameInstance()).Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.FirstEquipRequestedEQ, false, false);
     return false;
   };
 
   // Return true if firstEquip blocked
-  if !player.ShouldRunFirstEquip_eq(weapon) {
+  if !player.ShouldRunFirstEquipEQ(weapon) {
     return true;
-  }
+  };
 
   // Default logic
   while i < ArraySize(this.m_equipDataArray) {
@@ -392,10 +397,10 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
     // Probability check and run
     let playerPuppet: ref<PlayerPuppet> = scriptInterface.owner as PlayerPuppet;
     if IsDefined(playerPuppet) && (!isInCombat || FirstEquipConfig.PlayInCombatMode()) {
-      if Equals(playerPuppet.ShouldSkipFirstEquip_eq(), true) {
-        playerPuppet.SetSkipFirstEquip_eq(false);
+      if Equals(playerPuppet.ShouldSkipFirstEquipEQ(), true) {
+        playerPuppet.SetSkipFirstEquipEQ(false);
       } else {
-        if playerPuppet.ShouldRunFirstEquip_eq(itemObject) {
+        if playerPuppet.ShouldRunFirstEquipEQ(itemObject) {
           weaponEquipAnimFeature.firstEquip = true;
           stateContext.SetConditionBoolParameter(n"firstEquip", true, true);
         };
@@ -446,7 +451,7 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
 @wrapMethod(DefaultTransition)
 protected final const func SendEquipmentSystemWeaponManipulationRequest(const scriptInterface: ref<StateGameScriptInterface>, requestType: EquipmentManipulationAction, opt equipAnimType: gameEquipAnimationType) -> Void {
   let blackboard: ref<IBlackboard> = GameInstance.GetBlackboardSystem(scriptInterface.executionOwner.GetGame()).Get(GetAllBlackboardDefs().UI_System);
-  let lastUsedSlot: Int32 = GameInstance.GetBlackboardSystem(scriptInterface.executionOwner.GetGame()).Get(GetAllBlackboardDefs().UI_System).GetInt(GetAllBlackboardDefs().UI_System.LastUsedSlot_eq);
+  let lastUsedSlot: Int32 = GameInstance.GetBlackboardSystem(scriptInterface.executionOwner.GetGame()).Get(GetAllBlackboardDefs().UI_System).GetInt(GetAllBlackboardDefs().UI_System.LastUsedSlotEQ);
   let newLastUsedSlot: Int32 = lastUsedSlot;
   switch requestType {
     case EquipmentManipulationAction.RequestWeaponSlot1:
@@ -468,7 +473,7 @@ protected final const func SendEquipmentSystemWeaponManipulationRequest(const sc
       newLastUsedSlot = GetPreviousSlotIndex(lastUsedSlot);
       break;
   };
-  blackboard.SetInt(GetAllBlackboardDefs().UI_System.LastUsedSlot_eq, newLastUsedSlot, false);
+  blackboard.SetInt(GetAllBlackboardDefs().UI_System.LastUsedSlotEQ, newLastUsedSlot, false);
   wrappedMethod(scriptInterface, requestType, equipAnimType);
 }
 
@@ -485,38 +490,38 @@ enum FirstEquipHotkeyState {
 
 // Track custom hotkey states
 @addField(ReadyEvents)
-private let customHotkeyState_eq: FirstEquipHotkeyState;
+private let customHotkeyStateEQ: FirstEquipHotkeyState;
 
 // Timestamp field to control the mod logic periods
 @addField(ReadyEvents)
-private let savedIdleTimestamp_eq: Float;
+private let savedIdleTimestampEQ: Float;
 
 // SafeAction anim object
 @addField(ReadyEvents)
-private let safeAnimFeature_eq: ref<AnimFeature_SafeAction>;
+private let safeAnimFeatureEQ: ref<AnimFeature_SafeAction>;
 
 // Weapon object
 @addField(ReadyEvents)
-private let weaponObjectID_eq: TweakDBID;
+private let weaponObjectIDEQ: TweakDBID;
 
 // Held status
 @addField(ReadyEvents)
-private let isHeldActive_eq: Bool;
+private let isHeldActiveEQ: Bool;
 
 // Flag to request weapon ready state
 @addField(ReadyEvents)
-private let readyStateRequested_eq: Bool;
+private let readyStateRequestedEQ: Bool;
 
 @wrapMethod(ReadyEvents)
 protected final func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
   wrappedMethod(stateContext, scriptInterface);
   // Initialize new fields
-  this.customHotkeyState_eq = FirstEquipHotkeyState.IDLE;
-  this.savedIdleTimestamp_eq = this.m_timeStamp;
-  this.safeAnimFeature_eq = new AnimFeature_SafeAction();
-  this.weaponObjectID_eq = TweakDBInterface.GetWeaponItemRecord(ItemID.GetTDBID(DefaultTransition.GetActiveWeapon(scriptInterface).GetItemID())).GetID();
-  this.isHeldActive_eq = false;
-  this.readyStateRequested_eq = false;
+  this.customHotkeyStateEQ = FirstEquipHotkeyState.IDLE;
+  this.savedIdleTimestampEQ = this.m_timeStamp;
+  this.safeAnimFeatureEQ = new AnimFeature_SafeAction();
+  this.weaponObjectIDEQ = TweakDBInterface.GetWeaponItemRecord(ItemID.GetTDBID(DefaultTransition.GetActiveWeapon(scriptInterface).GetItemID())).GetID();
+  this.isHeldActiveEQ = false;
+  this.readyStateRequestedEQ = false;
   // Register custom hotkey listener
   scriptInterface.executionOwner.RegisterInputListener(this, n"FirstTimeEquip");
 }
@@ -553,87 +558,87 @@ protected final func OnTick(timeDelta: Float, stateContext: ref<StateContext>, s
   if DefaultTransition.HasRightWeaponEquipped(scriptInterface) {
 
     // HOTKEY BASED
-    pressed = GameInstance.GetBlackboardSystem(gameInstance).Get(GetAllBlackboardDefs().UI_System).GetBool(GetAllBlackboardDefs().UI_System.HotkeyPressed_eq);
-    released = GameInstance.GetBlackboardSystem(gameInstance).Get(GetAllBlackboardDefs().UI_System).GetBool(GetAllBlackboardDefs().UI_System.HotkeyReleased_eq);
-    hold = GameInstance.GetBlackboardSystem(gameInstance).Get(GetAllBlackboardDefs().UI_System).GetBool(GetAllBlackboardDefs().UI_System.HotkeyHold_eq);
+    pressed = GameInstance.GetBlackboardSystem(gameInstance).Get(GetAllBlackboardDefs().UI_System).GetBool(GetAllBlackboardDefs().UI_System.HotkeyPressedEQ);
+    released = GameInstance.GetBlackboardSystem(gameInstance).Get(GetAllBlackboardDefs().UI_System).GetBool(GetAllBlackboardDefs().UI_System.HotkeyReleasedEQ);
+    hold = GameInstance.GetBlackboardSystem(gameInstance).Get(GetAllBlackboardDefs().UI_System).GetBool(GetAllBlackboardDefs().UI_System.HotkeyHoldEQ);
 
-    // EQ(s"OnTick: pressed = \(pressed), released = \(released), hold = \(hold), state = \(ToString(this.customHotkeyState_eq))");
+    // EQ(s"OnTick: pressed = \(pressed), released = \(released), hold = \(hold), state = \(ToString(this.customHotkeyStateEQ))");
 
     // Force weapon ready state if requested
-    if this.readyStateRequested_eq {
-      this.readyStateRequested_eq = false;
+    if this.readyStateRequestedEQ {
+      this.readyStateRequestedEQ = false;
       scriptInterface.SetAnimationParameterFloat(n"safe", 0.0);
     };
 
     // Action detected when in IDLE state -> PREPARING
-    if Equals(this.customHotkeyState_eq, FirstEquipHotkeyState.IDLE) && pressed {
-      this.customHotkeyState_eq = FirstEquipHotkeyState.PREPARING;
+    if Equals(this.customHotkeyStateEQ, FirstEquipHotkeyState.IDLE) && pressed {
+      this.customHotkeyStateEQ = FirstEquipHotkeyState.PREPARING;
     } else {
       // Action detected when in PREPARING STATE -> TAPPED OR HOLD_STARTED
-      if Equals(this.customHotkeyState_eq, FirstEquipHotkeyState.PREPARING) {
+      if Equals(this.customHotkeyStateEQ, FirstEquipHotkeyState.PREPARING) {
         if hold {
-          this.customHotkeyState_eq = FirstEquipHotkeyState.HOLD_STARTED;
+          this.customHotkeyStateEQ = FirstEquipHotkeyState.HOLD_STARTED;
         } else {
           if released {
-            this.customHotkeyState_eq = FirstEquipHotkeyState.TAPPED;
+            this.customHotkeyStateEQ = FirstEquipHotkeyState.TAPPED;
           };
-        }
+        };
       };
     };
 
     // Action detected when in HOLD_STARTED state -> HOLD_ENDED
     let buttonReleased: Bool = released || scriptInterface.GetActionValue(n"FirstTimeEquip") < 0.50;
-    if Equals(this.customHotkeyState_eq, FirstEquipHotkeyState.HOLD_STARTED) && buttonReleased {
-      this.customHotkeyState_eq = FirstEquipHotkeyState.HOLD_ENDED;
+    if Equals(this.customHotkeyStateEQ, FirstEquipHotkeyState.HOLD_STARTED) && buttonReleased {
+      this.customHotkeyStateEQ = FirstEquipHotkeyState.HOLD_ENDED;
     };
 
     // RUN ANIMATIONS
-    if Equals(this.customHotkeyState_eq, FirstEquipHotkeyState.PREPARING) {
+    if Equals(this.customHotkeyStateEQ, FirstEquipHotkeyState.PREPARING) {
       // Switch weapon state to ready when hotkey clicked
-      this.readyStateRequested_eq = true;
+      this.readyStateRequestedEQ = true;
     };
     // Single tap
-    if Equals(this.customHotkeyState_eq, FirstEquipHotkeyState.TAPPED) {
+    if Equals(this.customHotkeyStateEQ, FirstEquipHotkeyState.TAPPED) {
       if IdleBreakConfig.BindToHotkey() {
-        this.savedIdleTimestamp_eq = currentTime;
+        this.savedIdleTimestampEQ = currentTime;
         scriptInterface.PushAnimationEvent(n"IdleBreak");
       };
-      this.customHotkeyState_eq = FirstEquipHotkeyState.IDLE;
+      this.customHotkeyStateEQ = FirstEquipHotkeyState.IDLE;
     } else {
       // Hold started
-      if Equals(this.customHotkeyState_eq, FirstEquipHotkeyState.HOLD_STARTED) && !this.isHeldActive_eq {
+      if Equals(this.customHotkeyStateEQ, FirstEquipHotkeyState.HOLD_STARTED) && !this.isHeldActiveEQ {
         // Move weapon to safe position and run SafeAction
         scriptInterface.SetAnimationParameterFloat(n"safe", 1.0);
         scriptInterface.PushAnimationEvent(n"SafeAction");
         stateContext.SetPermanentBoolParameter(n"TriggerHeld", true, true);
-        this.safeAnimFeature_eq.triggerHeld = true;
-        this.isHeldActive_eq = true;
+        this.safeAnimFeatureEQ.triggerHeld = true;
+        this.isHeldActiveEQ = true;
       };
       // Hold released
-      if Equals(this.customHotkeyState_eq, FirstEquipHotkeyState.HOLD_ENDED) {
+      if Equals(this.customHotkeyStateEQ, FirstEquipHotkeyState.HOLD_ENDED) {
         stateContext.SetPermanentBoolParameter(n"TriggerHeld", false, true);
-        this.safeAnimFeature_eq.triggerHeld = false;
-        this.customHotkeyState_eq = FirstEquipHotkeyState.IDLE;
-        this.isHeldActive_eq = false;
+        this.safeAnimFeatureEQ.triggerHeld = false;
+        this.customHotkeyStateEQ = FirstEquipHotkeyState.IDLE;
+        this.isHeldActiveEQ = false;
         // Switch weapon state to ready when SafeAction completed
-        this.readyStateRequested_eq = true;
+        this.readyStateRequestedEQ = true;
         stateContext.SetConditionFloatParameter(n"ForceSafeTimeStampToAutoUnequip", stateContext.GetConditionFloat(n"ForceSafeTimeStampToAutoUnequip") + this.GetStaticFloatParameterDefault("addedTimeToAutoUnequipAfterSafeAction", 0.00), true);
       };
     };
     // AnimFeature setup
     stateContext.SetConditionFloatParameter(n"ForceSafeCurrentTimeToAutoUnequip", stateContext.GetConditionFloat(n"ForceSafeCurrentTimeToAutoUnequip") + timeDelta, true);
-    this.safeAnimFeature_eq.safeActionDuration = TDB.GetFloat(this.weaponObjectID_eq + t".safeActionDuration");
-    scriptInterface.SetAnimationParameterFeature(n"SafeAction", this.safeAnimFeature_eq);
-    scriptInterface.SetAnimationParameterFeature(n"SafeAction", this.safeAnimFeature_eq, DefaultTransition.GetActiveWeapon(scriptInterface));
+    this.safeAnimFeatureEQ.safeActionDuration = TDB.GetFloat(this.weaponObjectIDEQ + t".safeActionDuration");
+    scriptInterface.SetAnimationParameterFeature(n"SafeAction", this.safeAnimFeatureEQ);
+    scriptInterface.SetAnimationParameterFeature(n"SafeAction", this.safeAnimFeatureEQ, DefaultTransition.GetActiveWeapon(scriptInterface));
     
     // PROBABILITY BASED
     if WeaponTransition.GetPlayerSpeed(scriptInterface) < 0.10 && stateContext.IsStateActive(n"Locomotion", n"stand") && IsDefined(player) {
       playerStandsStill = WeaponTransition.GetPlayerSpeed(scriptInterface) < 0.10 && stateContext.IsStateActive(n"Locomotion", n"stand");
-      timePassed = currentTime - this.savedIdleTimestamp_eq > IdleBreakConfig.AnimationCheckPeriod();
-      if timePassed && playerStandsStill && !this.isHeldActive_eq {
+      timePassed = currentTime - this.savedIdleTimestampEQ > IdleBreakConfig.AnimationCheckPeriod();
+      if timePassed && playerStandsStill && !this.isHeldActiveEQ {
         // Reset flag and run IdleBreak
-        this.savedIdleTimestamp_eq = currentTime;
-        if player.ShouldRunIdleBreak_eq() {
+        this.savedIdleTimestampEQ = currentTime;
+        if player.ShouldRunIdleBreakEQ() {
           scriptInterface.PushAnimationEvent(n"IdleBreak");
         };
       };
