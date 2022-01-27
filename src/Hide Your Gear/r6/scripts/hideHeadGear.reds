@@ -36,14 +36,14 @@ public class DelayedUnequipCallback extends DelayCallback {
 	public let playerData: ref<EquipmentSystemPlayerData>;
 	public func Call() -> Void {
     this.playerData.UnequipHeadSlot();
-	};
+	}
 }
 
 public class DelayedReequipCallback extends DelayCallback {
 	public let playerData: ref<EquipmentSystemPlayerData>;
 	public func Call() -> Void {
     this.playerData.ReequipHeadSlot();
-	};
+	}
 }
 
 
