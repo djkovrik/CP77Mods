@@ -19,56 +19,6 @@ protected cb func OnInitialize() -> Bool {
   this.m_uiSystem = GameInstance.GetUISystem(this.GetPlayerControlledObject().GetGame());
 }
 
-public class SwitchToNewOptionEvent extends Event {
-  public let hubId: Int32;
-  public let selectedIndex: Int32;
-}
-
-public class SwitchOpacityEvent extends Event {
-  public let opacity: Float;
-}
-
-public class ValidationCallback extends DelayCallback {
-  public let hubs: array<ListChoiceHubData>;
-  public let dialogTree: wref<DialogTree>;
-  public let uiSystem: wref<UISystem>;
-
-	public func Call() -> Void {
-    let switchEvent: ref<SwitchToNewOptionEvent> = new SwitchToNewOptionEvent();
-    let opacityEvent: ref<SwitchOpacityEvent> = new SwitchOpacityEvent();
-    let nextAvailableOption: ref<DialogOption>;
-
-    this.dialogTree.Rebuild(this.hubs);
-
-    if this.dialogTree.IsSelectedItemNotAvailable() {
-      nextAvailableOption = this.dialogTree.GetNextAvailableOption();
-      if nextAvailableOption.IsNotEmpty() {
-        switchEvent.hubId = nextAvailableOption.hub;
-        switchEvent.selectedIndex = nextAvailableOption.index;
-        this.uiSystem.QueueEvent(switchEvent);
-      };
-    };
-
-    if this.dialogTree.IsStateInvalid() {
-      opacityEvent.opacity = 0.0;
-    } else {
-      opacityEvent.opacity = 1.0;
-    };
-    this.uiSystem.QueueEvent(opacityEvent);
-	}
-}
-
-@addMethod(dialogWidgetGameController)
-protected cb func OnSwitchToNewOptionEvent(evt: ref<SwitchToNewOptionEvent>) -> Bool {
-  this.m_InteractionsBlackboard.SetInt(this.m_InteractionsBBDefinition.ActiveChoiceHubID, evt.hubId, true);
-  this.m_InteractionsBlackboard.SetInt(this.m_InteractionsBBDefinition.SelectedIndex, evt.selectedIndex, true);
-}
-
-@addMethod(dialogWidgetGameController)
-protected cb func OnSwitchOpacityEvent(evt: ref<SwitchOpacityEvent>) -> Bool {
-  this.GetRootCompoundWidget().SetOpacity(evt.opacity);
-}
-
 @wrapMethod(dialogWidgetGameController)
 protected func OnInteractionsChanged() -> Void {
   wrappedMethod();
@@ -79,9 +29,10 @@ protected func OnInteractionsChanged() -> Void {
 
 @addMethod(dialogWidgetGameController)
 private func ScheduleValidation() -> Void {
-  let validateCallback: ref<ValidationCallback> = new ValidationCallback();
+  let validateCallback: ref<ValidationCallback>;
   if this.m_activeHubID != -1 {
     this.m_delaySystem.CancelCallback(this.m_delayID);
+    validateCallback = new ValidationCallback();
     validateCallback.hubs = this.m_data.choiceHubs;
     validateCallback.dialogTree = this.m_dialogTree;
     validateCallback.uiSystem = this.m_uiSystem;
@@ -102,7 +53,7 @@ public final func SetDimmed() -> Void {
   let opacity: Float = BlockedOptionConfig.TextOpacity();
   inkWidgetRef.SetOpacity(this.m_ActiveTextRef, opacity);
   inkWidgetRef.SetOpacity(this.m_InActiveTextRef, opacity);
-  this.m_SelectedBg.SetOpacity(0.0);
+  this.m_SelectedBg.SetOpacity(BlockedOptionConfig.TextOpacity());
 }
 
 @wrapMethod(DialogHubLogicController)
@@ -119,4 +70,20 @@ private final func UpdateDialogHubData() -> Void {
     };
     j += 1;
   };
+}
+
+@addMethod(dialogWidgetGameController)
+protected cb func OnSwitchToNewOptionEvent(evt: ref<SwitchToNewOptionEvent>) -> Bool {
+  this.m_InteractionsBlackboard.SetInt(this.m_InteractionsBBDefinition.ActiveChoiceHubID, evt.hubId, true);
+  this.m_InteractionsBlackboard.SetInt(this.m_InteractionsBBDefinition.SelectedIndex, evt.selectedIndex, true);
+  if evt.movesDown {
+    this.m_delaySystem.DelayCallback(new MoveDownCallback(), 0.1);
+  } else {
+    this.m_delaySystem.DelayCallback(new MoveUpCallback(), 0.1);
+  };
+}
+
+@addMethod(dialogWidgetGameController)
+protected cb func OnSwitchOpacityEvent(evt: ref<SwitchOpacityEvent>) -> Bool {
+  this.GetRootCompoundWidget().SetOpacity(evt.opacity);
 }

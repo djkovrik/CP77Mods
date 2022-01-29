@@ -12,6 +12,8 @@ public class DialogOption {
 
   public let selected: Bool;
 
+  public let movesDown: Bool;
+
   public static func Create(id: Int32, index: Int32, hub: Int32, choice: ListChoiceData, valid: Bool, selected: Bool) -> ref<DialogOption> {
     let result: ref<DialogOption> = new DialogOption();
     result.id = id;
@@ -20,6 +22,7 @@ public class DialogOption {
     result.choice = choice;
     result.valid = valid;
     result.selected = selected;
+    result.movesDown = false;
     return result;
   }
 
@@ -31,28 +34,8 @@ public class DialogOption {
     return result;
   }
 
-  public func AsString() -> String {
-    if this.IsNotEmpty() {
-      return this.choice.localizedName + ", global id:" + this.id + ", index:" + this.index + ", hub:" + this.hub + ", selected:" + this.selected + ", valid:" + this.valid;
-    } else {
-      return "EMPTY";
-    };
-  }
-
-  public func IsEmpty() -> Bool {
-    return this.id == -1;
-  }
-
   public func IsNotEmpty() -> Bool {
     return this.id != -1;
-  }
-
-  public func IsValid() -> Bool {
-    return this.valid;
-  }
-
-  public func IsNotValid() -> Bool {
-    return !this.valid;
   }
 }
 
@@ -154,14 +137,6 @@ public class DialogTree {
     this.currSelectedHub = index;
   }
 
-  public func IsHubOnTop(hubId: Int32) -> Bool {
-    if ArraySize(this.hubsIds) == 0 {
-      return false;
-    };
-
-    return this.hubsIds[0] == hubId;
-  }
-
   public static func HasBlockedLifepath(argList: array<ref<InteractionChoiceCaptionPart>>) -> Bool {
     let currBluelineHolder: wref<InteractionChoiceCaptionBluelinePart>;
     let currBlueLinePart: wref<LifePathBluelinePart>;
@@ -195,6 +170,12 @@ public class DialogTree {
     return !current.valid;
   }
 
+  public func IsHubChanged() -> Bool {
+    let prevOption: ref<DialogOption> = this.GetPreviousOption();
+    let currOption: ref<DialogOption> = this.GetCurrentOption();
+    return prevOption.hub != currOption.hub;
+  }
+  
   public func GetNextAvailableOption() -> ref<DialogOption> {
     let prevOption: ref<DialogOption> = this.GetPreviousOption();
     let currOption: ref<DialogOption> = this.GetCurrentOption();
@@ -226,6 +207,7 @@ public class DialogTree {
     while i != startedFrom {
       option = this.currTree[i];
       if option.valid {
+        option.movesDown = movesDown;
         return option;
       };
       i = this.GetNextIndexFor(i, movesDown);
@@ -290,6 +272,6 @@ public class DialogTree {
   // }
 }
 
-// private static func LLL(str: String) -> Void {
-//   LogChannel(n"DEBUG", s"Lifepaths: \(str)");
-// }
+private static func LLL(str: String) -> Void {
+  LogChannel(n"DEBUG", s"Lifepaths: \(str)");
+}
