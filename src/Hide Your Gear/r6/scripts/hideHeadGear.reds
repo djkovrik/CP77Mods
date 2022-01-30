@@ -33,17 +33,17 @@ public static func IsTppHeadHG(itemId: ItemID) -> Bool {
 // Instant unequip does not fix mirror TPP view so need delayed one
 
 public class DelayedUnequipCallback extends DelayCallback {
-	public let playerData: ref<EquipmentSystemPlayerData>;
-	public func Call() -> Void {
+  public let playerData: ref<EquipmentSystemPlayerData>;
+  public func Call() -> Void {
     this.playerData.UnequipHeadSlot();
-	}
+  }
 }
 
 public class DelayedReequipCallback extends DelayCallback {
-	public let playerData: ref<EquipmentSystemPlayerData>;
-	public func Call() -> Void {
+  public let playerData: ref<EquipmentSystemPlayerData>;
+  public func Call() -> Void {
     this.playerData.ReequipHeadSlot();
-	}
+  }
 }
 
 

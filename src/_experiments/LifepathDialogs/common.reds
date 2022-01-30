@@ -13,7 +13,7 @@ public class ValidationCallback extends DelayCallback {
   public let dialogTree: wref<DialogTree>;
   public let uiSystem: wref<UISystem>;
 
-	public func Call() -> Void {
+  public func Call() -> Void {
     let switchEvent: ref<SwitchToNewOptionEvent> = new SwitchToNewOptionEvent();
     let nextAvailableOption: ref<DialogOption>;
 
@@ -37,7 +37,7 @@ public class ValidationCallback extends DelayCallback {
       opacityEvent.opacity = 1.0;
     };
     this.uiSystem.QueueEvent(opacityEvent);
-	}
+  }
 }
 
 public class MoveUpCallback extends DelayCallback {

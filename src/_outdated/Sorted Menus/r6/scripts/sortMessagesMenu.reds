@@ -18,9 +18,9 @@
     context.stateFilter.active = true;
     journal.GetContacts(context, entries);
 
-	/* Sort initial entries which used inside MessengerGameController::PopulateData() */
-	SortContactsArray(journal, entries);
-	
+  /* Sort initial entries which used inside MessengerGameController::PopulateData() */
+  SortContactsArray(journal, entries);
+  
     i = 0;
     while i < ArraySize(entries) {
       contactEntry = (entries[i] as JournalContact);

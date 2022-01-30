@@ -9,9 +9,9 @@ public class MarkerPopupButton extends SimpleButton {
   }
 
   public static func Create() -> ref<MarkerPopupButton> {
-		let self: ref<MarkerPopupButton> = new MarkerPopupButton();
-		self.CreateInstance();
+    let self: ref<MarkerPopupButton> = new MarkerPopupButton();
+    self.CreateInstance();
 
-		return self;
-	}
+    return self;
+  }
 }
