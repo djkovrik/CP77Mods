@@ -1,4 +1,7 @@
+module Sleeves
+
 private class SleevesConfig {
+  // Equipment exclusion list
   public static func Exclude(itemID: ItemID) -> Bool {
     let id: TweakDBID = ItemID.GetTDBID(itemID);
     return
@@ -11,6 +14,7 @@ private class SleevesConfig {
       Equals(id, t"Items.SQ030_Diving_Suit_NoShoes") ||     // Judy's Diving Suit
       false;
   }
+  // Equip areas which swapped between FPP and TPP variants
   public static func TargetSlots() -> array<gamedataEquipmentArea> = [
     // gamedataEquipmentArea.Head,
     // gamedataEquipmentArea.Face,
@@ -20,130 +24,176 @@ private class SleevesConfig {
     gamedataEquipmentArea.OuterChest,
     gamedataEquipmentArea.Outfit
   ]
+  // Uncomment any line to treat cyberware as incompatible what means that 
+  // sleeves will be rolled up if have it installed (no matter equipped or not)
   public static func IncompatibleCyberware() -> array<gamedataItemType> = [
     // gamedataItemType.Cyb_NanoWires,
     // gamedataItemType.Cyb_StrongArms,
-    gamedataItemType.Cyb_Launcher,
-    gamedataItemType.Cyb_MantisBlades
+    // gamedataItemType.Cyb_Launcher,
+    gamedataItemType.Cyb_MantisBlades,
+    gamedataItemType.Clo_Face // <- do not edit this one, just utility line to make empty array work
   ]
 }
 
-// -- Swap substrings inside item appearance name
-@addMethod(EquipmentSystemPlayerData)
-private func SwapItemAppearance(itemID: ItemID, from: String, to: String) -> Void {
-  if SleevesConfig.Exclude(itemID) {
-    return ;
-  };
-  let ts: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.m_owner.GetGame());
-  let appearanceString: String = ToString(ts.GetItemAppearance(this.m_owner, itemID));
-  let newAppearanceString: String;
-  if StrFindLast(appearanceString, from) != -1 {
-    newAppearanceString = StrReplace(appearanceString, from, to);
-    ts.ChangeItemAppearance(this.m_owner, itemID, StringToName(newAppearanceString));
-    this.OnEquipProcessVisualTags(itemID);
-  };
-}
+// -- DO NOT EDIT ANYTHING BELOW
 
-// -- Swap item appearance from target slots to FPP variant
-@addMethod(EquipmentSystemPlayerData)
-public func SwapTargetSlotsToFPP() -> Void {
-  for slot in SleevesConfig.TargetSlots() {
-    this.SwapItemAppearance(this.GetActiveItem(slot), "&TPP", "&FPP");
-  };
-}
 
-// -- Swap item appearance from target slots to TPP variant
-@addMethod(EquipmentSystemPlayerData)
-public func SwapTargetSlotsToTPP() -> Void {
-  for slot in SleevesConfig.TargetSlots() {
-    this.SwapItemAppearance(this.GetActiveItem(slot), "&FPP", "&TPP");
-  };
-}
+public class SleevesControlSystem extends ScriptableSystem {
 
-// -- Check if equipment slot must me switched to TPP appearance
-private static func IsTargetSlot(slot: gamedataEquipmentArea) -> Bool {
-  for target in SleevesConfig.TargetSlots() {
-    if Equals(target, slot) {
-      return true;
+  private let playerPuppet: ref<PlayerPuppet>;
+
+  private let equipmentSystemPlayerData: ref<EquipmentSystemPlayerData>;
+
+  private let hasLauncher: Bool;
+
+  private let switchedToFpp: Bool;
+
+  private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
+    this.playerPuppet = GameInstance.GetPlayerSystem(request.owner.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
+    this.equipmentSystemPlayerData = EquipmentSystem.GetData(this.playerPuppet);
+    this.hasLauncher = false;
+    this.switchedToFpp = false;
+  }
+
+  private final func OnPlayerDetach(request: ref<PlayerDetachRequest>) -> Void {
+    this.playerPuppet = null;
+    this.equipmentSystemPlayerData = null;
+  }
+
+  public func SetHasLauncher(value: Bool) -> Void {
+    this.hasLauncher = value;
+  }
+
+  public func RunAppearanceSwap() -> Void {
+    // Check for cyberware
+    if this.hasLauncher || this.HasIncompatibleCyberware() {
+      this.SwapTargetSlotsToFPP();
+      // LogChannel(n"DEBUG", "Switch to FPP");
+    } else {
+      this.SwapTargetSlotsToTPP();
+      // LogChannel(n"DEBUG", "Switch to TPP");
     };
-  };
-  return false;
-}
+  }
 
-// -- Set TPP variant for specified slots items on equip event
-@wrapMethod(PlayerPuppet)
-protected cb func OnItemAddedToSlot(evt: ref<ItemAddedToSlot>) -> Bool {
-  wrappedMethod(evt);
-  let targetItemId: ItemID = evt.GetItemID();
-  let targetItemArea: gamedataEquipmentArea = EquipmentSystem.GetEquipAreaType(targetItemId);
-  let playerData: ref<EquipmentSystemPlayerData> = EquipmentSystem.GetData(this);
-  if IsTargetSlot(targetItemArea) && IsDefined(playerData) {
-    playerData.SwapTargetSlotsToTPP();
-  };
-}
-
-// -- Check cyberware compatibility
-@addMethod(EquipmentSystemPlayerData)
-private final func IsCyberwareTypIncompatible(type: gamedataItemType) -> Bool {
-  for target in SleevesConfig.IncompatibleCyberware() {
-    if Equals(target, type) {
-      return true;
+  private func SwapItemAppearance(itemID: ItemID, from: String, to: String) -> Void {
+    if SleevesConfig.Exclude(itemID) {
+      return ;
     };
-  };
-}
+    let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.playerPuppet.GetGame());
+    let appearanceString: String = ToString(transactionSystem.GetItemAppearance(this.playerPuppet, itemID));
+    let newAppearanceString: String;
+    if StrFindLast(appearanceString, from) != -1 {
+      newAppearanceString = StrReplace(appearanceString, from, to);
+      transactionSystem.ChangeItemAppearance(this.playerPuppet, itemID, StringToName(newAppearanceString));
+      this.equipmentSystemPlayerData.OnEquipProcessVisualTags(itemID);
+    };
+  }
 
-// -- Check if player has incompatible arms cyberware
-@addMethod(EquipmentSystemPlayerData)
-private final func HasIncompatibleCyberware() -> Bool {
-  let equipArea: SEquipArea = this.m_equipment.equipAreas[this.GetEquipAreaIndex(gamedataEquipmentArea.ArmsCW)];
-  let i: Int32 = 0;
-  let moduleID: ItemID;
-  let moduleRecord: ref<Item_Record>;
-  while i < this.GetNumberOfSlots(gamedataEquipmentArea.ArmsCW) {
-    moduleID = equipArea.equipSlots[i].itemID;
-    if ItemID.IsValid(moduleID) {
-      moduleRecord = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(moduleID));
-      if this.IsCyberwareTypIncompatible(moduleRecord.ItemType().Type()) {
+  // -- Swap item appearance from target slots to FPP variant
+  private func SwapTargetSlotsToFPP() -> Void {
+    for slot in SleevesConfig.TargetSlots() {
+      this.SwapItemAppearance(this.equipmentSystemPlayerData.GetActiveItem(slot), "&TPP", "&FPP");
+    };
+  }
+
+  // -- Swap item appearance from target slots to TPP variant
+  private func SwapTargetSlotsToTPP() -> Void {
+    for slot in SleevesConfig.TargetSlots() {
+      this.SwapItemAppearance(this.equipmentSystemPlayerData.GetActiveItem(slot), "&FPP", "&TPP");
+    };
+  }
+
+  private final func IsCyberwareTypIncompatible(type: gamedataItemType) -> Bool {
+    for target in SleevesConfig.IncompatibleCyberware() {
+      if Equals(target, type) {
         return true;
       };
-    } else {
-      moduleID = this.GetActiveGadget();
-      if ItemID.IsValid(moduleID) {
-        moduleRecord = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(moduleID));
-        if this.IsCyberwareTypIncompatible(moduleRecord.ItemType().Type()) {
-          return true;
-        };
-      };
     };
-    i += 1;
+  }
+
+  private final func HasIncompatibleCyberware() -> Bool {
+    let armsCW: gamedataItemType = RPGManager.GetItemType(EquipmentSystem.GetInstance(this.playerPuppet).GetActiveItem(this.playerPuppet, gamedataEquipmentArea.ArmsCW));
+    return this.IsCyberwareTypIncompatible(armsCW);
+  }
+}
+
+// -- Swap appearance after weapon manipulation requests
+@wrapMethod(EquipmentSystemPlayerData)
+public final func OnEquipmentSystemWeaponManipulationRequest(request: ref<EquipmentSystemWeaponManipulationRequest>) -> Void {
+  wrappedMethod(request);
+  let container: ref<ScriptableSystemsContainer> = GameInstance.GetScriptableSystemsContainer(this.m_owner.GetGame());
+  let sleevesSystem: ref<SleevesControlSystem> = container.Get(n"Sleeves.SleevesControlSystem") as SleevesControlSystem;
+  sleevesSystem.RunAppearanceSwap();
+}
+
+// -- Swap appearance after entAppearanceChangeFinishEvent events
+@addField(PlayerPuppet)
+private let m_sleevesControlSystem: ref<SleevesControlSystem>;
+
+@wrapMethod(PlayerPuppet)
+private final func PlayerAttachedCallback(playerPuppet: ref<GameObject>) -> Void {
+  wrappedMethod(playerPuppet);
+  this.m_sleevesControlSystem = GameInstance.GetScriptableSystemsContainer(this.GetGame()).Get(n"Sleeves.SleevesControlSystem") as SleevesControlSystem;
+}
+
+@wrapMethod(PlayerPuppet)
+protected cb func OnAppearanceChangeFinishEvent(evt: ref<entAppearanceChangeFinishEvent>) -> Bool {
+  wrappedMethod(evt);
+  this.m_sleevesControlSystem.RunAppearanceSwap();
+}
+
+// -- Cyberware helper methods
+
+@addMethod(UpperBodyTransition)
+public final static func HasLauncherEquipped(const scriptInterface: ref<StateGameScriptInterface>) -> Bool {
+  let weapon: ref<WeaponObject> = scriptInterface.GetTransactionSystem().GetItemInSlot(scriptInterface.executionOwner, t"AttachmentSlots.WeaponRight") as WeaponObject;
+  let armsCW: gamedataItemType = RPGManager.GetItemType(EquipmentSystem.GetInstance(scriptInterface.executionOwner).GetActiveItem(scriptInterface.executionOwner, gamedataEquipmentArea.ArmsCW));
+  let weaponType: gamedataItemType;
+  if IsDefined(weapon) {
+    weaponType = scriptInterface.GetTransactionSystem().GetItemData(scriptInterface.executionOwner, weapon.GetItemID()).GetItemType();
+    if Equals(weaponType, gamedataItemType.Wea_Fists) && Equals(armsCW, gamedataItemType.Cyb_Launcher) {
+      return true;
+    };
   };
   return false;
 }
 
-// -- Check for incompatible cyberware while weapons manipulations and switch to FPP variant if needed
-@wrapMethod(EquipmentSystemPlayerData)
-public final func OnEquipmentSystemWeaponManipulationRequest(request: ref<EquipmentSystemWeaponManipulationRequest>) -> Void {
-  let targetItemId: ItemID = this.GetItemIDfromEquipmentManipulationAction(request.requestType);
-  let targetItemArea: gamedataEquipmentArea = EquipmentSystem.GetEquipAreaType(targetItemId);
-  let targetItemRecord: ref<Item_Record> = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(targetItemId));
-  let targetItemType: gamedataItemType = targetItemRecord.ItemType().Type();
-
-  if NotEquals(targetItemArea, gamedataEquipmentArea.Weapon) && this.HasIncompatibleCyberware() {
-    this.SwapTargetSlotsToFPP();
-  } else {
-    this.SwapTargetSlotsToTPP();
+@addMethod(UpperBodyTransition)
+public final static func HasCyberwareEquipped(const scriptInterface: ref<StateGameScriptInterface>, type: gamedataItemType) -> Bool {
+  let weapon: ref<WeaponObject> = scriptInterface.GetTransactionSystem().GetItemInSlot(scriptInterface.executionOwner, t"AttachmentSlots.WeaponRight") as WeaponObject;
+  let weaponType: gamedataItemType;
+  if IsDefined(weapon) {
+    weaponType = scriptInterface.GetTransactionSystem().GetItemData(scriptInterface.executionOwner, weapon.GetItemID()).GetItemType();
+    if Equals(weaponType, type) {
+      return true;
+    };
   };
-
-  wrappedMethod(request);
+  return false;
 }
 
-// -- Set TPP appearance after vehicle mounting/unmounting events
-@wrapMethod(VehicleComponent)
-protected final func ManageAdditionalAnimFeatures(object: ref<GameObject>, value: Bool) -> Void {
-  wrappedMethod(object, value);
-  EquipmentSystem.GetData(GetPlayer(object.GetGame())).SwapTargetSlotsToTPP();
+
+// -- Run appearance swap on weapon transitions
+
+@addMethod(UpperBodyEventsTransition)
+private func UpdateCyberwareState(scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  let container: ref<ScriptableSystemsContainer> = GameInstance.GetScriptableSystemsContainer(scriptInterface.executionOwner.GetGame());
+  let sleevesSystem: ref<SleevesControlSystem> =  container.Get(n"Sleeves.SleevesControlSystem") as SleevesControlSystem;
+  let launcher: Bool = UpperBodyTransition.HasLauncherEquipped(scriptInterface);
+  // let mantis: Bool = UpperBodyTransition.HasCyberwareEquipped(scriptInterface, gamedataItemType.Cyb_MantisBlades);
+  // let nanowires: Bool = UpperBodyTransition.HasCyberwareEquipped(scriptInterface, gamedataItemType.Cyb_NanoWires);
+
+  sleevesSystem.SetHasLauncher(launcher);
+  sleevesSystem.RunAppearanceSwap();
 }
 
-private static func SLog(str: String) -> Void {
-  LogChannel(n"DEBUG", "Sleeves: " + str);
+@wrapMethod(UpperBodyEventsTransition)
+protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  wrappedMethod(stateContext, scriptInterface);
+  this.UpdateCyberwareState(scriptInterface);
+}
+
+@wrapMethod(UpperBodyEventsTransition)
+protected func OnExit(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  wrappedMethod(stateContext, scriptInterface);
+  this.UpdateCyberwareState(scriptInterface);
 }
