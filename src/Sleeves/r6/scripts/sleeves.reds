@@ -40,9 +40,9 @@ private class SleevesConfig {
 
 public class SleevesControlSystem extends ScriptableSystem {
 
-  private let playerPuppet: ref<PlayerPuppet>;
+  private let playerPuppet: wref<PlayerPuppet>;
 
-  private let equipmentSystemPlayerData: ref<EquipmentSystemPlayerData>;
+  private let equipmentSystemPlayerData: wref<EquipmentSystemPlayerData>;
 
   private let hasLauncher: Bool;
 
