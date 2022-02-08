@@ -4,11 +4,10 @@ import Codeware.Localization.*
 import CustomMarkers.Common.*
 import CustomMarkers.Config.*
 
-// TODO add keywords with redscript update
 public class CustomMappinData {
-  public let position: Vector4; // persistent
-  public let description: CName; // persistent
-  public let type: CName; // persistent
+  public persistent let position: Vector4;
+  public persistent let description: CName;
+  public persistent let type: CName;
 }
 
 // Custom ScriptableSystem which holds all markers related stuff
@@ -18,13 +17,13 @@ public class CustomMarkerSystem extends ScriptableSystem {
 
   private let m_translator: ref<LocalizationSystem>;
 
-  private let m_mappins: array<ref<CustomMappinData>>; // persistent
+  private persistent let m_mappins: array<ref<CustomMappinData>>;
 
   private func OnAttach() -> Void {
     this.m_mappinSystem = GameInstance.GetMappinSystem(this.GetGameInstance());
     this.m_translator = LocalizationSystem.GetInstance(this.GetGameInstance());
-    L(s"Initialized! Your game language code: \(ToString(this.m_translator.GetInterfaceLanguage()))");
-    L(s"Persisted data loaded, mappins count: \(ToString(ArraySize(this.m_mappins)))");
+    CMM(s"Initialized! Your game language code: \(ToString(this.m_translator.GetInterfaceLanguage()))");
+    CMM(s"Persisted data loaded, mappins count: \(ToString(ArraySize(this.m_mappins)))");
   }
 
   public func AddCustomMappin(title: String, description: String, texturePart: CName, persist: Bool) -> Void {
@@ -34,7 +33,7 @@ public class CustomMarkerSystem extends ScriptableSystem {
   }
 
   public func AddCustomMappin(title: String, description: String, texturePart: CName, position: Vector4, persist: Bool) -> Void {
-    if ArraySize(this.m_mappins) > CustomMarkersConfig.MaximumAvailableMarkers() && persist {
+    if ArraySize(this.m_mappins) >= CustomMarkersConfig.MaximumAvailableMarkers() && persist {
       this.ShowCustomWarning(this.m_translator.GetText("CustomMarkers-LimitMessage"));
       return ;
     };
@@ -50,7 +49,7 @@ public class CustomMarkerSystem extends ScriptableSystem {
       this.AddPersistedMappin(description, texturePart, position);
     };
     this.ShowCustomMessage(this.m_translator.GetText("CustomMarkers-AddedMessage"));
-    L(s"Registered mappin at position \(ToString(position)) as \(NameToString(texturePart))");
+    CMM(s"Registered mappin at position \(ToString(position)) as \(NameToString(texturePart))");
   }
 
   public func DeleteCustomMappin(position: Vector4) -> Void {
@@ -60,7 +59,7 @@ public class CustomMarkerSystem extends ScriptableSystem {
       if Equals(mappin.worldPosition, position) {
         this.m_mappinSystem.UnregisterMappin(mappin.id);
         this.DeletePersistedMappin(position);
-        L(s"Unregistered mappin at position \(ToString(position))");
+        CMM(s"Unregistered mappin at position \(ToString(position))");
       };
     };
   }
@@ -77,7 +76,7 @@ public class CustomMarkerSystem extends ScriptableSystem {
     newMappin.type = type;
     ArrayPush(persistedMappins, newMappin);
     this.m_mappins = persistedMappins;
-    L(s"Persisted mappin added: \(position), persisted mappins count: \(ArraySize(this.m_mappins))");
+    CMM(s"Persisted mappin added: \(position), persisted mappins count: \(ArraySize(this.m_mappins))");
   }
 
   private func DeletePersistedMappin(position: Vector4) -> Void {
@@ -90,11 +89,11 @@ public class CustomMarkerSystem extends ScriptableSystem {
       index = index + 1;
     };
     this.m_mappins = persistedMappins;
-    L(s"Persisted mappin deleted: \(position), persisted mappins count: \(ArraySize(this.m_mappins))");
+    CMM(s"Persisted mappin deleted: \(position), persisted mappins count: \(ArraySize(this.m_mappins))");
   }
 
   public func RestorePersistedMappins() -> Void {
-    L(s"Trying to restore persisted mappins: \(ArraySize(this.m_mappins))");
+    CMM(s"Trying to restore persisted mappins: \(ArraySize(this.m_mappins))");
     let persistedMappins: array<ref<CustomMappinData>> = this.m_mappins;
     let counter: Int32 = 0;
     for mappin in persistedMappins {
@@ -102,7 +101,7 @@ public class CustomMarkerSystem extends ScriptableSystem {
       counter = counter + 1;
     };
 
-    L(s"Persisted mappins restored: \(counter)");
+    CMM(s"Persisted mappins restored: \(counter)");
   }
 
   private func CreateMappinData(title: String, description: String, texturePart: CName, position: Vector4) -> MappinData {

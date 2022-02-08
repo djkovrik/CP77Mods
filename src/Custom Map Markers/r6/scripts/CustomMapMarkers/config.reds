@@ -9,6 +9,8 @@ public class CustomMarkersConfig {
   public static func IconColorActive() -> HDRColor = Colors.BaseGreen()
   // Secondary marker color, used for icon picker inactive markers
   public static func IconColorInactive() -> HDRColor = Colors.BaseGrey()
+  // Replace false with true to disable the mod logs for CET console
+  public static func DisableLogsCET() -> Bool = false
 }
 
 /**

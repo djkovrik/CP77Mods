@@ -68,7 +68,7 @@ public class CustomMarkerPopup extends InGamePopup {
         evt.m_texturePart = this.m_selectedIcon;
         this.m_uiSystem.QueueEvent(evt);
       } else {
-        L("You have not entered marker description");
+        CMM("You have not entered marker description");
       };
     };
 
