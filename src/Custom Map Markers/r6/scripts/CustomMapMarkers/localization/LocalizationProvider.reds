@@ -1,6 +1,6 @@
 module CustomMarkers.Localization
 
-import Codeware.Localization.*
+import CustomMapMarkers.Codeware.Localization.*
 
 public class LocalizationProvider extends ModLocalizationProvider {
   public func GetPackage(language: CName) -> ref<ModLocalizationPackage> {

@@ -1,6 +1,6 @@
 module CustomMarkers.Localization
 
-import Codeware.Localization.*
+import CustomMapMarkers.Codeware.Localization.*
 
 public class Russian extends ModLocalizationPackage {
   protected func DefineTexts() -> Void {

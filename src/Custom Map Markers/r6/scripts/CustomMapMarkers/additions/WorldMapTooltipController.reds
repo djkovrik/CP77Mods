@@ -1,4 +1,4 @@
-import Codeware.Localization.*
+import CustomMapMarkers.Codeware.Localization.*
 import CustomMarkers.Config.*
 
 // Set custom data for worldmap mappin popup

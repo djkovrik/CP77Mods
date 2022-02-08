@@ -1,7 +1,7 @@
 module CustomMarkers.UI
 
-import Codeware.UI.*
-import Codeware.Localization.*
+import CustomMapMarkers.Codeware.UI.*
+import CustomMapMarkers.Codeware.Localization.*
 import CustomMarkers.Config.*
 import CustomMarkers.Common.*
 import CustomMarkers.UI.*
