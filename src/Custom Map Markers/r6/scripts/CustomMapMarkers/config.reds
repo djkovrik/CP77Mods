@@ -4,7 +4,7 @@ import CustomMarkers.Common.*
 
 public class CustomMarkersConfig {
   // Markers amount threshold
-  public static func MaximumAvailableMarkers() -> Int32 = 20
+  public static func MaximumAvailableMarkers() -> Int32 = 50
   // Primary marker color
   public static func IconColorActive() -> HDRColor = Colors.BaseGreen()
   // Secondary marker color, used for icon picker inactive markers

@@ -19,7 +19,7 @@ public class CustomMarkerSystem extends ScriptableSystem {
 
   private persistent let m_mappins: array<ref<CustomMappinData>>;
 
-  private func OnAttach() -> Void {
+  private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
     this.m_mappinSystem = GameInstance.GetMappinSystem(this.GetGameInstance());
     this.m_translator = LocalizationSystem.GetInstance(this.GetGameInstance());
     CMM(s"Initialized! Your game language code: \(ToString(this.m_translator.GetInterfaceLanguage()))");
