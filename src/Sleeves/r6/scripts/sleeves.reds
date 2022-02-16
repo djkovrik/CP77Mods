@@ -68,10 +68,10 @@ public class SleevesControlSystem extends ScriptableSystem {
     // Check for cyberware
     if this.hasLauncher || this.HasIncompatibleCyberware() {
       this.SwapTargetSlotsToFPP();
-      // LogChannel(n"DEBUG", "Switch to FPP");
+      LogChannel(n"DEBUG", "Switch to FPP");
     } else {
       this.SwapTargetSlotsToTPP();
-      // LogChannel(n"DEBUG", "Switch to TPP");
+      LogChannel(n"DEBUG", "Switch to TPP");
     };
   }
 
@@ -139,6 +139,7 @@ private final func PlayerAttachedCallback(playerPuppet: ref<GameObject>) -> Void
 @wrapMethod(PlayerPuppet)
 protected cb func OnAppearanceChangeFinishEvent(evt: ref<entAppearanceChangeFinishEvent>) -> Bool {
   wrappedMethod(evt);
+  LogChannel(n"DEBUG", "OnAppearanceChangeFinishEvent");
   this.m_sleevesControlSystem.RunAppearanceSwap();
 }
 
@@ -196,4 +197,38 @@ protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<Sta
 protected func OnExit(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
   wrappedMethod(stateContext, scriptInterface);
   this.UpdateCyberwareState(scriptInterface);
+}
+
+public class DelayedSleevesCallback extends DelayCallback {
+  let sleevesSystem: ref<SleevesControlSystem>;
+  public func Call() -> Void {
+    this.sleevesSystem.RunAppearanceSwap();
+  }
+}
+
+@addField(VehicleComponent)
+private let m_delayId: DelayID;
+
+@addField(VehicleComponent)
+private let m_delaySystem: ref<DelaySystem>;
+
+@addField(VehicleComponent)
+private let m_sleevesControlSystem: ref<SleevesControlSystem>;
+
+@wrapMethod(VehicleComponent)
+private final func OnGameAttach() -> Void {
+  wrappedMethod();
+  this.m_delaySystem = GameInstance.GetDelaySystem(this.GetVehicle().GetGame());
+  this.m_sleevesControlSystem = GameInstance.GetScriptableSystemsContainer(this.GetVehicle().GetGame()).Get(n"Sleeves.SleevesControlSystem") as SleevesControlSystem;
+}
+
+
+@wrapMethod(VehicleComponent)
+protected final func OnVehicleCameraChange(state: Bool) -> Void {
+  wrappedMethod(state);
+
+  let callback: ref<DelayedSleevesCallback> = new DelayedSleevesCallback();
+  callback.sleevesSystem = this.m_sleevesControlSystem;
+  this.m_delaySystem.CancelCallback(this.m_delayId);
+  this.m_delayId = this.m_delaySystem.DelayCallback(callback, 2.0);
 }
