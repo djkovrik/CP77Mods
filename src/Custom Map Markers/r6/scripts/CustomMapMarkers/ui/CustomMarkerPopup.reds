@@ -48,7 +48,7 @@ public class CustomMarkerPopup extends InGamePopup {
     if StrContains(nameString, "button") {
       this.HandleButtonClick(name);
     } else {
-      this.HandleIconClick(name);
+      this.HandleIconClick(widget);
     };
   }
 
@@ -89,13 +89,16 @@ public class CustomMarkerPopup extends InGamePopup {
     popup.Open(requester);
   }
 
-  private func HandleIconClick(name: CName) -> Void {
-    this.m_selectedIcon = name;
-    for icon in this.m_icons {
-      if Equals(this.m_selectedIcon, icon.GetName()) {
-        icon.Tint();
-      } else {
-        icon.Dim();
+  private func HandleIconClick(widget: wref<inkWidget>) -> Void {
+    // everything fires onClick since 1.5
+    if Equals(widget.GetClassName(), n"inkCanvasWidget") {
+      this.m_selectedIcon = widget.GetName();
+      for icon in this.m_icons {
+        if Equals(this.m_selectedIcon, icon.GetName()) {
+          icon.Tint();
+        } else {
+          icon.Dim();
+        };
       };
     };
   }

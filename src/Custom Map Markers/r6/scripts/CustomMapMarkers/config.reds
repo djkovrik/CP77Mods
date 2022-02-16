@@ -6,7 +6,7 @@ public class CustomMarkersConfig {
   // Markers amount threshold
   public static func MaximumAvailableMarkers() -> Int32 = 50
   // Primary marker color
-  public static func IconColorActive() -> HDRColor = Colors.BaseGreen()
+  public static func IconColorActive() -> HDRColor = Colors.BaseOrange()
   // Secondary marker color, used for icon picker inactive markers
   public static func IconColorInactive() -> HDRColor = Colors.BaseGrey()
   // Replace false with true to disable the mod logs for CET console
