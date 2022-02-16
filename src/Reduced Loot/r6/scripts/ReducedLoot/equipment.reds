@@ -2,61 +2,63 @@ import ReducedLootTypes.RL_LootSource
 import ReducedLootUtils.*
 
 @replaceMethod(ScriptedPuppet)
-public final static func ProcessLoot(self: wref<ScriptedPuppet>) -> Void {
+protected final func ProcessLoot() -> Void {
   let ammoAmount: Int32;
   let ammoToDrop: array<TweakDBID>;
   let blockRequest: ref<BlockAmmoDrop>;
+  let equipmentItem: ref<gameItemData>;
   let i: Int32;
-  let isBroken: Bool;
   let itemTDBID: TweakDBID;
   let lootModifiers: array<ref<gameStatModifierData>>;
   let rand: Float;
   let randQuery: Float;
   let tempPlayerLevel: Float;
   let tempStat: Float;
-  let TS: ref<TransactionSystem> = GameInstance.GetTransactionSystem(self.GetGame());
-  let record: wref<Character_Record> = TweakDBInterface.GetCharacterRecord(self.GetRecordID());
+  let TS: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.GetGame());
+  let record: wref<Character_Record> = TweakDBInterface.GetCharacterRecord(this.GetRecordID());
   let canDropWeapon: Bool = record.DropsWeaponOnDeath();
   let canDropAmmo: Bool = record.DropsAmmoOnDeath();
   let dropMoney: Bool = record.DropsMoneyOnDeath();
-  let foundEquipment: array<ref<gameItemData>> = ScriptedPuppet.GetEquipment(self);
-  let heldMoney: Int32 = TS.GetItemQuantity(self, MarketSystem.Money());
-  ScriptedPuppet.GenerateLootModifiers(self, lootModifiers);
+  let foundEquipment: array<ItemID> = this.CreateEquipmentDataList(this);
+  let heldMoney: Int32 = TS.GetItemQuantity(this, MarketSystem.Money());
   let itemData: ref<gameItemData>;
-  self.GenerateLootWithStats(lootModifiers);
-  if self.IsLooted() {
+  ScriptedPuppet.GenerateLootModifiers(this, lootModifiers);
+  this.GenerateLootWithStats(lootModifiers);
+  if this.IsLooted() {
     return;
   };
-  if self.IsCrowd() {
+  if this.IsCrowd() {
     return;
   };
   if dropMoney {
-    TS.GiveItem(self, MarketSystem.Money(), heldMoney);
+    TS.GiveItem(this, MarketSystem.Money(), heldMoney);
   };
   if canDropWeapon {
     i = 0;
     while i < ArraySize(foundEquipment) {
-      RPGManager.SetDroppedWeaponQuality(self, foundEquipment[i]);
-      isBroken = RPGManager.BreakItem(self.GetGame(), self, foundEquipment[i].GetID());
-      if !isBroken {
-        ScriptedPuppet.ScaleDroppedItem(foundEquipment[i], self);
-        itemData = foundEquipment[i];
+      TS.GiveItem(this, foundEquipment[i], 1);
+      if RPGManager.BreakItem(this.GetGame(), this, foundEquipment[i]) {
+        TS.RemoveItem(this, foundEquipment[i], 1);
+      } else {
+        itemData = TS.GetItemData(this, foundEquipment[i]);
         itemData.SetShouldKeep_RL();
         RLog("#1 set weapon was held for " + ToStr(itemData));
-        TS.GiveItemByItemData(self, itemData);
+        equipmentItem = TS.GetItemData(this, foundEquipment[i]);
+        RPGManager.SetDroppedWeaponQuality(this, equipmentItem);
+        ScriptedPuppet.ScaleDroppedItem(equipmentItem, this);
       };
       i += 1;
     };
   };
   if canDropAmmo {
-    ammoToDrop = PlayerHandicapSystem.GetInstance(self).GetHandicapAmmo();
+    ammoToDrop = PlayerHandicapSystem.GetInstance(this).GetHandicapAmmo();
     if ArraySize(ammoToDrop) > 0 {
       blockRequest = new BlockAmmoDrop();
-      PlayerHandicapSystem.GetInstance(self).QueueRequest(blockRequest);
+      PlayerHandicapSystem.GetInstance(this).QueueRequest(blockRequest);
     };
     i = 0;
     while i < ArraySize(foundEquipment) {
-      itemTDBID = RPGManager.GetWeaponAmmoTDBID(foundEquipment[i].GetID());
+      itemTDBID = RPGManager.GetWeaponAmmoTDBID(foundEquipment[i]);
       if TDBID.IsValid(itemTDBID) {
         ArrayPush(ammoToDrop, itemTDBID);
       };
@@ -84,8 +86,8 @@ public final static func ProcessLoot(self: wref<ScriptedPuppet>) -> Void {
         RLog("> Ammo check #1:");
         if RL_Checker.CanDropAmmo(RL_LootSource.Puppet) {
           RLog("+ ammo dropped: " + IntToString(ammoAmount));
-          TS.GiveItemByTDBID(self, ammoToDrop[i], ammoAmount);
-          self.DropAmmo();
+          TS.GiveItemByTDBID(this, ammoToDrop[i], ammoAmount);
+          this.DropAmmo();
         } else {
           RLog("- ammo removed: " + IntToString(ammoAmount));
         };
@@ -93,50 +95,50 @@ public final static func ProcessLoot(self: wref<ScriptedPuppet>) -> Void {
       i += 1;
     };
   };
-  if Equals(record.CharacterType().Type(), gamedataNPCType.Human) && self.IsHostile() {
-    ScriptedPuppet.ProcessSupportiveItems(self);
+  if Equals(record.CharacterType().Type(), gamedataNPCType.Human) && this.IsHostile() {
+    ScriptedPuppet.ProcessSupportiveItems(this);
   };
-  if ScriptedPuppet.IsMechanical(self) {
+  if ScriptedPuppet.IsMechanical(this) {
     rand = RandF();
     randQuery = RandF();
-    tempStat = GameInstance.GetStatsSystem(self.GetGame()).GetStatValue(Cast(GetPlayer(self.GetGame()).GetEntityID()), gamedataStatType.ScrapItemChance);
-    tempPlayerLevel = GameInstance.GetStatsSystem(self.GetGame()).GetStatValue(Cast(GetPlayer(self.GetGame()).GetEntityID()), gamedataStatType.Level);
-    if tempStat >= rand  && RL_Checker.CanDropMods() {
+    tempStat = GameInstance.GetStatsSystem(this.GetGame()).GetStatValue(Cast<StatsObjectID>(GetPlayer(this.GetGame()).GetEntityID()), gamedataStatType.ScrapItemChance);
+    tempPlayerLevel = GameInstance.GetStatsSystem(this.GetGame()).GetStatValue(Cast<StatsObjectID>(GetPlayer(this.GetGame()).GetEntityID()), gamedataStatType.Level);
+    if tempStat >= rand {
       if tempPlayerLevel < 20.00 {
         if randQuery <= 0.33 {
-          GameInstance.GetTransactionSystem(self.GetGame()).GiveItemByItemQuery(self, t"Query.EarlyGameWeaponMods", 1u, 1u);
+          GameInstance.GetTransactionSystem(this.GetGame()).GiveItemByItemQuery(this, t"Query.EarlyGameWeaponMods", 1u, 1u);
         } else {
           if randQuery > 0.33 && randQuery <= 0.66 {
-            GameInstance.GetTransactionSystem(self.GetGame()).GiveItemByItemQuery(self, t"Query.EarlyGameWeaponScopes", 1u, 1u);
+            GameInstance.GetTransactionSystem(this.GetGame()).GiveItemByItemQuery(this, t"Query.EarlyGameWeaponScopes", 1u, 1u);
           } else {
             if randQuery > 0.66 {
-              GameInstance.GetTransactionSystem(self.GetGame()).GiveItemByItemQuery(self, t"Query.EarlyGameWeaponSilencers", 1u, 1u);
+              GameInstance.GetTransactionSystem(this.GetGame()).GiveItemByItemQuery(this, t"Query.EarlyGameWeaponSilencers", 1u, 1u);
             };
           };
         };
       } else {
         if tempPlayerLevel >= 20.00 && tempPlayerLevel < 35.00 {
           if randQuery <= 0.33 {
-            GameInstance.GetTransactionSystem(self.GetGame()).GiveItemByItemQuery(self, t"Query.MidGameWeaponMods", 1u, 1u);
+            GameInstance.GetTransactionSystem(this.GetGame()).GiveItemByItemQuery(this, t"Query.MidGameWeaponMods", 1u, 1u);
           } else {
             if randQuery > 0.33 && randQuery <= 0.66 {
-              GameInstance.GetTransactionSystem(self.GetGame()).GiveItemByItemQuery(self, t"Query.MidGameWeaponScopes", 1u, 1u);
+              GameInstance.GetTransactionSystem(this.GetGame()).GiveItemByItemQuery(this, t"Query.MidGameWeaponScopes", 1u, 1u);
             } else {
               if randQuery > 0.66 {
-                GameInstance.GetTransactionSystem(self.GetGame()).GiveItemByItemQuery(self, t"Query.MidGameWeaponSilencers", 1u, 1u);
+                GameInstance.GetTransactionSystem(this.GetGame()).GiveItemByItemQuery(this, t"Query.MidGameWeaponSilencers", 1u, 1u);
               };
             };
           };
         } else {
           if tempPlayerLevel >= 35.00 {
             if randQuery <= 0.33 {
-              GameInstance.GetTransactionSystem(self.GetGame()).GiveItemByItemQuery(self, t"Query.EndGameWeaponMods", 1u, 1u);
+              GameInstance.GetTransactionSystem(this.GetGame()).GiveItemByItemQuery(this, t"Query.EndGameWeaponMods", 1u, 1u);
             } else {
               if randQuery > 0.33 && randQuery <= 0.66 {
-                GameInstance.GetTransactionSystem(self.GetGame()).GiveItemByItemQuery(self, t"Query.EndGameWeaponScopes", 1u, 1u);
+                GameInstance.GetTransactionSystem(this.GetGame()).GiveItemByItemQuery(this, t"Query.EndGameWeaponScopes", 1u, 1u);
               } else {
                 if randQuery > 0.66 {
-                  GameInstance.GetTransactionSystem(self.GetGame()).GiveItemByItemQuery(self, t"Query.EndGameWeaponSilencers", 1u, 1u);
+                  GameInstance.GetTransactionSystem(this.GetGame()).GiveItemByItemQuery(this, t"Query.EndGameWeaponSilencers", 1u, 1u);
                 };
               };
             };
@@ -145,48 +147,46 @@ public final static func ProcessLoot(self: wref<ScriptedPuppet>) -> Void {
       };
     };
   };
-  if ScriptedPuppet.HasLootableItems(self) {
-    ScriptedPuppet.EvaluateLootQuality(self);
+  if ScriptedPuppet.HasLootableItems(this) {
+    ScriptedPuppet.EvaluateLootQuality(this);
   };
-  self.CacheLootForDroping();
+  this.CacheLootForDroping();
 }
 
 @replaceMethod(ScriptedPuppet)
-public final static func DropHeldItems(self: wref<ScriptedPuppet>) -> Bool {
-  let canDrop: Bool;
+private final func DropHeldItems() -> Bool {
   let canLeftItemDrop: Bool;
   let canRightItemDrop: Bool;
   let leftItem: wref<ItemObject>;
   let rightItem: wref<ItemObject>;
   let slot: TweakDBID;
-  if !IsDefined(self) {
-    return false;
-  };
-  canDrop = TweakDBInterface.GetCharacterRecord(self.GetRecordID()).DropsWeaponOnDeath();
+  let canDrop: Bool = TweakDBInterface.GetCharacterRecord(this.GetRecordID()).DropsWeaponOnDeath();
+
   if canDrop {
     slot = t"AttachmentSlots.WeaponRight";
-    rightItem = GameInstance.GetTransactionSystem(self.GetGame()).GetItemInSlot(self, slot);
+    rightItem = GameInstance.GetTransactionSystem(this.GetGame()).GetItemInSlot(this, slot);
     canRightItemDrop = IsDefined(rightItem) && IsNameValid(TweakDBInterface.GetItemRecord(ItemID.GetTDBID(rightItem.GetItemID())).DropObject());
     slot = t"AttachmentSlots.WeaponLeft";
-    leftItem = GameInstance.GetTransactionSystem(self.GetGame()).GetItemInSlot(self, slot);
+    leftItem = GameInstance.GetTransactionSystem(this.GetGame()).GetItemInSlot(this, slot);
     canLeftItemDrop = IsDefined(leftItem) && IsNameValid(TweakDBInterface.GetItemRecord(ItemID.GetTDBID(leftItem.GetItemID())).DropObject());
     if canLeftItemDrop || canRightItemDrop {
-      self.DropWeapons();
+      this.DropWeapons();
       if IsDefined(rightItem) {
-        ScriptedPuppet.ScaleDroppedItem(rightItem.GetItemData(), self);
+        ScriptedPuppet.ScaleDroppedItem(rightItem.GetItemData(), this);
         rightItem.GetItemData().SetShouldKeep_RL();
         RLog("#2 set weapon was held for " + ToStr(rightItem.GetItemData()));
       };
       if IsDefined(leftItem) {
-        ScriptedPuppet.ScaleDroppedItem(leftItem.GetItemData(), self);
+        ScriptedPuppet.ScaleDroppedItem(leftItem.GetItemData(), this);
         leftItem.GetItemData().SetShouldKeep_RL();
         RLog("#2 set weapon was held for " + ToStr(leftItem.GetItemData()));
       };
-      return true;
+      if RPGManager.IsItemWeapon(rightItem.GetItemID()) || RPGManager.IsItemWeapon(leftItem.GetItemID()) {
+        this.m_droppedWeapons = true;
+      };
     };
-    return false;
   };
-  return false;
+  return this.m_droppedWeapons;
 }
 
 @replaceMethod(ScriptedPuppet)
