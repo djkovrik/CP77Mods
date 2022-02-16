@@ -219,82 +219,33 @@ public static func EQ(str: String) -> Void {
 // --- SET SKIP ANIMATION FLAGS
 
 // Set skip flag for locomotion events
-@replaceMethod(LocomotionEventsTransition)
+@wrapMethod(LocomotionEventsTransition)
 public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
-  let playerPuppet: ref<PlayerPuppet>;
-  let event: Int32;
-  let flag = UpperBodyTransition.HasRangedWeaponEquipped(scriptInterface);
-  playerPuppet = scriptInterface.owner as PlayerPuppet;
-  event = scriptInterface.localBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.LocomotionDetailed);
+  let playerPuppet: ref<PlayerPuppet> = scriptInterface.owner as PlayerPuppet;
+  let event: Int32 = scriptInterface.localBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.LocomotionDetailed);
   if event == EnumInt(gamePSMDetailedLocomotionStates.Climb) || event == EnumInt(gamePSMDetailedLocomotionStates.Ladder) {
     if IsDefined(playerPuppet) {
       playerPuppet.SetSkipFirstEquipEQ(true);
     };
   };
-
-  let blockAimingFor: Float = this.GetStaticFloatParameterDefault("softBlockAimingOnEnterFor", -1.00);
-  if blockAimingFor > 0.00 {
-    this.SoftBlockAimingForTime(stateContext, scriptInterface, blockAimingFor);
-  };
-  this.SetLocomotionParameters(stateContext, scriptInterface);
-  this.SetCollisionFilter(scriptInterface);
-  this.SetLocomotionCameraParameters(stateContext, scriptInterface);
+  wrappedMethod(stateContext, scriptInterface);
 }
 
 // Set skip flag for body carrying events
-@replaceMethod(CarriedObjectEvents)
+@wrapMethod(CarriedObjectEvents)
 protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
-  let hasWeaponEquipped: Bool;
   let carrying: Bool = scriptInterface.localBlackboard.GetBool(GetAllBlackboardDefs().PlayerStateMachine.Carrying);
-  let playerPuppet: ref<PlayerPuppet>;
-  let attitude: EAIAttitude;
-  let mountEvent: ref<MountingRequest>;
-  let puppet: ref<gamePuppet>;
-  let slotId: MountingSlotId;
-  let workspotSystem: ref<WorkspotGameSystem>;
-  let mountingInfo: MountingInfo = scriptInterface.GetMountingFacility().GetMountingInfoSingleWithObjects(scriptInterface.owner);
-  let isNPCMounted: Bool = EntityID.IsDefined(mountingInfo.childId);
+  let playerPuppet: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
+  let hasWeaponEquipped: Bool = playerPuppet.HasRangedWeaponEquippedEQ();
   // Set flag if player and not carrying yet
-  playerPuppet = scriptInterface.executionOwner as PlayerPuppet;
-  hasWeaponEquipped = playerPuppet.HasRangedWeaponEquippedEQ();
   if IsDefined(playerPuppet) && !carrying {
     playerPuppet.SetSkipFirstEquipEQ(hasWeaponEquipped);
   };
-  if !isNPCMounted && !this.IsBodyDisposalOngoing(stateContext, scriptInterface) {
-    mountEvent = new MountingRequest();
-    slotId.id = n"leftShoulder";
-    mountingInfo.childId = scriptInterface.ownerEntityID;
-    mountingInfo.parentId = scriptInterface.executionOwnerEntityID;
-    mountingInfo.slotId = slotId;
-    mountEvent.lowLevelMountingInfo = mountingInfo;
-    scriptInterface.GetMountingFacility().Mount(mountEvent);
-    (scriptInterface.owner as NPCPuppet).MountingStartDisableComponents();
-  };
-  workspotSystem = scriptInterface.GetWorkspotSystem();
-  this.m_animFeature = new AnimFeature_Mounting();
-  this.m_animFeature.mountingState = 2;
-  this.UpdateCarryStylePickUpAndDropParams(stateContext, scriptInterface, false);
-  this.m_isFriendlyCarry = false;
-  this.m_forcedCarryStyle = gamePSMBodyCarryingStyle.Any;
-  puppet = scriptInterface.owner as gamePuppet;
-  if IsDefined(puppet) {
-    if IsDefined(workspotSystem) && !this.IsBodyDisposalOngoing(stateContext, scriptInterface) {
-      workspotSystem.StopNpcInWorkspot(puppet);
-    };
-    attitude = GameObject.GetAttitudeBetween(scriptInterface.owner, scriptInterface.executionOwner);
-    this.m_forcedCarryStyle = IntEnum(puppet.GetBlackboard().GetInt(GetAllBlackboardDefs().Puppet.ForcedCarryStyle));
-    if Equals(this.m_forcedCarryStyle, gamePSMBodyCarryingStyle.Friendly) || Equals(attitude, EAIAttitude.AIA_Friendly) && Equals(this.m_forcedCarryStyle, gamePSMBodyCarryingStyle.Any) {
-      this.m_isFriendlyCarry = true;
-    };
-    this.UpdateCarryStylePickUpAndDropParams(stateContext, scriptInterface, this.m_isFriendlyCarry);
-  };
-  scriptInterface.SetAnimationParameterFeature(n"Mounting", this.m_animFeature, scriptInterface.executionOwner);
-  scriptInterface.SetAnimationParameterFeature(n"Mounting", this.m_animFeature);
-  (scriptInterface.owner as NPCPuppet).MountingStartDisableComponents();
+  wrappedMethod(stateContext, scriptInterface);
 }
 
 // Set skip flag for interaction events
-@replaceMethod(InteractiveDevice)
+@wrapMethod(InteractiveDevice)
 protected cb func OnInteractionUsed(evt: ref<InteractionChoiceEvent>) -> Bool {
   let playerPuppet: ref<PlayerPuppet>;
   let className: CName;
@@ -308,7 +259,7 @@ protected cb func OnInteractionUsed(evt: ref<InteractionChoiceEvent>) -> Bool {
       playerPuppet.SetSkipFirstEquipEQ(hasWeaponEquipped);
     };
   };
-  this.ExecuteAction(evt.choice, evt.activator, evt.layerData.tag);
+  wrappedMethod(evt);
 }
 
 // Set skip flag for takedown events
@@ -375,6 +326,7 @@ public final const func HasPlayedFirstEquip(weaponID: TweakDBID) -> Bool {
 // Controls if firstEquip should be played, allows firstEquip in combat if PlayInCombatMode option enabled
 @replaceMethod(EquipmentBaseTransition)
 protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScriptInterface>, stateContext: ref<StateContext>, stateMachineInstanceData: StateMachineInstanceData, item: ItemID) -> Void {
+  let animFeatureMeleeData: ref<AnimFeature_MeleeData>;
   let statsEvent: ref<UpdateWeaponStatsEvent>;
   let weaponEquipEvent: ref<WeaponEquipEvent>;
   let animFeature: ref<AnimFeature_EquipUnequipItem> = new AnimFeature_EquipUnequipItem();
@@ -415,7 +367,7 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
   //     stateContext.SetConditionBoolParameter(n"firstEquip", true, true);
   //   };
   // };
-  animFeature.stateTransitionDuration = statSystem.GetStatValue(Cast(itemObject.GetEntityID()), gamedataStatType.EquipDuration);
+  animFeature.stateTransitionDuration = statSystem.GetStatValue(Cast<StatsObjectID>(itemObject.GetEntityID()), gamedataStatType.EquipDuration);
   animFeature.itemState = 1;
   animFeature.itemType = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(item)).ItemType().AnimFeatureIndex();
   this.BlockAimingForTime(stateContext, scriptInterface, animFeature.stateTransitionDuration + 0.10);
@@ -427,6 +379,11 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
   weaponEquipEvent.animFeature = weaponEquipAnimFeature;
   weaponEquipEvent.item = itemObject;
   GameInstance.GetDelaySystem(scriptInterface.executionOwner.GetGame()).DelayEvent(scriptInterface.executionOwner, weaponEquipEvent, 0.03);
+  if itemObject.WeaponHasTag(n"Throwable") && !scriptInterface.GetStatPoolsSystem().HasStatPoolValueReachedMax(Cast<StatsObjectID>(itemObject.GetEntityID()), gamedataStatPoolType.WeaponOverheat) {
+    animFeatureMeleeData = new AnimFeature_MeleeData();
+    animFeatureMeleeData.isThrowReloading = true;
+    scriptInterface.SetAnimationParameterFeature(n"MeleeData", animFeatureMeleeData);
+  };
   scriptInterface.executionOwner.QueueEventForEntityID(itemObject.GetEntityID(), new PlayerWeaponSetupEvent());
   statsEvent = new UpdateWeaponStatsEvent();
   scriptInterface.executionOwner.QueueEventForEntityID(itemObject.GetEntityID(), statsEvent);
@@ -443,7 +400,6 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
     };
   };
 }
-
 
 // --- TRACK USED SLOTS
 
@@ -660,7 +616,7 @@ protected final func OnTick(timeDelta: Float, stateContext: ref<StateContext>, s
   statsSystem = GameInstance.GetStatsSystem(gameInstance);
   ownerID = scriptInterface.ownerEntityID;
   animFeature = new AnimFeature_WeaponHandlingStats();
-  animFeature.weaponRecoil = statsSystem.GetStatValue(Cast(ownerID), gamedataStatType.RecoilAnimation);
-  animFeature.weaponSpread = statsSystem.GetStatValue(Cast(ownerID), gamedataStatType.SpreadAnimation);
+  animFeature.weaponRecoil = statsSystem.GetStatValue(Cast<StatsObjectID>(ownerID), gamedataStatType.RecoilAnimation);
+  animFeature.weaponSpread = statsSystem.GetStatValue(Cast<StatsObjectID>(ownerID), gamedataStatType.SpreadAnimation);
   scriptInterface.SetAnimationParameterFeature(n"WeaponHandlingData", animFeature, scriptInterface.executionOwner);
 }
