@@ -3,6 +3,7 @@ Powered by [redscript](https://github.com/jac3km4/redscript)
 
 #### Mods list:
 - [Always First Equip](https://www.nexusmods.com/cyberpunk2077/mods/2557 "Always First Equip")
+- [Custom Map Markers](https://www.nexusmods.com/cyberpunk2077/mods/3819 "Custom Map Markers")
 - [Declutter WorldMap](https://www.nexusmods.com/cyberpunk2077/mods/1930 "Declutter WorldMap")
 - [Hide Your Gear](https://www.nexusmods.com/cyberpunk2077/mods/1860 "Hide Your Gear")
 - [Hide Known Specs](https://www.nexusmods.com/cyberpunk2077/mods/2111 "Hide Known Specs")

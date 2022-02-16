@@ -38,8 +38,6 @@ public class WorldConfig {
   public static func HideExplosives() -> Bool = false
   // Replace false with true if you want to hide icons for misc network devices (computers, smart screens etc.)
   public static func HideNetworking() -> Bool = false
-  // Replace false with true if you want to hide icons for your vehicles
-  public static func HideVehicles() -> Bool = false
 }
 
 public class MiniMapConfig {

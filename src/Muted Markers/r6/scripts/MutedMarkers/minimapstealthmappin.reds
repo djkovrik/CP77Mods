@@ -10,7 +10,7 @@ protected cb func OnUpdate() -> Bool {
   };
 }
 
-// Hide enemies
+// Hide enemies and loot
 @replaceMethod(MinimapStealthMappinController)
 protected func Update() -> Void {
   let gameDevice: wref<Device>;
@@ -35,6 +35,7 @@ protected func Update() -> Void {
   let numberOfCombatantsAboveZero: Bool = this.m_stealthMappin.GetNumberOfCombatants() > 0u;
   let isUsingSenseCone: Bool = this.m_stealthMappin.IsUsingSenseCone();
   this.m_isHacking = this.m_stealthMappin.HasHackingStatusEffect();
+  let lootToCheck: Uint32;
   if this.m_isDevice {
     this.m_isAggressive = NotEquals(attitude, EAIAttitude.AIA_Friendly);
     if this.m_isAggressive {
@@ -74,19 +75,34 @@ protected func Update() -> Void {
   if this.m_hasBeenLooted || this.m_stealthMappin.IsHiddenByQuestOnMinimap() {
     shouldShowMappin = false;
   } else {
-    if this.m_isDevice && !this.m_isAggressive {
-      shouldShowMappin = false;
+    if this.m_isPrevention && this.m_policeChasePrototypeEnabled {
+      shouldShowMappin = !this.m_isInVehicleStance;
     } else {
-      if !IsMultiplayer() {
-        shouldShowMappin = hasBeenSeen || !this.m_isAlive || isCompanion || wasDetectionAboveZero || isHighlighted || isTagged;
+      if this.m_isDevice && !this.m_isAggressive {
+        shouldShowMappin = false;
       } else {
-        shouldShowMappin = (isCompanion || wasDetectionAboveZero || isHighlighted) && this.m_isAlive;
+        if !IsMultiplayer() {
+          shouldShowMappin = hasBeenSeen || !this.m_isAlive || isCompanion || wasDetectionAboveZero || isHighlighted || isTagged;
+        } else {
+          shouldShowMappin = (isCompanion || wasDetectionAboveZero || isHighlighted) && this.m_isAlive;
+        };
       };
     };
   };
   // Hide enemies
   if MiniMapConfig.HideEnemies() && this.m_isAlive && NotEquals(attitude, EAIAttitude.AIA_Friendly) {
     shouldShowMappin = false;
+  };
+  // Hide loot
+  if !this.m_isAlive {
+    lootToCheck = this.m_stealthMappin.GetHighestLootQuality();
+    if (MiniMapConfig.HideLegendary() && Equals(lootToCheck, 4u))
+      || (MiniMapConfig.HideEpic() && Equals(lootToCheck, 3u))
+      || (MiniMapConfig.HideRare() && Equals(lootToCheck, 2u))
+      || (MiniMapConfig.HideUncommon() && Equals(lootToCheck, 1u))
+      || (MiniMapConfig.HideCommon() && Equals(lootToCheck, 0u)) {
+        shouldShowMappin = false;
+      };
   };
   this.SetForceHide(!shouldShowMappin);
   if shouldShowMappin {

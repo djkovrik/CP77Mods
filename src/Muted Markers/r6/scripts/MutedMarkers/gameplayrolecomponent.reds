@@ -37,13 +37,17 @@ public func ShouldShowOnMinimap(data: SDeviceMappinData, roleMappinData: ref<Gam
 
   let showOnMiniMap: Bool;
 
-  if roleMappinData.m_isQuest || roleMappinData.m_isTagged {
+  if Equals(data.mappinVariant, gamedataMappinVariant.Zzz07_PlayerStashVariant) {
     showOnMiniMap = true;
   } else {
-    if roleMappinData.m_isCurrentTarget || roleMappinData.m_visibleThroughWalls || Equals(GetVisibilityTypeFor(data, this), MarkerVisibility.ThroughWalls) {
+    if roleMappinData.m_isQuest || roleMappinData.m_isTagged {
       showOnMiniMap = true;
     } else {
-      showOnMiniMap = false;
+      if roleMappinData.m_isCurrentTarget || roleMappinData.m_visibleThroughWalls || Equals(GetVisibilityTypeFor(data, this), MarkerVisibility.ThroughWalls) {
+        showOnMiniMap = true;
+      } else {
+        showOnMiniMap = false;
+      };
     };
   };
 
