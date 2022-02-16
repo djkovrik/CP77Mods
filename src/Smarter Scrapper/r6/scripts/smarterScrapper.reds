@@ -37,8 +37,8 @@ protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
   let itemQuality: gamedataQuality;
   let itemRecord: ref<Item_Record>;
   let questSystem: ref<QuestsSystem>;
-  let scalingMod: ref<gameStatModifierData>;
   let shouldUpdateLog: Bool;
+  let wardrobeSystem: wref<WardrobeSystem>;
   if !ItemID.IsValid(evt.itemID) {
     return false;
   };
@@ -49,11 +49,7 @@ protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
   if !itemRecord.IsSingleInstance() {
     this.UpdateInventoryWeight(RPGManager.GetItemWeight(itemData));
   };
-  if TweakDBInterface.GetBool(ItemID.GetTDBID(evt.itemID) + t".scaleToPlayer", false) && itemData.GetStatValueByType(gamedataStatType.PowerLevel) <= 1.00 {
-    GameInstance.GetStatsSystem(this.GetGame()).RemoveAllModifiers(itemData.GetStatsObjectID(), gamedataStatType.PowerLevel, true);
-    scalingMod = RPGManager.CreateStatModifier(gamedataStatType.PowerLevel, gameStatModifierType.Additive, GameInstance.GetStatsSystem(this.GetGame()).GetStatValue(Cast(this.GetEntityID()), gamedataStatType.PowerLevel));
-    GameInstance.GetStatsSystem(this.GetGame()).AddSavedModifier(itemData.GetStatsObjectID(), scalingMod);
-  };
+  this.TryScaleItemToPlayer(itemData);
   if IsDefined(itemData) {
     itemQuality = RPGManager.GetItemDataQuality(itemData);
     if itemData.HasTag(n"SkipActivityLog") || itemData.HasTag(n"SkipActivityLogOnLoot") || evt.flaggedAsSilent || itemData.HasTag(n"Currency") {
@@ -80,8 +76,12 @@ protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
       eqSystem.QueueRequest(drawItemRequest);
     };
   };
+  wardrobeSystem = GameInstance.GetWardrobeSystem(this.GetGame());
+  if IsDefined(wardrobeSystem) && Equals(RPGManager.GetItemCategory(evt.itemID), gamedataItemCategory.Clothing) {
+    wardrobeSystem.StoreUniqueItemID(evt.itemID);
+  };
   if Equals(RPGManager.GetItemType(evt.itemID), gamedataItemType.Con_Skillbook) {
-    GameInstance.GetTelemetrySystem(this.GetGame()).LogSkillbookUsed(ToTelemetryInventoryItem(this, evt.itemID));
+    GameInstance.GetTelemetrySystem(this.GetGame()).LogSkillbookUsed(this, evt.itemID);
     ItemActionsHelper.LearnItem(this, evt.itemID, true);
     this.SetWarningMessage(GetLocalizedText("LocKey#46534") + "\\n" + GetLocalizedText(LocKeyToString(TweakDBInterface.GetItemRecord(ItemID.GetTDBID(evt.itemID)).LocalizedDescription())));
   };
@@ -90,7 +90,7 @@ protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
     entryString = ReadAction.GetJournalEntryFromAction(ItemActionsHelper.GetReadAction(evt.itemID).GetID());
     GameInstance.GetJournalManager(this.GetGame()).ChangeEntryState(entryString, "gameJournalOnscreen", gameJournalEntryState.Active, JournalNotifyOption.Notify);
   };
-  if Equals(RPGManager.GetItemType(evt.itemID), gamedataItemType.Gen_Junk) && GameInstance.GetStatsSystem(this.GetGame()).GetStatValue(Cast(this.GetEntityID()), gamedataStatType.CanAutomaticallyDisassembleJunk) > 0.00 {
+  if Equals(RPGManager.GetItemType(evt.itemID), gamedataItemType.Gen_Junk) && GameInstance.GetStatsSystem(this.GetGame()).GetStatValue(Cast<StatsObjectID>(this.GetEntityID()), gamedataStatType.CanAutomaticallyDisassembleJunk) > 0.00 {
     // Scrapper check passed, dissasemble request here
     if CanBeScrapped_mod(this, evt.itemID) {
       ItemActionsHelper.DisassembleItem(this, evt.itemID, GameInstance.GetTransactionSystem(this.GetGame()).GetItemQuantity(this, evt.itemID));
