@@ -65,13 +65,11 @@ protected cb func OnPostOnRelease(evt: ref<inkPointerEvent>) -> Bool {
 }
 
 
-// -- Main inventory window -- gameuiInventoryGameController --
+// -- Main inventory window -- InventoryItemModeLogicController --
 
 // Handle new button hint visibility
-@addMethod(gameuiInventoryGameController)
-private func UpdateHintsVisibility(shouldShow: Bool, opt evt: ref<inkPointerEvent>) {
-  let controller: ref<InventoryItemDisplayController> = this.GetEquipmentSlotControllerFromTarget(evt);
-  let itemData: InventoryItemData = controller.GetItemData();
+@addMethod(InventoryItemModeLogicController)
+private func UpdateHintsVisibility(shouldShow: Bool) {
   let text: String = ToggleQuestTagStrings.Toggle();
   if shouldShow {
     this.m_buttonHintsController.AddButtonHint(StringToName(ToggleQuestTagStrings.Hotkey()), text);
@@ -81,23 +79,76 @@ private func UpdateHintsVisibility(shouldShow: Bool, opt evt: ref<inkPointerEven
 }
 
 // Show new hint on item hover over
-@wrapMethod(gameuiInventoryGameController)
-protected cb func OnEquipmentSlotHoverOver(evt: ref<inkPointerEvent>) -> Bool {
-  wrappedMethod(evt);
-  this.UpdateHintsVisibility(true, evt);
+@wrapMethod(InventoryItemModeLogicController)
+private final func SetInventoryItemButtonHintsHoverOver(displayingData: InventoryItemData, opt display: ref<InventoryItemDisplayController>) -> Void {
+  let cursorData: ref<MenuCursorUserData> = new MenuCursorUserData();
+  let isEquipped: Bool = InventoryItemData.IsEquipped(displayingData) || this.itemChooser.IsAttachmentItem(displayingData);
+  if IsDefined(display) {
+    if !InventoryItemData.IsEmpty(displayingData) {
+      if this.itemChooser.CanEquipVisuals(InventoryItemData.GetID(displayingData)) {
+        this.m_buttonHintsController.AddButtonHint(n"equip_visuals", GetLocalizedText("UI-UserActions-EquipVisuals"));
+      } else {
+        this.m_buttonHintsController.RemoveButtonHint(n"equip_visuals");
+      };
+      if !isEquipped {
+        if NotEquals(InventoryItemData.GetItemType(displayingData), gamedataItemType.Prt_Program) {
+          this.m_buttonHintsController.AddButtonHint(n"drop_item", GetLocalizedText("UI-ScriptExports-Drop0"));
+        };
+        if !InventoryItemData.IsPart(displayingData) {
+          if NotEquals(InventoryItemData.GetEquipmentArea(displayingData), gamedataEquipmentArea.Invalid) {
+            this.m_buttonHintsController.AddButtonHint(n"equip_item", GetLocalizedText("UI-UserActions-Equip"));
+          };
+        } else {
+          this.m_buttonHintsController.AddButtonHint(n"equip_item", GetLocalizedText("UI-UserActions-Equip"));
+        };
+        if Equals(display.GetDisplayContext(), ItemDisplayContext.Attachment) {
+          this.m_buttonHintsController.RemoveButtonHint(n"drop_item");
+          this.m_buttonHintsController.RemoveButtonHint(n"equip_item");
+          if RPGManager.CanPartBeUnequipped(InventoryItemData.GetID(displayingData)) {
+            this.m_buttonHintsController.AddButtonHint(n"unequip_item", GetLocalizedText("UI-UserActions-Unequip"));
+            this.UpdateHintsVisibility(true);
+          } else {
+            this.m_buttonHintsController.RemoveButtonHint(n"unequip_item");
+          };
+        };
+      } else {
+        if !InventoryItemData.IsPart(displayingData) || RPGManager.CanPartBeUnequipped(InventoryItemData.GetID(displayingData)) || Equals(InventoryItemData.GetEquipmentArea(this.itemChooser.GetModifiedItemData()), gamedataEquipmentArea.SystemReplacementCW) {
+          this.m_buttonHintsController.AddButtonHint(n"unequip_item", GetLocalizedText("UI-UserActions-Unequip"));
+          this.UpdateHintsVisibility(true);
+        };
+      };
+      if !this.m_isE3Demo {
+        if RPGManager.CanItemBeDisassembled(this.m_player.GetGame(), InventoryItemData.GetID(displayingData)) && !isEquipped {
+          this.m_buttonHintsController.AddButtonHint(n"disassemble_item", "[" + GetLocalizedText("Gameplay-Devices-Interactions-Helpers-Hold") + "] " + GetLocalizedText("UI-ScriptExports-Disassemble0"));
+          cursorData.AddAction(n"disassemble_item");
+        };
+      };
+      if Equals(InventoryItemData.GetEquipmentArea(displayingData), gamedataEquipmentArea.Consumable) {
+        this.m_buttonHintsController.AddButtonHint(n"use_item", "[" + GetLocalizedText("Gameplay-Devices-Interactions-Helpers-Hold") + "] " + GetLocalizedText("UI-UserActions-Use"));
+        cursorData.AddAction(n"use_item");
+      };
+    };
+    if cursorData.GetActionsListSize() >= 0 {
+      this.SetCursorContext(n"HoldToComplete", cursorData);
+    } else {
+      this.SetCursorContext(n"Hover");
+    };
+  } else {
+    this.SetCursorContext(n"Default");
+  };
 }
 
 // Hide new hint on item hover out
-@wrapMethod(gameuiInventoryGameController)
-protected cb func OnEquipmentSlotHoverOut(evt: ref<inkPointerEvent>) -> Bool {
-  wrappedMethod(evt);
+@wrapMethod(InventoryItemModeLogicController)
+private final func SetInventoryItemButtonHintsHoverOut() -> Void {
+  wrappedMethod();
   this.UpdateHintsVisibility(false);
 }
 
 // Toggle quest tag for item data
 @addMethod(gameuiInventoryGameController)
-private func ToggleQuestTag(evt: ref<inkPointerEvent>) -> Void {
-  let controller: wref<InventoryItemDisplayController> = this.GetEquipmentSlotControllerFromTarget(evt);
+private func ToggleQuestTag(evt: ref<ItemDisplayClickEvent>) -> Void {
+  let controller: wref<InventoryItemDisplayController> = evt.display;
   let itemData: InventoryItemData = controller.GetItemData();
   let data: ref<gameItemData>;
   if !InventoryItemData.IsEmpty(itemData) {
@@ -112,9 +163,9 @@ private func ToggleQuestTag(evt: ref<inkPointerEvent>) -> Void {
 
 // Handle activate_secondary hotkey click
 @wrapMethod(gameuiInventoryGameController)
-protected cb func OnEquipmentClick(evt: ref<inkPointerEvent>) -> Bool {
+protected cb func OnEquipmentClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
   wrappedMethod(evt);
-  if evt.IsAction(StringToName(ToggleQuestTagStrings.Hotkey())) {
+  if evt.actionName.IsAction(StringToName(ToggleQuestTagStrings.Hotkey())) {
     this.ToggleQuestTag(evt);
     this.RefreshUI();
   };
