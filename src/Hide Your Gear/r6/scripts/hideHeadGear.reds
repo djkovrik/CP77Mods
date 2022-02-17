@@ -117,13 +117,13 @@ private final func IsVisualTagActive(tag: CName) -> Bool {
 
 // Additional hack to force items hidden state
 @wrapMethod(EquipmentSystemPlayerData)
-public final func IsItemHidden(id: ItemID) -> Bool {
-  return wrappedMethod(id) || ShouldHideHG(id);
+public final func IsSlotHidden(area: gamedataEquipmentArea) -> Bool {
+  return wrappedMethod(area) || ShouldHideHG(area);
 }
 
 // Hack EquipItem calls to prevent inventory preview item disappearing
 @replaceMethod(EquipmentSystemPlayerData)
-private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt addToInventory: Bool, opt blockActiveSlotsUpdate: Bool, opt forceEquipWeapon: Bool) -> Void {
+private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt blockActiveSlotsUpdate: Bool, opt forceEquipWeapon: Bool) -> Void {
   let audioEventFoley: ref<AudioEvent>;
   let audioEventFootwear: ref<AudioEvent>;
   let currentItem: ItemID;
@@ -153,6 +153,7 @@ private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt addToInventor
   if this.IsItemOfCategory(itemID, gamedataItemCategory.Weapon) && equipArea.activeIndex == slotIndex && this.CheckWeaponAgainstGameplayRestrictions(itemID) && !blockActiveSlotsUpdate {
     this.SetSlotActiveItem(EquipmentManipulationRequestSlot.Right, itemID);
     this.SetLastUsedItem(itemID);
+    this.SendPSMWeaponManipulationRequest(EquipmentManipulationRequestType.Equip, EquipmentManipulationRequestSlot.Right, gameEquipAnimationType.Default);
   } else {
     if this.IsItemOfCategory(itemID, gamedataItemCategory.Weapon) && forceEquipWeapon && this.CheckWeaponAgainstGameplayRestrictions(itemID) {
       this.m_equipment.equipAreas[equipAreaIndex].equipSlots[slotIndex].itemID = itemID;
@@ -189,7 +190,7 @@ private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt addToInventor
       transactionSystem.AddItemToSlot(this.m_owner, placementSlot, itemID);
     };
   };
-  if Equals(RPGManager.GetItemRecord(itemID).ItemType().Type(), gamedataItemType.Clo_Feet) {
+  if Equals(RPGManager.GetItemType(itemID), gamedataItemType.Clo_Feet) {
     audioEventFootwear = new AudioEvent();
     audioEventFootwear.eventName = n"equipFootwear";
     audioEventFootwear.nameData = RPGManager.GetItemRecord(itemID).MovementSound().AudioMovementName();
@@ -204,6 +205,9 @@ private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt addToInventor
   paperdollEquipData.placementSlot = placementSlot;
   paperdollEquipData.slotIndex = slotIndex;
   this.ApplyEquipGLPs(itemID);
+  if itemData.UsesVariants() {
+    itemData.AddStatsOnEquip(this.m_owner);
+  };
   this.UpdateWeaponWheel();
   this.UpdateQuickWheel();
   this.UpdateEquipmentUIBB(paperdollEquipData);
@@ -218,7 +222,15 @@ private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt addToInventor
   if ItemID.IsValid(currentItem) && currentItem != itemID {
     transactionSystem.OnItemRemovedFromEquipmentSlot(this.m_owner, currentItem);
   };
-  transactionSystem.OnItemAddedToEquipmentSlot(this.m_owner, itemID);
+  if RPGManager.IsItemClothing(itemID) && this.IsSlotHidden(equipArea.areaType) {
+    transactionSystem.OnItemAddedToEquipmentSlot(this.m_owner, itemID, n"empty_appearance_default", false);
+  } else {
+    if RPGManager.IsItemClothing(itemID) && this.IsSlotOverriden(equipArea.areaType) {
+      transactionSystem.OnItemAddedToEquipmentSlot(this.m_owner, itemID, EquipmentSystem.GetClothingItemAppearanceName(this.GetSlotOverridenVisualItem(equipArea.areaType)), true);
+    } else {
+      transactionSystem.OnItemAddedToEquipmentSlot(this.m_owner, itemID);
+    };
+  };
   if this.IsItemOfCategory(itemID, gamedataItemCategory.Cyberware) || Equals(equipArea.areaType, gamedataEquipmentArea.ArmsCW) {
     this.CheckCyberjunkieAchievement();
   };
