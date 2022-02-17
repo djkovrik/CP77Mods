@@ -6,18 +6,36 @@ public class MappinChecker {
 
     return 
          Equals(variant, gamedataMappinVariant.ActionDealDamageVariant) 
-      || Equals(variant, gamedataMappinVariant.BountyHuntVariant)
+      || Equals(variant, gamedataMappinVariant.ConversationVariant)
+      || Equals(variant, gamedataMappinVariant.DefaultVariant)
       || Equals(variant, gamedataMappinVariant.DefaultQuestVariant)
-      || Equals(variant, gamedataMappinVariant.ExclamationMarkVariant)
-      || Equals(variant, gamedataMappinVariant.GangWatchVariant)
-      || Equals(variant, gamedataMappinVariant.PhoneCallVariant)
+      || Equals(variant, gamedataMappinVariant.DefaultInteractionVariant)
       || Equals(variant, gamedataMappinVariant.QuestGiverVariant)
+      || Equals(variant, gamedataMappinVariant.MinorActivityVariant)
+      || Equals(variant, gamedataMappinVariant.Zzz06_NCPDGigVariant)
+      || Equals(variant, gamedataMappinVariant.ExclamationMarkVariant)
       || Equals(variant, gamedataMappinVariant.RetrievingVariant)
+      || Equals(variant, gamedataMappinVariant.ThieveryVariant)
       || Equals(variant, gamedataMappinVariant.SabotageVariant)
-      || Equals(variant, gamedataMappinVariant.ThieveryVariant)
-      || Equals(variant, gamedataMappinVariant.ThieveryVariant)
+      || Equals(variant, gamedataMappinVariant.ClientInDistressVariant)
+      || Equals(variant, gamedataMappinVariant.BountyHuntVariant)
+      || Equals(variant, gamedataMappinVariant.CourierVariant)
+      || Equals(variant, gamedataMappinVariant.GangWatchVariant)
+      || Equals(variant, gamedataMappinVariant.OutpostVariant)
+      || Equals(variant, gamedataMappinVariant.HiddenStashVariant)
+      || Equals(variant, gamedataMappinVariant.HuntForPsychoVariant)
+      || Equals(variant, gamedataMappinVariant.SmugglersDenVariant)
+      || Equals(variant, gamedataMappinVariant.WanderingMerchantVariant)
+      || Equals(variant, gamedataMappinVariant.ConvoyVariant)
+      || Equals(variant, gamedataMappinVariant.FixerVariant)
+      || Equals(variant, gamedataMappinVariant.ApartmentVariant)
       || Equals(variant, gamedataMappinVariant.Zzz01_CarForPurchaseVariant)
       || Equals(variant, gamedataMappinVariant.Zzz02_MotorcycleForPurchaseVariant)
+      || Equals(variant, gamedataMappinVariant.Zzz04_PreventionVehicleVariant)
+      || Equals(variant, gamedataMappinVariant.Zzz05_ApartmentToPurchaseVariant)
+      || Equals(variant, gamedataMappinVariant.GPSPortalVariant)
+      || Equals(variant, gamedataMappinVariant.PhoneCallVariant)
+      || Equals(variant, gamedataMappinVariant.TarotVariant)
       || false;
   }
 
@@ -35,21 +53,22 @@ public class MappinChecker {
 
     return 
          Equals(variant, gamedataMappinVariant.FastTravelVariant) 
-      || Equals(variant, gamedataMappinVariant.ConversationVariant)
-      || Equals(variant, gamedataMappinVariant.FixerVariant)
-      || Equals(variant, gamedataMappinVariant.ServicePointBarVariant)
+      || Equals(variant, gamedataMappinVariant.DropboxVariant)
+      || Equals(variant, gamedataMappinVariant.ApartmentVariant)
       || Equals(variant, gamedataMappinVariant.ServicePointClothesVariant)
-      || Equals(variant, gamedataMappinVariant.ServicePointCyberwareVariant)
-      || Equals(variant, gamedataMappinVariant.ServicePointDropPointVariant)
       || Equals(variant, gamedataMappinVariant.ServicePointFoodVariant)
+      || Equals(variant, gamedataMappinVariant.ServicePointBarVariant)
       || Equals(variant, gamedataMappinVariant.ServicePointGunsVariant)
-      || Equals(variant, gamedataMappinVariant.ServicePointJunkVariant)
       || Equals(variant, gamedataMappinVariant.ServicePointMedsVariant)
       || Equals(variant, gamedataMappinVariant.ServicePointMeleeTrainerVariant)
       || Equals(variant, gamedataMappinVariant.ServicePointNetTrainerVariant)
       || Equals(variant, gamedataMappinVariant.ServicePointProstituteVariant)
       || Equals(variant, gamedataMappinVariant.ServicePointRipperdocVariant)
       || Equals(variant, gamedataMappinVariant.ServicePointTechVariant)
+      || Equals(variant, gamedataMappinVariant.ServicePointJunkVariant)
+      || Equals(variant, gamedataMappinVariant.EffectDropPointVariant)
+      || Equals(variant, gamedataMappinVariant.ServicePointDropPointVariant)
+      || Equals(variant, gamedataMappinVariant.CustomPositionVariant)
       || false;
   }
 
@@ -64,6 +83,7 @@ public class MappinChecker {
     return 
        Equals(variant, gamedataMappinVariant.LootVariant) 
     || Equals(variant, gamedataMappinVariant.NPCVariant)
+    || Equals(data.m_gameplayRole, EGameplayRole.Loot)
     || false;
   }
 
@@ -82,17 +102,20 @@ public class MappinChecker {
 
 
     return 
-       Equals(role, EGameplayRole.ControlNetwork)
-    || Equals(role, EGameplayRole.HideBody)
-    || Equals(role, EGameplayRole.Alarm)
-    || Equals(role, EGameplayRole.OpenPath)
+       Equals(role, EGameplayRole.Alarm)
+    || Equals(role, EGameplayRole.ControlNetwork)
+    || Equals(role, EGameplayRole.ControlOtherDevice)
+    || Equals(role, EGameplayRole.ControlSelf)
+    || Equals(role, EGameplayRole.CutPower)
     || Equals(role, EGameplayRole.Distract)
-    || Equals(role, EGameplayRole.Fall)
     || Equals(role, EGameplayRole.ExplodeLethal)
     || Equals(role, EGameplayRole.ExplodeNoneLethal)
+    || Equals(role, EGameplayRole.Fall)
     || Equals(role, EGameplayRole.GrantInformation)
-    || Equals(role, EGameplayRole.ControlSelf)
-    || Equals(role, EGameplayRole.Alarm)
+    || Equals(role, EGameplayRole.HideBody)
+    || Equals(role, EGameplayRole.OpenPath)
+    || Equals(role, EGameplayRole.ClearPath)
+    || Equals(role, EGameplayRole.DistractVendingMachine)
     || false;
   }
 

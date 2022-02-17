@@ -41,4 +41,3 @@ public func Refresh() -> Void {
   inkWidgetRef.SetVisible(this.m_ModifiedFlag, wasModified);
   inkTextRef.SetText(this.m_ModifiedFlag, modifiedSymbol);
 }
-

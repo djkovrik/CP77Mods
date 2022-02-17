@@ -1,6 +1,6 @@
 module LimitedHudConfig
 
-// -- Limited HUD v2.4 config
+// -- Limited HUD v2.5 config
 
 // -- Here you can configure base Limited HUD modules
 

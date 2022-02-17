@@ -8,6 +8,7 @@ public class LHUDInputListener {
 
   // Store player instance
   public func SetPlayerInstance(player: ref<PlayerPuppet>) -> Void {
+    LHUDLog("-- LHUDInputListener initialized");
     this.playerInstance = player;
   }
 
@@ -43,8 +44,8 @@ public class LHUDBlackboardsListener {
   private let uiSystemBlackboard: ref<IBlackboard>;       // UI system blackboard reference
   private let weaponBlackboard: ref<IBlackboard>;         // Active weapon blackboard reference
 
-  private let globalHotkeyCallback: ref<CallbackHandle>;  // Ref for registered braindance callback
-  private let minimapHotkeyCallback: ref<CallbackHandle>; // Ref for registered braindance callback
+  private let globalHotkeyCallback: ref<CallbackHandle>;  // Ref for registered global hotkey callback
+  private let minimapHotkeyCallback: ref<CallbackHandle>; // Ref for registered minimap hotkey callback
   private let braindanceCallback: ref<CallbackHandle>;    // Ref for registered braindance callback
   private let scannerCallback: ref<CallbackHandle>;       // Ref for registered scanner callback
   private let psmCallback: ref<CallbackHandle>;           // Ref for registered player state callback
@@ -54,6 +55,7 @@ public class LHUDBlackboardsListener {
 
   // Initialise blackboards
   public func InitializeData(player: ref<PlayerPuppet>) -> Void {
+    LHUDLog("-- LHUDBlackboardsListener::InitializeData");
     this.playerInstance = player;
     this.bbDefs = GetAllBlackboardDefs();
     this.braindanceBlackboard =  GameInstance.GetBlackboardSystem(player.GetGame()).Get(this.bbDefs.Braindance);
@@ -66,6 +68,7 @@ public class LHUDBlackboardsListener {
 
   // Register listeners
   public func RegisterListeners() -> Void {
+    LHUDLog("-- LHUDBlackboardsListener::RegisterListeners");
     this.globalHotkeyCallback = this.uiSystemBlackboard.RegisterListenerBool(this.bbDefs.UI_System.IsGlobalFlagToggled_LHUD, this, n"OnGlobalToggle");
     this.minimapHotkeyCallback = this.uiSystemBlackboard.RegisterListenerBool(this.bbDefs.UI_System.IsMinimapToggled_LHUD, this, n"OnMinimapToggle");
     this.braindanceCallback = this.braindanceBlackboard.RegisterListenerBool(this.bbDefs.Braindance.IsActive, this, n"OnBraindanceToggle");
@@ -78,6 +81,7 @@ public class LHUDBlackboardsListener {
 
   // Unregister listeners
   public func UnregisterListeners() -> Void {
+    LHUDLog("-- LHUDBlackboardsListener::UnregisterListeners");
     this.uiSystemBlackboard.UnregisterListenerBool(this.bbDefs.UI_System.IsGlobalFlagToggled_LHUD, this.globalHotkeyCallback);
     this.uiSystemBlackboard.UnregisterListenerBool(this.bbDefs.UI_System.IsMinimapToggled_LHUD, this.minimapHotkeyCallback);
     this.braindanceBlackboard.UnregisterListenerBool(this.bbDefs.Braindance.IsActive, this.braindanceCallback);
@@ -90,6 +94,7 @@ public class LHUDBlackboardsListener {
 
   // Trigger events which required to get some initial state
   public func LaunchInitialStateEvents() -> Void {
+    LHUDLog("-- LHUDBlackboardsListener::LaunchInitialStateEvents");
     this.OnCombatStateChanged(this.stateMachineBlackboard.GetInt(this.bbDefs.PlayerStateMachine.Combat));
     this.OnWeaponStateChanged(this.playerInstance.HasAnyWeaponEquipped_LHUD());
   }
@@ -118,15 +123,23 @@ public class LHUDBlackboardsListener {
   protected cb func OnCombatStateChanged(newState: Int32) -> Bool {
     switch newState {
       case EnumInt(gamePSMCombat.Default):
+        this.playerInstance.QueueLHUDEvent(LHUDEventType.Combat, false);
+        this.playerInstance.QueueLHUDEvent(LHUDEventType.Stealth, false);
         this.playerInstance.QueueLHUDEvent(LHUDEventType.OutOfCombat, true);
         break;
       case EnumInt(gamePSMCombat.InCombat):
+        this.playerInstance.QueueLHUDEvent(LHUDEventType.Stealth, false);
+        this.playerInstance.QueueLHUDEvent(LHUDEventType.OutOfCombat, false);
         this.playerInstance.QueueLHUDEvent(LHUDEventType.Combat, true);
         break;
       case EnumInt(gamePSMCombat.OutOfCombat):
+        this.playerInstance.QueueLHUDEvent(LHUDEventType.Stealth, false);
+        this.playerInstance.QueueLHUDEvent(LHUDEventType.Combat, false);
         this.playerInstance.QueueLHUDEvent(LHUDEventType.OutOfCombat, true);
         break;
       case EnumInt(gamePSMCombat.Stealth):
+        this.playerInstance.QueueLHUDEvent(LHUDEventType.Combat, false);
+        this.playerInstance.QueueLHUDEvent(LHUDEventType.OutOfCombat, false);
         this.playerInstance.QueueLHUDEvent(LHUDEventType.Stealth, true);
         break;
       default:
@@ -185,9 +198,18 @@ private final func PlayerDetachedCallback(playerPuppet: ref<GameObject>) -> Void
   wrappedMethod(playerPuppet);
 }
 
+// Launch additional initial events
+
 @addMethod(inkGameController)
 protected cb func OnInitializeFinished() -> Void {
   let manager: ref<HUDManager> = GameInstance.GetScriptableSystemsContainer(this.GetPlayerControlledObject().GetGame()).Get(n"HUDManager") as HUDManager;
+  manager.blabockardsListenerLHUD.LaunchInitialStateEvents();
+}
+
+@wrapMethod(PlayerPuppet)
+protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpawn>) -> Bool {
+  wrappedMethod(evt);
+  let manager: ref<HUDManager> = GameInstance.GetScriptableSystemsContainer(this.GetGame()).Get(n"HUDManager") as HUDManager;
   manager.blabockardsListenerLHUD.LaunchInitialStateEvents();
 }
 

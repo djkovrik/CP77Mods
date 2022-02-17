@@ -25,7 +25,7 @@ just replace minimap related code blocks with the new ones.
                 {
                     "name": "crafting",
                     "display_name": "LocKey#78528",
-                    "order": 33,
+                    "order": 35,
                     "is_input": true
                 },
 
@@ -35,13 +35,13 @@ just replace minimap related code blocks with the new ones.
                 {
                     "name": "globalToggle",
                     "display_name": "LHUD: Global Toggle",
-                    "order": 35,
+                    "order": 99,
                     "is_input": true
                 },
                 {
                     "name": "minimapToggle",
                     "display_name": "LHUD: Minimap Toggle",
-                    "order": 35,
+                    "order": 99,
                     "is_input": true
                 },
 
@@ -51,27 +51,27 @@ just replace minimap related code blocks with the new ones.
                 {
                     "name": "crafting",
                     "display_name": "LocKey#78528",
-                    "order": 33,
+                    "order": 35,
                     "is_input": true
                 },
                 {
                     "name": "globalToggle",
                     "display_name": "LHUD: Global Toggle",
-                    "order": 35,
+                    "order": 99,
                     "is_input": true
                 },
                 {
                     "name": "minimapToggle",
                     "display_name": "LHUD: Minimap Toggle",
-                    "order": 35,
+                    "order": 99,
                     "is_input": true
                 },
                 {
                     "name": "inventory",
                     "display_name": "LocKey#77901",
-                    "order": 34,
+                    "order": 36,
                     "is_input": true
-                }
+                },
 
 
 3. Add new hotkey definitions to inputContexts.xml:
@@ -115,7 +115,7 @@ just replace minimap related code blocks with the new ones.
     </mapping>
 	
 	<mapping name="ToggleGlobal_Button" type="Button" >
-        <button id="IK_G" overridableUI="globalToggle"/>
+        <button id="IK_Y" overridableUI="globalToggle"/>
     </mapping>
 
 
