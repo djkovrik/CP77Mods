@@ -50,14 +50,14 @@ private final func SetInventoryItemButtonHintsHoverOver(displayingData: Inventor
   let vendorPreviewButtonHint = VendorPreviewButtonHint.Get();
   let itemId = InventoryItemData.GetID(displayingData);
 
-  this.m_buttonHintsController.AddButtonHint(vendorPreviewButtonHint.previewModeToggleName, "Preview Item");
+  this.m_buttonHintsController.AddButtonHint(vendorPreviewButtonHint.previewModeToggleNameBackpack, "Preview Item");
 }
 
 @wrapMethod(BackpackMainGameController)
 private final func SetInventoryItemButtonHintsHoverOut() -> Void {
   wrappedMethod();
 
-  this.m_buttonHintsController.RemoveButtonHint(VendorPreviewButtonHint.Get().previewModeToggleName);
+  this.m_buttonHintsController.RemoveButtonHint(VendorPreviewButtonHint.Get().previewModeToggleNameBackpack);
 }
 
 @wrapMethod(BackpackMainGameController)
@@ -71,7 +71,7 @@ protected cb func OnPostOnRelease(evt: ref<inkPointerEvent>) -> Bool {
 
 @replaceMethod(BackpackMainGameController)
  protected cb func OnItemDisplayClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
-   if evt.actionName.IsAction(VendorPreviewButtonHint.Get().previewModeToggleName) {
+   if evt.actionName.IsAction(VendorPreviewButtonHint.Get().previewModeToggleNameBackpack) {
     this.ShowItemPreview(evt.itemData);
   } else {
     if (this.m_isPreviewMode) {

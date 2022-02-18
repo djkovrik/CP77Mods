@@ -20,17 +20,6 @@ protected cb func OnInitialize() -> Bool {
   ItemPreviewManager.AdjustGarmentPreviewWidgets(this);
 }
 
-@wrapMethod(GarmentItemPreviewGameController)
-protected cb func OnPreviewInitialized() -> Bool {
-  // Remove widget parts added in 1.5
-  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
-  let bg = root.GetWidget(n"bg") as inkWidget;
-  let window = root.GetWidget(n"wrapper/window") as inkWidget;
-  bg.SetVisible(false);
-  window.SetVisible(false);
-  wrappedMethod();
-}
-
 @addMethod(GarmentItemPreviewGameController)
 private func GetIsVirtual() -> Bool {
   return Equals(this.m_additionalData.displayContext, ItemDisplayContext.VendorPlayer);

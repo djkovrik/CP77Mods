@@ -258,7 +258,7 @@ public class ItemPreviewManager {
   public static func GetItemPreviewNotificationToken(controller: ref<gameuiMenuGameController>, itemData: InventoryItemData) -> ref<inkGameNotificationToken> {
     let notificationName = n"base\\gameplay\\gui\\widgets\\notifications\\item_preview.inkwidget";
 
-    let previewData = ItemPreviewHelper.GetPreviewData(controller, itemData, true);
+    let previewData = ItemPreviewHelper.GetPreviewData(controller, itemData, false);
     
     return controller.ShowGameNotification(previewData);
   }
@@ -398,17 +398,14 @@ public class ItemPreviewManager {
   public static func AdjustGarmentPreviewWidgets(controller: ref<GarmentItemPreviewGameController>) {
     ItemPreviewManager.RegisterGlobalInputListeners(controller);
 
-    let root = controller.GetRootWidget();
     let rootCompoundWidget = controller.GetRootCompoundWidget();
-    let wrapperWidget: wref<inkWidget> = rootCompoundWidget.GetWidget(n"wrapper");
-    let backgroundWidget: wref<inkWidget> = rootCompoundWidget.GetWidget(n"background");
-    let borderWidget: wref<inkBorder> = rootCompoundWidget.GetWidget(n"wrapper/border") as inkBorder;
+    let backgroundWidget: wref<inkWidget> = rootCompoundWidget.GetWidget(n"bg");
     let previewWidget = rootCompoundWidget.GetWidget(n"wrapper/preview") as inkImage;
+    let windowWidget = rootCompoundWidget.GetWidget(n"wrapper/window") as inkWidget;
 
     previewWidget.SetMargin(0, 0, 960, 0);
     backgroundWidget.SetVisible(false);
-
-    borderWidget.SetVisible(false);
+    windowWidget.SetVisible(false);
 
     let transparencyInterpolator: ref<inkAnimTransparency>;
     let translationAnimation: ref<inkAnimDef> = new inkAnimDef();

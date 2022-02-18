@@ -2,6 +2,7 @@ module VendorPreview.constants
 
 public class VendorPreviewButtonHint {
   public let previewModeToggleName: CName;
+  public let previewModeToggleNameBackpack: CName;
   public let previewModeToggleEnableLabel: String;
   public let previewModeToggleDisableLabel: String;
   public let previewModeTogglePurchaseLabel: String;
@@ -28,6 +29,7 @@ public class VendorPreviewButtonHint {
     let vendorPreviewButtonHint = new VendorPreviewButtonHint();
 
     vendorPreviewButtonHint.previewModeToggleName = n"UI_PrintDebug";
+    vendorPreviewButtonHint.previewModeToggleNameBackpack = n"UI_Unequip";
     vendorPreviewButtonHint.previewModeToggleEnableLabel = "Enable Preview";
     vendorPreviewButtonHint.previewModeToggleDisableLabel = "Disable Preview";
     vendorPreviewButtonHint.previewModeTogglePurchaseLabel = "Purchase";
