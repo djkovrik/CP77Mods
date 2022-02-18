@@ -136,12 +136,13 @@ protected cb func OnDetach() -> Bool {
 // Checks if firstEquip animation must be played depending on config 
 @addMethod(PlayerPuppet)
 public func ShouldRunFirstEquipEQ(weapon: wref<WeaponObject>) -> Bool {
-  if WeaponObject.IsMagazineEmpty(weapon) && !FirstEquipConfig.PlayWhenMagazineIsEmpty() {
+  if !weapon.m_isMeleeWeapon && WeaponObject.IsMagazineEmpty(weapon) && !FirstEquipConfig.PlayWhenMagazineIsEmpty() {
     return false;
   };
 
   if !FirstEquipConfig.PlayInCombatMode() && this.m_inCombat { return false; }
   if !FirstEquipConfig.PlayInStealthMode() && this.m_inCrouch { return false; }
+  if VehicleComponent.IsMountedToVehicle(this.GetGame(), this)  { return false; }
 
   let isSprinting: Bool = Equals(PlayerPuppet.GetCurrentLocomotionState(this), gamePSMLocomotionStates.Sprint);
   if !FirstEquipConfig.PlayWhileSprinting() && isSprinting { return false; }
@@ -158,6 +159,9 @@ public func ShouldRunFirstEquipEQ(weapon: wref<WeaponObject>) -> Bool {
 // Checks if IdleBreak animation must be played depending on config 
 @addMethod(PlayerPuppet)
 public func ShouldRunIdleBreakEQ() -> Bool {
+  if this.m_inCombat { return false; }
+  if VehicleComponent.IsMountedToVehicle(this.GetGame(), this)  { return false; }
+
   let probability: Int32 = IdleBreakConfig.AnimationProbability();
   let random: Int32 = RandRange(0, 100);
 
@@ -175,6 +179,24 @@ public func HasRangedWeaponEquippedEQ() -> Bool {
   if IsDefined(weapon) {
     if transactionSystem.HasTag(this, WeaponObject.GetRangedWeaponTag(), weapon.GetItemID()) {
       return true;
+    };
+  };
+  return false;
+}
+
+@addMethod(PlayerPuppet)
+public func HasAnyWeaponEquippedEQ() -> Bool {
+  let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.GetGame());
+  let weapon: ref<WeaponObject> = transactionSystem.GetItemInSlot(this, t"AttachmentSlots.WeaponRight") as WeaponObject;
+  let weaponId: ItemID;
+  if IsDefined(weapon) {
+    weaponId = weapon.GetItemID();
+    if transactionSystem.HasTag(this, WeaponObject.GetMeleeWeaponTag(), weaponId) 
+      || transactionSystem.HasTag(this, WeaponObject.GetOneHandedRangedWeaponTag(), weaponId)
+      || transactionSystem.HasTag(this, WeaponObject.GetRangedWeaponTag(), weaponId)
+      || WeaponObject.IsFists(weaponId) 
+      || WeaponObject.IsCyberwareWeapon(weaponId) {
+        return true;
     };
   };
   return false;
