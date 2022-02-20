@@ -46,39 +46,27 @@ public class HUDWidgetsManager {
 
   public static func GetNextWidget(widgetName: CName) -> CName {
     switch widgetName {
-      case n"TopRight":
-        return n"BottomRight";
-
-      case n"BottomRight":
-        return n"BottomLeft";
-
-      case n"BottomLeft":
-        return n"TopLeft";
-
-      case n"TopLeft":
-        return n"TopLeftPhone";
-
-      default:
-        return n"TopRight"; 
+      case n"TopRight": return n"BottomRight";
+      case n"BottomRight": return n"BottomLeft";
+      case n"BottomLeft": return n"TopLeft";
+      case n"TopLeft": return n"TopLeftPhone";
+      case n"TopLeftPhone": return n"TopRightWanted";
+      case n"TopRightWanted": return n"InputHint";
+      case n"InputHint": return n"LeftCenter";
+      default: return n"TopRight"; 
     }
   }
 
   public static func GetPreviousWidget(widgetName: CName) -> CName {
     switch widgetName {
-      case n"BottomRight":
-        return n"TopRight";
-
-      case n"BottomLeft":
-        return n"BottomRight";
-
-      case n"TopLeft":
-        return n"BottomLeft";
-
-      case n"TopLeftPhone":
-        return n"TopLeft";
-
-      default:
-        return n"TopLeftPhone";
+      case n"LeftCenter": return n"InputHint";
+      case n"InputHint": return n"TopRightWanted";
+      case n"TopRightWanted": return n"TopLeftPhone";
+      case n"TopLeftPhone": return n"TopLeft";
+      case n"TopLeft": return n"BottomLeft";
+      case n"BottomLeft": return n"BottomRight";
+      case n"BottomRight": return n"TopRight";
+      default: return n"LeftCenter"; 
     }
   }
 
@@ -86,7 +74,7 @@ public class HUDWidgetsManager {
     let player: wref<PlayerPuppet> = this.GetPlayerPuppet();
 
     player.RegisterInputListener(hudGameController, n"ToggleSprint");
-    player.RegisterInputListener(hudGameController, n"world_map_menu_cycle_filter_prev");
+    player.RegisterInputListener(hudGameController, n"UI_Unequip");
     player.RegisterInputListener(hudGameController, n"world_map_filter_navigation_down");
     player.RegisterInputListener(hudGameController, n"back");
     player.RegisterInputListener(hudGameController, n"cancel");

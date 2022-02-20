@@ -39,12 +39,21 @@ private func SetPersistedState(locationX: Float, locationY: Float, scaleX: Float
   this.GetRootWidget().SetScale(persistedScale);
 }
 
+// TopRight - minimap, quest, vehicle summon
+// BottomRight - ammo counter and crouch indicator
+// BottomLeft - dpad hint
+// TopLeft - player health bar
+// TopLeftPhone - phone call
+// TopRightWanted - wanted bar
+// InputHint - input hints
+// LeftCenter - item and journal notifications
+
 @addMethod(inkLogicController)
 private func IsHUDWidget() -> Bool {
   let widgetName = this.GetRootWidget().GetName();
 
   if !Equals(widgetName, n"") {
-    let hudWidgets = [n"BottomLeft", n"TopRight", n"TopLeft", n"TopLeftPhone", n"TopRightWanted", n"InputHint", n"BottomRight"];
+    let hudWidgets = [n"TopRight", n"BottomRight", n"BottomLeft", n"TopLeft", n"TopLeftPhone", n"TopRightWanted", n"InputHint", n"LeftCenter"];
 
     return ArrayContains(hudWidgets, widgetName);
   } else {
@@ -66,7 +75,7 @@ protected cb func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidget>) 
       this.GetRootWidget().SetOpacity(0.15);
       HUDWidgetsManager.GetInstance().RemoveHUDWidgetListeners(this);
     }
-  }
+  };
 }
 
 @addMethod(inkLogicController)
@@ -82,8 +91,14 @@ protected cb func OnResetHUDWidgets(event: ref<ResetAllHUDWidgets>) {
   if this.IsHUDWidget() {
     let widget = this.GetRootWidget();
 
-    widget.SetTranslation(new Vector2(0, 0));
-    widget.SetScale(new Vector2(1, 1));
+    if Equals(widget.GetName(), n"LeftCenter") {
+      widget.SetTranslation(new Vector2(0.0, 0.0));
+      widget.SetScale(new Vector2(0.666667, 0.666667));
+    } else {
+      widget.SetTranslation(new Vector2(0.0, 0.0));
+      widget.SetScale(new Vector2(1.0, 1.0));
+    };
+
     this.UpdatePersistedState(new Vector2(0, 0), new Vector2(1, 1));
   }
 }
