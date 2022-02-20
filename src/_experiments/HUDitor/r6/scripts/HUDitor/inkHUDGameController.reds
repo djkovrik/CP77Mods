@@ -118,7 +118,7 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
     }
 
     if this.isShiftDown {
-      if Equals(actionName, n"context_help") {
+      if Equals(actionName, n"world_map_menu_cycle_filter_prev") {
         let playerPuppet = this.GetPlayerControlledObject() as PlayerPuppet;
         
         if !isActive {
