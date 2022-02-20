@@ -78,6 +78,19 @@ protected cb func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidget>) 
   };
 }
 
+@addMethod(inkGameController)
+protected cb func OnDisplayPreviewEvent(event: ref<DisplayPreviewEvent>) -> Bool {
+  this.ShowIncomingPhoneCall(n"unknown", true);
+  this.ShowWantedBar(true);
+  this.ShowItemsNotification();
+}
+
+@addMethod(inkGameController)
+protected cb func OnHidePreviewEvent(event: ref<HidePreviewEvent>) -> Bool {
+  this.ShowIncomingPhoneCall(n"unknown", false);
+  this.ShowWantedBar(false);
+}
+
 @addMethod(inkLogicController)
 protected cb func OnDisableHUDEditorWidgets(event: ref<DisableHUDEditor>) -> Bool {
   if this.IsHUDWidget() {
@@ -171,5 +184,48 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
         
     this.GetRootWidget().SetScale(new Vector2(finalXScale, finalYScale));
     this.UpdatePersistedState(this.GetRootWidget().GetTranslation(), new Vector2(finalXScale, finalYScale));
+  };
+}
+
+// Widgets previewing stuff
+
+@addMethod(inkGameController)
+private func ShowIncomingPhoneCall(name: CName, show: Bool) -> Void {
+  if this.IsA(n"HudPhoneGameController") {
+    let phoneSystem: ref<PhoneSystem> = GameInstance.GetScriptableSystemsContainer(this.GetPlayerControlledObject().GetGame()).Get(n"PhoneSystem") as PhoneSystem;
+    if show {
+      phoneSystem.TriggerCall(questPhoneCallMode.Video, false, name, false, questPhoneCallPhase.IncomingCall, true);
+    } else {
+      phoneSystem.TriggerCall(questPhoneCallMode.Video, false, name, false, questPhoneCallPhase.EndCall, true);    
+    };
+  };
+}
+
+@addMethod(inkGameController)
+private func ShowWantedBar(show: Bool) -> Void {
+  if this.IsA(n"WantedBarGameController") {
+    let controller = this as WantedBarGameController;
+    let stars: Int32;
+    if show {
+      stars = 5;
+    } else {
+      stars = 0;
+    }
+    controller.OnWantedDataChange(stars);
+  };
+}
+
+
+@addMethod(inkGameController)
+private func ShowItemsNotification() -> Void {
+  if this.IsA(n"ItemsNotificationQueue") {
+    let controller = this as ItemsNotificationQueue;
+    controller.m_showDuration = 10.0;
+    controller.PushItemNotification(ItemID.FromTDBID(t"Items.Pants_03_rich_01"), n"epic");
+    controller.PushItemNotification(ItemID.FromTDBID(t"Items.Pants_03_rich_02"), n"epic");
+    controller.PushItemNotification(ItemID.FromTDBID(t"Items.TShirt_02_rich_01"), n"epic");
+    controller.PushItemNotification(ItemID.FromTDBID(t"Items.TShirt_02_rich_02"), n"epic");
+    controller.PushItemNotification(ItemID.FromTDBID(t"Items.TShirt_02_rich_03"), n"epic");
+    controller.PushItemNotification(ItemID.FromTDBID(t"Items.TShirt_02_rich_04"), n"epic");
   };
 }

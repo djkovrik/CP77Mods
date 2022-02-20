@@ -109,6 +109,7 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
       if Equals(actionName, n"cancel") || Equals(actionName, n"back") {
         HUDWidgetsManager.GetInstance().isActive = false;
 
+        this.QueueEvent(new HidePreviewEvent());
         this.QueueEvent(new DisableHUDEditor());
         this.GetSystemRequestsHandler().UnpauseGame();
 
@@ -127,13 +128,15 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
           enableHUDEditorEvent.activeWidget = n"TopRight";
           HUDWidgetsManager.GetInstance().isActive = true;
           HUDWidgetsManager.GetInstance().activeWidget = n"TopRight";
-          
+
+          this.QueueEvent(new DisplayPreviewEvent());
           this.QueueEvent(enableHUDEditorEvent);
 
           this.cursor.SetVisible(true);
         } else {
           HUDWidgetsManager.GetInstance().isActive = false;
 
+          this.QueueEvent(new HidePreviewEvent());
           this.QueueEvent(new DisableHUDEditor());
           this.GetSystemRequestsHandler().UnpauseGame();
 
