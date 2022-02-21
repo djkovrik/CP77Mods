@@ -125,9 +125,9 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
         if !isActive {
           this.GetSystemRequestsHandler().PauseGame();
           let enableHUDEditorEvent = new SetActiveHUDEditorWidget();
-          enableHUDEditorEvent.activeWidget = n"TopRight";
+          enableHUDEditorEvent.activeWidget = n"NewMinimap";
           HUDWidgetsManager.GetInstance().isActive = true;
-          HUDWidgetsManager.GetInstance().activeWidget = n"TopRight";
+          HUDWidgetsManager.GetInstance().activeWidget = n"NewMinimap";
 
           this.QueueEvent(new DisplayPreviewEvent());
           this.QueueEvent(enableHUDEditorEvent);

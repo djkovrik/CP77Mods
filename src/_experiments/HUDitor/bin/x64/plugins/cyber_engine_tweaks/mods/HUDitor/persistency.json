@@ -98,5 +98,45 @@
          "Y":1,
          "X":1
       }
+   },
+   "NewMinimap":{
+      "translation":{
+         "Y":0,
+         "X":0
+      },
+      "scale":{
+         "Y":1,
+         "X":1
+      }
+   },
+   "NewTracker":{
+      "translation":{
+         "Y":0,
+         "X":0
+      },
+      "scale":{
+         "Y":1,
+         "X":1
+      }
+   },
+   "NewStaminaBar":{
+      "translation":{
+         "Y":0,
+         "X":0
+      },
+      "scale":{
+         "Y":1,
+         "X":1
+      }
+   },
+   "NewVehicleSummon":{
+      "translation":{
+         "Y":0,
+         "X":0
+      },
+      "scale":{
+         "Y":1,
+         "X":1
+      }
    }
 }

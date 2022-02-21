@@ -44,29 +44,48 @@ public class HUDWidgetsManager {
     return GameInstance.FindEntityByID(this.gameInstance, this.puppetId) as PlayerPuppet;
   }
 
+  // Widgets and order:
+  // - NewMinimap - Minimap
+  // - NewTracker - Quest tracker
+  // - TopRightWanted - Wanted bar
+  // - LeftCenter - Notifications area
+  // - NewVehicleSummon - Vehicle summon
+  // - BottomRight - Ammo counter and Crouch indicator
+  // - BottomLeft - Dpad hint
+  // - TopLeft - Player Healthbar
+  // - NewStaminaBar - Stamina
+  // - TopLeftPhone - Phone Call
+  // - InputHint - Input hints
+
   public static func GetNextWidget(widgetName: CName) -> CName {
     switch widgetName {
-      case n"TopRight": return n"BottomRight";
+      case n"NewMinimap": return n"NewTracker";
+      case n"NewTracker": return n"TopRightWanted";
+      case n"TopRightWanted": return n"LeftCenter";
+      case n"LeftCenter": return n"NewVehicleSummon";
+      case n"NewVehicleSummon": return n"BottomRight";
       case n"BottomRight": return n"BottomLeft";
       case n"BottomLeft": return n"TopLeft";
-      case n"TopLeft": return n"TopLeftPhone";
-      case n"TopLeftPhone": return n"TopRightWanted";
-      case n"TopRightWanted": return n"InputHint";
-      case n"InputHint": return n"LeftCenter";
-      default: return n"TopRight"; 
+      case n"TopLeft": return n"NewStaminaBar";
+      case n"NewStaminaBar": return n"TopLeftPhone";
+      case n"TopLeftPhone": return n"InputHint";
+      default: return n"NewMinimap"; 
     }
   }
 
   public static func GetPreviousWidget(widgetName: CName) -> CName {
     switch widgetName {
-      case n"LeftCenter": return n"InputHint";
-      case n"InputHint": return n"TopRightWanted";
-      case n"TopRightWanted": return n"TopLeftPhone";
-      case n"TopLeftPhone": return n"TopLeft";
+      case n"InputHint": return n"TopLeftPhone";
+      case n"TopLeftPhone": return n"NewStaminaBar";
+      case n"NewStaminaBar": return n"TopLeft";
       case n"TopLeft": return n"BottomLeft";
       case n"BottomLeft": return n"BottomRight";
-      case n"BottomRight": return n"TopRight";
-      default: return n"LeftCenter"; 
+      case n"BottomRight": return n"NewVehicleSummon";
+      case n"NewVehicleSummon": return n"LeftCenter";
+      case n"LeftCenter": return n"TopRightWanted";
+      case n"TopRightWanted": return n"NewTracker";
+      case n"NewTracker": return n"NewMinimap";
+      default: return n"InputHint"; 
     }
   }
 
@@ -101,5 +120,24 @@ public class HUDWidgetsManager {
     player.UnregisterInputListener(hudWidgetController, n"CameraMouseY");
     player.UnregisterInputListener(hudWidgetController, n"mouse_wheel");
     player.UnregisterInputListener(hudWidgetController, n"click");
+  }
+
+
+  public func AssignHUDWidgetListeners(customSlot: ref<HUDitorCustomSlot>) {
+    let player: wref<PlayerPuppet> = this.GetPlayerPuppet();
+
+    player.RegisterInputListener(customSlot, n"mouse_wheel");
+    player.RegisterInputListener(customSlot, n"CameraMouseX");
+    player.RegisterInputListener(customSlot, n"CameraMouseY");
+    player.RegisterInputListener(customSlot, n"click");
+  }
+
+   public func RemoveHUDWidgetListeners(customSlot: ref<HUDitorCustomSlot>) {
+    let player: wref<PlayerPuppet> = this.GetPlayerPuppet();
+
+    player.UnregisterInputListener(customSlot, n"CameraMouseX");
+    player.UnregisterInputListener(customSlot, n"CameraMouseY");
+    player.UnregisterInputListener(customSlot, n"mouse_wheel");
+    player.UnregisterInputListener(customSlot, n"click");
   }
 } 

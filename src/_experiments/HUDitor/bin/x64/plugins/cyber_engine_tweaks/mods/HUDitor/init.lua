@@ -23,6 +23,24 @@ registerForEvent('onInit', function()
 			persistedState[widgetName].scale.X = scale.X;
 			persistedState[widgetName].scale.Y = scale.Y;
 		end)
+        
+		Observe('HUDitorCustomSlot', 'LoadPersistedState', function(self)
+			local widgetName = Game.NameToString(self:GetName());
+
+			local scale = persistedState[widgetName]["scale"];
+			local translation = persistedState[widgetName]["translation"];
+
+			self:SetPersistedState(translation.X, translation.Y, scale.X, scale.Y);
+		end)
+		
+		Observe('HUDitorCustomSlot', 'UpdatePersistedState', function(self, translation, scale)
+			local widgetName = Game.NameToString(self:GetName());
+
+			persistedState[widgetName].translation.X = translation.X;
+			persistedState[widgetName].translation.Y = translation.Y;
+			persistedState[widgetName].scale.X = scale.X;
+			persistedState[widgetName].scale.Y = scale.Y;
+		end)
 
 		Observe('inkHUDGameController', 'PersistHUDWidgetsState', function(self)
 			local validJson, contents = pcall(function() return json.encode(persistedState) end)
