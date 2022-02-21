@@ -302,11 +302,12 @@ private final func PopulateVendorInventory() -> Void {
 
     let virtualItemIndex = 0;
 
-    let inventorySystem: ref<InventoryManager> = GameInstance.GetInventoryManager(gameInstance);
-
     while virtualItemIndex < ArraySize(storeItems) {
       let itemId = ItemID.FromTDBID(TDBID.Create(storeItems[virtualItemIndex]));
-      let itemData: ref<gameItemData> = inventorySystem.CreateBasicItemData(itemId, this.m_player);
+      let itemModParams: ItemModParams;
+      itemModParams.itemID = itemId;
+      itemModParams.quantity = 1;
+      let itemData: ref<gameItemData> = Inventory.CreateItemData(itemModParams, this.m_player);
       itemData.isVirtualItem = true;
 
       ArrayPush(itemDataArray, itemData);
