@@ -16,9 +16,6 @@ public class VendorPreviewButtonHint {
   public let removePreviewGarmentName: CName;
   public let removePreviewGarmentLabel: String;
   
-  public let rotateName: CName;
-  public let rotateLabel: String;
-
   public let moveName: CName;
   public let moveLabel: String;
 
@@ -43,10 +40,7 @@ public class VendorPreviewButtonHint {
     vendorPreviewButtonHint.removePreviewGarmentName = n"disassemble_item";
     vendorPreviewButtonHint.removePreviewGarmentLabel = "Remove Preview Garment";
 
-    vendorPreviewButtonHint.rotateName = n"world_map_fake_move";
-    vendorPreviewButtonHint.rotateLabel = "Rotate";
-
-    vendorPreviewButtonHint.moveName = n"world_map_fake_rotate";
+    vendorPreviewButtonHint.moveName = n"world_map_fake_move";
     vendorPreviewButtonHint.moveLabel = "Move";
 
     vendorPreviewButtonHint.zoomName = n"mouse_wheel";

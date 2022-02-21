@@ -6,9 +6,6 @@ import VendorPreview.ItemPreviewManager.*
 private let m_isLeftMouseDown: Bool;
 
 @addField(GarmentItemPreviewGameController)
-private let m_isRightMouseDown: Bool;
-
-@addField(GarmentItemPreviewGameController)
 private let m_additionalData: ref<PreviewInventoryItemPreviewData>;
 
 @wrapMethod(GarmentItemPreviewGameController)
@@ -34,22 +31,14 @@ protected cb func OnUninitialize() -> Bool {
 protected cb func OnGlobalPress(e: ref<inkPointerEvent>) -> Bool {
   if e.IsAction(n"mouse_left") {
     this.m_isLeftMouseDown = true;
-  }
-
-  if e.IsAction(n"world_map_fake_rotate") {
-    this.m_isRightMouseDown = true;
-  }
+  };
 }
 
 @replaceMethod(GarmentItemPreviewGameController)
 protected cb func OnGlobalRelease(e: ref<inkPointerEvent>) -> Bool {
   if e.IsAction(n"mouse_left") {
     this.m_isLeftMouseDown = false;
-  }
-
-  if e.IsAction(n"world_map_fake_rotate") {
-    this.m_isRightMouseDown = false;
-  }
+  };
 
   if e.IsAction(n"cancel") {
     this.m_data.token.TriggerCallback(null);

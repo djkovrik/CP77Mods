@@ -342,14 +342,12 @@ public class ItemPreviewManager {
       controller.m_buttonHintsController.AddButtonHint(vendorPreviewButtonHint.resetGarmentName, vendorPreviewButtonHint.resetGarmentLabel);
       controller.m_buttonHintsController.AddButtonHint(vendorPreviewButtonHint.removeAllGarmentName, vendorPreviewButtonHint.removeAllGarmentLabel);
       controller.m_buttonHintsController.AddButtonHint(vendorPreviewButtonHint.removePreviewGarmentName, vendorPreviewButtonHint.removePreviewGarmentLabel);
-      controller.m_buttonHintsController.AddButtonHint(vendorPreviewButtonHint.rotateName, vendorPreviewButtonHint.rotateLabel);
       controller.m_buttonHintsController.AddButtonHint(vendorPreviewButtonHint.moveName, vendorPreviewButtonHint.moveLabel);
       controller.m_buttonHintsController.AddCharacterRoatateButtonHint();
     } else {
       controller.m_buttonHintsController.RemoveButtonHint(vendorPreviewButtonHint.previewModeToggleName);
       controller.m_buttonHintsController.RemoveButtonHint(vendorPreviewButtonHint.resetGarmentName);
       controller.m_buttonHintsController.RemoveButtonHint(vendorPreviewButtonHint.removeAllGarmentName);
-      controller.m_buttonHintsController.RemoveButtonHint(vendorPreviewButtonHint.rotateName);
       controller.m_buttonHintsController.RemoveButtonHint(vendorPreviewButtonHint.zoomName);
       controller.m_buttonHintsController.RemoveButtonHint(vendorPreviewButtonHint.moveName);
       controller.m_buttonHintsController.RemoveButtonHint(vendorPreviewButtonHint.removePreviewGarmentName);
@@ -452,35 +450,12 @@ public class ItemPreviewManager {
 
       if controller.m_isLeftMouseDown {
         if event.IsAction(n"mouse_x") {
-          let ratio: Float;
-          let velocity: Float;
-          let offset: Float = event.GetAxisData();
-
-          if offset > 0.00 {
-            ratio = ClampF(offset / controller.m_maxMousePointerOffset, 0.50, 1.0);
-          } else {
-            ratio = ClampF(offset / controller.m_maxMousePointerOffset, -1.0, -0.50);
-          };
-
-          velocity = ratio * controller.m_mouseRotationSpeed;
-          
-          controller.Rotate(velocity);
-        }
-      }
-      
-      if controller.m_isRightMouseDown {
-        if event.IsAction(n"mouse_x") {
           previewWidget.ChangeTranslation(new Vector2(amount, 0.0));      
         };
-
         if event.IsAction(n"mouse_y") {
           previewWidget.ChangeTranslation(new Vector2(0.0, -1.0 * amount));
-        }
-      }
-      
-      if (controller.GetIsVirtual() && !controller.m_isRightMouseDown) {
-        return true;
-      }
+        };
+      };
 
       if event.IsAction(n"mouse_wheel") {
         let currentScale = previewWidget.GetScale();
