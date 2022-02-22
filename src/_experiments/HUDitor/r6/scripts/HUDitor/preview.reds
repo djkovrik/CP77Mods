@@ -4,9 +4,14 @@
 protected cb func OnDisplayPreviewEvent(event: ref<DisplayPreviewEvent>) -> Bool {
   this.ShowHealthbar(true);
   this.ShowIncomingPhoneCall(n"unknown", true);
+  this.ShowIncomingCallController(n"unknown", true);
   this.ShowWantedBar(true);
   this.ShowItemsNotification();
-  this.ShowStaminaBar();
+  this.ShowJournalNotification(10);
+  this.ShowJournalNotification(20);
+  this.ShowJournalNotification(30);
+  this.ShowJournalNotification(40);
+  this.ShowStaminaBar(true);
   this.ShowVehicleSummonNotification(true);
 }
 
@@ -14,7 +19,9 @@ protected cb func OnDisplayPreviewEvent(event: ref<DisplayPreviewEvent>) -> Bool
 protected cb func OnHidePreviewEvent(event: ref<HidePreviewEvent>) -> Bool {
   this.ShowHealthbar(false);
   this.ShowIncomingPhoneCall(n"unknown", false);
+  this.ShowIncomingCallController(n"unknown", false);
   this.ShowWantedBar(false);
+  this.ShowStaminaBar(false);
   this.ShowVehicleSummonNotification(false);
 }
 
@@ -36,11 +43,21 @@ private func ShowHealthbar(show: Bool) -> Void {
 @addMethod(inkGameController)
 private func ShowIncomingPhoneCall(name: CName, show: Bool) -> Void {
   if this.IsA(n"HudPhoneGameController") {
-    let phoneSystem: ref<PhoneSystem> = GameInstance.GetScriptableSystemsContainer(this.GetPlayerControlledObject().GetGame()).Get(n"PhoneSystem") as PhoneSystem;
+    let controller = this as HudPhoneGameController;
+    let phoneCallInfo: PhoneCallInformation;
+    phoneCallInfo.callMode = questPhoneCallMode.Video;
+    phoneCallInfo.isAudioCall = false;
+    phoneCallInfo.contactName = name;
+    phoneCallInfo.isPlayerCalling = true;
+    phoneCallInfo.isPlayerTriggered = true;
+    phoneCallInfo.callPhase = questPhoneCallPhase.IncomingCall;
+    controller.m_CurrentCallInformation = phoneCallInfo;
+    controller.m_CurrentPhoneCallContact = controller.GetIncomingContact();
+    controller.m_RootWidget.SetVisible(show);
     if show {
-      phoneSystem.TriggerCall(questPhoneCallMode.Video, false, name, false, questPhoneCallPhase.IncomingCall, true);
+      controller.SetPhoneFunction(EHudPhoneFunction.IncomingCall);
     } else {
-      phoneSystem.TriggerCall(questPhoneCallMode.Video, false, name, false, questPhoneCallPhase.EndCall, true);    
+      controller.SetPhoneFunction(EHudPhoneFunction.Inactive);  
     };
   };
 }
@@ -64,24 +81,40 @@ private func ShowWantedBar(show: Bool) -> Void {
 private func ShowItemsNotification() -> Void {
   if this.IsA(n"ItemsNotificationQueue") {
     let controller = this as ItemsNotificationQueue;
-    controller.m_showDuration = 10.0;
     controller.PushItemNotification(ItemID.FromTDBID(t"Items.Pants_03_rich_01"), n"epic");
     controller.PushItemNotification(ItemID.FromTDBID(t"Items.Pants_03_rich_02"), n"epic");
     controller.PushItemNotification(ItemID.FromTDBID(t"Items.TShirt_02_rich_01"), n"epic");
     controller.PushItemNotification(ItemID.FromTDBID(t"Items.TShirt_02_rich_02"), n"epic");
-    controller.PushItemNotification(ItemID.FromTDBID(t"Items.TShirt_02_rich_03"), n"epic");
-    controller.PushItemNotification(ItemID.FromTDBID(t"Items.TShirt_02_rich_04"), n"epic");
   };
 }
 
 @addMethod(inkGameController)
-private func ShowStaminaBar() -> Void {
+private func ShowJournalNotification(exp: Int32) -> Void {
+  if this.IsA(n"JournalNotificationQueue") {
+    let controller = this as JournalNotificationQueue;
+    let evt = new NCPDJobDoneEvent();
+    evt.levelXPAwarded = exp;
+    evt.streetCredXPAwarded = exp;
+    controller.OnNCPDJobDoneEvent(evt);
+    controller.OnNewLocationDiscovered(true);
+  };
+}
+
+
+@addMethod(inkGameController)
+private func ShowStaminaBar(show: Bool) -> Void {
   if this.IsA(n"StaminabarWidgetGameController") {
     let controller = this as StaminabarWidgetGameController;
     controller.m_currentStamina = 87.7;
     controller.m_staminaPoolListener.OnStatPoolValueChanged(70.0, 87.7, 11.0);
-    controller.m_RootWidget.SetOpacity(1.00);
-    controller.m_RootWidget.SetVisible(true);
+
+    if show {
+      controller.m_RootWidget.SetOpacity(1.0);
+      controller.m_RootWidget.SetVisible(true);
+    } else {
+      controller.m_RootWidget.SetOpacity(0.0);
+      controller.m_RootWidget.SetVisible(false);
+    };
   };
 }
 
@@ -101,5 +134,38 @@ private func ShowVehicleSummonNotification(show: Bool) -> Void {
     controller.m_animationCounterProxy = controller.PlayLibraryAnimation(n"counter", controller.m_optionCounter);
     GameInstance.GetAudioSystem(controller.m_gameInstance).Play(n"ui_jingle_car_call");
     inkTextRef.SetLocalizedTextScript(controller.m_vehicleNameLabel, "Your vehicle name");
+  };
+}
+
+@addMethod(inkGameController)
+private func ShowIncomingCallController(name: CName, show: Bool) -> Void {
+  if this.IsA(n"IncomingCallGameController") {
+    let controller = this as IncomingCallGameController;
+    let phoneCallInfo: PhoneCallInformation;
+    phoneCallInfo.callMode = questPhoneCallMode.Video;
+    phoneCallInfo.isAudioCall = false;
+    phoneCallInfo.contactName = name;
+    phoneCallInfo.isPlayerCalling = true;
+    phoneCallInfo.isPlayerTriggered = true;
+    phoneCallInfo.callPhase = questPhoneCallPhase.IncomingCall;
+
+    let options: inkAnimOptions;
+    options.playReversed = false;
+    options.executionDelay = 0.0;
+    options.loopType = inkanimLoopType.Cycle;
+    options.loopCounter = 100u;
+    options.loopInfinite = true;
+    let contact: wref<JournalContact> = controller.GetIncomingContact(phoneCallInfo);
+    inkTextRef.SetLetterCase(controller.m_contactNameWidget, textLetterCase.UpperCase);
+    inkTextRef.SetText(controller.m_contactNameWidget, "Unknown");
+    inkWidgetRef.SetVisible(controller.m_buttonHint, phoneCallInfo.isRejectable);
+    controller.GetRootWidget().SetVisible(show);
+    if IsDefined(controller.m_animProxy) {
+      controller.m_animProxy.Stop();
+      controller.m_animProxy = null;
+    };
+    if show {
+      controller.m_animProxy = this.PlayLibraryAnimation(n"ring", options);
+    };
   };
 }

@@ -5,24 +5,6 @@ registerForEvent('onInit', function()
 
 	if validJson then
 		file:close();
-
-		Observe('inkLogicController', 'LoadPersistedState', function(self)
-			local widgetName = Game.NameToString(self:GetRootWidget():GetName());
-
-			local scale = persistedState[widgetName]["scale"];
-			local translation = persistedState[widgetName]["translation"];
-
-			self:SetPersistedState(translation.X, translation.Y, scale.X, scale.Y);
-		end)
-		
-		Observe('inkLogicController', 'UpdatePersistedState', function(self, translation, scale)
-			local widgetName = Game.NameToString(self:GetRootWidget():GetName());
-
-			persistedState[widgetName].translation.X = translation.X;
-			persistedState[widgetName].translation.Y = translation.Y;
-			persistedState[widgetName].scale.X = scale.X;
-			persistedState[widgetName].scale.Y = scale.Y;
-		end)
         
 		Observe('HUDitorCustomSlot', 'LoadPersistedState', function(self)
 			local widgetName = Game.NameToString(self:GetName());

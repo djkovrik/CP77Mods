@@ -45,36 +45,34 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
   if (isActive) {
     if Equals(actionName, n"CameraMouseX") {
       currentInput = ListenerAction.GetValue(action);
-
-      this.cursor.ChangeTranslation(new Vector2(currentInput, 0));
+      this.cursor.ChangeTranslation(new Vector2(currentInput, 0.0));
     };
 
     if Equals(actionName, n"CameraMouseY") {
       currentInput = ListenerAction.GetValue(action);
-      
-      this.cursor.ChangeTranslation(new Vector2(0, -currentInput));
+      this.cursor.ChangeTranslation(new Vector2(0.0, -currentInput));
     };
-  }
+  };
 
   if Equals(actionName, n"click") {
     if (ListenerAction.IsButtonJustPressed(action)) {
       this.cursor.SetTexturePart(n"mouse_fill");
-    }
+    };
 
     if (ListenerAction.IsButtonJustReleased(action)) {
       this.cursor.SetTexturePart(n"mouse_frame");
-    }
-  }
+    };
+  };
 
   if Equals(actionName, n"ToggleSprint") {
     if (ListenerAction.IsButtonJustPressed(action)) {
       this.isShiftDown = true;
-    }
+    };
 
     if (ListenerAction.IsButtonJustReleased(action)) {
       this.isShiftDown = false;
-    }
-  }
+    };
+  };
 
   if ListenerAction.IsButtonJustPressed(action) {
     if Equals(actionName, n"right_button") && isActive {
@@ -86,7 +84,7 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
       enableHUDEditorEvent.activeWidget = nextActiveWidget;
 
       this.QueueEvent(enableHUDEditorEvent);
-    }
+    };
 
     if Equals(actionName, n"left_button") && isActive {
       let previousActiveWidget = HUDWidgetsManager.GetPreviousWidget(HUDWidgetsManager.GetInstance().activeWidget);
@@ -97,14 +95,14 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
       enableHUDEditorEvent.activeWidget = previousActiveWidget;
 
       this.QueueEvent(enableHUDEditorEvent);
-    }
+    };
 
     if isActive {
       if Equals(actionName, n"world_map_filter_navigation_down") {
         let resetEvent = new ResetAllHUDWidgets();
 
         this.QueueEvent(resetEvent);
-      }
+      };
 
       if Equals(actionName, n"cancel") || Equals(actionName, n"back") {
         HUDWidgetsManager.GetInstance().isActive = false;
@@ -115,8 +113,8 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
 
         this.cursor.SetVisible(false);
         this.PersistHUDWidgetsState();
-      }
-    }
+      };
+    };
 
     if this.isShiftDown {
       if Equals(actionName, n"UI_Unequip") {
@@ -142,8 +140,8 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
 
           this.cursor.SetVisible(false);
           this.PersistHUDWidgetsState();
-        }
-      }
-    }
-  }
+        };
+      };
+    };
+  };
 }

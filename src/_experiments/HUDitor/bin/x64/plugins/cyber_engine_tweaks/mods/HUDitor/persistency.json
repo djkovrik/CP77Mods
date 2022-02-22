@@ -1,142 +1,122 @@
 {
-   "TopLeft":{
+   "NewHealthBar":{
       "translation":{
-         "Y":0,
-         "X":0
+         "Y":0.0,
+         "X":0.0
       },
       "scale":{
-         "Y":1,
-         "X":1
+         "Y":1.0,
+         "X":1.0
       }
    },
-   "BottomLeft":{
+   "NewDpad":{
       "translation":{
-         "Y":0,
-         "X":0
+         "Y":0.0,
+         "X":0.0
       },
       "scale":{
-         "Y":1,
-         "X":1
+         "Y":1.0,
+         "X":1.0
       }
    },
-   "TopLeftSecondary":{
+   "NewInputHint":{
       "translation":{
-         "Y":0,
-         "X":0
+         "Y":0.0,
+         "X":0.0
       },
       "scale":{
-         "Y":1,
-         "X":1
+         "Y":1.0,
+         "X":1.0
       }
    },
-   "InputHint":{
+   "NewPhoneAvatar":{
       "translation":{
-         "Y":0,
-         "X":0
+         "Y":0.0,
+         "X":0.0
       },
       "scale":{
-         "Y":1,
-         "X":1
+         "Y":1.0,
+         "X":1.0
       }
    },
-   "TopRightSummon":{
+   "NewPhoneControl":{
       "translation":{
-         "Y":0,
-         "X":0
+         "Y":0.0,
+         "X":0.0
       },
       "scale":{
-         "Y":1,
-         "X":1
+         "Y":0.666667,
+         "X":0.666667
       }
    },
-   "TopRight":{
+   "NewWanted":{
       "translation":{
-         "Y":0,
-         "X":0
+         "Y":0.0,
+         "X":0.0
       },
       "scale":{
-         "Y":1,
-         "X":1
+         "Y":1.0,
+         "X":1.0
       }
    },
-   "TopLeftPhone":{
+   "NewWeaponCrouch":{
       "translation":{
-         "Y":0,
-         "X":0
+         "Y":0.0,
+         "X":0.0
       },
       "scale":{
-         "Y":1,
-         "X":1
+         "Y":1.0,
+         "X":1.0
       }
    },
-   "TopRightWanted":{
+   "NewNotifications":{
       "translation":{
-         "Y":0,
-         "X":0
+         "Y":0.0,
+         "X":0.0
       },
       "scale":{
-         "Y":1,
-         "X":1
-      }
-   },
-   "BottomRight":{
-      "translation":{
-         "Y":0,
-         "X":0
-      },
-      "scale":{
-         "Y":1,
-         "X":1
-      }
-   },
-   "LeftCenter":{
-      "translation":{
-         "Y":0,
-         "X":0
-      },
-      "scale":{
-         "Y":1,
-         "X":1
+         "Y":1.0,
+         "X":1.0
       }
    },
    "NewMinimap":{
       "translation":{
-         "Y":0,
-         "X":0
+         "Y":0.0,
+         "X":0.0
       },
       "scale":{
-         "Y":1,
-         "X":1
+         "Y":1.0,
+         "X":1.0
       }
    },
    "NewTracker":{
       "translation":{
-         "Y":0,
-         "X":0
+         "Y":0.0,
+         "X":0.0
       },
       "scale":{
-         "Y":1,
-         "X":1
+         "Y":1.0,
+         "X":1.0
       }
    },
    "NewStaminaBar":{
       "translation":{
-         "Y":0,
-         "X":0
+         "Y":0.0,
+         "X":0.0
       },
       "scale":{
-         "Y":1,
-         "X":1
+         "Y":1.0,
+         "X":1.0
       }
    },
    "NewVehicleSummon":{
       "translation":{
-         "Y":0,
-         "X":0
+         "Y":0.0,
+         "X":0.0
       },
       "scale":{
-         "Y":1,
-         "X":1
+         "Y":1.0,
+         "X":1.0
       }
    }
 }

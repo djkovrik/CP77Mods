@@ -1,5 +1,19 @@
 module HUDrag.HUDWidgetsManager
 
+// Widgets and order:
+// - NewMinimap - Minimap
+// - NewTracker - Quest tracker
+// - NewWanted - Wanted bar
+// - NewNotifications - Notifications area
+// - NewVehicleSummon - Vehicle summon
+// - NewWeaponCrouch - Ammo counter and Crouch indicator
+// - NewDpad - Dpad hint
+// - NewHealthBar - Player healthbar
+// - NewStaminaBar - Stamina
+// - NewPhoneAvatar - Phone call avatar
+// - NewPhoneControl - Phone call input control
+// - NewInputHint - Input hints
+
 @addField(PlayerPuppet)
 public let hudWidgetsManager: ref<HUDWidgetsManager>;
 
@@ -7,25 +21,20 @@ public let hudWidgetsManager: ref<HUDWidgetsManager>;
 public let hudWidgetsManager: wref<HUDWidgetsManager>;
 
 public class HUDWidgetsManager {
+
   public let gameInstance: GameInstance;
   public let puppetId: EntityID;
-
   public let isActive: Bool;
   public let activeWidget: CName;
-
-  public let topRight: ref<inkLogicController>;
-  public let bottomLeft: ref<inkLogicController>;
 
   private func Initialize(gameInstance: GameInstance, puppetId: EntityID, hudGameController: ref<inkGameController>) {
     this.gameInstance = gameInstance;
     this.puppetId = puppetId;
-
     this.SetHUDEditorListener(hudGameController);
   }
 
   public static func CreateInstance(puppet: ref<gamePuppet>, hudGameController: ref<inkGameController>) {
     let instance: ref<HUDWidgetsManager> = new HUDWidgetsManager();
-
     let gameInstance = puppet.GetGame();
     let puppetEntityId = puppet.GetEntityID();
 
@@ -44,49 +53,38 @@ public class HUDWidgetsManager {
     return GameInstance.FindEntityByID(this.gameInstance, this.puppetId) as PlayerPuppet;
   }
 
-  // Widgets and order:
-  // - NewMinimap - Minimap
-  // - NewTracker - Quest tracker
-  // - TopRightWanted - Wanted bar
-  // - LeftCenter - Notifications area
-  // - NewVehicleSummon - Vehicle summon
-  // - BottomRight - Ammo counter and Crouch indicator
-  // - BottomLeft - Dpad hint
-  // - TopLeft - Player Healthbar
-  // - NewStaminaBar - Stamina
-  // - TopLeftPhone - Phone Call
-  // - InputHint - Input hints
-
   public static func GetNextWidget(widgetName: CName) -> CName {
     switch widgetName {
       case n"NewMinimap": return n"NewTracker";
-      case n"NewTracker": return n"TopRightWanted";
-      case n"TopRightWanted": return n"LeftCenter";
-      case n"LeftCenter": return n"NewVehicleSummon";
-      case n"NewVehicleSummon": return n"BottomRight";
-      case n"BottomRight": return n"BottomLeft";
-      case n"BottomLeft": return n"TopLeft";
-      case n"TopLeft": return n"NewStaminaBar";
-      case n"NewStaminaBar": return n"TopLeftPhone";
-      case n"TopLeftPhone": return n"InputHint";
+      case n"NewTracker": return n"NewWanted";
+      case n"NewWanted": return n"NewNotifications";
+      case n"NewNotifications": return n"NewVehicleSummon";
+      case n"NewVehicleSummon": return n"NewWeaponCrouch";
+      case n"NewWeaponCrouch": return n"NewDpad";
+      case n"NewDpad": return n"NewHealthBar";
+      case n"NewHealthBar": return n"NewStaminaBar";
+      case n"NewStaminaBar": return n"NewPhoneAvatar";
+      case n"NewPhoneAvatar": return n"NewPhoneControl";
+      case n"NewPhoneControl": return n"NewInputHint";
       default: return n"NewMinimap"; 
-    }
+    };
   }
 
   public static func GetPreviousWidget(widgetName: CName) -> CName {
     switch widgetName {
-      case n"InputHint": return n"TopLeftPhone";
-      case n"TopLeftPhone": return n"NewStaminaBar";
-      case n"NewStaminaBar": return n"TopLeft";
-      case n"TopLeft": return n"BottomLeft";
-      case n"BottomLeft": return n"BottomRight";
-      case n"BottomRight": return n"NewVehicleSummon";
-      case n"NewVehicleSummon": return n"LeftCenter";
-      case n"LeftCenter": return n"TopRightWanted";
-      case n"TopRightWanted": return n"NewTracker";
+      case n"NewInputHint": return n"NewPhoneControl";
+      case n"NewPhoneControl": return n"NewPhoneAvatar";
+      case n"NewPhoneAvatar": return n"NewStaminaBar";
+      case n"NewStaminaBar": return n"NewHealthBar";
+      case n"NewHealthBar": return n"NewDpad";
+      case n"NewDpad": return n"NewWeaponCrouch";
+      case n"NewWeaponCrouch": return n"NewVehicleSummon";
+      case n"NewVehicleSummon": return n"NewNotifications";
+      case n"NewNotifications": return n"NewWanted";
+      case n"NewWanted": return n"NewTracker";
       case n"NewTracker": return n"NewMinimap";
-      default: return n"InputHint"; 
-    }
+      default: return n"NewInputHint"; 
+    };
   }
 
   public func SetHUDEditorListener(hudGameController: ref<inkGameController>) -> Void {
@@ -103,25 +101,6 @@ public class HUDWidgetsManager {
     player.RegisterInputListener(hudGameController, n"CameraMouseY");
     player.RegisterInputListener(hudGameController, n"click");
   }
-
-  public func AssignHUDWidgetListeners(hudWidgetController: ref<inkLogicController>) {
-    let player: wref<PlayerPuppet> = this.GetPlayerPuppet();
-
-    player.RegisterInputListener(hudWidgetController, n"mouse_wheel");
-    player.RegisterInputListener(hudWidgetController, n"CameraMouseX");
-    player.RegisterInputListener(hudWidgetController, n"CameraMouseY");
-    player.RegisterInputListener(hudWidgetController, n"click");
-  }
-
-   public func RemoveHUDWidgetListeners(hudWidgetController: ref<inkLogicController>) {
-    let player: wref<PlayerPuppet> = this.GetPlayerPuppet();
-
-    player.UnregisterInputListener(hudWidgetController, n"CameraMouseX");
-    player.UnregisterInputListener(hudWidgetController, n"CameraMouseY");
-    player.UnregisterInputListener(hudWidgetController, n"mouse_wheel");
-    player.UnregisterInputListener(hudWidgetController, n"click");
-  }
-
 
   public func AssignHUDWidgetListeners(customSlot: ref<HUDitorCustomSlot>) {
     let player: wref<PlayerPuppet> = this.GetPlayerPuppet();

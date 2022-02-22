@@ -2,6 +2,8 @@ public class SetActiveHUDEditorWidget extends Event {
   let activeWidget: CName;
 }
 
+public class GameSessionInitializedEvent extends Event {}
+
 public class DisableHUDEditor extends Event {}
 
 public class ResetAllHUDWidgets extends Event {}

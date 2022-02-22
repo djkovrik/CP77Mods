@@ -1,20 +1,23 @@
 import HUDrag.HUDWidgetsManager.*
 
-// TODO move everything to custom slots?
 public class HUDitorCustomSlot extends inkVerticalPanel {
   
   private let isMouseDown: Bool;
 
+  // Called from Lua
   private func LoadPersistedState() {}
 
+  // Called from Lua
   private func UpdatePersistedState(translation: Vector2, scale: Vector2) {}
 
+  // Call for a method that's observed in Lua, which then loads widgets' persisted state
   protected cb func OnGameSessionInitialized(evt: ref<GameSessionInitializedEvent>) -> Bool {
     if this.IsHUDWidget() {
       this.LoadPersistedState();
     };
   }
 
+  // Used in Lua
   private func SetPersistedState(locationX: Float, locationY: Float, scaleX: Float, scaleY: Float) {
     let persistedTranslation = new Vector2(locationX, locationY);
     let persistedScale = new Vector2(scaleX, scaleY);
@@ -24,7 +27,6 @@ public class HUDitorCustomSlot extends inkVerticalPanel {
   }
 
   protected cb func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidget>) -> Bool {
-
     let widgetName = this.GetName();
     let hudEditorWidgetName = event.activeWidget;
 
@@ -36,7 +38,7 @@ public class HUDitorCustomSlot extends inkVerticalPanel {
       } else {
         this.SetOpacity(0.15);
         HUDWidgetsManager.GetInstance().RemoveHUDWidgetListeners(this);
-      }
+      };
     };
   }
 
@@ -44,7 +46,20 @@ public class HUDitorCustomSlot extends inkVerticalPanel {
     let widgetName = this.GetName();
 
     if !Equals(widgetName, n"") {
-      let hudWidgets = [n"NewMinimap", n"NewTracker", n"NewStaminaBar", n"NewVehicleSummon"];
+      let hudWidgets = [
+        n"NewMinimap", 
+        n"NewTracker", 
+        n"NewWanted", 
+        n"NewVehicleSummon", 
+        n"NewStaminaBar", 
+        n"NewInputHint", 
+        n"NewPhoneAvatar",
+        n"NewPhoneControl",
+        n"NewNotifications", 
+        n"NewWeaponCrouch", 
+        n"NewDpad",
+        n"NewHealthBar"
+      ];
       return ArrayContains(hudWidgets, widgetName);
     } else {
       return false;
@@ -53,17 +68,24 @@ public class HUDitorCustomSlot extends inkVerticalPanel {
 
   protected cb func OnDisableHUDEditorWidgets(event: ref<DisableHUDEditor>) -> Bool {
     if this.IsHUDWidget() {
-      this.SetOpacity(1);
+      this.SetOpacity(1.0);
       HUDWidgetsManager.GetInstance().RemoveHUDWidgetListeners(this);
-    }
+    };
   }
 
   protected cb func OnResetHUDWidgets(event: ref<ResetAllHUDWidgets>) {
     if this.IsHUDWidget() {
+      let scale: Vector2;
+      if Equals(this.GetName(), n"NewPhoneControl") || Equals(this.GetName(), n"NewNotifications") {
+        scale = new Vector2(0.666667, 0.666667);
+      } else {
+        scale = new Vector2(1.0, 1.0);
+      };
+
       this.SetTranslation(new Vector2(0.0, 0.0));
-      this.SetScale(new Vector2(1.0, 1.0));
-      this.UpdatePersistedState(new Vector2(0, 0), new Vector2(1, 1));
-    }
+      this.SetScale(scale);
+      this.UpdatePersistedState(new Vector2(0.0, 0.0), scale);
+    };
   }
 
 
@@ -73,12 +95,12 @@ public class HUDitorCustomSlot extends inkVerticalPanel {
     if Equals(ListenerAction.GetName(action), n"click") {
       if (ListenerAction.IsButtonJustPressed(action)) {
         this.isMouseDown = true;
-      }
+      };
 
       if (ListenerAction.IsButtonJustReleased(action)) {
         this.isMouseDown = false;
-      }
-    }
+      };
+    };
 
     if (this.isMouseDown) {
       if Equals(ListenerAction.GetName(action), n"CameraMouseX") {
@@ -100,7 +122,7 @@ public class HUDitorCustomSlot extends inkVerticalPanel {
         this.ChangeTranslation(new Vector2(0, currentInput * 0.6));
         this.UpdatePersistedState(currentTranslation, this.GetScale());
       };
-    }
+    };
 
     if Equals(ListenerAction.GetName(action), n"mouse_wheel") {
       let widgetName = this.GetName();
@@ -114,19 +136,19 @@ public class HUDitorCustomSlot extends inkVerticalPanel {
 
       if (finalXScale < 0.1) {
         finalXScale = 0.1;
-      }
+      };
 
       if (finalYScale > 5.0) {
         finalYScale = 5.0;
-      }
+      };
 
       if (finalYScale < 0.1) {
         finalYScale = 0.1;
-      }
+      };
 
       if (finalXScale > 5.0) {
         finalXScale = 5.0;
-      }
+      };
           
       this.SetScale(new Vector2(finalXScale, finalYScale));
       this.UpdatePersistedState(this.GetTranslation(), new Vector2(finalXScale, finalYScale));
