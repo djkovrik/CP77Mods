@@ -26,7 +26,7 @@ public func DetermineCurrentVisibility() -> Void {
     let showForStealth: Bool = this.lhud_isStealthActive && WorldMarkersModuleConfigCombat.ShowInStealth();
     let showForVehicle: Bool = this.lhud_isInVehicle && WorldMarkersModuleConfigCombat.ShowInVehicle();
     let showForScanner: Bool = this.lhud_isScannerActive && WorldMarkersModuleConfigCombat.ShowWithScanner();
-    let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && !this.lhud_isCombatActive && WorldMarkersModuleConfigCombat.ShowWithWeapon();
+    let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && WorldMarkersModuleConfigCombat.ShowWithWeapon();
     let showForZoom: Bool = this.lhud_isZoomActive && WorldMarkersModuleConfigCombat.ShowWithZoom();
 
     let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;
@@ -60,7 +60,7 @@ public func DetermineCurrentVisibility() -> Void {
     let showForStealth: Bool = this.lhud_isStealthActive && WorldMarkersModuleConfigCombat.ShowInStealth();
     let showForVehicle: Bool = this.lhud_isInVehicle && WorldMarkersModuleConfigCombat.ShowInVehicle();
     let showForScanner: Bool = this.lhud_isScannerActive && WorldMarkersModuleConfigCombat.ShowWithScanner();
-    let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && !this.lhud_isCombatActive && WorldMarkersModuleConfigCombat.ShowWithWeapon();
+    let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && WorldMarkersModuleConfigCombat.ShowWithWeapon();
     let showForZoom: Bool = this.lhud_isZoomActive && WorldMarkersModuleConfigCombat.ShowWithZoom();
     let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;
     this.lhud_isVisibleNow = isVisible;

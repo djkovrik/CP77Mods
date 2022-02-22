@@ -23,7 +23,7 @@ private final func ComputeHealthBarVisibility() -> Void {
   // Additional flags
   let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && PlayerHealthbarModuleConfig.BindToGlobalHotkey();
   let showForStealth: Bool =  this.lhud_isStealthActive && PlayerHealthbarModuleConfig.ShowInStealth();
-  let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && !this.lhud_isCombatActive && PlayerHealthbarModuleConfig.ShowWithWeapon();
+  let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && PlayerHealthbarModuleConfig.ShowWithWeapon();
   let showForZoom: Bool =  this.lhud_isZoomActive && PlayerHealthbarModuleConfig.ShowWithZoom();
   let showForHealthNotFull: Bool = !isMaxHP && PlayerHealthbarModuleConfig.ShowWhenHealthNotFull();
   let showForMemoryNotFull: Bool = this.m_quickhacksMemoryPercent > 0.0 && this.m_quickhacksMemoryPercent < 100.0 && PlayerHealthbarModuleConfig.ShowWhenMemoryNotFull();

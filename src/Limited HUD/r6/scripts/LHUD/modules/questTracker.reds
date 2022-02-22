@@ -25,7 +25,7 @@ public func DetermineCurrentVisibility() -> Void {
   let showForStealth: Bool =  this.lhud_isStealthActive && QuestTrackerModuleConfig.ShowInStealth();
   let showForVehicle: Bool =  this.lhud_isInVehicle && QuestTrackerModuleConfig.ShowInVehicle();
   let showForScanner: Bool =  this.lhud_isScannerActive && QuestTrackerModuleConfig.ShowWithScanner();
-  let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && !this.lhud_isCombatActive && QuestTrackerModuleConfig.ShowWithWeapon();
+  let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && QuestTrackerModuleConfig.ShowWithWeapon();
   let showForZoom: Bool =  this.lhud_isZoomActive && QuestTrackerModuleConfig.ShowWithZoom();
 
   let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;

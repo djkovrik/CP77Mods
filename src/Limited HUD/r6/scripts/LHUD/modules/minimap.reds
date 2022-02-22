@@ -20,7 +20,7 @@ public func DetermineCurrentVisibility() -> Void {
   let showForStealth: Bool =  this.lhud_isStealthActive && MinimapModuleConfig.ShowInStealth();
   let showForVehicle: Bool =  this.lhud_isInVehicle && MinimapModuleConfig.ShowInVehicle();
   let showForScanner: Bool =  this.lhud_isScannerActive && MinimapModuleConfig.ShowWithScanner();
-  let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && !this.lhud_isCombatActive && MinimapModuleConfig.ShowWithWeapon();
+  let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && MinimapModuleConfig.ShowWithWeapon();
   let showForZoom: Bool =  this.lhud_isZoomActive && MinimapModuleConfig.ShowWithZoom();
 
   let isVisible: Bool = showForGlobalHotkey || showForMinimapHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;

@@ -17,7 +17,7 @@ public func DetermineCurrentVisibility() -> Void {
   let showForCombat: Bool = this.lhud_isCombatActive && CrouchIndicatorModuleConfig.ShowInCombat();
   let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && CrouchIndicatorModuleConfig.ShowOutOfCombat();
   let showForStealth: Bool =  this.lhud_isStealthActive && CrouchIndicatorModuleConfig.ShowInStealth();
-  let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && !this.lhud_isCombatActive && CrouchIndicatorModuleConfig.ShowWithWeapon();
+  let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && CrouchIndicatorModuleConfig.ShowWithWeapon();
   let showForZoom: Bool =  this.lhud_isZoomActive && CrouchIndicatorModuleConfig.ShowWithZoom();
 
   let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForWeapon || showForZoom;
