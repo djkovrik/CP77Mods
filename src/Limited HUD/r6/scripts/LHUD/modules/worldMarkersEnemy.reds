@@ -1,4 +1,5 @@
 import LimitedHudConfig.WorldMarkersModuleConfigCombat
+import LimitedHudListeners.LHUDBlackboardsListener
 import LimitedHudCommon.LHUDEvent
 
 // -- Enemy head nameplate icons
@@ -7,6 +8,13 @@ import LimitedHudCommon.LHUDEvent
 protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
   this.ConsumeLHUDEvent(evt);
   this.DetermineCurrentVisibility();
+}
+
+@wrapMethod(StealthMappinController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+  let manager: ref<HUDManager> = GameInstance.GetScriptableSystemsContainer(this.m_ownerObject.GetGame()).Get(n"HUDManager") as HUDManager;
+  manager.blabockardsListenerLHUD.LaunchInitialStateEvents();
 }
 
 @addMethod(StealthMappinController)
@@ -22,11 +30,9 @@ public func DetermineCurrentVisibility() -> Void {
     let showForZoom: Bool = this.lhud_isZoomActive && WorldMarkersModuleConfigCombat.ShowWithZoom();
 
     let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;
-    if NotEquals(this.lhud_isVisibleNow, isVisible) {
-      this.lhud_isVisibleNow = isVisible;
-      this.OnUpdate();
-    };
-  };
+    this.lhud_isVisibleNow = isVisible;
+    this.OnUpdate();
+};
 }
 
 @wrapMethod(StealthMappinController)

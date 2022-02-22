@@ -22,6 +22,9 @@ public class LHUDEvent extends Event {
   public let type: LHUDEventType;
 }
 
+// Basic event for delayed startup logic triggering 
+public class LHUDInitLaunchEvent extends Event {}
+
 // Blackboard flags for global and minimap toggles
 @addField(UI_SystemDef) public let IsGlobalFlagToggled_LHUD: BlackboardID_Bool;
 @addField(UI_SystemDef) public let IsMinimapToggled_LHUD: BlackboardID_Bool;
@@ -54,7 +57,7 @@ public class LHUDEvent extends Event {
 // Catch LHUDEvent inside inkGameController instances
 @addMethod(inkGameController)
 protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
-  LHUDLog(" <- inkGameController consume event: " + ToString(evt.type) + " " + ToString(evt.isActive));
+  LHUDLog(s" <- \(this.GetClassName()) consume event: " + ToString(evt.type) + " " + ToString(evt.isActive));
   switch(evt.type) {
     case LHUDEventType.GlobalHotkey: 
       this.lhud_isGlobalFlagToggled = evt.isActive;
@@ -100,7 +103,7 @@ protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
 // Catch LHUDEvent inside inkLogicController instances
 @addMethod(inkLogicController)
 protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
-  LHUDLog(" <- inkLogicController consume event: " + ToString(evt.type) + " " + ToString(evt.isActive));
+  LHUDLog(s" <- \(this.GetClassName()) consume event: " + ToString(evt.type) + " " + ToString(evt.isActive));
   switch(evt.type) {
     case LHUDEventType.GlobalHotkey: 
       this.lhud_isGlobalFlagToggled = evt.isActive;
@@ -186,5 +189,5 @@ public func HasAnyWeaponEquipped_LHUD() -> Bool {
 
 // Print string to CET console
 public static func LHUDLog(str: String) -> Void {
-  // LogChannel(n"DEBUG", "LHUD: " + str);
+  LogChannel(n"DEBUG", "LHUD: " + str);
 }

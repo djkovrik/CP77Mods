@@ -53,6 +53,9 @@ public class LHUDBlackboardsListener {
   private let weaponCallback: ref<CallbackHandle>;        // Ref for registered weapon state callback
   private let zoomCallback: ref<CallbackHandle>;          // Ref for registered zoom value callback
 
+  private let delaySystem: ref<DelaySystem>;
+  private let delayId: DelayID;
+
   // Initialise blackboards
   public func InitializeData(player: ref<PlayerPuppet>) -> Void {
     LHUDLog("-- LHUDBlackboardsListener::InitializeData");
@@ -64,6 +67,8 @@ public class LHUDBlackboardsListener {
     this.vehicleBlackboard =  GameInstance.GetBlackboardSystem(player.GetGame()).Get(this.bbDefs.UI_ActiveVehicleData);
     this.uiSystemBlackboard =  GameInstance.GetBlackboardSystem(player.GetGame()).Get(this.bbDefs.UI_System);
     this.weaponBlackboard =  GameInstance.GetBlackboardSystem(player.GetGame()).Get(this.bbDefs.UI_EquipmentData);
+
+    this.delaySystem = GameInstance.GetDelaySystem(player.GetGame());
   }
 
   // Register listeners
@@ -90,13 +95,17 @@ public class LHUDBlackboardsListener {
     this.vehicleBlackboard.UnregisterListenerBool(this.bbDefs.UI_ActiveVehicleData.IsPlayerMounted, this.vehicleCallback);
     this.weaponBlackboard.UnregisterListenerBool(this.bbDefs.UI_EquipmentData.HasWeaponEquipped, this.weaponCallback);
     this.stateMachineBlackboard.UnregisterListenerFloat(this.bbDefs.PlayerStateMachine.ZoomLevel, this.zoomCallback);
+
+    this.delaySystem.CancelCallback(this.delayId);
   }
 
   // Trigger events which required to get some initial state
   public func LaunchInitialStateEvents() -> Void {
-    LHUDLog("-- LHUDBlackboardsListener::LaunchInitialStateEvents");
-    this.OnCombatStateChanged(this.stateMachineBlackboard.GetInt(this.bbDefs.PlayerStateMachine.Combat));
-    this.OnWeaponStateChanged(this.playerInstance.HasAnyWeaponEquipped_LHUD());
+    LHUDLog("-- InitialStateEvent - schedule callback");
+    let callback: ref<LHUDLaunchCallback> = new LHUDLaunchCallback();
+    callback.bbListener = this;
+    this.delaySystem.CancelCallback(this.delayId);
+    this.delayId = this.delaySystem.DelayCallback(callback, 0.5);
   }
 
   // Global hotkey bb callback
@@ -166,6 +175,17 @@ public class LHUDBlackboardsListener {
   }
 }
 
+public class LHUDLaunchCallback extends DelayCallback {
+  public let bbListener: wref<LHUDBlackboardsListener>;
+
+  public func Call() -> Void {
+    LHUDLog("-- InitialStateEvent - execute callback");
+    let listener: ref<LHUDBlackboardsListener> = this.bbListener;
+    listener.OnCombatStateChanged(listener.stateMachineBlackboard.GetInt(listener.bbDefs.PlayerStateMachine.Combat));
+    listener.OnWeaponStateChanged(listener.playerInstance.HasAnyWeaponEquipped_LHUD());
+  }
+}
+
 // -- INITIALIZE LHUD LISTENERS
 
 @addField(HUDManager) 
@@ -206,9 +226,17 @@ protected cb func OnInitializeFinished() -> Void {
   manager.blabockardsListenerLHUD.LaunchInitialStateEvents();
 }
 
+@addField(PlayerPuppet)
+private let lhud_initEvent: DelayID;
+
 @wrapMethod(PlayerPuppet)
 protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpawn>) -> Bool {
   wrappedMethod(evt);
+  this.lhud_initEvent = GameInstance.GetDelaySystem(this.GetGame()).DelayEvent(this, new LHUDInitLaunchEvent(), 1.0);
+}
+
+@addMethod(PlayerPuppet)
+protected cb func OnLHUDInitLaunchEvent(evt: ref<LHUDInitLaunchEvent>) -> Bool {
   let manager: ref<HUDManager> = GameInstance.GetScriptableSystemsContainer(this.GetGame()).Get(n"HUDManager") as HUDManager;
   manager.blabockardsListenerLHUD.LaunchInitialStateEvents();
 }
