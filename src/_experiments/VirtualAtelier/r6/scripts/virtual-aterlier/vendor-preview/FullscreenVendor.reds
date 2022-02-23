@@ -246,19 +246,22 @@ protected cb func OnInventoryItemHoverOver(evt: ref<ItemDisplayHoverOverEvent>) 
         hintLabel = "Unequip";
       } else {
         hintLabel = "Equip";
-      }
+      };
 
       this.m_buttonHintsController.RemoveButtonHint(n"select");
       this.m_buttonHintsController.AddButtonHint(n"select", hintLabel);
     } else {
       this.m_buttonHintsController.RemoveButtonHint(n"select");
-    }
+    };
 
     if this.GetIsVirtual() {
       let vendorPreviewButtonHint = VendorPreviewButtonHint.Get();
       this.m_buttonHintsController.RemoveButtonHint(vendorPreviewButtonHint.previewModeToggleName);
       this.m_buttonHintsController.AddButtonHint(vendorPreviewButtonHint.previewModeToggleName, vendorPreviewButtonHint.previewModeTogglePurchaseLabel);
-    }
+    };
+
+    let noCompare: InventoryItemData;
+    this.ShowTooltipsForItemController(evt.widget, noCompare, evt.itemData, evt.display.DEBUG_GetIconErrorInfo(), false);
   } else {
     wrappedMethod(evt);
   }
