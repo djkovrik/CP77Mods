@@ -189,5 +189,5 @@ public func HasAnyWeaponEquipped_LHUD() -> Bool {
 
 // Print string to CET console
 public static func LHUDLog(str: String) -> Void {
-  LogChannel(n"DEBUG", "LHUD: " + str);
+  // LogChannel(n"DEBUG", "LHUD: " + str);
 }

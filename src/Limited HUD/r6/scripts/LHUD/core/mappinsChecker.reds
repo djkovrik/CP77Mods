@@ -36,6 +36,7 @@ public class MappinChecker {
       || Equals(variant, gamedataMappinVariant.GPSPortalVariant)
       || Equals(variant, gamedataMappinVariant.PhoneCallVariant)
       || Equals(variant, gamedataMappinVariant.TarotVariant)
+      || Equals(variant, gamedataMappinVariant.FocusClueVariant)
       || false;
   }
 

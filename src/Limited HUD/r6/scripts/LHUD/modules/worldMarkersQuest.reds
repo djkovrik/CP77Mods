@@ -104,8 +104,8 @@ private func UpdateVisibility() -> Void {
 
   this.lhud_isVisibleNow = shouldBeVisible;
   this.SetRootVisible(shouldBeVisible);
-  // let data: ref<GameplayRoleMappinData> = this.m_mappin.GetScriptData() as GameplayRoleMappinData;
-  // LHUDLog("Missed mappin! Variant: " + ToString(this.m_mappin.GetVariant()) + ", role: " + ToString(data.m_gameplayRole)  + ", visibility: " + ToString(this.lhud_isVisibleNow));
+  let data: ref<GameplayRoleMappinData> = this.m_mappin.GetScriptData() as GameplayRoleMappinData;
+  LHUDLog("Missed mappin: " + ToString(this.m_mappin.GetVariant()) + ", role: " + ToString(data.m_gameplayRole)  + ", visibility: " + ToString(this.lhud_isVisibleNow));
 }
 
 @wrapMethod(QuestMappinController)
