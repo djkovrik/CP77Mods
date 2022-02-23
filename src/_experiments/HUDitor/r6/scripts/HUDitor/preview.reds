@@ -3,8 +3,8 @@
 @addMethod(inkGameController)
 protected cb func OnDisplayPreviewEvent(event: ref<DisplayPreviewEvent>) -> Bool {
   this.ShowHealthbar(true);
-  this.ShowIncomingPhoneCall(n"unknown", true);
-  this.ShowIncomingCallController(n"unknown", true);
+  this.ShowIncomingPhoneCall(n"jackie", true);
+  this.ShowIncomingCallController(n"jackie", true);
   this.ShowWantedBar(true);
   this.ShowItemsNotification();
   this.ShowJournalNotification(10);
@@ -18,8 +18,8 @@ protected cb func OnDisplayPreviewEvent(event: ref<DisplayPreviewEvent>) -> Bool
 @addMethod(inkGameController)
 protected cb func OnHidePreviewEvent(event: ref<HidePreviewEvent>) -> Bool {
   this.ShowHealthbar(false);
-  this.ShowIncomingPhoneCall(n"unknown", false);
-  this.ShowIncomingCallController(n"unknown", false);
+  this.ShowIncomingPhoneCall(n"jackie", false);
+  this.ShowIncomingCallController(n"jackie", false);
   this.ShowWantedBar(false);
   this.ShowStaminaBar(false);
   this.ShowVehicleSummonNotification(false);
@@ -50,7 +50,11 @@ private func ShowIncomingPhoneCall(name: CName, show: Bool) -> Void {
     phoneCallInfo.contactName = name;
     phoneCallInfo.isPlayerCalling = true;
     phoneCallInfo.isPlayerTriggered = true;
-    phoneCallInfo.callPhase = questPhoneCallPhase.IncomingCall;
+    if show {
+      phoneCallInfo.callPhase = questPhoneCallPhase.IncomingCall;
+    } else {
+      phoneCallInfo.callPhase = questPhoneCallPhase.EndCall;
+    };
     controller.m_CurrentCallInformation = phoneCallInfo;
     controller.m_CurrentPhoneCallContact = controller.GetIncomingContact();
     controller.m_RootWidget.SetVisible(show);
