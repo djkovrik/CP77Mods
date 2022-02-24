@@ -52,6 +52,7 @@ public final static func FromInventoryTooltipData(tooltipData: ref<InventoryTool
 
     // Add more custom stuff here: description, quality, name, icon, whatever
     result.price = InventoryItemData.GetBuyPrice(tooltipData.virtualInventoryItemData);
+    result.quality = UIItemsHelper.QualityNameToEnum(tooltipData.virtualInventoryItemData.Quality);
     // result.iconPath = "UIIcon.clothing_player_feet_item_s1_formal_02_basic_02__Female_";
   }
 
