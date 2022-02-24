@@ -55,7 +55,8 @@ public class HUDitorCustomSlot extends inkVerticalPanel {
         n"NewInputHint", 
         n"NewPhoneAvatar",
         n"NewPhoneControl",
-        n"NewNotifications", 
+        n"NewQuestNotifications", 
+        n"NewItemNotifications", 
         n"NewWeaponCrouch", 
         n"NewDpad",
         n"NewHealthBar"
@@ -76,7 +77,7 @@ public class HUDitorCustomSlot extends inkVerticalPanel {
   protected cb func OnResetHUDWidgets(event: ref<ResetAllHUDWidgets>) {
     if this.IsHUDWidget() {
       let scale: Vector2;
-      if Equals(this.GetName(), n"NewPhoneControl") || Equals(this.GetName(), n"NewNotifications") {
+      if Equals(this.GetName(), n"NewPhoneControl") || Equals(this.GetName(), n"NewItemNotifications") {
         scale = new Vector2(0.666667, 0.666667);
       } else {
         scale = new Vector2(1.0, 1.0);

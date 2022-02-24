@@ -5,11 +5,12 @@
 @addField(inkGameController) let inputHintSlot: ref<HUDitorCustomSlot>;
 @addField(inkGameController) let wantedSlot: ref<HUDitorCustomSlot>;
 @addField(inkGameController) let phoneCallAvatarSlot: ref<HUDitorCustomSlot>;
-@addField(inkGameController) let notificationsSlot: ref<HUDitorCustomSlot>;
 @addField(inkGameController) let weaponCrouchSlot: ref<HUDitorCustomSlot>;
 @addField(inkGameController) let dpadSlot: ref<HUDitorCustomSlot>;
 @addField(inkGameController) let healthbarSlot: ref<HUDitorCustomSlot>;
 @addField(inkGameController) let phoneControlSlot: ref<HUDitorCustomSlot>;
+@addField(inkGameController) let questNotificationsSlot: ref<HUDitorCustomSlot>;
+@addField(inkGameController) let itemNotificationsSlot: ref<HUDitorCustomSlot>;
 
 @addMethod(inkGameController)
 protected cb func OnGameSessionInitialized(event: ref<GameSessionInitializedEvent>) -> Bool {
@@ -21,11 +22,12 @@ protected cb func OnGameSessionInitialized(event: ref<GameSessionInitializedEven
     this.inputHintSlot.OnGameSessionInitialized(event);
     this.wantedSlot.OnGameSessionInitialized(event);
     this.phoneCallAvatarSlot.OnGameSessionInitialized(event);
-    this.notificationsSlot.OnGameSessionInitialized(event);
     this.weaponCrouchSlot.OnGameSessionInitialized(event);
     this.dpadSlot.OnGameSessionInitialized(event);
     this.healthbarSlot.OnGameSessionInitialized(event);
     this.phoneControlSlot.OnGameSessionInitialized(event);
+    this.questNotificationsSlot.OnGameSessionInitialized(event);
+    this.itemNotificationsSlot.OnGameSessionInitialized(event);
   };
 }
 
@@ -39,11 +41,12 @@ protected cb func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidget>) 
     this.inputHintSlot.OnEnableHUDEditorWidget(event);
     this.wantedSlot.OnEnableHUDEditorWidget(event);
     this.phoneCallAvatarSlot.OnEnableHUDEditorWidget(event);
-    this.notificationsSlot.OnEnableHUDEditorWidget(event);
     this.weaponCrouchSlot.OnEnableHUDEditorWidget(event);
     this.dpadSlot.OnEnableHUDEditorWidget(event);
     this.healthbarSlot.OnEnableHUDEditorWidget(event);
     this.phoneControlSlot.OnEnableHUDEditorWidget(event);
+    this.questNotificationsSlot.OnEnableHUDEditorWidget(event);
+    this.itemNotificationsSlot.OnEnableHUDEditorWidget(event);
   };
 }
 
@@ -57,11 +60,12 @@ protected cb func OnDisableHUDEditorWidgets(event: ref<DisableHUDEditor>) -> Boo
     this.inputHintSlot.OnDisableHUDEditorWidgets(event);
     this.wantedSlot.OnDisableHUDEditorWidgets(event);
     this.phoneCallAvatarSlot.OnDisableHUDEditorWidgets(event);
-    this.notificationsSlot.OnDisableHUDEditorWidgets(event);
     this.weaponCrouchSlot.OnDisableHUDEditorWidgets(event);
     this.dpadSlot.OnDisableHUDEditorWidgets(event);
     this.healthbarSlot.OnDisableHUDEditorWidgets(event);
     this.phoneControlSlot.OnDisableHUDEditorWidgets(event);
+    this.questNotificationsSlot.OnDisableHUDEditorWidgets(event);
+    this.itemNotificationsSlot.OnDisableHUDEditorWidgets(event);
   };
 }
 
@@ -75,11 +79,12 @@ protected cb func OnResetHUDWidgets(event: ref<ResetAllHUDWidgets>) {
     this.inputHintSlot.OnResetHUDWidgets(event);
     this.wantedSlot.OnResetHUDWidgets(event);
     this.phoneCallAvatarSlot.OnResetHUDWidgets(event);
-    this.notificationsSlot.OnResetHUDWidgets(event);
     this.weaponCrouchSlot.OnResetHUDWidgets(event);
     this.dpadSlot.OnResetHUDWidgets(event);
     this.healthbarSlot.OnResetHUDWidgets(event);
     this.phoneControlSlot.OnResetHUDWidgets(event);
+    this.questNotificationsSlot.OnResetHUDWidgets(event);
+    this.itemNotificationsSlot.OnResetHUDWidgets(event);
   };
 }
 
@@ -93,11 +98,12 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
     this.inputHintSlot.OnAction(action, consumer);
     this.wantedSlot.OnAction(action, consumer);
     this.phoneCallAvatarSlot.OnAction(action, consumer);
-    this.notificationsSlot.OnAction(action, consumer);
     this.weaponCrouchSlot.OnAction(action, consumer);
     this.dpadSlot.OnAction(action, consumer);
     this.healthbarSlot.OnAction(action, consumer);
     this.phoneControlSlot.OnAction(action, consumer);
+    this.questNotificationsSlot.OnAction(action, consumer);
+    this.itemNotificationsSlot.OnAction(action, consumer);
   };
 }
 
@@ -121,6 +127,8 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
     let dpad: ref<inkWidget> = root.GetWidgetByPath(inkWidgetPath.Build(n"BottomLeft", n"dpad_hint")) as inkWidget;
     let healthbar: ref<inkWidget> = root.GetWidgetByPath(inkWidgetPath.Build(n"TopLeftMain", n"TopLeft", n"player_health_bar")) as inkWidget;
     let phoneControl: ref<inkWidget> = this.SearchForWidget(root, n"HUDMiddleWidget", n"PhoneCall") as inkWidget;
+    let questNotifications: ref<inkWidget> = leftCenterSlot.GetWidgetByIndex(1) as inkWidget;
+    let itemNotifications: ref<inkWidget> = leftCenterSlot.GetWidgetByIndex(0) as inkWidget;
 
     this.minimapSlot = new HUDitorCustomSlot();
     this.minimapSlot.SetName(n"NewMinimap");
@@ -290,18 +298,17 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
     phoneAvatar.Reparent(this.phoneCallAvatarSlot);
     this.phoneCallAvatarSlot.Reparent(root);
 
-    // Wrap LeftCenter to custom slot
-    this.notificationsSlot = new HUDitorCustomSlot();
-    this.notificationsSlot.SetName(n"NewNotifications");
-    this.notificationsSlot.SetFitToContent(leftCenterSlot.GetFitToContent());
-    this.notificationsSlot.SetInteractive(false);
-    this.notificationsSlot.SetAffectsLayoutWhenHidden(false);
-    this.notificationsSlot.SetMargin(leftCenterSlot.GetMargin());
-    this.notificationsSlot.SetHAlign(leftCenterSlot.GetHAlign());
-    this.notificationsSlot.SetVAlign(leftCenterSlot.GetVAlign());
-    this.notificationsSlot.SetAnchor(leftCenterSlot.GetAnchor());
-    this.notificationsSlot.SetAnchorPoint(leftCenterSlot.GetAnchorPoint());
-    this.notificationsSlot.SetLayout(
+    this.questNotificationsSlot = new HUDitorCustomSlot();
+    this.questNotificationsSlot.SetName(n"NewQuestNotifications");
+    this.questNotificationsSlot.SetFitToContent(leftCenterSlot.GetFitToContent());
+    this.questNotificationsSlot.SetInteractive(false);
+    this.questNotificationsSlot.SetAffectsLayoutWhenHidden(false);
+    this.questNotificationsSlot.SetMargin(leftCenterSlot.GetMargin());
+    this.questNotificationsSlot.SetHAlign(leftCenterSlot.GetHAlign());
+    this.questNotificationsSlot.SetVAlign(leftCenterSlot.GetVAlign());
+    this.questNotificationsSlot.SetAnchor(leftCenterSlot.GetAnchor());
+    this.questNotificationsSlot.SetAnchorPoint(leftCenterSlot.GetAnchorPoint());
+    this.questNotificationsSlot.SetLayout(
       new inkWidgetLayout(
         leftCenterSlot.GetPadding(),
         leftCenterSlot.GetMargin(),
@@ -312,8 +319,32 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
       )
     );
 
-    leftCenterSlot.Reparent(this.notificationsSlot);
-    this.notificationsSlot.Reparent(root);
+    questNotifications.Reparent(this.questNotificationsSlot);
+    this.questNotificationsSlot.Reparent(root);
+
+    this.itemNotificationsSlot = new HUDitorCustomSlot();
+    this.itemNotificationsSlot.SetName(n"NewItemNotifications");
+    this.itemNotificationsSlot.SetFitToContent(leftCenterSlot.GetFitToContent());
+    this.itemNotificationsSlot.SetInteractive(false);
+    this.itemNotificationsSlot.SetAffectsLayoutWhenHidden(false);
+    this.itemNotificationsSlot.SetMargin(leftCenterSlot.GetMargin());
+    this.itemNotificationsSlot.SetHAlign(leftCenterSlot.GetHAlign());
+    this.itemNotificationsSlot.SetVAlign(leftCenterSlot.GetVAlign());
+    this.itemNotificationsSlot.SetAnchor(leftCenterSlot.GetAnchor());
+    this.itemNotificationsSlot.SetAnchorPoint(leftCenterSlot.GetAnchorPoint());
+    this.itemNotificationsSlot.SetLayout(
+      new inkWidgetLayout(
+        leftCenterSlot.GetPadding(),
+        leftCenterSlot.GetMargin(),
+        leftCenterSlot.GetHAlign(),
+        leftCenterSlot.GetVAlign(),
+        leftCenterSlot.GetAnchor(),
+        leftCenterSlot.GetAnchorPoint()
+      )
+    );
+
+    itemNotifications.Reparent(this.itemNotificationsSlot);
+    this.itemNotificationsSlot.Reparent(root);
 
     // Reparent BottomRightHorizontal to custom slot
     this.weaponCrouchSlot = new HUDitorCustomSlot();

@@ -4,7 +4,8 @@ module HUDrag.HUDWidgetsManager
 // - NewMinimap - Minimap
 // - NewTracker - Quest tracker
 // - NewWanted - Wanted bar
-// - NewNotifications - Notifications area
+// - NewQuestNotifications - Quest notifications area
+// - NewItemNotifications - Items notifications area
 // - NewVehicleSummon - Vehicle summon
 // - NewWeaponCrouch - Ammo counter and Crouch indicator
 // - NewDpad - Dpad hint
@@ -57,8 +58,9 @@ public class HUDWidgetsManager {
     switch widgetName {
       case n"NewMinimap": return n"NewTracker";
       case n"NewTracker": return n"NewWanted";
-      case n"NewWanted": return n"NewNotifications";
-      case n"NewNotifications": return n"NewVehicleSummon";
+      case n"NewWanted": return n"NewQuestNotifications";
+      case n"NewQuestNotifications": return n"NewItemNotifications";
+      case n"NewItemNotifications": return n"NewVehicleSummon";
       case n"NewVehicleSummon": return n"NewWeaponCrouch";
       case n"NewWeaponCrouch": return n"NewDpad";
       case n"NewDpad": return n"NewHealthBar";
@@ -79,8 +81,9 @@ public class HUDWidgetsManager {
       case n"NewHealthBar": return n"NewDpad";
       case n"NewDpad": return n"NewWeaponCrouch";
       case n"NewWeaponCrouch": return n"NewVehicleSummon";
-      case n"NewVehicleSummon": return n"NewNotifications";
-      case n"NewNotifications": return n"NewWanted";
+      case n"NewVehicleSummon": return n"NewItemNotifications";
+      case n"NewItemNotifications": return n"NewQuestNotifications";
+      case n"NewQuestNotifications": return n"NewWanted";
       case n"NewWanted": return n"NewTracker";
       case n"NewTracker": return n"NewMinimap";
       default: return n"NewInputHint"; 

@@ -6,11 +6,8 @@ protected cb func OnDisplayPreviewEvent(event: ref<DisplayPreviewEvent>) -> Bool
   this.ShowIncomingPhoneCall(n"jackie", true);
   this.ShowIncomingCallController(n"jackie", true);
   this.ShowWantedBar(true);
+  this.ShowJournalNotification();
   this.ShowItemsNotification();
-  this.ShowJournalNotification(10);
-  this.ShowJournalNotification(20);
-  this.ShowJournalNotification(30);
-  this.ShowJournalNotification(40);
   this.ShowStaminaBar(true);
   this.ShowVehicleSummonNotification(true);
 }
@@ -80,27 +77,43 @@ private func ShowWantedBar(show: Bool) -> Void {
   };
 }
 
+@addMethod(inkGameController)
+private func ShowJournalNotification() -> Void {
+  if this.IsA(n"JournalNotificationQueue") {
+    let controller = this as JournalNotificationQueue;
+    let userData: ref<PhoneMessageNotificationViewData> = new PhoneMessageNotificationViewData();
+    let notificationData: gameuiGenericNotificationData;
+    userData.entryHash = -1;
+    userData.threadHash = -1;
+    userData.contactHash = -1;
+    userData.title = "Will disappear after 20 seconds";
+    userData.SMSText = "This is quest notifications area";
+    userData.action = new GenericNotificationBaseAction();
+    userData.animation = n"notification_phone_MSG";
+    userData.soundEvent = n"PhoneSmsPopup";
+    userData.soundAction = n"OnOpen";
+    notificationData.time = 20.0;
+    notificationData.widgetLibraryItemName = controller.m_messageNotification;
+    notificationData.notificationData = userData;
+    controller.AddNewNotificationData(notificationData);
+  };
+}
 
 @addMethod(inkGameController)
 private func ShowItemsNotification() -> Void {
   if this.IsA(n"ItemsNotificationQueue") {
     let controller = this as ItemsNotificationQueue;
-    controller.PushItemNotification(ItemID.FromTDBID(t"Items.Pants_03_rich_01"), n"epic");
-    controller.PushItemNotification(ItemID.FromTDBID(t"Items.Pants_03_rich_02"), n"epic");
-    controller.PushItemNotification(ItemID.FromTDBID(t"Items.TShirt_02_rich_01"), n"epic");
-    controller.PushItemNotification(ItemID.FromTDBID(t"Items.TShirt_02_rich_02"), n"epic");
-  };
-}
-
-@addMethod(inkGameController)
-private func ShowJournalNotification(exp: Int32) -> Void {
-  if this.IsA(n"JournalNotificationQueue") {
-    let controller = this as JournalNotificationQueue;
-    let evt = new NCPDJobDoneEvent();
-    evt.levelXPAwarded = exp;
-    evt.streetCredXPAwarded = exp;
-    controller.OnNCPDJobDoneEvent(evt);
-    controller.OnNewLocationDiscovered(true);
+    let data: ref<ItemAddedNotificationViewData>;
+    let notificationData: gameuiGenericNotificationData;
+    data = new ItemAddedNotificationViewData();
+    data.animation = n"Item_Received";
+    data.itemRarity = n"epic";
+    data.itemID = ItemID.FromTDBID(t"Items.Pants_03_rich_01");
+    data.title = GetLocalizedText("Story-base-gameplay-gui-widgets-notifications-quest_update-_localizationString19");
+    notificationData.time = 20.0;
+    notificationData.widgetLibraryItemName = controller.m_itemNotification;
+    notificationData.notificationData = data;
+    controller.AddNewNotificationData(notificationData);
   };
 }
 

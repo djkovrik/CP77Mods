@@ -69,7 +69,17 @@
          "X":1.0
       }
    },
-   "NewNotifications":{
+   "NewQuestNotifications":{
+      "translation":{
+         "Y":0.0,
+         "X":0.0
+      },
+      "scale":{
+         "Y":1.0,
+         "X":1.0
+      }
+   },
+   "NewItemNotifications":{
       "translation":{
          "Y":0.0,
          "X":0.0
