@@ -11,6 +11,7 @@
 @addField(inkGameController) let phoneControlSlot: ref<HUDitorCustomSlot>;
 @addField(inkGameController) let questNotificationsSlot: ref<HUDitorCustomSlot>;
 @addField(inkGameController) let itemNotificationsSlot: ref<HUDitorCustomSlot>;
+@addField(inkGameController) let carHudSlot: ref<HUDitorCustomSlot>;
 
 @addMethod(inkGameController)
 protected cb func OnGameSessionInitialized(event: ref<GameSessionInitializedEvent>) -> Bool {
@@ -28,6 +29,7 @@ protected cb func OnGameSessionInitialized(event: ref<GameSessionInitializedEven
     this.phoneControlSlot.OnGameSessionInitialized(event);
     this.questNotificationsSlot.OnGameSessionInitialized(event);
     this.itemNotificationsSlot.OnGameSessionInitialized(event);
+    this.carHudSlot.OnGameSessionInitialized(event);
   };
 }
 
@@ -47,6 +49,7 @@ protected cb func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidget>) 
     this.phoneControlSlot.OnEnableHUDEditorWidget(event);
     this.questNotificationsSlot.OnEnableHUDEditorWidget(event);
     this.itemNotificationsSlot.OnEnableHUDEditorWidget(event);
+    this.carHudSlot.OnEnableHUDEditorWidget(event);
   };
 }
 
@@ -66,6 +69,7 @@ protected cb func OnDisableHUDEditorWidgets(event: ref<DisableHUDEditor>) -> Boo
     this.phoneControlSlot.OnDisableHUDEditorWidgets(event);
     this.questNotificationsSlot.OnDisableHUDEditorWidgets(event);
     this.itemNotificationsSlot.OnDisableHUDEditorWidgets(event);
+    this.carHudSlot.OnDisableHUDEditorWidgets(event);
   };
 }
 
@@ -85,6 +89,7 @@ protected cb func OnResetHUDWidgets(event: ref<ResetAllHUDWidgets>) {
     this.phoneControlSlot.OnResetHUDWidgets(event);
     this.questNotificationsSlot.OnResetHUDWidgets(event);
     this.itemNotificationsSlot.OnResetHUDWidgets(event);
+    this.carHudSlot.OnResetHUDWidgets(event);
   };
 }
 
@@ -104,6 +109,7 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
     this.phoneControlSlot.OnAction(action, consumer);
     this.questNotificationsSlot.OnAction(action, consumer);
     this.itemNotificationsSlot.OnAction(action, consumer);
+    this.carHudSlot.OnAction(action, consumer);
   };
 }
 
@@ -129,6 +135,7 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
     let phoneControl: ref<inkWidget> = this.SearchForWidget(root, n"HUDMiddleWidget", n"PhoneCall") as inkWidget;
     let questNotifications: ref<inkWidget> = leftCenterSlot.GetWidgetByIndex(1) as inkWidget;
     let itemNotifications: ref<inkWidget> = leftCenterSlot.GetWidgetByIndex(0) as inkWidget;
+    let carHud: ref<inkWidget> = root.GetWidgetByPath(inkWidgetPath.Build(n"car hud")) as inkWidget;
 
     this.minimapSlot = new HUDitorCustomSlot();
     this.minimapSlot.SetName(n"NewMinimap");
@@ -443,6 +450,30 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
 
     phoneControl.Reparent(this.phoneControlSlot);
     this.phoneControlSlot.Reparent(root);
+
+    this.carHudSlot = new HUDitorCustomSlot();
+    this.carHudSlot.SetName(n"NewCarHud");
+    this.carHudSlot.SetFitToContent(true);
+    this.carHudSlot.SetInteractive(false);
+    this.carHudSlot.SetAffectsLayoutWhenHidden(false);
+    this.carHudSlot.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+    this.carHudSlot.SetHAlign(inkEHorizontalAlign.Center);
+    this.carHudSlot.SetVAlign(inkEVerticalAlign.Bottom);
+    this.carHudSlot.SetAnchor(inkEAnchor.BottomCenter);
+    this.carHudSlot.SetAnchorPoint(new Vector2(0.5, 0.5));
+    this.carHudSlot.SetLayout(
+      new inkWidgetLayout(
+        new inkMargin(0.0, 0.0, 0.0, 0.0),
+        new inkMargin(0.0, 0.0, 0.0, 0.0),
+        inkEHorizontalAlign.Center,
+        inkEVerticalAlign.Bottom,
+        inkEAnchor.BottomCenter,
+        new Vector2(0.5, 0.5)
+      )
+    );
+
+    carHud.Reparent(this.carHudSlot);
+    this.carHudSlot.Reparent(root);
   };
 }
 

@@ -186,3 +186,28 @@ private func ShowIncomingCallController(name: CName, show: Bool) -> Void {
     };
   };
 }
+
+@addMethod(hudCarController)
+private func ShowCarHUD(show: Bool) -> Void {
+  let player: ref<GameObject> = this.GetPlayerControlledObject();
+  let uiSystem: ref<UISystem> = GameInstance.GetUISystem(player.GetGame());
+  if show {
+    uiSystem.PushGameContext(UIGameContext.VehicleMounted);
+    this.GetRootWidget().SetVisible(true);
+    this.RegisterToVehicle(true);
+    this.OnSpeedValueChanged(145.0);
+    this.OnRpmValueChanged(2500.0);
+    inkTextRef.SetText(this.m_SpeedValue, ToString(145));
+  } else {
+    this.GetRootWidget().SetVisible(false);
+    uiSystem.ResetGameContext();
+  };
+}
+
+@addMethod(hudCarController)
+protected cb func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidget>) -> Bool {
+  let widgetName: CName = n"NewCarHud";
+  let hudEditorWidgetName: CName = event.activeWidget;
+  let isEnabled: Bool = Equals(widgetName, hudEditorWidgetName);
+  this.ShowCarHUD(isEnabled);
+}

@@ -85,8 +85,8 @@
          "X":0.0
       },
       "scale":{
-         "Y":1.0,
-         "X":1.0
+         "Y":0.666667,
+         "X":0.666667
       }
    },
    "NewMinimap":{
@@ -120,6 +120,16 @@
       }
    },
    "NewVehicleSummon":{
+      "translation":{
+         "Y":0.0,
+         "X":0.0
+      },
+      "scale":{
+         "Y":1.0,
+         "X":1.0
+      }
+   },
+   "NewCarHud":{
       "translation":{
          "Y":0.0,
          "X":0.0

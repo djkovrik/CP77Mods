@@ -59,7 +59,8 @@ public class HUDitorCustomSlot extends inkVerticalPanel {
         n"NewItemNotifications", 
         n"NewWeaponCrouch", 
         n"NewDpad",
-        n"NewHealthBar"
+        n"NewHealthBar",
+        n"NewCarHud"
       ];
       return ArrayContains(hudWidgets, widgetName);
     } else {

@@ -68,12 +68,14 @@ public class HUDWidgetsManager {
       case n"NewStaminaBar": return n"NewPhoneAvatar";
       case n"NewPhoneAvatar": return n"NewPhoneControl";
       case n"NewPhoneControl": return n"NewInputHint";
+      case n"NewInputHint": return n"NewCarHud";
       default: return n"NewMinimap"; 
     };
   }
 
   public static func GetPreviousWidget(widgetName: CName) -> CName {
     switch widgetName {
+      case n"NewCarHud": return n"NewInputHint";
       case n"NewInputHint": return n"NewPhoneControl";
       case n"NewPhoneControl": return n"NewPhoneAvatar";
       case n"NewPhoneAvatar": return n"NewStaminaBar";
@@ -86,7 +88,7 @@ public class HUDWidgetsManager {
       case n"NewQuestNotifications": return n"NewWanted";
       case n"NewWanted": return n"NewTracker";
       case n"NewTracker": return n"NewMinimap";
-      default: return n"NewInputHint"; 
+      default: return n"NewCarHud"; 
     };
   }
 
