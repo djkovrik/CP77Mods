@@ -13,6 +13,8 @@ protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
 @wrapMethod(StealthMappinController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
+  this.lhud_isOutOfCombatActive = true;
+  this.lhud_isVisibleNow = false;
   let manager: ref<HUDManager> = GameInstance.GetScriptableSystemsContainer(this.m_ownerObject.GetGame()).Get(n"HUDManager") as HUDManager;
   manager.blabockardsListenerLHUD.LaunchInitialStateEvents();
 }
@@ -31,8 +33,11 @@ public func DetermineCurrentVisibility() -> Void {
 
     let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;
     this.lhud_isVisibleNow = isVisible;
-    this.OnUpdate();
-};
+  } else {
+    this.lhud_isVisibleNow = true;
+  };
+
+  this.OnUpdate();
 }
 
 @wrapMethod(StealthMappinController)
@@ -64,15 +69,26 @@ public func DetermineCurrentVisibility() -> Void {
     let showForZoom: Bool = this.lhud_isZoomActive && WorldMarkersModuleConfigCombat.ShowWithZoom();
     let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;
     this.lhud_isVisibleNow = isVisible;
-    this.SetVisible(this.lhud_isVisibleNow);
+  } else {
+    this.lhud_isVisibleNow = true;
   };
+
+  this.UpdateHealthbarVisibility();
 }
 
-@addMethod(NameplateVisualsLogicController)
-private func SetVisible(visible: Bool) -> Void {
-  if (visible) {
-    inkWidgetRef.SetOpacity(this.m_healthbarWidget, 1.0);
-  } else {
-    inkWidgetRef.SetOpacity(this.m_healthbarWidget, 0.0);
+@wrapMethod(NameplateVisualsLogicController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+  // set for initial loading
+  this.lhud_isOutOfCombatActive = true;
+  this.lhud_isVisibleNow = false;
+}
+
+@replaceMethod(NameplateVisualsLogicController)
+private final func UpdateHealthbarVisibility() -> Void {
+  let hpVisible: Bool = this.lhud_isVisibleNow && this.m_npcIsAggressive && !this.m_isBoss && (this.m_healthNotFull || this.m_playerAimingDownSights || this.m_playerInCombat || this.m_playerInStealth);
+  if NotEquals(this.m_healthbarVisible, hpVisible) {
+    this.m_healthbarVisible = hpVisible;
+    inkWidgetRef.SetVisible(this.m_healthbarWidget, this.m_healthbarVisible);
   };
 }

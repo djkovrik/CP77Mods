@@ -23,6 +23,7 @@ private func UpdateVisibility() -> Void {
   // -- LHUD Conditions
   // ---- Quests
   if WorldMarkersModuleConfigQuest.IsEnabled() && MappinChecker.IsQuestIcon(this.m_mappin) {
+    LHUDLog(s" --- \(this.m_mappin.GetVariant()) detected as Quest marker");
     let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && WorldMarkersModuleConfigQuest.BindToGlobalHotkey();
     let showForCombat: Bool = this.lhud_isCombatActive && WorldMarkersModuleConfigQuest.ShowInCombat();
     let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && WorldMarkersModuleConfigQuest.ShowOutOfCombat();
@@ -38,6 +39,7 @@ private func UpdateVisibility() -> Void {
   };
   // ---- Loot
   if WorldMarkersModuleConfigLoot.IsEnabled() && MappinChecker.IsLootMarker(this.m_mappin) {
+    LHUDLog(s" --- \(this.m_mappin.GetVariant()) detected as Loot marker");
     let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && WorldMarkersModuleConfigLoot.BindToGlobalHotkey();
     let showForCombat: Bool = this.lhud_isCombatActive && WorldMarkersModuleConfigLoot.ShowInCombat();
     let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && WorldMarkersModuleConfigLoot.ShowOutOfCombat();
@@ -53,6 +55,7 @@ private func UpdateVisibility() -> Void {
   };
   // ---- Vehicles
   if WorldMarkersModuleConfigVehicles.IsEnabled() && MappinChecker.IsVehicleIcon(this.m_mappin) {
+    LHUDLog(s" --- \(this.m_mappin.GetVariant()) detected as Vehicle marker");
     let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && WorldMarkersModuleConfigVehicles.BindToGlobalHotkey();
     let showForVehicle: Bool =  this.lhud_isInVehicle && WorldMarkersModuleConfigVehicles.ShowInVehicle();
     let showForScanner: Bool =  this.lhud_isScannerActive && WorldMarkersModuleConfigVehicles.ShowWithScanner();
@@ -64,6 +67,7 @@ private func UpdateVisibility() -> Void {
   };
   // ---- POIs
   if WorldMarkersModuleConfigPOI.IsEnabled() && MappinChecker.IsPlaceOfInterestIcon(this.m_mappin) {
+    LHUDLog(s" --- \(this.m_mappin.GetVariant()) detected as POI marker");
     let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && WorldMarkersModuleConfigPOI.BindToGlobalHotkey();
     let showForCombat: Bool = this.lhud_isCombatActive && WorldMarkersModuleConfigPOI.ShowInCombat();
     let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && WorldMarkersModuleConfigPOI.ShowOutOfCombat();
@@ -80,6 +84,7 @@ private func UpdateVisibility() -> Void {
   };
   // ---- Combat
   if WorldMarkersModuleConfigCombat.IsEnabled() && MappinChecker.IsCombatMarker(this.m_mappin) {
+    LHUDLog(s" --- \(this.m_mappin.GetVariant()) detected as Combat marker");
     let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && WorldMarkersModuleConfigCombat.BindToGlobalHotkey();
     let showForCombat: Bool = this.lhud_isCombatActive && WorldMarkersModuleConfigCombat.ShowInCombat();
     let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && WorldMarkersModuleConfigCombat.ShowOutOfCombat();
@@ -95,6 +100,7 @@ private func UpdateVisibility() -> Void {
   };
   // ---- Devices and interactions
   if WorldMarkersModuleConfigDevices.IsEnabled() && MappinChecker.IsDeviceInteraction(this.m_mappin) {
+    LHUDLog(s" --- \(this.m_mappin.GetVariant()) detected as Device marker");
     let showForScanner: Bool =  this.lhud_isScannerActive && WorldMarkersModuleConfigDevices.ShowWithScanner();
     let isVisible: Bool = showForScanner && shouldBeVisible;
     this.lhud_isVisibleNow = isVisible;
@@ -105,16 +111,15 @@ private func UpdateVisibility() -> Void {
   this.lhud_isVisibleNow = shouldBeVisible;
   this.SetRootVisible(shouldBeVisible);
   let data: ref<GameplayRoleMappinData> = this.m_mappin.GetScriptData() as GameplayRoleMappinData;
-  LHUDLog("Missed mappin: " + ToString(this.m_mappin.GetVariant()) + ", role: " + ToString(data.m_gameplayRole)  + ", visibility: " + ToString(this.lhud_isVisibleNow));
+  LHUDLog(s"MISSED MAPPIN: \(this.m_mappin.GetVariant()), role: \(data.m_gameplayRole), visibility \(this.lhud_isVisibleNow)");
 }
 
 @wrapMethod(QuestMappinController)
 protected cb func OnInitialize() -> Bool {
-  // set to true for initial loading
-  this.lhud_isOutOfCombatActive = true;
   wrappedMethod();
+  // set for initial loading
+  this.lhud_isOutOfCombatActive = true;
   this.lhud_isVisibleNow = false;
-  this.SetRootVisible(false);
   this.UpdateVisibility();
 }
 
