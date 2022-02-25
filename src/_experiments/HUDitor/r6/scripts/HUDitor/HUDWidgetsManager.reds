@@ -14,6 +14,7 @@ module HUDrag.HUDWidgetsManager
 // - NewPhoneAvatar - Phone call avatar
 // - NewPhoneControl - Phone call input control
 // - NewInputHint - Input hints
+// - NewCarHud - Speedometer
 
 @addField(PlayerPuppet)
 public let hudWidgetsManager: ref<HUDWidgetsManager>;

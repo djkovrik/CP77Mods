@@ -86,8 +86,8 @@ private func ShowJournalNotification() -> Void {
     userData.entryHash = -1;
     userData.threadHash = -1;
     userData.contactHash = -1;
-    userData.title = "Will disappear after 20 seconds";
-    userData.SMSText = "This is quest notifications area";
+    userData.title = "Preview notifications";
+    userData.SMSText = "Will disappear after 20 seconds";
     userData.action = new GenericNotificationBaseAction();
     userData.animation = n"notification_phone_MSG";
     userData.soundEvent = n"PhoneSmsPopup";
