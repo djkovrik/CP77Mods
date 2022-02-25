@@ -73,12 +73,16 @@ protected cb func OnWeaponDataChanged(value: Variant) -> Bool {
     this.m_ActiveWeapon = currentData;
     weaponItemType = InventoryItemData.GetItemType(this.m_weaponItemData);
     this.SetRosterSlotData(Equals(weaponItemType, gamedataItemType.Wea_Melee) || Equals(weaponItemType, gamedataItemType.Wea_Fists) || Equals(weaponItemType, gamedataItemType.Wea_Hammer) || Equals(weaponItemType, gamedataItemType.Wea_Katana) || Equals(weaponItemType, gamedataItemType.Wea_Knife) || Equals(weaponItemType, gamedataItemType.Wea_OneHandedClub) || Equals(weaponItemType, gamedataItemType.Wea_ShortBlade) || Equals(weaponItemType, gamedataItemType.Wea_TwoHandedClub) || Equals(weaponItemType, gamedataItemType.Wea_LongBlade));
-    // this.PlayUnfold();
+    if !WeaponRosterModuleConfig.IsEnabled() {
+      this.PlayUnfold();
+    };
     if NotEquals(RPGManager.GetWeaponEvolution(InventoryItemData.GetID(this.m_weaponItemData)), gamedataWeaponEvolution.Smart) {
       inkWidgetRef.SetVisible(this.m_smartLinkFirmwareOffline, false);
       inkWidgetRef.SetVisible(this.m_smartLinkFirmwareOnline, false);
     };
   } else {
-    // this.PlayFold();
+    if !WeaponRosterModuleConfig.IsEnabled() {
+      this.PlayFold();
+    };
   };
 }
