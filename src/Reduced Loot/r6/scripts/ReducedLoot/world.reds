@@ -43,13 +43,15 @@ protected final func OnItemEntitySpawned(entID: EntityID) -> Void {
   let wasKept: Bool = false;
   let wasRemoved: Bool = false;
   let hash: String = this.GetSimpleHash_RL();
+  let tweakDbId: TweakDBID;
 
   playerPuppet = GameInstance.GetPlayerSystem(this.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
   if IsDefined(playerPuppet) {
+    tweakDbId = ItemID.GetTDBID(data.GetID());
     journalManager = GameInstance.GetJournalManager(playerPuppet.GetGame());
     trackedObjective = journalManager.GetTrackedEntry() as JournalQuestObjective;
     preventDestroying = Equals(ItemID.GetTDBID(this.GetItemObject().GetItemID()), playerPuppet.GetStoredId_RL());
-    shouldKeepForId = RL_Exclusions.KeepForItemId(ItemID.GetTDBID(data.GetID()));
+    shouldKeepForId = RL_Exclusions.KeepForItemId(tweakDbId) || RL_Exclusions.KeepForQ(tweakDbId) || RL_Exclusions.KeepForSQ(tweakDbId) || RL_Exclusions.KeepForMQ(tweakDbId);
     shouldKeepForQuest = RL_Exclusions.KeepForQuestTarget(trackedObjective.GetId());
     isHeldWeapon = RL_Utils.IsWeapon(data) && data.GetShouldKeep_RL();
     wasKept = playerPuppet.WasKept_RL(hash);

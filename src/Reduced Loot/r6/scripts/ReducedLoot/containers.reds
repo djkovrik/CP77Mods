@@ -12,6 +12,7 @@ private func EvaluateLoot() -> Void {
   let shouldKeepForId: Bool = false;
   let shouldKeepForQuest: Bool = false;
   let i: Int32 = 0;
+  let tweakDbId: TweakDBID;
   journalManager = GameInstance.GetJournalManager(this.GetGame());
   trackedObjective = journalManager.GetTrackedEntry() as JournalQuestObjective;
 
@@ -19,12 +20,13 @@ private func EvaluateLoot() -> Void {
     while i < ArraySize(items) {
       RLog("> Container check:");
       item = items[i];
-      shouldKeepForId = RL_Exclusions.KeepForItemId(ItemID.GetTDBID(item.GetID()));
+      tweakDbId = ItemID.GetTDBID(item.GetID());
+      shouldKeepForId = RL_Exclusions.KeepForItemId(tweakDbId) || RL_Exclusions.KeepForQ(tweakDbId) || RL_Exclusions.KeepForSQ(tweakDbId) || RL_Exclusions.KeepForMQ(tweakDbId);
       shouldKeepForQuest = RL_Exclusions.KeepForQuestTarget(trackedObjective.GetId());
       RLog("? Item TDBID: " + TDBID.ToStringDEBUG(ItemID.GetTDBID(item.GetID())));
       RLog("? Current quest objective: " + trackedObjective.GetId());
       RLog("? keep for id: " + BoolToString(shouldKeepForId) + ", keep for quest: " + BoolToString(shouldKeepForQuest));
-      if RL_Checker.CanLootThis(item, RL_LootSource.Container) || this.IsQuest()  || shouldKeepForId || shouldKeepForQuest {
+      if RL_Checker.CanLootThis(item, RL_LootSource.Container) || this.IsQuest() || item.HasTag(n"Quest") || shouldKeepForId || shouldKeepForQuest {
         RLog("+ kept for container " + ToStr(item));
       } else {
         RLog("- removed for container " + ToStr(item));
