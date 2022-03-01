@@ -144,15 +144,25 @@ protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
 }
 
 // Swap top right slot child order for braindance mode
+@if(ModuleExists("HUDrag.HUDWidgetsManager"))
+func SwapChildrenLHUD(evt: ref<LHUDEvent>, slot: ref<inkCompoundWidget>) -> Void {
+    // do nothing
+}
+
+@if(!ModuleExists("HUDrag.HUDWidgetsManager"))
+func SwapChildrenLHUD(evt: ref<LHUDEvent>, root: ref<inkCompoundWidget>) -> Void {
+  let slot: ref<inkCompoundWidget> = root.GetWidgetByPath(inkWidgetPath.Build(n"TopRightMain", n"TopRight")) as inkCompoundWidget;
+  if evt.isActive {
+    slot.SetChildOrder(inkEChildOrder.Backward);
+  } else {
+    slot.SetChildOrder(inkEChildOrder.Forward);
+  };
+}
+
 @addMethod(inkGameController)
 protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
   if this.IsA(n"gameuiRootHudGameController") && Equals(evt.type, LHUDEventType.Braindance) {
-    let slot: ref<inkCompoundWidget> = this.GetRootCompoundWidget().GetWidgetByPath(inkWidgetPath.Build(n"TopRightMain", n"TopRight")) as inkCompoundWidget;
-    if evt.isActive {
-      slot.SetChildOrder(inkEChildOrder.Backward);
-    } else {
-      slot.SetChildOrder(inkEChildOrder.Forward);
-    };
+    SwapChildrenLHUD(evt, this.GetRootCompoundWidget());
   };
 }
 
