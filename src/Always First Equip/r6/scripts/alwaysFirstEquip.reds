@@ -13,8 +13,7 @@ class FirstEquipConfig {
 
 
   // -- Hotkey config
-  // Replace true with false if you want to unbind firstEquip animation trigger from a custom hotkey
-  public static func BindToHotkey() -> Bool = true
+
   // Replace true with false if you want to disable slot tracking behavior
   // If enabled then mod tracks slots usage and hotkey press equips weapon from the last used slot,
   // if disabled then hotkey press always equips weapon from slot defined by DefaultSlotNumber
@@ -59,9 +58,6 @@ public let HotkeyHoldEQ: BlackboardID_Bool;
 @addField(UI_SystemDef)
 public let LastUsedSlotEQ: BlackboardID_Int;
 
-@addField(HotkeyItemController)
-public let playerPuppetEQ: ref<PlayerPuppet>;
-
 
 // --- CUSTOM HOTKEY
 
@@ -83,14 +79,14 @@ public class FirstEquipGlobalInputListener {
         return false;
       };
 
-      if IsDefined(this.m_player) && Equals(ListenerAction.GetName(action), n"FirstTimeEquip") {
+      if Equals(ListenerAction.GetName(action), n"FirstTimeEquip") {
         let pressed: Bool = Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED);
         let released: Bool = Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED);
         let hold: Bool = Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_HOLD_COMPLETE);
 
         // EQ(s"pressed = \(pressed), released = \(released), hold = \(hold)");
 
-        if this.m_player.HasRangedWeaponEquippedEQ() {
+        if this.m_player.HasAnyWeaponEquippedEQ() {
           // If weapon equipped set flags
           GameInstance.GetBlackboardSystem(this.m_player.GetGame()).Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.HotkeyPressedEQ, pressed, false);
           GameInstance.GetBlackboardSystem(this.m_player.GetGame()).Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.HotkeyReleasedEQ, released, false);
@@ -146,6 +142,13 @@ public func ShouldRunFirstEquipEQ(weapon: wref<WeaponObject>) -> Bool {
 
   let isSprinting: Bool = Equals(PlayerPuppet.GetCurrentLocomotionState(this), gamePSMLocomotionStates.Sprint);
   if !FirstEquipConfig.PlayWhileSprinting() && isSprinting { return false; }
+
+  let uiSystemBB: ref<IBlackboard> = GameInstance.GetBlackboardSystem(this.GetGame()).Get(GetAllBlackboardDefs().UI_System);
+  let isHotkeyPressed: Bool = uiSystemBB.GetBool(GetAllBlackboardDefs().UI_System.FirstEquipRequestedEQ);
+  if isHotkeyPressed { 
+    uiSystemBB.SetBool(GetAllBlackboardDefs().UI_System.FirstEquipRequestedEQ, false, false);
+    return true; 
+  }
 
   let probability: Int32 = FirstEquipConfig.PercentageProbability();
   let random: Int32 = RandRange(0, 100);
@@ -318,28 +321,22 @@ public final const func HasPlayedFirstEquip(weaponID: TweakDBID) -> Bool {
   let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.GetGameInstance());
   let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(this.GetGameInstance()).GetLocalPlayerMainGameObject() as PlayerPuppet;
   let weapon: wref<WeaponObject> = transactionSystem.GetItemInSlot(player, t"AttachmentSlots.WeaponRight") as WeaponObject;
-  let isHotkeyPressed: Bool = GameInstance.GetBlackboardSystem(this.GetGameInstance()).Get(GetAllBlackboardDefs().UI_System).GetBool(GetAllBlackboardDefs().UI_System.FirstEquipRequestedEQ);
   let i: Int32 = 0;
 
-  // Return false if hotkey pressed
-  if isHotkeyPressed && FirstEquipConfig.BindToHotkey() {
-    GameInstance.GetBlackboardSystem(this.GetGameInstance()).Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.FirstEquipRequestedEQ, false, false);
+  if !IsDefined(player) || !IsDefined(weapon) {
     return false;
   };
 
-  // Return true if firstEquip blocked
-  if !player.ShouldRunFirstEquipEQ(weapon) {
-    return true;
-  };
+  return !player.ShouldRunFirstEquipEQ(weapon);
 
   // Default logic
-  while i < ArraySize(this.m_equipDataArray) {
-    if this.m_equipDataArray[i].weaponID == weaponID {
-      return this.m_equipDataArray[i].hasPlayedFirstEquip;
-    };
-    i += 1;
-  };
-  return false;
+  // while i < ArraySize(this.m_equipDataArray) {
+  //   if this.m_equipDataArray[i].weaponID == weaponID {
+  //     return this.m_equipDataArray[i].hasPlayedFirstEquip;
+  //   };
+  //   i += 1;
+  // };
+  // return false;
 }
 
 
@@ -359,6 +356,7 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
   let firstEqSystem: ref<FirstEquipSystem> = FirstEquipSystem.GetInstance(scriptInterface.owner);
   let itemObject: wref<WeaponObject> = transactionSystem.GetItemInSlot(scriptInterface.executionOwner, TDBID.Create(mappedInstanceData.attachmentSlot)) as WeaponObject;
   let isInCombat: Bool = scriptInterface.localBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat) == EnumInt(gamePSMCombat.InCombat);
+  let playerPuppet: ref<PlayerPuppet>;
   if TweakDBInterface.GetBool(t"player.weapon.enableWeaponBlur", false) {
     this.GetBlurParametersFromWeapon(scriptInterface);
   };
@@ -369,7 +367,7 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
     stateContext.SetConditionBoolParameter(n"firstEquip", true, true);
   } else {
     // Probability check and run
-    let playerPuppet: ref<PlayerPuppet> = scriptInterface.owner as PlayerPuppet;
+    playerPuppet = scriptInterface.owner as PlayerPuppet;
     if IsDefined(playerPuppet) && (!isInCombat || FirstEquipConfig.PlayInCombatMode()) {
       if Equals(playerPuppet.ShouldSkipFirstEquipEQ(), true) {
         playerPuppet.SetSkipFirstEquipEQ(false);
@@ -490,6 +488,9 @@ private let isHeldActiveEQ: Bool;
 @addField(ReadyEvents)
 private let readyStateRequestedEQ: Bool;
 
+@addField(ReadyEvents)
+private let safeStateRequestedEQ: Bool;
+
 @wrapMethod(ReadyEvents)
 protected final func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
   wrappedMethod(stateContext, scriptInterface);
@@ -500,6 +501,7 @@ protected final func OnEnter(stateContext: ref<StateContext>, scriptInterface: r
   this.weaponObjectIDEQ = TweakDBInterface.GetWeaponItemRecord(ItemID.GetTDBID(DefaultTransition.GetActiveWeapon(scriptInterface).GetItemID())).GetID();
   this.isHeldActiveEQ = false;
   this.readyStateRequestedEQ = false;
+  this.safeStateRequestedEQ = false;
   // Register custom hotkey listener
   scriptInterface.executionOwner.RegisterInputListener(this, n"FirstTimeEquip");
 }
@@ -617,6 +619,7 @@ protected final func OnTick(timeDelta: Float, stateContext: ref<StateContext>, s
         // Reset flag and run IdleBreak
         this.savedIdleTimestampEQ = currentTime;
         if player.ShouldRunIdleBreakEQ() {
+          scriptInterface.SetAnimationParameterFloat(n"safe", 0.0);
           scriptInterface.PushAnimationEvent(n"IdleBreak");
         };
       };
