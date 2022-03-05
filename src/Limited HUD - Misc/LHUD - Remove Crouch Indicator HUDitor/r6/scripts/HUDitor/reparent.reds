@@ -161,7 +161,7 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
     );
 
     minimap.Reparent(this.minimapSlot);
-    this.minimapSlot.Reparent(topRightSlot);
+    this.minimapSlot.Reparent(root);
 
     this.questTrackerSlot = new HUDitorCustomSlot();
     this.questTrackerSlot.SetName(n"NewTracker");
@@ -185,7 +185,7 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
     );
 
     questList.Reparent(this.questTrackerSlot);
-    this.questTrackerSlot.Reparent(topRightSlot);
+    this.questTrackerSlot.Reparent(root);
 
     this.staminaBarSlot = new HUDitorCustomSlot();
     this.staminaBarSlot.SetName(n"NewStaminaBar");
