@@ -241,6 +241,13 @@ protected cb func OnLHUDInitLaunchEvent(evt: ref<LHUDInitLaunchEvent>) -> Bool {
   manager.blabockardsListenerLHUD.LaunchInitialStateEvents();
 }
 
+@wrapMethod(PauseMenuGameController)
+protected cb func OnUninitialize() -> Bool {
+  let manager: ref<HUDManager> = GameInstance.GetScriptableSystemsContainer(this.GetPlayerControlledObject().GetGame()).Get(n"HUDManager") as HUDManager;
+  manager.blabockardsListenerLHUD.LaunchInitialStateEvents();
+  wrappedMethod();
+}
+
 // -- SEND EVENTS FOR NEW BLACKBOARD VARIABLE
 
 @wrapMethod(EquipmentSystemPlayerData)

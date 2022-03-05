@@ -13,10 +13,8 @@ protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
 @wrapMethod(StealthMappinController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
-  this.lhud_isOutOfCombatActive = true;
-  this.lhud_isVisibleNow = false;
-  let manager: ref<HUDManager> = GameInstance.GetScriptableSystemsContainer(this.m_ownerObject.GetGame()).Get(n"HUDManager") as HUDManager;
-  manager.blabockardsListenerLHUD.LaunchInitialStateEvents();
+  this.FetchInitialStateFlags();
+  this.DetermineCurrentVisibility();
 }
 
 @addMethod(StealthMappinController)
@@ -79,9 +77,8 @@ public func DetermineCurrentVisibility() -> Void {
 @wrapMethod(NameplateVisualsLogicController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
-  // set for initial loading
-  this.lhud_isOutOfCombatActive = true;
-  this.lhud_isVisibleNow = false;
+  this.FetchInitialStateFlags();
+  this.DetermineCurrentVisibility();
 }
 
 @replaceMethod(NameplateVisualsLogicController)

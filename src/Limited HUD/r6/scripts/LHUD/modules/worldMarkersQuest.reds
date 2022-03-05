@@ -23,7 +23,6 @@ private func UpdateVisibility() -> Void {
   // -- LHUD Conditions
   // ---- Quests
   if WorldMarkersModuleConfigQuest.IsEnabled() && MappinChecker.IsQuestIcon(this.m_mappin) {
-    LHUDLog(s" --- \(this.m_mappin.GetVariant()) detected as Quest marker");
     let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && WorldMarkersModuleConfigQuest.BindToGlobalHotkey();
     let showForCombat: Bool = this.lhud_isCombatActive && WorldMarkersModuleConfigQuest.ShowInCombat();
     let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && WorldMarkersModuleConfigQuest.ShowOutOfCombat();
@@ -35,6 +34,7 @@ private func UpdateVisibility() -> Void {
     let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;
     this.lhud_isVisibleNow = shouldBeVisible && isVisible;
     this.SetRootVisible(this.lhud_isVisibleNow);
+    LHUDLog(s" --- \(this.m_mappin.GetVariant()) detected as Quest marker, visibility: \(this.lhud_isVisibleNow)");
     return ;
   };
   // ---- Loot
@@ -55,7 +55,6 @@ private func UpdateVisibility() -> Void {
   };
   // ---- Vehicles
   if WorldMarkersModuleConfigVehicles.IsEnabled() && MappinChecker.IsVehicleIcon(this.m_mappin) {
-    LHUDLog(s" --- \(this.m_mappin.GetVariant()) detected as Vehicle marker");
     let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && WorldMarkersModuleConfigVehicles.BindToGlobalHotkey();
     let showForVehicle: Bool =  this.lhud_isInVehicle && WorldMarkersModuleConfigVehicles.ShowInVehicle();
     let showForScanner: Bool =  this.lhud_isScannerActive && WorldMarkersModuleConfigVehicles.ShowWithScanner();
@@ -63,11 +62,11 @@ private func UpdateVisibility() -> Void {
     let isVisible: Bool = showForGlobalHotkey || showForVehicle || showForScanner || showForZoom;
     this.lhud_isVisibleNow = shouldBeVisible && isVisible;
     this.SetRootVisible(this.lhud_isVisibleNow);
+    LHUDLog(s" --- \(this.m_mappin.GetVariant()) detected as Vehicle marker, visibility: \(this.lhud_isVisibleNow)");
     return ;
   };
   // ---- POIs
   if WorldMarkersModuleConfigPOI.IsEnabled() && MappinChecker.IsPlaceOfInterestIcon(this.m_mappin) {
-    LHUDLog(s" --- \(this.m_mappin.GetVariant()) detected as POI marker");
     let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && WorldMarkersModuleConfigPOI.BindToGlobalHotkey();
     let showForCombat: Bool = this.lhud_isCombatActive && WorldMarkersModuleConfigPOI.ShowInCombat();
     let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && WorldMarkersModuleConfigPOI.ShowOutOfCombat();
@@ -80,11 +79,11 @@ private func UpdateVisibility() -> Void {
     let isVisible: Bool = showIfTracked || showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;
     this.lhud_isVisibleNow = shouldBeVisible && isVisible;
     this.SetRootVisible(this.lhud_isVisibleNow);
+    LHUDLog(s" --- \(this.m_mappin.GetVariant()) detected as POI marker, visibility: \(this.lhud_isVisibleNow)");
     return ;
   };
   // ---- Combat
   if WorldMarkersModuleConfigCombat.IsEnabled() && MappinChecker.IsCombatMarker(this.m_mappin) {
-    LHUDLog(s" --- \(this.m_mappin.GetVariant()) detected as Combat marker");
     let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && WorldMarkersModuleConfigCombat.BindToGlobalHotkey();
     let showForCombat: Bool = this.lhud_isCombatActive && WorldMarkersModuleConfigCombat.ShowInCombat();
     let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && WorldMarkersModuleConfigCombat.ShowOutOfCombat();
@@ -96,15 +95,16 @@ private func UpdateVisibility() -> Void {
     let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;
     this.lhud_isVisibleNow = shouldBeVisible && isVisible;
     this.SetRootVisible(this.lhud_isVisibleNow);
+    LHUDLog(s" --- \(this.m_mappin.GetVariant()) detected as Combat marker, visibility: \(this.lhud_isVisibleNow)");
     return ;
   };
   // ---- Devices and interactions
   if WorldMarkersModuleConfigDevices.IsEnabled() && MappinChecker.IsDeviceInteraction(this.m_mappin) {
-    LHUDLog(s" --- \(this.m_mappin.GetVariant()) detected as Device marker");
     let showForScanner: Bool =  this.lhud_isScannerActive && WorldMarkersModuleConfigDevices.ShowWithScanner();
     let isVisible: Bool = showForScanner && shouldBeVisible;
     this.lhud_isVisibleNow = isVisible;
     this.SetRootVisible(this.lhud_isVisibleNow);
+    LHUDLog(s" --- \(this.m_mappin.GetVariant()) detected as Device marker, visibility: \(this.lhud_isVisibleNow)");
     return ;
   };
 
@@ -117,9 +117,7 @@ private func UpdateVisibility() -> Void {
 @wrapMethod(QuestMappinController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
-  // set for initial loading
-  this.lhud_isOutOfCombatActive = true;
-  this.lhud_isVisibleNow = false;
+  this.FetchInitialStateFlags();
   this.UpdateVisibility();
 }
 

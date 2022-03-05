@@ -54,6 +54,18 @@ public class LHUDInitLaunchEvent extends Event {}
 @addField(inkLogicController) public let lhud_isZoomActive: Bool;
 @addField(inkLogicController) public let lhud_isVisibleNow: Bool;
 
+// Store actual flags in AllBlackboardDefinitions
+@addField(AllBlackboardDefinitions) public let lhud_isGlobalFlagToggled: Bool;
+@addField(AllBlackboardDefinitions) public let lhud_isBraindanceActive: Bool;
+@addField(AllBlackboardDefinitions) public let lhud_isCombatActive: Bool;
+@addField(AllBlackboardDefinitions) public let lhud_isOutOfCombatActive: Bool;
+@addField(AllBlackboardDefinitions) public let lhud_isStealthActive: Bool;
+@addField(AllBlackboardDefinitions) public let lhud_isScannerActive: Bool;
+@addField(AllBlackboardDefinitions) public let lhud_isInVehicle: Bool;
+@addField(AllBlackboardDefinitions) public let lhud_isWeaponUnsheathed: Bool;
+@addField(AllBlackboardDefinitions) public let lhud_isZoomActive: Bool;
+@addField(AllBlackboardDefinitions) public let lhud_isVisibleNow: Bool;
+
 // Catch LHUDEvent inside inkGameController instances
 @addMethod(inkGameController)
 protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
@@ -141,6 +153,65 @@ protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
     default:
       break;
   };
+  GetAllBlackboardDefs().ConsumeLHUDEvent(evt);
+}
+
+
+// Pass LHUDEvent to AllBlackboardDefinitions
+@addMethod(AllBlackboardDefinitions)
+protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
+  LHUDLog(s" <- \(this.GetClassName()) consume event: " + ToString(evt.type) + " " + ToString(evt.isActive));
+  switch(evt.type) {
+    case LHUDEventType.GlobalHotkey: 
+      this.lhud_isGlobalFlagToggled = evt.isActive;
+      break;
+    case LHUDEventType.Braindance: 
+      this.lhud_isBraindanceActive = evt.isActive;
+      break;
+    case LHUDEventType.Combat: 
+      this.lhud_isCombatActive = evt.isActive;
+      // this.lhud_isOutOfCombatActive = false;
+      // this.lhud_isStealthActive = false;
+      break;
+    case LHUDEventType.OutOfCombat: 
+      this.lhud_isOutOfCombatActive = evt.isActive;
+      // this.lhud_isCombatActive = false;
+      // this.lhud_isStealthActive = false;
+      break;
+    case LHUDEventType.Stealth: 
+      this.lhud_isStealthActive = evt.isActive;
+      // this.lhud_isCombatActive = false;
+      // this.lhud_isOutOfCombatActive = false;
+      break; 
+    case LHUDEventType.Scanner: 
+      this.lhud_isScannerActive = evt.isActive;
+      break;
+    case LHUDEventType.InVehicle: 
+      this.lhud_isInVehicle = evt.isActive;
+      break;
+    case LHUDEventType.Weapon: 
+      this.lhud_isWeaponUnsheathed = evt.isActive;
+      break;
+    case LHUDEventType.Zoom: 
+      this.lhud_isZoomActive = evt.isActive;
+      break;
+    default:
+      break;
+  };
+}
+
+@addMethod(inkLogicController)
+public func FetchInitialStateFlags() -> Void {
+  this.lhud_isGlobalFlagToggled = GetAllBlackboardDefs().lhud_isGlobalFlagToggled;
+  this.lhud_isBraindanceActive = GetAllBlackboardDefs().lhud_isBraindanceActive;
+  this.lhud_isCombatActive = GetAllBlackboardDefs().lhud_isCombatActive;
+  this.lhud_isOutOfCombatActive = GetAllBlackboardDefs().lhud_isOutOfCombatActive;
+  this.lhud_isStealthActive = GetAllBlackboardDefs().lhud_isStealthActive;
+  this.lhud_isScannerActive = GetAllBlackboardDefs().lhud_isScannerActive;
+  this.lhud_isInVehicle = GetAllBlackboardDefs().lhud_isInVehicle;
+  this.lhud_isWeaponUnsheathed = GetAllBlackboardDefs().lhud_isWeaponUnsheathed;
+  this.lhud_isZoomActive = GetAllBlackboardDefs().lhud_isZoomActive;
+  this.lhud_isVisibleNow = GetAllBlackboardDefs().lhud_isVisibleNow;
 }
 
 // Swap top right slot child order for braindance mode
@@ -199,5 +270,5 @@ public func HasAnyWeaponEquipped_LHUD() -> Bool {
 
 // Print string to CET console
 public static func LHUDLog(str: String) -> Void {
-  LogChannel(n"DEBUG", "LHUD: " + str);
+  // LogChannel(n"DEBUG", "LHUD: " + str);
 }
