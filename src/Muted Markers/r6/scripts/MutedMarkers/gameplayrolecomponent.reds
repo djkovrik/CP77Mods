@@ -55,18 +55,8 @@ public func ShouldShowOnMinimap(data: SDeviceMappinData, roleMappinData: ref<Gam
 }
 
 @addMethod(GameplayRoleComponent)
-public func IsOwnerLooted() -> Bool {
-  let owner: ref<GameObject> = this.GetOwner();
-  let puppet: ref<ScriptedPuppet> = owner as ScriptedPuppet;
-  let container: ref<gameLootContainerBase> = this.GetOwner() as gameLootContainerBase;
-  if IsDefined(puppet) {
-    return puppet.IsLooted();
-  };
-  if IsDefined(container) {
-    return Equals(container.GetLootQuality(), gamedataQuality.Invalid);
-  };
-
-  return false;
+protected cb func OnEvaluateVisibilitiesEvent(evt: ref<EvaluateVisibilitiesEvent>) -> Bool {
+  this.EvaluateVisibilities();
 }
 
 @addMethod(GameplayRoleComponent)
@@ -74,15 +64,22 @@ public func EvaluateVisibilities() -> Void {
   let isScannerActive: Bool = this.IsScannerActive_MM();
   let i: Int32 = 0;
   let visibility: MarkerVisibility;
-
-  // Stuck icon fix
-  if this.IsOwnerLooted() {
-    return ;
+  let owner: ref<GameObject> = this.GetOwner();
+  let puppet: ref<ScriptedPuppet> = owner as ScriptedPuppet;
+  let container: ref<gameLootContainerBase> = this.GetOwner() as gameLootContainerBase;
+  let alreadyLooted: Bool = false;
+  if IsDefined(puppet) && puppet.IsLooted() {
+    alreadyLooted = true;
   };
-
+  if IsDefined(container) && container.IsEmpty() {
+    alreadyLooted = true;
+  };
   while i < ArraySize(this.m_mappins) {
     if NotEquals(this.m_mappins[i].gameplayRole, IntEnum(0)) || NotEquals(this.m_mappins[i].gameplayRole, IntEnum(1)) {
       visibility = GetVisibilityTypeFor(this.m_mappins[i], this);
+      if alreadyLooted {
+        visibility = MarkerVisibility.Hidden;
+      };
       switch(visibility) {
         case MarkerVisibility.ThroughWalls:
           this.ActivateSingleMappin(i);
