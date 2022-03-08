@@ -4,6 +4,7 @@ local defaults = {
 	PlayInStealthMode = false,
 	PlayWhenMagazineIsEmpty = false,
 	PlayWhileSprinting = false,
+	ExcludeArmsCyberware = true,
 	TrackLastUsedSlot = true,
 	DefaultSlotNumber = 1,
 	AnimationProbability = 10,
@@ -17,6 +18,7 @@ local settings = {
 	PlayInStealthMode = false,
 	PlayWhenMagazineIsEmpty = false,
 	PlayWhileSprinting = false,
+	ExcludeArmsCyberware = true,
 	TrackLastUsedSlot = true,
 	DefaultSlotNumber = 1,
 	AnimationProbability = 10,
@@ -64,35 +66,33 @@ function SetupSettingsMenu()
 	nativeSettings.addSubcategory("/equip/common", "Common config")
 	
 	nativeSettings.addRangeInt("/equip/common", "Percentage probability", "Defines firstEquip animation probability in percents", 0, 100, 5, settings.PercentageProbability, defaults.PercentageProbability, function(value)
-		-- print("Changed SLIDER INT to ", value)
 		settings.PercentageProbability = value
 	end)
 	
 	nativeSettings.addSwitch("/equip/common", "Play in combat mode", "Enable if you want see firstEquip animation while in combat mode", settings.PlayInCombatMode, defaults.PlayInCombatMode, function(state)
-		-- print("Changed SWITCH to ", state)
 		settings.PlayInCombatMode = state
 	end)
 	
 	nativeSettings.addSwitch("/equip/common", "Play in stealth mode", "Enable if you want see firstEquip animation while in stealth mode", settings.PlayInStealthMode, defaults.PlayInStealthMode, function(state)
-		-- print("Changed SWITCH to ", state)
 		settings.PlayInStealthMode = state
 	end)
 	
 	nativeSettings.addSwitch("/equip/common", "Play when magazine is empty", "Enable if you want see firstEquip animation when weapon magazine is empty", settings.PlayWhenMagazineIsEmpty, defaults.PlayWhenMagazineIsEmpty, function(state)
-		-- print("Changed SWITCH to ", state)
 		settings.PlayWhenMagazineIsEmpty = state
 	end)
 	
 	nativeSettings.addSwitch("/equip/common", "Play while sprinting", "Enable if you want see firstEquip animation while sprinting", settings.PlayWhileSprinting, defaults.PlayWhileSprinting, function(state)
-		-- print("Changed SWITCH to ", state)
 		settings.PlayWhileSprinting = state
+	end)
+	
+	nativeSettings.addSwitch("/equip/common", "Exclure arms cyberware", "Enable if you want to prevent probability based animations for arms cyberware (Gorilla Arms, Projectile Launcher, Mantis Blades and Nano Wire)", settings.ExcludeArmsCyberware, defaults.ExcludeArmsCyberware, function(state)
+		settings.ExcludeArmsCyberware = state
 	end)
 	
 
 	nativeSettings.addSubcategory("/equip/hotkey", "Hotkey config")
 	
 	nativeSettings.addSwitch("/equip/hotkey", "Track last used slot", "If enabled then mod tracks slots usage and hotkey press equips weapon from the last used slot, otherwise it uses default slot number defined below", settings.TrackLastUsedSlot, defaults.TrackLastUsedSlot, function(state)
-		-- print("Changed SWITCH to ", state)
 		settings.TrackLastUsedSlot = state
 	end)
 	
@@ -104,17 +104,14 @@ function SetupSettingsMenu()
 	nativeSettings.addSubcategory("/equip/idle", "IdleBreak config")
 
 	nativeSettings.addSwitch("/equip/idle", "Bind to hotkey", "If enabled then you can trigger IdleBreak animation with a preconfigured hotkey", settings.BindToHotkeyIdleBreak, defaults.BindToHotkeyIdleBreak, function(state)
-		-- print("Changed SWITCH to ", state)
 		settings.BindToHotkeyIdleBreak = state
 	end)
 
 	nativeSettings.addRangeInt("/equip/idle", "Animation probability", "Set IdleBreak animation probability in percents", 1, 100, 5, settings.AnimationProbability, defaults.AnimationProbability, function(value)
-		-- print("Changed SLIDER INT to ", value)
 		settings.AnimationProbability = value
 	end)
 	
 	nativeSettings.addRangeInt("/equip/idle", "Animation check period", "Animation checks period in seconds, each check decides if animation should be played when V stands still based on probability value from previous option", 1, 100, 5, settings.AnimationCheckPeriod, defaults.AnimationCheckPeriod, function(value)
-		-- print("Changed SLIDER INT to ", value)
 		settings.AnimationCheckPeriod = value
 	end)
 end
@@ -129,6 +126,7 @@ registerForEvent("onInit", function()
 	Override("FirstEquipConfig", "PlayInStealthMode;", function(_) return settings.PlayInStealthMode end)
 	Override("FirstEquipConfig", "PlayWhenMagazineIsEmpty;", function(_) return settings.PlayWhenMagazineIsEmpty end)
 	Override("FirstEquipConfig", "PlayWhileSprinting;", function(_) return settings.PlayWhileSprinting end)
+	Override("FirstEquipConfig", "ExcludeArmsCyberware;", function(_) return settings.ExcludeArmsCyberware end)
 	Override("FirstEquipConfig", "TrackLastUsedSlot;", function(_) return settings.TrackLastUsedSlot end)
 	Override("FirstEquipConfig", "DefaultSlotNumber;", function(_) return settings.DefaultSlotNumber end)
 	Override("IdleBreakConfig", "AnimationProbability;", function(_) return settings.AnimationProbability end)

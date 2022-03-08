@@ -10,7 +10,8 @@ class FirstEquipConfig {
   public static func PlayWhenMagazineIsEmpty() -> Bool = false
   // Replace false with true if you want see firstEquip animation while sprinting
   public static func PlayWhileSprinting() -> Bool = false
-
+  // Replace false with true if you want to prevent probability based animations for arms cyberware
+  public static func ExcludeArmsCyberware() -> Bool = true
 
   // -- Hotkey config
 
@@ -128,6 +129,16 @@ protected cb func OnDetach() -> Bool {
 
 
 // --- UTILITY FUNCTIONS
+@addMethod(PlayerPuppet)
+public func IsTryingWithArmsCW(weapon: wref<WeaponObject>) -> Bool {
+  let armsCW: gamedataItemType = RPGManager.GetItemType(EquipmentSystem.GetInstance(this).GetActiveItem(this, gamedataEquipmentArea.ArmsCW));
+  let itemId: ItemID = weapon.GetItemID();
+  let isCyberwareWeapon: Bool = WeaponObject.IsCyberwareWeapon(itemId);
+  let targetItemType: gamedataItemType = RPGManager.GetItemType(itemId);
+  let isTargetGorillaArms: Bool = Equals(armsCW, gamedataItemType.Cyb_Launcher) && Equals(targetItemType, gamedataItemType.Wea_Fists);
+  let isTargetOtherArmsCW: Bool = Equals(targetItemType, gamedataItemType.Cyb_NanoWires) || Equals(targetItemType, gamedataItemType.Cyb_StrongArms) || Equals(targetItemType, gamedataItemType.Cyb_MantisBlades);
+  return isTargetGorillaArms || isTargetOtherArmsCW;
+}
 
 // Checks if firstEquip animation must be played depending on config 
 @addMethod(PlayerPuppet)
@@ -148,7 +159,11 @@ public func ShouldRunFirstEquipEQ(weapon: wref<WeaponObject>) -> Bool {
   if isHotkeyPressed { 
     uiSystemBB.SetBool(GetAllBlackboardDefs().UI_System.FirstEquipRequestedEQ, false, false);
     return true; 
-  }
+  };
+
+  if FirstEquipConfig.ExcludeArmsCyberware() && this.IsTryingWithArmsCW(weapon) {
+    return false;
+  };
 
   let probability: Int32 = FirstEquipConfig.PercentageProbability();
   let random: Int32 = RandRange(0, 100);
