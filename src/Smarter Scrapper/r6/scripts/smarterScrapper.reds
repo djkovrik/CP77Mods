@@ -1,28 +1,104 @@
-// -- Prevents auto disassembling for valuable junk by setting 
-//    the upper price threshold for Scrapper perk logic
-
-class SmarterScrapperConfig {
-  // Skip items which price above this value
-  public static func PriceThreshold() -> Int32 = 25
+class SmarterScrapperClothesConfig {
+  public static func Legendary() -> Bool = false
+  public static func Epic() -> Bool = false
+  public static func Rare() -> Bool = false
+  public static func Uncommon() -> Bool = false
+  public static func Common() -> Bool = true
 }
 
-public static func CanBeScrapped_mod(owner: ref<GameObject>, itemId: ItemID) -> Bool {
-  return RPGManager.CalculateSellPrice(owner.GetGame(), owner, itemId) <= SmarterScrapperConfig.PriceThreshold();
+class SmarterScrapperWeaponsConfig {
+  public static func Legendary() -> Bool = false
+  public static func Epic() -> Bool = false
+  public static func Rare() -> Bool = false
+  public static func Uncommon() -> Bool = false
+  public static func Common() -> Bool = true
 }
 
-// Runs for current items when you unlock Scrapper perk
-@replaceMethod(DisassembleOwnedJunkEffector)
-protected func ActionOn(owner: ref<GameObject>) -> Void {
-  let i: Int32;
-  let list: array<wref<gameItemData>>;
-  GameInstance.GetTransactionSystem(owner.GetGame()).GetItemListByTag(owner, n"Junk", list);
-  i = 0;
-  while i < ArraySize(list) {
-    if CanBeScrapped_mod(owner, list[i].GetID()) {
-      ItemActionsHelper.DisassembleItem(owner, list[i].GetID(), list[i].GetQuantity());
+@addMethod(PlayerPuppet)
+public func IsExclusionSS(id: TweakDBID) -> Bool {
+  return 
+    // Stadium Love
+    Equals(id, t"Items.Preset_MQ008_Nova") ||
+    // Sasquatch Hammer
+    Equals(id, t"Items.Preset_Hammer_Sasquatch") ||
+    // Prologue
+    Equals(id, t"Items.Preset_Nova_Q000_Nomad") ||
+  false;
+}
+
+@addMethod(PlayerPuppet)
+public func HasExcludedQuestActive() -> Bool {
+  let journalManager: wref<JournalManager> = GameInstance.GetJournalManager(this.GetGame());
+  let trackedObjective: wref<JournalQuestObjective> = journalManager.GetTrackedEntry() as JournalQuestObjective;
+  return 
+    // Starting tutorial
+    Equals(trackedObjective.GetId(), "01a_pick_weapon") ||
+    Equals(trackedObjective.GetId(), "01c_pick_up_reanimator") ||
+    Equals(trackedObjective.GetId(), "03_pick_up_katana") ||
+  false;
+}
+
+
+@addMethod(PlayerPuppet)
+private func IsClothesSS(type: gamedataItemType) -> Bool {
+  return
+    Equals(type, gamedataItemType.Clo_Face) ||
+    Equals(type, gamedataItemType.Clo_Feet) ||
+    Equals(type, gamedataItemType.Clo_Head) ||
+    Equals(type, gamedataItemType.Clo_InnerChest) ||
+    Equals(type, gamedataItemType.Clo_Legs) ||
+    Equals(type, gamedataItemType.Clo_OuterChest) ||
+  false;
+}
+
+@addMethod(PlayerPuppet)
+private func IsWeaponSS(type: gamedataItemType) -> Bool {
+  return
+    Equals(type, gamedataItemType.Wea_AssaultRifle) ||
+    Equals(type, gamedataItemType.Wea_Hammer) ||
+    Equals(type, gamedataItemType.Wea_Handgun) ||
+    Equals(type, gamedataItemType.Wea_HeavyMachineGun) ||
+    Equals(type, gamedataItemType.Wea_Katana) ||
+    Equals(type, gamedataItemType.Wea_LightMachineGun) ||
+    Equals(type, gamedataItemType.Wea_LongBlade) ||
+    Equals(type, gamedataItemType.Wea_OneHandedClub) ||
+    Equals(type, gamedataItemType.Wea_PrecisionRifle) ||
+    Equals(type, gamedataItemType.Wea_Revolver) ||
+    Equals(type, gamedataItemType.Wea_Rifle) ||
+    Equals(type, gamedataItemType.Wea_ShortBlade) ||
+    Equals(type, gamedataItemType.Wea_Shotgun) ||
+    Equals(type, gamedataItemType.Wea_ShotgunDual) ||
+    Equals(type, gamedataItemType.Wea_SniperRifle) ||
+    Equals(type, gamedataItemType.Wea_SubmachineGun) ||
+    Equals(type, gamedataItemType.Wea_TwoHandedClub) ||
+  false;
+}
+
+@addMethod(PlayerPuppet)
+private func ShouldBeScrappedSS(data: wref<gameItemData>, quality: gamedataQuality) -> Bool {
+  let type: gamedataItemType = data.GetItemType();
+
+  if this.IsClothesSS(type) {
+    switch quality {
+      case gamedataQuality.Legendary: return SmarterScrapperClothesConfig.Legendary();
+      case gamedataQuality.Epic: return SmarterScrapperClothesConfig.Epic();
+      case gamedataQuality.Rare: return SmarterScrapperClothesConfig.Rare();
+      case gamedataQuality.Uncommon: return SmarterScrapperClothesConfig.Uncommon();
+      case gamedataQuality.Common: return SmarterScrapperClothesConfig.Common();
     };
-    i += 1;
   };
+
+  if this.IsWeaponSS(type) {
+    switch quality {
+      case gamedataQuality.Legendary: return SmarterScrapperWeaponsConfig.Legendary();
+      case gamedataQuality.Epic: return SmarterScrapperWeaponsConfig.Epic();
+      case gamedataQuality.Rare: return SmarterScrapperWeaponsConfig.Rare();
+      case gamedataQuality.Uncommon: return SmarterScrapperWeaponsConfig.Uncommon();
+      case gamedataQuality.Common: return SmarterScrapperWeaponsConfig.Common();
+    };
+  };
+
+  return false;
 }
 
 // Runs when item added to inventory
@@ -39,10 +115,12 @@ protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
   let questSystem: ref<QuestsSystem>;
   let shouldUpdateLog: Bool;
   let wardrobeSystem: wref<WardrobeSystem>;
+  let tweakDbId: TweakDBID; // <- new
   if !ItemID.IsValid(evt.itemID) {
     return false;
   };
   itemData = evt.itemData;
+  tweakDbId = ItemID.GetTDBID(itemData.GetID()); // <- new
   questSystem = GameInstance.GetQuestsSystem(this.GetGame());
   itemRecord = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(evt.itemID));
   itemLogDataData = evt.itemID;
@@ -90,12 +168,20 @@ protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
     entryString = ReadAction.GetJournalEntryFromAction(ItemActionsHelper.GetReadAction(evt.itemID).GetID());
     GameInstance.GetJournalManager(this.GetGame()).ChangeEntryState(entryString, "gameJournalOnscreen", gameJournalEntryState.Active, JournalNotifyOption.Notify);
   };
-  if Equals(RPGManager.GetItemType(evt.itemID), gamedataItemType.Gen_Junk) && GameInstance.GetStatsSystem(this.GetGame()).GetStatValue(Cast<StatsObjectID>(this.GetEntityID()), gamedataStatType.CanAutomaticallyDisassembleJunk) > 0.00 {
-    // Scrapper check passed, dissasemble request here
-    if CanBeScrapped_mod(this, evt.itemID) {
+  // New logic
+  if GameInstance.GetStatsSystem(this.GetGame()).GetStatValue(Cast<StatsObjectID>(this.GetEntityID()), gamedataStatType.CanAutomaticallyDisassembleJunk) > 0.00 {
+    if Equals(RPGManager.GetItemType(evt.itemID), gamedataItemType.Gen_Junk) {
       ItemActionsHelper.DisassembleItem(this, evt.itemID, GameInstance.GetTransactionSystem(this.GetGame()).GetItemQuantity(this, evt.itemID));
+    } else {
+      if this.ShouldBeScrappedSS(itemData, itemQuality) && !itemData.HasTag(n"Quest") && !this.IsExclusionSS(tweakDbId) && !this.HasExcludedQuestActive() {
+        ItemActionsHelper.DisassembleItem(this, evt.itemID, GameInstance.GetTransactionSystem(this.GetGame()).GetItemQuantity(this, evt.itemID));
+      };
     };
   };
+  // Default logic
+  //if Equals(RPGManager.GetItemType(evt.itemID), gamedataItemType.Gen_Junk) && GameInstance.GetStatsSystem(this.GetGame()).GetStatValue(Cast<StatsObjectID>(this.GetEntityID()), gamedataStatType.CanAutomaticallyDisassembleJunk) > 0.00 {
+  //  ItemActionsHelper.DisassembleItem(this, evt.itemID, GameInstance.GetTransactionSystem(this.GetGame()).GetItemQuantity(this, evt.itemID));
+  // };
   if Equals(RPGManager.GetItemType(evt.itemID), gamedataItemType.Con_Ammo) {
     GameInstance.GetBlackboardSystem(this.GetGame()).Get(GetAllBlackboardDefs().UI_EquipmentData).SetBool(GetAllBlackboardDefs().UI_EquipmentData.ammoLooted, true);
     GameInstance.GetBlackboardSystem(this.GetGame()).Get(GetAllBlackboardDefs().UI_EquipmentData).SignalBool(GetAllBlackboardDefs().UI_EquipmentData.ammoLooted);
