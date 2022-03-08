@@ -173,7 +173,7 @@ protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
     if Equals(RPGManager.GetItemType(evt.itemID), gamedataItemType.Gen_Junk) {
       ItemActionsHelper.DisassembleItem(this, evt.itemID, GameInstance.GetTransactionSystem(this.GetGame()).GetItemQuantity(this, evt.itemID));
     } else {
-      if this.ShouldBeScrappedSS(itemData, itemQuality) && !itemData.HasTag(n"Quest") && !this.IsExclusionSS(tweakDbId) && !this.HasExcludedQuestActive() {
+      if this.ShouldBeScrappedSS(itemData, itemQuality) && !RPGManager.IsItemIconic(itemData) && !itemData.HasTag(n"Quest") && !this.IsExclusionSS(tweakDbId) && !this.HasExcludedQuestActive() {
         ItemActionsHelper.DisassembleItem(this, evt.itemID, GameInstance.GetTransactionSystem(this.GetGame()).GetItemQuantity(this, evt.itemID));
       };
     };
