@@ -85,7 +85,7 @@ function SetupSettingsMenu()
 		settings.PlayWhileSprinting = state
 	end)
 	
-	nativeSettings.addSwitch("/equip/common", "Exclure arms cyberware", "Enable if you want to prevent probability based animations for arms cyberware (Gorilla Arms, Projectile Launcher, Mantis Blades and Nano Wire)", settings.ExcludeArmsCyberware, defaults.ExcludeArmsCyberware, function(state)
+	nativeSettings.addSwitch("/equip/common", "Exclude arms cyberware", "Enable if you want to prevent probability based animations for arms cyberware (Gorilla Arms, Projectile Launcher, Mantis Blades and Nano Wire)", settings.ExcludeArmsCyberware, defaults.ExcludeArmsCyberware, function(state)
 		settings.ExcludeArmsCyberware = state
 	end)
 	

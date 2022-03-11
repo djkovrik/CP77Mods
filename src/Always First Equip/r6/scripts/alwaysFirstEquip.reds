@@ -258,51 +258,60 @@ public static func EQ(str: String) -> Void {
 
 // --- SET SKIP ANIMATION FLAGS
 
-// Set skip flag for locomotion events
-@wrapMethod(LocomotionEventsTransition)
-public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
-  let playerPuppet: ref<PlayerPuppet> = scriptInterface.owner as PlayerPuppet;
-  let event: Int32 = scriptInterface.localBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.LocomotionDetailed);
-  if event == EnumInt(gamePSMDetailedLocomotionStates.Climb) || event == EnumInt(gamePSMDetailedLocomotionStates.Ladder) {
-    if IsDefined(playerPuppet) {
-      playerPuppet.SetSkipFirstEquipEQ(true);
-    };
-  };
-  wrappedMethod(stateContext, scriptInterface);
+@wrapMethod(EquipCycleDecisions)
+protected final const func ToFirstEquip(const stateContext: ref<StateContext>, const scriptInterface: ref<StateGameScriptInterface>) -> Bool {
+  return false;
 }
 
-// Set skip flag for body carrying events
+// Climb
+@wrapMethod(ClimbEvents)
+public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  wrappedMethod(stateContext, scriptInterface);
+  let playerPuppet: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
+  if IsDefined(playerPuppet) {
+    playerPuppet.SetSkipFirstEquipEQ(true);
+  };
+}
+
+// Ladder
+@wrapMethod(LadderEvents)
+public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  wrappedMethod(stateContext, scriptInterface);
+  let playerPuppet: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
+  if IsDefined(playerPuppet) {
+    playerPuppet.SetSkipFirstEquipEQ(true);
+  };
+}
+
+// Body carrying
 @wrapMethod(CarriedObjectEvents)
 protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
   let carrying: Bool = scriptInterface.localBlackboard.GetBool(GetAllBlackboardDefs().PlayerStateMachine.Carrying);
   let playerPuppet: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
-  let hasWeaponEquipped: Bool = playerPuppet.HasRangedWeaponEquippedEQ();
-  // Set flag if player and not carrying yet
+  let hasWeaponEquipped: Bool = playerPuppet.HasAnyWeaponEquippedEQ();
   if IsDefined(playerPuppet) && !carrying {
     playerPuppet.SetSkipFirstEquipEQ(hasWeaponEquipped);
   };
   wrappedMethod(stateContext, scriptInterface);
 }
 
-// Set skip flag for interaction events
+// Interaction
 @wrapMethod(InteractiveDevice)
 protected cb func OnInteractionUsed(evt: ref<InteractionChoiceEvent>) -> Bool {
-  let playerPuppet: ref<PlayerPuppet>;
+  let playerPuppet: ref<PlayerPuppet> = evt.activator as PlayerPuppet;
   let className: CName;
   let hasWeaponEquipped: Bool;
-  // Set if player
-  playerPuppet = evt.activator as PlayerPuppet;
   if IsDefined(playerPuppet) {
     className = evt.hotspot.GetClassName();
     if Equals(className, n"AccessPoint") || Equals(className, n"Computer") || Equals(className, n"Stillage") || Equals(className, n"WeakFence") {
-      hasWeaponEquipped = playerPuppet.HasRangedWeaponEquippedEQ();
+      hasWeaponEquipped = playerPuppet.HasAnyWeaponEquippedEQ();
       playerPuppet.SetSkipFirstEquipEQ(hasWeaponEquipped);
     };
   };
   wrappedMethod(evt);
 }
 
-// Set skip flag for takedown events
+// Takedown
 @replaceMethod(gamestateMachineComponent)
 protected cb func OnStartTakedownEvent(startTakedownEvent: ref<StartTakedownEvent>) -> Bool {
   let instanceData: StateMachineInstanceData;
@@ -327,7 +336,6 @@ protected cb func OnStartTakedownEvent(startTakedownEvent: ref<StartTakedownEven
     playerPuppet.SetSkipFirstEquipEQ(true);
   };
 }
-
 
 // --- INJECT HOTKEY PRESS RESULT INTO DEFAULT CHECK
 
@@ -371,26 +379,19 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
   let firstEqSystem: ref<FirstEquipSystem> = FirstEquipSystem.GetInstance(scriptInterface.owner);
   let itemObject: wref<WeaponObject> = transactionSystem.GetItemInSlot(scriptInterface.executionOwner, TDBID.Create(mappedInstanceData.attachmentSlot)) as WeaponObject;
   let isInCombat: Bool = scriptInterface.localBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat) == EnumInt(gamePSMCombat.InCombat);
-  let playerPuppet: ref<PlayerPuppet>;
+  let playerPuppet: ref<PlayerPuppet> = scriptInterface.owner as PlayerPuppet;
   if TweakDBInterface.GetBool(t"player.weapon.enableWeaponBlur", false) {
     this.GetBlurParametersFromWeapon(scriptInterface);
   };
 
-  // Hotkey check and run
-  if !firstEqSystem.HasPlayedFirstEquip(ItemID.GetTDBID(itemObject.GetItemID())) {
-    weaponEquipAnimFeature.firstEquip = true;
-    stateContext.SetConditionBoolParameter(n"firstEquip", true, true);
-  } else {
-    // Probability check and run
-    playerPuppet = scriptInterface.owner as PlayerPuppet;
-    if IsDefined(playerPuppet) && (!isInCombat || FirstEquipConfig.PlayInCombatMode()) {
-      if Equals(playerPuppet.ShouldSkipFirstEquipEQ(), true) {
-        playerPuppet.SetSkipFirstEquipEQ(false);
-      } else {
-        if playerPuppet.ShouldRunFirstEquipEQ(itemObject) {
-          weaponEquipAnimFeature.firstEquip = true;
-          stateContext.SetConditionBoolParameter(n"firstEquip", true, true);
-        };
+  // Probability check and run
+  if IsDefined(playerPuppet) && (!isInCombat || FirstEquipConfig.PlayInCombatMode()) {
+    if Equals(playerPuppet.ShouldSkipFirstEquipEQ(), true) {
+      playerPuppet.SetSkipFirstEquipEQ(false);
+    } else {
+      if playerPuppet.ShouldRunFirstEquipEQ(itemObject) {
+        weaponEquipAnimFeature.firstEquip = true;
+        stateContext.SetConditionBoolParameter(n"firstEquip", true, true);
       };
     };
   };
