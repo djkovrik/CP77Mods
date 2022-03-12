@@ -419,16 +419,13 @@ private final func ShowTooltipsForItemController(targetWidget: wref<inkWidget>, 
   }
 }
 
-@replaceMethod(FullscreenVendorGameController)
+@wrapMethod(FullscreenVendorGameController)
 protected cb func OnVendorFilterChange(controller: wref<inkRadioGroupController>, selectedIndex: Int32) -> Bool {
-  let category: ItemFilterCategory = this.m_vendorFilterManager.GetAt(selectedIndex);
-  this.m_vendorItemsDataView.SetFilterType(category);
-  this.m_lastVendorFilter = category;
-  this.m_vendorItemsDataView.SetSortMode(this.m_vendorItemsDataView.GetSortMode());
-  this.PlayLibraryAnimation(n"vendor_grid_show");
-  (inkWidgetRef.GetController(this.m_vendorInventoryGridScroll) as inkScrollController).SetScrollPosition(0.00);
-
-  this.PopulateVendorInventory();
+  wrappedMethod(controller, selectedIndex);
+  
+  if this.GetIsVirtual() {
+    this.PopulateVendorInventory();
+  };
 }
 
 
