@@ -250,15 +250,25 @@ protected cb func OnUninitialize() -> Bool {
 
 // -- SEND EVENTS FOR NEW BLACKBOARD VARIABLE
 
+@addMethod(EquipmentSystemPlayerData)
+private func IsUnequipWeaponRequest(requestType: EquipmentManipulationAction) -> Bool {
+  return Equals(requestType, EquipmentManipulationAction.UnequipWeapon) || Equals(requestType, EquipmentManipulationAction.UnequipAll);
+}
+
+@addMethod(EquipmentSystemPlayerData)
+private func IsUnequipConsumableRequest(requestType: EquipmentManipulationAction) -> Bool {
+  return Equals(requestType, EquipmentManipulationAction.UnequipGadget) || Equals(requestType, EquipmentManipulationAction.UnequipConsumable) || Equals(requestType, EquipmentManipulationAction.UnequipLeftHandCyberware);
+}
+
 @wrapMethod(EquipmentSystemPlayerData)
 public final func OnEquipmentSystemWeaponManipulationRequest(request: ref<EquipmentSystemWeaponManipulationRequest>) -> Void {
   let targetItem: ItemID = this.GetItemIDfromEquipmentManipulationAction(request.requestType);
   let targetRecord: ref<Item_Record> = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(targetItem));
   let targetType: gamedataItemType = targetRecord.ItemType().Type();
-  let isTargetRequestUnequip: Bool = this.IsEquipmentManipulationAnUnequipRequest(request.requestType);
-  let isGrenadeRequest: Bool = Equals(targetType, gamedataItemType.Gad_Grenade) && Equals(request.requestType, EquipmentManipulationAction.UnequipGadget);
+  let isUnequipWeaponRequest: Bool = this.IsUnequipWeaponRequest(request.requestType);
+  let isConsumableRequest: Bool = this.IsUnequipConsumableRequest(request.requestType);
   let equipmentDataDef: ref<UI_EquipmentDataDef> = GetAllBlackboardDefs().UI_EquipmentData;
-  if !isTargetRequestUnequip || isGrenadeRequest {
+  if !isUnequipWeaponRequest || isConsumableRequest {
     GameInstance.GetBlackboardSystem(this.m_owner.GetGame()).Get(equipmentDataDef).SetBool(equipmentDataDef.HasWeaponEquipped, true);
   } else {
     if ItemID.IsValid(targetItem) {
