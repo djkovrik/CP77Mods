@@ -9,7 +9,7 @@ protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
 
 @replaceMethod(healthbarWidgetGameController)
 private final func ComputeHealthBarVisibility() -> Void {
-  let isMaxHP: Bool = this.m_currentHealth == this.m_maximumHealth;
+  let isMaxHP: Bool = this.m_currentHealth >= this.m_maximumHealth - 2;
   let isMultiplayer: Bool = this.IsPlayingMultiplayer();
   let areQuickhacksUsed: Bool = this.m_usedQuickhacks > 0;
   this.m_armorBar.SetVisible(isMultiplayer);
@@ -26,7 +26,7 @@ private final func ComputeHealthBarVisibility() -> Void {
   let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && PlayerHealthbarModuleConfig.ShowWithWeapon();
   let showForZoom: Bool =  this.lhud_isZoomActive && PlayerHealthbarModuleConfig.ShowWithZoom();
   let showForHealthNotFull: Bool = !isMaxHP && PlayerHealthbarModuleConfig.ShowWhenHealthNotFull();
-  let showForMemoryNotFull: Bool = this.m_quickhacksMemoryPercent > 0.0 && this.m_quickhacksMemoryPercent < 100.0 && PlayerHealthbarModuleConfig.ShowWhenMemoryNotFull();
+  let showForMemoryNotFull: Bool = this.m_quickhacksMemoryPercent > 0.0 && this.m_quickhacksMemoryPercent <= 98.0 && PlayerHealthbarModuleConfig.ShowWhenMemoryNotFull();
   let showForActiveBuffs: Bool = this.m_buffsVisible && PlayerHealthbarModuleConfig.ShowWhenBuffsActive();
   let showForActiveQuickhacks: Bool = areQuickhacksUsed && PlayerHealthbarModuleConfig.ShowWhenQuickhacksActive();
   let showForCombat: Bool = this.lhud_isCombatActive && PlayerHealthbarModuleConfig.ShowInCombat();
