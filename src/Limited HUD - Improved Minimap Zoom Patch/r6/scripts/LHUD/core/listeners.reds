@@ -227,9 +227,12 @@ protected cb func OnUninitialize() -> Bool {
 @wrapMethod(EquipmentSystemPlayerData)
 public final func OnEquipmentSystemWeaponManipulationRequest(request: ref<EquipmentSystemWeaponManipulationRequest>) -> Void {
   let targetItem: ItemID = this.GetItemIDfromEquipmentManipulationAction(request.requestType);
+  let targetRecord: ref<Item_Record> = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(targetItem));
+  let targetType: gamedataItemType = targetRecord.ItemType().Type();
   let isTargetRequestUnequip: Bool = this.IsEquipmentManipulationAnUnequipRequest(request.requestType);
+  let isGrenadeRequest: Bool = Equals(targetType, gamedataItemType.Gad_Grenade) && Equals(request.requestType, EquipmentManipulationAction.UnequipGadget);
   let equipmentDataDef: ref<UI_EquipmentDataDef> = GetAllBlackboardDefs().UI_EquipmentData;
-  if !isTargetRequestUnequip {
+  if !isTargetRequestUnequip || isGrenadeRequest {
     GameInstance.GetBlackboardSystem(this.m_owner.GetGame()).Get(equipmentDataDef).SetBool(equipmentDataDef.HasWeaponEquipped, true);
   } else {
     if ItemID.IsValid(targetItem) {
