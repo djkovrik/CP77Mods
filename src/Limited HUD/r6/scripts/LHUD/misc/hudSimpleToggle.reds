@@ -1,3 +1,5 @@
+import LimitedHudConfig.LHUDAddonsConfig
+
 // kudos to psiberx for redscript snippets
 
 /*
@@ -19,7 +21,7 @@ public class SimpleToggleGlobalInputListener {
     }
 
     protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
-        if ListenerAction.IsAction(action, StringToName(KeybindName_ToggleHUD())) && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED)  {
+        if LHUDAddonsConfig.EnableHUDToggle() && ListenerAction.IsAction(action, StringToName(KeybindName_ToggleHUD())) && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED)  {
           this.m_uiSystem.QueueEvent(new ToggleHudEvent());
         };
     }

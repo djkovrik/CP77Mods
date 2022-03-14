@@ -1,9 +1,16 @@
+import LimitedHudConfig.LHUDAddonsConfig
+
 // Swaps misplaced Power and Tech icons for weapon tooltips
 @replaceMethod(ItemTooltipEvolutionModule)
 public func Update(data: ref<MinimalItemTooltipData>) -> Void {
   switch data.itemEvolution {
     case gamedataWeaponEvolution.Power:
-      inkImageRef.SetTexturePart(this.m_weaponEvolutionIcon, n"ico_tech");    // "ico_power" replaced with "ico_tech"
+      if LHUDAddonsConfig.FixEvolutionIcons() {
+        // "ico_power" replaced with "ico_tech"
+        inkImageRef.SetTexturePart(this.m_weaponEvolutionIcon, n"ico_tech"); 
+      } else {
+        inkImageRef.SetTexturePart(this.m_weaponEvolutionIcon, n"ico_power");
+      };
       inkTextRef.SetText(this.m_weaponEvolutionName, "LocKey#54118");
       inkTextRef.SetText(this.m_weaponEvolutionDescription, "LocKey#54117");
       return;
@@ -13,7 +20,12 @@ public func Update(data: ref<MinimalItemTooltipData>) -> Void {
       inkTextRef.SetText(this.m_weaponEvolutionDescription, "LocKey#54120");
       return;
     case gamedataWeaponEvolution.Tech:
-      inkImageRef.SetTexturePart(this.m_weaponEvolutionIcon, n"ico_power");   // "ico_tech" replaced with "ico_power"
+      if LHUDAddonsConfig.FixEvolutionIcons() {
+        // "ico_tech" replaced with "ico_power"
+        inkImageRef.SetTexturePart(this.m_weaponEvolutionIcon, n"ico_power");
+      } else {
+        inkImageRef.SetTexturePart(this.m_weaponEvolutionIcon, n"ico_tech");
+      };
       inkTextRef.SetText(this.m_weaponEvolutionName, "LocKey#54121");
       inkTextRef.SetText(this.m_weaponEvolutionDescription, "LocKey#54122");
       return;
@@ -42,7 +54,12 @@ protected final func UpdateEvolutionDescription() -> Void {
 
   switch evolution {
     case gamedataWeaponEvolution.Power:
-      inkImageRef.SetTexturePart(this.m_weaponEvolutionIcon, n"ico_tech");    // "ico_power" replaced with "ico_tech"
+      if LHUDAddonsConfig.FixEvolutionIcons() {
+        // "ico_power" replaced with "ico_tech"
+        inkImageRef.SetTexturePart(this.m_weaponEvolutionIcon, n"ico_tech"); 
+      } else {
+        inkImageRef.SetTexturePart(this.m_weaponEvolutionIcon, n"ico_power");
+      };
       inkTextRef.SetText(this.m_weaponEvolutionName, "LocKey#54118");
       inkTextRef.SetText(this.m_weaponEvolutionDescription, "LocKey#54117");
       return;
@@ -52,7 +69,12 @@ protected final func UpdateEvolutionDescription() -> Void {
       inkTextRef.SetText(this.m_weaponEvolutionDescription, "LocKey#54120");
       return;
     case gamedataWeaponEvolution.Tech:
-      inkImageRef.SetTexturePart(this.m_weaponEvolutionIcon, n"ico_power");   // "ico_tech" replaced with "ico_power"
+      if LHUDAddonsConfig.FixEvolutionIcons() {
+        // "ico_tech" replaced with "ico_power"
+        inkImageRef.SetTexturePart(this.m_weaponEvolutionIcon, n"ico_power");
+      } else {
+        inkImageRef.SetTexturePart(this.m_weaponEvolutionIcon, n"ico_tech");
+      };
       inkTextRef.SetText(this.m_weaponEvolutionName, "LocKey#54121");
       inkTextRef.SetText(this.m_weaponEvolutionDescription, "LocKey#54122");
       return;

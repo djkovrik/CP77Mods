@@ -199,3 +199,69 @@ public class WorldMarkersModuleConfigDevices{
   public static func IsEnabled() -> Bool = true
   public static func ShowWithScanner() -> Bool = true
 }
+
+
+// ---- LIMITED HUD ADDONS
+public class LHUDAddonsConfig {
+  // Allows to scale dialog widget size, by default scale value set to 1.0 so tweak it as you like
+  // You may want to try something like 0.9 or 0.8
+  public static func DialogResizerScale() -> Float = 1.0
+  // Fixes wrong icons for Power and Tech weapons used in info popups
+  public static func FixEvolutionIcons() -> Bool = true
+  // Hides speedometer widget for TPP camera view
+  public static func HideSpeedometer() -> Bool = false
+  // Adjusts journal notification widget opacity
+  public static func JournalNotificationOpacity() -> Float = 1.0
+  // Adjusts journal notification widget scale
+  public static func JournalNotificationScale() -> Float = 1.0
+  // Disables journal notification widget sounds
+  public static func JournalNotificationDisableSounds() -> Bool = false
+  // Adjusts item notification widget opacity
+  public static func ItemNotificationOpacity() -> Float = 1.0
+  // Disables item notification widget scale
+  public static func ItemNotificationScale() -> Float = 1.0
+  // Disables item notification currency sound
+  public static func ItemNotificationDisableSoundCurrency() -> Bool = false
+  // Removes current HP and max HP text labels from player healthbar widget
+  public static func RemoveHealthbarTexts() -> Bool = false
+  // Removes pulse animation for tracked markers
+  public static func RemoveMarkerPulse() -> Bool = false
+  // Enables simple HUD toggle with F1 hotkey
+  public static func EnableHUDToggle() -> Bool = false
+  // Hides crouch indicator from HUD
+  public static func HideCrouchIndicator() -> Bool = false
+}
+
+// Objects Coloring config
+public class LHUDAddonsColoringConfig {
+  public static func FillInteraction() -> Int32 = 2
+  public static func FillImportantInteraction() -> Int32 = 5
+  public static func FillWeakspot() -> Int32 = 6
+  public static func FillQuest() -> Int32 = 1
+  public static func FillDistraction() -> Int32 = 3
+  public static func FillClue() -> Int32 = 4
+  public static func FillNPC() -> Int32 = 0
+  public static func FillAOE() -> Int32 = 7
+  public static func FillItem() -> Int32 = 5
+  public static func FillHostile() -> Int32 = 7
+  public static func FillFriendly() -> Int32 = 4
+  public static func FillNeutral() -> Int32 = 2
+  public static func FillHackable() -> Int32 = 4
+  public static func FillEnemyNetrunner() -> Int32 = 6
+  public static func FillBackdoor() -> Int32 = 5
+
+  public static func OutlineInteraction() -> Int32 = 3
+  public static func OutlineImportantInteraction() -> Int32 = 6
+  public static func OutlineWeakspot() -> Int32 = 4
+  public static func OutlineQuest() -> Int32 = 5
+  public static func OutlineDistraction() -> Int32 = 7
+  public static func OutlineClue() -> Int32 = 1
+  public static func OutlineAOE() -> Int32 = 2
+  public static func OutlineItem() -> Int32 = 6
+  public static func OutlineHostile() -> Int32 = 2
+  public static func OutlineFriendly() -> Int32 = 1
+  public static func OutlineNeutral() -> Int32 = 3
+  public static func OutlineHackable() -> Int32 = 1
+  public static func OutlineEnemyNetrunner() -> Int32 = 4
+  public static func OutlineBackdoor() -> Int32 = 6
+}

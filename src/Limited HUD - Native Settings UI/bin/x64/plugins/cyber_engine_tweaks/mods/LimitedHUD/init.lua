@@ -101,7 +101,49 @@ local defaults = {
 	VehicleMarkersScanner = false,
 	VehicleMarkersZoom = true,
 	DeviceMarkersEnabled = true,
-	DeviceMarkersScanner = true
+	DeviceMarkersScanner = true,
+	AddonsDialogResizerScale = 1.0,
+	AddonsFixEvolutionIcons = true,
+	AddonsHideSpeedometer = false,
+	AddonsJournalScale = 1.0,
+	AddonsJournalOpacity = 1.0,
+	AddonsJournalDisableSound = false,
+	AddonsItemScale = 1.0,
+	AddonsItemOpacity = 1.0,
+	AddonsItemDisableSoundCurrency = false,
+	AddonsRemoveHealthbarTexts = false,
+	AddonsRemoveMarkerPulse = false,
+	AddonsSimpleHUDToggle = false,
+	AddonsHideCrouchIndicator = false,
+	AddonsFillInteraction = 3,
+	AddonsFillImportantInteraction = 6,
+	AddonsFillWeakspot = 7,
+	AddonsFillQuest = 2,
+	AddonsFillDistraction = 4,
+	AddonsFillClue = 5,
+	AddonsFillNPC = 1,
+	AddonsFillAOE = 8,
+	AddonsFillItem = 6,
+	AddonsFillHostile = 8,
+	AddonsFillFriendly = 5,
+	AddonsFillNeutral = 3,
+	AddonsFillHackable = 5,
+	AddonsFillEnemyNetrunner = 7,
+	AddonsFillBackdoor = 6,
+	AddonsOutlineInteraction = 4,
+	AddonsOutlineImportantInteraction = 7,
+	AddonsOutlineWeakspot = 5,
+	AddonsOutlineQuest = 6,
+	AddonsOutlineDistraction = 8,
+	AddonsOutlineClue = 2,
+	AddonsOutlineAOE = 3,
+	AddonsOutlineItem = 7,
+	AddonsOutlineHostile = 3,
+	AddonsOutlineFriendly = 2,
+	AddonsOutlineNeutral = 4,
+	AddonsOutlineHackable = 2,
+	AddonsOutlineEnemyNetrunner = 5,
+	AddonsOutlineBackdoor = 7
 }
 
 local settings = {
@@ -207,8 +249,73 @@ local settings = {
 	VehicleMarkersScanner = false,
 	VehicleMarkersZoom = true,
 	DeviceMarkersEnabled = true,
-	DeviceMarkersScanner = true
+	DeviceMarkersScanner = true,
+	AddonsDialogResizerScale = 1.0,
+	AddonsFixEvolutionIcons = true,
+	AddonsHideSpeedometer = false,
+	AddonsJournalScale = 1.0,
+	AddonsJournalOpacity = 1.0,
+	AddonsJournalDisableSound = false,
+	AddonsItemScale = 1.0,
+	AddonsItemOpacity = 1.0,
+	AddonsItemDisableSoundCurrency = false,
+	AddonsRemoveHealthbarTexts = false,
+	AddonsRemoveMarkerPulse = false,
+	AddonsSimpleHUDToggle = false,
+	AddonsHideCrouchIndicator = false,
+	AddonsFillInteraction = 3,
+	AddonsFillImportantInteraction = 6,
+	AddonsFillWeakspot = 7,
+	AddonsFillQuest = 2,
+	AddonsFillDistraction = 4,
+	AddonsFillClue = 5,
+	AddonsFillNPC = 1,
+	AddonsFillAOE = 8,
+	AddonsFillItem = 6,
+	AddonsFillHostile = 8,
+	AddonsFillFriendly = 5,
+	AddonsFillNeutral = 3,
+	AddonsFillHackable = 5,
+	AddonsFillEnemyNetrunner = 7,
+	AddonsFillBackdoor = 6,
+	AddonsOutlineInteraction = 4,
+	AddonsOutlineImportantInteraction = 7,
+	AddonsOutlineWeakspot = 5,
+	AddonsOutlineQuest = 6,
+	AddonsOutlineDistraction = 8,
+	AddonsOutlineClue = 2,
+	AddonsOutlineAOE = 3,
+	AddonsOutlineItem = 7,
+	AddonsOutlineHostile = 3,
+	AddonsOutlineFriendly = 2,
+	AddonsOutlineNeutral = 4,
+	AddonsOutlineHackable = 2,
+	AddonsOutlineEnemyNetrunner = 5,
+	AddonsOutlineBackdoor = 7
 }
+
+local fills = {
+	[1] = "Transparent",
+	[2] = "Light yellow",
+	[3] = "Light blue",
+	[4] = "White",
+	[5] = "Light green",
+	[6] = "Blue",
+	[7] = "Orange",
+	[8] = "Red",
+}
+
+local outlines = {
+	[1] = "Transparent",
+	[2] = "Light green",
+	[3] = "Red",
+	[4] = "Light blue",
+	[5] = "Light red", -- ORANGE?
+	[6] = "Light yellow",
+	[7] = "Blue",
+	[8] = "White",
+}
+
 
 function SaveSettings() 
 	local validJson, contents = pcall(function() return json.encode(settings) end)
@@ -287,7 +394,7 @@ function SetupSettingsMenu()
 	nativeSettings.addSubcategory("/lhud/minimap", "Minimap")
 	nativeSettings.addSwitch("/lhud/minimap", "Is module enabled", "If enabled then widget controlled by LHUD, disable if you want to restore default widget behavior", settings.MinimapEnabled, defaults.MinimapEnabled, function(state) settings.MinimapEnabled = state end)
 	nativeSettings.addSwitch("/lhud/minimap", "Bind to Global hotkey", "If enabled then you will be able to toggle the module widgets visibility with the global hotkey if you have it configured", settings.MinimapGlobal, defaults.MinimapGlobal, function(state) settings.MinimapGlobal = state end)
-	nativeSettings.addRangeFloat("/lhud/minimap", "Opacity", "Minimap widget opacity (change it from the main menu only)", 0.0, 1.0, 0.1, "%.1f", settings.MinimapOpacity, defaults.MinimapOpacity, function(value) settings.MinimapOpacity = value end)
+	nativeSettings.addRangeFloat("/lhud/minimap", "Opacity", "Minimap widget opacity (change it from the main menu only)", 0.0, 1.0, 0.05, "%.2f", settings.MinimapOpacity, defaults.MinimapOpacity, function(value) settings.MinimapOpacity = value end)
 	nativeSettings.addSwitch("/lhud/minimap", "Show in combat", "Show when combat mode is active", settings.MinimapCombat, defaults.MinimapCombat, function(state) settings.MinimapCombat = state end)
 	nativeSettings.addSwitch("/lhud/minimap", "Show out of combat", "Show when when combat mode is not active and stealth mode is not active", settings.MinimapOutOfCombat, defaults.MinimapOutOfCombat, function(state) settings.MinimapOutOfCombat = state end)
 	nativeSettings.addSwitch("/lhud/minimap", "Show in stealth", "Show when stealth mode is active", settings.MinimapStealth, defaults.MinimapStealth, function(state) settings.MinimapStealth = state end)
@@ -375,6 +482,73 @@ function SetupSettingsMenu()
 	nativeSettings.addSubcategory("/lhud/interactionmarkers", "World markers - Device Interactions")
 	nativeSettings.addSwitch("/lhud/interactionmarkers", "Is module enabled", "If enabled then widgets controlled by LHUD, disable if you want to restore default widget behavior", settings.DeviceMarkersEnabled, defaults.DeviceMarkersEnabled, function(state) settings.DeviceMarkersEnabled = state end)
 	nativeSettings.addSwitch("/lhud/interactionmarkers", "Show with scanner", "Show when scanner is active", settings.DeviceMarkersScanner, defaults.DeviceMarkersScanner, function(state) settings.DeviceMarkersScanner = state end)
+	
+	
+	nativeSettings.addTab("/lhudaddons", "LHUD ADDONS")
+	nativeSettings.addSubcategory("/lhudaddons/journalnotif", "Journal Notifications Widget")
+	nativeSettings.addRangeFloat("/lhudaddons/journalnotif", "Widget opacity", "Adjust journal notifications widget opacity (change from the main menu or reload your game to apply changes)", 0.0, 1.0, 0.05, "%.2f", settings.AddonsJournalOpacity, defaults.AddonsJournalOpacity, function(value) settings.AddonsJournalOpacity = value end)
+	nativeSettings.addRangeFloat("/lhudaddons/journalnotif", "Widget scale", "Adjust journal notifications widget size (change from the main menu or reload your game to apply changes)", 0.1, 2.0, 0.05, "%.2f", settings.AddonsJournalScale, defaults.AddonsJournalScale, function(value) settings.AddonsJournalScale = value end)
+	nativeSettings.addSwitch("/lhudaddons/journalnotif", "Disable sounds", "If enabled then disables sounds for all kinds of journal notifications", settings.AddonsJournalDisableSound, defaults.AddonsJournalDisableSound, function(state) settings.AddonsJournalDisableSound = state end)
+	
+	nativeSettings.addSubcategory("/lhudaddons/itemnotif", "Items Notifications Widget")
+	nativeSettings.addRangeFloat("/lhudaddons/itemnotif", "Widget opacity", "Adjust received items notifications widget opacity (change from the main menu or reload your game to apply changes)", 0.0, 1.0, 0.05, "%.2f", settings.AddonsItemOpacity, defaults.AddonsItemOpacity, function(value) settings.AddonsItemOpacity = value end)
+	nativeSettings.addRangeFloat("/lhudaddons/itemnotif", "Widget scale", "Adjust received items notifications widget size (change from the main menu or reload your game to apply changes)", 0.1, 2.0, 0.05, "%.2f", settings.AddonsItemScale, defaults.AddonsItemScale, function(value) settings.AddonsItemScale = value end)
+	nativeSettings.addSwitch("/lhudaddons/itemnotif", "Disable currency sound", "If enabled then disables sounds for received currency notifications", settings.AddonsItemDisableSoundCurrency, defaults.AddonsItemDisableSoundCurrency, function(state) settings.AddonsItemDisableSoundCurrency = state end)
+	
+	nativeSettings.addSubcategory("/lhudaddons/dialogresizer", "Dialog Widget Resizer")
+	nativeSettings.addRangeFloat("/lhudaddons/dialogresizer", "Dialog widget scale", "Adjust dialog choices widget size (change from the main menu or reload your game to apply changes)", 0.1, 2.0, 0.05, "%.2f", settings.AddonsDialogResizerScale, defaults.AddonsDialogResizerScale, function(value) settings.AddonsDialogResizerScale = value end)
+	
+	nativeSettings.addSubcategory("/lhudaddons/evolution", "Fix Evolution Icons")
+	nativeSettings.addSwitch("/lhudaddons/evolution", "Enable fix", "Fix wrong icons for Power and Tech weapons used inside info popups", settings.AddonsFixEvolutionIcons, defaults.AddonsFixEvolutionIcons, function(state) settings.AddonsFixEvolutionIcons = state end)
+	
+	nativeSettings.addSubcategory("/lhudaddons/speedometer", "Hide Speedometer")
+	nativeSettings.addSwitch("/lhudaddons/speedometer", "Hide", "Hide speedometer widget for TPP camera view (change from the main menu or reload your game to apply changes)", settings.AddonsHideSpeedometer, defaults.AddonsHideSpeedometer, function(state) settings.AddonsHideSpeedometer = state end)
+	
+	nativeSettings.addSubcategory("/lhudaddons/crouch", "Remove Crouch Indicator")
+	nativeSettings.addSwitch("/lhudaddons/crouch", "Remove", "Remove crouch indicator from HUD (change from the main menu or reload your game to apply changes)", settings.AddonsHideCrouchIndicator, defaults.AddonsHideCrouchIndicator, function(state) settings.AddonsHideCrouchIndicator = state end)
+	
+	nativeSettings.addSubcategory("/lhudaddons/hptexts", "No Healthbar Texts")
+	nativeSettings.addSwitch("/lhudaddons/hptexts", "Remove text labels", "Remove current HP and max HP text labels from player healthbar widget (change from the main menu or reload your game to apply changes)", settings.AddonsRemoveHealthbarTexts, defaults.AddonsRemoveHealthbarTexts, function(state) settings.AddonsRemoveHealthbarTexts = state end)
+	
+	nativeSettings.addSubcategory("/lhudaddons/markerpulse", "No Marker Pulse")
+	nativeSettings.addSwitch("/lhudaddons/markerpulse", "Disable pulse animation", "Disable pulse animation for tracked quest marker (change from the main menu or reload your game to apply changes)", settings.AddonsRemoveMarkerPulse, defaults.AddonsRemoveMarkerPulse, function(state) settings.AddonsRemoveMarkerPulse = state end)
+	
+	nativeSettings.addSubcategory("/lhudaddons/hudtoggle", "Simple HUD Toggle")
+	nativeSettings.addSwitch("/lhudaddons/hudtoggle", "Enable HUD toggle hotkey", "If enabled then allows to toggle the whole HUD visibility with F1 keypress (hotkey can be changed inside hudSimpleToggle.reds file)", settings.AddonsSimpleHUDToggle, defaults.AddonsSimpleHUDToggle, function(state) settings.AddonsSimpleHUDToggle = state end)
+	
+	nativeSettings.addSubcategory("/lhudaddons/colorsfill", "Objects Coloring - Fill colors")
+	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Interaction", "Interaction objects fill color", fills, settings.AddonsFillInteraction, defaults.AddonsFillInteraction, function(value) settings.AddonsFillInteraction = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Important interaction", "Important interaction objects fill color", fills, settings.AddonsFillImportantInteraction, defaults.AddonsFillImportantInteraction, function(value) settings.AddonsFillImportantInteraction = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Weakspot", "Weakspots fill color", fills, settings.AddonsFillWeakspot, defaults.AddonsFillWeakspot, function(value) settings.AddonsFillWeakspot = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Quest", "Quest objects fill color", fills, settings.AddonsFillQuest, defaults.AddonsFillQuest, function(value) settings.AddonsFillQuest = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Distraction", "Distraction object fill color", fills, settings.AddonsFillDistraction, defaults.AddonsFillDistraction, function(value) settings.AddonsFillDistraction = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Clue", "Clue fill color", fills, settings.AddonsFillClue, defaults.AddonsFillClue, function(value) settings.AddonsFillClue = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "NPC", "NPC fill color", fills, settings.AddonsFillNPC, defaults.AddonsFillNPC, function(value) settings.AddonsFillNPC = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "AOE", "AOE damage objects fill color", fills, settings.AddonsFillAOE, defaults.AddonsFillAOE, function(value) settings.AddonsFillAOE = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Item", "Item objects fill color", fills, settings.AddonsFillItem, defaults.AddonsFillItem, function(value) settings.AddonsFillItem = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Hostile character", "Hostile characters fill color", fills, settings.AddonsFillHostile, defaults.AddonsFillHostile, function(value) settings.AddonsFillHostile = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Friendly character", "Friendly characters fill color", fills, settings.AddonsFillFriendly, defaults.AddonsFillFriendly, function(value) settings.AddonsFillFriendly = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Neutral character", "Neutral characters fill color", fills, settings.AddonsFillNeutral, defaults.AddonsFillNeutral, function(value) settings.AddonsFillNeutral = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Hackable object", "Hackable objects fill color", fills, settings.AddonsFillHackable, defaults.AddonsFillHackable, function(value) settings.AddonsFillHackable = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Enemy netrunner", "Enemy netrunners fill color", fills, settings.AddonsFillEnemyNetrunner, defaults.AddonsFillEnemyNetrunner, function(value) settings.AddonsFillEnemyNetrunner = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Backdoor", "Backdoor objects fill color", fills, settings.AddonsFillBackdoor, defaults.AddonsFillBackdoor, function(value) settings.AddonsFillBackdoor = value end)
+	
+	nativeSettings.addSubcategory("/lhudaddons/colorsoutline", "Objects Coloring - Outline colors")
+	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Interaction", "Interaction objects outline color", outlines, settings.AddonsFillInteraction, defaults.AddonsFillInteraction, function(value) settings.AddonsOutlineInteraction = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Important interaction", "Important interaction objects outline color", outlines, settings.AddonsOutlineImportantInteraction, defaults.AddonsOutlineImportantInteraction, function(value) settings.AddonsOutlineImportantInteraction = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Weakspot", "Weakspots outline color", outlines, settings.AddonsOutlineWeakspot, defaults.AddonsOutlineWeakspot, function(value) settings.AddonsOutlineWeakspot = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Quest", "Quest objects outline color", outlines, settings.AddonsOutlineQuest, defaults.AddonsOutlineQuest, function(value) settings.AddonsOutlineQuest = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Distraction", "Distraction object outline color", outlines, settings.AddonsOutlineDistraction, defaults.AddonsOutlineDistraction, function(value) settings.AddonsOutlineDistraction = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Clue", "Clue outline color", outlines, settings.AddonsOutlineClue, defaults.AddonsOutlineClue, function(value) settings.AddonsOutlineClue = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "AOE", "AOE damage objects outline color", outlines, settings.AddonsOutlineAOE, defaults.AddonsOutlineAOE, function(value) settings.AddonsOutlineAOE = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Item", "Item objects outline color", outlines, settings.AddonsOutlineItem, defaults.AddonsOutlineItem, function(value) settings.AddonsOutlineItem = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Hostile character", "Hostile characters outline color", outlines, settings.AddonsOutlineHostile, defaults.AddonsOutlineHostile, function(value) settings.AddonsOutlineHostile = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Friendly character", "Friendly characters outline color", outlines, settings.AddonsOutlineFriendly, defaults.AddonsOutlineFriendly, function(value) settings.AddonsOutlineFriendly = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Neutral character", "Neutral characters outline color", outlines, settings.AddonsOutlineNeutral, defaults.AddonsOutlineNeutral, function(value) settings.AddonsOutlineNeutral = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Hackable object", "Hackable objects outline color", outlines, settings.AddonsOutlineHackable, defaults.AddonsOutlineHackable, function(value) settings.AddonsOutlineHackable = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Enemy netrunner", "Enemy netrunners outline color", outlines, settings.AddonsOutlineEnemyNetrunner, defaults.AddonsOutlineEnemyNetrunner, function(value) settings.AddonsOutlineEnemyNetrunner = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Backdoor", "Backdoor objects outline color", outlines, settings.AddonsOutlineBackdoor, defaults.AddonsOutlineBackdoor, function(value) settings.AddonsOutlineBackdoor = value end)
+	
 end
 
 registerForEvent("onInit", function()
@@ -485,6 +659,49 @@ registerForEvent("onInit", function()
 	Override("LimitedHudConfig.WorldMarkersModuleConfigVehicles", "ShowWithZoom;", function(_) return settings.VehicleMarkersZoom end)
 	Override("LimitedHudConfig.WorldMarkersModuleConfigVehicles", "IsEnabled;", function(_) return settings.DeviceMarkersEnabled end)
 	Override("LimitedHudConfig.WorldMarkersModuleConfigVehicles", "ShowWithScanner;", function(_) return settings.DeviceMarkersScanner end)
+	Override("LimitedHudConfig.LHUDAddonsConfig", "DialogResizerScale;", function(_) return settings.AddonsDialogResizerScale end)
+	Override("LimitedHudConfig.LHUDAddonsConfig", "FixEvolutionIcons;", function(_) return settings.AddonsFixEvolutionIcons end)
+	Override("LimitedHudConfig.LHUDAddonsConfig", "HideSpeedometer;", function(_) return settings.AddonsHideSpeedometer end)
+	Override("LimitedHudConfig.LHUDAddonsConfig", "JournalNotificationOpacity;", function(_) return settings.AddonsJournalOpacity end)
+	Override("LimitedHudConfig.LHUDAddonsConfig", "JournalNotificationScale;", function(_) return settings.AddonsJournalScale end)
+	Override("LimitedHudConfig.LHUDAddonsConfig", "JournalNotificationDisableSounds;", function(_) return settings.AddonsJournalDisableSound end)
+	Override("LimitedHudConfig.LHUDAddonsConfig", "ItemNotificationOpacity;", function(_) return settings.AddonsItemOpacity end)
+	Override("LimitedHudConfig.LHUDAddonsConfig", "ItemNotificationScale;", function(_) return settings.AddonsItemScale end)
+	Override("LimitedHudConfig.LHUDAddonsConfig", "ItemNotificationDisableSoundCurrency;", function(_) return settings.AddonsItemDisableSoundCurrency end)
+	Override("LimitedHudConfig.LHUDAddonsConfig", "RemoveHealthbarTexts;", function(_) return settings.AddonsRemoveHealthbarTexts end)
+	Override("LimitedHudConfig.LHUDAddonsConfig", "RemoveMarkerPulse;", function(_) return settings.AddonsRemoveMarkerPulse end)
+	Override("LimitedHudConfig.LHUDAddonsConfig", "EnableHUDToggle;", function(_) return settings.AddonsSimpleHUDToggle end)
+	Override("LimitedHudConfig.LHUDAddonsConfig", "HideCrouchIndicator;", function(_) return settings.AddonsHideCrouchIndicator end)
+	
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "FillInteraction;", function(_) return settings.AddonsFillInteraction - 1 end)
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "FillImportantInteraction;", function(_) return settings.AddonsFillImportantInteraction - 1 end)
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "FillWeakspot;", function(_) return settings.AddonsFillWeakspot - 1 end)
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "FillQuest;", function(_) return settings.AddonsFillQuest - 1 end)
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "FillDistraction;", function(_) return settings.AddonsFillDistraction - 1 end)
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "FillClue;", function(_) return settings.AddonsFillClue - 1 end)
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "FillNPC;", function(_) return settings.AddonsFillNPC - 1 end)
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "FillAOE;", function(_) return settings.AddonsFillAOE - 1 end)
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "FillItem;", function(_) return settings.AddonsFillItem - 1 end)
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "FillHostile;", function(_) return settings.AddonsFillHostile - 1 end)
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "FillFriendly;", function(_) return settings.AddonsFillFriendly - 1 end)
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "FillNeutral;", function(_) return settings.AddonsFillNeutral - 1 end)
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "FillHackable;", function(_) return settings.AddonsFillHackable - 1 end)
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "FillEnemyNetrunner;", function(_) return settings.AddonsFillEnemyNetrunner - 1 end)
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "FillBackdoor;", function(_) return settings.AddonsFillBackdoor - 1 end)
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "OutlineInteraction;", function(_) return settings.AddonsOutlineInteraction - 1 end)
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "OutlineImportantInteraction;", function(_) return settings.AddonsOutlineImportantInteraction - 1 end)
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "OutlineWeakspot;", function(_) return settings.AddonsOutlineWeakspot - 1 end)
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "OutlineQuest;", function(_) return settings.AddonsOutlineQuest - 1 end)
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "OutlineDistraction;", function(_) return settings.AddonsOutlineDistraction - 1 end)
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "OutlineClue;", function(_) return settings.AddonsOutlineClue - 1 end)
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "OutlineAOE;", function(_) return settings.AddonsOutlineAOE - 1 end)
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "OutlineItem;", function(_) return settings.AddonsOutlineItem - 1 end)
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "OutlineHostile;", function(_) return settings.AddonsOutlineHostile - 1 end)
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "OutlineFriendly;", function(_) return settings.AddonsOutlineFriendly - 1 end)
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "OutlineNeutral;", function(_) return settings.AddonsOutlineNeutral - 1 end)
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "OutlineHackable;", function(_) return settings.AddonsOutlineHackable - 1 end)
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "OutlineEnemyNetrunner;", function(_) return settings.AddonsOutlineEnemyNetrunner - 1 end)
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "OutlineBackdoor;", function(_) return settings.AddonsOutlineBackdoor - 1 end)
 
 end)
 
