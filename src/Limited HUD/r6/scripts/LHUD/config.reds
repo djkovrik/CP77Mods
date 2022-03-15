@@ -230,6 +230,8 @@ public class LHUDAddonsConfig {
   public static func EnableHUDToggle() -> Bool = false
   // Hides crouch indicator from HUD
   public static func HideCrouchIndicator() -> Bool = false
+  // Enables hostile enemy highlighting only if they have Ping effect
+  public static func HighlightUnderPingOnly() -> Bool = false
 }
 
 // Objects Coloring config

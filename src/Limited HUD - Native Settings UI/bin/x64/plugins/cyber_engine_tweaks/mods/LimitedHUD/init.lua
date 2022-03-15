@@ -115,6 +115,7 @@ local defaults = {
 	AddonsRemoveMarkerPulse = false,
 	AddonsSimpleHUDToggle = false,
 	AddonsHideCrouchIndicator = false,
+	AddonsHighlightUnderPingOnly = false,
 	AddonsFillInteraction = 3,
 	AddonsFillImportantInteraction = 6,
 	AddonsFillWeakspot = 7,
@@ -263,6 +264,7 @@ local settings = {
 	AddonsRemoveMarkerPulse = false,
 	AddonsSimpleHUDToggle = false,
 	AddonsHideCrouchIndicator = false,
+	AddonsHighlightUnderPingOnly = false,
 	AddonsFillInteraction = 3,
 	AddonsFillImportantInteraction = 6,
 	AddonsFillWeakspot = 7,
@@ -516,6 +518,10 @@ function SetupSettingsMenu()
 	nativeSettings.addSubcategory("/lhudaddons/hudtoggle", "Simple HUD Toggle")
 	nativeSettings.addSwitch("/lhudaddons/hudtoggle", "Enable HUD toggle hotkey", "If enabled then allows to toggle the whole HUD visibility with F1 keypress (hotkey can be changed inside hudSimpleToggle.reds file)", settings.AddonsSimpleHUDToggle, defaults.AddonsSimpleHUDToggle, function(state) settings.AddonsSimpleHUDToggle = state end)
 	
+	nativeSettings.addSubcategory("/lhudaddons/highlight", "Enemy Highlighting")
+	nativeSettings.addSwitch("/lhudaddons/highlight", "Highlight Pinged only", "If enabled then enemy highlight effect will be visible only for non-friendly NPCs under Ping effect", settings.AddonsHighlightUnderPingOnly, defaults.AddonsHighlightUnderPingOnly, function(state) settings.AddonsHighlightUnderPingOnly = state end)
+	
+	
 	nativeSettings.addSubcategory("/lhudaddons/colorsfill", "Objects Coloring - Fill colors")
 	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Interaction", "Interaction objects fill color", fills, settings.AddonsFillInteraction, defaults.AddonsFillInteraction, function(value) settings.AddonsFillInteraction = value end)
 	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Important interaction", "Important interaction objects fill color", fills, settings.AddonsFillImportantInteraction, defaults.AddonsFillImportantInteraction, function(value) settings.AddonsFillImportantInteraction = value end)
@@ -672,6 +678,7 @@ registerForEvent("onInit", function()
 	Override("LimitedHudConfig.LHUDAddonsConfig", "RemoveMarkerPulse;", function(_) return settings.AddonsRemoveMarkerPulse end)
 	Override("LimitedHudConfig.LHUDAddonsConfig", "EnableHUDToggle;", function(_) return settings.AddonsSimpleHUDToggle end)
 	Override("LimitedHudConfig.LHUDAddonsConfig", "HideCrouchIndicator;", function(_) return settings.AddonsHideCrouchIndicator end)
+	Override("LimitedHudConfig.LHUDAddonsConfig", "HighlightUnderPingOnly;", function(_) return settings.AddonsHighlightUnderPingOnly end)
 	
 	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "FillInteraction;", function(_) return settings.AddonsFillInteraction - 1 end)
 	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "FillImportantInteraction;", function(_) return settings.AddonsFillImportantInteraction - 1 end)
