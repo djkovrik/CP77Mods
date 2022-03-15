@@ -213,13 +213,15 @@ public class LHUDAddonsConfig {
   // Adjusts journal notification widget opacity
   public static func JournalNotificationOpacity() -> Float = 1.0
   // Adjusts journal notification widget scale
-  public static func JournalNotificationScale() -> Float = 1.0
-  // Disables journal notification widget sounds
-  public static func JournalNotificationDisableSounds() -> Bool = false
+  public static func JournalNotificationScale() -> Float = 0.7
+  // Disables journal notification widget sounds for quest notifications (new quest, quest failed or quest completed)
+  public static func JournalNotificationDisableQuestCore() -> Bool = false
+  // Disables journal notification widget sounds for current quest updates
+  public static func JournalNotificationDisableQuestCurrent() -> Bool = false
   // Adjusts item notification widget opacity
   public static func ItemNotificationOpacity() -> Float = 1.0
   // Disables item notification widget scale
-  public static func ItemNotificationScale() -> Float = 1.0
+  public static func ItemNotificationScale() -> Float = 0.7
   // Disables item notification currency sound
   public static func ItemNotificationDisableSoundCurrency() -> Bool = false
   // Removes current HP and max HP text labels from player healthbar widget
