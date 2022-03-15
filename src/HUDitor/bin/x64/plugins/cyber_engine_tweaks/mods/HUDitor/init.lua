@@ -24,7 +24,7 @@ registerForEvent('onInit', function()
 			persistedState[widgetName].scale.Y = scale.Y;
 		end)
 
-		Observe('inkHUDGameController', 'PersistHUDWidgetsState', function(self)
+		Observe('HUDitorInputListener', 'PersistHUDWidgetsState', function(self)
 			local validJson, contents = pcall(function() return json.encode(persistedState) end)
 
 			if validJson and contents ~= nil then
