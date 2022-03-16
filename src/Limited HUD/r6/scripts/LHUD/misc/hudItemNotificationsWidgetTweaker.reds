@@ -21,7 +21,10 @@ public final func PushCurrencyNotification(diff: Int32, total: Uint32) -> Void {
   userData = new CurrencyUpdateNotificationViewData();
   userData.diff = diff;
   userData.total = total;
-  if !LHUDAddonsConfig.ItemNotificationDisableSoundCurrency() {
+  if LHUDAddonsConfig.ItemNotificationDisableSoundCurrency() {
+    userData.soundEvent = n"";
+    userData.soundAction = n"";
+  } else {
     userData.soundEvent = n"QuestUpdatePopup";
     userData.soundAction = n"OnOpen";
   };
