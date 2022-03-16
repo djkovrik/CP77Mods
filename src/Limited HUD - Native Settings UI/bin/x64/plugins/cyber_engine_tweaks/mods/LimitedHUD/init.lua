@@ -108,8 +108,7 @@ local defaults = {
 	AddonsJournalScale = 0.7,
 	AddonsJournalOpacity = 1.0,
 	AddonsJournalDisableSound = false,
-	AddonsJournalDisableSoundQuestNew = false,
-	AddonsJournalDisableSoundQuestCurrent = false,
+	AddonsLevelUpDisableSound = false,
 	AddonsItemScale = 0.7,
 	AddonsItemOpacity = 1.0,
 	AddonsItemDisableSoundCurrency = false,
@@ -259,8 +258,7 @@ local settings = {
 	AddonsJournalScale = 0.7,
 	AddonsJournalOpacity = 1.0,
 	AddonsJournalDisableSound = false,
-	AddonsJournalDisableSoundQuestNew = false,
-	AddonsJournalDisableSoundQuestCurrent = false,
+	AddonsLevelUpDisableSound = false,
 	AddonsItemScale = 0.7,
 	AddonsItemOpacity = 1.0,
 	AddonsItemDisableSoundCurrency = false,
@@ -494,13 +492,14 @@ function SetupSettingsMenu()
 	nativeSettings.addSubcategory("/lhudaddons/journalnotif", "Journal Notifications Widget")
 	nativeSettings.addRangeFloat("/lhudaddons/journalnotif", "Widget opacity", "Adjust journal notifications widget opacity (change from the main menu or reload your game to apply changes)", 0.0, 1.0, 0.05, "%.2f", settings.AddonsJournalOpacity, defaults.AddonsJournalOpacity, function(value) settings.AddonsJournalOpacity = value end)
 	nativeSettings.addRangeFloat("/lhudaddons/journalnotif", "Widget scale", "Adjust journal notifications widget size (change from the main menu or reload your game to apply changes)", 0.1, 2.0, 0.05, "%.2f", settings.AddonsJournalScale, defaults.AddonsJournalScale, function(value) settings.AddonsJournalScale = value end)
-	nativeSettings.addSwitch("/lhudaddons/journalnotif", "Mute quest update sounds", "Mute notification sound for global journal updates (new quest received, quest failed or quest completed)", settings.AddonsJournalDisableSoundQuestNew, defaults.AddonsJournalDisableSoundQuestNew, function(state) settings.AddonsJournalDisableSoundQuestNew = state end)
-	nativeSettings.addSwitch("/lhudaddons/journalnotif", "Mute quest stage update sounds", "Mute notification sound for current quest journal updates", settings.AddonsJournalDisableSoundQuestCurrent, defaults.AddonsJournalDisableSoundQuestCurrent, function(state) settings.AddonsJournalDisableSoundQuestCurrent = state end)
-	
+
 	nativeSettings.addSubcategory("/lhudaddons/itemnotif", "Items Notifications Widget")
 	nativeSettings.addRangeFloat("/lhudaddons/itemnotif", "Widget opacity", "Adjust received items notifications widget opacity (change from the main menu or reload your game to apply changes)", 0.0, 1.0, 0.05, "%.2f", settings.AddonsItemOpacity, defaults.AddonsItemOpacity, function(value) settings.AddonsItemOpacity = value end)
 	nativeSettings.addRangeFloat("/lhudaddons/itemnotif", "Widget scale", "Adjust received items notifications widget size (change from the main menu or reload your game to apply changes)", 0.1, 2.0, 0.05, "%.2f", settings.AddonsItemScale, defaults.AddonsItemScale, function(value) settings.AddonsItemScale = value end)
-	nativeSettings.addSwitch("/lhudaddons/itemnotif", "Mute currency operations sound", "Mute notification sound for currency notifications", settings.AddonsItemDisableSoundCurrency, defaults.AddonsItemDisableSoundCurrency, function(state) settings.AddonsItemDisableSoundCurrency = state end)
+	
+	nativeSettings.addSubcategory("/lhudaddons/notifsounds", "Notification Sounds")
+	nativeSettings.addSwitch("/lhudaddons/notifsounds", "Mute quest notifications", "Mute notification sounds for NCPD jobs and journal changes about new, updated, completed and failed quests", settings.AddonsJournalDisableSound, defaults.AddonsJournalDisableSound, function(state) settings.AddonsJournalDisableSound = state end)
+	nativeSettings.addSwitch("/lhudaddons/notifsounds", "Mute skill level up notifications", "Mute notification sounds for skills level up", settings.AddonsLevelUpDisableSound, defaults.AddonsLevelUpDisableSound, function(state) settings.AddonsLevelUpDisableSound = state end)
 	
 	nativeSettings.addSubcategory("/lhudaddons/dialogresizer", "Dialog Widget Resizer")
 	nativeSettings.addRangeFloat("/lhudaddons/dialogresizer", "Dialog widget scale", "Adjust dialog choices widget size (change from the main menu or reload your game to apply changes)", 0.1, 2.0, 0.05, "%.2f", settings.AddonsDialogResizerScale, defaults.AddonsDialogResizerScale, function(value) settings.AddonsDialogResizerScale = value end)
@@ -675,17 +674,16 @@ registerForEvent("onInit", function()
 	Override("LimitedHudConfig.LHUDAddonsConfig", "HideSpeedometer;", function(_) return settings.AddonsHideSpeedometer end)
 	Override("LimitedHudConfig.LHUDAddonsConfig", "JournalNotificationOpacity;", function(_) return settings.AddonsJournalOpacity end)
 	Override("LimitedHudConfig.LHUDAddonsConfig", "JournalNotificationScale;", function(_) return settings.AddonsJournalScale end)
-	Override("LimitedHudConfig.LHUDAddonsConfig", "JournalNotificationDisableQuestCore;", function(_) return settings.AddonsJournalDisableSoundQuestNew end)
-	Override("LimitedHudConfig.LHUDAddonsConfig", "JournalNotificationDisableQuestCurrent;", function(_) return settings.AddonsJournalDisableSoundQuestCurrent end)
 	Override("LimitedHudConfig.LHUDAddonsConfig", "ItemNotificationOpacity;", function(_) return settings.AddonsItemOpacity end)
 	Override("LimitedHudConfig.LHUDAddonsConfig", "ItemNotificationScale;", function(_) return settings.AddonsItemScale end)
-	Override("LimitedHudConfig.LHUDAddonsConfig", "ItemNotificationDisableSoundCurrency;", function(_) return settings.AddonsItemDisableSoundCurrency end)
 	Override("LimitedHudConfig.LHUDAddonsConfig", "RemoveHealthbarTexts;", function(_) return settings.AddonsRemoveHealthbarTexts end)
 	Override("LimitedHudConfig.LHUDAddonsConfig", "RemoveMarkerPulse;", function(_) return settings.AddonsRemoveMarkerPulse end)
 	Override("LimitedHudConfig.LHUDAddonsConfig", "EnableHUDToggle;", function(_) return settings.AddonsSimpleHUDToggle end)
 	Override("LimitedHudConfig.LHUDAddonsConfig", "HideCrouchIndicator;", function(_) return settings.AddonsHideCrouchIndicator end)
 	Override("LimitedHudConfig.LHUDAddonsConfig", "HighlightUnderPingOnly;", function(_) return settings.AddonsHighlightUnderPingOnly end)
-	
+	Override("LimitedHudConfig.LHUDAddonsConfig", "MuteQuestNotifications;", function(_) return settings.AddonsJournalDisableSound end)
+	Override("LimitedHudConfig.LHUDAddonsConfig", "MuteLevelUpNotifications;", function(_) return settings.AddonsLevelUpDisableSound end)
+
 	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "FillInteraction;", function(_) return settings.AddonsFillInteraction - 1 end)
 	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "FillImportantInteraction;", function(_) return settings.AddonsFillImportantInteraction - 1 end)
 	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "FillWeakspot;", function(_) return settings.AddonsFillWeakspot - 1 end)

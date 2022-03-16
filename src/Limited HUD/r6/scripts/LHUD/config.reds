@@ -214,16 +214,10 @@ public class LHUDAddonsConfig {
   public static func JournalNotificationOpacity() -> Float = 1.0
   // Adjusts journal notification widget scale
   public static func JournalNotificationScale() -> Float = 0.7
-  // Disables journal notification widget sounds for quest notifications (new quest, quest failed or quest completed)
-  public static func JournalNotificationDisableQuestCore() -> Bool = false
-  // Disables journal notification widget sounds for current quest updates
-  public static func JournalNotificationDisableQuestCurrent() -> Bool = false
   // Adjusts item notification widget opacity
   public static func ItemNotificationOpacity() -> Float = 1.0
   // Disables item notification widget scale
   public static func ItemNotificationScale() -> Float = 0.7
-  // Disables item notification currency sound
-  public static func ItemNotificationDisableSoundCurrency() -> Bool = false
   // Removes current HP and max HP text labels from player healthbar widget
   public static func RemoveHealthbarTexts() -> Bool = false
   // Removes pulse animation for tracked markers
@@ -234,6 +228,10 @@ public class LHUDAddonsConfig {
   public static func HideCrouchIndicator() -> Bool = false
   // Enables hostile enemy highlighting only if they have Ping effect
   public static func HighlightUnderPingOnly() -> Bool = false
+  // Mutes quest update notifications
+  public static func MuteQuestNotifications() -> Bool = false
+  // Mutes skill levelup notifications
+  public static func MuteLevelUpNotifications() -> Bool = false
 }
 
 // Objects Coloring config
