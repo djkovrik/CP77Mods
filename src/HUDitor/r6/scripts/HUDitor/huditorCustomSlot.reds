@@ -42,6 +42,14 @@ public class HUDitorCustomSlot extends inkVerticalPanel {
     };
   }
 
+  protected cb func OnScannerDetailsAppearedEvent(event: ref<ScannerDetailsAppearedEvent>) -> Bool {
+    if event.isVisible && !event.isHackable {
+      this.SetOpacity(0.0);
+    } else {
+      this.SetOpacity(1.0);
+    };
+  }
+
   private func IsHUDWidget() -> Bool {
     let widgetName = this.GetName();
 

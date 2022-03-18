@@ -14,6 +14,14 @@
 @addField(inkGameController) let carHudSlot: ref<HUDitorCustomSlot>;
 
 @addMethod(inkGameController)
+protected cb func OnScannerDetailsAppearedEvent(event: ref<ScannerDetailsAppearedEvent>) -> Bool {
+  if this.IsA(n"gameuiRootHudGameController") {
+    this.minimapSlot.OnScannerDetailsAppearedEvent(event);
+    this.questTrackerSlot.OnScannerDetailsAppearedEvent(event);
+  };
+}
+
+@addMethod(inkGameController)
 protected cb func OnGameSessionInitialized(event: ref<GameSessionInitializedEvent>) -> Bool {
   if this.IsA(n"gameuiRootHudGameController") {
     this.minimapSlot.OnGameSessionInitialized(event);

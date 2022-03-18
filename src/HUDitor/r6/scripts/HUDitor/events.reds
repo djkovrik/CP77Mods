@@ -13,3 +13,8 @@ public class DisplayPreviewEvent extends Event {}
 public class HidePreviewEvent extends Event {}
 
 public class HijackSlotsEvent extends Event {}
+
+public class ScannerDetailsAppearedEvent extends Event {
+  let isVisible: Bool;
+  let isHackable: Bool;
+}
