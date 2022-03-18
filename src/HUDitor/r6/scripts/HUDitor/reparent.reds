@@ -167,7 +167,7 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
     );
 
     minimap.Reparent(this.minimapSlot);
-    this.minimapSlot.Reparent(root);
+    this.minimapSlot.Reparent(root, 0);
 
     this.questTrackerSlot = new HUDitorCustomSlot();
     this.questTrackerSlot.SetName(n"NewTracker");
@@ -191,7 +191,7 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
     );
 
     questList.Reparent(this.questTrackerSlot);
-    this.questTrackerSlot.Reparent(root);
+    this.questTrackerSlot.Reparent(root, 1);
 
     this.staminaBarSlot = new HUDitorCustomSlot();
     this.staminaBarSlot.SetName(n"NewStaminaBar");
@@ -215,7 +215,7 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
     );
 
     staminabar.Reparent(this.staminaBarSlot);
-    this.staminaBarSlot.Reparent(root);
+    this.staminaBarSlot.Reparent(root, 2);
 
     this.vehicleSummonSlot = new HUDitorCustomSlot();
     this.vehicleSummonSlot.SetName(n"NewVehicleSummon");
@@ -239,7 +239,7 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
     );
 
     vehicleSummon.Reparent(this.vehicleSummonSlot);
-    this.vehicleSummonSlot.Reparent(root);
+    this.vehicleSummonSlot.Reparent(root, 3);
 
     this.inputHintSlot = new HUDitorCustomSlot();
     this.inputHintSlot.SetName(n"NewInputHint");
@@ -263,7 +263,7 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
     );
 
     inputHint.Reparent(this.inputHintSlot);
-    this.inputHintSlot.Reparent(root);
+    this.inputHintSlot.Reparent(root, 4);
 
     this.wantedSlot = new HUDitorCustomSlot();
     this.wantedSlot.SetName(n"NewWanted");
@@ -287,7 +287,7 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
     );
 
     wanted.Reparent(this.wantedSlot);
-    this.wantedSlot.Reparent(root);
+    this.wantedSlot.Reparent(root, 5);
 
     this.phoneCallAvatarSlot = new HUDitorCustomSlot();
     this.phoneCallAvatarSlot.SetName(n"NewPhoneAvatar");
@@ -311,7 +311,7 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
     );
 
     phoneAvatar.Reparent(this.phoneCallAvatarSlot);
-    this.phoneCallAvatarSlot.Reparent(root);
+    this.phoneCallAvatarSlot.Reparent(root, 6);
 
     this.questNotificationsSlot = new HUDitorCustomSlot();
     this.questNotificationsSlot.SetName(n"NewQuestNotifications");
@@ -335,7 +335,7 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
     );
 
     questNotifications.Reparent(this.questNotificationsSlot);
-    this.questNotificationsSlot.Reparent(root);
+    this.questNotificationsSlot.Reparent(root, 7);
 
     this.itemNotificationsSlot = new HUDitorCustomSlot();
     this.itemNotificationsSlot.SetName(n"NewItemNotifications");
@@ -359,7 +359,7 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
     );
 
     itemNotifications.Reparent(this.itemNotificationsSlot);
-    this.itemNotificationsSlot.Reparent(root);
+    this.itemNotificationsSlot.Reparent(root, 8);
 
     // Reparent BottomRightHorizontal to custom slot
     this.weaponCrouchSlot = new HUDitorCustomSlot();
@@ -384,7 +384,7 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
     );
 
     bottomRightHorizontalSlot.Reparent(this.weaponCrouchSlot);
-    this.weaponCrouchSlot.Reparent(root);
+    this.weaponCrouchSlot.Reparent(root, 9);
 
     this.dpadSlot = new HUDitorCustomSlot();
     this.dpadSlot.SetName(n"NewDpad");
@@ -408,7 +408,7 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
     );
 
     dpad.Reparent(this.dpadSlot);
-    this.dpadSlot.Reparent(root);
+    this.dpadSlot.Reparent(root, 10);
 
     this.healthbarSlot = new HUDitorCustomSlot();
     this.healthbarSlot.SetName(n"NewHealthBar");
@@ -432,7 +432,7 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
     );
 
     healthbar.Reparent(this.healthbarSlot);
-    this.healthbarSlot.Reparent(root);
+    this.healthbarSlot.Reparent(root, 11);
 
     this.phoneControlSlot = new HUDitorCustomSlot();
     this.phoneControlSlot.SetName(n"NewPhoneControl");
@@ -457,7 +457,7 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
     );
 
     phoneControl.Reparent(this.phoneControlSlot);
-    this.phoneControlSlot.Reparent(root);
+    this.phoneControlSlot.Reparent(root, 12);
 
     this.carHudSlot = new HUDitorCustomSlot();
     this.carHudSlot.SetName(n"NewCarHud");
@@ -481,7 +481,7 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
     );
 
     carHud.Reparent(this.carHudSlot);
-    this.carHudSlot.Reparent(root);
+    this.carHudSlot.Reparent(root, 13);
   };
 }
 
