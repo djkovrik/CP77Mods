@@ -183,9 +183,9 @@ private final func HandleVendorSlotInput(evt: ref<ItemDisplayClickEvent>, itemDa
       ItemPreviewManager.GetInstance().TogglePreviewItem(itemData);
 
       if isEquipped {
-        hintLabel = "Equip";
+        hintLabel = VirtualAtelierText.PreviewEquip();
       } else {
-        hintLabel = "Unequip";
+        hintLabel = VirtualAtelierText.PreviewUnequip();
       }
 
       this.m_buttonHintsController.RemoveButtonHint(n"select");
@@ -243,9 +243,9 @@ protected cb func OnInventoryItemHoverOver(evt: ref<ItemDisplayHoverOverEvent>) 
       let hintLabel: String;
 
       if isEquipped {
-        hintLabel = "Unequip";
+        hintLabel = VirtualAtelierText.PreviewUnequip();
       } else {
-        hintLabel = "Equip";
+        hintLabel = VirtualAtelierText.PreviewEquip();
       };
 
       this.m_buttonHintsController.RemoveButtonHint(n"select");

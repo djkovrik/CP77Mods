@@ -104,7 +104,7 @@ public func CheckDuplicates(stores: array<ref<VirtualShop>>, controller: ref<Web
     storedItem = mapValues[mapItemIndex] as StoreGoods;
     if IsDefined(storedItem) && ArraySize(storedItem.stores) > 1 {
       hasDuplicates = true;
-      duplicatesInfo = s"[ATELIER DUPLICATE ITEM: \(storedItem.item)]" + ": ";
+      duplicatesInfo = s"[DUPLICATE ITEM: \(storedItem.item)]" + ": ";
       storeIndex = 0;
       while storeIndex < ArraySize(storedItem.stores) {
         isLast = Equals(storeIndex, ArraySize(storedItem.stores) - 1);
@@ -123,7 +123,7 @@ public func CheckDuplicates(stores: array<ref<VirtualShop>>, controller: ref<Web
   };
 
   if hasDuplicates {
-    controller.DisplayWarning("Duplicate Atelier items detected! Check console logs for more details.");
+    controller.DisplayWarning(VirtualAtelierText.Warning());
   };
 }
 

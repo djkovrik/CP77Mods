@@ -50,7 +50,7 @@ private final func SetInventoryItemButtonHintsHoverOver(displayingData: Inventor
   let vendorPreviewButtonHint = VendorPreviewButtonHint.Get();
   let itemId = InventoryItemData.GetID(displayingData);
 
-  this.m_buttonHintsController.AddButtonHint(vendorPreviewButtonHint.previewModeToggleNameBackpack, "Preview Item");
+  this.m_buttonHintsController.AddButtonHint(vendorPreviewButtonHint.previewModeToggleNameBackpack, VirtualAtelierText.PreviewItem());
 }
 
 @wrapMethod(BackpackMainGameController)

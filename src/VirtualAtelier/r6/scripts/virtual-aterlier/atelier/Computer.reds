@@ -12,7 +12,7 @@ public func InitializeMenuButtons(gameController: ref<ComputerInkGameController>
     if Equals("internet", widgetName) {
       i = ArraySize(widgetsData);
 
-      widgetData.displayName = "Atelier";
+      widgetData.displayName = VirtualAtelierText.Name();
       widgetData.widgetName = "Atelier";
 
       // TODO: Find a way to show a badge for newly installed stores (+ add a border around new stores?)

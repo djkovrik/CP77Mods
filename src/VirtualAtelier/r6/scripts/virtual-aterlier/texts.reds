@@ -1,4 +1,6 @@
 public class VirtualAtelierText {
+  // Atelier tab name inside your PC
+  public static func Name() -> String = "Atelier"
   // Empty stores screen placeholder
   public static func EmptyPlaceholder() -> String = "No custom stores installed"
   // Previous page button
@@ -26,4 +28,12 @@ public class VirtualAtelierText {
   public static func PreviewMove() -> String = "Move"
   // Preview button hint
   public static func PreviewRotate() -> String = "Rotate"
+  // Preview button hint
+  public static func PreviewEquip() -> String = "Equip"
+  // Preview button hint
+  public static func PreviewUnequip() -> String = "Unequip"
+  // Preview button hint
+  public static func PreviewItem() -> String = "Preview Item"
+  // Duplicate items warning
+  public static func Warning() -> String = "Duplicate Atelier items detected! Check Cyber Engine Tweaks console log for more details."
 }
