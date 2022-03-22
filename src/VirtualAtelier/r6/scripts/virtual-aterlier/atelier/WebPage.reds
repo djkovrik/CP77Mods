@@ -111,7 +111,7 @@ private func PopulateAtelierPages() {
     };
   };
 
-  // CheckDuplicates(this.stores, this);
+  CheckDuplicates(this.stores, this);
 }
 
 @addMethod(WebPage)

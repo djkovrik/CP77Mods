@@ -63,7 +63,7 @@ public class AtelierTextButton extends inkCustomController {
     text.SetName(this.m_name);
     text.SetText(this.m_label);
     text.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-    text.SetFontStyle(n"Bold");
+    text.SetFontStyle(n"Semi-Bold");
     text.SetFontSize(this.m_fontSize);
     text.SetAnchor(inkEAnchor.Centered);
     text.SetVAlign(inkEVerticalAlign.Center);
