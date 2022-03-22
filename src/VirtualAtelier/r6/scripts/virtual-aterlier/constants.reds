@@ -27,29 +27,31 @@ public class VendorPreviewButtonHint {
 
     vendorPreviewButtonHint.previewModeToggleName = n"UI_PrintDebug";
     vendorPreviewButtonHint.previewModeToggleNameBackpack = n"UI_Unequip";
-    vendorPreviewButtonHint.previewModeToggleEnableLabel = "Enable Preview";
-    vendorPreviewButtonHint.previewModeToggleDisableLabel = "Disable Preview";
-    vendorPreviewButtonHint.previewModeTogglePurchaseLabel = "Purchase";
+    vendorPreviewButtonHint.previewModeToggleEnableLabel = VirtualAtelierText.PreviewEnable();
+    vendorPreviewButtonHint.previewModeToggleDisableLabel = VirtualAtelierText.PreviewDisable();
+    vendorPreviewButtonHint.previewModeTogglePurchaseLabel = VirtualAtelierText.PreviewPurchase();
 
     vendorPreviewButtonHint.resetGarmentName = n"world_map_filter_navigation_down";
-    vendorPreviewButtonHint.resetGarmentLabel = "Reset Preview";
+    vendorPreviewButtonHint.resetGarmentLabel = VirtualAtelierText.PreviewReset();
 
     vendorPreviewButtonHint.removeAllGarmentName = n"world_map_menu_open_quest_static";
-    vendorPreviewButtonHint.removeAllGarmentLabel = "Remove All Garment";
+    vendorPreviewButtonHint.removeAllGarmentLabel = VirtualAtelierText.PreviewRemoveAllGarment();
 
     vendorPreviewButtonHint.removePreviewGarmentName = n"disassemble_item";
-    vendorPreviewButtonHint.removePreviewGarmentLabel = "Remove Preview Garment";
+    vendorPreviewButtonHint.removePreviewGarmentLabel = VirtualAtelierText.PreviewRemovePreviewGarment();
 
     vendorPreviewButtonHint.moveName = n"world_map_fake_move";
-    vendorPreviewButtonHint.moveLabel = "Move";
+    vendorPreviewButtonHint.moveLabel = VirtualAtelierText.PreviewMove();
 
     vendorPreviewButtonHint.zoomName = n"mouse_wheel";
-    vendorPreviewButtonHint.zoomLabel = "Zoom";
+    vendorPreviewButtonHint.zoomLabel = VirtualAtelierText.PreviewRotate();
 
     return vendorPreviewButtonHint;
   }
 }
 
-public func GetNumOfVirtualStoresPerRow() -> Int32 {
-  return 6;
+public class VirtualAtelierConfig {
+  public static func NumOfVirtualStoresPerRow() -> Int32 = 6
+  public static func NumOfRowsTotal() -> Int32  = 2
+  public static func StoresPerPage() -> Int32 = VirtualAtelierConfig.NumOfVirtualStoresPerRow() * VirtualAtelierConfig.NumOfRowsTotal()
 }
