@@ -1,5 +1,10 @@
 module VendorPreview.utils
 
+public class ItemToStoresMap extends IScriptable {
+  let itemID: String;
+  let stores: array<String>;
+}
+
 public func IsItemClothing(itemID: ItemID) -> Bool {
   return Equals(RPGManager.GetItemCategory(itemID), gamedataItemCategory.Clothing);
 }
@@ -137,6 +142,6 @@ public func CheckDuplicates(stores: array<ref<VirtualShop>>, controller: ref<Web
     }
 
     controller.DisplayWarning("DUPLICATE ATELIER ITEMS\nCHECK CONSOLE FOR DETAILS");
-    Log(finalMessage);
+    LogChannel(n"DEBUG", finalMessage);
   }
 }
