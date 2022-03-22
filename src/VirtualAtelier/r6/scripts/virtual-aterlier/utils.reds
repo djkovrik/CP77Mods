@@ -1,10 +1,5 @@
 module VendorPreview.utils
 
-public class ItemToStoresMap extends IScriptable {
-  let itemID: String;
-  let stores: array<String>;
-}
-
 public func IsItemClothing(itemID: ItemID) -> Bool {
   return Equals(RPGManager.GetItemCategory(itemID), gamedataItemCategory.Clothing);
 }
@@ -44,104 +39,94 @@ public func GetZoomArea(equipmentArea: gamedataEquipmentArea) -> InventoryPaperd
   return InventoryPaperdollZoomArea.Default;
 }
 
+public class StoreGoods extends IScriptable {
+  let key: Uint64;
+  let item: String;
+  let stores: array<String>;
+
+  public func StoreShopIfNotContains(store: String) {
+    if !ArrayContains(this.stores, store) {
+      ArrayPush(this.stores, store);
+    };
+  };
+}
+
 public func CheckDuplicates(stores: array<ref<VirtualShop>>, controller: ref<WebPage>) -> Void {
-  let itemsToStoresMap: array<ref<ItemToStoresMap>>;
-  let duplicateItemIDs: array<String>;
+  let itemsHashMap: ref<inkHashMap> = new inkHashMap();
+  let storeIndex: Int32 = 0;
+  let store: ref<VirtualShop>;
+  let storeGoodie: ref<StoreGoods>;
+  let items: array<String>;
+  let item: String;
+  let key: Uint64;
+  let itemIndex: Int32;
 
-  let storeIndex = 0;
-
+  // Populate items map
   while storeIndex < ArraySize(stores) {
-    let store = stores[storeIndex];
-    let storeID: CName = store.storeID;
-    let storeName: String = store.storeName;
-    let items: array<String> = store.items;
-
-    let itemIndex = 0;
-
+    store = stores[storeIndex];
+    items = store.items;
+    itemIndex = 0;
     while itemIndex < ArraySize(items) {
-      let item: String = items[itemIndex];
+      item = items[itemIndex];
+      key = TDBID.ToNumber(TDBID.Create(item));
 
-      let isExists = false;
-
-      let itemsToStoreIndex = 0;
-
-      while itemsToStoreIndex < ArraySize(itemsToStoresMap) {
-        let itemToStoresMap = itemsToStoresMap[itemsToStoreIndex];
-
-        if Equals(itemToStoresMap.itemID, item) {
-          ArrayPush(itemToStoresMap.stores, storeName);
-          ArrayPush(duplicateItemIDs, item);
-
-          isExists = true;
-          
-          itemsToStoreIndex = ArraySize(itemsToStoresMap);
-        }
-
-        itemsToStoreIndex += 1;
-      }
-
-      if !isExists {
-        let newItemToStoresMap = new ItemToStoresMap();
-        newItemToStoresMap.itemID = item;
-
-        let storesList: array<String>;
-        newItemToStoresMap.stores = storesList;
-
-        ArrayPush(newItemToStoresMap.stores, storeName);
-        ArrayPush(itemsToStoresMap, newItemToStoresMap);
-      }
+      if itemsHashMap.KeyExist(key) {
+        // Extract, add store and save
+        storeGoodie = itemsHashMap.Get(key) as StoreGoods;
+        storeGoodie.StoreShopIfNotContains(store.storeName);
+        itemsHashMap.Set(key, storeGoodie);
+      } else {
+        // Insert new
+        storeGoodie = new StoreGoods();
+        storeGoodie.key = key;
+        storeGoodie.item = item;
+        storeGoodie.StoreShopIfNotContains(store.storeName);
+        itemsHashMap.Insert(key, storeGoodie);
+      };
 
       itemIndex += 1;
-    }
+    };
+    storeIndex += 1;
+  };
 
-    storeIndex += 1;  
-  }
-
-  if ArraySize(duplicateItemIDs) > 0 {
-    let finalMessage: String = "";
-
-    let duplicateItemIndex = 0;
-
-    while duplicateItemIndex < ArraySize(duplicateItemIDs) {
-      let duplicateItemID = duplicateItemIDs[duplicateItemIndex];
-
-      let storeNames: String = "[ATELIER DUPLICATE ITEM: " + duplicateItemID + "]" + ": ";
-
-      let currentItemToStoresMap: ref<ItemToStoresMap>;
-
-      let mapIndex = 0;
-
-      while mapIndex < ArraySize(itemsToStoresMap) {
-        let currMap = itemsToStoresMap[mapIndex];
-        
-        if Equals(currMap.itemID, duplicateItemID) {
-          let storeIndex = 0;
-
-          while storeIndex < ArraySize(currMap.stores) {
-            let isLast = Equals(storeIndex, ArraySize(currMap.stores) - 1);
-            let currStore = currMap.stores[storeIndex];
-
-            if isLast {
-              storeNames += currStore;
-            } else {
-              storeNames += currStore + ", ";
-            }
-
-            storeIndex += 1;
-          }
-
-          mapIndex = ArraySize(itemsToStoresMap);
+  // Find items with more than single store
+  let mapValues: array<wref<IScriptable>>;
+  let storedItem: ref<StoreGoods>;
+  let hasDuplicates: Bool = false;
+  let duplicatesInfo: String = "";
+  let finalMessage: String = "";
+  let mapItemIndex: Int32 = 0;
+  let isLast: Bool = false;
+  let storeIndex: Int32;
+  
+  itemsHashMap.GetValues(mapValues);
+  while mapItemIndex < ArraySize(mapValues) {
+    storedItem = mapValues[mapItemIndex] as StoreGoods;
+    if IsDefined(storedItem) && ArraySize(storedItem.stores) > 1 {
+      hasDuplicates = true;
+      duplicatesInfo = s"[ATELIER DUPLICATE ITEM: \(storedItem.item)]" + ": ";
+      storeIndex = 0;
+      while storeIndex < ArraySize(storedItem.stores) {
+        isLast = Equals(storeIndex, ArraySize(storedItem.stores) - 1);
+        if isLast {
+          duplicatesInfo += s"\(storedItem.stores[storeIndex])";
         } else {
-          mapIndex += 1;
-        }
-      }
+          duplicatesInfo += s"\(storedItem.stores[storeIndex]), ";
+        };
+        storeIndex += 1;
+      };
 
-      finalMessage += storeNames + "\n";
+      AtelierLog(duplicatesInfo);
+    };
 
-      duplicateItemIndex += 1;
-    }
+    mapItemIndex += 1;
+  };
 
-    controller.DisplayWarning("DUPLICATE ATELIER ITEMS\nCHECK CONSOLE FOR DETAILS");
-    LogChannel(n"DEBUG", finalMessage);
-  }
+  if hasDuplicates {
+    controller.DisplayWarning("Duplicate Atelier items detected! Check console logs for more details.");
+  };
+}
+
+public func AtelierLog(str: String) -> Void {
+  LogChannel(n"DEBUG", s"Atelier: \(str)");
 }

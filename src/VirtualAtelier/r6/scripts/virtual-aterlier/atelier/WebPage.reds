@@ -94,7 +94,7 @@ private func PopulateAtelierPages() {
     };
     let storeContainer: ref<inkVerticalPanel> = this.GetStore(store);
     row.AddChildWidget(storeContainer);
-    //LLL(s"Store \(storeIndex) added to row \(rowCounter) of page \(pageIndex), current row children: \(row.GetNumChildren()), current page children: \(parentPage.GetNumChildren())");
+    //AtelierLog(s"Store \(storeIndex) added to row \(rowCounter) of page \(pageIndex), current row children: \(row.GetNumChildren()), current page children: \(parentPage.GetNumChildren())");
 
     insideRowIndex += 1;
     insidePageIndex += 1;
@@ -347,8 +347,4 @@ protected cb func OnShopClick(evt: ref<inkPointerEvent>) -> Bool {
       }
     }
   }
-}
-
-private func LLL(str: String) -> Void {
-  LogChannel(n"DEBUG", s"Atelier: \(str)");
 }
