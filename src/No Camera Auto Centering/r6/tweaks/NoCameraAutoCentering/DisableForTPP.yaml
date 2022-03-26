@@ -1,0 +1,14 @@
+RTDB.VehicleTPPCameraParams.autoCenterStartTimeGamepad: 10000.0
+RTDB.VehicleTPPCameraParams.autoCenterStartTimeMouse: 10000.0
+
+Camera.VehicleTPP_2w_DefaultParams:
+  autoCenterStartTimeGamepad:  10000.0
+  autoCenterStartTimeMouse:  10000.0
+  
+Camera.VehicleTPP_DefaultParams:
+  autoCenterStartTimeGamepad:  10000.0
+  autoCenterStartTimeMouse:  10000.0
+  
+Vehicle.VehicleTPP_Params_v_militech_basilisk:
+  autoCenterStartTimeGamepad:  10000.0
+  autoCenterStartTimeMouse:  10000.0
