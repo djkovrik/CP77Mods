@@ -1,0 +1,4 @@
+scanning.scanTimeDilation.enableTimeDilation: false
+timeSystem.focusModeTimeDilation.enableTimeDilation: false
+timeSystem.focusModeTimeDilation.enableTimeDilationOnlyEnemyOrSensorVisible: false
+timeSystem.netrunnerBreach.enableTimeDilation: false
