@@ -251,32 +251,40 @@ protected cb func OnUninitialize() -> Bool {
 // -- SEND EVENTS FOR NEW BLACKBOARD VARIABLE
 
 @addMethod(EquipmentSystemPlayerData)
-private func IsUnequipWeaponRequest(requestType: EquipmentManipulationAction) -> Bool {
-  return Equals(requestType, EquipmentManipulationAction.UnequipWeapon) || Equals(requestType, EquipmentManipulationAction.UnequipAll);
+private func IsUnquipRequest(requestType: EquipmentManipulationAction) -> Bool {
+  return
+    Equals(requestType, EquipmentManipulationAction.UnequipWeapon) ||
+    Equals(requestType, EquipmentManipulationAction.UnequipAll) ||
+  false;
 }
 
 @addMethod(EquipmentSystemPlayerData)
-private func IsUnequipConsumableRequest(requestType: EquipmentManipulationAction) -> Bool {
-  return Equals(requestType, EquipmentManipulationAction.UnequipGadget) || Equals(requestType, EquipmentManipulationAction.UnequipConsumable) || Equals(requestType, EquipmentManipulationAction.UnequipLeftHandCyberware);
+private func ShouldSkipThisRequest(requestType: EquipmentManipulationAction) -> Bool {
+  return
+    Equals(requestType, EquipmentManipulationAction.RequestConsumable) ||
+    Equals(requestType, EquipmentManipulationAction.RequestGadget) ||
+    Equals(requestType, EquipmentManipulationAction.RequestLeftHandCyberware) ||
+    Equals(requestType, EquipmentManipulationAction.UnequipConsumable) ||
+    Equals(requestType, EquipmentManipulationAction.UnequipGadget) ||
+    Equals(requestType, EquipmentManipulationAction.UnequipLeftHandCyberware) ||
+  false;
 }
 
 @wrapMethod(EquipmentSystemPlayerData)
 public final func OnEquipmentSystemWeaponManipulationRequest(request: ref<EquipmentSystemWeaponManipulationRequest>) -> Void {
-  let targetItem: ItemID = this.GetItemIDfromEquipmentManipulationAction(request.requestType);
-  let targetRecord: ref<Item_Record> = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(targetItem));
-  let targetType: gamedataItemType = targetRecord.ItemType().Type();
-  let isUnequipWeaponRequest: Bool = this.IsUnequipWeaponRequest(request.requestType);
-  let isConsumableRequest: Bool = this.IsUnequipConsumableRequest(request.requestType);
+  wrappedMethod(request);
+
+  let isUnequipRequest: Bool = this.IsUnquipRequest(request.requestType);
+  let shouldSkipRequest: Bool = this.ShouldSkipThisRequest(request.requestType);
   let equipmentDataDef: ref<UI_EquipmentDataDef> = GetAllBlackboardDefs().UI_EquipmentData;
-  if !isUnequipWeaponRequest || isConsumableRequest {
-    GameInstance.GetBlackboardSystem(this.m_owner.GetGame()).Get(equipmentDataDef).SetBool(equipmentDataDef.HasWeaponEquipped, true);
+  if isUnequipRequest {
+    GameInstance.GetBlackboardSystem(this.m_owner.GetGame()).Get(equipmentDataDef).SetBool(equipmentDataDef.HasWeaponEquipped, false);
   } else {
-    if ItemID.IsValid(targetItem) {
-      GameInstance.GetBlackboardSystem(this.m_owner.GetGame()).Get(equipmentDataDef).SetBool(equipmentDataDef.HasWeaponEquipped, false);
+    if !shouldSkipRequest {
+      LHUDLog(s"!!! Show for request \(request.requestType)");
+      GameInstance.GetBlackboardSystem(this.m_owner.GetGame()).Get(equipmentDataDef).SetBool(equipmentDataDef.HasWeaponEquipped, true);
     };
   };
-
-  wrappedMethod(request);
 }
 
 @wrapMethod(RadialWheelController)

@@ -84,7 +84,7 @@ function SetupSettingsMenu()
 		settings.UseCooldowns = state
 	end)
 	
-	nativeSettings.addRangeInt("/equip/common", "Animation cooldown time", "Defines cooldown period for firstEquip animation, distinct for each equipped weapon", 0, 120, 1, settings.DefaultCooldown, defaults.DefaultCooldown, function(value)
+	nativeSettings.addRangeInt("/equip/common", "Animation cooldown time", "Defines cooldown period for firstEquip animation, distinct for each equipped weapon", 1, 120, 1, settings.DefaultCooldown, defaults.DefaultCooldown, function(value)
 		settings.DefaultCooldown = value
 	end)
 	
