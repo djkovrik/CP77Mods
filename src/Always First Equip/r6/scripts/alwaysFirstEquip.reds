@@ -12,6 +12,12 @@ class FirstEquipConfig {
   public static func PlayWhileSprinting() -> Bool = false
   // Replace false with true if you want to prevent probability based animations for arms cyberware
   public static func ExcludeArmsCyberware() -> Bool = true
+  // Use cooldown instead of probability
+  public static func UseCooldownBasedCheck() -> Bool = false
+  // Cooldown time
+  public static func CooldownTime() -> Int32 = 20
+  // Cooldown time units: 1 = seconds, 2 = minutes
+  public static func CooldownTimeUnits() -> Int32 = 1
 
   // -- Hotkey config
 
@@ -118,6 +124,7 @@ protected cb func OnGameAttached() -> Bool {
     this.m_firstEquipGlobalInputListener = new FirstEquipGlobalInputListener();
     this.m_firstEquipGlobalInputListener.SetPlayer(this);
     this.RegisterInputListener(this.m_firstEquipGlobalInputListener);
+    this.firstEquipCooldowns = new inkIntHashMap();
 }
 
 @wrapMethod(PlayerPuppet)
@@ -139,6 +146,10 @@ public func IsTryingWithArmsCW(weapon: wref<WeaponObject>) -> Bool {
   let isTargetOtherArmsCW: Bool = Equals(targetItemType, gamedataItemType.Cyb_NanoWires) || Equals(targetItemType, gamedataItemType.Cyb_StrongArms) || Equals(targetItemType, gamedataItemType.Cyb_MantisBlades);
   return isTargetGorillaArms || isTargetOtherArmsCW;
 }
+
+// Cooldown based methods
+@addField(PlayerPuppet)
+public let firstEquipCooldowns: ref<inkIntHashMap>;
 
 // Checks if firstEquip animation must be played depending on config 
 @addMethod(PlayerPuppet)
@@ -165,13 +176,52 @@ public func ShouldRunFirstEquipEQ(weapon: wref<WeaponObject>) -> Bool {
     return false;
   };
 
-  let probability: Int32 = FirstEquipConfig.PercentageProbability();
-  let random: Int32 = RandRange(0, 100);
+  let itemId: TweakDBID;
+  let currentTimeStamp: Int32;
+  let probability: Int32;
+  let random: Int32;
+  let key: Uint64;
+  let cooldown: Int32;
+  let savedTime: Int32;
 
-  if probability < 0 { return false; }
-  if probability > 100 { return true; }
+  if FirstEquipConfig.UseCooldownBasedCheck() {
+    // COOLDOWNS
+    if Equals(FirstEquipConfig.CooldownTimeUnits(), 1) {
+      cooldown = FirstEquipConfig.CooldownTime();
+    } else {
+      cooldown = FirstEquipConfig.CooldownTime() * 60;
+    };
 
-  return random <= probability;
+    itemId = ItemID.GetTDBID(weapon.GetItemID());
+    key = TDBID.ToNumber(itemId);
+    currentTimeStamp = Cast<Int32>(EngineTime.ToFloat(GameInstance.GetSimTime(this.GetGame())));
+
+    if this.firstEquipCooldowns.KeyExist(key) {
+      // Weapon does have saved cooldown
+      savedTime = this.firstEquipCooldowns.Get(key);
+      if currentTimeStamp - savedTime >= cooldown {
+        // Time passed - refresh cooldown and allow firstEquip
+        this.firstEquipCooldowns.Set(key, currentTimeStamp);
+        return true;
+      } else {
+        // Time not passed - deny firstEquip
+        return false;
+      }
+    } else {
+      // Weapon does not have cooldown yet - save and allow firstEquip
+      this.firstEquipCooldowns.Insert(key, currentTimeStamp);
+      return true;
+    };
+  } else {
+    // PROBABILITY
+    probability = FirstEquipConfig.PercentageProbability();
+    random = RandRange(0, 100);
+
+    if probability < 0 { return false; }
+    if probability > 100 { return true; }
+
+    return random <= probability;
+  };
 }
 
 // Checks if IdleBreak animation must be played depending on config 

@@ -9,7 +9,10 @@ local defaults = {
 	DefaultSlotNumber = 1,
 	AnimationProbability = 10,
 	AnimationCheckPeriod = 5,
-	BindToHotkeyIdleBreak = true
+	BindToHotkeyIdleBreak = true,
+	UseCooldowns = false,
+	DefaultCooldown = 20,
+	CooldownUnits = 1
 }
 
 local settings = {
@@ -23,7 +26,10 @@ local settings = {
 	DefaultSlotNumber = 1,
 	AnimationProbability = 10,
 	AnimationCheckPeriod = 5,
-	BindToHotkeyIdleBreak = true
+	BindToHotkeyIdleBreak = true,
+	UseCooldowns = false,
+	DefaultCooldown = 20,
+	CooldownUnits = 1
 }
 
 function SaveSettings() 
@@ -60,39 +66,58 @@ function SetupSettingsMenu()
 		print("Error: NativeSettings not found!")
 		return
 	end
+	
+	local cooldownUnit = {
+		[1] = "Seconds",
+		[2] = "Minutes"
+	}
 
 	nativeSettings.addTab("/equip", "First Equip")
 	
-	nativeSettings.addSubcategory("/equip/common", "Common config")
+	nativeSettings.addSubcategory("/equip/common", "Animation triggering")
 	
 	nativeSettings.addRangeInt("/equip/common", "Percentage probability", "Defines firstEquip animation probability in percents", 0, 100, 5, settings.PercentageProbability, defaults.PercentageProbability, function(value)
 		settings.PercentageProbability = value
 	end)
 	
-	nativeSettings.addSwitch("/equip/common", "Play in combat mode", "Enable if you want see firstEquip animation while in combat mode", settings.PlayInCombatMode, defaults.PlayInCombatMode, function(state)
+	nativeSettings.addSwitch("/equip/common", "Cooldown instead of probability", "If enabled then firstEquip animations will be played once per defined time period for each weapon INSTEAD of probability based trigger", settings.UseCooldowns, defaults.UseCooldowns, function(state)
+		settings.UseCooldowns = state
+	end)
+	
+	nativeSettings.addRangeInt("/equip/common", "Animation cooldown time", "Defines cooldown period for firstEquip animation, distinct for each equipped weapon", 0, 120, 1, settings.DefaultCooldown, defaults.DefaultCooldown, function(value)
+		settings.DefaultCooldown = value
+	end)
+	
+	nativeSettings.addSelectorString("/equip/common", "Cooldown time unit", "Defines if above value measured in seconds or minutes", cooldownUnit, settings.CooldownUnits, defaults.CooldownUnits, function(value)
+		settings.CooldownUnits = value
+	end)
+	
+	nativeSettings.addSubcategory("/equip/restr", "Restrictions")
+	
+	nativeSettings.addSwitch("/equip/restr", "Play in combat mode", "Enable if you want see firstEquip animation while in combat mode", settings.PlayInCombatMode, defaults.PlayInCombatMode, function(state)
 		settings.PlayInCombatMode = state
 	end)
 	
-	nativeSettings.addSwitch("/equip/common", "Play in stealth mode", "Enable if you want see firstEquip animation while in stealth mode", settings.PlayInStealthMode, defaults.PlayInStealthMode, function(state)
+	nativeSettings.addSwitch("/equip/restr", "Play in stealth mode", "Enable if you want see firstEquip animation while in stealth mode", settings.PlayInStealthMode, defaults.PlayInStealthMode, function(state)
 		settings.PlayInStealthMode = state
 	end)
 	
-	nativeSettings.addSwitch("/equip/common", "Play when magazine is empty", "Enable if you want see firstEquip animation when weapon magazine is empty", settings.PlayWhenMagazineIsEmpty, defaults.PlayWhenMagazineIsEmpty, function(state)
+	nativeSettings.addSwitch("/equip/restr", "Play when magazine is empty", "Enable if you want see firstEquip animation when weapon magazine is empty", settings.PlayWhenMagazineIsEmpty, defaults.PlayWhenMagazineIsEmpty, function(state)
 		settings.PlayWhenMagazineIsEmpty = state
 	end)
 	
-	nativeSettings.addSwitch("/equip/common", "Play while sprinting", "Enable if you want see firstEquip animation while sprinting", settings.PlayWhileSprinting, defaults.PlayWhileSprinting, function(state)
+	nativeSettings.addSwitch("/equip/restr", "Play while sprinting", "Enable if you want see firstEquip animation while sprinting", settings.PlayWhileSprinting, defaults.PlayWhileSprinting, function(state)
 		settings.PlayWhileSprinting = state
 	end)
 	
-	nativeSettings.addSwitch("/equip/common", "Exclude arms cyberware", "Enable if you want to prevent probability based animations for arms cyberware (Gorilla Arms, Projectile Launcher, Mantis Blades and Nano Wire)", settings.ExcludeArmsCyberware, defaults.ExcludeArmsCyberware, function(state)
+	nativeSettings.addSwitch("/equip/restr", "Exclude arms cyberware", "Enable if you want to prevent firstEquip animation triggers for arms cyberware (Gorilla Arms, Projectile Launcher, Mantis Blades and Nano Wire)", settings.ExcludeArmsCyberware, defaults.ExcludeArmsCyberware, function(state)
 		settings.ExcludeArmsCyberware = state
 	end)
 	
 
 	nativeSettings.addSubcategory("/equip/hotkey", "Hotkey config")
 	
-	nativeSettings.addSwitch("/equip/hotkey", "Track last used slot", "If enabled then mod tracks slots usage and hotkey press equips weapon from the last used slot, otherwise it uses default slot number defined below", settings.TrackLastUsedSlot, defaults.TrackLastUsedSlot, function(state)
+	nativeSettings.addSwitch("/equip/hotkey", "Track vanilla hotkeys", "If enabled then mod tracks slots usage and hotkey press equips weapon from the last used slot, otherwise it uses default slot number defined below", settings.TrackLastUsedSlot, defaults.TrackLastUsedSlot, function(state)
 		settings.TrackLastUsedSlot = state
 	end)
 	
@@ -111,7 +136,7 @@ function SetupSettingsMenu()
 		settings.AnimationProbability = value
 	end)
 	
-	nativeSettings.addRangeInt("/equip/idle", "Animation check period", "Animation checks period in seconds, each check decides if animation should be played when V stands still based on probability value from previous option", 1, 100, 5, settings.AnimationCheckPeriod, defaults.AnimationCheckPeriod, function(value)
+	nativeSettings.addRangeInt("/equip/idle", "Animation check period", "Animation checks period in seconds, each check decides if animation should be played when V stands still based on probability value from previous option (default values mean each 5 seconds with 10% chance)", 1, 100, 5, settings.AnimationCheckPeriod, defaults.AnimationCheckPeriod, function(value)
 		settings.AnimationCheckPeriod = value
 	end)
 end
@@ -132,6 +157,9 @@ registerForEvent("onInit", function()
 	Override("IdleBreakConfig", "AnimationProbability;", function(_) return settings.AnimationProbability end)
 	Override("IdleBreakConfig", "AnimationCheckPeriod;", function(_) return settings.AnimationCheckPeriod end)
 	Override("IdleBreakConfig", "BindToHotkey;", function(_) return settings.BindToHotkeyIdleBreak end)
+	Override("FirstEquipConfig", "UseCooldownBasedCheck;", function(_) return settings.UseCooldowns end)
+	Override("FirstEquipConfig", "CooldownTime;", function(_) return settings.DefaultCooldown end)
+	Override("FirstEquipConfig", "CooldownTimeUnits;", function(_) return settings.CooldownUnits end)
 
 end)
 
