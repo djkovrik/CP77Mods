@@ -183,6 +183,7 @@ public class LHUDLaunchCallback extends DelayCallback {
     let listener: ref<LHUDBlackboardsListener> = this.bbListener;
     listener.OnCombatStateChanged(listener.stateMachineBlackboard.GetInt(listener.bbDefs.PlayerStateMachine.Combat));
     listener.OnWeaponStateChanged(listener.playerInstance.HasAnyWeaponEquipped_LHUD());
+    listener.OnMountedStateChanged(VehicleComponent.IsMountedToVehicle(listener.playerInstance.GetGame(), listener.playerInstance));
   }
 }
 
