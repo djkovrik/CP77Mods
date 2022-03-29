@@ -22,6 +22,7 @@ protected cb func OnDisplayPreviewEvent(event: ref<DisplayPreviewEvent>) -> Bool
   this.ShowItemsNotification();
   this.ShowStaminaBar(true);
   this.ShowVehicleSummonNotification(true);
+  this.ShowBossHealthbar(true);
 }
 
 @addMethod(inkGameController)
@@ -38,6 +39,7 @@ protected cb func OnHidePreviewEvent(event: ref<HidePreviewEvent>) -> Bool {
   this.ShowWantedBar(false);
   this.ShowStaminaBar(false);
   this.ShowVehicleSummonNotification(false);
+  this.ShowBossHealthbar(false);
 }
 
 
@@ -282,6 +284,14 @@ private func ShowIncomingCallController(name: CName, show: Bool) -> Void {
 }
 
 @addMethod(hudCarController)
+protected cb func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidget>) -> Bool {
+  let widgetName: CName = n"NewCarHud";
+  let hudEditorWidgetName: CName = event.activeWidget;
+  let isEnabled: Bool = Equals(widgetName, hudEditorWidgetName);
+  this.ShowCarHUD(isEnabled);
+}
+
+@addMethod(hudCarController)
 private func ShowCarHUD(show: Bool) -> Void {
   let player: ref<GameObject> = this.GetPlayerControlledObject();
   let uiSystem: ref<UISystem> = GameInstance.GetUISystem(player.GetGame());
@@ -298,10 +308,24 @@ private func ShowCarHUD(show: Bool) -> Void {
   };
 }
 
-@addMethod(hudCarController)
-protected cb func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidget>) -> Bool {
-  let widgetName: CName = n"NewCarHud";
-  let hudEditorWidgetName: CName = event.activeWidget;
-  let isEnabled: Bool = Equals(widgetName, hudEditorWidgetName);
-  this.ShowCarHUD(isEnabled);
+@addMethod(inkGameController)
+private func ShowBossHealthbar(show: Bool) -> Void {
+  if this.IsA(n"BossHealthBarGameController") {
+    let controller = this as BossHealthBarGameController;
+    controller.m_root.SetVisible(show);
+
+    if show {
+      inkTextRef.SetText(controller.m_bossName, "Some boss name here");
+      controller.UpdateHealthValue(75);
+      if IsDefined(controller.m_foldAnimation) {
+        controller.m_foldAnimation.Stop();
+      };
+      controller.m_foldAnimation = this.PlayLibraryAnimation(n"unfold");
+    } else {
+      if IsDefined(controller.m_foldAnimation) {
+        controller.m_foldAnimation.Stop();
+      };
+      controller.m_foldAnimation = this.PlayLibraryAnimation(n"fold");
+    };
+  };
 }

@@ -138,5 +138,15 @@
          "Y":1.0,
          "X":1.0
       }
+   },
+   "NewBossHealthbar":{
+      "translation":{
+         "Y":0.0,
+         "X":0.0
+      },
+      "scale":{
+         "Y":1.0,
+         "X":1.0
+      }
    }
 }

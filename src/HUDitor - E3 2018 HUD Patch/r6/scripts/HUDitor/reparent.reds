@@ -12,6 +12,7 @@
 @addField(inkGameController) let questNotificationsSlot: ref<HUDitorCustomSlot>;
 @addField(inkGameController) let itemNotificationsSlot: ref<HUDitorCustomSlot>;
 @addField(inkGameController) let carHudSlot: ref<HUDitorCustomSlot>;
+@addField(inkGameController) let bossHealthbarSlot: ref<HUDitorCustomSlot>;
 
 @addMethod(inkGameController)
 protected cb func OnScannerDetailsAppearedEvent(event: ref<ScannerDetailsAppearedEvent>) -> Bool {
@@ -38,6 +39,7 @@ protected cb func OnGameSessionInitialized(event: ref<GameSessionInitializedEven
     this.questNotificationsSlot.OnGameSessionInitialized(event);
     this.itemNotificationsSlot.OnGameSessionInitialized(event);
     this.carHudSlot.OnGameSessionInitialized(event);
+    this.bossHealthbarSlot.OnGameSessionInitialized(event);
   };
 }
 
@@ -58,6 +60,7 @@ protected cb func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidget>) 
     this.questNotificationsSlot.OnEnableHUDEditorWidget(event);
     this.itemNotificationsSlot.OnEnableHUDEditorWidget(event);
     this.carHudSlot.OnEnableHUDEditorWidget(event);
+    this.bossHealthbarSlot.OnEnableHUDEditorWidget(event);
   };
 }
 
@@ -78,6 +81,7 @@ protected cb func OnDisableHUDEditorWidgets(event: ref<DisableHUDEditor>) -> Boo
     this.questNotificationsSlot.OnDisableHUDEditorWidgets(event);
     this.itemNotificationsSlot.OnDisableHUDEditorWidgets(event);
     this.carHudSlot.OnDisableHUDEditorWidgets(event);
+    this.bossHealthbarSlot.OnDisableHUDEditorWidgets(event);
   };
 }
 
@@ -98,6 +102,7 @@ protected cb func OnResetHUDWidgets(event: ref<ResetAllHUDWidgets>) {
     this.questNotificationsSlot.OnResetHUDWidgets(event);
     this.itemNotificationsSlot.OnResetHUDWidgets(event);
     this.carHudSlot.OnResetHUDWidgets(event);
+    this.bossHealthbarSlot.OnResetHUDWidgets(event);
   };
 }
 
@@ -118,6 +123,7 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
     this.questNotificationsSlot.OnAction(action, consumer);
     this.itemNotificationsSlot.OnAction(action, consumer);
     this.carHudSlot.OnAction(action, consumer);
+    this.bossHealthbarSlot.OnAction(action, consumer);
   };
 }
 
@@ -144,6 +150,7 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
     let questNotifications: ref<inkWidget> = leftCenterSlot.GetWidgetByIndex(1) as inkWidget;
     let itemNotifications: ref<inkWidget> = leftCenterSlot.GetWidgetByIndex(0) as inkWidget;
     let carHud: ref<inkWidget> = root.GetWidgetByPath(inkWidgetPath.Build(n"car hud")) as inkWidget;
+    let bossHealthbar: ref<inkWidget> = root.GetWidgetByPath(inkWidgetPath.Build(n"boss_healthbar")) as inkWidget;
 
     this.minimapSlot = new HUDitorCustomSlot();
     this.minimapSlot.SetName(n"NewMinimap");
@@ -482,6 +489,30 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
 
     carHud.Reparent(this.carHudSlot);
     this.carHudSlot.Reparent(root, 13);
+
+    this.bossHealthbarSlot = new HUDitorCustomSlot();
+    this.bossHealthbarSlot.SetName(n"NewBossHealthbar");
+    this.bossHealthbarSlot.SetFitToContent(true);
+    this.bossHealthbarSlot.SetInteractive(false);
+    this.bossHealthbarSlot.SetAffectsLayoutWhenHidden(false);
+    this.bossHealthbarSlot.SetMargin(new inkMargin(60.0, 100.0, 0.0, 0.0));
+    this.bossHealthbarSlot.SetHAlign(inkEHorizontalAlign.Fill);
+    this.bossHealthbarSlot.SetVAlign(inkEVerticalAlign.Fill);
+    this.bossHealthbarSlot.SetAnchor(inkEAnchor.TopCenter);
+    this.bossHealthbarSlot.SetAnchorPoint(new Vector2(0.5, 0.5));
+    this.bossHealthbarSlot.SetLayout(
+      new inkWidgetLayout(
+        new inkMargin(0.0, 0.0, 0.0, 0.0),
+        new inkMargin(60.0, 100.0, 0.0, 0.0),
+        inkEHorizontalAlign.Fill,
+        inkEVerticalAlign.Fill,
+        inkEAnchor.TopCenter,
+        new Vector2(0.5, 0.5)
+      )
+    );
+
+    bossHealthbar.Reparent(this.bossHealthbarSlot);
+    this.bossHealthbarSlot.Reparent(root, 14);
   };
 }
 
