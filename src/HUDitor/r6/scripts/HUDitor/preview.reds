@@ -1,7 +1,19 @@
 // Widgets previewing stuff
 
+@addField(inkGameController)
+public let originalOpacity: Float;
+
+@addField(inkGameController)
+public let originalVisibility: Bool;
+
 @addMethod(inkGameController)
 protected cb func OnDisplayPreviewEvent(event: ref<DisplayPreviewEvent>) -> Bool {
+  this.ShowMinimap(true);
+  this.ShowQuestTracker(true);
+  this.ShowAmmoCounter(true);
+  this.ShowCrouchIndicator(true);
+  this.ShowDpad(true);
+  this.ShowInputHints(true);
   this.ShowHealthbar(true);
   this.ShowIncomingPhoneCall(n"jackie", true);
   this.ShowIncomingCallController(n"jackie", true);
@@ -14,6 +26,12 @@ protected cb func OnDisplayPreviewEvent(event: ref<DisplayPreviewEvent>) -> Bool
 
 @addMethod(inkGameController)
 protected cb func OnHidePreviewEvent(event: ref<HidePreviewEvent>) -> Bool {
+  this.ShowMinimap(false);
+  this.ShowQuestTracker(false);
+  this.ShowAmmoCounter(false);
+  this.ShowCrouchIndicator(false);
+  this.ShowDpad(false);
+  this.ShowInputHints(false);
   this.ShowHealthbar(false);
   this.ShowIncomingPhoneCall(n"jackie", false);
   this.ShowIncomingCallController(n"jackie", false);
@@ -24,6 +42,82 @@ protected cb func OnHidePreviewEvent(event: ref<HidePreviewEvent>) -> Bool {
 
 
 // Preview helpers
+@addMethod(inkGameController)
+private func ShowMinimap(show: Bool) -> Void {
+  if this.IsA(n"gameuiMinimapContainerController") {
+    if show {
+      this.originalOpacity = this.GetRootWidget().GetOpacity();
+      this.GetRootWidget().SetOpacity(1.0);
+    } else {
+      this.GetRootWidget().SetOpacity(this.originalOpacity);
+    };
+  };
+}
+
+@addMethod(inkGameController)
+private func ShowQuestTracker(show: Bool) -> Void {
+  if this.IsA(n"QuestTrackerGameController") {
+    if show {
+      this.originalOpacity = this.GetRootWidget().GetOpacity();
+      this.GetRootWidget().SetOpacity(1.0);
+    } else {
+      this.GetRootWidget().SetOpacity(this.originalOpacity);
+    };
+  };
+}
+
+@addMethod(inkGameController)
+private func ShowAmmoCounter(show: Bool) -> Void {
+  if this.IsA(n"weaponRosterGameController") {
+    let controller: ref<weaponRosterGameController> = this as weaponRosterGameController;
+    if show {
+      this.originalVisibility = controller.m_folded;
+      if this.originalVisibility {
+        controller.PlayUnfold();
+      };
+    } else {
+      if this.originalVisibility {
+        controller.PlayFold();
+      };
+    };
+  };
+}
+
+@addMethod(inkGameController)
+private func ShowCrouchIndicator(show: Bool) -> Void {
+  if this.IsA(n"CrouchIndicatorGameController") {
+    if show {
+      this.originalOpacity = this.GetRootWidget().GetOpacity();
+      this.GetRootWidget().SetOpacity(1.0);
+    } else {
+      this.GetRootWidget().SetOpacity(this.originalOpacity);
+    };
+  };
+}
+
+@addMethod(inkGameController)
+private func ShowDpad(show: Bool) -> Void {
+  if this.IsA(n"HotkeysWidgetController") {
+    if show {
+      this.originalOpacity = this.GetRootWidget().GetOpacity();
+      this.GetRootWidget().SetOpacity(1.0);
+    } else {
+      this.GetRootWidget().SetOpacity(this.originalOpacity);
+    };
+  };
+}
+
+@addMethod(inkGameController)
+private func ShowInputHints(show: Bool) -> Void {
+  if this.IsA(n"gameuiInputHintManagerGameController") {
+    if show {
+      this.originalOpacity = this.GetRootWidget().GetOpacity();
+      this.GetRootWidget().SetOpacity(1.0);
+    } else {
+      this.GetRootWidget().SetOpacity(this.originalOpacity);
+    };
+  };
+}
 
 @addMethod(inkGameController)
 private func ShowHealthbar(show: Bool) -> Void {
