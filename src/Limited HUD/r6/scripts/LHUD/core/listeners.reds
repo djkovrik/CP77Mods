@@ -281,7 +281,7 @@ public final func OnEquipmentSystemWeaponManipulationRequest(request: ref<Equipm
     GameInstance.GetBlackboardSystem(this.m_owner.GetGame()).Get(equipmentDataDef).SetBool(equipmentDataDef.HasWeaponEquipped, false);
   } else {
     if !shouldSkipRequest {
-      LHUDLog(s"!!! Show for request \(request.requestType)");
+      // LHUDLog(s"!!! Show for request \(request.requestType)");
       GameInstance.GetBlackboardSystem(this.m_owner.GetGame()).Get(equipmentDataDef).SetBool(equipmentDataDef.HasWeaponEquipped, true);
     };
   };
