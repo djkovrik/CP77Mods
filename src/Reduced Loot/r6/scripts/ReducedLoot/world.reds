@@ -88,7 +88,7 @@ protected final func OnItemEntitySpawned(entID: EntityID) -> Void {
         playerPuppet.ClearStoredId_RL();
       };
        
-      if RL_Checker.CanLootThis(data, RL_LootSource.World) || preventDestroying || shouldKeepForId || shouldKeepForQuest || wasKept {
+      if RL_Checker.CanLootThis(data, RL_LootSource.World) || preventDestroying || shouldKeepForId || shouldKeepForQuest || wasKept || Equals(data.GetItemType(), gamedataItemType.Gen_Keycard) {
         RLog("+ kept for world " + ToStr(data));
         playerPuppet.SaveAsKept_RL(hash);
       } else {

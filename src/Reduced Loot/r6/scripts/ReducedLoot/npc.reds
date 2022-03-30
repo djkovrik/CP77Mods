@@ -26,7 +26,7 @@ private func EvaluateLoot() -> Void {
       RLog("? Item TDBID: " + TDBID.ToStringDEBUG(ItemID.GetTDBID(item.GetID())));
       RLog("? Current quest objective: " + trackedObjective.GetId());
       RLog("? keep for id: " + BoolToString(shouldKeepForId) + ", keep for quest: " + BoolToString(shouldKeepForQuest));
-      if RL_Checker.CanLootThis(item, RL_LootSource.Puppet) || this.IsQuest() || item.HasTag(n"Quest") || shouldKeepForId || shouldKeepForQuest {
+      if RL_Checker.CanLootThis(item, RL_LootSource.Puppet) || this.IsQuest() || item.HasTag(n"Quest") || shouldKeepForId || shouldKeepForQuest || Equals(item.GetItemType(), gamedataItemType.Gen_Keycard) {
         RLog("+ kept for npc " + ToStr(item));
       } else {
         RLog("- removed for npc " + ToStr(item));
