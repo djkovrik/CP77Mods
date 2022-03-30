@@ -158,7 +158,6 @@ public class LHUDBlackboardsListener {
 
   // Mounted state bb callback
   protected cb func OnMountedStateChanged(value: Bool) -> Bool {
-    this.playerInstance.QueueLHUDEvent(LHUDEventType.Weapon, false);
     this.playerInstance.QueueLHUDEvent(LHUDEventType.InVehicle, value);
   }
 
@@ -279,6 +278,7 @@ public final func OnEquipmentSystemWeaponManipulationRequest(request: ref<Equipm
   let shouldSkipRequest: Bool = this.ShouldSkipThisRequest(request.requestType);
   let equipmentDataDef: ref<UI_EquipmentDataDef> = GetAllBlackboardDefs().UI_EquipmentData;
   if isUnequipRequest {
+    // LHUDLog(s"!!! Hide for request \(request.requestType)");
     GameInstance.GetBlackboardSystem(this.m_owner.GetGame()).Get(equipmentDataDef).SetBool(equipmentDataDef.HasWeaponEquipped, false);
   } else {
     if !shouldSkipRequest {
