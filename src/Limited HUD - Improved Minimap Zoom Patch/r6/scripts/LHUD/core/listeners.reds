@@ -160,7 +160,6 @@ public class LHUDBlackboardsListener {
 
   // Mounted state bb callback
   protected cb func OnMountedStateChanged(value: Bool) -> Bool {
-    this.playerInstance.QueueLHUDEvent(LHUDEventType.Weapon, false);
     this.playerInstance.QueueLHUDEvent(LHUDEventType.InVehicle, value);
   }
 
