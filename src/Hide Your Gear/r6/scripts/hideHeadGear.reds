@@ -3,13 +3,26 @@ public final func IsTransmogEnabled() -> Int32 {
   return 1;
 }
 
+@addMethod(InventoryItemDisplayController)
+public func ShouldDisplayControl(area: gamedataEquipmentArea) -> Bool {
+  return
+    Equals(area, gamedataEquipmentArea.Head) || 
+    Equals(area, gamedataEquipmentArea.Face) ||
+    Equals(area, gamedataEquipmentArea.Feet) || 
+    Equals(area, gamedataEquipmentArea.Legs) || 
+    Equals(area, gamedataEquipmentArea.InnerChest) || 
+    Equals(area, gamedataEquipmentArea.OuterChest) || 
+  false;
+}
+
 @replaceMethod(InventoryItemDisplayController)
 private final func UpdateTransmogControls(isEmpty: Bool) -> Void {
   let isItemHidden: Bool;
+  let showControl: Bool = this.ShouldDisplayControl(this.m_equipmentArea);
   if !inkWidgetRef.IsValid(this.m_transmogContainer) {
     return;
   };
-  if !isEmpty {
+  if !isEmpty && showControl {
     if !IsDefined(this.m_btnHideAppearance) {
       this.m_btnHideAppearance = this.SpawnFromLocal(inkWidgetRef.Get(this.m_transmogContainer), n"hideButton");
       this.m_btnHideAppearanceCtrl = this.m_btnHideAppearance.GetControllerByType(n"TransmogButtonView") as TransmogButtonView;
