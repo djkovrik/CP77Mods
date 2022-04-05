@@ -117,6 +117,9 @@ local defaults = {
 	AddonsSimpleHUDToggle = false,
 	AddonsHideCrouchIndicator = false,
 	AddonsHighlightUnderPingOnly = false,
+	AddonsPromptGetIn = false,
+	AddonsPromptPickUpBody = false,
+	AddonsPromptTalk = false,
 	AddonsFillInteraction = 3,
 	AddonsFillImportantInteraction = 6,
 	AddonsFillWeakspot = 7,
@@ -268,6 +271,9 @@ local settings = {
 	AddonsSimpleHUDToggle = false,
 	AddonsHideCrouchIndicator = false,
 	AddonsHighlightUnderPingOnly = false,
+	AddonsPromptGetIn = false,
+	AddonsPromptPickUpBody = false,
+	AddonsPromptTalk = false,
 	AddonsFillInteraction = 3,
 	AddonsFillImportantInteraction = 6,
 	AddonsFillWeakspot = 7,
@@ -363,7 +369,7 @@ function SetupSettingsMenu()
 		return
 	end
 
-	nativeSettings.addTab("/lhud", "Limited HUD")
+	nativeSettings.addTab("/lhud", "LHUD")
 	
 	nativeSettings.addSubcategory("/lhud/action", "Action buttons")
 	nativeSettings.addSwitch("/lhud/action", "Is module enabled", "If enabled then widget controlled by LHUD, disable if you want to restore default widget behavior", settings.ActionButtonsEnabled, defaults.ActionButtonsEnabled, function(state) settings.ActionButtonsEnabled = state end)
@@ -507,6 +513,11 @@ function SetupSettingsMenu()
 	nativeSettings.addSubcategory("/lhudaddons/notifsounds", "Notification Sounds")
 	nativeSettings.addSwitch("/lhudaddons/notifsounds", "Mute quest notifications", "Mute notification sounds for NCPD jobs and journal changes about new, updated, completed and failed quests", settings.AddonsJournalDisableSound, defaults.AddonsJournalDisableSound, function(state) settings.AddonsJournalDisableSound = state end)
 	nativeSettings.addSwitch("/lhudaddons/notifsounds", "Mute skill level up notifications", "Mute notification sounds for skills level up", settings.AddonsLevelUpDisableSound, defaults.AddonsLevelUpDisableSound, function(state) settings.AddonsLevelUpDisableSound = state end)
+	
+	nativeSettings.addSubcategory("/lhudaddons/prompts", "Hide interaction prompts")
+	nativeSettings.addSwitch("/lhudaddons/prompts", "Get In", "Enable to hide Get in input prompt for your vehicles", settings.AddonsPromptGetIn, defaults.AddonsPromptGetIn, function(state) settings.AddonsPromptGetIn = state end)
+	nativeSettings.addSwitch("/lhudaddons/prompts", "Pick Up Body", "Enable to hide Pick Up Body input prompt for NPC bodies", settings.AddonsPromptPickUpBody, defaults.AddonsPromptPickUpBody, function(state) settings.AddonsPromptPickUpBody = state end)
+	nativeSettings.addSwitch("/lhudaddons/prompts", "Talk", "Enable to hide Talk input prompt for NPCs", settings.AddonsPromptTalk, defaults.AddonsPromptTalk, function(state) settings.AddonsPromptTalk = state end)
 	
 	nativeSettings.addSubcategory("/lhudaddons/dialogresizer", "Dialog Widget Resizer")
 	nativeSettings.addRangeFloat("/lhudaddons/dialogresizer", "Dialog widget scale", "Adjust dialog choices widget size (change from the main menu or reload your game to apply changes)", 0.1, 2.0, 0.05, "%.2f", settings.AddonsDialogResizerScale, defaults.AddonsDialogResizerScale, function(value) settings.AddonsDialogResizerScale = value end)
@@ -691,6 +702,9 @@ registerForEvent("onInit", function()
 	Override("LimitedHudConfig.LHUDAddonsConfig", "HighlightUnderPingOnly;", function(_) return settings.AddonsHighlightUnderPingOnly end)
 	Override("LimitedHudConfig.LHUDAddonsConfig", "MuteQuestNotifications;", function(_) return settings.AddonsJournalDisableSound end)
 	Override("LimitedHudConfig.LHUDAddonsConfig", "MuteLevelUpNotifications;", function(_) return settings.AddonsLevelUpDisableSound end)
+	Override("LimitedHudConfig.LHUDAddonsConfig", "HidePromptGetIn;", function(_) return settings.AddonsPromptGetIn end)
+	Override("LimitedHudConfig.LHUDAddonsConfig", "HidePromptPickUpBody;", function(_) return settings.AddonsPromptPickUpBody end)
+	Override("LimitedHudConfig.LHUDAddonsConfig", "HidePromptTalk;", function(_) return settings.AddonsPromptTalk end)
 
 	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "FillInteraction;", function(_) return settings.AddonsFillInteraction - 1 end)
 	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "FillImportantInteraction;", function(_) return settings.AddonsFillImportantInteraction - 1 end)
