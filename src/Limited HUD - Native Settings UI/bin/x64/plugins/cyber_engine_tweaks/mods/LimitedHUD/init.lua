@@ -145,7 +145,8 @@ local defaults = {
 	AddonsOutlineNeutral = 4,
 	AddonsOutlineHackable = 2,
 	AddonsOutlineEnemyNetrunner = 5,
-	AddonsOutlineBackdoor = 7
+	AddonsOutlineBackdoor = 7,
+	AddonsRicochete = 2
 }
 
 local settings = {
@@ -295,7 +296,8 @@ local settings = {
 	AddonsOutlineNeutral = 4,
 	AddonsOutlineHackable = 2,
 	AddonsOutlineEnemyNetrunner = 5,
-	AddonsOutlineBackdoor = 7
+	AddonsOutlineBackdoor = 7,
+	AddonsRicochete = 2
 }
 
 local fills = {
@@ -306,7 +308,7 @@ local fills = {
 	[5] = "Light green",
 	[6] = "Blue",
 	[7] = "Orange",
-	[8] = "Red",
+	[8] = "Red"
 }
 
 local outlines = {
@@ -317,9 +319,14 @@ local outlines = {
 	[5] = "Light red", -- ORANGE?
 	[6] = "Light yellow",
 	[7] = "Blue",
-	[8] = "White",
+	[8] = "White"
 }
 
+local ricochetes = {
+	[1] = "Transparent",
+	[2] = "Green",
+	[3] = "Red"
+}
 
 function SaveSettings() 
 	local validJson, contents = pcall(function() return json.encode(settings) end)
@@ -525,7 +532,6 @@ function SetupSettingsMenu()
 	nativeSettings.addSubcategory("/lhudaddons/highlight", "Enemy Highlighting")
 	nativeSettings.addSwitch("/lhudaddons/highlight", "Highlight Pinged only", "If enabled then enemy highlight effect will be visible only for non-friendly NPCs under Ping effect", settings.AddonsHighlightUnderPingOnly, defaults.AddonsHighlightUnderPingOnly, function(state) settings.AddonsHighlightUnderPingOnly = state end)
 	
-	
 	nativeSettings.addSubcategory("/lhudaddons/colorsfill", "Objects Coloring - Fill colors")
 	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Interaction", "Interaction objects fill color", fills, settings.AddonsFillInteraction, defaults.AddonsFillInteraction, function(value) settings.AddonsFillInteraction = value end)
 	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Important interaction", "Important interaction objects fill color", fills, settings.AddonsFillImportantInteraction, defaults.AddonsFillImportantInteraction, function(value) settings.AddonsFillImportantInteraction = value end)
@@ -544,7 +550,7 @@ function SetupSettingsMenu()
 	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Backdoor", "Backdoor objects fill color", fills, settings.AddonsFillBackdoor, defaults.AddonsFillBackdoor, function(value) settings.AddonsFillBackdoor = value end)
 	
 	nativeSettings.addSubcategory("/lhudaddons/colorsoutline", "Objects Coloring - Outline colors")
-	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Interaction", "Interaction objects outline color", outlines, settings.AddonsFillInteraction, defaults.AddonsFillInteraction, function(value) settings.AddonsOutlineInteraction = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Interaction", "Interaction objects outline color", outlines, settings.AddonsFillInteraction, defaults.AddonsFillInteraction, function(value) settings.AddonsFillInteraction = value end)
 	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Important interaction", "Important interaction objects outline color", outlines, settings.AddonsOutlineImportantInteraction, defaults.AddonsOutlineImportantInteraction, function(value) settings.AddonsOutlineImportantInteraction = value end)
 	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Weakspot", "Weakspots outline color", outlines, settings.AddonsOutlineWeakspot, defaults.AddonsOutlineWeakspot, function(value) settings.AddonsOutlineWeakspot = value end)
 	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Quest", "Quest objects outline color", outlines, settings.AddonsOutlineQuest, defaults.AddonsOutlineQuest, function(value) settings.AddonsOutlineQuest = value end)
@@ -559,6 +565,8 @@ function SetupSettingsMenu()
 	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Enemy netrunner", "Enemy netrunners outline color", outlines, settings.AddonsOutlineEnemyNetrunner, defaults.AddonsOutlineEnemyNetrunner, function(value) settings.AddonsOutlineEnemyNetrunner = value end)
 	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Backdoor", "Backdoor objects outline color", outlines, settings.AddonsOutlineBackdoor, defaults.AddonsOutlineBackdoor, function(value) settings.AddonsOutlineBackdoor = value end)
 	
+	nativeSettings.addSubcategory("/lhudaddons/colorricochete", "Objects Coloring - Ricochete")
+	nativeSettings.addSelectorString("/lhudaddons/colorricochete", "NPC highlight", "Highlight color for ricochete visual effects", ricochetes, settings.AddonsRicochete, defaults.AddonsRicochete, function(value) settings.AddonsRicochete = value end)
 end
 
 registerForEvent("onInit", function()
@@ -713,6 +721,7 @@ registerForEvent("onInit", function()
 	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "OutlineHackable;", function(_) return settings.AddonsOutlineHackable - 1 end)
 	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "OutlineEnemyNetrunner;", function(_) return settings.AddonsOutlineEnemyNetrunner - 1 end)
 	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "OutlineBackdoor;", function(_) return settings.AddonsOutlineBackdoor - 1 end)
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "RicocheteColor;", function(_) return settings.AddonsRicochete - 1 end)
 
 end)
 
