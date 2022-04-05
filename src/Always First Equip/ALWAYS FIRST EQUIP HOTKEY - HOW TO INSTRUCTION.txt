@@ -36,27 +36,6 @@ these changes so you must apply everything again with each new patch dropped.
                     "is_input": true
                 },
 
-   to make this file section look like this as a result:
-   
-                {
-                    "name": "switchItem",
-                    "display_name": "LocKey#77771",
-                    "order": 9,
-                    "is_input": true
-                },
-                {
-                    "name": "equipFirstTime",
-                    "display_name": "LocKey#228",
-                    "order": 10,
-                    "is_input": true
-                },
-                {
-                    "name": "nextWeapon",
-                    "display_name": "LocKey#77784",
-                    "order": 10,
-                    "is_input": true
-                },
-
 
 3. Add new definitions to inputContexts.xml:
 
@@ -71,12 +50,6 @@ these changes so you must apply everything again with each new patch dropped.
 
 		<action name="FirstTimeEquip"		map="FirstTimeEquip_Button" />
 
-   to make this file section look like this as a result:
-
-		<action name="SwitchItem"			map="SwitchItem_Button" />
-		<action name="FirstTimeEquip"		map="FirstTimeEquip_Button" />
-		<action name="WeaponWheel"			map="WeaponWheel_Button" />
-
 
  - *NEW* Find this line:
  
@@ -85,12 +58,6 @@ these changes so you must apply everything again with each new patch dropped.
    and add this line below:
 		
 	<hold action="FirstTimeEquip"				timeout="0.4" />
-
-   to make this file section look like this as a result:
-   
-	<!-- HOLD ACTIONS -->
-	<hold action="FirstTimeEquip"				timeout="0.4" />
-	<hold action="Reload"						timeout="0.4" />
 
 
 4. Add new hotkey definitions to inputUserMappings.xml:
@@ -104,13 +71,6 @@ these changes so you must apply everything again with each new patch dropped.
 
    and add this block below:
 
-	<mapping name="FirstTimeEquip_Button" type="Button" >
-        <button id="IK_F2" overridableUI="equipFirstTime"/>
-    </mapping>
-
-   to make this file section look like this as a result:
-
-	<!-- MAPPINGS -->
 	<mapping name="FirstTimeEquip_Button" type="Button" >
         <button id="IK_F2" overridableUI="equipFirstTime"/>
     </mapping>
