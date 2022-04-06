@@ -232,6 +232,12 @@ public class LHUDAddonsConfig {
   public static func MuteQuestNotifications() -> Bool = false
   // Mutes skill levelup notifications
   public static func MuteLevelUpNotifications() -> Bool = false
+  // Hides Get in input prompt for your vehicles
+  public static func HidePromptGetIn() -> Bool = false
+  // Hides Pick Up Body input prompt for NPC bodies
+  public static func HidePromptPickUpBody() -> Bool = false
+  // Hides Talk input prompt for NPCs
+  public static func HidePromptTalk() -> Bool = false
 }
 
 // Objects Coloring config
@@ -266,4 +272,6 @@ public class LHUDAddonsColoringConfig {
   public static func OutlineHackable() -> Int32 = 1
   public static func OutlineEnemyNetrunner() -> Int32 = 4
   public static func OutlineBackdoor() -> Int32 = 6
+
+  public static func RicocheteColor() -> Int32 = 1
 }
