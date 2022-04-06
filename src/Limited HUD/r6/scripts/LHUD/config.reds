@@ -273,5 +273,5 @@ public class LHUDAddonsColoringConfig {
   public static func OutlineEnemyNetrunner() -> Int32 = 4
   public static func OutlineBackdoor() -> Int32 = 6
 
-  public static func RicocheteColor() -> Int32 = 1
+  public static func RicochetColor() -> Int32 = 1
 }

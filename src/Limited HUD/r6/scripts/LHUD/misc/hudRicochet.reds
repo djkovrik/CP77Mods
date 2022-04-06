@@ -6,7 +6,7 @@ public final func OnSnap(ctx: EffectScriptContext, entity: ref<Entity>) -> Void 
   let data: OutlineData;
   let evt: ref<OutlineRequestEvent> = new OutlineRequestEvent();
 
-  switch LHUDAddonsColoringConfig.RicocheteColor() {
+  switch LHUDAddonsColoringConfig.RicochetColor() {
     case 0: 
       data.outlineType = EOutlineType.NONE;
       break;

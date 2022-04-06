@@ -149,7 +149,7 @@ local defaults = {
 	AddonsOutlineHackable = 2,
 	AddonsOutlineEnemyNetrunner = 5,
 	AddonsOutlineBackdoor = 7,
-	AddonsRicochete = 2
+	AddonsRicochet = 2
 }
 
 local settings = {
@@ -303,7 +303,7 @@ local settings = {
 	AddonsOutlineHackable = 2,
 	AddonsOutlineEnemyNetrunner = 5,
 	AddonsOutlineBackdoor = 7,
-	AddonsRicochete = 2
+	AddonsRicochet = 2
 }
 
 local fills = {
@@ -576,8 +576,8 @@ function SetupSettingsMenu()
 	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Enemy netrunner", "Enemy netrunners outline color", outlines, settings.AddonsOutlineEnemyNetrunner, defaults.AddonsOutlineEnemyNetrunner, function(value) settings.AddonsOutlineEnemyNetrunner = value end)
 	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Backdoor", "Backdoor objects outline color", outlines, settings.AddonsOutlineBackdoor, defaults.AddonsOutlineBackdoor, function(value) settings.AddonsOutlineBackdoor = value end)
 	
-	nativeSettings.addSubcategory("/lhudaddons/colorricochete", "Objects Coloring - Ricochete")
-	nativeSettings.addSelectorString("/lhudaddons/colorricochete", "NPC highlight", "Highlight color for ricochete visual effects", ricochetes, settings.AddonsRicochete, defaults.AddonsRicochete, function(value) settings.AddonsRicochete = value end)
+	nativeSettings.addSubcategory("/lhudaddons/colorricochet", "Objects Coloring - Ricochet")
+	nativeSettings.addSelectorString("/lhudaddons/colorricochet", "NPC highlight", "Highlight color for Ricochet visual effects", ricochetes, settings.AddonsRicochet, defaults.AddonsRicochet, function(value) settings.AddonsRicochet = value end)
 end
 
 registerForEvent("onInit", function()
@@ -735,7 +735,7 @@ registerForEvent("onInit", function()
 	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "OutlineHackable;", function(_) return settings.AddonsOutlineHackable - 1 end)
 	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "OutlineEnemyNetrunner;", function(_) return settings.AddonsOutlineEnemyNetrunner - 1 end)
 	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "OutlineBackdoor;", function(_) return settings.AddonsOutlineBackdoor - 1 end)
-	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "RicocheteColor;", function(_) return settings.AddonsRicochete - 1 end)
+	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "RicochetColor;", function(_) return settings.AddonsRicochet - 1 end)
 
 end)
 
