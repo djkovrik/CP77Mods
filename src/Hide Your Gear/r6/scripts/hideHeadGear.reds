@@ -211,3 +211,15 @@ private final func PutOnFakeItem(itemToAdd: ItemID, puppet: wref<PlayerPuppet>) 
     this.itemsLoadingTime = EngineTime.ToFloat(this.GetEngineTime());
   };
 }
+
+// Slept or showered
+@wrapMethod(PlayerPuppet)
+protected cb func OnStatusEffectApplied(evt: ref<ApplyStatusEffectEvent>) -> Bool {
+  wrappedMethod(evt);
+  let callback: ref<EvaluateSlotsVisibilityCallback>;
+  if Equals(evt.staticData.StatusEffectType().Type(), gamedataStatusEffectType.Housing) {
+    callback = new EvaluateSlotsVisibilityCallback();
+    callback.playerData = EquipmentSystem.GetData(this);
+    GameInstance.GetDelaySystem(this.GetGame()).DelayCallback(callback, 2.0);
+  };
+}
