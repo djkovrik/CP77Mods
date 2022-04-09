@@ -107,6 +107,11 @@ public func IsSlotHiddenCustom(area: gamedataEquipmentArea) -> Bool {
 }
 
 @addMethod(EquipmentSystemPlayerData)
+private func ResetItemVisibility(area: gamedataEquipmentArea) {
+  this.ResetItemAppearanceEvent(area);
+}
+
+@addMethod(EquipmentSystemPlayerData)
 private func ToggleItemVisibility(area: gamedataEquipmentArea, shouldHide: Bool) {
   let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.m_owner.GetGame());
   if shouldHide {
@@ -163,26 +168,33 @@ public class EvaluateSlotsVisibilityCallback extends DelayCallback {
   public let playerData: wref<EquipmentSystemPlayerData>;
 
   public func Call() -> Void {
+    this.playerData.ResetItemVisibility(gamedataEquipmentArea.Head);
+    this.playerData.ResetItemVisibility(gamedataEquipmentArea.Face);
+    this.playerData.ResetItemVisibility(gamedataEquipmentArea.Feet);
+    this.playerData.ResetItemVisibility(gamedataEquipmentArea.Legs);
+    this.playerData.ResetItemVisibility(gamedataEquipmentArea.InnerChest);
+    this.playerData.ResetItemVisibility(gamedataEquipmentArea.OuterChest);
+
     this.playerData.ToggleItemVisibility(gamedataEquipmentArea.Head, this.playerData.IsSlotHiddenCustom(gamedataEquipmentArea.Head));
     this.playerData.ToggleItemVisibility(gamedataEquipmentArea.Face, this.playerData.IsSlotHiddenCustom(gamedataEquipmentArea.Face));
     this.playerData.ToggleItemVisibility(gamedataEquipmentArea.Feet, this.playerData.IsSlotHiddenCustom(gamedataEquipmentArea.Feet));
     this.playerData.ToggleItemVisibility(gamedataEquipmentArea.Legs, this.playerData.IsSlotHiddenCustom(gamedataEquipmentArea.Legs));
     this.playerData.ToggleItemVisibility(gamedataEquipmentArea.InnerChest, this.playerData.IsSlotHiddenCustom(gamedataEquipmentArea.InnerChest));
     this.playerData.ToggleItemVisibility(gamedataEquipmentArea.OuterChest, this.playerData.IsSlotHiddenCustom(gamedataEquipmentArea.OuterChest));
+
+    // LogChannel(n"DEBUG", "Hide Head Gear: slots refreshed...");
   }
 }
 
+@addField(EquipmentSystemPlayerData)
+public let m_slotsRefreshDelayId: DelayID;
+
 @addMethod(EquipmentSystemPlayerData)
-public func ScheduleSlotsVisibilityRefresh() -> Void {
+public func ScheduleSlotsVisibilityRefresh(delay: Float) -> Void {
   let callback: ref<EvaluateSlotsVisibilityCallback> = new EvaluateSlotsVisibilityCallback();
   callback.playerData = this;
-  GameInstance.GetDelaySystem(this.m_owner.GetGame()).DelayCallback(callback, 0.5);
-}
-
-@wrapMethod(PlayerPuppet)
-protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpawn>) -> Bool {
-  wrappedMethod(evt);
-  EquipmentSystem.GetData(this).ScheduleSlotsVisibilityRefresh();
+  GameInstance.GetDelaySystem(this.m_owner.GetGame()).CancelDelay(this.m_slotsRefreshDelayId);
+  this.m_slotsRefreshDelayId = GameInstance.GetDelaySystem(this.m_owner.GetGame()).DelayCallback(callback, delay);
 }
 
 // Photomode tweaks
@@ -212,14 +224,19 @@ private final func PutOnFakeItem(itemToAdd: ItemID, puppet: wref<PlayerPuppet>) 
   };
 }
 
+// Game loaded
+@wrapMethod(PlayerPuppet)
+protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpawn>) -> Bool {
+  wrappedMethod(evt);
+  EquipmentSystem.GetData(this).ScheduleSlotsVisibilityRefresh(1.0);
+}
+
+
 // Slept or showered
 @wrapMethod(PlayerPuppet)
 protected cb func OnStatusEffectApplied(evt: ref<ApplyStatusEffectEvent>) -> Bool {
   wrappedMethod(evt);
-  let callback: ref<EvaluateSlotsVisibilityCallback>;
   if Equals(evt.staticData.StatusEffectType().Type(), gamedataStatusEffectType.Housing) {
-    callback = new EvaluateSlotsVisibilityCallback();
-    callback.playerData = EquipmentSystem.GetData(this);
-    GameInstance.GetDelaySystem(this.GetGame()).DelayCallback(callback, 2.0);
+    EquipmentSystem.GetData(this).ScheduleSlotsVisibilityRefresh(4.0);
   };
 }
