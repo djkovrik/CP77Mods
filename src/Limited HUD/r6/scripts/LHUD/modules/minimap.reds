@@ -9,7 +9,7 @@ protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
 
 @addMethod(MinimapContainerController)
 public func DetermineCurrentVisibility() -> Void {
-  if !MinimapModuleConfig.IsEnabled() {
+  if !MinimapModuleConfig.IsEnabled() || this.lhud_isBraindanceActive {
     return ;
   };
 

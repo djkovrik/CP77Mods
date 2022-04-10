@@ -9,7 +9,7 @@ protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
 
 @addMethod(HotkeysWidgetController)
 public func DetermineCurrentVisibility() -> Void {
-  if !ActionButtonsModuleConfig.IsEnabled() {
+  if !ActionButtonsModuleConfig.IsEnabled() || this.lhud_isBraindanceActive {
     return ;
   };
 

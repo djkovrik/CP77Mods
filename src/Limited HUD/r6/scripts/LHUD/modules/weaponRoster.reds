@@ -9,7 +9,7 @@ protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
 
 @addMethod(weaponRosterGameController)
 public func DetermineCurrentVisibility() -> Void {
-  if !WeaponRosterModuleConfig.IsEnabled() {
+  if !WeaponRosterModuleConfig.IsEnabled() || this.lhud_isBraindanceActive {
     return ;
   };
 

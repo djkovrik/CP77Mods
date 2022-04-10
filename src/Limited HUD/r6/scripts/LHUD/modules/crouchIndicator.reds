@@ -9,7 +9,7 @@ protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
 
 @addMethod(CrouchIndicatorGameController)
 public func DetermineCurrentVisibility() -> Void {
-  if !CrouchIndicatorModuleConfig.IsEnabled() {
+  if !CrouchIndicatorModuleConfig.IsEnabled() || this.lhud_isBraindanceActive {
     return ;
   };
 
