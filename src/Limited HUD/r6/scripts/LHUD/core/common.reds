@@ -237,6 +237,16 @@ protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
   };
 }
 
+// Restore HUD on camera control disable
+@wrapMethod(TakeOverControlSystem)
+private final const func EnablePlayerTPPRepresenation(enable: Bool) -> Void {
+  wrappedMethod(enable);
+  let playerPuppet: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(this.GetGameInstance()).GetLocalPlayerControlledGameObject() as PlayerPuppet;
+  if !enable && IsDefined(playerPuppet) {
+    GameInstance.GetDelaySystem(playerPuppet.GetGame()).DelayEvent(playerPuppet, new LHUDInitLaunchEvent(), 2.0);
+  };
+}
+
 // --- UTILITY FUNCTIONS
 
 // Broadcast LHUD event

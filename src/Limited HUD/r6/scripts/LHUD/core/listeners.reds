@@ -180,9 +180,13 @@ public class LHUDLaunchCallback extends DelayCallback {
   public func Call() -> Void {
     LHUDLog("-- InitialStateEvent - execute callback");
     let listener: ref<LHUDBlackboardsListener> = this.bbListener;
+    let globalToggled: Bool = listener.uiSystemBlackboard.GetBool(listener.bbDefs.UI_System.IsGlobalFlagToggled_LHUD);
+    let minimapToggled: Bool = listener.uiSystemBlackboard.GetBool(listener.bbDefs.UI_System.IsMinimapToggled_LHUD);
     listener.OnCombatStateChanged(listener.stateMachineBlackboard.GetInt(listener.bbDefs.PlayerStateMachine.Combat));
     listener.OnWeaponStateChanged(listener.playerInstance.HasAnyWeaponEquipped_LHUD());
     listener.OnMountedStateChanged(VehicleComponent.IsMountedToVehicle(listener.playerInstance.GetGame(), listener.playerInstance));
+    listener.OnGlobalToggle(globalToggled);
+    listener.OnMinimapToggle(minimapToggled);
   }
 }
 
