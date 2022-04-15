@@ -1,0 +1,897 @@
+# --- Normal craftables
+
+# Achiles
+Items.Craftable_Common_Achilles.weaponVariants: &PresetsAchiles
+- t"Items.Preset_Achilles_Default"
+- t"Items.Preset_Achilles_Military"
+- t"Items.Preset_Achilles_Neon"
+- t"Items.Preset_Achilles_Pimp"
+- t"Items.Preset_Achilles_Nash"
+- t"Items.Preset_Achilles_Tiny_Mike"
+# - t"Items.Preset_Achilles_Nash_Epic"
+# - t"Items.Preset_Achilles_Nash_Legendary"
+
+Items.Craftable_Uncommon_Achilles.weaponVariants: *PresetsAchiles
+Items.Craftable_Rare_Achilles.weaponVariants: *PresetsAchiles
+Items.Craftable_Epic_Achilles.weaponVariants: *PresetsAchiles
+Items.Craftable_Legendary_Achilles.weaponVariants: *PresetsAchiles
+
+Items.Preset_Achilles_Nash.iconicVariant: true
+Items.Preset_Achilles_Tiny_Mike.iconicVariant: true
+
+# Ajax
+Items.Craftable_Common_Ajax.weaponVariants: &PresetsAjax
+- t"Items.Preset_Ajax_Default"
+- t"Items.Preset_Ajax_Military"
+- t"Items.Preset_Ajax_Neon"
+- t"Items.Preset_Ajax_Pimp"
+- t"Items.Preset_Ajax_Moron"
+# - t"Items.Preset_Ajax_Moron_Legendary"
+# - t"Items.Preset_Ajax_Training"
+
+Items.Craftable_Uncommon_Ajax.weaponVariants: *PresetsAjax
+Items.Craftable_Rare_Ajax.weaponVariants: *PresetsAjax
+Items.Craftable_Epic_Ajax.weaponVariants: *PresetsAjax
+Items.Craftable_Legendary_Ajax.weaponVariants: *PresetsAjax
+
+Items.Preset_Ajax_Moron.iconicVariant: true
+
+# Ashura
+Items.Craftable_Common_Ashura.weaponVariants: &PresetsAshura
+- t"Items.Preset_Ashura_Default"
+- t"Items.Preset_Ashura_Military"
+- t"Items.Preset_Ashura_Neon"
+- t"Items.Preset_Ashura_Pimp"
+
+Items.Craftable_Uncommon_Ashura.weaponVariants: *PresetsAshura
+Items.Craftable_Rare_Ashura.weaponVariants: *PresetsAshura
+Items.Craftable_Epic_Ashura.weaponVariants: *PresetsAshura
+Items.Craftable_Legendary_Ashura.weaponVariants: *PresetsAshura
+
+# Bat
+Items.Craftable_Common_Bat.weaponVariants: &PresetsBat
+- t"Items.Preset_Baseball_Bat_Default"
+- t"Items.Preset_Baseball_Bat_Denny"
+# - t"Items.Preset_Baseball_Bat_Denny_Epic"
+# - t"Items.Preset_Baseball_Bat_Denny_Legendary"
+
+Items.Craftable_Uncommon_Bat.weaponVariants: *PresetsBat
+Items.Craftable_Rare_Bat.weaponVariants: *PresetsBat
+Items.Craftable_Epic_Bat.weaponVariants: *PresetsBat
+Items.Craftable_Legendary_Bat.weaponVariants: *PresetsBat
+
+Items.Preset_Baseball_Bat_Denny.iconicVariant: true
+
+# Baton
+Items.Craftable_Common_Baton_Alpha.weaponVariants: &PresetsBaton
+- t"Items.Preset_Baton_Alpha"
+- t"Items.Preset_Baton_Beta"
+- t"Items.Preset_Baton_Gamma"
+- t"Items.Preset_Baton_Tinker_Bell"
+# - t"Items.Preset_Baton_Tinker_Bell_Epic"
+# - t"Items.Preset_Baton_Tinker_Bell_Legendary"
+
+Items.Craftable_Common_Baton_Beta.weaponVariants: *PresetsBaton
+Items.Craftable_Common_Baton_Gamma.weaponVariants: *PresetsBaton
+Items.Craftable_Uncommon_Baton_Beta.weaponVariants: *PresetsBaton
+Items.Craftable_Uncommon_Baton_Gamma.weaponVariants: *PresetsBaton
+Items.Craftable_Rare_Baton_Alpha.weaponVariants: *PresetsBaton
+Items.Craftable_Rare_Baton_Beta.weaponVariants: *PresetsBaton
+Items.Craftable_Rare_Baton_Gamma.weaponVariants: *PresetsBaton
+Items.Craftable_Epic_Baton_Alpha.weaponVariants: *PresetsBaton
+Items.Craftable_Epic_Baton_Beta.weaponVariants: *PresetsBaton
+Items.Craftable_Epic_Baton_Gamma.weaponVariants: *PresetsBaton
+Items.Craftable_Legendary_Baton_Alpha.weaponVariants: *PresetsBaton
+Items.Craftable_Legendary_Baton_Beta.weaponVariants: *PresetsBaton
+Items.Craftable_Legendary_Baton_Gamma.weaponVariants: *PresetsBaton
+
+Items.Preset_Baton_Tinker_Bell.iconicVariant: true
+
+# Burya
+Items.Craftable_Common_Burya.weaponVariants: &PresetsBurya
+- t"Items.Preset_Burya_Default"
+- t"Items.Preset_Burya_Military"
+- t"Items.Preset_Burya_Neon"
+- t"Items.Preset_Burya_Pimp"
+- t"Items.Preset_Burya_Comrade"
+# - t"Items.Preset_Burya_Comrade_Legendary"
+# - t"Items.Preset_Burya_Default_Left_Hand"
+# - t"Items.Preset_Burya_Military_Left_Hand"
+# - t"Items.Preset_Burya_Neon_Left_Hand"
+# - t"Items.Preset_Burya_Pimp_Left_Hand"
+
+Items.Craftable_Uncommon_Burya.weaponVariants: *PresetsBurya
+Items.Craftable_Rare_Burya.weaponVariants: *PresetsBurya
+Items.Craftable_Epic_Burya.weaponVariants: *PresetsBurya
+Items.Craftable_Legendary_Burya.weaponVariants: *PresetsBurya
+
+Items.Preset_Burya_Comrade.iconicVariant: true
+
+# Carnage
+Items.Craftable_Common_Carnage.weaponVariants: &PresetsCarnage
+- t"Items.Preset_Carnage_Default"
+- t"Items.Preset_Carnage_Military"
+- t"Items.Preset_Carnage_Neon"
+- t"Items.Preset_Carnage_Pimp"
+- t"Items.Preset_Carnage_Mox"
+# - t"Items.Preset_Carnage_Mox_Epic"
+# - t"Items.Preset_Carnage_Mox_Legendary"
+
+Items.Craftable_Uncommon_Carnage.weaponVariants: *PresetsCarnage
+Items.Craftable_Rare_Carnage.weaponVariants: *PresetsCarnage
+Items.Craftable_Epic_Carnage.weaponVariants: *PresetsCarnage
+Items.Craftable_Legendary_Carnage.weaponVariants: *PresetsCarnage
+
+Items.Preset_Carnage_Mox_Epic.iconicVariant: true
+
+# Chao
+Items.Craftable_Common_Chao.weaponVariants: &PresetsChao
+- t"Items.Preset_Chao_Default"
+- t"Items.Preset_Chao_Military"
+- t"Items.Preset_Chao_Neon"
+- t"Items.Preset_Chao_Pimp"
+- t"Items.Preset_Chao_Workspot"
+# - t"Items.Preset_Chao_Default_Left_Hand"
+# - t"Items.Preset_Chao_Military_Left_Hand"
+# - t"Items.Preset_Chao_Neon_Left_Hand"
+# - t"Items.Preset_Chao_Pimp_Left_Hand"
+
+Items.Craftable_Uncommon_Chao.weaponVariants: *PresetsChao
+Items.Craftable_Rare_Chao.weaponVariants: *PresetsChao
+Items.Craftable_Epic_Chao.weaponVariants: *PresetsChao
+Items.Craftable_Legendary_Chao.weaponVariants: *PresetsChao
+
+# Combat Knife
+Items.Craftable_Common_Combat_Knife.weaponVariants: &PresetsCombatKnife
+- t"Items.Preset_Combat_Knife_Default"
+- t"Items.Preset_Combat_Knife_Military"
+- t"Items.Preset_Combat_Knife_Neon"
+- t"Items.Preset_Combat_Knife_Pimp"
+
+Items.Craftable_Uncommon_Combat_Knife.weaponVariants: *PresetsCombatKnife
+Items.Craftable_Rare_Combat_Knife.weaponVariants: *PresetsCombatKnife
+Items.Craftable_Epic_Combat_Knife.weaponVariants: *PresetsCombatKnife
+Items.Craftable_Legendary_Combat_Knife.weaponVariants: *PresetsCombatKnife
+
+# Copperhead
+Items.Craftable_Common_Copperhead.weaponVariants: &PresetsCopperhead
+- t"Items.Preset_Copperhead_Default"
+- t"Items.Preset_Copperhead_Military"
+- t"Items.Preset_Copperhead_Neon"
+- t"Items.Preset_Copperhead_Pimp"
+- t"Items.Preset_Copperhead_Genesis"
+# - t"Items.Preset_Copperhead_Genesis_Epic"
+# - t"Items.Preset_Copperhead_Genesis_Legendary"
+
+Items.Craftable_Uncommon_Copperhead.weaponVariants: *PresetsCopperhead
+Items.Craftable_Rare_Copperhead.weaponVariants: *PresetsCopperhead
+Items.Craftable_Epic_Copperhead.weaponVariants: *PresetsCopperhead
+Items.Craftable_Legendary_Copperhead.weaponVariants: *PresetsCopperhead
+
+Items.Preset_Copperhead_Genesis.iconicVariant: true
+
+# Crusher
+Items.Craftable_Common_Crusher.weaponVariants: &PresetsCrusher
+- t"Items.Preset_Crusher_Default"
+- t"Items.Preset_Crusher_Military"
+- t"Items.Preset_Crusher_Neon"
+- t"Items.Preset_Crusher_Pimp"
+# - t"Items.Preset_Crusher_Default_Left_Hand"
+# - t"Items.Preset_Crusher_Military_Left_Hand"
+# - t"Items.Preset_Crusher_Neon_Left_Hand"
+# - t"Items.Preset_Crusher_Pimp_Left_Hand"
+
+Items.Craftable_Uncommon_Crusher.weaponVariants: *PresetsCrusher
+Items.Craftable_Rare_Crusher.weaponVariants: *PresetsCrusher
+Items.Craftable_Epic_Crusher.weaponVariants: *PresetsCrusher
+Items.Craftable_Legendary_Crusher.weaponVariants: *PresetsCrusher
+
+# Defender
+Items.Craftable_Common_Defender.weaponVariants: &PresetsDefender
+- t"Items.Preset_Defender_Default"
+- t"Items.Preset_Defender_Military"
+- t"Items.Preset_Defender_Neon"
+- t"Items.Preset_Defender_Pimp"
+
+Items.Craftable_Uncommon_Defender.weaponVariants: *PresetsDefender
+Items.Craftable_Rare_Defender.weaponVariants: *PresetsDefender
+Items.Craftable_Epic_Defender.weaponVariants: *PresetsDefender
+Items.Craftable_Legendary_Defender.weaponVariants: *PresetsDefender
+
+# Dian
+Items.Craftable_Common_Dian.weaponVariants: &PresetsDian
+- t"Items.Preset_Dian_Default"
+- t"Items.Preset_Dian_Military"
+- t"Items.Preset_Dian_Neon"
+- t"Items.Preset_Dian_Pimp"
+- t"Items.Preset_Dian_Trauma"
+- t"Items.Preset_Dian_Yinglong"
+
+Items.Craftable_Uncommon_Dian.weaponVariants: *PresetsDian
+Items.Craftable_Rare_Dian.weaponVariants: *PresetsDian
+Items.Craftable_Epic_Dian.weaponVariants: *PresetsDian
+Items.Craftable_Legendary_Dian.weaponVariants: *PresetsDian
+
+Items.Preset_Dian_Yinglong.iconicVariant: true
+
+# Grad
+Items.Craftable_Common_Grad.weaponVariants: &PresetsGrad
+- t"Items.Preset_Grad_Default"
+- t"Items.Preset_Grad_Military"
+- t"Items.Preset_Grad_Neon"
+- t"Items.Preset_Grad_Pimp"
+- t"Items.Preset_Grad_Buck"
+- t"Items.Preset_Grad_Panam"
+# - t"Items.Preset_Grad_Buck_Legendary"
+# - t"Items.Preset_Grad_Panam_Epic"
+# - t"Items.Preset_Grad_Panam_Legendary"
+
+Items.Craftable_Uncommon_Grad.weaponVariants: *PresetsGrad
+Items.Craftable_Rare_Grad.weaponVariants: *PresetsGrad
+Items.Craftable_Epic_Grad.weaponVariants: *PresetsGrad
+Items.Craftable_Legendary_Grad.weaponVariants: *PresetsGrad
+
+Items.Preset_Grad_Buck.iconicVariant: true
+Items.Preset_Grad_Panam.iconicVariant: true
+
+# Guillotine
+Items.Craftable_Common_Guillotine.weaponVariants: &PresetsGuillotine
+- t"Items.Preset_Guillotine_Default"
+- t"Items.Preset_Guillotine_Military"
+- t"Items.Preset_Guillotine_Neon"
+- t"Items.Preset_Guillotine_Pimp"
+
+Items.Craftable_Uncommon_Guillotine.weaponVariants: *PresetsGuillotine
+Items.Craftable_Rare_Guillotine.weaponVariants: *PresetsGuillotine
+Items.Craftable_Epic_Guillotine.weaponVariants: *PresetsGuillotine
+Items.Craftable_Legendary_Guillotine.weaponVariants: *PresetsGuillotine
+
+# Igla
+Items.Craftable_Common_Igla.weaponVariants: &PresetsIgla
+- t"Items.Preset_Igla_Default"
+- t"Items.Preset_Igla_Military"
+- t"Items.Preset_Igla_Neon"
+- t"Items.Preset_Igla_Pimp"
+- t"Items.Preset_Igla_Sovereign"
+# - t"Items.Preset_Igla_Sovereign_Legendary"
+
+Items.Craftable_Uncommon_Igla.weaponVariants: *PresetsIgla
+Items.Craftable_Rare_Igla.weaponVariants: *PresetsIgla
+Items.Craftable_Epic_Igla.weaponVariants: *PresetsIgla
+Items.Craftable_Legendary_Igla.weaponVariants: *PresetsIgla
+
+Items.Preset_Igla_Sovereign.iconicVariant: true
+
+# Kappa
+Items.Craftable_Common_Kappa.weaponVariants: &PresetsKappa
+- t"Items.Preset_Kappa_Default"
+- t"Items.Preset_Kappa_Military"
+- t"Items.Preset_Kappa_Neon"
+- t"Items.Preset_Kappa_Pimp"
+- t"Items.Preset_Kappa_Workspot"
+# - t"Items.Preset_Kappa_Default_Left_Hand"
+# - t"Items.Preset_Kappa_Military_Left_Hand"
+# - t"Items.Preset_Kappa_Neon_Left_Hand"
+# - t"Items.Preset_Kappa_Pimp_Left_Hand"
+
+Items.Craftable_Uncommon_Kappa.weaponVariants: *PresetsKappa
+Items.Craftable_Rare_Kappa.weaponVariants: *PresetsKappa
+Items.Craftable_Epic_Kappa.weaponVariants: *PresetsKappa
+Items.Craftable_Legendary_Kappa.weaponVariants: *PresetsKappa
+
+# Katana
+Items.Craftable_Common_Katana.weaponVariants: &PresetsKatana
+- t"Items.Preset_Katana_Default"
+- t"Items.Preset_Katana_Military"
+- t"Items.Preset_Katana_Neon"
+- t"Items.Preset_Katana_Training"
+- t"Items.Preset_Katana_Arasaka_2020"
+- t"Items.Preset_Katana_Cocktail"
+- t"Items.Preset_Katana_GoG"
+- t"Items.Preset_Katana_Hiromi"
+- t"Items.Preset_Katana_Saburo"
+- t"Items.Preset_Katana_Surgeon"
+- t"Items.Preset_Katana_Takemura"
+- t"Items.Preset_Katana_Wakako"
+# - t"Items.Preset_Katana_GoG_Crafted"
+# - t"Items.Preset_Katana_GoG_Epic"
+# - t"Items.Preset_Katana_Cocktail_Epic"
+# - t"Items.Preset_Katana_Cocktail_Legendary"
+# - t"Items.Preset_Katana_GoG_Legendary"
+# - t"Items.Preset_Katana_Hiromi_Epic"
+# - t"Items.Preset_Katana_Hiromi_Legendary"
+# - t"Items.Preset_Katana_Saburo_Epic"
+# - t"Items.Preset_Katana_Saburo_Legendary"
+# - t"Items.Preset_Katana_Surgeon_Epic"
+# - t"Items.Preset_Katana_Surgeon_Legendary"
+# - t"Items.Preset_Katana_Takemura_Legendary"
+# - t"Items.Preset_Katana_Wakako_Legendary"
+
+Items.Craftable_Uncommon_Katana.weaponVariants: *PresetsKatana
+Items.Craftable_Rare_Katana.weaponVariants: *PresetsKatana
+Items.Craftable_Epic_Katana.weaponVariants: *PresetsKatana
+Items.Craftable_Legendary_Katana.weaponVariants: *PresetsKatana
+
+Items.Preset_Katana_Arasaka_2020.iconicVariant: true
+Items.Preset_Katana_Cocktail.iconicVariant: true
+Items.Preset_Katana_GoG.iconicVariant: true
+Items.Preset_Katana_Hiromi.iconicVariant: true
+Items.Preset_Katana_Saburo.iconicVariant: true
+Items.Preset_Katana_Surgeon.iconicVariant: true
+Items.Preset_Katana_Takemura.iconicVariant: true
+Items.Preset_Katana_Wakako.iconicVariant: true
+
+# Kenshin
+Items.Craftable_Common_Kenshin.weaponVariants: &PresetsKenshin
+- t"Items.Preset_Kenshin_Default"
+- t"Items.Preset_Kenshin_Military"
+- t"Items.Preset_Kenshin_Neon"
+- t"Items.Preset_Kenshin_Pimp"
+- t"Items.Preset_Kenshin_Frank"
+- t"Items.Preset_Kenshin_Royce"
+- t"Items.Preset_Kenshin_Takemura"
+# - t"Items.Preset_Kenshin_Default_Left_Hand"
+# - t"Items.Preset_Kenshin_Frank_Legendary"
+# - t"Items.Preset_Kenshin_Military_Left_Hand"
+# - t"Items.Preset_Kenshin_MQ041"
+# - t"Items.Preset_Kenshin_Neon_Left_Hand"
+# - t"Items.Preset_Kenshin_Pimp_Left_Hand"
+# - t"Items.Preset_Kenshin_Royce_Epic"
+# - t"Items.Preset_Kenshin_Royce_Legendary"
+
+Items.Craftable_Uncommon_Kenshin.weaponVariants: *PresetsKenshin
+Items.Craftable_Rare_Kenshin.weaponVariants: *PresetsKenshin
+Items.Craftable_Epic_Kenshin.weaponVariants: *PresetsKenshin
+Items.Craftable_Legendary_Kenshin.weaponVariants: *PresetsKenshin
+
+Items.Preset_Kenshin_Frank.iconicVariant: true
+Items.Preset_Kenshin_Royce.iconicVariant: true
+Items.Preset_Kenshin_Takemura.iconicVariant: true
+
+# Knife
+Items.Craftable_Common_Knife.weaponVariants: &PresetsKnife
+- t"Items.Preset_Knife_Default"
+- t"Items.Preset_Knife_Military"
+- t"Items.Preset_Knife_Stinger"
+# - t"Items.Preset_Knife_Stinger_Epic"
+# - t"Items.Preset_Knife_Stinger_Legendary"
+
+Items.Craftable_Uncommon_Knife.weaponVariants: *PresetsKnife
+Items.Craftable_Rare_Knife.weaponVariants: *PresetsKnife
+Items.Craftable_Epic_Knife.weaponVariants: *PresetsKnife
+Items.Craftable_Legendary_Knife.weaponVariants: *PresetsKnife
+
+Items.Preset_Knife_Stinger.iconicVariant: true
+
+# Kolac
+Items.Craftable_Common_Kolac.weaponVariants: &PresetsKolac
+- t"Items.Preset_Kolac_Default"
+- t"Items.Preset_Kolac_Military"
+- t"Items.Preset_Kolac_Neon"
+- t"Items.Preset_Kolac_Pimp"
+- t"Items.Preset_Kolac_Tiny_Mike"
+
+Items.Craftable_Uncommon_Kolac.weaponVariants: *PresetsKolac
+Items.Craftable_Rare_Kolac.weaponVariants: *PresetsKolac
+Items.Craftable_Epic_Kolac.weaponVariants: *PresetsKolac
+Items.Craftable_Legendary_Kolac.weaponVariants: *PresetsKolac
+
+Items.Preset_Kolac_Tiny_Mike.iconicVariant: true
+
+# Kukri
+Items.Craftable_Common_Kukri.weaponVariants: &PresetsKukri
+- t"Items.Preset_Kukri_Default"
+- t"Items.Preset_Kukri_Voodoo"
+
+Items.Craftable_Uncommon_Kukri.weaponVariants: *PresetsKukri
+Items.Craftable_Rare_Kukri.weaponVariants: *PresetsKukri
+Items.Craftable_Epic_Kukri.weaponVariants: *PresetsKukri
+Items.Craftable_Legendary_Kukri.weaponVariants: *PresetsKukri
+
+# Kyubi
+Items.Craftable_Common_Kyubi.weaponVariants: &PresetsKyubi
+- t"Items.Preset_Kyubi_Default"
+- t"Items.Preset_Kyubi_Military"
+- t"Items.Preset_Kyubi_Neon"
+- t"Items.Preset_Kyubi_Pimp"
+
+Items.Craftable_Uncommon_Kyubi.weaponVariants: *PresetsKyubi
+Items.Craftable_Rare_Kyubi.weaponVariants: *PresetsKyubi
+Items.Craftable_Epic_Kyubi.weaponVariants: *PresetsKyubi
+Items.Craftable_Legendary_Kyubi.weaponVariants: *PresetsKyubi
+
+# Lexington
+Items.Craftable_Common_Lexington.weaponVariants: &PresetsLexington
+- t"Items.Preset_Lexington_Default"
+- t"Items.Preset_Lexington_Military"
+- t"Items.Preset_Lexington_Neon"
+- t"Items.Preset_Lexington_Pimp"
+- t"Items.Preset_Lexington_Toygun"
+- t"Items.Preset_Lexington_Wilson"
+# - t"Items.Preset_Lexington_Default_Left_Hand"
+# - t"Items.Preset_Lexington_Military_Left_Hand"
+# - t"Items.Preset_Lexington_Neon_Left_Hand"
+# - t"Items.Preset_Lexington_Pimp_Left_Hand"
+# - t"Items.Preset_Lexington_Shooting_Competition"
+# - t"Items.Preset_Lexington_Toygun_Left_Hand"
+# - t"Items.Preset_Lexington_Training"
+# - t"Items.Preset_Lexington_Wilson_Epic"
+# - t"Items.Preset_Lexington_Wilson_Legendary"
+# - t"Items.Preset_Lexington_Wilson_Rare"
+
+Items.Craftable_Uncommon_Lexington.weaponVariants: *PresetsLexington
+Items.Craftable_Rare_Lexington.weaponVariants: *PresetsLexington
+Items.Craftable_Epic_Lexington.weaponVariants: *PresetsLexington
+Items.Craftable_Legendary_Lexington.weaponVariants: *PresetsLexington
+
+Items.Preset_Lexington_Wilson.iconicVariant: true
+
+# Liberty
+Items.Craftable_Common_Liberty.weaponVariants: &PresetsLiberty
+- t"Items.Preset_Liberty_Default"
+- t"Items.Preset_Liberty_Military"
+- t"Items.Preset_Liberty_Neon"
+- t"Items.Preset_Liberty_Pimp"
+- t"Items.Preset_Liberty_Dex"
+- t"Items.Preset_Liberty_Padre"
+- t"Items.Preset_Liberty_Rogue"
+- t"Items.Preset_Liberty_Yorinobu"
+# - t"Items.Preset_Liberty_Default_Left_Hand"
+# - t"Items.Preset_Liberty_Dex_Epic"
+# - t"Items.Preset_Liberty_Dex_Legendary"
+# - t"Items.Preset_Liberty_Military_Left_Hand"
+# - t"Items.Preset_Liberty_Neon_Left_Hand"
+# - t"Items.Preset_Liberty_Padre_Legendary"
+# - t"Items.Preset_Liberty_Pimp_Left_Hand"
+# - t"Items.Preset_Liberty_Yorinobu_Epic"
+# - t"Items.Preset_Liberty_Yorinobu_Legendary"
+
+Items.Craftable_Uncommon_Liberty.weaponVariants: *PresetsLiberty
+Items.Craftable_Rare_Liberty.weaponVariants: *PresetsLiberty
+Items.Craftable_Epic_Liberty.weaponVariants: *PresetsLiberty
+Items.Craftable_Legendary_Liberty.weaponVariants: *PresetsLiberty
+
+Items.Preset_Liberty_Dex.iconicVariant: true
+Items.Preset_Liberty_Padre.iconicVariant: true
+Items.Preset_Liberty_Rogue.iconicVariant: true
+Items.Preset_Liberty_Yorinobu.iconicVariant: true
+
+# MA70
+Items.Craftable_Common_MA70.weaponVariants: &PresetsMA70
+- t"Items.Preset_MA70_Default"
+- t"Items.Preset_MA70_Military"
+- t"Items.Preset_MA70_Neon"
+- t"Items.Preset_MA70_Pimp"
+
+Items.Craftable_Uncommon_MA70.weaponVariants: *PresetsMA70
+Items.Craftable_Rare_MA70.weaponVariants: *PresetsMA70
+Items.Craftable_Epic_MA70.weaponVariants: *PresetsMA70
+Items.Craftable_Legendary_MA70.weaponVariants: *PresetsMA70
+
+# Machete
+Items.Craftable_Common_Machete.weaponVariants: &PresetsMachete
+- t"Items.Preset_Machete_Default"
+- t"Items.Preset_Machete_Maelstrom"
+- t"Items.Preset_Machete_Valentinos"
+
+Items.Craftable_Uncommon_Machete.weaponVariants: *PresetsMachete
+Items.Craftable_Rare_Machete.weaponVariants: *PresetsMachete
+Items.Craftable_Epic_Machete.weaponVariants: *PresetsMachete
+Items.Craftable_Legendary_Machete.weaponVariants: *PresetsMachete
+
+# Masamune
+Items.Craftable_Common_Masamune.weaponVariants: &PresetsMasamune
+- t"Items.Preset_Masamune_Default"
+- t"Items.Preset_Masamune_Flashlight"
+- t"Items.Preset_Masamune_Military"
+- t"Items.Preset_Masamune_Neon"
+- t"Items.Preset_Masamune_Pimp"
+- t"Items.Preset_Masamune_Trauma"
+- t"Items.Preset_Masamune_Arasaka_2020"
+- t"Items.Preset_Masamune_Arasaka_2077"
+- t"Items.Preset_Masamune_Rogue"
+
+Items.Craftable_Uncommon_Masamune.weaponVariants: *PresetsMasamune
+Items.Craftable_Rare_Masamune.weaponVariants: *PresetsMasamune
+Items.Craftable_Epic_Masamune.weaponVariants: *PresetsMasamune
+Items.Craftable_Legendary_Masamune.weaponVariants: *PresetsMasamune
+
+Items.Preset_Masamune_Arasaka_2020.iconicVariant: true
+Items.Preset_Masamune_Arasaka_2077.iconicVariant: true
+Items.Preset_Masamune_Rogue.iconicVariant: true
+
+# Nekomata
+Items.Craftable_Common_Nekomata.weaponVariants: &PresetsNekomata
+- t"Items.Preset_Nekomata_Default"
+- t"Items.Preset_Nekomata_Military"
+- t"Items.Preset_Nekomata_Neon"
+- t"Items.Preset_Nekomata_Pimp"
+- t"Items.Preset_Nekomata_Breakthrough"
+# - t"Items.Preset_Nekomata_Breakthrough_Legendary"
+
+Items.Craftable_Uncommon_Nekomata.weaponVariants: *PresetsNekomata
+Items.Craftable_Rare_Nekomata.weaponVariants: *PresetsNekomata
+Items.Craftable_Epic_Nekomata.weaponVariants: *PresetsNekomata
+Items.Craftable_Legendary_Nekomata.weaponVariants: *PresetsNekomata
+
+Items.Preset_Nekomata_Breakthrough.iconicVariant: true
+
+# Nova
+Items.Craftable_Common_Nova.weaponVariants: &PresetsNova
+- t"Items.Preset_Nova_Default"
+- t"Items.Preset_Nova_Military"
+- t"Items.Preset_Nova_Neon"
+- t"Items.Preset_Nova_Pimp"
+- t"Items.Preset_Nova_Doom_Doom"
+# - t"Items.Preset_Nova_Default_Left_Hand"
+# - t"Items.Preset_Nova_Doom_Doom_Epic"
+# - t"Items.Preset_Nova_Doom_Doom_Legendary"
+# - t"Items.Preset_Nova_Military_Left_Hand"
+# - t"Items.Preset_Nova_Neon_Left_Hand"
+# - t"Items.Preset_Nova_Pimp_Left_Hand"
+# - t"Items.Preset_Nova_Q000_Nomad"
+
+Items.Craftable_Uncommon_Nova.weaponVariants: *PresetsNova
+Items.Craftable_Rare_Nova.weaponVariants: *PresetsNova
+Items.Craftable_Epic_Nova.weaponVariants: *PresetsNova
+Items.Craftable_Legendary_Nova.weaponVariants: *PresetsNova
+
+Items.Preset_Nova_Doom_Doom.iconicVariant: true
+
+# Nue
+Items.Craftable_Common_Nue.weaponVariants: &PresetsNue
+- t"Items.Preset_Nue_Default"
+- t"Items.Preset_Nue_Military"
+- t"Items.Preset_Nue_Neon"
+- t"Items.Preset_Nue_Pimp"
+- t"Items.Preset_Nue_Arasaka_2020"
+- t"Items.Preset_Nue_Arasaka_2077"
+- t"Items.Preset_Nue_Jackie"
+- t"Items.Preset_Nue_Maiko"
+# - t"Items.Preset_Nue_Arasaka_2020_Left_Hand1"
+# - t"Items.Preset_Nue_Default_Left_Hand"
+# - t"Items.Preset_Nue_Jackie_Epic"
+# - t"Items.Preset_Nue_Jackie_Left_Hand"
+# - t"Items.Preset_Nue_Jackie_Legendary"
+# - t"Items.Preset_Nue_Maiko_Epic"
+# - t"Items.Preset_Nue_Maiko_Legendary"
+# - t"Items.Preset_Nue_Military_Left_Hand"
+# - t"Items.Preset_Nue_Neon_Left_Hand"
+# - t"Items.Preset_Nue_Pimp_Left_Hand"
+
+Items.Craftable_Uncommon_Nue.weaponVariants: *PresetsNue
+Items.Craftable_Rare_Nue.weaponVariants: *PresetsNue
+Items.Craftable_Epic_Nue.weaponVariants: *PresetsNue
+Items.Craftable_Legendary_Nue.weaponVariants: *PresetsNue
+
+Items.Preset_Nue_Arasaka_2020.iconicVariant: true
+Items.Preset_Nue_Arasaka_2077.iconicVariant: true
+Items.Preset_Nue_Jackie.iconicVariant: true
+Items.Preset_Nue_Maiko.iconicVariant: true
+
+# Omaha
+Items.Craftable_Common_Omaha.weaponVariants: &PresetsOmaha
+- t"Items.Preset_Omaha_Default"
+- t"Items.Preset_Omaha_Military"
+- t"Items.Preset_Omaha_Neon"
+- t"Items.Preset_Omaha_Pimp"
+- t"Items.Preset_Omaha_Suzie"
+# - t"Items.Preset_Omaha_Default_Left_Hand"
+# - t"Items.Preset_Omaha_Military_Left_Hand"
+# - t"Items.Preset_Omaha_Neon_Left_Hand"
+# - t"Items.Preset_Omaha_Pimp_Left_Hand"
+# - t"Items.Preset_Omaha_Suzie_Epic"
+# - t"Items.Preset_Omaha_Suzie_Legendary"
+
+Items.Craftable_Uncommon_Omaha.weaponVariants: *PresetsOmaha
+Items.Craftable_Rare_Omaha.weaponVariants: *PresetsOmaha
+Items.Craftable_Epic_Omaha.weaponVariants: *PresetsOmaha
+Items.Craftable_Legendary_Omaha.weaponVariants: *PresetsOmaha
+
+Items.Preset_Omaha_Suzie.iconicVariant: true
+
+# Overture
+Items.Craftable_Common_Overture.weaponVariants: &PresetsOverture
+- t"Items.Preset_Overture_Default"
+- t"Items.Preset_Overture_Military"
+- t"Items.Preset_Overture_Neon"
+- t"Items.Preset_Overture_Pimp"
+- t"Items.Preset_Overture_Cassidy"
+- t"Items.Preset_Overture_Kerry"
+- t"Items.Preset_Overture_River"
+# - t"Items.Preset_Overture_Cassidy_Legendary"
+# - t"Items.Preset_Overture_Default_E"
+# - t"Items.Preset_Overture_Default_L"
+# - t"Items.Preset_Overture_Default_Left_Hand"
+# - t"Items.Preset_Overture_Default_R"
+# - t"Items.Preset_Overture_Default_U"
+# - t"Items.Preset_Overture_Kerry_Epic"
+# - t"Items.Preset_Overture_Kerry_Legendary"
+# - t"Items.Preset_Overture_Legendary"
+# - t"Items.Preset_Overture_Military_Left_Hand"
+# - t"Items.Preset_Overture_Neon_Left_Hand"
+# - t"Items.Preset_Overture_Pimp_Left_Hand"
+# - t"Items.Preset_Overture_River_Legendary"
+
+Items.Craftable_Uncommon_Overture.weaponVariants: *PresetsOverture
+Items.Craftable_Rare_Overture.weaponVariants: *PresetsOverture
+Items.Craftable_Epic_Overture.weaponVariants: *PresetsOverture
+Items.Craftable_Legendary_Overture.weaponVariants: *PresetsOverture
+
+Items.Preset_Overture_Cassidy.iconicVariant: true
+Items.Preset_Overture_Kerry.iconicVariant: true
+Items.Preset_Overture_River.iconicVariant: true
+
+# Palica
+Items.Craftable_Common_Palica.weaponVariants: &PresetsPalica
+- t"Items.Preset_Palica_Default"
+- t"Items.Preset_Palica_Military"
+- t"Items.Preset_Palica_Neon"
+- t"Items.Preset_Palica_Pimp"
+
+Items.Craftable_Uncommon_Palica.weaponVariants: *PresetsPalica
+Items.Craftable_Rare_Palica.weaponVariants: *PresetsPalica
+Items.Craftable_Epic_Palica.weaponVariants: *PresetsPalica
+Items.Craftable_Legendary_Palica.weaponVariants: *PresetsPalica
+
+# Pozhar
+Items.Craftable_Common_Pozhar.weaponVariants: &PresetsPozhar
+- t"Items.Preset_Pozhar_Default"
+- t"Items.Preset_Pozhar_Military"
+- t"Items.Preset_Pozhar_Neon"
+- t"Items.Preset_Pozhar_Pimp"
+
+Items.Craftable_Uncommon_Pozhar.weaponVariants: *PresetsPozhar
+Items.Craftable_Rare_Pozhar.weaponVariants: *PresetsPozhar
+Items.Craftable_Epic_Pozhar.weaponVariants: *PresetsPozhar
+Items.Craftable_Legendary_Pozhar.weaponVariants: *PresetsPozhar
+
+# Pulsar
+Items.Craftable_Common_Pulsar.weaponVariants: &PresetsPulsar
+- t"Items.Preset_Pulsar_Default"
+- t"Items.Preset_Pulsar_Military"
+- t"Items.Preset_Pulsar_Neon"
+- t"Items.Preset_Pulsar_Pimp"
+- t"Items.Preset_Pulsar_Buzzsaw"
+# - t"Items.Preset_Pulsar_Buzzsaw_Epic"
+# - t"Items.Preset_Pulsar_Buzzsaw_Legendary"
+
+Items.Craftable_Uncommon_Pulsar.weaponVariants: *PresetsPulsar
+Items.Craftable_Rare_Pulsar.weaponVariants: *PresetsPulsar
+Items.Craftable_Epic_Pulsar.weaponVariants: *PresetsPulsar
+Items.Craftable_Legendary_Pulsar.weaponVariants: *PresetsPulsar
+
+Items.Preset_Pulsar_Buzzsaw.iconicVariant: true
+
+# Quasar
+Items.Craftable_Common_Quasar.weaponVariants: &PresetsQuasar
+- t"Items.Preset_Quasar_Default"
+- t"Items.Preset_Quasar_Military"
+- t"Items.Preset_Quasar_Neon"
+- t"Items.Preset_Quasar_Pimp"
+- t"Items.Preset_Quasar_Patricia"
+# - t"Items.Preset_Quasar_Default_Left_Hand"
+# - t"Items.Preset_Quasar_Military_Left_Hand"
+# - t"Items.Preset_Quasar_Neon_Left_Hand"
+# - t"Items.Preset_Quasar_Pimp_Left_Hand"
+
+Items.Craftable_Uncommon_Quasar.weaponVariants: *PresetsQuasar
+Items.Craftable_Rare_Quasar.weaponVariants: *PresetsQuasar
+Items.Craftable_Epic_Quasar.weaponVariants: *PresetsQuasar
+Items.Craftable_Legendary_Quasar.weaponVariants: *PresetsQuasar
+
+Items.Preset_Quasar_Patricia.iconicVariant: true
+
+# Saratoga
+Items.Craftable_Common_Saratoga.weaponVariants: &PresetsSaratoga
+- t"Items.Preset_Saratoga_Default"
+- t"Items.Preset_Saratoga_Military"
+- t"Items.Preset_Saratoga_Neon"
+- t"Items.Preset_Saratoga_Pimp"
+- t"Items.Preset_Saratoga_Arasaka_2020"
+- t"Items.Preset_Saratoga_Arasaka_2077"
+- t"Items.Preset_Saratoga_Maelstrom"
+- t"Items.Preset_Saratoga_Raffen"
+# - t"Items.Preset_Saratoga_Maelstrom_Epic"
+# - t"Items.Preset_Saratoga_Maelstrom_Legendary"
+# - t"Items.Preset_Saratoga_Raffen_Epic"
+# - t"Items.Preset_Saratoga_Raffen_Legendary"
+
+Items.Craftable_Uncommon_Saratoga.weaponVariants: *PresetsSaratoga
+Items.Craftable_Rare_Saratoga.weaponVariants: *PresetsSaratoga
+Items.Craftable_Epic_Saratoga.weaponVariants: *PresetsSaratoga
+Items.Craftable_Legendary_Saratoga.weaponVariants: *PresetsSaratoga
+
+Items.Preset_Saratoga_Arasaka_2020.iconicVariant: true
+Items.Preset_Saratoga_Arasaka_2077.iconicVariant: true
+Items.Preset_Saratoga_Maelstrom.iconicVariant: true
+Items.Preset_Saratoga_Raffen.iconicVariant: true
+
+# Satara
+Items.Craftable_Common_Satara.weaponVariants: &PresetsSatara
+- t"Items.Preset_Satara_Default"
+- t"Items.Preset_Satara_Military"
+- t"Items.Preset_Satara_Neon"
+- t"Items.Preset_Satara_Pimp"
+
+Items.Craftable_Uncommon_Satara.weaponVariants: *PresetsSatara
+Items.Craftable_Rare_Satara.weaponVariants: *PresetsSatara
+Items.Craftable_Epic_Satara.weaponVariants: *PresetsSatara
+Items.Craftable_Legendary_Satara.weaponVariants: *PresetsSatara
+
+# Senkoh
+Items.Craftable_Common_Senkoh.weaponVariants: &PresetsSenkoh
+- t"Items.Preset_Senkoh_Default"
+- t"Items.Preset_Senkoh_Military"
+- t"Items.Preset_Senkoh_Neon"
+- t"Items.Preset_Senkoh_Pimp"
+
+Items.Craftable_Uncommon_Senkoh.weaponVariants: *PresetsSenkoh
+Items.Craftable_Rare_Senkoh.weaponVariants: *PresetsSenkoh
+Items.Craftable_Epic_Senkoh.weaponVariants: *PresetsSenkoh
+Items.Craftable_Legendary_Senkoh.weaponVariants: *PresetsSenkoh
+
+# Shingen
+Items.Craftable_Common_Shingen.weaponVariants: &PresetsShingen
+- t"Items.Preset_Shingen_Default"
+- t"Items.Preset_Shingen_Military"
+- t"Items.Preset_Shingen_Neon"
+- t"Items.Preset_Shingen_Pimp"
+- t"Items.Preset_Shingen_Prototype"
+
+Items.Craftable_Uncommon_Shingen.weaponVariants: *PresetsShingen
+Items.Craftable_Rare_Shingen.weaponVariants: *PresetsShingen
+Items.Craftable_Epic_Shingen.weaponVariants: *PresetsShingen
+Items.Craftable_Legendary_Shingen.weaponVariants: *PresetsShingen
+
+Items.Preset_Shingen_Prototype.iconicVariant: true
+
+# Sidewinder
+Items.Craftable_Common_Sidewinder.weaponVariants: &PresetsSidewinder
+- t"Items.Preset_Sidewinder_Default"
+- t"Items.Preset_Sidewinder_Military"
+- t"Items.Preset_Sidewinder_Neon"
+- t"Items.Preset_Sidewinder_Pimp"
+- t"Items.Preset_Sidewinder_Divided"
+# - t"Items.Preset_Sidewinder_Divided_Epic"
+# - t"Items.Preset_Sidewinder_Divided_Legendary"
+
+Items.Craftable_Uncommon_Sidewinder.weaponVariants: *PresetsSidewinder
+Items.Craftable_Rare_Sidewinder.weaponVariants: *PresetsSidewinder
+Items.Craftable_Epic_Sidewinder.weaponVariants: *PresetsSidewinder
+Items.Craftable_Legendary_Sidewinder.weaponVariants: *PresetsSidewinder
+
+Items.Preset_Sidewinder_Divided.iconicVariant: true
+
+# Sor22
+Items.Craftable_Common_Sor22.weaponVariants: &PresetsSor22
+- t"Items.Preset_Sor22_Default"
+- t"Items.Preset_Sor22_Military"
+- t"Items.Preset_Sor22_Neon"
+- t"Items.Preset_Sor22_Pimp"
+
+Items.Craftable_Uncommon_Sor22.weaponVariants: *PresetsSor22
+Items.Craftable_Rare_Sor22.weaponVariants: *PresetsSor22
+Items.Craftable_Epic_Sor22.weaponVariants: *PresetsSor22
+Items.Craftable_Legendary_Sor22.weaponVariants: *PresetsSor22
+
+# Tactician
+Items.Craftable_Common_Tactician.weaponVariants: &PresetsTactician
+- t"Items.Preset_Tactician_Default"
+- t"Items.Preset_Tactician_Military"
+- t"Items.Preset_Tactician_Neon"
+- t"Items.Preset_Tactician_Pimp"
+- t"Items.Preset_Tactician_Dino"
+- t"Items.Preset_Tactician_Headsman"
+# - t"Items.Preset_Tactician_Dino_Legendary"
+# - t"Items.Preset_Tactician_Headsman_Legendary"
+
+Items.Craftable_Uncommon_Tactician.weaponVariants: *PresetsTactician
+Items.Craftable_Rare_Tactician.weaponVariants: *PresetsTactician
+Items.Craftable_Epic_Tactician.weaponVariants: *PresetsTactician
+Items.Craftable_Legendary_Tactician.weaponVariants: *PresetsTactician
+
+Items.Preset_Tactician_Dino.iconicVariant: true
+Items.Preset_Tactician_Headsman.iconicVariant: true
+
+# Testera
+Items.Craftable_Common_Testera.weaponVariants: &PresetsTestera
+- t"Items.Preset_Testera_Default"
+- t"Items.Preset_Testera_Military"
+- t"Items.Preset_Testera_Neon"
+- t"Items.Preset_Testera_Pimp"
+
+Items.Craftable_Uncommon_Testera.weaponVariants: *PresetsTestera
+Items.Craftable_Rare_Testera.weaponVariants: *PresetsTestera
+Items.Craftable_Epic_Testera.weaponVariants: *PresetsTestera
+Items.Craftable_Legendary_Testera.weaponVariants: *PresetsTestera
+
+# Umbra
+Items.Craftable_Common_Umbra.weaponVariants: &PresetsUmbra
+- t"Items.Preset_Umbra_Default"
+- t"Items.Preset_Umbra_Military"
+- t"Items.Preset_Umbra_Neon"
+- t"Items.Preset_Umbra_Pimp"
+
+Items.Craftable_Uncommon_Umbra.weaponVariants: *PresetsUmbra
+Items.Craftable_Rare_Umbra.weaponVariants: *PresetsUmbra
+Items.Craftable_Epic_Umbra.weaponVariants: *PresetsUmbra
+Items.Craftable_Legendary_Umbra.weaponVariants: *PresetsUmbra
+
+# Unity
+Items.Craftable_Common_Unity.weaponVariants: &PresetsUnity
+- t"Items.Preset_Unity_Default"
+- t"Items.Preset_Unity_Military"
+- t"Items.Preset_Unity_Neon"
+- t"Items.Preset_Unity_Pimp"
+# - t"Items.Preset_Unity_Default_Left_Hand"
+# - t"Items.Preset_Unity_Military_Left_Hand"
+# - t"Items.Preset_Unity_Neon_Left_Hand"
+# - t"Items.Preset_Unity_Pimp_Left_Hand"
+# - t"Items.Preset_V_Unity"
+# - t"Items.Preset_V_Unity_Cutscene"
+
+Items.Craftable_Uncommon_Unity.weaponVariants: *PresetsUnity
+Items.Craftable_Rare_Unity.weaponVariants: *PresetsUnity
+Items.Craftable_Epic_Unity.weaponVariants: *PresetsUnity
+Items.Craftable_Legendary_Unity.weaponVariants: *PresetsUnity
+
+# Yukimura
+Items.Craftable_Common_Yukimura.weaponVariants: &PresetsYukimura
+- t"Items.Preset_Yukimura_Default"
+- t"Items.Preset_Yukimura_Military"
+- t"Items.Preset_Yukimura_Neon"
+- t"Items.Preset_Yukimura_Pimp"
+- t"Items.Preset_Yukimura_Trauma"
+- t"Items.Preset_Yukimura_Kiji"
+- t"Items.Preset_Yukimura_Skippy"
+# - t"Items.Preset_Yukimura_Default_Left_Hand"
+# - t"Items.Preset_Yukimura_Kiji_Legendary"
+# - t"Items.Preset_Yukimura_Legendary"
+# - t"Items.Preset_Yukimura_Military_Left_Hand"
+# - t"Items.Preset_Yukimura_Neon_Left_Hand"
+# - t"Items.Preset_Yukimura_Pimp_Left_Hand"
+# - t"Items.Preset_Yukimura_Trauma_Left_Hand"
+
+Items.Craftable_Uncommon_Yukimura.weaponVariants: *PresetsYukimura
+Items.Craftable_Rare_Yukimura.weaponVariants: *PresetsYukimura
+Items.Craftable_Epic_Yukimura.weaponVariants: *PresetsYukimura
+Items.Craftable_Legendary_Yukimura.weaponVariants: *PresetsYukimura
+
+Items.Preset_Yukimura_Kiji.iconicVariant: true
+Items.Preset_Yukimura_Skippy.iconicVariant: true
+
+# Zhuo
+Items.Craftable_Common_Zhuo.weaponVariants: &PresetsZhuo
+- t"Items.Preset_Zhuo_Default"
+- t"Items.Preset_Zhuo_Military"
+- t"Items.Preset_Zhuo_Neon"
+- t"Items.Preset_Zhuo_Pimp"
+- t"Items.Preset_Zhuo_Trauma"
+- t"Items.Preset_Zhuo_Eight_Star"
+
+Items.Craftable_Uncommon_Zhuo.weaponVariants: *PresetsZhuo
+Items.Craftable_Rare_Zhuo.weaponVariants: *PresetsZhuo
+Items.Craftable_Epic_Zhuo.weaponVariants: *PresetsZhuo
+Items.Craftable_Legendary_Zhuo.weaponVariants: *PresetsZhuo
+
+Items.Preset_Zhuo_Eight_Star.iconicVariant: true
+
+# --- Proficency craftables
+Items.Proficiency_Craftable_Uncommon_Baton_Alpha.weaponVariants: *PresetsBaton
+Items.Proficiency_Craftable_Uncommon_Copperhead.weaponVariants: *PresetsCopperhead
+Items.Proficiency_Craftable_Uncommon_Nue.weaponVariants: *PresetsNue
+Items.Proficiency_Craftable_Uncommon_Satara.weaponVariants: *PresetsSatara
+Items.Proficiency_Craftable_Rare_Grad.weaponVariants: *PresetsGrad
+Items.Proficiency_Craftable_Rare_Knife.weaponVariants: *PresetsCombatKnife
+Items.Proficiency_Craftable_Rare_Nova.weaponVariants: *PresetsNova
+Items.Proficiency_Craftable_Rare_Pulsar.weaponVariants: *PresetsPulsar
+Items.Proficiency_Craftable_Epic_Bat.weaponVariants: *PresetsBat
+Items.Proficiency_Craftable_Epic_Kolac.weaponVariants: *PresetsKolac
+Items.Proficiency_Craftable_Epic_Sor22.weaponVariants: *PresetsSor22
+Items.Proficiency_Craftable_Epic_Tactician.weaponVariants: *PresetsTactician
+Items.Proficiency_Craftable_Epic_Yukimura.weaponVariants: *PresetsYukimura
+Items.Proficiency_Craftable_Legendary_Carnage.weaponVariants: *PresetsCarnage
+Items.Proficiency_Craftable_Legendary_Katana.weaponVariants: *PresetsKatana
+Items.Proficiency_Craftable_Legendary_Nekomata.weaponVariants: *PresetsNekomata
+Items.Proficiency_Craftable_Legendary_Quasar.weaponVariants: *PresetsQuasar
