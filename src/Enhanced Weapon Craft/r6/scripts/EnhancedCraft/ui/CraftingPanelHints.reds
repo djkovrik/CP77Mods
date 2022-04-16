@@ -1,6 +1,7 @@
 module EnhancedCraft.UI
 import EnhancedCraft.Config.*
 
+// -- Displays Previous and Next variant button hints on crafting screen
 @addMethod(CraftingLogicController)
 public func ShowButtonHints() -> Void {
   if !Config.RandomizerEnabled() {
@@ -9,6 +10,7 @@ public func ShowButtonHints() -> Void {
   };
 }
 
+// -- Hides displayed button hints
 @addMethod(CraftingLogicController)
 public func HideButtonHints() -> Void {
   if !Config.RandomizerEnabled() {

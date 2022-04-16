@@ -1,13 +1,15 @@
 module EnhancedCraft.UI
-import EnhancedCraft.Common.L
 import EnhancedCraft.Config.*
 
+// -- New text label for available skins counter
 @addField(CraftingLogicController)
 private let m_availableSkinsText: ref<inkText>;
 
+// -- New text label for Randomizer status
 @addField(CraftingLogicController)
 private let m_randomizerText: ref<inkText>;
 
+// -- Inject new text labels into CraftingLogicController root compound widget
 @wrapMethod(CraftingLogicController)
 public func Init(craftingGameController: wref<CraftingMainGameController>) -> Void {
   wrappedMethod(craftingGameController);
@@ -50,9 +52,10 @@ public func Init(craftingGameController: wref<CraftingMainGameController>) -> Vo
   };
 }
 
+// -- Refresh available skins counter state
 @addMethod(CraftingLogicController)
 public func RefreshSkinsCounter() -> Void {
-  let size: Int32 = ArraySize(this.m_weaponVariants);
+  let size: Int32 = ArraySize(this.weaponVariants);
   if size > 1 {
     this.m_availableSkinsText.SetVisible(true);
     this.m_availableSkinsText.SetText(s"\(GetLocalizedTextByKey(n"Mod-Craft-UI-Variants")) \(size)");
@@ -61,9 +64,10 @@ public func RefreshSkinsCounter() -> Void {
   };
 }
 
+// -- Refresh Randomizer label state
 @addMethod(CraftingLogicController)
 public func RefreshRandomizerLabel() -> Void {
-  if ArraySize(this.m_weaponVariants) > 1 {
+  if ArraySize(this.weaponVariants) > 1 {
     this.m_randomizerText.SetVisible(true);
     if Config.RandomizerEnabled() {
       this.m_randomizerText.SetText(GetLocalizedTextByKey(n"Mod-Craft-UI-Randomizer-Enabled"));

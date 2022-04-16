@@ -1,15 +1,19 @@
 local defaults = {
 	CustomNamesEnabled = true,
-	RandomizerEnabled = true,
+	RandomizerEnabled = false,
 	PerkToUnlockStandard = 3,
-	PerkToUnlockIconics = 4
+	PerkToUnlockIconics = 5,
+	IconicRecipeCondition = 2,
+	IconicIngredientsMultiplier = 5
 }
 
 local settings = {
 	CustomNamesEnabled = true,
-	RandomizerEnabled = true,
+	RandomizerEnabled = false,
 	PerkToUnlockStandard = 3,
-	PerkToUnlockIconics = 4
+	PerkToUnlockIconics = 5,
+	IconicRecipeCondition = 2,
+	IconicIngredientsMultiplier = 5
 }
 
 function SaveSettings() 
@@ -47,27 +51,54 @@ function SetupSettingsMenu()
 		return
 	end
 	
-	local requirements = {
+	local basicRequirements = {
 		[1] = GetLocalizedTextByKey("Mod-Craft-Settings-Perk-None"),
 		[2] = GetLocalizedTextByKey("Mod-Craft-Settings-Perk-Craftsman"),
 		[3] = GetLocalizedTextByKey("Mod-Craft-Settings-Perk-Monkey"),
 		[4] = GetLocalizedTextByKey("Mod-Craft-Settings-Perk-Artisan")
 	}
+	
+	local iconicRequirements = {
+		[1] = GetLocalizedTextByKey("Mod-Craft-Settings-Perk-None"),
+		[2] = GetLocalizedTextByKey("Mod-Craft-Settings-Perk-Block"),
+		[3] = GetLocalizedTextByKey("Mod-Craft-Settings-Perk-Craftsman"),
+		[4] = GetLocalizedTextByKey("Mod-Craft-Settings-Perk-Monkey"),
+		[5] = GetLocalizedTextByKey("Mod-Craft-Settings-Perk-Artisan")
+	}
+	
+	local qualities = {
+		[1] = GetLocalizedTextByKey("Mod-Craft-Settings-Quality-Rare"),
+		[2] = GetLocalizedTextByKey("Mod-Craft-Settings-Quality-Epic"),
+		[3] = GetLocalizedTextByKey("Mod-Craft-Settings-Quality-Legendary")
+	}
 
 	nativeSettings.addTab("/ecraft", "ECRAFT")
 	
-	nativeSettings.addSubcategory("/ecraft/settings", GetLocalizedTextByKey("Mod-Craft-Settings-Core"))
+	nativeSettings.addSubcategory("/ecraft/basic", GetLocalizedTextByKey("Mod-Craft-Settings-Base"))
 
-	nativeSettings.addSwitch("/ecraft/settings", GetLocalizedTextByKey("Mod-Craft-Settings-Naming"), GetLocalizedTextByKey("Mod-Craft-Settings-Naming-Desc"), settings.CustomNamesEnabled, defaults.CustomNamesEnabled, function(state) settings.CustomNamesEnabled = state end)
-	nativeSettings.addSwitch("/ecraft/settings", GetLocalizedTextByKey("Mod-Craft-Settings-Randomizer"), GetLocalizedTextByKey("Mod-Craft-Settings-Randomizer-Desc"), settings.RandomizerEnabled, defaults.RandomizerEnabled, function(state) settings.RandomizerEnabled = state end)
-
-	nativeSettings.addSelectorString("/ecraft/settings", GetLocalizedTextByKey("Mod-Craft-Settings-Basic"), GetLocalizedTextByKey("Mod-Craft-Settings-Basic-Desc"), requirements, settings.PerkToUnlockStandard, defaults.PerkToUnlockStandard, function(value)
+	nativeSettings.addSelectorString("/ecraft/basic", GetLocalizedTextByKey("Mod-Craft-Settings-Basic"), GetLocalizedTextByKey("Mod-Craft-Settings-Basic-Desc"), basicRequirements, settings.PerkToUnlockStandard, defaults.PerkToUnlockStandard, function(value)
 		settings.PerkToUnlockStandard = value
 	end)
+	
+	nativeSettings.addSubcategory("/ecraft/iconic", GetLocalizedTextByKey("Mod-Craft-Settings-Iconic"))
 
-	nativeSettings.addSelectorString("/ecraft/settings", GetLocalizedTextByKey("Mod-Craft-Settings-Iconic"), GetLocalizedTextByKey("Mod-Craft-Settings-Iconic-Desc"), requirements, settings.PerkToUnlockIconics, defaults.PerkToUnlockIconics, function(value)
+	nativeSettings.addSelectorString("/ecraft/iconic", GetLocalizedTextByKey("Mod-Craft-Settings-Iconic-Unlock"), GetLocalizedTextByKey("Mod-Craft-Settings-Iconic-Unlock-Desc"), iconicRequirements, settings.PerkToUnlockIconics, defaults.PerkToUnlockIconics, function(value)
 		settings.PerkToUnlockIconics = value
 	end)
+	
+	nativeSettings.addSelectorString("/ecraft/iconic", GetLocalizedTextByKey("Mod-Craft-Settings-Iconic-Condition"), GetLocalizedTextByKey("Mod-Craft-Settings-Iconic-Condition-Desc"), qualities, settings.IconicRecipeCondition, defaults.IconicRecipeCondition, function(value)
+		settings.IconicRecipeCondition = value
+	end)
+	
+	nativeSettings.addRangeInt("/ecraft/iconic", GetLocalizedTextByKey("Mod-Craft-Iconic-Ingredients"), GetLocalizedTextByKey("Mod-Craft-Iconic-Ingredients-Desc"), 1, 25, 1, settings.IconicIngredientsMultiplier, defaults.IconicIngredientsMultiplier, function(value)
+		settings.IconicIngredientsMultiplier = value
+	end)
+	
+	nativeSettings.addSubcategory("/ecraft/misc", GetLocalizedTextByKey("Mod-Craft-Settings-Misc"))
+	
+	nativeSettings.addSwitch("/ecraft/misc", GetLocalizedTextByKey("Mod-Craft-Settings-Randomizer"), GetLocalizedTextByKey("Mod-Craft-Settings-Randomizer-Desc"), settings.RandomizerEnabled, defaults.RandomizerEnabled, function(state) settings.RandomizerEnabled = state end)
+	
+	nativeSettings.addSwitch("/ecraft/misc", GetLocalizedTextByKey("Mod-Craft-Settings-Naming"), GetLocalizedTextByKey("Mod-Craft-Settings-Naming-Desc"), settings.CustomNamesEnabled, defaults.CustomNamesEnabled, function(state) settings.CustomNamesEnabled = state end)
 end
 
 registerForEvent("onInit", function()
@@ -79,6 +110,8 @@ registerForEvent("onInit", function()
 	Override("EnhancedCraft.Config.Config", "RandomizerEnabled;", function(_) return settings.RandomizerEnabled end)
 	Override("EnhancedCraft.Config.Config", "PerkToUnlockStandard;", function(_) return settings.PerkToUnlockStandard end)
 	Override("EnhancedCraft.Config.Config", "PerkToUnlockIconics;", function(_) return settings.PerkToUnlockIconics end)
+	Override("EnhancedCraft.Config.Config", "IconicRecipeCondition;", function(_) return settings.IconicRecipeCondition end)
+	Override("EnhancedCraft.Config.Config", "IconicIngredientsMultiplier;", function(_) return settings.IconicIngredientsMultiplier end)
 end)
 
 registerForEvent("onShutdown", function()

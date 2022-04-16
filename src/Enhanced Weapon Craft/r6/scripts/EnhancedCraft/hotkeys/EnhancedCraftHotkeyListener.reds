@@ -1,6 +1,7 @@
 module EnhancedCraft.Hotkey
-import EnhancedCraft.Common.L
 import EnhancedCraft.Config.*
+
+// -- Custom hotkey listener for Prev and Next hotkeys
 
 public class EnhancedCraftHotkeyListener {
 
@@ -11,9 +12,9 @@ public class EnhancedCraftHotkeyListener {
   }
 
   protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
-    let previewEvent: ref<CraftingItemPreviewEvent>;
     let actionName: CName = ListenerAction.GetName(action);
     let isReleased: Bool = Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED);
+    // Hotkeys active only if Randomizer disabled
     if Equals(actionName, n"option_switch_prev") && isReleased && !Config.RandomizerEnabled() {
       this.controller.LoadPrevVariant();
     };
