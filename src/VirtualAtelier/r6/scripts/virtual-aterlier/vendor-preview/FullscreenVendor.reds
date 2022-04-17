@@ -129,6 +129,7 @@ protected cb func OnEquipPreviewClosed(data: ref<inkGameNotificationData>) -> Bo
 
 @addMethod(FullscreenVendorGameController)
 private func BuyItemFromVirtualVendor(inventoryItemData: InventoryItemData) {
+  let player: ref<PlayerPuppet> = this.GetPlayerControlledObject() as PlayerPuppet;
   let itemID: ItemID = InventoryItemData.GetID(inventoryItemData);
   let price = InventoryItemData.GetPrice(inventoryItemData);
 
@@ -147,7 +148,7 @@ private func BuyItemFromVirtualVendor(inventoryItemData: InventoryItemData) {
     transactionSystem.RemoveItemByTDBID(this.m_player, t"Items.money", Cast(price));
 
     let itemData = transactionSystem.GetItemData(this.m_player, itemID);
-    this.TryScaleItemToPlayer(itemData, inventoryItemData.Quality);
+    player.TryScaleItemToPlayer(itemData, inventoryItemData.Quality);
   }
 }
 
@@ -284,50 +285,13 @@ protected cb func OnSetUserData(userData: ref<IScriptable>) -> Bool {
 @addField(gameItemData)
 let isVirtualItem: Bool;
 
-@addMethod(FullscreenVendorGameController)
-private final func TryScaleItemToPlayer(itemData: ref<gameItemData>, quality: CName) -> Void {
-  let player: ref<GameObject> = this.GetPlayerControlledObject();
-  let statsSystem: ref<StatsSystem> = GameInstance.GetStatsSystem(player.GetGame());
-  let powerLevelPlayer: Float = statsSystem.GetStatValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatType.PowerLevel);
-  let powerLevelItem: Float = itemData.GetStatValueByType(gamedataStatType.PowerLevel);
-  let qualityMult: Float;
-
-  // TODO Something more flexible?
-  // Scale item from PowerLevel
-  switch (quality) {
-    case n"Legendary":
-      qualityMult = 0.9;
-      break;
-    case n"Epic":
-      qualityMult = 0.85;
-      break;
-    case n"Rare":
-      qualityMult = 0.8;
-      break;
-    case n"Uncommon":
-      qualityMult = 0.75;
-      break;
-    case n"Common":
-      qualityMult = 0.7;
-      break;
-    default:
-      qualityMult = 1.0;
-      break;
-  };
-
-  let resultingValue: Float = powerLevelPlayer * qualityMult;
-  let powerLevelMod: ref<gameStatModifierData> = RPGManager.CreateStatModifier(gamedataStatType.PowerLevel, gameStatModifierType.Additive, resultingValue);
-  statsSystem.RemoveAllModifiers(itemData.GetStatsObjectID(), gamedataStatType.PowerLevel, true);
-  statsSystem.AddSavedModifier(itemData.GetStatsObjectID(), powerLevelMod);
-  RPGManager.ForceItemQuality(player, itemData, quality);
-}
-
 @wrapMethod(FullscreenVendorGameController)
 private final func PopulateVendorInventory() -> Void {
   if this.GetIsVirtual() {
     let items: array<ref<IScriptable>>;
     let vendorInventory: array<InventoryItemData>;
     let vendorInventoryData: ref<VendorInventoryItemData>;
+    let player: ref<PlayerPuppet> = this.GetPlayerControlledObject() as PlayerPuppet;
 
     this.m_vendorFilterManager.Clear();
     this.m_vendorFilterManager.AddFilter(ItemFilterCategory.AllItems);
@@ -350,7 +314,7 @@ private final func PopulateVendorInventory() -> Void {
       itemModParams.quantity = 1;
       let itemData: ref<gameItemData> = Inventory.CreateItemData(itemModParams, this.m_player);
       itemData.isVirtualItem = true;
-      this.TryScaleItemToPlayer(itemData, itemsQualities[virtualItemIndex]);
+      player.TryScaleItemToPlayer(itemData, itemsQualities[virtualItemIndex]);
       ArrayPush(itemDataArray, itemData);
 
       virtualItemIndex += 1;
