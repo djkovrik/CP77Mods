@@ -36,7 +36,7 @@ public func Init(craftingGameController: wref<CraftingMainGameController>) -> Vo
 
   if !IsDefined(this.m_randomizerText) || NotEquals(this.m_randomizerText.GetName(), n"RandomizerLabel") {
     this.m_randomizerText = new inkText();
-    this.m_randomizerText.SetName(n"AvailableSkinsLabel");
+    this.m_randomizerText.SetName(n"RandomizerLabel");
     this.m_randomizerText.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
     this.m_randomizerText.SetFontStyle(inkTextRef.GetFontStyle(this.m_perkNotificationText));
     this.m_randomizerText.SetFontSize(inkTextRef.GetFontSize(this.m_perkNotificationText));

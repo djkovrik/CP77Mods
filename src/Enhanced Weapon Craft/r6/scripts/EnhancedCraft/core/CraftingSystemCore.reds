@@ -1,6 +1,7 @@
 module EnhancedCraft.Core
 import EnhancedCraft.Common.L
 import EnhancedCraft.Config.*
+import EnhancedCraft.Events.*
 
 // -- Weak ref to player puppet
 @addField(CraftingSystem)
@@ -35,7 +36,12 @@ private final func OnCraftItemRequest(request: ref<CraftItemRequest>) -> Void {
 private final func CraftItem(target: wref<GameObject>, itemRecord: ref<Item_Record>, amount: Int32, opt ammoBulletAmount: Int32) -> wref<gameItemData> {
   let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(this.m_playerPuppet.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
   let craftedItem: wref<gameItemData> = wrappedMethod(target, itemRecord, amount, ammoBulletAmount);
-  L(s"CRAFTED NORMAL: \(TDBID.ToStringDEBUG(ItemID.GetTDBID(craftedItem.GetID()))) \(RPGManager.GetItemDataQuality(craftedItem))");
+  L(s"CRAFTED NORMAL: \(craftedItem.GetID()) \(TDBID.ToStringDEBUG(ItemID.GetTDBID(craftedItem.GetID()))) \(RPGManager.GetItemDataQuality(craftedItem))");
+  // Notify that item was crafted
+  let event: ref<EnhancedCraftRecipeCrafted> = new EnhancedCraftRecipeCrafted();
+  event.isWeapon = Equals(RPGManager.GetItemCategory(craftedItem.GetID()), gamedataItemCategory.Weapon);
+  event.itemId = craftedItem.GetID();
+  GameInstance.GetUISystem(player.GetGame()).QueueEvent(event);
   return craftedItem;
 }
 
@@ -127,6 +133,11 @@ private final func CraftItemEnhanced(target: wref<GameObject>, itemRecord: ref<I
   this.SendItemCraftedDataTrackingRequest(craftedItemID);
   this.ProcessCraftSkill(Cast<Float>(recipeXP));
   player.ScaleCraftedItemData(itemData, quality);
-  L(s"CRAFTED CUSTOM: \(TDBID.ToStringDEBUG(ItemID.GetTDBID(itemData.GetID()))) \(RPGManager.GetItemDataQuality(itemData))");
+  L(s"CRAFTED CUSTOM: \(itemData.GetID()) \(TDBID.ToStringDEBUG(ItemID.GetTDBID(itemData.GetID()))) \(RPGManager.GetItemDataQuality(itemData))");
+  // Notify that item was crafted
+  let event: ref<EnhancedCraftRecipeCrafted> = new EnhancedCraftRecipeCrafted();
+  event.isWeapon = Equals(RPGManager.GetItemCategory(itemData.GetID()), gamedataItemCategory.Weapon);
+  event.itemId = itemData.GetID();
+  GameInstance.GetUISystem(player.GetGame()).QueueEvent(event);
   return itemData;
 }

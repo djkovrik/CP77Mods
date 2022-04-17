@@ -25,7 +25,7 @@ public class EnhancedCraftHotkeyListener {
 }
 
 @addField(CraftingLogicController)
-private let m_inputListener: ref<EnhancedCraftHotkeyListener>;
+public let m_inputListener: ref<EnhancedCraftHotkeyListener>;
 
 @wrapMethod(CraftingLogicController)
 public func Init(craftingGameController: wref<CraftingMainGameController>) -> Void {
