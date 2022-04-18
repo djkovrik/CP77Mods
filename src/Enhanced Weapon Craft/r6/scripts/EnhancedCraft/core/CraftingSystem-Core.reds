@@ -3,10 +3,6 @@ import EnhancedCraft.Common.L
 import EnhancedCraft.Config.*
 import EnhancedCraft.Events.*
 
-// -- Weak ref to player puppet
-@addField(CraftingSystem)
-private let m_playerPuppet: wref<PlayerPuppet>;
-
 @wrapMethod(CraftingSystem)
 private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
   wrappedMethod(request);
@@ -26,12 +22,12 @@ private final func OnCraftItemRequest(request: ref<CraftItemRequest>) -> Void {
   if request.custom {
     craftedItem = this.CraftItemEnhanced(request.target, request.itemRecord, request.amount, request.originalIngredients, request.quantityMultiplier, request.originalQuality);
   } else {
-    this.CraftItem(request.target, request.itemRecord, request.amount, request.bulletAmount);
+    craftedItem = this.CraftItem(request.target, request.itemRecord, request.amount, request.bulletAmount);
   };
   this.UpdateBlackboard(CraftingCommands.CraftingFinished, craftedItem.GetID());
 }
 
-// -- Just log crafting result for normal requests
+// -- Log crafting result for normal requests and launch crafting completion event
 @wrapMethod(CraftingSystem)
 private final func CraftItem(target: wref<GameObject>, itemRecord: ref<Item_Record>, amount: Int32, opt ammoBulletAmount: Int32) -> wref<gameItemData> {
   let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(this.m_playerPuppet.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
@@ -47,7 +43,7 @@ private final func CraftItem(target: wref<GameObject>, itemRecord: ref<Item_Reco
 
 // -- Handle custom variants crafting
 //    Copy-Pasted from CraftItem with ingredients, multiplier and quality additions
-//    Scaling replaced with our own ScaleCraftedItemData
+//    Scaling replaced with our own ScaleCraftedItemData (which works the same way)
 @addMethod(CraftingSystem)
 private final func CraftItemEnhanced(target: wref<GameObject>, itemRecord: ref<Item_Record>, amount: Int32, ingredients: array<IngredientData>, multiplier: Int32, quality: CName) -> wref<gameItemData> {
   let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(this.m_playerPuppet.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;

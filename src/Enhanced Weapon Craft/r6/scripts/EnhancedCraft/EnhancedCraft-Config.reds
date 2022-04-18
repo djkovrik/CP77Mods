@@ -20,6 +20,7 @@ module EnhancedCraft.Config
     3: Legendary
 */
 
+// Controlled by Native Settings UI
 public class Config {
   // If enabled then you can rename your crafted weapons
   public static func CustomNamesEnabled() -> Bool = false

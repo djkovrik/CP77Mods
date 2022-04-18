@@ -2,6 +2,7 @@ module EnhancedCraft.Naming
 import EnhancedCraft.Common.*
 import EnhancedCraft.Events.*
 
+// -- Launches EnhancedCraftRecipeClicked event which triggers custom name input text visibility refresh
 @wrapMethod(CraftingLogicController)
 protected func UpdateItemPreview(craftableController: ref<CraftableItemLogicController>) -> Void {
   wrappedMethod(craftableController);

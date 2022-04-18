@@ -1,6 +1,7 @@
 module EnhancedCraft.System
 import EnhancedCraft.Common.L
 
+// -- Persisted custom name data
 public class CustomCraftNameData {
   public persistent let id: Uint64;
   public persistent let name: CName;
@@ -30,6 +31,7 @@ public class EnhancedCraftSystem extends ScriptableSystem {
     return system;
   }
 
+  // -- Saves custom name
   public func AddCustomName(itemId: ItemID, name: String) -> Void {
     let persistedRecords: array<ref<CustomCraftNameData>> = this.m_records;
     let newRecord: ref<CustomCraftNameData> = new CustomCraftNameData();
@@ -41,6 +43,7 @@ public class EnhancedCraftSystem extends ScriptableSystem {
     L(s"New name \(name) persisted with id \(newId), total persisted names: \(ArraySize(this.m_records))");
   }
 
+  // -- Checks if item has custom name persisted
   public func HasCustomName(itemId: ItemID) -> Bool {
     let id: Uint64 = ItemID.GetCombinedHash(itemId);
     for record in this.m_records {
@@ -51,6 +54,7 @@ public class EnhancedCraftSystem extends ScriptableSystem {
     return false;
   }
 
+  // -- Returns custom name by ItemID
   public func GetCustomName(itemId: ItemID) -> String {
     let id: Uint64 = ItemID.GetCombinedHash(itemId);
     for record in this.m_records {
@@ -61,6 +65,7 @@ public class EnhancedCraftSystem extends ScriptableSystem {
     return "";
   }
 
+  // -- Deletes persisted record
   private func DeleteStoredRecord(id: Uint64) -> Void {
     let persistedRecords: array<ref<CustomCraftNameData>> = this.m_records;
     let index: Int32 = 0;
@@ -76,21 +81,8 @@ public class EnhancedCraftSystem extends ScriptableSystem {
     L(s"Persisted record \(id) deleted, total persisted names: \(ArraySize(this.m_records))");
   }
 
-  private func GetInventoryHashes(items: array<ItemID>, out hashes: array<Uint64>) -> Void {
-    for item in items {
-      ArrayPush(hashes, ItemID.GetCombinedHash(item));
-    };
-  }
-
-  private func HasInInventory(hashes: array<Uint64>, target: Uint64) -> Bool {
-    for hash in hashes {
-      if Equals(hash, target) {
-        return true;
-      };
-    };
-    return false;
-  }
-
+  // -- Iterates through player inventory, checks if custom named item still exists
+  //    and then assigns custom names to gameItemData
   public func RefreshStoredNames() -> Void {
     let persistedRecords: array<ref<CustomCraftNameData>> = this.m_records;
     let playerItems: array<ItemID>;
@@ -123,5 +115,22 @@ public class EnhancedCraftSystem extends ScriptableSystem {
       data.hasCustomName = this.HasCustomName(data.GetID());
       data.customName = this.GetCustomName(data.GetID());
     };
+  }
+
+  // -- Converts array<ItemID> to array<Uint64>
+  private func GetInventoryHashes(items: array<ItemID>, out hashes: array<Uint64>) -> Void {
+    for item in items {
+      ArrayPush(hashes, ItemID.GetCombinedHash(item));
+    };
+  }
+
+  // -- Checks if target hash exists in hashes array
+  private func HasInInventory(hashes: array<Uint64>, target: Uint64) -> Bool {
+    for hash in hashes {
+      if Equals(hash, target) {
+        return true;
+      };
+    };
+    return false;
   }
 }

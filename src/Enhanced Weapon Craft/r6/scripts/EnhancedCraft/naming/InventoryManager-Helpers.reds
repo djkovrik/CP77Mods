@@ -1,5 +1,7 @@
 module EnhancedCraft.Naming
 
+// -- Returns ItemID array for weapons from player inventory
+//    TODO Add stash?
 @addMethod(InventoryDataManagerV2)
 public final func GetPlayerItemsIDsByCategory(category: gamedataItemCategory, out items: array<ItemID>) -> Void {
   let unfilteredItems: array<wref<gameItemData>> = this.GetPlayerInventoryItems();
@@ -15,6 +17,7 @@ public final func GetPlayerItemsIDsByCategory(category: gamedataItemCategory, ou
   };
 }
 
+// -- Returns gameItemData array for weapons from player inventory
 @addMethod(InventoryDataManagerV2)
 public final func GetPlayerItemsDataByCategory(category: gamedataItemCategory, out items: array<ref<gameItemData>>) -> Void {
   let unfilteredItems: array<wref<gameItemData>> = this.GetPlayerInventoryItems();

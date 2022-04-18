@@ -1,6 +1,6 @@
 module EnhancedCraft.Common
 
-// -- Check if item with id has iconic flag defined in TweakXL
+// -- Checks if item with id has iconic flag defined in TweakXL
 public static func IsPresetIconic(id: TweakDBID) -> Bool {
   let variant: Variant = TweakDBInterface.GetFlat(id + t".iconicVariant");
   let isIconic: Bool = FromVariant<Bool>(variant);
@@ -20,5 +20,5 @@ public static func GetBaseQualityValue(quality: CName) -> Int32  {
 
 // -- Basic logging function
 public static func L(str: String) -> Void {
-  LogChannel(n"DEBUG", s"Craft: \(str)");
+  // LogChannel(n"DEBUG", s"Craft: \(str)");
 }

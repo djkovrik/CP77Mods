@@ -22,6 +22,7 @@ protected func UpdateItemPreview(craftableController: ref<CraftableItemLogicCont
   ArrayClear(this.weaponVariantsNoIconic);
   L("--- Arrays cleared");
   wrappedMethod(craftableController);
+  this.RefreshListViewContent();
 }
 
 @wrapMethod(CraftingLogicController)
@@ -137,4 +138,11 @@ private final func CraftItem(selectedRecipe: ref<RecipeData>, amount: Int32) -> 
     }
     this.m_craftingSystem.QueueRequest(craftItemRequest);
   };
+}
+
+// -- Hide hints on tab changed
+@addMethod(CraftingLogicController)
+protected cb func OnFilterChange(controller: wref<inkRadioGroupController>, selectedIndex: Int32) -> Bool {
+  super.OnFilterChange(controller, selectedIndex);
+  this.HideButtonHints();
 }

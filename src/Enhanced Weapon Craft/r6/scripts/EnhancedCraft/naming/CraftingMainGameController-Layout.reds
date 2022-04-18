@@ -7,9 +7,11 @@ import EnhancedCraft.Config.*
 @addField(CraftingMainGameController)
 private let m_nameInput: ref<HubTextInput>;
 
+// -- Custom text input container
 @addField(CraftingMainGameController)
 private let m_nameInputContainer: ref<inkCompoundWidget>;
 
+// -- Recipe weapon name
 @addField(CraftingMainGameController)
 private let m_weaponName: ref<inkText>;
 
@@ -18,6 +20,7 @@ private let m_weaponName: ref<inkText>;
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
 
+  // If custon naming disabled then do nothing
   if !Config.CustomNamesEnabled() {
     return true;
   };
@@ -43,6 +46,7 @@ protected cb func OnInitialize() -> Bool {
   this.m_weaponName = root.GetWidget(n"craftingPanel/inkCanvasWidget2/itemDetailsContainer/itemTitle/header/itemName") as inkText;
 }
 
+// -- Catch text input events
 @addMethod(CraftingMainGameController)
 protected cb func OnTextInput(widget: wref<inkWidget>) -> Bool {
   let text: String = this.m_nameInput.GetText();
@@ -55,6 +59,7 @@ protected cb func OnTextInput(widget: wref<inkWidget>) -> Bool {
   };
 }
 
+// -- Catch mouse clicks to reset input focus
 @addMethod(CraftingMainGameController)
 protected cb func OnGlobalInput(evt: ref<inkPointerEvent>) -> Void {
 	if evt.IsAction(n"mouse_left") {
