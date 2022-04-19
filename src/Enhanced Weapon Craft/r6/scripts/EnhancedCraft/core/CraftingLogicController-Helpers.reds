@@ -5,8 +5,6 @@ import EnhancedCraft.Config.*
 // -- Switch weapon variant to previous one
 @addMethod(CraftingLogicController)
 public func LoadPrevVariant() -> Void {
-  let recipe: ref<RecipeData> = this.originalRecipe;
-  let record: ref<Item_Record>;
   let tdbid: TweakDBID; 
   if ArraySize(this.weaponVariants) > 1 {
     this.weaponIndex = this.weaponIndex - 1;
@@ -15,19 +13,16 @@ public func LoadPrevVariant() -> Void {
     };
     this.alternateSkinSelected = NotEquals(this.weaponIndex, 0);
     this.iconicSelected = IsPresetIconic(this.weaponVariants[this.weaponIndex]);
-    record = TweakDBInterface.GetItemRecord(this.weaponVariants[this.weaponIndex]);
+    this.currentItemRecord = TweakDBInterface.GetItemRecord(this.weaponVariants[this.weaponIndex]);
     tdbid = this.weaponVariants[this.weaponIndex];
-    recipe.id = record;
-    this.UpdateRecipePreviewPanelEnhanced(recipe);
-    L(s"LoadPrevVariant for index \(this.weaponIndex) and id \(TDBID.ToStringDEBUG(tdbid)) with quality \(record.Quality().Type())");
+    this.UpdateRecipePreviewPanelEnhanced();
+    L(s"LoadPrevVariant for index \(this.weaponIndex) and id \(TDBID.ToStringDEBUG(tdbid)) with quality \(this.currentItemRecord.Quality().Type())");
   };
 }
 
 // -- Switch weapon variant to next one
 @addMethod(CraftingLogicController)
 public func LoadNextVariant() -> Void {
-  let recipe: ref<RecipeData> = this.originalRecipe;
-  let record: ref<Item_Record>;
   let tdbid: TweakDBID; 
   if ArraySize(this.weaponVariants) > 1 {
     this.weaponIndex = this.weaponIndex + 1;
@@ -36,11 +31,10 @@ public func LoadNextVariant() -> Void {
     };
     this.alternateSkinSelected = NotEquals(this.weaponIndex, 0);
     this.iconicSelected = IsPresetIconic(this.weaponVariants[this.weaponIndex]);
-    record = TweakDBInterface.GetItemRecord(this.weaponVariants[this.weaponIndex]);
+    this.currentItemRecord = TweakDBInterface.GetItemRecord(this.weaponVariants[this.weaponIndex]);
     tdbid = this.weaponVariants[this.weaponIndex];
-    recipe.id = record;
-    this.UpdateRecipePreviewPanelEnhanced(recipe);
-    L(s"LoadNextVariant for index \(this.weaponIndex) and id \(TDBID.ToStringDEBUG(tdbid)) with quality \(record.Quality().Type())");
+    this.UpdateRecipePreviewPanelEnhanced();
+    L(s"LoadNextVariant for index \(this.weaponIndex) and id \(TDBID.ToStringDEBUG(tdbid)) with quality \(this.currentItemRecord.Quality().Type())");
   };
 }
 

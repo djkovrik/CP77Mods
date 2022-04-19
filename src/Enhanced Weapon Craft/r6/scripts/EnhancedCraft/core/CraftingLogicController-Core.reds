@@ -2,31 +2,32 @@ module EnhancedCraft.Core
 import EnhancedCraft.Common.*
 import EnhancedCraft.Config.*
 
-@replaceMethod(CraftingLogicController)
-public func RefreshListViewContent(opt inventoryItemData: InventoryItemData) -> Void {
-  this.m_dataSource.Clear();
-  this.m_dataSource.Reset(this.GetRecipesList());
-  if this.alternateSkinSelected {
-    this.UpdateRecipePreviewPanelEnhanced(this.originalRecipe);
-  } else {
-    this.UpdateRecipePreviewPanel(this.m_selectedRecipe);
-  };
-}
+// @replaceMethod(CraftingLogicController)
+// public func RefreshListViewContent(opt inventoryItemData: InventoryItemData) -> Void {
+//   this.m_dataSource.Clear();
+//   this.m_dataSource.Reset(this.GetRecipesList());
+//   if this.alternateSkinSelected {
+//     this.UpdateRecipePreviewPanelEnhanced();
+//   } else {
+//     this.UpdateRecipePreviewPanel(this.m_selectedRecipe);
+//   };
+// }
 
 @wrapMethod(CraftingLogicController)
 protected func UpdateItemPreview(craftableController: ref<CraftableItemLogicController>) -> Void {
-  this.variantsPopulated = false;
-  this.alternateSkinSelected = false;
   this.weaponIndex = 0;
+  this.alternateSkinSelected = false;
   ArrayClear(this.weaponVariants);
   ArrayClear(this.weaponVariantsNoIconic);
   L("--- Arrays cleared");
   wrappedMethod(craftableController);
-  this.RefreshListViewContent();
+  L(s"UpdateRecipePreviewPanel for \(this.m_selectedRecipe.label) \(TDBID.ToStringDEBUG(this.m_selectedRecipe.id.GetID()))");
+  this.currentItemRecord = this.m_selectedRecipe.id;
 }
 
 @wrapMethod(CraftingLogicController)
 private final func UpdateRecipePreviewPanel(selectedRecipe: ref<RecipeData>) -> Void {
+  let shouldRefresh: Bool = this.m_selectedRecipe.id != selectedRecipe.id;
   wrappedMethod(selectedRecipe);
   // New logic
   let isWeaponSelected: Bool = InventoryItemData.IsWeapon(this.m_selectedItemData);
@@ -34,26 +35,28 @@ private final func UpdateRecipePreviewPanel(selectedRecipe: ref<RecipeData>) -> 
   let weaponsVariant: Variant;
   let qualityVariant: Variant;
   let tdbid: TweakDBID;
-  if isWeaponSelected && !this.variantsPopulated {
-    this.variantsPopulated = true;
-    tdbid = selectedRecipe.id.GetID();
-    weaponsVariant = TweakDBInterface.GetFlat(tdbid + t".weaponVariants");
-    qualityVariant = TweakDBInterface.GetFlat(tdbid + t".quality");
-    detectedVariants = FromVariant<array<TweakDBID>>(weaponsVariant);
-    this.originalRecipe = this.m_selectedRecipe;
-    this.originalRecipeQuality = StringToName(TweakDBInterface.GetQualityRecord(FromVariant<TweakDBID>(qualityVariant)).Name());
-    this.originalItemData = this.m_selectedItemGameData;
-    this.weaponVariants = this.RebuildAccordingToPerks(detectedVariants, tdbid, this.originalRecipeQuality, false);
-    this.weaponVariantsNoIconic = this.RebuildAccordingToPerks(detectedVariants, tdbid, this.originalRecipeQuality, true);
-    this.RefreshPanelWidgets();
-    L(s"--- Array populated (full): \(ArraySize(this.weaponVariants))");
-    L(s"--- Array populated (no Iconics): \(ArraySize(this.weaponVariantsNoIconic))");
+  if IsDefined(selectedRecipe) { 
     L(s"UpdateRecipePreviewPanel for \(selectedRecipe.label) \(TDBID.ToStringDEBUG(selectedRecipe.id.GetID()))");
+    if isWeaponSelected && shouldRefresh {
+      tdbid = selectedRecipe.id.GetID();
+      weaponsVariant = TweakDBInterface.GetFlat(tdbid + t".weaponVariants");
+      qualityVariant = TweakDBInterface.GetFlat(tdbid + t".quality");
+      detectedVariants = FromVariant<array<TweakDBID>>(weaponsVariant);
+      this.originalRecipe = this.m_selectedRecipe;
+      this.originalRecipeQuality = StringToName(TweakDBInterface.GetQualityRecord(FromVariant<TweakDBID>(qualityVariant)).Name());
+      this.originalItemData = this.m_selectedItemGameData;
+      this.weaponVariants = this.RebuildAccordingToPerks(detectedVariants, tdbid, this.originalRecipeQuality, false);
+      this.weaponVariantsNoIconic = this.RebuildAccordingToPerks(detectedVariants, tdbid, this.originalRecipeQuality, true);
+      this.RefreshPanelWidgets();
+      L(s"--- Array populated (full): \(ArraySize(this.weaponVariants))");
+      L(s"--- Array populated (no Iconics): \(ArraySize(this.weaponVariantsNoIconic))");
+    };
   };
 }
 
+
 @addMethod(CraftingLogicController)
-private final func UpdateRecipePreviewPanelEnhanced(selectedRecipe: ref<RecipeData>) -> Void {
+private final func UpdateRecipePreviewPanelEnhanced() -> Void {
   if ArraySize(this.weaponVariants) < 1 {
     return ;
   }; 
@@ -64,14 +67,14 @@ private final func UpdateRecipePreviewPanelEnhanced(selectedRecipe: ref<RecipeDa
   // Preview
   let previewEvent: ref<CraftingItemPreviewEvent>;
   previewEvent = new CraftingItemPreviewEvent();
-  previewEvent.itemID = ItemID.FromTDBID(selectedRecipe.id.GetID());
+  previewEvent.itemID = ItemID.FromTDBID(this.currentItemRecord.GetID());
   previewEvent.isGarment = false;
   this.QueueEvent(previewEvent);
   this.RefreshPanelWidgets();
 
   // Setup ingredients
   let ingredients: array<IngredientData> = this.m_craftingSystem.GetItemCraftingCost(this.originalItemData);
-  if IsPresetIconic(selectedRecipe.id.GetID()) {
+  if IsPresetIconic(this.currentItemRecord.GetID()) {
     this.SetupIngredients(ingredients, Config.IconicIngredientsMultiplier());
   } else {
     this.SetupIngredients(ingredients, 1);
@@ -79,7 +82,7 @@ private final func UpdateRecipePreviewPanelEnhanced(selectedRecipe: ref<RecipeDa
 
   // Tooltip data and scaling
   let item: InventoryItemData;
-  let craftedItemID: ItemID = ItemID.FromTDBID(selectedRecipe.id.GetID());
+  let craftedItemID: ItemID = ItemID.FromTDBID(this.currentItemRecord.GetID());
   let itemData: ref<gameItemData> = inventorySystem.CreateBasicItemData(craftedItemID, player);
   CraftingSystem.SetItemLevel(player, itemData);
   CraftingSystem.MarkItemAsCrafted(player, itemData);
@@ -100,8 +103,8 @@ private final func UpdateRecipePreviewPanelEnhanced(selectedRecipe: ref<RecipeDa
       this.m_notificationType = UIMenuNotificationType.CraftingNotEnoughMaterial;
     };
   };
-
-  L(s"UpdateRecipePreviewPanelEnhanced for \(selectedRecipe.label) \(TDBID.ToStringDEBUG(selectedRecipe.id.GetID()))");
+  
+  L(s"UpdateRecipePreviewPanelEnhanced for index \(this.weaponIndex)");
 }
 
 // -- Inject with custom and random crafts
@@ -125,6 +128,7 @@ private final func CraftItem(selectedRecipe: ref<RecipeData>, amount: Int32) -> 
       }
       craftItemRequest.custom = true;
       craftItemRequest.originalQuality = this.originalRecipeQuality;
+      craftItemRequest.itemRecord = this.currentItemRecord;
       craftItemRequest.originalIngredients = this.m_craftingSystem.GetItemCraftingCost(this.originalItemData);
       craftItemRequest.quantityMultiplier = multiplier;
     } else {

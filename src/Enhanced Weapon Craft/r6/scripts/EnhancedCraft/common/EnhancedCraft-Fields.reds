@@ -2,10 +2,6 @@ module EnhancedCraft.Common
 
 // -- CraftingLogicController
 
-// Is crafting varians populated after recipe selection
-@addField(CraftingLogicController)
-private let variantsPopulated: Bool;
-
 // Stores loaded weapon variants from TweakXL
 @addField(CraftingLogicController)
 private let weaponVariants: array<TweakDBID>;
@@ -39,6 +35,9 @@ private let originalRecipeQuality: CName;
 @addField(CraftingLogicController)
 private let originalItemData: ref<gameItemData>;
 
+// Stores original recipe
+@addField(CraftingLogicController)
+private let currentItemRecord: ref<Item_Record>;
 
 // -- CraftItemRequest
 
