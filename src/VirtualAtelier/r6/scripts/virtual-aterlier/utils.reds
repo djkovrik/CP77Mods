@@ -1,46 +1,5 @@
 module VendorPreview.utils
 
-
-@addMethod(PlayerPuppet)
-private final func TryScaleItemToPlayer(itemData: ref<gameItemData>, quality: CName) -> Void {
-  let statsSystem: ref<StatsSystem> = GameInstance.GetStatsSystem(this.GetGame());
-  let powerLevelPlayer: Float = statsSystem.GetStatValue(Cast<StatsObjectID>(this.GetEntityID()), gamedataStatType.PowerLevel);
-  let powerLevelItem: Float = itemData.GetStatValueByType(gamedataStatType.PowerLevel);
-  let qualityMult: Float;
-
-  // TODO Something more flexible?
-  // Scale item from PowerLevel
-  switch (quality) {
-    case n"Legendary":
-      qualityMult = 0.9;
-      break;
-    case n"Epic":
-      qualityMult = 0.85;
-      break;
-    case n"Rare":
-      qualityMult = 0.8;
-      break;
-    case n"Uncommon":
-      qualityMult = 0.75;
-      break;
-    case n"Common":
-      qualityMult = 0.7;
-      break;
-    default:
-      qualityMult = 1.0;
-      break;
-  };
-
-  let resultingValue: Float = powerLevelPlayer * qualityMult;
-  let powerLevelMod: ref<gameStatModifierData> = RPGManager.CreateStatModifier(gamedataStatType.PowerLevel, gameStatModifierType.Additive, resultingValue);
-  let qualityMod: ref<gameStatModifierData> = RPGManager.CreateStatModifier(gamedataStatType.Quality, gameStatModifierType.Additive, RPGManager.ItemQualityNameToValue(quality));
-  statsSystem.RemoveAllModifiers(itemData.GetStatsObjectID(), gamedataStatType.PowerLevel, true);
-  statsSystem.AddSavedModifier(itemData.GetStatsObjectID(), powerLevelMod);
-  statsSystem.RemoveAllModifiers(itemData.GetStatsObjectID(), gamedataStatType.Quality);
-  statsSystem.AddModifier(itemData.GetStatsObjectID(), qualityMod);
-  RPGManager.ForceItemQuality(this, itemData, quality);
-}
-
 public func IsItemClothing(itemID: ItemID) -> Bool {
   return Equals(RPGManager.GetItemCategory(itemID), gamedataItemCategory.Clothing);
 }
