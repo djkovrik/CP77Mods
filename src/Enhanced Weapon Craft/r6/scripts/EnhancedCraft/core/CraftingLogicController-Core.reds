@@ -107,6 +107,20 @@ private final func UpdateRecipePreviewPanelEnhanced() -> Void {
   L(s"UpdateRecipePreviewPanelEnhanced for index \(this.weaponIndex)");
 }
 
+@wrapMethod(CraftingLogicController)
+private final func SetupIngredients(ingredient: array<IngredientData>, itemAmount: Int32) -> Void {
+  let ingredients: array<IngredientData> = this.m_craftingSystem.GetItemCraftingCost(this.originalItemData);
+  if IsPresetIconic(this.currentItemRecord.GetID()) {
+    wrappedMethod(ingredients, Config.IconicIngredientsMultiplier());
+  } else {
+    if this.alternateSkinSelected {
+      wrappedMethod(ingredients, 1);
+    } else {
+      wrappedMethod(ingredient, itemAmount);
+    };
+  };
+}
+
 // -- Inject with custom and random crafts
 @replaceMethod(CraftingLogicController)
 private final func CraftItem(selectedRecipe: ref<RecipeData>, amount: Int32) -> Void {
