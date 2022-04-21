@@ -4,7 +4,8 @@ local defaults = {
 	PerkToUnlockStandard = 3,
 	PerkToUnlockIconics = 5,
 	IconicRecipeCondition = 2,
-	IconicIngredientsMultiplier = 5
+	IconicIngredientsMultiplier = 5,
+	ControllerSupportEnabled = false
 }
 
 local settings = {
@@ -13,7 +14,8 @@ local settings = {
 	PerkToUnlockStandard = 3,
 	PerkToUnlockIconics = 5,
 	IconicRecipeCondition = 2,
-	IconicIngredientsMultiplier = 5
+	IconicIngredientsMultiplier = 5,
+	ControllerSupportEnabled = false
 }
 
 function SaveSettings() 
@@ -99,6 +101,8 @@ function SetupSettingsMenu()
 	nativeSettings.addSwitch("/ecraft/misc", GetLocalizedTextByKey("Mod-Craft-Settings-Randomizer"), GetLocalizedTextByKey("Mod-Craft-Settings-Randomizer-Desc"), settings.RandomizerEnabled, defaults.RandomizerEnabled, function(state) settings.RandomizerEnabled = state end)
 	
 	nativeSettings.addSwitch("/ecraft/misc", GetLocalizedTextByKey("Mod-Craft-Settings-Naming"), GetLocalizedTextByKey("Mod-Craft-Settings-Naming-Desc"), settings.CustomNamesEnabled, defaults.CustomNamesEnabled, function(state) settings.CustomNamesEnabled = state end)
+	
+	nativeSettings.addSwitch("/ecraft/misc", GetLocalizedTextByKey("Mod-Craft-UI-Controller"), GetLocalizedTextByKey("Mod-Craft-UI-Controller-Desc"), settings.ControllerSupportEnabled, defaults.ControllerSupportEnabled, function(state) settings.ControllerSupportEnabled = state end)
 end
 
 registerForEvent("onInit", function()
@@ -112,6 +116,7 @@ registerForEvent("onInit", function()
 	Override("EnhancedCraft.Config.Config", "PerkToUnlockIconics;", function(_) return settings.PerkToUnlockIconics end)
 	Override("EnhancedCraft.Config.Config", "IconicRecipeCondition;", function(_) return settings.IconicRecipeCondition end)
 	Override("EnhancedCraft.Config.Config", "IconicIngredientsMultiplier;", function(_) return settings.IconicIngredientsMultiplier end)
+	Override("EnhancedCraft.Config.Config", "ControllerSupportEnabled;", function(_) return settings.ControllerSupportEnabled end)
 end)
 
 registerForEvent("onShutdown", function()

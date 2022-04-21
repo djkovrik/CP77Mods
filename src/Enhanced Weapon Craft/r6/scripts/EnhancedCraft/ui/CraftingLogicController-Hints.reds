@@ -5,8 +5,8 @@ import EnhancedCraft.Config.*
 @addMethod(CraftingLogicController)
 public func ShowButtonHints() -> Void {
   if !Config.RandomizerEnabled() {
-    this.m_buttonHintsController.AddButtonHint(n"option_switch_next", GetLocalizedTextByKey(n"Mod-Craft-UI-Next"));
-    this.m_buttonHintsController.AddButtonHint(n"option_switch_prev", GetLocalizedTextByKey(n"Mod-Craft-UI-Previous"));
+    this.m_buttonHintsController.AddButtonHint(HotkeyActions.EnhancedCraftNextAction(), GetLocalizedTextByKey(n"Mod-Craft-UI-Next"));
+    this.m_buttonHintsController.AddButtonHint(HotkeyActions.EnhancedCraftPrevAction(), GetLocalizedTextByKey(n"Mod-Craft-UI-Previous"));
   };
 }
 
@@ -14,7 +14,7 @@ public func ShowButtonHints() -> Void {
 @addMethod(CraftingLogicController)
 public func HideButtonHints() -> Void {
   if !Config.RandomizerEnabled() {
-    this.m_buttonHintsController.RemoveButtonHint(n"option_switch_next");
-    this.m_buttonHintsController.RemoveButtonHint(n"option_switch_prev");
+    this.m_buttonHintsController.RemoveButtonHint(HotkeyActions.EnhancedCraftNextAction());
+    this.m_buttonHintsController.RemoveButtonHint(HotkeyActions.EnhancedCraftPrevAction());
   };
 }

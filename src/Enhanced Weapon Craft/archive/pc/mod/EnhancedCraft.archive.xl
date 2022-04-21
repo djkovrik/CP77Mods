@@ -3,3 +3,4 @@ localization:
     en-us: base\localization\en-us\onscreens\ecraft.json
     ru-ru: base\localization\ru-ru\onscreens\ecraft.json
     fr-fr: base\localization\fr-fr\onscreens\ecraft.json
+    pt-br: base\localization\pt-br\onscreens\ecraft.json

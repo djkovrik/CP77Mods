@@ -896,3 +896,6 @@ Items.Proficiency_Craftable_Legendary_Carnage.weaponVariants: *PresetsCarnage
 Items.Proficiency_Craftable_Legendary_Katana.weaponVariants: *PresetsKatana
 Items.Proficiency_Craftable_Legendary_Nekomata.weaponVariants: *PresetsNekomata
 Items.Proficiency_Craftable_Legendary_Quasar.weaponVariants: *PresetsQuasar
+
+# --- Misc
+Items.Preset_Overture_Legendary.weaponVariants: *PresetsOverture

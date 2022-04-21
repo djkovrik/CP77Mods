@@ -34,4 +34,27 @@ public class Config {
   public static func IconicRecipeCondition() -> Int32 = 2
   // Ingredients quantity multiplier for Iconic variants
   public static func IconicIngredientsMultiplier() -> Int32 = 5
+  // Enables controller support
+  public static func ControllerSupportEnabled() -> Bool = false
+}
+
+
+public class HotkeyActions {
+    // -- Get Prev button action name (IK_A + IK_Pad_X_SQUARE)
+  public static func EnhancedCraftPrevAction() -> CName {
+    if Config.ControllerSupportEnabled() {
+      return n"transfer_save";
+    } else {
+      return n"option_switch_prev";
+    };
+  }
+
+  // -- Get Next button action name (IK_D + IK_Pad_Y_TRIANGLE)
+  public static func EnhancedCraftNextAction() -> CName {
+    if Config.ControllerSupportEnabled() {
+      return n"delete_save";
+    } else {
+      return n"option_switch_next";
+    };
+  }
 }
