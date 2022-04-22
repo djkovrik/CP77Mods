@@ -5,19 +5,18 @@ import EnhancedCraft.Common.*
 // -- Item data
 @wrapMethod(InventoryItemData)
 public final static func GetName(self: InventoryItemData) -> String {
-  if self.GameItemData.hasCustomName {
-    return self.GameItemData.customName; 
-  }
+  if InventoryItemData.GetGameItemData(self).hasCustomName && Equals(InventoryItemData.GetEquipmentArea(self), gamedataEquipmentArea.Weapon) {
+    return InventoryItemData.GetGameItemData(self).customName; 
+  };
   return wrappedMethod(self);
 }
 
 // -- Tooltips
 @wrapMethod(UIItemsHelper)
 public final static func GetItemName(itemRecord: ref<Item_Record>, itemData: wref<gameItemData>) -> String {
-  if itemData.hasCustomName {
+  if itemData.hasCustomName && Equals(itemRecord.EquipArea().Type(), gamedataEquipmentArea.Weapon) {
     return itemData.customName;
   };
-
   return wrappedMethod(itemRecord, itemData);
 }
 
