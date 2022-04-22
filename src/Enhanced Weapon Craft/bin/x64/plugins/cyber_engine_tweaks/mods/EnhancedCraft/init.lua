@@ -5,7 +5,9 @@ local defaults = {
 	PerkToUnlockIconics = 5,
 	IconicRecipeCondition = 2,
 	IconicIngredientsMultiplier = 5,
-	ControllerSupportEnabled = false
+	ControllerSupportEnabled = false,
+	CustomizedDamageEnabled = true,
+	PerkToUnlockDamageTypes = 2
 }
 
 local settings = {
@@ -15,7 +17,9 @@ local settings = {
 	PerkToUnlockIconics = 5,
 	IconicRecipeCondition = 2,
 	IconicIngredientsMultiplier = 5,
-	ControllerSupportEnabled = false
+	ControllerSupportEnabled = false,
+	CustomizedDamageEnabled = true,
+	PerkToUnlockDamageTypes = 2
 }
 
 function SaveSettings() 
@@ -68,6 +72,13 @@ function SetupSettingsMenu()
 		[5] = GetLocalizedTextByKey("Mod-Craft-Settings-Perk-Artisan")
 	}
 	
+	local damageRequirements = {
+		[1] = GetLocalizedTextByKey("Mod-Craft-Settings-Perk-None"),
+		[2] = GetLocalizedTextByKey("Mod-Craft-Settings-Perk-Craftsman"),
+		[3] = GetLocalizedTextByKey("Mod-Craft-Settings-Perk-Monkey"),
+		[4] = GetLocalizedTextByKey("Mod-Craft-Settings-Perk-Artisan")
+	}
+	
 	local qualities = {
 		[1] = GetLocalizedTextByKey("Mod-Craft-Settings-Quality-Rare"),
 		[2] = GetLocalizedTextByKey("Mod-Craft-Settings-Quality-Epic"),
@@ -96,6 +107,14 @@ function SetupSettingsMenu()
 		settings.IconicIngredientsMultiplier = value
 	end)
 	
+	nativeSettings.addSubcategory("/ecraft/damage", GetLocalizedTextByKey("Mod-Craft-UI-Damage-Type"))
+	
+	nativeSettings.addSwitch("/ecraft/damage", GetLocalizedTextByKey("Mod-Craft-UI-Damage-Type-Enable"), GetLocalizedTextByKey("Mod-Craft-UI-Damage-Type-Enable-Desc"), settings.CustomizedDamageEnabled, defaults.CustomizedDamageEnabled, function(state) settings.CustomizedDamageEnabled = state end)
+	
+	nativeSettings.addSelectorString("/ecraft/damage", GetLocalizedTextByKey("Mod-Craft-UI-Damage-Perk"), GetLocalizedTextByKey("Mod-Craft-UI-Damage-Perk-Desc"), damageRequirements, settings.PerkToUnlockDamageTypes, defaults.PerkToUnlockDamageTypes, function(value)
+		settings.PerkToUnlockDamageTypes = value
+	end)
+	
 	nativeSettings.addSubcategory("/ecraft/misc", GetLocalizedTextByKey("Mod-Craft-Settings-Misc"))
 	
 	nativeSettings.addSwitch("/ecraft/misc", GetLocalizedTextByKey("Mod-Craft-Settings-Randomizer"), GetLocalizedTextByKey("Mod-Craft-Settings-Randomizer-Desc"), settings.RandomizerEnabled, defaults.RandomizerEnabled, function(state) settings.RandomizerEnabled = state end)
@@ -117,6 +136,8 @@ registerForEvent("onInit", function()
 	Override("EnhancedCraft.Config.Config", "IconicRecipeCondition;", function(_) return settings.IconicRecipeCondition end)
 	Override("EnhancedCraft.Config.Config", "IconicIngredientsMultiplier;", function(_) return settings.IconicIngredientsMultiplier end)
 	Override("EnhancedCraft.Config.Config", "ControllerSupportEnabled;", function(_) return settings.ControllerSupportEnabled end)
+	Override("EnhancedCraft.Config.Config", "CustomizedDamageEnabled;", function(_) return settings.CustomizedDamageEnabled end)
+	Override("EnhancedCraft.Config.Config", "PerkToUnlockDamageTypes;", function(_) return settings.PerkToUnlockDamageTypes end)
 end)
 
 registerForEvent("onShutdown", function()

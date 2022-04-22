@@ -130,3 +130,4 @@ private func RebuildAccordingToPerks(otherIds: array<TweakDBID>, baseId: TweakDB
 
   return newArray;
 }
+

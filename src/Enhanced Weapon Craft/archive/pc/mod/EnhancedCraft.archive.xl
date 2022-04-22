@@ -4,3 +4,4 @@ localization:
     ru-ru: base\localization\ru-ru\onscreens\ecraft.json
     fr-fr: base\localization\fr-fr\onscreens\ecraft.json
     pt-br: base\localization\pt-br\onscreens\ecraft.json
+    zh-tw: base\localization\zh-tw\onscreens\ecraft.json

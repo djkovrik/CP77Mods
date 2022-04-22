@@ -14,6 +14,12 @@ module EnhancedCraft.Config
     4: Grease Monkey (Epic items craft)
     5: Edgerunner Artisan (Legendary items craft)
 
+  PerkToUnlockDamageTypes:
+    1: No perk required
+    2: True Craftsman (Rare items craft)
+    3: Grease Monkey (Epic items craft)
+    4: Edgerunner Artisan (Legendary items craft)
+
   IconicRecipeCondition:
     1: Rare
     2: Epic
@@ -36,11 +42,14 @@ public class Config {
   public static func IconicIngredientsMultiplier() -> Int32 = 5
   // Enables controller support
   public static func ControllerSupportEnabled() -> Bool = false
+  // Enables weapon damage type selection
+  public static func CustomizedDamageEnabled() -> Bool = true
+  // Required perk to unlock weapon damage type selection
+  public static func PerkToUnlockDamageTypes() -> Int32 = 2
 }
 
-
 public class HotkeyActions {
-    // -- Get Prev button action name (IK_A + IK_Pad_X_SQUARE)
+  // Get Prev button action name (IK_A + IK_Pad_X_SQUARE)
   public static func EnhancedCraftPrevAction() -> CName {
     if Config.ControllerSupportEnabled() {
       return n"transfer_save";
@@ -49,7 +58,7 @@ public class HotkeyActions {
     };
   }
 
-  // -- Get Next button action name (IK_D + IK_Pad_Y_TRIANGLE)
+  // Get Next button action name (IK_D + IK_Pad_Y_TRIANGLE)
   public static func EnhancedCraftNextAction() -> CName {
     if Config.ControllerSupportEnabled() {
       return n"delete_save";

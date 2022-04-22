@@ -7,3 +7,11 @@ public class EnhancedCraftRecipeClicked extends Event {
 public class EnhancedCraftRecipeCrafted extends EnhancedCraftRecipeClicked {
   public let itemId: ItemID;
 }
+
+public class EnhancedCraftDamageTypeClicked extends Event {
+  public let damageType: gamedataStatType;
+}
+
+public class EnhancedCraftDamageSelectionAvailable extends Event {
+  public let available: Bool;
+}

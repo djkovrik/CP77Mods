@@ -1,17 +1,7 @@
 module EnhancedCraft.Core
+import EnhancedCraft.Events.*
 import EnhancedCraft.Common.*
 import EnhancedCraft.Config.*
-
-// @replaceMethod(CraftingLogicController)
-// public func RefreshListViewContent(opt inventoryItemData: InventoryItemData) -> Void {
-//   this.m_dataSource.Clear();
-//   this.m_dataSource.Reset(this.GetRecipesList());
-//   if this.alternateSkinSelected {
-//     this.UpdateRecipePreviewPanelEnhanced();
-//   } else {
-//     this.UpdateRecipePreviewPanel(this.m_selectedRecipe);
-//   };
-// }
 
 @wrapMethod(CraftingLogicController)
 protected func UpdateItemPreview(craftableController: ref<CraftableItemLogicController>) -> Void {
@@ -131,6 +121,7 @@ private final func CraftItem(selectedRecipe: ref<RecipeData>, amount: Int32) -> 
     craftItemRequest.target = this.m_craftingGameController.GetPlayer();
     craftItemRequest.itemRecord = selectedRecipe.id;
     craftItemRequest.amount = amount;
+    craftItemRequest.selectedDamageType = this.currentDamageType;
     if selectedRecipe.id.TagsContains(n"Ammo") {
       craftItemRequest.bulletAmount = selectedRecipe.amount;
     };
@@ -163,4 +154,11 @@ private final func CraftItem(selectedRecipe: ref<RecipeData>, amount: Int32) -> 
 protected cb func OnFilterChange(controller: wref<inkRadioGroupController>, selectedIndex: Int32) -> Bool {
   super.OnFilterChange(controller, selectedIndex);
   this.HideButtonHints();
+}
+
+// -- Catch damage type selection events
+@addMethod(CraftingLogicController)
+protected cb func OnEnhancedCraftDamageTypeClickedEvent(event: ref<EnhancedCraftDamageTypeClicked>) -> Bool {
+  L(s"--- Damage type selected: \(event.damageType)");
+  this.currentDamageType = event.damageType;
 }

@@ -39,6 +39,11 @@ private let originalItemData: ref<gameItemData>;
 @addField(CraftingLogicController)
 private let currentItemRecord: ref<Item_Record>;
 
+// Stores currently selected damage type
+@addField(CraftingLogicController)
+private let currentDamageType: gamedataStatType;
+
+
 // -- CraftItemRequest
 
 // Custom crafting request flag
@@ -57,6 +62,11 @@ public let originalQuality: CName;
 @addField(CraftItemRequest)
 public let quantityMultiplier: Int32;
 
+// Store multiplier for ingredients quantity
+@addField(CraftItemRequest)
+public let selectedDamageType: gamedataStatType;
+
+
 
 // -- gameItemData
 
@@ -74,3 +84,56 @@ public let customName: String;
 // Weak ref to player puppet
 @addField(CraftingSystem)
 private let m_playerPuppet: wref<PlayerPuppet>;
+
+// Stores damage type selected in crafting menu
+@addField(CraftingSystem)
+private let m_requestedDamageType: gamedataStatType;
+
+
+// -- ItemTooltipCommonController
+
+// Service flag for HUD init state
+@addField(ItemTooltipCommonController)
+private let m_damageSelectionAvailable: Bool;
+
+
+// -- ItemTooltipStatController
+
+// Stores damage type selected in crafting menu
+@addField(ItemTooltipStatController)
+public let m_damageType: gamedataStatType;
+
+// Service flag for HUD init state
+@addField(ItemTooltipRecipeDataModule)
+private let m_shouldDisplayHud: Bool;
+
+// Stores damage selection availability state
+@addField(ItemTooltipRecipeDataModule)
+private let m_damageSelectionAvailable: Bool;
+
+
+// -- ItemTooltipRecipeDataModule
+
+// Stores selected damage type 
+@addField(ItemTooltipRecipeDataModule)
+public let m_selectedDamageType: gamedataStatType;
+
+// Ref to crafting menu damage preview container title
+@addField(ItemTooltipRecipeDataModule)
+private let m_damagesTitle: ref<inkText>;
+
+// Ref to chemical damage item
+@addField(ItemTooltipRecipeDataModule)
+private let m_chemicalDamageItem: ref<ItemTooltipStatController>;
+
+// Ref to electrical damage item
+@addField(ItemTooltipRecipeDataModule)
+private let m_electricalDamageItem: ref<ItemTooltipStatController>;
+
+// Ref to physical damage item
+@addField(ItemTooltipRecipeDataModule)
+private let m_physicalDamageItem: ref<ItemTooltipStatController>;
+
+// Ref to thermal damage item
+@addField(ItemTooltipRecipeDataModule)
+private let m_thermalDamageItem: ref<ItemTooltipStatController>;

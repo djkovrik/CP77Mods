@@ -19,12 +19,20 @@ private final func OnPlayerDetach(request: ref<PlayerDetachRequest>) -> Void {
 @replaceMethod(CraftingSystem)
 private final func OnCraftItemRequest(request: ref<CraftItemRequest>) -> Void {
   let craftedItem: wref<gameItemData>;
+  this.m_requestedDamageType = request.selectedDamageType;
   if request.custom {
     craftedItem = this.CraftItemEnhanced(request.target, request.itemRecord, request.amount, request.originalIngredients, request.quantityMultiplier, request.originalQuality);
   } else {
     craftedItem = this.CraftItem(request.target, request.itemRecord, request.amount, request.bulletAmount);
   };
   this.UpdateBlackboard(CraftingCommands.CraftingFinished, craftedItem.GetID());
+}
+
+@addMethod(CraftingSystem)
+private func SwitchCraftedWeaponType(craftedItem: ref<gameItemData>) -> Void {
+  if NotEquals(this.m_requestedDamageType, gamedataStatType.Invalid) {
+    this.m_playerPuppet.SwitchDamageTypeToChosen(craftedItem, this.m_requestedDamageType);
+  };
 }
 
 // -- Log crafting result for normal requests and launch crafting completion event
@@ -37,6 +45,7 @@ private final func CraftItem(target: wref<GameObject>, itemRecord: ref<Item_Reco
   let event: ref<EnhancedCraftRecipeCrafted> = new EnhancedCraftRecipeCrafted();
   event.isWeapon = Equals(RPGManager.GetItemCategory(craftedItem.GetID()), gamedataItemCategory.Weapon);
   event.itemId = craftedItem.GetID();
+  this.SwitchCraftedWeaponType(craftedItem);
   GameInstance.GetUISystem(player.GetGame()).QueueEvent(event);
   return craftedItem;
 }
@@ -134,6 +143,7 @@ private final func CraftItemEnhanced(target: wref<GameObject>, itemRecord: ref<I
   let event: ref<EnhancedCraftRecipeCrafted> = new EnhancedCraftRecipeCrafted();
   event.isWeapon = Equals(RPGManager.GetItemCategory(itemData.GetID()), gamedataItemCategory.Weapon);
   event.itemId = itemData.GetID();
+  this.SwitchCraftedWeaponType(itemData);
   GameInstance.GetUISystem(player.GetGame()).QueueEvent(event);
   return itemData;
 }
