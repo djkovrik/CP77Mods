@@ -1,7 +1,6 @@
 module EnhancedCraft.Damage
-import EnhancedCraft.Events.*
 import EnhancedCraft.Config.Config
-import EnhancedCraft.Common.L
+import EnhancedCraft.Events.*
 
 // -- Setup click listener
 @addMethod(ItemTooltipRecipeDataModule)
@@ -29,6 +28,7 @@ protected cb func OnPanelItemClicked(e: ref<inkPointerEvent>) -> Bool {
     targetName = e.GetTarget().GetName();
     target = e.GetTarget().GetController() as ItemTooltipStatController;
     if IsDefined(target) {
+      this.PlaySound(n"Button", n"OnPress");
       this.m_selectedDamageType = target.m_damageType;
       evt = new EnhancedCraftDamageTypeClicked();
       evt.damageType = target.m_damageType;
@@ -46,7 +46,6 @@ private final func UpdatemRecipeDamageTypes(data: ref<MinimalItemTooltipData>) -
   
   // Inject HUD only when all four damage types are visible and feature available
   this.m_shouldDisplayHud = this.m_damageSelectionAvailable && Equals(ArraySize(data.recipeData.damageTypes), 4);
-  L(s"this.m_shouldDisplayHud = \(this.m_shouldDisplayHud)");
   this.SetInitialSelection();
   if this.m_shouldDisplayHud {
     this.InitializeAdditionalHUD(data);

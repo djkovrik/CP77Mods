@@ -87,6 +87,14 @@ function SetupSettingsMenu()
 
 	nativeSettings.addTab("/ecraft", "ECRAFT")
 	
+	nativeSettings.addSubcategory("/ecraft/damage", GetLocalizedTextByKey("Mod-Craft-UI-Damage-Type"))
+	
+	nativeSettings.addSwitch("/ecraft/damage", GetLocalizedTextByKey("Mod-Craft-UI-Damage-Type-Enable"), GetLocalizedTextByKey("Mod-Craft-UI-Damage-Type-Enable-Desc"), settings.CustomizedDamageEnabled, defaults.CustomizedDamageEnabled, function(state) settings.CustomizedDamageEnabled = state end)
+	
+	nativeSettings.addSelectorString("/ecraft/damage", GetLocalizedTextByKey("Mod-Craft-UI-Damage-Perk"), GetLocalizedTextByKey("Mod-Craft-UI-Damage-Perk-Desc"), damageRequirements, settings.PerkToUnlockDamageTypes, defaults.PerkToUnlockDamageTypes, function(value)
+		settings.PerkToUnlockDamageTypes = value
+	end)
+	
 	nativeSettings.addSubcategory("/ecraft/basic", GetLocalizedTextByKey("Mod-Craft-Settings-Base"))
 
 	nativeSettings.addSelectorString("/ecraft/basic", GetLocalizedTextByKey("Mod-Craft-Settings-Basic"), GetLocalizedTextByKey("Mod-Craft-Settings-Basic-Desc"), basicRequirements, settings.PerkToUnlockStandard, defaults.PerkToUnlockStandard, function(value)
@@ -105,14 +113,6 @@ function SetupSettingsMenu()
 	
 	nativeSettings.addRangeInt("/ecraft/iconic", GetLocalizedTextByKey("Mod-Craft-Iconic-Ingredients"), GetLocalizedTextByKey("Mod-Craft-Iconic-Ingredients-Desc"), 1, 25, 1, settings.IconicIngredientsMultiplier, defaults.IconicIngredientsMultiplier, function(value)
 		settings.IconicIngredientsMultiplier = value
-	end)
-	
-	nativeSettings.addSubcategory("/ecraft/damage", GetLocalizedTextByKey("Mod-Craft-UI-Damage-Type"))
-	
-	nativeSettings.addSwitch("/ecraft/damage", GetLocalizedTextByKey("Mod-Craft-UI-Damage-Type-Enable"), GetLocalizedTextByKey("Mod-Craft-UI-Damage-Type-Enable-Desc"), settings.CustomizedDamageEnabled, defaults.CustomizedDamageEnabled, function(state) settings.CustomizedDamageEnabled = state end)
-	
-	nativeSettings.addSelectorString("/ecraft/damage", GetLocalizedTextByKey("Mod-Craft-UI-Damage-Perk"), GetLocalizedTextByKey("Mod-Craft-UI-Damage-Perk-Desc"), damageRequirements, settings.PerkToUnlockDamageTypes, defaults.PerkToUnlockDamageTypes, function(value)
-		settings.PerkToUnlockDamageTypes = value
 	end)
 	
 	nativeSettings.addSubcategory("/ecraft/misc", GetLocalizedTextByKey("Mod-Craft-Settings-Misc"))

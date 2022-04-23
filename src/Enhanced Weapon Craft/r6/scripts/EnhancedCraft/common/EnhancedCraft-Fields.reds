@@ -67,7 +67,6 @@ public let quantityMultiplier: Int32;
 public let selectedDamageType: gamedataStatType;
 
 
-
 // -- gameItemData
 
 // Signals that item data has custom name
@@ -103,14 +102,6 @@ private let m_damageSelectionAvailable: Bool;
 @addField(ItemTooltipStatController)
 public let m_damageType: gamedataStatType;
 
-// Service flag for HUD init state
-@addField(ItemTooltipRecipeDataModule)
-private let m_shouldDisplayHud: Bool;
-
-// Stores damage selection availability state
-@addField(ItemTooltipRecipeDataModule)
-private let m_damageSelectionAvailable: Bool;
-
 
 // -- ItemTooltipRecipeDataModule
 
@@ -137,3 +128,11 @@ private let m_physicalDamageItem: ref<ItemTooltipStatController>;
 // Ref to thermal damage item
 @addField(ItemTooltipRecipeDataModule)
 private let m_thermalDamageItem: ref<ItemTooltipStatController>;
+
+// Service flag for HUD init state
+@addField(ItemTooltipRecipeDataModule)
+private let m_shouldDisplayHud: Bool;
+
+// Stores damage selection availability state
+@addField(ItemTooltipRecipeDataModule)
+private let m_damageSelectionAvailable: Bool;
