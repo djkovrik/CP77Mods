@@ -133,8 +133,8 @@ private func BuyItemFromVirtualVendor(inventoryItemData: InventoryItemData) {
   let price = InventoryItemData.GetPrice(inventoryItemData);
 
   let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.m_player.GetGame());
-  let statsSystem: ref<StatsSystem> = GameInstance.GetStatsSystem(this.m_player.GetGame()); //
-  let inventorySystem: ref<InventoryManager> = GameInstance.GetInventoryManager(this.m_player.GetGame()); //
+  let statsSystem: ref<StatsSystem> = GameInstance.GetStatsSystem(this.m_player.GetGame());
+  let inventorySystem: ref<InventoryManager> = GameInstance.GetInventoryManager(this.m_player.GetGame());
 
   let playerMoney = this.m_VendorDataManager.GetLocalPlayerCurrencyAmount();
 
@@ -145,9 +145,6 @@ private func BuyItemFromVirtualVendor(inventoryItemData: InventoryItemData) {
   } else {
     transactionSystem.GiveItem(this.m_player, itemID, 1);
     transactionSystem.RemoveItemByTDBID(this.m_player, t"Items.money", Cast(price));
-
-    let itemData = transactionSystem.GetItemData(this.m_player, itemID);
-    this.m_player.TryScaleItemToPlayer(itemData, inventoryItemData.Quality);
   }
 }
 
@@ -155,7 +152,6 @@ private func BuyItemFromVirtualVendor(inventoryItemData: InventoryItemData) {
 private final func HandleVendorSlotInput(evt: ref<ItemDisplayClickEvent>, itemData: InventoryItemData) -> Void {
   if (!this.m_isPreviewMode) {
     wrappedMethod(evt, itemData);
-
     return;
   }
 
@@ -164,7 +160,6 @@ private final func HandleVendorSlotInput(evt: ref<ItemDisplayClickEvent>, itemDa
   
   if (isVirtual && evt.actionName.IsAction(VendorPreviewButtonHint.Get().previewModeToggleName)) {
     this.BuyItemFromVirtualVendor(itemData);
-
     return;
   }
 
@@ -285,83 +280,6 @@ protected cb func OnSetUserData(userData: ref<IScriptable>) -> Bool {
 let isVirtualItem: Bool;
 
 @wrapMethod(FullscreenVendorGameController)
-private final func PopulateVendorInventory() -> Void {
-  if this.GetIsVirtual() {
-    let items: array<ref<IScriptable>>;
-    let vendorInventory: array<InventoryItemData>;
-    let vendorInventoryData: ref<VendorInventoryItemData>;
-
-    this.m_vendorFilterManager.Clear();
-    this.m_vendorFilterManager.AddFilter(ItemFilterCategory.AllItems);
-
-    let itemDataArray: array<ref<gameItemData>>;
-    let gameInstance = this.m_player.GetGame();
-    let ts = GameInstance.GetTransactionSystem(gameInstance);
-
-    let storeID = this.GetVirtualStoreID();
-    let storeItems: array<String> = this.GetVirtualStoreItems();
-    let itemsPrices: array<Int32> = this.GetVirtualStorePrices();
-    let itemsQualities: array<CName> = this.GetVirtualStoreQualities();
-
-    let virtualItemIndex = 0;
-
-    while virtualItemIndex < ArraySize(storeItems) {
-      let itemId = ItemID.FromTDBID(TDBID.Create(storeItems[virtualItemIndex]));
-      let itemModParams: ItemModParams;
-      itemModParams.itemID = itemId;
-      itemModParams.quantity = 1;
-      let itemData: ref<gameItemData> = Inventory.CreateItemData(itemModParams, this.m_player);
-      itemData.isVirtualItem = true;
-      this.m_player.TryScaleItemToPlayer(itemData, itemsQualities[virtualItemIndex]);
-      ArrayPush(itemDataArray, itemData);
-
-      virtualItemIndex += 1;
-    }
-
-    let vendorItems = this.ConvertGameDataIntoInventoryData(itemDataArray, this.m_VendorDataManager.GetVendorInstance(), true);
-
-    let inventoryItemDataIndex = 0;
-
-    while inventoryItemDataIndex < ArraySize(vendorItems) {
-      vendorInventoryData = new VendorInventoryItemData();
-      vendorInventoryData.ItemData = vendorItems[inventoryItemDataIndex];
-
-      InventoryItemData.SetIsVendorItem(vendorInventoryData.ItemData, true);
-      InventoryItemData.SetItemType(vendorInventoryData.ItemData, itemDataArray[inventoryItemDataIndex].GetItemType());
-      InventoryItemData.SetPrice(vendorInventoryData.ItemData, Cast(itemsPrices[inventoryItemDataIndex]));
-      InventoryItemData.SetBuyPrice(vendorInventoryData.ItemData, Cast(itemsPrices[inventoryItemDataIndex]));
-      InventoryItemData.SetQuantity(vendorInventoryData.ItemData, 1);
-      InventoryItemData.SetQuality(vendorInventoryData.ItemData, itemsQualities[inventoryItemDataIndex]);
-      // TODO: Apply atlas/texture changes here also, as in the tooltip
-
-      vendorInventoryData.IsVendorItem = true;
-      vendorInventoryData.IsEnoughMoney = true;
-      vendorInventoryData.ComparisonState = this.GetComparisonState(vendorInventoryData.ItemData);
-
-      this.m_InventoryManager.GetOrCreateInventoryItemSortData(vendorInventoryData.ItemData, this.m_uiScriptableSystem);      
-      this.m_vendorFilterManager.AddItem(vendorInventoryData.ItemData.GameItemData);
-
-      ArrayPush(items, vendorInventoryData);
-
-      inventoryItemDataIndex += 1;
-    };
-
-    this.m_vendorDataSource.Reset(items);
-    this.m_vendorFilterManager.InsertFilter(0, ItemFilterCategory.AllItems);
-    this.SetFilters(this.m_vendorFiltersContainer, this.m_vendorFilterManager.GetIntFiltersList(), n"OnVendorFilterChange");
-    this.m_vendorItemsDataView.EnableSorting();
-    this.m_vendorItemsDataView.SetFilterType(this.m_lastVendorFilter);
-    this.m_vendorItemsDataView.SetSortMode(this.m_vendorItemsDataView.GetSortMode());
-    this.m_vendorItemsDataView.DisableSorting();
-    this.ToggleFilter(this.m_vendorFiltersContainer, EnumInt(this.m_lastVendorFilter));
-    inkWidgetRef.SetVisible(this.m_vendorFiltersContainer, ArraySize(items) > 0);
-    this.PlayLibraryAnimation(n"vendor_grid_show");
-  } else {
-    wrappedMethod();
-  }
-}
-
-@wrapMethod(FullscreenVendorGameController)
 private final func ShowTooltipsForItemController(targetWidget: wref<inkWidget>, equippedItem: InventoryItemData, inspectedItemData: InventoryItemData, iconErrorInfo: ref<DEBUG_IconErrorInfo>, isBuybackStack: Bool) -> Void {
   if this.GetIsVirtual() {
     let data: ref<InventoryTooltipData>;
@@ -391,68 +309,134 @@ protected cb func OnVendorFilterChange(controller: wref<inkRadioGroupController>
 }
 
 
-// Reference for future use
-// @wrapMethod(LootingController)
-// public final func SetLootData(data: LootData) -> Void {
-//   let board: wref<IBlackboard> = GameInstance.GetBlackboardSystem(this.m_gameInstance).Get(GetAllBlackboardDefs().VirtualShop);
-//   let atelierItems: array<ItemID> = FromVariant(board.GetVariant(GetAllBlackboardDefs().VirtualShop.AtelierItems));
+// POPULATE VIRTUAL STOCK & SCALE
 
-//   if Equals(EntityID.ToDebugString(data.ownerId), "$/03_night_city/c_watson/little_china/loc_megabuilding_a_prefab4KCU2IQ/loc_megabuilding_a_gameplay_prefab2GWVWSA/#loc_megabuilding_a_devices/#mq000_clothes_container") {
-//     data.itemIDs = atelierItems;
+class VirtualStockItem {
+  public let itemID: ItemID;
+  public let itemTDBID: TweakDBID;
+  public let price: Float;
+  public let quality: CName;
+  public let itemData: ref<gameItemData>;
+}
 
-//     let firstChoices = data.choices[0];
+@addField(FullscreenVendorGameController)
+private let m_virtualStock: array<ref<VirtualStockItem>>;
 
-//     ArrayClear(data.choices);
+@addMethod(FullscreenVendorGameController)
+private final func FillVirtualStock() -> Void {
+  let inventoryManager: ref<InventoryManager> = GameInstance.GetInventoryManager(this.m_player.GetGame());
+  let itemDataArray: array<ref<gameItemData>>;
+  let storeID: CName = this.GetVirtualStoreID();
+  let storeItems: array<String> = this.GetVirtualStoreItems();
+  let itemsPrices: array<Int32> = this.GetVirtualStorePrices();
+  let itemsQualities: array<CName> = this.GetVirtualStoreQualities();
 
-//     let i = 0;
+  let stockItem: ref<VirtualStockItem>;
+  let virtualItemIndex = 0;
+  ArrayClear(this.m_virtualStock);
+  while virtualItemIndex < ArraySize(storeItems) {
+    let itemTDBID: TweakDBID = TDBID.Create(storeItems[virtualItemIndex]);
+    let itemId = ItemID.FromTDBID(itemTDBID);
+    let itemData: ref<gameItemData> = inventoryManager.CreateBasicItemData(itemId, this.m_player);
+    itemData.isVirtualItem = true;
+    stockItem = new VirtualStockItem();
+    stockItem.itemID = itemId;
+    stockItem.itemTDBID = itemTDBID;
+    stockItem.price = Cast<Float>(itemsPrices[virtualItemIndex]);
+    stockItem.quality = itemsQualities[virtualItemIndex];
+    stockItem.itemData = itemData;
+    ArrayPush(this.m_virtualStock, stockItem);
+    virtualItemIndex += 1;
+  };
 
-//     while i < ArraySize(data.choices) {
-//       let newChoice = firstChoices;
-//       newChoice.localizedName = "OLOLOOL";
-//       ArrayPush(data.choices, newChoice);
-//     }
-//   } 
+  this.ScaleStockItems();
+}
 
-//   wrappedMethod(data);
-// }     
+@addMethod(FullscreenVendorGameController)
+private final func ScaleStockItems() -> Void {
+  let itemData: wref<gameItemData>;
+  let itemRecord: wref<Item_Record>;
+  let statsSystem: ref<StatsSystem> = GameInstance.GetStatsSystem(this.m_player.GetGame());
+  let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.m_player.GetGame());
+  let powerLevelPlayer: Float = statsSystem.GetStatValue(Cast<StatsObjectID>(this.m_player.GetEntityID()), gamedataStatType.PowerLevel);
+  let powerLevelMod: ref<gameStatModifierData>;
+  let qualityMod: ref<gameStatModifierData>;
+  let i: Int32 = 0;
+  while i < ArraySize(this.m_virtualStock) {
+    itemRecord = TweakDBInterface.GetItemRecord(this.m_virtualStock[i].itemTDBID);
+    if !itemRecord.IsSingleInstance() && !itemData.HasTag(n"Cyberware") {
+      this.m_player.ScaleAtelierItem(this.m_virtualStock[i].itemData, this.m_virtualStock[i].quality);
+    };
+    i += 1;
+  };
+}
 
-// QueueEventForEntityID
-// EntityID & PersistentID: 
-// EntityID has: -784947793
-// create extended ItemAddedEvent -> add a cb to gameLootContainerBase > use TransactionSystem on `this` to add item
-// @wrapMethod(LootContainerObjectAnimatedByTransform)
-// protected cb func OnInteraction(choiceEvent: ref<InteractionChoiceEvent>) -> Bool {
-//   // EntityID.GetHash(this.GetEntityID())
-//   // PersistentID.ExtractEntityID(this.GetPS().GetID())
-//   // this.GetPS().GetID()
+@addMethod(FullscreenVendorGameController)
+private final func ConvertGameDataIntoInventoryData(data: array<ref<VirtualStockItem>>, owner: wref<GameObject>) -> array<InventoryItemData> {
+  let itemData: InventoryItemData;
+  let itemDataArray: array<InventoryItemData>;
+  let stockItem: ref<VirtualStockItem>;
+  let i: Int32 = 0;
+  while i < ArraySize(data) {
+    stockItem = data[i];
+    itemData = this.m_InventoryManager.GetInventoryItemData(owner, stockItem.itemData);
+    InventoryItemData.SetIsVendorItem(itemData, true);
+    InventoryItemData.SetPrice(itemData, stockItem.price);
+    InventoryItemData.SetBuyPrice(itemData, stockItem.price);
+    InventoryItemData.SetQuantity(itemData, 1);
+    InventoryItemData.SetQuality(itemData, stockItem.quality);
+    ArrayPush(itemDataArray, itemData);
+    i += 1;
+  };
+  return itemDataArray;
+}
 
-//   // let nullArrayOfNames: array<CName>;
-//   // let entityRef = CreateEntityReference("$/03_night_city/c_watson/little_china/loc_megabuilding_a_prefab4KCU2IQ/loc_megabuilding_a_gameplay_prefab2GWVWSA/#loc_megabuilding_a_devices/#mq000_clothes_container", nullArrayOfNames);
-//   // // let entityRef = CreateEntityReference("#mq000_clothes_container", nullArrayOfNames);
-  
-//   // let gameObject: ref<GameObject>;
-//   // let entityIDs: array<EntityID>;
-//   // GetFixedEntityIdsFromEntityReference(entityRef, this.GetGame(), entityIDs);
-//   // GetGameObjectFromEntityReference(entityRef, this.GetGame(), gameObject);
+@wrapMethod(FullscreenVendorGameController)
+private final func PopulateVendorInventory() -> Void {
+  if this.GetIsVirtual() {
+    let i: Int32;
+    let items: array<ref<IScriptable>>;
+    let j: Int32;
+    let playerMoney: Int32;
+    let vendorInventory: array<InventoryItemData>;
+    let vendorInventoryData: ref<VendorInventoryItemData>;
+    let vendorInventorySize: Int32;
+    this.m_vendorFilterManager.Clear();
+    this.m_vendorFilterManager.AddFilter(ItemFilterCategory.AllItems);
+    this.FillVirtualStock();
+    vendorInventory = this.ConvertGameDataIntoInventoryData(this.m_virtualStock, this.m_VendorDataManager.GetVendorInstance());
+    vendorInventorySize = ArraySize(vendorInventory);
+    playerMoney = this.m_VendorDataManager.GetLocalPlayerCurrencyAmount();
 
-//   // Log("OLOLOLOL NAME: " + NameToString(gameObject.GetName()));
-//   // Log("OLOLOLO entity ids length: " + ArraySize(entityIDs));
+    // AtelierLog(s"Resulting list size: \(vendorInventorySize)");
 
-//   // let id: EntityID = Cast(ResolveNodeRefWithEntityID(nodeRef, this.GetEntityID()));
-//   // return 
+    i = 0;
+    while i < vendorInventorySize {
+      vendorInventoryData = new VendorInventoryItemData();
+      vendorInventoryData.ItemData = vendorInventory[i];
+      vendorInventoryData.IsVendorItem = true;
+      vendorInventoryData.IsEnoughMoney = playerMoney >= Cast<Int32>(InventoryItemData.GetBuyPrice(vendorInventory[i]));
+      vendorInventoryData.IsDLCAddedActiveItem = this.m_uiScriptableSystem.IsDLCAddedActiveItem(ItemID.GetTDBID(InventoryItemData.GetID(vendorInventory[i])));
+      vendorInventoryData.ComparisonState = this.GetComparisonState(vendorInventoryData.ItemData);
 
-//   // let i = 0;
+      this.m_InventoryManager.GetOrCreateInventoryItemSortData(vendorInventoryData.ItemData, this.m_uiScriptableSystem);      
+      this.m_vendorFilterManager.AddItem(vendorInventoryData.ItemData.GameItemData);
+      ArrayPush(items, vendorInventoryData);
+      i += 1;
+    };
 
-//   // while i < ArraySize(entityIDs) {
-//   //   let entity = GameInstance.FindEntityByID(this.GetGame(), entityIDs[i]);
-
-//   //   Log("ENTITY NAME: " + entity.GetName());
-//   //   i += 1;
-//   // }
-//   let board: wref<IBlackboard> = GameInstance.GetBlackboardSystem(this.GetGame()).Get(GetAllBlackboardDefs().VirtualShop);
-//   let lootContainer: ref<LootContainerObjectAnimatedByTransform> = FromVariant(board.GetVariant(GetAllBlackboardDefs().VirtualShop.StorageID));
-
-//   Log("OLOLOLO OnInteraction: " + NameToString(lootContainer.GetName()));
-
-//   return wrappedMethod(choiceEvent);
-// }
+    this.m_vendorDataSource.Reset(items);
+    this.m_vendorFilterManager.SortFiltersList();
+    this.m_vendorFilterManager.InsertFilter(0, ItemFilterCategory.AllItems);
+    this.SetFilters(this.m_vendorFiltersContainer, this.m_vendorFilterManager.GetIntFiltersList(), n"OnVendorFilterChange");
+    this.m_vendorItemsDataView.EnableSorting();
+    this.m_vendorItemsDataView.SetFilterType(this.m_lastVendorFilter);
+    this.m_vendorItemsDataView.SetSortMode(this.m_vendorItemsDataView.GetSortMode());
+    this.m_vendorItemsDataView.DisableSorting();
+    this.ToggleFilter(this.m_vendorFiltersContainer, EnumInt(this.m_lastVendorFilter));
+    inkWidgetRef.SetVisible(this.m_vendorFiltersContainer, ArraySize(items) > 0);
+    this.PlayLibraryAnimation(n"vendor_grid_show");
+  } else {
+    wrappedMethod();
+  }
+}

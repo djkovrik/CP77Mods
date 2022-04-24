@@ -1,8 +1,7 @@
 module VendorPreview.utils
 
-
 @addMethod(PlayerPuppet)
-private final func TryScaleItemToPlayer(itemData: ref<gameItemData>, quality: CName) -> Void {
+private final func ScaleAtelierItem(itemData: ref<gameItemData>, quality: CName) -> Void {
   let statsSystem: ref<StatsSystem> = GameInstance.GetStatsSystem(this.GetGame());
   let powerLevelPlayer: Float = statsSystem.GetStatValue(Cast<StatsObjectID>(this.GetEntityID()), gamedataStatType.PowerLevel);
   let powerLevelItem: Float = itemData.GetStatValueByType(gamedataStatType.PowerLevel);
