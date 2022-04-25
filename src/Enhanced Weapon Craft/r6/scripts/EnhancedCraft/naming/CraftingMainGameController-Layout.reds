@@ -51,7 +51,7 @@ protected cb func OnInitialize() -> Bool {
 protected cb func OnTextInput(widget: wref<inkWidget>) -> Bool {
   let text: String = this.m_nameInput.GetText();
   let originalName: String = this.m_craftingLogicController.originalRecipe.label;
-	L(s"INPUT: \(this.m_nameInput.GetText())");
+	// L(s"INPUT: \(this.m_nameInput.GetText())");
   if NotEquals(text, "") {
     this.m_weaponName.SetText(text);
   } else {

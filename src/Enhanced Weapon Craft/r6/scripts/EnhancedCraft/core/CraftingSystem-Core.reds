@@ -1,7 +1,8 @@
 module EnhancedCraft.Core
-import EnhancedCraft.Common.L
+import EnhancedCraft.Common.*
 import EnhancedCraft.Config.*
 import EnhancedCraft.Events.*
+import EnhancedCraft.System.*
 
 @wrapMethod(CraftingSystem)
 private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
@@ -31,6 +32,8 @@ private final func OnCraftItemRequest(request: ref<CraftItemRequest>) -> Void {
 @addMethod(CraftingSystem)
 private func SwitchCraftedWeaponType(craftedItem: ref<gameItemData>) -> Void {
   if NotEquals(this.m_requestedDamageType, gamedataStatType.Invalid) {
+    let stats: ref<DamageTypeStats> = this.m_playerPuppet.GetCraftedWeaponDamageStats(craftedItem, this.m_requestedDamageType);
+    EnhancedCraftSystem.GetInstance(this.m_playerPuppet.GetGame()).AddCustomDamageType(craftedItem.GetID(), stats);
     this.m_playerPuppet.SwitchDamageTypeToChosen(craftedItem, this.m_requestedDamageType);
   };
 }
