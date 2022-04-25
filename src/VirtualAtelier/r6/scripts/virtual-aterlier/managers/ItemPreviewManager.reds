@@ -29,7 +29,7 @@ public class ItemPreviewManager {
     let transactionSystem: wref<TransactionSystem> = this.GetTransactionSystem();
     let gamePuppet: ref<gamePuppet> = this.GetGamePuppet();
 
-    Log("[Virtual Atelier] Initialized Virtual [v0.1.0]");
+    // AtelierLog("ItemPreviewManager initialized");
 
     transactionSystem.GetItemList(gamePuppet, this.initialItems);
   }
