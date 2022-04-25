@@ -9,7 +9,7 @@ public func ScaleCraftedItemData(itemData: ref<gameItemData>, quality: CName) ->
   let statsSystem: ref<StatsSystem> = GameInstance.GetStatsSystem(this.GetGame());
   let qualityMod: ref<gameStatModifierData> = RPGManager.CreateStatModifier(gamedataStatType.Quality, gameStatModifierType.Additive, RPGManager.ItemQualityNameToValue(quality));
   statsSystem.RemoveAllModifiers(itemData.GetStatsObjectID(), gamedataStatType.Quality);
-  statsSystem.AddModifier(itemData.GetStatsObjectID(), qualityMod);
+  statsSystem.AddSavedModifier(itemData.GetStatsObjectID(), qualityMod);
   RPGManager.ForceItemQuality(this, itemData, quality);
 }
 
