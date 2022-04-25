@@ -6,6 +6,7 @@ import EnhancedCraft.Config.*
 @wrapMethod(CraftingLogicController)
 protected func UpdateItemPreview(craftableController: ref<CraftableItemLogicController>) -> Void {
   this.weaponIndex = 0;
+  this.iconicSelected = false;
   this.alternateSkinSelected = false;
   ArrayClear(this.weaponVariants);
   ArrayClear(this.weaponVariantsNoIconic);
@@ -100,7 +101,7 @@ private final func UpdateRecipePreviewPanelEnhanced() -> Void {
 @wrapMethod(CraftingLogicController)
 private final func SetupIngredients(ingredient: array<IngredientData>, itemAmount: Int32) -> Void {
   let ingredients: array<IngredientData> = this.m_craftingSystem.GetItemCraftingCost(this.originalItemData);
-  if IsPresetIconic(this.currentItemRecord.GetID()) {
+  if this.iconicSelected {
     wrappedMethod(ingredients, Config.IconicIngredientsMultiplier());
   } else {
     if this.alternateSkinSelected {

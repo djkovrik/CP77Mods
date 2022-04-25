@@ -11,8 +11,8 @@ public func LoadPrevVariant() -> Void {
     if this.weaponIndex < 0 {
       this.weaponIndex = ArraySize(this.weaponVariants) - 1;
     };
-    this.alternateSkinSelected = NotEquals(this.weaponIndex, 0);
-    this.iconicSelected = IsPresetIconic(this.weaponVariants[this.weaponIndex]);
+    this.alternateSkinSelected = NotEquals(this.weaponIndex, 0) && ArraySize(this.weaponVariants) > 1;
+    this.iconicSelected = this.alternateSkinSelected && IsPresetIconic(this.weaponVariants[this.weaponIndex]);
     this.currentItemRecord = TweakDBInterface.GetItemRecord(this.weaponVariants[this.weaponIndex]);
     tdbid = this.weaponVariants[this.weaponIndex];
     this.UpdateRecipePreviewPanelEnhanced();
@@ -29,8 +29,8 @@ public func LoadNextVariant() -> Void {
     if this.weaponIndex > ArraySize(this.weaponVariants) - 1 {
       this.weaponIndex = 0;
     };
-    this.alternateSkinSelected = NotEquals(this.weaponIndex, 0);
-    this.iconicSelected = IsPresetIconic(this.weaponVariants[this.weaponIndex]);
+    this.alternateSkinSelected = NotEquals(this.weaponIndex, 0) && ArraySize(this.weaponVariants) > 1;
+    this.iconicSelected = this.alternateSkinSelected && IsPresetIconic(this.weaponVariants[this.weaponIndex]);
     this.currentItemRecord = TweakDBInterface.GetItemRecord(this.weaponVariants[this.weaponIndex]);
     tdbid = this.weaponVariants[this.weaponIndex];
     this.UpdateRecipePreviewPanelEnhanced();
