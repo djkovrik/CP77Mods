@@ -29,6 +29,14 @@ private final func OnCraftItemRequest(request: ref<CraftItemRequest>) -> Void {
   this.UpdateBlackboard(CraftingCommands.CraftingFinished, craftedItem.GetID());
 }
 
+// -- Check if crafted item is a weapon
+@addMethod(CraftingSystem)
+private func IsWeaponCrafted(itemRecord: ref<Item_Record>) -> Bool {
+  let area: gamedataEquipmentArea = itemRecord.EquipArea().Type();
+  return Equals(area, gamedataEquipmentArea.Weapon) || Equals(area, gamedataEquipmentArea.WeaponHeavy) || Equals(area, gamedataEquipmentArea.WeaponWheel) || Equals(area, gamedataEquipmentArea.WeaponLeft);
+}
+
+// -- Switch damage type
 @addMethod(CraftingSystem)
 private func SwitchCraftedWeaponType(craftedItem: ref<gameItemData>) -> Void {
   if NotEquals(this.m_requestedDamageType, gamedataStatType.Invalid) {
@@ -44,12 +52,15 @@ private final func CraftItem(target: wref<GameObject>, itemRecord: ref<Item_Reco
   let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(this.m_playerPuppet.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
   let craftedItem: wref<gameItemData> = wrappedMethod(target, itemRecord, amount, ammoBulletAmount);
   L(s"CRAFTED NORMAL: \(craftedItem.GetID()) \(TDBID.ToStringDEBUG(ItemID.GetTDBID(craftedItem.GetID()))) \(RPGManager.GetItemDataQuality(craftedItem))");
-  // Notify that item was crafted
-  let event: ref<EnhancedCraftRecipeCrafted> = new EnhancedCraftRecipeCrafted();
-  event.isWeapon = Equals(RPGManager.GetItemCategory(craftedItem.GetID()), gamedataItemCategory.Weapon);
-  event.itemId = craftedItem.GetID();
-  this.SwitchCraftedWeaponType(craftedItem);
-  GameInstance.GetUISystem(player.GetGame()).QueueEvent(event);
+  // Notify that weapon was crafted
+  let event: ref<EnhancedCraftRecipeCrafted>;
+  if this.IsWeaponCrafted(itemRecord) {
+    event = new EnhancedCraftRecipeCrafted();
+    event.isWeapon = Equals(RPGManager.GetItemCategory(craftedItem.GetID()), gamedataItemCategory.Weapon);
+    event.itemId = craftedItem.GetID();
+    this.SwitchCraftedWeaponType(craftedItem);
+    GameInstance.GetUISystem(player.GetGame()).QueueEvent(event);
+  };
   return craftedItem;
 }
 
@@ -142,11 +153,14 @@ private final func CraftItemEnhanced(target: wref<GameObject>, itemRecord: ref<I
   this.ProcessCraftSkill(Cast<Float>(recipeXP));
   player.ScaleCraftedItemData(itemData, quality);
   L(s"CRAFTED CUSTOM: \(itemData.GetID()) \(TDBID.ToStringDEBUG(ItemID.GetTDBID(itemData.GetID()))) \(RPGManager.GetItemDataQuality(itemData))");
-  // Notify that item was crafted
-  let event: ref<EnhancedCraftRecipeCrafted> = new EnhancedCraftRecipeCrafted();
-  event.isWeapon = Equals(RPGManager.GetItemCategory(itemData.GetID()), gamedataItemCategory.Weapon);
-  event.itemId = itemData.GetID();
-  this.SwitchCraftedWeaponType(itemData);
-  GameInstance.GetUISystem(player.GetGame()).QueueEvent(event);
+  // Notify that weapon was crafted
+  let event: ref<EnhancedCraftRecipeCrafted>;
+  if this.IsWeaponCrafted(itemRecord) {
+    event = new EnhancedCraftRecipeCrafted();
+    event.isWeapon = Equals(RPGManager.GetItemCategory(itemData.GetID()), gamedataItemCategory.Weapon);
+    event.itemId = itemData.GetID();
+    this.SwitchCraftedWeaponType(itemData);
+    GameInstance.GetUISystem(player.GetGame()).QueueEvent(event);
+  };
   return itemData;
 }
