@@ -12,7 +12,7 @@ protected func UpdateItemPreview(craftableController: ref<CraftableItemLogicCont
   ArrayClear(this.weaponVariantsNoIconic);
   L("--- Arrays cleared");
   wrappedMethod(craftableController);
-  L(s"UpdateRecipePreviewPanel for \(this.m_selectedRecipe.label) \(TDBID.ToStringDEBUG(this.m_selectedRecipe.id.GetID()))");
+  L(s"UpdateItemPreview for \(this.m_selectedRecipe.label) \(TDBID.ToStringDEBUG(this.m_selectedRecipe.id.GetID()))");
   this.currentItemRecord = this.m_selectedRecipe.id;
 }
 
@@ -26,7 +26,8 @@ private final func UpdateRecipePreviewPanel(selectedRecipe: ref<RecipeData>) -> 
   let weaponsVariant: Variant;
   let qualityVariant: Variant;
   let tdbid: TweakDBID;
-  if IsDefined(selectedRecipe) { 
+  // Initialize variant arrays
+  if IsDefined(selectedRecipe) {
     L(s"UpdateRecipePreviewPanel for \(selectedRecipe.label) \(TDBID.ToStringDEBUG(selectedRecipe.id.GetID()))");
     if isWeaponSelected && shouldRefresh {
       tdbid = selectedRecipe.id.GetID();
@@ -43,8 +44,15 @@ private final func UpdateRecipePreviewPanel(selectedRecipe: ref<RecipeData>) -> 
       L(s"--- Array populated (no Iconics): \(ArraySize(this.weaponVariantsNoIconic))");
     };
   };
+  // If crafted iconic then switch preview to the first item
+  if this.alternateSkinSelected && this.iconicSelected {
+    this.weaponIndex = 0;
+    this.iconicSelected = false;
+    this.alternateSkinSelected = false;
+    this.currentItemRecord = this.m_selectedRecipe.id;
+    this.UpdateRecipePreviewPanelEnhanced();
+  };
 }
-
 
 @addMethod(CraftingLogicController)
 private final func UpdateRecipePreviewPanelEnhanced() -> Void {
