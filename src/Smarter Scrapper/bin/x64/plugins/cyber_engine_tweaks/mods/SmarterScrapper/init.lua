@@ -59,7 +59,7 @@ function SetupSettingsMenu()
 		return
 	end
 
-	nativeSettings.addTab("/scrapper", "Smarter Scrapper")
+	nativeSettings.addTab("/scrapper", "Scrapper")
 	
 	nativeSettings.addSubcategory("/scrapper/clothes", "Auto disassemble clothes")
 	nativeSettings.addSwitch("/scrapper/clothes", "Legendary", "Disassemble legendary clothes on pickup", settings.ClothesLegendary, defaults.ClothesLegendary, function(state) settings.ClothesLegendary = state end)
