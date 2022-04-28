@@ -425,7 +425,7 @@ private final func ConvertGameDataIntoInventoryData(data: array<ref<VirtualStock
     InventoryItemData.SetIsVendorItem(itemData, true);
     InventoryItemData.SetPrice(itemData, stockItem.price);
     InventoryItemData.SetBuyPrice(itemData, stockItem.price);
-    // InventoryItemData.SetQuantity(itemData, 1);
+    InventoryItemData.SetQuantity(itemData, stockItem.quantity);
     InventoryItemData.SetQuality(itemData, stockItem.quality);
     ArrayPush(itemDataArray, itemData);
     i += 1;
