@@ -37,9 +37,22 @@ private final func GetVirtualStoreItems() -> array<String> {
   return this.m_vendorUserData.vendorData.virtualStore.items;
 }
 
+// Darkcopse prices tweak
 @addMethod(FullscreenVendorGameController)
-private final func GetVirtualStorePrices() -> array<Int32> {
-  return this.m_vendorUserData.vendorData.virtualStore.prices;
+private final func GetVirtualStorePrices() -> array<Int32> { 
+  let items: array<String> = this.m_vendorUserData.vendorData.virtualStore.items;
+  let prices: array<Int32> = this.m_vendorUserData.vendorData.virtualStore.prices;
+  let defaultPrice = 0;
+  if (ArraySize(prices) == 1) {
+    let defaultPrice = prices[0];
+  }  
+  let i = 0;
+  if (ArraySize(items) > ArraySize(prices)) {
+    while (i < (ArraySize(items) - ArraySize(prices))) {
+      ArrayPush(prices, defaultPrice); 
+    }
+  }  
+  return prices;
 }
 
 @addMethod(FullscreenVendorGameController)
