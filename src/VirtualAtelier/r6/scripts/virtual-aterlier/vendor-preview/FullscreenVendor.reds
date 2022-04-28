@@ -62,6 +62,10 @@ private final func GetVirtualStoreQualities() -> array<CName> {
   let qualitiesCNames: array<CName> = [];
 
   let defaultQuality = n"Rare";
+  // Darkcopse qualities tweak
+  if (ArraySize(qualities) == 1) {
+    defaultQuality = StringToName(qualities[0]);
+  } 
 
   let i = 0;
 
