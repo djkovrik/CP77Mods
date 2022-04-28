@@ -51,7 +51,7 @@ public class VendorPreviewButtonHint {
 }
 
 public class VirtualAtelierConfig {
-  public static func NumOfVirtualStoresPerRow() -> Int32 = 6
+  public static func NumOfVirtualStoresPerRow() -> Int32 = 5
   public static func NumOfRowsTotal() -> Int32  = 2
   public static func StoresPerPage() -> Int32 = VirtualAtelierConfig.NumOfVirtualStoresPerRow() * VirtualAtelierConfig.NumOfRowsTotal()
 }

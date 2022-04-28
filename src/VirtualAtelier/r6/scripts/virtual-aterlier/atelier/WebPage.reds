@@ -46,7 +46,17 @@ private func PopulateAtelierView(owner: ref<GameObject>) {
   this.atelierTotalStores = ArraySize(this.stores);
 
   this.atelierCurrentPageIndex = 0;
-  this.atelierTotalPages = this.atelierTotalStores / VirtualAtelierConfig.StoresPerPage() + 1;
+  this.atelierTotalPages = 1;
+  let i: Int32 = 1;
+  while i < this.atelierTotalStores {
+    if Equals(i % 10, 0) {
+      this.atelierTotalPages += 1;
+    };
+    i += 1;
+  };
+
+  AtelierLog(s"TOTAL STORES: \(this.atelierTotalStores)");
+  AtelierLog(s"TOTAL PAGES: \(this.atelierTotalPages)");
 
   if this.atelierTotalStores >= 1 {
     this.ShowSideImages();
