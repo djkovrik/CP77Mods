@@ -139,7 +139,7 @@ public func CheckDuplicates(stores: array<ref<VirtualShop>>, controller: ref<Web
         storeIndex += 1;
       };
 
-      AtelierLog(duplicatesInfo);
+      LogChannel(n"DEBUG", s"Atelier: \(duplicatesInfo)");
     };
 
     mapItemIndex += 1;
@@ -151,5 +151,5 @@ public func CheckDuplicates(stores: array<ref<VirtualShop>>, controller: ref<Web
 }
 
 public func AtelierLog(str: String) -> Void {
-  LogChannel(n"DEBUG", s"Atelier: \(str)");
+  // LogChannel(n"DEBUG", s"Atelier: \(str)");
 }

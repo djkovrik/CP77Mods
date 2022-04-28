@@ -21,6 +21,8 @@ public class ItemPreviewManager {
   public let givenItems: array<ItemID>;
   public let initialItems: array<wref<gameItemData>>;
 
+  public let screenWidthLimit: Float;
+
   private func Initialize(gameInstance: GameInstance, puppetId: EntityID, opt garmentPreviewController: ref<GarmentItemPreviewGameController>) {
     this.gameInstance = gameInstance;
     this.puppetId = puppetId;
@@ -28,9 +30,6 @@ public class ItemPreviewManager {
 
     let transactionSystem: wref<TransactionSystem> = this.GetTransactionSystem();
     let gamePuppet: ref<gamePuppet> = this.GetGamePuppet();
-
-    // AtelierLog("ItemPreviewManager initialized");
-
     transactionSystem.GetItemList(gamePuppet, this.initialItems);
   }
 
@@ -45,6 +44,8 @@ public class ItemPreviewManager {
     let player = GetPlayer(gameInstance);
     player.itemPreviewManager = instance;
     GetAllBlackboardDefs().itemPreviewManager = instance;
+
+    instance.screenWidthLimit = instance.CalculateScreenWidthLimit();
   }
   
   public static func GetInstance() -> wref<ItemPreviewManager> {
@@ -442,6 +443,11 @@ public class ItemPreviewManager {
     let widget: ref<inkWidget> = event.GetTarget();
     let parent = controller.GetRootCompoundWidget();
 
+    // Allow player puppet dragging only for left side of the screen
+    let screenPosition: Vector2 = event.GetScreenSpacePosition();
+    let limit: Float = ItemPreviewManager.GetInstance().GetScreenWidthLimit();
+    let isDragAllowed: Bool = screenPosition.X < limit;
+
     if !Equals(NameToString(widget.GetName()), "None") {
       return true;
     } else {
@@ -449,10 +455,10 @@ public class ItemPreviewManager {
       let zoomRatio: Float = 0.1;
 
       if controller.m_isLeftMouseDown {
-        if event.IsAction(n"mouse_x") {
+        if event.IsAction(n"mouse_x") && isDragAllowed {
           previewWidget.ChangeTranslation(new Vector2(amount, 0.0));      
         };
-        if event.IsAction(n"mouse_y") {
+        if event.IsAction(n"mouse_y") && isDragAllowed {
           previewWidget.ChangeTranslation(new Vector2(0.0, -1.0 * amount));
         };
       };
@@ -482,5 +488,17 @@ public class ItemPreviewManager {
         previewWidget.SetScale(new Vector2(finalXScale, finalYScale));
       }; 
     }
+  }
+
+  public func GetScreenWidthLimit() -> Float {
+    return this.screenWidthLimit;
+  }
+
+  private func CalculateScreenWidthLimit() -> Float {
+    let settings: ref<UserSettings> = GameInstance.GetSettingsSystem(this.gameInstance);
+    let config: ref<ConfigVarListString> = settings.GetVar(n"/video/display", n"Resolution") as ConfigVarListString;
+    let resolution: String = config.GetValue();
+    let dimensions: array<String> = StrSplit(resolution, "x");
+    return StringToFloat(dimensions[0]) / 2.0;
   }
 }

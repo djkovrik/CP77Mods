@@ -626,7 +626,7 @@ private final func PopulateVendorInventory() -> Void {
     vendorInventorySize = ArraySize(vendorInventory);
     playerMoney = this.m_VendorDataManager.GetLocalPlayerCurrencyAmount();
 
-    // AtelierLog(s"Resulting list size: \(vendorInventorySize)");
+    AtelierLog(s"Resulting list size: \(vendorInventorySize)");
 
     i = 0;
     while i < vendorInventorySize {
