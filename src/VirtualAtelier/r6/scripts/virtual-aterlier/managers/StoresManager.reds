@@ -16,6 +16,7 @@ public class VirtualShop extends IScriptable {
   let storeName: String;
   let items: array<String>;
   let qualities: array<String>;
+  let quantities: array<Int32>;
   let prices: array<Int32>;
   let atlasResource: ResRef;
   let texturePart: CName;
@@ -24,7 +25,7 @@ public class VirtualShop extends IScriptable {
 public class VirtualShopRegistration extends Event {
   let owner: wref<GameObject>;
 
-  private func AddStore(storeID: CName, storeName: String, items: array<String>, prices: array<Int32>, atlasResource: ResRef, texturePart: CName, opt qualities: array<String>) -> Bool {
+  private func AddStore(storeID: CName, storeName: String, items: array<String>, prices: array<Int32>, atlasResource: ResRef, texturePart: CName, opt qualities: array<String>, opt quantities: array<Int32>) -> Bool {
     let board: wref<IBlackboard> = GameInstance.GetBlackboardSystem(this.owner.GetGame()).Get(GetAllBlackboardDefs().VirtualShop);
     let stores: array<ref<VirtualShop>> = FromVariant(board.GetVariant(GetAllBlackboardDefs().VirtualShop.Stores));
 
@@ -36,6 +37,7 @@ public class VirtualShopRegistration extends Event {
     store.atlasResource = atlasResource;
     store.texturePart = texturePart;
     store.qualities = qualities;
+    store.quantities = quantities;
 
     ArrayPush(stores, store);
 
