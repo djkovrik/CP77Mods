@@ -63,7 +63,7 @@ function SetupSettingsMenu()
 		return
 	end
 
-	nativeSettings.addTab("/imz", "Improved Minimap Zoom")
+	nativeSettings.addTab("/imz", "IZoom")
 	
 	nativeSettings.addSubcategory("/imz/zoom", "Static zoom Values")
 	
