@@ -251,6 +251,10 @@ protected cb func OnHandleGlobalInput(event: ref<inkPointerEvent>) -> Bool {
       ItemPreviewManager.GetInstance().RemovePreviewGarment();
       break;
 
+    case (event.IsAction(n"world_map_menu_toggle_custom_filter")):
+      event.Consume();
+      break;
+
     case (event.IsAction(n"back") && isVirtual && this.m_isPreviewMode):
     case (event.IsAction(n"cancel") && isVirtual && this.m_isPreviewMode):
       this.m_menuEventDispatcher.SpawnEvent(n"OnVendorClose");
