@@ -255,6 +255,10 @@ protected cb func OnHandleGlobalInput(event: ref<inkPointerEvent>) -> Bool {
       event.Consume();
       break;
 
+    case (event.IsAction(n"world_map_fake_rotate")):
+      event.Consume();
+      break;
+
     case (event.IsAction(n"back") && isVirtual && this.m_isPreviewMode):
     case (event.IsAction(n"cancel") && isVirtual && this.m_isPreviewMode):
       this.m_menuEventDispatcher.SpawnEvent(n"OnVendorClose");
