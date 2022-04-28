@@ -90,6 +90,20 @@ private final func GetVirtualStoreQualities() -> array<CName> {
   return qualitiesCNames;
 }
 
+// Darkcopse quantities tweak
+@addMethod(FullscreenVendorGameController)
+private final func GetVirtualStoreQuantities() -> array<Int32> {
+  let items: array<String> = this.m_vendorUserData.vendorData.virtualStore.items;
+  let quantities: array<Int32> = this.m_vendorUserData.vendorData.virtualStore.quantities;
+  let i = 0;
+  if (ArraySize(items) > ArraySize(quantities)) {
+    while (i < (ArraySize(items) - ArraySize(quantities))) {
+      ArrayPush(quantities, 1); 
+    }
+  }  
+  return quantities;
+}
+
 @addMethod(FullscreenVendorGameController)
 private final func GetVirtualStoreAtlasResource() -> ResRef {
   return this.m_vendorUserData.vendorData.virtualStore.atlasResource;
@@ -148,6 +162,7 @@ protected cb func OnEquipPreviewClosed(data: ref<inkGameNotificationData>) -> Bo
 private func BuyItemFromVirtualVendor(inventoryItemData: InventoryItemData) {
   let itemID: ItemID = InventoryItemData.GetID(inventoryItemData);
   let price = InventoryItemData.GetPrice(inventoryItemData);
+  let quantity: Int32 = InventoryItemData.GetQuantity(inventoryItemData);
 
   let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.m_player.GetGame());
   let statsSystem: ref<StatsSystem> = GameInstance.GetStatsSystem(this.m_player.GetGame());
@@ -160,7 +175,7 @@ private func BuyItemFromVirtualVendor(inventoryItemData: InventoryItemData) {
     vendorNotification.m_notificationType = UIMenuNotificationType.VNotEnoughMoney;
     GameInstance.GetUISystem(this.m_player.GetGame()).QueueEvent(vendorNotification);
   } else {
-    transactionSystem.GiveItem(this.m_player, itemID, 1);
+    transactionSystem.GiveItem(this.m_player, itemID, quantity);
     transactionSystem.RemoveItemByTDBID(this.m_player, t"Items.money", Cast(price));
   }
 }
@@ -333,6 +348,7 @@ class VirtualStockItem {
   public let itemTDBID: TweakDBID;
   public let price: Float;
   public let quality: CName;
+  public let quantity: Int32;
   public let itemData: ref<gameItemData>;
 }
 
@@ -347,6 +363,7 @@ private final func FillVirtualStock() -> Void {
   let storeItems: array<String> = this.GetVirtualStoreItems();
   let itemsPrices: array<Int32> = this.GetVirtualStorePrices();
   let itemsQualities: array<CName> = this.GetVirtualStoreQualities();
+  let itemsQuantities: array<Int32> = this.GetVirtualStoreQuantities();
 
   let stockItem: ref<VirtualStockItem>;
   let virtualItemIndex = 0;
@@ -361,6 +378,10 @@ private final func FillVirtualStock() -> Void {
     stockItem.itemTDBID = itemTDBID;
     stockItem.price = Cast<Float>(itemsPrices[virtualItemIndex]);
     stockItem.quality = itemsQualities[virtualItemIndex];
+    stockItem.quantity = itemsQuantities[virtualItemIndex];
+  	if (RoundF(stockItem.price) == 0) {
+      stockItem.price = Cast<Float>(this.ScaleItemPriceToPlayer(itemId, stockItem.quality) * stockItem.quantity);
+ 	  }
     stockItem.itemData = itemData;
     ArrayPush(this.m_virtualStock, stockItem);
     virtualItemIndex += 1;
@@ -400,12 +421,184 @@ private final func ConvertGameDataIntoInventoryData(data: array<ref<VirtualStock
     InventoryItemData.SetIsVendorItem(itemData, true);
     InventoryItemData.SetPrice(itemData, stockItem.price);
     InventoryItemData.SetBuyPrice(itemData, stockItem.price);
-    InventoryItemData.SetQuantity(itemData, 1);
+    // InventoryItemData.SetQuantity(itemData, 1);
     InventoryItemData.SetQuality(itemData, stockItem.quality);
     ArrayPush(itemDataArray, itemData);
     i += 1;
   };
   return itemDataArray;
+}
+
+@addMethod(FullscreenVendorGameController)
+private final func ScaleItemPriceToPlayer(itemId: ItemID, itemQuality: CName) -> Int32 {
+  let itemModParams: ItemModParams;
+  itemModParams.itemID = itemId;
+  itemModParams.quantity = 1;
+  let itemData: ref<gameItemData> = Inventory.CreateItemData(itemModParams, this.m_player);
+  let statsSystem: ref<StatsSystem> = GameInstance.GetStatsSystem(this.m_player.GetGame());
+  let powerLevelPlayer: Float = statsSystem.GetStatValue(Cast<StatsObjectID>(this.m_player.GetEntityID()), gamedataStatType.PowerLevel);
+  if (Cast<Int32>(powerLevelPlayer) < 1) {
+    powerLevelPlayer = 1.0;
+  }
+  let qualMulti : Float = 1.0;
+
+  if Equals(itemData.GetItemType(), gamedataItemType.Gen_Misc) {
+    powerLevelPlayer = 1.0;
+  }
+
+  if (itemData.HasTag(n"Weapon")) {
+    if (RPGManager.IsItemIconic(itemData)) {
+      switch (itemQuality) {
+        case n"Legendary":
+          qualMulti = 2.3;
+          break;
+        case n"Epic":
+            qualMulti = 1.49;
+          break;
+        case n"Rare":
+          qualMulti = 1.0;
+          break;
+        case n"Uncommon":
+          qualMulti = 0.5;
+          break;
+        case n"Common":
+          qualMulti = 0.33;
+          break;
+        default:
+          qualMulti = 1.0;
+          break;
+      };
+    } else {
+      switch (itemQuality) {
+        case n"Legendary":
+          qualMulti = 1.85;
+          break;
+        case n"Epic":
+            qualMulti = 1.19;
+          break;
+        case n"Rare":
+          qualMulti = 0.79;
+          break;
+        case n"Uncommon":
+          qualMulti = 0.40;
+          break;
+        case n"Common":
+          qualMulti = 0.26;
+          break;
+        default:
+          qualMulti = 0.79;
+          break;
+      };
+    }
+  }
+  
+  if (itemData.HasTag(n"Clothing")) {
+    if (RPGManager.IsItemIconic(itemData)) {
+      switch (itemQuality) {
+        case n"Legendary":
+          qualMulti = 2.9;
+          break;
+        case n"Epic":
+            qualMulti = 1.8;
+          break;
+        case n"Rare":
+          qualMulti = 1.25;
+          break;
+        case n"Uncommon":
+          qualMulti = 1.025;
+          break;
+        case n"Common":
+          qualMulti = 0.91;
+          break;
+        default:
+          qualMulti = 1.25;
+          break;
+      };
+    } else {
+      switch (itemQuality) {
+        case n"Legendary":
+            qualMulti = 2.34;
+            break;
+        case n"Epic":
+            qualMulti = 1.5;
+            break;
+        case n"Rare":
+            qualMulti = 1.0;
+            break;
+        case n"Uncommon":
+            qualMulti = 0.5;
+            break;
+        case n"Common":
+            qualMulti = 0.33;
+            break;
+        default:
+            qualMulti = 1.0;
+            break;
+      };
+    }
+  }
+
+  if ((itemData.HasTag(n"WeaponMod")) || (itemData.HasTag(n"FabricEnhancer")) || (itemData.HasTag(n"SoftwareShard")) || (itemData.HasTag(n"Fragment")) || (itemData.HasTag(n"Recipe"))) {
+    powerLevelPlayer = 1.0;
+    switch (itemQuality) {
+      case n"Legendary":
+        qualMulti = 7.0;
+        break;
+      case n"Epic":
+        qualMulti = 4.5;
+        break;
+      case n"Rare":
+        qualMulti = 3.0;
+        break;
+      case n"Uncommon":
+        qualMulti = 1.5;
+        break;
+      case n"Common":
+        qualMulti = 1.0;
+        break;
+      default:
+        qualMulti = 3.0;
+        break;
+    };
+  }
+    
+  if (itemData.HasTag(n"Cyberware")) {
+    powerLevelPlayer = 1.0;
+    if (RPGManager.IsItemIconic(itemData)) {
+      qualMulti = 8.75;  
+    } else {
+        switch (itemQuality) {
+          case n"Legendary":
+            qualMulti = 7.0;
+            break;
+          case n"Epic":
+            qualMulti = 4.0;
+            break;
+          case n"Rare":
+            qualMulti = 2.5;
+            break;
+          case n"Uncommon":
+            qualMulti = 1.5;
+            break;
+          case n"Common":
+            qualMulti = 1.0;
+            break;
+          default:
+            qualMulti = 2.5;
+            break;
+        };
+    }
+  }
+  
+  if ((itemData.HasTag(n"Grenade")) || (itemData.HasTag(n"Ammo")) || (itemData.HasTag(n"CraftingPart")) || (itemData.HasTag(n"Consumable")) || (itemData.HasTag(n"Junk"))) {
+    if itemData.HasTag(n"skillbook") {
+      qualMulti = 20.0;
+    } else {
+      powerLevelPlayer = 1.0;
+    }
+  }
+
+  return RoundF((powerLevelPlayer * qualMulti) * Cast<Float>(MarketSystem.GetBuyPrice(this.m_VendorDataManager.GetVendorInstance(), itemData.GetID())));
 }
 
 @wrapMethod(FullscreenVendorGameController)
