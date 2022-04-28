@@ -7,6 +7,13 @@ public static func IsPresetIconic(id: TweakDBID) -> Bool {
   return isIconic;
 }
 
+// -- Checks if item has DLC jackets variations
+public static func HasDLCItems(id: TweakDBID) -> Bool {
+  let variant: Variant = TweakDBInterface.GetFlat(id + t".hasDLCItems");
+  let hasItems: Bool = FromVariant<Bool>(variant);
+  return hasItems;
+}
+
 // -- Get quality representation as int value to bind with the one defined in IconicRecipeCondition
 public static func GetBaseQualityValue(quality: CName) -> Int32  {
   switch (quality) {

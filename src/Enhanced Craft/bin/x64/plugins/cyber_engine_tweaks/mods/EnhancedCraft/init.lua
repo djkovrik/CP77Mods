@@ -7,7 +7,9 @@ local defaults = {
 	IconicIngredientsMultiplier = 5,
 	ControllerSupportEnabled = false,
 	CustomizedDamageEnabled = true,
-	PerkToUnlockDamageTypes = 2
+	PerkToUnlockDamageTypes = 2,
+	PerkToUnlockClothes = 2,
+	IncludeJacketsFromDLC = false
 }
 
 local settings = {
@@ -19,7 +21,9 @@ local settings = {
 	IconicIngredientsMultiplier = 5,
 	ControllerSupportEnabled = false,
 	CustomizedDamageEnabled = true,
-	PerkToUnlockDamageTypes = 2
+	PerkToUnlockDamageTypes = 2,
+	PerkToUnlockClothes = 2,
+	IncludeJacketsFromDLC = false
 }
 
 function SaveSettings() 
@@ -71,14 +75,7 @@ function SetupSettingsMenu()
 		[4] = GetLocalizedTextByKey("Mod-Craft-Settings-Perk-Monkey"),
 		[5] = GetLocalizedTextByKey("Mod-Craft-Settings-Perk-Artisan")
 	}
-	
-	local damageRequirements = {
-		[1] = GetLocalizedTextByKey("Mod-Craft-Settings-Perk-None"),
-		[2] = GetLocalizedTextByKey("Mod-Craft-Settings-Perk-Craftsman"),
-		[3] = GetLocalizedTextByKey("Mod-Craft-Settings-Perk-Monkey"),
-		[4] = GetLocalizedTextByKey("Mod-Craft-Settings-Perk-Artisan")
-	}
-	
+
 	local qualities = {
 		[1] = GetLocalizedTextByKey("Mod-Craft-Settings-Quality-Rare"),
 		[2] = GetLocalizedTextByKey("Mod-Craft-Settings-Quality-Epic"),
@@ -91,7 +88,7 @@ function SetupSettingsMenu()
 	
 	nativeSettings.addSwitch("/ecraft/damage", GetLocalizedTextByKey("Mod-Craft-UI-Damage-Type-Enable"), GetLocalizedTextByKey("Mod-Craft-UI-Damage-Type-Enable-Desc"), settings.CustomizedDamageEnabled, defaults.CustomizedDamageEnabled, function(state) settings.CustomizedDamageEnabled = state end)
 	
-	nativeSettings.addSelectorString("/ecraft/damage", GetLocalizedTextByKey("Mod-Craft-UI-Damage-Perk"), GetLocalizedTextByKey("Mod-Craft-UI-Damage-Perk-Desc"), damageRequirements, settings.PerkToUnlockDamageTypes, defaults.PerkToUnlockDamageTypes, function(value)
+	nativeSettings.addSelectorString("/ecraft/damage", GetLocalizedTextByKey("Mod-Craft-UI-Damage-Perk"), GetLocalizedTextByKey("Mod-Craft-UI-Damage-Perk-Desc"), basicRequirements, settings.PerkToUnlockDamageTypes, defaults.PerkToUnlockDamageTypes, function(value)
 		settings.PerkToUnlockDamageTypes = value
 	end)
 	
@@ -114,6 +111,14 @@ function SetupSettingsMenu()
 	nativeSettings.addRangeInt("/ecraft/iconic", GetLocalizedTextByKey("Mod-Craft-Iconic-Ingredients"), GetLocalizedTextByKey("Mod-Craft-Iconic-Ingredients-Desc"), 1, 25, 1, settings.IconicIngredientsMultiplier, defaults.IconicIngredientsMultiplier, function(value)
 		settings.IconicIngredientsMultiplier = value
 	end)
+	
+	nativeSettings.addSubcategory("/ecraft/clothes", GetLocalizedTextByKey("Mod-Craft-Settings-Clothes"))
+	
+	nativeSettings.addSelectorString("/ecraft/clothes", GetLocalizedTextByKey("Mod-Craft-UI-Damage-Perk"), GetLocalizedTextByKey("Mod-Craft-Settings-Clothes-Unlock-Desc"), basicRequirements, settings.PerkToUnlockClothes, defaults.PerkToUnlockClothes, function(value)
+		settings.PerkToUnlockClothes = value
+	end)
+	
+	nativeSettings.addSwitch("/ecraft/clothes", GetLocalizedTextByKey("Mod-Craft-Settings-Jackets"), GetLocalizedTextByKey("Mod-Craft-Settings-Jackets-Desc"), settings.IncludeJacketsFromDLC, defaults.IncludeJacketsFromDLC, function(state) settings.IncludeJacketsFromDLC = state end)
 	
 	nativeSettings.addSubcategory("/ecraft/misc", GetLocalizedTextByKey("Mod-Craft-Settings-Misc"))
 	
@@ -138,6 +143,8 @@ registerForEvent("onInit", function()
 	Override("EnhancedCraft.Config.Config", "ControllerSupportEnabled;", function(_) return settings.ControllerSupportEnabled end)
 	Override("EnhancedCraft.Config.Config", "CustomizedDamageEnabled;", function(_) return settings.CustomizedDamageEnabled end)
 	Override("EnhancedCraft.Config.Config", "PerkToUnlockDamageTypes;", function(_) return settings.PerkToUnlockDamageTypes end)
+	Override("EnhancedCraft.Config.Config", "PerkToUnlockClothes;", function(_) return settings.PerkToUnlockClothes end)
+	Override("EnhancedCraft.Config.Config", "IncludeJacketsFromDLC;", function(_) return settings.IncludeJacketsFromDLC end)
 end)
 
 registerForEvent("onShutdown", function()

@@ -12,15 +12,27 @@ public class EnhancedCraftHotkeyListener {
     this.controller = controller;
   }
 
+  // Hotkeys active only if Randomizer disabled
   protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
     let actionName: CName = ListenerAction.GetName(action);
-    let isReleased: Bool = Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED);
-    // Hotkeys active only if Randomizer disabled
-    if Equals(actionName, HotkeyActions.EnhancedCraftPrevAction()) && isReleased && !Config.RandomizerEnabled() {
-      this.controller.LoadPrevVariant();
+    let isReleased: Bool = Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED);
+    // Weapons
+    if ArraySize(this.controller.weaponVariants) > 1 {
+      if Equals(actionName, HotkeyActions.EnhancedCraftPrevAction()) && isReleased && !Config.RandomizerEnabled() {
+        this.controller.LoadPrevWeaponVariant();
+      };
+      if Equals(actionName, HotkeyActions.EnhancedCraftNextAction()) && isReleased && !Config.RandomizerEnabled() {
+        this.controller.LoadNextWeaponVariant();
+      };
     };
-    if Equals(actionName, HotkeyActions.EnhancedCraftNextAction()) && isReleased && !Config.RandomizerEnabled() {
-      this.controller.LoadNextVariant();
+    // Clothes
+    if ArraySize(this.controller.clothesVariants) > 1 {
+      if Equals(actionName, HotkeyActions.EnhancedCraftPrevAction()) && isReleased {
+        this.controller.LoadPrevClothesVariant();
+      };
+      if Equals(actionName, HotkeyActions.EnhancedCraftNextAction()) && isReleased {
+        this.controller.LoadNextClothesVariant();
+      };
     };
   }
 }

@@ -1,0 +1,497 @@
+# UncommonBalaclavaRecipe = Items.Balaclava_01_basic_02_Crafting
+Items.Balaclava_01_basic_02_Crafting.clothesVariants:
+- t"Items.Balaclava_01_basic_01"
+- t"Items.Balaclava_01_basic_02"
+
+# UncommonBootsRecipe = Items.Boots_03_basic_02_Crafting
+Items.Boots_03_basic_02_Crafting.clothesVariants:
+- t"Items.Boots_03_basic_01"
+- t"Items.Boots_03_basic_02"
+
+# UncommonCapRecipe = Items.Proficiency_Cap_06_basic_01_Crafting
+Items.Proficiency_Cap_06_basic_01_Crafting.clothesVariants:
+- t"Items.Cap_06_basic_01"
+- t"Items.Cap_06_basic_02"
+
+# UncommonCasualShoesRecipe = Items.CasualShoes_01_basic_01_Crafting
+Items.CasualShoes_01_basic_01_Crafting.clothesVariants:
+- t"Items.CasualShoes_01_basic_01"
+- t"Items.CasualShoes_01_basic_02"
+- t"Items.CasualShoes_01_basic_03"
+- t"Items.CasualShoes_01_basic_04"
+- t"Items.CasualShoes_01_basic_05"
+
+# UncommonDressRecipe = Items.Dress_01_rich_03_Crafting
+Items.Dress_01_rich_03_Crafting.clothesVariants:
+- t"Items.Dress_01_rich_01"
+- t"Items.Dress_01_rich_02"
+- t"Items.Dress_01_rich_03"
+
+# UncommonFormalPantsRecipe = Items.Proficiency_FormalPants_01_basic_01_Crafting
+Items.Proficiency_FormalPants_01_basic_01_Crafting.clothesVariants:
+- t"Items.FormalPants_01_basic_01"
+- t"Items.FormalPants_01_basic_02"
+- t"Items.FormalPants_01_basic_03"
+
+# UncommonFormalShirtRecipe = Items.FormalShirt_02_basic_03_Crafting
+Items.FormalShirt_02_basic_03_Crafting.clothesVariants:
+- t"Items.FormalShirt_02_basic_01"
+- t"Items.FormalShirt_02_basic_02"
+- t"Items.FormalShirt_02_basic_03"
+- t"Items.FormalShirt_02_basic_04"
+
+# UncommonFormalShoesRecipe = Items.Proficiency_FormalShoes_02_basic_02_Crafting
+Items.Proficiency_FormalShoes_02_basic_02_Crafting.clothesVariants:
+- t"Items.FormalShoes_02_basic_01"
+- t"Items.FormalShoes_02_basic_02"
+- t"Items.FormalShoes_02_basic_03"
+
+# UncommonFormalSkirtRecipe = Items.FormalSkirt_01_rich_01_Crafting
+Items.FormalSkirt_01_rich_01_Crafting.clothesVariants:
+- t"Items.FormalSkirt_01_rich_01"
+- t"Items.FormalSkirt_01_rich_02"
+- t"Items.FormalSkirt_01_rich_03"
+
+# UncommonHelmetRecipe = Items.Helmet_01_basic_03_Crafting
+Items.Helmet_01_basic_03_Crafting.clothesVariants:
+- t"Items.Helmet_01_basic_01"
+- t"Items.Helmet_01_basic_02"
+- t"Items.Helmet_01_basic_03"
+
+# UncommonJacketRecipe = Items.Proficiency_Jacket_06_basic_01_Crafting
+Items.Proficiency_Jacket_06_basic_01_Crafting.clothesVariants:
+- t"Items.Jacket_06_basic_01"
+- t"Items.Jacket_06_basic_02"
+
+# UncommonMaskRecipe = Items.Mask_02_rich_02_Crafting
+Items.Mask_02_rich_02_Crafting.clothesVariants:
+- t"Items.Mask_02_rich_01"
+- t"Items.Mask_02_rich_02"
+
+# UncommonPantsRecipe = Items.Pants_02_basic_01_Crafting
+Items.Pants_02_basic_01_Crafting.clothesVariants:
+- t"Items.Pants_02_basic_01"
+- t"Items.Pants_02_basic_02"
+- t"Items.Pants_02_basic_03"
+
+# UncommonShirtLooseRecipe = Items.LooseShirt_01_rich_02_Crafting
+Items.LooseShirt_01_rich_02_Crafting.clothesVariants:
+- t"Items.LooseShirt_01_rich_01"
+- t"Items.LooseShirt_01_rich_02"
+
+# UncommonShirtRecipe = Items.Proficiency_Shirt_02_basic_02_Crafting
+Items.Proficiency_Shirt_02_basic_02_Crafting.clothesVariants:
+- t"Items.Shirt_02_basic_01"
+- t"Items.Shirt_02_basic_02"
+- t"Items.Shirt_02_basic_03"
+- t"Items.Shirt_02_basic_04"
+
+# UncommonTechRecipe = Items.Proficiency_Tech_02_basic_02_Crafting
+Items.Proficiency_Tech_02_basic_02_Crafting.clothesVariants:
+- t"Items.Tech_02_basic_01"
+- t"Items.Tech_02_basic_02"
+
+# UncommonUndershirtRecipe = Items.Undershirt_03_basic_04_Crafting
+Items.Undershirt_03_basic_04_Crafting.clothesVariants:
+- t"Items.Undershirt_03_basic_01"
+- t"Items.Undershirt_03_basic_02"
+- t"Items.Undershirt_03_basic_03"
+- t"Items.Undershirt_03_basic_04"
+
+# UncommonVestRecipe = Items.Vest_13_rich_04_Crafting
+Items.Vest_13_rich_04_Crafting.clothesVariants:
+- t"Items.Vest_13_rich_01"
+- t"Items.Vest_13_rich_02"
+- t"Items.Vest_13_rich_03"
+- t"Items.Vest_13_rich_04"
+
+# UncommonVisorRecipe = Items.Visor_02_basic_02_Crafting
+Items.Visor_02_basic_02_Crafting.clothesVariants:
+- t"Items.Visor_02_basic_01"
+- t"Items.Visor_02_basic_02"
+- t"Items.Visor_02_basic_03"
+
+# RareBootsRecipe = Items.Boots_07_basic_01_Crafting
+Items.Boots_07_basic_01_Crafting.clothesVariants:
+- t"Items.Boots_07_basic_01"
+- t"Items.Boots_07_basic_02"
+
+# RareCasualShoesRecipe = Items.Proficiency_CasualShoes_07_basic_01_Crafting
+Items.Proficiency_CasualShoes_07_basic_01_Crafting.clothesVariants:
+- t"Items.CasualShoes_07_basic_01"
+- t"Items.CasualShoes_07_basic_02"
+- t"Items.CasualShoes_07_basic_03"
+- t"Items.CasualShoes_07_basic_04"
+
+# RareCoatRecipe = Items.Coat_04_rich_02_Crafting
+Items.Coat_04_rich_02_Crafting.clothesVariants:
+- t"Items.Coat_04_rich_01"
+- t"Items.Coat_04_rich_02"
+
+# RareFormalJacketRecipe = Items.FormalJacket_02_basic_02_Crafting
+Items.FormalJacket_02_basic_02_Crafting.clothesVariants:
+- t"Items.FormalJacket_02_basic_01"
+- t"Items.FormalJacket_02_basic_02"
+- t"Items.FormalJacket_02_basic_03"
+
+# RareFormalPantsRecipe = Items.FormalPants_02_rich_01_Crafting
+Items.FormalPants_02_rich_01_Crafting.clothesVariants:
+- t"Items.FormalPants_02_rich_01"
+- t"Items.FormalPants_02_rich_02"
+- t"Items.FormalPants_02_rich_03"
+
+# RareFormalShoesRecipe = Items.FormalShoes_03_rich_01_Crafting
+Items.FormalShoes_03_rich_01_Crafting.clothesVariants:
+- t"Items.FormalShoes_03_rich_01"
+- t"Items.FormalShoes_03_rich_02"
+
+# RareGlassesRecipe = Items.Glasses_03_basic_06_Crafting
+Items.Glasses_03_basic_06_Crafting.clothesVariants:
+- t"Items.Glasses_03_basic_01"
+- t"Items.Glasses_03_basic_02"
+- t"Items.Glasses_03_basic_03"
+- t"Items.Glasses_03_basic_04"
+- t"Items.Glasses_03_basic_05"
+- t"Items.Glasses_03_basic_06"
+- t"Items.Glasses_03_basic_07"
+- t"Items.Glasses_03_basic_08"
+- t"Items.Glasses_03_basic_09"
+- t"Items.Glasses_03_basic_10"
+
+# RareHatRecipe = Items.Hat_03_basic_02_Crafting
+Items.Hat_03_basic_02_Crafting.clothesVariants:
+- t"Items.Hat_03_basic_01"
+- t"Items.Hat_03_basic_02"
+
+# RareHelmetRecipe = Items.Proficiency_Helmet_04_basic_02_Crafting
+Items.Proficiency_Helmet_04_basic_02_Crafting.clothesVariants:
+- t"Items.Helmet_04_basic_01"
+- t"Items.Helmet_04_basic_02"
+
+# RareJacketRecipe = Items.Jacket_01_rich_01_Crafting
+Items.Jacket_01_rich_01_Crafting.clothesVariants:
+- t"Items.Jacket_01_rich_01"
+- t"Items.Jacket_01_rich_02"
+
+# RareMaskRecipe = Items.Proficiency_Mask_02_basic_01_Crafting
+Items.Proficiency_Mask_02_basic_01_Crafting.clothesVariants:
+- t"Items.Mask_02_basic_01"
+- t"Items.Mask_02_basic_02"
+
+# RarePantsRecipe = Items.Proficiency_Pants_13_basic_01_Crafting
+Items.Proficiency_Pants_13_basic_01_Crafting.clothesVariants:
+- t"Items.Pants_13_basic_01"
+- t"Items.Pants_13_basic_02"
+- t"Items.Pants_13_basic_03"
+
+# RareScarfRecipe = Items.Scarf_01_rich_01_Crafting
+Items.Scarf_01_rich_01_Crafting.clothesVariants:
+- t"Items.Scarf_01_rich_01"
+- t"Items.Scarf_01_rich_02"
+- t"Items.Scarf_01_rich_03"
+
+# RareShirtRecipe = Items.Shirt_01_basic_02_Crafting
+Items.Shirt_01_basic_02_Crafting.clothesVariants:
+- t"Items.Shirt_01_basic_01"
+- t"Items.Shirt_01_basic_02"
+
+# RareShortsRecipe = Items.Shorts_01_basic_01_Crafting
+# No variants here
+# Items.Shorts_01_basic_01_Crafting.clothesVariants:
+
+
+# RareTechRecipe = Items.Tech_01_basic_01_Crafting
+Items.Tech_01_basic_01_Crafting.clothesVariants:
+- t"Items.Tech_01_basic_01"
+- t"Items.Tech_01_basic_02"
+
+# RareTShirtRecipe = Items.TShirt_02_basic_04_Crafting
+Items.TShirt_02_basic_04_Crafting.clothesVariants:
+- t"Items.TShirt_02_basic_01"
+- t"Items.TShirt_02_basic_02"
+- t"Items.TShirt_02_basic_03"
+- t"Items.TShirt_02_basic_04"
+- t"Items.TShirt_02_basic_05"
+
+# RareUndershirtRecipe = Items.Proficiency_Undershirt_03_basic_03_Crafting
+Items.Proficiency_Undershirt_03_basic_03_Crafting.clothesVariants:
+- t"Items.Undershirt_03_basic_01"
+- t"Items.Undershirt_03_basic_02"
+- t"Items.Undershirt_03_basic_03"
+- t"Items.Undershirt_03_basic_04"
+
+# RareVestRecipe = Items.Proficiency_Vest_18_basic_01_Crafting
+Items.Proficiency_Vest_18_basic_01_Crafting.clothesVariants:
+- t"Items.Vest_18_basic_01"
+- t"Items.Vest_18_basic_02"
+
+# EpicBootsRecipe = Items.Proficiency_Boots_11_rich_01_Crafting
+Items.Proficiency_Boots_11_rich_01_Crafting.clothesVariants:
+- t"Items.Boots_11_rich_01"
+- t"Items.Boots_11_rich_02"
+
+# EpicCapRecipe = Items.Cap_02_basic_01_Crafting
+Items.Cap_02_basic_01_Crafting.clothesVariants:
+- t"Items.Cap_02_basic_01"
+- t"Items.Cap_02_basic_02"
+- t"Items.Cap_02_basic_03"
+
+# EpicCasualShoesRecipe = Items.CasualShoes_05_basic_03_Crafting
+Items.CasualShoes_05_basic_03_Crafting.clothesVariants:
+- t"Items.CasualShoes_05_basic_01"
+- t"Items.CasualShoes_05_basic_02"
+- t"Items.CasualShoes_05_basic_03"
+
+# EpicCoatRecipe = Items.Coat_01_basic_03_Crafting
+Items.Coat_01_basic_03_Crafting.clothesVariants:
+- t"Items.Coat_01_basic_01"
+- t"Items.Coat_01_basic_02"
+- t"Items.Coat_01_basic_03"
+
+# EpicFormalJacketRecipe = Items.FormalJacket_04_basic_02_Crafting
+Items.FormalJacket_04_basic_02_Crafting.clothesVariants:
+- t"Items.FormalJacket_04_basic_01"
+- t"Items.FormalJacket_04_basic_02"
+- t"Items.FormalJacket_04_basic_03"
+
+# EpicFormalShirtRecipe = Items.FormalShirt_01_rich_06_Crafting
+Items.FormalShirt_01_rich_06_Crafting.clothesVariants:
+- t"Items.FormalShirt_01_rich_01"
+- t"Items.FormalShirt_01_rich_02"
+- t"Items.FormalShirt_01_rich_03"
+- t"Items.FormalShirt_01_rich_04"
+- t"Items.FormalShirt_01_rich_05"
+- t"Items.FormalShirt_01_rich_06"
+
+# EpicFormalShoesRecipe = Items.FormalShoes_01_rich_02_Crafting
+Items.FormalShoes_01_rich_02_Crafting.clothesVariants:
+- t"Items.FormalShoes_01_rich_01"
+- t"Items.FormalShoes_01_rich_02"
+
+# EpicFormalSkirtRecipe = Items.Proficiency_FormalSkirt_02_rich_01_Crafting
+Items.Proficiency_FormalSkirt_02_rich_01_Crafting.clothesVariants:
+- t"Items.FormalSkirt_02_rich_01"
+- t"Items.FormalSkirt_02_rich_02"
+- t"Items.FormalSkirt_02_rich_03"
+
+# EpicGlassesRecipe = Items.Glasses_01_basic_03_Crafting
+Items.Glasses_01_basic_03_Crafting.clothesVariants:
+- t"Items.Glasses_01_basic_01"
+- t"Items.Glasses_01_basic_02"
+- t"Items.Glasses_01_basic_03"
+- t"Items.Glasses_01_basic_04"
+- t"Items.Glasses_01_basic_05"
+
+# EpicHatRecipe = Items.Proficiency_Hat_01_rich_01_Crafting
+Items.Proficiency_Hat_01_rich_01_Crafting.clothesVariants:
+- t"Items.Hat_01_rich_01"
+- t"Items.Hat_01_rich_02"
+
+# EpicHelmetRecipe = Items.Helmet_03_basic_01_Crafting
+Items.Helmet_03_basic_01_Crafting.clothesVariants:
+- t"Items.Helmet_03_basic_01"
+- t"Items.Helmet_03_basic_02"
+
+# EpicLooseShirtRecipe = Items.Proficiency_LooseShirt_02_rich_01_Crafting
+Items.Proficiency_LooseShirt_02_rich_01_Crafting.clothesVariants:
+- t"Items.LooseShirt_02_rich_01"
+- t"Items.LooseShirt_02_rich_02"
+
+# EpicMaskRecipe = Items.Mask_03_basic_02_Crafting
+Items.Mask_03_basic_02_Crafting.clothesVariants:
+- t"Items.Mask_03_basic_01"
+- t"Items.Mask_03_basic_02"
+
+# EpicPantsRecipe = Items.Pants_04_basic_01_Crafting
+Items.Pants_04_basic_01_Crafting.clothesVariants:
+- t"Items.Pants_04_basic_01"
+- t"Items.Pants_04_basic_02"
+- t"Items.Pants_04_basic_03"
+- t"Items.Pants_04_basic_04"
+
+# EpicScarfRecipe = Items.Scarf_03_basic_03_Crafting
+Items.Scarf_03_basic_03_Crafting.clothesVariants:
+- t"Items.Scarf_03_basic_01"
+- t"Items.Scarf_03_basic_02"
+- t"Items.Scarf_03_basic_03"
+
+# EpicShortsRecipe = Items.Shorts_02_basic_02_Crafting
+Items.Shorts_02_basic_02_Crafting.clothesVariants:
+- t"Items.Shorts_02_basic_01"
+- t"Items.Shorts_02_basic_02"
+
+# EpicTShirtRecipe = Items.Proficiency_TShirt_03_rich_03_Crafting
+Items.Proficiency_TShirt_03_rich_03_Crafting.clothesVariants:
+- t"Items.TShirt_03_rich_01"
+- t"Items.TShirt_03_rich_02"
+- t"Items.TShirt_03_rich_03"
+
+# EpicUndershirtRecipe = Items.Undershirt_02_rich_02_Crafting
+Items.Undershirt_02_rich_02_Crafting.clothesVariants:
+- t"Items.Undershirt_02_rich_01"
+- t"Items.Undershirt_02_rich_02"
+
+# EpicVisorRecipe = Items.Proficiency_Visor_02_rich_01_Crafting
+Items.Proficiency_Visor_02_rich_01_Crafting.clothesVariants:
+- t"Items.Visor_02_rich_01"
+- t"Items.Visor_02_rich_02"
+- t"Items.Visor_02_rich_03"
+
+# LegendaryBootsRecipe = Items.Boots_09_rich_01_Crafting
+Items.Boots_09_rich_01_Crafting.clothesVariants:
+- t"Items.Boots_09_rich_01"
+- t"Items.Boots_09_rich_02"
+- t"Items.Boots_09_rich_03"
+
+# LegendaryCapRecipe = Items.Cap_03_rich_02_Crafting
+Items.Cap_03_rich_02_Crafting.clothesVariants:
+- t"Items.Cap_03_rich_01"
+- t"Items.Cap_03_rich_02"
+
+# LegendaryCasualShoesRecipe = Items.CasualShoes_02_basic_01_Crafting
+Items.CasualShoes_02_basic_01_Crafting.clothesVariants:
+- t""
+
+# LegendaryFormalPantsRecipe = Items.FormalPants_03_rich_02_Crafting
+Items.FormalPants_03_rich_02_Crafting.clothesVariants:
+- t"Items.FormalPants_03_rich_01"
+- t"Items.FormalPants_03_rich_02"
+
+# LegendaryFormalShoesRecipe = Items.Proficiency_FormalShoes_02_rich_03_Crafting
+Items.Proficiency_FormalShoes_02_rich_03_Crafting.clothesVariants:
+- t"Items.FormalShoes_02_rich_01"
+- t"Items.FormalShoes_02_rich_02"
+- t"Items.FormalShoes_02_rich_03"
+
+# LegendaryFormalSkirtRecipe = Items.FormalSkirt_02_rich_03_Crafting
+Items.FormalSkirt_02_rich_03_Crafting.clothesVariants:
+- t"Items.FormalSkirt_02_rich_01"
+- t"Items.FormalSkirt_02_rich_02"
+- t"Items.FormalSkirt_02_rich_03"
+
+# LegendaryGlassesRecipe = Items.Proficiency_Glasses_05_basic_01_Crafting
+Items.Proficiency_Glasses_05_basic_01_Crafting.clothesVariants:
+- t"Items.Glasses_05_basic_01"
+- t"Items.Glasses_05_basic_02"
+- t"Items.Glasses_05_basic_03"
+- t"Items.Glasses_05_basic_04"
+
+# LegendaryHatRecipe = Items.Hat_02_rich_02_Crafting
+Items.Hat_02_rich_02_Crafting.clothesVariants:
+- t"Items.Hat_02_rich_01"
+- t"Items.Hat_02_rich_02"
+
+# LegendaryJacketRecipe = Items.Jacket_17_rich_06_Crafting
+Items.Jacket_17_rich_06_Crafting.clothesVariants:
+- t"Items.Jacket_17_rich_01"
+- t"Items.Jacket_17_rich_02"
+- t"Items.Jacket_17_rich_03"
+- t"Items.Jacket_17_rich_04"
+- t"Items.Jacket_17_rich_05"
+- t"Items.Jacket_17_rich_06"
+
+# LegendaryJumpsuitRecipe = Items.Proficiency_Jumpsuit_02_rich_03_Crafting
+Items.Proficiency_Jumpsuit_02_rich_03_Crafting.clothesVariants:
+- t"Items.Jumpsuit_02_rich_01"
+- t"Items.Jumpsuit_02_rich_02"
+- t"Items.Jumpsuit_02_rich_03"
+
+# LegendaryPantsRecipe = Items.Pants_08_rich_01_Crafting
+Items.Pants_08_rich_01_Crafting.clothesVariants:
+- t"Items.Pants_08_rich_01"
+- t"Items.Pants_08_rich_02"
+- t"Items.Pants_08_rich_03"
+
+# LegendaryScarfRecipe = Items.Proficiency_Scarf_02_rich_01_Crafting
+# No variants here
+# Items.Proficiency_Scarf_02_rich_01_Crafting.clothesVariants:
+
+# LegendaryShirtRecipe = Items.Shirt_03_basic_02_Crafting
+Items.Shirt_03_basic_02_Crafting.clothesVariants:
+- t"Items.Shirt_03_basic_01"
+- t"Items.Shirt_03_basic_02"
+- t"Items.Shirt_03_basic_03"
+
+# LegendaryShortsRecipe = Items.Proficiency_Shorts_02_rich_02_Crafting
+Items.Proficiency_Shorts_02_rich_02_Crafting.clothesVariants:
+- t"Items.Shorts_02_rich_01"
+- t"Items.Shorts_02_rich_02"
+
+# LegendaryTechRecipe = Items.Tech_02_basic_01_Crafting
+Items.Tech_02_basic_01_Crafting.clothesVariants:
+- t"Items.Tech_02_basic_01"
+- t"Items.Tech_02_basic_02"
+
+# LegendaryTightJumpsuitRecipe = Items.Proficiency_TightJumpsuit_01_rich_02_Crafting
+Items.Proficiency_TightJumpsuit_01_rich_02_Crafting.clothesVariants:
+- t"Items.TightJumpsuit_01_rich_01"
+- t"Items.TightJumpsuit_01_rich_02"
+
+# LegendaryTShirtRecipe = Items.TShirt_01_rich_02_Crafting
+Items.TShirt_01_rich_02_Crafting.clothesVariants:
+- t"Items.TShirt_01_rich_01"
+- t"Items.TShirt_01_rich_02"
+- t"Items.TShirt_01_rich_03"
+
+# LegendaryVestRecipe = Items.Vest_20_rich_01_Crafting
+Items.Vest_20_rich_01_Crafting.clothesVariants:
+- t"Items.Vest_20_rich_01"
+- t"Items.Vest_20_rich_02"
+
+# LegendaryVisorRecipe = Items.Visor_01_basic_05_Crafting
+Items.Visor_01_basic_05_Crafting.clothesVariants:
+- t"Items.Visor_01_basic_01"
+- t"Items.Visor_01_basic_02"
+- t"Items.Visor_01_basic_03"
+- t"Items.Visor_01_basic_04"
+- t"Items.Visor_01_basic_05"
+
+# DLC Jackets
+Items.Jacket_19_basic_04.clothesVariants: &DLCJackets
+- t"Items.Jacket_19_basic_01"
+- t"Items.Jacket_19_basic_02"
+- t"Items.Jacket_19_basic_03"
+# Default DLC jacket
+- t"Items.Jacket_19_basic_04"
+- t"Items.Jacket_19_basic_05"
+- t"Items.Jacket_19_basic_06"
+- t"Items.Jacket_19_old_01"
+- t"Items.Jacket_19_old_02"
+- t"Items.Jacket_19_old_03"
+- t"Items.Jacket_19_old_04"
+- t"Items.Jacket_19_old_05"
+- t"Items.Jacket_19_old_06"
+- t"Items.Jacket_19_rich_01"
+- t"Items.Jacket_19_rich_02"
+- t"Items.Jacket_19_rich_03"
+- t"Items.Jacket_19_rich_04"
+- t"Items.Jacket_19_rich_05"
+- t"Items.Jacket_19_rich_06"
+# Default DLC jacket
+- t"Items.Jacket_20_basic_01"
+- t"Items.Jacket_20_basic_02"
+- t"Items.Jacket_20_basic_03"
+- t"Items.Jacket_20_basic_04"
+- t"Items.Jacket_20_basic_05"
+- t"Items.Jacket_20_basic_06"
+- t"Items.Jacket_20_basic_07"
+- t"Items.Jacket_20_old_01"
+- t"Items.Jacket_20_old_02"
+- t"Items.Jacket_20_old_03"
+- t"Items.Jacket_20_old_04"
+- t"Items.Jacket_20_old_05"
+- t"Items.Jacket_20_rich_01"
+- t"Items.Jacket_20_rich_02"
+- t"Items.Jacket_20_rich_03"
+- t"Items.Jacket_20_rich_04"
+- t"Items.Jacket_20_rich_05"
+
+Items.Jacket_20_basic_01.clothesVariants: *DLCJackets
+Items.Jacket_19_basic_04_Crafted.clothesVariants: *DLCJackets
+Items.Jacket_20_basic_01_Crafted.clothesVariants: *DLCJackets
+
+Items.Jacket_19_basic_04.hasDLCItems: true
+Items.Jacket_20_basic_01.hasDLCItems: true
+Items.Jacket_19_basic_04_Crafted.hasDLCItems: true
+Items.Jacket_20_basic_01_Crafted.hasDLCItems: true
+

@@ -20,6 +20,12 @@ module EnhancedCraft.Config
     3: Grease Monkey (Epic items craft)
     4: Edgerunner Artisan (Legendary items craft)
 
+  PerkToUnlockClothes:
+    1: No perk required
+    2: True Craftsman (Rare items craft)
+    3: Grease Monkey (Epic items craft)
+    4: Edgerunner Artisan (Legendary items craft)
+
   IconicRecipeCondition:
     1: Rare
     2: Epic
@@ -46,6 +52,10 @@ public class Config {
   public static func CustomizedDamageEnabled() -> Bool = true
   // Required perk to unlock weapon damage type selection
   public static func PerkToUnlockDamageTypes() -> Int32 = 2
+  // Required perk to unlock clothes variants
+  public static func PerkToUnlockClothes() -> Int32 = 2
+  // If enabled then adds jacket variants from DLC
+  public static func IncludeJacketsFromDLC() -> Bool = false
 }
 
 public class HotkeyActions {

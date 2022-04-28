@@ -5,6 +5,10 @@ import EnhancedCraft.Config.*
 @addField(CraftingLogicController)
 private let m_availableSkinsText: ref<inkText>;
 
+// -- New text label for available clothes counter
+@addField(CraftingLogicController)
+private let m_availableClothesText: ref<inkText>;
+
 // -- New text label for Randomizer status
 @addField(CraftingLogicController)
 private let m_randomizerText: ref<inkText>;
@@ -16,6 +20,7 @@ public func Init(craftingGameController: wref<CraftingMainGameController>) -> Vo
 
   let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
   let textContainer: ref<inkCompoundWidget> = root.GetWidget(n"inkCanvasWidget2/itemDetailsContainer/weaponPreviewContainer") as inkCompoundWidget;
+  let garmentContainer: ref<inkCompoundWidget> = root.GetWidget(n"inkCanvasWidget2/itemDetailsContainer/garmentPreview") as inkCompoundWidget;
   
   if !IsDefined(this.m_availableSkinsText) || NotEquals(this.m_availableSkinsText.GetName(), n"AvailableSkinsLabel") {
     this.m_availableSkinsText = new inkText();
@@ -50,6 +55,23 @@ public func Init(craftingGameController: wref<CraftingMainGameController>) -> Vo
     this.m_randomizerText.BindProperty(n"tintColor", n"MainColors.Red");
     this.m_randomizerText.Reparent(textContainer);
   };
+
+  if !IsDefined(this.m_availableClothesText) || NotEquals(this.m_availableClothesText.GetName(), n"AvailableClothesLabel") {
+    this.m_availableClothesText = new inkText();
+    this.m_availableClothesText.SetName(n"AvailableClothesLabel");
+    this.m_availableClothesText.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+    this.m_availableClothesText.SetFontStyle(inkTextRef.GetFontStyle(this.m_perkNotificationText));
+    this.m_availableClothesText.SetFontSize(inkTextRef.GetFontSize(this.m_perkNotificationText));
+    this.m_availableClothesText.SetHAlign(inkEHorizontalAlign.Left);
+    this.m_availableClothesText.SetVAlign(inkEVerticalAlign.Bottom);
+    this.m_availableClothesText.SetAnchor(inkEAnchor.BottomLeft);
+    this.m_availableClothesText.SetAnchorPoint(0.0, 1.0);
+    this.m_availableClothesText.SetMargin(new inkMargin(0.0, 0.0, 0.0, 300.0));
+    this.m_availableClothesText.SetLetterCase(textLetterCase.UpperCase);
+    this.m_availableClothesText.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    this.m_availableClothesText.BindProperty(n"tintColor", n"MainColors.Red");
+    this.m_availableClothesText.Reparent(garmentContainer);
+  };
 }
 
 // -- Refresh available skins counter state
@@ -61,6 +83,18 @@ public func RefreshSkinsCounter() -> Void {
     this.m_availableSkinsText.SetText(s"\(GetLocalizedTextByKey(n"Mod-Craft-UI-Variants")) \(size)");
   } else {
     this.m_availableSkinsText.SetVisible(false);
+  };
+}
+
+// -- Refresh available clothes counter state
+@addMethod(CraftingLogicController)
+public func RefreshClothesCounter() -> Void {
+  let size: Int32 = ArraySize(this.clothesVariants);
+  if size > 1 {
+    this.m_availableClothesText.SetVisible(true);
+    this.m_availableClothesText.SetText(s"\(GetLocalizedTextByKey(n"Mod-Craft-UI-Variants")) \(size)");
+  } else {
+    this.m_availableClothesText.SetVisible(false);
   };
 }
 

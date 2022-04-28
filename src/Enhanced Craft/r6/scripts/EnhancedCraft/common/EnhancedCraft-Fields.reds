@@ -10,9 +10,17 @@ private let weaponVariants: array<TweakDBID>;
 @addField(CraftingLogicController)
 private let weaponVariantsNoIconic: array<TweakDBID>;
 
+// Stores loaded clothes variants from TweakXL
+@addField(CraftingLogicController)
+private let clothesVariants: array<TweakDBID>;
+
 // Stores current weapon variant index
 @addField(CraftingLogicController)
 private let weaponIndex: Int32;
+
+// Stores current clothes variant index
+@addField(CraftingLogicController)
+private let clothesIndex: Int32;
 
 // Is currently selected variant not original
 @addField(CraftingLogicController)
@@ -136,3 +144,15 @@ private let m_shouldDisplayHud: Bool;
 // Stores damage selection availability state
 @addField(ItemTooltipRecipeDataModule)
 private let m_damageSelectionAvailable: Bool;
+
+
+// -- CraftingGarmentItemPreviewGameController
+
+@addField(CraftingGarmentItemPreviewGameController)
+private let m_preview: ref<inkWidget>;
+
+@addField(CraftingGarmentItemPreviewGameController)
+private let m_isMouseDown: Bool;
+
+@addField(CraftingGarmentItemPreviewGameController)
+private let m_isHoveredByCursor: Bool;
