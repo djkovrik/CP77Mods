@@ -614,10 +614,11 @@ private final func ScaleItemPriceToPlayer(itemId: ItemID, itemQuality: CName) ->
     }
   }
 
-  AtelierLog(s"   BasePrice: \(ToString(MarketSystem.GetBuyPrice(this.m_VendorDataManager.GetVendorInstance(), itemData.GetID())))");
+  let price: Int32 = RPGManager.CalculateBuyPrice(this.m_player.GetGame(), this.m_VendorDataManager.GetVendorInstance(), itemData.GetID(), 1.0);
+  AtelierLog(s"   BasePrice: \(ToString(price))");
   AtelierLog(s"   qualMulti: \(ToString(qualMulti))");
   AtelierLog(s"   powerLevelPlayer \(ToString(powerLevelPlayer))");
-  return RoundF((powerLevelPlayer * qualMulti) * Cast<Float>(MarketSystem.GetBuyPrice(this.m_VendorDataManager.GetVendorInstance(), itemData.GetID())));
+  return RoundF((powerLevelPlayer * qualMulti) * Cast<Float>(price));
 }
 
 @wrapMethod(FullscreenVendorGameController)
