@@ -220,7 +220,7 @@ private final func HandleVendorSlotInput(evt: ref<ItemDisplayClickEvent>, itemDa
     } else {
       this.m_buttonHintsController.RemoveButtonHint(n"select");
     }
-	}
+  }
 }
 
 @wrapMethod(FullscreenVendorGameController)
@@ -380,6 +380,7 @@ private final func FillVirtualStock() -> Void {
     let itemTDBID: TweakDBID = TDBID.Create(storeItems[virtualItemIndex]);
     let itemId = ItemID.FromTDBID(itemTDBID);
     let itemData: ref<gameItemData> = inventoryManager.CreateBasicItemData(itemId, this.m_player);
+    AtelierLog(s"Store item: \(ToString(storeItems[virtualItemIndex]))");
     itemData.isVirtualItem = true;
     stockItem = new VirtualStockItem();
     stockItem.itemID = itemId;
@@ -387,9 +388,12 @@ private final func FillVirtualStock() -> Void {
     stockItem.price = Cast<Float>(itemsPrices[virtualItemIndex]);
     stockItem.quality = itemsQualities[virtualItemIndex];
     stockItem.quantity = itemsQuantities[virtualItemIndex];
-  	if (RoundF(stockItem.price) == 0) {
+    AtelierLog(s"   Dynamic tags: \(ToString(itemData.GetDynamicTags()))");
+    AtelierLog(s"   VirtPrice: \(ToString(stockItem.price))");
+    if (RoundF(stockItem.price) == 0) {
       stockItem.price = Cast<Float>(this.ScaleItemPriceToPlayer(itemId, stockItem.quality) * stockItem.quantity);
- 	  }
+     };
+    AtelierLog(s"   CalcPrice: \(ToString(stockItem.price))");
     stockItem.itemData = itemData;
     ArrayPush(this.m_virtualStock, stockItem);
     virtualItemIndex += 1;
@@ -445,10 +449,14 @@ private final func ScaleItemPriceToPlayer(itemId: ItemID, itemQuality: CName) ->
   let itemData: ref<gameItemData> = Inventory.CreateItemData(itemModParams, this.m_player);
   let statsSystem: ref<StatsSystem> = GameInstance.GetStatsSystem(this.m_player.GetGame());
   let powerLevelPlayer: Float = statsSystem.GetStatValue(Cast<StatsObjectID>(this.m_player.GetEntityID()), gamedataStatType.PowerLevel);
+  AtelierLog(s"   powerLevelPlayer \(ToString(powerLevelPlayer))");
   if (Cast<Int32>(powerLevelPlayer) < 1) {
     powerLevelPlayer = 1.0;
-  }
+  };
   let qualMulti : Float = 1.0;
+
+  AtelierLog(s"   is iconic: \(ToString(RPGManager.IsItemIconic(itemData)))");
+  AtelierLog(s"   quality: \(ToString(itemQuality)))");
 
   if Equals(itemData.GetItemType(), gamedataItemType.Gen_Misc) {
     powerLevelPlayer = 1.0;
@@ -606,6 +614,9 @@ private final func ScaleItemPriceToPlayer(itemId: ItemID, itemQuality: CName) ->
     }
   }
 
+  AtelierLog(s"   BasePrice: \(ToString(MarketSystem.GetBuyPrice(this.m_VendorDataManager.GetVendorInstance(), itemData.GetID())))");
+  AtelierLog(s"   qualMulti: \(ToString(qualMulti))");
+  AtelierLog(s"   powerLevelPlayer \(ToString(powerLevelPlayer))");
   return RoundF((powerLevelPlayer * qualMulti) * Cast<Float>(MarketSystem.GetBuyPrice(this.m_VendorDataManager.GetVendorInstance(), itemData.GetID())));
 }
 
