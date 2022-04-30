@@ -350,7 +350,8 @@ Items.Cap_03_rich_02_Crafting.clothesVariants:
 
 # LegendaryCasualShoesRecipe = Items.CasualShoes_02_basic_01_Crafting
 Items.CasualShoes_02_basic_01_Crafting.clothesVariants:
-- t""
+- t"Items.CasualShoes_02_basic_01"
+- t"Items.CasualShoes_02_basic_02"
 
 # LegendaryFormalPantsRecipe = Items.FormalPants_03_rich_02_Crafting
 Items.FormalPants_03_rich_02_Crafting.clothesVariants:
