@@ -148,4 +148,11 @@ public class RL_Exclusions {
       Equals(id, t"Items.q204_samurai_jacket") ||
     false;
   }
+
+  // Keep for container
+  public static func KeepForContainer(hash: Uint32) -> Bool {
+    // Extremely Loud And Incredibly Close target
+    return Equals(hash, 73457349u) ||
+    false;
+  }
 }
