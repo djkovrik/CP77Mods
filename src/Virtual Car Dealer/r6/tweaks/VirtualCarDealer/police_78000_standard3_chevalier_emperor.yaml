@@ -1,14 +1,17 @@
+UIIcon.vcd_chevalier_emperor_police_purchasable:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer.inkatlas"
+  atlasPartName: n"v-chevallion-emperor-police-nbg"
+  
 Vehicle.vcd_chevalier_emperor_police_purchasable:
   $base: Vehicle.v_standard3_chevalier_emperor_police
   displayName: LocKey(22764)
+  icon: UIIcon.vcd_chevalier_emperor_police_purchasable
 
 Vehicle.vcd_chevalier_emperor_police_purchasable.dealerPrice: 78000
 # - Codex image size: 1860x609
 Vehicle.vcd_chevalier_emperor_police_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen16.inkatlas"
 Vehicle.vcd_chevalier_emperor_police_purchasable.dealerPartName: "v_chevallion_emperor_police_nbg_full"
-# - Must have 16:9 ratio
-Vehicle.vcd_chevalier_emperor_police_purchasable.previewAtlasPath: "base/gameplay/gui/common/icons/codex/assets_preview3.inkatlas"
-Vehicle.vcd_chevalier_emperor_police_purchasable.previewPartName: "v_chevallion_emperor_police_nbg"
 
 Vehicle.vehicle_list.list:
   - !append t"Vehicle.vcd_chevalier_emperor_police_purchasable"

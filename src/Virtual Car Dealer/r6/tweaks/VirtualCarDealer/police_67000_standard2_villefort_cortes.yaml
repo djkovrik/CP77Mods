@@ -1,14 +1,17 @@
+UIIcon.vcd_police_cortes_purchasable:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer.inkatlas"
+  atlasPartName: n"v-villefort-cortes-police"
+
 Vehicle.vcd_police_cortes_purchasable:
   $base: Vehicle.v_standard2_villefort_cortes_police
   displayName: LocKey(22358)
+  icon: UIIcon.vcd_police_cortes_purchasable
 
 Vehicle.vcd_police_cortes_purchasable.dealerPrice: 67000
 # - Codex image size: 1860x609
 Vehicle.vcd_police_cortes_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen21.inkatlas"
 Vehicle.vcd_police_cortes_purchasable.dealerPartName: "v_villefort_cortes_police_full"
-# - Must have 16:9 ratio
-Vehicle.vcd_police_cortes_purchasable.previewAtlasPath: "base/gameplay/gui/common/icons/codex/assets_preview2.inkatlas"
-Vehicle.vcd_police_cortes_purchasable.previewPartName: "v_villefort_cortes_police"
 
 Vehicle.vehicle_list.list:
   - !append t"Vehicle.vcd_police_cortes_purchasable"

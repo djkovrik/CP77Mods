@@ -1,15 +1,18 @@
+UIIcon.vcd_aerondight_urban_02_purchasable:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer.inkatlas"
+  atlasPartName: n"v-rayfield-aerondight"
+  
 Vehicle.vcd_aerondight_urban_02_purchasable:
   $base: Vehicle.v_sport1_rayfield_aerondight
   appearanceName: n"rayfield_aerondight__basic_urban_02"
   displayName: LocKey(20293)
+  icon: UIIcon.vcd_aerondight_urban_02_purchasable
 
 Vehicle.vcd_aerondight_urban_02_purchasable.dealerPrice: 230000
 # - Codex image size: 1860x609
 Vehicle.vcd_aerondight_urban_02_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen17.inkatlas"
 Vehicle.vcd_aerondight_urban_02_purchasable.dealerPartName: "v_rayfield_aerondight_full"
-# - Must have 16:9 ratio
-Vehicle.vcd_aerondight_urban_02_purchasable.previewAtlasPath: "base/gameplay/gui/common/icons/codex/assets_preview0.inkatlas"
-Vehicle.vcd_aerondight_urban_02_purchasable.previewPartName: "v_rayfield_aerondight"
 
 Vehicle.vehicle_list.list:
   - !append t"Vehicle.vcd_aerondight_urban_02_purchasable"

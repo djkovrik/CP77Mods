@@ -1,15 +1,18 @@
+UIIcon.vcd_chevalier_emperor_suburban_purchasable:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer.inkatlas"
+  atlasPartName: n"v-standard3-chevalier-emperor"
+
 Vehicle.vcd_chevalier_emperor_suburban_purchasable:
   $base: Vehicle.v_standard3_chevalier_emperor
   appearanceName: n"chevalier_emperor__basic_suburban_1_4"
   displayName: LocKey(1625)
+  icon: UIIcon.vcd_chevalier_emperor_suburban_purchasable
 
 Vehicle.vcd_chevalier_emperor_suburban_purchasable.dealerPrice: 37000
 # - Codex image size: 1860x609
 Vehicle.vcd_chevalier_emperor_suburban_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen20.inkatlas"
 Vehicle.vcd_chevalier_emperor_suburban_purchasable.dealerPartName: "v_standard3_chevalier_emperor_full"
-# - Must have 16:9 ratio
-Vehicle.vcd_chevalier_emperor_suburban_purchasable.previewAtlasPath: "base/gameplay/gui/common/icons/codex/assets_preview0.inkatlas"
-Vehicle.vcd_chevalier_emperor_suburban_purchasable.previewPartName: "v_standard3_chevalier_emperor"
 
 Vehicle.vehicle_list.list:
   - !append t"Vehicle.vcd_chevalier_emperor_suburban_purchasable"
