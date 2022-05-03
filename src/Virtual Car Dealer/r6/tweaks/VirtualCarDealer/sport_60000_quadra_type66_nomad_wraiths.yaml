@@ -1,0 +1,15 @@
+Vehicle.vcd_nomad_quadra_purchasable:
+  $base: Vehicle.v_sport2_quadra_type66_nomad_wraith
+  appearanceName: n"thorton_galena_nomad_wraiths_01"
+  displayName: LocKey(22341)
+  
+Vehicle.vcd_nomad_quadra_purchasable.dealerPrice: 60000
+# - Codex image size: 1860x609
+Vehicle.vcd_nomad_quadra_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen18.inkatlas"
+Vehicle.vcd_nomad_quadra_purchasable.dealerPartName: "v_sport2_quadra_type66_nomad_wraith_full"
+# - Must have 16:9 ratio
+Vehicle.vcd_nomad_quadra_purchasable.previewAtlasPath: "base/gameplay/gui/common/icons/codex/assets_preview3.inkatlas"
+Vehicle.vcd_nomad_quadra_purchasable.previewPartName: "v_sport2_quadra_type66_nomad_wraith"
+
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_nomad_quadra_purchasable"

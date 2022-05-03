@@ -1,0 +1,14 @@
+Vehicle.vcd_police_archer_hella_purchasable:
+  $base: Vehicle.v_standard2_archer_hella_police
+  displayName: LocKey(22077)
+
+Vehicle.vcd_police_archer_hella_purchasable.dealerPrice: 56000
+# - Codex image size: 1860x609
+Vehicle.vcd_police_archer_hella_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen15.inkatlas"
+Vehicle.vcd_police_archer_hella_purchasable.dealerPartName: "v_archer_hella_police_full"
+# - Must have 16:9 ratio
+Vehicle.vcd_police_archer_hella_purchasable.previewAtlasPath: "base/gameplay/gui/common/icons/codex/assets_preview2.inkatlas"
+Vehicle.vcd_police_archer_hella_purchasable.previewPartName: "v_archer_hella_police"
+
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_police_archer_hella_purchasable"

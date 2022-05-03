@@ -1,0 +1,15 @@
+Vehicle.vcd_archer_quartz_nomad_purchasable:
+  $base: Vehicle.v_standard2_archer_quartz_nomad
+  appearanceName: n"archer_quartz_nomad_aldecados_01"
+  displayName: LocKey(22079)
+
+Vehicle.vcd_archer_quartz_nomad_purchasable.dealerPrice: 32000
+# - Codex image size: 1860x609
+Vehicle.vcd_archer_quartz_nomad_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen15.inkatlas"
+Vehicle.vcd_archer_quartz_nomad_purchasable.dealerPartName: "v_archer_quartz_nomad_v1_full"
+# - Must have 16:9 ratio
+Vehicle.vcd_archer_quartz_nomad_purchasable.previewAtlasPath: "base/gameplay/gui/common/icons/codex/assets_preview2.inkatlas"
+Vehicle.vcd_archer_quartz_nomad_purchasable.previewPartName: "v_archer_quartz_nomad_v1"
+
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_archer_quartz_nomad_purchasable"

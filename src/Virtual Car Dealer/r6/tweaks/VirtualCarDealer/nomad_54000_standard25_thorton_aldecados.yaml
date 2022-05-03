@@ -1,0 +1,15 @@
+Vehicle.vcd_thorton_colby_nomad_purchasable:
+  $base: Vehicle.v_standard25_thorton_colby_nomad
+  appearanceName: n"thorton_colby_pickup_nomad_aldecados_01"
+  displayName: LocKey(46894)
+
+Vehicle.vcd_thorton_colby_nomad_purchasable.dealerPrice: 54000
+# - Codex image size: 1860x609
+Vehicle.vcd_thorton_colby_nomad_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen20.inkatlas"
+Vehicle.vcd_thorton_colby_nomad_purchasable.dealerPartName: "v_thorton_colby_nomad_full"
+# - Must have 16:9 ratio
+Vehicle.vcd_thorton_colby_nomad_purchasable.previewAtlasPath: "base/gameplay/gui/common/icons/codex/assets_preview1.inkatlas"
+Vehicle.vcd_thorton_colby_nomad_purchasable.previewPartName: "v_thorton_colby_nomad"
+
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_thorton_colby_nomad_purchasable"

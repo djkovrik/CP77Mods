@@ -1,0 +1,15 @@
+Vehicle.vcd_caliburn_purchasable:
+  $base: Vehicle.v_sport1_rayfield_caliburn
+  appearanceName: n"rayfield_caliburn__basic_premium_00"
+  displayName: LocKey(20294)
+
+Vehicle.vcd_caliburn_purchasable.dealerPrice: 162000
+# - Codex image size: 1860x609
+Vehicle.vcd_caliburn_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen9.inkatlas"
+Vehicle.vcd_caliburn_purchasable.dealerPartName: "v_rayfield_caliburn_full"
+# - Must have 16:9 ratio
+Vehicle.vcd_caliburn_purchasable.previewAtlasPath: "base/gameplay/gui/common/icons/codex/assets_preview1.inkatlas"
+Vehicle.vcd_caliburn_purchasable.previewPartName: "v_rayfield_caliburn"
+
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_caliburn_purchasable"

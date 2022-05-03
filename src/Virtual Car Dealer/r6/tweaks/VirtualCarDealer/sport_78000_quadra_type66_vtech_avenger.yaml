@@ -1,0 +1,15 @@
+Vehicle.vcd_type66_vtech_avenger_04_purchasable:
+  $base: Vehicle.v_sport2_quadra_type66_avenger
+  appearanceName: n"quadra_type66_vtech_avenger_04"
+  displayName: LocKey(20282)
+
+Vehicle.vcd_type66_vtech_avenger_04_purchasable.dealerPrice: 78000
+# - Codex image size: 1860x609
+Vehicle.vcd_type66_vtech_avenger_04_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen17.inkatlas"
+Vehicle.vcd_type66_vtech_avenger_04_purchasable.dealerPartName: "v_quadra_type66_vtech_avenger_04_full"
+# - Must have 16:9 ratio
+Vehicle.vcd_type66_vtech_avenger_04_purchasable.previewAtlasPath: "base/gameplay/gui/common/icons/codex/assets_preview0.inkatlas"
+Vehicle.vcd_type66_vtech_avenger_04_purchasable.previewPartName: "v_quadra_type66_vtech_avenger_04"
+
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_type66_vtech_avenger_04_purchasable"

@@ -1,0 +1,15 @@
+Vehicle.vcd_thorton_galena_nomad_purchasable:
+  $base: Vehicle.cs_v_standard2_thorton_galena_nomad
+  appearanceName: n"thorton_galena_nomad_aldecados_01"
+  displayName: LocKey(47446)
+
+Vehicle.vcd_thorton_galena_nomad_purchasable.dealerPrice: 26000
+# - Codex image size: 1860x609
+Vehicle.vcd_thorton_galena_nomad_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen20.inkatlas"
+Vehicle.vcd_thorton_galena_nomad_purchasable.dealerPartName: "v_thorton_galena_nomad_full"
+# - Must have 16:9 ratio
+Vehicle.vcd_thorton_galena_nomad_purchasable.previewAtlasPath: "base/gameplay/gui/common/icons/codex/assets_preview1.inkatlas"
+Vehicle.vcd_thorton_galena_nomad_purchasable.previewPartName: "v_thorton_galena_nomad"
+
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_thorton_galena_nomad_purchasable"

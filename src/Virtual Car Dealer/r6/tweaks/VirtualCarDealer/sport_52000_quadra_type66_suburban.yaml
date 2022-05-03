@@ -1,0 +1,15 @@
+Vehicle.vcd_type66_vtech_suburban_02_purchasable:
+  $base: Vehicle.v_sport2_quadra_type66_rowley
+  appearanceName: n"quadra_type66__basic_suburban_02"
+  displayName: LocKey(20279)
+
+Vehicle.vcd_type66_vtech_suburban_02_purchasable.dealerPrice: 52000
+# - Codex image size: 1860x609
+Vehicle.vcd_type66_vtech_suburban_02_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen17.inkatlas"
+Vehicle.vcd_type66_vtech_suburban_02_purchasable.dealerPartName: "v_quadra_type66__basic_suburban_02_full"
+# - Must have 16:9 ratio
+Vehicle.vcd_type66_vtech_suburban_02_purchasable.previewAtlasPath: "base/gameplay/gui/common/icons/codex/assets_preview0.inkatlas"
+Vehicle.vcd_type66_vtech_suburban_02_purchasable.previewPartName: "v_quadra_type66__basic_suburban_02"
+
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_type66_vtech_suburban_02_purchasable"

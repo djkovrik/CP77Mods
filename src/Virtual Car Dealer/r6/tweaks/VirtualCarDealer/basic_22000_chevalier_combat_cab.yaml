@@ -1,0 +1,14 @@
+Vehicle.vcd_thrax_combat_cab_purchasable:
+  $base: Vehicle.v_standard2_chevalier_thrax_combat_cab
+  displayName: LocKey(18549)
+
+Vehicle.vcd_thrax_combat_cab_purchasable.dealerPrice: 22000
+# - Codex image size: 1860x609
+Vehicle.vcd_thrax_combat_cab_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen26.inkatlas"
+Vehicle.vcd_thrax_combat_cab_purchasable.dealerPartName: "lore_combat_cab_full"
+# - Must have 16:9 ratio
+Vehicle.vcd_thrax_combat_cab_purchasable.previewAtlasPath: "base/gameplay/gui/common/icons/codex/assets_preview4.inkatlas"
+Vehicle.vcd_thrax_combat_cab_purchasable.previewPartName: "lore_combat_cab"
+
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_thrax_combat_cab_purchasable"
