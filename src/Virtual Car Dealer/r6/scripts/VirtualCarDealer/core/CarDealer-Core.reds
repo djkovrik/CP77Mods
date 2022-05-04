@@ -22,8 +22,8 @@ private func PopulateDealerView(owner: ref<GameObject>) {
     } else {
       this.vehicleIndex = 0;
       this.vehicleLastIndex = stockSize - 1;
-      this.ShowCommonElements();
-      this.ShowCurrentPage();
+      this.ShowDealerCommonElements();
+      this.ShowDealerCurrentPage();
     };
   };
 }
@@ -98,7 +98,7 @@ private func ShowDealerEmptyScreen() -> Void {
 
 // Show basic UI elements
 @addMethod(WebPage)
-private func ShowCommonElements() {  
+private func ShowDealerCommonElements() {  
   this.dealerPanelRoot.RemoveAllChildren();
   this.GetRootCompoundWidget().SetInteractive(true);
   this.dealerPanelRoot.SetInteractive(true);
@@ -131,36 +131,36 @@ private func ShowCommonElements() {
   this.dealerPanelInfoContainer.SetFitToContent(true);
   this.dealerPanelInfoContainer.Reparent(horizontalPanel);
 
-  let buttons: ref<inkHorizontalPanel> = this.GetButtonsContainer();
+  let buttons: ref<inkHorizontalPanel> = this.GetDealerButtonsContainer();
   buttons.Reparent(horizontalPanel);
 }
 
 // Show info for current selected car
 @addMethod(WebPage)
-public func ShowCurrentPage() {
+public func ShowDealerCurrentPage() {
   let vehicle: ref<PurchasableVehicle> = this.vehiclesStock[this.vehicleIndex];
-  let info: ref<inkFlex> = this.GetInfoPanel(vehicle);
+  let info: ref<inkFlex> = this.GetDealerInfoPanel(vehicle);
   let currentChild: ref<inkWidget> = this.dealerPanelInfoContainer.GetWidgetByIndex(0);
-  P(s"ShowCurrentPage call: index \(this.vehicleIndex), last index: \(this.vehicleLastIndex), vehicle: \(GetLocalizedTextByKey(vehicle.record.DisplayName())) \(vehicle.price) \(vehicle.dealerPartName)");
+  P(s"ShowDealerCurrentPage call: index \(this.vehicleIndex), last index: \(this.vehicleLastIndex), vehicle: \(GetLocalizedTextByKey(vehicle.record.DisplayName())) \(vehicle.price) \(vehicle.dealerPartName)");
   info.Reparent(this.dealerPanelInfoContainer);
   this.dealerPanelInfoContainer.RemoveChild(currentChild);
-  this.RefreshControls(vehicle);
+  this.RefreshDealerControls(vehicle);
 }
 
 // Refresh buttons state
 @addMethod(WebPage)
-public func RefreshControls(vehicle: ref<PurchasableVehicle>) {
+public func RefreshDealerControls(vehicle: ref<PurchasableVehicle>) {
   let id: TweakDBID = vehicle.record.GetID();
   let price: Int32 = vehicle.price;
   let isPurchased: Bool = this.purchaseSystem.IsPurchased(id);
-  let enoughMoney: Bool = this.HasEnoughMoney(price);
+  let enoughMoney: Bool = this.HasEnoughMoneyDealer(price);
   let disableButton: Bool = isPurchased || !enoughMoney;
   this.buttonBuy.SetDisabled(disableButton);
 }
 
 // Create buttons
 @addMethod(WebPage)
-private func GetButtonsContainer() -> ref<inkHorizontalPanel> {
+private func GetDealerButtonsContainer() -> ref<inkHorizontalPanel> {
   let column: ref<inkHorizontalPanel> = new inkHorizontalPanel();
   column.SetName(n"Buttons");
   column.SetFitToContent(true);
@@ -207,44 +207,44 @@ private func GetButtonsContainer() -> ref<inkHorizontalPanel> {
 
   this.buttonBuy.Reparent(buyContainer);
 
-  this.RegisterListeners();
+  this.RegisterDealerListeners();
 
   return column;
 }
 
 // Register buttons listeners
 @addMethod(WebPage)
-protected func RegisterListeners() -> Void {
-  P("RegisterListeners...");
-  this.buttonPrev.RegisterToCallback(n"OnClick", this, n"OnClick");
-  this.buttonPrev.RegisterToCallback(n"OnEnter", this, n"OnEnter");
-  this.buttonPrev.RegisterToCallback(n"OnLeave", this, n"OnLeave");
+protected func RegisterDealerListeners() -> Void {
+  P("RegisterDealerListeners...");
+  this.buttonPrev.RegisterToCallback(n"OnClick", this, n"OnDealerButtonClick");
+  this.buttonPrev.RegisterToCallback(n"OnEnter", this, n"OnDealerButtonEnter");
+  this.buttonPrev.RegisterToCallback(n"OnLeave", this, n"OnDealerButtonLeave");
 
-  this.buttonNext.RegisterToCallback(n"OnClick", this, n"OnClick");
-  this.buttonNext.RegisterToCallback(n"OnEnter", this, n"OnEnter");
-  this.buttonNext.RegisterToCallback(n"OnLeave", this, n"OnLeave");
+  this.buttonNext.RegisterToCallback(n"OnClick", this, n"OnDealerButtonClick");
+  this.buttonNext.RegisterToCallback(n"OnEnter", this, n"OnDealerButtonEnter");
+  this.buttonNext.RegisterToCallback(n"OnLeave", this, n"OnDealerButtonLeave");
 
-  this.buttonBuy.RegisterToCallback(n"OnClick", this, n"OnClick");
-  this.buttonBuy.RegisterToCallback(n"OnEnter", this, n"OnEnter");
-  this.buttonBuy.RegisterToCallback(n"OnLeave", this, n"OnLeave");
+  this.buttonBuy.RegisterToCallback(n"OnClick", this, n"OnDealerButtonClick");
+  this.buttonBuy.RegisterToCallback(n"OnEnter", this, n"OnDealerButtonEnter");
+  this.buttonBuy.RegisterToCallback(n"OnLeave", this, n"OnDealerButtonLeave");
 }
 
 // Handle click
 @addMethod(WebPage)
-protected cb func OnClick(evt: ref<inkPointerEvent>) -> Bool {
+protected cb func OnDealerButtonClick(evt: ref<inkPointerEvent>) -> Bool {
   let targetName: CName = evt.GetTarget().GetName();
   if evt.IsAction(n"click") {
     switch targetName {
       case n"ButtonPrev":
-        this.PreviousLot();
-        this.PlayCustomSound(n"ui_menu_onpress");
+        this.PreviousDealerLot();
+        this.PlayCustomSoundDealer(n"ui_menu_onpress");
         break;
       case n"ButtonNext":
-        this.NextLot();
-        this.PlayCustomSound(n"ui_menu_onpress");
+        this.NextDealerLot();
+        this.PlayCustomSoundDealer(n"ui_menu_onpress");
         break;
       case n"ButtonBuy":
-        this.BuyCurrentVehicle();
+        this.DealerBuyCurrentVehicle();
         break;
     };
   };
@@ -252,27 +252,27 @@ protected cb func OnClick(evt: ref<inkPointerEvent>) -> Bool {
 
 // Handle hover in
 @addMethod(WebPage)
-protected cb func OnEnter(evt: ref<inkPointerEvent>) -> Bool {
+protected cb func OnDealerButtonEnter(evt: ref<inkPointerEvent>) -> Bool {
   let targetName: CName = evt.GetTarget().GetName();
   switch targetName {
     case n"ButtonPrev":
       this.buttonPrev.SetHoveredState(true);
-      this.PlayCustomSound(n"ui_menu_hover");
+      this.PlayCustomSoundDealer(n"ui_menu_hover");
       break;
     case n"ButtonNext":
       this.buttonNext.SetHoveredState(true);
-      this.PlayCustomSound(n"ui_menu_hover");
+      this.PlayCustomSoundDealer(n"ui_menu_hover");
       break;
     case n"ButtonBuy":
       this.buttonBuy.SetHoveredState(true);
-      this.PlayCustomSound(n"ui_menu_hover");
+      this.PlayCustomSoundDealer(n"ui_menu_hover");
       break;
   };
 }
 
 // Handle hover out
 @addMethod(WebPage)
-protected cb func OnLeave(evt: ref<inkPointerEvent>) -> Bool {
+protected cb func OnDealerButtonLeave(evt: ref<inkPointerEvent>) -> Bool {
   let targetName: CName = evt.GetTarget().GetName();
   switch targetName {
     case n"ButtonPrev":
@@ -289,37 +289,37 @@ protected cb func OnLeave(evt: ref<inkPointerEvent>) -> Bool {
 
 // Go to the previous lot
 @addMethod(WebPage)
-private func PreviousLot() -> Void {
+private func PreviousDealerLot() -> Void {
   this.vehicleIndex = this.vehicleIndex - 1;
-  P(s"PreviousLot click: new index \(this.vehicleIndex )");
+  P(s"PreviousDealerLot click: new index \(this.vehicleIndex )");
   if this.vehicleIndex < 0 {
     this.vehicleIndex = this.vehicleLastIndex;
-    P(s"PreviousLot: index switched to \(this.vehicleIndex )");
+    P(s"PreviousDealerLot: index switched to \(this.vehicleIndex )");
   };
-  this.ShowCurrentPage();
+  this.ShowDealerCurrentPage();
 }
 
 // Go to the next lot
 @addMethod(WebPage)
-private func NextLot() -> Void {
+private func NextDealerLot() -> Void {
   this.vehicleIndex = this.vehicleIndex + 1;
-  P(s"NextLot click: new index \(this.vehicleIndex )");
+  P(s"NextDealerLot click: new index \(this.vehicleIndex )");
   if this.vehicleIndex > this.vehicleLastIndex {
     this.vehicleIndex = 0;
-    P(s"NextLot: index switched to \(this.vehicleIndex )");
+    P(s"NextDealerLot: index switched to \(this.vehicleIndex )");
   };
-  this.ShowCurrentPage();
+  this.ShowDealerCurrentPage();
 }
 
 // Build info panel for the current selected car
 @addMethod(WebPage)
-private func GetInfoPanel(vehicle: ref<PurchasableVehicle>) -> ref<inkFlex> {
+private func GetDealerInfoPanel(vehicle: ref<PurchasableVehicle>) -> ref<inkFlex> {
   let id: TweakDBID = vehicle.record.GetID();
   let name: CName = vehicle.record.DisplayName();
   let price: Int32 = vehicle.price;
   let isPurchasable: Bool = this.purchaseSystem.IsPurchasable(id);
   let isPurchased: Bool = this.purchaseSystem.IsPurchased(id);
-  let enoughMoney: Bool = this.HasEnoughMoney(price);
+  let enoughMoney: Bool = this.HasEnoughMoneyDealer(price);
 
   let infoPanel: ref<inkFlex>;
   let carName: ref<inkText>;
