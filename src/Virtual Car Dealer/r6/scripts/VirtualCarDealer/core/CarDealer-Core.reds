@@ -4,6 +4,7 @@ import CarDealer.System.PurchasableVehicleSystem
 import CarDealer.Utils.DealerTexts
 import CarDealer.Utils.P
 
+// Show core dealer page
 @addMethod(WebPage)
 private func PopulateDealerView(owner: ref<GameObject>) {
   let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
@@ -27,6 +28,7 @@ private func PopulateDealerView(owner: ref<GameObject>) {
   };
 }
 
+// Show empty screen
 @addMethod(WebPage)
 private func ShowDealerEmptyScreen() -> Void {
   this.dealerPanelRoot.RemoveAllChildren();
@@ -94,9 +96,9 @@ private func ShowDealerEmptyScreen() -> Void {
   emptyImage.Reparent(this.dealerPanelRoot);
 }
 
+// Show basic UI elements
 @addMethod(WebPage)
 private func ShowCommonElements() {  
-  P("ShowCommonElements call");
   this.dealerPanelRoot.RemoveAllChildren();
   this.GetRootCompoundWidget().SetInteractive(true);
   this.dealerPanelRoot.SetInteractive(true);
@@ -129,10 +131,11 @@ private func ShowCommonElements() {
   this.dealerPanelInfoContainer.SetFitToContent(true);
   this.dealerPanelInfoContainer.Reparent(horizontalPanel);
 
-  let buttons: ref<inkHorizontalPanel> = this.GetButtonsColumn();
+  let buttons: ref<inkHorizontalPanel> = this.GetButtonsContainer();
   buttons.Reparent(horizontalPanel);
 }
 
+// Show info for current selected car
 @addMethod(WebPage)
 public func ShowCurrentPage() {
   let vehicle: ref<PurchasableVehicle> = this.vehiclesStock[this.vehicleIndex];
@@ -144,6 +147,7 @@ public func ShowCurrentPage() {
   this.RefreshControls(vehicle);
 }
 
+// Refresh buttons state
 @addMethod(WebPage)
 public func RefreshControls(vehicle: ref<PurchasableVehicle>) {
   let id: TweakDBID = vehicle.record.GetID();
@@ -151,13 +155,12 @@ public func RefreshControls(vehicle: ref<PurchasableVehicle>) {
   let isPurchased: Bool = this.purchaseSystem.IsPurchased(id);
   let enoughMoney: Bool = this.HasEnoughMoney(price);
   let disableButton: Bool = isPurchased || !enoughMoney;
-  P(s"RefreshControls call: vehicle: \(GetLocalizedTextByKey(vehicle.record.DisplayName())) \(vehicle.price) \(vehicle.dealerPartName)");
   this.buttonBuy.SetDisabled(disableButton);
 }
 
+// Create buttons
 @addMethod(WebPage)
-private func GetButtonsColumn() -> ref<inkHorizontalPanel> {
-  P("GetButtonsColumn call");
+private func GetButtonsContainer() -> ref<inkHorizontalPanel> {
   let column: ref<inkHorizontalPanel> = new inkHorizontalPanel();
   column.SetName(n"Buttons");
   column.SetFitToContent(true);
@@ -172,6 +175,8 @@ private func GetButtonsColumn() -> ref<inkHorizontalPanel> {
   this.buttonPrev.ToggleAnimations(true);
   this.buttonPrev.ToggleSounds(true);
   this.buttonPrev.SetTextColor(n"MainColors.MediumBlue");
+  this.buttonPrev.SetHoverColor(n"MainColors.MediumBlue");
+  this.buttonPrev.SetFluffColor(n"MainColors.Blue");
   this.buttonPrev.Reparent(column);
 
   this.buttonNext = CustomHubButton.Create();
@@ -180,6 +185,8 @@ private func GetButtonsColumn() -> ref<inkHorizontalPanel> {
   this.buttonNext.ToggleAnimations(true);
   this.buttonNext.ToggleSounds(true);
   this.buttonNext.SetTextColor(n"MainColors.MediumBlue");
+  this.buttonNext.SetHoverColor(n"MainColors.MediumBlue");
+  this.buttonNext.SetFluffColor(n"MainColors.Blue");
   this.buttonNext.Reparent(column);
 
   let buyContainer: ref<inkVerticalPanel> = new inkVerticalPanel();
@@ -194,6 +201,10 @@ private func GetButtonsColumn() -> ref<inkHorizontalPanel> {
   this.buttonBuy.ToggleAnimations(true);
   this.buttonBuy.ToggleSounds(true);
   this.buttonBuy.SetTextColor(n"MainColors.Yellow");
+  this.buttonBuy.SetHoverColor(n"MainColors.Yellow");
+  this.buttonBuy.SetFluffColor(n"MainColors.Yellow");
+  this.buttonBuy.SetLeftSideColor(n"MainColors.Yellow");
+
   this.buttonBuy.Reparent(buyContainer);
 
   this.RegisterListeners();
@@ -201,25 +212,24 @@ private func GetButtonsColumn() -> ref<inkHorizontalPanel> {
   return column;
 }
 
+// Register buttons listeners
 @addMethod(WebPage)
 protected func RegisterListeners() -> Void {
-  P("RegisterListeners call");
+  P("RegisterListeners...");
   this.buttonPrev.RegisterToCallback(n"OnClick", this, n"OnClick");
-  this.buttonPrev.RegisterToCallback(n"OnRelease", this, n"OnRelease");
   this.buttonPrev.RegisterToCallback(n"OnEnter", this, n"OnEnter");
   this.buttonPrev.RegisterToCallback(n"OnLeave", this, n"OnLeave");
 
   this.buttonNext.RegisterToCallback(n"OnClick", this, n"OnClick");
-  this.buttonNext.RegisterToCallback(n"OnRelease", this, n"OnRelease");
   this.buttonNext.RegisterToCallback(n"OnEnter", this, n"OnEnter");
   this.buttonNext.RegisterToCallback(n"OnLeave", this, n"OnLeave");
 
   this.buttonBuy.RegisterToCallback(n"OnClick", this, n"OnClick");
-  this.buttonBuy.RegisterToCallback(n"OnRelease", this, n"OnRelease");
   this.buttonBuy.RegisterToCallback(n"OnEnter", this, n"OnEnter");
   this.buttonBuy.RegisterToCallback(n"OnLeave", this, n"OnLeave");
 }
 
+// Handle click
 @addMethod(WebPage)
 protected cb func OnClick(evt: ref<inkPointerEvent>) -> Bool {
   let targetName: CName = evt.GetTarget().GetName();
@@ -228,43 +238,19 @@ protected cb func OnClick(evt: ref<inkPointerEvent>) -> Bool {
       case n"ButtonPrev":
         this.PreviousLot();
         this.PlayCustomSound(n"ui_menu_onpress");
-        P(s"OnClick \(targetName)");
         break;
       case n"ButtonNext":
         this.NextLot();
         this.PlayCustomSound(n"ui_menu_onpress");
-        P(s"OnClick \(targetName)");
         break;
       case n"ButtonBuy":
         this.BuyCurrentVehicle();
-        P(s"OnClick \(targetName)");
         break;
     };
   };
 }
 
-@addMethod(WebPage)
-private func PreviousLot() -> Void {
-  this.vehicleIndex = this.vehicleIndex - 1;
-  P(s"PreviousLot click: new index \(this.vehicleIndex )");
-  if this.vehicleIndex < 0 {
-    this.vehicleIndex = this.vehicleLastIndex;
-    P(s"PreviousLot: index switched to \(this.vehicleIndex )");
-  };
-  this.ShowCurrentPage();
-}
-
-@addMethod(WebPage)
-private func NextLot() -> Void {
-  this.vehicleIndex = this.vehicleIndex + 1;
-  P(s"NextLot click: new index \(this.vehicleIndex )");
-  if this.vehicleIndex > this.vehicleLastIndex {
-    this.vehicleIndex = 0;
-    P(s"NextLot: index switched to \(this.vehicleIndex )");
-  };
-  this.ShowCurrentPage();
-}
-
+// Handle hover in
 @addMethod(WebPage)
 protected cb func OnEnter(evt: ref<inkPointerEvent>) -> Bool {
   let targetName: CName = evt.GetTarget().GetName();
@@ -284,6 +270,7 @@ protected cb func OnEnter(evt: ref<inkPointerEvent>) -> Bool {
   };
 }
 
+// Handle hover out
 @addMethod(WebPage)
 protected cb func OnLeave(evt: ref<inkPointerEvent>) -> Bool {
   let targetName: CName = evt.GetTarget().GetName();
@@ -300,6 +287,31 @@ protected cb func OnLeave(evt: ref<inkPointerEvent>) -> Bool {
   };
 }
 
+// Go to the previous lot
+@addMethod(WebPage)
+private func PreviousLot() -> Void {
+  this.vehicleIndex = this.vehicleIndex - 1;
+  P(s"PreviousLot click: new index \(this.vehicleIndex )");
+  if this.vehicleIndex < 0 {
+    this.vehicleIndex = this.vehicleLastIndex;
+    P(s"PreviousLot: index switched to \(this.vehicleIndex )");
+  };
+  this.ShowCurrentPage();
+}
+
+// Go to the next lot
+@addMethod(WebPage)
+private func NextLot() -> Void {
+  this.vehicleIndex = this.vehicleIndex + 1;
+  P(s"NextLot click: new index \(this.vehicleIndex )");
+  if this.vehicleIndex > this.vehicleLastIndex {
+    this.vehicleIndex = 0;
+    P(s"NextLot: index switched to \(this.vehicleIndex )");
+  };
+  this.ShowCurrentPage();
+}
+
+// Build info panel for the current selected car
 @addMethod(WebPage)
 private func GetInfoPanel(vehicle: ref<PurchasableVehicle>) -> ref<inkFlex> {
   let id: TweakDBID = vehicle.record.GetID();
@@ -315,7 +327,7 @@ private func GetInfoPanel(vehicle: ref<PurchasableVehicle>) -> ref<inkFlex> {
   let carImage: ref<inkImage>;
   let carStatus: ref<inkText>;
   
-  // Name and price
+  // Root container
   infoPanel = new inkFlex();
   infoPanel.SetName(StringToName(s"TextInfoPanel_\(this.vehicleIndex)"));
   infoPanel.SetFitToContent(true);
@@ -325,6 +337,7 @@ private func GetInfoPanel(vehicle: ref<PurchasableVehicle>) -> ref<inkFlex> {
   infoPanel.SetMargin(new inkMargin(0.0, 100.0, 0.0, 0.0));
   infoPanel.SetAnchorPoint(new Vector2(0.5, 0.5));
 
+  // Image
   carImage = new inkImage();
   carImage.SetName(n"CarImage");
   carImage.SetAtlasResource(vehicle.dealerAtlasPath);
@@ -337,6 +350,7 @@ private func GetInfoPanel(vehicle: ref<PurchasableVehicle>) -> ref<inkFlex> {
   carImage.SetAnchorPoint(new Vector2(0.5, 0.5));
   carImage.Reparent(infoPanel);
 
+  // Frame around the image
   let frame: ref<inkImage> = new inkImage();
   frame.SetName(n"frame");
   frame.SetNineSliceScale(true);
@@ -353,6 +367,7 @@ private func GetInfoPanel(vehicle: ref<PurchasableVehicle>) -> ref<inkFlex> {
   frame.SetOpacity(0.75);
   frame.Reparent(infoPanel);
 
+  // Car label
   carName = new inkText();
   carName.SetName(n"CarName");
   carName.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
@@ -370,6 +385,7 @@ private func GetInfoPanel(vehicle: ref<PurchasableVehicle>) -> ref<inkFlex> {
   carName.BindProperty(n"tintColor", n"MainColors.Blue");
   carName.Reparent(infoPanel);
 
+  // Car price
   carPrice = new inkText();
   carPrice.SetName(n"CarPrice");
   carPrice.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
@@ -387,6 +403,7 @@ private func GetInfoPanel(vehicle: ref<PurchasableVehicle>) -> ref<inkFlex> {
   carPrice.BindProperty(n"tintColor", n"MainColors.Yellow");
   carPrice.Reparent(infoPanel);
 
+  // Status text: Lot x of xx available / purchased / no eddies
   carStatus = new inkText();
   carStatus.SetName(n"CarStatus");
   carStatus.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
@@ -402,15 +419,15 @@ private func GetInfoPanel(vehicle: ref<PurchasableVehicle>) -> ref<inkFlex> {
   let lotNumber: Int32 = this.vehicleIndex + 1;
   let totalLots: Int32 = this.vehicleLastIndex + 1;
 
-  if !enoughMoney {
-    carStatus.SetText(s"\(DealerTexts.Lot()) \(lotNumber) \(DealerTexts.Of()) \(totalLots): \(DealerTexts.NoMoni())");
+  if isPurchased {
+    carStatus.SetText(s"\(DealerTexts.Lot()) \(lotNumber) \(DealerTexts.Of()) \(totalLots): \(DealerTexts.Purchased())");
     carStatus.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-    carStatus.BindProperty(n"tintColor", n"MainColors.Red");
+    carStatus.BindProperty(n"tintColor", n"MainColors.Yellow");
   } else {
-    if isPurchased {
-        carStatus.SetText(s"\(DealerTexts.Lot()) \(lotNumber) \(DealerTexts.Of()) \(totalLots): \(DealerTexts.Purchased())");
-        carStatus.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-        carStatus.BindProperty(n"tintColor", n"MainColors.Red");
+    if !enoughMoney {
+      carStatus.SetText(s"\(DealerTexts.Lot()) \(lotNumber) \(DealerTexts.Of()) \(totalLots): \(DealerTexts.NoMoni())");
+      carStatus.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+      carStatus.BindProperty(n"tintColor", n"MainColors.Red");
     } else {
       if isPurchasable {
         carStatus.SetText(s"\(DealerTexts.Lot()) \(lotNumber) \(DealerTexts.Of()) \(totalLots): \(DealerTexts.Available())");
@@ -419,6 +436,7 @@ private func GetInfoPanel(vehicle: ref<PurchasableVehicle>) -> ref<inkFlex> {
       };
     };
   };
+
   carStatus.Reparent(infoPanel);
 
   return infoPanel;

@@ -1,17 +1,21 @@
 import CarDealer.Classes.PurchasableVehicle
 import CarDealer.System.PurchasableVehicleSystem
 
+// Check if player has enough money to pay the price
 @addMethod(WebPage)
 private func HasEnoughMoney(price: Int32) -> Bool {
   let playerBalance: Int32 = GameInstance.GetTransactionSystem(this.playerPuppet.GetGame()).GetItemQuantity(this.playerPuppet, MarketSystem.Money());
+  let result: Bool = playerBalance >= price;
   return playerBalance >= price;
 }
 
+// Remove money from player inventory
 @addMethod(WebPage)
 private func RemoveMoneyFromPlayer(price: Int32) -> Bool {
   return GameInstance.GetTransactionSystem(this.playerPuppet.GetGame()).RemoveItemByTDBID(this.playerPuppet, t"Items.money", price);
 }
 
+// Show purchased notification
 @addMethod(WebPage)
 private func PushPurchasedNotification(id: TweakDBID) -> Void {
   let bb: ref<IBlackboard> = GameInstance.GetBlackboardSystem(this.playerPuppet.GetGame()).Get(GetAllBlackboardDefs().VehiclePurchaseData);
@@ -24,6 +28,8 @@ protected cb func PlayCustomSound(evt: CName) -> Bool {
   GameObject.PlaySoundEvent(this.playerPuppet, evt);
 }
 
+// -- Play click sound, buy current selected vehicle, 
+//    refresh UI and show notification
 @addMethod(WebPage)
 private func BuyCurrentVehicle() {
   let vehicle: ref<PurchasableVehicle> = this.vehiclesStock[this.vehicleIndex];

@@ -19,7 +19,6 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
       this.m_vehicleSystem = GameInstance.GetVehicleSystem(player.GetGame());
       this.PopulateVehicleList();
       P(s"PurchasableVehicleSystem initialized, detected vehicles: \(ArraySize(this.m_storeVehicles))");
-      // this.BuyAll();
     };
   }
 
@@ -32,20 +31,14 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
       let price: Int32 = FromVariant<Int32>(priceVariant);
       let dealerAtlasVariant: Variant;
       let dealerPartNameVariant: Variant;
-      let previewAtlasVariant: Variant;
-      let previewPartNameVariant: Variant;
       if NotEquals(price, 0) {
         dealerAtlasVariant = TweakDBInterface.GetFlat(vehicleRecord.GetID() + t".dealerAtlasPath");
         dealerPartNameVariant = TweakDBInterface.GetFlat(vehicleRecord.GetID() + t".dealerPartName");
-        previewAtlasVariant = TweakDBInterface.GetFlat(vehicleRecord.GetID() + t".previewAtlasPath");
-        previewPartNameVariant = TweakDBInterface.GetFlat(vehicleRecord.GetID() + t".previewPartName");
         purchaseable = new PurchasableVehicle();
         purchaseable.record = vehicleRecord;
         purchaseable.price = price;
         purchaseable.dealerAtlasPath = ResRef.FromString(FromVariant<String>(dealerAtlasVariant));
         purchaseable.dealerPartName = StringToName(FromVariant<String>(dealerPartNameVariant));
-        purchaseable.previewAtlasPath = ResRef.FromString(FromVariant<String>(previewAtlasVariant));
-        purchaseable.previewPartName = StringToName(FromVariant<String>(previewPartNameVariant));
         ArrayPush(vehicles, purchaseable);
         P(s" - vehicle detected: \(GetLocalizedTextByKey(vehicleRecord.DisplayName())): \(price) $");
       };
@@ -54,21 +47,8 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
   }
 
   public func GetList() -> array<ref<PurchasableVehicle>> {
-    P(s"GetList returns \(ArraySize(this.m_storeVehicles))");
     return this.m_storeVehicles;
   }
-
-  public func GetRecord(id: TweakDBID) -> ref<PurchasableVehicle> {
-    for vehicle in this.m_storeVehicles {
-      if Equals(vehicle.record.GetID(), id) {
-        return vehicle;
-      };
-    };
-    // SHOULD NOT REACH THIS
-    P("KERNEL PANIC!!!!!");
-    return new PurchasableVehicle();
-  }
-
 
   public func IsPurchasable(id: TweakDBID) -> Bool {
     for vehicle in this.m_storeVehicles {

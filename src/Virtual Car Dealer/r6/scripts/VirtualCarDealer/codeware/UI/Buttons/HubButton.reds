@@ -5,7 +5,11 @@ public class CustomHubButton extends CustomButton {
 
 	protected let m_fluff: wref<inkImage>;
 
-	protected let m_hover: wref<inkWidget>;
+  protected let m_leftSideBg: wref<inkImage>;
+
+  protected let m_leftSideFg: wref<inkImage>;
+
+	protected let m_hover: wref<inkFlex>;
 
 	protected let m_disabledRootAnimDef: ref<inkAnimDef>;
 
@@ -18,7 +22,7 @@ public class CustomHubButton extends CustomButton {
 	protected func CreateWidgets() -> Void {
 		let root: ref<inkCanvas> = new inkCanvas();
 		root.SetName(n"button");
-		root.SetSize(new Vector2(500.0, 100.0)); // Big Mode = 160.0
+		root.SetSize(new Vector2(500.0, 105.0)); // Big Mode = 160.0
 		root.SetAnchorPoint(new Vector2(0.5, 0.5));
 		root.SetInteractive(true);
 
@@ -94,7 +98,9 @@ public class CustomHubButton extends CustomButton {
 		icon.SetVAlign(inkEVerticalAlign.Center);
 		icon.SetAnchorPoint(new Vector2(0.5, 0.5));
 		icon.SetSizeRule(inkESizeRule.Stretch);
-		icon.SetTintColor(new HDRColor(0.368627, 0.964706, 1.0, 1.0));
+		// icon.SetTintColor(new HDRColor(0.368627, 0.964706, 1.0, 1.0));
+		icon.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+		icon.BindProperty(n"tintColor", n"MainColors.Blue");
 		icon.SetSize(new Vector2(80.0, 80.0));
 		icon.SetScale(new Vector2(0.8, 0.8));
 		icon.Reparent(inkVerticalPanelWidget8);
@@ -109,7 +115,9 @@ public class CustomHubButton extends CustomButton {
 		fluff.SetVAlign(inkEVerticalAlign.Center);
 		fluff.SetAnchorPoint(new Vector2(0.5, 0.5));
 		fluff.SetOpacity(0.8);
-		fluff.SetTintColor(new HDRColor(0.368627, 0.964706, 1.0, 1.0));
+		// fluff.SetTintColor(new HDRColor(0.368627, 0.964706, 1.0, 1.0));
+		fluff.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+		fluff.BindProperty(n"tintColor", n"MainColors.Blue");
 		fluff.SetSize(new Vector2(90.0, 80.0));
 		fluff.Reparent(inkVerticalPanelWidget8);
 		
@@ -126,7 +134,9 @@ public class CustomHubButton extends CustomButton {
 		label.SetMargin(new inkMargin(20.0, -5.0, 0.0, 0.0));
 		label.SetHAlign(inkEHorizontalAlign.Left);
 		label.SetVAlign(inkEVerticalAlign.Center);
-		label.SetTintColor(new HDRColor(0.368627, 0.964706, 1.0, 1.0));
+		// label.SetTintColor(new HDRColor(0.368627, 0.964706, 1.0, 1.0));
+		label.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+		label.BindProperty(n"tintColor", n"MainColors.Blue");
 		label.SetSize(new Vector2(360.0, 120.0));
 		label.Reparent(container);
 
@@ -196,6 +206,8 @@ public class CustomHubButton extends CustomButton {
 		this.m_icon = icon;
 		this.m_fluff = fluff;
 		this.m_hover = hoverFrames;
+    this.m_leftSideBg = backgroundLeftBg;
+    this.m_leftSideFg = backgroundLeftFrame;
 
 		this.SetRootWidget(root);
 	}
@@ -257,6 +269,31 @@ public class CustomHubButton extends CustomButton {
   public func SetTextColor(colorName: CName) -> Void {
     this.m_label.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     this.m_label.BindProperty(n"tintColor", colorName);
+  }
+
+  public func SetHoverColor(colorName: CName) -> Void {
+    let root: ref<inkCompoundWidget> = this.m_hover as inkCompoundWidget;
+    let numChildren: Int32 = root.GetNumChildren();
+    let child: ref<inkImage>;
+    let i: Int32 = 0;
+    while i < numChildren {
+      child = root.GetWidget(i) as inkImage;
+      child.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+      child.BindProperty(n"tintColor", colorName);
+      i += 1;
+    };
+  }
+
+  public func SetFluffColor(colorName: CName) -> Void {
+    this.m_fluff.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    this.m_fluff.BindProperty(n"tintColor", colorName);
+  }
+
+  public func SetLeftSideColor(colorName: CName) -> Void {
+    this.m_leftSideBg.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    this.m_leftSideBg.BindProperty(n"tintColor", colorName);
+    this.m_leftSideFg.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    this.m_leftSideFg.BindProperty(n"tintColor", colorName);
   }
 
 	public static func Create() -> ref<CustomHubButton> {
