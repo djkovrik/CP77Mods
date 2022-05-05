@@ -31,16 +31,17 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
       let price: Int32 = FromVariant<Int32>(priceVariant);
       let dealerAtlasVariant: Variant;
       let dealerPartNameVariant: Variant;
-      if NotEquals(price, 0) {
-        dealerAtlasVariant = TweakDBInterface.GetFlat(vehicleRecord.GetID() + t".dealerAtlasPath");
-        dealerPartNameVariant = TweakDBInterface.GetFlat(vehicleRecord.GetID() + t".dealerPartName");
+      let id: TweakDBID = vehicleRecord.GetID();
+      if NotEquals(price, 0) && !StrBeginsWith(TDBID.ToStringDEBUG(id), "AMM_") {
+        dealerAtlasVariant = TweakDBInterface.GetFlat(id + t".dealerAtlasPath");
+        dealerPartNameVariant = TweakDBInterface.GetFlat(id + t".dealerPartName");
         purchaseable = new PurchasableVehicle();
         purchaseable.record = vehicleRecord;
         purchaseable.price = price;
         purchaseable.dealerAtlasPath = ResRef.FromString(FromVariant<String>(dealerAtlasVariant));
         purchaseable.dealerPartName = StringToName(FromVariant<String>(dealerPartNameVariant));
         ArrayPush(vehicles, purchaseable);
-        P(s" - vehicle detected: \(GetLocalizedTextByKey(vehicleRecord.DisplayName())): \(price) $");
+        P(s" - vehicle detected: \(TDBID.ToStringDEBUG(id)) \(GetLocalizedTextByKey(vehicleRecord.DisplayName())): \(price) $");
       };
     };
     this.m_storeVehicles = vehicles;
