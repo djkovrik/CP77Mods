@@ -1,0 +1,18 @@
+UIIcon.vcd_thorton_mackinaw_larimore_purchasable:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer.inkatlas"
+  atlasPartName: n"v-thorton-mackinaw-larimore"
+
+Vehicle.vcd_thorton_mackinaw_larimore_purchasable:
+  $base: Vehicle.v_standard3_thorton_mackinaw_country
+  appearanceName: n"v_standard3_thorton_mackinaw_larimore_suburban_03"
+  displayName: LocKey(20315)
+  icon: UIIcon.vcd_thorton_mackinaw_larimore_purchasable
+
+Vehicle.vcd_thorton_mackinaw_larimore_purchasable.dealerPrice: 133000
+# - Codex image size: 1860x609
+Vehicle.vcd_thorton_mackinaw_larimore_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen20.inkatlas"
+Vehicle.vcd_thorton_mackinaw_larimore_purchasable.dealerPartName: "v_thorton_mackinaw_larimore_full"
+
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_thorton_mackinaw_larimore_purchasable"
