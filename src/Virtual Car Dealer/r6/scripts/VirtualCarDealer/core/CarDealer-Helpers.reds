@@ -36,7 +36,7 @@ private func DealerBuyCurrentVehicle() {
   let id: TweakDBID = vehicle.record.GetID();
   let price: Int32 = vehicle.price;
   let isPurchased: Bool = this.purchaseSystem.IsPurchased(id);
-  if !isPurchased {
+  if !isPurchased && this.HasEnoughMoneyDealer(price) {
     this.PlayCustomSoundDealer(n"ui_menu_onpress");
     this.purchaseSystem.Purchase(id);
     this.ShowDealerCurrentPage();
