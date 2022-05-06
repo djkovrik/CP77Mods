@@ -27,19 +27,16 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
     let purchaseable: ref<PurchasableVehicle>;
     for record in TweakDBInterface.GetRecords(n"Vehicle") {
       let vehicleRecord: ref<Vehicle_Record> = record as Vehicle_Record;
-      let priceVariant: Variant = TweakDBInterface.GetFlat(vehicleRecord.GetID() + t".dealerPrice");
-      let price: Int32 = FromVariant<Int32>(priceVariant);
-      let dealerAtlasVariant: Variant;
-      let dealerPartNameVariant: Variant;
       let id: TweakDBID = vehicleRecord.GetID();
-      if NotEquals(price, 0) && !StrBeginsWith(TDBID.ToStringDEBUG(id), "AMM_") {
-        dealerAtlasVariant = TweakDBInterface.GetFlat(id + t".dealerAtlasPath");
-        dealerPartNameVariant = TweakDBInterface.GetFlat(id + t".dealerPartName");
+      let price: Int32 = TweakDBInterface.GetInt(id + t".dealerPrice", 0);
+      let dealerAtlasStr: String = TweakDBInterface.GetString(id + t".dealerAtlasPath", "");
+      let dealerPartNameStr: String = TweakDBInterface.GetString(id + t".dealerPartName", "");
+      if NotEquals(price, 0) && NotEquals(dealerAtlasStr, "") && NotEquals(dealerPartNameStr, "") {
         purchaseable = new PurchasableVehicle();
         purchaseable.record = vehicleRecord;
         purchaseable.price = price;
-        purchaseable.dealerAtlasPath = ResRef.FromString(FromVariant<String>(dealerAtlasVariant));
-        purchaseable.dealerPartName = StringToName(FromVariant<String>(dealerPartNameVariant));
+        purchaseable.dealerAtlasPath = ResRef.FromString(dealerAtlasStr);
+        purchaseable.dealerPartName = StringToName(dealerPartNameStr);
         ArrayPush(vehicles, purchaseable);
         P(s" - vehicle detected: \(TDBID.ToStringDEBUG(id)) \(GetLocalizedTextByKey(vehicleRecord.DisplayName())): \(price) $");
       };
