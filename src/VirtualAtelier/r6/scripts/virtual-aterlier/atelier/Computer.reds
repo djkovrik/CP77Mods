@@ -1,32 +1,13 @@
 import VendorPreview.utils.*
 
-@addField(ComputerMainLayoutWidgetController)
-public let m_isInDangerZone: Bool;
-
-@replaceMethod(ComputerInkGameController)
-protected cb func OnMainLayoutSpawned(widget: ref<inkWidget>, userData: ref<IScriptable>) -> Bool {
-  let danger: Bool = CurrentPlayerZoneManager.GetInstance().IsInDangerZone();
-  let controller: ref<ComputerMainLayoutWidgetController>;
-  this.m_mainLayout = widget;
-  if IsDefined(this.m_mainLayout) {
-    this.m_mainLayout.SetAnchor(inkEAnchor.Fill);
-    controller = this.GetMainLayoutController();
-    controller.m_isInDangerZone = danger;
-    if IsDefined(controller) {
-      controller.Initialize(this);
-    };
-    this.SetDevicesMenu(this, this.GetMainLayoutController().GetDevicesMenuContainer());
-    this.RegisterCloseWindowButtonCallback();
-  };
-}
-
-
 @wrapMethod(ComputerMainLayoutWidgetController)
 public func InitializeMenuButtons(gameController: ref<ComputerInkGameController>, widgetsData: array<SComputerMenuButtonWidgetPackage>) -> Void {
   wrappedMethod(gameController, widgetsData);
 
+  let inDangerZone: Bool = CurrentPlayerZoneManager.IsInDangerZone(gameController.GetPlayerControlledObject() as PlayerPuppet);
+
   // Do nothing if zone is danger
-  if this.m_isInDangerZone {
+  if inDangerZone {
     return ;
   };
 
