@@ -5,7 +5,7 @@ UIIcon.vcd_nomad_quadra_purchasable:
 
 Vehicle.vcd_nomad_quadra_purchasable:
   $base: Vehicle.v_sport2_quadra_type66_nomad_wraith
-  appearanceName: n"thorton_galena_nomad_wraiths_01"
+  appearanceName: n"quadra_type66_nomad_wraiths_01"
   displayName: LocKey(22341)
   icon: UIIcon.vcd_nomad_quadra_purchasable
   
