@@ -1,0 +1,91 @@
+# Base record for Mizutani Shion Targa MZT
+Vehicle.vcd_mizutani_shion_targa_purchasable:
+  $base: Vehicle.v_sport2_mizutani_shion_targa
+  displayName: LocKey(46598)
+
+
+# Now let's define color variants
+
+# -- Black variant icon
+UIIcon.vcd_mizutani_shion_targa_purchasable.black:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_shion_targa_mzt.inkatlas"
+  atlasPartName: n"mzt-shion-targa-black-small"
+
+# -- Black variant record
+Vehicle.vcd_mizutani_shion_targa_purchasable.black:
+  $base: Vehicle.vcd_mizutani_shion_targa_purchasable
+  appearanceName: n"mizutani_shion__basic_targa_black"
+  icon: UIIcon.vcd_mizutani_shion_targa_purchasable.black
+
+# -- Black variant dealer preview
+Vehicle.vcd_mizutani_shion_targa_purchasable.black.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_shion_targa_mzt.inkatlas"
+Vehicle.vcd_mizutani_shion_targa_purchasable.black.dealerPartName: "mzt-shion-targa-black-full"
+
+
+# -- Blue variant icon
+UIIcon.vcd_mizutani_shion_targa_purchasable.blue:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_shion_targa_mzt.inkatlas"
+  atlasPartName: n"mzt-shion-targa-blue-small"
+
+# -- Blue variant record
+Vehicle.vcd_mizutani_shion_targa_purchasable.blue:
+  $base: Vehicle.vcd_mizutani_shion_targa_purchasable
+  appearanceName: n"mizutani_shion__basic_targa_blue"
+  icon: UIIcon.vcd_mizutani_shion_targa_purchasable.blue
+
+# -- Blue variant dealer preview
+Vehicle.vcd_mizutani_shion_targa_purchasable.blue.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_shion_targa_mzt.inkatlas"
+Vehicle.vcd_mizutani_shion_targa_purchasable.blue.dealerPartName: "mzt-shion-targa-blue-full"
+
+
+# -- Red variant icon
+UIIcon.vcd_mizutani_shion_targa_purchasable.red:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_shion_targa_mzt.inkatlas"
+  atlasPartName: n"mzt-shion-targa-red-small"
+
+# -- Red variant record
+Vehicle.vcd_mizutani_shion_targa_purchasable.red:
+  $base: Vehicle.vcd_mizutani_shion_targa_purchasable
+  appearanceName: n"mizutani_shion__basic_targa_red"
+  icon: UIIcon.vcd_mizutani_shion_targa_purchasable.red
+
+# -- Red variant dealer preview
+Vehicle.vcd_mizutani_shion_targa_purchasable.red.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_shion_targa_mzt.inkatlas"
+Vehicle.vcd_mizutani_shion_targa_purchasable.red.dealerPartName: "mzt-shion-targa-red-full"
+
+
+# -- White variant icon
+UIIcon.vcd_mizutani_shion_targa_purchasable.white:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_shion_targa_mzt.inkatlas"
+  atlasPartName: n"mzt-shion-targa-white-small"
+
+# -- White variant record
+Vehicle.vcd_mizutani_shion_targa_purchasable.white:
+  $base: Vehicle.vcd_mizutani_shion_targa_purchasable
+  appearanceName: n"mizutani_shion__basic_targa_01"
+  icon: UIIcon.vcd_mizutani_shion_targa_purchasable.white
+
+# -- White variant dealer preview
+Vehicle.vcd_mizutani_shion_targa_purchasable.white.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_shion_targa_mzt.inkatlas"
+Vehicle.vcd_mizutani_shion_targa_purchasable.white.dealerPartName: "mzt-shion-targa-white-full"
+
+
+# Core flats defition for vehicle base record
+Vehicle.vcd_mizutani_shion_targa_purchasable.dealerPrice: 82000
+Vehicle.vcd_mizutani_shion_targa_purchasable.dealerVariants: 
+  - "Vehicle.vcd_mizutani_shion_targa_purchasable.black"
+  - "Vehicle.vcd_mizutani_shion_targa_purchasable.blue"
+  - "Vehicle.vcd_mizutani_shion_targa_purchasable.red"
+  - "Vehicle.vcd_mizutani_shion_targa_purchasable.white"
+
+
+# And adding color variants to vehicles list to make them purchasable
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_mizutani_shion_targa_purchasable.black"
+  - !append t"Vehicle.vcd_mizutani_shion_targa_purchasable.blue"
+  - !append t"Vehicle.vcd_mizutani_shion_targa_purchasable.red"
+  - !append t"Vehicle.vcd_mizutani_shion_targa_purchasable.white"
