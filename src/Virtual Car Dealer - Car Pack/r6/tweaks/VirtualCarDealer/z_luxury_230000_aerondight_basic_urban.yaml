@@ -10,6 +10,7 @@ Vehicle.vcd_aerondight_urban_02_purchasable:
   icon: UIIcon.vcd_aerondight_urban_02_purchasable
 
 Vehicle.vcd_aerondight_urban_02_purchasable.dealerPrice: 230000
+Vehicle.vcd_aerondight_urban_02_purchasable.dealerCred: 50
 # - Codex image size: 1860x609
 Vehicle.vcd_aerondight_urban_02_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen17.inkatlas"
 Vehicle.vcd_aerondight_urban_02_purchasable.dealerPartName: "v_rayfield_aerondight_full"

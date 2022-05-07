@@ -10,6 +10,7 @@ Vehicle.vcd_thorton_colby_nomad_purchasable:
   icon: UIIcon.vcd_thorton_colby_nomad_purchasable
 
 Vehicle.vcd_thorton_colby_nomad_purchasable.dealerPrice: 54000
+Vehicle.vcd_thorton_colby_nomad_purchasable.dealerCred: 10
 # - Codex image size: 1860x609
 Vehicle.vcd_thorton_colby_nomad_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen20.inkatlas"
 Vehicle.vcd_thorton_colby_nomad_purchasable.dealerPartName: "v_thorton_colby_nomad_full"

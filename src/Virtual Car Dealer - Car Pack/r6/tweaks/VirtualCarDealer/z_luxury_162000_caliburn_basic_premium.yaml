@@ -10,6 +10,7 @@ Vehicle.vcd_caliburn_purchasable:
   icon: UIIcon.vcd_caliburn_purchasable
 
 Vehicle.vcd_caliburn_purchasable.dealerPrice: 162000
+Vehicle.vcd_caliburn_purchasable.dealerCred: 40
 # - Codex image size: 1860x609
 Vehicle.vcd_caliburn_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen9.inkatlas"
 Vehicle.vcd_caliburn_purchasable.dealerPartName: "v_rayfield_caliburn_full"

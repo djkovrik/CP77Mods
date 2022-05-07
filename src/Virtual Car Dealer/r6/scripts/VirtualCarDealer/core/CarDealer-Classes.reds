@@ -1,6 +1,7 @@
 module CarDealer.Classes
 
 public class PurchasableVehicleBundle {
+  public let cred: Int32;
   public let price: Int32;
   public let variants: array<ref<PurchasableVehicleVariant>>;
 }

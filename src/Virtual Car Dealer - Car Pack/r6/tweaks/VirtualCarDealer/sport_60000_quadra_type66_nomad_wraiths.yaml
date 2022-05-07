@@ -10,6 +10,7 @@ Vehicle.vcd_nomad_quadra_purchasable:
   icon: UIIcon.vcd_nomad_quadra_purchasable
   
 Vehicle.vcd_nomad_quadra_purchasable.dealerPrice: 60000
+Vehicle.vcd_nomad_quadra_purchasable.dealerCred: 25
 # - Codex image size: 1860x609
 Vehicle.vcd_nomad_quadra_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen18.inkatlas"
 Vehicle.vcd_nomad_quadra_purchasable.dealerPartName: "v_sport2_quadra_type66_nomad_wraith_full"

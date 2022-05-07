@@ -9,6 +9,7 @@ Vehicle.vcd_chevalier_emperor_police_purchasable:
   icon: UIIcon.vcd_chevalier_emperor_police_purchasable
 
 Vehicle.vcd_chevalier_emperor_police_purchasable.dealerPrice: 78000
+Vehicle.vcd_chevalier_emperor_police_purchasable.dealerCred: 35
 # - Codex image size: 1860x609
 Vehicle.vcd_chevalier_emperor_police_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen16.inkatlas"
 Vehicle.vcd_chevalier_emperor_police_purchasable.dealerPartName: "v_chevallion_emperor_police_nbg_full"

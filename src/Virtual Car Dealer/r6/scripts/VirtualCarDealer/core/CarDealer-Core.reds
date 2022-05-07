@@ -147,15 +147,16 @@ public func ShowDealerCurrentPage() {
   let currentChild: ref<inkWidget> = this.dealerPanelInfoContainer.GetWidgetByIndex(0);
   info.Reparent(this.dealerPanelInfoContainer);
   this.dealerPanelInfoContainer.RemoveChild(currentChild);
-  this.RefreshDealerControls(variant.record.GetID(), bundle.price);
+  this.RefreshDealerControls(variant.record.GetID(), bundle.cred, bundle.price);
 }
 
 // Refresh buttons state
 @addMethod(WebPage)
-public func RefreshDealerControls(id: TweakDBID, price: Int32) {
+public func RefreshDealerControls(id: TweakDBID, cred: Int32, price: Int32) {
   let isPurchased: Bool = this.purchaseSystem.IsPurchased(id);
+  let enoughCred: Bool = this.HasEnoughStreetCredDealer(cred);
   let enoughMoney: Bool = this.HasEnoughMoneyDealer(price);
-  let disableBuy: Bool = isPurchased || !enoughMoney;
+  let disableBuy: Bool = isPurchased || !enoughMoney || !enoughCred;
   let disableColor: Bool = Equals(this.vehicleVariantLastIndex, 0);
   this.buttonBuy.SetDisabled(disableBuy);
   this.buttonColor.SetDisabled(disableColor);
@@ -373,13 +374,16 @@ private func NextDealerColor() -> Void {
 private func GetDealerInfoPanel(bundle: ref<PurchasableVehicleBundle>, variant: ref<PurchasableVehicleVariant>) -> ref<inkFlex> {
   let id: TweakDBID = variant.record.GetID();
   let name: CName = variant.record.DisplayName();
+  let cred: Int32 = bundle.cred;
   let price: Int32 = bundle.price;
   let isPurchasable: Bool = this.purchaseSystem.IsPurchasable(id);
   let isPurchased: Bool = this.purchaseSystem.IsPurchased(id);
+  let enoughCred: Bool = this.HasEnoughStreetCredDealer(cred);
   let enoughMoney: Bool = this.HasEnoughMoneyDealer(price);
 
   let infoPanel: ref<inkFlex>;
   let carName: ref<inkText>;
+  let carCred: ref<inkText>;
   let carPrice: ref<inkText>;
   let carImage: ref<inkImage>;
   let carStatus: ref<inkText>;
@@ -442,6 +446,28 @@ private func GetDealerInfoPanel(bundle: ref<PurchasableVehicleBundle>, variant: 
   carName.BindProperty(n"tintColor", n"MainColors.Blue");
   carName.Reparent(infoPanel);
 
+  let priceCredContainer: ref<inkHorizontalPanel> = new inkHorizontalPanel();
+  priceCredContainer.SetName(n"PriceCredContainer");
+  priceCredContainer.SetMargin(new inkMargin(0.0, -80.0, 0.0, 0.0));
+  priceCredContainer.SetHAlign(inkEHorizontalAlign.Right);
+  priceCredContainer.SetVAlign(inkEVerticalAlign.Top);
+  priceCredContainer.SetAnchor(inkEAnchor.TopRight);
+  priceCredContainer.SetAnchorPoint(new Vector2(0.5, 0.5));
+
+  // Car cred
+  carCred = new inkText();
+  carCred.SetName(n"CarCred");
+  carCred.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+  carCred.SetFontStyle(n"Regular");
+  carCred.SetFontSize(56);
+  carCred.SetLetterCase(textLetterCase.OriginalCase);
+  carCred.SetText(s"\(cred) SC");
+  carCred.SetFitToContent(true);
+  carCred.SetMargin(new inkMargin(0.0, 0.0, 60.0, 0.0));
+  carCred.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+  carCred.BindProperty(n"tintColor", n"MainColors.Green");
+  carCred.Reparent(priceCredContainer);
+
   // Car price
   carPrice = new inkText();
   carPrice.SetName(n"CarPrice");
@@ -451,14 +477,11 @@ private func GetDealerInfoPanel(bundle: ref<PurchasableVehicleBundle>, variant: 
   carPrice.SetLetterCase(textLetterCase.UpperCase);
   carPrice.SetText(s"\(price) \(GetLocalizedTextByKey(n"Common-Characters-EuroDollar"))");
   carPrice.SetFitToContent(true);
-  carPrice.SetHAlign(inkEHorizontalAlign.Right);
-  carPrice.SetVAlign(inkEVerticalAlign.Top);
-  carPrice.SetAnchor(inkEAnchor.TopRight);
-  carPrice.SetAnchorPoint(new Vector2(0.5, 0.5));
-  carPrice.SetMargin(new inkMargin(0.0, -80.0, 0.0, 0.0));
   carPrice.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
   carPrice.BindProperty(n"tintColor", n"MainColors.Yellow");
-  carPrice.Reparent(infoPanel);
+  carPrice.Reparent(priceCredContainer);
+
+  priceCredContainer.Reparent(infoPanel);
 
   // Status text: Lot x of xx available / purchased / no eddies
   carStatus = new inkText();
@@ -475,22 +498,24 @@ private func GetDealerInfoPanel(bundle: ref<PurchasableVehicleBundle>, variant: 
   carStatus.SetMargin(new inkMargin(0.0, 0.0, 0.0, -100.0));
   let lotNumber: Int32 = this.vehicleIndex + 1;
   let totalLots: Int32 = this.vehicleLastIndex + 1;
-  carStatus.SetText(s"\(DealerTexts.Lot()) \(lotNumber) \(DealerTexts.Of()) \(totalLots): \(DealerTexts.Purchased())");
+  carStatus.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
 
   if isPurchased {
     carStatus.SetText(s"\(DealerTexts.Lot()) \(lotNumber) \(DealerTexts.Of()) \(totalLots): \(DealerTexts.Purchased())");
-    carStatus.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     carStatus.BindProperty(n"tintColor", n"MainColors.Yellow");
   } else {
-    if !enoughMoney {
-      carStatus.SetText(s"\(DealerTexts.Lot()) \(lotNumber) \(DealerTexts.Of()) \(totalLots): \(DealerTexts.NoMoni())");
-      carStatus.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-      carStatus.BindProperty(n"tintColor", n"MainColors.Red");
+    if !enoughCred {
+        carStatus.SetText(s"\(DealerTexts.Lot()) \(lotNumber) \(DealerTexts.Of()) \(totalLots): \(DealerTexts.NoCred())");
+        carStatus.BindProperty(n"tintColor", n"MainColors.Green");
     } else {
-      if isPurchasable {
-        carStatus.SetText(s"\(DealerTexts.Lot()) \(lotNumber) \(DealerTexts.Of()) \(totalLots): \(DealerTexts.Available())");
-        carStatus.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-        carStatus.BindProperty(n"tintColor", n"MainColors.ActiveGreen");
+      if !enoughMoney {
+        carStatus.SetText(s"\(DealerTexts.Lot()) \(lotNumber) \(DealerTexts.Of()) \(totalLots): \(DealerTexts.NoMoni())");
+        carStatus.BindProperty(n"tintColor", n"MainColors.Red");
+      } else {
+        if isPurchasable {
+          carStatus.SetText(s"\(DealerTexts.Lot()) \(lotNumber) \(DealerTexts.Of()) \(totalLots): \(DealerTexts.Available())");
+          carStatus.BindProperty(n"tintColor", n"MainColors.ActiveGreen");
+        };
       };
     };
   };

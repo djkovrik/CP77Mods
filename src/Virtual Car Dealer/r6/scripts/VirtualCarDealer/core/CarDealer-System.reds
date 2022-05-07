@@ -32,12 +32,14 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
     for record in TweakDBInterface.GetRecords(n"Vehicle") {
       let currentRecord: ref<Vehicle_Record> = record as Vehicle_Record;
       let currentId: TweakDBID = currentRecord.GetID();
+      let currentCred: Int32 = TweakDBInterface.GetInt(currentId + t".dealerCred", 0);
       let currentPrice: Int32 = TweakDBInterface.GetInt(currentId + t".dealerPrice", 0);
       // Dealer record detected
       if NotEquals(currentPrice, 0) {
         P(s" - vehicle detected: \(TDBID.ToStringDEBUG(currentId)) \(GetLocalizedTextByKey(currentRecord.DisplayName())): \(currentPrice) $");
         // Let's make a new bundle
         newBundle = new PurchasableVehicleBundle();
+        newBundle.cred = currentCred;
         newBundle.price = currentPrice;
         // And then check if dealer variants available
         let dealerVariants: array<String> = TweakDBInterface.GetStringArray(currentId + t".dealerVariants");

@@ -10,6 +10,7 @@ Vehicle.vcd_archer_quartz_nomad_purchasable:
   icon: UIIcon.vcd_archer_quartz_nomad_purchasable
 
 Vehicle.vcd_archer_quartz_nomad_purchasable.dealerPrice: 32000
+Vehicle.vcd_archer_quartz_nomad_purchasable.dealerCred: 10
 # - Codex image size: 1860x609
 Vehicle.vcd_archer_quartz_nomad_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen15.inkatlas"
 Vehicle.vcd_archer_quartz_nomad_purchasable.dealerPartName: "v_archer_quartz_nomad_v1_full"

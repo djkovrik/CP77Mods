@@ -9,6 +9,7 @@ Vehicle.vcd_police_archer_hella_purchasable:
   icon: UIIcon.vcd_police_archer_hella_purchasable
 
 Vehicle.vcd_police_archer_hella_purchasable.dealerPrice: 56000
+Vehicle.vcd_police_archer_hella_purchasable.dealerCred: 25
 # - Codex image size: 1860x609
 Vehicle.vcd_police_archer_hella_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen15.inkatlas"
 Vehicle.vcd_police_archer_hella_purchasable.dealerPartName: "v_archer_hella_police_full"

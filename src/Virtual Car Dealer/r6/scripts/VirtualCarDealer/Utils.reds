@@ -12,6 +12,7 @@ public class DealerTexts {
   public static func Of() -> String = GetLocalizedTextByKey(n"Mod-Car-Dealer-Of")
   public static func Available() -> String = GetLocalizedTextByKey(n"Mod-Car-Dealer-Available")
   public static func Purchased() -> String = GetLocalizedTextByKey(n"Mod-Car-Dealer-Purchased")
+  public static func NoCred() -> String = GetLocalizedTextByKey(n"Mod-Car-Dealer-Cred")
   public static func NoMoni() -> String = GetLocalizedTextByKey(n"Mod-Car-Dealer-Eddies")
   public static func Previous() -> String = GetLocalizedTextByKey(n"Mod-Car-Dealer-Previous")
   public static func Next() -> String = GetLocalizedTextByKey(n"Mod-Car-Dealer-Next")

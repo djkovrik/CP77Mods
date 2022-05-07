@@ -10,6 +10,7 @@ Vehicle.vcd_type66_vtech_avenger_04_purchasable:
   icon: UIIcon.vcd_type66_vtech_avenger_04_purchasable
 
 Vehicle.vcd_type66_vtech_avenger_04_purchasable.dealerPrice: 78000
+Vehicle.vcd_type66_vtech_avenger_04_purchasable.dealerCred: 30
 # - Codex image size: 1860x609
 Vehicle.vcd_type66_vtech_avenger_04_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen17.inkatlas"
 Vehicle.vcd_type66_vtech_avenger_04_purchasable.dealerPartName: "v_quadra_type66_vtech_avenger_04_full"

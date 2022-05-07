@@ -76,6 +76,7 @@ Vehicle.vcd_mizutani_shion_targa_purchasable.white.dealerPartName: "mzt-shion-ta
 
 # Core flats defition for vehicle base record
 Vehicle.vcd_mizutani_shion_targa_purchasable.dealerPrice: 82000
+Vehicle.vcd_mizutani_shion_targa_purchasable.dealerCred: 30
 Vehicle.vcd_mizutani_shion_targa_purchasable.dealerVariants: 
   - "Vehicle.vcd_mizutani_shion_targa_purchasable.black"
   - "Vehicle.vcd_mizutani_shion_targa_purchasable.blue"

@@ -9,6 +9,7 @@ Vehicle.vcd_police_cortes_purchasable:
   icon: UIIcon.vcd_police_cortes_purchasable
 
 Vehicle.vcd_police_cortes_purchasable.dealerPrice: 67000
+Vehicle.vcd_police_cortes_purchasable.dealerCred: 30
 # - Codex image size: 1860x609
 Vehicle.vcd_police_cortes_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen21.inkatlas"
 Vehicle.vcd_police_cortes_purchasable.dealerPartName: "v_villefort_cortes_police_full"

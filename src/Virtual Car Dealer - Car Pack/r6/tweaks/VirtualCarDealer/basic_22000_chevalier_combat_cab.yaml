@@ -9,6 +9,7 @@ Vehicle.vcd_thrax_combat_cab_purchasable:
   icon: UIIcon.vcd_thrax_combat_cab_purchasable
 
 Vehicle.vcd_thrax_combat_cab_purchasable.dealerPrice: 22000
+Vehicle.vcd_thrax_combat_cab_purchasable.dealerCred: 5
 # - Codex image size: 1860x609
 Vehicle.vcd_thrax_combat_cab_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen26.inkatlas"
 Vehicle.vcd_thrax_combat_cab_purchasable.dealerPartName: "lore_combat_cab_full"
