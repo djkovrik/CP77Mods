@@ -115,7 +115,7 @@ private func ShowDealerCommonElements() {
   rootCanvas.SetVAlign(inkEVerticalAlign.Center);
   rootCanvas.SetAnchor(inkEAnchor.Centered);
   rootCanvas.SetAnchorPoint(new Vector2(0.5, 0.5));
-  rootCanvas.SetMargin(new inkMargin(0.0, 120.0, 0.0, 0.0));
+  rootCanvas.SetMargin(new inkMargin(0.0, 140.0, 0.0, 0.0));
   rootCanvas.Reparent(this.dealerPanelRoot);
 
   let horizontalPanel: ref<inkVerticalPanel> = new inkVerticalPanel();

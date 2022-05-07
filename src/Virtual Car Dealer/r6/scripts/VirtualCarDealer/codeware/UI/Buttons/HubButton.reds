@@ -296,10 +296,6 @@ public class CustomHubButton extends CustomButton {
     this.m_leftSideFg.BindProperty(n"tintColor", colorName);
   }
 
-  public func SetVisible(visible: Bool) -> Void {
-    this.m_root.SetVisible(visible);
-  }
-
 	public static func Create() -> ref<CustomHubButton> {
 		let self: ref<CustomHubButton> = new CustomHubButton();
 		self.CreateInstance();

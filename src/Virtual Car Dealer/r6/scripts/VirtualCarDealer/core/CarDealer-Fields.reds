@@ -43,15 +43,3 @@ let playerPuppet: wref<PlayerPuppet>;
 
 @addField(WebPage)
 let infoPanel: ref<inkFlex>;
-
-@addField(WebPage)
-let carName: ref<inkText>;
-
-@addField(WebPage)
-let carPrice: ref<inkText>;
-
-@addField(WebPage)
-let carImage: ref<inkImage>;
-
-@addField(WebPage)
-let carStatus: ref<inkText>;
