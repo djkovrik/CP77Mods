@@ -16,4 +16,5 @@ public class DealerTexts {
   public static func Previous() -> String = GetLocalizedTextByKey(n"Mod-Car-Dealer-Previous")
   public static func Next() -> String = GetLocalizedTextByKey(n"Mod-Car-Dealer-Next")
   public static func Buy() -> String = GetLocalizedTextByKey(n"Mod-Car-Dealer-Buy")
+  public static func ChangeColor() -> String = GetLocalizedTextByKey(n"Mod-Car-Dealer-ChangeColor")
 }

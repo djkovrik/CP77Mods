@@ -1,4 +1,5 @@
-import CarDealer.Classes.PurchasableVehicle
+import CarDealer.Classes.PurchasableVehicleBundle
+import CarDealer.Classes.PurchasableVehicleVariant
 import CarDealer.System.PurchasableVehicleSystem
 
 // Check if player has enough money to pay the price
@@ -32,15 +33,16 @@ protected cb func PlayCustomSoundDealer(evt: CName) -> Bool {
 //    refresh UI and show notification
 @addMethod(WebPage)
 private func DealerBuyCurrentVehicle() {
-  let vehicle: ref<PurchasableVehicle> = this.vehiclesStock[this.vehicleIndex];
-  let id: TweakDBID = vehicle.record.GetID();
-  let price: Int32 = vehicle.price;
+  let currentBundle: ref<PurchasableVehicleBundle> = this.vehiclesStock[this.vehicleIndex];
+  let currentVehicle: ref<PurchasableVehicleVariant> = currentBundle.variants[this.vehicleVariantIndex];
+  let id: TweakDBID = currentVehicle.record.GetID();
+  let price: Int32 = currentBundle.price;
   let isPurchased: Bool = this.purchaseSystem.IsPurchased(id);
   if !isPurchased && this.HasEnoughMoneyDealer(price) {
     this.PlayCustomSoundDealer(n"ui_menu_onpress");
     this.purchaseSystem.Purchase(id);
-    this.ShowDealerCurrentPage();
     this.RemoveMoneyFromPlayerDealer(price);
     this.PushPurchasedNotificationDealer(id);
+    this.ShowDealerCurrentPage();
   };
 }

@@ -1,5 +1,6 @@
 import CarDealer.Codeware.UI.*
-import CarDealer.Classes.PurchasableVehicle
+import CarDealer.Classes.PurchasableVehicleBundle
+import CarDealer.Classes.PurchasableVehicleVariant
 import CarDealer.System.PurchasableVehicleSystem
 import CarDealer.Utils.DealerTexts
 import CarDealer.Utils.P
@@ -22,6 +23,8 @@ private func PopulateDealerView(owner: ref<GameObject>) {
     } else {
       this.vehicleIndex = 0;
       this.vehicleLastIndex = stockSize - 1;
+      this.vehicleVariantIndex = 0;
+      this.vehicleVariantLastIndex = ArraySize(this.vehiclesStock[this.vehicleIndex].variants) - 1;
       this.ShowDealerCommonElements();
       this.ShowDealerCurrentPage();
     };
@@ -131,43 +134,43 @@ private func ShowDealerCommonElements() {
   this.dealerPanelInfoContainer.SetFitToContent(true);
   this.dealerPanelInfoContainer.Reparent(horizontalPanel);
 
-  let buttons: ref<inkHorizontalPanel> = this.GetDealerButtonsContainer();
+  let buttons: ref<inkVerticalPanel> = this.GetDealerButtonsContainer();
   buttons.Reparent(horizontalPanel);
 }
 
 // Show info for current selected car
 @addMethod(WebPage)
 public func ShowDealerCurrentPage() {
-  let vehicle: ref<PurchasableVehicle> = this.vehiclesStock[this.vehicleIndex];
-  let info: ref<inkFlex> = this.GetDealerInfoPanel(vehicle);
+  let bundle: ref<PurchasableVehicleBundle> = this.vehiclesStock[this.vehicleIndex];
+  let variant: ref<PurchasableVehicleVariant> = bundle.variants[this.vehicleVariantIndex];
+  let info: ref<inkFlex> = this.GetDealerInfoPanel(bundle, variant);
   let currentChild: ref<inkWidget> = this.dealerPanelInfoContainer.GetWidgetByIndex(0);
-  P(s"ShowDealerCurrentPage call: index \(this.vehicleIndex), last index: \(this.vehicleLastIndex), vehicle: \(GetLocalizedTextByKey(vehicle.record.DisplayName())) \(vehicle.price) \(vehicle.dealerPartName)");
   info.Reparent(this.dealerPanelInfoContainer);
   this.dealerPanelInfoContainer.RemoveChild(currentChild);
-  this.RefreshDealerControls(vehicle);
+  this.RefreshDealerControls(variant.record.GetID(), bundle.price);
 }
 
 // Refresh buttons state
 @addMethod(WebPage)
-public func RefreshDealerControls(vehicle: ref<PurchasableVehicle>) {
-  let id: TweakDBID = vehicle.record.GetID();
-  let price: Int32 = vehicle.price;
+public func RefreshDealerControls(id: TweakDBID, price: Int32) {
   let isPurchased: Bool = this.purchaseSystem.IsPurchased(id);
   let enoughMoney: Bool = this.HasEnoughMoneyDealer(price);
-  let disableButton: Bool = isPurchased || !enoughMoney;
-  this.buttonBuy.SetDisabled(disableButton);
+  let disableBuy: Bool = isPurchased || !enoughMoney;
+  let disableColor: Bool = Equals(this.vehicleVariantLastIndex, 0);
+  this.buttonBuy.SetDisabled(disableBuy);
+  this.buttonColor.SetDisabled(disableColor);
 }
 
 // Create buttons
 @addMethod(WebPage)
-private func GetDealerButtonsContainer() -> ref<inkHorizontalPanel> {
-  let column: ref<inkHorizontalPanel> = new inkHorizontalPanel();
-  column.SetName(n"Buttons");
-  column.SetFitToContent(true);
-  column.SetAnchor(inkEAnchor.Centered);
-  column.SetAnchorPoint(new Vector2(0.5, 0.5));
-  column.SetMargin(new inkMargin(0.0, 180.0, 0.0, 0.0));
-  column.SetChildMargin(new inkMargin(20.0, 0.0, 20.0, 0.0));
+private func GetDealerButtonsContainer() -> ref<inkVerticalPanel> {
+  let rowTop: ref<inkHorizontalPanel> = new inkHorizontalPanel();
+  rowTop.SetName(n"ButtonsTop");
+  rowTop.SetFitToContent(true);
+  rowTop.SetAnchor(inkEAnchor.Centered);
+  rowTop.SetAnchorPoint(new Vector2(0.5, 0.5));
+  rowTop.SetMargin(new inkMargin(0.0, 140.0, 0.0, 0.0));
+  rowTop.SetChildMargin(new inkMargin(20.0, 0.0, 20.0, 0.0));
 
   this.buttonPrev = CustomHubButton.Create();
   this.buttonPrev.SetName(n"ButtonPrev");
@@ -177,7 +180,7 @@ private func GetDealerButtonsContainer() -> ref<inkHorizontalPanel> {
   this.buttonPrev.SetTextColor(n"MainColors.MediumBlue");
   this.buttonPrev.SetHoverColor(n"MainColors.MediumBlue");
   this.buttonPrev.SetFluffColor(n"MainColors.Blue");
-  this.buttonPrev.Reparent(column);
+  this.buttonPrev.Reparent(rowTop);
 
   this.buttonNext = CustomHubButton.Create();
   this.buttonNext.SetName(n"ButtonNext");
@@ -187,14 +190,33 @@ private func GetDealerButtonsContainer() -> ref<inkHorizontalPanel> {
   this.buttonNext.SetTextColor(n"MainColors.MediumBlue");
   this.buttonNext.SetHoverColor(n"MainColors.MediumBlue");
   this.buttonNext.SetFluffColor(n"MainColors.Blue");
-  this.buttonNext.Reparent(column);
+  this.buttonNext.Reparent(rowTop);
 
-  let buyContainer: ref<inkVerticalPanel> = new inkVerticalPanel();
-  buyContainer.SetName(n"ButtonBuyContainer");
-  buyContainer.SetFitToContent(true);
-  buyContainer.SetHAlign(inkEHorizontalAlign.Center);
-  buyContainer.SetChildMargin(new inkMargin(240.0, 0.0, 0.0, 0.0));
-  buyContainer.Reparent(column);
+  let colorContainer: ref<inkVerticalPanel> = new inkVerticalPanel();
+  colorContainer.SetName(n"ButtonBuyContainer");
+  colorContainer.SetFitToContent(true);
+  colorContainer.SetHAlign(inkEHorizontalAlign.Center);
+  colorContainer.SetChildMargin(new inkMargin(240.0, 0.0, 0.0, 0.0));
+  colorContainer.Reparent(rowTop);
+  this.buttonColor = CustomHubButton.Create();
+  this.buttonColor.SetName(n"ButtonColor");
+  this.buttonColor.SetText(DealerTexts.ChangeColor());
+  this.buttonColor.ToggleAnimations(true);
+  this.buttonColor.ToggleSounds(true);
+  this.buttonColor.SetTextColor(n"MainColors.MediumBlue");
+  this.buttonColor.SetHoverColor(n"MainColors.MediumBlue");
+  this.buttonColor.SetFluffColor(n"MainColors.Blue");
+  this.buttonColor.Reparent(colorContainer);
+
+  let rowBottom: ref<inkHorizontalPanel> = new inkHorizontalPanel();
+  rowBottom.SetName(n"ButtonsBottom");
+  rowBottom.SetFitToContent(true);
+  rowBottom.SetHAlign(inkEHorizontalAlign.Right);
+  rowBottom.SetAnchor(inkEAnchor.CenterRight);
+  rowBottom.SetAnchorPoint(new Vector2(0.5, 0.5));
+  rowBottom.SetMargin(new inkMargin(0.0, 40.0, 0.0, 0.0));
+  rowBottom.SetChildMargin(new inkMargin(20.0, 0.0, 20.0, 0.0));
+
   this.buttonBuy = CustomHubButton.Create();
   this.buttonBuy.SetName(n"ButtonBuy");
   this.buttonBuy.SetText(DealerTexts.Buy());
@@ -204,12 +226,15 @@ private func GetDealerButtonsContainer() -> ref<inkHorizontalPanel> {
   this.buttonBuy.SetHoverColor(n"MainColors.Yellow");
   this.buttonBuy.SetFluffColor(n"MainColors.Yellow");
   this.buttonBuy.SetLeftSideColor(n"MainColors.Yellow");
+  this.buttonBuy.Reparent(rowBottom);
 
-  this.buttonBuy.Reparent(buyContainer);
 
   this.RegisterDealerListeners();
 
-  return column;
+  let result: ref<inkVerticalPanel> = new inkVerticalPanel();
+  rowTop.Reparent(result);
+  rowBottom.Reparent(result);
+  return result;
 }
 
 // Register buttons listeners
@@ -227,6 +252,10 @@ protected func RegisterDealerListeners() -> Void {
   this.buttonBuy.RegisterToCallback(n"OnClick", this, n"OnDealerButtonClick");
   this.buttonBuy.RegisterToCallback(n"OnEnter", this, n"OnDealerButtonEnter");
   this.buttonBuy.RegisterToCallback(n"OnLeave", this, n"OnDealerButtonLeave");
+
+  this.buttonColor.RegisterToCallback(n"OnClick", this, n"OnDealerButtonClick");
+  this.buttonColor.RegisterToCallback(n"OnEnter", this, n"OnDealerButtonEnter");
+  this.buttonColor.RegisterToCallback(n"OnLeave", this, n"OnDealerButtonLeave");
 }
 
 // Handle click
@@ -242,6 +271,12 @@ protected cb func OnDealerButtonClick(evt: ref<inkPointerEvent>) -> Bool {
       case n"ButtonNext":
         this.NextDealerLot();
         this.PlayCustomSoundDealer(n"ui_menu_onpress");
+        break;
+      case n"ButtonColor":
+        if NotEquals(this.vehicleVariantLastIndex, 0) {
+          this.NextDealerColor();
+          this.PlayCustomSoundDealer(n"ui_menu_onpress");
+        };
         break;
       case n"ButtonBuy":
         this.DealerBuyCurrentVehicle();
@@ -267,6 +302,10 @@ protected cb func OnDealerButtonEnter(evt: ref<inkPointerEvent>) -> Bool {
       this.buttonBuy.SetHoveredState(true);
       this.PlayCustomSoundDealer(n"ui_menu_hover");
       break;
+    case n"ButtonColor":
+      this.buttonColor.SetHoveredState(true);
+      this.PlayCustomSoundDealer(n"ui_menu_hover");
+      break;
   };
 }
 
@@ -284,6 +323,9 @@ protected cb func OnDealerButtonLeave(evt: ref<inkPointerEvent>) -> Bool {
     case n"ButtonBuy":
       this.buttonBuy.SetHoveredState(false);
       break;
+    case n"ButtonColor":
+      this.buttonColor.SetHoveredState(false);
+      break;
   };
 }
 
@@ -296,6 +338,8 @@ private func PreviousDealerLot() -> Void {
     this.vehicleIndex = this.vehicleLastIndex;
     P(s"PreviousDealerLot: index switched to \(this.vehicleIndex )");
   };
+  this.vehicleVariantIndex = 0;
+  this.vehicleVariantLastIndex = ArraySize(this.vehiclesStock[this.vehicleIndex].variants) - 1;
   this.ShowDealerCurrentPage();
 }
 
@@ -303,20 +347,33 @@ private func PreviousDealerLot() -> Void {
 @addMethod(WebPage)
 private func NextDealerLot() -> Void {
   this.vehicleIndex = this.vehicleIndex + 1;
-  P(s"NextDealerLot click: new index \(this.vehicleIndex )");
+  P(s"NextDealerLot click: new index \(this.vehicleIndex)");
   if this.vehicleIndex > this.vehicleLastIndex {
     this.vehicleIndex = 0;
-    P(s"NextDealerLot: index switched to \(this.vehicleIndex )");
+    P(s"NextDealerLot: index switched to \(this.vehicleIndex)");
+  };
+  this.vehicleVariantIndex = 0;
+  this.vehicleVariantLastIndex = ArraySize(this.vehiclesStock[this.vehicleIndex].variants) - 1;
+  this.ShowDealerCurrentPage();
+}
+
+@addMethod(WebPage)
+private func NextDealerColor() -> Void {
+  this.vehicleVariantIndex = this.vehicleVariantIndex + 1;
+  P(s"NextDealerColor click: new index \(this.vehicleVariantIndex)");
+  if this.vehicleVariantIndex > this.vehicleVariantLastIndex {
+    this.vehicleVariantIndex = 0;
+    P(s"NextDealerColor: index switched to \(this.vehicleVariantIndex)");
   };
   this.ShowDealerCurrentPage();
 }
 
 // Build info panel for the current selected car
 @addMethod(WebPage)
-private func GetDealerInfoPanel(vehicle: ref<PurchasableVehicle>) -> ref<inkFlex> {
-  let id: TweakDBID = vehicle.record.GetID();
-  let name: CName = vehicle.record.DisplayName();
-  let price: Int32 = vehicle.price;
+private func GetDealerInfoPanel(bundle: ref<PurchasableVehicleBundle>, variant: ref<PurchasableVehicleVariant>) -> ref<inkFlex> {
+  let id: TweakDBID = variant.record.GetID();
+  let name: CName = variant.record.DisplayName();
+  let price: Int32 = bundle.price;
   let isPurchasable: Bool = this.purchaseSystem.IsPurchasable(id);
   let isPurchased: Bool = this.purchaseSystem.IsPurchased(id);
   let enoughMoney: Bool = this.HasEnoughMoneyDealer(price);
@@ -340,8 +397,8 @@ private func GetDealerInfoPanel(vehicle: ref<PurchasableVehicle>) -> ref<inkFlex
   // Image
   carImage = new inkImage();
   carImage.SetName(n"CarImage");
-  carImage.SetAtlasResource(vehicle.dealerAtlasPath);
-  carImage.SetTexturePart(vehicle.dealerPartName);
+  carImage.SetAtlasResource(variant.dealerAtlasPath);
+  carImage.SetTexturePart(variant.dealerPartName);
   carImage.SetInteractive(false);
   carImage.SetFitToContent(true);
   carImage.SetHAlign(inkEHorizontalAlign.Center);
@@ -407,7 +464,7 @@ private func GetDealerInfoPanel(vehicle: ref<PurchasableVehicle>) -> ref<inkFlex
   carStatus = new inkText();
   carStatus.SetName(n"CarStatus");
   carStatus.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-  carStatus.SetFontStyle(n"Semi-Bold");
+  carStatus.SetFontStyle(n"Regular");
   carStatus.SetFontSize(62);
   carStatus.SetLetterCase(textLetterCase.OriginalCase);
   carStatus.SetFitToContent(true);
@@ -418,6 +475,7 @@ private func GetDealerInfoPanel(vehicle: ref<PurchasableVehicle>) -> ref<inkFlex
   carStatus.SetMargin(new inkMargin(0.0, 0.0, 0.0, -100.0));
   let lotNumber: Int32 = this.vehicleIndex + 1;
   let totalLots: Int32 = this.vehicleLastIndex + 1;
+  carStatus.SetText(s"\(DealerTexts.Lot()) \(lotNumber) \(DealerTexts.Of()) \(totalLots): \(DealerTexts.Purchased())");
 
   if isPurchased {
     carStatus.SetText(s"\(DealerTexts.Lot()) \(lotNumber) \(DealerTexts.Of()) \(totalLots): \(DealerTexts.Purchased())");
@@ -432,7 +490,7 @@ private func GetDealerInfoPanel(vehicle: ref<PurchasableVehicle>) -> ref<inkFlex
       if isPurchasable {
         carStatus.SetText(s"\(DealerTexts.Lot()) \(lotNumber) \(DealerTexts.Of()) \(totalLots): \(DealerTexts.Available())");
         carStatus.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-        carStatus.BindProperty(n"tintColor", n"MainColors.Green");
+        carStatus.BindProperty(n"tintColor", n"MainColors.ActiveGreen");
       };
     };
   };
