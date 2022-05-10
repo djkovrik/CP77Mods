@@ -28,7 +28,6 @@ public class MappinChecker {
       || Equals(variant, gamedataMappinVariant.WanderingMerchantVariant)
       || Equals(variant, gamedataMappinVariant.ConvoyVariant)
       || Equals(variant, gamedataMappinVariant.FixerVariant)
-      || Equals(variant, gamedataMappinVariant.ApartmentVariant)
       || Equals(variant, gamedataMappinVariant.Zzz01_CarForPurchaseVariant)
       || Equals(variant, gamedataMappinVariant.Zzz02_MotorcycleForPurchaseVariant)
       || Equals(variant, gamedataMappinVariant.Zzz04_PreventionVehicleVariant)
@@ -70,6 +69,7 @@ public class MappinChecker {
       || Equals(variant, gamedataMappinVariant.EffectDropPointVariant)
       || Equals(variant, gamedataMappinVariant.ServicePointDropPointVariant)
       || Equals(variant, gamedataMappinVariant.CustomPositionVariant)
+      || Equals(variant, gamedataMappinVariant.Zzz07_PlayerStashVariant)
       || false;
   }
 
