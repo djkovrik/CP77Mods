@@ -96,6 +96,8 @@ public class QuestTrackerModuleConfig {
   public static func ShowWithScanner() -> Bool = false
   public static func ShowWithWeapon() -> Bool = false
   public static func ShowWithZoom() -> Bool = true
+  public static func DisplayForQuestUpdates() -> Bool = true
+  public static func QuestUpdateDisplayingTime() -> Float = 5.0
 }
 
 // -- PLAYER HEALTHBAR

@@ -1,4 +1,5 @@
 import LimitedHudConfig.QuestTrackerModuleConfig
+import LimitedHudCommon.LHUDEventType
 import LimitedHudCommon.LHUDEvent
 
 @addMethod(QuestTrackerGameController)
@@ -47,4 +48,31 @@ protected cb func OnInitialize() -> Bool {
     this.GetRootWidget().SetOpacity(0.0);
     this.OnInitializeFinished();
   };
+}
+
+// -- Temporarily show tracker and then schedule hiding
+@wrapMethod(QuestTrackerGameController)
+protected cb func OnTrackedEntryChanges(hash: Uint32, className: CName, notifyOption: JournalNotifyOption, changeType: JournalChangeType) -> Bool {
+  wrappedMethod(hash, className, notifyOption, changeType);
+
+  let callback: ref<LHUDHideQuestTrackerCallback>;
+  if QuestTrackerModuleConfig.IsEnabled() && QuestTrackerModuleConfig.DisplayForQuestUpdates() {
+    // Show tracker
+    this.lhud_isVisibleNow = true;
+    this.AnimateAlphaLHUD(this.GetRootWidget(), 1.0, 0.3);
+    // Schedule hiding
+    callback = new LHUDHideQuestTrackerCallback();
+    callback.uiSystem = GameInstance.GetUISystem(this.GetPlayerControlledObject().GetGame());
+    GameInstance.GetDelaySystem(this.GetPlayerControlledObject().GetGame()).DelayCallback(callback, QuestTrackerModuleConfig.QuestUpdateDisplayingTime());
+  };
+}
+
+public class LHUDHideQuestTrackerCallback extends DelayCallback {
+  public let uiSystem: wref<UISystem>;
+  public func Call() -> Void {
+    let evt: ref<LHUDEvent> = new LHUDEvent();
+    evt.type = LHUDEventType.Refresh;
+    evt.isActive = false;
+    this.uiSystem.QueueEvent(evt);
+  }
 }

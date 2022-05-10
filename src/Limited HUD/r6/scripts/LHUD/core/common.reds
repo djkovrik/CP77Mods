@@ -14,6 +14,7 @@ enum LHUDEventType {
   InVehicle = 8,
   Weapon = 9,
   Zoom = 10,
+  Refresh = 11
 }
 
 // Basic visibility condition event
