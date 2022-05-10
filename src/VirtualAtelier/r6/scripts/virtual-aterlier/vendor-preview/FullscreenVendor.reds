@@ -177,6 +177,8 @@ private func BuyItemFromVirtualVendor(inventoryItemData: InventoryItemData) {
   } else {
     transactionSystem.GiveItem(this.m_player, itemID, quantity);
     transactionSystem.RemoveItemByTDBID(this.m_player, t"Items.money", Cast(price));
+    // Refresh stock to regenerate ItemIDs
+    this.PopulateVendorInventory();
   }
 }
 
