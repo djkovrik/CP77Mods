@@ -9,7 +9,7 @@ Vehicle.vcd_type66_vtech_suburban_02_purchasable:
   displayName: LocKey(20279)
   icon: UIIcon.vcd_type66_vtech_suburban_02_purchasable
 
-Vehicle.vcd_type66_vtech_suburban_02_purchasable.dealerPrice: 52000
+Vehicle.vcd_type66_vtech_suburban_02_purchasable.dealerPrice: 57000
 Vehicle.vcd_type66_vtech_suburban_02_purchasable.dealerCred: 20
 # - Codex image size: 1860x609
 Vehicle.vcd_type66_vtech_suburban_02_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen17.inkatlas"

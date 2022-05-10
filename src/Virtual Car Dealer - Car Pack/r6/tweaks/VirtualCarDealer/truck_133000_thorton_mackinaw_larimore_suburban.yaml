@@ -9,7 +9,7 @@ Vehicle.vcd_thorton_mackinaw_larimore_purchasable:
   displayName: LocKey(20315)
   icon: UIIcon.vcd_thorton_mackinaw_larimore_purchasable
 
-Vehicle.vcd_thorton_mackinaw_larimore_purchasable.dealerPrice: 133000
+Vehicle.vcd_thorton_mackinaw_larimore_purchasable.dealerPrice: 38000
 Vehicle.vcd_thorton_mackinaw_larimore_purchasable.dealerCred: 30
 # - Codex image size: 1860x609
 Vehicle.vcd_thorton_mackinaw_larimore_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen20.inkatlas"

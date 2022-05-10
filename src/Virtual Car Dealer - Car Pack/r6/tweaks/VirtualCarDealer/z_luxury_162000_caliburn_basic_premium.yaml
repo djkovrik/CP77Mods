@@ -9,7 +9,7 @@ Vehicle.vcd_caliburn_purchasable:
   displayName: LocKey(20294)
   icon: UIIcon.vcd_caliburn_purchasable
 
-Vehicle.vcd_caliburn_purchasable.dealerPrice: 162000
+Vehicle.vcd_caliburn_purchasable.dealerPrice: 132000
 Vehicle.vcd_caliburn_purchasable.dealerCred: 40
 # - Codex image size: 1860x609
 Vehicle.vcd_caliburn_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen9.inkatlas"

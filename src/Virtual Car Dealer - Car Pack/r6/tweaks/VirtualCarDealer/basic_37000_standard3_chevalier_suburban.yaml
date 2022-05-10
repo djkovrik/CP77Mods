@@ -9,7 +9,7 @@ Vehicle.vcd_chevalier_emperor_suburban_purchasable:
   displayName: LocKey(1625)
   icon: UIIcon.vcd_chevalier_emperor_suburban_purchasable
 
-Vehicle.vcd_chevalier_emperor_suburban_purchasable.dealerPrice: 37000
+Vehicle.vcd_chevalier_emperor_suburban_purchasable.dealerPrice: 42000
 Vehicle.vcd_chevalier_emperor_suburban_purchasable.dealerCred: 10
 # - Codex image size: 1860x609
 Vehicle.vcd_chevalier_emperor_suburban_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen20.inkatlas"
