@@ -443,10 +443,10 @@ public class ItemPreviewManager {
     let widget: ref<inkWidget> = event.GetTarget();
     let parent = controller.GetRootCompoundWidget();
 
-    // Allow player puppet dragging only for left side of the screen
+    // Allow player puppet dragging and scrolling only for left side of the screen
     let screenPosition: Vector2 = event.GetScreenSpacePosition();
     let limit: Float = ItemPreviewManager.GetInstance().GetScreenWidthLimit();
-    let isDragAllowed: Bool = screenPosition.X < limit;
+    let isScaleAllowed: Bool = screenPosition.X < limit;
 
     if !Equals(NameToString(widget.GetName()), "None") {
       return true;
@@ -455,15 +455,15 @@ public class ItemPreviewManager {
       let zoomRatio: Float = 0.1;
 
       if controller.m_isLeftMouseDown {
-        if event.IsAction(n"mouse_x") && isDragAllowed {
+        if event.IsAction(n"mouse_x") && isScaleAllowed {
           previewWidget.ChangeTranslation(new Vector2(amount, 0.0));      
         };
-        if event.IsAction(n"mouse_y") && isDragAllowed {
+        if event.IsAction(n"mouse_y") && isScaleAllowed {
           previewWidget.ChangeTranslation(new Vector2(0.0, -1.0 * amount));
         };
       };
 
-      if event.IsAction(n"mouse_wheel") {
+      if event.IsAction(n"mouse_wheel") && isScaleAllowed {
         let currentScale = previewWidget.GetScale();
 
         let finalXScale = currentScale.X + (amount * zoomRatio);
