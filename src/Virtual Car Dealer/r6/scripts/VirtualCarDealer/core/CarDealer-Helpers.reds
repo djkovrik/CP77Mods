@@ -58,3 +58,9 @@ private func DealerBuyCurrentVehicle() {
     this.ShowDealerCurrentPage();
   };
 }
+
+@wrapMethod(PlayerPuppet)
+protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpawn>) -> Bool {
+  wrappedMethod(evt);
+  PurchasableVehicleSystem.GetInstance(this.GetGame()).Initialize(this);
+}

@@ -15,8 +15,7 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
     return system;
   }
 
-  private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
-    let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(request.owner.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
+  public final func Initialize(player: ref<PlayerPuppet>) -> Void {
     if IsDefined(player) {
       this.m_vehicleSystem = GameInstance.GetVehicleSystem(player.GetGame());
       this.PopulateVehicleList();
@@ -93,6 +92,9 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
   }
 
   public func Purchase(id: TweakDBID) -> Void {
+    if IsDefined(this.m_vehicleSystem) {
+      Log("Vehicle system available");
+    };
     this.m_vehicleSystem.EnablePlayerVehicle(TDBID.ToStringDEBUG(id), true, false);
   }
 
