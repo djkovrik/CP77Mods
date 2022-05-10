@@ -310,34 +310,6 @@ local settings = {
 	AddonsRicochet = 2
 }
 
-local fills = {
-	[1] = "Transparent",
-	[2] = "Light yellow",
-	[3] = "Light blue",
-	[4] = "White",
-	[5] = "Light green",
-	[6] = "Blue",
-	[7] = "Orange",
-	[8] = "Red"
-}
-
-local outlines = {
-	[1] = "Transparent",
-	[2] = "Light green",
-	[3] = "Red",
-	[4] = "Light blue",
-	[5] = "Light red", -- ORANGE?
-	[6] = "Light yellow",
-	[7] = "Blue",
-	[8] = "White"
-}
-
-local ricochetes = {
-	[1] = "Transparent",
-	[2] = "Green",
-	[3] = "Red"
-}
-
 function SaveSettings() 
 	local validJson, contents = pcall(function() return json.encode(settings) end)
 	
@@ -372,218 +344,246 @@ function SetupSettingsMenu()
 		print("Error: NativeSettings not found!")
 		return
 	end
+		
+	local fills = {
+		[1] = GetLocalizedTextByKey("Mod-LHUD-Transparent"),
+		[2] = GetLocalizedTextByKey("Mod-LHUD-Light-Yellow"),
+		[3] = GetLocalizedTextByKey("Mod-LHUD-Light-Blue"),
+		[4] = GetLocalizedTextByKey("Mod-LHUD-White"),
+		[5] = GetLocalizedTextByKey("Mod-LHUD-Light-Green"),
+		[6] = GetLocalizedTextByKey("Mod-LHUD-Blue"),
+		[7] = GetLocalizedTextByKey("Mod-LHUD-Orange"),
+		[8] = GetLocalizedTextByKey("Mod-LHUD-Red")
+	}
+
+	local outlines = {
+		[1] = GetLocalizedTextByKey("Mod-LHUD-Transparent"),
+		[2] = GetLocalizedTextByKey("Mod-LHUD-Light-Green"),
+		[3] = GetLocalizedTextByKey("Mod-LHUD-Red"),
+		[4] = GetLocalizedTextByKey("Mod-LHUD-Light-Blue"),
+		[5] = GetLocalizedTextByKey("Mod-LHUD-Light-Red"), -- ORANGE?
+		[6] = GetLocalizedTextByKey("Mod-LHUD-Light-Yellow"),
+		[7] = GetLocalizedTextByKey("Mod-LHUD-Blue"),
+		[8] = GetLocalizedTextByKey("Mod-LHUD-White")
+	}
+
+	local ricochetes = {
+		[1] = GetLocalizedTextByKey("Mod-LHUD-Transparent"),
+		[2] = GetLocalizedTextByKey("Mod-LHUD-Green"),
+		[3] = GetLocalizedTextByKey("Mod-LHUD-Red")
+	}
 
 	nativeSettings.addTab("/lhud", "LHUD")
 	
-	nativeSettings.addSubcategory("/lhud/action", "Action buttons")
-	nativeSettings.addSwitch("/lhud/action", "Is module enabled", "If enabled then widget controlled by LHUD, disable if you want to restore default widget behavior", settings.ActionButtonsEnabled, defaults.ActionButtonsEnabled, function(state) settings.ActionButtonsEnabled = state end)
-	nativeSettings.addSwitch("/lhud/action", "Bind to Global hotkey", "If enabled then you will be able to toggle the module widgets visibility with the global hotkey if you have it configured", settings.ActionButtonsGlobal, defaults.ActionButtonsGlobal, function(state) settings.ActionButtonsGlobal = state end)
-	nativeSettings.addSwitch("/lhud/action", "Show in combat", "Show when combat mode is active", settings.ActionButtonsCombat, defaults.ActionButtonsCombat, function(state) settings.ActionButtonsCombat = state end)
-	nativeSettings.addSwitch("/lhud/action", "Show out of combat", "Show when when combat mode is not active and stealth mode is not active", settings.ActionButtonsOutOfCombat, defaults.ActionButtonsOutOfCombat, function(state) settings.ActionButtonsOutOfCombat = state end)
-	nativeSettings.addSwitch("/lhud/action", "Show in stealth", "Show when stealth mode is active", settings.ActionButtonsStealth, defaults.ActionButtonsStealth, function(state) settings.ActionButtonsStealth = state end)
-	nativeSettings.addSwitch("/lhud/action", "Show with weapon", "Show when weapon unsheated", settings.ActionButtonsWeapon, defaults.ActionButtonsWeapon, function(state) settings.ActionButtonsWeapon = state end)
-	nativeSettings.addSwitch("/lhud/action", "Show with zoom", "Show when zoom mode is active (press aim hotkey with no weapon in hands)", settings.ActionButtonsZoom, defaults.ActionButtonsZoom, function(state) settings.ActionButtonsZoom = state end)
+	nativeSettings.addSubcategory("/lhud/action", GetLocalizedTextByKey("Mod-LHUD-Action-Buttons"))
+	nativeSettings.addSwitch("/lhud/action", GetLocalizedTextByKey("Mod-LHUD-Is-Enabled"), GetLocalizedTextByKey("Mod-LHUD-Is-Enabled-Desc"), settings.ActionButtonsEnabled, defaults.ActionButtonsEnabled, function(state) settings.ActionButtonsEnabled = state end)
+	nativeSettings.addSwitch("/lhud/action", GetLocalizedTextByKey("Mod-LHUD-Global-Key"), GetLocalizedTextByKey("Mod-LHUD-Global-Key-Desc"), settings.ActionButtonsGlobal, defaults.ActionButtonsGlobal, function(state) settings.ActionButtonsGlobal = state end)
+	nativeSettings.addSwitch("/lhud/action", GetLocalizedTextByKey("Mod-LHUD-Show-Combat"), GetLocalizedTextByKey("Mod-LHUD-Show-Combat-Desc"), settings.ActionButtonsCombat, defaults.ActionButtonsCombat, function(state) settings.ActionButtonsCombat = state end)
+	nativeSettings.addSwitch("/lhud/action", GetLocalizedTextByKey("Mod-LHUD-Show-Out-Combat"), GetLocalizedTextByKey("Mod-LHUD-Show-Out-Combat-Desc"), settings.ActionButtonsOutOfCombat, defaults.ActionButtonsOutOfCombat, function(state) settings.ActionButtonsOutOfCombat = state end)
+	nativeSettings.addSwitch("/lhud/action", GetLocalizedTextByKey("Mod-LHUD-Show-Stealth"), GetLocalizedTextByKey("Mod-LHUD-Show-Stealth-Desc"), settings.ActionButtonsStealth, defaults.ActionButtonsStealth, function(state) settings.ActionButtonsStealth = state end)
+	nativeSettings.addSwitch("/lhud/action", GetLocalizedTextByKey("Mod-LHUD-Show-Weapon"), GetLocalizedTextByKey("Mod-LHUD-Show-Weapon-Desc"), settings.ActionButtonsWeapon, defaults.ActionButtonsWeapon, function(state) settings.ActionButtonsWeapon = state end)
+	nativeSettings.addSwitch("/lhud/action", GetLocalizedTextByKey("Mod-LHUD-Show-Zoom"), GetLocalizedTextByKey("Mod-LHUD-Show-Zoom-Desc"), settings.ActionButtonsZoom, defaults.ActionButtonsZoom, function(state) settings.ActionButtonsZoom = state end)
 	
-	nativeSettings.addSubcategory("/lhud/crouch", "Crouch indicator")
-	nativeSettings.addSwitch("/lhud/crouch", "Is module enabled", "If enabled then widget controlled by LHUD, disable if you want to restore default widget behavior", settings.CrouchEnabled, defaults.CrouchEnabled, function(state) settings.CrouchEnabled = state end)
-	nativeSettings.addSwitch("/lhud/crouch", "Bind to Global hotkey", "If enabled then you will be able to toggle the module widgets visibility with the global hotkey if you have it configured", settings.CrouchGlobal, defaults.CrouchGlobal, function(state) settings.CrouchGlobal = state end)
-	nativeSettings.addSwitch("/lhud/crouch", "Show in combat", "Show when combat mode is active", settings.CrouchCombat, defaults.CrouchCombat, function(state) settings.CrouchCombat = state end)
-	nativeSettings.addSwitch("/lhud/crouch", "Show out of combat", "Show when combat mode is not active and stealth mode is not active", settings.CrouchOutOfCombat, defaults.CrouchOutOfCombat, function(state) settings.CrouchOutOfCombat = state end)
-	nativeSettings.addSwitch("/lhud/crouch", "Show in stealth", "Show when stealth mode is active", settings.CrouchStealth, defaults.CrouchStealth, function(state) settings.CrouchStealth = state end)
-	nativeSettings.addSwitch("/lhud/crouch", "Show with weapon", "Show when weapon unsheated", settings.CrouchWeapon, defaults.CrouchWeapon, function(state) settings.CrouchWeapon = state end)
-	nativeSettings.addSwitch("/lhud/crouch", "Show with zoom", "Show when zoom mode is active (press aim hotkey with no weapon in hands)", settings.CrouchZoom, defaults.CrouchZoom, function(state) settings.CrouchZoom = state end)
+	nativeSettings.addSubcategory("/lhud/crouch", GetLocalizedTextByKey("Mod-LHUD-Crouch-Indicator"))
+	nativeSettings.addSwitch("/lhud/crouch", GetLocalizedTextByKey("Mod-LHUD-Is-Enabled"), GetLocalizedTextByKey("Mod-LHUD-Is-Enabled-Desc"), settings.CrouchEnabled, defaults.CrouchEnabled, function(state) settings.CrouchEnabled = state end)
+	nativeSettings.addSwitch("/lhud/crouch", GetLocalizedTextByKey("Mod-LHUD-Global-Key"), GetLocalizedTextByKey("Mod-LHUD-Global-Key-Desc"), settings.CrouchGlobal, defaults.CrouchGlobal, function(state) settings.CrouchGlobal = state end)
+	nativeSettings.addSwitch("/lhud/crouch", GetLocalizedTextByKey("Mod-LHUD-Show-Combat"), GetLocalizedTextByKey("Mod-LHUD-Show-Combat-Desc"), settings.CrouchCombat, defaults.CrouchCombat, function(state) settings.CrouchCombat = state end)
+	nativeSettings.addSwitch("/lhud/crouch", GetLocalizedTextByKey("Mod-LHUD-Show-Out-Combat"), GetLocalizedTextByKey("Mod-LHUD-Show-Out-Combat-Desc"), settings.CrouchOutOfCombat, defaults.CrouchOutOfCombat, function(state) settings.CrouchOutOfCombat = state end)
+	nativeSettings.addSwitch("/lhud/crouch", GetLocalizedTextByKey("Mod-LHUD-Show-Stealth"), GetLocalizedTextByKey("Mod-LHUD-Show-Stealth-Desc"), settings.CrouchStealth, defaults.CrouchStealth, function(state) settings.CrouchStealth = state end)
+	nativeSettings.addSwitch("/lhud/crouch", GetLocalizedTextByKey("Mod-LHUD-Show-Weapon"), GetLocalizedTextByKey("Mod-LHUD-Show-Weapon-Desc"), settings.CrouchWeapon, defaults.CrouchWeapon, function(state) settings.CrouchWeapon = state end)
+	nativeSettings.addSwitch("/lhud/crouch", GetLocalizedTextByKey("Mod-LHUD-Show-Zoom"), GetLocalizedTextByKey("Mod-LHUD-Show-Zoom-Desc"), settings.CrouchZoom, defaults.CrouchZoom, function(state) settings.CrouchZoom = state end)
 	
-	nativeSettings.addSubcategory("/lhud/roster", "Weapon roster")
-	nativeSettings.addSwitch("/lhud/roster", "Is module enabled", "If enabled then widget controlled by LHUD, disable if you want to restore default widget behavior", settings.RosterEnabled, defaults.RosterEnabled, function(state) settings.RosterEnabled = state end)
-	nativeSettings.addSwitch("/lhud/roster", "Bind to Global hotkey", "If enabled then you will be able to toggle the module widgets visibility with the global hotkey if you have it configured", settings.RosterGlobal, defaults.RosterGlobal, function(state) settings.RosterGlobal = state end)
-	nativeSettings.addSwitch("/lhud/roster", "Show in combat", "Show when combat mode is active", settings.RosterCombat, defaults.RosterCombat, function(state) settings.RosterCombat = state end)
-	nativeSettings.addSwitch("/lhud/roster", "Show out of combat", "Show when combat mode is not active and stealth mode is not active", settings.RosterOutOfCombat, defaults.RosterOutOfCombat, function(state) settings.RosterOutOfCombat = state end)
-	nativeSettings.addSwitch("/lhud/roster", "Show in stealth", "Show when stealth mode is active", settings.RosterStealth, defaults.RosterStealth, function(state) settings.RosterStealth = state end)
-	nativeSettings.addSwitch("/lhud/roster", "Show with weapon", "Show when weapon unsheated", settings.RosterWeapon, defaults.RosterWeapon, function(state) settings.RosterWeapon = state end)
-	nativeSettings.addSwitch("/lhud/roster", "Show with zoom", "Show when zoom mode is active (press aim hotkey with no weapon in hands)", settings.RosterZoom, defaults.RosterZoom, function(state) settings.RosterZoom = state end)
+	nativeSettings.addSubcategory("/lhud/roster", GetLocalizedTextByKey("Mod-LHUD-Weapon-Roster"))
+	nativeSettings.addSwitch("/lhud/roster", GetLocalizedTextByKey("Mod-LHUD-Is-Enabled"), GetLocalizedTextByKey("Mod-LHUD-Is-Enabled-Desc"), settings.RosterEnabled, defaults.RosterEnabled, function(state) settings.RosterEnabled = state end)
+	nativeSettings.addSwitch("/lhud/roster", GetLocalizedTextByKey("Mod-LHUD-Global-Key"), GetLocalizedTextByKey("Mod-LHUD-Global-Key-Desc"), settings.RosterGlobal, defaults.RosterGlobal, function(state) settings.RosterGlobal = state end)
+	nativeSettings.addSwitch("/lhud/roster", GetLocalizedTextByKey("Mod-LHUD-Show-Combat"), GetLocalizedTextByKey("Mod-LHUD-Show-Combat-Desc"), settings.RosterCombat, defaults.RosterCombat, function(state) settings.RosterCombat = state end)
+	nativeSettings.addSwitch("/lhud/roster", GetLocalizedTextByKey("Mod-LHUD-Show-Out-Combat"), GetLocalizedTextByKey("Mod-LHUD-Show-Out-Combat-Desc"), settings.RosterOutOfCombat, defaults.RosterOutOfCombat, function(state) settings.RosterOutOfCombat = state end)
+	nativeSettings.addSwitch("/lhud/roster", GetLocalizedTextByKey("Mod-LHUD-Show-Stealth"), GetLocalizedTextByKey("Mod-LHUD-Show-Stealth-Desc"), settings.RosterStealth, defaults.RosterStealth, function(state) settings.RosterStealth = state end)
+	nativeSettings.addSwitch("/lhud/roster", GetLocalizedTextByKey("Mod-LHUD-Show-Weapon"), GetLocalizedTextByKey("Mod-LHUD-Show-Weapon-Desc"), settings.RosterWeapon, defaults.RosterWeapon, function(state) settings.RosterWeapon = state end)
+	nativeSettings.addSwitch("/lhud/roster", GetLocalizedTextByKey("Mod-LHUD-Show-Zoom"), GetLocalizedTextByKey("Mod-LHUD-Show-Zoom-Desc"), settings.RosterZoom, defaults.RosterZoom, function(state) settings.RosterZoom = state end)
 	
-	nativeSettings.addSubcategory("/lhud/hints", "Hotkey hints")
-	nativeSettings.addSwitch("/lhud/hints", "Is module enabled", "If enabled then widget controlled by LHUD, disable if you want to restore default widget behavior", settings.HintsEnabled, defaults.HintsEnabled, function(state) settings.HintsEnabled = state end)
-	nativeSettings.addSwitch("/lhud/hints", "Bind to Global hotkey", "If enabled then you will be able to toggle the module widgets visibility with the global hotkey if you have it configured", settings.HintsGlobal, defaults.HintsGlobal, function(state) settings.HintsGlobal = state end)
-	nativeSettings.addSwitch("/lhud/hints", "Show in combat", "Show when combat mode is active", settings.HintsCombat, defaults.HintsCombat, function(state) settings.HintsCombat = state end)
-	nativeSettings.addSwitch("/lhud/hints", "Show out of combat", "Show when combat mode is not active and stealth mode is not active", settings.HintsOutOfCombat, defaults.HintsOutOfCombat, function(state) settings.HintsOutOfCombat = state end)
-	nativeSettings.addSwitch("/lhud/hints", "Show in stealth", "Show when stealth mode is active", settings.HintsStealth, defaults.HintsStealth, function(state) settings.HintsStealth = state end)
-	nativeSettings.addSwitch("/lhud/hints", "Show in vehicle", "Show when player mounted to vehicle", settings.HintsVehicle, defaults.HintsVehicle, function(state) settings.HintsVehicle = state end)
-	nativeSettings.addSwitch("/lhud/hints", "Show with weapon", "Show when weapon unsheated", settings.HintsWeapon, defaults.HintsWeapon, function(state) settings.HintsWeapon = state end)
-	nativeSettings.addSwitch("/lhud/hints", "Show with zoom", "Show when zoom mode is active (press aim hotkey with no weapon in hands)", settings.HintsZoom, defaults.HintsZoom, function(state) settings.HintsZoom = state end)
+	nativeSettings.addSubcategory("/lhud/hints", GetLocalizedTextByKey("Mod-LHUD-Hotkey-Hints"))
+	nativeSettings.addSwitch("/lhud/hints", GetLocalizedTextByKey("Mod-LHUD-Is-Enabled"), GetLocalizedTextByKey("Mod-LHUD-Is-Enabled-Desc"), settings.HintsEnabled, defaults.HintsEnabled, function(state) settings.HintsEnabled = state end)
+	nativeSettings.addSwitch("/lhud/hints", GetLocalizedTextByKey("Mod-LHUD-Global-Key"), GetLocalizedTextByKey("Mod-LHUD-Global-Key-Desc"), settings.HintsGlobal, defaults.HintsGlobal, function(state) settings.HintsGlobal = state end)
+	nativeSettings.addSwitch("/lhud/hints", GetLocalizedTextByKey("Mod-LHUD-Show-Combat"), GetLocalizedTextByKey("Mod-LHUD-Show-Combat-Desc"), settings.HintsCombat, defaults.HintsCombat, function(state) settings.HintsCombat = state end)
+	nativeSettings.addSwitch("/lhud/hints", GetLocalizedTextByKey("Mod-LHUD-Show-Out-Combat"), GetLocalizedTextByKey("Mod-LHUD-Show-Out-Combat-Desc"), settings.HintsOutOfCombat, defaults.HintsOutOfCombat, function(state) settings.HintsOutOfCombat = state end)
+	nativeSettings.addSwitch("/lhud/hints", GetLocalizedTextByKey("Mod-LHUD-Show-Stealth"), GetLocalizedTextByKey("Mod-LHUD-Show-Stealth-Desc"), settings.HintsStealth, defaults.HintsStealth, function(state) settings.HintsStealth = state end)
+	nativeSettings.addSwitch("/lhud/hints", GetLocalizedTextByKey("Mod-LHUD-Show-Vehicle"), GetLocalizedTextByKey("Mod-LHUD-Show-Vehicle-Desc"), settings.HintsVehicle, defaults.HintsVehicle, function(state) settings.HintsVehicle = state end)
+	nativeSettings.addSwitch("/lhud/hints", GetLocalizedTextByKey("Mod-LHUD-Show-Weapon"), GetLocalizedTextByKey("Mod-LHUD-Show-Weapon-Desc"), settings.HintsWeapon, defaults.HintsWeapon, function(state) settings.HintsWeapon = state end)
+	nativeSettings.addSwitch("/lhud/hints", GetLocalizedTextByKey("Mod-LHUD-Show-Zoom"), GetLocalizedTextByKey("Mod-LHUD-Show-Zoom-Desc"), settings.HintsZoom, defaults.HintsZoom, function(state) settings.HintsZoom = state end)
 	
-	nativeSettings.addSubcategory("/lhud/minimap", "Minimap")
-	nativeSettings.addSwitch("/lhud/minimap", "Is module enabled", "If enabled then widget controlled by LHUD, disable if you want to restore default widget behavior", settings.MinimapEnabled, defaults.MinimapEnabled, function(state) settings.MinimapEnabled = state end)
-	nativeSettings.addSwitch("/lhud/minimap", "Bind to Global hotkey", "If enabled then you will be able to toggle the module widgets visibility with the global hotkey if you have it configured", settings.MinimapGlobal, defaults.MinimapGlobal, function(state) settings.MinimapGlobal = state end)
-	nativeSettings.addRangeFloat("/lhud/minimap", "Opacity", "Minimap widget opacity (change it from the main menu only)", 0.0, 1.0, 0.05, "%.2f", settings.MinimapOpacity, defaults.MinimapOpacity, function(value) settings.MinimapOpacity = value end)
-	nativeSettings.addSwitch("/lhud/minimap", "Show in combat", "Show when combat mode is active", settings.MinimapCombat, defaults.MinimapCombat, function(state) settings.MinimapCombat = state end)
-	nativeSettings.addSwitch("/lhud/minimap", "Show out of combat", "Show when combat mode is not active and stealth mode is not active", settings.MinimapOutOfCombat, defaults.MinimapOutOfCombat, function(state) settings.MinimapOutOfCombat = state end)
-	nativeSettings.addSwitch("/lhud/minimap", "Show in stealth", "Show when stealth mode is active", settings.MinimapStealth, defaults.MinimapStealth, function(state) settings.MinimapStealth = state end)
-	nativeSettings.addSwitch("/lhud/minimap", "Show in vehicle", "Show when player mounted to vehicle", settings.MinimapVehicle, defaults.MinimapVehicle, function(state) settings.MinimapVehicle = state end)
-	nativeSettings.addSwitch("/lhud/minimap", "Show with scanner", "Show when scanner is active", settings.MinimapScanner, defaults.MinimapScanner, function(state) settings.MinimapScanner = state end)
-	nativeSettings.addSwitch("/lhud/minimap", "Show with weapon", "Show when weapon unsheated", settings.MinimapWeapon, defaults.MinimapWeapon, function(state) settings.MinimapWeapon = state end)
-	nativeSettings.addSwitch("/lhud/minimap", "Show with zoom", "Show when zoom mode is active (press aim hotkey with no weapon in hands)", settings.MinimapZoom, defaults.MinimapZoom, function(state) settings.MinimapZoom = state end)
+	nativeSettings.addSubcategory("/lhud/minimap", GetLocalizedTextByKey("Mod-LHUD-Minimap"))
+	nativeSettings.addSwitch("/lhud/minimap", GetLocalizedTextByKey("Mod-LHUD-Is-Enabled"), GetLocalizedTextByKey("Mod-LHUD-Is-Enabled-Desc"), settings.MinimapEnabled, defaults.MinimapEnabled, function(state) settings.MinimapEnabled = state end)
+	nativeSettings.addSwitch("/lhud/minimap", GetLocalizedTextByKey("Mod-LHUD-Global-Key"), GetLocalizedTextByKey("Mod-LHUD-Global-Key-Desc"), settings.MinimapGlobal, defaults.MinimapGlobal, function(state) settings.MinimapGlobal = state end)
+	nativeSettings.addRangeFloat("/lhud/minimap", GetLocalizedTextByKey("Mod-LHUD-Minimap-Opacity"), GetLocalizedTextByKey("Mod-LHUD-Minimap-Opacity-Desc"), 0.0, 1.0, 0.05, "%.2f", settings.MinimapOpacity, defaults.MinimapOpacity, function(value) settings.MinimapOpacity = value end)
+	nativeSettings.addSwitch("/lhud/minimap", GetLocalizedTextByKey("Mod-LHUD-Show-Combat"), GetLocalizedTextByKey("Mod-LHUD-Show-Combat-Desc"), settings.MinimapCombat, defaults.MinimapCombat, function(state) settings.MinimapCombat = state end)
+	nativeSettings.addSwitch("/lhud/minimap", GetLocalizedTextByKey("Mod-LHUD-Show-Out-Combat"), GetLocalizedTextByKey("Mod-LHUD-Show-Out-Combat-Desc"), settings.MinimapOutOfCombat, defaults.MinimapOutOfCombat, function(state) settings.MinimapOutOfCombat = state end)
+	nativeSettings.addSwitch("/lhud/minimap", GetLocalizedTextByKey("Mod-LHUD-Show-Stealth"), GetLocalizedTextByKey("Mod-LHUD-Show-Stealth-Desc"), settings.MinimapStealth, defaults.MinimapStealth, function(state) settings.MinimapStealth = state end)
+	nativeSettings.addSwitch("/lhud/minimap", GetLocalizedTextByKey("Mod-LHUD-Show-Vehicle"), GetLocalizedTextByKey("Mod-LHUD-Show-Vehicle-Desc"), settings.MinimapVehicle, defaults.MinimapVehicle, function(state) settings.MinimapVehicle = state end)
+	nativeSettings.addSwitch("/lhud/minimap", GetLocalizedTextByKey("Mod-LHUD-Show-Scanner"), GetLocalizedTextByKey("Mod-LHUD-Show-Scanner-Desc"), settings.MinimapScanner, defaults.MinimapScanner, function(state) settings.MinimapScanner = state end)
+	nativeSettings.addSwitch("/lhud/minimap", GetLocalizedTextByKey("Mod-LHUD-Show-Weapon"), GetLocalizedTextByKey("Mod-LHUD-Show-Weapon-Desc"), settings.MinimapWeapon, defaults.MinimapWeapon, function(state) settings.MinimapWeapon = state end)
+	nativeSettings.addSwitch("/lhud/minimap", GetLocalizedTextByKey("Mod-LHUD-Show-Zoom"), GetLocalizedTextByKey("Mod-LHUD-Show-Zoom-Desc"), settings.MinimapZoom, defaults.MinimapZoom, function(state) settings.MinimapZoom = state end)
 	
-	nativeSettings.addSubcategory("/lhud/tracker", "Quest tracker")
-	nativeSettings.addSwitch("/lhud/tracker", "Is module enabled", "If enabled then widget controlled by LHUD, disable if you want to restore default widget behavior", settings.TrackerEnabled, defaults.TrackerEnabled, function(state) settings.TrackerEnabled = state end)
-	nativeSettings.addSwitch("/lhud/tracker", "Bind to Global hotkey", "If enabled then you will be able to toggle the module widgets visibility with the global hotkey if you have it configured", settings.TrackerGlobal, defaults.TrackerGlobal, function(state) settings.TrackerGlobal = state end)
-	nativeSettings.addSwitch("/lhud/tracker", "Show in combat", "Show when combat mode is active", settings.TrackerCombat, defaults.TrackerCombat, function(state) settings.TrackerCombat = state end)
-	nativeSettings.addSwitch("/lhud/tracker", "Show out of combat", "Show when combat mode is not active and stealth mode is not active", settings.TrackerOutOfCombat, defaults.TrackerOutOfCombat, function(state) settings.TrackerOutOfCombat = state end)
-	nativeSettings.addSwitch("/lhud/tracker", "Show in stealth", "Show when stealth mode is active", settings.TrackerStealth, defaults.TrackerStealth, function(state) settings.TrackerStealth = state end)
-	nativeSettings.addSwitch("/lhud/tracker", "Show in vehicle", "Show when player mounted to vehicle", settings.TrackerVehicle, defaults.TrackerVehicle, function(state) settings.TrackerVehicle = state end)
-	nativeSettings.addSwitch("/lhud/tracker", "Show with scanner", "Show when scanner is active", settings.TrackerScanner, defaults.TrackerScanner, function(state) settings.TrackerScanner = state end)
-	nativeSettings.addSwitch("/lhud/tracker", "Show with weapon", "Show when weapon unsheated", settings.TrackerWeapon, defaults.TrackerWeapon, function(state) settings.TrackerWeapon = state end)
-	nativeSettings.addSwitch("/lhud/tracker", "Show with zoom", "Show when zoom mode is active (press aim hotkey with no weapon in hands)", settings.TrackerZoom, defaults.TrackerZoom, function(state) settings.TrackerZoom = state end)
-	nativeSettings.addSwitch("/lhud/tracker", "Display for journal updates", "If enabled then quest tracker will be displayed for a short time when current quest gets journal update", settings.TrackerShowUpdates, defaults.TrackerShowUpdates, function(state) settings.TrackerShowUpdates = state end)
-	nativeSettings.addRangeFloat("/lhud/tracker", "Displaying time, seconds", "Determines how long quest tracker will be displayed after current quest journal update", 2.0, 10.0, 1.0, "%.1f", settings.TrackerShowUpdatesTime, defaults.TrackerShowUpdatesTime, function(value) settings.TrackerShowUpdatesTime = value end)
+	nativeSettings.addSubcategory("/lhud/tracker", GetLocalizedTextByKey("Mod-LHUD-Quest-Tracker"))
+	nativeSettings.addSwitch("/lhud/tracker", GetLocalizedTextByKey("Mod-LHUD-Is-Enabled"), GetLocalizedTextByKey("Mod-LHUD-Is-Enabled-Desc"), settings.TrackerEnabled, defaults.TrackerEnabled, function(state) settings.TrackerEnabled = state end)
+	nativeSettings.addSwitch("/lhud/tracker", GetLocalizedTextByKey("Mod-LHUD-Global-Key"), GetLocalizedTextByKey("Mod-LHUD-Global-Key-Desc"), settings.TrackerGlobal, defaults.TrackerGlobal, function(state) settings.TrackerGlobal = state end)
+	nativeSettings.addSwitch("/lhud/tracker", GetLocalizedTextByKey("Mod-LHUD-Show-Combat"), GetLocalizedTextByKey("Mod-LHUD-Show-Combat-Desc"), settings.TrackerCombat, defaults.TrackerCombat, function(state) settings.TrackerCombat = state end)
+	nativeSettings.addSwitch("/lhud/tracker", GetLocalizedTextByKey("Mod-LHUD-Show-Out-Combat"), GetLocalizedTextByKey("Mod-LHUD-Show-Out-Combat-Desc"), settings.TrackerOutOfCombat, defaults.TrackerOutOfCombat, function(state) settings.TrackerOutOfCombat = state end)
+	nativeSettings.addSwitch("/lhud/tracker", GetLocalizedTextByKey("Mod-LHUD-Show-Stealth"), GetLocalizedTextByKey("Mod-LHUD-Show-Stealth-Desc"), settings.TrackerStealth, defaults.TrackerStealth, function(state) settings.TrackerStealth = state end)
+	nativeSettings.addSwitch("/lhud/tracker", GetLocalizedTextByKey("Mod-LHUD-Show-Vehicle"), GetLocalizedTextByKey("Mod-LHUD-Show-Vehicle-Desc"), settings.TrackerVehicle, defaults.TrackerVehicle, function(state) settings.TrackerVehicle = state end)
+	nativeSettings.addSwitch("/lhud/tracker", GetLocalizedTextByKey("Mod-LHUD-Show-Scanner"), GetLocalizedTextByKey("Mod-LHUD-Show-Scanner-Desc"), settings.TrackerScanner, defaults.TrackerScanner, function(state) settings.TrackerScanner = state end)
+	nativeSettings.addSwitch("/lhud/tracker", GetLocalizedTextByKey("Mod-LHUD-Show-Weapon"), GetLocalizedTextByKey("Mod-LHUD-Show-Weapon-Desc"), settings.TrackerWeapon, defaults.TrackerWeapon, function(state) settings.TrackerWeapon = state end)
+	nativeSettings.addSwitch("/lhud/tracker", GetLocalizedTextByKey("Mod-LHUD-Show-Zoom"), GetLocalizedTextByKey("Mod-LHUD-Show-Zoom-Desc"), settings.TrackerZoom, defaults.TrackerZoom, function(state) settings.TrackerZoom = state end)
+	nativeSettings.addSwitch("/lhud/tracker", GetLocalizedTextByKey("Mod-LHUD-Quest-Tracker-Updates"), GetLocalizedTextByKey("Mod-LHUD-Quest-Tracker-Updates-Desc"), settings.TrackerShowUpdates, defaults.TrackerShowUpdates, function(state) settings.TrackerShowUpdates = state end)
+	nativeSettings.addRangeFloat("/lhud/tracker", GetLocalizedTextByKey("Mod-LHUD-Quest-Tracker-Time"), GetLocalizedTextByKey("Mod-LHUD-Quest-Tracker-Time-Desc"), 2.0, 10.0, 1.0, "%.1f", settings.TrackerShowUpdatesTime, defaults.TrackerShowUpdatesTime, function(value) settings.TrackerShowUpdatesTime = value end)
 
-	nativeSettings.addSubcategory("/lhud/healthbar", "Player healthbar")
-	nativeSettings.addSwitch("/lhud/healthbar", "Is module enabled", "If enabled then widget controlled by LHUD, disable if you want to restore default widget behavior", settings.HealthbarEnabled, defaults.HealthbarEnabled, function(state) settings.HealthbarEnabled = state end)
-	nativeSettings.addSwitch("/lhud/healthbar", "Bind to Global hotkey", "If enabled then you will be able to toggle the module widgets visibility with the global hotkey if you have it configured", settings.HealthbarGlobal, defaults.HealthbarGlobal, function(state) settings.HealthbarGlobal = state end)
-	nativeSettings.addSwitch("/lhud/healthbar", "Show when health not full", "Show when your character health is not full", settings.HealthbarNotFullHealth, defaults.HealthbarNotFullHealth, function(state) settings.HealthbarNotFullHealth = state end)
-	nativeSettings.addSwitch("/lhud/healthbar", "Show when memory not full", "Show when your character memory is not full", settings.HealthbarNotFullMemory, defaults.HealthbarNotFullMemory, function(state) settings.HealthbarNotFullMemory = state end)
-	nativeSettings.addSwitch("/lhud/healthbar", "Show with buffs", "Show when character has any active buffs", settings.HealthbarBuffs, defaults.HealthbarBuffs, function(state) settings.HealthbarBuffs = state end)
-	nativeSettings.addSwitch("/lhud/healthbar", "Show with quickhacks", "Show when character has any active quickhack effects", settings.HealthbarHacks, defaults.HealthbarHacks, function(state) settings.HealthbarHacks = state end)
-	nativeSettings.addSwitch("/lhud/healthbar", "Show in combat", "Show when combat mode is active", settings.HealthbarCombat, defaults.HealthbarCombat, function(state) settings.HealthbarCombat = state end)
-	nativeSettings.addSwitch("/lhud/healthbar", "Show out of combat", "Show when combat mode is not active and stealth mode is not active", settings.HealthbarOutOfCombat, defaults.HealthbarOutOfCombat, function(state) settings.HealthbarOutOfCombat = state end)
-	nativeSettings.addSwitch("/lhud/healthbar", "Show in stealth", "Show when stealth mode is active", settings.HealthbarStealth, defaults.HealthbarStealth, function(state) settings.HealthbarStealth = state end)
-	nativeSettings.addSwitch("/lhud/healthbar", "Show with weapon", "Show when weapon unsheated", settings.HealthbarWeapon, defaults.HealthbarWeapon, function(state) settings.HealthbarWeapon = state end)
-	nativeSettings.addSwitch("/lhud/healthbar", "Show with zoom", "Show when zoom mode is active (press aim hotkey with no weapon in hands)", settings.HealthbarZoom, defaults.HealthbarZoom, function(state) settings.HealthbarZoom = state end)
+	nativeSettings.addSubcategory("/lhud/healthbar", GetLocalizedTextByKey("Mod-LHUD-Player-Healthbar"))
+	nativeSettings.addSwitch("/lhud/healthbar", GetLocalizedTextByKey("Mod-LHUD-Is-Enabled"), GetLocalizedTextByKey("Mod-LHUD-Is-Enabled-Desc"), settings.HealthbarEnabled, defaults.HealthbarEnabled, function(state) settings.HealthbarEnabled = state end)
+	nativeSettings.addSwitch("/lhud/healthbar", GetLocalizedTextByKey("Mod-LHUD-Global-Key"), GetLocalizedTextByKey("Mod-LHUD-Global-Key-Desc"), settings.HealthbarGlobal, defaults.HealthbarGlobal, function(state) settings.HealthbarGlobal = state end)
+	nativeSettings.addSwitch("/lhud/healthbar", GetLocalizedTextByKey("Mod-LHUD-Player-Healthbar-No-Health"), GetLocalizedTextByKey("Mod-LHUD-Player-Healthbar-No-Health-Desc"), settings.HealthbarNotFullHealth, defaults.HealthbarNotFullHealth, function(state) settings.HealthbarNotFullHealth = state end)
+	nativeSettings.addSwitch("/lhud/healthbar", GetLocalizedTextByKey("Mod-LHUD-Player-Healthbar-No-Memory"), GetLocalizedTextByKey("Mod-LHUD-Player-Healthbar-No-Memory-Desc"), settings.HealthbarNotFullMemory, defaults.HealthbarNotFullMemory, function(state) settings.HealthbarNotFullMemory = state end)
+	nativeSettings.addSwitch("/lhud/healthbar", GetLocalizedTextByKey("Mod-LHUD-Player-Healthbar-Buffs"), GetLocalizedTextByKey("Mod-LHUD-Player-Healthbar-Buffs-Desc"), settings.HealthbarBuffs, defaults.HealthbarBuffs, function(state) settings.HealthbarBuffs = state end)
+	nativeSettings.addSwitch("/lhud/healthbar", GetLocalizedTextByKey("Mod-LHUD-Player-Healthbar-Hacks"), GetLocalizedTextByKey("Mod-LHUD-Player-Healthbar-Hacks-Desc"), settings.HealthbarHacks, defaults.HealthbarHacks, function(state) settings.HealthbarHacks = state end)
+	nativeSettings.addSwitch("/lhud/healthbar", GetLocalizedTextByKey("Mod-LHUD-Show-Combat"), GetLocalizedTextByKey("Mod-LHUD-Show-Combat-Desc"), settings.HealthbarCombat, defaults.HealthbarCombat, function(state) settings.HealthbarCombat = state end)
+	nativeSettings.addSwitch("/lhud/healthbar", GetLocalizedTextByKey("Mod-LHUD-Show-Out-Combat"), GetLocalizedTextByKey("Mod-LHUD-Show-Out-Combat-Desc"), settings.HealthbarOutOfCombat, defaults.HealthbarOutOfCombat, function(state) settings.HealthbarOutOfCombat = state end)
+	nativeSettings.addSwitch("/lhud/healthbar", GetLocalizedTextByKey("Mod-LHUD-Show-Stealth"), GetLocalizedTextByKey("Mod-LHUD-Show-Stealth-Desc"), settings.HealthbarStealth, defaults.HealthbarStealth, function(state) settings.HealthbarStealth = state end)
+	nativeSettings.addSwitch("/lhud/healthbar", GetLocalizedTextByKey("Mod-LHUD-Show-Weapon"), GetLocalizedTextByKey("Mod-LHUD-Show-Weapon-Desc"), settings.HealthbarWeapon, defaults.HealthbarWeapon, function(state) settings.HealthbarWeapon = state end)
+	nativeSettings.addSwitch("/lhud/healthbar", GetLocalizedTextByKey("Mod-LHUD-Show-Zoom"), GetLocalizedTextByKey("Mod-LHUD-Show-Zoom-Desc"), settings.HealthbarZoom, defaults.HealthbarZoom, function(state) settings.HealthbarZoom = state end)
 	
-	nativeSettings.addSubcategory("/lhud/questmakers", "World markers - Quest")
-	nativeSettings.addSwitch("/lhud/questmakers", "Is module enabled", "If enabled then widget controlled by LHUD, disable if you want to restore default widget behavior", settings.QuestMarkersEnabled, defaults.QuestMarkersEnabled, function(state) settings.QuestMarkersEnabled = state end)
-	nativeSettings.addSwitch("/lhud/questmakers", "Bind to Global hotkey", "If enabled then you will be able to toggle the module widgets visibility with the global hotkey if you have it configured", settings.QuestMarkersGlobal, defaults.QuestMarkersGlobal, function(state) settings.QuestMarkersGlobal = state end)
-	nativeSettings.addSwitch("/lhud/questmakers", "Show in combat", "Show when combat mode is active", settings.QuestMarkersCombat, defaults.QuestMarkersCombat, function(state) settings.QuestMarkersCombat = state end)
-	nativeSettings.addSwitch("/lhud/questmakers", "Show out of combat", "Show when combat mode is not active and stealth mode is not active", settings.QuestMarkersOutOfCombat, defaults.QuestMarkersOutOfCombat, function(state) settings.QuestMarkersOutOfCombat = state end)
-	nativeSettings.addSwitch("/lhud/questmakers", "Show in stealth", "Show when stealth mode is active", settings.QuestMarkersStealth, defaults.QuestMarkersStealth, function(state) settings.QuestMarkersStealth = state end)
-	nativeSettings.addSwitch("/lhud/questmakers", "Show in vehicle", "Show when player mounted to vehicle", settings.QuestMarkersVehicle, defaults.QuestMarkersVehicle, function(state) settings.QuestMarkersVehicle = state end)
-	nativeSettings.addSwitch("/lhud/questmakers", "Show with scanner", "Show when scanner is active", settings.QuestMarkersScanner, defaults.QuestMarkersScanner, function(state) settings.QuestMarkersScanner = state end)
-	nativeSettings.addSwitch("/lhud/questmakers", "Show with weapon", "Show when weapon unsheated", settings.QuestMarkersWeapon, defaults.QuestMarkersWeapon, function(state) settings.QuestMarkersWeapon = state end)
-	nativeSettings.addSwitch("/lhud/questmakers", "Show with zoom", "Show when zoom mode is active (press aim hotkey with no weapon in hands)", settings.QuestMarkersZoom, defaults.QuestMarkersZoom, function(state) settings.QuestMarkersZoom = state end)
+	nativeSettings.addSubcategory("/lhud/questmakers", GetLocalizedTextByKey("Mod-LHUD-Player-Markers-Quest"))
+	nativeSettings.addSwitch("/lhud/questmakers", GetLocalizedTextByKey("Mod-LHUD-Is-Enabled"), GetLocalizedTextByKey("Mod-LHUD-Is-Enabled-Desc"), settings.QuestMarkersEnabled, defaults.QuestMarkersEnabled, function(state) settings.QuestMarkersEnabled = state end)
+	nativeSettings.addSwitch("/lhud/questmakers", GetLocalizedTextByKey("Mod-LHUD-Global-Key"), GetLocalizedTextByKey("Mod-LHUD-Global-Key-Desc"), settings.QuestMarkersGlobal, defaults.QuestMarkersGlobal, function(state) settings.QuestMarkersGlobal = state end)
+	nativeSettings.addSwitch("/lhud/questmakers", GetLocalizedTextByKey("Mod-LHUD-Show-Combat"), GetLocalizedTextByKey("Mod-LHUD-Show-Combat-Desc"), settings.QuestMarkersCombat, defaults.QuestMarkersCombat, function(state) settings.QuestMarkersCombat = state end)
+	nativeSettings.addSwitch("/lhud/questmakers", GetLocalizedTextByKey("Mod-LHUD-Show-Out-Combat"), GetLocalizedTextByKey("Mod-LHUD-Show-Out-Combat-Desc"), settings.QuestMarkersOutOfCombat, defaults.QuestMarkersOutOfCombat, function(state) settings.QuestMarkersOutOfCombat = state end)
+	nativeSettings.addSwitch("/lhud/questmakers", GetLocalizedTextByKey("Mod-LHUD-Show-Stealth"), GetLocalizedTextByKey("Mod-LHUD-Show-Stealth-Desc"), settings.QuestMarkersStealth, defaults.QuestMarkersStealth, function(state) settings.QuestMarkersStealth = state end)
+	nativeSettings.addSwitch("/lhud/questmakers", GetLocalizedTextByKey("Mod-LHUD-Show-Vehicle"), GetLocalizedTextByKey("Mod-LHUD-Show-Vehicle-Desc"), settings.QuestMarkersVehicle, defaults.QuestMarkersVehicle, function(state) settings.QuestMarkersVehicle = state end)
+	nativeSettings.addSwitch("/lhud/questmakers", GetLocalizedTextByKey("Mod-LHUD-Show-Scanner"), GetLocalizedTextByKey("Mod-LHUD-Show-Scanner-Desc"), settings.QuestMarkersScanner, defaults.QuestMarkersScanner, function(state) settings.QuestMarkersScanner = state end)
+	nativeSettings.addSwitch("/lhud/questmakers", GetLocalizedTextByKey("Mod-LHUD-Show-Weapon"), GetLocalizedTextByKey("Mod-LHUD-Show-Weapon-Desc"), settings.QuestMarkersWeapon, defaults.QuestMarkersWeapon, function(state) settings.QuestMarkersWeapon = state end)
+	nativeSettings.addSwitch("/lhud/questmakers", GetLocalizedTextByKey("Mod-LHUD-Show-Zoom"), GetLocalizedTextByKey("Mod-LHUD-Show-Zoom-Desc"), settings.QuestMarkersZoom, defaults.QuestMarkersZoom, function(state) settings.QuestMarkersZoom = state end)
 	
-	nativeSettings.addSubcategory("/lhud/lootmarkers", "World markers - Loot")
-	nativeSettings.addSwitch("/lhud/lootmarkers", "Is module enabled", "If enabled then widget controlled by LHUD, disable if you want to restore default widget behavior", settings.LootMarkersEnabled, defaults.LootMarkersEnabled, function(state) settings.LootMarkersEnabled = state end)
-	nativeSettings.addSwitch("/lhud/lootmarkers", "Bind to Global hotkey", "If enabled then you will be able to toggle the module widgets visibility with the global hotkey if you have it configured", settings.LootMarkersGlobal, defaults.LootMarkersGlobal, function(state) settings.LootMarkersGlobal = state end)
-	nativeSettings.addSwitch("/lhud/lootmarkers", "Show in combat", "Show when combat mode is active", settings.LootMarkersCombat, defaults.LootMarkersCombat, function(state) settings.LootMarkersCombat = state end)
-	nativeSettings.addSwitch("/lhud/lootmarkers", "Show out of combat", "Show when combat mode is not active and stealth mode is not active", settings.LootMarkersOutOfCombat, defaults.LootMarkersOutOfCombat, function(state) settings.LootMarkersOutOfCombat = state end)
-	nativeSettings.addSwitch("/lhud/lootmarkers", "Show in stealth", "Show when stealth mode is active", settings.LootMarkersStealth, defaults.LootMarkersStealth, function(state) settings.LootMarkersStealth = state end)
-	nativeSettings.addSwitch("/lhud/lootmarkers", "Show in vehicle", "Show when player mounted to vehicle", settings.LootMarkersVehicle, defaults.LootMarkersVehicle, function(state) settings.LootMarkersVehicle = state end)
-	nativeSettings.addSwitch("/lhud/lootmarkers", "Show with scanner", "Show when scanner is active", settings.LootMarkersScanner, defaults.LootMarkersScanner, function(state) settings.LootMarkersScanner = state end)
-	nativeSettings.addSwitch("/lhud/lootmarkers", "Show with weapon", "Show when weapon unsheated", settings.LootMarkersWeapon, defaults.LootMarkersWeapon, function(state) settings.LootMarkersWeapon = state end)
-	nativeSettings.addSwitch("/lhud/lootmarkers", "Show with zoom", "Show when zoom mode is active (press aim hotkey with no weapon in hands)", settings.LootMarkersZoom, defaults.LootMarkersZoom, function(state) settings.LootMarkersZoom = state end)
+	nativeSettings.addSubcategory("/lhud/lootmarkers", GetLocalizedTextByKey("Mod-LHUD-Player-Markers-Loot"))
+	nativeSettings.addSwitch("/lhud/lootmarkers", GetLocalizedTextByKey("Mod-LHUD-Is-Enabled"), GetLocalizedTextByKey("Mod-LHUD-Is-Enabled-Desc"), settings.LootMarkersEnabled, defaults.LootMarkersEnabled, function(state) settings.LootMarkersEnabled = state end)
+	nativeSettings.addSwitch("/lhud/lootmarkers", GetLocalizedTextByKey("Mod-LHUD-Global-Key"), GetLocalizedTextByKey("Mod-LHUD-Global-Key-Desc"), settings.LootMarkersGlobal, defaults.LootMarkersGlobal, function(state) settings.LootMarkersGlobal = state end)
+	nativeSettings.addSwitch("/lhud/lootmarkers", GetLocalizedTextByKey("Mod-LHUD-Show-Combat"), GetLocalizedTextByKey("Mod-LHUD-Show-Combat-Desc"), settings.LootMarkersCombat, defaults.LootMarkersCombat, function(state) settings.LootMarkersCombat = state end)
+	nativeSettings.addSwitch("/lhud/lootmarkers", GetLocalizedTextByKey("Mod-LHUD-Show-Out-Combat"), GetLocalizedTextByKey("Mod-LHUD-Show-Out-Combat-Desc"), settings.LootMarkersOutOfCombat, defaults.LootMarkersOutOfCombat, function(state) settings.LootMarkersOutOfCombat = state end)
+	nativeSettings.addSwitch("/lhud/lootmarkers", GetLocalizedTextByKey("Mod-LHUD-Show-Stealth"), GetLocalizedTextByKey("Mod-LHUD-Show-Stealth-Desc"), settings.LootMarkersStealth, defaults.LootMarkersStealth, function(state) settings.LootMarkersStealth = state end)
+	nativeSettings.addSwitch("/lhud/lootmarkers", GetLocalizedTextByKey("Mod-LHUD-Show-Vehicle"), GetLocalizedTextByKey("Mod-LHUD-Show-Vehicle-Desc"), settings.LootMarkersVehicle, defaults.LootMarkersVehicle, function(state) settings.LootMarkersVehicle = state end)
+	nativeSettings.addSwitch("/lhud/lootmarkers", GetLocalizedTextByKey("Mod-LHUD-Show-Scanner"), GetLocalizedTextByKey("Mod-LHUD-Show-Scanner-Desc"), settings.LootMarkersScanner, defaults.LootMarkersScanner, function(state) settings.LootMarkersScanner = state end)
+	nativeSettings.addSwitch("/lhud/lootmarkers", GetLocalizedTextByKey("Mod-LHUD-Show-Weapon"), GetLocalizedTextByKey("Mod-LHUD-Show-Weapon-Desc"), settings.LootMarkersWeapon, defaults.LootMarkersWeapon, function(state) settings.LootMarkersWeapon = state end)
+	nativeSettings.addSwitch("/lhud/lootmarkers", GetLocalizedTextByKey("Mod-LHUD-Show-Zoom"), GetLocalizedTextByKey("Mod-LHUD-Show-Zoom-Desc"), settings.LootMarkersZoom, defaults.LootMarkersZoom, function(state) settings.LootMarkersZoom = state end)
 	
-	nativeSettings.addSubcategory("/lhud/poimarkers", "World markers - Places Of Interest")
-	nativeSettings.addSwitch("/lhud/poimarkers", "Is module enabled", "If enabled then widget controlled by LHUD, disable if you want to restore default widget behavior", settings.POIMarkersEnabled, defaults.POIMarkersEnabled, function(state) settings.POIMarkersEnabled = state end)
-	nativeSettings.addSwitch("/lhud/poimarkers", "Bind to Global hotkey", "If enabled then you will be able to toggle the module widgets visibility with the global hotkey if you have it configured", settings.POIMarkersGlobal, defaults.POIMarkersGlobal, function(state) settings.POIMarkersGlobal = state end)
-	nativeSettings.addSwitch("/lhud/poimarkers", "Show in combat", "Show when combat mode is active", settings.POIMarkersCombat, defaults.POIMarkersCombat, function(state) settings.POIMarkersCombat = state end)
-	nativeSettings.addSwitch("/lhud/poimarkers", "Show out of combat", "Show when combat mode is not active and stealth mode is not active", settings.POIMarkersOutOfCombat, defaults.POIMarkersOutOfCombat, function(state) settings.POIMarkersOutOfCombat = state end)
-	nativeSettings.addSwitch("/lhud/poimarkers", "Show in stealth", "Show when stealth mode is active", settings.POIMarkersStealth, defaults.POIMarkersStealth, function(state) settings.POIMarkersStealth = state end)
-	nativeSettings.addSwitch("/lhud/poimarkers", "Show in vehicle", "Show when player mounted to vehicle", settings.POIMarkersVehicle, defaults.POIMarkersVehicle, function(state) settings.POIMarkersVehicle = state end)
-	nativeSettings.addSwitch("/lhud/poimarkers", "Show with scanner", "Show when scanner is active", settings.POIMarkersScanner, defaults.POIMarkersScanner, function(state) settings.POIMarkersScanner = state end)
-	nativeSettings.addSwitch("/lhud/poimarkers", "Show with weapon", "Show when weapon unsheated", settings.POIMarkersWeapon, defaults.POIMarkersWeapon, function(state) settings.POIMarkersWeapon = state end)
-	nativeSettings.addSwitch("/lhud/poimarkers", "Show with zoom", "Show when zoom mode is active (press aim hotkey with no weapon in hands)", settings.POIMarkersZoom, defaults.POIMarkersZoom, function(state) settings.POIMarkersZoom = state end)
+	nativeSettings.addSubcategory("/lhud/poimarkers", GetLocalizedTextByKey("Mod-LHUD-Player-Markers-POI"))
+	nativeSettings.addSwitch("/lhud/poimarkers", GetLocalizedTextByKey("Mod-LHUD-Is-Enabled"), GetLocalizedTextByKey("Mod-LHUD-Is-Enabled-Desc"), settings.POIMarkersEnabled, defaults.POIMarkersEnabled, function(state) settings.POIMarkersEnabled = state end)
+	nativeSettings.addSwitch("/lhud/poimarkers", GetLocalizedTextByKey("Mod-LHUD-Global-Key"), GetLocalizedTextByKey("Mod-LHUD-Global-Key-Desc"), settings.POIMarkersGlobal, defaults.POIMarkersGlobal, function(state) settings.POIMarkersGlobal = state end)
+	nativeSettings.addSwitch("/lhud/poimarkers", GetLocalizedTextByKey("Mod-LHUD-Show-Combat"), GetLocalizedTextByKey("Mod-LHUD-Show-Combat-Desc"), settings.POIMarkersCombat, defaults.POIMarkersCombat, function(state) settings.POIMarkersCombat = state end)
+	nativeSettings.addSwitch("/lhud/poimarkers", GetLocalizedTextByKey("Mod-LHUD-Show-Out-Combat"), GetLocalizedTextByKey("Mod-LHUD-Show-Out-Combat-Desc"), settings.POIMarkersOutOfCombat, defaults.POIMarkersOutOfCombat, function(state) settings.POIMarkersOutOfCombat = state end)
+	nativeSettings.addSwitch("/lhud/poimarkers", GetLocalizedTextByKey("Mod-LHUD-Show-Stealth"), GetLocalizedTextByKey("Mod-LHUD-Show-Stealth-Desc"), settings.POIMarkersStealth, defaults.POIMarkersStealth, function(state) settings.POIMarkersStealth = state end)
+	nativeSettings.addSwitch("/lhud/poimarkers", GetLocalizedTextByKey("Mod-LHUD-Show-Vehicle"), GetLocalizedTextByKey("Mod-LHUD-Show-Vehicle-Desc"), settings.POIMarkersVehicle, defaults.POIMarkersVehicle, function(state) settings.POIMarkersVehicle = state end)
+	nativeSettings.addSwitch("/lhud/poimarkers", GetLocalizedTextByKey("Mod-LHUD-Show-Scanner"), GetLocalizedTextByKey("Mod-LHUD-Show-Scanner-Desc"), settings.POIMarkersScanner, defaults.POIMarkersScanner, function(state) settings.POIMarkersScanner = state end)
+	nativeSettings.addSwitch("/lhud/poimarkers", GetLocalizedTextByKey("Mod-LHUD-Show-Weapon"), GetLocalizedTextByKey("Mod-LHUD-Show-Weapon-Desc"), settings.POIMarkersWeapon, defaults.POIMarkersWeapon, function(state) settings.POIMarkersWeapon = state end)
+	nativeSettings.addSwitch("/lhud/poimarkers", GetLocalizedTextByKey("Mod-LHUD-Show-Zoom"), GetLocalizedTextByKey("Mod-LHUD-Show-Zoom-Desc"), settings.POIMarkersZoom, defaults.POIMarkersZoom, function(state) settings.POIMarkersZoom = state end)
 	nativeSettings.addSwitch("/lhud/poimarkers", "Always show tracked", "If enabled then makes current tracked POI marker always visible", settings.POIAlwaysShowTracked, defaults.POIAlwaysShowTracked, function(state) settings.POIAlwaysShowTracked = state end)
 	
-	nativeSettings.addSubcategory("/lhud/combatmarkers", "World markers - Combat")
-	nativeSettings.addSwitch("/lhud/combatmarkers", "Is module enabled", "If enabled then widget controlled by LHUD, disable if you want to restore default widget behavior", settings.CombatMarkersEnabled, defaults.CombatMarkersEnabled, function(state) settings.CombatMarkersEnabled = state end)
-	nativeSettings.addSwitch("/lhud/combatmarkers", "Bind to Global hotkey", "If enabled then you will be able to toggle the module widgets visibility with the global hotkey if you have it configured", settings.CombatMarkersGlobal, defaults.CombatMarkersGlobal, function(state) settings.CombatMarkersGlobal = state end)
-	nativeSettings.addSwitch("/lhud/combatmarkers", "Show in combat", "Show when combat mode is active", settings.CombatMarkersCombat, defaults.CombatMarkersCombat, function(state) settings.CombatMarkersCombat = state end)
-	nativeSettings.addSwitch("/lhud/combatmarkers", "Show out of combat", "Show when combat mode is not active and stealth mode is not active", settings.CombatMarkersOutOfCombat, defaults.CombatMarkersOutOfCombat, function(state) settings.CombatMarkersOutOfCombat = state end)
-	nativeSettings.addSwitch("/lhud/combatmarkers", "Show in stealth", "Show when stealth mode is active", settings.CombatMarkersStealth, defaults.CombatMarkersStealth, function(state) settings.CombatMarkersStealth = state end)
-	nativeSettings.addSwitch("/lhud/combatmarkers", "Show in vehicle", "Show when player mounted to vehicle", settings.CombatMarkersVehicle, defaults.CombatMarkersVehicle, function(state) settings.CombatMarkersVehicle = state end)
-	nativeSettings.addSwitch("/lhud/combatmarkers", "Show with scanner", "Show when scanner is active", settings.CombatMarkersScanner, defaults.CombatMarkersScanner, function(state) settings.CombatMarkersScanner = state end)
-	nativeSettings.addSwitch("/lhud/combatmarkers", "Show with weapon", "Show when weapon unsheated", settings.CombatMarkersWeapon, defaults.CombatMarkersWeapon, function(state) settings.CombatMarkersWeapon = state end)
-	nativeSettings.addSwitch("/lhud/combatmarkers", "Show with zoom", "Show when zoom mode is active (press aim hotkey with no weapon in hands)", settings.CombatMarkersZoom, defaults.CombatMarkersZoom, function(state) settings.CombatMarkersZoom = state end)
+	nativeSettings.addSubcategory("/lhud/combatmarkers", GetLocalizedTextByKey("Mod-LHUD-Player-Markers-Combat"))
+	nativeSettings.addSwitch("/lhud/combatmarkers", GetLocalizedTextByKey("Mod-LHUD-Is-Enabled"), GetLocalizedTextByKey("Mod-LHUD-Is-Enabled-Desc"), settings.CombatMarkersEnabled, defaults.CombatMarkersEnabled, function(state) settings.CombatMarkersEnabled = state end)
+	nativeSettings.addSwitch("/lhud/combatmarkers", GetLocalizedTextByKey("Mod-LHUD-Global-Key"), GetLocalizedTextByKey("Mod-LHUD-Global-Key-Desc"), settings.CombatMarkersGlobal, defaults.CombatMarkersGlobal, function(state) settings.CombatMarkersGlobal = state end)
+	nativeSettings.addSwitch("/lhud/combatmarkers", GetLocalizedTextByKey("Mod-LHUD-Show-Combat"), GetLocalizedTextByKey("Mod-LHUD-Show-Combat-Desc"), settings.CombatMarkersCombat, defaults.CombatMarkersCombat, function(state) settings.CombatMarkersCombat = state end)
+	nativeSettings.addSwitch("/lhud/combatmarkers", GetLocalizedTextByKey("Mod-LHUD-Show-Out-Combat"), GetLocalizedTextByKey("Mod-LHUD-Show-Out-Combat-Desc"), settings.CombatMarkersOutOfCombat, defaults.CombatMarkersOutOfCombat, function(state) settings.CombatMarkersOutOfCombat = state end)
+	nativeSettings.addSwitch("/lhud/combatmarkers", GetLocalizedTextByKey("Mod-LHUD-Show-Stealth"), GetLocalizedTextByKey("Mod-LHUD-Show-Stealth-Desc"), settings.CombatMarkersStealth, defaults.CombatMarkersStealth, function(state) settings.CombatMarkersStealth = state end)
+	nativeSettings.addSwitch("/lhud/combatmarkers", GetLocalizedTextByKey("Mod-LHUD-Show-Vehicle"), GetLocalizedTextByKey("Mod-LHUD-Show-Vehicle-Desc"), settings.CombatMarkersVehicle, defaults.CombatMarkersVehicle, function(state) settings.CombatMarkersVehicle = state end)
+	nativeSettings.addSwitch("/lhud/combatmarkers", GetLocalizedTextByKey("Mod-LHUD-Show-Scanner"), GetLocalizedTextByKey("Mod-LHUD-Show-Scanner-Desc"), settings.CombatMarkersScanner, defaults.CombatMarkersScanner, function(state) settings.CombatMarkersScanner = state end)
+	nativeSettings.addSwitch("/lhud/combatmarkers", GetLocalizedTextByKey("Mod-LHUD-Show-Weapon"), GetLocalizedTextByKey("Mod-LHUD-Show-Weapon-Desc"), settings.CombatMarkersWeapon, defaults.CombatMarkersWeapon, function(state) settings.CombatMarkersWeapon = state end)
+	nativeSettings.addSwitch("/lhud/combatmarkers", GetLocalizedTextByKey("Mod-LHUD-Show-Zoom"), GetLocalizedTextByKey("Mod-LHUD-Show-Zoom-Desc"), settings.CombatMarkersZoom, defaults.CombatMarkersZoom, function(state) settings.CombatMarkersZoom = state end)
 	
-	nativeSettings.addSubcategory("/lhud/vehiclemarkers", "World markers - Owned Vehicles")
-	nativeSettings.addSwitch("/lhud/vehiclemarkers", "Is module enabled", "If enabled then widget controlled by LHUD, disable if you want to restore default widget behavior", settings.VehicleMarkersEnabled, defaults.VehicleMarkersEnabled, function(state) settings.VehicleMarkersEnabled = state end)
-	nativeSettings.addSwitch("/lhud/vehiclemarkers", "Bind to Global hotkey", "If enabled then you will be able to toggle the module widgets visibility with the global hotkey if you have it configured", settings.VehicleMarkersGlobal, defaults.VehicleMarkersGlobal, function(state) settings.VehicleMarkersGlobal = state end)
-	nativeSettings.addSwitch("/lhud/vehiclemarkers", "Show in vehicle", "Show when player mounted to vehicle", settings.VehicleMarkersVehicle, defaults.VehicleMarkersVehicle, function(state) settings.VehicleMarkersVehicle = state end)
-	nativeSettings.addSwitch("/lhud/vehiclemarkers", "Show with scanner", "Show when scanner is active", settings.VehicleMarkersScanner, defaults.VehicleMarkersScanner, function(state) settings.VehicleMarkersScanner = state end)
-	nativeSettings.addSwitch("/lhud/vehiclemarkers", "Show with zoom", "Show when zoom mode is active (press aim hotkey with no weapon in hands)", settings.VehicleMarkersZoom, defaults.VehicleMarkersZoom, function(state) settings.VehicleMarkersZoom = state end)
+	nativeSettings.addSubcategory("/lhud/vehiclemarkers", GetLocalizedTextByKey("Mod-LHUD-Player-Markers-Vehicles"))
+	nativeSettings.addSwitch("/lhud/vehiclemarkers", GetLocalizedTextByKey("Mod-LHUD-Is-Enabled"), GetLocalizedTextByKey("Mod-LHUD-Is-Enabled-Desc"), settings.VehicleMarkersEnabled, defaults.VehicleMarkersEnabled, function(state) settings.VehicleMarkersEnabled = state end)
+	nativeSettings.addSwitch("/lhud/vehiclemarkers", GetLocalizedTextByKey("Mod-LHUD-Global-Key"), GetLocalizedTextByKey("Mod-LHUD-Global-Key-Desc"), settings.VehicleMarkersGlobal, defaults.VehicleMarkersGlobal, function(state) settings.VehicleMarkersGlobal = state end)
+	nativeSettings.addSwitch("/lhud/vehiclemarkers", GetLocalizedTextByKey("Mod-LHUD-Show-Vehicle"), GetLocalizedTextByKey("Mod-LHUD-Show-Vehicle-Desc"), settings.VehicleMarkersVehicle, defaults.VehicleMarkersVehicle, function(state) settings.VehicleMarkersVehicle = state end)
+	nativeSettings.addSwitch("/lhud/vehiclemarkers", GetLocalizedTextByKey("Mod-LHUD-Show-Scanner"), GetLocalizedTextByKey("Mod-LHUD-Show-Scanner-Desc"), settings.VehicleMarkersScanner, defaults.VehicleMarkersScanner, function(state) settings.VehicleMarkersScanner = state end)
+	nativeSettings.addSwitch("/lhud/vehiclemarkers", GetLocalizedTextByKey("Mod-LHUD-Show-Zoom"), GetLocalizedTextByKey("Mod-LHUD-Show-Zoom-Desc"), settings.VehicleMarkersZoom, defaults.VehicleMarkersZoom, function(state) settings.VehicleMarkersZoom = state end)
 	
-	nativeSettings.addSubcategory("/lhud/interactionmarkers", "World markers - Device Interactions")
-	nativeSettings.addSwitch("/lhud/interactionmarkers", "Is module enabled", "If enabled then widgets controlled by LHUD, disable if you want to restore default widget behavior", settings.DeviceMarkersEnabled, defaults.DeviceMarkersEnabled, function(state) settings.DeviceMarkersEnabled = state end)
-	nativeSettings.addSwitch("/lhud/interactionmarkers", "Show with scanner", "Show when scanner is active", settings.DeviceMarkersScanner, defaults.DeviceMarkersScanner, function(state) settings.DeviceMarkersScanner = state end)
+	nativeSettings.addSubcategory("/lhud/interactionmarkers", GetLocalizedTextByKey("Mod-LHUD-Player-Markers-Devices"))
+	nativeSettings.addSwitch("/lhud/interactionmarkers", GetLocalizedTextByKey("Mod-LHUD-Is-Enabled"), "If enabled then widgets controlled by LHUD, disable if you want to restore default widget behavior", settings.DeviceMarkersEnabled, defaults.DeviceMarkersEnabled, function(state) settings.DeviceMarkersEnabled = state end)
+	nativeSettings.addSwitch("/lhud/interactionmarkers", GetLocalizedTextByKey("Mod-LHUD-Show-Scanner"), GetLocalizedTextByKey("Mod-LHUD-Show-Scanner-Desc"), settings.DeviceMarkersScanner, defaults.DeviceMarkersScanner, function(state) settings.DeviceMarkersScanner = state end)
 	
 	
 	nativeSettings.addTab("/lhudaddons", "LHUD ADDONS")
-	nativeSettings.addSubcategory("/lhudaddons/journalnotif", "Journal Notifications Widget")
-	nativeSettings.addRangeFloat("/lhudaddons/journalnotif", "Widget opacity", "Adjust journal notifications widget opacity (change from the main menu or reload your game to apply changes)", 0.0, 1.0, 0.05, "%.2f", settings.AddonsJournalOpacity, defaults.AddonsJournalOpacity, function(value) settings.AddonsJournalOpacity = value end)
-	nativeSettings.addRangeFloat("/lhudaddons/journalnotif", "Widget scale", "Adjust journal notifications widget size (change from the main menu or reload your game to apply changes)", 0.1, 2.0, 0.05, "%.2f", settings.AddonsJournalScale, defaults.AddonsJournalScale, function(value) settings.AddonsJournalScale = value end)
+	nativeSettings.addSubcategory("/lhudaddons/journalnotif", GetLocalizedTextByKey("Addons-LHUD-Journal-Widget"))
+	nativeSettings.addRangeFloat("/lhudaddons/journalnotif", GetLocalizedTextByKey("Addons-LHUD-Opacity"), GetLocalizedTextByKey("Addons-LHUD-Opacity-Desc"), 0.0, 1.0, 0.05, "%.2f", settings.AddonsJournalOpacity, defaults.AddonsJournalOpacity, function(value) settings.AddonsJournalOpacity = value end)
+	nativeSettings.addRangeFloat("/lhudaddons/journalnotif", GetLocalizedTextByKey("Addons-LHUD-Scale"), GetLocalizedTextByKey("Addons-LHUD-Scale-Desc"), 0.1, 2.0, 0.05, "%.2f", settings.AddonsJournalScale, defaults.AddonsJournalScale, function(value) settings.AddonsJournalScale = value end)
 
-	nativeSettings.addSubcategory("/lhudaddons/itemnotif", "Items Notifications Widget")
-	nativeSettings.addRangeFloat("/lhudaddons/itemnotif", "Widget opacity", "Adjust received items notifications widget opacity (change from the main menu or reload your game to apply changes)", 0.0, 1.0, 0.05, "%.2f", settings.AddonsItemOpacity, defaults.AddonsItemOpacity, function(value) settings.AddonsItemOpacity = value end)
-	nativeSettings.addRangeFloat("/lhudaddons/itemnotif", "Widget scale", "Adjust received items notifications widget size (change from the main menu or reload your game to apply changes)", 0.1, 2.0, 0.05, "%.2f", settings.AddonsItemScale, defaults.AddonsItemScale, function(value) settings.AddonsItemScale = value end)
+	nativeSettings.addSubcategory("/lhudaddons/itemnotif", GetLocalizedTextByKey("Addons-LHUD-Items-Widget"))
+	nativeSettings.addRangeFloat("/lhudaddons/itemnotif", GetLocalizedTextByKey("Addons-LHUD-Opacity"), GetLocalizedTextByKey("Addons-LHUD-Opacity-Desc"), 0.0, 1.0, 0.05, "%.2f", settings.AddonsItemOpacity, defaults.AddonsItemOpacity, function(value) settings.AddonsItemOpacity = value end)
+	nativeSettings.addRangeFloat("/lhudaddons/itemnotif", GetLocalizedTextByKey("Addons-LHUD-Scale"), GetLocalizedTextByKey("Addons-LHUD-Scale-Desc"), 0.1, 2.0, 0.05, "%.2f", settings.AddonsItemScale, defaults.AddonsItemScale, function(value) settings.AddonsItemScale = value end)
 	
-	nativeSettings.addSubcategory("/lhudaddons/notifsounds", "Notification Sounds")
-	nativeSettings.addSwitch("/lhudaddons/notifsounds", "Mute quest notifications", "Mute notification sounds for NCPD jobs and journal changes about new, updated, completed and failed quests", settings.AddonsJournalDisableSound, defaults.AddonsJournalDisableSound, function(state) settings.AddonsJournalDisableSound = state end)
-	nativeSettings.addSwitch("/lhudaddons/notifsounds", "Mute skill level up notifications", "Mute notification sounds for skills level up", settings.AddonsLevelUpDisableSound, defaults.AddonsLevelUpDisableSound, function(state) settings.AddonsLevelUpDisableSound = state end)
+	nativeSettings.addSubcategory("/lhudaddons/notifsounds", GetLocalizedTextByKey("Addons-LHUD-Notification-Sounds"))
+	nativeSettings.addSwitch("/lhudaddons/notifsounds", GetLocalizedTextByKey("Addons-LHUD-Notification-Mute-Quest"), GetLocalizedTextByKey("Addons-LHUD-Notification-Mute-Quest-Desc"), settings.AddonsJournalDisableSound, defaults.AddonsJournalDisableSound, function(state) settings.AddonsJournalDisableSound = state end)
+	nativeSettings.addSwitch("/lhudaddons/notifsounds", GetLocalizedTextByKey("Addons-LHUD-Notification-Mute-Level"), GetLocalizedTextByKey("Addons-LHUD-Notification-Mute-Level-Desc"), settings.AddonsLevelUpDisableSound, defaults.AddonsLevelUpDisableSound, function(state) settings.AddonsLevelUpDisableSound = state end)
 	
-	nativeSettings.addSubcategory("/lhudaddons/prompts", "Hide interaction prompts")
-	nativeSettings.addSwitch("/lhudaddons/prompts", "Get In", "Enable to hide Get in input prompt for your vehicles", settings.AddonsPromptGetIn, defaults.AddonsPromptGetIn, function(state) settings.AddonsPromptGetIn = state end)
-	nativeSettings.addSwitch("/lhudaddons/prompts", "Pick Up Body", "Enable to hide Pick Up Body input prompt for NPC bodies", settings.AddonsPromptPickUpBody, defaults.AddonsPromptPickUpBody, function(state) settings.AddonsPromptPickUpBody = state end)
-	nativeSettings.addSwitch("/lhudaddons/prompts", "Talk", "Enable to hide Talk input prompt for NPCs", settings.AddonsPromptTalk, defaults.AddonsPromptTalk, function(state) settings.AddonsPromptTalk = state end)
+	nativeSettings.addSubcategory("/lhudaddons/prompts", GetLocalizedTextByKey("Addons-LHUD-Hide-Prompt"))
+	nativeSettings.addSwitch("/lhudaddons/prompts", GetLocalizedText("LocKey#23295"), GetLocalizedTextByKey("Addons-LHUD-Hide-Prompt-Vehicle"), settings.AddonsPromptGetIn, defaults.AddonsPromptGetIn, function(state) settings.AddonsPromptGetIn = state end)
+	nativeSettings.addSwitch("/lhudaddons/prompts", GetLocalizedText("LocKey#238"), GetLocalizedTextByKey("Addons-LHUD-Hide-Prompt-Pick-Up"), settings.AddonsPromptPickUpBody, defaults.AddonsPromptPickUpBody, function(state) settings.AddonsPromptPickUpBody = state end)
+	nativeSettings.addSwitch("/lhudaddons/prompts", GetLocalizedText("LocKey#312"), GetLocalizedTextByKey("Addons-LHUD-Hide-Prompt-Talk"), settings.AddonsPromptTalk, defaults.AddonsPromptTalk, function(state) settings.AddonsPromptTalk = state end)
 	
-	nativeSettings.addSubcategory("/lhudaddons/dialogresizer", "Dialog Widget Resizer")
-	nativeSettings.addRangeFloat("/lhudaddons/dialogresizer", "Dialog widget scale", "Adjust dialog choices widget size (change from the main menu or reload your game to apply changes)", 0.1, 2.0, 0.05, "%.2f", settings.AddonsDialogResizerScale, defaults.AddonsDialogResizerScale, function(value) settings.AddonsDialogResizerScale = value end)
+	nativeSettings.addSubcategory("/lhudaddons/dialogresizer", GetLocalizedTextByKey("Addons-LHUD-Dialog-Resizer"))
+	nativeSettings.addRangeFloat("/lhudaddons/dialogresizer", GetLocalizedTextByKey("Addons-LHUD-Scale"), GetLocalizedTextByKey("Addons-LHUD-Scale-Desc"), 0.1, 2.0, 0.05, "%.2f", settings.AddonsDialogResizerScale, defaults.AddonsDialogResizerScale, function(value) settings.AddonsDialogResizerScale = value end)
 	
-	nativeSettings.addSubcategory("/lhudaddons/evolution", "Fix Evolution Icons")
-	nativeSettings.addSwitch("/lhudaddons/evolution", "Enable fix", "Fix wrong icons for Power and Tech weapons used inside info popups", settings.AddonsFixEvolutionIcons, defaults.AddonsFixEvolutionIcons, function(state) settings.AddonsFixEvolutionIcons = state end)
+	nativeSettings.addSubcategory("/lhudaddons/evolution", GetLocalizedTextByKey("Addons-LHUD-Evolution"))
+	nativeSettings.addSwitch("/lhudaddons/evolution", GetLocalizedTextByKey("Addons-LHUD-Evolution-Enable"), GetLocalizedTextByKey("Addons-LHUD-Evolution-Enable-Desc"), settings.AddonsFixEvolutionIcons, defaults.AddonsFixEvolutionIcons, function(state) settings.AddonsFixEvolutionIcons = state end)
 	
-	nativeSettings.addSubcategory("/lhudaddons/speedometer", "Hide Speedometer")
-	nativeSettings.addSwitch("/lhudaddons/speedometer", "Hide", "Hide speedometer widget for TPP camera view (change from the main menu or reload your game to apply changes)", settings.AddonsHideSpeedometer, defaults.AddonsHideSpeedometer, function(state) settings.AddonsHideSpeedometer = state end)
+	nativeSettings.addSubcategory("/lhudaddons/speedometer", GetLocalizedTextByKey("Addons-LHUD-Speedometer"))
+	nativeSettings.addSwitch("/lhudaddons/speedometer", GetLocalizedTextByKey("Addons-LHUD-Speedometer-Hide"), GetLocalizedTextByKey("Addons-LHUD-Speedometer-Hide-Desc"), settings.AddonsHideSpeedometer, defaults.AddonsHideSpeedometer, function(state) settings.AddonsHideSpeedometer = state end)
 	
-	nativeSettings.addSubcategory("/lhudaddons/crouch", "Remove Crouch Indicator")
-	nativeSettings.addSwitch("/lhudaddons/crouch", "Remove", "Remove crouch indicator from HUD (change from the main menu or reload your game to apply changes)", settings.AddonsHideCrouchIndicator, defaults.AddonsHideCrouchIndicator, function(state) settings.AddonsHideCrouchIndicator = state end)
+	nativeSettings.addSubcategory("/lhudaddons/crouch", GetLocalizedTextByKey("Addons-LHUD-Crouch"))
+	nativeSettings.addSwitch("/lhudaddons/crouch", GetLocalizedTextByKey("Addons-LHUD-Crouch-Remove"), GetLocalizedTextByKey("Addons-LHUD-Crouch-Remove-Desc"), settings.AddonsHideCrouchIndicator, defaults.AddonsHideCrouchIndicator, function(state) settings.AddonsHideCrouchIndicator = state end)
 	
-	nativeSettings.addSubcategory("/lhudaddons/hptexts", "No Healthbar Texts")
-	nativeSettings.addSwitch("/lhudaddons/hptexts", "Remove text labels", "Remove current HP and max HP text labels from player healthbar widget (change from the main menu or reload your game to apply changes)", settings.AddonsRemoveHealthbarTexts, defaults.AddonsRemoveHealthbarTexts, function(state) settings.AddonsRemoveHealthbarTexts = state end)
+	nativeSettings.addSubcategory("/lhudaddons/hptexts", GetLocalizedTextByKey("Addons-LHUD-Healthbar-Texts"))
+	nativeSettings.addSwitch("/lhudaddons/hptexts", GetLocalizedTextByKey("Addons-LHUD-Healthbar-Texts-Remove"), GetLocalizedTextByKey("Addons-LHUD-Healthbar-Texts-Remove-Desc"), settings.AddonsRemoveHealthbarTexts, defaults.AddonsRemoveHealthbarTexts, function(state) settings.AddonsRemoveHealthbarTexts = state end)
 	
-	nativeSettings.addSubcategory("/lhudaddons/markerpulse", "No Marker Pulse")
-	nativeSettings.addSwitch("/lhudaddons/markerpulse", "Disable pulse animation", "Disable pulse animation for tracked quest marker (change from the main menu or reload your game to apply changes)", settings.AddonsRemoveMarkerPulse, defaults.AddonsRemoveMarkerPulse, function(state) settings.AddonsRemoveMarkerPulse = state end)
+	nativeSettings.addSubcategory("/lhudaddons/markerpulse", GetLocalizedTextByKey("Addons-LHUD-Pulse"))
+	nativeSettings.addSwitch("/lhudaddons/markerpulse", GetLocalizedTextByKey("Addons-LHUD-Pulse-Disable"), GetLocalizedTextByKey("Addons-LHUD-Pulse-Disable-Desc"), settings.AddonsRemoveMarkerPulse, defaults.AddonsRemoveMarkerPulse, function(state) settings.AddonsRemoveMarkerPulse = state end)
 	
-	nativeSettings.addSubcategory("/lhudaddons/hudtoggle", "Simple HUD Toggle")
-	nativeSettings.addSwitch("/lhudaddons/hudtoggle", "Enable HUD toggle hotkey", "If enabled then allows to toggle the whole HUD visibility with F1 keypress (hotkey can be changed inside hudSimpleToggle.reds file)", settings.AddonsSimpleHUDToggle, defaults.AddonsSimpleHUDToggle, function(state) settings.AddonsSimpleHUDToggle = state end)
+	nativeSettings.addSubcategory("/lhudaddons/hudtoggle", GetLocalizedTextByKey("Addons-LHUD-HUD-Toggle"))
+	nativeSettings.addSwitch("/lhudaddons/hudtoggle", GetLocalizedTextByKey("Addons-LHUD-HUD-Toggle-Enable"), GetLocalizedTextByKey("Addons-LHUD-HUD-Toggle-Enable-Desc"), settings.AddonsSimpleHUDToggle, defaults.AddonsSimpleHUDToggle, function(state) settings.AddonsSimpleHUDToggle = state end)
 	
-	nativeSettings.addSubcategory("/lhudaddons/highlight", "Enemy Highlighting")
-	nativeSettings.addSwitch("/lhudaddons/highlight", "Highlight Pinged only", "If enabled then enemy highlight effect will be visible only for non-friendly NPCs under Ping effect", settings.AddonsHighlightUnderPingOnly, defaults.AddonsHighlightUnderPingOnly, function(state) settings.AddonsHighlightUnderPingOnly = state end)
+	nativeSettings.addSubcategory("/lhudaddons/highlight", GetLocalizedTextByKey("Addons-LHUD-Highlighting"))
+	nativeSettings.addSwitch("/lhudaddons/highlight", GetLocalizedTextByKey("Addons-LHUD-Highlight-Pinged"), GetLocalizedTextByKey("Addons-LHUD-Highlight-Pinged-Desc"), settings.AddonsHighlightUnderPingOnly, defaults.AddonsHighlightUnderPingOnly, function(state) settings.AddonsHighlightUnderPingOnly = state end)
 	
-	nativeSettings.addSubcategory("/lhudaddons/colorsfill", "Objects Coloring - Fill colors")
-	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Interaction", "Interaction objects fill color", fills, settings.AddonsFillInteraction, defaults.AddonsFillInteraction, function(value) settings.AddonsFillInteraction = value end)
-	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Important interaction", "Important interaction objects fill color", fills, settings.AddonsFillImportantInteraction, defaults.AddonsFillImportantInteraction, function(value) settings.AddonsFillImportantInteraction = value end)
-	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Weakspot", "Weakspots fill color", fills, settings.AddonsFillWeakspot, defaults.AddonsFillWeakspot, function(value) settings.AddonsFillWeakspot = value end)
-	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Quest", "Quest objects fill color", fills, settings.AddonsFillQuest, defaults.AddonsFillQuest, function(value) settings.AddonsFillQuest = value end)
-	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Distraction", "Distraction object fill color", fills, settings.AddonsFillDistraction, defaults.AddonsFillDistraction, function(value) settings.AddonsFillDistraction = value end)
-	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Clue", "Clue fill color", fills, settings.AddonsFillClue, defaults.AddonsFillClue, function(value) settings.AddonsFillClue = value end)
-	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "NPC", "NPC fill color", fills, settings.AddonsFillNPC, defaults.AddonsFillNPC, function(value) settings.AddonsFillNPC = value end)
-	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "AOE", "AOE damage objects fill color", fills, settings.AddonsFillAOE, defaults.AddonsFillAOE, function(value) settings.AddonsFillAOE = value end)
-	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Item", "Item objects fill color", fills, settings.AddonsFillItem, defaults.AddonsFillItem, function(value) settings.AddonsFillItem = value end)
-	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Hostile character", "Hostile characters fill color", fills, settings.AddonsFillHostile, defaults.AddonsFillHostile, function(value) settings.AddonsFillHostile = value end)
-	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Friendly character", "Friendly characters fill color", fills, settings.AddonsFillFriendly, defaults.AddonsFillFriendly, function(value) settings.AddonsFillFriendly = value end)
-	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Neutral character", "Neutral characters fill color", fills, settings.AddonsFillNeutral, defaults.AddonsFillNeutral, function(value) settings.AddonsFillNeutral = value end)
-	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Hackable object", "Hackable objects fill color", fills, settings.AddonsFillHackable, defaults.AddonsFillHackable, function(value) settings.AddonsFillHackable = value end)
-	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Enemy netrunner", "Enemy netrunners fill color", fills, settings.AddonsFillEnemyNetrunner, defaults.AddonsFillEnemyNetrunner, function(value) settings.AddonsFillEnemyNetrunner = value end)
-	nativeSettings.addSelectorString("/lhudaddons/colorsfill", "Backdoor", "Backdoor objects fill color", fills, settings.AddonsFillBackdoor, defaults.AddonsFillBackdoor, function(value) settings.AddonsFillBackdoor = value end)
+	nativeSettings.addSubcategory("/lhudaddons/colorsfill", GetLocalizedTextByKey("Addons-LHUD-Coloring-Fill"))
+	nativeSettings.addSelectorString("/lhudaddons/colorsfill", GetLocalizedTextByKey("Addons-LHUD-Coloring-Interaction"), GetLocalizedTextByKey("Addons-LHUD-Coloring-Interaction-Fill"), fills, settings.AddonsFillInteraction, defaults.AddonsFillInteraction, function(value) settings.AddonsFillInteraction = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsfill", GetLocalizedTextByKey("Addons-LHUD-Coloring-Imp-Interaction"), GetLocalizedTextByKey("Addons-LHUD-Coloring-Imp-Interaction-Fill"), fills, settings.AddonsFillImportantInteraction, defaults.AddonsFillImportantInteraction, function(value) settings.AddonsFillImportantInteraction = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsfill", GetLocalizedTextByKey("Addons-LHUD-Coloring-Weakspot"), GetLocalizedTextByKey("Addons-LHUD-Coloring-Weakspot-Fill"), fills, settings.AddonsFillWeakspot, defaults.AddonsFillWeakspot, function(value) settings.AddonsFillWeakspot = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsfill", GetLocalizedTextByKey("Addons-LHUD-Coloring-Quest"), GetLocalizedTextByKey("Addons-LHUD-Coloring-Quest-Fill"), fills, settings.AddonsFillQuest, defaults.AddonsFillQuest, function(value) settings.AddonsFillQuest = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsfill", GetLocalizedTextByKey("Addons-LHUD-Coloring-Distraction"), GetLocalizedTextByKey("Addons-LHUD-Coloring-Distraction-Fill"), fills, settings.AddonsFillDistraction, defaults.AddonsFillDistraction, function(value) settings.AddonsFillDistraction = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsfill", GetLocalizedTextByKey("Addons-LHUD-Coloring-Clue"), GetLocalizedTextByKey("Addons-LHUD-Coloring-Clue-Fill"), fills, settings.AddonsFillClue, defaults.AddonsFillClue, function(value) settings.AddonsFillClue = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsfill", GetLocalizedTextByKey("Addons-LHUD-Coloring-NPC"), GetLocalizedTextByKey("Addons-LHUD-Coloring-NPC-Fill"), fills, settings.AddonsFillNPC, defaults.AddonsFillNPC, function(value) settings.AddonsFillNPC = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsfill", GetLocalizedTextByKey("Addons-LHUD-Coloring-AOE"), GetLocalizedTextByKey("Addons-LHUD-Coloring-AOE-Fill"), fills, settings.AddonsFillAOE, defaults.AddonsFillAOE, function(value) settings.AddonsFillAOE = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsfill", GetLocalizedTextByKey("Addons-LHUD-Coloring-Item"), GetLocalizedTextByKey("Addons-LHUD-Coloring-Item-Fill"), fills, settings.AddonsFillItem, defaults.AddonsFillItem, function(value) settings.AddonsFillItem = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsfill", GetLocalizedTextByKey("Addons-LHUD-Coloring-Hostile"), GetLocalizedTextByKey("Addons-LHUD-Coloring-Hostile-Fill"), fills, settings.AddonsFillHostile, defaults.AddonsFillHostile, function(value) settings.AddonsFillHostile = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsfill", GetLocalizedTextByKey("Addons-LHUD-Coloring-Friendly"), GetLocalizedTextByKey("Addons-LHUD-Coloring-Friendly-Fill"), fills, settings.AddonsFillFriendly, defaults.AddonsFillFriendly, function(value) settings.AddonsFillFriendly = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsfill", GetLocalizedTextByKey("Addons-LHUD-Coloring-Neutral"), GetLocalizedTextByKey("Addons-LHUD-Coloring-Neutral-Fill"), fills, settings.AddonsFillNeutral, defaults.AddonsFillNeutral, function(value) settings.AddonsFillNeutral = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsfill", GetLocalizedTextByKey("Addons-LHUD-Coloring-Hackable"), GetLocalizedTextByKey("Addons-LHUD-Coloring-Hackable-Fill"), fills, settings.AddonsFillHackable, defaults.AddonsFillHackable, function(value) settings.AddonsFillHackable = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsfill", GetLocalizedTextByKey("Addons-LHUD-Coloring-Netrunner"), GetLocalizedTextByKey("Addons-LHUD-Coloring-Netrunner-Fill"), fills, settings.AddonsFillEnemyNetrunner, defaults.AddonsFillEnemyNetrunner, function(value) settings.AddonsFillEnemyNetrunner = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsfill", GetLocalizedTextByKey("Addons-LHUD-Coloring-Backdoor"), GetLocalizedTextByKey("Addons-LHUD-Coloring-Backdoor-Fill"), fills, settings.AddonsFillBackdoor, defaults.AddonsFillBackdoor, function(value) settings.AddonsFillBackdoor = value end)
 	
-	nativeSettings.addSubcategory("/lhudaddons/colorsoutline", "Objects Coloring - Outline colors")
-	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Interaction", "Interaction objects outline color", outlines, settings.AddonsFillInteraction, defaults.AddonsFillInteraction, function(value) settings.AddonsFillInteraction = value end)
-	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Important interaction", "Important interaction objects outline color", outlines, settings.AddonsOutlineImportantInteraction, defaults.AddonsOutlineImportantInteraction, function(value) settings.AddonsOutlineImportantInteraction = value end)
-	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Weakspot", "Weakspots outline color", outlines, settings.AddonsOutlineWeakspot, defaults.AddonsOutlineWeakspot, function(value) settings.AddonsOutlineWeakspot = value end)
-	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Quest", "Quest objects outline color", outlines, settings.AddonsOutlineQuest, defaults.AddonsOutlineQuest, function(value) settings.AddonsOutlineQuest = value end)
-	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Distraction", "Distraction object outline color", outlines, settings.AddonsOutlineDistraction, defaults.AddonsOutlineDistraction, function(value) settings.AddonsOutlineDistraction = value end)
-	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Clue", "Clue outline color", outlines, settings.AddonsOutlineClue, defaults.AddonsOutlineClue, function(value) settings.AddonsOutlineClue = value end)
-	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "AOE", "AOE damage objects outline color", outlines, settings.AddonsOutlineAOE, defaults.AddonsOutlineAOE, function(value) settings.AddonsOutlineAOE = value end)
-	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Item", "Item objects outline color", outlines, settings.AddonsOutlineItem, defaults.AddonsOutlineItem, function(value) settings.AddonsOutlineItem = value end)
-	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Hostile character", "Hostile characters outline color", outlines, settings.AddonsOutlineHostile, defaults.AddonsOutlineHostile, function(value) settings.AddonsOutlineHostile = value end)
-	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Friendly character", "Friendly characters outline color", outlines, settings.AddonsOutlineFriendly, defaults.AddonsOutlineFriendly, function(value) settings.AddonsOutlineFriendly = value end)
-	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Neutral character", "Neutral characters outline color", outlines, settings.AddonsOutlineNeutral, defaults.AddonsOutlineNeutral, function(value) settings.AddonsOutlineNeutral = value end)
-	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Hackable object", "Hackable objects outline color", outlines, settings.AddonsOutlineHackable, defaults.AddonsOutlineHackable, function(value) settings.AddonsOutlineHackable = value end)
-	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Enemy netrunner", "Enemy netrunners outline color", outlines, settings.AddonsOutlineEnemyNetrunner, defaults.AddonsOutlineEnemyNetrunner, function(value) settings.AddonsOutlineEnemyNetrunner = value end)
-	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", "Backdoor", "Backdoor objects outline color", outlines, settings.AddonsOutlineBackdoor, defaults.AddonsOutlineBackdoor, function(value) settings.AddonsOutlineBackdoor = value end)
+	nativeSettings.addSubcategory("/lhudaddons/colorsoutline", GetLocalizedTextByKey("Addons-LHUD-Coloring-Outline"))
+	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", GetLocalizedTextByKey("Addons-LHUD-Coloring-Interaction"), GetLocalizedTextByKey("Addons-LHUD-Coloring-Interaction-Outline"), outlines, settings.AddonsFillInteraction, defaults.AddonsFillInteraction, function(value) settings.AddonsFillInteraction = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", GetLocalizedTextByKey("Addons-LHUD-Coloring-Imp-Interaction"), GetLocalizedTextByKey("Addons-LHUD-Coloring-Imp-Interaction-Outline"), outlines, settings.AddonsOutlineImportantInteraction, defaults.AddonsOutlineImportantInteraction, function(value) settings.AddonsOutlineImportantInteraction = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", GetLocalizedTextByKey("Addons-LHUD-Coloring-Weakspot"), GetLocalizedTextByKey("Addons-LHUD-Coloring-Weakspot-Outline"), outlines, settings.AddonsOutlineWeakspot, defaults.AddonsOutlineWeakspot, function(value) settings.AddonsOutlineWeakspot = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", GetLocalizedTextByKey("Addons-LHUD-Coloring-Quest"), GetLocalizedTextByKey("Addons-LHUD-Coloring-Quest-Outline"), outlines, settings.AddonsOutlineQuest, defaults.AddonsOutlineQuest, function(value) settings.AddonsOutlineQuest = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", GetLocalizedTextByKey("Addons-LHUD-Coloring-Distraction"), GetLocalizedTextByKey("Addons-LHUD-Coloring-Distraction-Outline"), outlines, settings.AddonsOutlineDistraction, defaults.AddonsOutlineDistraction, function(value) settings.AddonsOutlineDistraction = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", GetLocalizedTextByKey("Addons-LHUD-Coloring-Clue"), GetLocalizedTextByKey("Addons-LHUD-Coloring-Clue-Outline"), outlines, settings.AddonsOutlineClue, defaults.AddonsOutlineClue, function(value) settings.AddonsOutlineClue = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", GetLocalizedTextByKey("Addons-LHUD-Coloring-AOE"), GetLocalizedTextByKey("Addons-LHUD-Coloring-AOE-Outline"), outlines, settings.AddonsOutlineAOE, defaults.AddonsOutlineAOE, function(value) settings.AddonsOutlineAOE = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", GetLocalizedTextByKey("Addons-LHUD-Coloring-Item"), GetLocalizedTextByKey("Addons-LHUD-Coloring-Item-Outline"), outlines, settings.AddonsOutlineItem, defaults.AddonsOutlineItem, function(value) settings.AddonsOutlineItem = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", GetLocalizedTextByKey("Addons-LHUD-Coloring-Hostile"), GetLocalizedTextByKey("Addons-LHUD-Coloring-Hostile-Outline"), outlines, settings.AddonsOutlineHostile, defaults.AddonsOutlineHostile, function(value) settings.AddonsOutlineHostile = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", GetLocalizedTextByKey("Addons-LHUD-Coloring-Friendly"), GetLocalizedTextByKey("Addons-LHUD-Coloring-Friendly-Outline"), outlines, settings.AddonsOutlineFriendly, defaults.AddonsOutlineFriendly, function(value) settings.AddonsOutlineFriendly = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", GetLocalizedTextByKey("Addons-LHUD-Coloring-Neutral"), GetLocalizedTextByKey("Addons-LHUD-Coloring-Neutral-Outline"), outlines, settings.AddonsOutlineNeutral, defaults.AddonsOutlineNeutral, function(value) settings.AddonsOutlineNeutral = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", GetLocalizedTextByKey("Addons-LHUD-Coloring-Hackable"), GetLocalizedTextByKey("Addons-LHUD-Coloring-Hackable-Outline"), outlines, settings.AddonsOutlineHackable, defaults.AddonsOutlineHackable, function(value) settings.AddonsOutlineHackable = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", GetLocalizedTextByKey("Addons-LHUD-Coloring-Netrunner"), GetLocalizedTextByKey("Addons-LHUD-Coloring-Netrunner-Outline"), outlines, settings.AddonsOutlineEnemyNetrunner, defaults.AddonsOutlineEnemyNetrunner, function(value) settings.AddonsOutlineEnemyNetrunner = value end)
+	nativeSettings.addSelectorString("/lhudaddons/colorsoutline", GetLocalizedTextByKey("Addons-LHUD-Coloring-Backdoor"), GetLocalizedTextByKey("Addons-LHUD-Coloring-Backdoor-Outline"), outlines, settings.AddonsOutlineBackdoor, defaults.AddonsOutlineBackdoor, function(value) settings.AddonsOutlineBackdoor = value end)
 	
-	nativeSettings.addSubcategory("/lhudaddons/colorricochet", "Objects Coloring - Ricochet")
-	nativeSettings.addSelectorString("/lhudaddons/colorricochet", "NPC highlight", "Highlight color for Ricochet visual effects", ricochetes, settings.AddonsRicochet, defaults.AddonsRicochet, function(value) settings.AddonsRicochet = value end)
+	nativeSettings.addSubcategory("/lhudaddons/colorricochet", GetLocalizedTextByKey("Addons-LHUD-Coloring-Ricochet"))
+	nativeSettings.addSelectorString("/lhudaddons/colorricochet", GetLocalizedTextByKey("Addons-LHUD-Coloring-Ricochet-NPC"), GetLocalizedTextByKey("Addons-LHUD-Coloring-Ricochet-NPC-Desc"), ricochetes, settings.AddonsRicochet, defaults.AddonsRicochet, function(value) settings.AddonsRicochet = value end)
 end
 
 registerForEvent("onInit", function()
