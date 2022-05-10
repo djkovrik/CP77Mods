@@ -235,10 +235,11 @@ protected cb func OnHandleGlobalInput(event: ref<inkPointerEvent>) -> Bool {
   switch true {
     case event.IsAction(vendorPreviewButtonHint.previewModeToggleName) && !isVirtual:
       if (this.m_isPreviewMode) {
+        this.m_lastVendorFilter = ItemFilterCategory.AllItems;
         this.m_itemPreviewPopupToken.TriggerCallback(null);
       } else {
         this.ShowGarmentPreview();
-      }
+      };
       break;
     
     case event.IsAction(vendorPreviewButtonHint.resetGarmentName):
