@@ -2,3 +2,5 @@ localization:
   onscreens:
     en-us: base\localization\en-us\onscreens\vdealer.json
     ru-ru: base\localization\ru-ru\onscreens\vdealer.json
+    fr-fr: base\localization\fr-fr\onscreens\vdealer.json
+    zh-tw: base\localization\zh-tw\onscreens\vdealer.json
