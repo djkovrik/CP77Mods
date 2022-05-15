@@ -1,0 +1,41 @@
+Vehicle.vcd_gangs_mahir_supron_purchasable:
+  # not used, added just to create base vehicle record
+  $base: Vehicle.v_standard25_mahir_supron
+
+UIIcon.vcd_gangs_mahir_supron_purchasable.mox:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_gangs_preview.inkatlas"
+  atlasPartName: n"mahir-supron-mox"
+
+Vehicle.vcd_gangs_mahir_supron_purchasable.mox:
+  $base: Vehicle.v_standard25_mahir_mox
+  appearanceName: n"mahir_supron__basic_mox_01"
+  icon: UIIcon.vcd_gangs_mahir_supron_purchasable.mox
+
+Vehicle.vcd_gangs_mahir_supron_purchasable.mox.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_gangs_full.inkatlas"
+Vehicle.vcd_gangs_mahir_supron_purchasable.mox.dealerPartName: "mahir-supron-mox"
+
+UIIcon.vcd_gangs_mahir_supron_purchasable.voodoo_boys:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_gangs_preview.inkatlas"
+  atlasPartName: n"mahir-supron-voodooboys"
+
+Vehicle.vcd_gangs_mahir_supron_purchasable.voodoo_boys:
+  $base: Vehicle.v_standard25_mahir_voodoo_boys
+  appearanceName: n"mahir_supron__basic_tap_tap"
+  icon: UIIcon.vcd_gangs_mahir_supron_purchasable.voodoo_boys
+
+Vehicle.vcd_gangs_mahir_supron_purchasable.voodoo_boys.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_gangs_full.inkatlas"
+Vehicle.vcd_gangs_mahir_supron_purchasable.voodoo_boys.dealerPartName: "mahir-supron-voodooboys"
+
+# Core flats:
+Vehicle.vcd_gangs_mahir_supron_purchasable.dealerPrice: 21000
+Vehicle.vcd_gangs_mahir_supron_purchasable.dealerCred: 25
+Vehicle.vcd_gangs_mahir_supron_purchasable.dealerVariants: 
+  - "Vehicle.vcd_gangs_mahir_supron_purchasable.mox"
+  - "Vehicle.vcd_gangs_mahir_supron_purchasable.voodoo_boys"
+
+# Add to vehicles list
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_gangs_mahir_supron_purchasable.mox"
+  - !append t"Vehicle.vcd_gangs_mahir_supron_purchasable.voodoo_boys"

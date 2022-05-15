@@ -1,0 +1,76 @@
+Vehicle.vcd_gangs_chevalier_thrax_purchasable:
+  # not used, added just to create base vehicle record
+  $base: Vehicle.v_standard2_chevalier_thrax
+
+# Maelstrom
+UIIcon.vcd_gangs_chevalier_thrax_purchasable.maelstrom:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_gangs_preview.inkatlas"
+  atlasPartName: n"chevalier-thrax-maelstrom"
+
+Vehicle.vcd_gangs_chevalier_thrax_purchasable.maelstrom:
+  $base: Vehicle.v_standard2_chevalier_thrax_maelstrom
+  appearanceName: n"chevalier_thrax__basic_maelstrom_01"
+  icon: UIIcon.vcd_gangs_chevalier_thrax_purchasable.maelstrom
+
+Vehicle.vcd_gangs_chevalier_thrax_purchasable.maelstrom.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_gangs_full.inkatlas"
+Vehicle.vcd_gangs_chevalier_thrax_purchasable.maelstrom.dealerPartName: "chevalier-thrax-maelstrom"
+
+# Sixth Street
+UIIcon.vcd_gangs_chevalier_thrax_purchasable.sixth_street:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_gangs_preview.inkatlas"
+  atlasPartName: n"chevalier-thrax-sixth-street"
+
+Vehicle.vcd_gangs_chevalier_thrax_purchasable.sixth_street:
+  $base: Vehicle.v_standard2_chevalier_thrax_sixth_street
+  appearanceName: n"chevalier_thrax__basic_6th_street_01"
+  icon: UIIcon.vcd_gangs_chevalier_thrax_purchasable.sixth_street
+
+Vehicle.vcd_gangs_chevalier_thrax_purchasable.sixth_street.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_gangs_full.inkatlas"
+Vehicle.vcd_gangs_chevalier_thrax_purchasable.sixth_street.dealerPartName: "chevalier-thrax-sixth-street"
+
+# Valentinos 1
+UIIcon.vcd_gangs_chevalier_thrax_purchasable.valentinos1:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_gangs_preview.inkatlas"
+  atlasPartName: n"chevalier-thrax-valentinos-1"
+
+Vehicle.vcd_gangs_chevalier_thrax_purchasable.valentinos1:
+  $base: Vehicle.v_standard2_chevalier_thrax_valentino
+  appearanceName: n"chevalier_thrax__basic_valentinos_01"
+  icon: UIIcon.vcd_gangs_chevalier_thrax_purchasable.valentinos1
+
+Vehicle.vcd_gangs_chevalier_thrax_purchasable.valentinos1.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_gangs_full.inkatlas"
+Vehicle.vcd_gangs_chevalier_thrax_purchasable.valentinos1.dealerPartName: "chevalier-thrax-valentinos-1"
+
+# Valentinos 2
+UIIcon.vcd_gangs_chevalier_thrax_purchasable.valentinos2:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_gangs_preview.inkatlas"
+  atlasPartName: n"chevalier-thrax-valentinos-2"
+
+Vehicle.vcd_gangs_chevalier_thrax_purchasable.valentinos2:
+  $base: Vehicle.v_standard2_chevalier_thrax_valentino
+  appearanceName: n"chevalier_thrax__basic_valentinos_02"
+  icon: UIIcon.vcd_gangs_chevalier_thrax_purchasable.valentinos2
+
+Vehicle.vcd_gangs_chevalier_thrax_purchasable.valentinos2.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_gangs_full.inkatlas"
+Vehicle.vcd_gangs_chevalier_thrax_purchasable.valentinos2.dealerPartName: "chevalier-thrax-valentinos-2"
+
+
+# Core flats:
+Vehicle.vcd_gangs_chevalier_thrax_purchasable.dealerPrice: 39000
+Vehicle.vcd_gangs_chevalier_thrax_purchasable.dealerCred: 5
+Vehicle.vcd_gangs_chevalier_thrax_purchasable.dealerVariants: 
+  - "Vehicle.vcd_gangs_chevalier_thrax_purchasable.maelstrom"
+  - "Vehicle.vcd_gangs_chevalier_thrax_purchasable.sixth_street"
+  - "Vehicle.vcd_gangs_chevalier_thrax_purchasable.valentinos1"
+  - "Vehicle.vcd_gangs_chevalier_thrax_purchasable.valentinos2"
+
+# Add to vehicles list
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_gangs_chevalier_thrax_purchasable.maelstrom"
+  - !append t"Vehicle.vcd_gangs_chevalier_thrax_purchasable.sixth_street"
+  - !append t"Vehicle.vcd_gangs_chevalier_thrax_purchasable.valentinos1"
+  - !append t"Vehicle.vcd_gangs_chevalier_thrax_purchasable.valentinos2"
