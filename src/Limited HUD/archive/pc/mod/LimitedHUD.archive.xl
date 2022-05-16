@@ -2,4 +2,6 @@ localization:
   onscreens:
     en-us: base\localization\en-us\onscreens\lhud.json
     ru-ru: base\localization\ru-ru\onscreens\lhud.json
+    fr-fr: base\localization\fr-fr\onscreens\lhud.json
+    zh-tw: base\localization\zh-tw\onscreens\lhud.json
 
