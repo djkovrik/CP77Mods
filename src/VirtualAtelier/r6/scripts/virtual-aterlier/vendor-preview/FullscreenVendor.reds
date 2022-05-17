@@ -258,7 +258,7 @@ protected cb func OnHandleGlobalInput(event: ref<inkPointerEvent>) -> Bool {
       event.Consume();
       break;
 
-    case (event.IsAction(n"world_map_fake_rotate")):
+    case (event.IsAction(n"world_map_fake_rotate")) && isVirtual:
       event.Consume();
       break;
 
