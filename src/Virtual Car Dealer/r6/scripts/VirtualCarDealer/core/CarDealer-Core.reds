@@ -399,6 +399,28 @@ private func GetDealerInfoPanel(bundle: ref<PurchasableVehicleBundle>, variant: 
   infoPanel.SetAnchorPoint(new Vector2(0.5, 0.5));
 
   // Image
+  let imageContainer: ref<inkCanvas> = new inkCanvas();
+  imageContainer.SetName(n"ImageContainer");
+  imageContainer.SetSize(new Vector2(1860.0, 609.0));
+  imageContainer.SetInteractive(false);
+  imageContainer.SetFitToContent(true);
+  imageContainer.SetHAlign(inkEHorizontalAlign.Center);
+  imageContainer.SetVAlign(inkEVerticalAlign.Center);
+  imageContainer.SetAnchor(inkEAnchor.Centered);
+  imageContainer.SetAnchorPoint(new Vector2(0.5, 0.5));
+  imageContainer.Reparent(infoPanel);
+
+  let background: ref<inkRectangle> = new inkRectangle();
+  background.SetName(n"ImageBackground");
+  background.SetFitToContent(true);
+  background.SetAnchor(inkEAnchor.Fill);
+  background.SetAnchorPoint(new Vector2(0.5, 0.5));
+  background.SetHAlign(inkEHorizontalAlign.Fill);
+  background.SetVAlign(inkEVerticalAlign.Fill);
+  background.SetTintColor(new HDRColor(0.0, 0.0, 0.0, 1.0));
+  background.SetOpacity(0.8);
+  background.Reparent(imageContainer);
+
   carImage = new inkImage();
   carImage.SetName(n"CarImage");
   carImage.SetAtlasResource(variant.dealerAtlasPath);
@@ -409,7 +431,7 @@ private func GetDealerInfoPanel(bundle: ref<PurchasableVehicleBundle>, variant: 
   carImage.SetVAlign(inkEVerticalAlign.Center);
   carImage.SetAnchor(inkEAnchor.Centered);
   carImage.SetAnchorPoint(new Vector2(0.5, 0.5));
-  carImage.Reparent(infoPanel);
+  carImage.Reparent(imageContainer);
 
   // Frame around the image
   let frame: ref<inkImage> = new inkImage();
