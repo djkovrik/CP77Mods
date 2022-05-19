@@ -1,0 +1,17 @@
+UIIcon.vcd_kaukaz_bratsk_metalstud_purchasable:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_utility_preview.inkatlas"
+  atlasPartName: n"kaukaz-bratsk-metalstud"
+
+Vehicle.vcd_kaukaz_bratsk_metalstud_purchasable:
+  $base: Vehicle.v_utility4_kaukaz_bratsk_metalstud
+  displayName: LocKey(20249)
+  icon: UIIcon.vcd_kaukaz_bratsk_metalstud_purchasable
+
+Vehicle.vcd_kaukaz_bratsk_metalstud_purchasable.dealerPrice: 20000
+Vehicle.vcd_kaukaz_bratsk_metalstud_purchasable.dealerCred: 5
+Vehicle.vcd_kaukaz_bratsk_metalstud_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_utility_full.inkatlas"
+Vehicle.vcd_kaukaz_bratsk_metalstud_purchasable.dealerPartName: "kaukaz-bratsk-metalstud"
+
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_kaukaz_bratsk_metalstud_purchasable"

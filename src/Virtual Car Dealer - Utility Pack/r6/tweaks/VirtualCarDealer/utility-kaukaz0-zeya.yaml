@@ -1,0 +1,42 @@
+Vehicle.vcd_kaukaz_zeya_purchasable:
+  $base: Vehicle.v_utility4_kaukaz_zeya
+
+UIIcon.vcd_kaukaz_zeya_purchasable.freight:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_utility_preview.inkatlas"
+  atlasPartName: n"kaukaz-zeya-freight"
+
+Vehicle.vcd_kaukaz_zeya_purchasable.freight:
+  $base: Vehicle.v_utility4_kaukaz_zeya_freight
+  appearanceName: n"kaukaz_zeya__basic_zeya_freight_02"
+  displayName: LocKey(20252)
+  icon: UIIcon.vcd_kaukaz_zeya_purchasable.freight
+
+Vehicle.vcd_kaukaz_zeya_purchasable.freight.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_utility_full.inkatlas"
+Vehicle.vcd_kaukaz_zeya_purchasable.freight.dealerPartName: "kaukaz-zeya-freight"
+
+UIIcon.vcd_kaukaz_zeya_purchasable.full:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_utility_preview.inkatlas"
+  atlasPartName: n"kaukaz-zeya-full"
+
+Vehicle.vcd_kaukaz_zeya_purchasable.full:
+  $base: Vehicle.v_utility4_kaukaz_zeya_full
+  displayName: LocKey(20252)
+  icon: UIIcon.vcd_kaukaz_zeya_purchasable.full
+
+Vehicle.vcd_kaukaz_zeya_purchasable.full.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_utility_full.inkatlas"
+Vehicle.vcd_kaukaz_zeya_purchasable.full.dealerPartName: "kaukaz-zeya-full"
+
+
+# Core flats:
+Vehicle.vcd_kaukaz_zeya_purchasable.dealerPrice: 20000
+Vehicle.vcd_kaukaz_zeya_purchasable.dealerCred: 5
+Vehicle.vcd_kaukaz_zeya_purchasable.dealerVariants: 
+  - "Vehicle.vcd_kaukaz_zeya_purchasable.freight"
+  - "Vehicle.vcd_kaukaz_zeya_purchasable.full"
+
+# Add to vehicles list
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_kaukaz_zeya_purchasable.freight"
+  - !append t"Vehicle.vcd_kaukaz_zeya_purchasable.full"

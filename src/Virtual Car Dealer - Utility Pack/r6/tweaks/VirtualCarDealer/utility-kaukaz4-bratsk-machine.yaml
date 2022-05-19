@@ -1,0 +1,43 @@
+Vehicle.vcd_kaukaz_bratsk_machine_purchasable:
+  $base: Vehicle.v_utility4_kaukaz_bratsk_machine
+
+UIIcon.vcd_kaukaz_bratsk_machine_purchasable.orange:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_utility_preview.inkatlas"
+  atlasPartName: n"kaukaz-bratsk-machine-1"
+
+Vehicle.vcd_kaukaz_bratsk_machine_purchasable.orange:
+  $base: Vehicle.v_utility4_kaukaz_bratsk_machine
+  appearanceName: n"kaukaz_bratsk__basic_machine_truck_01"
+  displayName: LocKey(20249)
+  icon: UIIcon.vcd_kaukaz_bratsk_machine_purchasable.orange
+
+Vehicle.vcd_kaukaz_bratsk_machine_purchasable.orange.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_utility_full.inkatlas"
+Vehicle.vcd_kaukaz_bratsk_machine_purchasable.orange.dealerPartName: "kaukaz-bratsk-machine-1"
+
+UIIcon.vcd_kaukaz_bratsk_machine_purchasable.blue:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_utility_preview.inkatlas"
+  atlasPartName: n"kaukaz-bratsk-machine-2"
+
+Vehicle.vcd_kaukaz_bratsk_machine_purchasable.blue:
+  $base: Vehicle.v_utility4_kaukaz_bratsk_machine
+  appearanceName: n"kaukaz_bratsk__basic_machine_truck_02"
+  displayName: LocKey(20249)
+  icon: UIIcon.vcd_kaukaz_bratsk_machine_purchasable.blue
+
+Vehicle.vcd_kaukaz_bratsk_machine_purchasable.blue.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_utility_full.inkatlas"
+Vehicle.vcd_kaukaz_bratsk_machine_purchasable.blue.dealerPartName: "kaukaz-bratsk-machine-2"
+
+
+# Core flats:
+Vehicle.vcd_kaukaz_bratsk_machine_purchasable.dealerPrice: 26000
+Vehicle.vcd_kaukaz_bratsk_machine_purchasable.dealerCred: 8
+Vehicle.vcd_kaukaz_bratsk_machine_purchasable.dealerVariants: 
+  - "Vehicle.vcd_kaukaz_bratsk_machine_purchasable.orange"
+  - "Vehicle.vcd_kaukaz_bratsk_machine_purchasable.blue"
+
+# Add to vehicles list
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_kaukaz_bratsk_machine_purchasable.orange"
+  - !append t"Vehicle.vcd_kaukaz_bratsk_machine_purchasable.blue"

@@ -1,0 +1,95 @@
+Vehicle.vcd_gangs_mahir_supron_purchasable:
+  $base: Vehicle.v_utility4_militech_behemoth
+
+UIIcon.vcd_gangs_mahir_supron_purchasable.kangtao:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_utility_preview.inkatlas"
+  atlasPartName: n"militech-behemoth-kangtao"
+
+Vehicle.vcd_gangs_mahir_supron_purchasable.kangtao:
+  $base: Vehicle.v_utility4_militech_behemoth_kangtao
+  appearanceName: n"militech_behemoth_basic_kang_tao"
+  displayName: LocKey(20261)
+  icon: UIIcon.vcd_gangs_mahir_supron_purchasable.kangtao
+
+Vehicle.vcd_gangs_mahir_supron_purchasable.kangtao.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_utility_full.inkatlas"
+Vehicle.vcd_gangs_mahir_supron_purchasable.kangtao.dealerPartName: "militech-behemoth-kangtao"
+
+
+UIIcon.vcd_gangs_mahir_supron_purchasable.cammo:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_utility_preview.inkatlas"
+  atlasPartName: n"militech-behemoth-cammo"
+
+Vehicle.vcd_gangs_mahir_supron_purchasable.cammo:
+  $base: Vehicle.v_utility4_militech_behemoth
+  appearanceName: n"militech_behemoth_basic_camo_01"
+  displayName: LocKey(20261)
+  icon: UIIcon.vcd_gangs_mahir_supron_purchasable.cammo
+
+Vehicle.vcd_gangs_mahir_supron_purchasable.cammo.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_utility_full.inkatlas"
+Vehicle.vcd_gangs_mahir_supron_purchasable.cammo.dealerPartName: "militech-behemoth-cammo"
+
+
+UIIcon.vcd_gangs_mahir_supron_purchasable.border_patrol:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_utility_preview.inkatlas"
+  atlasPartName: n"militech-behemoth-border-patrol"
+
+Vehicle.vcd_gangs_mahir_supron_purchasable.border_patrol:
+  $base: Vehicle.v_utility4_militech_behemoth_kangtao
+  appearanceName: n"militech_behemoth_basic_border_patrol_01"
+  displayName: LocKey(20261)
+  icon: UIIcon.vcd_gangs_mahir_supron_purchasable.border_patrol
+
+Vehicle.vcd_gangs_mahir_supron_purchasable.border_patrol.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_utility_full.inkatlas"
+Vehicle.vcd_gangs_mahir_supron_purchasable.border_patrol.dealerPartName: "militech-behemoth-border-patrol"
+
+
+UIIcon.vcd_gangs_mahir_supron_purchasable.brown:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_utility_preview.inkatlas"
+  atlasPartName: n"militech-behemoth-white"
+
+Vehicle.vcd_gangs_mahir_supron_purchasable.brown:
+  $base: Vehicle.v_utility4_militech_behemoth
+  appearanceName: n"militech_behemoth_basic_brown_01"
+  displayName: LocKey(20261)
+  icon: UIIcon.vcd_gangs_mahir_supron_purchasable.brown
+
+Vehicle.vcd_gangs_mahir_supron_purchasable.brown.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_utility_full.inkatlas"
+Vehicle.vcd_gangs_mahir_supron_purchasable.brown.dealerPartName: "militech-behemoth-white"
+
+
+UIIcon.vcd_gangs_mahir_supron_purchasable.arasaka:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_utility_preview.inkatlas"
+  atlasPartName: n"militech-behemoth-arasaka"
+
+Vehicle.vcd_gangs_mahir_supron_purchasable.arasaka:
+  $base: Vehicle.v_utility4_militech_behemoth
+  appearanceName: n"militech_behemoth_basic_arasaka"
+  displayName: LocKey(20261)
+  icon: UIIcon.vcd_gangs_mahir_supron_purchasable.arasaka
+
+Vehicle.vcd_gangs_mahir_supron_purchasable.arasaka.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_utility_full.inkatlas"
+Vehicle.vcd_gangs_mahir_supron_purchasable.arasaka.dealerPartName: "militech-behemoth-arasaka"
+
+
+# Core flats:
+Vehicle.vcd_gangs_mahir_supron_purchasable.dealerPrice: 35000
+Vehicle.vcd_gangs_mahir_supron_purchasable.dealerCred: 20
+Vehicle.vcd_gangs_mahir_supron_purchasable.dealerVariants: 
+  - "Vehicle.vcd_gangs_mahir_supron_purchasable.kangtao"
+  - "Vehicle.vcd_gangs_mahir_supron_purchasable.cammo"
+  - "Vehicle.vcd_gangs_mahir_supron_purchasable.border_patrol"
+  - "Vehicle.vcd_gangs_mahir_supron_purchasable.brown"
+  - "Vehicle.vcd_gangs_mahir_supron_purchasable.arasaka"
+
+# Add to vehicles list
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_gangs_mahir_supron_purchasable.kangtao"
+  - !append t"Vehicle.vcd_gangs_mahir_supron_purchasable.cammo"
+  - !append t"Vehicle.vcd_gangs_mahir_supron_purchasable.border_patrol"
+  - !append t"Vehicle.vcd_gangs_mahir_supron_purchasable.brown"
+  - !append t"Vehicle.vcd_gangs_mahir_supron_purchasable.arasaka"

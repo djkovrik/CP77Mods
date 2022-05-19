@@ -1,0 +1,17 @@
+UIIcon.vcd_kaukaz_bratsk_concrete_purchasable:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_utility_preview.inkatlas"
+  atlasPartName: n"kaukaz-bratsk-concrete"
+
+Vehicle.vcd_kaukaz_bratsk_concrete_purchasable:
+  $base: Vehicle.v_utility4_kaukaz_bratsk_concrete
+  displayName: LocKey(20249)
+  icon: UIIcon.vcd_kaukaz_bratsk_concrete_purchasable
+
+Vehicle.vcd_kaukaz_bratsk_concrete_purchasable.dealerPrice: 22000
+Vehicle.vcd_kaukaz_bratsk_concrete_purchasable.dealerCred: 6
+Vehicle.vcd_kaukaz_bratsk_concrete_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_utility_full.inkatlas"
+Vehicle.vcd_kaukaz_bratsk_concrete_purchasable.dealerPartName: "kaukaz-bratsk-concrete"
+
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_kaukaz_bratsk_concrete_purchasable"

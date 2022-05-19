@@ -1,0 +1,17 @@
+UIIcon.vcd_kaukaz_bratsk_dumpster_purchasable:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_utility_preview.inkatlas"
+  atlasPartName: n"kaukaz-bratsk-dumpster"
+
+Vehicle.vcd_kaukaz_bratsk_dumpster_purchasable:
+  $base: Vehicle.v_utility4_kaukaz_bratsk_dumpster
+  displayName: LocKey(20249)
+  icon: UIIcon.vcd_kaukaz_bratsk_dumpster_purchasable
+
+Vehicle.vcd_kaukaz_bratsk_dumpster_purchasable.dealerPrice: 24000
+Vehicle.vcd_kaukaz_bratsk_dumpster_purchasable.dealerCred: 7
+Vehicle.vcd_kaukaz_bratsk_dumpster_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_utility_full.inkatlas"
+Vehicle.vcd_kaukaz_bratsk_dumpster_purchasable.dealerPartName: "kaukaz-bratsk-dumpster"
+
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_kaukaz_bratsk_dumpster_purchasable"

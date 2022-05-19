@@ -1,0 +1,17 @@
+UIIcon.vcd_thorton_mackinaw_bmf_purchasable:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_utility_preview.inkatlas"
+  atlasPartName: n"thorton-mackinaw-bmf"
+
+Vehicle.vcd_thorton_mackinaw_bmf_purchasable:
+  $base: Vehicle.v_utility4_thorton_mackinaw_bmf
+  displayName: LocKey(79138)
+  icon: UIIcon.vcd_thorton_mackinaw_bmf_purchasable
+
+Vehicle.vcd_thorton_mackinaw_bmf_purchasable.dealerPrice: 40000
+Vehicle.vcd_thorton_mackinaw_bmf_purchasable.dealerCred: 25
+Vehicle.vcd_thorton_mackinaw_bmf_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_utility_full.inkatlas"
+Vehicle.vcd_thorton_mackinaw_bmf_purchasable.dealerPartName: "thorton-mackinaw-bmf"
+
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_thorton_mackinaw_bmf_purchasable"
