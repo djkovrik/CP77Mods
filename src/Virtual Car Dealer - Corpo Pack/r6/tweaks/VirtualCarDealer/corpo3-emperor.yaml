@@ -1,0 +1,74 @@
+Vehicle.vcd_corpo_emperor_purchasable:
+  $base: Vehicle.v_standard3_chevalier_emperor
+
+UIIcon.vcd_corpo_emperor_purchasable.arasaka:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_corpo_preview.inkatlas"
+  atlasPartName: n"emperor-arasaka"
+
+Vehicle.vcd_corpo_emperor_purchasable.arasaka:
+  $base: Vehicle.v_standard3_chevalier_emperor
+  appearanceName: n"chevalier_emperor__basic_arasaka_01"
+  icon: UIIcon.vcd_corpo_emperor_purchasable.arasaka
+
+Vehicle.vcd_corpo_emperor_purchasable.arasaka.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_corpo_full.inkatlas"
+Vehicle.vcd_corpo_emperor_purchasable.arasaka.dealerPartName: "emperor-arasaka"
+
+
+UIIcon.vcd_corpo_emperor_purchasable.militech:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_corpo_preview.inkatlas"
+  atlasPartName: n"emperor-militech"
+
+Vehicle.vcd_corpo_emperor_purchasable.militech:
+  $base: Vehicle.v_standard3_chevalier_emperor_militech
+  appearanceName: n"chevalier_emperor__basic_militech"
+  icon: UIIcon.vcd_corpo_emperor_purchasable.militech
+
+Vehicle.vcd_corpo_emperor_purchasable.militech.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_corpo_full.inkatlas"
+Vehicle.vcd_corpo_emperor_purchasable.militech.dealerPartName: "emperor-militech"
+
+
+UIIcon.vcd_corpo_emperor_purchasable.militech_camo:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_corpo_preview.inkatlas"
+  atlasPartName: n"emperor-militech-camo"
+
+Vehicle.vcd_corpo_emperor_purchasable.militech_camo:
+  $base: Vehicle.v_standard3_chevalier_emperor_militech
+  appearanceName: n"chevalier_emperor__basic_militech_camo_01"
+  icon: UIIcon.vcd_corpo_emperor_purchasable.militech_camo
+
+Vehicle.vcd_corpo_emperor_purchasable.militech_camo.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_corpo_full.inkatlas"
+Vehicle.vcd_corpo_emperor_purchasable.militech_camo.dealerPartName: "emperor-militech-camo"
+
+
+UIIcon.vcd_corpo_emperor_purchasable.netwatch:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_corpo_preview.inkatlas"
+  atlasPartName: n"emperor-netwatch"
+
+Vehicle.vcd_corpo_emperor_purchasable.netwatch:
+  $base: Vehicle.v_standard3_chevalier_emperor
+  appearanceName: n"chevalier_emperor__basic_netwatch_01"
+  icon: UIIcon.vcd_corpo_emperor_purchasable.netwatch
+
+Vehicle.vcd_corpo_emperor_purchasable.netwatch.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_corpo_full.inkatlas"
+Vehicle.vcd_corpo_emperor_purchasable.netwatch.dealerPartName: "emperor-netwatch"
+
+# Core flats:
+Vehicle.vcd_corpo_emperor_purchasable.dealerPrice: 44000
+Vehicle.vcd_corpo_emperor_purchasable.dealerCred: 25
+Vehicle.vcd_corpo_emperor_purchasable.dealerVariants: 
+  - "Vehicle.vcd_corpo_emperor_purchasable.arasaka"
+  - "Vehicle.vcd_corpo_emperor_purchasable.militech"
+  - "Vehicle.vcd_corpo_emperor_purchasable.militech_camo"
+  - "Vehicle.vcd_corpo_emperor_purchasable.netwatch"
+
+
+# Add to vehicles list
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_corpo_emperor_purchasable.arasaka"
+  - !append t"Vehicle.vcd_corpo_emperor_purchasable.militech"
+  - !append t"Vehicle.vcd_corpo_emperor_purchasable.militech_camo"
+  - !append t"Vehicle.vcd_corpo_emperor_purchasable.netwatch"

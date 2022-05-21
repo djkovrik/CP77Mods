@@ -1,0 +1,78 @@
+Vehicle.vcd_corpo_cortes_purchasable:
+  $base: Vehicle.v_standard2_villefort_cortes
+
+UIIcon.vcd_corpo_cortes_purchasable.arasaka:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_corpo_preview.inkatlas"
+  atlasPartName: n"cortes-arasaka"
+
+Vehicle.vcd_corpo_cortes_purchasable.arasaka:
+  $base: Vehicle.v_standard2_villefort_cortes_arasaka
+  displayName: LocKey(46590)
+  appearanceName: n"villefort_cortes__basic_arasaka_01"
+  icon: UIIcon.vcd_corpo_cortes_purchasable.arasaka
+
+Vehicle.vcd_corpo_cortes_purchasable.arasaka.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_corpo_full.inkatlas"
+Vehicle.vcd_corpo_cortes_purchasable.arasaka.dealerPartName: "cortes-arasaka"
+
+
+UIIcon.vcd_corpo_cortes_purchasable.kangtao:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_corpo_preview.inkatlas"
+  atlasPartName: n"cortes-kangtao"
+
+Vehicle.vcd_corpo_cortes_purchasable.kangtao:
+  $base: Vehicle.v_standard2_villefort_cortes_kangtao
+  appearanceName: n"villefort_cortes__basic_kangtao_01"
+  displayName: LocKey(46590)
+  icon: UIIcon.vcd_corpo_cortes_purchasable.kangtao
+
+Vehicle.vcd_corpo_cortes_purchasable.kangtao.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_corpo_full.inkatlas"
+Vehicle.vcd_corpo_cortes_purchasable.kangtao.dealerPartName: "cortes-kangtao"
+
+
+UIIcon.vcd_corpo_cortes_purchasable.mafia:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_corpo_preview.inkatlas"
+  atlasPartName: n"cortes-mafia"
+
+Vehicle.vcd_corpo_cortes_purchasable.mafia:
+  $base: Vehicle.v_standard2_villefort_cortes
+  appearanceName: n"villefort_cortes__basic_mafia_01"
+  displayName: LocKey(46590)
+  icon: UIIcon.vcd_corpo_cortes_purchasable.mafia
+
+Vehicle.vcd_corpo_cortes_purchasable.mafia.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_corpo_full.inkatlas"
+Vehicle.vcd_corpo_cortes_purchasable.mafia.dealerPartName: "cortes-mafia"
+
+
+UIIcon.vcd_corpo_cortes_purchasable.urban:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_corpo_preview.inkatlas"
+  atlasPartName: n"cortes-urban-102"
+
+Vehicle.vcd_corpo_cortes_purchasable.urban:
+  $base: Vehicle.v_standard2_villefort_cortes
+  appearanceName: n"villefort_cortes__basic_urban_1_02"
+  displayName: LocKey(46590)
+  icon: UIIcon.vcd_corpo_cortes_purchasable.urban
+
+Vehicle.vcd_corpo_cortes_purchasable.urban.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_corpo_full.inkatlas"
+Vehicle.vcd_corpo_cortes_purchasable.urban.dealerPartName: "cortes-urban-102"
+
+# Core flats:
+Vehicle.vcd_corpo_cortes_purchasable.dealerPrice: 34000
+Vehicle.vcd_corpo_cortes_purchasable.dealerCred: 20
+Vehicle.vcd_corpo_cortes_purchasable.dealerVariants: 
+  - "Vehicle.vcd_corpo_cortes_purchasable.arasaka"
+  - "Vehicle.vcd_corpo_cortes_purchasable.kangtao"
+  - "Vehicle.vcd_corpo_cortes_purchasable.mafia"
+  - "Vehicle.vcd_corpo_cortes_purchasable.urban"
+
+
+# Add to vehicles list
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_corpo_cortes_purchasable.arasaka"
+  - !append t"Vehicle.vcd_corpo_cortes_purchasable.kangtao"
+  - !append t"Vehicle.vcd_corpo_cortes_purchasable.mafia"
+  - !append t"Vehicle.vcd_corpo_cortes_purchasable.urban"

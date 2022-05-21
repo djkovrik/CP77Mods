@@ -1,0 +1,78 @@
+Vehicle.vcd_corpo_columbus_purchasable:
+  $base: Vehicle.v_standard25_villefort_columbus
+
+UIIcon.vcd_corpo_columbus_purchasable.arasaka:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_corpo_preview.inkatlas"
+  atlasPartName: n"columbus-arasaka"
+
+Vehicle.vcd_corpo_columbus_purchasable.arasaka:
+  $base: Vehicle.v_standard25_villefort_columbus_arasaka
+  appearanceName: n"villefort_columbus__basic_arasaka_01"
+  displayName: LocKey(46599)
+  icon: UIIcon.vcd_corpo_columbus_purchasable.arasaka
+
+Vehicle.vcd_corpo_columbus_purchasable.arasaka.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_corpo_full.inkatlas"
+Vehicle.vcd_corpo_columbus_purchasable.arasaka.dealerPartName: "columbus-arasaka"
+
+
+UIIcon.vcd_corpo_columbus_purchasable.kangtao:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_corpo_preview.inkatlas"
+  atlasPartName: n"columbus-kangtao"
+
+Vehicle.vcd_corpo_columbus_purchasable.kangtao:
+  $base: Vehicle.v_standard25_villefort_columbus_kangtao
+  appearanceName: n"villefort_columbus__basic_kangtao_01"
+  displayName: LocKey(46599)
+  icon: UIIcon.vcd_corpo_columbus_purchasable.kangtao
+
+Vehicle.vcd_corpo_columbus_purchasable.kangtao.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_corpo_full.inkatlas"
+Vehicle.vcd_corpo_columbus_purchasable.kangtao.dealerPartName: "columbus-kangtao"
+
+
+UIIcon.vcd_corpo_columbus_purchasable.netwatch:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_corpo_preview.inkatlas"
+  atlasPartName: n"columbus-netwatch"
+
+Vehicle.vcd_corpo_columbus_purchasable.netwatch:
+  $base: Vehicle.v_standard25_villefort_columbus
+  appearanceName: n"villefort_columbus__basic_netwatch_van"
+  displayName: LocKey(46599)
+  icon: UIIcon.vcd_corpo_columbus_purchasable.netwatch
+
+Vehicle.vcd_corpo_columbus_purchasable.netwatch.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_corpo_full.inkatlas"
+Vehicle.vcd_corpo_columbus_purchasable.netwatch.dealerPartName: "columbus-netwatch"
+
+
+UIIcon.vcd_corpo_columbus_purchasable.suburban:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_corpo_preview.inkatlas"
+  atlasPartName: n"columbus-suburban-025"
+
+Vehicle.vcd_corpo_columbus_purchasable.suburban:
+  $base: Vehicle.v_standard25_villefort_columbus
+  appearanceName: n"villefort_columbus__basic_suburban_02_5"
+  displayName: LocKey(46599)
+  icon: UIIcon.vcd_corpo_columbus_purchasable.suburban
+
+Vehicle.vcd_corpo_columbus_purchasable.suburban.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_corpo_full.inkatlas"
+Vehicle.vcd_corpo_columbus_purchasable.suburban.dealerPartName: "columbus-suburban-025"
+
+
+# Core flats:
+Vehicle.vcd_corpo_columbus_purchasable.dealerPrice: 24000
+Vehicle.vcd_corpo_columbus_purchasable.dealerCred: 15
+Vehicle.vcd_corpo_columbus_purchasable.dealerVariants: 
+  - "Vehicle.vcd_corpo_columbus_purchasable.arasaka"
+  - "Vehicle.vcd_corpo_columbus_purchasable.kangtao"
+  - "Vehicle.vcd_corpo_columbus_purchasable.netwatch"
+  - "Vehicle.vcd_corpo_columbus_purchasable.suburban"
+
+# Add to vehicles list
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_corpo_columbus_purchasable.arasaka"
+  - !append t"Vehicle.vcd_corpo_columbus_purchasable.kangtao"
+  - !append t"Vehicle.vcd_corpo_columbus_purchasable.netwatch"
+  - !append t"Vehicle.vcd_corpo_columbus_purchasable.suburban"
