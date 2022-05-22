@@ -1,6 +1,7 @@
 module VendorPreview.constants
 
 public class VendorPreviewButtonHint {
+
   public let previewModeToggleName: CName;
   public let previewModeToggleNameBackpack: CName;
   public let previewModeToggleEnableLabel: String;
@@ -22,30 +23,36 @@ public class VendorPreviewButtonHint {
   public let zoomName: CName;
   public let zoomLabel: String;
   
-  public static func Get() -> ref<VendorPreviewButtonHint> {
+  public static func Get(playerPuppet: ref<GameObject>) -> ref<VendorPreviewButtonHint> {
     let vendorPreviewButtonHint = new VendorPreviewButtonHint();
+    let lastUsedPad: Bool = playerPuppet.PlayerLastUsedPad();
 
-    vendorPreviewButtonHint.previewModeToggleName = n"UI_PrintDebug";
-    vendorPreviewButtonHint.previewModeToggleNameBackpack = n"UI_Unequip";
+    if lastUsedPad {
+      vendorPreviewButtonHint.previewModeToggleName = n"world_map_menu_toggle_custom_filter";
+      vendorPreviewButtonHint.previewModeToggleNameBackpack = n"world_map_menu_toggle_custom_filter";
+      vendorPreviewButtonHint.resetGarmentName = n"world_map_filter_navigation_down";
+      vendorPreviewButtonHint.removeAllGarmentName = n"world_map_menu_open_quest_static";
+      vendorPreviewButtonHint.removePreviewGarmentName = n"world_map_filter_navigation_up";
+      vendorPreviewButtonHint.moveName = n"world_map_fake_move";
+      vendorPreviewButtonHint.zoomName = n"";
+    } else {
+      vendorPreviewButtonHint.previewModeToggleName = n"UI_PrintDebug";
+      vendorPreviewButtonHint.previewModeToggleNameBackpack = n"UI_Unequip";
+      vendorPreviewButtonHint.resetGarmentName = n"world_map_filter_navigation_down";
+      vendorPreviewButtonHint.removeAllGarmentName = n"world_map_menu_open_quest_static";
+      vendorPreviewButtonHint.removePreviewGarmentName = n"disassemble_item";
+      vendorPreviewButtonHint.moveName = n"world_map_fake_move";
+      vendorPreviewButtonHint.zoomName = n"mouse_wheel";
+    };
+
     vendorPreviewButtonHint.previewModeToggleEnableLabel = VirtualAtelierText.PreviewEnable();
     vendorPreviewButtonHint.previewModeToggleDisableLabel = VirtualAtelierText.PreviewDisable();
     vendorPreviewButtonHint.previewModeTogglePurchaseLabel = VirtualAtelierText.PreviewPurchase();
-
-    vendorPreviewButtonHint.resetGarmentName = n"world_map_filter_navigation_down";
     vendorPreviewButtonHint.resetGarmentLabel = VirtualAtelierText.PreviewReset();
-
-    vendorPreviewButtonHint.removeAllGarmentName = n"world_map_menu_open_quest_static";
     vendorPreviewButtonHint.removeAllGarmentLabel = VirtualAtelierText.PreviewRemoveAllGarment();
-
-    vendorPreviewButtonHint.removePreviewGarmentName = n"disassemble_item";
     vendorPreviewButtonHint.removePreviewGarmentLabel = VirtualAtelierText.PreviewRemovePreviewGarment();
-
-    vendorPreviewButtonHint.moveName = n"world_map_fake_move";
     vendorPreviewButtonHint.moveLabel = VirtualAtelierText.PreviewMove();
-
-    vendorPreviewButtonHint.zoomName = n"mouse_wheel";
     vendorPreviewButtonHint.zoomLabel = VirtualAtelierText.PreviewRotate();
-
     return vendorPreviewButtonHint;
   }
 }

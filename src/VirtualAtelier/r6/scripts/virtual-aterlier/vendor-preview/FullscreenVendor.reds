@@ -192,7 +192,7 @@ private final func HandleVendorSlotInput(evt: ref<ItemDisplayClickEvent>, itemDa
   let isVendorItem = InventoryItemData.IsVendorItem(itemData);
   let isVirtual = this.GetIsVirtual();
   
-  if (isVirtual && evt.actionName.IsAction(VendorPreviewButtonHint.Get().previewModeToggleName)) {
+  if (isVirtual && evt.actionName.IsAction(VendorPreviewButtonHint.Get(this.GetPlayerControlledObject()).previewModeToggleName)) {
     this.BuyItemFromVirtualVendor(itemData);
     return;
   }
@@ -229,7 +229,7 @@ private final func HandleVendorSlotInput(evt: ref<ItemDisplayClickEvent>, itemDa
 protected cb func OnHandleGlobalInput(event: ref<inkPointerEvent>) -> Bool {
   wrappedMethod(event);
 
-  let vendorPreviewButtonHint = VendorPreviewButtonHint.Get();
+  let vendorPreviewButtonHint = VendorPreviewButtonHint.Get(this.GetPlayerControlledObject());
   let isVirtual: Bool = this.GetIsVirtual();
 
   switch true {
@@ -293,7 +293,7 @@ protected cb func OnInventoryItemHoverOver(evt: ref<ItemDisplayHoverOverEvent>) 
     };
 
     if this.GetIsVirtual() {
-      let vendorPreviewButtonHint = VendorPreviewButtonHint.Get();
+      let vendorPreviewButtonHint = VendorPreviewButtonHint.Get(this.GetPlayerControlledObject());
       this.m_buttonHintsController.RemoveButtonHint(vendorPreviewButtonHint.previewModeToggleName);
       this.m_buttonHintsController.AddButtonHint(vendorPreviewButtonHint.previewModeToggleName, vendorPreviewButtonHint.previewModeTogglePurchaseLabel);
     };

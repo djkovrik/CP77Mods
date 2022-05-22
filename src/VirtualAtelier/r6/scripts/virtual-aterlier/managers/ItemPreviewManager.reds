@@ -315,7 +315,7 @@ public class ItemPreviewManager {
 
   public static func AddPreviewModeToggleButtonHint(controller: ref<FullscreenVendorGameController>) {
     if !controller.GetIsVirtual() {
-      let vendorPreviewButtonHint = VendorPreviewButtonHint.Get();
+      let vendorPreviewButtonHint = VendorPreviewButtonHint.Get(controller.GetPlayerControlledObject());
 
       controller.m_buttonHintsController.AddButtonHint(
         vendorPreviewButtonHint.previewModeToggleName,
@@ -325,7 +325,7 @@ public class ItemPreviewManager {
   }
 
   public static func UpdateButtonHints(controller: ref<FullscreenVendorGameController>, isPreviewMode: Bool) {
-    let vendorPreviewButtonHint = VendorPreviewButtonHint.Get();
+    let vendorPreviewButtonHint = VendorPreviewButtonHint.Get(controller.GetPlayerControlledObject());
     let isVirtual: Bool = controller.GetIsVirtual();
 
     if (isPreviewMode) {
@@ -335,10 +335,10 @@ public class ItemPreviewManager {
 
       if (!isVirtual) {
         controller.m_buttonHintsController.AddButtonHint(vendorPreviewButtonHint.previewModeToggleName,vendorPreviewButtonHint.previewModeToggleDisableLabel);
+      };
+      if NotEquals(vendorPreviewButtonHint.zoomName, n"") {
         controller.m_buttonHintsController.AddButtonHint(vendorPreviewButtonHint.zoomName, vendorPreviewButtonHint.zoomLabel);
-      } else {
-        controller.m_buttonHintsController.AddButtonHint(vendorPreviewButtonHint.zoomName, vendorPreviewButtonHint.zoomLabel + " (+ Ctrl)");
-      }
+      };
 
       controller.m_buttonHintsController.AddButtonHint(vendorPreviewButtonHint.resetGarmentName, vendorPreviewButtonHint.resetGarmentLabel);
       controller.m_buttonHintsController.AddButtonHint(vendorPreviewButtonHint.removeAllGarmentName, vendorPreviewButtonHint.removeAllGarmentLabel);
