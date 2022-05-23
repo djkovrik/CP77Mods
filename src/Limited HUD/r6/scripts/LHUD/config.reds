@@ -240,6 +240,8 @@ public class LHUDAddonsConfig {
   public static func HidePromptPickUpBody() -> Bool = false
   // Hides Talk input prompt for NPCs
   public static func HidePromptTalk() -> Bool = false
+  // Removes overhead subtitles
+  public static func RemoveOverheadSubtitles() -> Bool = false
 }
 
 // Objects Coloring config

@@ -119,6 +119,7 @@ local defaults = {
 	AddonsSimpleHUDToggle = false,
 	AddonsHideCrouchIndicator = false,
 	AddonsHighlightUnderPingOnly = false,
+	AddonsRemoveOverheadSubtitles = false,
 	AddonsPromptGetIn = false,
 	AddonsPromptPickUpBody = false,
 	AddonsPromptTalk = false,
@@ -275,6 +276,7 @@ local settings = {
 	AddonsSimpleHUDToggle = false,
 	AddonsHideCrouchIndicator = false,
 	AddonsHighlightUnderPingOnly = false,
+	AddonsRemoveOverheadSubtitles = false,
 	AddonsPromptGetIn = false,
 	AddonsPromptPickUpBody = false,
 	AddonsPromptTalk = false,
@@ -482,7 +484,7 @@ function SetupSettingsMenu()
 	nativeSettings.addSwitch("/lhud/poimarkers", GetLocalizedTextByKey("Mod-LHUD-Show-Scanner"), GetLocalizedTextByKey("Mod-LHUD-Show-Scanner-Desc"), settings.POIMarkersScanner, defaults.POIMarkersScanner, function(state) settings.POIMarkersScanner = state end)
 	nativeSettings.addSwitch("/lhud/poimarkers", GetLocalizedTextByKey("Mod-LHUD-Show-Weapon"), GetLocalizedTextByKey("Mod-LHUD-Show-Weapon-Desc"), settings.POIMarkersWeapon, defaults.POIMarkersWeapon, function(state) settings.POIMarkersWeapon = state end)
 	nativeSettings.addSwitch("/lhud/poimarkers", GetLocalizedTextByKey("Mod-LHUD-Show-Zoom"), GetLocalizedTextByKey("Mod-LHUD-Show-Zoom-Desc"), settings.POIMarkersZoom, defaults.POIMarkersZoom, function(state) settings.POIMarkersZoom = state end)
-	nativeSettings.addSwitch("/lhud/poimarkers", "Always show tracked", "If enabled then makes current tracked POI marker always visible", settings.POIAlwaysShowTracked, defaults.POIAlwaysShowTracked, function(state) settings.POIAlwaysShowTracked = state end)
+	nativeSettings.addSwitch("/lhud/poimarkers", GetLocalizedTextByKey("Mod-LHUD-POI-Tracked"), GetLocalizedTextByKey("Mod-LHUD-POI-Tracked-Desc"), settings.POIAlwaysShowTracked, defaults.POIAlwaysShowTracked, function(state) settings.POIAlwaysShowTracked = state end)
 	
 	nativeSettings.addSubcategory("/lhud/combatmarkers", GetLocalizedTextByKey("Mod-LHUD-Player-Markers-Combat"))
 	nativeSettings.addSwitch("/lhud/combatmarkers", GetLocalizedTextByKey("Mod-LHUD-Is-Enabled"), GetLocalizedTextByKey("Mod-LHUD-Is-Enabled-Desc"), settings.CombatMarkersEnabled, defaults.CombatMarkersEnabled, function(state) settings.CombatMarkersEnabled = state end)
@@ -525,20 +527,17 @@ function SetupSettingsMenu()
 	nativeSettings.addSwitch("/lhudaddons/prompts", GetLocalizedText("LocKey#238"), GetLocalizedTextByKey("Addons-LHUD-Hide-Prompt-Pick-Up"), settings.AddonsPromptPickUpBody, defaults.AddonsPromptPickUpBody, function(state) settings.AddonsPromptPickUpBody = state end)
 	nativeSettings.addSwitch("/lhudaddons/prompts", GetLocalizedText("LocKey#312"), GetLocalizedTextByKey("Addons-LHUD-Hide-Prompt-Talk"), settings.AddonsPromptTalk, defaults.AddonsPromptTalk, function(state) settings.AddonsPromptTalk = state end)
 	
+	nativeSettings.addSubcategory("/lhudaddons/remover", GetLocalizedTextByKey("Addons-LHUD-Widgets-Remover"))
+	nativeSettings.addSwitch("/lhudaddons/remover", GetLocalizedTextByKey("Addons-LHUD-Speedometer"), GetLocalizedTextByKey("Addons-LHUD-Speedometer-Hide-Desc"), settings.AddonsHideSpeedometer, defaults.AddonsHideSpeedometer, function(state) settings.AddonsHideSpeedometer = state end)
+	nativeSettings.addSwitch("/lhudaddons/remover", GetLocalizedTextByKey("Addons-LHUD-Crouch"), GetLocalizedTextByKey("Addons-LHUD-Crouch-Remove-Desc"), settings.AddonsHideCrouchIndicator, defaults.AddonsHideCrouchIndicator, function(state) settings.AddonsHideCrouchIndicator = state end)
+	nativeSettings.addSwitch("/lhudaddons/remover", GetLocalizedTextByKey("Addons-LHUD-Healthbar-Texts"), GetLocalizedTextByKey("Addons-LHUD-Healthbar-Texts-Remove-Desc"), settings.AddonsRemoveHealthbarTexts, defaults.AddonsRemoveHealthbarTexts, function(state) settings.AddonsRemoveHealthbarTexts = state end)
+	nativeSettings.addSwitch("/lhudaddons/remover", GetLocalizedTextByKey("Addons-LHUD-Remover-Overhead"), GetLocalizedTextByKey("Addons-LHUD-Remover-Overhead-Desc"), settings.AddonsRemoveOverheadSubtitles, defaults.AddonsRemoveOverheadSubtitles, function(state) settings.AddonsRemoveOverheadSubtitles = state end)
+	
 	nativeSettings.addSubcategory("/lhudaddons/dialogresizer", GetLocalizedTextByKey("Addons-LHUD-Dialog-Resizer"))
 	nativeSettings.addRangeFloat("/lhudaddons/dialogresizer", GetLocalizedTextByKey("Addons-LHUD-Scale"), GetLocalizedTextByKey("Addons-LHUD-Scale-Desc"), 0.1, 2.0, 0.05, "%.2f", settings.AddonsDialogResizerScale, defaults.AddonsDialogResizerScale, function(value) settings.AddonsDialogResizerScale = value end)
 	
 	nativeSettings.addSubcategory("/lhudaddons/evolution", GetLocalizedTextByKey("Addons-LHUD-Evolution"))
 	nativeSettings.addSwitch("/lhudaddons/evolution", GetLocalizedTextByKey("Addons-LHUD-Evolution-Enable"), GetLocalizedTextByKey("Addons-LHUD-Evolution-Enable-Desc"), settings.AddonsFixEvolutionIcons, defaults.AddonsFixEvolutionIcons, function(state) settings.AddonsFixEvolutionIcons = state end)
-	
-	nativeSettings.addSubcategory("/lhudaddons/speedometer", GetLocalizedTextByKey("Addons-LHUD-Speedometer"))
-	nativeSettings.addSwitch("/lhudaddons/speedometer", GetLocalizedTextByKey("Addons-LHUD-Speedometer-Hide"), GetLocalizedTextByKey("Addons-LHUD-Speedometer-Hide-Desc"), settings.AddonsHideSpeedometer, defaults.AddonsHideSpeedometer, function(state) settings.AddonsHideSpeedometer = state end)
-	
-	nativeSettings.addSubcategory("/lhudaddons/crouch", GetLocalizedTextByKey("Addons-LHUD-Crouch"))
-	nativeSettings.addSwitch("/lhudaddons/crouch", GetLocalizedTextByKey("Addons-LHUD-Crouch-Remove"), GetLocalizedTextByKey("Addons-LHUD-Crouch-Remove-Desc"), settings.AddonsHideCrouchIndicator, defaults.AddonsHideCrouchIndicator, function(state) settings.AddonsHideCrouchIndicator = state end)
-	
-	nativeSettings.addSubcategory("/lhudaddons/hptexts", GetLocalizedTextByKey("Addons-LHUD-Healthbar-Texts"))
-	nativeSettings.addSwitch("/lhudaddons/hptexts", GetLocalizedTextByKey("Addons-LHUD-Healthbar-Texts-Remove"), GetLocalizedTextByKey("Addons-LHUD-Healthbar-Texts-Remove-Desc"), settings.AddonsRemoveHealthbarTexts, defaults.AddonsRemoveHealthbarTexts, function(state) settings.AddonsRemoveHealthbarTexts = state end)
 	
 	nativeSettings.addSubcategory("/lhudaddons/markerpulse", GetLocalizedTextByKey("Addons-LHUD-Pulse"))
 	nativeSettings.addSwitch("/lhudaddons/markerpulse", GetLocalizedTextByKey("Addons-LHUD-Pulse-Disable"), GetLocalizedTextByKey("Addons-LHUD-Pulse-Disable-Desc"), settings.AddonsRemoveMarkerPulse, defaults.AddonsRemoveMarkerPulse, function(state) settings.AddonsRemoveMarkerPulse = state end)
@@ -713,7 +712,8 @@ registerForEvent("onInit", function()
 	Override("LimitedHudConfig.LHUDAddonsConfig", "HidePromptGetIn;", function(_) return settings.AddonsPromptGetIn end)
 	Override("LimitedHudConfig.LHUDAddonsConfig", "HidePromptPickUpBody;", function(_) return settings.AddonsPromptPickUpBody end)
 	Override("LimitedHudConfig.LHUDAddonsConfig", "HidePromptTalk;", function(_) return settings.AddonsPromptTalk end)
-
+	Override("LimitedHudConfig.LHUDAddonsConfig", "RemoveOverheadSubtitles;", function(_) return settings.AddonsRemoveOverheadSubtitles end)
+	
 	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "FillInteraction;", function(_) return settings.AddonsFillInteraction - 1 end)
 	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "FillImportantInteraction;", function(_) return settings.AddonsFillImportantInteraction - 1 end)
 	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "FillWeakspot;", function(_) return settings.AddonsFillWeakspot - 1 end)
