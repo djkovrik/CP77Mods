@@ -7,3 +7,4 @@ localization:
     zh-cn: base\localization\zh-cn\onscreens\first-equip.json
     zh-tw: base\localization\zh-tw\onscreens\first-equip.json
     jp-jp: base\localization\jp-jp\onscreens\first-equip.json
+    es-es: base\localization\es-es\onscreens\first-equip.json
