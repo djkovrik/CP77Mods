@@ -4,4 +4,4 @@ localization:
     ru-ru: base\localization\ru-ru\onscreens\lhud.json
     fr-fr: base\localization\fr-fr\onscreens\lhud.json
     zh-tw: base\localization\zh-tw\onscreens\lhud.json
-
+    es-es: base\localization\es-es\onscreens\lhud.json
