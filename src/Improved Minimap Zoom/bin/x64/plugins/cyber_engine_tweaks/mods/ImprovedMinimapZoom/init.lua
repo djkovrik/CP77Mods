@@ -65,70 +65,70 @@ function SetupSettingsMenu()
 
 	nativeSettings.addTab("/imz", "IZoom")
 	
-	nativeSettings.addSubcategory("/imz/zoom", "Static zoom Values")
+	nativeSettings.addSubcategory("/imz/zoom", GetLocalizedTextByKey("Mod-IMZ-Static"))
 	
-	nativeSettings.addRangeInt("/imz/zoom", "Combat zoom", "Zoom value for active combat mode", 20, 200, 5, settings.Combat, defaults.Combat, function(value)
-		-- print("Changed SLIDER INT to ", value)
+	nativeSettings.addRangeInt("/imz/zoom", GetLocalizedTextByKey("Mod-IMZ-Combat"), GetLocalizedTextByKey("Mod-IMZ-Combat-Desc"), 20, 200, 5, settings.Combat, defaults.Combat, function(value)
 		settings.Combat = value
+		SaveSettings()
 	end)
 	
-	nativeSettings.addRangeInt("/imz/zoom", "Quest area zoom", "Zoom value for quest areas", 20, 200, 5, settings.QuestArea, defaults.QuestArea, function(value)
-		-- print("Changed SLIDER INT to ", value)
+	nativeSettings.addRangeInt("/imz/zoom", GetLocalizedTextByKey("Mod-IMZ-Quest"), GetLocalizedTextByKey("Mod-IMZ-Quest-Desc"), 20, 200, 5, settings.QuestArea, defaults.QuestArea, function(value)
 		settings.QuestArea = value
+		SaveSettings()
 	end)
 	
-	nativeSettings.addRangeInt("/imz/zoom", "Security area zoom", "Zoom value for restricted and dangerous areas", 20, 200, 5, settings.SecurityArea, defaults.SecurityArea, function(value)
-		-- print("Changed SLIDER INT to ", value)
+	nativeSettings.addRangeInt("/imz/zoom", GetLocalizedTextByKey("Mod-IMZ-Security"), GetLocalizedTextByKey("Mod-IMZ-Security-Desc"), 20, 200, 5, settings.SecurityArea, defaults.SecurityArea, function(value)
 		settings.SecurityArea = value
+		SaveSettings()
 	end)
 	
-	nativeSettings.addRangeInt("/imz/zoom", "Interior zoom", "Zoom value for interiors", 20, 200, 5, settings.Interior, defaults.Interior, function(value)
-		-- print("Changed SLIDER INT to ", value)
+	nativeSettings.addRangeInt("/imz/zoom", GetLocalizedTextByKey("Mod-IMZ-Interior"), GetLocalizedTextByKey("Mod-IMZ-Interior-Desc"), 20, 200, 5, settings.Interior, defaults.Interior, function(value)
 		settings.Interior = value
+		SaveSettings()
 	end)
 	
-	nativeSettings.addRangeInt("/imz/zoom", "Exterior zoom", "Zoom value for remained cases: (not in interior, not in vehicle, not in security area, no active combat)", 20, 200, 5, settings.Exterior, defaults.Exterior, function(value)
-		-- print("Changed SLIDER INT to ", value)
+	nativeSettings.addRangeInt("/imz/zoom", GetLocalizedTextByKey("Mod-IMZ-Exterior"), GetLocalizedTextByKey("Mod-IMZ-Exterior-Desc"), 20, 200, 5, settings.Exterior, defaults.Exterior, function(value)
 		settings.Exterior = value
+		SaveSettings()
 	end)
 	
-	nativeSettings.addSubcategory("/imz/peek", "Minimap Peek hotkey")
+	nativeSettings.addSubcategory("/imz/peek", GetLocalizedTextByKey("Mod-IMZ-Peek-Hotkey"))
 	
-	nativeSettings.addRangeInt("/imz/peek", "Peek hotkey zoom increment", "Non-vehicle zoom increment value for peek mode", 20, 200, 5, settings.Peek, defaults.Peek, function(value)
-		-- print("Changed SLIDER INT to ", value)
+	nativeSettings.addRangeInt("/imz/peek", GetLocalizedTextByKey("Mod-IMZ-Peek-Increment"), GetLocalizedTextByKey("Mod-IMZ-Peek-Increment-Desc"), 20, 200, 5, settings.Peek, defaults.Peek, function(value)
 		settings.Peek = value
+		SaveSettings()
 	end)
 	
-	nativeSettings.addSwitch("/imz/peek", "Toggleable hotkey", "By default peek hotkey zooms minimap only while you hold it, enable this option to make it toggleable", settings.ReplaceHoldWithToggle, defaults.ReplaceHoldWithToggle, function(state)
-		-- print("Changed SWITCH to ", state)
+	nativeSettings.addSwitch("/imz/peek", GetLocalizedTextByKey("Mod-IMZ-Peek-Toggleable"), GetLocalizedTextByKey("Mod-IMZ-Peek-Toggleable-Desc"), settings.ReplaceHoldWithToggle, defaults.ReplaceHoldWithToggle, function(state)
 		settings.ReplaceHoldWithToggle = state
+		SaveSettings()
 	end)
 	
-	nativeSettings.addSubcategory("/imz/dynamic", "Dynamic Zoom")
+	nativeSettings.addSubcategory("/imz/dynamic", GetLocalizedTextByKey("Mod-IMZ-Max-Dynamic"))
 	
-	nativeSettings.addSwitch("/imz/dynamic", "Enable dynamic zoom", "This option enables vehicle minimap dynamic zoom based on speed, if disabled then vehicle minimap will use value from Min zoom option", settings.IsDynamicZoomEnabled, defaults.IsDynamicZoomEnabled, function(state)
-		-- print("Changed SWITCH to ", state)
+	nativeSettings.addSwitch("/imz/dynamic", GetLocalizedTextByKey("Mod-IMZ-Max-Dynamic-Enable"), GetLocalizedTextByKey("Mod-IMZ-Max-Dynamic-Enable-Desc"), settings.IsDynamicZoomEnabled, defaults.IsDynamicZoomEnabled, function(state)
 		settings.IsDynamicZoomEnabled = state
+		SaveSettings()
 	end)
 	
-	nativeSettings.addRangeInt("/imz/dynamic", "Min zoom", "Minimal zoom value", 20, 200, 5, settings.MinZoom, defaults.MinZoom, function(value)
-		-- print("Changed SLIDER INT to ", value)
+	nativeSettings.addRangeInt("/imz/dynamic", GetLocalizedTextByKey("Mod-IMZ-Min-Zoom"), GetLocalizedTextByKey("Mod-IMZ-Min-Zoom-Desc"), 20, 200, 5, settings.MinZoom, defaults.MinZoom, function(value)
 		settings.MinZoom = value
+		SaveSettings()
 	end)
 	
-	nativeSettings.addRangeInt("/imz/dynamic", "Min speed", "Speed threshold when zoom will start increasing from Min zoom", 20, 200, 5, settings.MinSpeed, defaults.MinSpeed, function(value)
-		-- print("Changed SLIDER INT to ", value)
+	nativeSettings.addRangeInt("/imz/dynamic", GetLocalizedTextByKey("Mod-IMZ-Min-Speed"), GetLocalizedTextByKey("Mod-IMZ-Min-Speed-Desc"), 20, 200, 5, settings.MinSpeed, defaults.MinSpeed, function(value)
 		settings.MinSpeed = value
+		SaveSettings()
 	end)
 	
-	nativeSettings.addRangeInt("/imz/dynamic", "Max zoom", "Maximal zoom value", 20, 200, 5, settings.MaxZoom, defaults.MaxZoom, function(value)
-		-- print("Changed SLIDER INT to ", value)
+	nativeSettings.addRangeInt("/imz/dynamic", GetLocalizedTextByKey("Mod-IMZ-Max-Zoom"), GetLocalizedTextByKey("Mod-IMZ-Max-Zoom-Desc"), 20, 200, 5, settings.MaxZoom, defaults.MaxZoom, function(value)
 		settings.MaxZoom = value
+		SaveSettings()
 	end)
 	
-	nativeSettings.addRangeInt("/imz/dynamic", "Max speed", "Speed threshold when zoom will reach the value from Max zoom", 20, 200, 5, settings.MaxSpeed, defaults.MaxSpeed, function(value)
-		-- print("Changed SLIDER INT to ", value)
+	nativeSettings.addRangeInt("/imz/dynamic", GetLocalizedTextByKey("Mod-IMZ-Max-Speed"), GetLocalizedTextByKey("Mod-IMZ-Max-Speed-Desc"), 20, 200, 5, settings.MaxSpeed, defaults.MaxSpeed, function(value)
 		settings.MaxSpeed = value
+		SaveSettings()
 	end)
 end
 
@@ -150,8 +150,4 @@ registerForEvent("onInit", function()
 	Override("ImprovedMinimapMain.ZoomConfig", "Peek;", function(_) return settings.Peek end)
 	Override("ImprovedMinimapMain.ZoomConfig", "ReplaceHoldWithToggle;", function(_) return settings.ReplaceHoldWithToggle end)
 
-end)
-
-registerForEvent("onShutdown", function()
-    SaveSettings()
 end)

@@ -148,7 +148,7 @@ protected cb func OnPlayerAttach(playerGameObject: ref<GameObject>) -> Bool {
   this.InitBBs_IMZ(playerGameObject);
   this.m_isPeekActive_IMZ = false;
   this.SetPreconfiguredZoomValues_IMZ();
-  playerGameObject.RegisterInputListener(this, n"minimapPeek");
+  playerGameObject.RegisterInputListener(this, IMZAction());
 }
 
 @wrapMethod(MinimapContainerController)
@@ -160,7 +160,7 @@ protected cb func OnPlayerDetach(playerGameObject: ref<GameObject>) -> Bool {
 @addMethod(MinimapContainerController)
 protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
   let actionName: CName = ListenerAction.GetName(action);
-  if Equals(actionName, n"minimapPeek") {
+  if Equals(actionName, IMZAction()) {
     if Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED) {
       if ZoomConfig.ReplaceHoldWithToggle() {
         this.m_isPeekActive_IMZ = !this.m_isPeekActive_IMZ;

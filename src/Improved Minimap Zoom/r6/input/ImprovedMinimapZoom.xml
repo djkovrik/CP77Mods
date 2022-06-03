@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<bindings>
+    <!-- inputContexts -->
+    <context name="ImprovedMinimapZoomContext" >
+        <action name="imzPeek" map="imzPeek_Button" />
+    </context>
+
+    <context name="UIShared" append="true">
+        <include name="ImprovedMinimapZoomContext" />
+    </context>
+
+    <!-- inputUserMapping -->
+    <mapping name="imzPeek_Button" type="Button" >
+        <button id="IK_F6" />
+    </mapping>
+
+</bindings>

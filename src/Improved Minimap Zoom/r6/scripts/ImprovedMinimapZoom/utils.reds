@@ -52,3 +52,5 @@ public class ZoomCalc {
 public static func IMZLog(message: String) -> Void {
   // LogChannel(n"DEBUG", "IMZ: " + message);
 }
+
+public static func IMZAction() -> CName = n"imzPeek"
