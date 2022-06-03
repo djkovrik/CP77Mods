@@ -12,17 +12,17 @@ public class LHUDInputListener {
     this.playerInstance = player;
   }
 
-  // Listen for ToggleGlobal and ToggleMinimap actions and send LHUD events
+  // Listen for LHUD_Global and LHUD_Minimap actions and send LHUD events
   protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
     let actionName: CName = ListenerAction.GetName(action);
     let blackBoard: ref<IBlackboard> = GameInstance.GetBlackboardSystem(this.playerInstance.GetGame()).Get(GetAllBlackboardDefs().UI_System);
     let isToggled: Bool;
-    if Equals(actionName, n"ToggleGlobal") && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED) {
+    if Equals(actionName, n"LHUD_Global") && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED) {
       isToggled = blackBoard.GetBool(GetAllBlackboardDefs().UI_System.IsGlobalFlagToggled_LHUD);
       blackBoard.SetBool(GetAllBlackboardDefs().UI_System.IsGlobalFlagToggled_LHUD, !isToggled, true);
     };
 
-    if Equals(actionName, n"ToggleMinimap") && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED) {
+    if Equals(actionName, n"LHUD_Minimap") && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED) {
       isToggled = blackBoard.GetBool(GetAllBlackboardDefs().UI_System.IsMinimapToggled_LHUD);
       blackBoard.SetBool(GetAllBlackboardDefs().UI_System.IsMinimapToggled_LHUD, !isToggled, true);
     };
