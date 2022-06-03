@@ -68,6 +68,8 @@ public let LastUsedSlotEQ: BlackboardID_Int;
 
 // --- CUSTOM HOTKEY
 
+private static func AlwaysFirstEquipAction() -> CName = n"AlwaysFirstEquip"
+
 public class FirstEquipGlobalInputListener {
     private let m_player: ref<PlayerPuppet>;
 
@@ -86,7 +88,7 @@ public class FirstEquipGlobalInputListener {
         return false;
       };
 
-      if Equals(ListenerAction.GetName(action), n"FirstTimeEquip") {
+      if Equals(ListenerAction.GetName(action), AlwaysFirstEquipAction()) {
         let pressed: Bool = Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED);
         let released: Bool = Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED);
         let hold: Bool = Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_HOLD_COMPLETE);
@@ -569,7 +571,7 @@ protected final func OnEnter(stateContext: ref<StateContext>, scriptInterface: r
   this.readyStateRequestedEQ = false;
   this.safeStateRequestedEQ = false;
   // Register custom hotkey listener
-  scriptInterface.executionOwner.RegisterInputListener(this, n"FirstTimeEquip");
+  scriptInterface.executionOwner.RegisterInputListener(this, AlwaysFirstEquipAction());
 }
 
 @addMethod(ReadyEvents)
@@ -633,7 +635,7 @@ protected final func OnTick(timeDelta: Float, stateContext: ref<StateContext>, s
     };
 
     // Action detected when in HOLD_STARTED state -> HOLD_ENDED
-    let buttonReleased: Bool = released || scriptInterface.GetActionValue(n"FirstTimeEquip") < 0.50;
+    let buttonReleased: Bool = released || scriptInterface.GetActionValue(AlwaysFirstEquipAction()) < 0.50;
     if Equals(this.customHotkeyStateEQ, FirstEquipHotkeyState.HOLD_STARTED) && buttonReleased {
       this.customHotkeyStateEQ = FirstEquipHotkeyState.HOLD_ENDED;
     };
