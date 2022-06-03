@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<bindings>
+    <hold action="Reload" timeout="0.4" />
+
+	<acceptedEvents action="Reload" >
+		<event name="BUTTON_RELEASED" />
+		<event name="BUTTON_HOLD_PROGRESS" />
+		<event name="BUTTON_HOLD_COMPLETE" />
+	</acceptedEvents>
+</bindings>
