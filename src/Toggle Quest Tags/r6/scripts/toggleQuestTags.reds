@@ -4,10 +4,16 @@ class ToggleQuestTagStrings {
   
   // Some options which you can try:
   // - "activate_secondary" equals to RightMouse and Pad_Y_TRIANGLE
-  // - "prior_sub_menu" equals to 8 and Pad_LeftTrigger   <- recommended for controller users
+  // - "prior_sub_menu" equals to 8 and Pad_LeftTrigger
   // - "next_sub_menu" equals to 9 and Pad_RightTrigger
 
-  public static func Hotkey() -> String = "activate_secondary"
+  public static func GetActionName(player: ref<GameObject>) -> CName {
+    if player.PlayerLastUsedKBM() {
+      return n"activate_secondary";
+    } else {
+      return n"prior_sub_menu";
+    };
+  }
   
   // Button hint label text
   public static func Toggle() -> String = "Toggle quest tag"
@@ -20,12 +26,12 @@ class ToggleQuestTagStrings {
 
 // Handle new button hint visibility
 @addMethod(BackpackMainGameController)
-private func UpdateHintsVisibility(shouldShow: Bool, opt evt: ref<ItemDisplayHoverOverEvent>) {
+private func UpdateToggleTagsHints(shouldShow: Bool, opt evt: ref<ItemDisplayHoverOverEvent>) {
   let text: String = ToggleQuestTagStrings.Toggle();
   if shouldShow {
-    this.m_buttonHintsController.AddButtonHint(StringToName(ToggleQuestTagStrings.Hotkey()), text);
+    this.m_buttonHintsController.AddButtonHint(ToggleQuestTagStrings.GetActionName(this.m_player), text);
   } else {
-    this.m_buttonHintsController.RemoveButtonHint(StringToName(ToggleQuestTagStrings.Hotkey()));
+    this.m_buttonHintsController.RemoveButtonHint(ToggleQuestTagStrings.GetActionName(this.m_player));
   };
 }
 
@@ -33,14 +39,14 @@ private func UpdateHintsVisibility(shouldShow: Bool, opt evt: ref<ItemDisplayHov
 @wrapMethod(BackpackMainGameController)
 protected cb func OnItemDisplayHoverOver(evt: ref<ItemDisplayHoverOverEvent>) -> Bool {
   wrappedMethod(evt);
-  this.UpdateHintsVisibility(true, evt);
+  this.UpdateToggleTagsHints(true, evt);
 }
 
 // Hide new hint on item hover out
 @wrapMethod(BackpackMainGameController)
 protected cb func OnItemDisplayHoverOut(evt: ref<ItemDisplayHoverOutEvent>) -> Bool {
   wrappedMethod(evt);
-  this.UpdateHintsVisibility(false);
+  this.UpdateToggleTagsHints(false);
 }
 
 // Toggle quest tag for item data
@@ -57,7 +63,7 @@ private func ToggleQuestTag() -> Void {
 // Handle activate_secondary hotkey click
 @wrapMethod(BackpackMainGameController)
 protected cb func OnPostOnRelease(evt: ref<inkPointerEvent>) -> Bool {
-  if evt.IsAction(StringToName(ToggleQuestTagStrings.Hotkey())) && IsDefined(this.m_lastItemHoverOverEvent) {
+  if evt.IsAction(ToggleQuestTagStrings.GetActionName(this.m_player)) && IsDefined(this.m_lastItemHoverOverEvent) {
     this.ToggleQuestTag();
     this.RefreshUI();
   };
@@ -69,17 +75,17 @@ protected cb func OnPostOnRelease(evt: ref<inkPointerEvent>) -> Bool {
 
 // Handle new button hint visibility
 @addMethod(InventoryItemModeLogicController)
-private func UpdateHintsVisibility(shouldShow: Bool) {
+private func UpdateToggleTagsHints(shouldShow: Bool) {
   let text: String = ToggleQuestTagStrings.Toggle();
   if shouldShow {
-    this.m_buttonHintsController.AddButtonHint(StringToName(ToggleQuestTagStrings.Hotkey()), text);
+    this.m_buttonHintsController.AddButtonHint(ToggleQuestTagStrings.GetActionName(this.m_player), text);
   } else {
-    this.m_buttonHintsController.RemoveButtonHint(StringToName(ToggleQuestTagStrings.Hotkey()));
+    this.m_buttonHintsController.RemoveButtonHint(ToggleQuestTagStrings.GetActionName(this.m_player));
   };
 }
 
 // Show new hint on item hover over
-@wrapMethod(InventoryItemModeLogicController)
+@replaceMethod(InventoryItemModeLogicController)
 private final func SetInventoryItemButtonHintsHoverOver(displayingData: InventoryItemData, opt display: ref<InventoryItemDisplayController>) -> Void {
   let cursorData: ref<MenuCursorUserData> = new MenuCursorUserData();
   let isEquipped: Bool = InventoryItemData.IsEquipped(displayingData) || this.itemChooser.IsAttachmentItem(displayingData);
@@ -93,6 +99,7 @@ private final func SetInventoryItemButtonHintsHoverOver(displayingData: Inventor
       if !isEquipped {
         if NotEquals(InventoryItemData.GetItemType(displayingData), gamedataItemType.Prt_Program) {
           this.m_buttonHintsController.AddButtonHint(n"drop_item", GetLocalizedText("UI-ScriptExports-Drop0"));
+          this.UpdateToggleTagsHints(true);
         };
         if !InventoryItemData.IsPart(displayingData) {
           if NotEquals(InventoryItemData.GetEquipmentArea(displayingData), gamedataEquipmentArea.Invalid) {
@@ -106,7 +113,7 @@ private final func SetInventoryItemButtonHintsHoverOver(displayingData: Inventor
           this.m_buttonHintsController.RemoveButtonHint(n"equip_item");
           if RPGManager.CanPartBeUnequipped(InventoryItemData.GetID(displayingData)) {
             this.m_buttonHintsController.AddButtonHint(n"unequip_item", GetLocalizedText("UI-UserActions-Unequip"));
-            this.UpdateHintsVisibility(true);
+            this.UpdateToggleTagsHints(true);
           } else {
             this.m_buttonHintsController.RemoveButtonHint(n"unequip_item");
           };
@@ -114,7 +121,7 @@ private final func SetInventoryItemButtonHintsHoverOver(displayingData: Inventor
       } else {
         if !InventoryItemData.IsPart(displayingData) || RPGManager.CanPartBeUnequipped(InventoryItemData.GetID(displayingData)) || Equals(InventoryItemData.GetEquipmentArea(this.itemChooser.GetModifiedItemData()), gamedataEquipmentArea.SystemReplacementCW) {
           this.m_buttonHintsController.AddButtonHint(n"unequip_item", GetLocalizedText("UI-UserActions-Unequip"));
-          this.UpdateHintsVisibility(true);
+          this.UpdateToggleTagsHints(true);
         };
       };
       if !this.m_isE3Demo {
@@ -142,7 +149,7 @@ private final func SetInventoryItemButtonHintsHoverOver(displayingData: Inventor
 @wrapMethod(InventoryItemModeLogicController)
 private final func SetInventoryItemButtonHintsHoverOut() -> Void {
   wrappedMethod();
-  this.UpdateHintsVisibility(false);
+  this.UpdateToggleTagsHints(false);
 }
 
 // Toggle quest tag for item data
@@ -165,8 +172,18 @@ private func ToggleQuestTag(evt: ref<ItemDisplayClickEvent>) -> Void {
 @wrapMethod(gameuiInventoryGameController)
 protected cb func OnEquipmentClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
   wrappedMethod(evt);
-  if evt.actionName.IsAction(StringToName(ToggleQuestTagStrings.Hotkey())) {
+  if evt.actionName.IsAction(ToggleQuestTagStrings.GetActionName(this.m_player)) {
     this.ToggleQuestTag(evt);
     this.RefreshUI();
+  };
+}
+
+
+
+@wrapMethod(InventoryItemModeLogicController)
+protected cb func OnPostOnRelease(evt: ref<inkPointerEvent>) -> Bool {
+  wrappedMethod(evt);
+  if evt.IsAction(ToggleQuestTagStrings.GetActionName(this.m_player)) {
+    this.RefreshAvailableItems();
   };
 }
