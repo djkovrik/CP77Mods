@@ -101,6 +101,20 @@ private func ShouldBeScrappedSS(data: wref<gameItemData>, quality: gamedataQuali
   return false;
 }
 
+// Keep last bought item id
+@addField(PlayerPuppet)
+public let boughtItem: ItemID;
+
+// Save last bought item id
+@wrapMethod(Vendor)
+private final func PerformItemTransfer(buyer: wref<GameObject>, seller: wref<GameObject>, itemTransaction: SItemTransaction) -> Bool {
+  let player: ref<PlayerPuppet> = buyer as PlayerPuppet;
+  if IsDefined(player) {
+    player.boughtItem = itemTransaction.itemStack.itemID;
+  };
+  return wrappedMethod(buyer, seller, itemTransaction);
+}
+
 // Runs when item added to inventory
 @replaceMethod(PlayerPuppet)
 protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
@@ -173,7 +187,7 @@ protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
     if Equals(RPGManager.GetItemType(evt.itemID), gamedataItemType.Gen_Junk) {
       ItemActionsHelper.DisassembleItem(this, evt.itemID, GameInstance.GetTransactionSystem(this.GetGame()).GetItemQuantity(this, evt.itemID));
     } else {
-      if this.ShouldBeScrappedSS(itemData, itemQuality) && !RPGManager.IsItemIconic(itemData) && !itemData.HasTag(n"Quest") && !this.IsExclusionSS(tweakDbId) && !this.HasExcludedQuestActive() {
+      if this.ShouldBeScrappedSS(itemData, itemQuality) && !RPGManager.IsItemIconic(itemData) && NotEquals(this.boughtItem, itemData.GetID()) && !RPGManager.IsItemCrafted(itemData) && !itemData.HasTag(n"Quest") && !this.IsExclusionSS(tweakDbId) && !this.HasExcludedQuestActive() {
         ItemActionsHelper.DisassembleItem(this, evt.itemID, GameInstance.GetTransactionSystem(this.GetGame()).GetItemQuantity(this, evt.itemID));
       };
     };
