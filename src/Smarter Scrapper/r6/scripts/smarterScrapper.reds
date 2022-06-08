@@ -115,6 +115,23 @@ private final func PerformItemTransfer(buyer: wref<GameObject>, seller: wref<Gam
   return wrappedMethod(buyer, seller, itemTransaction);
 }
 
+@addMethod(PlayerPuppet)
+public func HasWeaponInInventorySS() -> Bool {
+  let itemList: array<wref<gameItemData>>;
+  let item: wref<gameItemData>;
+  GameInstance.GetTransactionSystem(this.GetGame()).GetItemList(this, itemList);
+  let i: Int32 = 0;
+  let counter: Int32 = 0;
+  while i < ArraySize(itemList) {
+    item = itemList[i];
+    if this.IsWeaponSS(item.GetItemType()) && NotEquals(item.GetName(), n"w_handgun_constitutional_unity") {
+      counter += 1;
+    };
+    i += 1;
+  };
+  return counter > 1;
+}
+
 // Runs when item added to inventory
 @replaceMethod(PlayerPuppet)
 protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
@@ -187,7 +204,7 @@ protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
     if Equals(RPGManager.GetItemType(evt.itemID), gamedataItemType.Gen_Junk) {
       ItemActionsHelper.DisassembleItem(this, evt.itemID, GameInstance.GetTransactionSystem(this.GetGame()).GetItemQuantity(this, evt.itemID));
     } else {
-      if this.ShouldBeScrappedSS(itemData, itemQuality) && !RPGManager.IsItemIconic(itemData) && NotEquals(this.boughtItem, itemData.GetID()) && !RPGManager.IsItemCrafted(itemData) && !itemData.HasTag(n"Quest") && !this.IsExclusionSS(tweakDbId) && !this.HasExcludedQuestActive() {
+      if this.HasWeaponInInventorySS() && this.ShouldBeScrappedSS(itemData, itemQuality) && !RPGManager.IsItemIconic(itemData) && NotEquals(this.boughtItem, itemData.GetID()) && !RPGManager.IsItemCrafted(itemData) && !itemData.HasTag(n"Quest") && !this.IsExclusionSS(tweakDbId) && !this.HasExcludedQuestActive() {
         ItemActionsHelper.DisassembleItem(this, evt.itemID, GameInstance.GetTransactionSystem(this.GetGame()).GetItemQuantity(this, evt.itemID));
       };
     };
