@@ -78,40 +78,49 @@ function SetupSettingsMenu()
 	
 	nativeSettings.addRangeInt("/equip/common", GetLocalizedTextByKey("Mod-First-Equip-Percentage"), GetLocalizedTextByKey("Mod-First-Equip-Percentage-Desc"), 0, 100, 5, settings.PercentageProbability, defaults.PercentageProbability, function(value)
 		settings.PercentageProbability = value
+		SaveSettings()
 	end)
 	
 	nativeSettings.addSwitch("/equip/common", GetLocalizedTextByKey("Mod-First-Equip-Cooldowns"), GetLocalizedTextByKey("Mod-First-Equip-Cooldowns-Desc"), settings.UseCooldowns, defaults.UseCooldowns, function(state)
 		settings.UseCooldowns = state
+		SaveSettings()
 	end)
 	
 	nativeSettings.addRangeInt("/equip/common", GetLocalizedTextByKey("Mod-First-Equip-Cooldowns-Time"), GetLocalizedTextByKey("Mod-First-Equip-Cooldowns-Time-Desc"), 0, 120, 1, settings.DefaultCooldown, defaults.DefaultCooldown, function(value)
 		settings.DefaultCooldown = value
+		SaveSettings()
 	end)
 	
 	nativeSettings.addSelectorString("/equip/common", GetLocalizedTextByKey("Mod-First-Equip-Cooldowns-Time-Unit"), GetLocalizedTextByKey("Mod-First-Equip-Cooldowns-Time-Unit-Desc"), cooldownUnit, settings.CooldownUnits, defaults.CooldownUnits, function(value)
 		settings.CooldownUnits = value
+		SaveSettings()
 	end)
 	
 	nativeSettings.addSubcategory("/equip/restr", GetLocalizedTextByKey("Mod-First-Equip-Restrictions"))
 	
 	nativeSettings.addSwitch("/equip/restr", GetLocalizedTextByKey("Mod-First-Equip-Restrictions-Combat"), GetLocalizedTextByKey("Mod-First-Equip-Restrictions-Combat-Desc"), settings.PlayInCombatMode, defaults.PlayInCombatMode, function(state)
 		settings.PlayInCombatMode = state
+		SaveSettings()
 	end)
 	
 	nativeSettings.addSwitch("/equip/restr", GetLocalizedTextByKey("Mod-First-Equip-Restrictions-Stealth"), GetLocalizedTextByKey("Mod-First-Equip-Restrictions-Stealth-Desc"), settings.PlayInStealthMode, defaults.PlayInStealthMode, function(state)
 		settings.PlayInStealthMode = state
+		SaveSettings()
 	end)
 	
 	nativeSettings.addSwitch("/equip/restr", GetLocalizedTextByKey("Mod-First-Equip-Restrictions-Magazine"), GetLocalizedTextByKey("Mod-First-Equip-Restrictions-Magazine-Desc"), settings.PlayWhenMagazineIsEmpty, defaults.PlayWhenMagazineIsEmpty, function(state)
 		settings.PlayWhenMagazineIsEmpty = state
+		SaveSettings()
 	end)
 	
 	nativeSettings.addSwitch("/equip/restr", GetLocalizedTextByKey("Mod-First-Equip-Restrictions-Sprinting"), GetLocalizedTextByKey("Mod-First-Equip-Restrictions-Sprinting-Desc"), settings.PlayWhileSprinting, defaults.PlayWhileSprinting, function(state)
 		settings.PlayWhileSprinting = state
+		SaveSettings()
 	end)
 	
 	nativeSettings.addSwitch("/equip/restr", GetLocalizedTextByKey("Mod-First-Equip-Restrictions-ArmsCW"), GetLocalizedTextByKey("Mod-First-Equip-Restrictions-ArmsCW-Desc"), settings.ExcludeArmsCyberware, defaults.ExcludeArmsCyberware, function(state)
 		settings.ExcludeArmsCyberware = state
+		SaveSettings()
 	end)
 	
 
@@ -119,25 +128,30 @@ function SetupSettingsMenu()
 	
 	nativeSettings.addSwitch("/equip/hotkey", GetLocalizedTextByKey("Mod-First-Equip-Hotkey-Track"), GetLocalizedTextByKey("Mod-First-Equip-Hotkey-Track-Desc"), settings.TrackLastUsedSlot, defaults.TrackLastUsedSlot, function(state)
 		settings.TrackLastUsedSlot = state
+		SaveSettings()
 	end)
 	
 	nativeSettings.addRangeInt("/equip/hotkey", GetLocalizedTextByKey("Mod-First-Equip-Hotkey-Default"), GetLocalizedTextByKey("Mod-First-Equip-Hotkey-Default-Desc"), 1, 4, 1, settings.DefaultSlotNumber, defaults.DefaultSlotNumber, function(value)
 		-- print("Changed SLIDER INT to ", value)
 		settings.DefaultSlotNumber = value
+		SaveSettings()
 	end)
 	
 	nativeSettings.addSubcategory("/equip/idle", GetLocalizedTextByKey("Mod-First-Equip-IdleBreak"))
 
 	nativeSettings.addSwitch("/equip/idle", GetLocalizedTextByKey("Mod-First-Equip-IdleBreak-Bind"), GetLocalizedTextByKey("Mod-First-Equip-IdleBreak-Bind-Desc"), settings.BindToHotkeyIdleBreak, defaults.BindToHotkeyIdleBreak, function(state)
 		settings.BindToHotkeyIdleBreak = state
+		SaveSettings()
 	end)
 
 	nativeSettings.addRangeInt("/equip/idle", GetLocalizedTextByKey("Mod-First-Equip-IdleBreak-Probability"), GetLocalizedTextByKey("Mod-First-Equip-IdleBreak-Probability-Desc"), 1, 100, 5, settings.AnimationProbability, defaults.AnimationProbability, function(value)
 		settings.AnimationProbability = value
+		SaveSettings()
 	end)
 	
 	nativeSettings.addRangeInt("/equip/idle", GetLocalizedTextByKey("Mod-First-Equip-IdleBreak-Check"), GetLocalizedTextByKey("Mod-First-Equip-IdleBreak-Check-Desc"), 1, 100, 5, settings.AnimationCheckPeriod, defaults.AnimationCheckPeriod, function(value)
 		settings.AnimationCheckPeriod = value
+		SaveSettings()
 	end)
 end
 
@@ -161,8 +175,4 @@ registerForEvent("onInit", function()
 	Override("FirstEquipConfig", "CooldownTime;", function(_) return settings.DefaultCooldown end)
 	Override("FirstEquipConfig", "CooldownTimeUnits;", function(_) return settings.CooldownUnits end)
 
-end)
-
-registerForEvent("onShutdown", function()
-    SaveSettings()
 end)
