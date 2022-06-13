@@ -1,19 +1,179 @@
+Vehicle.vcd_type66_vtech_purchasable:
+  $base: Vehicle.v_sport2_quadra_type66
+
+# Icons
+
+UIIcon.vcd_type66_vtech_suburban_01_purchasable:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_type66_preview.inkatlas"
+  atlasPartName: n"suburban-01"
+
 UIIcon.vcd_type66_vtech_suburban_02_purchasable:
   $type: UIIcon_Record
-  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer.inkatlas"
-  atlasPartName: n"v-quadra-type66-basic-suburban-02"
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_type66_preview.inkatlas"
+  atlasPartName: n"suburban-02"
+
+UIIcon.vcd_type66_vtech_suburban_03_purchasable:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_type66_preview.inkatlas"
+  atlasPartName: n"suburban-03"
+
+UIIcon.vcd_type66_vtech_suburban_04_purchasable:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_type66_preview.inkatlas"
+  atlasPartName: n"suburban-04"
+  
+UIIcon.vcd_type66_vtech_suburban_05_purchasable:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_type66_preview.inkatlas"
+  atlasPartName: n"suburban-05"
+
+UIIcon.vcd_type66_vtech_suburban_06_purchasable:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_type66_preview.inkatlas"
+  atlasPartName: n"suburban-06"
+
+UIIcon.vcd_type66_vtech_urban_01_purchasable:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_type66_preview.inkatlas"
+  atlasPartName: n"urban-01"
+
+UIIcon.vcd_type66_vtech_urban_02_purchasable:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_type66_preview.inkatlas"
+  atlasPartName: n"urban-02"
+
+UIIcon.vcd_type66_vtech_urban_03_purchasable:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_type66_preview.inkatlas"
+  atlasPartName: n"urban-03"
+
+UIIcon.vcd_type66_vtech_urban_04_purchasable:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_type66_preview.inkatlas"
+  atlasPartName: n"urban-04"
+
+UIIcon.vcd_type66_vtech_urban_05_purchasable:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_type66_preview.inkatlas"
+  atlasPartName: n"urban-05"
+
+# Variants
+Vehicle.vcd_type66_vtech_suburban_01_purchasable:
+  $base: Vehicle.v_sport2_quadra_type66
+  appearanceName: n"quadra_type66__basic_suburban_01"
+  displayName: LocKey(20279)
+  icon: UIIcon.vcd_type66_vtech_suburban_01_purchasable
+Vehicle.vcd_type66_vtech_suburban_01_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_type66_full.inkatlas"
+Vehicle.vcd_type66_vtech_suburban_01_purchasable.dealerPartName: "suburban-01"
 
 Vehicle.vcd_type66_vtech_suburban_02_purchasable:
-  $base: Vehicle.v_sport2_quadra_type66_rowley
+  $base: Vehicle.v_sport2_quadra_type66
   appearanceName: n"quadra_type66__basic_suburban_02"
   displayName: LocKey(20279)
   icon: UIIcon.vcd_type66_vtech_suburban_02_purchasable
+Vehicle.vcd_type66_vtech_suburban_02_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_type66_full.inkatlas"
+Vehicle.vcd_type66_vtech_suburban_02_purchasable.dealerPartName: "suburban-02"
 
-Vehicle.vcd_type66_vtech_suburban_02_purchasable.dealerPrice: 57000
-Vehicle.vcd_type66_vtech_suburban_02_purchasable.dealerCred: 20
-# - Codex image size: 1860x609
-Vehicle.vcd_type66_vtech_suburban_02_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen17.inkatlas"
-Vehicle.vcd_type66_vtech_suburban_02_purchasable.dealerPartName: "v_quadra_type66__basic_suburban_02_full"
+Vehicle.vcd_type66_vtech_suburban_03_purchasable:
+  $base: Vehicle.v_sport2_quadra_type66
+  appearanceName: n"quadra_type66__basic_suburban_03"
+  displayName: LocKey(20279)
+  icon: UIIcon.vcd_type66_vtech_suburban_03_purchasable
+Vehicle.vcd_type66_vtech_suburban_03_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_type66_full.inkatlas"
+Vehicle.vcd_type66_vtech_suburban_03_purchasable.dealerPartName: "suburban-03"
 
+Vehicle.vcd_type66_vtech_suburban_04_purchasable:
+  $base: Vehicle.v_sport2_quadra_type66
+  appearanceName: n"quadra_type66__basic_suburban_04"
+  displayName: LocKey(20279)
+  icon: UIIcon.vcd_type66_vtech_suburban_04_purchasable
+Vehicle.vcd_type66_vtech_suburban_04_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_type66_full.inkatlas"
+Vehicle.vcd_type66_vtech_suburban_04_purchasable.dealerPartName: "suburban-04"
+
+Vehicle.vcd_type66_vtech_suburban_05_purchasable:
+  $base: Vehicle.v_sport2_quadra_type66
+  appearanceName: n"quadra_type66__basic_suburban_05"
+  displayName: LocKey(20279)
+  icon: UIIcon.vcd_type66_vtech_suburban_05_purchasable
+Vehicle.vcd_type66_vtech_suburban_05_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_type66_full.inkatlas"
+Vehicle.vcd_type66_vtech_suburban_05_purchasable.dealerPartName: "suburban-05"
+
+Vehicle.vcd_type66_vtech_suburban_06_purchasable:
+  $base: Vehicle.v_sport2_quadra_type66
+  appearanceName: n"quadra_type66__basic_suburban_06"
+  displayName: LocKey(20279)
+  icon: UIIcon.vcd_type66_vtech_suburban_06_purchasable
+Vehicle.vcd_type66_vtech_suburban_06_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_type66_full.inkatlas"
+Vehicle.vcd_type66_vtech_suburban_06_purchasable.dealerPartName: "suburban-06"
+
+Vehicle.vcd_type66_vtech_urban_01_purchasable:
+  $base: Vehicle.v_sport2_quadra_type66
+  appearanceName: n"quadra_type66__basic_urban_01"
+  displayName: LocKey(20279)
+  icon: UIIcon.vcd_type66_vtech_urban_01_purchasable
+Vehicle.vcd_type66_vtech_urban_01_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_type66_full.inkatlas"
+Vehicle.vcd_type66_vtech_urban_01_purchasable.dealerPartName: "urban-01"
+
+Vehicle.vcd_type66_vtech_urban_02_purchasable:
+  $base: Vehicle.v_sport2_quadra_type66
+  appearanceName: n"quadra_type66__basic_urban_02"
+  displayName: LocKey(20279)
+  icon: UIIcon.vcd_type66_vtech_urban_02_purchasable
+Vehicle.vcd_type66_vtech_urban_02_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_type66_full.inkatlas"
+Vehicle.vcd_type66_vtech_urban_02_purchasable.dealerPartName: "urban-02"
+
+Vehicle.vcd_type66_vtech_urban_03_purchasable:
+  $base: Vehicle.v_sport2_quadra_type66
+  appearanceName: n"quadra_type66__basic_urban_03"
+  displayName: LocKey(20279)
+  icon: UIIcon.vcd_type66_vtech_urban_03_purchasable
+Vehicle.vcd_type66_vtech_urban_03_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_type66_full.inkatlas"
+Vehicle.vcd_type66_vtech_urban_03_purchasable.dealerPartName: "urban-03"
+
+Vehicle.vcd_type66_vtech_urban_04_purchasable:
+  $base: Vehicle.v_sport2_quadra_type66
+  appearanceName: n"quadra_type66__basic_urban_04"
+  displayName: LocKey(20279)
+  icon: UIIcon.vcd_type66_vtech_urban_04_purchasable
+Vehicle.vcd_type66_vtech_urban_04_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_type66_full.inkatlas"
+Vehicle.vcd_type66_vtech_urban_04_purchasable.dealerPartName: "urban-04"
+
+Vehicle.vcd_type66_vtech_urban_05_purchasable:
+  $base: Vehicle.v_sport2_quadra_type66
+  appearanceName: n"quadra_type66__basic_urban_05"
+  displayName: LocKey(20279)
+  icon: UIIcon.vcd_type66_vtech_urban_05_purchasable
+Vehicle.vcd_type66_vtech_urban_05_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_type66_full.inkatlas"
+Vehicle.vcd_type66_vtech_urban_05_purchasable.dealerPartName: "urban-05"
+
+# Core flats
+Vehicle.vcd_type66_vtech_purchasable.dealerPrice: 57000
+Vehicle.vcd_type66_vtech_purchasable.dealerCred: 20
+Vehicle.vcd_type66_vtech_purchasable.dealerVariants: 
+  - "Vehicle.vcd_type66_vtech_suburban_01_purchasable"
+  - "Vehicle.vcd_type66_vtech_suburban_02_purchasable"
+  - "Vehicle.vcd_type66_vtech_suburban_03_purchasable"
+  - "Vehicle.vcd_type66_vtech_suburban_04_purchasable"
+  - "Vehicle.vcd_type66_vtech_suburban_05_purchasable"
+  - "Vehicle.vcd_type66_vtech_suburban_06_purchasable"
+  - "Vehicle.vcd_type66_vtech_urban_01_purchasable"
+  - "Vehicle.vcd_type66_vtech_urban_02_purchasable"
+  - "Vehicle.vcd_type66_vtech_urban_03_purchasable"
+  - "Vehicle.vcd_type66_vtech_urban_04_purchasable"
+  - "Vehicle.vcd_type66_vtech_urban_05_purchasable"
+
+
+# Add to vehicles list
 Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_type66_vtech_suburban_01_purchasable"
   - !append t"Vehicle.vcd_type66_vtech_suburban_02_purchasable"
+  - !append t"Vehicle.vcd_type66_vtech_suburban_03_purchasable"
+  - !append t"Vehicle.vcd_type66_vtech_suburban_04_purchasable"
+  - !append t"Vehicle.vcd_type66_vtech_suburban_05_purchasable"
+  - !append t"Vehicle.vcd_type66_vtech_suburban_06_purchasable"
+  - !append t"Vehicle.vcd_type66_vtech_urban_01_purchasable"
+  - !append t"Vehicle.vcd_type66_vtech_urban_02_purchasable"
+  - !append t"Vehicle.vcd_type66_vtech_urban_03_purchasable"
+  - !append t"Vehicle.vcd_type66_vtech_urban_04_purchasable"
+  - !append t"Vehicle.vcd_type66_vtech_urban_05_purchasable"

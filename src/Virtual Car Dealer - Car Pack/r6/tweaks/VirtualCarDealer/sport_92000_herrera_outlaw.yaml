@@ -1,0 +1,154 @@
+Vehicle.vcd_herrera_outlaw_purchasable:
+  $base: Vehicle.v_sport1_herrera_outlaw
+
+# Icons
+UIIcon.vcd_herrera_outlaw_purchasable.mafia:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_herrera_preview.inkatlas"
+  atlasPartName: n"herrera-mafia"
+
+UIIcon.vcd_herrera_outlaw_purchasable.premium01:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_herrera_preview.inkatlas"
+  atlasPartName: n"herrera-premium-01"
+
+UIIcon.vcd_herrera_outlaw_purchasable.premium02:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_herrera_preview.inkatlas"
+  atlasPartName: n"herrera-premium-02"
+
+UIIcon.vcd_herrera_outlaw_purchasable.premium03:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_herrera_preview.inkatlas"
+  atlasPartName: n"herrera-premium-03"
+
+UIIcon.vcd_herrera_outlaw_purchasable.premium04:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_herrera_preview.inkatlas"
+  atlasPartName: n"herrera-premium-04"
+
+UIIcon.vcd_herrera_outlaw_purchasable.premium05:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_herrera_preview.inkatlas"
+  atlasPartName: n"herrera-premium-05"
+
+UIIcon.vcd_herrera_outlaw_purchasable.premium06:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_herrera_preview.inkatlas"
+  atlasPartName: n"herrera-premium-06"
+
+UIIcon.vcd_herrera_outlaw_purchasable.premium07:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_herrera_preview.inkatlas"
+  atlasPartName: n"herrera-premium-07"
+
+UIIcon.vcd_herrera_outlaw_purchasable.premium08:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_herrera_preview.inkatlas"
+  atlasPartName: n"herrera-premium-08"
+
+UIIcon.vcd_herrera_outlaw_purchasable.premium09:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_herrera_preview.inkatlas"
+  atlasPartName: n"herrera-premium-09"
+
+
+# Variants
+
+Vehicle.vcd_herrera_outlaw_purchasable.mafia:
+  $base: Vehicle.v_sport1_herrera_outlaw
+  appearanceName: n"herrera_outlaw__basic_mafia_01"
+  icon: UIIcon.vcd_herrera_outlaw_purchasable.mafia
+Vehicle.vcd_herrera_outlaw_purchasable.mafia.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_herrera_full.inkatlas"
+Vehicle.vcd_herrera_outlaw_purchasable.mafia.dealerPartName: "herrera-mafia"
+
+Vehicle.vcd_herrera_outlaw_purchasable.premium01:
+  $base: Vehicle.v_sport1_herrera_outlaw
+  appearanceName: n"herrera_outlaw__basic_premium_01"
+  icon: UIIcon.vcd_herrera_outlaw_purchasable.premium01
+Vehicle.vcd_herrera_outlaw_purchasable.premium01.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_herrera_full.inkatlas"
+Vehicle.vcd_herrera_outlaw_purchasable.premium01.dealerPartName: "herrera-premium-01"
+
+Vehicle.vcd_herrera_outlaw_purchasable.premium02:
+  $base: Vehicle.v_sport1_herrera_outlaw
+  appearanceName: n"herrera_outlaw__basic_premium_02"
+  icon: UIIcon.vcd_herrera_outlaw_purchasable.premium02
+Vehicle.vcd_herrera_outlaw_purchasable.premium02.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_herrera_full.inkatlas"
+Vehicle.vcd_herrera_outlaw_purchasable.premium02.dealerPartName: "herrera-premium-02"
+
+Vehicle.vcd_herrera_outlaw_purchasable.premium03:
+  $base: Vehicle.v_sport1_herrera_outlaw
+  appearanceName: n"herrera_outlaw__basic_premium_03"
+  icon: UIIcon.vcd_herrera_outlaw_purchasable.premium03
+Vehicle.vcd_herrera_outlaw_purchasable.premium03.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_herrera_full.inkatlas"
+Vehicle.vcd_herrera_outlaw_purchasable.premium03.dealerPartName: "herrera-premium-03"
+
+Vehicle.vcd_herrera_outlaw_purchasable.premium04:
+  $base: Vehicle.v_sport1_herrera_outlaw
+  appearanceName: n"herrera_outlaw__basic_premium_04"
+  icon: UIIcon.vcd_herrera_outlaw_purchasable.premium04
+Vehicle.vcd_herrera_outlaw_purchasable.premium04.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_herrera_full.inkatlas"
+Vehicle.vcd_herrera_outlaw_purchasable.premium04.dealerPartName: "herrera-premium-04"
+
+Vehicle.vcd_herrera_outlaw_purchasable.premium05:
+  $base: Vehicle.v_sport1_herrera_outlaw
+  appearanceName: n"herrera_outlaw__basic_premium_05"
+  icon: UIIcon.vcd_herrera_outlaw_purchasable.premium05
+Vehicle.vcd_herrera_outlaw_purchasable.premium05.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_herrera_full.inkatlas"
+Vehicle.vcd_herrera_outlaw_purchasable.premium05.dealerPartName: "herrera-premium-05"
+
+Vehicle.vcd_herrera_outlaw_purchasable.premium06:
+  $base: Vehicle.v_sport1_herrera_outlaw
+  appearanceName: n"herrera_outlaw__basic_premium_06"
+  icon: UIIcon.vcd_herrera_outlaw_purchasable.premium06
+Vehicle.vcd_herrera_outlaw_purchasable.premium06.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_herrera_full.inkatlas"
+Vehicle.vcd_herrera_outlaw_purchasable.premium06.dealerPartName: "herrera-premium-06"
+
+Vehicle.vcd_herrera_outlaw_purchasable.premium07:
+  $base: Vehicle.v_sport1_herrera_outlaw
+  appearanceName: n"herrera_outlaw__basic_premium_07"
+  icon: UIIcon.vcd_herrera_outlaw_purchasable.premium07
+Vehicle.vcd_herrera_outlaw_purchasable.premium07.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_herrera_full.inkatlas"
+Vehicle.vcd_herrera_outlaw_purchasable.premium07.dealerPartName: "herrera-premium-07"
+
+Vehicle.vcd_herrera_outlaw_purchasable.premium08:
+  $base: Vehicle.v_sport1_herrera_outlaw
+  appearanceName: n"herrera_outlaw__basic_premium_08"
+  icon: UIIcon.vcd_herrera_outlaw_purchasable.premium08
+Vehicle.vcd_herrera_outlaw_purchasable.premium08.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_herrera_full.inkatlas"
+Vehicle.vcd_herrera_outlaw_purchasable.premium08.dealerPartName: "herrera-premium-08"
+
+Vehicle.vcd_herrera_outlaw_purchasable.premium09:
+  $base: Vehicle.v_sport1_herrera_outlaw
+  appearanceName: n"herrera_outlaw__basic_premium_09"
+  icon: UIIcon.vcd_herrera_outlaw_purchasable.premium09
+Vehicle.vcd_herrera_outlaw_purchasable.premium09.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_herrera_full.inkatlas"
+Vehicle.vcd_herrera_outlaw_purchasable.premium09.dealerPartName: "herrera-premium-09"
+
+# Core flats:
+Vehicle.vcd_herrera_outlaw_purchasable.dealerPrice: 92000
+Vehicle.vcd_herrera_outlaw_purchasable.dealerCred: 35
+Vehicle.vcd_herrera_outlaw_purchasable.dealerVariants: 
+  - "Vehicle.vcd_herrera_outlaw_purchasable.mafia"
+  - "Vehicle.vcd_herrera_outlaw_purchasable.premium01"
+  - "Vehicle.vcd_herrera_outlaw_purchasable.premium02"
+  - "Vehicle.vcd_herrera_outlaw_purchasable.premium03"
+  - "Vehicle.vcd_herrera_outlaw_purchasable.premium04"
+  - "Vehicle.vcd_herrera_outlaw_purchasable.premium05"
+  - "Vehicle.vcd_herrera_outlaw_purchasable.premium06"
+  - "Vehicle.vcd_herrera_outlaw_purchasable.premium07"
+  - "Vehicle.vcd_herrera_outlaw_purchasable.premium08"
+  - "Vehicle.vcd_herrera_outlaw_purchasable.premium09"
+
+# Add to vehicles list
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_herrera_outlaw_purchasable.mafia"
+  - !append t"Vehicle.vcd_herrera_outlaw_purchasable.premium01"
+  - !append t"Vehicle.vcd_herrera_outlaw_purchasable.premium02"
+  - !append t"Vehicle.vcd_herrera_outlaw_purchasable.premium03"
+  - !append t"Vehicle.vcd_herrera_outlaw_purchasable.premium04"
+  - !append t"Vehicle.vcd_herrera_outlaw_purchasable.premium05"
+  - !append t"Vehicle.vcd_herrera_outlaw_purchasable.premium06"
+  - !append t"Vehicle.vcd_herrera_outlaw_purchasable.premium07"
+  - !append t"Vehicle.vcd_herrera_outlaw_purchasable.premium08"
+  - !append t"Vehicle.vcd_herrera_outlaw_purchasable.premium09"
