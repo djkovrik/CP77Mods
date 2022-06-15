@@ -1,0 +1,161 @@
+Vehicle.vcd_arch_sport_purchasable:
+  $base: Vehicle.v_sportbike2_arch_sport
+#
+UIIcon.vcd_arch_sport_purchasable.black02:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_arch_sport_preview.inkatlas"
+  atlasPartName: n"sport-black-02"
+
+Vehicle.vcd_arch_sport_purchasable.black02:
+  $base: Vehicle.v_sportbike2_arch_sport
+  appearanceName: n"arch_nemesis_basic_sport_black_02"
+  icon: UIIcon.vcd_arch_sport_purchasable.black02
+Vehicle.vcd_arch_sport_purchasable.black02.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_arch_sport_full.inkatlas"
+Vehicle.vcd_arch_sport_purchasable.black02.dealerPartName: "sport-black-02"
+
+#
+UIIcon.vcd_arch_sport_purchasable.blue01:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_arch_sport_preview.inkatlas"
+  atlasPartName: n"sport-blue-01"
+
+Vehicle.vcd_arch_sport_purchasable.blue01:
+  $base: Vehicle.v_sportbike2_arch_sport
+  appearanceName: n"arch_nemesis_basic_sport_blue_01"
+  icon: UIIcon.vcd_arch_sport_purchasable.blue01
+Vehicle.vcd_arch_sport_purchasable.blue01.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_arch_sport_full.inkatlas"
+Vehicle.vcd_arch_sport_purchasable.blue01.dealerPartName: "sport-blue-01"
+
+#
+UIIcon.vcd_arch_sport_purchasable.blue03_neon:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_arch_sport_preview.inkatlas"
+  atlasPartName: n"sport-blue-03-neon"
+
+Vehicle.vcd_arch_sport_purchasable.blue03_neon:
+  $base: Vehicle.v_sportbike2_arch_sport
+  appearanceName: n"arch_nemesis_basic_sport_blue_03_neon"
+  icon: UIIcon.vcd_arch_sport_purchasable.blue03_neon
+Vehicle.vcd_arch_sport_purchasable.blue03_neon.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_arch_sport_full.inkatlas"
+Vehicle.vcd_arch_sport_purchasable.blue03_neon.dealerPartName: "sport-blue-03-neon"
+
+#
+UIIcon.vcd_arch_sport_purchasable.gray02:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_arch_sport_preview.inkatlas"
+  atlasPartName: n"sport-gray-02"
+
+Vehicle.vcd_arch_sport_purchasable.gray02:
+  $base: Vehicle.v_sportbike2_arch_sport
+  appearanceName: n"arch_nemesis_basic_sport_gray_02"
+  icon: UIIcon.vcd_arch_sport_purchasable.gray02
+Vehicle.vcd_arch_sport_purchasable.gray02.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_arch_sport_full.inkatlas"
+Vehicle.vcd_arch_sport_purchasable.gray02.dealerPartName: "sport-gray-02"
+
+#
+UIIcon.vcd_arch_sport_purchasable.green02_neon:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_arch_sport_preview.inkatlas"
+  atlasPartName: n"sport-green-02-neon"
+
+Vehicle.vcd_arch_sport_purchasable.green02_neon:
+  $base: Vehicle.v_sportbike2_arch_sport
+  appearanceName: n"arch_nemesis_basic_sport_green_02_neon"
+  icon: UIIcon.vcd_arch_sport_purchasable.green02_neon
+Vehicle.vcd_arch_sport_purchasable.green02_neon.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_arch_sport_full.inkatlas"
+Vehicle.vcd_arch_sport_purchasable.green02_neon.dealerPartName: "sport-green-02-neon"
+
+#
+UIIcon.vcd_arch_sport_purchasable.neon01:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_arch_sport_preview.inkatlas"
+  atlasPartName: n"sport-neon-01"
+
+Vehicle.vcd_arch_sport_purchasable.neon01:
+  $base: Vehicle.v_sportbike2_arch_sport
+  appearanceName: n"arch_nemesis_basic_sport_neon_01"
+  icon: UIIcon.vcd_arch_sport_purchasable.neon01
+Vehicle.vcd_arch_sport_purchasable.neon01.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_arch_sport_full.inkatlas"
+Vehicle.vcd_arch_sport_purchasable.neon01.dealerPartName: "sport-neon-01"
+
+#
+UIIcon.vcd_arch_sport_purchasable.orange01:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_arch_sport_preview.inkatlas"
+  atlasPartName: n"sport-orange-01"
+
+Vehicle.vcd_arch_sport_purchasable.orange01:
+  $base: Vehicle.v_sportbike2_arch_sport
+  appearanceName: n"arch_nemesis_basic_sport_orange_01"
+  icon: UIIcon.vcd_arch_sport_purchasable.orange01
+Vehicle.vcd_arch_sport_purchasable.orange01.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_arch_sport_full.inkatlas"
+Vehicle.vcd_arch_sport_purchasable.orange01.dealerPartName: "sport-orange-01"
+
+#
+UIIcon.vcd_arch_sport_purchasable.red01:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_arch_sport_preview.inkatlas"
+  atlasPartName: n"sport-red-01"
+
+Vehicle.vcd_arch_sport_purchasable.red01:
+  $base: Vehicle.v_sportbike2_arch_sport
+  appearanceName: n"arch_nemesis_basic_sport_red_01"
+  icon: UIIcon.vcd_arch_sport_purchasable.red01
+Vehicle.vcd_arch_sport_purchasable.red01.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_arch_sport_full.inkatlas"
+Vehicle.vcd_arch_sport_purchasable.red01.dealerPartName: "sport-red-01"
+
+#
+UIIcon.vcd_arch_sport_purchasable.white01:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_arch_sport_preview.inkatlas"
+  atlasPartName: n"sport-white-01"
+
+Vehicle.vcd_arch_sport_purchasable.white01:
+  $base: Vehicle.v_sportbike2_arch_sport
+  appearanceName: n"arch_nemesis_basic_sport_white_01"
+  icon: UIIcon.vcd_arch_sport_purchasable.white01
+Vehicle.vcd_arch_sport_purchasable.white01.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_arch_sport_full.inkatlas"
+Vehicle.vcd_arch_sport_purchasable.white01.dealerPartName: "sport-white-01"
+
+#
+UIIcon.vcd_arch_sport_purchasable.yellow02:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_arch_sport_preview.inkatlas"
+  atlasPartName: n"sport-yellow-02"
+
+Vehicle.vcd_arch_sport_purchasable.yellow02:
+  $base: Vehicle.v_sportbike2_arch_sport
+  appearanceName: n"arch_nemesis_basic_sport_yellow_02"
+  icon: UIIcon.vcd_arch_sport_purchasable.yellow02
+Vehicle.vcd_arch_sport_purchasable.yellow02.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_arch_sport_full.inkatlas"
+Vehicle.vcd_arch_sport_purchasable.yellow02.dealerPartName: "sport-yellow-02"
+
+# Core flats:
+Vehicle.vcd_arch_sport_purchasable.dealerPrice: 81000
+Vehicle.vcd_arch_sport_purchasable.dealerCred: 40
+Vehicle.vcd_arch_sport_purchasable.dealerVariants: 
+  - "Vehicle.vcd_arch_sport_purchasable.black02"
+  - "Vehicle.vcd_arch_sport_purchasable.blue01"
+  - "Vehicle.vcd_arch_sport_purchasable.blue03_neon"
+  - "Vehicle.vcd_arch_sport_purchasable.gray02"
+  - "Vehicle.vcd_arch_sport_purchasable.green02_neon"
+  - "Vehicle.vcd_arch_sport_purchasable.neon01"
+  - "Vehicle.vcd_arch_sport_purchasable.orange01"
+  - "Vehicle.vcd_arch_sport_purchasable.red01"
+  - "Vehicle.vcd_arch_sport_purchasable.white01"
+  - "Vehicle.vcd_arch_sport_purchasable.yellow02"
+
+
+
+# Add to vehicles list
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_arch_sport_purchasable.black02"
+  - !append t"Vehicle.vcd_arch_sport_purchasable.blue01"
+  - !append t"Vehicle.vcd_arch_sport_purchasable.blue03_neon"
+  - !append t"Vehicle.vcd_arch_sport_purchasable.gray02"
+  - !append t"Vehicle.vcd_arch_sport_purchasable.green02_neon"
+  - !append t"Vehicle.vcd_arch_sport_purchasable.neon01"
+  - !append t"Vehicle.vcd_arch_sport_purchasable.orange01"
+  - !append t"Vehicle.vcd_arch_sport_purchasable.red01"
+  - !append t"Vehicle.vcd_arch_sport_purchasable.white01"
+  - !append t"Vehicle.vcd_arch_sport_purchasable.yellow02"

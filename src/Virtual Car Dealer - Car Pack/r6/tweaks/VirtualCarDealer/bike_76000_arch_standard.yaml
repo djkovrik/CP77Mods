@@ -1,0 +1,112 @@
+Vehicle.vcd_arch_standard_purchasable:
+  $base: Vehicle.v_sportbike2_arch
+
+# Icons
+UIIcon.vcd_arch_standard_purchasable.black03:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_arch_standard_preview.inkatlas"
+  atlasPartName: n"standard-black-03"
+
+UIIcon.vcd_arch_standard_purchasable.blue04:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_arch_standard_preview.inkatlas"
+  atlasPartName: n"standard-blue-04"
+
+UIIcon.vcd_arch_standard_purchasable.camo01:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_arch_standard_preview.inkatlas"
+  atlasPartName: n"standard-camo-01"
+
+UIIcon.vcd_arch_standard_purchasable.camo02_dark:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_arch_standard_preview.inkatlas"
+  atlasPartName: n"standard-camo-02-dark"
+
+UIIcon.vcd_arch_standard_purchasable.gray01:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_arch_standard_preview.inkatlas"
+  atlasPartName: n"standard-gray-01"
+
+UIIcon.vcd_arch_standard_purchasable.green03:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_arch_standard_preview.inkatlas"
+  atlasPartName: n"standard-green-03"
+
+UIIcon.vcd_arch_standard_purchasable.silver01:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_arch_standard_preview.inkatlas"
+  atlasPartName: n"standard-silver-01"
+
+# Variants
+
+Vehicle.vcd_arch_standard_purchasable.black03:
+  $base: Vehicle.v_sportbike2_arch
+  appearanceName: n"arch_nemesis_basic_standard_black_03"
+  icon: UIIcon.vcd_arch_standard_purchasable.black03
+Vehicle.vcd_arch_standard_purchasable.black03.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_arch_standard_full.inkatlas"
+Vehicle.vcd_arch_standard_purchasable.black03.dealerPartName: "standard-black-03"
+
+Vehicle.vcd_arch_standard_purchasable.blue04:
+  $base: Vehicle.v_sportbike2_arch
+  appearanceName: n"arch_nemesis_basic_standard_blue_04"
+  icon: UIIcon.vcd_arch_standard_purchasable.blue04
+Vehicle.vcd_arch_standard_purchasable.blue04.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_arch_standard_full.inkatlas"
+Vehicle.vcd_arch_standard_purchasable.blue04.dealerPartName: "standard-blue-04"
+
+Vehicle.vcd_arch_standard_purchasable.camo01:
+  $base: Vehicle.v_sportbike2_arch
+  appearanceName: n"arch_nemesis_basic_standard_camo_01"
+  icon: UIIcon.vcd_arch_standard_purchasable.camo01
+Vehicle.vcd_arch_standard_purchasable.camo01.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_arch_standard_full.inkatlas"
+Vehicle.vcd_arch_standard_purchasable.camo01.dealerPartName: "standard-camo-01"
+
+Vehicle.vcd_arch_standard_purchasable.camo02_dark:
+  $base: Vehicle.v_sportbike2_arch
+  appearanceName: n"arch_nemesis_basic_standard_camo_02_dark"
+  icon: UIIcon.vcd_arch_standard_purchasable.camo02_dark
+Vehicle.vcd_arch_standard_purchasable.camo02_dark.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_arch_standard_full.inkatlas"
+Vehicle.vcd_arch_standard_purchasable.camo02_dark.dealerPartName: "standard-camo-02-dark"
+
+Vehicle.vcd_arch_standard_purchasable.gray01:
+  $base: Vehicle.v_sportbike2_arch
+  appearanceName: n"arch_nemesis_basic_standard_gray_01"
+  icon: UIIcon.vcd_arch_standard_purchasable.gray01
+Vehicle.vcd_arch_standard_purchasable.gray01.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_arch_standard_full.inkatlas"
+Vehicle.vcd_arch_standard_purchasable.gray01.dealerPartName: "standard-gray-01"
+
+Vehicle.vcd_arch_standard_purchasable.green03:
+  $base: Vehicle.v_sportbike2_arch
+  appearanceName: n"arch_nemesis_basic_standard_green_03"
+  icon: UIIcon.vcd_arch_standard_purchasable.green03
+Vehicle.vcd_arch_standard_purchasable.green03.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_arch_standard_full.inkatlas"
+Vehicle.vcd_arch_standard_purchasable.green03.dealerPartName: "standard-green-03"
+
+Vehicle.vcd_arch_standard_purchasable.silver01:
+  $base: Vehicle.v_sportbike2_arch
+  appearanceName: n"arch_nemesis_basic_standard_silver_01"
+  icon: UIIcon.vcd_arch_standard_purchasable.silver01
+Vehicle.vcd_arch_standard_purchasable.silver01.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_arch_standard_full.inkatlas"
+Vehicle.vcd_arch_standard_purchasable.silver01.dealerPartName: "standard-silver-01"
+
+# Core flats:
+Vehicle.vcd_arch_standard_purchasable.dealerPrice: 76000
+Vehicle.vcd_arch_standard_purchasable.dealerCred: 40
+Vehicle.vcd_arch_standard_purchasable.dealerVariants: 
+  - "Vehicle.vcd_arch_standard_purchasable.black03"
+  - "Vehicle.vcd_arch_standard_purchasable.blue04"
+  - "Vehicle.vcd_arch_standard_purchasable.camo01"
+  - "Vehicle.vcd_arch_standard_purchasable.camo02_dark"
+  - "Vehicle.vcd_arch_standard_purchasable.gray01"
+  - "Vehicle.vcd_arch_standard_purchasable.green03"
+  - "Vehicle.vcd_arch_standard_purchasable.silver01"
+
+
+# Add to vehicles list
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_arch_standard_purchasable.black03"
+  - !append t"Vehicle.vcd_arch_standard_purchasable.blue04"
+  - !append t"Vehicle.vcd_arch_standard_purchasable.camo01"
+  - !append t"Vehicle.vcd_arch_standard_purchasable.camo02_dark"
+  - !append t"Vehicle.vcd_arch_standard_purchasable.gray01"
+  - !append t"Vehicle.vcd_arch_standard_purchasable.green03"
+  - !append t"Vehicle.vcd_arch_standard_purchasable.silver01"

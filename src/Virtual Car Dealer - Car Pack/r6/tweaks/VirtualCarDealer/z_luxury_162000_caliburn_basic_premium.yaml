@@ -1,19 +1,103 @@
+Vehicle.vcd_caliburn_purchasable_base:
+  $base: Vehicle.v_sport1_rayfield_caliburn
+
+# Icons
 UIIcon.vcd_caliburn_purchasable:
   $type: UIIcon_Record
-  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer.inkatlas"
-  atlasPartName: n"v-rayfield-caliburn"
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_caliburn_preview.inkatlas"
+  atlasPartName: n"premium-00"
+
+UIIcon.vcd_caliburn_purchasable02:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_caliburn_preview.inkatlas"
+  atlasPartName: n"premium-02"
+
+UIIcon.vcd_caliburn_purchasable03:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_caliburn_preview.inkatlas"
+  atlasPartName: n"premium-03"
+
+UIIcon.vcd_caliburn_purchasable04:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_caliburn_preview.inkatlas"
+  atlasPartName: n"premium-04"
+
+UIIcon.vcd_caliburn_purchasable05:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_caliburn_preview.inkatlas"
+  atlasPartName: n"premium-05"
+
+UIIcon.vcd_caliburn_purchasable06:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_caliburn_preview.inkatlas"
+  atlasPartName: n"premium-06"
+
+
+# Variants
 
 Vehicle.vcd_caliburn_purchasable:
   $base: Vehicle.v_sport1_rayfield_caliburn
   appearanceName: n"rayfield_caliburn__basic_premium_00"
   displayName: LocKey(20294)
   icon: UIIcon.vcd_caliburn_purchasable
+Vehicle.vcd_caliburn_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_caliburn_full.inkatlas"
+Vehicle.vcd_caliburn_purchasable.dealerPartName: "premium-00"
 
-Vehicle.vcd_caliburn_purchasable.dealerPrice: 132000
-Vehicle.vcd_caliburn_purchasable.dealerCred: 40
-# - Codex image size: 1860x609
-Vehicle.vcd_caliburn_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen9.inkatlas"
-Vehicle.vcd_caliburn_purchasable.dealerPartName: "v_rayfield_caliburn_full"
+Vehicle.vcd_caliburn_purchasable02:
+  $base: Vehicle.v_sport1_rayfield_caliburn
+  appearanceName: n"rayfield_caliburn__basic_premium_02"
+  displayName: LocKey(20294)
+  icon: UIIcon.vcd_caliburn_purchasable02
+Vehicle.vcd_caliburn_purchasable02.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_caliburn_full.inkatlas"
+Vehicle.vcd_caliburn_purchasable02.dealerPartName: "premium-02"
+
+Vehicle.vcd_caliburn_purchasable03:
+  $base: Vehicle.v_sport1_rayfield_caliburn
+  appearanceName: n"rayfield_caliburn__basic_premium_03"
+  displayName: LocKey(20294)
+  icon: UIIcon.vcd_caliburn_purchasable03
+Vehicle.vcd_caliburn_purchasable03.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_caliburn_full.inkatlas"
+Vehicle.vcd_caliburn_purchasable03.dealerPartName: "premium-03"
+
+Vehicle.vcd_caliburn_purchasable04:
+  $base: Vehicle.v_sport1_rayfield_caliburn
+  appearanceName: n"rayfield_caliburn__basic_premium_04"
+  displayName: LocKey(20294)
+  icon: UIIcon.vcd_caliburn_purchasable04
+Vehicle.vcd_caliburn_purchasable04.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_caliburn_full.inkatlas"
+Vehicle.vcd_caliburn_purchasable04.dealerPartName: "premium-04"
+
+Vehicle.vcd_caliburn_purchasable05:
+  $base: Vehicle.v_sport1_rayfield_caliburn
+  appearanceName: n"rayfield_caliburn__basic_premium_05"
+  displayName: LocKey(20294)
+  icon: UIIcon.vcd_caliburn_purchasable05
+Vehicle.vcd_caliburn_purchasable05.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_caliburn_full.inkatlas"
+Vehicle.vcd_caliburn_purchasable05.dealerPartName: "premium-05"
+
+Vehicle.vcd_caliburn_purchasable06:
+  $base: Vehicle.v_sport1_rayfield_caliburn
+  appearanceName: n"rayfield_caliburn__basic_premium_06"
+  displayName: LocKey(20294)
+  icon: UIIcon.vcd_caliburn_purchasable06
+Vehicle.vcd_caliburn_purchasable06.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_caliburn_full.inkatlas"
+Vehicle.vcd_caliburn_purchasable06.dealerPartName: "premium-06"
+
+# Core flats
+Vehicle.vcd_caliburn_purchasable_base.dealerPrice: 132000
+Vehicle.vcd_caliburn_purchasable_base.dealerCred: 40
+Vehicle.vcd_caliburn_purchasable_base.dealerVariants:
+  - "Vehicle.vcd_caliburn_purchasable"
+  - "Vehicle.vcd_caliburn_purchasable02"
+  - "Vehicle.vcd_caliburn_purchasable03"
+  - "Vehicle.vcd_caliburn_purchasable04"
+  - "Vehicle.vcd_caliburn_purchasable05"
+  - "Vehicle.vcd_caliburn_purchasable06"
 
 Vehicle.vehicle_list.list:
   - !append t"Vehicle.vcd_caliburn_purchasable"
+  - !append t"Vehicle.vcd_caliburn_purchasable02"
+  - !append t"Vehicle.vcd_caliburn_purchasable03"
+  - !append t"Vehicle.vcd_caliburn_purchasable04"
+  - !append t"Vehicle.vcd_caliburn_purchasable05"
+  - !append t"Vehicle.vcd_caliburn_purchasable06"
