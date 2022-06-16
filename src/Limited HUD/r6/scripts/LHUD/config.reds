@@ -242,6 +242,8 @@ public class LHUDAddonsConfig {
   public static func HidePromptTalk() -> Bool = false
   // Removes overhead subtitles
   public static func RemoveOverheadSubtitles() -> Bool = false
+  // Remove new area notification
+  public static func RemoveNewAreaNotification() -> Bool = false
 }
 
 // Objects Coloring config

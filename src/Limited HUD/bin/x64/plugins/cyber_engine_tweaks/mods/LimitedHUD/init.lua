@@ -123,6 +123,7 @@ local defaults = {
 	AddonsPromptGetIn = false,
 	AddonsPromptPickUpBody = false,
 	AddonsPromptTalk = false,
+	AddonsRemoveNewArea = false,
 	AddonsFillInteraction = 3,
 	AddonsFillImportantInteraction = 6,
 	AddonsFillWeakspot = 7,
@@ -280,6 +281,7 @@ local settings = {
 	AddonsPromptGetIn = false,
 	AddonsPromptPickUpBody = false,
 	AddonsPromptTalk = false,
+	AddonsRemoveNewArea = false,
 	AddonsFillInteraction = 3,
 	AddonsFillImportantInteraction = 6,
 	AddonsFillWeakspot = 7,
@@ -880,6 +882,10 @@ function SetupSettingsMenu()
 		settings.AddonsRemoveOverheadSubtitles = state
 		SaveSettings()
 	end)
+	nativeSettings.addSwitch("/lhudaddons/remover", GetLocalizedTextByKey("Addons-LHUD-New-Area"), GetLocalizedTextByKey("Addons-LHUD-New-Area-Desc"), settings.AddonsRemoveNewArea, defaults.AddonsRemoveNewArea, function(state)
+		settings.AddonsRemoveNewArea = state
+		SaveSettings()
+	end)
 	
 	nativeSettings.addSubcategory("/lhudaddons/dialogresizer", GetLocalizedTextByKey("Addons-LHUD-Dialog-Resizer"))
 	nativeSettings.addRangeFloat("/lhudaddons/dialogresizer", GetLocalizedTextByKey("Addons-LHUD-Scale"), GetLocalizedTextByKey("Addons-LHUD-Scale-Desc"), 0.1, 2.0, 0.05, "%.2f", settings.AddonsDialogResizerScale, defaults.AddonsDialogResizerScale, function(value) settings.AddonsDialogResizerScale = value
@@ -1135,6 +1141,7 @@ registerForEvent("onInit", function()
 	Override("LimitedHudConfig.LHUDAddonsConfig", "HidePromptPickUpBody;", function(_) return settings.AddonsPromptPickUpBody end)
 	Override("LimitedHudConfig.LHUDAddonsConfig", "HidePromptTalk;", function(_) return settings.AddonsPromptTalk end)
 	Override("LimitedHudConfig.LHUDAddonsConfig", "RemoveOverheadSubtitles;", function(_) return settings.AddonsRemoveOverheadSubtitles end)
+	Override("LimitedHudConfig.LHUDAddonsConfig", "RemoveNewAreaNotification;", function(_) return settings.AddonsRemoveNewArea end)
 	
 	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "FillInteraction;", function(_) return settings.AddonsFillInteraction - 1 end)
 	Override("LimitedHudConfig.LHUDAddonsColoringConfig", "FillImportantInteraction;", function(_) return settings.AddonsFillImportantInteraction - 1 end)

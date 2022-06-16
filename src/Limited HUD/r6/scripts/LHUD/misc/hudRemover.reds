@@ -34,3 +34,11 @@ protected func ShouldDisplayLine(lineData: scnDialogLineData) -> Bool {
     return shouldDisplayOriginal;
   };
 }
+
+// -- NEW AREA NOTIFICATION
+@wrapMethod(JournalNotificationQueue)
+protected cb func OnNewLocationDiscovered(newLocation: Bool) -> Bool {
+  if !LHUDAddonsConfig.RemoveNewAreaNotification() {
+    wrappedMethod(newLocation);
+  };
+}

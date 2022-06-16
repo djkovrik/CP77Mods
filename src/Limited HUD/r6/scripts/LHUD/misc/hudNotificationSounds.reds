@@ -273,7 +273,7 @@ private final func OnCharacterLevelUpdated(value: Variant) -> Void {
 
 @replaceMethod(GenericNotificationController)
 public cb func SetNotificationData(notificationData: ref<GenericNotificationViewData>) -> Void {
-  // LogChannel(n"DEBUG", s"SetNotificationData( \(GetLocalizedText(notificationData.title)) \(notificationData.soundEvent), \(notificationData.soundAction))");
+  // LogChannel(n"DEBUG", s"SetNotificationData( \(GetLocalizedText(notificationData.title)) \(GetLocalizedText(notificationData.text)) \(notificationData.soundEvent), \(notificationData.soundAction) \(notificationData.action))");
   this.m_data = notificationData;
 
   // Additional mute
