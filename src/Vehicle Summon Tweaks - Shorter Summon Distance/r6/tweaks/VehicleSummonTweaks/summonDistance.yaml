@@ -1,0 +1,4 @@
+Vehicle.summon_setup.summonDistanceMin: 6.25   # Default: 25.0
+Vehicle.summon_setup.summonDistanceMax: 62.5   # Default: 250.0
+Vehicle.summon_setup.spawnDistanceMin: 7.5   # Default: 30.0
+Vehicle.summon_setup.spawnDistanceMax: 25.0   # Default: 100.0
