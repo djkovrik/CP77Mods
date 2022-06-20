@@ -1,0 +1,106 @@
+Vehicle.vcd_apollo_cicada_purchasable:
+  $base: Vehicle.v_sportbike3_brennan_apollo_nomad
+
+#
+UIIcon.vcd_apollo_cicada_purchasable.adventure01:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_apollo_preview.inkatlas"
+  atlasPartName: n"basic-adventure-01"
+
+Vehicle.vcd_apollo_cicada_purchasable.adventure01:
+  $base: Vehicle.v_sportbike3_brennan_apollo_nomad
+  appearanceName: n"brennan_apollo_basic_adventure_01"
+  displayName: LocKey(23292)
+  icon: UIIcon.vcd_apollo_cicada_purchasable.adventure01
+Vehicle.vcd_apollo_cicada_purchasable.adventure01.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_apollo_other_full.inkatlas"
+Vehicle.vcd_apollo_cicada_purchasable.adventure01.dealerPartName: "basic-adventure-01"
+
+#
+UIIcon.vcd_apollo_cicada_purchasable.adventure011:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_apollo_preview.inkatlas"
+  atlasPartName: n"basic-adventure-01-1"
+
+Vehicle.vcd_apollo_cicada_purchasable.adventure011:
+  $base: Vehicle.v_sportbike3_brennan_apollo_nomad
+  appearanceName: n"brennan_apollo_basic_adventure_01_1"
+  displayName: LocKey(23292)
+  icon: UIIcon.vcd_apollo_cicada_purchasable.adventure011
+Vehicle.vcd_apollo_cicada_purchasable.adventure011.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_apollo_other_full.inkatlas"
+Vehicle.vcd_apollo_cicada_purchasable.adventure011.dealerPartName: "basic-adventure-01-1"
+
+#
+UIIcon.vcd_apollo_cicada_purchasable.adventure012:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_apollo_preview.inkatlas"
+  atlasPartName: n"basic-adventure-01-2"
+
+Vehicle.vcd_apollo_cicada_purchasable.adventure012:
+  $base: Vehicle.v_sportbike3_brennan_apollo_nomad
+  appearanceName: n"brennan_apollo_basic_adventure_01_2"
+  displayName: LocKey(23292)
+  icon: UIIcon.vcd_apollo_cicada_purchasable.adventure012
+Vehicle.vcd_apollo_cicada_purchasable.adventure012.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_apollo_other_full.inkatlas"
+Vehicle.vcd_apollo_cicada_purchasable.adventure012.dealerPartName: "basic-adventure-01-2"
+
+#
+UIIcon.vcd_apollo_cicada_purchasable.aldecados01:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_apollo_preview.inkatlas"
+  atlasPartName: n"basic-aldecados-01"
+
+Vehicle.vcd_apollo_cicada_purchasable.aldecados01:
+  $base: Vehicle.v_sportbike3_brennan_apollo_nomad
+  appearanceName: n"brennan_apollo_basic_aldecados_01"
+  displayName: LocKey(23292)
+  icon: UIIcon.vcd_apollo_cicada_purchasable.aldecados01
+Vehicle.vcd_apollo_cicada_purchasable.aldecados01.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_apollo_other_full.inkatlas"
+Vehicle.vcd_apollo_cicada_purchasable.aldecados01.dealerPartName: "basic-aldecados-01"
+
+#
+UIIcon.vcd_apollo_cicada_purchasable.aldecados02:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_apollo_preview.inkatlas"
+  atlasPartName: n"basic-aldecados-02"
+
+Vehicle.vcd_apollo_cicada_purchasable.aldecados02:
+  $base: Vehicle.v_sportbike3_brennan_apollo_nomad
+  appearanceName: n"brennan_apollo_basic_aldecados_02"
+  displayName: LocKey(23292)
+  icon: UIIcon.vcd_apollo_cicada_purchasable.aldecados02
+Vehicle.vcd_apollo_cicada_purchasable.aldecados02.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_apollo_other_full.inkatlas"
+Vehicle.vcd_apollo_cicada_purchasable.aldecados02.dealerPartName: "basic-aldecados-02"
+
+#
+UIIcon.vcd_apollo_cicada_purchasable.aldecados03:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_apollo_preview.inkatlas"
+  atlasPartName: n"basic-aldecados-03"
+
+Vehicle.vcd_apollo_cicada_purchasable.aldecados03:
+  $base: Vehicle.v_sportbike3_brennan_apollo_nomad
+  appearanceName: n"brennan_apollo_basic_aldecados_03"
+  displayName: LocKey(23292)
+  icon: UIIcon.vcd_apollo_cicada_purchasable.aldecados03
+Vehicle.vcd_apollo_cicada_purchasable.aldecados03.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_apollo_other_full.inkatlas"
+Vehicle.vcd_apollo_cicada_purchasable.aldecados03.dealerPartName: "basic-aldecados-03"
+
+# Core flats:
+Vehicle.vcd_apollo_cicada_purchasable.dealerPrice: 40000
+Vehicle.vcd_apollo_cicada_purchasable.dealerCred: 35
+Vehicle.vcd_apollo_cicada_purchasable.dealerVariants: 
+  - "Vehicle.vcd_apollo_cicada_purchasable.adventure01"
+  - "Vehicle.vcd_apollo_cicada_purchasable.adventure011"
+  - "Vehicle.vcd_apollo_cicada_purchasable.adventure012"
+  - "Vehicle.vcd_apollo_cicada_purchasable.aldecados01"
+  - "Vehicle.vcd_apollo_cicada_purchasable.aldecados02"
+  - "Vehicle.vcd_apollo_cicada_purchasable.aldecados03"
+
+# Add to vehicles list
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_apollo_cicada_purchasable.adventure01"
+  - !append t"Vehicle.vcd_apollo_cicada_purchasable.adventure011"
+  - !append t"Vehicle.vcd_apollo_cicada_purchasable.adventure012"
+  - !append t"Vehicle.vcd_apollo_cicada_purchasable.aldecados01"
+  - !append t"Vehicle.vcd_apollo_cicada_purchasable.aldecados02"
+  - !append t"Vehicle.vcd_apollo_cicada_purchasable.aldecados03"

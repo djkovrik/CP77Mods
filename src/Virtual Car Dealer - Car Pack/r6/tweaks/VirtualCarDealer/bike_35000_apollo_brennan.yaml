@@ -1,0 +1,90 @@
+Vehicle.vcd_apollo_brennan_purchasable:
+  $base: Vehicle.v_sportbike3_brennan_apollo_sport
+
+#
+UIIcon.vcd_apollo_brennan_purchasable.v2:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_apollo_preview.inkatlas"
+  atlasPartName: n"basic-brennan-apollo-v2"
+
+Vehicle.vcd_apollo_brennan_purchasable.v2:
+  $base: Vehicle.v_sportbike3_brennan_apollo_sport
+  appearanceName: n"brennan_apollo_basic_brennan_apollo_v2"
+  displayName: LocKey(22095)
+  icon: UIIcon.vcd_apollo_brennan_purchasable.v2
+Vehicle.vcd_apollo_brennan_purchasable.v2.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_apollo_brennan_full.inkatlas"
+Vehicle.vcd_apollo_brennan_purchasable.v2.dealerPartName: "basic-brennan-apollo-v2"
+
+#
+UIIcon.vcd_apollo_brennan_purchasable.v21:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_apollo_preview.inkatlas"
+  atlasPartName: n"basic-brennan-apollo-v2-1"
+
+Vehicle.vcd_apollo_brennan_purchasable.v21:
+  $base: Vehicle.v_sportbike3_brennan_apollo_sport
+  appearanceName: n"brennan_apollo_basic_brennan_apollo_v2_1"
+  displayName: LocKey(22095)
+  icon: UIIcon.vcd_apollo_brennan_purchasable.v21
+Vehicle.vcd_apollo_brennan_purchasable.v21.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_apollo_brennan_full.inkatlas"
+Vehicle.vcd_apollo_brennan_purchasable.v21.dealerPartName: "basic-brennan-apollo-v2-1"
+
+#
+UIIcon.vcd_apollo_brennan_purchasable.v22:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_apollo_preview.inkatlas"
+  atlasPartName: n"basic-brennan-apollo-v2-2"
+
+Vehicle.vcd_apollo_brennan_purchasable.v22:
+  $base: Vehicle.v_sportbike3_brennan_apollo_sport
+  appearanceName: n"brennan_apollo_basic_brennan_apollo_v2_2"
+  displayName: LocKey(22095)
+  icon: UIIcon.vcd_apollo_brennan_purchasable.v22
+Vehicle.vcd_apollo_brennan_purchasable.v22.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_apollo_brennan_full.inkatlas"
+Vehicle.vcd_apollo_brennan_purchasable.v22.dealerPartName: "basic-brennan-apollo-v2-2"
+
+#
+UIIcon.vcd_apollo_brennan_purchasable.v3:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_apollo_preview.inkatlas"
+  atlasPartName: n"basic-brennan-apollo-v3"
+
+Vehicle.vcd_apollo_brennan_purchasable.v3:
+  $base: Vehicle.v_sportbike3_brennan_apollo_sport
+  appearanceName: n"brennan_apollo_basic_brennan_apollo_v3"
+  displayName: LocKey(22095)
+  icon: UIIcon.vcd_apollo_brennan_purchasable.v3
+Vehicle.vcd_apollo_brennan_purchasable.v3.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_apollo_brennan_full.inkatlas"
+Vehicle.vcd_apollo_brennan_purchasable.v3.dealerPartName: "basic-brennan-apollo-v3"
+
+#
+UIIcon.vcd_apollo_brennan_purchasable.v31:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_apollo_preview.inkatlas"
+  atlasPartName: n"basic-brennan-apollo-v3-1"
+
+Vehicle.vcd_apollo_brennan_purchasable.v31:
+  $base: Vehicle.v_sportbike3_brennan_apollo_sport
+  appearanceName: n"brennan_apollo_basic_brennan_apollo_v3_1"
+  displayName: LocKey(22095)
+  icon: UIIcon.vcd_apollo_brennan_purchasable.v31
+Vehicle.vcd_apollo_brennan_purchasable.v31.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_apollo_brennan_full.inkatlas"
+Vehicle.vcd_apollo_brennan_purchasable.v31.dealerPartName: "basic-brennan-apollo-v3-1"
+
+# Core flats:
+Vehicle.vcd_apollo_brennan_purchasable.dealerPrice: 35000
+Vehicle.vcd_apollo_brennan_purchasable.dealerCred: 30
+Vehicle.vcd_apollo_brennan_purchasable.dealerVariants: 
+  - "Vehicle.vcd_apollo_brennan_purchasable.v2"
+  - "Vehicle.vcd_apollo_brennan_purchasable.v21"
+  - "Vehicle.vcd_apollo_brennan_purchasable.v22"
+  - "Vehicle.vcd_apollo_brennan_purchasable.v3"
+  - "Vehicle.vcd_apollo_brennan_purchasable.v31"
+
+# Add to vehicles list
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_apollo_brennan_purchasable.v2"
+  - !append t"Vehicle.vcd_apollo_brennan_purchasable.v21"
+  - !append t"Vehicle.vcd_apollo_brennan_purchasable.v22"
+  - !append t"Vehicle.vcd_apollo_brennan_purchasable.v3"
+  - !append t"Vehicle.vcd_apollo_brennan_purchasable.v31"
