@@ -1,59 +1,5 @@
 import MutedMarkersConfig.*
 
-@addField(GameplayRoleMappinData)
-public let m_isShard_MM: Bool;
-
-@addMethod(GameplayRoleComponent)
-public func ShouldShowOnMinimap(data: SDeviceMappinData, roleMappinData: ref<GameplayRoleMappinData> ) -> Bool {
-  let quality: gamedataQuality = roleMappinData.m_quality;
-
-  if Equals(quality, gamedataQuality.Legendary) {
-    return !MiniMapConfig.HideLegendary();
-  };
-
-  if Equals(quality, gamedataQuality.Epic) {
-    return !MiniMapConfig.HideEpic();
-  };
-
-  if Equals(quality, gamedataQuality.Rare) {
-    return !MiniMapConfig.HideRare();
-  };
-
-  if Equals(quality, gamedataQuality.Uncommon) {
-    return !MiniMapConfig.HideUncommon();
-  };
-
-  if Equals(quality, gamedataQuality.Common) {
-    return !MiniMapConfig.HideCommon();
-  };
-
-  if roleMappinData.m_isShard_MM {
-    return !MiniMapConfig.HideShards();
-  };
-
-  if Equals(data.mappinVariant, gamedataMappinVariant.LootVariant) {
-    return true;
-  }
-
-  let showOnMiniMap: Bool;
-
-  if Equals(data.mappinVariant, gamedataMappinVariant.Zzz07_PlayerStashVariant) {
-    showOnMiniMap = true;
-  } else {
-    if roleMappinData.m_isQuest || roleMappinData.m_isTagged {
-      showOnMiniMap = true;
-    } else {
-      if roleMappinData.m_isCurrentTarget || roleMappinData.m_visibleThroughWalls || Equals(GetVisibilityTypeFor(data, this), MarkerVisibility.ThroughWalls) {
-        showOnMiniMap = true;
-      } else {
-        showOnMiniMap = false;
-      };
-    };
-  };
-
-  return showOnMiniMap;
-}
-
 @addMethod(GameplayRoleComponent)
 protected cb func OnEvaluateVisibilitiesEvent(evt: ref<EvaluateVisibilitiesEvent>) -> Bool {
   this.EvaluateVisibilities();
@@ -64,22 +10,9 @@ public func EvaluateVisibilities() -> Void {
   let isScannerActive: Bool = this.IsScannerActive_MM();
   let i: Int32 = 0;
   let visibility: MarkerVisibility;
-  let owner: ref<GameObject> = this.GetOwner();
-  let puppet: ref<ScriptedPuppet> = owner as ScriptedPuppet;
-  let container: ref<gameLootContainerBase> = this.GetOwner() as gameLootContainerBase;
-  let alreadyLooted: Bool = false;
-  if IsDefined(puppet) && puppet.IsLooted() {
-    alreadyLooted = true;
-  };
-  if IsDefined(container) && container.IsEmpty() {
-    alreadyLooted = true;
-  };
   while i < ArraySize(this.m_mappins) {
     if NotEquals(this.m_mappins[i].gameplayRole, IntEnum(0)) || NotEquals(this.m_mappins[i].gameplayRole, IntEnum(1)) {
-      visibility = GetVisibilityTypeFor(this.m_mappins[i], this);
-      if alreadyLooted {
-        visibility = MarkerVisibility.Hidden;
-      };
+      visibility = MMUtils.GetVisibilityTypeFor(this.m_mappins[i], this);
       switch(visibility) {
         case MarkerVisibility.ThroughWalls:
           this.ActivateSingleMappin(i);
@@ -103,27 +36,14 @@ public func EvaluateVisibilities() -> Void {
   };
 }
 
-@replaceMethod(GameplayRoleComponent)
+@wrapMethod(GameplayRoleComponent)
 private final func CreateRoleMappinData(data: SDeviceMappinData) -> ref<GameplayRoleMappinData> {
-  let showOnMiniMap: Bool;
-  let roleMappinData: ref<GameplayRoleMappinData> = new GameplayRoleMappinData();
-  let showThroughWalls: Bool = Equals(GetVisibilityTypeFor(data, this), MarkerVisibility.ThroughWalls);
-  roleMappinData.m_mappinVisualState = this.GetOwner().DeterminGameplayRoleMappinVisuaState(data);
-  roleMappinData.m_isTagged = this.GetOwner().IsTaggedinFocusMode();
-  roleMappinData.m_isQuest = this.GetOwner().IsQuest() || this.GetOwner().IsAnyClueEnabled() && !this.GetOwner().IsClueInspected();
-  roleMappinData.m_visibleThroughWalls = this.m_isForcedVisibleThroughWalls || this.GetOwner().IsObjectRevealed() || this.IsCurrentTarget() || showThroughWalls;
-  roleMappinData.m_range = this.GetOwner().DeterminGameplayRoleMappinRange(data);
-  roleMappinData.m_isCurrentTarget = this.IsCurrentTarget();
-  roleMappinData.m_gameplayRole = this.m_currentGameplayRole;
-  roleMappinData.m_braindanceLayer = this.GetOwner().GetBraindanceLayer();
-  roleMappinData.m_quality = this.GetOwner().GetLootQuality();
-  roleMappinData.m_isIconic = this.GetOwner().GetIsIconic();
-  roleMappinData.m_hasOffscreenArrow = this.HasOffscreenArrow();
-  roleMappinData.m_isScanningCluesBlocked = this.GetOwner().IsAnyClueEnabled() && this.GetOwner().IsScaningCluesBlocked();
-  roleMappinData.m_textureID = this.GetIconIdForMappinVariant(data.mappinVariant);
-  roleMappinData.m_isShard_MM = Equals(roleMappinData.m_textureID, t"MappinIcons.ShardMappin");
-  roleMappinData.m_showOnMiniMap = this.ShouldShowOnMinimap(data, roleMappinData);
-  return roleMappinData;
+  let result: ref<GameplayRoleMappinData> = wrappedMethod(data);
+  let showThroughWalls: Bool = Equals(MMUtils.GetVisibilityTypeFor(data, this), MarkerVisibility.ThroughWalls);
+  result.m_visibleThroughWalls = this.m_isForcedVisibleThroughWalls || this.GetOwner().IsObjectRevealed() || this.IsCurrentTarget() || showThroughWalls;
+  result.isShard_mm = Equals(result.m_textureID, t"MappinIcons.ShardMappin");
+  result.m_showOnMiniMap = MMUtils.ShouldShowOnMinimap(data, result, this);
+  return result;
 }
 
 // Refresh markers

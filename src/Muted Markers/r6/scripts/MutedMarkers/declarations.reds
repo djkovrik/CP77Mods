@@ -5,3 +5,5 @@ enum MarkerVisibility {
   Hidden = 3, 
   Default = 4 
 }
+
+public class EvaluateVisibilitiesEvent extends Event {}

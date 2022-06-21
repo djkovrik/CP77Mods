@@ -5,7 +5,7 @@ import MutedMarkersConfig.MiniMapConfig
 protected cb func OnUpdate() -> Bool {
   this.Update();
   let data: ref<GameplayRoleMappinData> = this.m_mappin.GetScriptData() as GameplayRoleMappinData;
-  if data.m_isShard_MM && MiniMapConfig.HideShards() {
+  if data.isShard_mm && MiniMapConfig.HideShards() {
     this.GetRootWidget().SetVisible(false);
   };
 }
