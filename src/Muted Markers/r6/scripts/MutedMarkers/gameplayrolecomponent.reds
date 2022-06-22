@@ -2,12 +2,11 @@ import MutedMarkersConfig.*
 
 @addMethod(GameplayRoleComponent)
 protected cb func OnEvaluateVisibilitiesEvent(evt: ref<EvaluateVisibilitiesEvent>) -> Bool {
-  this.EvaluateVisibilities();
+  this.EvaluateVisibilityMM();
 }
 
 @addMethod(GameplayRoleComponent)
-public func EvaluateVisibilities() -> Void {
-  let isScannerActive: Bool = this.IsScannerActive_MM();
+public func EvaluateVisibilityMM() -> Void {
   let i: Int32 = 0;
   let visibility: MarkerVisibility;
   while i < ArraySize(this.m_mappins) {
@@ -21,7 +20,7 @@ public func EvaluateVisibilities() -> Void {
           this.ActivateSingleMappin(i);
           break;
         case MarkerVisibility.Scanner:
-          this.ToggleMappin(i, isScannerActive);
+          this.ToggleMappin(i, this.isScannerActive_mm);
           break;
         case MarkerVisibility.Hidden:
           this.DeactivateSingleMappin(i);
@@ -47,20 +46,45 @@ private final func CreateRoleMappinData(data: SDeviceMappinData) -> ref<Gameplay
 }
 
 // Refresh markers
+@addMethod(GameplayRoleComponent)
+private func IsLootOrShardMM() -> Bool {
+  let isLootOrShard: Bool = false;
+  let j: Int32 = 0;
+  while j < ArraySize(this.m_mappins) {
+    PrintDump("Checking", this.m_mappins[j], this);
+    if Equals(this.m_mappins[j].gameplayRole, EGameplayRole.Loot) || Equals(this.m_mappins[j].mappinVariant, gamedataMappinVariant.LootVariant ) || this.m_mappins[j].visualStateData.isShard_mm {
+      isLootOrShard = true;
+    };
+    j += 1;
+  };
+
+  return isLootOrShard;
+}
+
+//  Tweak show/hide logic
 @wrapMethod(GameplayRoleComponent)
 protected cb func OnHUDInstruction(evt: ref<HUDInstruction>) -> Bool {
   wrappedMethod(evt);
-  this.EvaluateVisibilities();
+  this.EvaluateVisibilityMM();
+}
+
+@wrapMethod(GameplayRoleComponent)
+protected func HideRoleMappinsByTask() -> Void {
+  if this.IsLootOrShardMM() {
+    this.EvaluateVisibilityMM();
+  } else {
+    wrappedMethod();
+  };
 }
 
 @wrapMethod(GameplayRoleComponent)
 public final func ShowRoleMappins() -> Void {
   wrappedMethod();
-  this.EvaluateVisibilities();
+  this.EvaluateVisibilityMM();
 }
 
 @wrapMethod(GameplayRoleComponent)
 public final func HideRoleMappins() -> Void {
   wrappedMethod();
-  this.EvaluateVisibilities();
+  this.EvaluateVisibilityMM();
 }

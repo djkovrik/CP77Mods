@@ -27,7 +27,8 @@ local defaults = {
 	HideUncommon = false,
 	HideCommon = false,
 	HideEnemies = false,
-	HideShards = false
+	HideShards = false,
+	HideDelay = 5.0
 }
 
 local settings = {
@@ -51,7 +52,8 @@ local settings = {
 	HideUncommon = false,
 	HideCommon = false,
 	HideEnemies = false,
-	HideShards = false
+	HideShards = false,
+	HideDelay = 5.0
 }
 
 local list = {
@@ -110,49 +112,103 @@ function SetupSettingsMenu()
 
 	nativeSettings.addSelectorString("/mutedmarkers/loot", "Iconic", "Visibility for iconic items", list, settings.LootIconic, defaults.LootIconic, function(value)
 		settings.LootIconic = value
+		SaveSettings()
 	end)
 
 	nativeSettings.addSelectorString("/mutedmarkers/loot", "Legendary", "Visibility for legendary items", list, settings.LootLegendary, defaults.LootLegendary, function(value)
 		settings.LootLegendary = value
+		SaveSettings()
 	end)
 	
 	nativeSettings.addSelectorString("/mutedmarkers/loot", "Epic", "Visibility for epic items", list, settings.LootEpic, defaults.LootEpic, function(value)
 		settings.LootEpic = value
+		SaveSettings()
 	end)
 	
 	nativeSettings.addSelectorString("/mutedmarkers/loot", "Rare", "Visibility for rare items", list, settings.LootRare, defaults.LootRare, function(value)
 		settings.LootRare = value
+		SaveSettings()
 	end)
 	
 	nativeSettings.addSelectorString("/mutedmarkers/loot", "Uncommon", "Visibility for uncommon items", list, settings.LootUncommon, defaults.LootUncommon, function(value)
 		settings.LootUncommon = value
+		SaveSettings()
 	end)
 	
 	nativeSettings.addSelectorString("/mutedmarkers/loot", "Common", "Visibility for common items", list, settings.LootCommon, defaults.LootCommon, function(value)
 		settings.LootCommon = value
+		SaveSettings()
+	end)
+	
+	nativeSettings.addRangeFloat("/mutedmarkers/loot", "Markers hide delay", "Delay in seconds between scanner disabling and markers hiding", 0.1, 30.0, 1.0, "%.1f", settings.HideDelay, defaults.HideDelay, function(value)
+		settings.HideDelay = value
+		SaveSettings()
 	end)
 	
 	nativeSettings.addSelectorString("/mutedmarkers/loot", "Shards", "Visibility for shards", list, settings.LootShards, defaults.LootShards, function(value)
 		settings.LootShards = value
+		SaveSettings()
 	end)
 	
 	nativeSettings.addSubcategory("/mutedmarkers/world", "World markers")
-	nativeSettings.addSwitch("/mutedmarkers/world", "Hide access points", "Enable if you want to hide icons for access points", settings.HideAccessPoints, defaults.HideAccessPoints, function(state) settings.HideAccessPoints = state end)
-	nativeSettings.addSwitch("/mutedmarkers/world", "Hide body containers", "Enable if you want to hide icons for body containers", settings.HideBodyContainers, defaults.HideBodyContainers, function(state) settings.HideBodyContainers = state end)
-	nativeSettings.addSwitch("/mutedmarkers/world", "Hide cameras", "Enable if you want to hide icons for cameras", settings.HideCameras, defaults.HideCameras, function(state) settings.HideCameras = state end)
-	nativeSettings.addSwitch("/mutedmarkers/world", "Hide doors", "Enable if you want to hide icons for doors", settings.HideDoors, defaults.HideDoors, function(state) settings.HideDoors = state end)
-	nativeSettings.addSwitch("/mutedmarkers/world", "Hide distractions", "Enable if you want to hide icons for distraction objects", settings.HideDistractions, defaults.HideDistractions, function(state) settings.HideDistractions = state end)
-	nativeSettings.addSwitch("/mutedmarkers/world", "Hide explosives", "Enable if you want to hide icons for explosive objects", settings.HideExplosives, defaults.HideExplosives, function(state) settings.HideExplosives = state end)
-	nativeSettings.addSwitch("/mutedmarkers/world", "Hide networking", "Enable if you want to hide icons for misc network devices (computers, smart screens etc.)", settings.HideNetworking, defaults.HideNetworking, function(state) settings.HideNetworking = state end)
+	nativeSettings.addSwitch("/mutedmarkers/world", "Hide access points", "Enable if you want to hide icons for access points", settings.HideAccessPoints, defaults.HideAccessPoints, function(state) 
+		settings.HideAccessPoints = state
+		SaveSettings()
+	end)
+	nativeSettings.addSwitch("/mutedmarkers/world", "Hide body containers", "Enable if you want to hide icons for body containers", settings.HideBodyContainers, defaults.HideBodyContainers, function(state) 
+		settings.HideBodyContainers = state 
+		SaveSettings()
+	end)
+	nativeSettings.addSwitch("/mutedmarkers/world", "Hide cameras", "Enable if you want to hide icons for cameras", settings.HideCameras, defaults.HideCameras, function(state) 
+		settings.HideCameras = state 
+		SaveSettings()
+	end)
+	nativeSettings.addSwitch("/mutedmarkers/world", "Hide doors", "Enable if you want to hide icons for doors", settings.HideDoors, defaults.HideDoors, function(state) 
+		settings.HideDoors = state
+		SaveSettings()
+	end)
+	nativeSettings.addSwitch("/mutedmarkers/world", "Hide distractions", "Enable if you want to hide icons for distraction objects", settings.HideDistractions, defaults.HideDistractions, function(state)
+		settings.HideDistractions = state
+		SaveSettings()
+	end)
+	nativeSettings.addSwitch("/mutedmarkers/world", "Hide explosives", "Enable if you want to hide icons for explosive objects", settings.HideExplosives, defaults.HideExplosives, function(state)
+		settings.HideExplosives = state
+		SaveSettings()
+	end)
+	nativeSettings.addSwitch("/mutedmarkers/world", "Hide networking", "Enable if you want to hide icons for misc network devices (computers, smart screens etc.)", settings.HideNetworking, defaults.HideNetworking, function(state)
+		settings.HideNetworking = state
+		SaveSettings()
+	end)
 	
 	nativeSettings.addSubcategory("/mutedmarkers/minimap", "Minimap markers")
-	nativeSettings.addSwitch("/mutedmarkers/minimap", "Hide Legendary loot", "Enable if you want to hide legendary loot markers from minimap", settings.HideLegendary, defaults.HideLegendary, function(state) settings.HideLegendary = state end)
-	nativeSettings.addSwitch("/mutedmarkers/minimap", "Hide Epic loot", "Enable if you want to hide epic loot markers from minimap", settings.HideEpic, defaults.HideEpic, function(state) settings.HideEpic = state end)
-	nativeSettings.addSwitch("/mutedmarkers/minimap", "Hide Rare loot", "Enable if you want to hide rare loot markers from minimap", settings.HideRare, defaults.HideRare, function(state) settings.HideRare = state end)
-	nativeSettings.addSwitch("/mutedmarkers/minimap", "Hide Uncommon loot", "Enable if you want to hide uncommon loot markers from minimap", settings.HideUncommon, defaults.HideUncommon, function(state) settings.HideUncommon = state end)
-	nativeSettings.addSwitch("/mutedmarkers/minimap", "Hide Common loot", "Enable if you want to hide common loot markers from minimap", settings.HideCommon, defaults.HideCommon, function(state) settings.HideCommon = state end)
-	nativeSettings.addSwitch("/mutedmarkers/minimap", "Hide enemies", "Enable if you want to hide enemy markers from minimap", settings.HideEnemies, defaults.HideEnemies, function(state) settings.HideEnemies = state end)
-	nativeSettings.addSwitch("/mutedmarkers/minimap", "Hide shards", "Enable if you want to hide shard markers from minimap", settings.HideShards, defaults.HideShards, function(state) settings.HideShards = state end)
+	nativeSettings.addSwitch("/mutedmarkers/minimap", "Hide Legendary loot", "Enable if you want to hide legendary loot markers from minimap", settings.HideLegendary, defaults.HideLegendary, function(state)
+		settings.HideLegendary = state
+		SaveSettings()
+	end)
+	nativeSettings.addSwitch("/mutedmarkers/minimap", "Hide Epic loot", "Enable if you want to hide epic loot markers from minimap", settings.HideEpic, defaults.HideEpic, function(state)
+		settings.HideEpic = state
+		SaveSettings()
+	end)
+	nativeSettings.addSwitch("/mutedmarkers/minimap", "Hide Rare loot", "Enable if you want to hide rare loot markers from minimap", settings.HideRare, defaults.HideRare, function(state)
+		settings.HideRare = state
+		SaveSettings()
+	end)
+	nativeSettings.addSwitch("/mutedmarkers/minimap", "Hide Uncommon loot", "Enable if you want to hide uncommon loot markers from minimap", settings.HideUncommon, defaults.HideUncommon, function(state)
+		settings.HideUncommon = state
+		SaveSettings()
+	end)
+	nativeSettings.addSwitch("/mutedmarkers/minimap", "Hide Common loot", "Enable if you want to hide common loot markers from minimap", settings.HideCommon, defaults.HideCommon, function(state)
+		settings.HideCommon = state
+		SaveSettings()
+	end)
+	nativeSettings.addSwitch("/mutedmarkers/minimap", "Hide enemies", "Enable if you want to hide enemy markers from minimap", settings.HideEnemies, defaults.HideEnemies, function(state)
+		settings.HideEnemies = state
+		SaveSettings()
+	end)
+	nativeSettings.addSwitch("/mutedmarkers/minimap", "Hide shards", "Enable if you want to hide shard markers from minimap", settings.HideShards, defaults.HideShards, function(state)
+		settings.HideShards = state
+		SaveSettings()
+	end)
 end
 
 registerForEvent("onInit", function()
@@ -167,6 +223,7 @@ registerForEvent("onInit", function()
 	Override("MutedMarkersConfig.LootConfig", "Uncommon;", function(_) return GetEnumFromIndex(settings.LootUncommon) end)
 	Override("MutedMarkersConfig.LootConfig", "Common;", function(_) return GetEnumFromIndex(settings.LootCommon) end)
 	Override("MutedMarkersConfig.LootConfig", "Shards;", function(_) return GetEnumFromIndex(settings.LootShards) end)
+	Override("MutedMarkersConfig.LootConfig", "HideDelay;", function(_) return settings.HideDelay end)
 	Override("MutedMarkersConfig.WorldConfig", "HideAccessPoints;", function(_) return settings.HideAccessPoints end)
 	Override("MutedMarkersConfig.WorldConfig", "HideBodyContainers;", function(_) return settings.HideBodyContainers end)
 	Override("MutedMarkersConfig.WorldConfig", "HideCameras;", function(_) return settings.HideCameras end)
@@ -183,6 +240,3 @@ registerForEvent("onInit", function()
 	Override("MutedMarkersConfig.MiniMapConfig", "HideShards;", function(_) return settings.HideShards end)
 end)
 
-registerForEvent("onShutdown", function()
-    SaveSettings()
-end)

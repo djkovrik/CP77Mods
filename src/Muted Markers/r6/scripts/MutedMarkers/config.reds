@@ -21,6 +21,8 @@ public class LootConfig {
   public static func Common() -> MarkerVisibility = MarkerVisibility.Scanner
   // Visibility for Shards
   public static func Shards() -> MarkerVisibility = MarkerVisibility.LineOfSight
+  //
+  public static func HideDelay() -> Float = 5.0
 }
 
 public class WorldConfig {
