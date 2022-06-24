@@ -177,7 +177,7 @@ private final func CraftItem(selectedRecipe: ref<RecipeData>, amount: Int32) -> 
       craftItemRequest.originalIngredients = this.m_craftingSystem.GetItemCraftingCost(this.originalItemData);
       craftItemRequest.quantityMultiplier = multiplier;
     } else {
-      if Config.RandomizerEnabled() {
+      if Config.RandomizerEnabled() && CraftingMainLogicController.IsWeapon(selectedRecipe.inventoryItem.EquipmentArea) {
         craftItemRequest.custom = true;
         craftItemRequest.originalQuality = this.originalRecipeQuality;
         craftItemRequest.itemRecord = this.GetRandomWeaponVariant();
