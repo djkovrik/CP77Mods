@@ -136,7 +136,7 @@ public class MMUtils {
 }
 
 public static func MM(const str: script_ref<String>) -> Void {
-  LogChannel(n"DEBUG", s"Markers: \(str)");
+  // LogChannel(n"DEBUG", s"Markers: \(str)");
 }
 
 public static func PrintDump(title: String, data: SDeviceMappinData, source: ref<GameplayRoleComponent>) -> Void {
