@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<bindings>
+    <context name="ToggleQuestTag" >
+		<action name="toggle_quest_tag" map="toggle_quest_tag" />
+    </context>
+
+    <context name="UIMenu" append="true">
+        <include name="ToggleQuestTag" />
+    </context>
+
+	<mapping name="toggle_quest_tag" type="Button" >
+		<!-- You can change the hotkeys here -->
+		<!-- Available keycodes: https://pastebin.com/nsQ1cqi8 -->
+		<button id="IK_T" />
+		<button id="IK_Pad_LeftThumb" />
+	</mapping>
+	
+</bindings>
