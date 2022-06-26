@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<bindings>
+    <context name="MarkToSell" >
+		<action name="mark_to_sell" map="mark_to_sell" />
+    </context>
+
+    <context name="UIMenu" append="true">
+        <include name="MarkToSell" />
+    </context>
+
+	<mapping name="mark_to_sell" type="Button" >
+		<!-- You can change the hotkeys here -->
+		<!-- Available keycodes: https://pastebin.com/nsQ1cqi8 -->
+		<button id="IK_S" />
+		<button id="IK_Pad_X_SQUARE" />
+	</mapping>
+	
+</bindings>
