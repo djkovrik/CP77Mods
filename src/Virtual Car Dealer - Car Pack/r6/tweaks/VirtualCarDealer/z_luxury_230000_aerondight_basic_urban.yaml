@@ -1,19 +1,136 @@
+Vehicle.vcd_aerondight_purchasable:
+  $base: Vehicle.v_sport1_rayfield_aerondight
+
+#
+UIIcon.vcd_aerondight_urban_01_purchasable:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_aerondight_preview.inkatlas"
+  atlasPartName: n"urban-01"
+  
+Vehicle.vcd_aerondight_urban_01_purchasable:
+  $base: Vehicle.v_sport1_rayfield_aerondight
+  appearanceName: n"rayfield_aerondight__basic_urban_01"
+  displayName: LocKey(20293)
+  icon: UIIcon.vcd_aerondight_urban_01_purchasable
+Vehicle.vcd_aerondight_urban_01_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_aerondight_full.inkatlas"
+Vehicle.vcd_aerondight_urban_01_purchasable.dealerPartName: "urban-01"
+
+#
 UIIcon.vcd_aerondight_urban_02_purchasable:
   $type: UIIcon_Record
-  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer.inkatlas"
-  atlasPartName: n"v-rayfield-aerondight"
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_aerondight_preview.inkatlas"
+  atlasPartName: n"urban-02"
   
 Vehicle.vcd_aerondight_urban_02_purchasable:
   $base: Vehicle.v_sport1_rayfield_aerondight
   appearanceName: n"rayfield_aerondight__basic_urban_02"
   displayName: LocKey(20293)
   icon: UIIcon.vcd_aerondight_urban_02_purchasable
+Vehicle.vcd_aerondight_urban_02_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_aerondight_full.inkatlas"
+Vehicle.vcd_aerondight_urban_02_purchasable.dealerPartName: "urban-02"
 
-Vehicle.vcd_aerondight_urban_02_purchasable.dealerPrice: 160000
-Vehicle.vcd_aerondight_urban_02_purchasable.dealerCred: 50
-# - Codex image size: 1860x609
-Vehicle.vcd_aerondight_urban_02_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/codex/assets_fullscreen17.inkatlas"
-Vehicle.vcd_aerondight_urban_02_purchasable.dealerPartName: "v_rayfield_aerondight_full"
+#
+UIIcon.vcd_aerondight_urban_04_purchasable:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_aerondight_preview.inkatlas"
+  atlasPartName: n"urban-04"
+  
+Vehicle.vcd_aerondight_urban_04_purchasable:
+  $base: Vehicle.v_sport1_rayfield_aerondight
+  appearanceName: n"rayfield_aerondight__basic_urban_04"
+  displayName: LocKey(20293)
+  icon: UIIcon.vcd_aerondight_urban_04_purchasable
+Vehicle.vcd_aerondight_urban_04_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_aerondight_full.inkatlas"
+Vehicle.vcd_aerondight_urban_04_purchasable.dealerPartName: "urban-04"
+
+#
+UIIcon.vcd_aerondight_urban_05_purchasable:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_aerondight_preview.inkatlas"
+  atlasPartName: n"urban-05"
+  
+Vehicle.vcd_aerondight_urban_05_purchasable:
+  $base: Vehicle.v_sport1_rayfield_aerondight
+  appearanceName: n"rayfield_aerondight__basic_urban_05"
+  displayName: LocKey(20293)
+  icon: UIIcon.vcd_aerondight_urban_05_purchasable
+Vehicle.vcd_aerondight_urban_05_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_aerondight_full.inkatlas"
+Vehicle.vcd_aerondight_urban_05_purchasable.dealerPartName: "urban-05"
+
+#
+UIIcon.vcd_aerondight_urban_06_purchasable:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_aerondight_preview.inkatlas"
+  atlasPartName: n"urban-06"
+  
+Vehicle.vcd_aerondight_urban_06_purchasable:
+  $base: Vehicle.v_sport1_rayfield_aerondight
+  appearanceName: n"rayfield_aerondight__basic_urban_06"
+  displayName: LocKey(20293)
+  icon: UIIcon.vcd_aerondight_urban_06_purchasable
+Vehicle.vcd_aerondight_urban_06_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_aerondight_full.inkatlas"
+Vehicle.vcd_aerondight_urban_06_purchasable.dealerPartName: "urban-06"
+
+#
+UIIcon.vcd_aerondight_urban_07_purchasable:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_aerondight_preview.inkatlas"
+  atlasPartName: n"urban-07"
+  
+Vehicle.vcd_aerondight_urban_07_purchasable:
+  $base: Vehicle.v_sport1_rayfield_aerondight
+  appearanceName: n"rayfield_aerondight__basic_urban_07"
+  displayName: LocKey(20293)
+  icon: UIIcon.vcd_aerondight_urban_07_purchasable
+Vehicle.vcd_aerondight_urban_07_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_aerondight_full.inkatlas"
+Vehicle.vcd_aerondight_urban_07_purchasable.dealerPartName: "urban-07"
+
+#
+UIIcon.vcd_aerondight_streetkid_purchasable:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_aerondight_preview.inkatlas"
+  atlasPartName: n"q000-streetkid"
+  
+Vehicle.vcd_aerondight_streetkid_purchasable:
+  $base: Vehicle.v_sport1_rayfield_aerondight
+  appearanceName: n"rayfield_aerondight__basic_q000_streetkid"
+  displayName: LocKey(20293)
+  icon: UIIcon.vcd_aerondight_streetkid_purchasable
+Vehicle.vcd_aerondight_streetkid_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_aerondight_full.inkatlas"
+Vehicle.vcd_aerondight_streetkid_purchasable.dealerPartName: "q000-streetkid"
+
+#
+UIIcon.vcd_aerondight_urban_03_purchasable:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_aerondight_preview.inkatlas"
+  atlasPartName: n"urban-03"
+  
+Vehicle.vcd_aerondight_urban_03_purchasable:
+  $base: Vehicle.v_sport1_rayfield_aerondight
+  appearanceName: n"rayfield_aerondight__basic_urban_03"
+  displayName: LocKey(20293)
+  icon: UIIcon.vcd_aerondight_urban_03_purchasable
+Vehicle.vcd_aerondight_urban_03_purchasable.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_aerondight_full.inkatlas"
+Vehicle.vcd_aerondight_urban_03_purchasable.dealerPartName: "urban-03"
+
+Vehicle.vcd_aerondight_purchasable.dealerPrice: 160000
+Vehicle.vcd_aerondight_purchasable.dealerCred: 50
+Vehicle.vcd_aerondight_purchasable.dealerVariants:
+  - "Vehicle.vcd_aerondight_urban_01_purchasable"
+  - "Vehicle.vcd_aerondight_urban_02_purchasable"
+  #- "Vehicle.vcd_aerondight_urban_03_purchasable"
+  - "Vehicle.vcd_aerondight_urban_04_purchasable"
+  - "Vehicle.vcd_aerondight_urban_05_purchasable"
+  - "Vehicle.vcd_aerondight_urban_06_purchasable"
+  - "Vehicle.vcd_aerondight_urban_07_purchasable"
+  - "Vehicle.vcd_aerondight_streetkid_purchasable"
 
 Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_aerondight_urban_01_purchasable"
   - !append t"Vehicle.vcd_aerondight_urban_02_purchasable"
+  #- !append t"Vehicle.vcd_aerondight_urban_03_purchasable"
+  - !append t"Vehicle.vcd_aerondight_urban_04_purchasable"
+  - !append t"Vehicle.vcd_aerondight_urban_05_purchasable"
+  - !append t"Vehicle.vcd_aerondight_urban_06_purchasable"
+  - !append t"Vehicle.vcd_aerondight_urban_07_purchasable"
+  - !append t"Vehicle.vcd_aerondight_streetkid_purchasable"
