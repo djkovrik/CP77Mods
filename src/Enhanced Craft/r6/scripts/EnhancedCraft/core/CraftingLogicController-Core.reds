@@ -156,6 +156,7 @@ private final func SetupIngredients(ingredient: array<IngredientData>, itemAmoun
 private final func CraftItem(selectedRecipe: ref<RecipeData>, amount: Int32) -> Void {
   let craftItemRequest: ref<CraftItemRequest>;
   let multiplier: Int32;
+  let hasVariantsToRandomize: Bool;
   if NotEquals(selectedRecipe.label, "") {
     craftItemRequest = new CraftItemRequest();
     craftItemRequest.target = this.m_craftingGameController.GetPlayer();
@@ -177,14 +178,15 @@ private final func CraftItem(selectedRecipe: ref<RecipeData>, amount: Int32) -> 
       craftItemRequest.originalIngredients = this.m_craftingSystem.GetItemCraftingCost(this.originalItemData);
       craftItemRequest.quantityMultiplier = multiplier;
     } else {
-      if Config.RandomizerEnabled() && CraftingMainLogicController.IsWeapon(selectedRecipe.inventoryItem.EquipmentArea) {
+      hasVariantsToRandomize = ArraySize(this.weaponVariantsNoIconic) > 1;
+      if Config.RandomizerEnabled() && CraftingMainLogicController.IsWeapon(selectedRecipe.inventoryItem.EquipmentArea) && hasVariantsToRandomize {
         craftItemRequest.custom = true;
         craftItemRequest.originalQuality = this.originalRecipeQuality;
         craftItemRequest.itemRecord = this.GetRandomWeaponVariant();
         craftItemRequest.originalIngredients = this.m_craftingSystem.GetItemCraftingCost(this.originalItemData);
         craftItemRequest.quantityMultiplier = 1;
       };
-    }
+    };
     this.m_craftingSystem.QueueRequest(craftItemRequest);
   };
 }

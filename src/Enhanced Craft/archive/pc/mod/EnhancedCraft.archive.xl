@@ -9,3 +9,4 @@ localization:
     zh-cn: base\localization\zh-cn\onscreens\ecraft.json
     es-es: base\localization\es-es\onscreens\ecraft.json
     pl-pl: base\localization\pl-pl\onscreens\ecraft.json
+    it-it: base\localization\it-it\onscreens\ecraft.json

@@ -31,8 +31,7 @@ protected cb func OnEnhancedCraftRecipeCraftedEvent(event: ref<EnhancedCraftReci
 
 // -- Restores original recipe name in crafting panel
 @addMethod(CraftingMainGameController)
-public func RestoreOriginalName() -> Bool {
-  let text: String = this.m_nameInput.GetText();
+public func RestoreOriginalName() -> Void {
   let originalName: String = this.m_craftingLogicController.originalRecipe.label;
 	this.m_weaponName.SetText(originalName);
 }
