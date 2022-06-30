@@ -2,6 +2,7 @@
 <bindings>
     <context name="MarkToSell" >
 		<action name="mark_to_sell" map="mark_to_sell" />
+		<action name="mark_similar_to_sell" map="mark_similar_to_sell" />
     </context>
 
     <context name="UIMenu" append="true">
@@ -13,6 +14,13 @@
 		<!-- Available keycodes: https://pastebin.com/nsQ1cqi8 -->
 		<button id="IK_S" />
 		<button id="IK_Pad_X_SQUARE" />
+	</mapping>
+	
+	<mapping name="mark_similar_to_sell" type="Button" >
+		<!-- You can change the hotkeys here -->
+		<!-- Available keycodes: https://pastebin.com/nsQ1cqi8 -->
+		<button id="IK_A" />
+		<button id="IK_Pad_Y_TRIANGLE" />
 	</mapping>
 	
 </bindings>

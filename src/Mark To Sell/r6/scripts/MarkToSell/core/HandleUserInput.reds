@@ -5,17 +5,23 @@ import MarkToSell.Text.Labels
 
 @addMethod(BackpackMainGameController)
 private func UpdateMarkForSaleHint(shouldShow: Bool, opt alreadyHasIt: Bool, opt evt: ref<ItemDisplayHoverOverEvent>) {
-  let text: String;
+  let text1: String;
+  let text2: String;
+
   if alreadyHasIt {
-    text = Labels.Remove();
+    text1 = Labels.Remove();
+    text2 = Labels.RemoveSimilar();
   } else {
-    text = Labels.Add();
+    text1 = Labels.Add();
+    text2 = Labels.AddSimilar();
   };
 
   if shouldShow {
-    this.m_buttonHintsController.AddButtonHint(n"mark_to_sell", text);
+    this.m_buttonHintsController.AddButtonHint(n"mark_to_sell", text1);
+    this.m_buttonHintsController.AddButtonHint(n"mark_similar_to_sell", text2);
   } else {
     this.m_buttonHintsController.RemoveButtonHint(n"mark_to_sell");
+    this.m_buttonHintsController.RemoveButtonHint(n"mark_similar_to_sell");
   };
 }
 
@@ -59,11 +65,25 @@ private func ToggleMarkForSale() -> Void {
   InventoryItemData.SetGameItemData(this.m_lastItemHoverOverEvent.itemData, data);
 }
 
+@addMethod(BackpackMainGameController)
+private func ToggleMarkForSaleForSimilarItems() -> Void {
+  let system: ref<MarkToSellSystem> = MarkToSellSystem.GetInstance(this.m_player.GetGame());
+  let data: ref<gameItemData> = InventoryItemData.GetGameItemData(this.m_lastItemHoverOverEvent.itemData);
+  system.MarkSimilarItems(data);
+}
+
 @wrapMethod(BackpackMainGameController)
 protected cb func OnPostOnRelease(evt: ref<inkPointerEvent>) -> Bool {
-  if evt.IsAction(n"mark_to_sell") && IsDefined(this.m_lastItemHoverOverEvent) {
-    this.ToggleMarkForSale();
-    this.RefreshUI();
+
+  if IsDefined(this.m_lastItemHoverOverEvent) {
+    if evt.IsAction(n"mark_to_sell") {
+      this.ToggleMarkForSale();
+      this.RefreshUI();
+    };
+    if evt.IsAction(n"mark_similar_to_sell") {
+      this.ToggleMarkForSaleForSimilarItems();
+      this.RefreshUI();
+    };
   };
   wrappedMethod(evt);
 }
@@ -73,17 +93,23 @@ protected cb func OnPostOnRelease(evt: ref<inkPointerEvent>) -> Bool {
 
 @addMethod(InventoryItemModeLogicController)
 private func UpdateMarkForSaleHint(shouldShow: Bool, opt alreadyHasIt: Bool) {
-  let text: String;
+  let text1: String;
+  let text2: String;
+
   if alreadyHasIt {
-    text = Labels.Remove();
+    text1 = Labels.Remove();
+    text2 = Labels.RemoveSimilar();
   } else {
-    text = Labels.Add();
+    text1 = Labels.Add();
+    text2 = Labels.AddSimilar();
   };
 
   if shouldShow {
-    this.m_buttonHintsController.AddButtonHint(n"mark_to_sell", text);
+    this.m_buttonHintsController.AddButtonHint(n"mark_to_sell", text1);
+    this.m_buttonHintsController.AddButtonHint(n"mark_similar_to_sell", text2);
   } else {
     this.m_buttonHintsController.RemoveButtonHint(n"mark_to_sell");
+    this.m_buttonHintsController.RemoveButtonHint(n"mark_similar_to_sell");
   };
 }
 
@@ -154,6 +180,20 @@ private func ToggleMarkForSale(evt: ref<ItemDisplayClickEvent>) -> Void {
   };
 }
 
+@addMethod(gameuiInventoryGameController)
+private func ToggleMarkForSaleForSimilarItems(evt: ref<ItemDisplayClickEvent>) -> Void {
+  let controller: wref<InventoryItemDisplayController> = evt.display;
+  let itemData: InventoryItemData = controller.GetItemData();
+  let system: ref<MarkToSellSystem>;
+  let data: ref<gameItemData>;
+
+  if !InventoryItemData.IsEmpty(itemData) {
+    data = InventoryItemData.GetGameItemData(itemData);
+    system = MarkToSellSystem.GetInstance(this.m_player.GetGame());
+    system.MarkSimilarItems(data);
+  };  
+}
+
 @wrapMethod(gameuiInventoryGameController)
 protected cb func OnEquipmentClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
   wrappedMethod(evt);
@@ -161,12 +201,16 @@ protected cb func OnEquipmentClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
     this.ToggleMarkForSale(evt);
     this.RefreshUI();
   };
+  if evt.actionName.IsAction(n"mark_similar_to_sell") {
+    this.ToggleMarkForSaleForSimilarItems(evt);
+    this.RefreshUI();
+  };
 }
 
 @wrapMethod(InventoryItemModeLogicController)
 protected cb func OnPostOnRelease(evt: ref<inkPointerEvent>) -> Bool {
   wrappedMethod(evt);
-  if evt.IsAction(n"mark_to_sell") {
+  if evt.IsAction(n"mark_to_sell") || evt.IsAction(n"mark_similar_to_sell") {
     this.RefreshAvailableItems();
   };
 }

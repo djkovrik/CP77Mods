@@ -6,6 +6,10 @@ public class MarkToSellSystem extends ScriptableSystem {
 
   private let m_inventoryManager: ref<InventoryDataManagerV2>;
 
+  private let m_equipmentSystem: ref<EquipmentSystem>;
+
+  private let m_player: wref<PlayerPuppet>;
+
   public final static func GetInstance(gameInstance: GameInstance) -> ref<MarkToSellSystem> {
     let system: ref<MarkToSellSystem> = GameInstance.GetScriptableSystemsContainer(gameInstance).Get(n"MarkToSell.System.MarkToSellSystem") as MarkToSellSystem;
     return system;
@@ -16,6 +20,8 @@ public class MarkToSellSystem extends ScriptableSystem {
     if IsDefined(player) {
       this.m_inventoryManager = new InventoryDataManagerV2();
       this.m_inventoryManager.Initialize(player);
+      this.m_equipmentSystem = GameInstance.GetScriptableSystemsContainer(player.GetGame()).Get(n"EquipmentSystem") as EquipmentSystem;
+      this.m_player = player;
       this.RefreshMarksForSale();
     };
   }
@@ -42,6 +48,30 @@ public class MarkToSellSystem extends ScriptableSystem {
 
   public func HasAnythingMarked() -> Bool {
     return ArraySize(this.markers) > 0;
+  }
+
+  public func MarkSimilarItems(data: ref<gameItemData>) -> Void {
+    let sellable: array<wref<gameItemData>>;
+    this.m_inventoryManager.GetSellablePlayerItems(sellable);
+    let type: gamedataItemType = data.GetItemType();
+    let quality: gamedataQuality = RPGManager.GetItemDataQuality(data);
+    let currentlyMarked: Bool = data.modMarkedForSale;
+    let isEquipped: Bool;
+    let isIconic: Bool;
+
+    for itemData in sellable {
+      isEquipped = this.m_equipmentSystem.IsEquipped(this.m_player, itemData.GetID());
+      isIconic = RPGManager.IsItemDataIconic(itemData);
+      if !itemData.HasTag(n"Quest") && Equals(itemData.GetItemType(), type) && Equals(RPGManager.GetItemDataQuality(itemData), quality) && !isEquipped && !isIconic {
+        if currentlyMarked {
+          itemData.modMarkedForSale = false;
+          this.Remove(itemData.GetID());
+        } else {
+          itemData.modMarkedForSale = true;
+          this.Add(itemData.GetID());
+        };
+      };
+    };
   }
 
   public func ClearAll() -> Void {
