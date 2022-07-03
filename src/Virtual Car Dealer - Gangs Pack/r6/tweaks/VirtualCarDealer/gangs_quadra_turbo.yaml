@@ -1,0 +1,91 @@
+Vehicle.vcd_gangs_quadra_turbo_purchasable:
+  # not used, added just to create base vehicle record
+  $base: Vehicle.v_sport1_quadra_turbo_tyger_claw
+
+# 
+UIIcon.vcd_gangs_quadra_turbo_purchasable.tigerclaws01:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_quadra_tygerclaws_preview.inkatlas"
+  atlasPartName: n"tygerclaws-01"
+Vehicle.vcd_gangs_quadra_turbo_purchasable.tigerclaws01:
+  $base: Vehicle.v_sport1_quadra_turbo_tyger_claw
+  appearanceName: n"quadra_turbo_basic_tygerclaws_01"
+  icon: UIIcon.vcd_gangs_quadra_turbo_purchasable.tigerclaws01
+Vehicle.vcd_gangs_quadra_turbo_purchasable.tigerclaws01.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_quadra_tygerclaws_full.inkatlas"
+Vehicle.vcd_gangs_quadra_turbo_purchasable.tigerclaws01.dealerPartName: "tygerclaws-01"
+# 
+UIIcon.vcd_gangs_quadra_turbo_purchasable.tigerclaws02:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_quadra_tygerclaws_preview.inkatlas"
+  atlasPartName: n"tygerclaws-02"
+Vehicle.vcd_gangs_quadra_turbo_purchasable.tigerclaws02:
+  $base: Vehicle.v_sport1_quadra_turbo_tyger_claw
+  appearanceName: n"quadra_turbo_basic_tygerclaws_02"
+  icon: UIIcon.vcd_gangs_quadra_turbo_purchasable.tigerclaws02
+Vehicle.vcd_gangs_quadra_turbo_purchasable.tigerclaws02.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_quadra_tygerclaws_full.inkatlas"
+Vehicle.vcd_gangs_quadra_turbo_purchasable.tigerclaws02.dealerPartName: "tygerclaws-02"
+# 
+UIIcon.vcd_gangs_quadra_turbo_purchasable.tigerclaws03:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_quadra_tygerclaws_preview.inkatlas"
+  atlasPartName: n"tygerclaws-03"
+Vehicle.vcd_gangs_quadra_turbo_purchasable.tigerclaws03:
+  $base: Vehicle.v_sport1_quadra_turbo_tyger_claw
+  appearanceName: n"quadra_turbo_basic_tygerclaws_03"
+  icon: UIIcon.vcd_gangs_quadra_turbo_purchasable.tigerclaws03
+Vehicle.vcd_gangs_quadra_turbo_purchasable.tigerclaws03.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_quadra_tygerclaws_full.inkatlas"
+Vehicle.vcd_gangs_quadra_turbo_purchasable.tigerclaws03.dealerPartName: "tygerclaws-03"
+# 
+UIIcon.vcd_gangs_quadra_turbo_purchasable.tigerclaws04:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_quadra_tygerclaws_preview.inkatlas"
+  atlasPartName: n"tygerclaws-04"
+Vehicle.vcd_gangs_quadra_turbo_purchasable.tigerclaws04:
+  $base: Vehicle.v_sport1_quadra_turbo_tyger_claw
+  appearanceName: n"quadra_turbo_basic_tygerclaws_04"
+  icon: UIIcon.vcd_gangs_quadra_turbo_purchasable.tigerclaws04
+Vehicle.vcd_gangs_quadra_turbo_purchasable.tigerclaws04.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_quadra_tygerclaws_full.inkatlas"
+Vehicle.vcd_gangs_quadra_turbo_purchasable.tigerclaws04.dealerPartName: "tygerclaws-04"
+# 
+UIIcon.vcd_gangs_quadra_turbo_purchasable.tigerclaws05:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_quadra_tygerclaws_preview.inkatlas"
+  atlasPartName: n"tygerclaws-05"
+Vehicle.vcd_gangs_quadra_turbo_purchasable.tigerclaws05:
+  $base: Vehicle.v_sport1_quadra_turbo_tyger_claw
+  appearanceName: n"quadra_turbo_basic_tygerclaws_05"
+  icon: UIIcon.vcd_gangs_quadra_turbo_purchasable.tigerclaws05
+Vehicle.vcd_gangs_quadra_turbo_purchasable.tigerclaws05.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_quadra_tygerclaws_full.inkatlas"
+Vehicle.vcd_gangs_quadra_turbo_purchasable.tigerclaws05.dealerPartName: "tygerclaws-05"
+# 
+UIIcon.vcd_gangs_quadra_turbo_purchasable.tigerclaws06:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_quadra_tygerclaws_preview.inkatlas"
+  atlasPartName: n"tygerclaws-06"
+Vehicle.vcd_gangs_quadra_turbo_purchasable.tigerclaws06:
+  $base: Vehicle.v_sport1_quadra_turbo_tyger_claw
+  appearanceName: n"quadra_turbo_basic_tygerclaws_06"
+  icon: UIIcon.vcd_gangs_quadra_turbo_purchasable.tigerclaws06
+Vehicle.vcd_gangs_quadra_turbo_purchasable.tigerclaws06.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_quadra_tygerclaws_full.inkatlas"
+Vehicle.vcd_gangs_quadra_turbo_purchasable.tigerclaws06.dealerPartName: "tygerclaws-06"
+
+# Core flats:
+Vehicle.vcd_gangs_quadra_turbo_purchasable.dealerPrice: 76000
+Vehicle.vcd_gangs_quadra_turbo_purchasable.dealerCred: 30
+Vehicle.vcd_gangs_quadra_turbo_purchasable.dealerVariants: 
+  - "Vehicle.vcd_gangs_quadra_turbo_purchasable.tigerclaws01"
+  - "Vehicle.vcd_gangs_quadra_turbo_purchasable.tigerclaws02"
+  - "Vehicle.vcd_gangs_quadra_turbo_purchasable.tigerclaws03"
+  - "Vehicle.vcd_gangs_quadra_turbo_purchasable.tigerclaws04"
+  - "Vehicle.vcd_gangs_quadra_turbo_purchasable.tigerclaws05"
+  - "Vehicle.vcd_gangs_quadra_turbo_purchasable.tigerclaws06"
+
+
+# Add to vehicles list
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_gangs_quadra_turbo_purchasable.tigerclaws01"
+  - !append t"Vehicle.vcd_gangs_quadra_turbo_purchasable.tigerclaws02"
+  - !append t"Vehicle.vcd_gangs_quadra_turbo_purchasable.tigerclaws03"
+  - !append t"Vehicle.vcd_gangs_quadra_turbo_purchasable.tigerclaws04"
+  - !append t"Vehicle.vcd_gangs_quadra_turbo_purchasable.tigerclaws05"
+  - !append t"Vehicle.vcd_gangs_quadra_turbo_purchasable.tigerclaws06"
