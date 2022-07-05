@@ -18,7 +18,7 @@ public func ShouldDisplayControl(area: gamedataEquipmentArea) -> Bool {
 @replaceMethod(InventoryItemDisplayController)
 private final func UpdateTransmogControls(isEmpty: Bool) -> Void {
   let isItemHidden: Bool;
-  let showControl: Bool = this.ShouldDisplayControl(this.m_equipmentArea);
+  let showControl: Bool = this.ShouldDisplayControl(this.m_equipmentArea) && !this.m_isLocked;
   if !inkWidgetRef.IsValid(this.m_transmogContainer) {
     return;
   };
@@ -67,22 +67,22 @@ public final func IsSlotHidden(area: gamedataEquipmentArea) -> Bool {
 public func ToggleSlotVisibilityCustom(area: gamedataEquipmentArea) -> Void {
   switch (area) {
     case gamedataEquipmentArea.Head:
-      this.SetHeadSlotVisibilityHG(!this.m_headToggleHG);
+      this.SetHeadSlotToggleHG(!this.m_headToggleHG);
       break;
     case gamedataEquipmentArea.Face:
-      this.SetFaceSlotVisibilityHG(!this.m_faceToggleHG);
+      this.SetFaceSlotToggleHG(!this.m_faceToggleHG);
       break;
     case gamedataEquipmentArea.Feet:
-      this.SetFeetSlotVisibilityHG(!this.m_feetToggleHG);
+      this.SetFeetSlotToggleHG(!this.m_feetToggleHG);
       break;
     case gamedataEquipmentArea.Legs:
-      this.SetLegsSlotVisibilityHG(!this.m_legsToggleHG);
+      this.SetLegsSlotToggleHG(!this.m_legsToggleHG);
       break;
     case gamedataEquipmentArea.InnerChest:
-      this.SetInnerChestSlotVisibilityHG(!this.m_innerChestToggleHG);
+      this.SetInnerChestSlotToggleHG(!this.m_innerChestToggleHG);
       break;
     case gamedataEquipmentArea.OuterChest:
-      this.SetOuterChestSlotVisibilityHG(!this.m_outerChestToggleHG);
+      this.SetOuterChestSlotToggleHG(!this.m_outerChestToggleHG);
       break;
     default:
       break;
@@ -128,37 +128,37 @@ private func ToggleItemVisibility(area: gamedataEquipmentArea, shouldHide: Bool)
 }
 
 @addMethod(EquipmentSystemPlayerData)
-private func SetHeadSlotVisibilityHG(visible: Bool) -> Void {
+private func SetHeadSlotToggleHG(visible: Bool) -> Void {
   this.m_headToggleHG = visible;
   this.ToggleItemVisibility(gamedataEquipmentArea.Head, this.m_headToggleHG);
 }
 
 @addMethod(EquipmentSystemPlayerData)
-private func SetFaceSlotVisibilityHG(visible: Bool) -> Void {
+private func SetFaceSlotToggleHG(visible: Bool) -> Void {
   this.m_faceToggleHG = visible;
   this.ToggleItemVisibility(gamedataEquipmentArea.Face, this.m_faceToggleHG);
 }
 
 @addMethod(EquipmentSystemPlayerData)
-private func SetFeetSlotVisibilityHG(visible: Bool) -> Void {
+private func SetFeetSlotToggleHG(visible: Bool) -> Void {
   this.m_feetToggleHG = visible;
   this.ToggleItemVisibility(gamedataEquipmentArea.Feet, this.m_feetToggleHG);
 }
 
 @addMethod(EquipmentSystemPlayerData)
-private func SetLegsSlotVisibilityHG(visible: Bool) -> Void {
+private func SetLegsSlotToggleHG(visible: Bool) -> Void {
   this.m_legsToggleHG = visible;
   this.ToggleItemVisibility(gamedataEquipmentArea.Legs, this.m_legsToggleHG);
 }
 
 @addMethod(EquipmentSystemPlayerData)
-private func SetInnerChestSlotVisibilityHG(visible: Bool) -> Void {
+private func SetInnerChestSlotToggleHG(visible: Bool) -> Void {
   this.m_innerChestToggleHG = visible;
   this.ToggleItemVisibility(gamedataEquipmentArea.InnerChest, this.m_innerChestToggleHG);
 }
 
 @addMethod(EquipmentSystemPlayerData)
-private func SetOuterChestSlotVisibilityHG(visible: Bool) -> Void {
+private func SetOuterChestSlotToggleHG(visible: Bool) -> Void {
   this.m_outerChestToggleHG = visible;
   this.ToggleItemVisibility(gamedataEquipmentArea.OuterChest, this.m_outerChestToggleHG);
 }
@@ -239,4 +239,31 @@ protected cb func OnStatusEffectApplied(evt: ref<ApplyStatusEffectEvent>) -> Boo
   if Equals(evt.staticData.StatusEffectType().Type(), gamedataStatusEffectType.Housing) {
     EquipmentSystem.GetData(this).ScheduleSlotsVisibilityRefresh(4.0);
   };
+}
+
+@addMethod(EquipmentSystemPlayerData)
+private func ResetAllTogglesHG() -> Void {
+  this.SetHeadSlotToggleHG(false);
+  this.SetFaceSlotToggleHG(false);
+  this.SetFeetSlotToggleHG(false);
+  this.SetLegsSlotToggleHG(false);
+  this.SetInnerChestSlotToggleHG(false);
+  this.SetOuterChestSlotToggleHG(false);
+}
+
+@wrapMethod(EquipmentSystemPlayerData)
+private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt blockActiveSlotsUpdate: Bool, opt forceEquipWeapon: Bool) -> Void {
+  let data: wref<gameItemData> = RPGManager.GetItemData(this.m_owner.GetGame(), this.m_owner, itemID);
+  if !this.IsEquippable(data) {
+    return;
+  };
+  let index: Int32 = this.GetEquipAreaIndex(EquipmentSystem.GetEquipAreaType(itemID));
+  let area: SEquipArea = this.m_equipment.equipAreas[index];
+
+  // Reset all toggles on Outfit slot equip
+  if Equals(area.areaType, gamedataEquipmentArea.Outfit) {
+    this.ResetAllTogglesHG();
+  };
+
+  wrappedMethod(itemID, slotIndex, blockActiveSlotsUpdate, forceEquipWeapon);
 }
