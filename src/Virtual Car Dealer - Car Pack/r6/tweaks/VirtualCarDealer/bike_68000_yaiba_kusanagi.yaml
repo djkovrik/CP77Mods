@@ -1,0 +1,76 @@
+Vehicle.vcd_yaiba_kusanagi_purchasable:
+  $base: Vehicle.v_sportbike1_yaiba_kusanagi
+
+# 
+UIIcon.vcd_yaiba_kusanagi_purchasable.suburban01:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_kusanagi_preview.inkatlas"
+  atlasPartName: n"suburban-01"
+Vehicle.vcd_yaiba_kusanagi_purchasable.suburban01:
+  $base: Vehicle.v_sportbike1_yaiba_kusanagi
+  appearanceName: n"yaiba_kusanagi_basic_suburban_01"
+  icon: UIIcon.vcd_yaiba_kusanagi_purchasable.suburban01
+Vehicle.vcd_yaiba_kusanagi_purchasable.suburban01.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_kusanagi_full.inkatlas"
+Vehicle.vcd_yaiba_kusanagi_purchasable.suburban01.dealerPartName: "suburban-01"
+# 
+UIIcon.vcd_yaiba_kusanagi_purchasable.suburban02:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_kusanagi_preview.inkatlas"
+  atlasPartName: n"suburban-02"
+Vehicle.vcd_yaiba_kusanagi_purchasable.suburban02:
+  $base: Vehicle.v_sportbike1_yaiba_kusanagi
+  appearanceName: n"yaiba_kusanagi_basic_suburban_02"
+  icon: UIIcon.vcd_yaiba_kusanagi_purchasable.suburban02
+Vehicle.vcd_yaiba_kusanagi_purchasable.suburban02.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_kusanagi_full.inkatlas"
+Vehicle.vcd_yaiba_kusanagi_purchasable.suburban02.dealerPartName: "suburban-02"
+# 
+UIIcon.vcd_yaiba_kusanagi_purchasable.suburban03:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_kusanagi_preview.inkatlas"
+  atlasPartName: n"suburban-03"
+Vehicle.vcd_yaiba_kusanagi_purchasable.suburban03:
+  $base: Vehicle.v_sportbike1_yaiba_kusanagi
+  appearanceName: n"yaiba_kusanagi_basic_suburban_03"
+  icon: UIIcon.vcd_yaiba_kusanagi_purchasable.suburban03
+Vehicle.vcd_yaiba_kusanagi_purchasable.suburban03.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_kusanagi_full.inkatlas"
+Vehicle.vcd_yaiba_kusanagi_purchasable.suburban03.dealerPartName: "suburban-03"
+# 
+UIIcon.vcd_yaiba_kusanagi_purchasable.suburban04:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_kusanagi_preview.inkatlas"
+  atlasPartName: n"suburban-04"
+Vehicle.vcd_yaiba_kusanagi_purchasable.suburban04:
+  $base: Vehicle.v_sportbike1_yaiba_kusanagi
+  appearanceName: n"yaiba_kusanagi_basic_suburban_04"
+  icon: UIIcon.vcd_yaiba_kusanagi_purchasable.suburban04
+Vehicle.vcd_yaiba_kusanagi_purchasable.suburban04.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_kusanagi_full.inkatlas"
+Vehicle.vcd_yaiba_kusanagi_purchasable.suburban04.dealerPartName: "suburban-04"
+# 
+UIIcon.vcd_yaiba_kusanagi_purchasable.suburban05:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_kusanagi_preview.inkatlas"
+  atlasPartName: n"suburban-05"
+Vehicle.vcd_yaiba_kusanagi_purchasable.suburban05:
+  $base: Vehicle.v_sportbike1_yaiba_kusanagi
+  appearanceName: n"yaiba_kusanagi_basic_suburban_05"
+  icon: UIIcon.vcd_yaiba_kusanagi_purchasable.suburban05
+Vehicle.vcd_yaiba_kusanagi_purchasable.suburban05.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_kusanagi_full.inkatlas"
+Vehicle.vcd_yaiba_kusanagi_purchasable.suburban05.dealerPartName: "suburban-05"
+
+# Core flats:
+Vehicle.vcd_yaiba_kusanagi_purchasable.dealerPrice: 68000
+Vehicle.vcd_yaiba_kusanagi_purchasable.dealerCred: 35
+Vehicle.vcd_yaiba_kusanagi_purchasable.dealerVariants: 
+  - "Vehicle.vcd_yaiba_kusanagi_purchasable.suburban01"
+  - "Vehicle.vcd_yaiba_kusanagi_purchasable.suburban02"
+  - "Vehicle.vcd_yaiba_kusanagi_purchasable.suburban03"
+  - "Vehicle.vcd_yaiba_kusanagi_purchasable.suburban04"
+  - "Vehicle.vcd_yaiba_kusanagi_purchasable.suburban05"
+
+# Add to vehicles list
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_yaiba_kusanagi_purchasable.suburban01"
+  - !append t"Vehicle.vcd_yaiba_kusanagi_purchasable.suburban02"
+  - !append t"Vehicle.vcd_yaiba_kusanagi_purchasable.suburban03"
+  - !append t"Vehicle.vcd_yaiba_kusanagi_purchasable.suburban04"
+  - !append t"Vehicle.vcd_yaiba_kusanagi_purchasable.suburban05"
