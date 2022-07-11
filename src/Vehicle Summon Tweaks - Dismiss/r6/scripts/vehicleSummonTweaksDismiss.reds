@@ -6,6 +6,14 @@ private class VehicleSummonDismissConfig {
   public static func Delay() -> Float = 20.0
 }
 
+@addField(PlayerPuppet)
+private let m_dismissPromptVisible: Bool;
+
+@addMethod(PlayerPuppet)
+public func SetDismissPromptVisible(visible: Bool) -> Void {
+  this.m_dismissPromptVisible = visible;
+}
+
 @wrapMethod(interactionWidgetGameController)
 protected cb func OnUpdateInteraction(argValue: Variant) -> Bool {
   let player: ref<PlayerPuppet> = this.GetPlayerControlledObject() as PlayerPuppet;
@@ -27,8 +35,10 @@ protected cb func OnUpdateInteraction(argValue: Variant) -> Bool {
     ArrayPush(interactionChoices, newChoice);
     interactionData.choices = interactionChoices;
     wrappedMethod(ToVariant(interactionData));
+    player.SetDismissPromptVisible(true);
   } else {
     wrappedMethod(argValue);
+    player.SetDismissPromptVisible(false);
   };
 }
 
@@ -62,7 +72,7 @@ private func IsThisVehicleOwned(id: TweakDBID) -> Bool {
 protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
   wrappedMethod(action, consumer);
   let currentTarget: ref<VehicleObject>;
-  if Equals(ListenerAction.GetName(action), VehicleSummonDismissConfig.Action()) && this.IsLookingAtOwnedVehicle() {
+  if Equals(ListenerAction.GetName(action), VehicleSummonDismissConfig.Action()) && this.IsLookingAtOwnedVehicle() && this.m_dismissPromptVisible {
     currentTarget = GameInstance.GetTargetingSystem(this.GetGame()).GetLookAtObject(this) as VehicleObject;
     GameInstance.GetPreventionSpawnSystem(this.GetGame()).JoinTraffic(currentTarget);
     let callback: ref<VehicleSummonDismissCallback> = new VehicleSummonDismissCallback();
