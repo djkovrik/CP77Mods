@@ -9,6 +9,9 @@ local defaults = {
 	WeaponsRare = false,
 	WeaponsUncommon = false,
 	WeaponsCommon = true,
+	ModsRare = false,
+	ModsUncommon = false,
+	ModsCommon = false,
 	GrenadesRare = false,
 	GrenadesUncommon = false,
 	GrenadesCommon = false,
@@ -32,6 +35,9 @@ local settings = {
 	WeaponsRare = false,
 	WeaponsUncommon = false,
 	WeaponsCommon = true,
+	ModsRare = false,
+	ModsUncommon = false,
+	ModsCommon = false,
 	GrenadesRare = false,
 	GrenadesUncommon = false,
 	GrenadesCommon = false,
@@ -127,6 +133,20 @@ function SetupSettingsMenu()
 		settings.WeaponsCommon = state
 		SaveSettings()
 	end)
+
+	nativeSettings.addSubcategory("/scrapper/mods", GetLocalizedText("LocKey#49863") .. " - " .. GetLocalizedText("LocKey#261"))
+	nativeSettings.addSwitch("/scrapper/mods", GetLocalizedText("LocKey#1816"), "", settings.ModRare, defaults.ModRare, function(state)
+		settings.ModsRare = state
+		SaveSettings()
+	end)
+	nativeSettings.addSwitch("/scrapper/mods", GetLocalizedText("LocKey#1817"), "", settings.ModUncommon, defaults.ModUncommon, function(state)
+		settings.ModsUncommon = state
+		SaveSettings()
+	end)
+	nativeSettings.addSwitch("/scrapper/mods", GetLocalizedText("LocKey#1814"), "", settings.ModCommon, defaults.ModCommon, function(state)
+		settings.ModsCommon = state
+		SaveSettings()
+	end)
 	
 	nativeSettings.addSubcategory("/scrapper/grenades", GetLocalizedText("LocKey#76995") .. " - " .. GetLocalizedText("LocKey#261"))
 	nativeSettings.addSwitch("/scrapper/grenades", GetLocalizedText("LocKey#1816"), "", settings.GrenadesRare, defaults.GrenadesRare, function(state)
@@ -188,6 +208,10 @@ registerForEvent("onInit", function()
 	Override("SmarterScrapperWeaponsConfig", "Rare;", function(_) return settings.WeaponsRare end)
 	Override("SmarterScrapperWeaponsConfig", "Uncommon;", function(_) return settings.WeaponsUncommon end)
 	Override("SmarterScrapperWeaponsConfig", "Common;", function(_) return settings.WeaponsCommon end)
+
+	Override("SmarterScrapperModsConfig", "Rare;", function(_) return settings.ModsRare end)
+	Override("SmarterScrapperModsConfig", "Uncommon;", function(_) return settings.ModsUncommon end)
+	Override("SmarterScrapperModsConfig", "Common;", function(_) return settings.ModsCommon end)
 	
 	Override("SmarterScrapperGrenadeConfig", "Rare;", function(_) return settings.GrenadesRare end)
 	Override("SmarterScrapperGrenadeConfig", "Uncommon;", function(_) return settings.GrenadesUncommon end)

@@ -33,6 +33,12 @@ class SmarterScrapperMaxDocConfig {
   public static func Uncommon() -> Bool = false
 }
 
+class SmarterScrapperModsConfig {
+  public static func Rare() -> Bool = false
+  public static func Uncommon() -> Bool = false
+  public static func Common() -> Bool = false
+}
+
 @addMethod(PlayerPuppet)
 public func IsExclusionSS(id: TweakDBID) -> Bool {
   return 
@@ -95,21 +101,45 @@ private func IsWeaponSS(type: gamedataItemType) -> Bool {
 @addMethod(PlayerPuppet)
 private func IsGrenadeSS(type: gamedataItemType) -> Bool {
   return
-	Equals(type, gamedataItemType.Gad_Grenade) ||
+	  Equals(type, gamedataItemType.Gad_Grenade) ||
   false;
 }
 
 @addMethod(PlayerPuppet)
 private func IsBounceBackSS(type: gamedataItemType) -> Bool {
   return
-	Equals(type, gamedataItemType.Con_Injector) ||
+	  Equals(type, gamedataItemType.Con_Injector) ||
   false;
 }
 
 @addMethod(PlayerPuppet)
 private func IsMaxDocSS(type: gamedataItemType) -> Bool {
   return
-	Equals(type, gamedataItemType.Con_Inhaler) ||
+	  Equals(type, gamedataItemType.Con_Inhaler) ||
+  false;
+}
+
+@addMethod(PlayerPuppet)
+private func IsModSS(type: gamedataItemType) -> Bool {
+  return
+    Equals(type, gamedataItemType.Prt_Mod) ||
+    Equals(type, gamedataItemType.Prt_Muzzle) ||
+    Equals(type, gamedataItemType.Prt_Scope) ||
+    Equals(type, gamedataItemType.Prt_FabricEnhancer) ||
+    Equals(type, gamedataItemType.Prt_HeadFabricEnhancer) ||
+    Equals(type, gamedataItemType.Prt_FaceFabricEnhancer) ||
+    Equals(type, gamedataItemType.Prt_OuterTorsoFabricEnhancer) ||
+    Equals(type, gamedataItemType.Prt_TorsoFabricEnhancer) ||
+    Equals(type, gamedataItemType.Prt_PantsFabricEnhancer) ||
+    Equals(type, gamedataItemType.Prt_BootsFabricEnhancer) ||
+    // Equals(type, gamedataItemType.Prt_Program ) ||
+    // Equals(type, gamedataItemType.Prt_Capacitor) ||
+    // Equals(type, gamedataItemType.Prt_HandgunMuzzle) ||
+    // Equals(type, gamedataItemType.Prt_Magazine) ||
+    // Equals(type, gamedataItemType.Prt_RifleMuzzle) ||
+    // Equals(type, gamedataItemType.Prt_ScopeRail) ||
+    // Equals(type, gamedataItemType.Prt_Stock) ||
+    // Equals(type, gamedataItemType.Prt_TargetingSystem) ||
   false;
 }
 
@@ -144,6 +174,14 @@ private func ShouldBeScrappedSS(data: wref<gameItemData>, quality: gamedataQuali
       case gamedataQuality.Rare: return SmarterScrapperWeaponsConfig.Rare();
       case gamedataQuality.Uncommon: return SmarterScrapperWeaponsConfig.Uncommon();
       case gamedataQuality.Common: return SmarterScrapperWeaponsConfig.Common();
+    };
+  };
+
+  if this.IsModSS(type) {
+    switch quality {
+      case gamedataQuality.Rare: return SmarterScrapperModsConfig.Rare();
+      case gamedataQuality.Uncommon: return SmarterScrapperModsConfig.Uncommon();
+      case gamedataQuality.Common: return SmarterScrapperModsConfig.Common();
     };
   };
 
