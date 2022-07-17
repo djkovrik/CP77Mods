@@ -7,11 +7,36 @@ class SmarterScrapperClothesConfig {
 }
 
 class SmarterScrapperWeaponsConfig {
+  public static func Knife() -> Bool = false
   public static func Legendary() -> Bool = false
   public static func Epic() -> Bool = false
   public static func Rare() -> Bool = false
   public static func Uncommon() -> Bool = false
   public static func Common() -> Bool = true
+}
+
+class SmarterScrapperGrenadeConfig {
+  public static func Rare() -> Bool = false
+  public static func Uncommon() -> Bool = false
+  public static func Common() -> Bool = false
+}
+
+class SmarterScrapperBounceBackConfig {
+  public static func Rare() -> Bool = false
+  public static func Uncommon() -> Bool = false
+  public static func Common() -> Bool = false
+}
+
+class SmarterScrapperMaxDocConfig {
+  public static func Epic() -> Bool = false
+  public static func Rare() -> Bool = false
+  public static func Uncommon() -> Bool = false
+}
+
+class SmarterScrapperModsConfig {
+  public static func Rare() -> Bool = false
+  public static func Uncommon() -> Bool = false
+  public static func Common() -> Bool = false
 }
 
 @addMethod(PlayerPuppet)
@@ -37,7 +62,6 @@ public func HasExcludedQuestActive() -> Bool {
     Equals(trackedObjective.GetId(), "03_pick_up_katana") ||
   false;
 }
-
 
 @addMethod(PlayerPuppet)
 private func IsClothesSS(type: gamedataItemType) -> Bool {
@@ -75,6 +99,30 @@ private func IsWeaponSS(type: gamedataItemType) -> Bool {
 }
 
 @addMethod(PlayerPuppet)
+private func IsModSS(type: gamedataItemType) -> Bool {
+  return
+    Equals(type, gamedataItemType.Prt_Mod) ||
+    Equals(type, gamedataItemType.Prt_Muzzle) ||
+    Equals(type, gamedataItemType.Prt_Scope) ||
+    Equals(type, gamedataItemType.Prt_FabricEnhancer) ||
+    Equals(type, gamedataItemType.Prt_HeadFabricEnhancer) ||
+    Equals(type, gamedataItemType.Prt_FaceFabricEnhancer) ||
+    Equals(type, gamedataItemType.Prt_OuterTorsoFabricEnhancer) ||
+    Equals(type, gamedataItemType.Prt_TorsoFabricEnhancer) ||
+    Equals(type, gamedataItemType.Prt_PantsFabricEnhancer) ||
+    Equals(type, gamedataItemType.Prt_BootsFabricEnhancer) ||
+    // Equals(type, gamedataItemType.Prt_Program ) ||
+    // Equals(type, gamedataItemType.Prt_Capacitor) ||
+    // Equals(type, gamedataItemType.Prt_HandgunMuzzle) ||
+    // Equals(type, gamedataItemType.Prt_Magazine) ||
+    // Equals(type, gamedataItemType.Prt_RifleMuzzle) ||
+    // Equals(type, gamedataItemType.Prt_ScopeRail) ||
+    // Equals(type, gamedataItemType.Prt_Stock) ||
+    // Equals(type, gamedataItemType.Prt_TargetingSystem) ||
+  false;
+}
+
+@addMethod(PlayerPuppet)
 private func ShouldBeScrappedSS(data: wref<gameItemData>, quality: gamedataQuality) -> Bool {
   let type: gamedataItemType = data.GetItemType();
 
@@ -95,6 +143,55 @@ private func ShouldBeScrappedSS(data: wref<gameItemData>, quality: gamedataQuali
       case gamedataQuality.Rare: return SmarterScrapperWeaponsConfig.Rare();
       case gamedataQuality.Uncommon: return SmarterScrapperWeaponsConfig.Uncommon();
       case gamedataQuality.Common: return SmarterScrapperWeaponsConfig.Common();
+    };
+  };
+  
+  if Equals(type, gamedataItemType.Wea_Knife) && SmarterScrapperWeaponsConfig.Knife() {
+    switch quality {
+      case gamedataQuality.Legendary: return SmarterScrapperWeaponsConfig.Legendary();
+      case gamedataQuality.Epic: return SmarterScrapperWeaponsConfig.Epic();
+      case gamedataQuality.Rare: return SmarterScrapperWeaponsConfig.Rare();
+      case gamedataQuality.Uncommon: return SmarterScrapperWeaponsConfig.Uncommon();
+      case gamedataQuality.Common: return SmarterScrapperWeaponsConfig.Common();
+    };
+  };
+
+  if this.IsModSS(type) {
+    switch quality {
+      case gamedataQuality.Rare: return SmarterScrapperModsConfig.Rare();
+      case gamedataQuality.Uncommon: return SmarterScrapperModsConfig.Uncommon();
+      case gamedataQuality.Common: return SmarterScrapperModsConfig.Common();
+    };
+  };
+
+  return false;
+}
+
+@addMethod(PlayerPuppet)
+private func ShouldBeScrappedConsumableSS(data: wref<gameItemData>, quality: gamedataQuality) -> Bool {
+  let type: gamedataItemType = data.GetItemType();
+  
+  if Equals(type, gamedataItemType.Gad_Grenade) {
+    switch quality {
+      case gamedataQuality.Rare: return SmarterScrapperGrenadeConfig.Rare();
+      case gamedataQuality.Uncommon: return SmarterScrapperGrenadeConfig.Uncommon();
+      case gamedataQuality.Common: return SmarterScrapperGrenadeConfig.Common();
+    };
+  };
+  
+  if Equals(type, gamedataItemType.Con_Injector) {
+    switch quality {
+      case gamedataQuality.Rare: return SmarterScrapperBounceBackConfig.Rare();
+      case gamedataQuality.Uncommon: return SmarterScrapperBounceBackConfig.Uncommon();
+      case gamedataQuality.Common: return SmarterScrapperBounceBackConfig.Common();
+    };
+  };
+  
+  if Equals(type, gamedataItemType.Con_Inhaler) {
+    switch quality {
+      case gamedataQuality.Epic: return SmarterScrapperMaxDocConfig.Epic();
+      case gamedataQuality.Rare: return SmarterScrapperMaxDocConfig.Rare();
+      case gamedataQuality.Uncommon: return SmarterScrapperMaxDocConfig.Uncommon();
     };
   };
 
@@ -206,6 +303,10 @@ protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
     } else {
       if this.HasWeaponInInventorySS() && this.ShouldBeScrappedSS(itemData, itemQuality) && !RPGManager.IsItemIconic(itemData) && NotEquals(this.boughtItem, itemData.GetID()) && !RPGManager.IsItemCrafted(itemData) && !itemData.HasTag(n"Quest") && !this.IsExclusionSS(tweakDbId) && !this.HasExcludedQuestActive() {
         ItemActionsHelper.DisassembleItem(this, evt.itemID, GameInstance.GetTransactionSystem(this.GetGame()).GetItemQuantity(this, evt.itemID));
+      } else {
+	    if this.ShouldBeScrappedConsumableSS(itemData, itemQuality) && !itemData.HasTag(n"Quest") && !this.IsExclusionSS(tweakDbId) && !this.HasExcludedQuestActive() {
+          ItemActionsHelper.DisassembleItem(this, evt.itemID, GameInstance.GetTransactionSystem(this.GetGame()).GetItemQuantity(this, evt.itemID));
+		};
       };
     };
   };
