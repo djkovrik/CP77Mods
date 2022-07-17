@@ -71,7 +71,7 @@ public let LastUsedSlotEQ: BlackboardID_Int;
 private static func AlwaysFirstEquipAction() -> CName = n"AlwaysFirstEquip"
 
 public class FirstEquipGlobalInputListener {
-    private let m_player: ref<PlayerPuppet>;
+    private let m_player: wref<PlayerPuppet>;
 
     public func SetPlayer(player: ref<PlayerPuppet>) -> Void {
       this.m_player = player;

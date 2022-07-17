@@ -54,7 +54,7 @@ public let m_isMountedTrackingCallback_IMZ: ref<CallbackHandle>;
 public let m_isActuallyMountedTrackingCallback_IMZ: ref<CallbackHandle>;
 
 @addField(MinimapContainerController)
-public let m_playerInstance_IMZ: ref<PlayerPuppet>;
+public let m_playerInstance_IMZ: wref<PlayerPuppet>;
 
 @addField(MinimapContainerController)
 public let m_currentInVehicleZoom_IMZ: Float;
