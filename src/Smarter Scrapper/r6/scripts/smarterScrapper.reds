@@ -99,27 +99,6 @@ private func IsWeaponSS(type: gamedataItemType) -> Bool {
 }
 
 @addMethod(PlayerPuppet)
-private func IsGrenadeSS(type: gamedataItemType) -> Bool {
-  return
-	  Equals(type, gamedataItemType.Gad_Grenade) ||
-  false;
-}
-
-@addMethod(PlayerPuppet)
-private func IsBounceBackSS(type: gamedataItemType) -> Bool {
-  return
-	  Equals(type, gamedataItemType.Con_Injector) ||
-  false;
-}
-
-@addMethod(PlayerPuppet)
-private func IsMaxDocSS(type: gamedataItemType) -> Bool {
-  return
-	  Equals(type, gamedataItemType.Con_Inhaler) ||
-  false;
-}
-
-@addMethod(PlayerPuppet)
 private func IsModSS(type: gamedataItemType) -> Bool {
   return
     Equals(type, gamedataItemType.Prt_Mod) ||
@@ -192,7 +171,7 @@ private func ShouldBeScrappedSS(data: wref<gameItemData>, quality: gamedataQuali
 private func ShouldBeScrappedConsumableSS(data: wref<gameItemData>, quality: gamedataQuality) -> Bool {
   let type: gamedataItemType = data.GetItemType();
   
-  if this.IsGrenadeSS(type) {
+  if Equals(type, gamedataItemType.Gad_Grenade) {
     switch quality {
       case gamedataQuality.Rare: return SmarterScrapperGrenadeConfig.Rare();
       case gamedataQuality.Uncommon: return SmarterScrapperGrenadeConfig.Uncommon();
@@ -200,7 +179,7 @@ private func ShouldBeScrappedConsumableSS(data: wref<gameItemData>, quality: gam
     };
   };
   
-  if this.IsBounceBackSS(type) {
+  if Equals(type, gamedataItemType.Con_Injector) {
     switch quality {
       case gamedataQuality.Rare: return SmarterScrapperBounceBackConfig.Rare();
       case gamedataQuality.Uncommon: return SmarterScrapperBounceBackConfig.Uncommon();
@@ -208,7 +187,7 @@ private func ShouldBeScrappedConsumableSS(data: wref<gameItemData>, quality: gam
     };
   };
   
-  if this.IsMaxDocSS(type) {
+  if Equals(type, gamedataItemType.Con_Inhaler) {
     switch quality {
       case gamedataQuality.Epic: return SmarterScrapperMaxDocConfig.Epic();
       case gamedataQuality.Rare: return SmarterScrapperMaxDocConfig.Rare();
@@ -325,7 +304,7 @@ protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
       if this.HasWeaponInInventorySS() && this.ShouldBeScrappedSS(itemData, itemQuality) && !RPGManager.IsItemIconic(itemData) && NotEquals(this.boughtItem, itemData.GetID()) && !RPGManager.IsItemCrafted(itemData) && !itemData.HasTag(n"Quest") && !this.IsExclusionSS(tweakDbId) && !this.HasExcludedQuestActive() {
         ItemActionsHelper.DisassembleItem(this, evt.itemID, GameInstance.GetTransactionSystem(this.GetGame()).GetItemQuantity(this, evt.itemID));
       } else {
-	    if this.HasWeaponInInventorySS() && this.ShouldBeScrappedConsumableSS(itemData, itemQuality) && NotEquals(this.boughtItem, itemData.GetID()) && !itemData.HasTag(n"Quest") && !this.IsExclusionSS(tweakDbId) && !this.HasExcludedQuestActive() {
+	    if this.ShouldBeScrappedConsumableSS(itemData, itemQuality) && !itemData.HasTag(n"Quest") && !this.IsExclusionSS(tweakDbId) && !this.HasExcludedQuestActive() {
           ItemActionsHelper.DisassembleItem(this, evt.itemID, GameInstance.GetTransactionSystem(this.GetGame()).GetItemQuantity(this, evt.itemID));
 		};
       };
