@@ -109,6 +109,8 @@ public class SleevesControlSystem extends ScriptableSystem {
         return true;
       };
     };
+
+    return false;
   }
 
   private final func HasIncompatibleCyberware() -> Bool {
