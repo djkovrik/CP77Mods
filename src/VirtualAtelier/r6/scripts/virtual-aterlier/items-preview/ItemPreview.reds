@@ -13,8 +13,6 @@ protected cb func OnRelativeInput(e: ref<inkPointerEvent>) -> Bool {
     let amount: Float = e.GetAxisData();
     let ration: Float = 0.25;
 
-    let actionName: ref<inkActionName> = e.GetActionName();
-
     if this.m_isMouseDown {
       if e.IsAction(n"mouse_x") {
         this.RotateVector(new Vector3(0.00, 0.00, amount * ration));

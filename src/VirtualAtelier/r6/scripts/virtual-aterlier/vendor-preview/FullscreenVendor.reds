@@ -16,6 +16,13 @@ protected cb func OnInitialize() -> Bool {
   }
 }
 
+@wrapMethod(FullscreenVendorGameController)
+private final func RequestAutoSave(opt delay: Float) -> Void {
+  if !this.GetIsVirtual() {
+    wrappedMethod(delay);
+  };
+}
+
 @addMethod(FullscreenVendorGameController)
 private final func GetIsVirtual() -> Bool {
   return Equals(this.m_vendorUserData.vendorData.data.vendorId, "VirtualVendor");
@@ -44,7 +51,7 @@ private final func GetVirtualStorePrices() -> array<Int32> {
   let prices: array<Int32> = this.m_vendorUserData.vendorData.virtualStore.prices;
   let defaultPrice = 0;
   if (ArraySize(prices) == 1) {
-    let defaultPrice = prices[0];
+    defaultPrice = prices[0];
   }  
   let i = 0;
   if (ArraySize(items) > ArraySize(prices)) {
@@ -165,9 +172,6 @@ private func BuyItemFromVirtualVendor(inventoryItemData: InventoryItemData) {
   let quantity: Int32 = InventoryItemData.GetQuantity(inventoryItemData);
 
   let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.m_player.GetGame());
-  let statsSystem: ref<StatsSystem> = GameInstance.GetStatsSystem(this.m_player.GetGame());
-  let inventorySystem: ref<InventoryManager> = GameInstance.GetInventoryManager(this.m_player.GetGame());
-
   let playerMoney = this.m_VendorDataManager.GetLocalPlayerCurrencyAmount();
 
   if playerMoney < Cast(price) {
@@ -200,9 +204,6 @@ private final func HandleVendorSlotInput(evt: ref<ItemDisplayClickEvent>, itemDa
   // Override the "click" action on item, if the preview widget is currently open
   if (evt.actionName.IsAction(n"click") && isVendorItem) {
     let itemId = InventoryItemData.GetID(itemData);
-
-    let itemName = InventoryItemData.GetName(itemData);
-
     let isEquipped = ItemPreviewManager.GetInstance().GetIsEquipped(itemId);
     let hintLabel: String;
     let isWeapon = IsItemWeapon(itemId);
@@ -254,14 +255,11 @@ protected cb func OnHandleGlobalInput(event: ref<inkPointerEvent>) -> Bool {
       ItemPreviewManager.GetInstance().RemovePreviewGarment();
       break;
 
-    case (event.IsAction(n"world_map_menu_toggle_custom_filter")):
-      event.Consume();
-      break;
-
     case (event.IsAction(n"world_map_fake_rotate")) && isVirtual:
       event.Consume();
       break;
 
+    case (event.IsAction(n"world_map_menu_toggle_custom_filter") && isVirtual && this.m_isPreviewMode):
     case (event.IsAction(n"back") && isVirtual && this.m_isPreviewMode):
     case (event.IsAction(n"cancel") && isVirtual && this.m_isPreviewMode):
       this.m_menuEventDispatcher.SpawnEvent(n"OnVendorClose");
@@ -326,9 +324,6 @@ let isVirtualItem: Bool;
 private final func ShowTooltipsForItemController(targetWidget: wref<inkWidget>, equippedItem: InventoryItemData, inspectedItemData: InventoryItemData, iconErrorInfo: ref<DEBUG_IconErrorInfo>, isBuybackStack: Bool) -> Void {
   if this.GetIsVirtual() {
     let data: ref<InventoryTooltipData>;
-    let isComparable: Bool;
-    let tooltipData: ref<IdentifiedWrappedTooltipData>;
-    let tooltipsData: array<ref<ATooltipData>>;
     let isPlayerItem: Bool = !InventoryItemData.IsVendorItem(inspectedItemData);
     let placement: gameuiETooltipPlacement = isPlayerItem ? gameuiETooltipPlacement.RightTop : gameuiETooltipPlacement.LeftTop;
     
@@ -369,8 +364,6 @@ private let m_virtualStock: array<ref<VirtualStockItem>>;
 @addMethod(FullscreenVendorGameController)
 private final func FillVirtualStock() -> Void {
   let inventoryManager: ref<InventoryManager> = GameInstance.GetInventoryManager(this.m_player.GetGame());
-  let itemDataArray: array<ref<gameItemData>>;
-  let storeID: CName = this.GetVirtualStoreID();
   let storeItems: array<String> = this.GetVirtualStoreItems();
   let itemsPrices: array<Int32> = this.GetVirtualStorePrices();
   let itemsQualities: array<CName> = this.GetVirtualStoreQualities();
@@ -409,11 +402,6 @@ private final func FillVirtualStock() -> Void {
 private final func ScaleStockItems() -> Void {
   let itemData: wref<gameItemData>;
   let itemRecord: wref<Item_Record>;
-  let statsSystem: ref<StatsSystem> = GameInstance.GetStatsSystem(this.m_player.GetGame());
-  let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.m_player.GetGame());
-  let powerLevelPlayer: Float = statsSystem.GetStatValue(Cast<StatsObjectID>(this.m_player.GetEntityID()), gamedataStatType.PowerLevel);
-  let powerLevelMod: ref<gameStatModifierData>;
-  let qualityMod: ref<gameStatModifierData>;
   let i: Int32 = 0;
   while i < ArraySize(this.m_virtualStock) {
     itemRecord = TweakDBInterface.GetItemRecord(this.m_virtualStock[i].itemTDBID);
@@ -629,7 +617,6 @@ private final func PopulateVendorInventory() -> Void {
   if this.GetIsVirtual() {
     let i: Int32;
     let items: array<ref<IScriptable>>;
-    let j: Int32;
     let playerMoney: Int32;
     let vendorInventory: array<InventoryItemData>;
     let vendorInventoryData: ref<VendorInventoryItemData>;

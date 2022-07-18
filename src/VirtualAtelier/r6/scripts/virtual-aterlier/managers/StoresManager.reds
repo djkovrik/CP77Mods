@@ -25,7 +25,7 @@ public class VirtualShop extends IScriptable {
 public class VirtualShopRegistration extends Event {
   let owner: wref<GameObject>;
 
-  private func AddStore(storeID: CName, storeName: String, items: array<String>, prices: array<Int32>, atlasResource: ResRef, texturePart: CName, opt qualities: array<String>, opt quantities: array<Int32>) -> Bool {
+  private func AddStore(storeID: CName, storeName: String, items: array<String>, prices: array<Int32>, atlasResource: ResRef, texturePart: CName, opt qualities: array<String>, opt quantities: array<Int32>) -> Void {
     let board: wref<IBlackboard> = GameInstance.GetBlackboardSystem(this.owner.GetGame()).Get(GetAllBlackboardDefs().VirtualShop);
     let stores: array<ref<VirtualShop>> = FromVariant(board.GetVariant(GetAllBlackboardDefs().VirtualShop.Stores));
 

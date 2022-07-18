@@ -45,7 +45,6 @@ private final func ShowMenuByName(elementName: String) -> Void {
 // TODO: Change the tab icon from Internet to something new
 @addMethod(ComputerInkGameController)
 protected final func ShowCustomInternet() -> Void {
-  let internetData: SInternetData = (this.GetOwner().GetDevicePS() as ComputerControllerPS).GetInternetData();
   this.GetMainLayoutController().ShowInternet("Atelier");
   this.RequestMainMenuButtonWidgetsUpdate();
 }

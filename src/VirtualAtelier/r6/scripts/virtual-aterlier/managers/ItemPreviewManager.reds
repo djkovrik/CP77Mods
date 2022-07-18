@@ -86,9 +86,6 @@ public class ItemPreviewManager {
   }
 
   public func GetIsEquipped(itemId: ItemID) -> Bool {
-    let i = 0;
-    let isEquipped = false;
-
     let puppet: ref<gamePuppet> = this.GetGamePuppet();
     let transactionSystem: ref<TransactionSystem> = this.GetTransactionSystem();
       
@@ -156,9 +153,6 @@ public class ItemPreviewManager {
   }
 
   public func RemoveAllGarment() -> Void {
-    let puppet: ref<gamePuppet>;
-    let transactionSystem: ref<TransactionSystem>;
-
     let puppet = this.GetGamePuppet();
 
     if !IsDefined(puppet) { 
@@ -192,9 +186,6 @@ public class ItemPreviewManager {
   }
 
   public func RemovePreviewGarment() -> Void {
-    let puppet: ref<gamePuppet>;
-    let transactionSystem: ref<TransactionSystem>;
-
     let puppet = this.GetGamePuppet();
 
     if !IsDefined(puppet) { 
@@ -202,11 +193,10 @@ public class ItemPreviewManager {
     }
 
     let transactionSystem = this.GetTransactionSystem();
-    let equipmentData: ref<EquipmentSystemPlayerData> = EquipmentSystem.GetData(puppet);
 
     if ArraySize(this.givenItems) < 1 {
       return;
-    }
+    };
 
     let i: Int32 = 0;
 
@@ -224,9 +214,6 @@ public class ItemPreviewManager {
   }
 
   public func RevertInitialGarment() -> Void {
-    let puppet: ref<gamePuppet>;
-    let transactionSystem: ref<TransactionSystem>;
-
     let puppet = this.GetGamePuppet();
 
     if !IsDefined(puppet) { 
@@ -257,10 +244,7 @@ public class ItemPreviewManager {
   }
 
   public static func GetItemPreviewNotificationToken(controller: ref<gameuiMenuGameController>, itemData: InventoryItemData) -> ref<inkGameNotificationToken> {
-    let notificationName = n"base\\gameplay\\gui\\widgets\\notifications\\item_preview.inkwidget";
-
     let previewData = ItemPreviewHelper.GetPreviewData(controller, itemData, false);
-    
     return controller.ShowGameNotification(previewData);
   }
 
@@ -421,7 +405,7 @@ public class ItemPreviewManager {
     previewWidget.PlayAnimation(translationAnimation);
   }
 
-  public static func OnGarmentPreviewAxisInput(controller: ref<GarmentItemPreviewGameController>, event: ref<inkPointerEvent>) -> Bool {
+  public static func OnGarmentPreviewAxisInput(controller: ref<GarmentItemPreviewGameController>, event: ref<inkPointerEvent>) -> Void {
     let amount: Float = event.GetAxisData();
 
     if event.IsAction(n"character_preview_rotate") {
@@ -441,8 +425,7 @@ public class ItemPreviewManager {
     let previewWidget = controller.GetRootCompoundWidget().GetWidgetByPath(inkWidgetPath.Build(n"wrapper", n"preview")) as inkImage;
 
     let widget: ref<inkWidget> = event.GetTarget();
-    let parent = controller.GetRootCompoundWidget();
-
+    
     // Allow player puppet dragging and scrolling only for left side of the screen
     let screenPosition: Vector2 = event.GetScreenSpacePosition();
     let limit: Float = ItemPreviewManager.GetInstance().GetScreenWidthLimit();
@@ -487,7 +470,9 @@ public class ItemPreviewManager {
             
         previewWidget.SetScale(new Vector2(finalXScale, finalYScale));
       }; 
-    }
+    };
+
+    return false;
   }
 
   public func GetScreenWidthLimit() -> Float {

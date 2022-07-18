@@ -17,7 +17,6 @@ protected cb func OnPlayerAttach(playerPuppet: ref<GameObject>) -> Bool {
 
 @addMethod(BackpackMainGameController)
 private final func ShowItemPreview(opt itemData: InventoryItemData) -> Void {
-  let itemId = InventoryItemData.GetID(itemData);
 
   this.m_previewItemPopupToken = ItemPreviewManager.GetItemPreviewNotificationToken(this, itemData);
 
@@ -48,8 +47,6 @@ private final func SetInventoryItemButtonHintsHoverOver(displayingData: Inventor
   wrappedMethod(displayingData);
 
   let vendorPreviewButtonHint = VendorPreviewButtonHint.Get(this.GetPlayerControlledObject());
-  let itemId = InventoryItemData.GetID(displayingData);
-
   this.m_buttonHintsController.AddButtonHint(vendorPreviewButtonHint.previewModeToggleNameBackpack, VirtualAtelierText.PreviewItem());
 }
 

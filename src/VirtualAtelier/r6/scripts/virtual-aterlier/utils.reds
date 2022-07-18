@@ -1,4 +1,5 @@
 module VendorPreview.utils
+import VendorPreview.config.VirtualAtelierConfig
 
 // Darkcopse itemParts fix
 @wrapMethod(InventoryDataManagerV2)
@@ -13,7 +14,6 @@ private final func GetPartInventoryItemData(owner: wref<GameObject>, itemId: Ite
 private final func ScaleAtelierItem(itemData: ref<gameItemData>, quality: CName) -> Void {
   let statsSystem: ref<StatsSystem> = GameInstance.GetStatsSystem(this.GetGame());
   let powerLevelPlayer: Float = statsSystem.GetStatValue(Cast<StatsObjectID>(this.GetEntityID()), gamedataStatType.PowerLevel);
-  let powerLevelItem: Float = itemData.GetStatValueByType(gamedataStatType.PowerLevel);
   let powerLevelMod: ref<gameStatModifierData> = RPGManager.CreateStatModifier(gamedataStatType.PowerLevel, gameStatModifierType.Additive, powerLevelPlayer);
   let qualityMod: ref<gameStatModifierData> = RPGManager.CreateStatModifier(gamedataStatType.Quality, gameStatModifierType.Additive, RPGManager.ItemQualityNameToValue(quality));
   statsSystem.RemoveAllModifiers(itemData.GetStatsObjectID(), gamedataStatType.PowerLevel, true);
@@ -75,6 +75,10 @@ public class StoreGoods extends IScriptable {
 }
 
 public func CheckDuplicates(stores: array<ref<VirtualShop>>, controller: ref<WebPage>) -> Void {
+  if VirtualAtelierConfig.DisableDuplicatesChecker() {
+    return ;
+  };
+  
   let itemsHashMap: ref<inkHashMap> = new inkHashMap();
   let storeIndex: Int32 = 0;
   let store: ref<VirtualShop>;
@@ -117,7 +121,6 @@ public func CheckDuplicates(stores: array<ref<VirtualShop>>, controller: ref<Web
   let storedItem: ref<StoreGoods>;
   let hasDuplicates: Bool = false;
   let duplicatesInfo: String = "";
-  let finalMessage: String = "";
   let mapItemIndex: Int32 = 0;
   let isLast: Bool = false;
   let storeIndex: Int32;
