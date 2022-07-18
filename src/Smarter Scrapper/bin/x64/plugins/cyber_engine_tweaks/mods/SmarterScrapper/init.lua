@@ -109,8 +109,8 @@ function SetupSettingsMenu()
 	end)
 
 	nativeSettings.addSubcategory("/scrapper/weapons", GetLocalizedText("LocKey#53751") .. " - " .. GetLocalizedText("LocKey#261"))
-	nativeSettings.addSwitch("/scrapper/weapons", GetLocalizedText("LocKey#778"), "", settings.WeaponsKnife, defaults.WeaponsKnife, function(state)
-		settings.WeaponsKnife = state
+	nativeSettings.addSwitch("/scrapper/weapons", GetLocalizedText("LocKey#778"), "", settings.WeaponsKnives, defaults.WeaponsKnives, function(state)
+		settings.WeaponsKnives = state
 		SaveSettings()
 	end)
 	nativeSettings.addSwitch("/scrapper/weapons", GetLocalizedText("LocKey#1815"), "", settings.WeaponsLegendary, defaults.WeaponsLegendary, function(state)
@@ -135,15 +135,15 @@ function SetupSettingsMenu()
 	end)
 
 	nativeSettings.addSubcategory("/scrapper/mods", GetLocalizedText("LocKey#49863") .. " - " .. GetLocalizedText("LocKey#261"))
-	nativeSettings.addSwitch("/scrapper/mods", GetLocalizedText("LocKey#1816"), "", settings.ModRare, defaults.ModRare, function(state)
+	nativeSettings.addSwitch("/scrapper/mods", GetLocalizedText("LocKey#1816"), "", settings.ModsRare, defaults.ModsRare, function(state)
 		settings.ModsRare = state
 		SaveSettings()
 	end)
-	nativeSettings.addSwitch("/scrapper/mods", GetLocalizedText("LocKey#1817"), "", settings.ModUncommon, defaults.ModUncommon, function(state)
+	nativeSettings.addSwitch("/scrapper/mods", GetLocalizedText("LocKey#1817"), "", settings.ModsUncommon, defaults.ModsUncommon, function(state)
 		settings.ModsUncommon = state
 		SaveSettings()
 	end)
-	nativeSettings.addSwitch("/scrapper/mods", GetLocalizedText("LocKey#1814"), "", settings.ModCommon, defaults.ModCommon, function(state)
+	nativeSettings.addSwitch("/scrapper/mods", GetLocalizedText("LocKey#1814"), "", settings.ModsCommon, defaults.ModsCommon, function(state)
 		settings.ModsCommon = state
 		SaveSettings()
 	end)
@@ -202,7 +202,7 @@ registerForEvent("onInit", function()
 	Override("SmarterScrapperClothesConfig", "Uncommon;", function(_) return settings.ClothesUncommon end)
 	Override("SmarterScrapperClothesConfig", "Common;", function(_) return settings.ClothesCommon end)
 	
-	Override("SmarterScrapperWeaponsConfig", "Knife;", function(_) return settings.WeaponsKnife end)
+	Override("SmarterScrapperWeaponsConfig", "Knife;", function(_) return settings.WeaponsKnives end)
 	Override("SmarterScrapperWeaponsConfig", "Legendary;", function(_) return settings.WeaponsLegendary end)
 	Override("SmarterScrapperWeaponsConfig", "Epic;", function(_) return settings.WeaponsEpic end)
 	Override("SmarterScrapperWeaponsConfig", "Rare;", function(_) return settings.WeaponsRare end)
