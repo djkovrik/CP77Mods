@@ -232,6 +232,8 @@ protected cb func OnHandleGlobalInput(event: ref<inkPointerEvent>) -> Bool {
 
   let vendorPreviewButtonHint = VendorPreviewButtonHint.Get(this.GetPlayerControlledObject());
   let isVirtual: Bool = this.GetIsVirtual();
+  let lastUsedPad: Bool = this.GetPlayerControlledObject().PlayerLastUsedPad();
+  let lastUsedKBM: Bool = this.GetPlayerControlledObject().PlayerLastUsedKBM();
 
   switch true {
     case event.IsAction(vendorPreviewButtonHint.previewModeToggleName) && !isVirtual:
@@ -255,14 +257,25 @@ protected cb func OnHandleGlobalInput(event: ref<inkPointerEvent>) -> Bool {
       ItemPreviewManager.GetInstance().RemovePreviewGarment();
       break;
 
-    case (event.IsAction(n"world_map_fake_rotate")) && isVirtual:
-      event.Consume();
-      break;
-
-    case (event.IsAction(n"world_map_menu_toggle_custom_filter") && isVirtual && this.m_isPreviewMode):
     case (event.IsAction(n"back") && isVirtual && this.m_isPreviewMode):
     case (event.IsAction(n"cancel") && isVirtual && this.m_isPreviewMode):
       this.m_menuEventDispatcher.SpawnEvent(n"OnVendorClose");
+      break;
+
+    // Since patch 1.5 right mouse click closes menus and for Atelier it just removes preview
+    // without closing the shop so Consume just blocks it
+    case (event.IsAction(n"world_map_fake_rotate") && isVirtual):
+      event.Consume();
+      break;
+
+    // Force shop closing on C for keyboards to prevent preview screw up
+    case (event.IsAction(n"world_map_menu_toggle_custom_filter") && isVirtual && this.m_isPreviewMode && lastUsedKBM):
+      this.m_menuEventDispatcher.SpawnEvent(n"OnVendorClose");
+      break;
+
+    // Consume SQUARE for Pad to prevent conflicts with Purchase action which also uses world_map_menu_toggle_custom_filter
+    case (event.IsAction(n"world_map_menu_toggle_custom_filter") && isVirtual && this.m_isPreviewMode && lastUsedPad):
+      event.Consume();
       break;
   }
 }

@@ -472,7 +472,7 @@ public class ItemPreviewManager {
       }; 
     };
 
-    return false;
+    return true;
   }
 
   public func GetScreenWidthLimit() -> Float {
