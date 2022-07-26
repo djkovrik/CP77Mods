@@ -9,16 +9,16 @@ protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
 
 @addMethod(weaponRosterGameController)
 public func DetermineCurrentVisibility() -> Void {
-  if !WeaponRosterModuleConfig.IsEnabled() || this.lhud_isBraindanceActive {
+  if !this.lhudConfig.IsEnabled || this.lhud_isBraindanceActive {
     return ;
   };
 
-  let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && WeaponRosterModuleConfig.BindToGlobalHotkey();
-  let showForCombat: Bool = this.lhud_isCombatActive && WeaponRosterModuleConfig.ShowInCombat();
-  let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && WeaponRosterModuleConfig.ShowOutOfCombat();
-  let showForStealth: Bool =  this.lhud_isStealthActive && WeaponRosterModuleConfig.ShowInStealth();
-  let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && WeaponRosterModuleConfig.ShowWithWeapon();
-  let showForZoom: Bool =  this.lhud_isZoomActive && WeaponRosterModuleConfig.ShowWithZoom();
+  let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && this.lhudConfig.BindToGlobalHotkey;
+  let showForCombat: Bool = this.lhud_isCombatActive && this.lhudConfig.ShowInCombat;
+  let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && this.lhudConfig.ShowOutOfCombat;
+  let showForStealth: Bool =  this.lhud_isStealthActive && this.lhudConfig.ShowInStealth;
+  let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfig.ShowWithWeapon;
+  let showForZoom: Bool =  this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
 
   let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForWeapon || showForZoom;
   if NotEquals(this.lhud_isVisibleNow, isVisible) {
@@ -35,10 +35,14 @@ public func DetermineCurrentVisibility() -> Void {
   };
 }
 
+@addField(weaponRosterGameController)
+private let lhudConfig: ref<WeaponRosterModuleConfig>;
+
 @wrapMethod(weaponRosterGameController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
-  if WeaponRosterModuleConfig.IsEnabled() {
+  this.lhudConfig = new WeaponRosterModuleConfig();
+  if this.lhudConfig.IsEnabled {
     this.lhud_isVisibleNow = this.m_Player.HasAnyWeaponEquipped_LHUD();
     this.OnInitializeFinished();
     this.DetermineCurrentVisibility();
@@ -73,7 +77,7 @@ protected cb func OnWeaponDataChanged(value: Variant) -> Bool {
     this.m_ActiveWeapon = currentData;
     weaponItemType = InventoryItemData.GetItemType(this.m_weaponItemData);
     this.SetRosterSlotData(Equals(weaponItemType, gamedataItemType.Wea_Melee) || Equals(weaponItemType, gamedataItemType.Wea_Fists) || Equals(weaponItemType, gamedataItemType.Wea_Hammer) || Equals(weaponItemType, gamedataItemType.Wea_Katana) || Equals(weaponItemType, gamedataItemType.Wea_Knife) || Equals(weaponItemType, gamedataItemType.Wea_OneHandedClub) || Equals(weaponItemType, gamedataItemType.Wea_ShortBlade) || Equals(weaponItemType, gamedataItemType.Wea_TwoHandedClub) || Equals(weaponItemType, gamedataItemType.Wea_LongBlade));
-    if !WeaponRosterModuleConfig.IsEnabled() {
+    if !this.lhudConfig.IsEnabled {
       this.PlayUnfold();
     };
     if NotEquals(RPGManager.GetWeaponEvolution(InventoryItemData.GetID(this.m_weaponItemData)), gamedataWeaponEvolution.Smart) {
@@ -81,7 +85,7 @@ protected cb func OnWeaponDataChanged(value: Variant) -> Bool {
       inkWidgetRef.SetVisible(this.m_smartLinkFirmwareOnline, false);
     };
   } else {
-    if !WeaponRosterModuleConfig.IsEnabled() {
+    if !this.lhudConfig.IsEnabled {
       this.PlayFold();
     };
   };

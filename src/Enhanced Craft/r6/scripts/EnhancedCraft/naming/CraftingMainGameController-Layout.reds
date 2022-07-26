@@ -1,6 +1,7 @@
 module EnhancedCraft.Naming
 import EnhancedCraft.Codeware.UI.*
 import EnhancedCraft.Common.L
+import EnhancedCraft.System.EnhancedCraftSystem
 import EnhancedCraft.Config.*
 
 // -- Custom text input
@@ -21,7 +22,9 @@ protected cb func OnInitialize() -> Bool {
   wrappedMethod();
 
   // If custon naming disabled then do nothing
-  if !Config.CustomNamesEnabled() {
+  let config: ref<ECraftConfig> = new ECraftConfig();
+  let customNamesEnabled: Bool = config.customNamesEnabled;
+  if !customNamesEnabled {
     return true;
   };
 

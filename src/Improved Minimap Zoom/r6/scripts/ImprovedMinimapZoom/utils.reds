@@ -2,42 +2,27 @@ module ImprovedMinimapUtil
 
 import ImprovedMinimapMain.ZoomConfig
 
-public class CastedValues {
-  public static func Combat() -> Float = Cast(ZoomConfig.Combat())
-  public static func QuestArea() -> Float = Cast(ZoomConfig.QuestArea())
-  public static func SecurityArea() -> Float = Cast(ZoomConfig.SecurityArea())
-  public static func Interior() -> Float = Cast(ZoomConfig.Interior())
-  public static func Exterior() -> Float = Cast(ZoomConfig.Exterior())
-
-  public static func MinZoom() -> Float = Cast(ZoomConfig.MinZoom())
-  public static func MaxZoom() -> Float = Cast(ZoomConfig.MaxZoom())
-  public static func MinSpeed() -> Float = Cast(ZoomConfig.MinSpeed())
-  public static func MaxSpeed() -> Float = Cast(ZoomConfig.MaxSpeed())
-
-  public static func Peek() -> Float = Cast(ZoomConfig.Peek())
-}
-
 public class ZoomCalc {
 
-  public static func GetForSpeed(speed: Float) -> Float {
-    if !ZoomConfig.IsDynamicZoomEnabled() {
-      return CastedValues.MinZoom();
+  public static func GetForSpeed(speed: Float, config: ref<ZoomConfig>) -> Float {
+    if !config.isDynamicZoomEnabled {
+      return Cast<Float>(config.minZoom);
     };
-    if speed <= CastedValues.MinSpeed() { 
-      return CastedValues.MinZoom(); 
+    if speed <= Cast<Float>(config.minSpeed) { 
+      return Cast<Float>(config.minZoom); 
     };
-    if speed >= CastedValues.MaxSpeed() { 
-      return CastedValues.MaxZoom(); 
+    if speed >= Cast<Float>(config.maxSpeed) { 
+      return Cast<Float>(config.maxZoom); 
     };
 
     // Calculate zoom increase step based on min/max values
-    let speedRange: Float = CastedValues.MaxSpeed() - CastedValues.MinSpeed();
-    let zoomRange: Float = CastedValues.MaxZoom() - CastedValues.MinZoom();
+    let speedRange: Float = Cast<Float>(config.maxSpeed) - Cast<Float>(config.minSpeed) ;
+    let zoomRange: Float = Cast<Float>(config.maxZoom) - Cast<Float>(config.minZoom);
     let step: Float = zoomRange / speedRange;
     // Shift speed range for cases when MinSpeed is above zero
-    let baseSpeed: Float = speed - CastedValues.MinSpeed();
+    let baseSpeed: Float = speed - Cast<Float>(config.minSpeed) ;
     let zoomToAdd: Float = baseSpeed * step;
-    let calculated: Float = CastedValues.MinZoom() + zoomToAdd;
+    let calculated: Float = Cast<Float>(config.minZoom) + zoomToAdd;
     return calculated;
   }
 
@@ -54,3 +39,34 @@ public static func IMZLog(message: String) -> Void {
 }
 
 public static func IMZAction() -> CName = n"imzPeek"
+
+// -- ArchiveXL checker
+@addField(SingleplayerMenuGameController)
+public let archiveXlChecked: Bool;
+
+@wrapMethod(SingleplayerMenuGameController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+
+  let warning: ref<inkText>;
+  let str: String = GetLocalizedTextByKey(n"Mod-IMZ-Combat");
+  if Equals(str, "Mod-IMZ-Combat") || Equals(str, "") {
+    if !this.archiveXlChecked {
+      this.archiveXlChecked = true;
+      warning = new inkText();
+      warning.SetName(n"CustomWarning");
+      warning.SetText("Archive XL not detected! Make sure that it was installed correctly.");
+      warning.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+      warning.SetFontSize(64);
+      warning.SetHAlign(inkEHorizontalAlign.Fill);
+      warning.SetVAlign(inkEVerticalAlign.Bottom);
+      warning.SetAnchor(inkEAnchor.BottomFillHorizontaly);
+      warning.SetAnchorPoint(0.5, 1.0);
+      warning.SetLetterCase(textLetterCase.OriginalCase);
+      warning.SetMargin(new inkMargin(20.0, 0.0, 0.0, 10.0));
+      warning.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+      warning.BindProperty(n"tintColor", n"MainColors.Red");
+      warning.Reparent(this.GetRootCompoundWidget());
+    };
+  };
+}

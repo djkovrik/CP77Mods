@@ -3,9 +3,10 @@ import LimitedHudConfig.LHUDAddonsConfig
 // Swaps misplaced Power and Tech icons for weapon tooltips
 @replaceMethod(ItemTooltipEvolutionModule)
 public func Update(data: ref<MinimalItemTooltipData>) -> Void {
+  let config: ref<LHUDAddonsConfig> = new LHUDAddonsConfig();
   switch data.itemEvolution {
     case gamedataWeaponEvolution.Power:
-      if LHUDAddonsConfig.FixEvolutionIcons() {
+      if config.FixEvolutionIcons {
         // "ico_power" replaced with "ico_tech"
         inkImageRef.SetTexturePart(this.m_weaponEvolutionIcon, n"ico_tech"); 
       } else {
@@ -20,7 +21,7 @@ public func Update(data: ref<MinimalItemTooltipData>) -> Void {
       inkTextRef.SetText(this.m_weaponEvolutionDescription, "LocKey#54120");
       return;
     case gamedataWeaponEvolution.Tech:
-      if LHUDAddonsConfig.FixEvolutionIcons() {
+      if config.FixEvolutionIcons {
         // "ico_tech" replaced with "ico_power"
         inkImageRef.SetTexturePart(this.m_weaponEvolutionIcon, n"ico_power");
       } else {
@@ -44,6 +45,7 @@ public func Update(data: ref<MinimalItemTooltipData>) -> Void {
 
 @replaceMethod(ItemTooltipController)
 protected final func UpdateEvolutionDescription() -> Void {
+  let config: ref<LHUDAddonsConfig> = new LHUDAddonsConfig();
   let evolution: gamedataWeaponEvolution;
   evolution = gamedataWeaponEvolution.Invalid;
   if Equals(InventoryItemData.GetEquipmentArea(this.m_data.inventoryItemData), gamedataEquipmentArea.Weapon) {
@@ -54,7 +56,7 @@ protected final func UpdateEvolutionDescription() -> Void {
 
   switch evolution {
     case gamedataWeaponEvolution.Power:
-      if LHUDAddonsConfig.FixEvolutionIcons() {
+      if config.FixEvolutionIcons {
         // "ico_power" replaced with "ico_tech"
         inkImageRef.SetTexturePart(this.m_weaponEvolutionIcon, n"ico_tech"); 
       } else {
@@ -69,7 +71,7 @@ protected final func UpdateEvolutionDescription() -> Void {
       inkTextRef.SetText(this.m_weaponEvolutionDescription, "LocKey#54120");
       return;
     case gamedataWeaponEvolution.Tech:
-      if LHUDAddonsConfig.FixEvolutionIcons() {
+      if config.FixEvolutionIcons {
         // "ico_tech" replaced with "ico_power"
         inkImageRef.SetTexturePart(this.m_weaponEvolutionIcon, n"ico_power");
       } else {

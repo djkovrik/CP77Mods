@@ -97,7 +97,6 @@ public class MappinChecker {
   }
 
   public static func IsDeviceInteraction(mappin: wref<IMappin>) -> Bool {
-    let variant: gamedataMappinVariant = mappin.GetVariant();
     let data: ref<GameplayRoleMappinData> = mappin.GetScriptData() as GameplayRoleMappinData;
     let role: EGameplayRole = data.m_gameplayRole;
 

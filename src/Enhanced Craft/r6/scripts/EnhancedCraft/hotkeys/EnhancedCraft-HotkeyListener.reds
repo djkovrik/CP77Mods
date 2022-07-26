@@ -1,6 +1,7 @@
 module EnhancedCraft.Hotkey
 import EnhancedCraft.Config.*
 import EnhancedCraft.Common.*
+import EnhancedCraft.System.*
 
 // -- Custom hotkey listener for Prev and Next hotkeys
 
@@ -8,8 +9,14 @@ public class EnhancedCraftHotkeyListener {
 
   private let controller: wref<CraftingLogicController>;
 
+  private let config: ref<ECraftConfig>;
+
   public func SetController(controller: ref<CraftingLogicController>) -> Void {
     this.controller = controller;
+  }
+
+  public func SetConfig(config: ref<ECraftConfig>) -> Void {
+    this.config = config;
   }
 
   // Hotkeys active only if Randomizer disabled
@@ -18,19 +25,19 @@ public class EnhancedCraftHotkeyListener {
     let isReleased: Bool = Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED);
     // Weapons
     if ArraySize(this.controller.weaponVariants) > 1 {
-      if Equals(actionName, HotkeyActions.EnhancedCraftPrevAction()) && isReleased && !Config.RandomizerEnabled() {
+      if Equals(actionName, HotkeyActions.EnhancedCraftPrevAction(this.config)) && isReleased && !this.config.randomizerEnabled {
         this.controller.LoadPrevWeaponVariant();
       };
-      if Equals(actionName, HotkeyActions.EnhancedCraftNextAction()) && isReleased && !Config.RandomizerEnabled() {
+      if Equals(actionName, HotkeyActions.EnhancedCraftNextAction(this.config)) && isReleased && !this.config.randomizerEnabled {
         this.controller.LoadNextWeaponVariant();
       };
     };
     // Clothes
     if ArraySize(this.controller.clothesVariants) > 1 {
-      if Equals(actionName, HotkeyActions.EnhancedCraftPrevAction()) && isReleased {
+      if Equals(actionName, HotkeyActions.EnhancedCraftPrevAction(this.config)) && isReleased {
         this.controller.LoadPrevClothesVariant();
       };
-      if Equals(actionName, HotkeyActions.EnhancedCraftNextAction()) && isReleased {
+      if Equals(actionName, HotkeyActions.EnhancedCraftNextAction(this.config)) && isReleased {
         this.controller.LoadNextClothesVariant();
       };
     };
@@ -43,8 +50,12 @@ public let m_inputListener: ref<EnhancedCraftHotkeyListener>;
 @wrapMethod(CraftingLogicController)
 public func Init(craftingGameController: wref<CraftingMainGameController>) -> Void {
   wrappedMethod(craftingGameController);
+  if !IsDefined(this.ecraftConfig) {
+    this.ecraftConfig = new ECraftConfig();
+  };
   this.m_inputListener = new EnhancedCraftHotkeyListener();
   this.m_inputListener.SetController(this);
+  this.m_inputListener.SetConfig(this.ecraftConfig);
   this.m_craftingGameController.GetPlayer().RegisterInputListener(this.m_inputListener);
 }
 

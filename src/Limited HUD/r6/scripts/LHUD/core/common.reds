@@ -17,6 +17,34 @@ enum LHUDEventType {
   Refresh = 11
 }
 
+enum LHUDFillColors {
+  Transparent = 0,
+  LightYellow = 1,
+  LightBlue = 2,
+  White = 3,
+  LightGreen = 4,
+  Blue = 5,
+  Orange = 6,
+  Red = 8,
+}
+
+enum LHUDOutlineColors {
+  Transparent = 0,
+  LightGreen = 1,
+  Red = 2,
+  LightBlue = 3,
+  LightRed = 4,
+  LightYellow = 5,
+  Blue = 6,
+  White = 7,
+}
+
+enum LHUDRicochetColors {
+  Transparent = 0,
+  Green = 1,
+  Red = 2,
+}
+
 // Basic visibility condition event
 public class LHUDEvent extends Event {
   public let isActive: Bool;

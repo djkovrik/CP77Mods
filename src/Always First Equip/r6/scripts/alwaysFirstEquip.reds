@@ -1,51 +1,146 @@
-class FirstEquipConfig {
-  // -- Common config
+public static func FirstEquipConfig() -> ref<FirstEquipConfig> {
+  return FirstEquipConfig.Create();
+}
+
+enum FirstEquipTimeUnit {
+  Seconds = 0,
+  Minutes = 1
+}
+
+public class FirstEquipConfig {
+
+  public static func Create() -> ref<FirstEquipConfig> {
+    let self = new FirstEquipConfig();
+    return self;
+  }
+
   // Defines firstEquip animation probability in percents, you can use values from 0 to 100 here
-  public static func PercentageProbability() -> Int32 = 50
-  // Replace false with true if you want see firstEquip animation while in combat mode
-  public static func PlayInCombatMode() -> Bool = false
-  // Replace false with true if you want see firstEquip animation while in stealth mode
-  public static func PlayInStealthMode() -> Bool = false
-  // Replace false with true if you want see firstEquip animation when weapon magazine is empty
-  public static func PlayWhenMagazineIsEmpty() -> Bool = false
-  // Replace false with true if you want see firstEquip animation while sprinting
-  public static func PlayWhileSprinting() -> Bool = false
-  // Replace false with true if you want to prevent probability based animations for arms cyberware
-  public static func ExcludeArmsCyberware() -> Bool = true
+  @runtimeProperty("ModSettings.mod", "First Equip")
+  @runtimeProperty("ModSettings.category", "Mod-First-Equip-Triggering")
+  @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Percentage")
+  @runtimeProperty("ModSettings.description", "Mod-First-Equip-Percentage-Desc")
+  @runtimeProperty("ModSettings.step", "5")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "100")
+  let percentageProbability: Int32 = 50;
+
   // Use cooldown instead of probability
-  public static func UseCooldownBasedCheck() -> Bool = false
+  @runtimeProperty("ModSettings.mod", "First Equip")
+  @runtimeProperty("ModSettings.category", "Mod-First-Equip-Triggering")
+  @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Cooldowns")
+  @runtimeProperty("ModSettings.description", "Mod-First-Equip-Cooldowns-Desc")
+  let useCooldownBasedCheck: Bool = false;
+
   // Cooldown time
-  public static func CooldownTime() -> Int32 = 20
+  @runtimeProperty("ModSettings.mod", "First Equip")
+  @runtimeProperty("ModSettings.category", "Mod-First-Equip-Triggering")
+  @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Cooldowns-Time")
+  @runtimeProperty("ModSettings.description", "Mod-First-Equip-Cooldowns-Time-Desc")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "120")
+  let cooldownTime: Int32 = 20;
+
   // Cooldown time units: 1 = seconds, 2 = minutes
-  public static func CooldownTimeUnits() -> Int32 = 1
+  @runtimeProperty("ModSettings.mod", "First Equip")
+  @runtimeProperty("ModSettings.category", "Mod-First-Equip-Triggering")
+  @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Cooldowns-Time-Unit")
+  @runtimeProperty("ModSettings.description", "Mod-First-Equip-Cooldowns-Time-Unit-Desc")
+  let cooldownTimeUnit: FirstEquipTimeUnit = FirstEquipTimeUnit.Seconds;
+
+  // Replace false with true if you want see firstEquip animation while in combat mode
+  @runtimeProperty("ModSettings.mod", "First Equip")
+  @runtimeProperty("ModSettings.category", "Mod-First-Equip-Restrictions")
+  @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Restrictions-Combat")
+  @runtimeProperty("ModSettings.description", "Mod-First-Equip-Restrictions-Combat-Desc")
+  let playInCombatMode: Bool = false;
+
+  // Replace false with true if you want see firstEquip animation while in stealth mode
+  @runtimeProperty("ModSettings.mod", "First Equip")
+  @runtimeProperty("ModSettings.category", "Mod-First-Equip-Restrictions")
+  @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Restrictions-Stealth")
+  @runtimeProperty("ModSettings.description", "Mod-First-Equip-Restrictions-Stealth-Desc")
+  let playInStealthMode: Bool = false;
+
+  // Replace false with true if you want see firstEquip animation when weapon magazine is empty
+  @runtimeProperty("ModSettings.mod", "First Equip")
+  @runtimeProperty("ModSettings.category", "Mod-First-Equip-Restrictions")
+  @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Restrictions-Magazine")
+  @runtimeProperty("ModSettings.description", "Mod-First-Equip-Restrictions-Magazine-Desc")
+  let playWhenMagazineIsEmpty: Bool = false;
+
+  // Replace false with true if you want see firstEquip animation while sprinting
+  @runtimeProperty("ModSettings.mod", "First Equip")
+  @runtimeProperty("ModSettings.category", "Mod-First-Equip-Restrictions")
+  @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Restrictions-Sprinting")
+  @runtimeProperty("ModSettings.description", "Mod-First-Equip-Restrictions-Sprinting-Desc")
+  let playWhileSprinting: Bool = false;
+
+  // Replace false with true if you want to prevent probability based animations for arms cyberware
+  @runtimeProperty("ModSettings.mod", "First Equip")
+  @runtimeProperty("ModSettings.category", "Mod-First-Equip-Restrictions")
+  @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Restrictions-ArmsCW")
+  @runtimeProperty("ModSettings.description", "Mod-First-Equip-Restrictions-ArmsCW-Desc")
+  let excludeArmsCyberware: Bool = true;
 
   // -- Hotkey config
 
   // Replace true with false if you want to disable slot tracking behavior
   // If enabled then mod tracks slots usage and hotkey press equips weapon from the last used slot,
   // if disabled then hotkey press always equips weapon from slot defined by DefaultSlotNumber
-  public static func TrackLastUsedSlot() -> Bool = true
-  // Default slot number
-  public static func DefaultSlotNumber() -> Int32 = 1
-}
+  @runtimeProperty("ModSettings.mod", "First Equip")
+  @runtimeProperty("ModSettings.category", "Mod-First-Equip-Hotkey")
+  @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Hotkey-Track")
+  @runtimeProperty("ModSettings.description", "Mod-First-Equip-Hotkey-Track-Desc")
+  let trackLastUsedSlot: Bool = true;
 
-class IdleBreakConfig {
+  // Default slot number
+  @runtimeProperty("ModSettings.mod", "First Equip")
+  @runtimeProperty("ModSettings.category", "Mod-First-Equip-Hotkey")
+  @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Hotkey-Default")
+  @runtimeProperty("ModSettings.description", "Mod-First-Equip-Hotkey-Default-Desc")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "1")
+  @runtimeProperty("ModSettings.max", "4")
+  let defaultSlotNumber: Int32 = 1;
+
   // -- Common config
+  // Replace true with false if you want to unbind IdleBreak animation trigger from a custom hotkey
+  @runtimeProperty("ModSettings.mod", "First Equip")
+  @runtimeProperty("ModSettings.category", "Mod-First-Equip-IdleBreak")
+  @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-IdleBreak-Bind")
+  @runtimeProperty("ModSettings.description", "Mod-First-Equip-IdleBreak-Bind-Desc")
+  let bindToHotkeyIdleBreak: Bool = true;
+
   // Set IdleBreak animation probability in percents, you can use values from 0 to 100 here
-  public static func AnimationProbability() -> Int32 = 10
+  @runtimeProperty("ModSettings.mod", "First Equip")
+  @runtimeProperty("ModSettings.category", "Mod-First-Equip-IdleBreak")
+  @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-IdleBreak-Probability")
+  @runtimeProperty("ModSettings.description", "Mod-First-Equip-IdleBreak-Probability-Desc")
+  @runtimeProperty("ModSettings.step", "5")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "100")
+  let animationProbabilityIdleBreak: Int32 = 10;
+  
   // Animation checks period in seconds, each check decides if animation should be played when V stands still based on 
   // probability value from AnimationProbability option (with default settings it runs each 5 seconds with 10% probability)
-  public static func AnimationCheckPeriod() -> Float = 5.0
-
-  // -- Hotkey config
-  // Replace true with false if you want to unbind IdleBreak animation trigger from a custom hotkey
-  public static func BindToHotkey() -> Bool = true 
+  @runtimeProperty("ModSettings.mod", "First Equip")
+  @runtimeProperty("ModSettings.category", "Mod-First-Equip-IdleBreak")
+  @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-IdleBreak-Check")
+  @runtimeProperty("ModSettings.description", "Mod-First-Equip-IdleBreak-Check-Desc")
+  @runtimeProperty("ModSettings.step", "5.0")
+  @runtimeProperty("ModSettings.min", "0.0")
+  @runtimeProperty("ModSettings.max", "100.0")
+  let animationCheckPeriodIdleBreak: Float = 5.0;
 }
 
 // --- CONFIG SECTION ENDS HERE, DO NOT EDIT ANYTHING BELOW
 
 
 // --- NEW FIELDS
+
+@addField(PlayerPuppet)
+private let firstEquipConfig: ref<FirstEquipConfig>;
 
 @addField(PlayerPuppet)
 private let skipFirstEquipEQ: Bool;
@@ -80,8 +175,6 @@ public class FirstEquipGlobalInputListener {
     // Catch FirstTimeEquip hotkey press
     protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
       let drawItemRequest: ref<DrawItemRequest>;
-      let sheatheRequest: ref<EquipmentSystemWeaponManipulationRequest>;
-      let equipmentSystem: ref<EquipmentSystem>;
       let slotForHotkey: Int32;
 
       if !IsDefined(this.m_player) {
@@ -102,10 +195,10 @@ public class FirstEquipGlobalInputListener {
           GameInstance.GetBlackboardSystem(this.m_player.GetGame()).Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.HotkeyHoldEQ, hold, false);
         } else {
           // If no weapon equipped then run firstEquip
-          if FirstEquipConfig.TrackLastUsedSlot() {
+          if this.m_player.firstEquipConfig.trackLastUsedSlot {
             slotForHotkey = GameInstance.GetBlackboardSystem(this.m_player.GetGame()).Get(GetAllBlackboardDefs().UI_System).GetInt(GetAllBlackboardDefs().UI_System.LastUsedSlotEQ);
           } else {
-            slotForHotkey = FirstEquipConfig.DefaultSlotNumber() - 1;
+            slotForHotkey = this.m_player.firstEquipConfig.defaultSlotNumber - 1;
           };
           drawItemRequest = new DrawItemRequest();
           drawItemRequest.itemID = EquipmentSystem.GetData(this.m_player).GetItemInEquipSlot(gamedataEquipmentArea.WeaponWheel, slotForHotkey);
@@ -127,6 +220,7 @@ protected cb func OnGameAttached() -> Bool {
     this.m_firstEquipGlobalInputListener.SetPlayer(this);
     this.RegisterInputListener(this.m_firstEquipGlobalInputListener);
     this.firstEquipCooldowns = new inkIntHashMap();
+    this.firstEquipConfig = FirstEquipConfig.Create();
 }
 
 @wrapMethod(PlayerPuppet)
@@ -134,6 +228,7 @@ protected cb func OnDetach() -> Bool {
     wrappedMethod();
     this.UnregisterInputListener(this.m_firstEquipGlobalInputListener);
     this.m_firstEquipGlobalInputListener = null;
+    this.firstEquipConfig = null;
 }
 
 
@@ -142,7 +237,6 @@ protected cb func OnDetach() -> Bool {
 public func IsTryingWithArmsCW(weapon: wref<WeaponObject>) -> Bool {
   let armsCW: gamedataItemType = RPGManager.GetItemType(EquipmentSystem.GetInstance(this).GetActiveItem(this, gamedataEquipmentArea.ArmsCW));
   let itemId: ItemID = weapon.GetItemID();
-  let isCyberwareWeapon: Bool = WeaponObject.IsCyberwareWeapon(itemId);
   let targetItemType: gamedataItemType = RPGManager.GetItemType(itemId);
   let isTargetGorillaArms: Bool = Equals(armsCW, gamedataItemType.Cyb_Launcher) && Equals(targetItemType, gamedataItemType.Wea_Fists);
   let isTargetOtherArmsCW: Bool = Equals(targetItemType, gamedataItemType.Cyb_NanoWires) || Equals(targetItemType, gamedataItemType.Cyb_StrongArms) || Equals(targetItemType, gamedataItemType.Cyb_MantisBlades);
@@ -156,16 +250,16 @@ public let firstEquipCooldowns: ref<inkIntHashMap>;
 // Checks if firstEquip animation must be played depending on config 
 @addMethod(PlayerPuppet)
 public func ShouldRunFirstEquipEQ(weapon: wref<WeaponObject>) -> Bool {
-  if !weapon.m_isMeleeWeapon && WeaponObject.IsMagazineEmpty(weapon) && !FirstEquipConfig.PlayWhenMagazineIsEmpty() {
+  if !weapon.m_isMeleeWeapon && WeaponObject.IsMagazineEmpty(weapon) && !this.firstEquipConfig.playWhenMagazineIsEmpty {
     return false;
   };
 
-  if !FirstEquipConfig.PlayInCombatMode() && this.m_inCombat { return false; }
-  if !FirstEquipConfig.PlayInStealthMode() && this.m_inCrouch { return false; }
+  if !this.firstEquipConfig.playInCombatMode && this.m_inCombat { return false; }
+  if !this.firstEquipConfig.playInStealthMode && this.m_inCrouch { return false; }
   if VehicleComponent.IsMountedToVehicle(this.GetGame(), this)  { return false; }
 
   let isSprinting: Bool = Equals(PlayerPuppet.GetCurrentLocomotionState(this), gamePSMLocomotionStates.Sprint);
-  if !FirstEquipConfig.PlayWhileSprinting() && isSprinting { return false; }
+  if !this.firstEquipConfig.playWhileSprinting && isSprinting { return false; }
 
   let uiSystemBB: ref<IBlackboard> = GameInstance.GetBlackboardSystem(this.GetGame()).Get(GetAllBlackboardDefs().UI_System);
   let isHotkeyPressed: Bool = uiSystemBB.GetBool(GetAllBlackboardDefs().UI_System.FirstEquipRequestedEQ);
@@ -174,7 +268,7 @@ public func ShouldRunFirstEquipEQ(weapon: wref<WeaponObject>) -> Bool {
     return true; 
   };
 
-  if FirstEquipConfig.ExcludeArmsCyberware() && this.IsTryingWithArmsCW(weapon) {
+  if this.firstEquipConfig.excludeArmsCyberware && this.IsTryingWithArmsCW(weapon) {
     return false;
   };
 
@@ -186,12 +280,12 @@ public func ShouldRunFirstEquipEQ(weapon: wref<WeaponObject>) -> Bool {
   let cooldown: Int32;
   let savedTime: Int32;
 
-  if FirstEquipConfig.UseCooldownBasedCheck() {
+  if this.firstEquipConfig.useCooldownBasedCheck {
     // COOLDOWNS
-    if Equals(FirstEquipConfig.CooldownTimeUnits(), 1) {
-      cooldown = FirstEquipConfig.CooldownTime();
+    if Equals(this.firstEquipConfig.cooldownTimeUnit, FirstEquipTimeUnit.Seconds) {
+      cooldown = this.firstEquipConfig.cooldownTime;
     } else {
-      cooldown = FirstEquipConfig.CooldownTime() * 60;
+      cooldown = this.firstEquipConfig.cooldownTime * 60;
     };
 
     itemId = ItemID.GetTDBID(weapon.GetItemID());
@@ -216,7 +310,7 @@ public func ShouldRunFirstEquipEQ(weapon: wref<WeaponObject>) -> Bool {
     };
   } else {
     // PROBABILITY
-    probability = FirstEquipConfig.PercentageProbability();
+    probability = this.firstEquipConfig.percentageProbability;
     random = RandRange(0, 100);
 
     if probability < 0 { return false; }
@@ -232,7 +326,7 @@ public func ShouldRunIdleBreakEQ() -> Bool {
   if this.m_inCombat { return false; }
   if VehicleComponent.IsMountedToVehicle(this.GetGame(), this)  { return false; }
 
-  let probability: Int32 = IdleBreakConfig.AnimationProbability();
+  let probability: Int32 = this.firstEquipConfig.animationProbabilityIdleBreak;
   let random: Int32 = RandRange(0, 100);
 
   if probability < 0 { return false; }
@@ -396,7 +490,6 @@ public final const func HasPlayedFirstEquip(weaponID: TweakDBID) -> Bool {
   let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.GetGameInstance());
   let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(this.GetGameInstance()).GetLocalPlayerMainGameObject() as PlayerPuppet;
   let weapon: wref<WeaponObject> = transactionSystem.GetItemInSlot(player, t"AttachmentSlots.WeaponRight") as WeaponObject;
-  let i: Int32 = 0;
 
   if !IsDefined(player) || !IsDefined(weapon) {
     return false;
@@ -428,7 +521,6 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
   let transactionSystem: ref<TransactionSystem> = scriptInterface.GetTransactionSystem();
   let statSystem: ref<StatsSystem> = scriptInterface.GetStatsSystem();
   let mappedInstanceData: InstanceDataMappedToReferenceName = this.GetMappedInstanceData(stateMachineInstanceData.referenceName);
-  let firstEqSystem: ref<FirstEquipSystem> = FirstEquipSystem.GetInstance(scriptInterface.owner);
   let itemObject: wref<WeaponObject> = transactionSystem.GetItemInSlot(scriptInterface.executionOwner, TDBID.Create(mappedInstanceData.attachmentSlot)) as WeaponObject;
   let isInCombat: Bool = scriptInterface.localBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat) == EnumInt(gamePSMCombat.InCombat);
   let playerPuppet: ref<PlayerPuppet> = scriptInterface.owner as PlayerPuppet;
@@ -437,7 +529,7 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
   };
 
   // Probability check and run
-  if IsDefined(playerPuppet) && (!isInCombat || FirstEquipConfig.PlayInCombatMode()) {
+  if IsDefined(playerPuppet) && (!isInCombat || playerPuppet.firstEquipConfig.playInCombatMode) {
     if Equals(playerPuppet.ShouldSkipFirstEquipEQ(), true) {
       playerPuppet.SetSkipFirstEquipEQ(false);
     } else {
@@ -647,7 +739,7 @@ protected final func OnTick(timeDelta: Float, stateContext: ref<StateContext>, s
     };
     // Single tap
     if Equals(this.customHotkeyStateEQ, FirstEquipHotkeyState.TAPPED) {
-      if IdleBreakConfig.BindToHotkey() {
+      if player.firstEquipConfig.bindToHotkeyIdleBreak {
         this.savedIdleTimestampEQ = currentTime;
         scriptInterface.PushAnimationEvent(n"IdleBreak");
       };
@@ -682,7 +774,7 @@ protected final func OnTick(timeDelta: Float, stateContext: ref<StateContext>, s
     // PROBABILITY BASED
     if WeaponTransition.GetPlayerSpeed(scriptInterface) < 0.10 && stateContext.IsStateActive(n"Locomotion", n"stand") && IsDefined(player) {
       playerStandsStill = WeaponTransition.GetPlayerSpeed(scriptInterface) < 0.10 && stateContext.IsStateActive(n"Locomotion", n"stand");
-      timePassed = currentTime - this.savedIdleTimestampEQ > IdleBreakConfig.AnimationCheckPeriod();
+      timePassed = currentTime - this.savedIdleTimestampEQ > player.firstEquipConfig.animationCheckPeriodIdleBreak;
       if timePassed && playerStandsStill && !this.isHeldActiveEQ {
         // Reset flag and run IdleBreak
         this.savedIdleTimestampEQ = currentTime;
@@ -712,4 +804,35 @@ protected final func OnTick(timeDelta: Float, stateContext: ref<StateContext>, s
   animFeature.weaponRecoil = statsSystem.GetStatValue(Cast<StatsObjectID>(ownerID), gamedataStatType.RecoilAnimation);
   animFeature.weaponSpread = statsSystem.GetStatValue(Cast<StatsObjectID>(ownerID), gamedataStatType.SpreadAnimation);
   scriptInterface.SetAnimationParameterFeature(n"WeaponHandlingData", animFeature, scriptInterface.executionOwner);
+}
+
+// -- ArchiveXL checker
+@addField(SingleplayerMenuGameController)
+public let archiveXlChecked: Bool;
+
+@wrapMethod(SingleplayerMenuGameController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+
+  let warning: ref<inkText>;
+  let str: String = GetLocalizedTextByKey(n"Mod-First-Equip-Hotkey");
+  if Equals(str, "Mod-First-Equip-Hotkey") || Equals(str, "") {
+    if !this.archiveXlChecked {
+      this.archiveXlChecked = true;
+      warning = new inkText();
+      warning.SetName(n"CustomWarning");
+      warning.SetText("Archive XL not detected! Make sure that it was installed correctly.");
+      warning.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+      warning.SetFontSize(64);
+      warning.SetHAlign(inkEHorizontalAlign.Fill);
+      warning.SetVAlign(inkEVerticalAlign.Bottom);
+      warning.SetAnchor(inkEAnchor.BottomFillHorizontaly);
+      warning.SetAnchorPoint(0.5, 1.0);
+      warning.SetLetterCase(textLetterCase.OriginalCase);
+      warning.SetMargin(new inkMargin(20.0, 0.0, 0.0, 10.0));
+      warning.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+      warning.BindProperty(n"tintColor", n"MainColors.Red");
+      warning.Reparent(this.GetRootCompoundWidget());
+    };
+  };
 }

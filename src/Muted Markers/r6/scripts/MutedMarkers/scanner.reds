@@ -1,13 +1,20 @@
 import MutedMarkersConfig.LootConfig
 
-// Toggle scanner flag
+@addField(scannerGameController)
+private let mm_lootConfig: ref<LootConfig>;
+
+@wrapMethod(scannerGameController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+  this.mm_lootConfig = new LootConfig();
+}
 
 @wrapMethod(scannerGameController)
 private final func ShowScanner(show: Bool) -> Void {
   wrappedMethod(show);
 
   let bb: ref<IBlackboard> = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_Scanner);
-  let delay: Float = LootConfig.HideDelay();
+  let delay: Float = this.mm_lootConfig.hideDelay;
   let delaySystem: ref<DelaySystem> = GameInstance.GetDelaySystem(this.m_gameInstance);
   let callback: ref<EvaluateMutedMarkersCallback> = new EvaluateMutedMarkersCallback();
 

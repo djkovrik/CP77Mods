@@ -10,7 +10,7 @@ protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
 
 @addMethod(QuestTrackerGameController)
 public func DetermineCurrentVisibility() -> Void {
-  if !QuestTrackerModuleConfig.IsEnabled() {
+  if !this.lhudConfig.IsEnabled {
     return ;
   };
 
@@ -20,14 +20,14 @@ public func DetermineCurrentVisibility() -> Void {
     return ;
   };
 
-  let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && QuestTrackerModuleConfig.BindToGlobalHotkey();
-  let showForCombat: Bool = this.lhud_isCombatActive && QuestTrackerModuleConfig.ShowInCombat();
-  let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && QuestTrackerModuleConfig.ShowOutOfCombat();
-  let showForStealth: Bool =  this.lhud_isStealthActive && QuestTrackerModuleConfig.ShowInStealth();
-  let showForVehicle: Bool =  this.lhud_isInVehicle && QuestTrackerModuleConfig.ShowInVehicle();
-  let showForScanner: Bool =  this.lhud_isScannerActive && QuestTrackerModuleConfig.ShowWithScanner();
-  let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && QuestTrackerModuleConfig.ShowWithWeapon();
-  let showForZoom: Bool =  this.lhud_isZoomActive && QuestTrackerModuleConfig.ShowWithZoom();
+  let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && this.lhudConfig.BindToGlobalHotkey;
+  let showForCombat: Bool = this.lhud_isCombatActive && this.lhudConfig.ShowInCombat;
+  let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && this.lhudConfig.ShowOutOfCombat;
+  let showForStealth: Bool =  this.lhud_isStealthActive && this.lhudConfig.ShowInStealth;
+  let showForVehicle: Bool =  this.lhud_isInVehicle && this.lhudConfig.ShowInVehicle;
+  let showForScanner: Bool =  this.lhud_isScannerActive && this.lhudConfig.ShowWithScanner;
+  let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfig.ShowWithWeapon;
+  let showForZoom: Bool =  this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
 
   let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;
   if NotEquals(this.lhud_isVisibleNow, isVisible) {
@@ -40,10 +40,14 @@ public func DetermineCurrentVisibility() -> Void {
   };
 }
 
+@addField(QuestTrackerGameController)
+private let lhudConfig: ref<QuestTrackerModuleConfig>;
+
 @wrapMethod(QuestTrackerGameController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
-  if QuestTrackerModuleConfig.IsEnabled() {
+  this.lhudConfig = new QuestTrackerModuleConfig();
+  if this.lhudConfig.IsEnabled {
     this.lhud_isVisibleNow = false;
     this.GetRootWidget().SetOpacity(0.0);
     this.OnInitializeFinished();
@@ -56,14 +60,14 @@ protected cb func OnTrackedEntryChanges(hash: Uint32, className: CName, notifyOp
   wrappedMethod(hash, className, notifyOption, changeType);
 
   let callback: ref<LHUDHideQuestTrackerCallback>;
-  if QuestTrackerModuleConfig.IsEnabled() && QuestTrackerModuleConfig.DisplayForQuestUpdates() {
+  if this.lhudConfig.IsEnabled && this.lhudConfig.DisplayForQuestUpdates {
     // Show tracker
     this.lhud_isVisibleNow = true;
     this.AnimateAlphaLHUD(this.GetRootWidget(), 1.0, 0.3);
     // Schedule hiding
     callback = new LHUDHideQuestTrackerCallback();
     callback.uiSystem = GameInstance.GetUISystem(this.GetPlayerControlledObject().GetGame());
-    GameInstance.GetDelaySystem(this.GetPlayerControlledObject().GetGame()).DelayCallback(callback, QuestTrackerModuleConfig.QuestUpdateDisplayingTime());
+    GameInstance.GetDelaySystem(this.GetPlayerControlledObject().GetGame()).DelayCallback(callback, this.lhudConfig.QuestUpdateDisplayingTime);
   };
 }
 

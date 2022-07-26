@@ -1,11 +1,13 @@
 module EnhancedCraft.Damage
-import EnhancedCraft.Config.Config
+import EnhancedCraft.Config.ECraftConfig
 import EnhancedCraft.Events.*
 
 // -- Setup click listener
 @addMethod(ItemTooltipRecipeDataModule)
 protected cb func OnInitialize() -> Bool {
-  if Config.CustomizedDamageEnabled() {
+  let config: ref<ECraftConfig> = new ECraftConfig();
+  this.m_settingsDamageEnabled = config.customizedDamageEnabled;
+  if this.m_settingsDamageEnabled {
     this.RegisterToGlobalInputCallback(n"OnPostOnPress", this, n"OnPanelItemClicked");
   };
 }
@@ -13,7 +15,7 @@ protected cb func OnInitialize() -> Bool {
 // -- Remove click listener
 @addMethod(ItemTooltipRecipeDataModule)
 protected cb func OnUninitialize() -> Bool {
-  if Config.CustomizedDamageEnabled() {
+  if this.m_settingsDamageEnabled {
     this.UnregisterFromGlobalInputCallback(n"OnPostOnPress", this, n"OnPanelItemClicked");
   };
 }

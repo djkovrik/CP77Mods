@@ -102,7 +102,7 @@ private final func UpdateRecipePreviewPanelEnhanced() -> Void {
   // Setup ingredients
   let ingredients: array<IngredientData> = this.m_craftingSystem.GetItemCraftingCost(this.originalItemData);
   if IsPresetIconic(this.currentItemRecord.GetID()) {
-    this.SetupIngredients(ingredients, Config.IconicIngredientsMultiplier());
+    this.SetupIngredients(ingredients, this.ecraftConfig.iconicIngredientsMultiplier);
   } else {
     this.SetupIngredients(ingredients, 1);
   };
@@ -141,7 +141,7 @@ private final func UpdateRecipePreviewPanelEnhanced() -> Void {
 private final func SetupIngredients(ingredient: array<IngredientData>, itemAmount: Int32) -> Void {
   let ingredients: array<IngredientData> = this.m_craftingSystem.GetItemCraftingCost(this.originalItemData);
   if this.iconicSelected {
-    wrappedMethod(ingredients, Config.IconicIngredientsMultiplier());
+    wrappedMethod(ingredients, this.ecraftConfig.iconicIngredientsMultiplier);
   } else {
     if this.alternateSkinSelected {
       wrappedMethod(ingredients, 1);
@@ -168,7 +168,7 @@ private final func CraftItem(selectedRecipe: ref<RecipeData>, amount: Int32) -> 
     };
     if this.alternateSkinSelected {
       if this.iconicSelected {
-        multiplier = Config.IconicIngredientsMultiplier();
+        multiplier = this.ecraftConfig.iconicIngredientsMultiplier;
       } else {
         multiplier = 1;
       }
@@ -179,7 +179,7 @@ private final func CraftItem(selectedRecipe: ref<RecipeData>, amount: Int32) -> 
       craftItemRequest.quantityMultiplier = multiplier;
     } else {
       hasVariantsToRandomize = ArraySize(this.weaponVariantsNoIconic) > 1;
-      if Config.RandomizerEnabled() && CraftingMainLogicController.IsWeapon(selectedRecipe.inventoryItem.EquipmentArea) && hasVariantsToRandomize {
+      if this.ecraftConfig.randomizerEnabled && CraftingMainLogicController.IsWeapon(selectedRecipe.inventoryItem.EquipmentArea) && hasVariantsToRandomize {
         craftItemRequest.custom = true;
         craftItemRequest.originalQuality = this.originalRecipeQuality;
         craftItemRequest.itemRecord = this.GetRandomWeaponVariant();

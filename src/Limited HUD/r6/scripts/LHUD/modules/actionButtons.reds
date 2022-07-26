@@ -9,16 +9,16 @@ protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
 
 @addMethod(HotkeysWidgetController)
 public func DetermineCurrentVisibility() -> Void {
-  if !ActionButtonsModuleConfig.IsEnabled() || this.lhud_isBraindanceActive {
+  if !this.lhudConfig.IsEnabled || this.lhud_isBraindanceActive {
     return ;
   };
 
-  let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && ActionButtonsModuleConfig.BindToGlobalHotkey();
-  let showForCombat: Bool = this.lhud_isCombatActive && ActionButtonsModuleConfig.ShowInCombat();
-  let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && ActionButtonsModuleConfig.ShowOutOfCombat();
-  let showForStealth: Bool =  this.lhud_isStealthActive && ActionButtonsModuleConfig.ShowInStealth();
-  let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && ActionButtonsModuleConfig.ShowWithWeapon();
-  let showForZoom: Bool =  this.lhud_isZoomActive && ActionButtonsModuleConfig.ShowWithZoom();
+  let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && this.lhudConfig.BindToGlobalHotkey;
+  let showForCombat: Bool = this.lhud_isCombatActive && this.lhudConfig.ShowInCombat;
+  let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && this.lhudConfig.ShowOutOfCombat;
+  let showForStealth: Bool =  this.lhud_isStealthActive && this.lhudConfig.ShowInStealth;
+  let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfig.ShowWithWeapon;
+  let showForZoom: Bool =  this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
 
   let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForWeapon || showForZoom;
   if NotEquals(this.lhud_isVisibleNow, isVisible) {
@@ -31,10 +31,14 @@ public func DetermineCurrentVisibility() -> Void {
   };
 }
 
+@addField(HotkeysWidgetController)
+private let lhudConfig: ref<ActionButtonsModuleConfig>;
+
 @wrapMethod(HotkeysWidgetController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
-  if ActionButtonsModuleConfig.IsEnabled() {
+  this.lhudConfig = new ActionButtonsModuleConfig();
+  if this.lhudConfig.IsEnabled {
     this.lhud_isVisibleNow = false;
     this.GetRootWidget().SetOpacity(0.0);
     this.OnInitializeFinished();

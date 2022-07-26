@@ -1,4 +1,5 @@
 import LimitedHudConfig.LHUDAddonsColoringConfig
+import LimitedHudCommon.*
 
 // Change or remove fill and outline coloring for characters and objects
 // You can change return numbers for object categories below (but do not delete semicolon)
@@ -13,22 +14,23 @@ import LimitedHudConfig.LHUDAddonsColoringConfig
 // Light green: 4           Blue: 5           Orange: 6       Red: 7
 @replaceMethod(FocusForcedHighlightData)
 private final func GetFillColorIndex() -> Int32 {
+  let config: ref<LHUDAddonsColoringConfig> = new LHUDAddonsColoringConfig();
   switch this.highlightType {
-    case EFocusForcedHighlightType.INTERACTION:             return LHUDAddonsColoringConfig.FillInteraction(); // 2
-    case EFocusForcedHighlightType.IMPORTANT_INTERACTION:   return LHUDAddonsColoringConfig.FillImportantInteraction(); // 5
-    case EFocusForcedHighlightType.WEAKSPOT:                return LHUDAddonsColoringConfig.FillWeakspot(); // 6
-    case EFocusForcedHighlightType.QUEST:                   return LHUDAddonsColoringConfig.FillQuest(); // 1
-    case EFocusForcedHighlightType.DISTRACTION:             return LHUDAddonsColoringConfig.FillDistraction(); // 3
-    case EFocusForcedHighlightType.CLUE:                    return LHUDAddonsColoringConfig.FillClue(); // 4
-    case EFocusForcedHighlightType.NPC:                     return LHUDAddonsColoringConfig.FillNPC(); // 0
-    case EFocusForcedHighlightType.AOE:                     return LHUDAddonsColoringConfig.FillAOE(); // 7
-    case EFocusForcedHighlightType.ITEM:                    return LHUDAddonsColoringConfig.FillItem(); // 5
-    case EFocusForcedHighlightType.HOSTILE:                 return LHUDAddonsColoringConfig.FillHostile(); // 7
-    case EFocusForcedHighlightType.FRIENDLY:                return LHUDAddonsColoringConfig.FillFriendly(); // 4
-    case EFocusForcedHighlightType.NEUTRAL:                 return LHUDAddonsColoringConfig.FillNeutral(); // 2
-    case EFocusForcedHighlightType.HACKABLE:                return LHUDAddonsColoringConfig.FillHackable(); // 4
-    case EFocusForcedHighlightType.ENEMY_NETRUNNER:         return LHUDAddonsColoringConfig.FillEnemyNetrunner(); // 6
-    case EFocusForcedHighlightType.BACKDOOR:                return LHUDAddonsColoringConfig.FillBackdoor(); // 5
+    case EFocusForcedHighlightType.INTERACTION:             return EnumInt(config.FillInteraction); // 2
+    case EFocusForcedHighlightType.IMPORTANT_INTERACTION:   return EnumInt(config.FillImportantInteraction); // 5
+    case EFocusForcedHighlightType.WEAKSPOT:                return EnumInt(config.FillWeakspot); // 6
+    case EFocusForcedHighlightType.QUEST:                   return EnumInt(config.FillQuest); // 1
+    case EFocusForcedHighlightType.DISTRACTION:             return EnumInt(config.FillDistraction); // 3
+    case EFocusForcedHighlightType.CLUE:                    return EnumInt(config.FillClue); // 4
+    case EFocusForcedHighlightType.NPC:                     return EnumInt(config.FillNPC); // 0
+    case EFocusForcedHighlightType.AOE:                     return EnumInt(config.FillAOE); // 7
+    case EFocusForcedHighlightType.ITEM:                    return EnumInt(config.FillItem); // 5
+    case EFocusForcedHighlightType.HOSTILE:                 return EnumInt(config.FillHostile); // 7
+    case EFocusForcedHighlightType.FRIENDLY:                return EnumInt(config.FillFriendly); // 4
+    case EFocusForcedHighlightType.NEUTRAL:                 return EnumInt(config.FillNeutral); // 2
+    case EFocusForcedHighlightType.HACKABLE:                return EnumInt(config.FillHackable); // 4
+    case EFocusForcedHighlightType.ENEMY_NETRUNNER:         return EnumInt(config.FillEnemyNetrunner); // 6
+    case EFocusForcedHighlightType.BACKDOOR:                return EnumInt(config.FillBackdoor); // 5
     default: return 0; // do not change this
   };
 }
@@ -42,22 +44,23 @@ private final func GetFillColorIndex() -> Int32 {
 // Light red: 4             Light yellow: 5   Blue: 6     White: 7
 @replaceMethod(FocusForcedHighlightData)
 private final func GetOutlineColorIndex() -> Int32 {
+  let config: ref<LHUDAddonsColoringConfig> = new LHUDAddonsColoringConfig();
   switch this.outlineType {
-    case EFocusOutlineType.INTERACTION:               return LHUDAddonsColoringConfig.OutlineInteraction(); // 3
-    case EFocusOutlineType.IMPORTANT_INTERACTION:     return LHUDAddonsColoringConfig.OutlineImportantInteraction(); // 6
-    case EFocusOutlineType.WEAKSPOT:                  return LHUDAddonsColoringConfig.OutlineWeakspot(); // 4
-    case EFocusOutlineType.QUEST:                     return LHUDAddonsColoringConfig.OutlineQuest(); // 5
-    case EFocusOutlineType.DISTRACTION:               return LHUDAddonsColoringConfig.OutlineDistraction(); // 7
-    case EFocusOutlineType.CLUE:                      return LHUDAddonsColoringConfig.OutlineClue(); // 1
+    case EFocusOutlineType.INTERACTION:               return EnumInt(config.OutlineInteraction); // 3
+    case EFocusOutlineType.IMPORTANT_INTERACTION:     return EnumInt(config.OutlineImportantInteraction); // 6
+    case EFocusOutlineType.WEAKSPOT:                  return EnumInt(config.OutlineWeakspot); // 4
+    case EFocusOutlineType.QUEST:                     return EnumInt(config.OutlineQuest); // 5
+    case EFocusOutlineType.DISTRACTION:               return EnumInt(config.OutlineDistraction); // 7
+    case EFocusOutlineType.CLUE:                      return EnumInt(config.OutlineClue); // 1
     // No NPC category here
-    case EFocusOutlineType.AOE:                       return LHUDAddonsColoringConfig.OutlineAOE(); // 2
-    case EFocusOutlineType.ITEM:                      return LHUDAddonsColoringConfig.OutlineItem(); // 6
-    case EFocusOutlineType.HOSTILE:                   return LHUDAddonsColoringConfig.OutlineHostile(); // 2
-    case EFocusOutlineType.FRIENDLY:                  return LHUDAddonsColoringConfig.OutlineFriendly(); // 1
-    case EFocusOutlineType.NEUTRAL:                   return LHUDAddonsColoringConfig.OutlineNeutral(); // 3
-    case EFocusOutlineType.HACKABLE:                  return LHUDAddonsColoringConfig.OutlineHackable(); // 1
-    case EFocusOutlineType.ENEMY_NETRUNNER:           return LHUDAddonsColoringConfig.OutlineEnemyNetrunner(); // 4
-    case EFocusOutlineType.BACKDOOR:                  return LHUDAddonsColoringConfig.OutlineBackdoor(); // 6
+    case EFocusOutlineType.AOE:                       return EnumInt(config.OutlineAOE); // 2
+    case EFocusOutlineType.ITEM:                      return EnumInt(config.OutlineItem); // 6
+    case EFocusOutlineType.HOSTILE:                   return EnumInt(config.OutlineHostile); // 2
+    case EFocusOutlineType.FRIENDLY:                  return EnumInt(config.OutlineFriendly); // 1
+    case EFocusOutlineType.NEUTRAL:                   return EnumInt(config.OutlineNeutral); // 3
+    case EFocusOutlineType.HACKABLE:                  return EnumInt(config.OutlineHackable); // 1
+    case EFocusOutlineType.ENEMY_NETRUNNER:           return EnumInt(config.OutlineEnemyNetrunner); // 4
+    case EFocusOutlineType.BACKDOOR:                  return EnumInt(config.OutlineBackdoor); // 6
     default: return 0; // do not change this
   };
 }

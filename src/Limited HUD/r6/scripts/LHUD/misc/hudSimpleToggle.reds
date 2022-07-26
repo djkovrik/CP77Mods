@@ -15,13 +15,18 @@ public class ToggleHudEvent extends Event {}
 public class SimpleToggleGlobalInputListener {
 
     private let m_uiSystem: ref<UISystem>;
+    private let m_config: ref<LHUDAddonsConfig>;
 
     public func SetUISystem(system: ref<UISystem>) -> Void {
       this.m_uiSystem = system;
     }
 
+    public func SetConfig(m_config: ref<LHUDAddonsConfig>) -> Void {
+      this.m_config = m_config;
+    }
+
     protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
-        if LHUDAddonsConfig.EnableHUDToggle() && ListenerAction.IsAction(action, StringToName(KeybindName_ToggleHUD())) && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED)  {
+        if this.m_config.EnableHUDToggle && ListenerAction.IsAction(action, StringToName(KeybindName_ToggleHUD())) && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED)  {
           this.m_uiSystem.QueueEvent(new ToggleHudEvent());
         };
     }
@@ -44,6 +49,7 @@ protected cb func OnGameAttached() -> Bool {
     wrappedMethod();
     this.m_simpleToggleInputListener = new SimpleToggleGlobalInputListener();
     this.m_simpleToggleInputListener.SetUISystem(GameInstance.GetUISystem(this.GetGame()));
+    this.m_simpleToggleInputListener.SetConfig(new LHUDAddonsConfig());
     this.RegisterInputListener(this.m_simpleToggleInputListener);
 }
 

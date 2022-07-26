@@ -1,5 +1,21 @@
+import ImprovedMinimapMain.ZoomConfig
+
 public class RestorePlayerZoneEvent extends Event {
   public let realZone: Int32;
+}
+
+@addField(PlayerPuppet)
+public let imz_config: ref<ZoomConfig>;
+
+@wrapMethod(PlayerPuppet)
+protected cb func OnGameAttached() -> Bool {
+  wrappedMethod();
+  this.imz_config = new ZoomConfig();
+}
+
+@addMethod(PlayerPuppet)
+public func IMZConfig() -> ref<ZoomConfig> {
+  return this.imz_config;
 }
 
 @addMethod(PlayerPuppet)

@@ -103,7 +103,7 @@ public func RefreshClothesCounter() -> Void {
 public func RefreshRandomizerLabel() -> Void {
   if ArraySize(this.weaponVariants) > 1 {
     this.m_randomizerText.SetVisible(true);
-    if Config.RandomizerEnabled() {
+    if this.ecraftConfig.randomizerEnabled {
       this.m_randomizerText.SetText(GetLocalizedTextByKey(n"Mod-Craft-UI-Randomizer-Enabled"));
     } else {
       this.m_randomizerText.SetText(GetLocalizedTextByKey(n"Mod-Craft-UI-Randomizer-Disabled"));

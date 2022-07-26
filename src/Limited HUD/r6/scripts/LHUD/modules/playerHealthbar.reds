@@ -21,22 +21,22 @@ private final func ComputeHealthBarVisibility() -> Void {
   };
 
   // Additional flags
-  let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && PlayerHealthbarModuleConfig.BindToGlobalHotkey();
-  let showForStealth: Bool =  this.lhud_isStealthActive && PlayerHealthbarModuleConfig.ShowInStealth();
-  let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && PlayerHealthbarModuleConfig.ShowWithWeapon();
-  let showForZoom: Bool =  this.lhud_isZoomActive && PlayerHealthbarModuleConfig.ShowWithZoom();
-  let showForHealthNotFull: Bool = !isMaxHP && PlayerHealthbarModuleConfig.ShowWhenHealthNotFull();
-  let showForMemoryNotFull: Bool = this.m_quickhacksMemoryPercent > 0.0 && this.m_quickhacksMemoryPercent <= 98.0 && PlayerHealthbarModuleConfig.ShowWhenMemoryNotFull();
-  let showForActiveBuffs: Bool = this.m_buffsVisible && PlayerHealthbarModuleConfig.ShowWhenBuffsActive();
-  let showForActiveQuickhacks: Bool = areQuickhacksUsed && PlayerHealthbarModuleConfig.ShowWhenQuickhacksActive();
-  let showForCombat: Bool = this.lhud_isCombatActive && PlayerHealthbarModuleConfig.ShowInCombat();
-  let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && PlayerHealthbarModuleConfig.ShowOutOfCombat();
+  let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && this.lhudConfig.BindToGlobalHotkey;
+  let showForStealth: Bool =  this.lhud_isStealthActive && this.lhudConfig.ShowInStealth;
+  let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfig.ShowWithWeapon;
+  let showForZoom: Bool =  this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
+  let showForHealthNotFull: Bool = !isMaxHP && this.lhudConfig.ShowWhenHealthNotFull;
+  let showForMemoryNotFull: Bool = this.m_quickhacksMemoryPercent > 0.0 && this.m_quickhacksMemoryPercent <= 98.0 && this.lhudConfig.ShowWhenMemoryNotFull;
+  let showForActiveBuffs: Bool = this.m_buffsVisible && this.lhudConfig.ShowWhenBuffsActive;
+  let showForActiveQuickhacks: Bool = areQuickhacksUsed && this.lhudConfig.ShowWhenQuickhacksActive;
+  let showForCombat: Bool = this.lhud_isCombatActive && this.lhudConfig.ShowInCombat;
+  let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && this.lhudConfig.ShowOutOfCombat;
 
   let defaultVisibility: Bool = !isMaxHP || areQuickhacksUsed || isMultiplayer || Equals(this.m_combatModePSM, gamePSMCombat.InCombat) || (this.m_quickhacksMemoryPercent > 0.0 && this.m_quickhacksMemoryPercent < 100.0) || this.m_buffsVisible;
   let moddedVisibility: Bool = showForGlobalHotkey || showForStealth || showForZoom || showForWeapon || showForHealthNotFull || showForMemoryNotFull || showForActiveBuffs || showForActiveQuickhacks || showForCombat || showForOutOfCombat;
   let isVisible: Bool = defaultVisibility;
 
-  if PlayerHealthbarModuleConfig.IsEnabled() {
+  if this.lhudConfig.IsEnabled {
     isVisible = moddedVisibility;
   };
 
@@ -47,10 +47,14 @@ private final func ComputeHealthBarVisibility() -> Void {
   };
 }
 
+@addField(healthbarWidgetGameController)
+private let lhudConfig: ref<PlayerHealthbarModuleConfig>;
+
 @wrapMethod(healthbarWidgetGameController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
-  if PlayerHealthbarModuleConfig.IsEnabled() {
+  this.lhudConfig = new PlayerHealthbarModuleConfig();
+  if this.lhudConfig.IsEnabled {
     this.m_moduleShown = false;
     this.GetRootWidget().SetVisible(false);
     this.OnInitializeFinished();

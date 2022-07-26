@@ -10,24 +10,28 @@ protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
   this.DetermineCurrentVisibility();
 }
 
+@addField(StealthMappinController)
+private let lhudConfig: ref<WorldMarkersModuleConfigCombat>;
+
 @wrapMethod(StealthMappinController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
+  this.lhudConfig = new WorldMarkersModuleConfigCombat();
   this.FetchInitialStateFlags();
   this.DetermineCurrentVisibility();
 }
 
 @addMethod(StealthMappinController)
 public func DetermineCurrentVisibility() -> Void {
-  if WorldMarkersModuleConfigCombat.IsEnabled() {
-    let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && WorldMarkersModuleConfigCombat.BindToGlobalHotkey();
-    let showForCombat: Bool = this.lhud_isCombatActive && WorldMarkersModuleConfigCombat.ShowInCombat();
-    let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && WorldMarkersModuleConfigCombat.ShowOutOfCombat();
-    let showForStealth: Bool = this.lhud_isStealthActive && WorldMarkersModuleConfigCombat.ShowInStealth();
-    let showForVehicle: Bool = this.lhud_isInVehicle && WorldMarkersModuleConfigCombat.ShowInVehicle();
-    let showForScanner: Bool = this.lhud_isScannerActive && WorldMarkersModuleConfigCombat.ShowWithScanner();
-    let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && WorldMarkersModuleConfigCombat.ShowWithWeapon();
-    let showForZoom: Bool = this.lhud_isZoomActive && WorldMarkersModuleConfigCombat.ShowWithZoom();
+  if this.lhudConfig.IsEnabled {
+    let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && this.lhudConfig.BindToGlobalHotkey;
+    let showForCombat: Bool = this.lhud_isCombatActive && this.lhudConfig.ShowInCombat;
+    let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && this.lhudConfig.ShowOutOfCombat;
+    let showForStealth: Bool = this.lhud_isStealthActive && this.lhudConfig.ShowInStealth;
+    let showForVehicle: Bool = this.lhud_isInVehicle && this.lhudConfig.ShowInVehicle;
+    let showForScanner: Bool = this.lhud_isScannerActive && this.lhudConfig.ShowWithScanner;
+    let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfig.ShowWithWeapon;
+    let showForZoom: Bool = this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
 
     let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;
     this.lhud_isVisibleNow = isVisible;
@@ -56,15 +60,15 @@ protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
 
 @addMethod(NameplateVisualsLogicController)
 public func DetermineCurrentVisibility() -> Void {
-  if WorldMarkersModuleConfigCombat.IsEnabled() {
-    let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && WorldMarkersModuleConfigCombat.BindToGlobalHotkey();
-    let showForCombat: Bool = this.lhud_isCombatActive && WorldMarkersModuleConfigCombat.ShowInCombat();
-    let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && WorldMarkersModuleConfigCombat.ShowOutOfCombat();
-    let showForStealth: Bool = this.lhud_isStealthActive && WorldMarkersModuleConfigCombat.ShowInStealth();
-    let showForVehicle: Bool = this.lhud_isInVehicle && WorldMarkersModuleConfigCombat.ShowInVehicle();
-    let showForScanner: Bool = this.lhud_isScannerActive && WorldMarkersModuleConfigCombat.ShowWithScanner();
-    let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && WorldMarkersModuleConfigCombat.ShowWithWeapon();
-    let showForZoom: Bool = this.lhud_isZoomActive && WorldMarkersModuleConfigCombat.ShowWithZoom();
+  if this.lhudConfig.IsEnabled {
+    let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && this.lhudConfig.BindToGlobalHotkey;
+    let showForCombat: Bool = this.lhud_isCombatActive && this.lhudConfig.ShowInCombat;
+    let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && this.lhudConfig.ShowOutOfCombat;
+    let showForStealth: Bool = this.lhud_isStealthActive && this.lhudConfig.ShowInStealth;
+    let showForVehicle: Bool = this.lhud_isInVehicle && this.lhudConfig.ShowInVehicle;
+    let showForScanner: Bool = this.lhud_isScannerActive && this.lhudConfig.ShowWithScanner;
+    let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfig.ShowWithWeapon;
+    let showForZoom: Bool = this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
     let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;
     this.lhud_isVisibleNow = isVisible;
   } else {
@@ -74,9 +78,13 @@ public func DetermineCurrentVisibility() -> Void {
   this.UpdateHealthbarVisibility();
 }
 
+@addField(NameplateVisualsLogicController)
+private let lhudConfig: ref<WorldMarkersModuleConfigCombat>;
+
 @wrapMethod(NameplateVisualsLogicController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
+  this.lhudConfig = new WorldMarkersModuleConfigCombat();
   this.FetchInitialStateFlags();
   this.DetermineCurrentVisibility();
 }

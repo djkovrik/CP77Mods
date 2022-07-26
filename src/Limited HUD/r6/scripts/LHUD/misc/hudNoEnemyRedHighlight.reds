@@ -1,5 +1,13 @@
-
 import LimitedHudConfig.LHUDAddonsConfig
+
+@addField(ScriptedPuppet)
+private let lhudAddonsConfig: ref<LHUDAddonsConfig>;
+
+@wrapMethod(ScriptedPuppet)
+protected cb func OnGameAttached() -> Bool {
+  wrappedMethod();
+  this.lhudAddonsConfig = new LHUDAddonsConfig();
+}
 
 @replaceMethod(ScriptedPuppet)
 public const func GetCurrentOutline() -> EFocusOutlineType {
@@ -21,7 +29,7 @@ public const func GetCurrentOutline() -> EFocusOutlineType {
       if this.IsPrevention() && Equals(attitude, EAIAttitude.AIA_Neutral) {
         outlineType = EFocusOutlineType.NEUTRAL;
       } else {
-        if LHUDAddonsConfig.HighlightUnderPingOnly() {
+        if this.lhudAddonsConfig.HighlightUnderPingOnly {
           if hasPingEffect {
             outlineType = EFocusOutlineType.HOSTILE;
           } else {

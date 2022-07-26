@@ -2,6 +2,7 @@ import LimitedHudConfig.LHUDAddonsConfig
 
 @replaceMethod(BaseMappinBaseController)
 protected func UpdateTrackedState() -> Void {
+  let config: ref<LHUDAddonsConfig> = new LHUDAddonsConfig();
   let animPlayer: ref<animationPlayer>;
   let i: Int32;
   let isClamped: Bool;
@@ -13,7 +14,7 @@ protected func UpdateTrackedState() -> Void {
   };
   if this.GetProfile().ShowTrackedIcon() {
     isRootVisible = this.GetRootWidget().IsVisible();
-    if LHUDAddonsConfig.RemoveMarkerPulse() {
+    if config.RemoveMarkerPulse {
       isTracked = false;
     } else {
       isTracked = this.IsTracked();

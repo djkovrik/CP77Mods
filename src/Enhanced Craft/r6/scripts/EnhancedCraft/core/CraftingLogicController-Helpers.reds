@@ -110,7 +110,7 @@ private func RebuildAccordingToPerks(otherIds: array<TweakDBID>, baseId: TweakDB
   let canCraftEpic: Bool = ss.GetStatValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatType.CanCraftEpicItems) > 0.0;
   let canCraftLegendary: Bool = ss.GetStatValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatType.CanCraftLegendaryItems) > 0.0;
   let recipeQualityValue: Int32 = GetBaseQualityValue(quality);
-  let configQualityValue: Int32 = Config.IconicRecipeCondition();
+  let configQualityValue: Int32 = EnumInt(this.ecraftConfig.iconicRecipeCondition);
   let shouldSkip: Bool;
   let isIconic: Bool;
   let newArray: array<TweakDBID>;
@@ -124,7 +124,7 @@ private func RebuildAccordingToPerks(otherIds: array<TweakDBID>, baseId: TweakDB
     isIconic = IsPresetIconic(currentId);
 
     if isIconic {
-      perkUnlockValue = Config.PerkToUnlockIconics();
+      perkUnlockValue = EnumInt(this.ecraftConfig.perkToUnlockIconics);
       shouldSkip = skipIconic || Equals(perkUnlockValue, 2) || recipeQualityValue < configQualityValue;
       if !shouldSkip {
         switch perkUnlockValue {
@@ -144,7 +144,7 @@ private func RebuildAccordingToPerks(otherIds: array<TweakDBID>, baseId: TweakDB
       };
       L(s"----- \(TDBID.ToStringDEBUG(currentId)) is iconic: \(isIconic), skipIconic: \(skipIconic), recipe value: \(recipeQualityValue), config value: \(configQualityValue), shouldSkip: \(shouldSkip), equals: \(Equals(perkUnlockValue, 2))");
     } else {
-      perkUnlockValue = Config.PerkToUnlockStandard();
+      perkUnlockValue = EnumInt(this.ecraftConfig.perkToUnlockStandard);
       shouldSkip = false;
       switch perkUnlockValue {
         case 1:
@@ -179,7 +179,7 @@ private func RebuildClothesAccordingToPerks(otherIds: array<TweakDBID>, baseId: 
   let canCraftLegendary: Bool = ss.GetStatValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatType.CanCraftLegendaryItems) > 0.0;
 
   let hasDLCItems: Bool = HasDLCItems(baseId);
-  let shouldSkip: Bool = hasDLCItems && !Config.IncludeJacketsFromDLC();
+  let shouldSkip: Bool = hasDLCItems && !this.ecraftConfig.includeJacketsFromDLC;
   let newArray: array<TweakDBID>;
   let currentId: TweakDBID;
   let perkUnlockValue: Int32;
@@ -188,7 +188,7 @@ private func RebuildClothesAccordingToPerks(otherIds: array<TweakDBID>, baseId: 
   if !shouldSkip {
     while i < ArraySize(otherIds) {
       currentId = otherIds[i];
-      perkUnlockValue = Config.PerkToUnlockClothes();
+      perkUnlockValue = EnumInt(this.ecraftConfig.perkToUnlockClothes);
       switch perkUnlockValue {
         case 1:
           ArrayPush(newArray, currentId);

@@ -1,11 +1,20 @@
 import MutedMarkersConfig.MiniMapConfig
 
+@addField(BaseMinimapMappinController)
+private let mm_minimapConfig: ref<MiniMapConfig>;
+
+@wrapMethod(BaseMinimapMappinController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+  this.mm_minimapConfig = new MiniMapConfig();
+}
+
 // Hide shards
 @replaceMethod(BaseMinimapMappinController)
 protected cb func OnUpdate() -> Bool {
   this.Update();
   let data: ref<GameplayRoleMappinData> = this.m_mappin.GetScriptData() as GameplayRoleMappinData;
-  if data.isShard_mm && MiniMapConfig.HideShards() {
+  if data.isShard_mm && this.mm_minimapConfig.hideShards {
     this.GetRootWidget().SetVisible(false);
   };
 }
@@ -90,17 +99,17 @@ protected func Update() -> Void {
     };
   };
   // Hide enemies
-  if MiniMapConfig.HideEnemies() && this.m_isAlive && NotEquals(attitude, EAIAttitude.AIA_Friendly) {
+  if this.mm_minimapConfig.hideEnemies && this.m_isAlive && NotEquals(attitude, EAIAttitude.AIA_Friendly) {
     shouldShowMappin = false;
   };
   // Hide loot
   if !this.m_isAlive {
     lootToCheck = this.m_stealthMappin.GetHighestLootQuality();
-    if (MiniMapConfig.HideLegendary() && Equals(lootToCheck, 4u))
-      || (MiniMapConfig.HideEpic() && Equals(lootToCheck, 3u))
-      || (MiniMapConfig.HideRare() && Equals(lootToCheck, 2u))
-      || (MiniMapConfig.HideUncommon() && Equals(lootToCheck, 1u))
-      || (MiniMapConfig.HideCommon() && Equals(lootToCheck, 0u)) {
+    if (this.mm_minimapConfig.hideLegendary && Equals(lootToCheck, 4u))
+      || (this.mm_minimapConfig.hideEpic && Equals(lootToCheck, 3u))
+      || (this.mm_minimapConfig.hideRare && Equals(lootToCheck, 2u))
+      || (this.mm_minimapConfig.hideUncommon && Equals(lootToCheck, 1u))
+      || (this.mm_minimapConfig.hideCommon && Equals(lootToCheck, 0u)) {
         shouldShowMappin = false;
       };
   };

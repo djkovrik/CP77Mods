@@ -1,10 +1,11 @@
 module EnhancedCraft.Damage
-import EnhancedCraft.Config.Config
+import EnhancedCraft.Config.ECraftConfig
+import EnhancedCraft.Common.*
 
 // -- Check if weapon damage type selection available to player
 @addMethod(CraftingLogicController)
 public func CanSelectDamageType() -> Bool {
-  if !Config.CustomizedDamageEnabled() {
+  if !this.ecraftConfig.customizedDamageEnabled {
     return false;
   };
 
@@ -13,7 +14,7 @@ public func CanSelectDamageType() -> Bool {
   let canCraftRare: Bool = ss.GetStatValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatType.CanCraftRareItems) > 0.0;
   let canCraftEpic: Bool = ss.GetStatValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatType.CanCraftEpicItems) > 0.0;
   let canCraftLegendary: Bool = ss.GetStatValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatType.CanCraftLegendaryItems) > 0.0;
-  let configValue: Int32 = Config.PerkToUnlockDamageTypes();
+  let configValue: Int32 = EnumInt(this.ecraftConfig.perkToUnlockDamageTypes);
   let canSelect: Bool = Equals(configValue, 1) || (canCraftRare && Equals(configValue, 2)) || (canCraftEpic && Equals(configValue, 3)) || (canCraftLegendary && Equals(configValue, 4));
   return canSelect;
 }

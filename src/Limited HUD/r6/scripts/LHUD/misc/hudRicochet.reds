@@ -1,12 +1,13 @@
 import LimitedHudConfig.LHUDAddonsColoringConfig
+import LimitedHudCommon.LHUDRicochetColors
 
 // No color (disable): 0    Green: 1    Red: 2
 @replaceMethod(gameEffectExecutor_Ricochet)
 public final func OnSnap(ctx: EffectScriptContext, entity: ref<Entity>) -> Void {
   let data: OutlineData;
   let evt: ref<OutlineRequestEvent> = new OutlineRequestEvent();
-
-  switch LHUDAddonsColoringConfig.RicochetColor() {
+  let config: ref<LHUDAddonsColoringConfig> = new LHUDAddonsColoringConfig();
+  switch config.RicochetColor {
     case 0: 
       data.outlineType = EOutlineType.NONE;
       break;

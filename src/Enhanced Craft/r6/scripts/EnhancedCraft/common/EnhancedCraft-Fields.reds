@@ -1,4 +1,5 @@
 module EnhancedCraft.Common
+import EnhancedCraft.Config.ECraftConfig
 
 // -- CraftingLogicController
 
@@ -51,6 +52,8 @@ private let currentItemRecord: ref<Item_Record>;
 @addField(CraftingLogicController)
 private let currentDamageType: gamedataStatType;
 
+@addField(CraftingLogicController)
+private let ecraftConfig: ref<ECraftConfig>;
 
 // -- CraftItemRequest
 
@@ -145,6 +148,9 @@ private let m_shouldDisplayHud: Bool;
 @addField(ItemTooltipRecipeDataModule)
 private let m_damageSelectionAvailable: Bool;
 
+// Stores settings flag
+@addField(ItemTooltipRecipeDataModule)
+private let m_settingsDamageEnabled: Bool;
 
 // -- CraftingGarmentItemPreviewGameController
 

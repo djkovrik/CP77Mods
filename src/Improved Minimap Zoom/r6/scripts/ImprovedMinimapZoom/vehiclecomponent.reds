@@ -9,11 +9,13 @@ protected cb func OnMountingEvent(evt: ref<MountingEvent>) -> Bool {
   let mounted: ref<GameObject> = GameInstance.FindEntityByID(this.GetVehicle().GetGame(), evt.request.lowLevelMountingInfo.childId) as GameObject;
   if mounted.IsPlayer() {
     let player: ref<PlayerPuppet> = mounted as PlayerPuppet;
-    GameInstance.GetBlackboardSystem(player.GetGame()).Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.IsMounted_IMZ, true, true);
-
-    // Dirty hack #3: reset IsPlayerMounted to remove minimap shift
-    if ZoomConfig.IsDynamicZoomEnabled() {
-      GameInstance.GetBlackboardSystem(player.GetGame()).Get(GetAllBlackboardDefs().UI_ActiveVehicleData).SetBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted, false, false);
+    if IsDefined(player) {
+      let config: ref<ZoomConfig> = player.IMZConfig();
+      GameInstance.GetBlackboardSystem(player.GetGame()).Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.IsMounted_IMZ, true, true);
+      // Dirty hack #3: reset IsPlayerMounted to remove minimap shift
+      if config.isDynamicZoomEnabled {
+        GameInstance.GetBlackboardSystem(player.GetGame()).Get(GetAllBlackboardDefs().UI_ActiveVehicleData).SetBool(GetAllBlackboardDefs().UI_ActiveVehicleData.IsPlayerMounted, false, false);
+      };
     };
   }
 }

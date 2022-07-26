@@ -23,12 +23,21 @@ public func ShouldShowSubtitlesLHUD(affiliationata: gamedataAffiliation) -> Bool
   false;
 }
 
+@addField(ChattersGameController)
+private let lhudAddonsConfig: ref<LHUDAddonsConfig>;
+
+@wrapMethod(ChattersGameController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+  this.lhudAddonsConfig = new LHUDAddonsConfig();
+}
+
 @wrapMethod(ChattersGameController)
 protected func ShouldDisplayLine(lineData: scnDialogLineData) -> Bool {
   let affiliation: gamedataAffiliation = this.GetAffiliationLHUD(lineData);
   let shouldDisplayOriginal: Bool = wrappedMethod(lineData);
   let shouldDisplayModded: Bool = this.ShouldShowSubtitlesLHUD(affiliation);
-  if LHUDAddonsConfig.RemoveOverheadSubtitles() {
+  if this.lhudAddonsConfig.RemoveOverheadSubtitles {
     return shouldDisplayOriginal && shouldDisplayModded;
   } else {
     return shouldDisplayOriginal;
@@ -38,7 +47,8 @@ protected func ShouldDisplayLine(lineData: scnDialogLineData) -> Bool {
 // -- NEW AREA NOTIFICATION
 @wrapMethod(JournalNotificationQueue)
 protected cb func OnNewLocationDiscovered(newLocation: Bool) -> Bool {
-  if !LHUDAddonsConfig.RemoveNewAreaNotification() {
+  let config: ref<LHUDAddonsConfig> = new LHUDAddonsConfig();
+  if !config.RemoveNewAreaNotification {
     wrappedMethod(newLocation);
   };
 }

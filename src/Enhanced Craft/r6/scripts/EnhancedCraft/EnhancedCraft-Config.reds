@@ -1,67 +1,98 @@
 module EnhancedCraft.Config
+import EnhancedCraft.Common.*
 
-/*
-  PerkToUnlockStandard:
-    1: No perk required
-    2: True Craftsman (Rare items craft)
-    3: Grease Monkey (Epic items craft)
-    4: Edgerunner Artisan (Legendary items craft)
+public class ECraftConfig {
 
-  PerkToUnlockIconics:
-    1: No perk required
-    2: Disable Iconics
-    3: True Craftsman (Rare items craft)
-    4: Grease Monkey (Epic items craft)
-    5: Edgerunner Artisan (Legendary items craft)
+  public static func Get() -> ref<ECraftConfig> {
+    let self: ref<ECraftConfig> = new ECraftConfig();
+    return self;
+  }
 
-  PerkToUnlockDamageTypes:
-    1: No perk required
-    2: True Craftsman (Rare items craft)
-    3: Grease Monkey (Epic items craft)
-    4: Edgerunner Artisan (Legendary items craft)
-
-  PerkToUnlockClothes:
-    1: No perk required
-    2: True Craftsman (Rare items craft)
-    3: Grease Monkey (Epic items craft)
-    4: Edgerunner Artisan (Legendary items craft)
-
-  IconicRecipeCondition:
-    1: Rare
-    2: Epic
-    3: Legendary
-*/
-
-// Controlled by Native Settings UI
-public class Config {
-  // If enabled then you can rename your crafted weapons
-  public static func CustomNamesEnabled() -> Bool = false
-  // If enabled then random weapon skin will be applied for crafted item
-  public static func RandomizerEnabled() -> Bool = false
-  // Required perk to unlock standard weapon variants
-  public static func PerkToUnlockStandard() -> Int32 = 3
-  // Required perk to unlock iconic weapon variants
-  public static func PerkToUnlockIconics() -> Int32 = 5
-  // Ingredients quantity multiplier for Iconic variants
-  public static func IconicRecipeCondition() -> Int32 = 2
-  // Ingredients quantity multiplier for Iconic variants
-  public static func IconicIngredientsMultiplier() -> Int32 = 5
-  // Enables controller support
-  public static func ControllerSupportEnabled() -> Bool = false
   // Enables weapon damage type selection
-  public static func CustomizedDamageEnabled() -> Bool = true
+  @runtimeProperty("ModSettings.mod", "Enhanced Craft")
+  @runtimeProperty("ModSettings.category", "Mod-Craft-UI-Damage-Type")
+  @runtimeProperty("ModSettings.displayName", "Mod-Craft-UI-Damage-Type-Enable")
+  @runtimeProperty("ModSettings.description", "Mod-Craft-UI-Damage-Type-Enable-Desc")
+  let customizedDamageEnabled: Bool = true;
+
   // Required perk to unlock weapon damage type selection
-  public static func PerkToUnlockDamageTypes() -> Int32 = 2
+  @runtimeProperty("ModSettings.mod", "Enhanced Craft")
+  @runtimeProperty("ModSettings.category", "Mod-Craft-UI-Damage-Type")
+  @runtimeProperty("ModSettings.displayName", "Mod-Craft-UI-Damage-Perk")
+  @runtimeProperty("ModSettings.description", "Mod-Craft-UI-Damage-Perk-Desc")
+  let perkToUnlockDamageTypes: ECraftPerkToUnlockDamageTypes = ECraftPerkToUnlockDamageTypes.TrueCraftsman;
+
+  // Required perk to unlock standard weapon variants
+  @runtimeProperty("ModSettings.mod", "Enhanced Craft")
+  @runtimeProperty("ModSettings.category", "Mod-Craft-Settings-Base")
+  @runtimeProperty("ModSettings.displayName", "Mod-Craft-Settings-Basic")
+  @runtimeProperty("ModSettings.description", "Mod-Craft-Settings-Basic-Desc")
+  let perkToUnlockStandard: ECraftPerkToUnlockStandard = ECraftPerkToUnlockStandard.GreaseMonkey;
+
+  // Required perk to unlock iconic weapon variants
+  @runtimeProperty("ModSettings.mod", "Enhanced Craft")
+  @runtimeProperty("ModSettings.category", "Mod-Craft-Settings-Iconic")
+  @runtimeProperty("ModSettings.displayName", "Mod-Craft-Settings-Iconic-Unlock")
+  @runtimeProperty("ModSettings.description", "Mod-Craft-Settings-Iconic-Unlock-Desc")
+  let perkToUnlockIconics: ECraftPerkToUnlockIconics = ECraftPerkToUnlockIconics.EdgerunnerArtisan;
+
+  // Quality requirement for iconic variants craft
+  @runtimeProperty("ModSettings.mod", "Enhanced Craft")
+  @runtimeProperty("ModSettings.category", "Mod-Craft-Settings-Iconic")
+  @runtimeProperty("ModSettings.displayName", "Mod-Craft-Settings-Iconic-Condition")
+  @runtimeProperty("ModSettings.description", "Mod-Craft-Settings-Iconic-Condition-Desc")
+  let iconicRecipeCondition: ECraftIconicRecipeCondition = ECraftIconicRecipeCondition.Epic;
+
+  // Ingredients quantity multiplier for Iconic variants
+  @runtimeProperty("ModSettings.mod", "Enhanced Craft")
+  @runtimeProperty("ModSettings.category", "Mod-Craft-Settings-Iconic")
+  @runtimeProperty("ModSettings.displayName", "Mod-Craft-Iconic-Ingredients")
+  @runtimeProperty("ModSettings.description", "Mod-Craft-Iconic-Ingredients-Desc")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "1")
+  @runtimeProperty("ModSettings.max", "25")
+  let iconicIngredientsMultiplier: Int32 = 5;
+
   // Required perk to unlock clothes variants
-  public static func PerkToUnlockClothes() -> Int32 = 2
+  @runtimeProperty("ModSettings.mod", "Enhanced Craft")
+  @runtimeProperty("ModSettings.category", "Mod-Craft-Settings-Clothes")
+  @runtimeProperty("ModSettings.displayName", "Mod-Craft-UI-Damage-Perk")
+  @runtimeProperty("ModSettings.description", "Mod-Craft-Settings-Clothes-Unlock-Desc")
+  let perkToUnlockClothes: ECraftPerkToUnlockClothes = ECraftPerkToUnlockClothes.TrueCraftsman;
+
   // If enabled then adds jacket variants from DLC
-  public static func IncludeJacketsFromDLC() -> Bool = false
+  @runtimeProperty("ModSettings.mod", "Enhanced Craft")
+  @runtimeProperty("ModSettings.category", "Mod-Craft-Settings-Clothes")
+  @runtimeProperty("ModSettings.displayName", "Mod-Craft-Settings-Jackets")
+  @runtimeProperty("ModSettings.description", "Mod-Craft-Settings-Jackets-Desc")
+  let includeJacketsFromDLC: Bool = false;
+
+  // If enabled then random weapon skin will be applied for crafted item
+  @runtimeProperty("ModSettings.mod", "Enhanced Craft")
+  @runtimeProperty("ModSettings.category", "Mod-Craft-Settings-Misc")
+  @runtimeProperty("ModSettings.displayName", "Mod-Craft-Settings-Randomizer")
+  @runtimeProperty("ModSettings.description", "Mod-Craft-Settings-Randomizer-Desc")
+  let randomizerEnabled: Bool = false;
+
+  // If enabled then you can rename your crafted weapons
+  @runtimeProperty("ModSettings.mod", "Enhanced Craft")
+  @runtimeProperty("ModSettings.category", "Mod-Craft-Settings-Misc")
+  @runtimeProperty("ModSettings.displayName", "Mod-Craft-Settings-Naming")
+  @runtimeProperty("ModSettings.description", "Mod-Craft-Settings-Naming-Desc")
+  let customNamesEnabled: Bool = true;
+
+  // Enables controller support
+  @runtimeProperty("ModSettings.mod", "Enhanced Craft")
+  @runtimeProperty("ModSettings.category", "Mod-Craft-Settings-Misc")
+  @runtimeProperty("ModSettings.displayName", "Mod-Craft-UI-Controller")
+  @runtimeProperty("ModSettings.description", "Mod-Craft-UI-Controller-Desc")
+  let controllerSupportEnabled: Bool = false;
 }
 
 public class HotkeyActions {
   // Get Prev button action name (IK_A + IK_Pad_X_SQUARE)
-  public static func EnhancedCraftPrevAction() -> CName {
-    if Config.ControllerSupportEnabled() {
+  public static func EnhancedCraftPrevAction(config: ref<ECraftConfig>) -> CName {
+    if config.controllerSupportEnabled {
       return n"transfer_save";
     } else {
       return n"option_switch_prev";
@@ -69,8 +100,8 @@ public class HotkeyActions {
   }
 
   // Get Next button action name (IK_D + IK_Pad_Y_TRIANGLE)
-  public static func EnhancedCraftNextAction() -> CName {
-    if Config.ControllerSupportEnabled() {
+  public static func EnhancedCraftNextAction(config: ref<ECraftConfig>) -> CName {
+    if config.controllerSupportEnabled {
       return n"delete_save";
     } else {
       return n"option_switch_next";

@@ -5,8 +5,9 @@ private class RemoveCrouchEvent extends Event {}
 @wrapMethod(CrouchIndicatorGameController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
+  let config: ref<LHUDAddonsConfig> = new LHUDAddonsConfig();
   let callback: ref<LHUDHideCrouchCallback>;
-  if LHUDAddonsConfig.HideCrouchIndicator() {
+  if config.HideCrouchIndicator {
     callback = new LHUDHideCrouchCallback();
     callback.uiSystem = GameInstance.GetUISystem(this.GetPlayerControlledObject().GetGame());
     GameInstance.GetDelaySystem(this.GetPlayerControlledObject().GetGame()).DelayCallback(callback, 0.1);

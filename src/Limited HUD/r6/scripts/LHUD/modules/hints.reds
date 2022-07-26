@@ -9,17 +9,17 @@ protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
 
 @addMethod(InputHintManagerGameController)
 public func DetermineCurrentVisibility() -> Void {
-  if !HintsModuleConfig.IsEnabled() {
+  if !this.lhudConfig.IsEnabled {
     return ;
   };
 
-  let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && HintsModuleConfig.BindToGlobalHotkey();
-  let showForCombat: Bool = this.lhud_isCombatActive && HintsModuleConfig.ShowInCombat();
-  let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && HintsModuleConfig.ShowOutOfCombat();
-  let showForStealth: Bool =  this.lhud_isStealthActive && HintsModuleConfig.ShowInStealth();
-  let showForVehicle: Bool =  this.lhud_isInVehicle && HintsModuleConfig.ShowInVehicle();
-  let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && HintsModuleConfig.ShowWithWeapon();
-  let showForZoom: Bool =  this.lhud_isZoomActive && HintsModuleConfig.ShowWithZoom();
+  let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && this.lhudConfig.BindToGlobalHotkey;
+  let showForCombat: Bool = this.lhud_isCombatActive && this.lhudConfig.ShowInCombat;
+  let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && this.lhudConfig.ShowOutOfCombat;
+  let showForStealth: Bool =  this.lhud_isStealthActive && this.lhudConfig.ShowInStealth;
+  let showForVehicle: Bool =  this.lhud_isInVehicle && this.lhudConfig.ShowInVehicle;
+  let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfig.ShowWithWeapon;
+  let showForZoom: Bool =  this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
 
   let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForWeapon || showForZoom;
   if NotEquals(this.lhud_isVisibleNow, isVisible) {
@@ -32,9 +32,13 @@ public func DetermineCurrentVisibility() -> Void {
   };
 }
 
+@addField(InputHintManagerGameController)
+private let lhudConfig: ref<HintsModuleConfig>;
+
 @addMethod(InputHintManagerGameController)
 protected cb func OnInitialize() -> Bool {
-  if HintsModuleConfig.IsEnabled() {
+  this.lhudConfig = new HintsModuleConfig();
+  if this.lhudConfig.IsEnabled {
     this.lhud_isVisibleNow = false;
     this.GetRootWidget().SetOpacity(0.0);
     this.OnInitializeFinished();

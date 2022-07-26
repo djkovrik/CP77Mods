@@ -57,6 +57,9 @@ public let m_isActuallyMountedTrackingCallback_IMZ: ref<CallbackHandle>;
 public let m_playerInstance_IMZ: wref<PlayerPuppet>;
 
 @addField(MinimapContainerController)
+public let m_imzConfig: wref<ZoomConfig>;
+
+@addField(MinimapContainerController)
 public let m_currentInVehicleZoom_IMZ: Float;
 
 @addField(MinimapContainerController)
@@ -66,8 +69,8 @@ public let m_isPeekActive_IMZ: Bool;
 
 @addMethod(MinimapContainerController)
 protected cb func OnSpeedValueChanged_IMZ(speed: Float) -> Bool {
-  if ZoomConfig.IsDynamicZoomEnabled() {
-    let newZoom: Float = ZoomCalc.GetForSpeed(speed);
+  if this.m_imzConfig.isDynamicZoomEnabled {
+    let newZoom: Float = ZoomCalc.GetForSpeed(speed, this.m_imzConfig);
     IMZLog("New zoom available: " + ToString(newZoom));
     if NotEquals(this.m_currentInVehicleZoom_IMZ, newZoom) && IsDefined(this.m_playerInstance_IMZ) {
       this.HackAllZoomValues_IMZ(newZoom);
@@ -91,6 +94,7 @@ protected cb func OnActualMountedStateChanged_IMZ(value: Bool) -> Bool {
 @addMethod(MinimapContainerController)
 func InitBBs_IMZ(playerGameObject: ref<GameObject>) -> Void {
   this.m_playerInstance_IMZ = playerGameObject as PlayerPuppet;
+  this.m_imzConfig = this.m_playerInstance_IMZ.IMZConfig();
   this.m_UIBlackboard_IMZ = GameInstance.GetBlackboardSystem(playerGameObject.GetGame()).Get(GetAllBlackboardDefs().UI_System);
   this.m_speedTrackingCallback_IMZ = this.m_UIBlackboard_IMZ.RegisterListenerFloat(GetAllBlackboardDefs().UI_System.CurrentSpeed_IMZ, this, n"OnSpeedValueChanged_IMZ");
   this.m_isMountedBlackboard_IMZ = GameInstance.GetBlackboardSystem(playerGameObject.GetGame()).Get(GetAllBlackboardDefs().UI_ActiveVehicleData);
@@ -113,17 +117,17 @@ public func SetPreconfiguredZoomValues_IMZ() -> Void {
   let peek: Float;
 
   if this.m_isPeekActive_IMZ {
-    peek = CastedValues.Peek();
+    peek = Cast<Float>(this.m_imzConfig.peek);
   } else {
     peek = 0.0;
   }
 
-  this.visionRadiusVehicle = CastedValues.MinZoom();
-  this.visionRadiusCombat = CastedValues.Combat() + peek;
-  this.visionRadiusQuestArea = CastedValues.QuestArea() + peek;
-  this.visionRadiusSecurityArea = CastedValues.SecurityArea() + peek;
-  this.visionRadiusInterior = CastedValues.Interior() + peek;
-  this.visionRadiusExterior = CastedValues.Exterior() + peek;
+  this.visionRadiusVehicle = Cast<Float>(this.m_imzConfig.minZoom);
+  this.visionRadiusCombat = Cast<Float>(this.m_imzConfig.combat) + peek;
+  this.visionRadiusQuestArea = Cast<Float>(this.m_imzConfig.questArea) + peek;
+  this.visionRadiusSecurityArea = Cast<Float>(this.m_imzConfig.securityArea) + peek;
+  this.visionRadiusInterior = Cast<Float>(this.m_imzConfig.interior) + peek;
+  this.visionRadiusExterior = Cast<Float>(this.m_imzConfig.exterior) + peek;
   this.m_playerInstance_IMZ.ForceMinimapRefreshWithFakeZone();
 }
 
@@ -162,14 +166,14 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
   let actionName: CName = ListenerAction.GetName(action);
   if Equals(actionName, IMZAction()) {
     if Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED) {
-      if ZoomConfig.ReplaceHoldWithToggle() {
+      if this.m_imzConfig.replaceHoldWithToggle {
         this.m_isPeekActive_IMZ = !this.m_isPeekActive_IMZ;
       } else {
         this.m_isPeekActive_IMZ = true;
       };
     };
     if Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED) {
-      if !ZoomConfig.ReplaceHoldWithToggle() {
+      if !this.m_imzConfig.replaceHoldWithToggle {
         this.m_isPeekActive_IMZ = false;
       };
     };

@@ -1,5 +1,14 @@
 import LimitedHudConfig.LHUDAddonsConfig
 
+@addField(interactionItemLogicController)
+private let lhudAddonsConfig: ref<LHUDAddonsConfig>;
+
+@wrapMethod(interactionItemLogicController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+  this.lhudAddonsConfig = new LHUDAddonsConfig();
+}
+
 @wrapMethod(interactionItemLogicController)
 private final func SetLabel(data: script_ref<InteractionChoiceData>) -> Void {
   wrappedMethod(data);
@@ -8,16 +17,16 @@ private final func SetLabel(data: script_ref<InteractionChoiceData>) -> Void {
 
   // Get in / Get on
   if Equals(dataLocalizedName, "LocKey#23295") || Equals(dataLocalizedName, "LocKey#23296") {
-    this.GetRootCompoundWidget().SetVisible(!LHUDAddonsConfig.HidePromptGetIn());
+    this.GetRootCompoundWidget().SetVisible(!this.lhudAddonsConfig.HidePromptGetIn);
   };
 
   // Pick Up Body
   if Equals(dataLocalizedName, "LocKey#238") {
-    this.GetRootCompoundWidget().SetVisible(!LHUDAddonsConfig.HidePromptPickUpBody());
+    this.GetRootCompoundWidget().SetVisible(!this.lhudAddonsConfig.HidePromptPickUpBody);
   };
 
   // Talk
   if Equals(dataLocalizedName, "LocKey#312") {
-    this.GetRootCompoundWidget().SetVisible(!LHUDAddonsConfig.HidePromptTalk());
+    this.GetRootCompoundWidget().SetVisible(!this.lhudAddonsConfig.HidePromptTalk);
   };
 }
