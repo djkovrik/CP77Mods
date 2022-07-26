@@ -36,6 +36,29 @@ public class EnhancedCraftSystem extends ScriptableSystem {
     this.RefreshStoredDamages();
   }
 
+  public func RefreshSingleItem(itemData: ref<gameItemData>) -> Void {
+    let hasCustomName: Bool = this.HasCustomName(itemData.GetID());
+    let hasCustomDamage: Bool = this.HasCustomDamageStats(itemData.GetID());
+    let customDamage: ref<DamageTypeStats>;
+
+    if hasCustomName {
+      itemData.hasCustomName = this.HasCustomName(itemData.GetID());
+      itemData.customName = this.GetCustomName(itemData.GetID());
+    };
+
+    if hasCustomDamage {
+      customDamage = this.GetCustomDamageStats(itemData.GetID());
+      this.m_player.RestorePersistedDamageType(itemData, customDamage);
+    };
+  }
+
+  public func RefreshDataAndClearUnused(storageItems: array<ref<gameItemData>>) -> Void {
+    this.RefreshData();
+    this.RefreshStashNames(storageItems);
+    this.RefreshStashDamages(storageItems);
+    this.ClearUnusedFromStorageAndInventory(storageItems);
+  }
+
   // -- Saves custom name
   public func AddCustomName(itemId: ItemID, name: String) -> Void {
     let persistedRecords: array<ref<CustomCraftNameDataPS>> = this.m_nameRecords;
@@ -103,6 +126,126 @@ public class EnhancedCraftSystem extends ScriptableSystem {
     };
     return newStats;
   }
+  // -- Iterates through player inventory, checks if custom named item still exists
+  //    and then assigns custom names to gameItemData
+  public func RefreshStoredNames() -> Void {
+    let playerItems: array<ItemID>;
+    let playerItemsData: array<ref<gameItemData>>;
+
+    this.m_inventoryManager.GetPlayerItemsDataByCategory(gamedataItemCategory.Weapon, playerItemsData);
+    this.m_inventoryManager.GetItemsIdsFromGameData(playerItemsData, playerItems);
+    L(s"RefreshStoredNames: player weapons detected: \(ArraySize(playerItems))");
+
+    // Iterate through player weapons and assign custom names
+    for data in playerItemsData {
+      data.hasCustomName = this.HasCustomName(data.GetID());
+      data.customName = this.GetCustomName(data.GetID());
+    };
+  }
+
+
+  // -- Iterates through player inventory, checks if custom damage item still exists
+  //    and then assigns custom damage to gameItemData
+  public func RefreshStoredDamages() -> Void {
+    let playerItems: array<ItemID>;
+    let playerItemsData: array<ref<gameItemData>>;
+
+    this.m_inventoryManager.GetPlayerItemsDataByCategory(gamedataItemCategory.Weapon, playerItemsData);
+    this.m_inventoryManager.GetItemsIdsFromGameData(playerItemsData, playerItems);
+    L(s"RefreshStoredDamages: player weapons detected: \(ArraySize(playerItems))");
+
+    // Iterate through player weapons and assign custom damage
+    let hasCustomDamage: Bool;
+    let customDamage: ref<DamageTypeStats>;
+    for data in playerItemsData {
+      hasCustomDamage = this.HasCustomDamageStats(data.GetID());
+      if hasCustomDamage {
+        customDamage = this.GetCustomDamageStats(data.GetID());
+        this.m_player.RestorePersistedDamageType(data, customDamage);
+      };
+    };
+  }
+
+  // -- STASH
+
+  // -- Iterates through stash, checks if custom named item still exists
+  //    and then assigns custom names to gameItemData
+  private func RefreshStashNames(storageItems: array<ref<gameItemData>>) -> Void {
+    let playerItems: array<ItemID>;
+    let inventoryHashes: array<Uint64>;
+
+    this.m_inventoryManager.GetPlayerItemsDataByCategory(gamedataItemCategory.Weapon, storageItems);
+    this.m_inventoryManager.GetItemsIdsFromGameData(storageItems, playerItems);
+    this.GetInventoryHashes(playerItems, inventoryHashes);
+    L(s"RefreshStashNames: player weapons detected: \(ArraySize(playerItems))");
+
+    // Iterate through player weapons and assign custom names
+    for data in storageItems {
+      data.hasCustomName = this.HasCustomName(data.GetID());
+      data.customName = this.GetCustomName(data.GetID());
+    };
+  }
+
+
+  // -- Iterates through player inventory, checks if custom damage item still exists
+  //    and then assigns custom damage to gameItemData
+  private func RefreshStashDamages(storageItems: array<ref<gameItemData>>) -> Void {
+    let playerItems: array<ItemID>;
+    let inventoryHashes: array<Uint64>;
+
+    this.m_inventoryManager.GetPlayerItemsDataByCategory(gamedataItemCategory.Weapon, storageItems);
+    this.m_inventoryManager.GetItemsIdsFromGameData(storageItems, playerItems);
+    this.GetInventoryHashes(playerItems, inventoryHashes);
+    L(s"RefreshStashDamages: player weapons detected: \(ArraySize(playerItems))");
+
+    // Iterate through stash weapons and assign custom damage
+    let hasCustomDamage: Bool;
+    let customDamage: ref<DamageTypeStats>;
+    for data in storageItems {
+      hasCustomDamage = this.HasCustomDamageStats(data.GetID());
+      if hasCustomDamage {
+        customDamage = this.GetCustomDamageStats(data.GetID());
+        this.m_player.RestorePersistedDamageType(data, customDamage);
+      };
+    };
+  }
+
+  private func ClearUnusedFromStorageAndInventory(storageItems: array<ref<gameItemData>>) -> Void {
+    let persistedNameRecords: array<ref<CustomCraftNameDataPS>> = this.m_nameRecords;
+    let persistedDamageRecords: array<ref<DamageTypeStatsPS>> = this.m_damageRecords;
+    let commonItemDatas: array<ref<gameItemData>>;
+    let commonItemIds: array<ItemID>;
+    let commonItemHashes: array<Uint64>;
+
+    this.m_inventoryManager.GetPlayerItemsDataByCategory(gamedataItemCategory.Weapon, commonItemDatas);
+
+    // Add storage items to array
+    for item in storageItems {
+      ArrayPush(commonItemDatas, item);
+    };
+    this.m_inventoryManager.GetItemsIdsFromGameData(commonItemDatas, commonItemIds);
+    this.GetInventoryHashes(commonItemIds, commonItemHashes);
+    if ArraySize(commonItemHashes) > 0 {
+      for record in persistedNameRecords {
+        if this.HasInInventory(commonItemHashes, record.id) {
+          L(s"- \(record.id) detected as \(record.name), keep it");
+        } else {
+          L(s"- \(record.id) not detected, deleting persistent record...");
+          this.DeleteStoredNameRecord(record.id);
+        };
+      };
+      for record in persistedDamageRecords {
+        if this.HasInInventory(commonItemHashes, record.id) {
+          L(s"- \(record.id) detected as \(record.id), keep it");
+        } else {
+          L(s"- \(record.id) not detected, deleting persistent record...");
+          this.DeleteStoredDamageRecord(record.id);
+        };
+      };
+    };
+  }
+
+  // -- MISC
 
   // -- Deletes persisted name record
   private func DeleteStoredNameRecord(id: Uint64) -> Void {
@@ -135,78 +278,6 @@ public class EnhancedCraftSystem extends ScriptableSystem {
     this.m_damageRecords = persistedRecords;
     L(s"Persisted damage record \(id) deleted, total persisted records: \(ArraySize(this.m_damageRecords))");
   }
-
-  // -- Iterates through player inventory, checks if custom named item still exists
-  //    and then assigns custom names to gameItemData
-  private func RefreshStoredNames() -> Void {
-    let persistedRecords: array<ref<CustomCraftNameDataPS>> = this.m_nameRecords;
-    let playerItems: array<ItemID>;
-    let playerItemsData: array<ref<gameItemData>>;
-    let inventoryHashes: array<Uint64>;
-
-    this.m_inventoryManager.GetPlayerItemsIDsByCategory(gamedataItemCategory.Weapon, playerItems);
-    this.m_inventoryManager.GetPlayerItemsDataByCategory(gamedataItemCategory.Weapon, playerItemsData);
-    this.GetInventoryHashes(playerItems, inventoryHashes);
-    L(s"RefreshStoredNames: player weapons detected: \(ArraySize(playerItems))");
-
-    // Iterate through saved hashes and check if inventory has the same
-    if ArraySize(inventoryHashes) > 0 {
-      for record in persistedRecords {
-        if this.HasInInventory(inventoryHashes, record.id) {
-          L(s"- \(record.id) detected as \(record.name), keep it");
-        } else {
-          L(s"- \(record.id) not detected, deleting persistent record...");
-          this.DeleteStoredNameRecord(record.id);
-        };
-      };
-    };
-
-    // Iterate through player weapons and assign custom names
-    for data in playerItemsData {
-      data.hasCustomName = this.HasCustomName(data.GetID());
-      data.customName = this.GetCustomName(data.GetID());
-    };
-  }
-
-
-  // -- Iterates through player inventory, checks if custom damage item still exists
-  //    and then assigns custom damage to gameItemData
-  private func RefreshStoredDamages() -> Void {
-    let persistedRecords: array<ref<DamageTypeStatsPS>> = this.m_damageRecords;
-    let playerItems: array<ItemID>;
-    let playerItemsData: array<ref<gameItemData>>;
-    let inventoryHashes: array<Uint64>;
-
-    this.m_inventoryManager.GetPlayerItemsIDsByCategory(gamedataItemCategory.Weapon, playerItems);
-    this.m_inventoryManager.GetPlayerItemsDataByCategory(gamedataItemCategory.Weapon, playerItemsData);
-    this.GetInventoryHashes(playerItems, inventoryHashes);
-    L(s"RefreshStoredDamages: player weapons detected: \(ArraySize(playerItems))");
-
-    // Iterate through saved hashes and check if inventory has the same
-    if ArraySize(inventoryHashes) > 0 {
-      for record in persistedRecords {
-        if this.HasInInventory(inventoryHashes, record.id) {
-          L(s"- \(record.id) detected as \(record.id), keep it");
-        } else {
-          L(s"- \(record.id) not detected, deleting persistent record...");
-          this.DeleteStoredDamageRecord(record.id);
-        };
-      };
-    };
-
-    // Iterate through player weapons and assign custom damage
-    let hasCustomDamage: Bool;
-    let customDamage: ref<DamageTypeStats>;
-    for data in playerItemsData {
-      hasCustomDamage = this.HasCustomDamageStats(data.GetID());
-      if hasCustomDamage {
-        customDamage = this.GetCustomDamageStats(data.GetID());
-        this.m_player.RestorePersistedDamageType(data, customDamage);
-      };
-    };
-  }
-
-
   // -- Converts array<ItemID> to array<Uint64>
   private func GetInventoryHashes(items: array<ItemID>, out hashes: array<Uint64>) -> Void {
     for item in items {
