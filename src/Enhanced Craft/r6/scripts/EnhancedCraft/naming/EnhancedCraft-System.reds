@@ -22,14 +22,18 @@ public class EnhancedCraftSystem extends ScriptableSystem {
       this.m_inventoryManager = new InventoryDataManagerV2();
       this.m_inventoryManager.Initialize(this.m_player);
       L("Inventory manager initialzied");
-      this.RefreshStoredNames();
-      this.RefreshStoredDamages();
+      this.RefreshData();
     };
   }
 
   public final static func GetInstance(gameInstance: GameInstance) -> ref<EnhancedCraftSystem> {
     let system: ref<EnhancedCraftSystem> = GameInstance.GetScriptableSystemsContainer(gameInstance).Get(n"EnhancedCraft.System.EnhancedCraftSystem") as EnhancedCraftSystem;
     return system;
+  }
+
+  public func RefreshData() -> Void {
+    this.RefreshStoredNames();
+    this.RefreshStoredDamages();
   }
 
   // -- Saves custom name
@@ -134,7 +138,7 @@ public class EnhancedCraftSystem extends ScriptableSystem {
 
   // -- Iterates through player inventory, checks if custom named item still exists
   //    and then assigns custom names to gameItemData
-  public func RefreshStoredNames() -> Void {
+  private func RefreshStoredNames() -> Void {
     let persistedRecords: array<ref<CustomCraftNameDataPS>> = this.m_nameRecords;
     let playerItems: array<ItemID>;
     let playerItemsData: array<ref<gameItemData>>;
@@ -167,7 +171,7 @@ public class EnhancedCraftSystem extends ScriptableSystem {
 
   // -- Iterates through player inventory, checks if custom damage item still exists
   //    and then assigns custom damage to gameItemData
-  public func RefreshStoredDamages() -> Void {
+  private func RefreshStoredDamages() -> Void {
     let persistedRecords: array<ref<DamageTypeStatsPS>> = this.m_damageRecords;
     let playerItems: array<ItemID>;
     let playerItemsData: array<ref<gameItemData>>;

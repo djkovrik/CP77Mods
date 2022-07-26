@@ -1,5 +1,6 @@
 module EnhancedCraft.Core
 import EnhancedCraft.Common.DamageTypeStats
+import EnhancedCraft.System.EnhancedCraftSystem
 import EnhancedCraft.Common.L
 
 // -- Helper function to scale custom variant data to player level and original recipe quality
@@ -284,4 +285,10 @@ public func RestorePersistedDamageType(itemData: ref<gameItemData>, originalStat
   this.RemoveCurrentDamageModifiers(statsSystem, statsObject);
   this.AssignNewDamageModifiers(statsSystem, statsObject, originalStats, newDamageType);
   L(s"Restored damage type \(newDamageType) with \(originalStats.damage) (\(originalStats.minDamage) - \(originalStats.maxDamage))");
+}
+
+@wrapMethod(PlayerPuppet)
+protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
+  wrappedMethod(evt);
+  EnhancedCraftSystem.GetInstance(this.GetGame()).RefreshData();
 }
