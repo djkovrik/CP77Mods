@@ -53,6 +53,7 @@ public class EnhancedCraftSystem extends ScriptableSystem {
   }
 
   public func RefreshDataAndClearUnused(storageItems: array<ref<gameItemData>>) -> Void {
+    L("RefreshDataAndClearUnused");
     this.RefreshData();
     this.RefreshStashNames(storageItems);
     this.RefreshStashDamages(storageItems);
@@ -133,7 +134,7 @@ public class EnhancedCraftSystem extends ScriptableSystem {
     let playerItemsData: array<ref<gameItemData>>;
 
     this.m_inventoryManager.GetPlayerItemsDataByCategory(gamedataItemCategory.Weapon, playerItemsData);
-    this.m_inventoryManager.GetItemsIdsFromGameData(playerItemsData, playerItems);
+    this.GetItemsIdsFromGameData(playerItemsData, playerItems);
     L(s"RefreshStoredNames: player weapons detected: \(ArraySize(playerItems))");
 
     // Iterate through player weapons and assign custom names
@@ -151,7 +152,7 @@ public class EnhancedCraftSystem extends ScriptableSystem {
     let playerItemsData: array<ref<gameItemData>>;
 
     this.m_inventoryManager.GetPlayerItemsDataByCategory(gamedataItemCategory.Weapon, playerItemsData);
-    this.m_inventoryManager.GetItemsIdsFromGameData(playerItemsData, playerItems);
+    this.GetItemsIdsFromGameData(playerItemsData, playerItems);
     L(s"RefreshStoredDamages: player weapons detected: \(ArraySize(playerItems))");
 
     // Iterate through player weapons and assign custom damage
@@ -175,7 +176,7 @@ public class EnhancedCraftSystem extends ScriptableSystem {
     let inventoryHashes: array<Uint64>;
 
     this.m_inventoryManager.GetPlayerItemsDataByCategory(gamedataItemCategory.Weapon, storageItems);
-    this.m_inventoryManager.GetItemsIdsFromGameData(storageItems, playerItems);
+    this.GetItemsIdsFromGameData(storageItems, playerItems);
     this.GetInventoryHashes(playerItems, inventoryHashes);
     L(s"RefreshStashNames: player weapons detected: \(ArraySize(playerItems))");
 
@@ -194,7 +195,7 @@ public class EnhancedCraftSystem extends ScriptableSystem {
     let inventoryHashes: array<Uint64>;
 
     this.m_inventoryManager.GetPlayerItemsDataByCategory(gamedataItemCategory.Weapon, storageItems);
-    this.m_inventoryManager.GetItemsIdsFromGameData(storageItems, playerItems);
+    this.GetItemsIdsFromGameData(storageItems, playerItems);
     this.GetInventoryHashes(playerItems, inventoryHashes);
     L(s"RefreshStashDamages: player weapons detected: \(ArraySize(playerItems))");
 
@@ -223,22 +224,23 @@ public class EnhancedCraftSystem extends ScriptableSystem {
     for item in storageItems {
       ArrayPush(commonItemDatas, item);
     };
-    this.m_inventoryManager.GetItemsIdsFromGameData(commonItemDatas, commonItemIds);
+    // Check all
+    this.GetItemsIdsFromGameData(commonItemDatas, commonItemIds);
     this.GetInventoryHashes(commonItemIds, commonItemHashes);
     if ArraySize(commonItemHashes) > 0 {
       for record in persistedNameRecords {
         if this.HasInInventory(commonItemHashes, record.id) {
-          L(s"- \(record.id) detected as \(record.name), keep it");
+          L(s"- name record \(record.id) detected as \(record.name), keep it");
         } else {
-          L(s"- \(record.id) not detected, deleting persistent record...");
+          L(s"- name record \(record.id) not detected, deleting persistent record...");
           this.DeleteStoredNameRecord(record.id);
         };
       };
       for record in persistedDamageRecords {
         if this.HasInInventory(commonItemHashes, record.id) {
-          L(s"- \(record.id) detected as \(record.id), keep it");
+          L(s"- damage record \(record.id) detected, keep it");
         } else {
-          L(s"- \(record.id) not detected, deleting persistent record...");
+          L(s"- damage record \(record.id) not detected, deleting persistent record...");
           this.DeleteStoredDamageRecord(record.id);
         };
       };
@@ -254,7 +256,7 @@ public class EnhancedCraftSystem extends ScriptableSystem {
     for record in this.m_nameRecords {
       if Equals(record.id, id) {
         ArrayErase(persistedRecords, index);
-        L(s" - deleted \(record.name)");
+        L(s" - name record deleted \(record.name)");
       };
       index += 1;
     };
@@ -270,7 +272,7 @@ public class EnhancedCraftSystem extends ScriptableSystem {
     for record in this.m_damageRecords {
       if Equals(record.id, id) {
         ArrayErase(persistedRecords, index);
-        L(s" - deleted \(record.id)");
+        L(s" - damage record deleted \(record.id)");
       };
       index += 1;
     };
@@ -278,6 +280,19 @@ public class EnhancedCraftSystem extends ScriptableSystem {
     this.m_damageRecords = persistedRecords;
     L(s"Persisted damage record \(id) deleted, total persisted records: \(ArraySize(this.m_damageRecords))");
   }
+
+  // -- Get IDs from game data array
+  private func GetItemsIdsFromGameData(targetItems: array<ref<gameItemData>>, out items: array<ItemID>) -> Void {
+    let itemId: ItemID;
+    let limit: Int32 = ArraySize(targetItems);
+    let i: Int32 = 0;
+    while i < limit {
+      itemId = targetItems[i].GetID();
+      ArrayPush(items, itemId);
+      i += 1;
+    };
+  }
+
   // -- Converts array<ItemID> to array<Uint64>
   private func GetInventoryHashes(items: array<ItemID>, out hashes: array<Uint64>) -> Void {
     for item in items {

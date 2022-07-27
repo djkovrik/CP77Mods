@@ -19,23 +19,38 @@ public final func GetPlayerItemsDataByCategory(category: gamedataItemCategory, o
   };
 }
 
-// -- Get IDs from array
-@addMethod(InventoryDataManagerV2)
-public final func GetItemsIdsFromGameData(targetItems: array<ref<gameItemData>>, out items: array<ItemID>) -> Void {
-  let itemId: ItemID;
-  let limit: Int32 = ArraySize(targetItems);
-  let i: Int32 = 0;
-  while i < limit {
-    itemId = targetItems[i].GetID();
-    ArrayPush(items, itemId);
-    i += 1;
+// -- Refresh data for loot item tooltip
+@wrapMethod(InventoryDataManagerV2)
+public final func GetPlayerItemData(itemId: ItemID) -> wref<gameItemData> {
+  let itemData: wref<gameItemData> = wrappedMethod(itemId);
+  if this.m_Player.IsWeaponECraft(itemData) {
+    EnhancedCraftSystem.GetInstance(this.m_Player.GetGame()).RefreshSingleItem(itemData);
   };
+  return itemData;
 }
 
-// -- Refresh data for item tooltip
 @wrapMethod(InventoryDataManagerV2)
 public final func GetExternalGameItemData(ownerId: EntityID, externalItemId: ItemID) -> wref<gameItemData> {
-  let data: wref<gameItemData> = wrappedMethod(ownerId, externalItemId);
-  EnhancedCraftSystem.GetInstance(this.m_Player.GetGame()).RefreshSingleItem(data);
-  return data;
+  let itemData: wref<gameItemData> = wrappedMethod(ownerId, externalItemId);
+  if this.m_Player.IsWeaponECraft(itemData) {
+    EnhancedCraftSystem.GetInstance(this.m_Player.GetGame()).RefreshSingleItem(itemData);
+  };
+  return itemData;
+}
+
+// -- Refresh data for stash item tooltip
+@wrapMethod(InventoryDataManagerV2)
+public final func GetTooltipDataForInventoryItem(tooltipItemData: InventoryItemData, equipped: Bool, opt vendorItem: Bool, opt overrideRarity: Bool) -> ref<InventoryTooltipData> {
+  let system: ref<EnhancedCraftSystem> = EnhancedCraftSystem.GetInstance(this.m_Player.GetGame());
+  let newItemData: ref<gameItemData> = InventoryItemData.GetGameItemData(tooltipItemData);
+  let newInventoryItemData: InventoryItemData;
+  if this.m_Player.IsWeaponECraft(newItemData) {
+    if system.HasCustomName(newItemData.GetID()) || system.HasCustomDamageStats(newItemData.GetID()) {
+      EnhancedCraftSystem.GetInstance(this.m_Player.GetGame()).RefreshSingleItem(newItemData);
+      newInventoryItemData = this.GetInventoryItemData(newItemData);
+      return wrappedMethod(newInventoryItemData, equipped, vendorItem, overrideRarity);
+    };
+  };
+
+  return wrappedMethod(tooltipItemData, equipped, vendorItem, overrideRarity);
 }

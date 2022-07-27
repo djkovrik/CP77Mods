@@ -281,14 +281,22 @@ public func RestorePersistedDamageType(itemData: ref<gameItemData>, originalStat
   let statsSystem: ref<StatsSystem> = GameInstance.GetStatsSystem(this.GetGame());
   let newDamageType: gamedataDamageType = originalStats.type;
   let statsObject: StatsObjectID = itemData.GetStatsObjectID();
-
   this.RemoveCurrentDamageModifiers(statsSystem, statsObject);
   this.AssignNewDamageModifiers(statsSystem, statsObject, originalStats, newDamageType);
   L(s"Restored damage type \(newDamageType) with \(originalStats.damage) (\(originalStats.minDamage) - \(originalStats.maxDamage))");
 }
 
+@addMethod(PlayerPuppet)
+public func IsWeaponECraft(data: ref<gameItemData>) -> Bool {
+  let typeStr: String = ToString(data.GetItemType());
+  return StrContains(typeStr, "Wea_");
+}
+
 @wrapMethod(PlayerPuppet)
 protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
   wrappedMethod(evt);
-  EnhancedCraftSystem.GetInstance(this.GetGame()).RefreshData();
+  let itemData: ref<gameItemData> = evt.itemData;
+  if this.IsWeaponECraft(itemData) {
+    EnhancedCraftSystem.GetInstance(this.GetGame()).RefreshSingleItem(itemData);
+  };
 }
