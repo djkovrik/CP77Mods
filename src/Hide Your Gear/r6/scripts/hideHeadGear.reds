@@ -267,3 +267,44 @@ private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt blockActiveSl
 
   wrappedMethod(itemID, slotIndex, blockActiveSlotsUpdate, forceEquipWeapon);
 }
+
+@addMethod(EquipmentSystemPlayerData)
+private func DisableToggleForAreaTypeHG(areaType: gamedataEquipmentArea) -> Void {
+  switch areaType {
+    case gamedataEquipmentArea.Head:
+      this.SetHeadSlotToggleHG(false);
+      break;
+    case gamedataEquipmentArea.Face:
+      this.SetFaceSlotToggleHG(false);
+      break;
+    case gamedataEquipmentArea.Feet:
+      this.SetFeetSlotToggleHG(false);
+      break;
+    case gamedataEquipmentArea.Legs:
+      this.SetLegsSlotToggleHG(false);
+      break;
+    case gamedataEquipmentArea.InnerChest:
+      this.SetInnerChestSlotToggleHG(false);
+      break;
+    case gamedataEquipmentArea.OuterChest:
+      this.SetOuterChestSlotToggleHG(false);
+      break;
+  };
+}
+
+@wrapMethod(EquipmentSystemPlayerData)
+private final func UnequipItem(equipAreaIndex: Int32, opt slotIndex: Int32) -> Void {
+  let area: SEquipArea = this.m_equipment.equipAreas[equipAreaIndex];
+  let areaType: gamedataEquipmentArea = area.areaType;
+  this.DisableToggleForAreaTypeHG(areaType);
+  wrappedMethod(equipAreaIndex, slotIndex);
+}
+
+@wrapMethod(EquipmentSystemPlayerData)
+private final func UnequipItem(itemID: ItemID) -> Void {
+  let index: Int32 = this.GetEquipAreaIndex(EquipmentSystem.GetEquipAreaType(itemID));
+  let area: SEquipArea = this.m_equipment.equipAreas[index];
+  let areaType: gamedataEquipmentArea = area.areaType;
+  this.DisableToggleForAreaTypeHG(areaType);
+  wrappedMethod(itemID);
+}
