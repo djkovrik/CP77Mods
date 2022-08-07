@@ -14,11 +14,11 @@ private func GetRealVendorName(data: WorldMapTooltipData) -> String {
   let targetId: TweakDBID = TDBID.Create(s"Vendors.\(entry).localizedName");
   let vendorName: String = TweakDBInterface.GetString(targetId, "");
 
-  // LogChannel(n"DEBUG", s"entry = \(entry), variant = \(data.mappin.GetVariant()), name = \(vendorName)");
+  LogChannel(n"DEBUG", s"entry = \(entry), variant = \(data.mappin.GetVariant()), name = \(vendorName)");
 
   // Some hardcoded thingies
   switch entry {
-    // Fingers M.D. and Chan Hoon Nam - both have wbr_jpn_netrunner_02 entry attached
+    // Fingers M.D.
     case "wbr_jpn_netrunner_02":
       if Equals(data.mappin.GetVariant(), gamedataMappinVariant.ServicePointRipperdocVariant) {
         vendorName = "LocKey#45149";
@@ -26,6 +26,10 @@ private func GetRealVendorName(data: WorldMapTooltipData) -> String {
       if Equals(data.mappin.GetVariant(), gamedataMappinVariant.ServicePointNetTrainerVariant) {
         vendorName = "LocKey#45176";
       };
+      break;
+    // Chan Hoon Nam 
+    case "wbr_jpn_netrun_02":
+      vendorName = "LocKey#45176";
       break;
     // Ded Zed
     case "wat_nid_clothingshop_01":
@@ -146,6 +150,14 @@ private func GetRealVendorName(data: WorldMapTooltipData) -> String {
     // Just Food
     case "wbr_jpn_foodshop_05_japantown":
       vendorName = "LocKey#45067";
+      break;
+    // El Coyote Cojo
+    case "hey_rey_food_01":
+      vendorName = "LocKey#45075";
+      break;
+    // Pacifica Melee Vendor
+    case "pac_wwd_ripperdoc_01":
+      vendorName = "";
       break;
     default:
       // do nothing
