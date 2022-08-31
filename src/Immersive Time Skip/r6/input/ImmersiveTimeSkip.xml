@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<bindings>
+    <context name="ImmersiveTimeSkip" >
+		<action name="immersive_time_skip" map="immersive_time_skip" />
+    </context>
+
+    <context name="Exploration" append="true">
+        <include name="ImmersiveTimeSkip" />
+    </context>
+    <context name="VehicleDrive" append="true">
+        <include name="ImmersiveTimeSkip" />
+    </context>
+
+	<!-- You can change the hotkeys here -->
+	<!-- Available keycodes: https://pastebin.com/nsQ1cqi8 -->
+	<mapping name="immersive_time_skip" type="Button" >
+		<button id="IK_O" />
+		<button id="IK_Pad_LeftThumb" />
+	</mapping>
+	
+</bindings>
