@@ -1,19 +1,19 @@
-import ImmersiveTimeSkip.Hotkey.CustomTimeSkipListener
+import ImmersiveTimeskip.Hotkey.CustomTimeSkipListener
 
 @addField(inkGameController)
 public let itsDefaultOpacity: Float;
 
 @addField(GameObject) 
-public let itsTimeSkipActive: Bool;
+public let itsTimeskipActive: Bool;
 
 @addField(PlayerPuppet)
-private let itsTimeSkipListener: ref<CustomTimeSkipListener>;
+private let itsTimeskipListener: ref<CustomTimeSkipListener>;
 
 @addField(PlayerPuppet)
 private let itsTimeSystem: ref<TimeSystem>;
 
 @addField(PlayerPuppet) 
-public let itsTimeSkipPopupToken: ref<inkGameNotificationToken>;
+public let itsTimeskipPopupToken: ref<inkGameNotificationToken>;
 
 @addField(TimeskipGameController)
 private let itsInitialDiff: Float;

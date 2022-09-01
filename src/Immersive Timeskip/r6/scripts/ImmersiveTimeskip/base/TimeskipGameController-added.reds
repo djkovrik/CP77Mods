@@ -1,5 +1,5 @@
-import ImmersiveTimeSkip.Utils.ITS
-import ImmersiveTimeSkip.Events.*
+import ImmersiveTimeskip.Utils.ITS
+import ImmersiveTimeskip.Events.*
 
 @addMethod(TimeskipGameController)
 private func TweakWidgetAppearance() -> Void {
@@ -10,15 +10,15 @@ private func TweakWidgetAppearance() -> Void {
 }
 
 @addMethod(TimeskipGameController)
-private func FinalizeTimeSkip() -> Void {
+private func FinalizeTimeskip() -> Void {
   let player: ref<PlayerPuppet> = this.m_player as PlayerPuppet;
   let evt: ref<TimeSkipMenuVisibilityEvent> = new TimeSkipMenuVisibilityEvent();
   ITS("FinalizeTimeSkip");
-  if player.itsTimeSkipActive {
+  if player.itsTimeskipActive {
     evt.visible = false;
     GameInstance.GetUISystem(player.GetGame()).QueueEvent(evt);
-    player.itsTimeSkipActive = false;
-    player.itsTimeSkipPopupToken = null;
+    player.itsTimeskipActive = false;
+    player.itsTimeskipPopupToken = null;
   };
 }
 
@@ -33,7 +33,7 @@ private func FastForwardTimeCustom(diff: Float) -> Void {
 @addMethod(TimeskipGameController)
 protected cb func OnInterruptCustomTimeSkipEvent(evt: ref<InterruptCustomTimeSkipEvent>) -> Bool {
   let player: ref<PlayerPuppet> = this.m_player as PlayerPuppet;
-  if player.itsTimeSkipActive {
+  if player.itsTimeskipActive {
     ITS("Interrupting...");
     player.DisableCustomTimeFastForward();
     GameInstance.GetAudioSystem(this.m_gameInstance).Play(n"ui_menu_map_timeskip_stop");
@@ -42,7 +42,7 @@ protected cb func OnInterruptCustomTimeSkipEvent(evt: ref<InterruptCustomTimeSki
     this.m_progressAnimProxy.Stop(true);
     // let data: ref<TimeSkipPopupCloseData> = new TimeSkipPopupCloseData();
     // this.m_data.token.TriggerCallback(data);
-    this.FinalizeTimeSkip();
+    this.FinalizeTimeskip();
     this.Cancel();
   };
 }

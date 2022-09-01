@@ -1,4 +1,4 @@
-import ImmersiveTimeSkip.Events.InterruptCustomTimeSkipEvent
+import ImmersiveTimeskip.Events.InterruptCustomTimeSkipEvent
 
 // Force popup canceling on any triggered call
 @wrapMethod(PhoneSystem)

@@ -1,5 +1,5 @@
-import ImmersiveTimeSkip.Utils.ITSUtils
-import ImmersiveTimeSkip.Events.*
+import ImmersiveTimeskip.Utils.ITSUtils
+import ImmersiveTimeskip.Events.*
 
 @addMethod(inkGameController)
 protected cb func ShowTimeSkipPopup() -> Void {
@@ -12,8 +12,8 @@ protected cb func ShowTimeSkipPopup() -> Void {
   data.isBlocking = true;
   data.useCursor = true;
   data.queueName = n"modal_popup";
-  player.itsTimeSkipActive = true;
-  player.itsTimeSkipPopupToken = this.ShowGameNotification(data);
+  player.itsTimeskipActive = true;
+  player.itsTimeskipPopupToken = this.ShowGameNotification(data);
   this.PlaySound(n"Button", n"OnPress");
 }
 

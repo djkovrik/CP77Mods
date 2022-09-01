@@ -1,4 +1,4 @@
-module ImmersiveTimeSkip.Events
+module ImmersiveTimeskip.Events
 
 public class OpenTimeSkipMenuEvent extends Event {}
 

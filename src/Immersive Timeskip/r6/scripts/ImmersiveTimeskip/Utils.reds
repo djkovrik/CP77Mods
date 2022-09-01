@@ -1,14 +1,14 @@
-module ImmersiveTimeSkip.Utils
+module ImmersiveTimeskip.Utils
 
 public class ITSUtils {
   
   // Checks if custom timeskip popup available
   public static func IsTimeskipAvailable(player: ref<PlayerPuppet>) -> Bool {
     let gameInstance: GameInstance = player.GetGame();
-    let canTimeSkip: Bool = GameTimeUtils.CanPlayerTimeSkip(player);
+    let canTimeskip: Bool = GameTimeUtils.CanPlayerTimeSkip(player);
     let notInElevator: Bool = !LiftDevice.IsPlayerInsideElevator(gameInstance);
     let timeDilationNotActive: Bool = !GameInstance.GetTimeSystem(gameInstance).IsTimeDilationActive();
-    return canTimeSkip && notInElevator && timeDilationNotActive;
+    return canTimeskip && notInElevator && timeDilationNotActive;
   }
 
   // Animates opacity change

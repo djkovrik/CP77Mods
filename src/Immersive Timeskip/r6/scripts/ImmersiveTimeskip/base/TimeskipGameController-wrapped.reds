@@ -3,7 +3,7 @@ protected cb func OnInitialize() -> Bool {
   wrappedMethod();
 
   let player: ref<PlayerPuppet> = this.m_player as PlayerPuppet;
-  if player.itsTimeSkipActive {
+  if player.itsTimeskipActive {
     this.TweakWidgetAppearance();
   };
 }
@@ -13,7 +13,7 @@ private final func Apply() -> Void {
   let options: inkAnimOptions;
   let player: ref<PlayerPuppet> = this.m_player as PlayerPuppet;
 
-  if player.itsTimeSkipActive {
+  if player.itsTimeskipActive {
     if !this.m_inputEnabled {
       return;
     };
@@ -36,7 +36,7 @@ private final func Apply() -> Void {
 protected cb func OnStartProgressionLoop(proxy: ref<inkAnimProxy>) -> Bool {
   wrappedMethod(proxy);
   let player: ref<PlayerPuppet> = this.m_player as PlayerPuppet;
-  if player.itsTimeSkipActive && this.m_hoursToSkip > 0 {
+  if player.itsTimeskipActive && this.m_hoursToSkip > 0 {
     player.EnableCustomTimeFastForward();
   };
 }
@@ -45,7 +45,7 @@ protected cb func OnStartProgressionLoop(proxy: ref<inkAnimProxy>) -> Bool {
 protected cb func OnProgressAnimationFinished(proxy: ref<inkAnimProxy>) -> Bool {
   wrappedMethod(proxy);
   let player: ref<PlayerPuppet> = this.m_player as PlayerPuppet;
-  if player.itsTimeSkipActive {
+  if player.itsTimeskipActive {
     player.DisableCustomTimeFastForward();
   };
 }
@@ -54,13 +54,13 @@ protected cb func OnProgressAnimationFinished(proxy: ref<inkAnimProxy>) -> Bool 
 @wrapMethod(TimeskipGameController)
 protected cb func OnCloseAfterFinishing(proxy: ref<inkAnimProxy>) -> Bool {
   wrappedMethod(proxy);
-  this.FinalizeTimeSkip();
+  this.FinalizeTimeskip();
 }
 
 @wrapMethod(TimeskipGameController)
 protected cb func OnCloseAfterCanceling(proxy: ref<inkAnimProxy>) -> Bool {
   wrappedMethod(proxy);
-  this.FinalizeTimeSkip();
+  this.FinalizeTimeskip();
 }
 
 @wrapMethod(TimeskipGameController)
@@ -83,7 +83,7 @@ protected cb func OnUpdate(timeDelta: Float) -> Bool {
   let a: Float;
   let d: Float;
 
-  if !this.m_inputEnabled && this.m_player.itsTimeSkipActive {
+  if !this.m_inputEnabled && this.m_player.itsTimeskipActive {
     if IsDefined(this.m_progressAnimProxy) && this.m_progressAnimProxy.IsPlaying() {
       a = Deg2Rad(inkWidgetRef.GetRotation(this.m_currentTimePointerRef));
       if a > this.m_targetTimeAngle {

@@ -1,5 +1,5 @@
-module ImmersiveTimeSkip.Hotkey
-import ImmersiveTimeSkip.Events.*
+module ImmersiveTimeskip.Hotkey
+import ImmersiveTimeskip.Events.*
 
 public class CustomTimeSkipListener {
 
