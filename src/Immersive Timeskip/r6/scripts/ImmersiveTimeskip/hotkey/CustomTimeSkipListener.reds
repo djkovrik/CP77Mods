@@ -10,8 +10,16 @@ public class CustomTimeSkipListener {
   }
 
   protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
+    if ListenerAction.IsAction(action, n"immersive_time_skip") && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_HOLD_COMPLETE) {
+      this.player.isHoldingTimeSkipButton = true;
+    };
+
     if ListenerAction.IsAction(action, n"immersive_time_skip") && ListenerAction.IsButtonJustReleased(action) {
-      GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(new OpenTimeSkipMenuEvent());
+      if this.player.isHoldingTimeSkipButton {
+        this.player.isHoldingTimeSkipButton = false;
+      } else {
+        GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(new OpenTimeSkipMenuEvent());
+      };
     };
   }
 }

@@ -7,6 +7,9 @@ public let itsDefaultOpacity: Float;
 public let itsTimeskipActive: Bool;
 
 @addField(PlayerPuppet)
+public let isHoldingTimeSkipButton: Bool;
+
+@addField(PlayerPuppet)
 private let itsTimeskipListener: ref<CustomTimeSkipListener>;
 
 @addField(PlayerPuppet)

@@ -10,6 +10,13 @@
     <context name="VehicleDrive" append="true">
         <include name="ImmersiveTimeSkip" />
     </context>
+	
+	<acceptedEvents action="immersive_time_skip" >
+		<event name="BUTTON_HOLD_COMPLETE" />
+		<event name="BUTTON_RELEASED" />
+	</acceptedEvents>
+
+	<hold action="immersive_time_skip"  timeout="0.2" />
 
 	<!-- You can change the hotkeys here -->
 	<!-- Available keycodes: https://pastebin.com/nsQ1cqi8 -->
