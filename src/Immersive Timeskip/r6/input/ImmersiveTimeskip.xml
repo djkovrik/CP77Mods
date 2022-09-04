@@ -10,6 +10,9 @@
     <context name="VehicleDrive" append="true">
         <include name="ImmersiveTimeSkip" />
     </context>
+    <context name="UINotifications" append="true">
+        <include name="ImmersiveTimeSkip" />
+    </context>
 	
 	<acceptedEvents action="immersive_time_skip" >
 		<event name="BUTTON_HOLD_COMPLETE" />

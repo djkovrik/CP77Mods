@@ -3,7 +3,7 @@ import ImmersiveTimeskip.Events.*
 
 public class CustomTimeSkipListener {
 
-  private let player: ref<PlayerPuppet>;
+  private let player: wref<PlayerPuppet>;
 
   public func SetPlayer(player: ref<PlayerPuppet>) -> Void {
     this.player = player;
@@ -18,7 +18,11 @@ public class CustomTimeSkipListener {
       if this.player.isHoldingTimeSkipButton {
         this.player.isHoldingTimeSkipButton = false;
       } else {
-        GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(new OpenTimeSkipMenuEvent());
+        if this.player.itsTimeskipActive {
+          GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(new InterruptCustomTimeSkipEvent());
+        } else {
+          GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(new OpenTimeSkipMenuEvent());
+        }
       };
     };
   }

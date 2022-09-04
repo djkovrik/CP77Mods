@@ -26,3 +26,9 @@ private let itsInitialTimestamp: Float;
 
 @addField(TimeskipGameController)
 private let itsSecondsPerDegree: Float;
+
+@addField(HubTimeSkipController)
+private let itsMenuEventDispatcher: wref<inkMenuEventDispatcher>;
+
+@addField(HubTimeSkipController)
+private let itsPlayerInstance: wref<PlayerPuppet>;
