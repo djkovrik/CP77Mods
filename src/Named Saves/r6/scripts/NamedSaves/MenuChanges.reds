@@ -28,18 +28,17 @@ protected cb func OnInitialize() -> Bool {
   this.m_nameInput.SetName(n"InputText");
   this.m_nameInput.SetMaxLength(64);
   this.m_nameInput.Reparent(this.m_nameInputContainer);
-
-  this.RegisterToGlobalInputCallback(n"OnPostOnRelease", this, n"OnGlobalInput");
 }
 
 // Reset input focus on elsewhere click - copy-pasted from psiberx samples ^^
-@addMethod(SaveGameMenuGameController)
-protected cb func OnGlobalInput(evt: ref<inkPointerEvent>) -> Void {
-	if evt.IsAction(n"mouse_left") {
-		if !IsDefined(evt.GetTarget()) || !evt.GetTarget().CanSupportFocus() {
-			this.RequestSetFocus(null);
-		};
-	};
+@wrapMethod(SaveGameMenuGameController)
+protected cb func OnButtonRelease(evt: ref<inkPointerEvent>) -> Bool {
+  wrappedMethod(evt);
+  if evt.IsAction(n"mouse_left") {
+    if !IsDefined(evt.GetTarget()) || !evt.GetTarget().CanSupportFocus() {
+      this.RequestSetFocus(null);
+    };
+  };
 }
 
 // Save input text on save completion event
