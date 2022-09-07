@@ -68,10 +68,10 @@ public class SleevesControlSystem extends ScriptableSystem {
     // Check for cyberware
     if this.hasLauncher || this.HasIncompatibleCyberware() {
       this.SwapTargetSlotsToFPP();
-      LogChannel(n"DEBUG", "Switch to FPP");
+      // LogChannel(n"DEBUG", "Switch to FPP");
     } else {
       this.SwapTargetSlotsToTPP();
-      LogChannel(n"DEBUG", "Switch to TPP");
+      // LogChannel(n"DEBUG", "Switch to TPP");
     };
   }
 
@@ -84,7 +84,7 @@ public class SleevesControlSystem extends ScriptableSystem {
     let newAppearanceString: String;
     if StrFindLast(appearanceString, from) != -1 {
       newAppearanceString = StrReplace(appearanceString, from, to);
-      transactionSystem.ChangeItemAppearance(this.playerPuppet, itemID, StringToName(newAppearanceString));
+      transactionSystem.ChangeItemAppearanceByName(this.playerPuppet, itemID, StringToName(newAppearanceString));
       this.equipmentSystemPlayerData.OnEquipProcessVisualTags(itemID);
     };
   }
@@ -141,7 +141,7 @@ private final func PlayerAttachedCallback(playerPuppet: ref<GameObject>) -> Void
 @wrapMethod(PlayerPuppet)
 protected cb func OnAppearanceChangeFinishEvent(evt: ref<entAppearanceChangeFinishEvent>) -> Bool {
   wrappedMethod(evt);
-  LogChannel(n"DEBUG", "OnAppearanceChangeFinishEvent");
+  // LogChannel(n"DEBUG", "OnAppearanceChangeFinishEvent");
   this.m_sleevesControlSystem.RunAppearanceSwap();
 }
 
