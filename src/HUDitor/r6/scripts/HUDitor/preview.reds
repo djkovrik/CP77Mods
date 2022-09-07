@@ -268,7 +268,6 @@ private func ShowIncomingCallController(name: CName, show: Bool) -> Void {
     options.loopType = inkanimLoopType.Cycle;
     options.loopCounter = 100u;
     options.loopInfinite = true;
-    let contact: wref<JournalContact> = controller.GetIncomingContact(phoneCallInfo);
     inkTextRef.SetLetterCase(controller.m_contactNameWidget, textLetterCase.UpperCase);
     inkTextRef.SetText(controller.m_contactNameWidget, "Unknown");
     inkWidgetRef.SetVisible(controller.m_buttonHint, phoneCallInfo.isRejectable);

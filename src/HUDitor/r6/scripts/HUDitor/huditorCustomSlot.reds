@@ -136,8 +136,6 @@ public class HUDitorCustomSlot extends inkVerticalPanel {
     };
 
     if Equals(ListenerAction.GetName(action), n"mouse_wheel") {
-      let widgetName = this.GetName();
-
       let amount = ListenerAction.GetValue(action);
       let currentScale = this.GetScale();
       let zoomRatio: Float = 0.1;
