@@ -1,3 +1,77 @@
+// -- 1.6 stuff
+
+@addField(InventoryItemDisplayController)
+private let m_btnHideAppearanceCtrl: wref<TransmogButtonView>;
+
+@addField(InventoryItemDisplayController)
+private let m_btnHideAppearance: wref<inkWidget>;
+
+@replaceMethod(InventoryItemDisplayController)
+protected cb func OnDelayedHoverOver(proxy: ref<inkAnimProxy>) -> Bool {
+  let DLCAddedHoverOverEvent: ref<DLCAddedItemDisplayHoverOverEvent>;
+  let parentButton: wref<inkButtonController>;
+  let hoverOverEvent: ref<ItemDisplayHoverOverEvent> = new ItemDisplayHoverOverEvent();
+  hoverOverEvent.itemData = this.GetItemData();
+  hoverOverEvent.display = this;
+  hoverOverEvent.widget = this.m_hoverTarget;
+  hoverOverEvent.isBuybackStack = this.m_isBuybackStack;
+  hoverOverEvent.transmogItem = this.m_transmogItem;
+  hoverOverEvent.isItemHidden = !this.m_btnHideAppearanceCtrl.IsActive();
+  hoverOverEvent.uiInventoryItem = this.GetUIInventoryItem(); // merged from 1.6
+  hoverOverEvent.displayContextData = this.m_displayContextData;  // merged from 1.6
+  if this.m_hoverTarget == this.m_btnHideAppearance {
+    hoverOverEvent.toggleVisibilityControll = true;
+  };
+  this.QueueEvent(hoverOverEvent);
+  parentButton = this.GetParentButton();
+  if !parentButton.GetAutoUpdateWidgetState() && !hoverOverEvent.toggleVisibilityControll {
+    this.GetRootWidget().SetState(n"Hover");
+  };
+  if this.m_isNew {
+    this.SetIsNew(false);
+  };
+  if this.m_isDLCNewItem {
+    this.SetDLCNewIndicator(false);
+    DLCAddedHoverOverEvent = new DLCAddedItemDisplayHoverOverEvent();
+    DLCAddedHoverOverEvent.itemTDBID = ItemID.GetTDBID(this.GetItemID());
+    this.QueueEvent(DLCAddedHoverOverEvent);
+  };
+  this.m_delayProxy = null;
+}
+
+@replaceMethod(InventoryItemDisplayController)
+protected cb func OnDisplayClicked(evt: ref<inkPointerEvent>) -> Bool {
+  let clickEvent: ref<ItemDisplayClickEvent> = new ItemDisplayClickEvent();
+  clickEvent.itemData = this.GetItemData();
+  clickEvent.actionName = evt.GetActionName();
+  clickEvent.displayContext = this.m_itemDisplayContext;
+  clickEvent.isBuybackStack = this.m_isBuybackStack;
+  clickEvent.transmogItem = this.m_transmogItem;
+  clickEvent.display = this;
+  clickEvent.uiInventoryItem = this.GetUIInventoryItem();   // merged from 1.6
+  clickEvent.displayContextData = this.m_displayContextData;   // merged from 1.6
+  if evt.GetTarget() == this.m_btnHideAppearance {
+    clickEvent.toggleVisibilityRequest = true;
+  };
+  this.HandleLocalClick(evt);
+  this.QueueEvent(clickEvent);
+}
+
+@wrapMethod(InventoryItemModeLogicController)
+protected cb func OnItemDisplayClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
+  // Restore toggle from 1.5
+  if evt.toggleVisibilityRequest {
+    if evt.actionName.IsAction(n"click") {
+      this.m_InventoryManager.ToggleItemVisibility(InventoryItemData.GetEquipmentArea(evt.itemData));
+      this.PlaySound(n"Item", n"ItemGeneric");
+    };
+  } else {
+    wrappedMethod(evt);
+  };
+}
+
+// ----
+
 @replaceMethod(InventoryDataManagerV2)
 public final func IsTransmogEnabled() -> Int32 {
   return 1;
@@ -43,12 +117,12 @@ private final func UpdateTransmogControls(isEmpty: Bool) -> Void {
   };
 }
 
-@replaceMethod(InventoryDataManagerV2)
+@addMethod(InventoryDataManagerV2)
 public final func ToggleItemVisibility(area: gamedataEquipmentArea) -> Void {
   this.m_EquipmentSystem.GetPlayerData(this.m_Player).ToggleSlotVisibilityCustom(area);
 }
 
-@replaceMethod(InventoryDataManagerV2)
+@addMethod(InventoryDataManagerV2)
 public final func IsSlotHidden(area: gamedataEquipmentArea) -> Bool {
   return this.m_EquipmentSystem.GetPlayerData(this.m_Player).IsSlotHiddenCustom(area);
 }
@@ -113,13 +187,13 @@ private func ResetItemVisibility(area: gamedataEquipmentArea) {
 
 @addMethod(EquipmentSystemPlayerData)
 private func ToggleItemVisibility(area: gamedataEquipmentArea, shouldHide: Bool) {
-  let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.m_owner.GetGame());
   if shouldHide {
-    if Equals(area, gamedataEquipmentArea.Legs) {
-      this.ClearItemAppearance(transactionSystem, area);
-    } else {
-      this.ClearItemAppearanceEvent(area);
-    };
+    // if Equals(area, gamedataEquipmentArea.Legs) {
+    //   this.ClearItemAppearance(area);
+    // } else {
+    //   this.ClearItemAppearanceEvent(area);
+    // };
+    this.ClearItemAppearanceEvent(area);
   } else {
     this.ResetItemAppearanceEvent(area);
   };
@@ -307,4 +381,12 @@ private final func UnequipItem(itemID: ItemID) -> Void {
   let areaType: gamedataEquipmentArea = area.areaType;
   this.DisableToggleForAreaTypeHG(areaType);
   wrappedMethod(itemID);
+}
+
+// -- Reset eveyrhing on BD
+@wrapMethod(HUDManager)
+protected cb func OnBraindanceToggle(value: Bool) -> Bool {
+  if value {
+    EquipmentSystem.GetInstance(this.GetPlayer()).GetPlayerData(this.GetPlayer()).ResetAllTogglesHG();
+  };
 }
