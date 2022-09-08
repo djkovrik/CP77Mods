@@ -68,7 +68,7 @@ private final func PlayTictocAnimation() -> Void {
   wrappedMethod();
   let angle = Deg2Rad(inkWidgetRef.GetRotation(this.m_currentTimePointerRef));
   if angle > this.m_targetTimeAngle {
-    this.itsInitialDiff = Rad2Deg(Pi() * 2.00 - angle + this.m_targetTimeAngle);
+    this.itsInitialDiff = Rad2Deg(6.28 - angle + this.m_targetTimeAngle);
   } else {
     this.itsInitialDiff = Rad2Deg(this.m_targetTimeAngle - angle);
   };
@@ -87,7 +87,7 @@ protected cb func OnUpdate(timeDelta: Float) -> Bool {
     if IsDefined(this.m_progressAnimProxy) && this.m_progressAnimProxy.IsPlaying() {
       a = Deg2Rad(inkWidgetRef.GetRotation(this.m_currentTimePointerRef));
       if a > this.m_targetTimeAngle {
-        d = Rad2Deg(Pi() * 2.0 - a + this.m_targetTimeAngle);
+        d = Rad2Deg(6.28 - a + this.m_targetTimeAngle);
       } else {
         d = Rad2Deg(this.m_targetTimeAngle - a);
       };
