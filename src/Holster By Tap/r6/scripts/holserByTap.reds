@@ -1,6 +1,5 @@
 @replaceMethod(UpperBodyEventsTransition)
 protected final func UpdateSwitchItem(timeDelta: Float, stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Bool {
-  let holsterDelay: Float = 0.25;
   let nextWeaponJustPressed: Bool = scriptInterface.IsActionJustPressed(n"NextWeapon");
   let previousWeaponJustPressed: Bool = scriptInterface.IsActionJustPressed(n"PreviousWeapon");
   let switchItemJustTapped: Bool = scriptInterface.IsActionJustTapped(n"SwitchItem");

@@ -14,5 +14,5 @@ protected final func UpdateSwitchItem(timeDelta: Float, stateContext: ref<StateC
     };
   };
 
-  wrappedMethod(timeDelta, stateContext, scriptInterface);
+  return wrappedMethod(timeDelta, stateContext, scriptInterface);
 }
