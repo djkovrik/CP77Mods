@@ -4,8 +4,20 @@ import VendorPreview.ItemPreviewManager.*
 import VendorPreview.constants.*
 import VendorPreview.utils.*
 
+@addField(gameItemData)
+let isVirtualItem: Bool;
+
+@addField(UIInventoryItem)
+let virtualInventoryData: InventoryItemData;
+
 @addField(FullscreenVendorGameController)
 public let m_isPreviewMode: Bool;
+
+@addField(FullscreenVendorGameController)
+public let m_currentTutorialsFact: Int32;
+
+@addField(FullscreenVendorGameController)
+private let m_virtualStock: array<ref<VirtualStockItem>>;
 
 @wrapMethod(FullscreenVendorGameController)
 protected cb func OnInitialize() -> Bool {
@@ -13,7 +25,28 @@ protected cb func OnInitialize() -> Bool {
 
   if !this.GetIsVirtual() {
     ItemPreviewManager.AddPreviewModeToggleButtonHint(this);
-  }
+  } else {
+    this.m_currentTutorialsFact = GameInstance.GetQuestsSystem(this.m_player.GetGame()).GetFact(n"disable_tutorials");
+    GameInstance.GetQuestsSystem(this.m_player.GetGame()).SetFact(n"disable_tutorials", 1);
+  };
+}
+
+@wrapMethod(FullscreenVendorGameController)
+protected cb func OnUninitialize() -> Bool {
+  wrappedMethod();
+
+  if !Equals(this.m_itemPreviewPopupToken, null) {
+    this.m_itemPreviewPopupToken.TriggerCallback(null);
+  };
+
+  if this.GetIsVirtual() {
+    GameInstance.GetQuestsSystem(this.m_player.GetGame()).SetFact(n"disable_tutorials", this.m_currentTutorialsFact);
+  };
+}
+
+@addMethod(FullscreenVendorGameController)
+private final func SetPreviewStateActive(active: Bool) -> Void {
+  GetAllBlackboardDefs().atelierPreviewActive = active;
 }
 
 @wrapMethod(FullscreenVendorGameController)
@@ -121,15 +154,6 @@ private final func GetVirtualStoreTexturePart() -> CName {
   return this.m_vendorUserData.vendorData.virtualStore.texturePart;
 }
 
-@wrapMethod(FullscreenVendorGameController)
-protected cb func OnUninitialize() -> Bool {
-  wrappedMethod();
-
-  if !Equals(this.m_itemPreviewPopupToken, null) {
-    this.m_itemPreviewPopupToken.TriggerCallback(null);
-  }
-}
-
 @addMethod(FullscreenVendorGameController)
 protected cb func OnTogglePreviewMode(evt: ref<inkPointerEvent>) -> Bool {
   if this.m_isPreviewMode {
@@ -142,7 +166,7 @@ protected cb func OnTogglePreviewMode(evt: ref<inkPointerEvent>) -> Bool {
 @addMethod(FullscreenVendorGameController)
 private final func ShowGarmentPreview() -> Void {
   this.m_isPreviewMode = true;
-
+  this.SetPreviewStateActive(true);
   let displayContext: ItemDisplayContext;
 
   if (this.GetIsVirtual()) {
@@ -160,6 +184,7 @@ private final func ShowGarmentPreview() -> Void {
 @addMethod(FullscreenVendorGameController)
 protected cb func OnEquipPreviewClosed(data: ref<inkGameNotificationData>) -> Bool {
   this.m_isPreviewMode = false;
+  this.SetPreviewStateActive(false);
   this.m_itemPreviewPopupToken = null;
   
   ItemPreviewManager.OnToggleGarmentPreview(this, false);
@@ -187,43 +212,52 @@ private func BuyItemFromVirtualVendor(inventoryItemData: InventoryItemData) {
 }
 
 @wrapMethod(FullscreenVendorGameController)
-private final func HandleVendorSlotInput(evt: ref<ItemDisplayClickEvent>, itemData: InventoryItemData) -> Void {
-  if (!this.m_isPreviewMode) {
-    wrappedMethod(evt, itemData);
-    return;
+protected cb func OnInventoryClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
+  if this.m_isPreviewMode {
+    this.HandleVirtualSlotClick(evt);
+  } else {
+    wrappedMethod(evt);
   }
+}
 
-  let isVendorItem = InventoryItemData.IsVendorItem(itemData);
-  let isVirtual = this.GetIsVirtual();
-  
-  if (isVirtual && evt.actionName.IsAction(VendorPreviewButtonHint.Get(this.GetPlayerControlledObject()).previewModeToggleName)) {
-    this.BuyItemFromVirtualVendor(itemData);
-    return;
-  }
+@addMethod(FullscreenVendorGameController)
+private final func HandleVirtualSlotClick(evt: ref<ItemDisplayClickEvent>) -> Void {
+  let isVendorItem: Bool = InventoryItemData.IsVendorItem(evt.itemData);
+  let isVendorContext: Bool = Equals(evt.displayContextData.GetDisplayContext(), ItemDisplayContext.Vendor);
+  let showPreview: Bool = isVendorItem || isVendorContext;
 
   // Override the "click" action on item, if the preview widget is currently open
-  if (evt.actionName.IsAction(n"click") && isVendorItem) {
-    let itemId = InventoryItemData.GetID(itemData);
+  if evt.actionName.IsAction(n"click") && showPreview {
+    let itemId: ItemID;
+
+    if isVendorItem {
+      itemId = InventoryItemData.GetID(evt.itemData);
+    } else {
+      itemId = evt.uiInventoryItem.m_itemData.GetID();
+    };
+
     let isEquipped = ItemPreviewManager.GetInstance().GetIsEquipped(itemId);
     let hintLabel: String;
     let isWeapon = IsItemWeapon(itemId);
     let isClothing = IsItemClothing(itemId);
 
-    if (isClothing || isWeapon) {
-      ItemPreviewManager.GetInstance().TogglePreviewItem(itemData);
+    AtelierLog(s"CLICK: weapon \(isWeapon), clothing \(isClothing) - \(GetLocalizedText(evt.itemData.Name))");
+
+    if isClothing || isWeapon {
+      ItemPreviewManager.GetInstance().TogglePreviewItem(itemId);
 
       if isEquipped {
         hintLabel = VirtualAtelierText.PreviewEquip();
       } else {
         hintLabel = VirtualAtelierText.PreviewUnequip();
-      }
+      };
 
       this.m_buttonHintsController.RemoveButtonHint(n"select");
       this.m_buttonHintsController.AddButtonHint(n"select", hintLabel);
     } else {
       this.m_buttonHintsController.RemoveButtonHint(n"select");
-    }
-  }
+    };
+  };
 }
 
 @wrapMethod(FullscreenVendorGameController)
@@ -234,6 +268,11 @@ protected cb func OnHandleGlobalInput(event: ref<inkPointerEvent>) -> Bool {
   let isVirtual: Bool = this.GetIsVirtual();
   let lastUsedPad: Bool = this.GetPlayerControlledObject().PlayerLastUsedPad();
   let lastUsedKBM: Bool = this.GetPlayerControlledObject().PlayerLastUsedKBM();
+
+  if (isVirtual && event.IsAction(VendorPreviewButtonHint.Get(this.GetPlayerControlledObject()).previewModeToggleName)) {
+    this.BuyItemFromVirtualVendor(this.m_lastItemHoverOverEvent.itemData);
+    return false;
+  }
 
   switch true {
     case event.IsAction(vendorPreviewButtonHint.previewModeToggleName) && !isVirtual:
@@ -277,7 +316,19 @@ protected cb func OnHandleGlobalInput(event: ref<inkPointerEvent>) -> Bool {
     case (event.IsAction(n"world_map_menu_toggle_custom_filter") && isVirtual && this.m_isPreviewMode && lastUsedPad):
       event.Consume();
       break;
-  }
+  };
+}
+
+@addMethod(FullscreenVendorGameController)
+private final func ShowTooltipsForItemController(targetWidget: wref<inkWidget>, equippedItem: InventoryItemData, inspectedItemData: InventoryItemData, iconErrorInfo: ref<DEBUG_IconErrorInfo>, isBuybackStack: Bool) -> Void {
+  if this.GetIsVirtual() {
+    let data: ref<InventoryTooltipData>;
+    data = this.m_InventoryManager.GetTooltipDataForInventoryItem(inspectedItemData, InventoryItemData.IsEquipped(inspectedItemData), iconErrorInfo, InventoryItemData.IsVendorItem(inspectedItemData));
+    data.displayContext = InventoryTooltipDisplayContext.Vendor;
+    data.isVirtualItem = true;
+    data.virtualInventoryItemData = inspectedItemData;
+    this.m_TooltipsManager.ShowTooltipAtWidget(n"itemTooltip", targetWidget, data, gameuiETooltipPlacement.LeftTop);
+  };
 }
 
 @wrapMethod(FullscreenVendorGameController)
@@ -309,6 +360,8 @@ protected cb func OnInventoryItemHoverOver(evt: ref<ItemDisplayHoverOverEvent>) 
       this.m_buttonHintsController.AddButtonHint(vendorPreviewButtonHint.previewModeToggleName, vendorPreviewButtonHint.previewModeTogglePurchaseLabel);
     };
 
+    this.m_lastItemHoverOverEvent = evt;
+
     let noCompare: InventoryItemData;
     this.ShowTooltipsForItemController(evt.widget, noCompare, evt.itemData, evt.display.DEBUG_GetIconErrorInfo(), false);
   } else {
@@ -327,26 +380,6 @@ protected cb func OnSetUserData(userData: ref<IScriptable>) -> Bool {
     this.m_lastVendorFilter = ItemFilterCategory.AllItems;
     inkWidgetRef.SetVisible(this.m_vendorBalance, false);
     this.ShowGarmentPreview();
-  }
-}
-
-@addField(gameItemData)
-let isVirtualItem: Bool;
-
-@wrapMethod(FullscreenVendorGameController)
-private final func ShowTooltipsForItemController(targetWidget: wref<inkWidget>, equippedItem: InventoryItemData, inspectedItemData: InventoryItemData, iconErrorInfo: ref<DEBUG_IconErrorInfo>, isBuybackStack: Bool) -> Void {
-  if this.GetIsVirtual() {
-    let data: ref<InventoryTooltipData>;
-    let isPlayerItem: Bool = !InventoryItemData.IsVendorItem(inspectedItemData);
-    let placement: gameuiETooltipPlacement = isPlayerItem ? gameuiETooltipPlacement.RightTop : gameuiETooltipPlacement.LeftTop;
-    
-    data = this.m_InventoryManager.GetTooltipDataForInventoryItem(inspectedItemData, InventoryItemData.IsEquipped(inspectedItemData), iconErrorInfo, InventoryItemData.IsVendorItem(inspectedItemData));
-    data.displayContext = InventoryTooltipDisplayContext.Vendor;
-    data.isVirtualItem = true;
-    data.virtualInventoryItemData = inspectedItemData;
-    this.m_TooltipsManager.ShowTooltipAtWidget(n"itemTooltip", targetWidget, data, placement);
-  } else {
-    wrappedMethod(targetWidget, equippedItem, inspectedItemData, iconErrorInfo, isBuybackStack);
   }
 }
 
@@ -370,9 +403,6 @@ class VirtualStockItem {
   public let quantity: Int32;
   public let itemData: ref<gameItemData>;
 }
-
-@addField(FullscreenVendorGameController)
-private let m_virtualStock: array<ref<VirtualStockItem>>;
 
 @addMethod(FullscreenVendorGameController)
 private final func FillVirtualStock() -> Void {
@@ -657,7 +687,7 @@ private final func PopulateVendorInventory() -> Void {
       vendorInventoryData.IsVendorItem = true;
       vendorInventoryData.IsEnoughMoney = playerMoney >= Cast<Int32>(InventoryItemData.GetBuyPrice(vendorInventory[i]));
       vendorInventoryData.IsDLCAddedActiveItem = this.m_uiScriptableSystem.IsDLCAddedActiveItem(ItemID.GetTDBID(InventoryItemData.GetID(vendorInventory[i])));
-      vendorInventoryData.ComparisonState = this.GetComparisonState(vendorInventoryData.ItemData);
+      // vendorInventoryData.ComparisonState = this.GetComparisonState(vendorInventoryData.ItemData);
 
       this.m_InventoryManager.GetOrCreateInventoryItemSortData(vendorInventoryData.ItemData, this.m_uiScriptableSystem);      
       this.m_vendorFilterManager.AddItem(vendorInventoryData.ItemData.GameItemData);

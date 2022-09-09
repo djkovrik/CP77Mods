@@ -9,6 +9,9 @@ public let itemPreviewManager: ref<ItemPreviewManager>;
 @addField(AllBlackboardDefinitions)
 public let itemPreviewManager: wref<ItemPreviewManager>;
 
+@addField(AllBlackboardDefinitions)
+public let atelierPreviewActive: Bool;
+
 public class PreviewInventoryItemPreviewData extends InventoryItemPreviewData {
   let displayContext: ItemDisplayContext;
 }
@@ -16,14 +19,14 @@ public class PreviewInventoryItemPreviewData extends InventoryItemPreviewData {
 public class ItemPreviewManager {
   public let gameInstance: GameInstance;
   public let puppetId: EntityID;
-  public let garmentPreviewController: ref<GarmentItemPreviewGameController>;
+  public let garmentPreviewController: ref<BaseGarmentItemPreviewGameController>;
 
   public let givenItems: array<ItemID>;
   public let initialItems: array<wref<gameItemData>>;
 
   public let screenWidthLimit: Float;
 
-  private func Initialize(gameInstance: GameInstance, puppetId: EntityID, opt garmentPreviewController: ref<GarmentItemPreviewGameController>) {
+  private func Initialize(gameInstance: GameInstance, puppetId: EntityID, opt garmentPreviewController: ref<BaseGarmentItemPreviewGameController>) {
     this.gameInstance = gameInstance;
     this.puppetId = puppetId;
     this.garmentPreviewController = garmentPreviewController;
@@ -33,7 +36,7 @@ public class ItemPreviewManager {
     transactionSystem.GetItemList(gamePuppet, this.initialItems);
   }
 
-  public static func CreateInstance(puppet: ref<gamePuppet>, opt garmentPreviewController: ref<GarmentItemPreviewGameController>) {
+  public static func CreateInstance(puppet: ref<gamePuppet>, opt garmentPreviewController: ref<BaseGarmentItemPreviewGameController>) {
     let instance: ref<ItemPreviewManager> = new ItemPreviewManager();
 
     let gameInstance = puppet.GetGame();
@@ -115,8 +118,7 @@ public class ItemPreviewManager {
     this.RemoveGivenItem(itemId);
   }
 
-  public func TogglePreviewItem(itemData: InventoryItemData) -> Void {
-    let itemId = InventoryItemData.GetID(itemData);
+  public func TogglePreviewItem(itemId: ItemID) -> Void {
     let puppet: ref<gamePuppet>;
     let transactionSystem: ref<TransactionSystem>;
 
@@ -243,8 +245,8 @@ public class ItemPreviewManager {
     this.RevertInitialGarment();
   }
 
-  public static func GetItemPreviewNotificationToken(controller: ref<gameuiMenuGameController>, itemData: InventoryItemData) -> ref<inkGameNotificationToken> {
-    let previewData = ItemPreviewHelper.GetPreviewData(controller, itemData, false);
+  public static func GetItemPreviewNotificationToken(controller: ref<gameuiMenuGameController>, inventoryItem: ref<UIInventoryItem>) -> ref<inkGameNotificationToken> {
+    let previewData = ItemPreviewHelper.GetPreviewData(controller, inventoryItem, false);
     return controller.ShowGameNotification(previewData);
   }
 
@@ -370,7 +372,7 @@ public class ItemPreviewManager {
     ItemPreviewManager.ToggleVendorFilters(controller, isPreviewMode);
   }
 
-  public static func RegisterGlobalInputListeners(controller: ref<GarmentItemPreviewGameController>) {
+  public static func RegisterGlobalInputListeners(controller: ref<WardrobeSetPreviewGameController>) {
 
     controller.RegisterToGlobalInputCallback(n"OnPostOnPress", controller, n"OnGlobalPress");
     controller.RegisterToGlobalInputCallback(n"OnPostOnPress", controller, n"OnReleaseButton");
@@ -378,7 +380,7 @@ public class ItemPreviewManager {
     controller.RegisterToGlobalInputCallback(n"OnPostOnHold", controller, n"OnPostOnHold");
   }
 
-  public static func AdjustGarmentPreviewWidgets(controller: ref<GarmentItemPreviewGameController>) {
+  public static func AdjustGarmentPreviewWidgets(controller: ref<WardrobeSetPreviewGameController>) {
     ItemPreviewManager.RegisterGlobalInputListeners(controller);
 
     let rootCompoundWidget = controller.GetRootCompoundWidget();
@@ -405,7 +407,7 @@ public class ItemPreviewManager {
     previewWidget.PlayAnimation(translationAnimation);
   }
 
-  public static func OnGarmentPreviewAxisInput(controller: ref<GarmentItemPreviewGameController>, event: ref<inkPointerEvent>) -> Void {
+  public static func OnGarmentPreviewAxisInput(controller: ref<WardrobeSetPreviewGameController>, event: ref<inkPointerEvent>) -> Void {
     let amount: Float = event.GetAxisData();
 
     if event.IsAction(n"character_preview_rotate") {
@@ -421,7 +423,7 @@ public class ItemPreviewManager {
     }
   }      
 
-  public static func OnGarmentPreviewRelativeInput(controller: ref<GarmentItemPreviewGameController>, event: ref<inkPointerEvent>) -> Bool {
+  public static func OnGarmentPreviewRelativeInput(controller: ref<WardrobeSetPreviewGameController>, event: ref<inkPointerEvent>) -> Bool {
     let previewWidget = controller.GetRootCompoundWidget().GetWidgetByPath(inkWidgetPath.Build(n"wrapper", n"preview")) as inkImage;
 
     let widget: ref<inkWidget> = event.GetTarget();
