@@ -271,32 +271,32 @@ public func ScheduleSlotsVisibilityRefresh(delay: Float) -> Void {
   this.m_slotsRefreshDelayId = GameInstance.GetDelaySystem(this.m_owner.GetGame()).DelayCallback(callback, delay);
 }
 
-// Photomode tweaks
+// // Photomode tweaks
 
-@replaceMethod(PhotoModePlayerEntityComponent)
-private final func PutOnFakeItem(itemToAdd: ItemID, puppet: wref<PlayerPuppet>) -> Void {
-  let item: ItemID;
-  let itemData: wref<gameItemData>;
-  let equipAreaType: gamedataEquipmentArea = EquipmentSystem.GetEquipAreaType(itemToAdd);
-  let currSlot: TweakDBID = EquipmentSystem.GetPlacementSlot(itemToAdd);
-  if EquipmentSystem.GetData(puppet).IsSlotHiddenCustom(equipAreaType) {
-    return;
-  };
-  if Equals(equipAreaType, gamedataEquipmentArea.RightArm) {
-    item = ItemID.FromTDBID(ItemID.GetTDBID(itemToAdd));
-    this.TS.GiveItem(this.fakePuppet, item, 1);
-  } else {
-    itemData = this.TS.GetItemData(puppet, itemToAdd);
-    item = itemData.GetID();
-    this.TS.GivePreviewItemByItemData(this.fakePuppet, itemData);
-  };
-  if this.TS.CanPlaceItemInSlot(this.fakePuppet, currSlot, item) && this.TS.AddItemToSlot(this.fakePuppet, currSlot, item, true) {
-    if this.TS.HasItemInSlot(puppet, currSlot, itemToAdd) {
-      ArrayPush(this.loadingItems, item);
-    };
-    this.itemsLoadingTime = EngineTime.ToFloat(this.GetEngineTime());
-  };
-}
+// @replaceMethod(PhotoModePlayerEntityComponent)
+// private final func PutOnFakeItem(itemToAdd: ItemID, puppet: wref<PlayerPuppet>) -> Void {
+//   let item: ItemID;
+//   let itemData: wref<gameItemData>;
+//   let equipAreaType: gamedataEquipmentArea = EquipmentSystem.GetEquipAreaType(itemToAdd);
+//   let currSlot: TweakDBID = EquipmentSystem.GetPlacementSlot(itemToAdd);
+//   if EquipmentSystem.GetData(puppet).IsSlotHiddenCustom(equipAreaType) {
+//     return;
+//   };
+//   if Equals(equipAreaType, gamedataEquipmentArea.RightArm) {
+//     item = ItemID.FromTDBID(ItemID.GetTDBID(itemToAdd));
+//     this.TS.GiveItem(this.fakePuppet, item, 1);
+//   } else {
+//     itemData = this.TS.GetItemData(puppet, itemToAdd);
+//     item = itemData.GetID();
+//     this.TS.GivePreviewItemByItemData(this.fakePuppet, itemData);
+//   };
+//   if this.TS.CanPlaceItemInSlot(this.fakePuppet, currSlot, item) && this.TS.AddItemToSlot(this.fakePuppet, currSlot, item, true) {
+//     if this.TS.HasItemInSlot(puppet, currSlot, itemToAdd) {
+//       ArrayPush(this.loadingItems, item);
+//     };
+//     this.itemsLoadingTime = EngineTime.ToFloat(this.GetEngineTime());
+//   };
+// }
 
 // Game loaded
 @wrapMethod(PlayerPuppet)
@@ -386,6 +386,7 @@ private final func UnequipItem(itemID: ItemID) -> Void {
 // -- Reset eveyrhing on BD
 @wrapMethod(HUDManager)
 protected cb func OnBraindanceToggle(value: Bool) -> Bool {
+  wrappedMethod(value);
   if value {
     EquipmentSystem.GetInstance(this.GetPlayer()).GetPlayerData(this.GetPlayer()).ResetAllTogglesHG();
   };
