@@ -33,12 +33,26 @@ protected cb func OnInitialize() -> Bool {
 @addMethod(InventoryItemDisplayController)
 private func UpdateMarkedForSale() -> Void {
   let itemData: ref<gameItemData> = InventoryItemData.GetGameItemData(this.m_itemData);
-  let isVisible: Bool = !InventoryItemData.IsEmpty(this.m_itemData) && itemData.modMarkedForSale;
-  this.m_forSaleImage.SetVisible(isVisible);
+  let isVisible1: Bool = !InventoryItemData.IsEmpty(this.m_itemData) && itemData.modMarkedForSale;
+  let isVisible2: Bool = this.m_uiInventoryItem.GetItemData().modMarkedForSale;
+  this.m_forSaleImage.SetVisible(isVisible1 || isVisible2);
 }
 
 @wrapMethod(InventoryItemDisplayController)
 protected func RefreshUI() -> Void {
   wrappedMethod();
   this.UpdateMarkedForSale();
+}
+
+@addMethod(InventoryItemDisplayController)
+private func UpdateMarkedForSaleNew(itemData: ref<UIInventoryItem>) -> Void {
+  let itemData: ref<gameItemData> = itemData.GetItemData();
+  let isVisible: Bool = itemData.modMarkedForSale;
+  this.m_forSaleImage.SetVisible(isVisible);
+}
+
+@wrapMethod(InventoryItemDisplayController)
+protected func NewRefreshUI(itemData: ref<UIInventoryItem>) -> Void {
+  wrappedMethod(itemData);
+  this.UpdateMarkedForSaleNew(itemData);
 }

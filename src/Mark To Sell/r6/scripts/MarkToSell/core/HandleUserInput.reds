@@ -4,7 +4,7 @@ import MarkToSell.Text.Labels
 // -- BACKPACK
 
 @addMethod(BackpackMainGameController)
-private func UpdateMarkForSaleHint(shouldShow: Bool, opt alreadyHasIt: Bool, opt evt: ref<ItemDisplayHoverOverEvent>) {
+private func UpdateMarkForSaleHint(shouldShow: Bool, opt alreadyHasIt: Bool) {
   let text1: String;
   let text2: String;
 
@@ -29,11 +29,12 @@ private func UpdateMarkForSaleHint(shouldShow: Bool, opt alreadyHasIt: Bool, opt
 protected cb func OnItemDisplayHoverOver(evt: ref<ItemDisplayHoverOverEvent>) -> Bool {
   wrappedMethod(evt);
 
-  let hasQuestTag: Bool = InventoryItemData.GetGameItemData(evt.itemData).HasTag(n"Quest");
-  let alreadyMarked: Bool = InventoryItemData.GetGameItemData(evt.itemData).modMarkedForSale;
-  let price: Int32 = RPGManager.CalculateSellPrice(this.m_player.GetGame(), this.m_player, evt.itemData.ID);
+  let itemData: ref<gameItemData> = evt.uiInventoryItem.GetItemData();
+  let hasQuestTag: Bool = itemData.HasTag(n"Quest");
+  let alreadyMarked: Bool = itemData.modMarkedForSale;
+  let price: Int32 = RPGManager.CalculateSellPrice(this.m_player.GetGame(), this.m_player, itemData.GetID());
   if price > 0 && !hasQuestTag {
-    this.UpdateMarkForSaleHint(true, alreadyMarked, evt);
+    this.UpdateMarkForSaleHint(true, alreadyMarked);
   };
 }
 
@@ -46,7 +47,7 @@ protected cb func OnItemDisplayHoverOut(evt: ref<ItemDisplayHoverOutEvent>) -> B
 @addMethod(BackpackMainGameController)
 private func ToggleMarkForSale() -> Void {
   let system: ref<MarkToSellSystem> = MarkToSellSystem.GetInstance(this.m_player.GetGame());
-  let data: ref<gameItemData> = InventoryItemData.GetGameItemData(this.m_lastItemHoverOverEvent.itemData);
+  let data: ref<gameItemData> = this.m_lastItemHoverOverEvent.uiInventoryItem.GetItemData();
   let itemId: ItemID = data.GetID();
   let newMark: Bool;
 
@@ -62,19 +63,17 @@ private func ToggleMarkForSale() -> Void {
     newMark = true;
   };
   data.modMarkedForSale = newMark;
-  InventoryItemData.SetGameItemData(this.m_lastItemHoverOverEvent.itemData, data);
 }
 
 @addMethod(BackpackMainGameController)
 private func ToggleMarkForSaleForSimilarItems() -> Void {
   let system: ref<MarkToSellSystem> = MarkToSellSystem.GetInstance(this.m_player.GetGame());
-  let data: ref<gameItemData> = InventoryItemData.GetGameItemData(this.m_lastItemHoverOverEvent.itemData);
+  let data: ref<gameItemData> = this.m_lastItemHoverOverEvent.uiInventoryItem.GetItemData();
   system.MarkSimilarItems(data);
 }
 
 @wrapMethod(BackpackMainGameController)
 protected cb func OnPostOnRelease(evt: ref<inkPointerEvent>) -> Bool {
-
   if IsDefined(this.m_lastItemHoverOverEvent) {
     if evt.IsAction(n"mark_to_sell") {
       this.ToggleMarkForSale();
@@ -87,7 +86,6 @@ protected cb func OnPostOnRelease(evt: ref<inkPointerEvent>) -> Bool {
   };
   wrappedMethod(evt);
 }
-
 
 // -- INVENTORY
 
