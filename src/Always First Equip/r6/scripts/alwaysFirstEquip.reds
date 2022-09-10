@@ -559,7 +559,7 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
   weaponEquipEvent.animFeature = weaponEquipAnimFeature;
   weaponEquipEvent.item = itemObject;
   GameInstance.GetDelaySystem(scriptInterface.executionOwner.GetGame()).DelayEvent(scriptInterface.executionOwner, weaponEquipEvent, 0.03);
-  if itemObject.WeaponHasTag(n"Throwable") && !scriptInterface.GetStatPoolsSystem().HasStatPoolValueReachedMax(Cast<StatsObjectID>(itemObject.GetEntityID()), gamedataStatPoolType.WeaponOverheat) {
+  if itemObject.WeaponHasTag(n"Throwable") && !scriptInterface.GetStatPoolsSystem().HasStatPoolValueReachedMax(Cast<StatsObjectID>(itemObject.GetEntityID()), gamedataStatPoolType.ThrowRecovery) {
     animFeatureMeleeData = new AnimFeature_MeleeData();
     animFeatureMeleeData.isThrowReloading = true;
     scriptInterface.SetAnimationParameterFeature(n"MeleeData", animFeatureMeleeData);
