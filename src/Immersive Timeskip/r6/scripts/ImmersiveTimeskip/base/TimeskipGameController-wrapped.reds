@@ -1,14 +1,4 @@
 @wrapMethod(TimeskipGameController)
-protected cb func OnInitialize() -> Bool {
-  wrappedMethod();
-
-  let player: ref<PlayerPuppet> = this.m_player as PlayerPuppet;
-  if player.itsTimeskipActive {
-    this.TweakWidgetAppearance();
-  };
-}
-
-@wrapMethod(TimeskipGameController)
 private final func Apply() -> Void {
   let options: inkAnimOptions;
   let player: ref<PlayerPuppet> = this.m_player as PlayerPuppet;
