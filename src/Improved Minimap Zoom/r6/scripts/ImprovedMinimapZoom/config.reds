@@ -15,7 +15,7 @@ public class ZoomConfig {
   //    Vehicle = 100
 
   // Zoom value for active combat mode
-  @runtimeProperty("ModSettings.mod", "Improved Minimap Zoom")
+  @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Mod-IMZ-Static")
   @runtimeProperty("ModSettings.displayName", "Mod-IMZ-Combat")
   @runtimeProperty("ModSettings.description", "Mod-IMZ-Combat-Desc")
@@ -25,7 +25,7 @@ public class ZoomConfig {
   let combat: Int32 = 60;
   
   // Zoom value for quest areas
-  @runtimeProperty("ModSettings.mod", "Improved Minimap Zoom")
+  @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Mod-IMZ-Static")
   @runtimeProperty("ModSettings.displayName", "Mod-IMZ-Quest")
   @runtimeProperty("ModSettings.description", "Mod-IMZ-Quest-Desc")
@@ -35,7 +35,7 @@ public class ZoomConfig {
   let questArea: Int32 = 40;
   
   // Zoom value for restricted and dangerous areas
-  @runtimeProperty("ModSettings.mod", "Improved Minimap Zoom")
+  @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Mod-IMZ-Static")
   @runtimeProperty("ModSettings.displayName", "Mod-IMZ-Security")
   @runtimeProperty("ModSettings.description", "Mod-IMZ-Security-Desc")
@@ -45,7 +45,7 @@ public class ZoomConfig {
   let securityArea: Int32 = 60;
   
   // Zoom value for interiors
-  @runtimeProperty("ModSettings.mod", "Improved Minimap Zoom")
+  @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Mod-IMZ-Static")
   @runtimeProperty("ModSettings.displayName", "Mod-IMZ-Interior")
   @runtimeProperty("ModSettings.description", "Mod-IMZ-Interior-Desc")
@@ -56,7 +56,7 @@ public class ZoomConfig {
 
   // Zoom value for remained cases:
   // not in interior, not in vehicle, not in security area, no active combat
-  @runtimeProperty("ModSettings.mod", "Improved Minimap Zoom")
+  @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Mod-IMZ-Static")
   @runtimeProperty("ModSettings.displayName", "Mod-IMZ-Exterior")
   @runtimeProperty("ModSettings.description", "Mod-IMZ-Exterior-Desc")
@@ -68,7 +68,7 @@ public class ZoomConfig {
   // -- MINIMAP PEEK HOTKEY CONFIG
 
   // Non-vehicle zoom increment value for peek mode
-  @runtimeProperty("ModSettings.mod", "Improved Minimap Zoom")
+  @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Mod-IMZ-Peek-Hotkey")
   @runtimeProperty("ModSettings.displayName", "Mod-IMZ-Peek-Increment")
   @runtimeProperty("ModSettings.description", "Mod-IMZ-Peek-Increment-Desc")
@@ -80,7 +80,7 @@ public class ZoomConfig {
   // By default hotkey zooms minimap while you hold it and 
   // resets zoom when you release it, replace false with true here
   // if you want to replace hold to zoom behavior with toggle by keypress
-  @runtimeProperty("ModSettings.mod", "Improved Minimap Zoom")
+  @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Mod-IMZ-Peek-Hotkey")
   @runtimeProperty("ModSettings.displayName", "Mod-IMZ-Peek-Toggleable")
   @runtimeProperty("ModSettings.description", "Mod-IMZ-Peek-Toggleable-Desc")
@@ -90,7 +90,7 @@ public class ZoomConfig {
 
   // This option enables vehicle minimap dynamic zoom based on speed
   // If set to false then minimap will always use value from MinZoom option
-  @runtimeProperty("ModSettings.mod", "Improved Minimap Zoom")
+  @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Mod-IMZ-Max-Dynamic")
   @runtimeProperty("ModSettings.displayName", "Mod-IMZ-Max-Dynamic-Enable")
   @runtimeProperty("ModSettings.description", "Mod-IMZ-Max-Dynamic-Enable-Desc")
@@ -100,7 +100,7 @@ public class ZoomConfig {
   // starts and stops, and MinZoom and MaxZoom values define zoom range itself
 
   // Minimal zoom value
-  @runtimeProperty("ModSettings.mod", "Improved Minimap Zoom")
+  @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Mod-IMZ-Max-Dynamic")
   @runtimeProperty("ModSettings.displayName", "Mod-IMZ-Min-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-IMZ-Min-Zoom-Desc")
@@ -110,7 +110,7 @@ public class ZoomConfig {
   let minZoom: Int32 = 80;
 
   // Speed threshold when zoom will start increasing from MinZoom
-  @runtimeProperty("ModSettings.mod", "Improved Minimap Zoom")
+  @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Mod-IMZ-Max-Dynamic")
   @runtimeProperty("ModSettings.displayName", "Mod-IMZ-Min-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-IMZ-Min-Zoom-Desc")
@@ -120,7 +120,7 @@ public class ZoomConfig {
   let minSpeed: Int32 = 20;
 
   // Maximal zoom value
-  @runtimeProperty("ModSettings.mod", "Improved Minimap Zoom")
+  @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Mod-IMZ-Max-Dynamic")
   @runtimeProperty("ModSettings.displayName", "Mod-IMZ-Max-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-IMZ-Max-Zoom-Desc")
@@ -130,7 +130,7 @@ public class ZoomConfig {
   let maxZoom: Int32 = 140;
 
   // Speed threshold when zoom will reach the value from MaxZoom
-  @runtimeProperty("ModSettings.mod", "Improved Minimap Zoom")
+  @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Mod-IMZ-Max-Dynamic")
   @runtimeProperty("ModSettings.displayName", "Mod-IMZ-Max-Speed")
   @runtimeProperty("ModSettings.description", "Mod-IMZ-Max-Speed-Desc")
