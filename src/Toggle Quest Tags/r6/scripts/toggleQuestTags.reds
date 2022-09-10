@@ -4,8 +4,7 @@ class ToggleQuestTagStrings {
 
 // DO NOT EDIT ANYTHING BELOW
 
-
-// -- Backpack -- BackpackMainGameController --
+// // -- Backpack -- BackpackMainGameController --
 
 // Handle new button hint visibility
 @addMethod(BackpackMainGameController)
@@ -35,7 +34,7 @@ protected cb func OnItemDisplayHoverOut(evt: ref<ItemDisplayHoverOutEvent>) -> B
 // Toggle quest tag for item data
 @addMethod(BackpackMainGameController)
 private func ToggleQuestTag() -> Void {
-  let data: ref<gameItemData> = InventoryItemData.GetGameItemData(this.m_lastItemHoverOverEvent.itemData);
+  let data: ref<gameItemData> = this.m_lastItemHoverOverEvent.uiInventoryItem.GetItemData();
   if data.HasTag(n"Quest") {
     data.RemoveDynamicTag(n"Quest");
   } else {
@@ -43,7 +42,7 @@ private func ToggleQuestTag() -> Void {
   };
 }
 
-// Handle activate_secondary hotkey click
+// Handle toggle_quest_tag hotkey click
 @wrapMethod(BackpackMainGameController)
 protected cb func OnPostOnRelease(evt: ref<inkPointerEvent>) -> Bool {
   if evt.IsAction(n"toggle_quest_tag") && IsDefined(this.m_lastItemHoverOverEvent) {
@@ -52,7 +51,6 @@ protected cb func OnPostOnRelease(evt: ref<inkPointerEvent>) -> Bool {
   };
   wrappedMethod(evt);
 }
-
 
 // -- Main inventory window -- InventoryItemModeLogicController --
 
@@ -143,6 +141,7 @@ private func ToggleQuestTag(evt: ref<ItemDisplayClickEvent>) -> Void {
   let data: ref<gameItemData>;
   if !InventoryItemData.IsEmpty(itemData) {
     data = InventoryItemData.GetGameItemData(itemData);
+    LogChannel(n"DEBUG", s"2 TOGGLE FOR \(ItemID.GetCombinedHash(data.GetID()))");
     if data.HasTag(n"Quest") {
       data.RemoveDynamicTag(n"Quest");
     } else {
@@ -161,12 +160,16 @@ protected cb func OnEquipmentClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
   };
 }
 
-
-
 @wrapMethod(InventoryItemModeLogicController)
 protected cb func OnPostOnRelease(evt: ref<inkPointerEvent>) -> Bool {
   wrappedMethod(evt);
   if evt.IsAction(n"toggle_quest_tag") {
     this.RefreshAvailableItems();
   };
+}
+
+@wrapMethod(InventoryItemDisplayController)
+protected func NewUpdateIndicators(itemData: ref<UIInventoryItem>) -> Void {
+  wrappedMethod(itemData);
+  inkWidgetRef.SetVisible(this.m_questItemMaker, IsDefined(itemData) ? itemData.GetItemData().HasTag(n"Quest") : false);
 }
