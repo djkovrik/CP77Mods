@@ -112,8 +112,8 @@ public class ZoomConfig {
   // Speed threshold when zoom will start increasing from MinZoom
   @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Mod-IMZ-Max-Dynamic")
-  @runtimeProperty("ModSettings.displayName", "Mod-IMZ-Min-Zoom")
-  @runtimeProperty("ModSettings.description", "Mod-IMZ-Min-Zoom-Desc")
+  @runtimeProperty("ModSettings.displayName", "Mod-IMZ-Min-Speed")
+  @runtimeProperty("ModSettings.description", "Mod-IMZ-Min-Speed-Desc")
   @runtimeProperty("ModSettings.step", "5")
   @runtimeProperty("ModSettings.min", "20")
   @runtimeProperty("ModSettings.max", "200")
