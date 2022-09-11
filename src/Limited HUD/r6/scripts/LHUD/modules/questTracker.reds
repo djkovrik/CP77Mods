@@ -1,5 +1,6 @@
 import LimitedHudConfig.QuestTrackerModuleConfig
 import LimitedHudCommon.LHUDEventType
+import LimitedHudCommon.LHUDConfigUpdatedEvent
 import LimitedHudCommon.LHUDEvent
 
 @addMethod(QuestTrackerGameController)
@@ -52,6 +53,11 @@ protected cb func OnInitialize() -> Bool {
     this.GetRootWidget().SetOpacity(0.0);
     this.OnInitializeFinished();
   };
+}
+
+@addMethod(QuestTrackerGameController)
+protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> Void {
+  this.lhudConfig = new QuestTrackerModuleConfig();
 }
 
 // -- Temporarily show tracker and then schedule hiding

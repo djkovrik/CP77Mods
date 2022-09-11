@@ -54,6 +54,8 @@ public class LHUDEvent extends Event {
 // Basic event for delayed startup logic triggering 
 public class LHUDInitLaunchEvent extends Event {}
 
+public class LHUDConfigUpdatedEvent extends Event {}
+
 // Blackboard flags for global and minimap toggles
 @addField(UI_SystemDef) public let IsGlobalFlagToggled_LHUD: BlackboardID_Bool;
 @addField(UI_SystemDef) public let IsMinimapToggled_LHUD: BlackboardID_Bool;
@@ -305,6 +307,13 @@ public func HasAnyWeaponEquipped_LHUD() -> Bool {
     };
   };
   return false;
+}
+
+// Send config refreshing event
+@wrapMethod(PauseMenuBackgroundGameController)
+protected cb func OnUninitialize() -> Bool {
+  GameInstance.GetUISystem(this.GetPlayerControlledObject().GetGame()).QueueEvent(new LHUDConfigUpdatedEvent());
+  wrappedMethod();
 }
 
 // Print string to CET console

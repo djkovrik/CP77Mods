@@ -1,4 +1,5 @@
 import LimitedHudConfig.LHUDAddonsConfig
+import LimitedHudCommon.LHUDConfigUpdatedEvent
 
 // -- OVERHEAD SUBTITLES
 @addMethod(ChattersGameController)
@@ -29,6 +30,11 @@ private let lhudAddonsConfig: ref<LHUDAddonsConfig>;
 @wrapMethod(ChattersGameController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
+  this.lhudAddonsConfig = new LHUDAddonsConfig();
+}
+
+@addMethod(ChattersGameController)
+protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> Void {
   this.lhudAddonsConfig = new LHUDAddonsConfig();
 }
 

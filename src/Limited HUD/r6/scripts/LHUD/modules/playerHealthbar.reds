@@ -1,4 +1,5 @@
 import LimitedHudConfig.PlayerHealthbarModuleConfig
+import LimitedHudCommon.LHUDConfigUpdatedEvent
 import LimitedHudCommon.LHUDEvent
 
 @addMethod(healthbarWidgetGameController)
@@ -59,4 +60,9 @@ protected cb func OnInitialize() -> Bool {
     this.GetRootWidget().SetVisible(false);
     this.OnInitializeFinished();
   };
+}
+
+@addMethod(healthbarWidgetGameController)
+protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> Void {
+  this.lhudConfig = new PlayerHealthbarModuleConfig();
 }

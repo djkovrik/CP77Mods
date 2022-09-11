@@ -1,4 +1,5 @@
 import LimitedHudConfig.WeaponRosterModuleConfig
+import LimitedHudCommon.LHUDConfigUpdatedEvent
 import LimitedHudCommon.LHUDEvent
 
 @addMethod(weaponRosterGameController)
@@ -89,4 +90,9 @@ protected cb func OnWeaponDataChanged(value: Variant) -> Bool {
       this.PlayFold();
     };
   };
+}
+
+@addMethod(weaponRosterGameController)
+protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> Void {
+  this.lhudConfig = new WeaponRosterModuleConfig();
 }

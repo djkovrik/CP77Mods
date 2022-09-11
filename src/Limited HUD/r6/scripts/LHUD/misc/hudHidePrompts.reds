@@ -1,4 +1,5 @@
 import LimitedHudConfig.LHUDAddonsConfig
+import LimitedHudCommon.LHUDConfigUpdatedEvent
 
 @addField(interactionItemLogicController)
 private let lhudAddonsConfig: ref<LHUDAddonsConfig>;
@@ -6,6 +7,11 @@ private let lhudAddonsConfig: ref<LHUDAddonsConfig>;
 @wrapMethod(interactionItemLogicController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
+  this.lhudAddonsConfig = new LHUDAddonsConfig();
+}
+
+@addMethod(interactionItemLogicController)
+protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> Void {
   this.lhudAddonsConfig = new LHUDAddonsConfig();
 }
 

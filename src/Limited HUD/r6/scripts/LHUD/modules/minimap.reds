@@ -1,4 +1,5 @@
 import LimitedHudConfig.MinimapModuleConfig
+import LimitedHudCommon.LHUDConfigUpdatedEvent
 import LimitedHudCommon.LHUDEvent
 
 @addMethod(MinimapContainerController)
@@ -46,4 +47,9 @@ protected cb func OnInitialize() -> Bool {
     this.GetRootWidget().SetOpacity(0.0);
     this.OnInitializeFinished();
   };
+}
+
+@addMethod(MinimapContainerController)
+protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> Void {
+  this.lhudConfig = new MinimapModuleConfig();
 }

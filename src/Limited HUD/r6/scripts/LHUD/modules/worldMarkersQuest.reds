@@ -5,6 +5,7 @@ import LimitedHudConfig.WorldMarkersModuleConfigCombat
 import LimitedHudConfig.WorldMarkersModuleConfigLoot
 import LimitedHudConfig.WorldMarkersModuleConfigDevices
 import LimitedHudMappinChecker.MappinChecker
+import LimitedHudCommon.LHUDConfigUpdatedEvent
 import LimitedHudCommon.LHUDEvent
 import LimitedHudCommon.LHUDLog
 
@@ -137,4 +138,14 @@ protected cb func OnInitialize() -> Bool {
 @replaceMethod(GameplayMappinController)
 private func UpdateVisibility() -> Void {
   super.UpdateVisibility();
+}
+
+@addMethod(QuestMappinController)
+protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> Void {
+  this.lhudConfigQuest = new WorldMarkersModuleConfigQuest();
+  this.lhudConfigVehicles = new WorldMarkersModuleConfigVehicles();
+  this.lhudConfigPOI = new WorldMarkersModuleConfigPOI();
+  this.lhudConfigCombat = new WorldMarkersModuleConfigCombat();
+  this.lhudConfigLoot = new WorldMarkersModuleConfigLoot();
+  this.lhudConfigDevices = new WorldMarkersModuleConfigDevices();
 }

@@ -836,3 +836,16 @@ protected cb func OnInitialize() -> Bool {
     };
   };
 }
+
+public class RefreshFirstEquipConfigEvent extends Event {}
+
+@addMethod(PlayerPuppet)
+protected cb func OnRefreshFirstEquipConfig(evt: ref<RefreshFirstEquipConfigEvent>) -> Bool {
+  this.firstEquipConfig = FirstEquipConfig.Create();
+}
+
+@wrapMethod(PauseMenuBackgroundGameController)
+protected cb func OnUninitialize() -> Bool {
+  this.GetPlayerControlledObject().QueueEvent(new RefreshFirstEquipConfigEvent());
+  wrappedMethod();
+}

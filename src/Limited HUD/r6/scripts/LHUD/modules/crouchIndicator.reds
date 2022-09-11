@@ -1,4 +1,5 @@
 import LimitedHudConfig.CrouchIndicatorModuleConfig
+import LimitedHudCommon.LHUDConfigUpdatedEvent
 import LimitedHudCommon.LHUDEvent
 
 @addMethod(CrouchIndicatorGameController)
@@ -43,4 +44,9 @@ protected cb func OnInitialize() -> Bool {
     this.GetRootWidget().SetOpacity(0.0);
     this.OnInitializeFinished();
   };
+}
+
+@addMethod(CrouchIndicatorGameController)
+protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> Void {
+  this.lhudConfig = new CrouchIndicatorModuleConfig();
 }

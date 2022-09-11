@@ -365,3 +365,21 @@ protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
     };
   };
 }
+
+public class RefreshScapperConfigsEvent extends Event {}
+
+@addMethod(PlayerPuppet)
+protected cb func OnRefreshScapperConfigsEvent(evt: ref<RefreshScapperConfigsEvent>) -> Bool {
+  this.scrapperClothes = new SmarterScrapperClothesConfig();
+  this.scrapperWeapons = new SmarterScrapperWeaponsConfig();
+  this.scrapperMods = new SmarterScrapperModsConfig();
+  this.scrapperGrenade = new SmarterScrapperGrenadeConfig();
+  this.scrapperBounceBack = new SmarterScrapperBounceBackConfig();
+  this.scrapperMaxDoc = new SmarterScrapperMaxDocConfig();
+}
+
+@wrapMethod(PauseMenuBackgroundGameController)
+protected cb func OnUninitialize() -> Bool {
+  this.GetPlayerControlledObject().QueueEvent(new RefreshScapperConfigsEvent());
+  wrappedMethod();
+}

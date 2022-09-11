@@ -1,3 +1,4 @@
+import LimitedHudCommon.LHUDConfigUpdatedEvent
 import LimitedHudConfig.LHUDAddonsConfig
 
 @addField(JournalNotificationQueue)
@@ -6,6 +7,11 @@ private let lhudAddonsConfig: ref<LHUDAddonsConfig>;
 @wrapMethod(JournalNotificationQueue)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
+  this.lhudAddonsConfig = new LHUDAddonsConfig();
+}
+
+@addMethod(JournalNotificationQueue)
+protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> Void {
   this.lhudAddonsConfig = new LHUDAddonsConfig();
 }
 
