@@ -15,7 +15,6 @@ protected cb func OnPostInitialize(evt: ref<entPostInitializeEvent>) -> Bool {
   this.mm_lootConfig = new LootConfig();
   this.mm_minimapConfig = new MiniMapConfig();
   this.mm_worldConfig = new WorldConfig();
-  MM("!!!!!!!!!!");
 }
 
 @addMethod(GameplayRoleComponent)
