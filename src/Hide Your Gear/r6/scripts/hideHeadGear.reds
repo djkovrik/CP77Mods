@@ -1,10 +1,16 @@
-// -- 1.6 stuff
+// -- New fields
 
-@addField(InventoryItemDisplayController)
-private let m_btnHideAppearanceCtrl: wref<TransmogButtonView>;
+@addField(EquipmentSystemPlayerData) private persistent let m_headToggleHG: Bool;
+@addField(EquipmentSystemPlayerData) private persistent let m_faceToggleHG: Bool;
+@addField(EquipmentSystemPlayerData) private persistent let m_feetToggleHG: Bool;
+@addField(EquipmentSystemPlayerData) private persistent let m_legsToggleHG: Bool;
+@addField(EquipmentSystemPlayerData) private persistent let m_innerChestToggleHG: Bool;
+@addField(EquipmentSystemPlayerData) private persistent let m_outerChestToggleHG: Bool;
+@addField(InventoryItemDisplayController) private let m_btnHideAppearanceCtrl: wref<TransmogButtonView>;
+@addField(InventoryItemDisplayController) private let m_btnHideAppearance: wref<inkWidget>;
 
-@addField(InventoryItemDisplayController)
-private let m_btnHideAppearance: wref<inkWidget>;
+
+// -- Restoring toggle controls
 
 @replaceMethod(InventoryItemDisplayController)
 protected cb func OnDelayedHoverOver(proxy: ref<inkAnimProxy>) -> Bool {
@@ -39,22 +45,24 @@ protected cb func OnDelayedHoverOver(proxy: ref<inkAnimProxy>) -> Bool {
   this.m_delayProxy = null;
 }
 
-@replaceMethod(InventoryItemDisplayController)
+@wrapMethod(InventoryItemDisplayController)
 protected cb func OnDisplayClicked(evt: ref<inkPointerEvent>) -> Bool {
-  let clickEvent: ref<ItemDisplayClickEvent> = new ItemDisplayClickEvent();
-  clickEvent.itemData = this.GetItemData();
-  clickEvent.actionName = evt.GetActionName();
-  clickEvent.displayContext = this.m_itemDisplayContext;
-  clickEvent.isBuybackStack = this.m_isBuybackStack;
-  clickEvent.transmogItem = this.m_transmogItem;
-  clickEvent.display = this;
-  clickEvent.uiInventoryItem = this.GetUIInventoryItem();   // merged from 1.6
-  clickEvent.displayContextData = this.m_displayContextData;   // merged from 1.6
   if evt.GetTarget() == this.m_btnHideAppearance {
-    clickEvent.toggleVisibilityRequest = true;
-  };
-  this.HandleLocalClick(evt);
-  this.QueueEvent(clickEvent);
+    let event: ref<ItemDisplayClickEvent> = new ItemDisplayClickEvent();
+    event.itemData = this.GetItemData();
+    event.actionName = evt.GetActionName();
+    event.displayContext = this.m_itemDisplayContext;
+    event.isBuybackStack = this.m_isBuybackStack;
+    event.transmogItem = this.m_transmogItem;
+    event.display = this;
+    event.uiInventoryItem = this.GetUIInventoryItem();   // merged from 1.6
+    event.displayContextData = this.m_displayContextData;   // merged from 1.6
+    event.toggleVisibilityRequest = true;
+    this.HandleLocalClick(evt);
+    this.QueueEvent(event);
+  } else {
+    wrappedMethod(evt);
+  }
 }
 
 @wrapMethod(InventoryItemModeLogicController)
@@ -62,19 +70,12 @@ protected cb func OnItemDisplayClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
   // Restore toggle from 1.5
   if evt.toggleVisibilityRequest {
     if evt.actionName.IsAction(n"click") {
-      this.m_InventoryManager.ToggleItemVisibility(InventoryItemData.GetEquipmentArea(evt.itemData));
+      this.m_InventoryManager.ToggleSlotHG(InventoryItemData.GetEquipmentArea(evt.itemData));
       this.PlaySound(n"Item", n"ItemGeneric");
     };
   } else {
     wrappedMethod(evt);
   };
-}
-
-// ----
-
-@replaceMethod(InventoryDataManagerV2)
-public final func IsTransmogEnabled() -> Int32 {
-  return 1;
 }
 
 @addMethod(InventoryItemDisplayController)
@@ -89,19 +90,20 @@ public func ShouldDisplayControl(area: gamedataEquipmentArea) -> Bool {
   false;
 }
 
-@replaceMethod(InventoryItemDisplayController)
-private final func UpdateTransmogControls(isEmpty: Bool) -> Void {
+@addMethod(InventoryItemDisplayController)
+private final func UpdateTransmogControlsRestored() -> Void {
   let isItemHidden: Bool;
+  let isSlotEmpty: Bool = this.m_inventoryDataManager.IsSlotEmptyHG(this.m_slotID);
   let showControl: Bool = this.ShouldDisplayControl(this.m_equipmentArea) && !this.m_isLocked;
   if !inkWidgetRef.IsValid(this.m_transmogContainer) {
     return;
   };
-  if !isEmpty && showControl {
+  if !isSlotEmpty && showControl {
     if !IsDefined(this.m_btnHideAppearance) {
       this.m_btnHideAppearance = this.SpawnFromLocal(inkWidgetRef.Get(this.m_transmogContainer), n"hideButton");
       this.m_btnHideAppearanceCtrl = this.m_btnHideAppearance.GetControllerByType(n"TransmogButtonView") as TransmogButtonView;
     };
-    isItemHidden = this.m_inventoryDataManager.IsSlotHidden(this.m_equipmentArea);
+    isItemHidden = this.m_inventoryDataManager.IsSlotHiddenHG(this.m_equipmentArea);
     this.m_btnHideAppearanceCtrl.SetActive(!isItemHidden);
   } else {
     if IsDefined(this.m_btnHideAppearance) {
@@ -110,61 +112,43 @@ private final func UpdateTransmogControls(isEmpty: Bool) -> Void {
       this.m_btnHideAppearanceCtrl = null;
     };
   };
-  if !isEmpty && this.m_inventoryDataManager.IsSlotOverriden(this.m_equipmentArea) {
-    this.m_transmogItem = this.m_inventoryDataManager.GetVisualItemInSlot(this.m_equipmentArea);
-  } else {
-    this.m_transmogItem = ItemID.FromTDBID(t"");
-  };
+}
+
+@wrapMethod(InventoryItemDisplayController)
+protected func RefreshUI() -> Void {
+  wrappedMethod();
+  this.UpdateTransmogControlsRestored();
+}
+
+public class ResetTransmogControlsEvent extends Event {}
+
+@addMethod(InventoryItemDisplayController)
+protected cb func OnResetTransmogControls(evt: ref<ResetTransmogControlsEvent>) -> Bool {
+  this.UpdateTransmogControlsRestored();
+}
+
+// -- Custom helpers for InventoryDataManagerV2
+
+@addMethod(InventoryDataManagerV2)
+public func IsSlotEmptyHG(slotId: TweakDBID) -> Bool {
+  return GameInstance.GetTransactionSystem(this.GetGame()).IsSlotEmpty(this.m_Player, slotId);
 }
 
 @addMethod(InventoryDataManagerV2)
-public final func ToggleItemVisibility(area: gamedataEquipmentArea) -> Void {
-  this.m_EquipmentSystem.GetPlayerData(this.m_Player).ToggleSlotVisibilityCustom(area);
+public final func IsSlotHiddenHG(area: gamedataEquipmentArea) -> Bool {
+  return this.m_EquipmentSystem.GetPlayerData(this.m_Player).IsSlotHiddenHG(area);
 }
 
 @addMethod(InventoryDataManagerV2)
-public final func IsSlotHidden(area: gamedataEquipmentArea) -> Bool {
-  return this.m_EquipmentSystem.GetPlayerData(this.m_Player).IsSlotHiddenCustom(area);
+public final func ToggleSlotHG(area: gamedataEquipmentArea) -> Void {
+  this.m_EquipmentSystem.GetPlayerData(this.m_Player).ToggleSlotVisibilityHG(area);
 }
 
 
-// -- [EquipmentSystemPlayerData]
-
-@addField(EquipmentSystemPlayerData) private persistent let m_headToggleHG: Bool;
-@addField(EquipmentSystemPlayerData) private persistent let m_faceToggleHG: Bool;
-@addField(EquipmentSystemPlayerData) private persistent let m_feetToggleHG: Bool;
-@addField(EquipmentSystemPlayerData) private persistent let m_legsToggleHG: Bool;
-@addField(EquipmentSystemPlayerData) private persistent let m_innerChestToggleHG: Bool;
-@addField(EquipmentSystemPlayerData) private persistent let m_outerChestToggleHG: Bool;
+// -- Handle slots in EquipmentSystemPlayerData
 
 @addMethod(EquipmentSystemPlayerData)
-public func ToggleSlotVisibilityCustom(area: gamedataEquipmentArea) -> Void {
-  switch (area) {
-    case gamedataEquipmentArea.Head:
-      this.SetHeadSlotToggleHG(!this.m_headToggleHG);
-      break;
-    case gamedataEquipmentArea.Face:
-      this.SetFaceSlotToggleHG(!this.m_faceToggleHG);
-      break;
-    case gamedataEquipmentArea.Feet:
-      this.SetFeetSlotToggleHG(!this.m_feetToggleHG);
-      break;
-    case gamedataEquipmentArea.Legs:
-      this.SetLegsSlotToggleHG(!this.m_legsToggleHG);
-      break;
-    case gamedataEquipmentArea.InnerChest:
-      this.SetInnerChestSlotToggleHG(!this.m_innerChestToggleHG);
-      break;
-    case gamedataEquipmentArea.OuterChest:
-      this.SetOuterChestSlotToggleHG(!this.m_outerChestToggleHG);
-      break;
-    default:
-      break;
-  };
-}
-
-@addMethod(EquipmentSystemPlayerData)
-public func IsSlotHiddenCustom(area: gamedataEquipmentArea) -> Bool {
+public func IsSlotHiddenHG(area: gamedataEquipmentArea) -> Bool {
   let notCensored: Bool = this.IsBuildCensored();
   let showGenitals: Bool = this.ShouldShowGenitals();
   switch (area) {
@@ -178,27 +162,6 @@ public func IsSlotHiddenCustom(area: gamedataEquipmentArea) -> Bool {
     case gamedataEquipmentArea.UnderwearTop: return notCensored;
     default: return false;
   };
-}
-
-@addMethod(EquipmentSystemPlayerData)
-private func ResetItemVisibility(area: gamedataEquipmentArea) {
-  this.ResetItemAppearanceEvent(area);
-}
-
-@addMethod(EquipmentSystemPlayerData)
-private func ToggleItemVisibility(area: gamedataEquipmentArea, shouldHide: Bool) {
-  if shouldHide {
-    // if Equals(area, gamedataEquipmentArea.Legs) {
-    //   this.ClearItemAppearance(area);
-    // } else {
-    //   this.ClearItemAppearanceEvent(area);
-    // };
-    this.ClearItemAppearanceEvent(area);
-  } else {
-    this.ResetItemAppearanceEvent(area);
-  };
-
-  this.ResetItemAppearanceEvent(gamedataEquipmentArea.UnderwearBottom);
 }
 
 @addMethod(EquipmentSystemPlayerData)
@@ -237,84 +200,42 @@ private func SetOuterChestSlotToggleHG(visible: Bool) -> Void {
   this.ToggleItemVisibility(gamedataEquipmentArea.OuterChest, this.m_outerChestToggleHG);
 }
 
-// Hide underwear after the game loaded
-public class EvaluateSlotsVisibilityCallback extends DelayCallback {
-  public let playerData: wref<EquipmentSystemPlayerData>;
-
-  public func Call() -> Void {
-    this.playerData.ResetItemVisibility(gamedataEquipmentArea.Head);
-    this.playerData.ResetItemVisibility(gamedataEquipmentArea.Face);
-    this.playerData.ResetItemVisibility(gamedataEquipmentArea.Feet);
-    this.playerData.ResetItemVisibility(gamedataEquipmentArea.Legs);
-    this.playerData.ResetItemVisibility(gamedataEquipmentArea.InnerChest);
-    this.playerData.ResetItemVisibility(gamedataEquipmentArea.OuterChest);
-
-    this.playerData.ToggleItemVisibility(gamedataEquipmentArea.Head, this.playerData.IsSlotHiddenCustom(gamedataEquipmentArea.Head));
-    this.playerData.ToggleItemVisibility(gamedataEquipmentArea.Face, this.playerData.IsSlotHiddenCustom(gamedataEquipmentArea.Face));
-    this.playerData.ToggleItemVisibility(gamedataEquipmentArea.Feet, this.playerData.IsSlotHiddenCustom(gamedataEquipmentArea.Feet));
-    this.playerData.ToggleItemVisibility(gamedataEquipmentArea.Legs, this.playerData.IsSlotHiddenCustom(gamedataEquipmentArea.Legs));
-    this.playerData.ToggleItemVisibility(gamedataEquipmentArea.InnerChest, this.playerData.IsSlotHiddenCustom(gamedataEquipmentArea.InnerChest));
-    this.playerData.ToggleItemVisibility(gamedataEquipmentArea.OuterChest, this.playerData.IsSlotHiddenCustom(gamedataEquipmentArea.OuterChest));
-
-    // LogChannel(n"DEBUG", "Hide Head Gear: slots refreshed...");
-  }
-}
-
-@addField(EquipmentSystemPlayerData)
-public let m_slotsRefreshDelayId: DelayID;
-
 @addMethod(EquipmentSystemPlayerData)
-public func ScheduleSlotsVisibilityRefresh(delay: Float) -> Void {
-  let callback: ref<EvaluateSlotsVisibilityCallback> = new EvaluateSlotsVisibilityCallback();
-  callback.playerData = this;
-  GameInstance.GetDelaySystem(this.m_owner.GetGame()).CancelDelay(this.m_slotsRefreshDelayId);
-  this.m_slotsRefreshDelayId = GameInstance.GetDelaySystem(this.m_owner.GetGame()).DelayCallback(callback, delay);
-}
-
-// // Photomode tweaks
-
-// @replaceMethod(PhotoModePlayerEntityComponent)
-// private final func PutOnFakeItem(itemToAdd: ItemID, puppet: wref<PlayerPuppet>) -> Void {
-//   let item: ItemID;
-//   let itemData: wref<gameItemData>;
-//   let equipAreaType: gamedataEquipmentArea = EquipmentSystem.GetEquipAreaType(itemToAdd);
-//   let currSlot: TweakDBID = EquipmentSystem.GetPlacementSlot(itemToAdd);
-//   if EquipmentSystem.GetData(puppet).IsSlotHiddenCustom(equipAreaType) {
-//     return;
-//   };
-//   if Equals(equipAreaType, gamedataEquipmentArea.RightArm) {
-//     item = ItemID.FromTDBID(ItemID.GetTDBID(itemToAdd));
-//     this.TS.GiveItem(this.fakePuppet, item, 1);
-//   } else {
-//     itemData = this.TS.GetItemData(puppet, itemToAdd);
-//     item = itemData.GetID();
-//     this.TS.GivePreviewItemByItemData(this.fakePuppet, itemData);
-//   };
-//   if this.TS.CanPlaceItemInSlot(this.fakePuppet, currSlot, item) && this.TS.AddItemToSlot(this.fakePuppet, currSlot, item, true) {
-//     if this.TS.HasItemInSlot(puppet, currSlot, itemToAdd) {
-//       ArrayPush(this.loadingItems, item);
-//     };
-//     this.itemsLoadingTime = EngineTime.ToFloat(this.GetEngineTime());
-//   };
-// }
-
-// Game loaded
-@wrapMethod(PlayerPuppet)
-protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpawn>) -> Bool {
-  wrappedMethod(evt);
-  EquipmentSystem.GetData(this).ScheduleSlotsVisibilityRefresh(1.0);
-}
-
-
-// Slept or showered
-@wrapMethod(PlayerPuppet)
-protected cb func OnStatusEffectApplied(evt: ref<ApplyStatusEffectEvent>) -> Bool {
-  wrappedMethod(evt);
-  if Equals(evt.staticData.StatusEffectType().Type(), gamedataStatusEffectType.Housing) {
-    EquipmentSystem.GetData(this).ScheduleSlotsVisibilityRefresh(4.0);
+public func ToggleSlotVisibilityHG(area: gamedataEquipmentArea) -> Void {
+  switch (area) {
+    case gamedataEquipmentArea.Head:
+      this.SetHeadSlotToggleHG(!this.m_headToggleHG);
+      break;
+    case gamedataEquipmentArea.Face:
+      this.SetFaceSlotToggleHG(!this.m_faceToggleHG);
+      break;
+    case gamedataEquipmentArea.Feet:
+      this.SetFeetSlotToggleHG(!this.m_feetToggleHG);
+      break;
+    case gamedataEquipmentArea.Legs:
+      this.SetLegsSlotToggleHG(!this.m_legsToggleHG);
+      break;
+    case gamedataEquipmentArea.InnerChest:
+      this.SetInnerChestSlotToggleHG(!this.m_innerChestToggleHG);
+      break;
+    case gamedataEquipmentArea.OuterChest:
+      this.SetOuterChestSlotToggleHG(!this.m_outerChestToggleHG);
+      break;
+    default:
+      break;
   };
 }
 
+@addMethod(EquipmentSystemPlayerData)
+private func ToggleItemVisibility(area: gamedataEquipmentArea, shouldHide: Bool) {
+  if shouldHide {
+    this.ClearItemAppearanceEvent(area);
+  } else {
+    this.ResetItemAppearanceEvent(area);
+  };
+}
+
+// -- Reset all toggles
 @addMethod(EquipmentSystemPlayerData)
 private func ResetAllTogglesHG() -> Void {
   this.SetHeadSlotToggleHG(false);
@@ -323,7 +244,23 @@ private func ResetAllTogglesHG() -> Void {
   this.SetLegsSlotToggleHG(false);
   this.SetInnerChestSlotToggleHG(false);
   this.SetOuterChestSlotToggleHG(false);
+  GameInstance.GetUISystem((this.m_owner as PlayerPuppet).GetGame()).QueueEvent(new ResetTransmogControlsEvent());
 }
+
+// -- Reset toggles on wardrobe set equip
+@wrapMethod(EquipmentSystemPlayerData)
+public final func EquipWardrobeSet(setID: gameWardrobeClothingSetIndex) -> Void {
+  this.ResetAllTogglesHG();
+  wrappedMethod(setID);
+}
+
+// -- Reset toggles on wardrobe set unequip
+@wrapMethod(EquipmentSystemPlayerData)
+public final func UnequipWardrobeSet() -> Void {
+  this.ResetAllTogglesHG();
+  wrappedMethod();
+}
+
 
 @wrapMethod(EquipmentSystemPlayerData)
 private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt blockActiveSlotsUpdate: Bool, opt forceEquipWeapon: Bool) -> Void {
@@ -342,6 +279,7 @@ private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt blockActiveSl
   wrappedMethod(itemID, slotIndex, blockActiveSlotsUpdate, forceEquipWeapon);
 }
 
+// -- Disable toggle for specific area
 @addMethod(EquipmentSystemPlayerData)
 private func DisableToggleForAreaTypeHG(areaType: gamedataEquipmentArea) -> Void {
   switch areaType {
@@ -366,6 +304,7 @@ private func DisableToggleForAreaTypeHG(areaType: gamedataEquipmentArea) -> Void
   };
 }
 
+// -- Reset toggle on item unequip
 @wrapMethod(EquipmentSystemPlayerData)
 private final func UnequipItem(equipAreaIndex: Int32, opt slotIndex: Int32) -> Void {
   let area: SEquipArea = this.m_equipment.equipAreas[equipAreaIndex];
@@ -374,6 +313,7 @@ private final func UnequipItem(equipAreaIndex: Int32, opt slotIndex: Int32) -> V
   wrappedMethod(equipAreaIndex, slotIndex);
 }
 
+// -- Reset toggle on item unequip
 @wrapMethod(EquipmentSystemPlayerData)
 private final func UnequipItem(itemID: ItemID) -> Void {
   let index: Int32 = this.GetEquipAreaIndex(EquipmentSystem.GetEquipAreaType(itemID));
@@ -383,11 +323,60 @@ private final func UnequipItem(itemID: ItemID) -> Void {
   wrappedMethod(itemID);
 }
 
-// -- Reset eveyrhing on BD
+
+// -- MISC FIXES
+
+// Reset toggles on BD activation
 @wrapMethod(HUDManager)
 protected cb func OnBraindanceToggle(value: Bool) -> Bool {
   wrappedMethod(value);
   if value {
     EquipmentSystem.GetInstance(this.GetPlayer()).GetPlayerData(this.GetPlayer()).ResetAllTogglesHG();
   };
+}
+
+
+// Hide underwear after the game loaded
+@addMethod(EquipmentSystemPlayerData)
+private func ResetItemVisibility(area: gamedataEquipmentArea) {
+  this.ResetItemAppearanceEvent(area);
+}
+
+public class EvaluateSlotsVisibilityCallback extends DelayCallback {
+  public let playerData: wref<EquipmentSystemPlayerData>;
+
+  public func Call() -> Void {
+    this.playerData.ResetItemVisibility(gamedataEquipmentArea.Head);
+    this.playerData.ResetItemVisibility(gamedataEquipmentArea.Face);
+    this.playerData.ResetItemVisibility(gamedataEquipmentArea.Feet);
+    this.playerData.ResetItemVisibility(gamedataEquipmentArea.Legs);
+    this.playerData.ResetItemVisibility(gamedataEquipmentArea.InnerChest);
+    this.playerData.ResetItemVisibility(gamedataEquipmentArea.OuterChest);
+
+    this.playerData.ToggleItemVisibility(gamedataEquipmentArea.Head, this.playerData.IsSlotHiddenHG(gamedataEquipmentArea.Head));
+    this.playerData.ToggleItemVisibility(gamedataEquipmentArea.Face, this.playerData.IsSlotHiddenHG(gamedataEquipmentArea.Face));
+    this.playerData.ToggleItemVisibility(gamedataEquipmentArea.Feet, this.playerData.IsSlotHiddenHG(gamedataEquipmentArea.Feet));
+    this.playerData.ToggleItemVisibility(gamedataEquipmentArea.Legs, this.playerData.IsSlotHiddenHG(gamedataEquipmentArea.Legs));
+    this.playerData.ToggleItemVisibility(gamedataEquipmentArea.InnerChest, this.playerData.IsSlotHiddenHG(gamedataEquipmentArea.InnerChest));
+    this.playerData.ToggleItemVisibility(gamedataEquipmentArea.OuterChest, this.playerData.IsSlotHiddenHG(gamedataEquipmentArea.OuterChest));
+  }
+}
+
+@addField(EquipmentSystemPlayerData)
+public let m_slotsRefreshDelayId: DelayID;
+
+@addMethod(EquipmentSystemPlayerData)
+public func ScheduleSlotsVisibilityRefresh(delay: Float) -> Void {
+  let callback: ref<EvaluateSlotsVisibilityCallback> = new EvaluateSlotsVisibilityCallback();
+  callback.playerData = this;
+  GameInstance.GetDelaySystem(this.m_owner.GetGame()).CancelDelay(this.m_slotsRefreshDelayId);
+  this.m_slotsRefreshDelayId = GameInstance.GetDelaySystem(this.m_owner.GetGame()).DelayCallback(callback, delay);
+}
+
+
+// Refresh on game loading
+@wrapMethod(PlayerPuppet)
+protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpawn>) -> Bool {
+  wrappedMethod(evt);
+  EquipmentSystem.GetData(this).ScheduleSlotsVisibilityRefresh(1.0);
 }
