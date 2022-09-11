@@ -83,7 +83,7 @@ public class CrouchIndicatorModuleConfig {
   let ShowWithWeapon: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
-  @runtimeProperty("ModSettings.category", "Mod-LHUD-Action-Buttons")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Crouch-Indicator")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Zoom-Desc")
   let ShowWithZoom: Bool = false;
