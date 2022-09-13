@@ -25,7 +25,7 @@ enum LHUDFillColors {
   LightGreen = 4,
   Blue = 5,
   Orange = 6,
-  Red = 8,
+  Red = 7,
 }
 
 enum LHUDOutlineColors {
