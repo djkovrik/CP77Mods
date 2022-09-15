@@ -1,199 +1,232 @@
 # UncommonBalaclavaRecipe = Items.Balaclava_01_basic_02_Crafting
+Items.Balaclava_01_basic_02_Crafting.stringName: "Items.Balaclava_01_basic_02_Crafting"
 Items.Balaclava_01_basic_02_Crafting.clothesVariants:
-- t"Items.Balaclava_01_basic_01"
-- t"Items.Balaclava_01_basic_02"
+- n"Items.Balaclava_01_basic_02"
+- n"Items.Balaclava_01_basic_01"
 
 # UncommonBootsRecipe = Items.Boots_03_basic_02_Crafting
+Items.Boots_03_basic_02_Crafting.stringName: "Items.Boots_03_basic_02_Crafting"
 Items.Boots_03_basic_02_Crafting.clothesVariants:
-- t"Items.Boots_03_basic_01"
-- t"Items.Boots_03_basic_02"
+- n"Items.Boots_03_basic_02"
+- n"Items.Boots_03_basic_01"
 
 # UncommonCapRecipe = Items.Proficiency_Cap_06_basic_01_Crafting
+Items.Proficiency_Cap_06_basic_01_Crafting.stringName: "Items.Proficiency_Cap_06_basic_01_Crafting"
 Items.Proficiency_Cap_06_basic_01_Crafting.clothesVariants:
-- t"Items.Cap_06_basic_01"
-- t"Items.Cap_06_basic_02"
+- n"Items.Cap_06_basic_01"
+- n"Items.Cap_06_basic_02"
 
 # UncommonCasualShoesRecipe = Items.CasualShoes_01_basic_01_Crafting
+Items.CasualShoes_01_basic_01_Crafting.stringName: "Items.CasualShoes_01_basic_01_Crafting"
 Items.CasualShoes_01_basic_01_Crafting.clothesVariants:
-- t"Items.CasualShoes_01_basic_01"
-- t"Items.CasualShoes_01_basic_02"
-- t"Items.CasualShoes_01_basic_03"
-- t"Items.CasualShoes_01_basic_04"
-- t"Items.CasualShoes_01_basic_05"
+- n"Items.CasualShoes_01_basic_01"
+- n"Items.CasualShoes_01_basic_02"
+- n"Items.CasualShoes_01_basic_03"
+- n"Items.CasualShoes_01_basic_04"
+- n"Items.CasualShoes_01_basic_05"
 
 # UncommonDressRecipe = Items.Dress_01_rich_03_Crafting
+Items.Dress_01_rich_03_Crafting.stringName: "Items.Dress_01_rich_03_Crafting"
 Items.Dress_01_rich_03_Crafting.clothesVariants:
-- t"Items.Dress_01_rich_01"
-- t"Items.Dress_01_rich_02"
-- t"Items.Dress_01_rich_03"
+- n"Items.Dress_01_rich_03"
+- n"Items.Dress_01_rich_01"
+- n"Items.Dress_01_rich_02"
 
 # UncommonFormalPantsRecipe = Items.Proficiency_FormalPants_01_basic_01_Crafting
+Items.Proficiency_FormalPants_01_basic_01_Crafting.stringName: "Items.Proficiency_FormalPants_01_basic_01_Crafting"
 Items.Proficiency_FormalPants_01_basic_01_Crafting.clothesVariants:
-- t"Items.FormalPants_01_basic_01"
-- t"Items.FormalPants_01_basic_02"
-- t"Items.FormalPants_01_basic_03"
+- n"Items.FormalPants_01_basic_01"
+- n"Items.FormalPants_01_basic_02"
+- n"Items.FormalPants_01_basic_03"
 
 # UncommonFormalShirtRecipe = Items.FormalShirt_02_basic_03_Crafting
+Items.FormalShirt_02_basic_03_Crafting.stringName: "Items.FormalShirt_02_basic_03_Crafting"
 Items.FormalShirt_02_basic_03_Crafting.clothesVariants:
-- t"Items.FormalShirt_02_basic_01"
-- t"Items.FormalShirt_02_basic_02"
-- t"Items.FormalShirt_02_basic_03"
-- t"Items.FormalShirt_02_basic_04"
+- n"Items.FormalShirt_02_basic_03"
+- n"Items.FormalShirt_02_basic_01"
+- n"Items.FormalShirt_02_basic_02"
+- n"Items.FormalShirt_02_basic_04"
 
 # UncommonFormalShoesRecipe = Items.Proficiency_FormalShoes_02_basic_02_Crafting
+Items.Proficiency_FormalShoes_02_basic_02_Crafting.stringName: "Items.Proficiency_FormalShoes_02_basic_02_Crafting"
 Items.Proficiency_FormalShoes_02_basic_02_Crafting.clothesVariants:
-- t"Items.FormalShoes_02_basic_01"
-- t"Items.FormalShoes_02_basic_02"
-- t"Items.FormalShoes_02_basic_03"
+- n"Items.FormalShoes_02_basic_02"
+- n"Items.FormalShoes_02_basic_01"
+- n"Items.FormalShoes_02_basic_03"
 
 # UncommonFormalSkirtRecipe = Items.FormalSkirt_01_rich_01_Crafting
+Items.FormalSkirt_01_rich_01_Crafting.stringName: "Items.FormalSkirt_01_rich_01_Crafting"
 Items.FormalSkirt_01_rich_01_Crafting.clothesVariants:
-- t"Items.FormalSkirt_01_rich_01"
-- t"Items.FormalSkirt_01_rich_02"
-- t"Items.FormalSkirt_01_rich_03"
+- n"Items.FormalSkirt_01_rich_01"
+- n"Items.FormalSkirt_01_rich_02"
+- n"Items.FormalSkirt_01_rich_03"
 
 # UncommonHelmetRecipe = Items.Helmet_01_basic_03_Crafting
+Items.Helmet_01_basic_03_Crafting.stringName: "Items.Helmet_01_basic_03_Crafting"
 Items.Helmet_01_basic_03_Crafting.clothesVariants:
-- t"Items.Helmet_01_basic_01"
-- t"Items.Helmet_01_basic_02"
-- t"Items.Helmet_01_basic_03"
+- n"Items.Helmet_01_basic_03"
+- n"Items.Helmet_01_basic_01"
+- n"Items.Helmet_01_basic_02"
 
 # UncommonJacketRecipe = Items.Proficiency_Jacket_06_basic_01_Crafting
+Items.Proficiency_Jacket_06_basic_01_Crafting.stringName: "Items.Proficiency_Jacket_06_basic_01_Crafting"
 Items.Proficiency_Jacket_06_basic_01_Crafting.clothesVariants:
-- t"Items.Jacket_06_basic_01"
-- t"Items.Jacket_06_basic_02"
+- n"Items.Jacket_06_basic_01"
+- n"Items.Jacket_06_basic_02"
 
 # UncommonMaskRecipe = Items.Mask_02_rich_02_Crafting
+Items.Mask_02_rich_02_Crafting.stringName: "Items.Mask_02_rich_02_Crafting"
 Items.Mask_02_rich_02_Crafting.clothesVariants:
-- t"Items.Mask_02_rich_01"
-- t"Items.Mask_02_rich_02"
+- n"Items.Mask_02_rich_02"
+- n"Items.Mask_02_rich_01"
 
 # UncommonPantsRecipe = Items.Pants_02_basic_01_Crafting
+Items.Pants_02_basic_01_Crafting.stringName: "Items.Pants_02_basic_01_Crafting"
 Items.Pants_02_basic_01_Crafting.clothesVariants:
-- t"Items.Pants_02_basic_01"
-- t"Items.Pants_02_basic_02"
-- t"Items.Pants_02_basic_03"
+- n"Items.Pants_02_basic_01"
+- n"Items.Pants_02_basic_02"
+- n"Items.Pants_02_basic_03"
 
 # UncommonShirtLooseRecipe = Items.LooseShirt_01_rich_02_Crafting
+Items.LooseShirt_01_rich_02_Crafting.stringName: "Items.LooseShirt_01_rich_02_Crafting"
 Items.LooseShirt_01_rich_02_Crafting.clothesVariants:
-- t"Items.LooseShirt_01_rich_01"
-- t"Items.LooseShirt_01_rich_02"
+- n"Items.LooseShirt_01_rich_02"
+- n"Items.LooseShirt_01_rich_01"
 
 # UncommonShirtRecipe = Items.Proficiency_Shirt_02_basic_02_Crafting
+Items.Proficiency_Shirt_02_basic_02_Crafting.stringName: "Items.Proficiency_Shirt_02_basic_02_Crafting"
 Items.Proficiency_Shirt_02_basic_02_Crafting.clothesVariants:
-- t"Items.Shirt_02_basic_01"
-- t"Items.Shirt_02_basic_02"
-- t"Items.Shirt_02_basic_03"
-- t"Items.Shirt_02_basic_04"
+- n"Items.Shirt_02_basic_02"
+- n"Items.Shirt_02_basic_01"
+- n"Items.Shirt_02_basic_03"
+- n"Items.Shirt_02_basic_04"
 
 # UncommonTechRecipe = Items.Proficiency_Tech_02_basic_02_Crafting
+Items.Proficiency_Tech_02_basic_02_Crafting.stringName: "Items.Proficiency_Tech_02_basic_02_Crafting"
 Items.Proficiency_Tech_02_basic_02_Crafting.clothesVariants:
-- t"Items.Tech_02_basic_01"
-- t"Items.Tech_02_basic_02"
+- n"Items.Tech_02_basic_02"
+- n"Items.Tech_02_basic_01"
 
 # UncommonUndershirtRecipe = Items.Undershirt_03_basic_04_Crafting
+Items.Undershirt_03_basic_04_Crafting.stringName: "Items.Undershirt_03_basic_04_Crafting"
 Items.Undershirt_03_basic_04_Crafting.clothesVariants:
-- t"Items.Undershirt_03_basic_01"
-- t"Items.Undershirt_03_basic_02"
-- t"Items.Undershirt_03_basic_03"
-- t"Items.Undershirt_03_basic_04"
+- n"Items.Undershirt_03_basic_04"
+- n"Items.Undershirt_03_basic_01"
+- n"Items.Undershirt_03_basic_02"
+- n"Items.Undershirt_03_basic_03"
 
 # UncommonVestRecipe = Items.Vest_13_rich_04_Crafting
+Items.Vest_13_rich_04_Crafting.stringName: "Items.Vest_13_rich_04_Crafting"
 Items.Vest_13_rich_04_Crafting.clothesVariants:
-- t"Items.Vest_13_rich_01"
-- t"Items.Vest_13_rich_02"
-- t"Items.Vest_13_rich_03"
-- t"Items.Vest_13_rich_04"
+- n"Items.Vest_13_rich_04"
+- n"Items.Vest_13_rich_01"
+- n"Items.Vest_13_rich_02"
+- n"Items.Vest_13_rich_03"
 
 # UncommonVisorRecipe = Items.Visor_02_basic_02_Crafting
+Items.Visor_02_basic_02_Crafting.stringName: "Items.Visor_02_basic_02_Crafting"
 Items.Visor_02_basic_02_Crafting.clothesVariants:
-- t"Items.Visor_02_basic_01"
-- t"Items.Visor_02_basic_02"
-- t"Items.Visor_02_basic_03"
+- n"Items.Visor_02_basic_02"
+- n"Items.Visor_02_basic_01"
+- n"Items.Visor_02_basic_03"
 
 # RareBootsRecipe = Items.Boots_07_basic_01_Crafting
+Items.Boots_07_basic_01_Crafting.stringName: "Items.Boots_07_basic_01_Crafting"
 Items.Boots_07_basic_01_Crafting.clothesVariants:
-- t"Items.Boots_07_basic_01"
-- t"Items.Boots_07_basic_02"
+- n"Items.Boots_07_basic_01"
+- n"Items.Boots_07_basic_02"
 
 # RareCasualShoesRecipe = Items.Proficiency_CasualShoes_07_basic_01_Crafting
+Items.Proficiency_CasualShoes_07_basic_01_Crafting.stringName: "Items.Proficiency_CasualShoes_07_basic_01_Crafting"
 Items.Proficiency_CasualShoes_07_basic_01_Crafting.clothesVariants:
-- t"Items.CasualShoes_07_basic_01"
-- t"Items.CasualShoes_07_basic_02"
-- t"Items.CasualShoes_07_basic_03"
-- t"Items.CasualShoes_07_basic_04"
+- n"Items.CasualShoes_07_basic_01"
+- n"Items.CasualShoes_07_basic_02"
+- n"Items.CasualShoes_07_basic_03"
+- n"Items.CasualShoes_07_basic_04"
 
 # RareCoatRecipe = Items.Coat_04_rich_02_Crafting
+Items.Coat_04_rich_02_Crafting.stringName: "Items.Coat_04_rich_02_Crafting"
 Items.Coat_04_rich_02_Crafting.clothesVariants:
-- t"Items.Coat_04_rich_01"
-- t"Items.Coat_04_rich_02"
+- n"Items.Coat_04_rich_02"
+- n"Items.Coat_04_rich_01"
 
 # RareFormalJacketRecipe = Items.FormalJacket_02_basic_02_Crafting
+Items.FormalJacket_02_basic_02_Crafting.stringName: "Items.FormalJacket_02_basic_02_Crafting"
 Items.FormalJacket_02_basic_02_Crafting.clothesVariants:
-- t"Items.FormalJacket_02_basic_01"
-- t"Items.FormalJacket_02_basic_02"
-- t"Items.FormalJacket_02_basic_03"
+- n"Items.FormalJacket_02_basic_02"
+- n"Items.FormalJacket_02_basic_01"
+- n"Items.FormalJacket_02_basic_03"
 
 # RareFormalPantsRecipe = Items.FormalPants_02_rich_01_Crafting
+Items.FormalPants_02_rich_01_Crafting.stringName: "Items.FormalPants_02_rich_01_Crafting"
 Items.FormalPants_02_rich_01_Crafting.clothesVariants:
-- t"Items.FormalPants_02_rich_01"
-- t"Items.FormalPants_02_rich_02"
-- t"Items.FormalPants_02_rich_03"
+- n"Items.FormalPants_02_rich_01"
+- n"Items.FormalPants_02_rich_02"
+- n"Items.FormalPants_02_rich_03"
 
 # RareFormalShoesRecipe = Items.FormalShoes_03_rich_01_Crafting
+Items.FormalShoes_03_rich_01_Crafting.stringName: "Items.FormalShoes_03_rich_01_Crafting"
 Items.FormalShoes_03_rich_01_Crafting.clothesVariants:
-- t"Items.FormalShoes_03_rich_01"
-- t"Items.FormalShoes_03_rich_02"
+- n"Items.FormalShoes_03_rich_01"
+- n"Items.FormalShoes_03_rich_02"
 
 # RareGlassesRecipe = Items.Glasses_03_basic_06_Crafting
+Items.Glasses_03_basic_06_Crafting.stringName: "Items.Glasses_03_basic_06_Crafting"
 Items.Glasses_03_basic_06_Crafting.clothesVariants:
-- t"Items.Glasses_03_basic_01"
-- t"Items.Glasses_03_basic_02"
-- t"Items.Glasses_03_basic_03"
-- t"Items.Glasses_03_basic_04"
-- t"Items.Glasses_03_basic_05"
-- t"Items.Glasses_03_basic_06"
-- t"Items.Glasses_03_basic_07"
-- t"Items.Glasses_03_basic_08"
-- t"Items.Glasses_03_basic_09"
-- t"Items.Glasses_03_basic_10"
+- n"Items.Glasses_03_basic_06"
+- n"Items.Glasses_03_basic_01"
+- n"Items.Glasses_03_basic_02"
+- n"Items.Glasses_03_basic_03"
+- n"Items.Glasses_03_basic_04"
+- n"Items.Glasses_03_basic_05"
+- n"Items.Glasses_03_basic_07"
+- n"Items.Glasses_03_basic_08"
+- n"Items.Glasses_03_basic_09"
+- n"Items.Glasses_03_basic_10"
 
 # RareHatRecipe = Items.Hat_03_basic_02_Crafting
+Items.Hat_03_basic_02_Crafting.stringName: "Items.Hat_03_basic_02_Crafting"
 Items.Hat_03_basic_02_Crafting.clothesVariants:
-- t"Items.Hat_03_basic_01"
-- t"Items.Hat_03_basic_02"
+- n"Items.Hat_03_basic_02"
+- n"Items.Hat_03_basic_01"
 
 # RareHelmetRecipe = Items.Proficiency_Helmet_04_basic_02_Crafting
+Items.Proficiency_Helmet_04_basic_02_Crafting.stringName: "Items.Proficiency_Helmet_04_basic_02_Crafting"
 Items.Proficiency_Helmet_04_basic_02_Crafting.clothesVariants:
-- t"Items.Helmet_04_basic_01"
-- t"Items.Helmet_04_basic_02"
+- n"Items.Helmet_04_basic_02"
+- n"Items.Helmet_04_basic_01"
 
 # RareJacketRecipe = Items.Jacket_01_rich_01_Crafting
+Items.Jacket_01_rich_01_Crafting.stringName: "Items.Jacket_01_rich_01_Crafting"
 Items.Jacket_01_rich_01_Crafting.clothesVariants:
-- t"Items.Jacket_01_rich_01"
-- t"Items.Jacket_01_rich_02"
+- n"Items.Jacket_01_rich_01"
+- n"Items.Jacket_01_rich_02"
 
 # RareMaskRecipe = Items.Proficiency_Mask_02_basic_01_Crafting
+Items.Proficiency_Mask_02_basic_01_Crafting.stringName: "Items.Proficiency_Mask_02_basic_01_Crafting"
 Items.Proficiency_Mask_02_basic_01_Crafting.clothesVariants:
-- t"Items.Mask_02_basic_01"
-- t"Items.Mask_02_basic_02"
+- n"Items.Mask_02_basic_01"
+- n"Items.Mask_02_basic_02"
 
 # RarePantsRecipe = Items.Proficiency_Pants_13_basic_01_Crafting
+Items.Proficiency_Pants_13_basic_01_Crafting.stringName: "Items.Proficiency_Pants_13_basic_01_Crafting"
 Items.Proficiency_Pants_13_basic_01_Crafting.clothesVariants:
-- t"Items.Pants_13_basic_01"
-- t"Items.Pants_13_basic_02"
-- t"Items.Pants_13_basic_03"
+- n"Items.Pants_13_basic_01"
+- n"Items.Pants_13_basic_02"
+- n"Items.Pants_13_basic_03"
 
 # RareScarfRecipe = Items.Scarf_01_rich_01_Crafting
+Items.Scarf_01_rich_01_Crafting.stringName: "Items.Scarf_01_rich_01_Crafting"
 Items.Scarf_01_rich_01_Crafting.clothesVariants:
-- t"Items.Scarf_01_rich_01"
-- t"Items.Scarf_01_rich_02"
-- t"Items.Scarf_01_rich_03"
+- n"Items.Scarf_01_rich_01"
+- n"Items.Scarf_01_rich_02"
+- n"Items.Scarf_01_rich_03"
 
 # RareShirtRecipe = Items.Shirt_01_basic_02_Crafting
+Items.Shirt_01_basic_02_Crafting.stringName: "Items.Shirt_01_basic_02_Crafting"
 Items.Shirt_01_basic_02_Crafting.clothesVariants:
-- t"Items.Shirt_01_basic_01"
-- t"Items.Shirt_01_basic_02"
+- n"Items.Shirt_01_basic_02"
+- n"Items.Shirt_01_basic_01"
 
 # RareShortsRecipe = Items.Shorts_01_basic_01_Crafting
 # No variants here
@@ -201,298 +234,376 @@ Items.Shirt_01_basic_02_Crafting.clothesVariants:
 
 
 # RareTechRecipe = Items.Tech_01_basic_01_Crafting
+Items.Tech_01_basic_01_Crafting.stringName: "Items.Tech_01_basic_01_Crafting"
 Items.Tech_01_basic_01_Crafting.clothesVariants:
-- t"Items.Tech_01_basic_01"
-- t"Items.Tech_01_basic_02"
+- n"Items.Tech_01_basic_01"
+- n"Items.Tech_01_basic_02"
 
 # RareTShirtRecipe = Items.TShirt_02_basic_04_Crafting
+Items.TShirt_02_basic_04_Crafting.stringName: "Items.TShirt_02_basic_04_Crafting"
 Items.TShirt_02_basic_04_Crafting.clothesVariants:
-- t"Items.TShirt_02_basic_01"
-- t"Items.TShirt_02_basic_02"
-- t"Items.TShirt_02_basic_03"
-- t"Items.TShirt_02_basic_04"
-- t"Items.TShirt_02_basic_05"
+- n"Items.TShirt_02_basic_04"
+- n"Items.TShirt_02_basic_01"
+- n"Items.TShirt_02_basic_02"
+- n"Items.TShirt_02_basic_03"
+- n"Items.TShirt_02_basic_05"
 
 # RareUndershirtRecipe = Items.Proficiency_Undershirt_03_basic_03_Crafting
+Items.Proficiency_Undershirt_03_basic_03_Crafting.stringName: "Items.Proficiency_Undershirt_03_basic_03_Crafting"
 Items.Proficiency_Undershirt_03_basic_03_Crafting.clothesVariants:
-- t"Items.Undershirt_03_basic_01"
-- t"Items.Undershirt_03_basic_02"
-- t"Items.Undershirt_03_basic_03"
-- t"Items.Undershirt_03_basic_04"
+- n"Items.Undershirt_03_basic_03"
+- n"Items.Undershirt_03_basic_01"
+- n"Items.Undershirt_03_basic_02"
+- n"Items.Undershirt_03_basic_04"
 
 # RareVestRecipe = Items.Proficiency_Vest_18_basic_01_Crafting
+Items.Proficiency_Vest_18_basic_01_Crafting.stringName: "Items.Proficiency_Vest_18_basic_01_Crafting"
 Items.Proficiency_Vest_18_basic_01_Crafting.clothesVariants:
-- t"Items.Vest_18_basic_01"
-- t"Items.Vest_18_basic_02"
+- n"Items.Vest_18_basic_01"
+- n"Items.Vest_18_basic_02"
 
 # EpicBootsRecipe = Items.Proficiency_Boots_11_rich_01_Crafting
+Items.Proficiency_Boots_11_rich_01_Crafting.stringName: "Items.Proficiency_Boots_11_rich_01_Crafting"
 Items.Proficiency_Boots_11_rich_01_Crafting.clothesVariants:
-- t"Items.Boots_11_rich_01"
-- t"Items.Boots_11_rich_02"
+- n"Items.Boots_11_rich_01"
+- n"Items.Boots_11_rich_02"
 
 # EpicCapRecipe = Items.Cap_02_basic_01_Crafting
+Items.Cap_02_basic_01_Crafting.stringName: "Items.Cap_02_basic_01_Crafting"
 Items.Cap_02_basic_01_Crafting.clothesVariants:
-- t"Items.Cap_02_basic_01"
-- t"Items.Cap_02_basic_02"
-- t"Items.Cap_02_basic_03"
+- n"Items.Cap_02_basic_01"
+- n"Items.Cap_02_basic_02"
+- n"Items.Cap_02_basic_03"
 
 # EpicCasualShoesRecipe = Items.CasualShoes_05_basic_03_Crafting
+Items.CasualShoes_05_basic_03_Crafting.stringName: "Items.CasualShoes_05_basic_03_Crafting"
 Items.CasualShoes_05_basic_03_Crafting.clothesVariants:
-- t"Items.CasualShoes_05_basic_01"
-- t"Items.CasualShoes_05_basic_02"
-- t"Items.CasualShoes_05_basic_03"
+- n"Items.CasualShoes_05_basic_03"
+- n"Items.CasualShoes_05_basic_01"
+- n"Items.CasualShoes_05_basic_02"
 
 # EpicCoatRecipe = Items.Coat_01_basic_03_Crafting
+Items.Coat_01_basic_03_Crafting.stringName: "Items.Coat_01_basic_03_Crafting"
 Items.Coat_01_basic_03_Crafting.clothesVariants:
-- t"Items.Coat_01_basic_01"
-- t"Items.Coat_01_basic_02"
-- t"Items.Coat_01_basic_03"
+- n"Items.Coat_01_basic_03"
+- n"Items.Coat_01_basic_01"
+- n"Items.Coat_01_basic_02"
 
 # EpicFormalJacketRecipe = Items.FormalJacket_04_basic_02_Crafting
+Items.FormalJacket_04_basic_02_Crafting.stringName: "Items.FormalJacket_04_basic_02_Crafting"
 Items.FormalJacket_04_basic_02_Crafting.clothesVariants:
-- t"Items.FormalJacket_04_basic_01"
-- t"Items.FormalJacket_04_basic_02"
-- t"Items.FormalJacket_04_basic_03"
+- n"Items.FormalJacket_04_basic_02"
+- n"Items.FormalJacket_04_basic_01"
+- n"Items.FormalJacket_04_basic_03"
 
 # EpicFormalShirtRecipe = Items.FormalShirt_01_rich_06_Crafting
+Items.FormalShirt_01_rich_06_Crafting.stringName: "Items.FormalShirt_01_rich_06_Crafting"
 Items.FormalShirt_01_rich_06_Crafting.clothesVariants:
-- t"Items.FormalShirt_01_rich_01"
-- t"Items.FormalShirt_01_rich_02"
-- t"Items.FormalShirt_01_rich_03"
-- t"Items.FormalShirt_01_rich_04"
-- t"Items.FormalShirt_01_rich_05"
-- t"Items.FormalShirt_01_rich_06"
+- n"Items.FormalShirt_01_rich_06"
+- n"Items.FormalShirt_01_rich_01"
+- n"Items.FormalShirt_01_rich_02"
+- n"Items.FormalShirt_01_rich_03"
+- n"Items.FormalShirt_01_rich_04"
+- n"Items.FormalShirt_01_rich_05"
 
 # EpicFormalShoesRecipe = Items.FormalShoes_01_rich_02_Crafting
+Items.FormalShoes_01_rich_02_Crafting.stringName: "Items.FormalShoes_01_rich_02_Crafting"
 Items.FormalShoes_01_rich_02_Crafting.clothesVariants:
-- t"Items.FormalShoes_01_rich_01"
-- t"Items.FormalShoes_01_rich_02"
+- n"Items.FormalShoes_01_rich_02"
+- n"Items.FormalShoes_01_rich_01"
 
 # EpicFormalSkirtRecipe = Items.Proficiency_FormalSkirt_02_rich_01_Crafting
+Items.Proficiency_FormalSkirt_02_rich_01_Crafting.stringName: "Items.Proficiency_FormalSkirt_02_rich_01_Crafting"
 Items.Proficiency_FormalSkirt_02_rich_01_Crafting.clothesVariants:
-- t"Items.FormalSkirt_02_rich_01"
-- t"Items.FormalSkirt_02_rich_02"
-- t"Items.FormalSkirt_02_rich_03"
+- n"Items.FormalSkirt_02_rich_01"
+- n"Items.FormalSkirt_02_rich_02"
+- n"Items.FormalSkirt_02_rich_03"
 
 # EpicGlassesRecipe = Items.Glasses_01_basic_03_Crafting
+Items.Glasses_01_basic_03_Crafting.stringName: "Items.Glasses_01_basic_03_Crafting"
 Items.Glasses_01_basic_03_Crafting.clothesVariants:
-- t"Items.Glasses_01_basic_01"
-- t"Items.Glasses_01_basic_02"
-- t"Items.Glasses_01_basic_03"
-- t"Items.Glasses_01_basic_04"
-- t"Items.Glasses_01_basic_05"
+- n"Items.Glasses_01_basic_03"
+- n"Items.Glasses_01_basic_01"
+- n"Items.Glasses_01_basic_02"
+- n"Items.Glasses_01_basic_04"
+- n"Items.Glasses_01_basic_05"
 
 # EpicHatRecipe = Items.Proficiency_Hat_01_rich_01_Crafting
+Items.Proficiency_Hat_01_rich_01_Crafting.stringName: "Items.Proficiency_Hat_01_rich_01_Crafting"
 Items.Proficiency_Hat_01_rich_01_Crafting.clothesVariants:
-- t"Items.Hat_01_rich_01"
-- t"Items.Hat_01_rich_02"
+- n"Items.Hat_01_rich_01"
+- n"Items.Hat_01_rich_02"
 
 # EpicHelmetRecipe = Items.Helmet_03_basic_01_Crafting
+Items.Helmet_03_basic_01_Crafting.stringName: "Items.Helmet_03_basic_01_Crafting"
 Items.Helmet_03_basic_01_Crafting.clothesVariants:
-- t"Items.Helmet_03_basic_01"
-- t"Items.Helmet_03_basic_02"
+- n"Items.Helmet_03_basic_01"
+- n"Items.Helmet_03_basic_02"
 
 # EpicLooseShirtRecipe = Items.Proficiency_LooseShirt_02_rich_01_Crafting
+Items.Proficiency_LooseShirt_02_rich_01_Crafting.stringName: "Items.Proficiency_LooseShirt_02_rich_01_Crafting"
 Items.Proficiency_LooseShirt_02_rich_01_Crafting.clothesVariants:
-- t"Items.LooseShirt_02_rich_01"
-- t"Items.LooseShirt_02_rich_02"
+- n"Items.LooseShirt_02_rich_01"
+- n"Items.LooseShirt_02_rich_02"
 
 # EpicMaskRecipe = Items.Mask_03_basic_02_Crafting
+Items.Mask_03_basic_02_Crafting.stringName: "Items.Mask_03_basic_02_Crafting"
 Items.Mask_03_basic_02_Crafting.clothesVariants:
-- t"Items.Mask_03_basic_01"
-- t"Items.Mask_03_basic_02"
+- n"Items.Mask_03_basic_02"
+- n"Items.Mask_03_basic_01"
 
 # EpicPantsRecipe = Items.Pants_04_basic_01_Crafting
+Items.Pants_04_basic_01_Crafting.stringName: "Items.Pants_04_basic_01_Crafting"
 Items.Pants_04_basic_01_Crafting.clothesVariants:
-- t"Items.Pants_04_basic_01"
-- t"Items.Pants_04_basic_02"
-- t"Items.Pants_04_basic_03"
-- t"Items.Pants_04_basic_04"
+- n"Items.Pants_04_basic_01"
+- n"Items.Pants_04_basic_02"
+- n"Items.Pants_04_basic_03"
+- n"Items.Pants_04_basic_04"
 
 # EpicScarfRecipe = Items.Scarf_03_basic_03_Crafting
+Items.Scarf_03_basic_03_Crafting.stringName: "Items.Scarf_03_basic_03_Crafting"
 Items.Scarf_03_basic_03_Crafting.clothesVariants:
-- t"Items.Scarf_03_basic_01"
-- t"Items.Scarf_03_basic_02"
-- t"Items.Scarf_03_basic_03"
+- n"Items.Scarf_03_basic_03"
+- n"Items.Scarf_03_basic_01"
+- n"Items.Scarf_03_basic_02"
 
 # EpicShortsRecipe = Items.Shorts_02_basic_02_Crafting
+Items.Shorts_02_basic_02_Crafting.stringName: "Items.Shorts_02_basic_02_Crafting"
 Items.Shorts_02_basic_02_Crafting.clothesVariants:
-- t"Items.Shorts_02_basic_01"
-- t"Items.Shorts_02_basic_02"
+- n"Items.Shorts_02_basic_02"
+- n"Items.Shorts_02_basic_01"
 
 # EpicTShirtRecipe = Items.Proficiency_TShirt_03_rich_03_Crafting
+Items.Proficiency_TShirt_03_rich_03_Crafting.stringName: "Items.Proficiency_TShirt_03_rich_03_Crafting"
 Items.Proficiency_TShirt_03_rich_03_Crafting.clothesVariants:
-- t"Items.TShirt_03_rich_01"
-- t"Items.TShirt_03_rich_02"
-- t"Items.TShirt_03_rich_03"
+- n"Items.TShirt_03_rich_03"
+- n"Items.TShirt_03_rich_01"
+- n"Items.TShirt_03_rich_02"
 
 # EpicUndershirtRecipe = Items.Undershirt_02_rich_02_Crafting
+Items.Undershirt_02_rich_02_Crafting.stringName: "Items.Undershirt_02_rich_02_Crafting"
 Items.Undershirt_02_rich_02_Crafting.clothesVariants:
-- t"Items.Undershirt_02_rich_01"
-- t"Items.Undershirt_02_rich_02"
+- n"Items.Undershirt_02_rich_02"
+- n"Items.Undershirt_02_rich_01"
 
 # EpicVisorRecipe = Items.Proficiency_Visor_02_rich_01_Crafting
+Items.Proficiency_Visor_02_rich_01_Crafting.stringName: "Items.Proficiency_Visor_02_rich_01_Crafting"
 Items.Proficiency_Visor_02_rich_01_Crafting.clothesVariants:
-- t"Items.Visor_02_rich_01"
-- t"Items.Visor_02_rich_02"
-- t"Items.Visor_02_rich_03"
+- n"Items.Visor_02_rich_01"
+- n"Items.Visor_02_rich_02"
+- n"Items.Visor_02_rich_03"
 
 # LegendaryBootsRecipe = Items.Boots_09_rich_01_Crafting
+Items.Boots_09_rich_01_Crafting.stringName: "Items.Boots_09_rich_01_Crafting"
 Items.Boots_09_rich_01_Crafting.clothesVariants:
-- t"Items.Boots_09_rich_01"
-- t"Items.Boots_09_rich_02"
-- t"Items.Boots_09_rich_03"
+- n"Items.Boots_09_rich_01"
+- n"Items.Boots_09_rich_02"
+- n"Items.Boots_09_rich_03"
 
 # LegendaryCapRecipe = Items.Cap_03_rich_02_Crafting
+Items.Cap_03_rich_02_Crafting.stringName: "Items.Cap_03_rich_02_Crafting"
 Items.Cap_03_rich_02_Crafting.clothesVariants:
-- t"Items.Cap_03_rich_01"
-- t"Items.Cap_03_rich_02"
+- n"Items.Cap_03_rich_02"
+- n"Items.Cap_03_rich_01"
 
 # LegendaryCasualShoesRecipe = Items.CasualShoes_02_basic_01_Crafting
+Items.CasualShoes_02_basic_01_Crafting.stringName: "Items.CasualShoes_02_basic_01_Crafting"
 Items.CasualShoes_02_basic_01_Crafting.clothesVariants:
-- t"Items.CasualShoes_02_basic_01"
-- t"Items.CasualShoes_02_basic_02"
+- n"Items.CasualShoes_02_basic_01"
+- n"Items.CasualShoes_02_basic_02"
 
 # LegendaryFormalPantsRecipe = Items.FormalPants_03_rich_02_Crafting
+Items.FormalPants_03_rich_02_Crafting.stringName: "Items.FormalPants_03_rich_02_Crafting"
 Items.FormalPants_03_rich_02_Crafting.clothesVariants:
-- t"Items.FormalPants_03_rich_01"
-- t"Items.FormalPants_03_rich_02"
+- n"Items.FormalPants_03_rich_02"
+- n"Items.FormalPants_03_rich_01"
 
 # LegendaryFormalShoesRecipe = Items.Proficiency_FormalShoes_02_rich_03_Crafting
+Items.Proficiency_FormalShoes_02_rich_03_Crafting.stringName: "Items.Proficiency_FormalShoes_02_rich_03_Crafting"
 Items.Proficiency_FormalShoes_02_rich_03_Crafting.clothesVariants:
-- t"Items.FormalShoes_02_rich_01"
-- t"Items.FormalShoes_02_rich_02"
-- t"Items.FormalShoes_02_rich_03"
+- n"Items.FormalShoes_02_rich_03"
+- n"Items.FormalShoes_02_rich_01"
+- n"Items.FormalShoes_02_rich_02"
 
 # LegendaryFormalSkirtRecipe = Items.FormalSkirt_02_rich_03_Crafting
+Items.FormalSkirt_02_rich_03_Crafting.stringName: "Items.FormalSkirt_02_rich_03_Crafting"
 Items.FormalSkirt_02_rich_03_Crafting.clothesVariants:
-- t"Items.FormalSkirt_02_rich_01"
-- t"Items.FormalSkirt_02_rich_02"
-- t"Items.FormalSkirt_02_rich_03"
+- n"Items.FormalSkirt_02_rich_03"
+- n"Items.FormalSkirt_02_rich_01"
+- n"Items.FormalSkirt_02_rich_02"
 
 # LegendaryGlassesRecipe = Items.Proficiency_Glasses_05_basic_01_Crafting
+Items.Proficiency_Glasses_05_basic_01_Crafting.stringName: "Items.Proficiency_Glasses_05_basic_01_Crafting"
 Items.Proficiency_Glasses_05_basic_01_Crafting.clothesVariants:
-- t"Items.Glasses_05_basic_01"
-- t"Items.Glasses_05_basic_02"
-- t"Items.Glasses_05_basic_03"
-- t"Items.Glasses_05_basic_04"
+- n"Items.Glasses_05_basic_01"
+- n"Items.Glasses_05_basic_02"
+- n"Items.Glasses_05_basic_03"
+- n"Items.Glasses_05_basic_04"
 
 # LegendaryHatRecipe = Items.Hat_02_rich_02_Crafting
+Items.Hat_02_rich_02_Crafting.stringName: "Items.Hat_02_rich_02_Crafting"
 Items.Hat_02_rich_02_Crafting.clothesVariants:
-- t"Items.Hat_02_rich_01"
-- t"Items.Hat_02_rich_02"
+- n"Items.Hat_02_rich_02"
+- n"Items.Hat_02_rich_01"
 
 # LegendaryJacketRecipe = Items.Jacket_17_rich_06_Crafting
+Items.Jacket_17_rich_06_Crafting.stringName: "Items.Jacket_17_rich_06_Crafting"
 Items.Jacket_17_rich_06_Crafting.clothesVariants:
-- t"Items.Jacket_17_rich_01"
-- t"Items.Jacket_17_rich_02"
-- t"Items.Jacket_17_rich_03"
-- t"Items.Jacket_17_rich_04"
-- t"Items.Jacket_17_rich_05"
-- t"Items.Jacket_17_rich_06"
+- n"Items.Jacket_17_rich_06"
+- n"Items.Jacket_17_rich_01"
+- n"Items.Jacket_17_rich_02"
+- n"Items.Jacket_17_rich_03"
+- n"Items.Jacket_17_rich_04"
+- n"Items.Jacket_17_rich_05"
 
 # LegendaryJumpsuitRecipe = Items.Proficiency_Jumpsuit_02_rich_03_Crafting
+Items.Proficiency_Jumpsuit_02_rich_03_Crafting.stringName: "Items.Proficiency_Jumpsuit_02_rich_03_Crafting"
 Items.Proficiency_Jumpsuit_02_rich_03_Crafting.clothesVariants:
-- t"Items.Jumpsuit_02_rich_01"
-- t"Items.Jumpsuit_02_rich_02"
-- t"Items.Jumpsuit_02_rich_03"
+- n"Items.Jumpsuit_02_rich_03"
+- n"Items.Jumpsuit_02_rich_01"
+- n"Items.Jumpsuit_02_rich_02"
 
 # LegendaryPantsRecipe = Items.Pants_08_rich_01_Crafting
+Items.Pants_08_rich_01_Crafting.stringName: "Items.Pants_08_rich_01_Crafting"
 Items.Pants_08_rich_01_Crafting.clothesVariants:
-- t"Items.Pants_08_rich_01"
-- t"Items.Pants_08_rich_02"
-- t"Items.Pants_08_rich_03"
+- n"Items.Pants_08_rich_01"
+- n"Items.Pants_08_rich_02"
+- n"Items.Pants_08_rich_03"
 
 # LegendaryScarfRecipe = Items.Proficiency_Scarf_02_rich_01_Crafting
 # No variants here
 # Items.Proficiency_Scarf_02_rich_01_Crafting.clothesVariants:
 
 # LegendaryShirtRecipe = Items.Shirt_03_basic_02_Crafting
+Items.Shirt_03_basic_02_Crafting.stringName: "Items.Shirt_03_basic_02_Crafting"
 Items.Shirt_03_basic_02_Crafting.clothesVariants:
-- t"Items.Shirt_03_basic_01"
-- t"Items.Shirt_03_basic_02"
-- t"Items.Shirt_03_basic_03"
+- n"Items.Shirt_03_basic_02"
+- n"Items.Shirt_03_basic_01"
+- n"Items.Shirt_03_basic_03"
 
 # LegendaryShortsRecipe = Items.Proficiency_Shorts_02_rich_02_Crafting
+Items.Proficiency_Shorts_02_rich_02_Crafting.stringName: "Items.Proficiency_Shorts_02_rich_02_Crafting"
 Items.Proficiency_Shorts_02_rich_02_Crafting.clothesVariants:
-- t"Items.Shorts_02_rich_01"
-- t"Items.Shorts_02_rich_02"
+- n"Items.Shorts_02_rich_02"
+- n"Items.Shorts_02_rich_01"
 
 # LegendaryTechRecipe = Items.Tech_02_basic_01_Crafting
+Items.Tech_02_basic_01_Crafting.stringName: "Items.Tech_02_basic_01_Crafting"
 Items.Tech_02_basic_01_Crafting.clothesVariants:
-- t"Items.Tech_02_basic_01"
-- t"Items.Tech_02_basic_02"
+- n"Items.Tech_02_basic_01"
+- n"Items.Tech_02_basic_02"
 
 # LegendaryTightJumpsuitRecipe = Items.Proficiency_TightJumpsuit_01_rich_02_Crafting
+Items.Proficiency_TightJumpsuit_01_rich_02_Crafting.stringName: "Items.Proficiency_TightJumpsuit_01_rich_02_Crafting"
 Items.Proficiency_TightJumpsuit_01_rich_02_Crafting.clothesVariants:
-- t"Items.TightJumpsuit_01_rich_01"
-- t"Items.TightJumpsuit_01_rich_02"
+- n"Items.TightJumpsuit_01_rich_02"
+- n"Items.TightJumpsuit_01_rich_01"
 
 # LegendaryTShirtRecipe = Items.TShirt_01_rich_02_Crafting
+Items.TShirt_01_rich_02_Crafting.stringName: "Items.TShirt_01_rich_02_Crafting"
 Items.TShirt_01_rich_02_Crafting.clothesVariants:
-- t"Items.TShirt_01_rich_01"
-- t"Items.TShirt_01_rich_02"
-- t"Items.TShirt_01_rich_03"
+- n"Items.TShirt_01_rich_02"
+- n"Items.TShirt_01_rich_01"
+- n"Items.TShirt_01_rich_03"
 
 # LegendaryVestRecipe = Items.Vest_20_rich_01_Crafting
+Items.Vest_20_rich_01_Crafting.stringName: "Items.Vest_20_rich_01_Crafting"
 Items.Vest_20_rich_01_Crafting.clothesVariants:
-- t"Items.Vest_20_rich_01"
-- t"Items.Vest_20_rich_02"
+- n"Items.Vest_20_rich_01"
+- n"Items.Vest_20_rich_02"
 
 # LegendaryVisorRecipe = Items.Visor_01_basic_05_Crafting
+Items.Visor_01_basic_05_Crafting.stringName: "Items.Visor_01_basic_05_Crafting"
 Items.Visor_01_basic_05_Crafting.clothesVariants:
-- t"Items.Visor_01_basic_01"
-- t"Items.Visor_01_basic_02"
-- t"Items.Visor_01_basic_03"
-- t"Items.Visor_01_basic_04"
-- t"Items.Visor_01_basic_05"
+- n"Items.Visor_01_basic_05"
+- n"Items.Visor_01_basic_01"
+- n"Items.Visor_01_basic_02"
+- n"Items.Visor_01_basic_03"
+- n"Items.Visor_01_basic_04"
 
 # DLC Jackets
-Items.Jacket_19_basic_04.clothesVariants: &DLCJackets
-- t"Items.Jacket_19_basic_01"
-- t"Items.Jacket_19_basic_02"
-- t"Items.Jacket_19_basic_03"
-# Default DLC jacket
-- t"Items.Jacket_19_basic_04"
-- t"Items.Jacket_19_basic_05"
-- t"Items.Jacket_19_basic_06"
-- t"Items.Jacket_19_old_01"
-- t"Items.Jacket_19_old_02"
-- t"Items.Jacket_19_old_03"
-- t"Items.Jacket_19_old_04"
-- t"Items.Jacket_19_old_05"
-- t"Items.Jacket_19_old_06"
-- t"Items.Jacket_19_rich_01"
-- t"Items.Jacket_19_rich_02"
-- t"Items.Jacket_19_rich_03"
-- t"Items.Jacket_19_rich_04"
-- t"Items.Jacket_19_rich_05"
-- t"Items.Jacket_19_rich_06"
-# Default DLC jacket
-- t"Items.Jacket_20_basic_01"
-- t"Items.Jacket_20_basic_02"
-- t"Items.Jacket_20_basic_03"
-- t"Items.Jacket_20_basic_04"
-- t"Items.Jacket_20_basic_05"
-- t"Items.Jacket_20_basic_06"
-- t"Items.Jacket_20_basic_07"
-- t"Items.Jacket_20_old_01"
-- t"Items.Jacket_20_old_02"
-- t"Items.Jacket_20_old_03"
-- t"Items.Jacket_20_old_04"
-- t"Items.Jacket_20_old_05"
-- t"Items.Jacket_20_rich_01"
-- t"Items.Jacket_20_rich_02"
-- t"Items.Jacket_20_rich_03"
-- t"Items.Jacket_20_rich_04"
-- t"Items.Jacket_20_rich_05"
+Items.Jacket_19_basic_04.stringName: "Items.Jacket_19_basic_04"
+Items.Jacket_19_basic_04.clothesVariants:  &DLCJackets19
+- n"Items.Jacket_19_basic_04"
+- n"Items.Jacket_19_basic_01"
+- n"Items.Jacket_19_basic_02"
+- n"Items.Jacket_19_basic_03"
+- n"Items.Jacket_19_basic_05"
+- n"Items.Jacket_19_basic_06"
+- n"Items.Jacket_19_old_01"
+- n"Items.Jacket_19_old_02"
+- n"Items.Jacket_19_old_03"
+- n"Items.Jacket_19_old_04"
+- n"Items.Jacket_19_old_05"
+- n"Items.Jacket_19_old_06"
+- n"Items.Jacket_19_rich_01"
+- n"Items.Jacket_19_rich_02"
+- n"Items.Jacket_19_rich_03"
+- n"Items.Jacket_19_rich_04"
+- n"Items.Jacket_19_rich_05"
+- n"Items.Jacket_19_rich_06"
+- n"Items.Jacket_20_basic_01"
+- n"Items.Jacket_20_basic_02"
+- n"Items.Jacket_20_basic_03"
+- n"Items.Jacket_20_basic_04"
+- n"Items.Jacket_20_basic_05"
+- n"Items.Jacket_20_basic_06"
+- n"Items.Jacket_20_basic_07"
+- n"Items.Jacket_20_old_01"
+- n"Items.Jacket_20_old_02"
+- n"Items.Jacket_20_old_03"
+- n"Items.Jacket_20_old_04"
+- n"Items.Jacket_20_old_05"
+- n"Items.Jacket_20_rich_01"
+- n"Items.Jacket_20_rich_02"
+- n"Items.Jacket_20_rich_03"
+- n"Items.Jacket_20_rich_04"
+- n"Items.Jacket_20_rich_05"
 
-Items.Jacket_20_basic_01.clothesVariants: *DLCJackets
-Items.Jacket_19_basic_04_Crafted.clothesVariants: *DLCJackets
-Items.Jacket_20_basic_01_Crafted.clothesVariants: *DLCJackets
+Items.Jacket_20_basic_01.stringName: "Items.Jacket_20_basic_01"
+Items.Jacket_20_basic_01.clothesVariants: &DLCJackets20
+- n"Items.Jacket_20_basic_01"
+- n"Items.Jacket_20_basic_02"
+- n"Items.Jacket_20_basic_03"
+- n"Items.Jacket_20_basic_04"
+- n"Items.Jacket_20_basic_05"
+- n"Items.Jacket_20_basic_06"
+- n"Items.Jacket_20_basic_07"
+- n"Items.Jacket_19_basic_01"
+- n"Items.Jacket_19_basic_02"
+- n"Items.Jacket_19_basic_03"
+- n"Items.Jacket_19_basic_04"
+- n"Items.Jacket_19_basic_05"
+- n"Items.Jacket_19_basic_06"
+- n"Items.Jacket_19_old_01"
+- n"Items.Jacket_19_old_02"
+- n"Items.Jacket_19_old_03"
+- n"Items.Jacket_19_old_04"
+- n"Items.Jacket_19_old_05"
+- n"Items.Jacket_19_old_06"
+- n"Items.Jacket_19_rich_01"
+- n"Items.Jacket_19_rich_02"
+- n"Items.Jacket_19_rich_03"
+- n"Items.Jacket_19_rich_04"
+- n"Items.Jacket_19_rich_05"
+- n"Items.Jacket_19_rich_06"
+- n"Items.Jacket_20_old_01"
+- n"Items.Jacket_20_old_02"
+- n"Items.Jacket_20_old_03"
+- n"Items.Jacket_20_old_04"
+- n"Items.Jacket_20_old_05"
+- n"Items.Jacket_20_rich_01"
+- n"Items.Jacket_20_rich_02"
+- n"Items.Jacket_20_rich_03"
+- n"Items.Jacket_20_rich_04"
+- n"Items.Jacket_20_rich_05"
+
+Items.Jacket_19_basic_04_Crafted.stringName: "Items.Jacket_19_basic_04_Crafted"
+Items.Jacket_19_basic_04_Crafted.clothesVariants: *DLCJackets19
+Items.Jacket_20_basic_01_Crafted.stringName: "Items.Jacket_20_basic_01_Crafted"
+Items.Jacket_20_basic_01_Crafted.clothesVariants: *DLCJackets20
 
 Items.Jacket_19_basic_04.hasDLCItems: true
 Items.Jacket_20_basic_01.hasDLCItems: true
 Items.Jacket_19_basic_04_Crafted.hasDLCItems: true
 Items.Jacket_20_basic_01_Crafted.hasDLCItems: true
-

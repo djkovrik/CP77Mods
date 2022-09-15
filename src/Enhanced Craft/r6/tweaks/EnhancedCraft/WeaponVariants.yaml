@@ -1,318 +1,336 @@
-# --- Normal craftables
+# -- VARIANTS
 
 # Achiles
-Items.Craftable_Common_Achilles.weaponVariants: &PresetsAchiles
-- t"Items.Preset_Achilles_Default"
-- t"Items.Preset_Achilles_Military"
-- t"Items.Preset_Achilles_Neon"
-- t"Items.Preset_Achilles_Pimp"
-- t"Items.Preset_Achilles_Nash"
-- t"Items.Preset_Achilles_Tiny_Mike"
-# - t"Items.Preset_Achilles_Nash_Epic"
-# - t"Items.Preset_Achilles_Nash_Legendary"
+Items.Craftable_Common_Achilles.weaponVariants: &PresetAchilles
+- n"Items.Preset_Achilles_Default"
+- n"Items.Preset_Achilles_Military"
+- n"Items.Preset_Achilles_Neon"
+- n"Items.Preset_Achilles_Pimp"
+- n"Items.Preset_Achilles_Nash"
+- n"Items.Preset_Achilles_Tiny_Mike"
 
-Items.Craftable_Uncommon_Achilles.weaponVariants: *PresetsAchiles
-Items.Craftable_Rare_Achilles.weaponVariants: *PresetsAchiles
-Items.Craftable_Epic_Achilles.weaponVariants: *PresetsAchiles
-Items.Craftable_Legendary_Achilles.weaponVariants: *PresetsAchiles
+Items.Craftable_Uncommon_Achilles.weaponVariants: *PresetAchilles
+Items.Craftable_Rare_Achilles.weaponVariants: *PresetAchilles
+Items.Craftable_Epic_Achilles.weaponVariants: *PresetAchilles
+Items.Craftable_Legendary_Achilles.weaponVariants: *PresetAchilles
 
 Items.Preset_Achilles_Nash.iconicVariant: true
 Items.Preset_Achilles_Tiny_Mike.iconicVariant: true
 
 # Ajax
-Items.Craftable_Common_Ajax.weaponVariants: &PresetsAjax
-- t"Items.Preset_Ajax_Default"
-- t"Items.Preset_Ajax_Military"
-- t"Items.Preset_Ajax_Neon"
-- t"Items.Preset_Ajax_Pimp"
-- t"Items.Preset_Ajax_Moron"
-# - t"Items.Preset_Ajax_Moron_Legendary"
-# - t"Items.Preset_Ajax_Training"
+Items.Craftable_Common_Ajax.weaponVariants: &PresetAjax
+- n"Items.Preset_Ajax_Default"
+- n"Items.Preset_Ajax_Military"
+- n"Items.Preset_Ajax_Neon"
+- n"Items.Preset_Ajax_Pimp"
+- n"Items.Preset_Ajax_Moron"
 
-Items.Craftable_Uncommon_Ajax.weaponVariants: *PresetsAjax
-Items.Craftable_Rare_Ajax.weaponVariants: *PresetsAjax
-Items.Craftable_Epic_Ajax.weaponVariants: *PresetsAjax
-Items.Craftable_Legendary_Ajax.weaponVariants: *PresetsAjax
+Items.Craftable_Uncommon_Ajax.weaponVariants: *PresetAjax
+Items.Craftable_Rare_Ajax.weaponVariants: *PresetAjax
+Items.Craftable_Epic_Ajax.weaponVariants: *PresetAjax
+Items.Craftable_Legendary_Ajax.weaponVariants: *PresetAjax
 
 Items.Preset_Ajax_Moron.iconicVariant: true
 
 # Ashura
-Items.Craftable_Common_Ashura.weaponVariants: &PresetsAshura
-- t"Items.Preset_Ashura_Default"
-- t"Items.Preset_Ashura_Military"
-- t"Items.Preset_Ashura_Neon"
-- t"Items.Preset_Ashura_Pimp"
+Items.Craftable_Common_Ashura.weaponVariants: &PresetAshura
+- n"Items.Preset_Ashura_Default"
+- n"Items.Preset_Ashura_Military"
+- n"Items.Preset_Ashura_Neon"
+- n"Items.Preset_Ashura_Pimp"
 
-Items.Craftable_Uncommon_Ashura.weaponVariants: *PresetsAshura
-Items.Craftable_Rare_Ashura.weaponVariants: *PresetsAshura
-Items.Craftable_Epic_Ashura.weaponVariants: *PresetsAshura
-Items.Craftable_Legendary_Ashura.weaponVariants: *PresetsAshura
+Items.Craftable_Uncommon_Ashura.weaponVariants: *PresetAshura
+Items.Craftable_Rare_Ashura.weaponVariants: *PresetAshura
+Items.Craftable_Epic_Ashura.weaponVariants: *PresetAshura
+Items.Craftable_Legendary_Ashura.weaponVariants: *PresetAshura
 
 # Bat
-Items.Craftable_Common_Bat.weaponVariants: &PresetsBat
-- t"Items.Preset_Baseball_Bat_Default"
-- t"Items.Preset_Baseball_Bat_Denny"
-# - t"Items.Preset_Baseball_Bat_Denny_Epic"
-# - t"Items.Preset_Baseball_Bat_Denny_Legendary"
+Items.Craftable_Common_Bat.weaponVariants: &PresetBat
+- n"Items.Preset_Baseball_Bat_Default"
+- n"Items.Preset_Baseball_Bat_Denny"
 
-Items.Craftable_Uncommon_Bat.weaponVariants: *PresetsBat
-Items.Craftable_Rare_Bat.weaponVariants: *PresetsBat
-Items.Craftable_Epic_Bat.weaponVariants: *PresetsBat
-Items.Craftable_Legendary_Bat.weaponVariants: *PresetsBat
+Items.Craftable_Uncommon_Bat.weaponVariants: *PresetBat
+Items.Craftable_Rare_Bat.weaponVariants: *PresetBat
+Items.Proficiency_Craftable_Epic_Bat.weaponVariants: *PresetBat
+Items.Craftable_Legendary_Bat.weaponVariants: *PresetBat
 
 Items.Preset_Baseball_Bat_Denny.iconicVariant: true
 
-# Baton
-Items.Craftable_Common_Baton_Alpha.weaponVariants: &PresetsBaton
-- t"Items.Preset_Baton_Alpha"
-- t"Items.Preset_Baton_Beta"
-- t"Items.Preset_Baton_Gamma"
-- t"Items.Preset_Baton_Tinker_Bell"
-# - t"Items.Preset_Baton_Tinker_Bell_Epic"
-# - t"Items.Preset_Baton_Tinker_Bell_Legendary"
+# Baton_Alpha
+Items.Craftable_Common_Baton_Alpha.weaponVariants: &PresetAlpha
+- n"Items.Preset_Baton_Alpha"
+- n"Items.Preset_Baton_Beta"
+- n"Items.Preset_Baton_Gamma"
+- n"Items.Preset_Baton_Tinker_Bell"
 
-Items.Craftable_Common_Baton_Beta.weaponVariants: *PresetsBaton
-Items.Craftable_Common_Baton_Gamma.weaponVariants: *PresetsBaton
-Items.Craftable_Uncommon_Baton_Beta.weaponVariants: *PresetsBaton
-Items.Craftable_Uncommon_Baton_Gamma.weaponVariants: *PresetsBaton
-Items.Craftable_Rare_Baton_Alpha.weaponVariants: *PresetsBaton
-Items.Craftable_Rare_Baton_Beta.weaponVariants: *PresetsBaton
-Items.Craftable_Rare_Baton_Gamma.weaponVariants: *PresetsBaton
-Items.Craftable_Epic_Baton_Alpha.weaponVariants: *PresetsBaton
-Items.Craftable_Epic_Baton_Beta.weaponVariants: *PresetsBaton
-Items.Craftable_Epic_Baton_Gamma.weaponVariants: *PresetsBaton
-Items.Craftable_Legendary_Baton_Alpha.weaponVariants: *PresetsBaton
-Items.Craftable_Legendary_Baton_Beta.weaponVariants: *PresetsBaton
-Items.Craftable_Legendary_Baton_Gamma.weaponVariants: *PresetsBaton
+Items.Proficiency_Craftable_Uncommon_Baton_Alpha.weaponVariants: *PresetAlpha
+Items.Craftable_Rare_Baton_Alpha.weaponVariants: *PresetAlpha
+Items.Craftable_Epic_Baton_Alpha.weaponVariants: *PresetAlpha
+Items.Craftable_Legendary_Baton_Alpha.weaponVariants: *PresetAlpha
 
 Items.Preset_Baton_Tinker_Bell.iconicVariant: true
 
-# Burya
-Items.Craftable_Common_Burya.weaponVariants: &PresetsBurya
-- t"Items.Preset_Burya_Default"
-- t"Items.Preset_Burya_Military"
-- t"Items.Preset_Burya_Neon"
-- t"Items.Preset_Burya_Pimp"
-- t"Items.Preset_Burya_Comrade"
-# - t"Items.Preset_Burya_Comrade_Legendary"
-# - t"Items.Preset_Burya_Default_Left_Hand"
-# - t"Items.Preset_Burya_Military_Left_Hand"
-# - t"Items.Preset_Burya_Neon_Left_Hand"
-# - t"Items.Preset_Burya_Pimp_Left_Hand"
+# Baton_Beta
+Items.Craftable_Common_Baton_Beta.weaponVariants: &PresetBeta
+- n"Items.Preset_Baton_Alpha"
+- n"Items.Preset_Baton_Beta"
+- n"Items.Preset_Baton_Gamma"
+- n"Items.Preset_Baton_Tinker_Bell"
 
-Items.Craftable_Uncommon_Burya.weaponVariants: *PresetsBurya
-Items.Craftable_Rare_Burya.weaponVariants: *PresetsBurya
-Items.Craftable_Epic_Burya.weaponVariants: *PresetsBurya
-Items.Craftable_Legendary_Burya.weaponVariants: *PresetsBurya
+Items.Craftable_Uncommon_Baton_Beta.weaponVariants: *PresetBeta
+Items.Craftable_Rare_Baton_Beta.weaponVariants: *PresetBeta
+Items.Craftable_Epic_Baton_Beta.weaponVariants: *PresetBeta
+Items.Craftable_Legendary_Baton_Beta.weaponVariants: *PresetBeta
+
+# Baton_Gamma
+Items.Craftable_Common_Baton_Gamma.weaponVariants: &PresetGamma
+- n"Items.Preset_Baton_Alpha"
+- n"Items.Preset_Baton_Beta"
+- n"Items.Preset_Baton_Gamma"
+- n"Items.Preset_Baton_Tinker_Bell"
+
+Items.Craftable_Uncommon_Baton_Gamma.weaponVariants: *PresetGamma
+Items.Craftable_Rare_Baton_Gamma.weaponVariants: *PresetGamma
+Items.Craftable_Epic_Baton_Gamma.weaponVariants: *PresetGamma
+Items.Craftable_Legendary_Baton_Gamma.weaponVariants: *PresetGamma
+
+# Burya
+Items.Craftable_Common_Burya.weaponVariants: &PresetBurya
+- n"Items.Preset_Burya_Default"
+- n"Items.Preset_Burya_Military"
+- n"Items.Preset_Burya_Neon"
+- n"Items.Preset_Burya_Pimp"
+- n"Items.Preset_Burya_Comrade"
+
+Items.Craftable_Uncommon_Burya.weaponVariants: *PresetBurya
+Items.Craftable_Rare_Burya.weaponVariants: *PresetBurya
+Items.Craftable_Epic_Burya.weaponVariants: *PresetBurya
+Items.Craftable_Legendary_Burya.weaponVariants: *PresetBurya
 
 Items.Preset_Burya_Comrade.iconicVariant: true
 
+# Butchers_Knife
+Items.Craftable_Common_Butchers_Knife.weaponVariants: &PresetKnife
+- n"Items.Preset_Butchers_Knife_Default"
+- n"Items.Preset_Butchers_Knife_Iconic"
+
+Items.Craftable_Uncommon_Butchers_Knife.weaponVariants: *PresetKnife
+Items.Craftable_Rare_Butchers_Knife.weaponVariants: *PresetKnife
+Items.Craftable_Epic_Butchers_Knife.weaponVariants: *PresetKnife
+Items.Craftable_Legendary_Butchers_Knife.weaponVariants: *PresetKnife
+
+Items.Preset_Butchers_Knife_Iconic.iconicVariant: true
+
 # Carnage
-Items.Craftable_Common_Carnage.weaponVariants: &PresetsCarnage
-- t"Items.Preset_Carnage_Default"
-- t"Items.Preset_Carnage_Military"
-- t"Items.Preset_Carnage_Neon"
-- t"Items.Preset_Carnage_Pimp"
-- t"Items.Preset_Carnage_Mox"
-# - t"Items.Preset_Carnage_Mox_Epic"
-# - t"Items.Preset_Carnage_Mox_Legendary"
+Items.Craftable_Common_Carnage.weaponVariants: &PresetCarnage
+- n"Items.Preset_Carnage_Default"
+- n"Items.Preset_Carnage_Military"
+- n"Items.Preset_Carnage_Neon"
+- n"Items.Preset_Carnage_Pimp"
+- n"Items.Preset_Carnage_Mox"
+- n"Items.Preset_Carnage_Edgerunners"
 
-Items.Craftable_Uncommon_Carnage.weaponVariants: *PresetsCarnage
-Items.Craftable_Rare_Carnage.weaponVariants: *PresetsCarnage
-Items.Craftable_Epic_Carnage.weaponVariants: *PresetsCarnage
-Items.Craftable_Legendary_Carnage.weaponVariants: *PresetsCarnage
+Items.Craftable_Uncommon_Carnage.weaponVariants: *PresetCarnage
+Items.Craftable_Rare_Carnage.weaponVariants: *PresetCarnage
+Items.Craftable_Epic_Carnage.weaponVariants: *PresetCarnage
+Items.Proficiency_Craftable_Legendary_Carnage.weaponVariants: *PresetCarnage
 
-Items.Preset_Carnage_Mox_Epic.iconicVariant: true
+Items.Preset_Carnage_Mox.iconicVariant: true
+Items.Preset_Carnage_Edgerunners.iconicVariant: true
+
+# Chainsword
+Items.Craftable_Common_Chainsword.weaponVariants: &PresetChainsword
+- n"Items.Preset_Chainsword_Default"
+- n"Items.Preset_Chainsword_Military"
+- n"Items.Preset_Chainsword_Legendary"
+- n"Items.Preset_Chainsword_Neon"
+- n"Items.Preset_Chainsword_Pimp"
+
+Items.Craftable_Uncommon_Chainsword.weaponVariants: *PresetChainsword
+Items.Craftable_Rare_Chainsword.weaponVariants: *PresetChainsword
+Items.Craftable_Epic_Chainsword.weaponVariants: *PresetChainsword
+Items.Craftable_Legendary_Chainsword.weaponVariants: *PresetChainsword
 
 # Chao
-Items.Craftable_Common_Chao.weaponVariants: &PresetsChao
-- t"Items.Preset_Chao_Default"
-- t"Items.Preset_Chao_Military"
-- t"Items.Preset_Chao_Neon"
-- t"Items.Preset_Chao_Pimp"
-- t"Items.Preset_Chao_Workspot"
-# - t"Items.Preset_Chao_Default_Left_Hand"
-# - t"Items.Preset_Chao_Military_Left_Hand"
-# - t"Items.Preset_Chao_Neon_Left_Hand"
-# - t"Items.Preset_Chao_Pimp_Left_Hand"
+Items.Craftable_Common_Chao.weaponVariants: &PresetChao
+- n"Items.Preset_Chao_Default"
+- n"Items.Preset_Chao_Military"
+- n"Items.Preset_Chao_Neon"
+- n"Items.Preset_Chao_Pimp"
 
-Items.Craftable_Uncommon_Chao.weaponVariants: *PresetsChao
-Items.Craftable_Rare_Chao.weaponVariants: *PresetsChao
-Items.Craftable_Epic_Chao.weaponVariants: *PresetsChao
-Items.Craftable_Legendary_Chao.weaponVariants: *PresetsChao
+Items.Craftable_Uncommon_Chao.weaponVariants: *PresetChao
+Items.Craftable_Rare_Chao.weaponVariants: *PresetChao
+Items.Craftable_Epic_Chao.weaponVariants: *PresetChao
+Items.Craftable_Legendary_Chao.weaponVariants: *PresetChao
 
-# Combat Knife
-Items.Craftable_Common_Combat_Knife.weaponVariants: &PresetsCombatKnife
-- t"Items.Preset_Combat_Knife_Default"
-- t"Items.Preset_Combat_Knife_Military"
-- t"Items.Preset_Combat_Knife_Neon"
-- t"Items.Preset_Combat_Knife_Pimp"
-
-Items.Craftable_Uncommon_Combat_Knife.weaponVariants: *PresetsCombatKnife
-Items.Craftable_Rare_Combat_Knife.weaponVariants: *PresetsCombatKnife
-Items.Craftable_Epic_Combat_Knife.weaponVariants: *PresetsCombatKnife
-Items.Craftable_Legendary_Combat_Knife.weaponVariants: *PresetsCombatKnife
+# Chefs_Knife
+# NO VARIANTS
 
 # Copperhead
-Items.Craftable_Common_Copperhead.weaponVariants: &PresetsCopperhead
-- t"Items.Preset_Copperhead_Default"
-- t"Items.Preset_Copperhead_Military"
-- t"Items.Preset_Copperhead_Neon"
-- t"Items.Preset_Copperhead_Pimp"
-- t"Items.Preset_Copperhead_Genesis"
-# - t"Items.Preset_Copperhead_Genesis_Epic"
-# - t"Items.Preset_Copperhead_Genesis_Legendary"
-
-Items.Craftable_Uncommon_Copperhead.weaponVariants: *PresetsCopperhead
-Items.Craftable_Rare_Copperhead.weaponVariants: *PresetsCopperhead
-Items.Craftable_Epic_Copperhead.weaponVariants: *PresetsCopperhead
-Items.Craftable_Legendary_Copperhead.weaponVariants: *PresetsCopperhead
+Items.Craftable_Common_Copperhead.weaponVariants: &PresetCopperhead
+- n"Items.Preset_Copperhead_Default"
+- n"Items.Preset_Copperhead_Military"
+- n"Items.Preset_Copperhead_Neon"
+- n"Items.Preset_Copperhead_Pimp"
+- n"Items.Preset_Copperhead_Genesis"
+  
+Items.Proficiency_Craftable_Uncommon_Copperhead.weaponVariants: *PresetCopperhead
+Items.Craftable_Rare_Copperhead.weaponVariants: *PresetCopperhead
+Items.Craftable_Epic_Copperhead.weaponVariants: *PresetCopperhead
+Items.Craftable_Legendary_Copperhead.weaponVariants: *PresetCopperhead
 
 Items.Preset_Copperhead_Genesis.iconicVariant: true
 
-# Crusher
-Items.Craftable_Common_Crusher.weaponVariants: &PresetsCrusher
-- t"Items.Preset_Crusher_Default"
-- t"Items.Preset_Crusher_Military"
-- t"Items.Preset_Crusher_Neon"
-- t"Items.Preset_Crusher_Pimp"
-# - t"Items.Preset_Crusher_Default_Left_Hand"
-# - t"Items.Preset_Crusher_Military_Left_Hand"
-# - t"Items.Preset_Crusher_Neon_Left_Hand"
-# - t"Items.Preset_Crusher_Pimp_Left_Hand"
+# Crowbar
+# NO VARIANTS
 
-Items.Craftable_Uncommon_Crusher.weaponVariants: *PresetsCrusher
-Items.Craftable_Rare_Crusher.weaponVariants: *PresetsCrusher
-Items.Craftable_Epic_Crusher.weaponVariants: *PresetsCrusher
-Items.Craftable_Legendary_Crusher.weaponVariants: *PresetsCrusher
+# Crusher
+Items.Craftable_Common_Crusher.weaponVariants: &PresetCrusher
+- n"Items.Preset_Crusher_Default"
+- n"Items.Preset_Crusher_Military"
+- n"Items.Preset_Crusher_Neon"
+- n"Items.Preset_Crusher_Pimp"
+  
+Items.Craftable_Uncommon_Crusher.weaponVariants: *PresetCrusher
+Items.Craftable_Rare_Crusher.weaponVariants: *PresetCrusher
+Items.Craftable_Epic_Crusher.weaponVariants: *PresetCrusher
+Items.Craftable_Legendary_Crusher.weaponVariants: *PresetCrusher
 
 # Defender
-Items.Craftable_Common_Defender.weaponVariants: &PresetsDefender
-- t"Items.Preset_Defender_Default"
-- t"Items.Preset_Defender_Military"
-- t"Items.Preset_Defender_Neon"
-- t"Items.Preset_Defender_Pimp"
-
-Items.Craftable_Uncommon_Defender.weaponVariants: *PresetsDefender
-Items.Craftable_Rare_Defender.weaponVariants: *PresetsDefender
-Items.Craftable_Epic_Defender.weaponVariants: *PresetsDefender
-Items.Craftable_Legendary_Defender.weaponVariants: *PresetsDefender
+Items.Craftable_Common_Defender.weaponVariants: &PresetDefender
+- n"Items.Preset_Defender_Default"
+- n"Items.Preset_Defender_Military"
+- n"Items.Preset_Defender_Neon"
+- n"Items.Preset_Defender_Pimp"
+  
+Items.Craftable_Uncommon_Defender.weaponVariants: *PresetDefender
+Items.Craftable_Rare_Defender.weaponVariants: *PresetDefender
+Items.Craftable_Epic_Defender.weaponVariants: *PresetDefender
+Items.Craftable_Legendary_Defender.weaponVariants: *PresetDefender
 
 # Dian
-Items.Craftable_Common_Dian.weaponVariants: &PresetsDian
-- t"Items.Preset_Dian_Default"
-- t"Items.Preset_Dian_Military"
-- t"Items.Preset_Dian_Neon"
-- t"Items.Preset_Dian_Pimp"
-- t"Items.Preset_Dian_Trauma"
-- t"Items.Preset_Dian_Yinglong"
+Items.Craftable_Common_Dian.weaponVariants: &PresetDian
+- n"Items.Preset_Dian_Default"
+- n"Items.Preset_Dian_Military"
+- n"Items.Preset_Dian_Neon"
+- n"Items.Preset_Dian_Pimp"
+- n"Items.Preset_Dian_Trauma"
+- n"Items.Preset_Dian_Yinglong"
+  
+Items.Craftable_Uncommon_Dian.weaponVariants: *PresetDian
+Items.Craftable_Rare_Dian.weaponVariants: *PresetDian
+Items.Craftable_Epic_Dian.weaponVariants: *PresetDian
+Items.Craftable_Legendary_Dian.weaponVariants: *PresetDian
 
-Items.Craftable_Uncommon_Dian.weaponVariants: *PresetsDian
-Items.Craftable_Rare_Dian.weaponVariants: *PresetsDian
-Items.Craftable_Epic_Dian.weaponVariants: *PresetsDian
-Items.Craftable_Legendary_Dian.weaponVariants: *PresetsDian
-
+Items.Preset_Dian_Trauma.iconicVariant: true
 Items.Preset_Dian_Yinglong.iconicVariant: true
 
-# Grad
-Items.Craftable_Common_Grad.weaponVariants: &PresetsGrad
-- t"Items.Preset_Grad_Default"
-- t"Items.Preset_Grad_Military"
-- t"Items.Preset_Grad_Neon"
-- t"Items.Preset_Grad_Pimp"
-- t"Items.Preset_Grad_Buck"
-- t"Items.Preset_Grad_Panam"
-# - t"Items.Preset_Grad_Buck_Legendary"
-# - t"Items.Preset_Grad_Panam_Epic"
-# - t"Items.Preset_Grad_Panam_Legendary"
+# Fanged_Axe
+Items.Craftable_Common_Fanged_Axe.weaponVariants: &PresetAxe
+- n"Items.Preset_Fanged_Axe_Default"
+- n"Items.Preset_Fanged_Axe_Neon"
+  
+Items.Craftable_Uncommon_Fanged_Axe.weaponVariants: *PresetAxe
+Items.Craftable_Rare_Fanged_Axe.weaponVariants: *PresetAxe
+Items.Craftable_Epic_Fanged_Axe.weaponVariants: *PresetAxe
+Items.Craftable_Legendary_Fanged_Axe.weaponVariants: *PresetAxe
 
-Items.Craftable_Uncommon_Grad.weaponVariants: *PresetsGrad
-Items.Craftable_Rare_Grad.weaponVariants: *PresetsGrad
-Items.Craftable_Epic_Grad.weaponVariants: *PresetsGrad
-Items.Craftable_Legendary_Grad.weaponVariants: *PresetsGrad
+# Grad
+Items.Craftable_Common_Grad.weaponVariants: &PresetGrad
+- n"Items.Preset_Grad_Default"
+- n"Items.Preset_Grad_Military"
+- n"Items.Preset_Grad_Neon"
+- n"Items.Preset_Grad_Pimp"
+- n"Items.Preset_Grad_Buck"
+- n"Items.Preset_Grad_Panam"
+  
+Items.Craftable_Uncommon_Grad.weaponVariants: *PresetGrad
+Items.Proficiency_Craftable_Rare_Grad.weaponVariants: *PresetGrad
+Items.Craftable_Epic_Grad.weaponVariants: *PresetGrad
+Items.Craftable_Legendary_Grad.weaponVariants: *PresetGrad
 
 Items.Preset_Grad_Buck.iconicVariant: true
 Items.Preset_Grad_Panam.iconicVariant: true
 
 # Guillotine
-Items.Craftable_Common_Guillotine.weaponVariants: &PresetsGuillotine
-- t"Items.Preset_Guillotine_Default"
-- t"Items.Preset_Guillotine_Military"
-- t"Items.Preset_Guillotine_Neon"
-- t"Items.Preset_Guillotine_Pimp"
+Items.Craftable_Common_Guillotine.weaponVariants: &PresetGuillotine
+- n"Items.Preset_Guillotine_Default"
+- n"Items.Preset_Guillotine_Legendary"
+- n"Items.Preset_Guillotine_Military"
+- n"Items.Preset_Guillotine_Neon"
+- n"Items.Preset_Guillotine_Pimp"
 
-Items.Craftable_Uncommon_Guillotine.weaponVariants: *PresetsGuillotine
-Items.Craftable_Rare_Guillotine.weaponVariants: *PresetsGuillotine
-Items.Craftable_Epic_Guillotine.weaponVariants: *PresetsGuillotine
-Items.Craftable_Legendary_Guillotine.weaponVariants: *PresetsGuillotine
+Items.Craftable_Uncommon_Guillotine.weaponVariants: *PresetGuillotine
+Items.Craftable_Rare_Guillotine.weaponVariants: *PresetGuillotine
+Items.Craftable_Epic_Guillotine.weaponVariants: *PresetGuillotine
+Items.Craftable_Legendary_Guillotine.weaponVariants: *PresetGuillotine
+
+# Hammer
+Items.Craftable_Common_Hammer.weaponVariants: &PresetHammer
+- n"Items.Preset_Hammer_Default"
+- n"Items.Preset_Hammer_Sasquatch"
+
+Items.Craftable_Uncommon_Hammer.weaponVariants: *PresetHammer
+Items.Craftable_Rare_Hammer.weaponVariants: *PresetHammer
+Items.Craftable_Epic_Hammer.weaponVariants: *PresetHammer
+Items.Craftable_Legendary_Hammer.weaponVariants: *PresetHammer
+
+Items.Preset_Hammer_Sasquatch.iconicVariant: true
 
 # Igla
-Items.Craftable_Common_Igla.weaponVariants: &PresetsIgla
-- t"Items.Preset_Igla_Default"
-- t"Items.Preset_Igla_Military"
-- t"Items.Preset_Igla_Neon"
-- t"Items.Preset_Igla_Pimp"
-- t"Items.Preset_Igla_Sovereign"
-# - t"Items.Preset_Igla_Sovereign_Legendary"
+Items.Craftable_Common_Igla.weaponVariants: &PresetIgla
+- n"Items.Preset_Igla_Default"
+- n"Items.Preset_Igla_Military"
+- n"Items.Preset_Igla_Neon"
+- n"Items.Preset_Igla_Pimp"
+- n"Items.Preset_Igla_Sovereign"
 
-Items.Craftable_Uncommon_Igla.weaponVariants: *PresetsIgla
-Items.Craftable_Rare_Igla.weaponVariants: *PresetsIgla
-Items.Craftable_Epic_Igla.weaponVariants: *PresetsIgla
-Items.Craftable_Legendary_Igla.weaponVariants: *PresetsIgla
+Items.Craftable_Uncommon_Igla.weaponVariants: *PresetIgla
+Items.Craftable_Rare_Igla.weaponVariants: *PresetIgla
+Items.Craftable_Epic_Igla.weaponVariants: *PresetIgla
+Items.Craftable_Legendary_Igla.weaponVariants: *PresetIgla
 
 Items.Preset_Igla_Sovereign.iconicVariant: true
 
-# Kappa
-Items.Craftable_Common_Kappa.weaponVariants: &PresetsKappa
-- t"Items.Preset_Kappa_Default"
-- t"Items.Preset_Kappa_Military"
-- t"Items.Preset_Kappa_Neon"
-- t"Items.Preset_Kappa_Pimp"
-- t"Items.Preset_Kappa_Workspot"
-# - t"Items.Preset_Kappa_Default_Left_Hand"
-# - t"Items.Preset_Kappa_Military_Left_Hand"
-# - t"Items.Preset_Kappa_Neon_Left_Hand"
-# - t"Items.Preset_Kappa_Pimp_Left_Hand"
+# Iron_Pipe
+# NO VARIANTS
 
-Items.Craftable_Uncommon_Kappa.weaponVariants: *PresetsKappa
-Items.Craftable_Rare_Kappa.weaponVariants: *PresetsKappa
-Items.Craftable_Epic_Kappa.weaponVariants: *PresetsKappa
-Items.Craftable_Legendary_Kappa.weaponVariants: *PresetsKappa
+# Kanabo
+# NO VARIANTS
+
+# Kappa
+Items.Craftable_Common_Kappa.weaponVariants: &PresetKappa
+- n"Items.Preset_Kappa_Default"
+- n"Items.Preset_Kappa_Military"
+- n"Items.Preset_Kappa_Legendary"
+- n"Items.Preset_Kappa_Neon"
+- n"Items.Preset_Kappa_Pimp"
+- n"Items.Preset_Kappa_Workspot"
+
+Items.Craftable_Uncommon_Kappa.weaponVariants: *PresetKappa
+Items.Craftable_Rare_Kappa.weaponVariants: *PresetKappa
+Items.Craftable_Epic_Kappa.weaponVariants: *PresetKappa
+Items.Craftable_Legendary_Kappa.weaponVariants: *PresetKappa
+
+Items.Preset_Kappa_Workspot.iconicVariant: true
 
 # Katana
-Items.Craftable_Common_Katana.weaponVariants: &PresetsKatana
-- t"Items.Preset_Katana_Default"
-- t"Items.Preset_Katana_Military"
-- t"Items.Preset_Katana_Neon"
-- t"Items.Preset_Katana_Training"
-- t"Items.Preset_Katana_Arasaka_2020"
-- t"Items.Preset_Katana_Cocktail"
-- t"Items.Preset_Katana_GoG"
-- t"Items.Preset_Katana_Hiromi"
-- t"Items.Preset_Katana_Saburo"
-- t"Items.Preset_Katana_Surgeon"
-- t"Items.Preset_Katana_Takemura"
-- t"Items.Preset_Katana_Wakako"
-# - t"Items.Preset_Katana_GoG_Crafted"
-# - t"Items.Preset_Katana_GoG_Epic"
-# - t"Items.Preset_Katana_Cocktail_Epic"
-# - t"Items.Preset_Katana_Cocktail_Legendary"
-# - t"Items.Preset_Katana_GoG_Legendary"
-# - t"Items.Preset_Katana_Hiromi_Epic"
-# - t"Items.Preset_Katana_Hiromi_Legendary"
-# - t"Items.Preset_Katana_Saburo_Epic"
-# - t"Items.Preset_Katana_Saburo_Legendary"
-# - t"Items.Preset_Katana_Surgeon_Epic"
-# - t"Items.Preset_Katana_Surgeon_Legendary"
-# - t"Items.Preset_Katana_Takemura_Legendary"
-# - t"Items.Preset_Katana_Wakako_Legendary"
+Items.Craftable_Common_Katana.weaponVariants: &PresetKatana
+- n"Items.Preset_Katana_Default"
+- n"Items.Preset_Katana_Arasaka_2020"
+- n"Items.Preset_Katana_Cocktail"
+- n"Items.Preset_Katana_GoG"
+- n"Items.Preset_Katana_Hiromi"
+- n"Items.Preset_Katana_Saburo"
+- n"Items.Preset_Katana_Surgeon"
+- n"Items.Preset_Katana_Takemura"
+- n"Items.Preset_Katana_Wakako"
 
-Items.Craftable_Uncommon_Katana.weaponVariants: *PresetsKatana
-Items.Craftable_Rare_Katana.weaponVariants: *PresetsKatana
-Items.Craftable_Epic_Katana.weaponVariants: *PresetsKatana
-Items.Craftable_Legendary_Katana.weaponVariants: *PresetsKatana
+Items.Craftable_Uncommon_Katana.weaponVariants: *PresetKatana
+Items.Craftable_Rare_Katana.weaponVariants: *PresetKatana
+Items.Craftable_Epic_Katana.weaponVariants: *PresetKatana
+Items.Proficiency_Craftable_Legendary_Katana.weaponVariants: *PresetKatana
 
-Items.Preset_Katana_Arasaka_2020.iconicVariant: true
 Items.Preset_Katana_Cocktail.iconicVariant: true
 Items.Preset_Katana_GoG.iconicVariant: true
 Items.Preset_Katana_Hiromi.iconicVariant: true
@@ -321,135 +339,101 @@ Items.Preset_Katana_Surgeon.iconicVariant: true
 Items.Preset_Katana_Takemura.iconicVariant: true
 Items.Preset_Katana_Wakako.iconicVariant: true
 
-# Kenshin
-Items.Craftable_Common_Kenshin.weaponVariants: &PresetsKenshin
-- t"Items.Preset_Kenshin_Default"
-- t"Items.Preset_Kenshin_Military"
-- t"Items.Preset_Kenshin_Neon"
-- t"Items.Preset_Kenshin_Pimp"
-- t"Items.Preset_Kenshin_Frank"
-- t"Items.Preset_Kenshin_Royce"
-- t"Items.Preset_Kenshin_Takemura"
-# - t"Items.Preset_Kenshin_Default_Left_Hand"
-# - t"Items.Preset_Kenshin_Frank_Legendary"
-# - t"Items.Preset_Kenshin_Military_Left_Hand"
-# - t"Items.Preset_Kenshin_MQ041"
-# - t"Items.Preset_Kenshin_Neon_Left_Hand"
-# - t"Items.Preset_Kenshin_Pimp_Left_Hand"
-# - t"Items.Preset_Kenshin_Royce_Epic"
-# - t"Items.Preset_Kenshin_Royce_Legendary"
+# Katana_Military
+Items.Craftable_Common_Katana_Military.weaponVariants: &PresetMilitary
+- n"Items.Preset_Katana_Military"
+- n"Items.Preset_Katana_Neon"
 
-Items.Craftable_Uncommon_Kenshin.weaponVariants: *PresetsKenshin
-Items.Craftable_Rare_Kenshin.weaponVariants: *PresetsKenshin
-Items.Craftable_Epic_Kenshin.weaponVariants: *PresetsKenshin
-Items.Craftable_Legendary_Kenshin.weaponVariants: *PresetsKenshin
+Items.Craftable_Uncommon_Katana_Military.weaponVariants: *PresetMilitary
+Items.Craftable_Epic_Katana_Military.weaponVariants: *PresetMilitary
+Items.Craftable_Rare_Katana_Military_1.weaponVariants: *PresetMilitary
+Items.Craftable_Legendary_Katana_Military.weaponVariants: *PresetMilitary
+
+# Kenshin
+Items.Craftable_Common_Kenshin.weaponVariants: &PresetKenshin
+- n"Items.Preset_Kenshin_Default"
+- n"Items.Preset_Kenshin_Military"
+- n"Items.Preset_Kenshin_Neon"
+- n"Items.Preset_Kenshin_Pimp"
+- n"Items.Preset_Kenshin_Frank"
+- n"Items.Preset_Kenshin_Royce"
+- n"Items.Preset_Kenshin_Takemura"
+
+Items.Craftable_Uncommon_Kenshin.weaponVariants: *PresetKenshin
+Items.Craftable_Rare_Kenshin.weaponVariants: *PresetKenshin
+Items.Craftable_Epic_Kenshin.weaponVariants: *PresetKenshin
+Items.Craftable_Legendary_Kenshin.weaponVariants: *PresetKenshin
 
 Items.Preset_Kenshin_Frank.iconicVariant: true
 Items.Preset_Kenshin_Royce.iconicVariant: true
 Items.Preset_Kenshin_Takemura.iconicVariant: true
 
 # Knife
-Items.Craftable_Common_Knife.weaponVariants: &PresetsKnife
-- t"Items.Preset_Knife_Default"
-- t"Items.Preset_Knife_Military"
-- t"Items.Preset_Knife_Stinger"
-# - t"Items.Preset_Knife_Stinger_Epic"
-# - t"Items.Preset_Knife_Stinger_Legendary"
+Items.Craftable_Common_Knife.weaponVariants: &PresetKnife
+- n"Items.Preset_Knife_Default"
+- n"Items.Preset_Knife_Military"
+- n"Items.Preset_Knife_Stinger"
 
-Items.Craftable_Uncommon_Knife.weaponVariants: *PresetsKnife
-Items.Craftable_Rare_Knife.weaponVariants: *PresetsKnife
-Items.Craftable_Epic_Knife.weaponVariants: *PresetsKnife
-Items.Craftable_Legendary_Knife.weaponVariants: *PresetsKnife
+Items.Craftable_Uncommon_Knife.weaponVariants: *PresetKnife
+Items.Proficiency_Craftable_Rare_Knife.weaponVariants: *PresetKnife
+Items.Craftable_Epic_Knife.weaponVariants: *PresetKnife
+Items.Craftable_Legendary_Knife.weaponVariants: *PresetKnife
 
 Items.Preset_Knife_Stinger.iconicVariant: true
 
-# Kolac
-Items.Craftable_Common_Kolac.weaponVariants: &PresetsKolac
-- t"Items.Preset_Kolac_Default"
-- t"Items.Preset_Kolac_Military"
-- t"Items.Preset_Kolac_Neon"
-- t"Items.Preset_Kolac_Pimp"
-- t"Items.Preset_Kolac_Tiny_Mike"
-
-Items.Craftable_Uncommon_Kolac.weaponVariants: *PresetsKolac
-Items.Craftable_Rare_Kolac.weaponVariants: *PresetsKolac
-Items.Craftable_Epic_Kolac.weaponVariants: *PresetsKolac
-Items.Craftable_Legendary_Kolac.weaponVariants: *PresetsKolac
-
-Items.Preset_Kolac_Tiny_Mike.iconicVariant: true
-
 # Kukri
-Items.Craftable_Common_Kukri.weaponVariants: &PresetsKukri
-- t"Items.Preset_Kukri_Default"
-- t"Items.Preset_Kukri_Voodoo"
+Items.Craftable_Common_Kukri.weaponVariants: &PresetKukri
+- n"Items.Preset_Kukri_Default"
+- n"Items.Preset_Kukri_Voodoo"
 
-Items.Craftable_Uncommon_Kukri.weaponVariants: *PresetsKukri
-Items.Craftable_Rare_Kukri.weaponVariants: *PresetsKukri
-Items.Craftable_Epic_Kukri.weaponVariants: *PresetsKukri
-Items.Craftable_Legendary_Kukri.weaponVariants: *PresetsKukri
+Items.Craftable_Uncommon_Kukri.weaponVariants: *PresetKukri
+Items.Craftable_Rare_Kukri.weaponVariants: *PresetKukri
+Items.Craftable_Epic_Kukri.weaponVariants: *PresetKukri
+Items.Craftable_Legendary_Kukri.weaponVariants: *PresetKukri
 
 # Kyubi
-Items.Craftable_Common_Kyubi.weaponVariants: &PresetsKyubi
-- t"Items.Preset_Kyubi_Default"
-- t"Items.Preset_Kyubi_Military"
-- t"Items.Preset_Kyubi_Neon"
-- t"Items.Preset_Kyubi_Pimp"
+Items.Craftable_Common_Kyubi.weaponVariants: &PresetKyubi
+- n"Items.Preset_Kyubi_Default"
+- n"Items.Preset_Kyubi_Military"
+- n"Items.Preset_Kyubi_Legendary"
+- n"Items.Preset_Kyubi_Neon"
+- n"Items.Preset_Kyubi_Pimp"
 
-Items.Craftable_Uncommon_Kyubi.weaponVariants: *PresetsKyubi
-Items.Craftable_Rare_Kyubi.weaponVariants: *PresetsKyubi
-Items.Craftable_Epic_Kyubi.weaponVariants: *PresetsKyubi
-Items.Craftable_Legendary_Kyubi.weaponVariants: *PresetsKyubi
+Items.Craftable_Uncommon_Kyubi.weaponVariants: *PresetKyubi
+Items.Craftable_Rare_Kyubi.weaponVariants: *PresetKyubi
+Items.Craftable_Epic_Kyubi.weaponVariants: *PresetKyubi
+Items.Craftable_Legendary_Kyubi.weaponVariants: *PresetKyubi
 
 # Lexington
-Items.Craftable_Common_Lexington.weaponVariants: &PresetsLexington
-- t"Items.Preset_Lexington_Default"
-- t"Items.Preset_Lexington_Military"
-- t"Items.Preset_Lexington_Neon"
-- t"Items.Preset_Lexington_Pimp"
-- t"Items.Preset_Lexington_Wilson"
-# - t"Items.Preset_Lexington_Default_Left_Hand"
-# - t"Items.Preset_Lexington_Military_Left_Hand"
-# - t"Items.Preset_Lexington_Neon_Left_Hand"
-# - t"Items.Preset_Lexington_Pimp_Left_Hand"
-# - t"Items.Preset_Lexington_Shooting_Competition"
-# - t"Items.Preset_Lexington_Toygun"
-# - t"Items.Preset_Lexington_Toygun_Left_Hand"
-# - t"Items.Preset_Lexington_Training"
-# - t"Items.Preset_Lexington_Wilson_Epic"
-# - t"Items.Preset_Lexington_Wilson_Legendary"
-# - t"Items.Preset_Lexington_Wilson_Rare"
+Items.Craftable_Common_Lexington.weaponVariants: &PresetLexington
+- n"Items.Preset_Lexington_Default"
+- n"Items.Preset_Lexington_Military"
+- n"Items.Preset_Lexington_Neon"
+- n"Items.Preset_Lexington_Pimp"
+- n"Items.Preset_Lexington_Wilson"
 
-Items.Craftable_Uncommon_Lexington.weaponVariants: *PresetsLexington
-Items.Craftable_Rare_Lexington.weaponVariants: *PresetsLexington
-Items.Craftable_Epic_Lexington.weaponVariants: *PresetsLexington
-Items.Craftable_Legendary_Lexington.weaponVariants: *PresetsLexington
+Items.Craftable_Uncommon_Lexington.weaponVariants: *PresetLexington
+Items.Craftable_Rare_Lexington.weaponVariants: *PresetLexington
+Items.Craftable_Epic_Lexington.weaponVariants: *PresetLexington
+Items.Craftable_Legendary_Lexington.weaponVariants: *PresetLexington
 
 Items.Preset_Lexington_Wilson.iconicVariant: true
 
 # Liberty
-Items.Craftable_Common_Liberty.weaponVariants: &PresetsLiberty
-- t"Items.Preset_Liberty_Default"
-- t"Items.Preset_Liberty_Military"
-- t"Items.Preset_Liberty_Neon"
-- t"Items.Preset_Liberty_Pimp"
-- t"Items.Preset_Liberty_Dex"
-- t"Items.Preset_Liberty_Padre"
-- t"Items.Preset_Liberty_Rogue"
-- t"Items.Preset_Liberty_Yorinobu"
-# - t"Items.Preset_Liberty_Default_Left_Hand"
-# - t"Items.Preset_Liberty_Dex_Epic"
-# - t"Items.Preset_Liberty_Dex_Legendary"
-# - t"Items.Preset_Liberty_Military_Left_Hand"
-# - t"Items.Preset_Liberty_Neon_Left_Hand"
-# - t"Items.Preset_Liberty_Padre_Legendary"
-# - t"Items.Preset_Liberty_Pimp_Left_Hand"
-# - t"Items.Preset_Liberty_Yorinobu_Epic"
-# - t"Items.Preset_Liberty_Yorinobu_Legendary"
+Items.Craftable_Common_Liberty.weaponVariants: &PresetLiberty
+- n"Items.Preset_Liberty_Default"
+- n"Items.Preset_Liberty_Military"
+- n"Items.Preset_Liberty_Neon"
+- n"Items.Preset_Liberty_Pimp"
+- n"Items.Preset_Liberty_Dex"
+- n"Items.Preset_Liberty_Padre"
+- n"Items.Preset_Liberty_Rogue"
+- n"Items.Preset_Liberty_Yorinobu"
 
-Items.Craftable_Uncommon_Liberty.weaponVariants: *PresetsLiberty
-Items.Craftable_Rare_Liberty.weaponVariants: *PresetsLiberty
-Items.Craftable_Epic_Liberty.weaponVariants: *PresetsLiberty
-Items.Craftable_Legendary_Liberty.weaponVariants: *PresetsLiberty
+Items.Craftable_Uncommon_Liberty.weaponVariants: *PresetLiberty
+Items.Craftable_Rare_Liberty.weaponVariants: *PresetLiberty
+Items.Craftable_Epic_Liberty.weaponVariants: *PresetLiberty
+Items.Craftable_Legendary_Liberty.weaponVariants: *PresetLiberty
 
 Items.Preset_Liberty_Dex.iconicVariant: true
 Items.Preset_Liberty_Padre.iconicVariant: true
@@ -457,445 +441,867 @@ Items.Preset_Liberty_Rogue.iconicVariant: true
 Items.Preset_Liberty_Yorinobu.iconicVariant: true
 
 # MA70
-Items.Craftable_Common_MA70.weaponVariants: &PresetsMA70
-- t"Items.Preset_MA70_Default"
-- t"Items.Preset_MA70_Military"
-- t"Items.Preset_MA70_Neon"
-- t"Items.Preset_MA70_Pimp"
+Items.Craftable_Common_MA70.weaponVariants: &PresetMA70
+- n"Items.Preset_MA70_Default"
+- n"Items.Preset_MA70_Military"
+- n"Items.Preset_MA70_Legendary"
+- n"Items.Preset_MA70_Neon"
+- n"Items.Preset_MA70_Pimp"
 
-Items.Craftable_Uncommon_MA70.weaponVariants: *PresetsMA70
-Items.Craftable_Rare_MA70.weaponVariants: *PresetsMA70
-Items.Craftable_Epic_MA70.weaponVariants: *PresetsMA70
-Items.Craftable_Legendary_MA70.weaponVariants: *PresetsMA70
+Items.Craftable_Uncommon_MA70.weaponVariants: *PresetMA70
+Items.Craftable_Rare_MA70.weaponVariants: *PresetMA70
+Items.Craftable_Epic_MA70.weaponVariants: *PresetMA70
+Items.Craftable_Legendary_MA70.weaponVariants: *PresetMA70
 
 # Machete
-Items.Craftable_Common_Machete.weaponVariants: &PresetsMachete
-- t"Items.Preset_Machete_Default"
-- t"Items.Preset_Machete_Maelstrom"
-- t"Items.Preset_Machete_Valentinos"
+Items.Craftable_Common_Machete.weaponVariants: &PresetMachete
+- n"Items.Preset_Machete_Default"
+- n"Items.Preset_Machete_Maelstrom"
+- n"Items.Preset_Machete_Valentinos"
 
-Items.Craftable_Uncommon_Machete.weaponVariants: *PresetsMachete
-Items.Craftable_Rare_Machete.weaponVariants: *PresetsMachete
-Items.Craftable_Epic_Machete.weaponVariants: *PresetsMachete
-Items.Craftable_Legendary_Machete.weaponVariants: *PresetsMachete
+Items.Craftable_Uncommon_Machete.weaponVariants: *PresetMachete
+Items.Craftable_Rare_Machete.weaponVariants: *PresetMachete
+Items.Craftable_Epic_Machete.weaponVariants: *PresetMachete
+Items.Craftable_Legendary_Machete.weaponVariants: *PresetMachete
+
+# Machete_Borg
+Items.Craftable_Common_Machete_Borg.weaponVariants: &PresetBorg
+- n"Items.Preset_Machete_Borg_Default"
+- n"Items.Preset_Machete_Borg_Military"
+- n"Items.Preset_Machete_Borg_Neon"
+- n"Items.Preset_Machete_Borg_Pimp"
+
+Items.Craftable_Uncommon_Machete_Borg.weaponVariants: *PresetBorg
+Items.Craftable_Rare_Machete_Borg.weaponVariants: *PresetBorg
+Items.Craftable_Epic_Machete_Borg.weaponVariants: *PresetBorg
+Items.Craftable_Legendary_Machete_Borg.weaponVariants: *PresetBorg
 
 # Masamune
-Items.Craftable_Common_Masamune.weaponVariants: &PresetsMasamune
-- t"Items.Preset_Masamune_Default"
-- t"Items.Preset_Masamune_Flashlight"
-- t"Items.Preset_Masamune_Military"
-- t"Items.Preset_Masamune_Neon"
-- t"Items.Preset_Masamune_Pimp"
-- t"Items.Preset_Masamune_Trauma"
-- t"Items.Preset_Masamune_Arasaka_2020"
-- t"Items.Preset_Masamune_Arasaka_2077"
-- t"Items.Preset_Masamune_Rogue"
+Items.Craftable_Common_Masamune.weaponVariants: &PresetMasamune
+- n"Items.Preset_Masamune_Default"
+- n"Items.Preset_Masamune_Military"
+- n"Items.Preset_Masamune_Neon"
+- n"Items.Preset_Masamune_Pimp"
+- n"Items.Preset_Masamune_Arasaka_2020"
+- n"Items.Preset_Masamune_Arasaka_2077"
+- n"Items.Preset_Masamune_Flashlight"
+- n"Items.Preset_Masamune_Rogue"
+- n"Items.Preset_Masamune_Trauma"
 
-Items.Craftable_Uncommon_Masamune.weaponVariants: *PresetsMasamune
-Items.Craftable_Rare_Masamune.weaponVariants: *PresetsMasamune
-Items.Craftable_Epic_Masamune.weaponVariants: *PresetsMasamune
-Items.Craftable_Legendary_Masamune.weaponVariants: *PresetsMasamune
+Items.Craftable_Uncommon_Masamune.weaponVariants: *PresetMasamune
+Items.Craftable_Rare_Masamune.weaponVariants: *PresetMasamune
+Items.Craftable_Epic_Masamune.weaponVariants: *PresetMasamune
+Items.Craftable_Legendary_Masamune.weaponVariants: *PresetMasamune
 
-Items.Preset_Masamune_Arasaka_2020.iconicVariant: true
-Items.Preset_Masamune_Arasaka_2077.iconicVariant: true
 Items.Preset_Masamune_Rogue.iconicVariant: true
+Items.Preset_Masamune_Trauma.iconicVariant: true
 
 # Nekomata
-Items.Craftable_Common_Nekomata.weaponVariants: &PresetsNekomata
-- t"Items.Preset_Nekomata_Default"
-- t"Items.Preset_Nekomata_Military"
-- t"Items.Preset_Nekomata_Neon"
-- t"Items.Preset_Nekomata_Pimp"
-- t"Items.Preset_Nekomata_Breakthrough"
-# - t"Items.Preset_Nekomata_Breakthrough_Legendary"
+Items.Craftable_Common_Nekomata.weaponVariants: &PresetNekomata
+- n"Items.Preset_Nekomata_Default"
+- n"Items.Preset_Nekomata_Military"
+- n"Items.Preset_Nekomata_Neon"
+- n"Items.Preset_Nekomata_Pimp"
+- n"Items.Preset_Nekomata_Breakthrough"
 
-Items.Craftable_Uncommon_Nekomata.weaponVariants: *PresetsNekomata
-Items.Craftable_Rare_Nekomata.weaponVariants: *PresetsNekomata
-Items.Craftable_Epic_Nekomata.weaponVariants: *PresetsNekomata
-Items.Craftable_Legendary_Nekomata.weaponVariants: *PresetsNekomata
+Items.Craftable_Uncommon_Nekomata.weaponVariants: *PresetNekomata
+Items.Craftable_Rare_Nekomata.weaponVariants: *PresetNekomata
+Items.Craftable_Epic_Nekomata.weaponVariants: *PresetNekomata
+Items.Proficiency_Craftable_Legendary_Nekomata.weaponVariants: *PresetNekomata
 
 Items.Preset_Nekomata_Breakthrough.iconicVariant: true
 
-# Nova
-Items.Craftable_Common_Nova.weaponVariants: &PresetsNova
-- t"Items.Preset_Nova_Default"
-- t"Items.Preset_Nova_Military"
-- t"Items.Preset_Nova_Neon"
-- t"Items.Preset_Nova_Pimp"
-- t"Items.Preset_Nova_Doom_Doom"
-# - t"Items.Preset_Nova_Default_Left_Hand"
-# - t"Items.Preset_Nova_Doom_Doom_Epic"
-# - t"Items.Preset_Nova_Doom_Doom_Legendary"
-# - t"Items.Preset_Nova_Military_Left_Hand"
-# - t"Items.Preset_Nova_Neon_Left_Hand"
-# - t"Items.Preset_Nova_Pimp_Left_Hand"
-# - t"Items.Preset_Nova_Q000_Nomad"
+# Neurotoxin_Knife
+Items.Craftable_Common_Neurotoxin_Knife.weaponVariants: &PresetKnife
+- n"Items.Preset_Neurotoxin_Knife_Default"
+- n"Items.Preset_Neurotoxin_Knife_Military"
+- n"Items.Preset_Neurotoxin_Knife_Neon"
+- n"Items.Preset_Neurotoxin_Knife_Pimp"
+- n"Items.Preset_Neurotoxin_Knife_Iconic"
 
-Items.Craftable_Uncommon_Nova.weaponVariants: *PresetsNova
-Items.Craftable_Rare_Nova.weaponVariants: *PresetsNova
-Items.Craftable_Epic_Nova.weaponVariants: *PresetsNova
-Items.Craftable_Legendary_Nova.weaponVariants: *PresetsNova
+Items.Craftable_Uncommon_Neurotoxin_Knife.weaponVariants: *PresetKnife
+Items.Craftable_Rare_Neurotoxin_Knife.weaponVariants: *PresetKnife
+Items.Craftable_Epic_Neurotoxin_Knife.weaponVariants: *PresetKnife
+Items.Craftable_Legendary_Neurotoxin_Knife.weaponVariants: *PresetKnife
+
+Items.Preset_Neurotoxin_Knife_Iconic.iconicVariant: true
+
+# Nova
+Items.Craftable_Common_Nova.weaponVariants: &PresetNova
+- n"Items.Preset_Nova_Default"
+- n"Items.Preset_Nova_Military"
+- n"Items.Preset_Nova_Neon"
+- n"Items.Preset_Nova_Pimp"
+- n"Items.Preset_Nova_Doom_Doom"
+
+Items.Craftable_Uncommon_Nova.weaponVariants: *PresetNova
+Items.Proficiency_Craftable_Rare_Nova.weaponVariants: *PresetNova
+Items.Craftable_Epic_Nova.weaponVariants: *PresetNova
+Items.Craftable_Legendary_Nova.weaponVariants: *PresetNova
 
 Items.Preset_Nova_Doom_Doom.iconicVariant: true
 
 # Nue
-Items.Craftable_Common_Nue.weaponVariants: &PresetsNue
-- t"Items.Preset_Nue_Default"
-- t"Items.Preset_Nue_Military"
-- t"Items.Preset_Nue_Neon"
-- t"Items.Preset_Nue_Pimp"
-- t"Items.Preset_Nue_Arasaka_2020"
-- t"Items.Preset_Nue_Arasaka_2077"
-- t"Items.Preset_Nue_Jackie"
-- t"Items.Preset_Nue_Maiko"
-# - t"Items.Preset_Nue_Arasaka_2020_Left_Hand1"
-# - t"Items.Preset_Nue_Default_Left_Hand"
-# - t"Items.Preset_Nue_Jackie_Epic"
-# - t"Items.Preset_Nue_Jackie_Left_Hand"
-# - t"Items.Preset_Nue_Jackie_Legendary"
-# - t"Items.Preset_Nue_Maiko_Epic"
-# - t"Items.Preset_Nue_Maiko_Legendary"
-# - t"Items.Preset_Nue_Military_Left_Hand"
-# - t"Items.Preset_Nue_Neon_Left_Hand"
-# - t"Items.Preset_Nue_Pimp_Left_Hand"
+Items.Craftable_Common_Nue.weaponVariants: &PresetNue
+- n"Items.Preset_Nue_Default"
+- n"Items.Preset_Nue_Military"
+- n"Items.Preset_Nue_Neon"
+- n"Items.Preset_Nue_Pimp"
+- n"Items.Preset_Nue_Arasaka_2020"
+- n"Items.Preset_Nue_Arasaka_2077"
+- n"Items.Preset_Nue_Jackie"
+- n"Items.Preset_Nue_Maiko"
 
-Items.Craftable_Uncommon_Nue.weaponVariants: *PresetsNue
-Items.Craftable_Rare_Nue.weaponVariants: *PresetsNue
-Items.Craftable_Epic_Nue.weaponVariants: *PresetsNue
-Items.Craftable_Legendary_Nue.weaponVariants: *PresetsNue
+Items.Proficiency_Craftable_Uncommon_Nue.weaponVariants: *PresetNue
+Items.Craftable_Rare_Nue.weaponVariants: *PresetNue
+Items.Craftable_Epic_Nue.weaponVariants: *PresetNue
+Items.Craftable_Legendary_Nue.weaponVariants: *PresetNue
 
-Items.Preset_Nue_Arasaka_2020.iconicVariant: true
-Items.Preset_Nue_Arasaka_2077.iconicVariant: true
 Items.Preset_Nue_Jackie.iconicVariant: true
 Items.Preset_Nue_Maiko.iconicVariant: true
 
 # Omaha
-Items.Craftable_Common_Omaha.weaponVariants: &PresetsOmaha
-- t"Items.Preset_Omaha_Default"
-- t"Items.Preset_Omaha_Military"
-- t"Items.Preset_Omaha_Neon"
-- t"Items.Preset_Omaha_Pimp"
-- t"Items.Preset_Omaha_Suzie"
-# - t"Items.Preset_Omaha_Default_Left_Hand"
-# - t"Items.Preset_Omaha_Military_Left_Hand"
-# - t"Items.Preset_Omaha_Neon_Left_Hand"
-# - t"Items.Preset_Omaha_Pimp_Left_Hand"
-# - t"Items.Preset_Omaha_Suzie_Epic"
-# - t"Items.Preset_Omaha_Suzie_Legendary"
+Items.Craftable_Common_Omaha.weaponVariants: &PresetOmaha
+- n"Items.Preset_Omaha_Default"
+- n"Items.Preset_Omaha_Military"
+- n"Items.Preset_Omaha_Neon"
+- n"Items.Preset_Omaha_Pimp"
+- n"Items.Preset_Omaha_Suzie"
 
-Items.Craftable_Uncommon_Omaha.weaponVariants: *PresetsOmaha
-Items.Craftable_Rare_Omaha.weaponVariants: *PresetsOmaha
-Items.Craftable_Epic_Omaha.weaponVariants: *PresetsOmaha
-Items.Craftable_Legendary_Omaha.weaponVariants: *PresetsOmaha
+Items.Craftable_Uncommon_Omaha.weaponVariants: *PresetOmaha
+Items.Craftable_Rare_Omaha.weaponVariants: *PresetOmaha
+Items.Craftable_Epic_Omaha.weaponVariants: *PresetOmaha
+Items.Craftable_Legendary_Omaha.weaponVariants: *PresetOmaha
 
 Items.Preset_Omaha_Suzie.iconicVariant: true
 
 # Overture
-Items.Craftable_Common_Overture.weaponVariants: &PresetsOverture
-- t"Items.Preset_Overture_Default"
-- t"Items.Preset_Overture_Military"
-- t"Items.Preset_Overture_Neon"
-- t"Items.Preset_Overture_Pimp"
-- t"Items.Preset_Overture_Cassidy"
-- t"Items.Preset_Overture_Kerry"
-- t"Items.Preset_Overture_River"
-# - t"Items.Preset_Overture_Cassidy_Legendary"
-# - t"Items.Preset_Overture_Default_E"
-# - t"Items.Preset_Overture_Default_L"
-# - t"Items.Preset_Overture_Default_Left_Hand"
-# - t"Items.Preset_Overture_Default_R"
-# - t"Items.Preset_Overture_Default_U"
-# - t"Items.Preset_Overture_Kerry_Epic"
-# - t"Items.Preset_Overture_Kerry_Legendary"
-# - t"Items.Preset_Overture_Legendary"
-# - t"Items.Preset_Overture_Military_Left_Hand"
-# - t"Items.Preset_Overture_Neon_Left_Hand"
-# - t"Items.Preset_Overture_Pimp_Left_Hand"
-# - t"Items.Preset_Overture_River_Legendary"
+Items.Craftable_Common_Overture.weaponVariants: &PresetOverture
+- n"Items.Preset_Overture_Default"
+- n"Items.Preset_Overture_Military"
+- n"Items.Preset_Overture_Neon"
+- n"Items.Preset_Overture_Pimp"
+- n"Items.Preset_Overture_Cassidy"
+- n"Items.Preset_Overture_Kerry"
+- n"Items.Preset_Overture_River"
 
-Items.Craftable_Uncommon_Overture.weaponVariants: *PresetsOverture
-Items.Craftable_Rare_Overture.weaponVariants: *PresetsOverture
-Items.Craftable_Epic_Overture.weaponVariants: *PresetsOverture
-Items.Craftable_Legendary_Overture.weaponVariants: *PresetsOverture
+Items.Craftable_Uncommon_Overture.weaponVariants: *PresetOverture
+Items.Craftable_Rare_Overture.weaponVariants: *PresetOverture
+Items.Craftable_Epic_Overture.weaponVariants: *PresetOverture
+Items.Preset_Overture_Legendary.weaponVariants: *PresetOverture
 
 Items.Preset_Overture_Cassidy.iconicVariant: true
 Items.Preset_Overture_Kerry.iconicVariant: true
 Items.Preset_Overture_River.iconicVariant: true
 
 # Palica
-Items.Craftable_Common_Palica.weaponVariants: &PresetsPalica
-- t"Items.Preset_Palica_Default"
-- t"Items.Preset_Palica_Military"
-- t"Items.Preset_Palica_Neon"
-- t"Items.Preset_Palica_Pimp"
+Items.Craftable_Common_Palica.weaponVariants: &PresetPalica
+- n"Items.Preset_Palica_Default"
+- n"Items.Preset_Palica_Military"
+- n"Items.Preset_Palica_Neon"
+- n"Items.Preset_Palica_Pimp"
+Items.Craftable_Uncommon_Palica.weaponVariants: *PresetPalica
+Items.Craftable_Rare_Palica.weaponVariants: *PresetPalica
+Items.Craftable_Epic_Palica.weaponVariants: *PresetPalica
+Items.Craftable_Legendary_Palica.weaponVariants: *PresetPalica
 
-Items.Craftable_Uncommon_Palica.weaponVariants: *PresetsPalica
-Items.Craftable_Rare_Palica.weaponVariants: *PresetsPalica
-Items.Craftable_Epic_Palica.weaponVariants: *PresetsPalica
-Items.Craftable_Legendary_Palica.weaponVariants: *PresetsPalica
+# Pipe_Wrench
+# NO VARIANTS
 
 # Pozhar
-Items.Craftable_Common_Pozhar.weaponVariants: &PresetsPozhar
-- t"Items.Preset_Pozhar_Default"
-- t"Items.Preset_Pozhar_Military"
-- t"Items.Preset_Pozhar_Neon"
-- t"Items.Preset_Pozhar_Pimp"
+Items.Craftable_Common_Pozhar.weaponVariants: &PresetPozhar
+- n"Items.Preset_Pozhar_Default"
+- n"Items.Preset_Pozhar_Military"
+- n"Items.Preset_Pozhar_Legendary"
+- n"Items.Preset_Pozhar_Neon"
+- n"Items.Preset_Pozhar_Pimp"
 
-Items.Craftable_Uncommon_Pozhar.weaponVariants: *PresetsPozhar
-Items.Craftable_Rare_Pozhar.weaponVariants: *PresetsPozhar
-Items.Craftable_Epic_Pozhar.weaponVariants: *PresetsPozhar
-Items.Craftable_Legendary_Pozhar.weaponVariants: *PresetsPozhar
+Items.Craftable_Uncommon_Pozhar.weaponVariants: *PresetPozhar
+Items.Craftable_Rare_Pozhar.weaponVariants: *PresetPozhar
+Items.Craftable_Epic_Pozhar.weaponVariants: *PresetPozhar
+Items.Craftable_Legendary_Pozhar.weaponVariants: *PresetPozhar
 
 # Pulsar
-Items.Craftable_Common_Pulsar.weaponVariants: &PresetsPulsar
-- t"Items.Preset_Pulsar_Default"
-- t"Items.Preset_Pulsar_Military"
-- t"Items.Preset_Pulsar_Neon"
-- t"Items.Preset_Pulsar_Pimp"
-- t"Items.Preset_Pulsar_Buzzsaw"
-# - t"Items.Preset_Pulsar_Buzzsaw_Epic"
-# - t"Items.Preset_Pulsar_Buzzsaw_Legendary"
+Items.Craftable_Common_Pulsar.weaponVariants: &PresetPulsar
+- n"Items.Preset_Pulsar_Default"
+- n"Items.Preset_Pulsar_Military"
+- n"Items.Preset_Pulsar_Neon"
+- n"Items.Preset_Pulsar_Pimp"
+- n"Items.Preset_Pulsar_Buzzsaw"
 
-Items.Craftable_Uncommon_Pulsar.weaponVariants: *PresetsPulsar
-Items.Craftable_Rare_Pulsar.weaponVariants: *PresetsPulsar
-Items.Craftable_Epic_Pulsar.weaponVariants: *PresetsPulsar
-Items.Craftable_Legendary_Pulsar.weaponVariants: *PresetsPulsar
+Items.Craftable_Uncommon_Pulsar.weaponVariants: *PresetPulsar
+Items.Proficiency_Craftable_Rare_Pulsar.weaponVariants: *PresetPulsar
+Items.Craftable_Epic_Pulsar.weaponVariants: *PresetPulsar
+Items.Craftable_Legendary_Pulsar.weaponVariants: *PresetPulsar
 
 Items.Preset_Pulsar_Buzzsaw.iconicVariant: true
 
-# Quasar
-Items.Craftable_Common_Quasar.weaponVariants: &PresetsQuasar
-- t"Items.Preset_Quasar_Default"
-- t"Items.Preset_Quasar_Military"
-- t"Items.Preset_Quasar_Neon"
-- t"Items.Preset_Quasar_Pimp"
-- t"Items.Preset_Quasar_Patricia"
-# - t"Items.Preset_Quasar_Default_Left_Hand"
-# - t"Items.Preset_Quasar_Military_Left_Hand"
-# - t"Items.Preset_Quasar_Neon_Left_Hand"
-# - t"Items.Preset_Quasar_Pimp_Left_Hand"
+# Punk_Knife
+Items.Craftable_Common_Punk_Knife.weaponVariants: &PresetKnife
+- n"Items.Preset_Punk_Knife_Default"
+- n"Items.Preset_Punk_Knife_Military"
+- n"Items.Preset_Punk_Knife_Neon"
+- n"Items.Preset_Punk_Knife_Pimp"
+- n"Items.Preset_Punk_Knife_Iconic"
 
-Items.Craftable_Uncommon_Quasar.weaponVariants: *PresetsQuasar
-Items.Craftable_Rare_Quasar.weaponVariants: *PresetsQuasar
-Items.Craftable_Epic_Quasar.weaponVariants: *PresetsQuasar
-Items.Craftable_Legendary_Quasar.weaponVariants: *PresetsQuasar
+Items.Craftable_Uncommon_Punk_Knife.weaponVariants: *PresetKnife
+Items.Craftable_Rare_Punk_Knife.weaponVariants: *PresetKnife
+Items.Craftable_Epic_Punk_Knife.weaponVariants: *PresetKnife
+Items.Craftable_Legendary_Punk_Knife.weaponVariants: *PresetKnife
+
+Items.Preset_Punk_Knife_Iconic.iconicVariant: true
+
+# Quasar
+Items.Craftable_Common_Quasar.weaponVariants: &PresetQuasar
+- n"Items.Preset_Quasar_Default"
+- n"Items.Preset_Quasar_Military"
+- n"Items.Preset_Quasar_Neon"
+- n"Items.Preset_Quasar_Pimp"
+- n"Items.Preset_Quasar_Patricia"
+
+Items.Craftable_Uncommon_Quasar.weaponVariants: *PresetQuasar
+Items.Craftable_Rare_Quasar.weaponVariants: *PresetQuasar
+Items.Craftable_Epic_Quasar.weaponVariants: *PresetQuasar
+Items.Proficiency_Craftable_Legendary_Quasar.weaponVariants: *PresetQuasar
 
 Items.Preset_Quasar_Patricia.iconicVariant: true
 
 # Saratoga
-Items.Craftable_Common_Saratoga.weaponVariants: &PresetsSaratoga
-- t"Items.Preset_Saratoga_Default"
-- t"Items.Preset_Saratoga_Military"
-- t"Items.Preset_Saratoga_Neon"
-- t"Items.Preset_Saratoga_Pimp"
-- t"Items.Preset_Saratoga_Arasaka_2020"
-- t"Items.Preset_Saratoga_Arasaka_2077"
-- t"Items.Preset_Saratoga_Maelstrom"
-- t"Items.Preset_Saratoga_Raffen"
-# - t"Items.Preset_Saratoga_Maelstrom_Epic"
-# - t"Items.Preset_Saratoga_Maelstrom_Legendary"
-# - t"Items.Preset_Saratoga_Raffen_Epic"
-# - t"Items.Preset_Saratoga_Raffen_Legendary"
+Items.Craftable_Common_Saratoga.weaponVariants: &PresetSaratoga
+- n"Items.Preset_Saratoga_Default"
+- n"Items.Preset_Saratoga_Military"
+- n"Items.Preset_Saratoga_Neon"
+- n"Items.Preset_Saratoga_Pimp"
+- n"Items.Preset_Saratoga_Arasaka_2020"
+- n"Items.Preset_Saratoga_Arasaka_2077"
+- n"Items.Preset_Saratoga_Maelstrom"
+- n"Items.Preset_Saratoga_Raffen"
 
-Items.Craftable_Uncommon_Saratoga.weaponVariants: *PresetsSaratoga
-Items.Craftable_Rare_Saratoga.weaponVariants: *PresetsSaratoga
-Items.Craftable_Epic_Saratoga.weaponVariants: *PresetsSaratoga
-Items.Craftable_Legendary_Saratoga.weaponVariants: *PresetsSaratoga
+Items.Craftable_Uncommon_Saratoga.weaponVariants: *PresetSaratoga
+Items.Craftable_Rare_Saratoga.weaponVariants: *PresetSaratoga
+Items.Craftable_Epic_Saratoga.weaponVariants: *PresetSaratoga
+Items.Craftable_Legendary_Saratoga.weaponVariants: *PresetSaratoga
 
-Items.Preset_Saratoga_Arasaka_2020.iconicVariant: true
-Items.Preset_Saratoga_Arasaka_2077.iconicVariant: true
 Items.Preset_Saratoga_Maelstrom.iconicVariant: true
 Items.Preset_Saratoga_Raffen.iconicVariant: true
 
 # Satara
-Items.Craftable_Common_Satara.weaponVariants: &PresetsSatara
-- t"Items.Preset_Satara_Default"
-- t"Items.Preset_Satara_Military"
-- t"Items.Preset_Satara_Neon"
-- t"Items.Preset_Satara_Pimp"
+Items.Craftable_Common_Satara.weaponVariants: &PresetSatara
+- n"Items.Preset_Satara_Default"
+- n"Items.Preset_Satara_Military"
+- n"Items.Preset_Satara_Neon"
+- n"Items.Preset_Satara_Pimp"
 
-Items.Craftable_Uncommon_Satara.weaponVariants: *PresetsSatara
-Items.Craftable_Rare_Satara.weaponVariants: *PresetsSatara
-Items.Craftable_Epic_Satara.weaponVariants: *PresetsSatara
-Items.Craftable_Legendary_Satara.weaponVariants: *PresetsSatara
+Items.Proficiency_Craftable_Uncommon_Satara.weaponVariants: *PresetSatara
+Items.Craftable_Rare_Satara.weaponVariants: *PresetSatara
+Items.Craftable_Epic_Satara.weaponVariants: *PresetSatara
+Items.Craftable_Legendary_Satara.weaponVariants: *PresetSatara
 
 # Senkoh
-Items.Craftable_Common_Senkoh.weaponVariants: &PresetsSenkoh
-- t"Items.Preset_Senkoh_Default"
-- t"Items.Preset_Senkoh_Military"
-- t"Items.Preset_Senkoh_Neon"
-- t"Items.Preset_Senkoh_Pimp"
+Items.Craftable_Common_Senkoh.weaponVariants: &PresetSenkoh
+- n"Items.Preset_Senkoh_Default"
+- n"Items.Preset_Senkoh_Military"
+- n"Items.Preset_Senkoh_Legendary"
+- n"Items.Preset_Senkoh_Neon"
+- n"Items.Preset_Senkoh_Pimp"
 
-Items.Craftable_Uncommon_Senkoh.weaponVariants: *PresetsSenkoh
-Items.Craftable_Rare_Senkoh.weaponVariants: *PresetsSenkoh
-Items.Craftable_Epic_Senkoh.weaponVariants: *PresetsSenkoh
-Items.Craftable_Legendary_Senkoh.weaponVariants: *PresetsSenkoh
+Items.Craftable_Uncommon_Senkoh.weaponVariants: *PresetSenkoh
+Items.Craftable_Rare_Senkoh.weaponVariants: *PresetSenkoh
+Items.Craftable_Epic_Senkoh.weaponVariants: *PresetSenkoh
+Items.Craftable_Legendary_Senkoh.weaponVariants: *PresetSenkoh
 
 # Shingen
-Items.Craftable_Common_Shingen.weaponVariants: &PresetsShingen
-- t"Items.Preset_Shingen_Default"
-- t"Items.Preset_Shingen_Military"
-- t"Items.Preset_Shingen_Neon"
-- t"Items.Preset_Shingen_Pimp"
-- t"Items.Preset_Shingen_Prototype"
+Items.Craftable_Common_Shingen.weaponVariants: &PresetShingen
+- n"Items.Preset_Shingen_Default"
+- n"Items.Preset_Shingen_Military"
+- n"Items.Preset_Shingen_Neon"
+- n"Items.Preset_Shingen_Pimp"
+- n"Items.Preset_Shingen_Prototype"
 
-Items.Craftable_Uncommon_Shingen.weaponVariants: *PresetsShingen
-Items.Craftable_Rare_Shingen.weaponVariants: *PresetsShingen
-Items.Craftable_Epic_Shingen.weaponVariants: *PresetsShingen
-Items.Craftable_Legendary_Shingen.weaponVariants: *PresetsShingen
+Items.Craftable_Uncommon_Shingen.weaponVariants: *PresetShingen
+Items.Craftable_Rare_Shingen.weaponVariants: *PresetShingen
+Items.Craftable_Epic_Shingen.weaponVariants: *PresetShingen
+Items.Craftable_Legendary_Shingen.weaponVariants: *PresetShingen
 
 Items.Preset_Shingen_Prototype.iconicVariant: true
 
 # Sidewinder
-Items.Craftable_Common_Sidewinder.weaponVariants: &PresetsSidewinder
-- t"Items.Preset_Sidewinder_Default"
-- t"Items.Preset_Sidewinder_Military"
-- t"Items.Preset_Sidewinder_Neon"
-- t"Items.Preset_Sidewinder_Pimp"
-- t"Items.Preset_Sidewinder_Divided"
-# - t"Items.Preset_Sidewinder_Divided_Epic"
-# - t"Items.Preset_Sidewinder_Divided_Legendary"
+Items.Craftable_Common_Sidewinder.weaponVariants: &PresetSidewinder
+- n"Items.Preset_Sidewinder_Default"
+- n"Items.Preset_Sidewinder_Military"
+- n"Items.Preset_Sidewinder_Neon"
+- n"Items.Preset_Sidewinder_Pimp"
+- n"Items.Preset_Sidewinder_Divided"
 
-Items.Craftable_Uncommon_Sidewinder.weaponVariants: *PresetsSidewinder
-Items.Craftable_Rare_Sidewinder.weaponVariants: *PresetsSidewinder
-Items.Craftable_Epic_Sidewinder.weaponVariants: *PresetsSidewinder
-Items.Craftable_Legendary_Sidewinder.weaponVariants: *PresetsSidewinder
+Items.Craftable_Uncommon_Sidewinder.weaponVariants: *PresetSidewinder
+Items.Craftable_Rare_Sidewinder.weaponVariants: *PresetSidewinder
+Items.Craftable_Epic_Sidewinder.weaponVariants: *PresetSidewinder
+Items.Craftable_Legendary_Sidewinder.weaponVariants: *PresetSidewinder
 
 Items.Preset_Sidewinder_Divided.iconicVariant: true
 
 # Sor22
-Items.Craftable_Common_Sor22.weaponVariants: &PresetsSor22
-- t"Items.Preset_Sor22_Default"
-- t"Items.Preset_Sor22_Military"
-- t"Items.Preset_Sor22_Neon"
-- t"Items.Preset_Sor22_Pimp"
+Items.Craftable_Common_Sor22.weaponVariants: &PresetSor22
+- n"Items.Preset_Sor22_Default"
+- n"Items.Preset_Sor22_Military"
+- n"Items.Preset_Sor22_Neon"
+- n"Items.Preset_Sor22_Pimp"
 
-Items.Craftable_Uncommon_Sor22.weaponVariants: *PresetsSor22
-Items.Craftable_Rare_Sor22.weaponVariants: *PresetsSor22
-Items.Craftable_Epic_Sor22.weaponVariants: *PresetsSor22
-Items.Craftable_Legendary_Sor22.weaponVariants: *PresetsSor22
+Items.Craftable_Uncommon_Sor22.weaponVariants: *PresetSor22
+Items.Craftable_Rare_Sor22.weaponVariants: *PresetSor22
+Items.Proficiency_Craftable_Epic_Sor22.weaponVariants: *PresetSor22
+Items.Craftable_Legendary_Sor22.weaponVariants: *PresetSor22
 
 # Tactician
-Items.Craftable_Common_Tactician.weaponVariants: &PresetsTactician
-- t"Items.Preset_Tactician_Default"
-- t"Items.Preset_Tactician_Military"
-- t"Items.Preset_Tactician_Neon"
-- t"Items.Preset_Tactician_Pimp"
-- t"Items.Preset_Tactician_Dino"
-- t"Items.Preset_Tactician_Headsman"
-# - t"Items.Preset_Tactician_Dino_Legendary"
-# - t"Items.Preset_Tactician_Headsman_Legendary"
+Items.Craftable_Common_Tactician.weaponVariants: &PresetTactician
+- n"Items.Preset_Tactician_Default"
+- n"Items.Preset_Tactician_Military"
+- n"Items.Preset_Tactician_Neon"
+- n"Items.Preset_Tactician_Pimp"
+- n"Items.Preset_Tactician_Dino"
+- n"Items.Preset_Tactician_Headsman"
 
-Items.Craftable_Uncommon_Tactician.weaponVariants: *PresetsTactician
-Items.Craftable_Rare_Tactician.weaponVariants: *PresetsTactician
-Items.Craftable_Epic_Tactician.weaponVariants: *PresetsTactician
-Items.Craftable_Legendary_Tactician.weaponVariants: *PresetsTactician
+Items.Craftable_Uncommon_Tactician.weaponVariants: *PresetTactician
+Items.Craftable_Rare_Tactician.weaponVariants: *PresetTactician
+Items.Proficiency_Craftable_Epic_Tactician.weaponVariants: *PresetTactician
+Items.Craftable_Legendary_Tactician.weaponVariants: *PresetTactician
 
 Items.Preset_Tactician_Dino.iconicVariant: true
 Items.Preset_Tactician_Headsman.iconicVariant: true
 
-# Testera
-Items.Craftable_Common_Testera.weaponVariants: &PresetsTestera
-- t"Items.Preset_Testera_Default"
-- t"Items.Preset_Testera_Military"
-- t"Items.Preset_Testera_Neon"
-- t"Items.Preset_Testera_Pimp"
+# Tanto
+# NO VARIANTS
 
-Items.Craftable_Uncommon_Testera.weaponVariants: *PresetsTestera
-Items.Craftable_Rare_Testera.weaponVariants: *PresetsTestera
-Items.Craftable_Epic_Testera.weaponVariants: *PresetsTestera
-Items.Craftable_Legendary_Testera.weaponVariants: *PresetsTestera
+# Testera
+Items.Craftable_Common_Testera.weaponVariants: &PresetTestera
+- n"Items.Preset_Testera_Default"
+- n"Items.Preset_Testera_Military"
+- n"Items.Preset_Testera_Neon"
+- n"Items.Preset_Testera_Pimp"
+
+Items.Craftable_Uncommon_Testera.weaponVariants: *PresetTestera
+Items.Craftable_Rare_Testera.weaponVariants: *PresetTestera
+Items.Craftable_Epic_Testera.weaponVariants: *PresetTestera
+Items.Craftable_Legendary_Testera.weaponVariants: *PresetTestera
+
+# Tire_Iron
+# NO VARIANTS
+
+# Tomahawk
+# NO VARIANTS
 
 # Umbra
-Items.Craftable_Common_Umbra.weaponVariants: &PresetsUmbra
-- t"Items.Preset_Umbra_Default"
-- t"Items.Preset_Umbra_Military"
-- t"Items.Preset_Umbra_Neon"
-- t"Items.Preset_Umbra_Pimp"
+Items.Craftable_Common_Umbra.weaponVariants: &PresetUmbra
+- n"Items.Preset_Umbra_Default"
+- n"Items.Preset_Umbra_Military"
+- n"Items.Preset_Umbra_Legendary"
+- n"Items.Preset_Umbra_Neon"
+- n"Items.Preset_Umbra_Pimp"
 
-Items.Craftable_Uncommon_Umbra.weaponVariants: *PresetsUmbra
-Items.Craftable_Rare_Umbra.weaponVariants: *PresetsUmbra
-Items.Craftable_Epic_Umbra.weaponVariants: *PresetsUmbra
-Items.Craftable_Legendary_Umbra.weaponVariants: *PresetsUmbra
+Items.Craftable_Uncommon_Umbra.weaponVariants: *PresetUmbra
+Items.Craftable_Rare_Umbra.weaponVariants: *PresetUmbra
+Items.Craftable_Epic_Umbra.weaponVariants: *PresetUmbra
+Items.Craftable_Legendary_Umbra.weaponVariants: *PresetUmbra
 
 # Unity
-Items.Craftable_Common_Unity.weaponVariants: &PresetsUnity
-- t"Items.Preset_Unity_Default"
-- t"Items.Preset_Unity_Military"
-- t"Items.Preset_Unity_Neon"
-- t"Items.Preset_Unity_Pimp"
-# - t"Items.Preset_Unity_Default_Left_Hand"
-# - t"Items.Preset_Unity_Military_Left_Hand"
-# - t"Items.Preset_Unity_Neon_Left_Hand"
-# - t"Items.Preset_Unity_Pimp_Left_Hand"
-# - t"Items.Preset_V_Unity"
-# - t"Items.Preset_V_Unity_Cutscene"
+Items.Craftable_Common_Unity.weaponVariants: &PresetUnity
+- n"Items.Preset_Unity_Default"
+- n"Items.Preset_Unity_Military"
+- n"Items.Preset_Unity_Neon"
+- n"Items.Preset_Unity_Pimp"
 
-Items.Craftable_Uncommon_Unity.weaponVariants: *PresetsUnity
-Items.Craftable_Rare_Unity.weaponVariants: *PresetsUnity
-Items.Craftable_Epic_Unity.weaponVariants: *PresetsUnity
-Items.Craftable_Legendary_Unity.weaponVariants: *PresetsUnity
+Items.Craftable_Uncommon_Unity.weaponVariants: *PresetUnity
+Items.Craftable_Rare_Unity.weaponVariants: *PresetUnity
+Items.Craftable_Epic_Unity.weaponVariants: *PresetUnity
+Items.Craftable_Legendary_Unity.weaponVariants: *PresetUnity
 
 # Yukimura
-Items.Craftable_Common_Yukimura.weaponVariants: &PresetsYukimura
-- t"Items.Preset_Yukimura_Default"
-- t"Items.Preset_Yukimura_Military"
-- t"Items.Preset_Yukimura_Neon"
-- t"Items.Preset_Yukimura_Pimp"
-- t"Items.Preset_Yukimura_Trauma"
-- t"Items.Preset_Yukimura_Kiji"
-# ! Not sure if Skippy should be enabled
-# - t"Items.Preset_Yukimura_Skippy"
-# - t"Items.Preset_Yukimura_Default_Left_Hand"
-# - t"Items.Preset_Yukimura_Kiji_Legendary"
-# - t"Items.Preset_Yukimura_Legendary"
-# - t"Items.Preset_Yukimura_Military_Left_Hand"
-# - t"Items.Preset_Yukimura_Neon_Left_Hand"
-# - t"Items.Preset_Yukimura_Pimp_Left_Hand"
-# - t"Items.Preset_Yukimura_Trauma_Left_Hand"
+Items.Craftable_Common_Yukimura.weaponVariants: &PresetYukimura
+- n"Items.Preset_Yukimura_Default"
+- n"Items.Preset_Yukimura_Military"
+- n"Items.Preset_Yukimura_Legendary"
+- n"Items.Preset_Yukimura_Neon"
+- n"Items.Preset_Yukimura_Pimp"
+- n"Items.Preset_Yukimura_Kiji"
+- n"Items.Preset_Yukimura_Trauma"
 
-Items.Craftable_Uncommon_Yukimura.weaponVariants: *PresetsYukimura
-Items.Craftable_Rare_Yukimura.weaponVariants: *PresetsYukimura
-Items.Craftable_Epic_Yukimura.weaponVariants: *PresetsYukimura
-Items.Craftable_Legendary_Yukimura.weaponVariants: *PresetsYukimura
+Items.Craftable_Uncommon_Yukimura.weaponVariants: *PresetYukimura
+Items.Craftable_Rare_Yukimura.weaponVariants: *PresetYukimura
+Items.Proficiency_Craftable_Epic_Yukimura.weaponVariants: *PresetYukimura
+Items.Craftable_Legendary_Yukimura.weaponVariants: *PresetYukimura
 
 Items.Preset_Yukimura_Kiji.iconicVariant: true
-Items.Preset_Yukimura_Skippy.iconicVariant: true
+Items.Preset_Yukimura_Trauma.iconicVariant: true
 
 # Zhuo
-Items.Craftable_Common_Zhuo.weaponVariants: &PresetsZhuo
-- t"Items.Preset_Zhuo_Default"
-- t"Items.Preset_Zhuo_Military"
-- t"Items.Preset_Zhuo_Neon"
-- t"Items.Preset_Zhuo_Pimp"
-- t"Items.Preset_Zhuo_Trauma"
-- t"Items.Preset_Zhuo_Eight_Star"
+Items.Craftable_Common_Zhuo.weaponVariants: &PresetZhuo
+- n"Items.Preset_Zhuo_Default"
+- n"Items.Preset_Zhuo_Military"
+- n"Items.Preset_Zhuo_Neon"
+- n"Items.Preset_Zhuo_Pimp"
+- n"Items.Preset_Zhuo_Trauma"
+- n"Items.Preset_Zhuo_Eight_Star"
 
-Items.Craftable_Uncommon_Zhuo.weaponVariants: *PresetsZhuo
-Items.Craftable_Rare_Zhuo.weaponVariants: *PresetsZhuo
-Items.Craftable_Epic_Zhuo.weaponVariants: *PresetsZhuo
-Items.Craftable_Legendary_Zhuo.weaponVariants: *PresetsZhuo
+Items.Craftable_Uncommon_Zhuo.weaponVariants: *PresetZhuo
+Items.Craftable_Rare_Zhuo.weaponVariants: *PresetZhuo
+Items.Craftable_Epic_Zhuo.weaponVariants: *PresetZhuo
+Items.Craftable_Legendary_Zhuo.weaponVariants: *PresetZhuo
 
 Items.Preset_Zhuo_Eight_Star.iconicVariant: true
 
-# --- Proficency craftables
-Items.Proficiency_Craftable_Uncommon_Baton_Alpha.weaponVariants: *PresetsBaton
-Items.Proficiency_Craftable_Uncommon_Copperhead.weaponVariants: *PresetsCopperhead
-Items.Proficiency_Craftable_Uncommon_Nue.weaponVariants: *PresetsNue
-Items.Proficiency_Craftable_Uncommon_Satara.weaponVariants: *PresetsSatara
-Items.Proficiency_Craftable_Rare_Grad.weaponVariants: *PresetsGrad
-Items.Proficiency_Craftable_Rare_Knife.weaponVariants: *PresetsCombatKnife
-Items.Proficiency_Craftable_Rare_Nova.weaponVariants: *PresetsNova
-Items.Proficiency_Craftable_Rare_Pulsar.weaponVariants: *PresetsPulsar
-Items.Proficiency_Craftable_Epic_Bat.weaponVariants: *PresetsBat
-Items.Proficiency_Craftable_Epic_Kolac.weaponVariants: *PresetsKolac
-Items.Proficiency_Craftable_Epic_Sor22.weaponVariants: *PresetsSor22
-Items.Proficiency_Craftable_Epic_Tactician.weaponVariants: *PresetsTactician
-Items.Proficiency_Craftable_Epic_Yukimura.weaponVariants: *PresetsYukimura
-Items.Proficiency_Craftable_Legendary_Carnage.weaponVariants: *PresetsCarnage
-Items.Proficiency_Craftable_Legendary_Katana.weaponVariants: *PresetsKatana
-Items.Proficiency_Craftable_Legendary_Nekomata.weaponVariants: *PresetsNekomata
-Items.Proficiency_Craftable_Legendary_Quasar.weaponVariants: *PresetsQuasar
+# -- STRING NAMES
 
-# --- Misc
-Items.Preset_Overture_Legendary.weaponVariants: *PresetsOverture
+# Achiles
+Items.Craftable_Common_Achilles.stringName: "Items.Craftable_Common_Achilles"
+Items.Craftable_Uncommon_Achilles.stringName: "Items.Craftable_Uncommon_Achilles"
+Items.Craftable_Rare_Achilles.stringName: "Items.Craftable_Rare_Achilles"
+Items.Craftable_Epic_Achilles.stringName: "Items.Craftable_Epic_Achilles"
+Items.Craftable_Legendary_Achilles.stringName: "Items.Craftable_Legendary_Achilles"
+
+# Ajax
+Items.Craftable_Common_Ajax.stringName: "Items.Craftable_Common_Ajax"
+Items.Craftable_Uncommon_Ajax.stringName: "Items.Craftable_Uncommon_Ajax"
+Items.Craftable_Rare_Ajax.stringName: "Items.Craftable_Rare_Ajax"
+Items.Craftable_Epic_Ajax.stringName: "Items.Craftable_Epic_Ajax"
+Items.Craftable_Legendary_Ajax.stringName: "Items.Craftable_Legendary_Ajax"
+
+# Ashura
+Items.Craftable_Common_Ashura.stringName: "Items.Craftable_Common_Ashura"
+Items.Craftable_Uncommon_Ashura.stringName: "Items.Craftable_Uncommon_Ashura"
+Items.Craftable_Rare_Ashura.stringName: "Items.Craftable_Rare_Ashura"
+Items.Craftable_Epic_Ashura.stringName: "Items.Craftable_Epic_Ashura"
+Items.Craftable_Legendary_Ashura.stringName: "Items.Craftable_Legendary_Ashura"
+
+# Bat
+Items.Craftable_Common_Bat.stringName: "Items.Craftable_Common_Bat"
+Items.Craftable_Uncommon_Bat.stringName: "Items.Craftable_Uncommon_Bat"
+Items.Craftable_Rare_Bat.stringName: "Items.Craftable_Rare_Bat"
+Items.Proficiency_Craftable_Epic_Bat.stringName: "Items.Proficiency_Craftable_Epic_Bat"
+Items.Craftable_Legendary_Bat.stringName: "Items.Craftable_Legendary_Bat"
+
+# Baton_Alpha
+Items.Craftable_Common_Baton_Alpha.stringName: "Items.Craftable_Common_Baton_Alpha"
+Items.Proficiency_Craftable_Uncommon_Baton_Alpha.stringName: "Items.Proficiency_Craftable_Uncommon_Baton_Alpha"
+Items.Craftable_Rare_Baton_Alpha.stringName: "Items.Craftable_Rare_Baton_Alpha"
+Items.Craftable_Epic_Baton_Alpha.stringName: "Items.Craftable_Epic_Baton_Alpha"
+Items.Craftable_Legendary_Baton_Alpha.stringName: "Items.Craftable_Legendary_Baton_Alpha"
+
+# Baton_Beta
+Items.Craftable_Common_Baton_Beta.stringName: "Items.Craftable_Common_Baton_Beta"
+Items.Craftable_Uncommon_Baton_Beta.stringName: "Items.Craftable_Uncommon_Baton_Beta"
+Items.Craftable_Rare_Baton_Beta.stringName: "Items.Craftable_Rare_Baton_Beta"
+Items.Craftable_Epic_Baton_Beta.stringName: "Items.Craftable_Epic_Baton_Beta"
+Items.Craftable_Legendary_Baton_Beta.stringName: "Items.Craftable_Legendary_Baton_Beta"
+
+# Baton_Gamma
+Items.Craftable_Common_Baton_Gamma.stringName: "Items.Craftable_Common_Baton_Gamma"
+Items.Craftable_Uncommon_Baton_Gamma.stringName: "Items.Craftable_Uncommon_Baton_Gamma"
+Items.Craftable_Rare_Baton_Gamma.stringName: "Items.Craftable_Rare_Baton_Gamma"
+Items.Craftable_Epic_Baton_Gamma.stringName: "Items.Craftable_Epic_Baton_Gamma"
+Items.Craftable_Legendary_Baton_Gamma.stringName: "Items.Craftable_Legendary_Baton_Gamma"
+
+# Burya
+Items.Craftable_Common_Burya.stringName: "Items.Craftable_Common_Burya"
+Items.Craftable_Uncommon_Burya.stringName: "Items.Craftable_Uncommon_Burya"
+Items.Craftable_Rare_Burya.stringName: "Items.Craftable_Rare_Burya"
+Items.Craftable_Epic_Burya.stringName: "Items.Craftable_Epic_Burya"
+Items.Craftable_Legendary_Burya.stringName: "Items.Craftable_Legendary_Burya"
+
+# Butchers_Knife
+Items.Craftable_Common_Butchers_Knife.stringName: "Items.Craftable_Common_Butchers_Knife"
+Items.Craftable_Uncommon_Butchers_Knife.stringName: "Items.Craftable_Uncommon_Butchers_Knife"
+Items.Craftable_Rare_Butchers_Knife.stringName: "Items.Craftable_Rare_Butchers_Knife"
+Items.Craftable_Epic_Butchers_Knife.stringName: "Items.Craftable_Epic_Butchers_Knife"
+Items.Craftable_Legendary_Butchers_Knife.stringName: "Items.Craftable_Legendary_Butchers_Knife"
+
+# Carnage
+Items.Craftable_Common_Carnage.stringName: "Items.Craftable_Common_Carnage"
+Items.Craftable_Uncommon_Carnage.stringName: "Items.Craftable_Uncommon_Carnage"
+Items.Craftable_Rare_Carnage.stringName: "Items.Craftable_Rare_Carnage"
+Items.Craftable_Epic_Carnage.stringName: "Items.Craftable_Epic_Carnage"
+Items.Proficiency_Craftable_Legendary_Carnage.stringName: "Items.Proficiency_Craftable_Legendary_Carnage"
+
+# Chainsword
+Items.Craftable_Common_Chainsword.stringName: "Items.Craftable_Common_Chainsword"
+Items.Craftable_Uncommon_Chainsword.stringName: "Items.Craftable_Uncommon_Chainsword"
+Items.Craftable_Rare_Chainsword.stringName: "Items.Craftable_Rare_Chainsword"
+Items.Craftable_Epic_Chainsword.stringName: "Items.Craftable_Epic_Chainsword"
+Items.Craftable_Legendary_Chainsword.stringName: "Items.Craftable_Legendary_Chainsword"
+
+# Chao
+Items.Craftable_Common_Chao.stringName: "Items.Craftable_Common_Chao"
+Items.Craftable_Uncommon_Chao.stringName: "Items.Craftable_Uncommon_Chao"
+Items.Craftable_Rare_Chao.stringName: "Items.Craftable_Rare_Chao"
+Items.Craftable_Epic_Chao.stringName: "Items.Craftable_Epic_Chao"
+Items.Craftable_Legendary_Chao.stringName: "Items.Craftable_Legendary_Chao"
+
+# Chefs_Knife
+Items.Craftable_Common_Chefs_Knife.stringName: "Items.Craftable_Common_Chefs_Knife"
+Items.Craftable_Uncommon_Chefs_Knife.stringName: "Items.Craftable_Uncommon_Chefs_Knife"
+Items.Craftable_Rare_Chefs_Knife.stringName: "Items.Craftable_Rare_Chefs_Knife"
+Items.Craftable_Epic_Chefs_Knife.stringName: "Items.Craftable_Epic_Chefs_Knife"
+Items.Craftable_Legendary_Chefs_Knife.stringName: "Items.Craftable_Legendary_Chefs_Knife"
+
+# Copperhead
+Items.Craftable_Common_Copperhead.stringName: "Items.Craftable_Common_Copperhead"
+Items.Proficiency_Craftable_Uncommon_Copperhead.stringName: "Items.Proficiency_Craftable_Uncommon_Copperhead"
+Items.Craftable_Rare_Copperhead.stringName: "Items.Craftable_Rare_Copperhead"
+Items.Craftable_Epic_Copperhead.stringName: "Items.Craftable_Epic_Copperhead"
+Items.Craftable_Legendary_Copperhead.stringName: "Items.Craftable_Legendary_Copperhead"
+
+# Crowbar
+Items.Craftable_Common_Crowbar.stringName: "Items.Craftable_Common_Crowbar"
+Items.Craftable_Uncommon_Crowbar.stringName: "Items.Craftable_Uncommon_Crowbar"
+Items.Craftable_Rare_Crowbar.stringName: "Items.Craftable_Rare_Crowbar"
+Items.Craftable_Epic_Crowbar.stringName: "Items.Craftable_Epic_Crowbar"
+Items.Craftable_Legendary_Crowbar.stringName: "Items.Craftable_Legendary_Crowbar"
+
+# Crusher
+Items.Craftable_Common_Crusher.stringName: "Items.Craftable_Common_Crusher"
+Items.Craftable_Uncommon_Crusher.stringName: "Items.Craftable_Uncommon_Crusher"
+Items.Craftable_Rare_Crusher.stringName: "Items.Craftable_Rare_Crusher"
+Items.Craftable_Epic_Crusher.stringName: "Items.Craftable_Epic_Crusher"
+Items.Craftable_Legendary_Crusher.stringName: "Items.Craftable_Legendary_Crusher"
+
+# Defender
+Items.Craftable_Common_Defender.stringName: "Items.Craftable_Common_Defender"
+Items.Craftable_Uncommon_Defender.stringName: "Items.Craftable_Uncommon_Defender"
+Items.Craftable_Rare_Defender.stringName: "Items.Craftable_Rare_Defender"
+Items.Craftable_Epic_Defender.stringName: "Items.Craftable_Epic_Defender"
+Items.Craftable_Legendary_Defender.stringName: "Items.Craftable_Legendary_Defender"
+
+# Dian
+Items.Craftable_Common_Dian.stringName: "Items.Craftable_Common_Dian"
+Items.Craftable_Uncommon_Dian.stringName: "Items.Craftable_Uncommon_Dian"
+Items.Craftable_Rare_Dian.stringName: "Items.Craftable_Rare_Dian"
+Items.Craftable_Epic_Dian.stringName: "Items.Craftable_Epic_Dian"
+Items.Craftable_Legendary_Dian.stringName: "Items.Craftable_Legendary_Dian"
+
+# Fanged_Axe
+Items.Craftable_Common_Fanged_Axe.stringName: "Items.Craftable_Common_Fanged_Axe"
+Items.Craftable_Uncommon_Fanged_Axe.stringName: "Items.Craftable_Uncommon_Fanged_Axe"
+Items.Craftable_Rare_Fanged_Axe.stringName: "Items.Craftable_Rare_Fanged_Axe"
+Items.Craftable_Epic_Fanged_Axe.stringName: "Items.Craftable_Epic_Fanged_Axe"
+Items.Craftable_Legendary_Fanged_Axe.stringName: "Items.Craftable_Legendary_Fanged_Axe"
+
+# Grad
+Items.Craftable_Common_Grad.stringName: "Items.Craftable_Common_Grad"
+Items.Craftable_Uncommon_Grad.stringName: "Items.Craftable_Uncommon_Grad"
+Items.Proficiency_Craftable_Rare_Grad.stringName: "Items.Proficiency_Craftable_Rare_Grad"
+Items.Craftable_Epic_Grad.stringName: "Items.Craftable_Epic_Grad"
+Items.Craftable_Legendary_Grad.stringName: "Items.Craftable_Legendary_Grad"
+
+# Guillotine
+Items.Craftable_Common_Guillotine.stringName: "Items.Craftable_Common_Guillotine"
+Items.Craftable_Uncommon_Guillotine.stringName: "Items.Craftable_Uncommon_Guillotine"
+Items.Craftable_Rare_Guillotine.stringName: "Items.Craftable_Rare_Guillotine"
+Items.Craftable_Epic_Guillotine.stringName: "Items.Craftable_Epic_Guillotine"
+Items.Craftable_Legendary_Guillotine.stringName: "Items.Craftable_Legendary_Guillotine"
+
+# Hammer
+Items.Craftable_Common_Hammer.stringName: "Items.Craftable_Common_Hammer"
+Items.Craftable_Uncommon_Hammer.stringName: "Items.Craftable_Uncommon_Hammer"
+Items.Craftable_Rare_Hammer.stringName: "Items.Craftable_Rare_Hammer"
+Items.Craftable_Epic_Hammer.stringName: "Items.Craftable_Epic_Hammer"
+Items.Craftable_Legendary_Hammer.stringName: "Items.Craftable_Legendary_Hammer"
+
+# Igla
+Items.Craftable_Common_Igla.stringName: "Items.Craftable_Common_Igla"
+Items.Craftable_Uncommon_Igla.stringName: "Items.Craftable_Uncommon_Igla"
+Items.Craftable_Rare_Igla.stringName: "Items.Craftable_Rare_Igla"
+Items.Craftable_Epic_Igla.stringName: "Items.Craftable_Epic_Igla"
+Items.Craftable_Legendary_Igla.stringName: "Items.Craftable_Legendary_Igla"
+
+# Iron_Pipe
+Items.Craftable_Common_Iron_Pipe.stringName: "Items.Craftable_Common_Iron_Pipe"
+Items.Craftable_Uncommon_Iron_Pipe.stringName: "Items.Craftable_Uncommon_Iron_Pipe"
+Items.Craftable_Rare_Iron_Pipe.stringName: "Items.Craftable_Rare_Iron_Pipe"
+Items.Craftable_Epic_Iron_Pipe.stringName: "Items.Craftable_Epic_Iron_Pipe"
+Items.Craftable_Legendary_Iron_Pipe.stringName: "Items.Craftable_Legendary_Iron_Pipe"
+
+# Kanabo
+Items.Craftable_Common_Kanabo.stringName: "Items.Craftable_Common_Kanabo"
+Items.Craftable_Uncommon_Kanabo.stringName: "Items.Craftable_Uncommon_Kanabo"
+Items.Craftable_Rare_Kanabo.stringName: "Items.Craftable_Rare_Kanabo"
+Items.Craftable_Epic_Kanabo.stringName: "Items.Craftable_Epic_Kanabo"
+Items.Craftable_Legendary_Kanabo.stringName: "Items.Craftable_Legendary_Kanabo"
+
+# Kappa
+Items.Craftable_Common_Kappa.stringName: "Items.Craftable_Common_Kappa"
+Items.Craftable_Uncommon_Kappa.stringName: "Items.Craftable_Uncommon_Kappa"
+Items.Craftable_Rare_Kappa.stringName: "Items.Craftable_Rare_Kappa"
+Items.Craftable_Epic_Kappa.stringName: "Items.Craftable_Epic_Kappa"
+Items.Craftable_Legendary_Kappa.stringName: "Items.Craftable_Legendary_Kappa"
+
+# Katana
+Items.Craftable_Common_Katana.stringName: "Items.Craftable_Common_Katana"
+Items.Craftable_Uncommon_Katana.stringName: "Items.Craftable_Uncommon_Katana"
+Items.Craftable_Rare_Katana.stringName: "Items.Craftable_Rare_Katana"
+Items.Craftable_Epic_Katana.stringName: "Items.Craftable_Epic_Katana"
+Items.Proficiency_Craftable_Legendary_Katana.stringName: "Items.Proficiency_Craftable_Legendary_Katana"
+
+# Katana_Military
+Items.Craftable_Common_Katana_Military.stringName: "Items.Craftable_Common_Katana_Military"
+Items.Craftable_Uncommon_Katana_Military.stringName: "Items.Craftable_Uncommon_Katana_Military"
+Items.Craftable_Epic_Katana_Military.stringName: "Items.Craftable_Epic_Katana_Military"
+Items.Craftable_Rare_Katana_Military_1.stringName: "Items.Craftable_Rare_Katana_Military_1"
+Items.Craftable_Legendary_Katana_Military.stringName: "Items.Craftable_Legendary_Katana_Military"
+
+# Kenshin
+Items.Craftable_Common_Kenshin.stringName: "Items.Craftable_Common_Kenshin"
+Items.Craftable_Uncommon_Kenshin.stringName: "Items.Craftable_Uncommon_Kenshin"
+Items.Craftable_Rare_Kenshin.stringName: "Items.Craftable_Rare_Kenshin"
+Items.Craftable_Epic_Kenshin.stringName: "Items.Craftable_Epic_Kenshin"
+Items.Craftable_Legendary_Kenshin.stringName: "Items.Craftable_Legendary_Kenshin"
+
+# Knife
+Items.Craftable_Common_Knife.stringName: "Items.Craftable_Common_Knife"
+Items.Craftable_Uncommon_Knife.stringName: "Items.Craftable_Uncommon_Knife"
+Items.Proficiency_Craftable_Rare_Knife.stringName: "Items.Proficiency_Craftable_Rare_Knife"
+Items.Craftable_Epic_Knife.stringName: "Items.Craftable_Epic_Knife"
+Items.Craftable_Legendary_Knife.stringName: "Items.Craftable_Legendary_Knife"
+
+# Kukri
+Items.Craftable_Common_Kukri.stringName: "Items.Craftable_Common_Kukri"
+Items.Craftable_Uncommon_Kukri.stringName: "Items.Craftable_Uncommon_Kukri"
+Items.Craftable_Rare_Kukri.stringName: "Items.Craftable_Rare_Kukri"
+Items.Craftable_Epic_Kukri.stringName: "Items.Craftable_Epic_Kukri"
+Items.Craftable_Legendary_Kukri.stringName: "Items.Craftable_Legendary_Kukri"
+
+# Kyubi
+Items.Craftable_Common_Kyubi.stringName: "Items.Craftable_Common_Kyubi"
+Items.Craftable_Uncommon_Kyubi.stringName: "Items.Craftable_Uncommon_Kyubi"
+Items.Craftable_Rare_Kyubi.stringName: "Items.Craftable_Rare_Kyubi"
+Items.Craftable_Epic_Kyubi.stringName: "Items.Craftable_Epic_Kyubi"
+Items.Craftable_Legendary_Kyubi.stringName: "Items.Craftable_Legendary_Kyubi"
+
+# Lexington
+Items.Craftable_Common_Lexington.stringName: "Items.Craftable_Common_Lexington"
+Items.Craftable_Uncommon_Lexington.stringName: "Items.Craftable_Uncommon_Lexington"
+Items.Craftable_Rare_Lexington.stringName: "Items.Craftable_Rare_Lexington"
+Items.Craftable_Epic_Lexington.stringName: "Items.Craftable_Epic_Lexington"
+Items.Craftable_Legendary_Lexington.stringName: "Items.Craftable_Legendary_Lexington"
+
+# Liberty
+Items.Craftable_Common_Liberty.stringName: "Items.Craftable_Common_Liberty"
+Items.Craftable_Uncommon_Liberty.stringName: "Items.Craftable_Uncommon_Liberty"
+Items.Craftable_Rare_Liberty.stringName: "Items.Craftable_Rare_Liberty"
+Items.Craftable_Epic_Liberty.stringName: "Items.Craftable_Epic_Liberty"
+Items.Craftable_Legendary_Liberty.stringName: "Items.Craftable_Legendary_Liberty"
+
+# MA70
+Items.Craftable_Common_MA70.stringName: "Items.Craftable_Common_MA70"
+Items.Craftable_Uncommon_MA70.stringName: "Items.Craftable_Uncommon_MA70"
+Items.Craftable_Rare_MA70.stringName: "Items.Craftable_Rare_MA70"
+Items.Craftable_Epic_MA70.stringName: "Items.Craftable_Epic_MA70"
+Items.Craftable_Legendary_MA70.stringName: "Items.Craftable_Legendary_MA70"
+
+# Machete
+Items.Craftable_Common_Machete.stringName: "Items.Craftable_Common_Machete"
+Items.Craftable_Uncommon_Machete.stringName: "Items.Craftable_Uncommon_Machete"
+Items.Craftable_Rare_Machete.stringName: "Items.Craftable_Rare_Machete"
+Items.Craftable_Epic_Machete.stringName: "Items.Craftable_Epic_Machete"
+Items.Craftable_Legendary_Machete.stringName: "Items.Craftable_Legendary_Machete"
+
+# Machete_Borg
+Items.Craftable_Common_Machete_Borg.stringName: "Items.Craftable_Common_Machete_Borg"
+Items.Craftable_Uncommon_Machete_Borg.stringName: "Items.Craftable_Uncommon_Machete_Borg"
+Items.Craftable_Rare_Machete_Borg.stringName: "Items.Craftable_Rare_Machete_Borg"
+Items.Craftable_Epic_Machete_Borg.stringName: "Items.Craftable_Epic_Machete_Borg"
+Items.Craftable_Legendary_Machete_Borg.stringName: "Items.Craftable_Legendary_Machete_Borg"
+
+# Masamune
+Items.Craftable_Common_Masamune.stringName: "Items.Craftable_Common_Masamune"
+Items.Craftable_Uncommon_Masamune.stringName: "Items.Craftable_Uncommon_Masamune"
+Items.Craftable_Rare_Masamune.stringName: "Items.Craftable_Rare_Masamune"
+Items.Craftable_Epic_Masamune.stringName: "Items.Craftable_Epic_Masamune"
+Items.Craftable_Legendary_Masamune.stringName: "Items.Craftable_Legendary_Masamune"
+
+# Nekomata
+Items.Craftable_Common_Nekomata.stringName: "Items.Craftable_Common_Nekomata"
+Items.Craftable_Uncommon_Nekomata.stringName: "Items.Craftable_Uncommon_Nekomata"
+Items.Craftable_Rare_Nekomata.stringName: "Items.Craftable_Rare_Nekomata"
+Items.Craftable_Epic_Nekomata.stringName: "Items.Craftable_Epic_Nekomata"
+Items.Proficiency_Craftable_Legendary_Nekomata.stringName: "Items.Proficiency_Craftable_Legendary_Nekomata"
+
+# Neurotoxin_Knife
+Items.Craftable_Common_Neurotoxin_Knife.stringName: "Items.Craftable_Common_Neurotoxin_Knife"
+Items.Craftable_Uncommon_Neurotoxin_Knife.stringName: "Items.Craftable_Uncommon_Neurotoxin_Knife"
+Items.Craftable_Rare_Neurotoxin_Knife.stringName: "Items.Craftable_Rare_Neurotoxin_Knife"
+Items.Craftable_Epic_Neurotoxin_Knife.stringName: "Items.Craftable_Epic_Neurotoxin_Knife"
+Items.Craftable_Legendary_Neurotoxin_Knife.stringName: "Items.Craftable_Legendary_Neurotoxin_Knife"
+
+# Nova
+Items.Craftable_Common_Nova.stringName: "Items.Craftable_Common_Nova"
+Items.Craftable_Uncommon_Nova.stringName: "Items.Craftable_Uncommon_Nova"
+Items.Proficiency_Craftable_Rare_Nova.stringName: "Items.Proficiency_Craftable_Rare_Nova"
+Items.Craftable_Epic_Nova.stringName: "Items.Craftable_Epic_Nova"
+Items.Craftable_Legendary_Nova.stringName: "Items.Craftable_Legendary_Nova"
+
+# Nue
+Items.Craftable_Common_Nue.stringName: "Items.Craftable_Common_Nue"
+Items.Proficiency_Craftable_Uncommon_Nue.stringName: "Items.Proficiency_Craftable_Uncommon_Nue"
+Items.Craftable_Rare_Nue.stringName: "Items.Craftable_Rare_Nue"
+Items.Craftable_Epic_Nue.stringName: "Items.Craftable_Epic_Nue"
+Items.Craftable_Legendary_Nue.stringName: "Items.Craftable_Legendary_Nue"
+
+# Omaha
+Items.Craftable_Common_Omaha.stringName: "Items.Craftable_Common_Omaha"
+Items.Craftable_Uncommon_Omaha.stringName: "Items.Craftable_Uncommon_Omaha"
+Items.Craftable_Rare_Omaha.stringName: "Items.Craftable_Rare_Omaha"
+Items.Craftable_Epic_Omaha.stringName: "Items.Craftable_Epic_Omaha"
+Items.Craftable_Legendary_Omaha.stringName: "Items.Craftable_Legendary_Omaha"
+
+# Overture
+Items.Craftable_Common_Overture.stringName: "Items.Craftable_Common_Overture"
+Items.Craftable_Uncommon_Overture.stringName: "Items.Craftable_Uncommon_Overture"
+Items.Craftable_Rare_Overture.stringName: "Items.Craftable_Rare_Overture"
+Items.Craftable_Epic_Overture.stringName: "Items.Craftable_Epic_Overture"
+Items.Preset_Overture_Legendary.stringName: "Items.Preset_Overture_Legendary"
+
+# Palica
+Items.Craftable_Common_Palica.stringName: "Items.Craftable_Common_Palica"
+Items.Craftable_Uncommon_Palica.stringName: "Items.Craftable_Uncommon_Palica"
+Items.Craftable_Rare_Palica.stringName: "Items.Craftable_Rare_Palica"
+Items.Craftable_Epic_Palica.stringName: "Items.Craftable_Epic_Palica"
+Items.Craftable_Legendary_Palica.stringName: "Items.Craftable_Legendary_Palica"
+
+# Pipe_Wrench
+Items.Craftable_Common_Pipe_Wrench.stringName: "Items.Craftable_Common_Pipe_Wrench"
+Items.Craftable_Uncommon_Pipe_Wrench.stringName: "Items.Craftable_Uncommon_Pipe_Wrench"
+Items.Craftable_Rare_Pipe_Wrench.stringName: "Items.Craftable_Rare_Pipe_Wrench"
+Items.Craftable_Epic_Pipe_Wrench.stringName: "Items.Craftable_Epic_Pipe_Wrench"
+Items.Craftable_Legendary_Pipe_Wrench.stringName: "Items.Craftable_Legendary_Pipe_Wrench"
+
+# Pozhar
+Items.Craftable_Common_Pozhar.stringName: "Items.Craftable_Common_Pozhar"
+Items.Craftable_Uncommon_Pozhar.stringName: "Items.Craftable_Uncommon_Pozhar"
+Items.Craftable_Rare_Pozhar.stringName: "Items.Craftable_Rare_Pozhar"
+Items.Craftable_Epic_Pozhar.stringName: "Items.Craftable_Epic_Pozhar"
+Items.Craftable_Legendary_Pozhar.stringName: "Items.Craftable_Legendary_Pozhar"
+
+# Pulsar
+Items.Craftable_Common_Pulsar.stringName: "Items.Craftable_Common_Pulsar"
+Items.Craftable_Uncommon_Pulsar.stringName: "Items.Craftable_Uncommon_Pulsar"
+Items.Proficiency_Craftable_Rare_Pulsar.stringName: "Items.Proficiency_Craftable_Rare_Pulsar"
+Items.Craftable_Epic_Pulsar.stringName: "Items.Craftable_Epic_Pulsar"
+Items.Craftable_Legendary_Pulsar.stringName: "Items.Craftable_Legendary_Pulsar"
+
+# Punk_Knife
+Items.Craftable_Common_Punk_Knife.stringName: "Items.Craftable_Common_Punk_Knife"
+Items.Craftable_Uncommon_Punk_Knife.stringName: "Items.Craftable_Uncommon_Punk_Knife"
+Items.Craftable_Rare_Punk_Knife.stringName: "Items.Craftable_Rare_Punk_Knife"
+Items.Craftable_Epic_Punk_Knife.stringName: "Items.Craftable_Epic_Punk_Knife"
+Items.Craftable_Legendary_Punk_Knife.stringName: "Items.Craftable_Legendary_Punk_Knife"
+
+# Quasar
+Items.Craftable_Common_Quasar.stringName: "Items.Craftable_Common_Quasar"
+Items.Craftable_Uncommon_Quasar.stringName: "Items.Craftable_Uncommon_Quasar"
+Items.Craftable_Rare_Quasar.stringName: "Items.Craftable_Rare_Quasar"
+Items.Craftable_Epic_Quasar.stringName: "Items.Craftable_Epic_Quasar"
+Items.Proficiency_Craftable_Legendary_Quasar.stringName: "Items.Proficiency_Craftable_Legendary_Quasar"
+
+# Saratoga
+Items.Craftable_Common_Saratoga.stringName: "Items.Craftable_Common_Saratoga"
+Items.Craftable_Uncommon_Saratoga.stringName: "Items.Craftable_Uncommon_Saratoga"
+Items.Craftable_Rare_Saratoga.stringName: "Items.Craftable_Rare_Saratoga"
+Items.Craftable_Epic_Saratoga.stringName: "Items.Craftable_Epic_Saratoga"
+Items.Craftable_Legendary_Saratoga.stringName: "Items.Craftable_Legendary_Saratoga"
+
+# Satara
+Items.Craftable_Common_Satara.stringName: "Items.Craftable_Common_Satara"
+Items.Proficiency_Craftable_Uncommon_Satara.stringName: "Items.Proficiency_Craftable_Uncommon_Satara"
+Items.Craftable_Rare_Satara.stringName: "Items.Craftable_Rare_Satara"
+Items.Craftable_Epic_Satara.stringName: "Items.Craftable_Epic_Satara"
+Items.Craftable_Legendary_Satara.stringName: "Items.Craftable_Legendary_Satara"
+
+# Senkoh
+Items.Craftable_Common_Senkoh.stringName: "Items.Craftable_Common_Senkoh"
+Items.Craftable_Uncommon_Senkoh.stringName: "Items.Craftable_Uncommon_Senkoh"
+Items.Craftable_Rare_Senkoh.stringName: "Items.Craftable_Rare_Senkoh"
+Items.Craftable_Epic_Senkoh.stringName: "Items.Craftable_Epic_Senkoh"
+Items.Craftable_Legendary_Senkoh.stringName: "Items.Craftable_Legendary_Senkoh"
+
+# Shingen
+Items.Craftable_Common_Shingen.stringName: "Items.Craftable_Common_Shingen"
+Items.Craftable_Uncommon_Shingen.stringName: "Items.Craftable_Uncommon_Shingen"
+Items.Craftable_Rare_Shingen.stringName: "Items.Craftable_Rare_Shingen"
+Items.Craftable_Epic_Shingen.stringName: "Items.Craftable_Epic_Shingen"
+Items.Craftable_Legendary_Shingen.stringName: "Items.Craftable_Legendary_Shingen"
+
+# Sidewinder
+Items.Craftable_Common_Sidewinder.stringName: "Items.Craftable_Common_Sidewinder"
+Items.Craftable_Uncommon_Sidewinder.stringName: "Items.Craftable_Uncommon_Sidewinder"
+Items.Craftable_Rare_Sidewinder.stringName: "Items.Craftable_Rare_Sidewinder"
+Items.Craftable_Epic_Sidewinder.stringName: "Items.Craftable_Epic_Sidewinder"
+Items.Craftable_Legendary_Sidewinder.stringName: "Items.Craftable_Legendary_Sidewinder"
+
+# Sor22
+Items.Craftable_Common_Sor22.stringName: "Items.Craftable_Common_Sor22"
+Items.Craftable_Uncommon_Sor22.stringName: "Items.Craftable_Uncommon_Sor22"
+Items.Craftable_Rare_Sor22.stringName: "Items.Craftable_Rare_Sor22"
+Items.Proficiency_Craftable_Epic_Sor22.stringName: "Items.Proficiency_Craftable_Epic_Sor22"
+Items.Craftable_Legendary_Sor22.stringName: "Items.Craftable_Legendary_Sor22"
+
+# Tactician
+Items.Craftable_Common_Tactician.stringName: "Items.Craftable_Common_Tactician"
+Items.Craftable_Uncommon_Tactician.stringName: "Items.Craftable_Uncommon_Tactician"
+Items.Craftable_Rare_Tactician.stringName: "Items.Craftable_Rare_Tactician"
+Items.Proficiency_Craftable_Epic_Tactician.stringName: "Items.Proficiency_Craftable_Epic_Tactician"
+Items.Craftable_Legendary_Tactician.stringName: "Items.Craftable_Legendary_Tactician"
+
+# Tanto
+Items.Craftable_Common_Tanto.stringName: "Items.Craftable_Common_Tanto"
+Items.Craftable_Uncommon_Tanto.stringName: "Items.Craftable_Uncommon_Tanto"
+Items.Craftable_Rare_Tanto.stringName: "Items.Craftable_Rare_Tanto"
+Items.Craftable_Epic_Tanto.stringName: "Items.Craftable_Epic_Tanto"
+Items.Craftable_Legendary_Tanto.stringName: "Items.Craftable_Legendary_Tanto"
+
+# Testera
+Items.Craftable_Common_Testera.stringName: "Items.Craftable_Common_Testera"
+Items.Craftable_Uncommon_Testera.stringName: "Items.Craftable_Uncommon_Testera"
+Items.Craftable_Rare_Testera.stringName: "Items.Craftable_Rare_Testera"
+Items.Craftable_Epic_Testera.stringName: "Items.Craftable_Epic_Testera"
+Items.Craftable_Legendary_Testera.stringName: "Items.Craftable_Legendary_Testera"
+
+# Tire_Iron
+Items.Craftable_Common_Tire_Iron.stringName: "Items.Craftable_Common_Tire_Iron"
+Items.Craftable_Uncommon_Tire_Iron.stringName: "Items.Craftable_Uncommon_Tire_Iron"
+Items.Craftable_Rare_Tire_Iron.stringName: "Items.Craftable_Rare_Tire_Iron"
+Items.Craftable_Epic_Tire_Iron.stringName: "Items.Craftable_Epic_Tire_Iron"
+Items.Craftable_Legendary_Tire_Iron.stringName: "Items.Craftable_Legendary_Tire_Iron"
+
+# Tomahawk
+Items.Craftable_Common_Tomahawk.stringName: "Items.Craftable_Common_Tomahawk"
+Items.Craftable_Uncommon_Tomahawk.stringName: "Items.Craftable_Uncommon_Tomahawk"
+Items.Craftable_Rare_Tomahawk.stringName: "Items.Craftable_Rare_Tomahawk"
+Items.Craftable_Epic_Tomahawk.stringName: "Items.Craftable_Epic_Tomahawk"
+Items.Craftable_Legendary_Tomahawk.stringName: "Items.Craftable_Legendary_Tomahawk"
+
+# Umbra
+Items.Craftable_Common_Umbra.stringName: "Items.Craftable_Common_Umbra"
+Items.Craftable_Uncommon_Umbra.stringName: "Items.Craftable_Uncommon_Umbra"
+Items.Craftable_Rare_Umbra.stringName: "Items.Craftable_Rare_Umbra"
+Items.Craftable_Epic_Umbra.stringName: "Items.Craftable_Epic_Umbra"
+Items.Craftable_Legendary_Umbra.stringName: "Items.Craftable_Legendary_Umbra"
+
+# Unity
+Items.Craftable_Common_Unity.stringName: "Items.Craftable_Common_Unity"
+Items.Craftable_Uncommon_Unity.stringName: "Items.Craftable_Uncommon_Unity"
+Items.Craftable_Rare_Unity.stringName: "Items.Craftable_Rare_Unity"
+Items.Craftable_Epic_Unity.stringName: "Items.Craftable_Epic_Unity"
+Items.Craftable_Legendary_Unity.stringName: "Items.Craftable_Legendary_Unity"
+
+# Yukimura
+Items.Craftable_Common_Yukimura.stringName: "Items.Craftable_Common_Yukimura"
+Items.Craftable_Uncommon_Yukimura.stringName: "Items.Craftable_Uncommon_Yukimura"
+Items.Craftable_Rare_Yukimura.stringName: "Items.Craftable_Rare_Yukimura"
+Items.Proficiency_Craftable_Epic_Yukimura.stringName: "Items.Proficiency_Craftable_Epic_Yukimura"
+Items.Craftable_Legendary_Yukimura.stringName: "Items.Craftable_Legendary_Yukimura"
+
+# Zhuo
+Items.Craftable_Common_Zhuo.stringName: "Items.Craftable_Common_Zhuo"
+Items.Craftable_Uncommon_Zhuo.stringName: "Items.Craftable_Uncommon_Zhuo"
+Items.Craftable_Rare_Zhuo.stringName: "Items.Craftable_Rare_Zhuo"
+Items.Craftable_Epic_Zhuo.stringName: "Items.Craftable_Epic_Zhuo"
+Items.Craftable_Legendary_Zhuo.stringName: "Items.Craftable_Legendary_Zhuo"
