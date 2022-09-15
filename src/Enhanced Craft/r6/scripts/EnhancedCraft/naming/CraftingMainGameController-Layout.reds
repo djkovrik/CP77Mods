@@ -8,6 +8,9 @@ import EnhancedCraft.Config.*
 @addField(CraftingMainGameController)
 private let m_nameInput: ref<HubTextInput>;
 
+@addField(CraftingMainGameController)
+private let m_originalName: String;
+
 // -- Custom text input container
 @addField(CraftingMainGameController)
 private let m_nameInputContainer: ref<inkCompoundWidget>;
@@ -32,12 +35,12 @@ protected cb func OnInitialize() -> Bool {
   let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
   let outerContainer: ref<inkCompoundWidget> = root.GetWidget(n"craftingPanel/inkCanvasWidget2/itemDetailsContainer/weaponPreviewContainer") as inkCompoundWidget;
   this.m_nameInputContainer = new inkVerticalPanel();
-  this.m_nameInputContainer .SetSize(600.0, 100.0);
-  this.m_nameInputContainer .SetFitToContent(true);
-  this.m_nameInputContainer .SetHAlign(inkEHorizontalAlign.Left);
-  this.m_nameInputContainer .SetAnchor(inkEAnchor.TopLeft);
-  this.m_nameInputContainer .SetMargin(new inkMargin(0.0, -30.0, 0.0, 0.0));
-  this.m_nameInputContainer .Reparent(outerContainer);
+  this.m_nameInputContainer.SetSize(600.0, 100.0);
+  this.m_nameInputContainer.SetFitToContent(true);
+  this.m_nameInputContainer.SetHAlign(inkEHorizontalAlign.Left);
+  this.m_nameInputContainer.SetAnchor(inkEAnchor.TopLeft);
+  this.m_nameInputContainer.SetMargin(new inkMargin(0.0, -30.0, 0.0, 0.0));
+  this.m_nameInputContainer.Reparent(outerContainer);
   this.m_nameInput = HubTextInput.Create();
   this.m_nameInput.RegisterToCallback(n"OnInput", this, n"OnTextInput");
   this.m_nameInput.Reparent(this.m_nameInputContainer );
@@ -47,18 +50,18 @@ protected cb func OnInitialize() -> Bool {
 
   // Find weapon name inkText
   this.m_weaponName = root.GetWidget(n"craftingPanel/inkCanvasWidget2/itemDetailsContainer/itemTitle/header/itemName") as inkText;
+  this.m_originalName = this.m_weaponName.GetText();
 }
 
 // -- Catch text input events
 @addMethod(CraftingMainGameController)
 protected cb func OnTextInput(widget: wref<inkWidget>) -> Bool {
   let text: String = this.m_nameInput.GetText();
-  let originalName: String = this.m_craftingLogicController.originalRecipe.label;
 	// L(s"INPUT: \(this.m_nameInput.GetText())");
   if NotEquals(text, "") {
     this.m_weaponName.SetText(text);
   } else {
-    this.m_weaponName.SetText(originalName);
+    this.m_weaponName.SetText(this.m_originalName);
   };
 }
 

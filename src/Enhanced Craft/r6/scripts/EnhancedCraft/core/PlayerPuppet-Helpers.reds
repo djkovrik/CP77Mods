@@ -1,18 +1,8 @@
 module EnhancedCraft.Core
 import EnhancedCraft.Common.DamageTypeStats
 import EnhancedCraft.System.EnhancedCraftSystem
+import EnhancedCraft.Common.ECraftUtils
 import EnhancedCraft.Common.L
-
-// -- Helper function to scale custom variant data to player level and original recipe quality
-//    Used for crafted item and for crafting panel item preview so stats will match
-@addMethod(PlayerPuppet)
-public func ScaleCraftedItemData(itemData: ref<gameItemData>, quality: CName) -> Void {
-  let statsSystem: ref<StatsSystem> = GameInstance.GetStatsSystem(this.GetGame());
-  let qualityMod: ref<gameStatModifierData> = RPGManager.CreateStatModifier(gamedataStatType.Quality, gameStatModifierType.Additive, RPGManager.ItemQualityNameToValue(quality));
-  statsSystem.RemoveAllModifiers(itemData.GetStatsObjectID(), gamedataStatType.Quality);
-  statsSystem.AddSavedModifier(itemData.GetStatsObjectID(), qualityMod);
-  RPGManager.ForceItemQuality(this, itemData, quality);
-}
 
 // -- Creates DamageTypeStats helper class based on original damage type
 @addMethod(PlayerPuppet)
@@ -47,16 +37,6 @@ private func GetDamageTypeStats(ss: ref<StatsSystem>, object: StatsObjectID, cur
       break;
   };
 
-  // Common
-  result.critChance = ss.GetStatValue(object, gamedataStatType.CritChance);
-  result.critChanceTimeCritDamage = ss.GetStatValue(object, gamedataStatType.CritChanceTimeCritDamage);
-  result.critDamage = ss.GetStatValue(object, gamedataStatType.CritDamage);
-  result.critDPSBonus = ss.GetStatValue(object, gamedataStatType.CritDPSBonus);
-  result.headshotMultiplier = ss.GetStatValue(object, gamedataStatType.HeadshotDamageMultiplier);
-  result.bonusRicochetDamage = ss.GetStatValue(object, gamedataStatType.BonusRicochetDamage);
-  result.staminaCostReduction = ss.GetStatValue(object, gamedataStatType.StaminaCostReduction);
-  result.chargeMultiplier = ss.GetStatValue(object, gamedataStatType.ChargeMultiplier);
-  result.chargeTime = ss.GetStatValue(object, gamedataStatType.ChargeTime);
   return result;
 }
 
@@ -202,17 +182,6 @@ private func RemoveCurrentDamageModifiers(ss: ref<StatsSystem>, object: StatsObj
   ss.RemoveAllModifiers(object, gamedataStatType.ThermalDamageMin, true);
   ss.RemoveAllModifiers(object, gamedataStatType.ThermalDamageMax, true);
   ss.RemoveAllModifiers(object, gamedataStatType.ThermalDamagePercent, true);
-  // Crit
-  ss.RemoveAllModifiers(object, gamedataStatType.CritChance, true);
-  ss.RemoveAllModifiers(object, gamedataStatType.CritChanceTimeCritDamage, true);
-  ss.RemoveAllModifiers(object, gamedataStatType.CritDPSBonus, true);
-  ss.RemoveAllModifiers(object, gamedataStatType.CritDamage, true);
-  // Other
-  ss.RemoveAllModifiers(object, gamedataStatType.HeadshotDamageMultiplier, true);
-  ss.RemoveAllModifiers(object, gamedataStatType.BonusRicochetDamage, true);
-  ss.RemoveAllModifiers(object, gamedataStatType.StaminaCostReduction, true);
-  ss.RemoveAllModifiers(object, gamedataStatType.ChargeMultiplier, true);
-  ss.RemoveAllModifiers(object, gamedataStatType.ChargeTime, true);
 }
 
 // -- Assigns new elemental damage modifiers to specified StatsObject
@@ -229,17 +198,6 @@ private func AssignNewDamageModifiers(ss: ref<StatsSystem>, object: StatsObjectI
   ss.AddSavedModifier(object, modifiderDamageMax);
   ss.AddSavedModifier(object, modifiderDamagePercent);
   ss.AddSavedModifier(object, modifiderDamageDeals);
-
-  // Common
-  ss.AddSavedModifier(object, RPGManager.CreateStatModifier(gamedataStatType.CritChance, gameStatModifierType.Additive, stats.critChance));
-  ss.AddSavedModifier(object, RPGManager.CreateStatModifier(gamedataStatType.CritChanceTimeCritDamage, gameStatModifierType.Additive, stats.critChanceTimeCritDamage));
-  ss.AddSavedModifier(object, RPGManager.CreateStatModifier(gamedataStatType.CritDamage, gameStatModifierType.Additive, stats.critDamage));
-  ss.AddSavedModifier(object, RPGManager.CreateStatModifier(gamedataStatType.CritDPSBonus, gameStatModifierType.Additive, stats.critDPSBonus));
-  ss.AddSavedModifier(object, RPGManager.CreateStatModifier(gamedataStatType.HeadshotDamageMultiplier, gameStatModifierType.Additive, stats.headshotMultiplier));
-  ss.AddSavedModifier(object, RPGManager.CreateStatModifier(gamedataStatType.BonusRicochetDamage, gameStatModifierType.Additive, stats.bonusRicochetDamage));
-  ss.AddSavedModifier(object, RPGManager.CreateStatModifier(gamedataStatType.StaminaCostReduction, gameStatModifierType.Additive, stats.staminaCostReduction));
-  ss.AddSavedModifier(object, RPGManager.CreateStatModifier(gamedataStatType.ChargeMultiplier, gameStatModifierType.Additive, stats.chargeMultiplier));
-  ss.AddSavedModifier(object, RPGManager.CreateStatModifier(gamedataStatType.ChargeTime, gameStatModifierType.Additive, stats.chargeTime));
 }
 
 @addMethod(PlayerPuppet)
@@ -286,17 +244,11 @@ public func RestorePersistedDamageType(itemData: ref<gameItemData>, originalStat
   L(s"Restored damage type \(newDamageType) with \(originalStats.damage) (\(originalStats.minDamage) - \(originalStats.maxDamage))");
 }
 
-@addMethod(PlayerPuppet)
-public func IsWeaponECraft(data: ref<gameItemData>) -> Bool {
-  let typeStr: String = ToString(data.GetItemType());
-  return StrContains(typeStr, "Wea_");
-}
-
 @wrapMethod(PlayerPuppet)
 protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
   wrappedMethod(evt);
   let itemData: ref<gameItemData> = evt.itemData;
-  if this.IsWeaponECraft(itemData) {
+  if ECraftUtils.IsWeapon(itemData.GetItemType()) {
     EnhancedCraftSystem.GetInstance(this.GetGame()).RefreshSingleItem(itemData);
   };
 }

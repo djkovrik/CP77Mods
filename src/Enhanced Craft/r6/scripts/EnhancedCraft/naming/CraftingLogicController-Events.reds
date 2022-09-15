@@ -11,5 +11,4 @@ protected func UpdateItemPreview(craftableController: ref<CraftableItemLogicCont
   let event: ref<EnhancedCraftRecipeClicked> = new EnhancedCraftRecipeClicked();
   event.isWeapon = Equals(recipe.inventoryItem.EquipmentArea, gamedataEquipmentArea.Weapon);
   GameInstance.GetUISystem(player.GetGame()).QueueEvent(event);
-  L("--- Event launched");
 }

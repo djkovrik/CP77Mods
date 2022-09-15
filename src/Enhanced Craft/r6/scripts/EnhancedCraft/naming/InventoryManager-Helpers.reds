@@ -1,5 +1,6 @@
 module EnhancedCraft.Naming
 import EnhancedCraft.System.EnhancedCraftSystem
+import EnhancedCraft.Common.ECraftUtils
 
 // -- Returns gameItemData array for weapons from player inventory
 @addMethod(InventoryDataManagerV2)
@@ -23,7 +24,7 @@ public final func GetPlayerItemsDataByCategory(category: gamedataItemCategory, o
 @wrapMethod(InventoryDataManagerV2)
 public final func GetPlayerItemData(itemId: ItemID) -> wref<gameItemData> {
   let itemData: wref<gameItemData> = wrappedMethod(itemId);
-  if this.m_Player.IsWeaponECraft(itemData) {
+  if ECraftUtils.IsWeapon(itemData.GetItemType()) {
     EnhancedCraftSystem.GetInstance(this.m_Player.GetGame()).RefreshSingleItem(itemData);
   };
   return itemData;
@@ -32,7 +33,7 @@ public final func GetPlayerItemData(itemId: ItemID) -> wref<gameItemData> {
 @wrapMethod(InventoryDataManagerV2)
 public final func GetExternalGameItemData(ownerId: EntityID, externalItemId: ItemID) -> wref<gameItemData> {
   let itemData: wref<gameItemData> = wrappedMethod(ownerId, externalItemId);
-  if this.m_Player.IsWeaponECraft(itemData) {
+  if ECraftUtils.IsWeapon(itemData.GetItemType()) {
     EnhancedCraftSystem.GetInstance(this.m_Player.GetGame()).RefreshSingleItem(itemData);
   };
   return itemData;
@@ -44,7 +45,7 @@ public final func GetTooltipDataForInventoryItem(tooltipItemData: InventoryItemD
   let system: ref<EnhancedCraftSystem> = EnhancedCraftSystem.GetInstance(this.m_Player.GetGame());
   let newItemData: ref<gameItemData> = InventoryItemData.GetGameItemData(tooltipItemData);
   let newInventoryItemData: InventoryItemData;
-  if this.m_Player.IsWeaponECraft(newItemData) {
+  if ECraftUtils.IsWeapon(newItemData.GetItemType()) {
     if system.HasCustomName(newItemData.GetID()) || system.HasCustomDamageStats(newItemData.GetID()) {
       EnhancedCraftSystem.GetInstance(this.m_Player.GetGame()).RefreshSingleItem(newItemData);
       newInventoryItemData = this.GetInventoryItemData(newItemData);

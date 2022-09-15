@@ -18,7 +18,7 @@ protected cb func OnInitialize() -> Bool {
 @addMethod(CraftingGarmentItemPreviewGameController)
 protected cb func OnPreviewClicked(e: ref<inkPointerEvent>) -> Bool {
   if e.IsAction(n"mouse_left") {
-    this.m_isMouseDown = true;
+    this.m_isMouseDownECraft = true;
   };
 }
 
@@ -32,20 +32,21 @@ protected cb func OnHoverOut(e: ref<inkPointerEvent>) -> Bool {
   this.m_isHoveredByCursor = false;
 }
 
-
 // -- Save LMB state
 @addMethod(CraftingGarmentItemPreviewGameController)
 protected cb func OnGlobalRelease(e: ref<inkPointerEvent>) -> Bool {
   super.OnGlobalRelease(e);
   if e.IsAction(n"mouse_left") {
-    this.m_isMouseDown = false;
+    this.m_isMouseDownECraft = false;
   };
 }
 
 // -- Scale and move player puppet preview
 @addMethod(CraftingGarmentItemPreviewGameController)
 protected cb func OnRelativeInput(e: ref<inkPointerEvent>) -> Bool {
-  super.OnRelativeInput(e);
+  if !this.m_isMouseDownECraft {
+    super.OnRelativeInput(e);
+  };
 
   let amount: Float = e.GetAxisData();
   let currentScale: Vector2;
@@ -66,7 +67,7 @@ protected cb func OnRelativeInput(e: ref<inkPointerEvent>) -> Bool {
     this.m_preview.SetScale(new Vector2(newScale, newScale));
   };
 
-  if this.m_isMouseDown {
+  if this.m_isMouseDownECraft {
     if e.IsAction(n"mouse_x") {
       this.m_preview.ChangeTranslation(new Vector2(amount, 0.0));      
     };

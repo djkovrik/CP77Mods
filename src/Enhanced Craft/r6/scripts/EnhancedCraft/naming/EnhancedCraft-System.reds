@@ -1,4 +1,5 @@
 module EnhancedCraft.System
+import EnhancedCraft.Config.ECraftConfig
 import EnhancedCraft.Common.*
 
 // -- Custom scriptable system which controls custom weapon names persistence
@@ -13,6 +14,8 @@ public class EnhancedCraftSystem extends ScriptableSystem {
 
   private let m_player: wref<PlayerPuppet>;
 
+  private let m_config: ref<ECraftConfig>;
+
   private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
     L(s"Persisted data loaded, stored names: \(ToString(ArraySize(this.m_nameRecords)))");
     L(s"Persisted data loaded, stored damage: \(ToString(ArraySize(this.m_damageRecords)))");
@@ -24,11 +27,17 @@ public class EnhancedCraftSystem extends ScriptableSystem {
       L("Inventory manager initialzied");
       this.RefreshData();
     };
+    this.m_config = new ECraftConfig();
   }
 
   public final static func GetInstance(gameInstance: GameInstance) -> ref<EnhancedCraftSystem> {
     let system: ref<EnhancedCraftSystem> = GameInstance.GetScriptableSystemsContainer(gameInstance).Get(n"EnhancedCraft.System.EnhancedCraftSystem") as EnhancedCraftSystem;
     return system;
+  }
+
+  public final static func GetConfig(gameInstance: GameInstance) -> ref<ECraftConfig> {
+    let config: ref<ECraftConfig> = EnhancedCraftSystem.GetInstance(gameInstance).GetConfig();
+    return config;
   }
 
   public func RefreshData() -> Void {
@@ -37,6 +46,7 @@ public class EnhancedCraftSystem extends ScriptableSystem {
   }
 
   public func RefreshSingleItem(itemData: ref<gameItemData>) -> Void {
+    L(s"RefreshSingleItem \(ItemID.GetCombinedHash(itemData.GetID()))");
     let hasCustomName: Bool = this.HasCustomName(itemData.GetID());
     let hasCustomDamage: Bool = this.HasCustomDamageStats(itemData.GetID());
     let customDamage: ref<DamageTypeStats>;
@@ -165,6 +175,10 @@ public class EnhancedCraftSystem extends ScriptableSystem {
         this.m_player.RestorePersistedDamageType(data, customDamage);
       };
     };
+  }
+
+  private func GetConfig() -> ref<ECraftConfig> {
+    return this.m_config;
   }
 
   // -- STASH

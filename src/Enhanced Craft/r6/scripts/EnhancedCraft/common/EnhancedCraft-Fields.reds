@@ -1,81 +1,18 @@
 module EnhancedCraft.Common
 import EnhancedCraft.Config.ECraftConfig
 
-// -- CraftingLogicController
+// -- CraftingMainLogicController
+@addField(CraftingMainLogicController)
+public let m_selectedRecipeVariants: array<ref<RecipeData>>;
 
-// Stores loaded weapon variants from TweakXL
-@addField(CraftingLogicController)
-private let weaponVariants: array<TweakDBID>;
+@addField(CraftingMainLogicController)
+public let m_selectedRecipeVariantsNoIconics: array<ref<RecipeData>>;
 
-// Same variants but with excluded Iconics
-@addField(CraftingLogicController)
-private let weaponVariantsNoIconic: array<TweakDBID>;
+@addField(CraftingMainLogicController)
+public let m_isClothesSelected: Bool;
 
-// Stores loaded clothes variants from TweakXL
-@addField(CraftingLogicController)
-private let clothesVariants: array<TweakDBID>;
-
-// Stores current weapon variant index
-@addField(CraftingLogicController)
-private let weaponIndex: Int32;
-
-// Stores current clothes variant index
-@addField(CraftingLogicController)
-private let clothesIndex: Int32;
-
-// Is currently selected variant not original
-@addField(CraftingLogicController)
-private let alternateSkinSelected: Bool;
-
-// Is currently selected variant Iconic
-@addField(CraftingLogicController)
-private let iconicSelected: Bool;
-
-// Stores original recipe
-@addField(CraftingLogicController)
-private let originalRecipe: ref<RecipeData>;
-
-// Stores original recipe quality
-@addField(CraftingLogicController)
-private let originalRecipeQuality: CName;
-
-// Stores original recipe item data
-// Used to calculate ingredients for variants
-@addField(CraftingLogicController)
-private let originalItemData: ref<gameItemData>;
-
-// Stores original recipe
-@addField(CraftingLogicController)
-private let currentItemRecord: ref<Item_Record>;
-
-// Stores currently selected damage type
-@addField(CraftingLogicController)
-private let currentDamageType: gamedataStatType;
-
-@addField(CraftingLogicController)
-private let ecraftConfig: ref<ECraftConfig>;
-
-// -- CraftItemRequest
-
-// Custom crafting request flag
-@addField(CraftItemRequest)
-public let custom: Bool;
-
-// Store ingredients from original recipe
-@addField(CraftItemRequest)
-public let originalIngredients: array<IngredientData>;
-
-// Store quality from original recipe
-@addField(CraftItemRequest)
-public let originalQuality: CName;
-
-// Store multiplier for ingredients quantity
-@addField(CraftItemRequest)
-public let quantityMultiplier: Int32;
-
-// Store multiplier for ingredients quantity
-@addField(CraftItemRequest)
-public let selectedDamageType: gamedataStatType;
+@addField(CraftingMainLogicController)
+public let m_isWeaponSelected: Bool;
 
 
 // -- gameItemData
@@ -98,6 +35,39 @@ private let m_playerPuppet: wref<PlayerPuppet>;
 // Stores damage type selected in crafting menu
 @addField(CraftingSystem)
 private let m_requestedDamageType: gamedataStatType;
+
+
+// -- CraftingLogicController
+
+// Stores current weapon variant index
+@addField(CraftingLogicController)
+private let selectedItemIndex: Int32;
+
+// // Stores current clothes variant index
+// @addField(CraftingLogicController)
+// private let clothesIndex: Int32;
+
+// // Is currently selected variant not original
+// @addField(CraftingLogicController)
+// private let alternateSkinSelected: Bool;
+
+// Is currently selected variant Iconic
+@addField(CraftingLogicController)
+private let iconicSelected: Bool;
+
+// Stores currently selected damage type
+@addField(CraftingLogicController)
+private let currentDamageType: gamedataStatType;
+
+@addField(CraftingLogicController)
+private let ecraftConfig: ref<ECraftConfig>;
+
+
+// -- CraftItemRequest
+
+// Store multiplier for ingredients quantity
+@addField(CraftItemRequest)
+public let selectedDamageType: gamedataStatType;
 
 
 // -- ItemTooltipCommonController
@@ -158,7 +128,10 @@ private let m_settingsDamageEnabled: Bool;
 private let m_preview: ref<inkWidget>;
 
 @addField(CraftingGarmentItemPreviewGameController)
-private let m_isMouseDown: Bool;
-
-@addField(CraftingGarmentItemPreviewGameController)
 private let m_isHoveredByCursor: Bool;
+
+
+// -- WardrobeSetPreviewGameController
+
+@addField(WardrobeSetPreviewGameController)
+private let m_isMouseDownECraft: Bool;

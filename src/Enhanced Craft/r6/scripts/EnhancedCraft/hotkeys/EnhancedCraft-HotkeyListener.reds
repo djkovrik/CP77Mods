@@ -24,21 +24,21 @@ public class EnhancedCraftHotkeyListener {
     let actionName: CName = ListenerAction.GetName(action);
     let isReleased: Bool = Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED);
     // Weapons
-    if ArraySize(this.controller.weaponVariants) > 1 {
+    if ArraySize(this.controller.m_selectedRecipeVariants) > 2 && this.controller.m_isWeaponSelected {
       if Equals(actionName, HotkeyActions.EnhancedCraftPrevAction(this.config)) && isReleased && !this.config.randomizerEnabled {
-        this.controller.LoadPrevWeaponVariant();
+        this.controller.LoadPrevItemVariant();
       };
       if Equals(actionName, HotkeyActions.EnhancedCraftNextAction(this.config)) && isReleased && !this.config.randomizerEnabled {
-        this.controller.LoadNextWeaponVariant();
+        this.controller.LoadNextItemVariant();
       };
     };
     // Clothes
-    if ArraySize(this.controller.clothesVariants) > 1 {
+    if ArraySize(this.controller.m_selectedRecipeVariants) > 2 && this.controller.m_isClothesSelected {
       if Equals(actionName, HotkeyActions.EnhancedCraftPrevAction(this.config)) && isReleased {
-        this.controller.LoadPrevClothesVariant();
+        this.controller.LoadPrevItemVariant();
       };
       if Equals(actionName, HotkeyActions.EnhancedCraftNextAction(this.config)) && isReleased {
-        this.controller.LoadNextClothesVariant();
+        this.controller.LoadNextItemVariant();
       };
     };
   }

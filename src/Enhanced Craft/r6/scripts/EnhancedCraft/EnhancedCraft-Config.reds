@@ -9,42 +9,42 @@ public class ECraftConfig {
   }
 
   // Enables weapon damage type selection
-  @runtimeProperty("ModSettings.mod", "Enhanced Craft")
+  @runtimeProperty("ModSettings.mod", "ECraft")
   @runtimeProperty("ModSettings.category", "Mod-Craft-UI-Damage-Type")
   @runtimeProperty("ModSettings.displayName", "Mod-Craft-UI-Damage-Type-Enable")
   @runtimeProperty("ModSettings.description", "Mod-Craft-UI-Damage-Type-Enable-Desc")
   let customizedDamageEnabled: Bool = true;
 
   // Required perk to unlock weapon damage type selection
-  @runtimeProperty("ModSettings.mod", "Enhanced Craft")
+  @runtimeProperty("ModSettings.mod", "ECraft")
   @runtimeProperty("ModSettings.category", "Mod-Craft-UI-Damage-Type")
   @runtimeProperty("ModSettings.displayName", "Mod-Craft-UI-Damage-Perk")
   @runtimeProperty("ModSettings.description", "Mod-Craft-UI-Damage-Perk-Desc")
   let perkToUnlockDamageTypes: ECraftPerkToUnlockDamageTypes = ECraftPerkToUnlockDamageTypes.TrueCraftsman;
 
   // Required perk to unlock standard weapon variants
-  @runtimeProperty("ModSettings.mod", "Enhanced Craft")
+  @runtimeProperty("ModSettings.mod", "ECraft")
   @runtimeProperty("ModSettings.category", "Mod-Craft-Settings-Base")
   @runtimeProperty("ModSettings.displayName", "Mod-Craft-Settings-Basic")
   @runtimeProperty("ModSettings.description", "Mod-Craft-Settings-Basic-Desc")
   let perkToUnlockStandard: ECraftPerkToUnlockStandard = ECraftPerkToUnlockStandard.GreaseMonkey;
 
   // Required perk to unlock iconic weapon variants
-  @runtimeProperty("ModSettings.mod", "Enhanced Craft")
+  @runtimeProperty("ModSettings.mod", "ECraft")
   @runtimeProperty("ModSettings.category", "Mod-Craft-Settings-Iconic")
   @runtimeProperty("ModSettings.displayName", "Mod-Craft-Settings-Iconic-Unlock")
   @runtimeProperty("ModSettings.description", "Mod-Craft-Settings-Iconic-Unlock-Desc")
   let perkToUnlockIconics: ECraftPerkToUnlockIconics = ECraftPerkToUnlockIconics.EdgerunnerArtisan;
 
   // Quality requirement for iconic variants craft
-  @runtimeProperty("ModSettings.mod", "Enhanced Craft")
+  @runtimeProperty("ModSettings.mod", "ECraft")
   @runtimeProperty("ModSettings.category", "Mod-Craft-Settings-Iconic")
   @runtimeProperty("ModSettings.displayName", "Mod-Craft-Settings-Iconic-Condition")
   @runtimeProperty("ModSettings.description", "Mod-Craft-Settings-Iconic-Condition-Desc")
   let iconicRecipeCondition: ECraftIconicRecipeCondition = ECraftIconicRecipeCondition.Epic;
 
   // Ingredients quantity multiplier for Iconic variants
-  @runtimeProperty("ModSettings.mod", "Enhanced Craft")
+  @runtimeProperty("ModSettings.mod", "ECraft")
   @runtimeProperty("ModSettings.category", "Mod-Craft-Settings-Iconic")
   @runtimeProperty("ModSettings.displayName", "Mod-Craft-Iconic-Ingredients")
   @runtimeProperty("ModSettings.description", "Mod-Craft-Iconic-Ingredients-Desc")
@@ -54,35 +54,35 @@ public class ECraftConfig {
   let iconicIngredientsMultiplier: Int32 = 5;
 
   // Required perk to unlock clothes variants
-  @runtimeProperty("ModSettings.mod", "Enhanced Craft")
+  @runtimeProperty("ModSettings.mod", "ECraft")
   @runtimeProperty("ModSettings.category", "Mod-Craft-Settings-Clothes")
   @runtimeProperty("ModSettings.displayName", "Mod-Craft-UI-Damage-Perk")
   @runtimeProperty("ModSettings.description", "Mod-Craft-Settings-Clothes-Unlock-Desc")
   let perkToUnlockClothes: ECraftPerkToUnlockClothes = ECraftPerkToUnlockClothes.TrueCraftsman;
 
   // If enabled then adds jacket variants from DLC
-  @runtimeProperty("ModSettings.mod", "Enhanced Craft")
+  @runtimeProperty("ModSettings.mod", "ECraft")
   @runtimeProperty("ModSettings.category", "Mod-Craft-Settings-Clothes")
   @runtimeProperty("ModSettings.displayName", "Mod-Craft-Settings-Jackets")
   @runtimeProperty("ModSettings.description", "Mod-Craft-Settings-Jackets-Desc")
   let includeJacketsFromDLC: Bool = false;
 
   // If enabled then random weapon skin will be applied for crafted item
-  @runtimeProperty("ModSettings.mod", "Enhanced Craft")
+  @runtimeProperty("ModSettings.mod", "ECraft")
   @runtimeProperty("ModSettings.category", "Mod-Craft-Settings-Misc")
   @runtimeProperty("ModSettings.displayName", "Mod-Craft-Settings-Randomizer")
   @runtimeProperty("ModSettings.description", "Mod-Craft-Settings-Randomizer-Desc")
   let randomizerEnabled: Bool = false;
 
   // If enabled then you can rename your crafted weapons
-  @runtimeProperty("ModSettings.mod", "Enhanced Craft")
+  @runtimeProperty("ModSettings.mod", "ECraft")
   @runtimeProperty("ModSettings.category", "Mod-Craft-Settings-Misc")
   @runtimeProperty("ModSettings.displayName", "Mod-Craft-Settings-Naming")
   @runtimeProperty("ModSettings.description", "Mod-Craft-Settings-Naming-Desc")
   let customNamesEnabled: Bool = true;
 
   // Enables controller support
-  @runtimeProperty("ModSettings.mod", "Enhanced Craft")
+  @runtimeProperty("ModSettings.mod", "ECraft")
   @runtimeProperty("ModSettings.category", "Mod-Craft-Settings-Misc")
   @runtimeProperty("ModSettings.displayName", "Mod-Craft-UI-Controller")
   @runtimeProperty("ModSettings.description", "Mod-Craft-UI-Controller-Desc")
