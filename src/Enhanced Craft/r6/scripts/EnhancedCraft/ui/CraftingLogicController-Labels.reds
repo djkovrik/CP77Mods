@@ -78,7 +78,7 @@ public func Init(craftingGameController: wref<CraftingMainGameController>) -> Vo
 @addMethod(CraftingLogicController)
 public func RefreshSkinsCounter() -> Void {
   let size: Int32 = ArraySize(this.m_selectedRecipeVariants);
-  if size > 2 {
+  if size > 1 {
     this.m_availableSkinsText.SetVisible(true);
     this.m_availableSkinsText.SetText(s"\(GetLocalizedTextByKey(n"Mod-Craft-UI-Variants")) \(size)");
   } else {
@@ -90,7 +90,7 @@ public func RefreshSkinsCounter() -> Void {
 @addMethod(CraftingLogicController)
 public func RefreshClothesCounter() -> Void {
   let size: Int32 = ArraySize(this.m_selectedRecipeVariants);
-  if size > 2 {
+  if size > 1 {
     this.m_availableClothesText.SetVisible(true);
     this.m_availableClothesText.SetText(s"\(GetLocalizedTextByKey(n"Mod-Craft-UI-Variants")) \(size)");
   } else {
@@ -101,7 +101,7 @@ public func RefreshClothesCounter() -> Void {
 // -- Refresh Randomizer label state
 @addMethod(CraftingLogicController)
 public func RefreshRandomizerLabel() -> Void {
-  if ArraySize(this.m_selectedRecipeVariants) > 2 {
+  if ArraySize(this.m_selectedRecipeVariantsNoIconics) > 1 {
     this.m_randomizerText.SetVisible(true);
     if this.ecraftConfig.randomizerEnabled {
       this.m_randomizerText.SetText(GetLocalizedTextByKey(n"Mod-Craft-UI-Randomizer-Enabled"));

@@ -19,24 +19,24 @@ private func IsWeaponAvailableBasedOnPerks(variantId: TweakDBID, quality: CName,
 
   if isIconic {
     perkUnlockValue = EnumInt(config.perkToUnlockIconics);
-    shouldSkip = Equals(perkUnlockValue, 2) || recipeQualityValue < configQualityValue;
+    shouldSkip = Equals(perkUnlockValue, 1) || recipeQualityValue < configQualityValue;
     if !shouldSkip {
       switch perkUnlockValue {
-        case 1: return true;
-        case 2: return false;
-        case 3: return canCraftRare;
-        case 4: return canCraftEpic;
-        case 5: return canCraftLegendary;
+        case 0: return true;
+        case 1: return false;
+        case 2: return canCraftRare;
+        case 3: return canCraftEpic;
+        case 4: return canCraftLegendary;
         default: return false;
       };
     };
   } else {
     perkUnlockValue = EnumInt(config.perkToUnlockStandard);
     switch perkUnlockValue {
-      case 1: return true;
-      case 2: return canCraftRare;
-      case 3: return canCraftEpic;
-      case 4: return canCraftLegendary;
+      case 0: return true;
+      case 1: return canCraftRare;
+      case 2: return canCraftEpic;
+      case 3: return canCraftLegendary;
     };
   };
 
@@ -57,10 +57,10 @@ private func IsClothesAvailableBasedOnPerks(variantId: TweakDBID, quality: CName
 
   if !shouldSkip {
     switch perkUnlockValue {
-      case 1: return true;
-      case 2: return canCraftRare;
-      case 3: return canCraftEpic;
-      case 4: return canCraftLegendary;
+      case 0: return true;
+      case 1: return canCraftRare;
+      case 2: return canCraftEpic;
+      case 3: return canCraftLegendary;
     };
   };
 
@@ -81,7 +81,7 @@ public final const func GetRecipesData(itemRecord: ref<Item_Record>, iconicsMult
   let tempItemCategory: ref<ItemCategory_Record>;
   let newRecipeData: ref<RecipeData>;
 
-  L(s"GetRecipesData for \(GetLocalizedTextByKey(itemRecord.DisplayName())): quality \(quality), is weapon: \(isWeapon), is clothes: \(isClothes)");
+  L(s"GetRecipesData for \(TDBID.ToStringDEBUG(itemRecord.GetID())) \(GetLocalizedTextByKey(itemRecord.DisplayName())): quality \(quality), is weapon: \(isWeapon), is clothes: \(isClothes)");
   let tdbid: TweakDBID = itemRecord.GetID();
   let itemsVariant: Variant = TweakDBInterface.GetFlat(tdbid + t".ecraftVariants");
   let variantsArray: array<TweakDBID> = FromVariant<array<TweakDBID>>(itemsVariant);

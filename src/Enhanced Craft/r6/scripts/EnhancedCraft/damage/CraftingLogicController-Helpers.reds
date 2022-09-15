@@ -15,7 +15,7 @@ public func CanSelectDamageType() -> Bool {
   let canCraftEpic: Bool = ss.GetStatValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatType.CanCraftEpicItems) > 0.0;
   let canCraftLegendary: Bool = ss.GetStatValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatType.CanCraftLegendaryItems) > 0.0;
   let configValue: Int32 = EnumInt(this.ecraftConfig.perkToUnlockDamageTypes);
-  let canSelect: Bool = Equals(configValue, 1) || (canCraftRare && Equals(configValue, 2)) || (canCraftEpic && Equals(configValue, 3)) || (canCraftLegendary && Equals(configValue, 4));
+  let canSelect: Bool = Equals(configValue, 0) || (canCraftRare && Equals(configValue, 1)) || (canCraftEpic && Equals(configValue, 2)) || (canCraftLegendary && Equals(configValue, 3));
   return canSelect;
 }
 

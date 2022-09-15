@@ -16,9 +16,9 @@ public class ECraftUtils {
   // -- Get quality representation as int value to bind with the one defined in IconicRecipeCondition
   public static func GetBaseQualityValue(quality: CName) -> Int32  {
     switch (quality) {
-      case n"Rare": return 1;
-      case n"Epic": return 2;
-      case n"Legendary": return 3;
+      case n"Rare": return 0;
+      case n"Epic": return 1;
+      case n"Legendary": return 2;
     };
 
     return 0;
