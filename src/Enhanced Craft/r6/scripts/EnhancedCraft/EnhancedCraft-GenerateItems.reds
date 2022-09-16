@@ -2,11 +2,14 @@ import EnhancedCraft.Common.L
 
 public class EnhancedCraftItemsGenerator extends ScriptableTweak {
 
+  private let counter: Int32;
+
   protected cb func OnApply() -> Void {
     let weaponsVariants: array<CName>;
     let clothesVariants: array<CName>;
     let id: TweakDBID;
     let name: String;
+    this.counter = 0;
     L("Checking weapon items...");
     for record in TweakDBInterface.GetRecords(n"WeaponItem") {
       let item = record as Item_Record;
@@ -27,6 +30,8 @@ public class EnhancedCraftItemsGenerator extends ScriptableTweak {
         this.GenerateClothesVariants(name, item, clothesVariants);
       };
     };
+
+    L(s"Generated records: \(this.counter)");
   }
 
   private func GenerateNewWeaponItem(baseName: String, baseRecord: ref<Item_Record>, variants: array<CName>) -> Void {
@@ -61,6 +66,7 @@ public class EnhancedCraftItemsGenerator extends ScriptableTweak {
         TweakDBManager.UpdateRecord(newRecordId);
         ArrayPush(craftingVariants, newRecordId);
         L(s" - generated - \(firstTag) variant for \(GetLocalizedTextByKey(baseRecord.DisplayName())): type \(baseRecord.Quality().Type()), iconic: \(isPresetIconic) -> \(newRecordIdStrName)");
+        this.counter += 1;
       };
     };
 
@@ -102,6 +108,7 @@ public class EnhancedCraftItemsGenerator extends ScriptableTweak {
         TweakDBManager.UpdateRecord(newRecordId);
         L(s" - generated - \(variantAppearanceName) variant for \(GetLocalizedTextByKey(baseRecord.DisplayName())): type \(baseRecord.Quality().Type()), iconic: \(isPresetIconic) -> \(newRecordIdStrName)");
         ArrayPush(craftingVariants, newRecordId);
+        this.counter += 1;
       };
     };
 

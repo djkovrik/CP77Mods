@@ -1,6 +1,7 @@
 module EnhancedCraft.Naming
 import EnhancedCraft.System.EnhancedCraftSystem
 import EnhancedCraft.Common.ECraftUtils
+import EnhancedCraft.Common.L
 
 // -- Returns gameItemData array for weapons from player inventory
 @addMethod(InventoryDataManagerV2)
@@ -37,21 +38,4 @@ public final func GetExternalGameItemData(ownerId: EntityID, externalItemId: Ite
     EnhancedCraftSystem.GetInstance(this.m_Player.GetGame()).RefreshSingleItem(itemData);
   };
   return itemData;
-}
-
-// -- Refresh data for stash item tooltip
-@wrapMethod(InventoryDataManagerV2)
-public final func GetTooltipDataForInventoryItem(tooltipItemData: InventoryItemData, equipped: Bool, opt vendorItem: Bool, opt overrideRarity: Bool) -> ref<InventoryTooltipData> {
-  let system: ref<EnhancedCraftSystem> = EnhancedCraftSystem.GetInstance(this.m_Player.GetGame());
-  let newItemData: ref<gameItemData> = InventoryItemData.GetGameItemData(tooltipItemData);
-  let newInventoryItemData: InventoryItemData;
-  if ECraftUtils.IsWeapon(newItemData.GetItemType()) {
-    if system.HasCustomName(newItemData.GetID()) || system.HasCustomDamageStats(newItemData.GetID()) {
-      EnhancedCraftSystem.GetInstance(this.m_Player.GetGame()).RefreshSingleItem(newItemData);
-      newInventoryItemData = this.GetInventoryItemData(newItemData);
-      return wrappedMethod(newInventoryItemData, equipped, vendorItem, overrideRarity);
-    };
-  };
-
-  return wrappedMethod(tooltipItemData, equipped, vendorItem, overrideRarity);
 }

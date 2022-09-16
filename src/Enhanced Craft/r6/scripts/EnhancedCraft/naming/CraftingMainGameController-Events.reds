@@ -23,8 +23,7 @@ protected cb func OnEnhancedCraftRecipeCraftedEvent(event: ref<EnhancedCraftReci
     itemId = event.itemId;
     name = this.m_nameInput.GetText();
     system.AddCustomName(itemId, name);
-    system.RefreshStoredNames();
-    system.RefreshStoredDamages();
+    system.RefreshPlayerInventory();
   };
   this.m_nameInput.SetText("");
   this.RestoreOriginalName();
