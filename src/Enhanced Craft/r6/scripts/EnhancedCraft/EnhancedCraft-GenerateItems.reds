@@ -36,6 +36,7 @@ public class EnhancedCraftItemsGenerator extends ScriptableTweak {
 
   private func GenerateNewWeaponItem(baseName: String, baseRecord: ref<Item_Record>, variants: array<CName>) -> Void {
     let baseRecordId: TweakDBID = baseRecord.GetID();
+    let baseRecordType: gamedataItemType = baseRecord.ItemType().Type();
     let variantRecord: ref<Item_Record>;
     let variantVisualTags: array<CName>;
     let firstTag: CName;
@@ -44,6 +45,8 @@ public class EnhancedCraftItemsGenerator extends ScriptableTweak {
     let newRecordIdStrName: CName;
     let craftingVariants: array<TweakDBID>;
     let isPresetIconic: Bool;
+    let projectileTemplateName: CName;
+    let useProjectileAppearance: Bool;
 
     L(s"Generating variants for: \(TDBID.ToStringDEBUG(baseRecordId)) - \(baseName)");
 
@@ -63,6 +66,16 @@ public class EnhancedCraftItemsGenerator extends ScriptableTweak {
         TweakDBManager.SetFlat(newRecordIdStrName + n".isPresetIconic", isPresetIconic);
         TweakDBManager.SetFlat(newRecordIdStrName + n".usesVariants", true);
         TweakDBManager.SetFlat(newRecordIdStrName + n".visualTags", variantVisualTags);
+        // Add projectiles for knives
+        if Equals(baseRecordType, gamedataItemType.Wea_Knife) {
+          projectileTemplateName = TweakDBInterface.GetCName(baseRecordId + t".projectileTemplateName", n"");
+          useProjectileAppearance = TweakDBInterface.GetBool(baseRecordId + t".useProjectileAppearance", false);
+          L(s" ---- knife detected: \(projectileTemplateName) - \(useProjectileAppearance)");
+          if NotEquals(projectileTemplateName, n"") {
+            TweakDBManager.SetFlat(newRecordIdStrName + n".projectileTemplateName", projectileTemplateName);
+          };
+          TweakDBManager.SetFlat(newRecordIdStrName + n".useProjectileAppearance", useProjectileAppearance);
+        };
         TweakDBManager.UpdateRecord(newRecordId);
         ArrayPush(craftingVariants, newRecordId);
         L(s" - generated - \(firstTag) variant for \(GetLocalizedTextByKey(baseRecord.DisplayName())): type \(baseRecord.Quality().Type()), iconic: \(isPresetIconic) -> \(newRecordIdStrName)");
