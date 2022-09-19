@@ -227,3 +227,14 @@ private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt blockActiveSl
     this.UnequipWardrobeSetExtra();
   };
 }
+
+@addMethod(EquipmentSystemPlayerData)
+public func InvalidateAppearance() -> Void {
+  this.QuestRestoreSlot(gamedataEquipmentArea.Head);
+  this.QuestRestoreSlot(gamedataEquipmentArea.Face);
+  this.QuestRestoreSlot(gamedataEquipmentArea.Legs);
+  this.QuestRestoreSlot(gamedataEquipmentArea.Feet);
+  this.QuestRestoreSlot(gamedataEquipmentArea.OuterChest);
+  this.QuestRestoreSlot(gamedataEquipmentArea.InnerChest);
+  this.QuestRestoreSlot(gamedataEquipmentArea.Outfit);
+}

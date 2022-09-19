@@ -110,4 +110,5 @@ protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
 protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpawn>) -> Bool {
   wrappedMethod(evt);
   WardrobeSystemExtra.GetInstance(this.GetGame()).MigrateOldWardrobe();
+  WardrobeSystemExtra.GetInstance(this.GetGame()).InvalidateAppearance();
 }
