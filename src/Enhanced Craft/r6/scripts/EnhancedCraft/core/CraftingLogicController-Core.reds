@@ -16,7 +16,7 @@ protected func UpdateItemPreview(craftableController: ref<CraftableItemLogicCont
   this.selectedItemIndex = 0;
   L(s"UpdateItemPreview for \(recipe.label) \(TDBID.ToStringDEBUG(recipe.id.GetID())) \(recipe.id.ItemType().Type()): weapon: \(this.m_isWeaponSelected), clothes: \(this.m_isClothesSelected), variants: \(ArraySize(this.m_selectedRecipeVariants))");
   this.RefreshPanelWidgets();
-  if ArraySize(this.m_selectedRecipeVariants) > 0 {
+  if ArraySize(this.m_selectedRecipeVariants) > 0 && ( this.m_isWeaponSelected || this.m_isClothesSelected ) {
     recipe = this.m_selectedRecipeVariants[0];
     this.UpdateRecipePreviewPanel(recipe);
   } else {
