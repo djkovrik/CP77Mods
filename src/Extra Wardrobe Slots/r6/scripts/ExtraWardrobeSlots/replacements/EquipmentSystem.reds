@@ -1,6 +1,3 @@
-import ExtraWardrobeSlots.Utils.W
-
-
 @addField(EquipmentSystemPlayerData)
 private let m_wardrobeSystemExtra: ref<WardrobeSystemExtra>;
 
@@ -19,6 +16,11 @@ public final func OnAttach() -> Void {
 public final func OnRestored() -> Void {
   wrappedMethod();
   this.m_wardrobeSystemExtra = WardrobeSystemExtra.GetInstance(this.m_owner.GetGame());
+  // Additional visual items validation
+  let activeIndex: gameWardrobeClothingSetIndexExtra = this.m_wardrobeSystemExtra.GetActiveClothingSetIndex();
+  if Equals(activeIndex, gameWardrobeClothingSetIndexExtra.INVALID) {
+    this.InvalidateAppearance();
+  };
 }
 
 @addMethod(EquipmentSystemPlayerData)

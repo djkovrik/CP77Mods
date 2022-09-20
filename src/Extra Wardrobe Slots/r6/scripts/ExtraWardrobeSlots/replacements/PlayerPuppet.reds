@@ -1,3 +1,5 @@
+import ExtraWardrobeSlots.Utils.W
+
 @replaceMethod(PlayerPuppet)
 protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
   let drawItemRequest: ref<DrawItemRequest>;
@@ -110,5 +112,4 @@ protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
 protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpawn>) -> Bool {
   wrappedMethod(evt);
   WardrobeSystemExtra.GetInstance(this.GetGame()).MigrateOldWardrobe();
-  WardrobeSystemExtra.GetInstance(this.GetGame()).InvalidateAppearance();
 }

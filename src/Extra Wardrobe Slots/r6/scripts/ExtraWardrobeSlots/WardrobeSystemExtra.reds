@@ -8,7 +8,7 @@ public final class WardrobeSystemExtra extends ScriptableSystem {
 
   private let originalSystem: ref<WardrobeSystem>;
 
-  private persistent let activeSetIndex: gameWardrobeClothingSetIndexExtra;
+  private persistent let activeSetIndex: gameWardrobeClothingSetIndexExtra = gameWardrobeClothingSetIndexExtra.INVALID;
 
   private persistent let clothingSets: array<ref<ClothingSetExtra>>;
 
@@ -17,14 +17,7 @@ public final class WardrobeSystemExtra extends ScriptableSystem {
     if IsDefined(player) {
       this.player = player;
       this.originalSystem = GameInstance.GetWardrobeSystem(this.player.GetGame());
-
-      // Reset index for pre-wardrobe saves
-      if Equals(ArraySize(this.clothingSets), 0) {
-        W("Index reset");
-        this.activeSetIndex = gameWardrobeClothingSetIndexExtra.INVALID;
-      };
-
-      W(s"Alternate wardrobe system initialized: active slot index: \(this.activeSetIndex), persisted sets: \(ArraySize(this.clothingSets))");
+      W(s"WardrobeSystemExtra initialized: current slot: \(this.activeSetIndex), current sets: \(ArraySize(this.clothingSets))");
     };
   }
 
@@ -81,7 +74,6 @@ public final class WardrobeSystemExtra extends ScriptableSystem {
   }
 
   public final func SetActiveClothingSetIndex(slotIndex: gameWardrobeClothingSetIndexExtra) -> Void {
-    W(s"SetActiveClothingSetIndex to \(slotIndex)");
     this.activeSetIndex = slotIndex;
   }
 
@@ -177,14 +169,6 @@ public final class WardrobeSystemExtra extends ScriptableSystem {
       W(s"Migrated old sets: \(ArraySize(oldSets))");
     };
   }
-
-  public func InvalidateAppearance() -> Void {
-    if Equals(this.activeSetIndex, gameWardrobeClothingSetIndexExtra.INVALID) {
-      W("Invalidate non-transmogged appearance");
-      EquipmentSystem.GetData(this.player).InvalidateAppearance();
-    };
-  }
-
 
   private func MigrateOldSetIndex(index: gameWardrobeClothingSetIndex) -> Void {
     let newIndex: gameWardrobeClothingSetIndexExtra = this.ToExtraIndex(index);
