@@ -87,6 +87,10 @@ public class MMUtils {
   public static func ShouldShowOnMinimap(data: SDeviceMappinData, roleMappinData: ref<GameplayRoleMappinData>, component: ref<GameplayRoleComponent>, loot: ref<LootConfig>, minimap: ref<MiniMapConfig>, world: ref<WorldConfig>) -> Bool {
     let quality: gamedataQuality = roleMappinData.m_quality;
 
+    if roleMappinData.isShard_mm {
+      return !minimap.hideShards;
+    };
+
     if Equals(quality, gamedataQuality.Legendary) {
       return !minimap.hideLegendary;
     };
@@ -105,10 +109,6 @@ public class MMUtils {
 
     if Equals(quality, gamedataQuality.Common) {
       return !minimap.hideCommon;
-    };
-
-    if roleMappinData.isShard_mm {
-      return !minimap.hideShards;
     };
 
     if Equals(data.mappinVariant, gamedataMappinVariant.LootVariant) {
