@@ -8,14 +8,14 @@ let CurrentSpeed_IMZ: BlackboardID_Float;
 let m_UIBlackboard_IMZ: wref<IBlackboard>;
 
 @addField(hudCarController)
-let m_config: wref<ZoomConfig>;
+let m_config: ref<ZoomConfig>;
 
 @wrapMethod(hudCarController)
 protected cb func OnPlayerAttach(playerPuppet: ref<GameObject>) -> Bool {
   wrappedMethod(playerPuppet);
   let puppet: ref<PlayerPuppet> = playerPuppet as PlayerPuppet;
   if IsDefined(puppet) {
-    this.m_config = puppet.IMZConfig();
+    this.m_config = new ZoomConfig();
     this.m_UIBlackboard_IMZ = GameInstance.GetBlackboardSystem(puppet.GetGame()).Get(GetAllBlackboardDefs().UI_System);
   };
 }
@@ -32,4 +32,9 @@ protected cb func OnSpeedValueChanged(speedValue: Float) -> Bool {
     resultingValue = ZoomCalc.RoundTo05(speedValue * m);
     this.m_UIBlackboard_IMZ.SetFloat(GetAllBlackboardDefs().UI_System.CurrentSpeed_IMZ, resultingValue);
   }
+}
+
+@addMethod(hudCarController)
+protected cb func OnRefreshZoomConfigsEvent(evt: ref<RefreshZoomConfigsEvent>) -> Void {
+  this.m_config = new ZoomConfig();
 }

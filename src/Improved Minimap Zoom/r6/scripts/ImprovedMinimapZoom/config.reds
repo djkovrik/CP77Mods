@@ -22,7 +22,7 @@ public class ZoomConfig {
   @runtimeProperty("ModSettings.step", "5")
   @runtimeProperty("ModSettings.min", "20")
   @runtimeProperty("ModSettings.max", "200")
-  let combat: Int32 = 60;
+  let combat: Float = 60;
   
   // Zoom value for quest areas
   @runtimeProperty("ModSettings.mod", "IZoom")
@@ -32,7 +32,7 @@ public class ZoomConfig {
   @runtimeProperty("ModSettings.step", "5")
   @runtimeProperty("ModSettings.min", "20")
   @runtimeProperty("ModSettings.max", "200")
-  let questArea: Int32 = 40;
+  let questArea: Float = 40;
   
   // Zoom value for restricted and dangerous areas
   @runtimeProperty("ModSettings.mod", "IZoom")
@@ -42,7 +42,7 @@ public class ZoomConfig {
   @runtimeProperty("ModSettings.step", "5")
   @runtimeProperty("ModSettings.min", "20")
   @runtimeProperty("ModSettings.max", "200")
-  let securityArea: Int32 = 60;
+  let securityArea: Float = 60;
   
   // Zoom value for interiors
   @runtimeProperty("ModSettings.mod", "IZoom")
@@ -52,7 +52,7 @@ public class ZoomConfig {
   @runtimeProperty("ModSettings.step", "5")
   @runtimeProperty("ModSettings.min", "20")
   @runtimeProperty("ModSettings.max", "200")
-  let interior: Int32 = 40;
+  let interior: Float = 40;
 
   // Zoom value for remained cases:
   // not in interior, not in vehicle, not in security area, no active combat
@@ -63,7 +63,7 @@ public class ZoomConfig {
   @runtimeProperty("ModSettings.step", "5")
   @runtimeProperty("ModSettings.min", "20")
   @runtimeProperty("ModSettings.max", "200")
-  let exterior: Int32 = 60;
+  let exterior: Float = 60;
 
   // -- MINIMAP PEEK HOTKEY CONFIG
 
@@ -75,7 +75,7 @@ public class ZoomConfig {
   @runtimeProperty("ModSettings.step", "5")
   @runtimeProperty("ModSettings.min", "20")
   @runtimeProperty("ModSettings.max", "200")
-  let peek: Int32 = 40;
+  let peek: Float = 40;
 
   // By default hotkey zooms minimap while you hold it and 
   // resets zoom when you release it, replace false with true here
@@ -107,7 +107,7 @@ public class ZoomConfig {
   @runtimeProperty("ModSettings.step", "5")
   @runtimeProperty("ModSettings.min", "20")
   @runtimeProperty("ModSettings.max", "200")
-  let minZoom: Int32 = 80;
+  let minZoom: Float = 80;
 
   // Speed threshold when zoom will start increasing from MinZoom
   @runtimeProperty("ModSettings.mod", "IZoom")
@@ -117,7 +117,7 @@ public class ZoomConfig {
   @runtimeProperty("ModSettings.step", "5")
   @runtimeProperty("ModSettings.min", "20")
   @runtimeProperty("ModSettings.max", "200")
-  let minSpeed: Int32 = 20;
+  let minSpeed: Float = 20;
 
   // Maximal zoom value
   @runtimeProperty("ModSettings.mod", "IZoom")
@@ -127,7 +127,7 @@ public class ZoomConfig {
   @runtimeProperty("ModSettings.step", "5")
   @runtimeProperty("ModSettings.min", "20")
   @runtimeProperty("ModSettings.max", "200")
-  let maxZoom: Int32 = 140;
+  let maxZoom: Float = 140;
 
   // Speed threshold when zoom will reach the value from MaxZoom
   @runtimeProperty("ModSettings.mod", "IZoom")
@@ -137,5 +137,5 @@ public class ZoomConfig {
   @runtimeProperty("ModSettings.step", "5")
   @runtimeProperty("ModSettings.min", "20")
   @runtimeProperty("ModSettings.max", "200")
-  let maxSpeed: Int32 = 120;
+  let maxSpeed: Float = 120;
 }

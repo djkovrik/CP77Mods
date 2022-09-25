@@ -6,23 +6,23 @@ public class ZoomCalc {
 
   public static func GetForSpeed(speed: Float, config: ref<ZoomConfig>) -> Float {
     if !config.isDynamicZoomEnabled {
-      return Cast<Float>(config.minZoom);
+      return config.minZoom;
     };
-    if speed <= Cast<Float>(config.minSpeed) { 
-      return Cast<Float>(config.minZoom); 
+    if speed <= config.minSpeed { 
+      return config.minZoom; 
     };
-    if speed >= Cast<Float>(config.maxSpeed) { 
-      return Cast<Float>(config.maxZoom); 
+    if speed >= config.maxSpeed { 
+      return config.maxZoom; 
     };
 
     // Calculate zoom increase step based on min/max values
-    let speedRange: Float = Cast<Float>(config.maxSpeed) - Cast<Float>(config.minSpeed) ;
-    let zoomRange: Float = Cast<Float>(config.maxZoom) - Cast<Float>(config.minZoom);
+    let speedRange: Float = config.maxSpeed -config.minSpeed;
+    let zoomRange: Float = config.maxZoom - config.minZoom;
     let step: Float = zoomRange / speedRange;
     // Shift speed range for cases when MinSpeed is above zero
-    let baseSpeed: Float = speed - Cast<Float>(config.minSpeed) ;
+    let baseSpeed: Float = speed - config.minSpeed ;
     let zoomToAdd: Float = baseSpeed * step;
-    let calculated: Float = Cast<Float>(config.minZoom) + zoomToAdd;
+    let calculated: Float = config.minZoom + zoomToAdd;
     return calculated;
   }
 

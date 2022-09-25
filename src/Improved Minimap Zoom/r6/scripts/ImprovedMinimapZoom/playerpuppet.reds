@@ -1,21 +1,8 @@
 import ImprovedMinimapMain.ZoomConfig
+import ImprovedMinimapUtil.IMZLog
 
 public class RestorePlayerZoneEvent extends Event {
   public let realZone: Int32;
-}
-
-@addField(PlayerPuppet)
-public let imz_config: ref<ZoomConfig>;
-
-@wrapMethod(PlayerPuppet)
-protected cb func OnGameAttached() -> Bool {
-  wrappedMethod();
-  this.imz_config = new ZoomConfig();
-}
-
-@addMethod(PlayerPuppet)
-public func IMZConfig() -> ref<ZoomConfig> {
-  return this.imz_config;
 }
 
 @addMethod(PlayerPuppet)
@@ -28,6 +15,8 @@ public func ForceMinimapRefreshWithFakeZone() -> Void {
     fakedZone = 3;
   };
 
+  IMZLog(s"Force minimap refresh with fake zone \(fakedZone)");
+
   this.GetPlayerStateMachineBlackboard().SetInt(GetAllBlackboardDefs().PlayerStateMachine.Zones, fakedZone, false);
   let event: ref<RestorePlayerZoneEvent> = new RestorePlayerZoneEvent();
   event.realZone = realZone;
@@ -37,4 +26,5 @@ public func ForceMinimapRefreshWithFakeZone() -> Void {
 @addMethod(PlayerPuppet)
 protected cb func OnRestorePlayerZoneEvent(evt: ref<RestorePlayerZoneEvent>) -> Bool {
   this.GetPlayerStateMachineBlackboard().SetInt(GetAllBlackboardDefs().PlayerStateMachine.Zones, evt.realZone, false);
+  IMZLog(s"Restore with real zone \(evt.realZone)");
 }

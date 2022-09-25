@@ -10,7 +10,7 @@ protected cb func OnMountingEvent(evt: ref<MountingEvent>) -> Bool {
   if IsDefined(mounted) && mounted.IsPlayer() {
     let player: ref<PlayerPuppet> = mounted as PlayerPuppet;
     if IsDefined(player) {
-      let config: ref<ZoomConfig> = player.IMZConfig();
+      let config: ref<ZoomConfig> = new ZoomConfig();
       GameInstance.GetBlackboardSystem(player.GetGame()).Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.IsMounted_IMZ, true, true);
       // Dirty hack #3: reset IsPlayerMounted to remove minimap shift
       if config.isDynamicZoomEnabled {

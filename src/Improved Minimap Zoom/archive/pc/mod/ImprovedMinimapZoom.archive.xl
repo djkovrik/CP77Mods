@@ -5,3 +5,4 @@ localization:
     fr-fr: base\localization\fr-fr\onscreens\imz.json
     zh-tw: base\localization\zh-tw\onscreens\imz.json
     ar-ar: base\localization\ar-ar\onscreens\imz.json
+    it-it: base\localization\it-it\onscreens\imz.json
