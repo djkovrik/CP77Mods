@@ -6,3 +6,5 @@ localization:
     zh-tw: base\localization\zh-tw\onscreens\vdealer.json
     zh-cn: base\localization\zh-cn\onscreens\vdealer.json
     pl-pl: base\localization\pl-pl\onscreens\vdealer.json
+    es-es: base\localization\es-es\onscreens\vdealer.json
+    it-it: base\localization\it-it\onscreens\vdealer.json
