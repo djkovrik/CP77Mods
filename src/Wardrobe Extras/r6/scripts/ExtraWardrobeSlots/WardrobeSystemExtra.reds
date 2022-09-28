@@ -12,6 +12,8 @@ public final class WardrobeSystemExtra extends ScriptableSystem {
 
   private persistent let clothingSets: array<ref<ClothingSetExtra>>;
 
+  private persistent let blacklist: array<ItemID>;
+
   private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
     let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(request.owner.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
     if IsDefined(player) {
@@ -39,15 +41,48 @@ public final class WardrobeSystemExtra extends ScriptableSystem {
   }
 
   public final func GetFilteredStoredItemIDs(equipmentArea: gamedataEquipmentArea) -> array<ItemID> {
-    return this.originalSystem.GetFilteredStoredItemIDs(equipmentArea);
+    let base: array<ItemID> = this.originalSystem.GetFilteredStoredItemIDs(equipmentArea);
+    let result: array<ItemID>;
+
+    for id in base {
+      if !ArrayContains(this.blacklist, id) {
+        ArrayPush(result, id);
+      } else {
+        W(s"Item \(ItemID.GetCombinedHash(id)) was blacklisted, skip");
+      };
+    };
+
+    return result;
   }
 
   public final func GetFilteredInventoryItemsData(equipmentArea: gamedataEquipmentArea, inventoryItemDataV2: ref<IScriptable>) -> array<InventoryItemData> {
-    return this.originalSystem.GetFilteredInventoryItemsData(equipmentArea, inventoryItemDataV2);
+    let base: array<InventoryItemData> = this.originalSystem.GetFilteredInventoryItemsData(equipmentArea, inventoryItemDataV2);
+    let result: array<InventoryItemData>;
+    let itemId: ItemID;
+    for item in base {
+      itemId = InventoryItemData.GetID(item);
+      if !ArrayContains(this.blacklist, itemId) {
+        ArrayPush(result, item);
+      } else {
+        W(s"Item \(ItemID.GetCombinedHash(itemId)) was blacklisted, skip");
+      };
+    };
+
+    return result;
   }
 
   public final func IsItemBlacklisted(itemID: ItemID) -> Bool {
     return this.originalSystem.IsItemBlacklisted(itemID);
+  }
+
+  public final func WasItemBlacklisted(itemID: ItemID) -> Bool {
+    return ArrayContains(this.blacklist, itemID);
+  }
+
+  public final func AddToBlacklist(itemID: ItemID) -> Void {
+    let current: array<ItemID> = this.blacklist;
+    ArrayPush(current, itemID);
+    this.blacklist = current;
   }
 
   public final func PushBackClothingSet(clothingSet: ref<ClothingSetExtra>) -> Void {

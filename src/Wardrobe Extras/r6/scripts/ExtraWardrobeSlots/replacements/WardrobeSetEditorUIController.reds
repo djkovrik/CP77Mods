@@ -1,3 +1,5 @@
+import ExtraWardrobeSlots.Utils.W
+
 @addField(WardrobeSetEditorUIController)
 private let m_wardrobeSystemExtra: wref<WardrobeSystemExtra>;
 
@@ -266,4 +268,41 @@ protected cb func OnResetButtonClicked(evt: ref<inkPointerEvent>) -> Bool {
       this.UpdateButtonVisibility();
     };
   };
+}
+
+// Blacklist on activate_secondary call
+@wrapMethod(WardrobeSetEditorUIController)
+protected cb func OnEquipmentClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
+  wrappedMethod(evt);
+  if evt.actionName.IsAction(n"activate_secondary") && NotEquals(evt.display.GetDisplayContext(), ItemDisplayContext.GearPanel) {
+    let displayData: InventoryItemDisplayData = evt.display.GetItemDisplayData();
+    let itemId: ItemID = displayData.m_itemID;
+    this.m_wardrobeSystemExtra.AddToBlacklist(itemId);
+    this.UpdateAvailableItems(this.m_currentEquipmentArea);
+  };
+}
+
+// Show additional hint
+@wrapMethod(WardrobeSetEditorUIController)
+private final func SetButtonHintsHoverOver(display: ref<InventoryItemDisplayController>) -> Void {
+  if Equals(display.GetDisplayContext(), ItemDisplayContext.GearPanel) {
+    this.m_buttonHintsController.AddButtonHint(n"select", GetLocalizedText("UI-Settings-ButtonMappings-Actions-Select"));
+    if !InventoryItemData.IsEmpty(display.GetItemData()) {
+      this.m_buttonHintsController.AddButtonHint(n"unequip_item", GetLocalizedText("UI-UserActions-Unequip"));
+    };
+  } else {
+    this.m_buttonHintsController.AddButtonHint(n"equip_item", GetLocalizedText("UI-UserActions-Equip"));
+  };
+
+  wrappedMethod(display);
+  if NotEquals(display.GetDisplayContext(), ItemDisplayContext.GearPanel) {
+    this.m_buttonHintsController.AddButtonHint(n"activate_secondary", GetLocalizedText("LocKey#17833"));
+  };
+}
+
+// Hide hint
+@wrapMethod(WardrobeSetEditorUIController)
+private final func SetButtonHintsHoverOut() -> Void {
+  wrappedMethod();
+  this.m_buttonHintsController.RemoveButtonHint(n"activate_secondary");
 }
