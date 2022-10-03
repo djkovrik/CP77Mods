@@ -52,7 +52,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public final static func GetInstance(gameInstance: GameInstance) -> ref<EdgerunningSystem> {
-    let system: ref<EdgerunningSystem> = GameInstance.GetScriptableSystemsContainer(gameInstance).Get(n"EdgerunningSystem") as EdgerunningSystem;
+    let system: ref<EdgerunningSystem> = GameInstance.GetScriptableSystemsContainer(gameInstance).Get(n"Edgerunning.System.EdgerunningSystem") as EdgerunningSystem;
     return system;
   }
 
@@ -441,9 +441,8 @@ public class EdgerunningSystem extends ScriptableSystem {
   public func RunPsychosisChecks() -> Void {
     E("!!! RUN PRE STAGE 2 - CYBERPSYCHOSIS CHECKS");
     this.StopPsychosisChecks();
-    //let nextRun: Float = Cast<Float>(this.config.pcychoCheckPeriod) * 60.0;
-    let nextRun: Float = 5.0;
-    E(s"? Scheduled next psycho check fromRunPsychosisChecks after \(nextRun) seconds");
+    let nextRun: Float = Cast<Float>(this.config.pcychoCheckPeriod) * 60.0;
+    E(s"? Scheduled next psycho check from RunPsychosisChecks after \(nextRun) seconds");
     this.psychosisCheckDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new LaunchCycledPsychosisCheckRequest(), nextRun);
   }
 
