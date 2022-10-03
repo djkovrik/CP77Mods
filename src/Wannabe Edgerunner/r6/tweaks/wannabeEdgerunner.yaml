@@ -1,0 +1,230 @@
+BaseStatusEffect.ActiveLowHumanityGlitch:
+  $type: StatusEffect_Record
+  duration:
+    $type: StatModifierGroup_Record
+    statModifiers:
+    - $type: ConstantStatModifier_Record
+      modifierType: Additive
+      statType: t"BaseStats.MaxDuration"
+      value: 3600
+  gameplayTags: [ Debuff ]
+  packages:
+   - $type: GameplayLogicPackage_Record
+     stats:
+     - $type: ConstantStatModifier_Record
+       statType: BaseStats.CritDamage
+       modifierType: Multiplier
+       value: 0.25
+  statusEffectType: BaseStatusEffectTypes.Misc
+  uiData: 
+    $type: StatusEffectUIData_Record
+    description: "LocKey#Mod-Edg-Low-Humanity-Desc"
+    displayName: "LocKey#Mod-Edg-Low-Humanity"
+    iconPath: decreased_stats_icon
+
+BaseStatusEffect.ActivePrePsychosisGlitch:
+  $type: StatusEffect_Record
+  duration:
+    $type: StatModifierGroup_Record
+    statModifiers:
+    - $type: ConstantStatModifier_Record
+      modifierType: Additive
+      statType: t"BaseStats.MaxDuration"
+      value: 3600
+  gameplayTags: [ Debuff ]
+  packages:
+   - $type: GameplayLogicPackage_Record
+     stats:
+     - $type: ConstantStatModifier_Record
+       statType: BaseStats.CritChance
+       modifierType: Multiplier
+       value: 0.25
+  statusEffectType: BaseStatusEffectTypes.Misc
+  uiData: 
+    $type: StatusEffectUIData_Record
+    description: "LocKey#Mod-Edg-Pre-Psychosis-Desc"
+    displayName: "LocKey#Mod-Edg-Pre-Psychosis"
+    iconPath: decreased_stats_icon
+  VFX:
+    - $type: StatusEffectFX_Record
+      name: status_bleeding
+
+BaseStatusEffect.ActivePsychosisBuff:
+  $type: StatusEffect_Record
+  duration:
+    $type: StatModifierGroup_Record
+    statModifiers:
+    - $type: ConstantStatModifier_Record
+      modifierType: Additive
+      statType: t"BaseStats.MaxDuration"
+      value: 66
+  gameplayTags: [ Buff ]
+  packages:
+   - $type: GameplayLogicPackage_Record
+     stats:
+     - $type: ConstantStatModifier_Record
+       statType: BaseStats.HealthInCombatRegenEnabled
+       modifierType: Additive
+       value: 1.0
+     - $type: ConstantStatModifier_Record
+       statType: BaseStats.MaxSpeed
+       modifierType: Multiplier
+       value: 2.5
+     - $type: ConstantStatModifier_Record
+       statType: BaseStats.Armor
+       modifierType: Multiplier
+       value: 2.0
+     effectors:
+     - $type: ModifyStatPoolModifierEffector_Record
+       effectorClassName: ModifyStatPoolModifierEffector
+       prereqRecord: Prereqs.AlwaysTruePrereq
+       effectorClassName: ModifyStatPoolModifierEffector
+       statPoolType: Health
+       modificationType: Regeneration
+       poolModifier:
+         $type: PoolValueModifier_Record
+         enabled: true
+         rangeBegin: 0
+         rangeEnd: 999
+         startDelay: 0
+         valuePerSec: 50
+         delayOnChange: false
+  statusEffectType: BaseStatusEffectTypes.Misc
+  uiData: 
+    $type: StatusEffectUIData_Record
+    description: "LocKey#Mod-Edg-Cyberpsychosis-Desc"
+    displayName: "LocKey#Mod-Edg-Cyberpsychosis"
+    iconPath: immunity_icon
+  SFX:
+    - $type: StatusEffectFX_Record
+      name: ono_v_fear_panic_scream
+  VFX:
+    - $type: StatusEffectFX_Record
+      name: johnny_sickness_blackout
+
+BaseStatusEffect.RipperDocMedBuff:
+  $type: StatusEffect_Record
+  duration: Items.LongLastingConsumableDuration
+  gameplayTags: [ Buff ]
+  statusEffectType: BaseStatusEffectTypes.Misc
+  uiData: 
+    $type: StatusEffectUIData_Record
+    description: "LocKey#Mod-Edg-Ripper-Med-Desc"
+    displayName: "LocKey#Mod-Edg-Ripper-Med"
+    iconPath: inhaler_buff_icon
+  VFX:
+    - BaseStatusEffect.InhalerBuff_inline0
+
+Price.RipperdocMedModifier:
+  $base: Price.PriceMultiplier
+  value: 2000
+
+Items.ripperdoc_med:
+  $base: Items.BlackLaceV0
+  displayName: l"Mod-Edg-Ripper-Med"
+  localizedDescription: l"Mod-Edg-Ripper-Med-Desc"
+  quality: t"Quality.Rare"
+  iconPath: inhaler_6_ripperdoc_med
+  appearanceName: drug_3
+  CraftingData:
+    $type: CraftingPackage_Record
+    craftingExpModifier: 1
+    overcraftPenaltyModifier: 1
+    craftingRecipe:
+    - $type: RecipeElement_Record
+      amount: 30
+      ingredient: Items.CommonMaterial1
+    - $type: RecipeElement_Record
+      amount: 20
+      ingredient: Items.UncommonMaterial1
+    - $type: RecipeElement_Record
+      amount: 15
+      ingredient: Items.RareMaterial1
+  objectActions:
+    - t"ItemAction.Drop"
+    - t"ItemAction.Disassemble"
+    - t"ItemAction.ConsumableDisassemble"
+    - $type: ItemAction_Record
+      actionName: Consume
+      objectActionType: ObjectActionType.Item
+      completionEffects:
+      - $type: ObjectActionEffect_Record
+        statusEffect: BaseStatusEffect.RipperDocMedBuff
+  OnEquip:
+    - $type: GameplayLogicPackage_Record
+      UIData:
+        $type: GameplayLogicPackageUIData_Record
+        localizedDescription: l"Mod-Edg-Ripper-Med-Desc"
+        intValues: [ 1 ]
+  statModifierGroups:
+    - t"Items.LongLastingConsumableDuration"
+  buyPrice:
+   - Price.BasePrice
+   - Price.BuyMultiplier
+   - Price.ItemQualityMultiplier
+   - Price.IconicMultiplier
+   - Price.BuyPriceIntrinsicModMult
+   - Price.RipperdocMedModifier
+
+Price.RipperdocMedModifierRecipe:
+  $base: Price.PriceMultiplier
+  value: 5000
+
+Items.recipe_ripperdoc_med:
+  $base: Items.RecipeConsumableRareBase
+  displayName: l"Mod-Edg-Ripper-Med"
+  craftingResult:
+    $type: CraftingResult_Record
+    amount: 1
+    item: Items.ripperdoc_med
+  buyPrice:
+    - Price.BasePrice
+    - Price.BuyMultiplier
+    - Price.ItemQualityMultiplier
+    - Price.IconicMultiplier
+    - Price.BuyPriceIntrinsicModMult
+    - Price.RipperdocMedModifierRecipe
+
+
+# -- Add inhalers to reapers
+
+# Cassius
+Vendors.wat_nid_ripperdoc_01: &AddInhaler
+  itemStock:
+    - !append
+      item: Items.ripperdoc_med
+      quantity: [ Vendors.MedicStore_inline5 ]
+
+# Kraviz's Clinic
+Vendors.wbr_hil_ripdoc_01: *AddInhaler
+# Fingers M.D.
+Vendors.wbr_jpn_ripperdoc_02: *AddInhaler
+# Viktor's Clinic
+Vendors.wat_lch_ripperdoc_01 : *AddInhaler
+
+
+# -- Add recipe to medstores
+
+Vendors.bls_ina_se1_medicstore_01: &AddRecipe
+  itemStock:
+    - !append
+      item: Items.recipe_ripperdoc_med
+      quantity: [ Vendors.IsPresent ]
+
+Vendors.wat_kab_medicstore_01: *AddRecipe
+Vendors.wat_nid_medicstore_01: *AddRecipe
+Vendors.wat_nid_medicstore_02: *AddRecipe
+Vendors.wat_lch_medicstore_01: *AddRecipe
+Vendors.wbr_jpn_medicstore_01: *AddRecipe
+Vendors.wbr_jpn_medicstore_02: *AddRecipe
+Vendors.wbr_jpn_medicstore_03: *AddRecipe
+Vendors.wbr_nok_medic_01: *AddRecipe
+Vendors.cct_dtn_medic_01: *AddRecipe
+Vendors.cct_cpz_medic_01: *AddRecipe
+Vendors.hey_spr_medicstore_01: *AddRecipe
+Vendors.std_arr_medicstore_01: *AddRecipe
+Vendors.std_rcr_medicstore_01: *AddRecipe
+Vendors.pac_cvi_medicstore_01: *AddRecipe
+
+# Game.AddToInventory("Items.ripperdoc_med", 5)
+# Game.AddToInventory("Items.recipe_ripperdoc_med", 1)
