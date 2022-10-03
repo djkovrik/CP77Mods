@@ -452,7 +452,35 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   private func CanRunPsychosis() -> Bool {
+    let psmBlackboard: ref<IBlackboard> = this.player.GetPlayerStateMachineBlackboard();
+    let tier: Int32 = this.player.GetPlayerStateMachineBlackboard().GetInt(GetAllBlackboardDefs().PlayerStateMachine.HighLevel);
     E("? Check if psychosis available...");
+    
+    if psmBlackboard.GetBool(GetAllBlackboardDefs().PlayerStateMachine.Carrying) {
+      E("- carrying");
+      return false;
+    };
+
+    if psmBlackboard.GetBool(GetAllBlackboardDefs().PlayerStateMachine.IsInLoreAnimationScene)  {
+      E("- animation scene");
+      return false;
+    };
+
+    if GameInstance.GetPhoneManager(this.player.GetGame()).IsPhoneCallActive() {
+      E("- active phone call");
+      return false;
+    };
+
+    if psmBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Swimming) == EnumInt(gamePSMSwimming.Diving) {
+      E("- diving");
+      return false;
+    };
+
+    if this.player.IsMovingVertically() {
+      E("- moving vertically");
+      return false;
+    };
+    
     if this.HasStatusEffect(t"BaseStatusEffect.ActivePsychosisBuff") {
       E("- already active");
       return false;
@@ -473,7 +501,6 @@ public class EdgerunningSystem extends ScriptableSystem {
       return false;
     };
 
-    let tier: Int32 = this.player.GetPlayerStateMachineBlackboard().GetInt(GetAllBlackboardDefs().PlayerStateMachine.HighLevel);
     if tier >= EnumInt(gamePSMHighLevel.SceneTier3) && tier <= EnumInt(gamePSMHighLevel.SceneTier5) {
       E("- has blocking scene active");
       return false;
