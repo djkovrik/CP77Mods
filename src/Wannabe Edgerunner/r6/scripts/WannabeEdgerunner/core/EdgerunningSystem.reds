@@ -73,44 +73,44 @@ public class EdgerunningSystem extends ScriptableSystem {
     let area: gamedataEquipmentArea = item.EquipArea().Type();
     let quality: gamedataQuality = item.Quality().Type();
 
-    let baseCost: Int32;
+    let baseCost: Float = 1.0;
     switch(area) {
       case gamedataEquipmentArea.FrontalCortexCW:
-        baseCost = this.config.frontalCortexCost;
+        baseCost = Cast<Float>(this.config.frontalCortexCost);
         break;
       case gamedataEquipmentArea.SystemReplacementCW:
-        baseCost = this.config.systemReplacementCost;
+        baseCost = Cast<Float>(this.config.systemReplacementCost);
         break;
       case gamedataEquipmentArea.EyesCW:
-        baseCost = this.config.eyesCost;
+        baseCost = Cast<Float>(this.config.eyesCost);
         break;
       case gamedataEquipmentArea.MusculoskeletalSystemCW:
-        baseCost = this.config.musculoskeletalSystemCost;
+        baseCost = Cast<Float>(this.config.musculoskeletalSystemCost);
         break;
       case gamedataEquipmentArea.NervousSystemCW :
-        baseCost = this.config.nervousSystemCost;
+        baseCost = Cast<Float>(this.config.nervousSystemCost);
         break;
       case gamedataEquipmentArea.CardiovascularSystemCW:
-        baseCost = this.config.cardiovascularSystemCost;
+        baseCost = Cast<Float>(this.config.cardiovascularSystemCost);
         break;
       case gamedataEquipmentArea.ImmuneSystemCW:
-        baseCost = this.config.immuneSystemCost;
+        baseCost = Cast<Float>(this.config.immuneSystemCost);
         break;
-      case gamedataEquipmentArea.IntegumentarySystemCW :
-        baseCost = this.config.integumentarySystemCost;
+      case gamedataEquipmentArea.IntegumentarySystemCW:
+        baseCost = Cast<Float>(this.config.integumentarySystemCost);
         break;
       case gamedataEquipmentArea.HandsCW:
-        baseCost = this.config.handsCost;
+        baseCost = Cast<Float>(this.config.handsCost);
         break;
       case gamedataEquipmentArea.ArmsCW:
-        baseCost = this.config.armsCost;
+        baseCost = Cast<Float>(this.config.armsCost);
         break;
       case gamedataEquipmentArea.LegsCW:
-        baseCost = this.config.legsCost;
+        baseCost = Cast<Float>(this.config.legsCost);
         break;
     };
 
-    let qualityMult: Float;
+    let qualityMult: Float = 1.0;
     switch (quality) {
       case gamedataQuality.Common:
         qualityMult = this.config.qualityMultiplierCommon;
@@ -129,7 +129,10 @@ public class EdgerunningSystem extends ScriptableSystem {
         break;
     };
 
-    return baseCost * Cast<Int32>(qualityMult);
+    let result: Float = baseCost * qualityMult;
+    E(s"GetCyberwareCost: \(area) costs \(baseCost), \(quality) mult \(qualityMult) = \(result)");
+
+    return RoundF(result);
   }
 
   public func GetHumanityCurrent() -> Int32 {
