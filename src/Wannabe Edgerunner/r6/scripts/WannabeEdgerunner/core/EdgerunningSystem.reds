@@ -743,22 +743,3 @@ public class RemoveStatusEffectCallback extends DelayCallback {
     E(s"Remove \(TDBID.ToStringDEBUG(this.id)) effect from player");
   }
 }
-
-@addMethod(PlayerPuppet)
-public func GetNearbyEntities() -> array<ref<Entity>> {
-  let hudManager: ref<HUDManager> = this.GetHudManager();
-  let actors: array<ref<HUDActor>> = hudManager.GetAllActors();
-  let entities: array<ref<Entity>>;
-  E(s"Actors: \(ArraySize(actors))");
-  let entity: ref<Entity>;
-  for actor in actors {
-    if Equals(actor.type, HUDActorType.PUPPET) && Equals(actor.status, HUDActorStatus.REGISTERED) {
-      entity = GameInstance.FindEntityByID(this.GetGame(), actor.entityID);
-      //E(s"Actor: type \(actor.type), \(actor.status), position: \(entity.GetWorldPosition())");
-      ArrayPush(entities, entity);
-    } else {
-      //E(s"Actor: type \(actor.type), \(actor.status)");
-    };
-  };
-  return entities;
-}

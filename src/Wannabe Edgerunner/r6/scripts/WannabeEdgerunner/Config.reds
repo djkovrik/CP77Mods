@@ -260,3 +260,6 @@ public class EdgerunningConfig {
     return EPreventionHeatStage.Heat_4;
   }
 }
+
+// Replace false with true to show full debug logs in CET console
+public static func ShowDebugLogsEdgerunner() -> Bool = false
