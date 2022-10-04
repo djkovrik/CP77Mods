@@ -40,10 +40,22 @@ public final class WardrobeSystemExtra extends ScriptableSystem {
     return this.originalSystem.GetStoredItemIDs();
   }
 
+  public func GetBlacklistSize() -> Int32 {
+    return ArraySize(this.blacklist);
+  }
+
+  public func UnblockLastItem() -> Void {
+    let current: array<ItemID> = this.blacklist;
+    let size: Int32 = ArraySize(current);
+    if size > 0 {
+      ArrayErase(current, size - 1);
+      this.blacklist = current;
+    };
+  }
+
   public final func GetFilteredStoredItemIDs(equipmentArea: gamedataEquipmentArea) -> array<ItemID> {
     let base: array<ItemID> = this.originalSystem.GetFilteredStoredItemIDs(equipmentArea);
     let result: array<ItemID>;
-
     for id in base {
       if !ArrayContains(this.blacklist, id) {
         ArrayPush(result, id);
@@ -73,10 +85,6 @@ public final class WardrobeSystemExtra extends ScriptableSystem {
 
   public final func IsItemBlacklisted(itemID: ItemID) -> Bool {
     return this.originalSystem.IsItemBlacklisted(itemID);
-  }
-
-  public final func WasItemBlacklisted(itemID: ItemID) -> Bool {
-    return ArrayContains(this.blacklist, itemID);
   }
 
   public final func AddToBlacklist(itemID: ItemID) -> Void {

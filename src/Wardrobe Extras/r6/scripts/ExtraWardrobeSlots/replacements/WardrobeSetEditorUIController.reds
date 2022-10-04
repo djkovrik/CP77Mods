@@ -6,11 +6,88 @@ private let m_wardrobeSystemExtra: wref<WardrobeSystemExtra>;
 @addField(WardrobeSetEditorUIController)
 private let m_currentSetExtra: wref<ClothingSetExtra>;
 
+@addField(WardrobeSetEditorUIController)
+public let m_blockedClothesButton: ref<inkText>;
+
 @wrapMethod(WardrobeSetEditorUIController)
 public final func Initialize(player: wref<PlayerPuppet>, tooltipsManager: wref<gameuiTooltipsManager>, buttonHintsController: wref<ButtonHints>, gameController: wref<WardrobeUIGameController>) -> Void {
   wrappedMethod(player, tooltipsManager, buttonHintsController, gameController);
   this.m_wardrobeSystemExtra = WardrobeSystemExtra.GetInstance(this.m_player.GetGame());
   this.m_currentSetExtra = new ClothingSetExtra();
+  this.m_blockedClothesButton = this.CreateUnblockLabel();
+  this.m_blockedClothesButton.Reparent(this.GetRootCompoundWidget());
+}
+
+@addMethod(WardrobeSetEditorUIController)
+private func CreateUnblockLabel() -> ref<inkText> {
+
+  let label: ref<inkText> = new inkText();
+  label.SetName(n"BlacklistedLabel");
+  label.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+  label.SetFontSize(44);
+  label.SetHAlign(inkEHorizontalAlign.Center);
+  label.SetVAlign(inkEVerticalAlign.Bottom);
+  label.SetAnchor(inkEAnchor.BottomCenter);
+  label.SetInteractive(true);
+  label.SetVisible(false);
+  label.SetAnchorPoint(0.0, 1.0);
+  label.SetMargin(new inkMargin(0.0, 0.0, 0.0, 100.0));
+  label.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+  label.BindProperty(n"tintColor", n"MainColors.Blue");
+
+  return label;
+}
+
+@wrapMethod(WardrobeSetEditorUIController)
+private final func SetupControlButtons() -> Void {
+  wrappedMethod();
+  this.RegisterToCallback(n"OnRelease", this, n"OnUnblockButtonClicked");
+  this.RegisterToCallback(n"OnHoverOver", this, n"OnUnblockButtonHoverOver");
+  this.RegisterToCallback(n"OnHoverOut", this, n"OnUnblockButtonHoverOut");
+}
+
+@addMethod(WardrobeSetEditorUIController)
+protected cb func OnUnblockButtonClicked(evt: ref<inkPointerEvent>) -> Bool {
+  if evt.IsAction(n"click") && Equals(evt.GetTarget().GetName(), n"BlacklistedLabel") {
+    this.PlaySound(n"Button", n"OnPress");
+    this.m_wardrobeSystemExtra.UnblockLastItem();
+    this.UpdateAvailableItems(this.m_currentEquipmentArea);
+  };
+}
+
+@addMethod(WardrobeSetEditorUIController)
+protected cb func OnUnblockButtonHoverOver(evt: ref<inkPointerEvent>) -> Bool {
+  if Equals(evt.GetTarget().GetName(), n"BlacklistedLabel") {
+    this.m_blockedClothesButton.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    this.m_blockedClothesButton.BindProperty(n"tintColor", n"MainColors.ActiveBlue");
+  };
+}
+
+@addMethod(WardrobeSetEditorUIController)
+protected cb func OnUnblockButtonHoverOut(evt: ref<inkPointerEvent>) -> Bool {
+  if Equals(evt.GetTarget().GetName(), n"BlacklistedLabel") {
+    this.m_blockedClothesButton.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    this.m_blockedClothesButton.BindProperty(n"tintColor", n"MainColors.Blue");
+  };
+}
+
+@wrapMethod(WardrobeSetEditorUIController)
+protected cb func OnUninitialize() -> Bool {
+  this.UnregisterFromCallback(n"OnRelease", this, n"OnUnblockButtonClicked");
+  this.UnregisterFromCallback(n"OnHoverOver", this, n"OnUnblockButtonHoverOver");
+  this.UnregisterFromCallback(n"OnHoverOut", this, n"OnUnblockButtonHoverOut");
+  wrappedMethod();
+}
+
+@addMethod(WardrobeSetEditorUIController)
+private func InvalidateUnblockButtonState() -> Void {
+  let blocked: Int32 =  this.m_wardrobeSystemExtra.GetBlacklistSize();
+  if blocked > 0 {
+    this.m_blockedClothesButton.SetText(s"\(GetLocalizedTextByKey(n"UI-Quickhacks-ActionState-StateLocked")): \(blocked)");
+    this.m_blockedClothesButton.SetVisible(true);
+  } else {
+    this.m_blockedClothesButton.SetVisible(false);
+  };
 }
 
 @replaceMethod(WardrobeSetEditorUIController)
@@ -158,6 +235,8 @@ private final func UpdateAvailableItems(equipmentArea: gamedataEquipmentArea) ->
   };
   inkWidgetRef.SetVisible(this.m_emptyGridText, ArraySize(availableItems) <= 0);
   this.m_itemGridDataSource.Reset(virtualWrappedData);
+
+  this.InvalidateUnblockButtonState();
 }
 
 @replaceMethod(WardrobeSetEditorUIController)
@@ -285,15 +364,6 @@ protected cb func OnEquipmentClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
 // Show additional hint
 @wrapMethod(WardrobeSetEditorUIController)
 private final func SetButtonHintsHoverOver(display: ref<InventoryItemDisplayController>) -> Void {
-  if Equals(display.GetDisplayContext(), ItemDisplayContext.GearPanel) {
-    this.m_buttonHintsController.AddButtonHint(n"select", GetLocalizedText("UI-Settings-ButtonMappings-Actions-Select"));
-    if !InventoryItemData.IsEmpty(display.GetItemData()) {
-      this.m_buttonHintsController.AddButtonHint(n"unequip_item", GetLocalizedText("UI-UserActions-Unequip"));
-    };
-  } else {
-    this.m_buttonHintsController.AddButtonHint(n"equip_item", GetLocalizedText("UI-UserActions-Equip"));
-  };
-
   wrappedMethod(display);
   if NotEquals(display.GetDisplayContext(), ItemDisplayContext.GearPanel) {
     this.m_buttonHintsController.AddButtonHint(n"activate_secondary", GetLocalizedText("LocKey#17833"));
