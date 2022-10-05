@@ -39,8 +39,8 @@ public func CreateHumanityIcon() -> ref<inkImage> {
   icon.SetBrushTileType(inkBrushTileType.NoTile);
   icon.SetContentHAlign(inkEHorizontalAlign.Center);
   icon.SetContentVAlign(inkEVerticalAlign.Center);
-  icon.SetTileHAlign(inkEHorizontalAlign.Center);
-  icon.SetTileVAlign(inkEVerticalAlign.Center);
+  // icon.SetTileHAlign(inkEHorizontalAlign.Center);
+  // icon.SetTileVAlign(inkEVerticalAlign.Center);
   icon.SetMargin(new inkMargin(20.0, 20.0, 20.0, 20.0));
   icon.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
   icon.BindProperty(n"tintColor", n"MainColors.Blue");
