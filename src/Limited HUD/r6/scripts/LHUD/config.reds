@@ -770,12 +770,6 @@ public class LHUDAddonsConfig {
   let DialogResizerScale: Float = 1.0;
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
-  @runtimeProperty("ModSettings.category", "Addons-LHUD-Evolution")
-  @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Evolution-Enable")
-  @runtimeProperty("ModSettings.description", "Addons-LHUD-Evolution-Enable-Desc")
-  let FixEvolutionIcons: Bool = true;
-
-  @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Pulse")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Pulse-Disable")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Pulse-Disable-Desc")
