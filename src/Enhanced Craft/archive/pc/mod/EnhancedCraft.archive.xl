@@ -11,3 +11,4 @@ localization:
     pl-pl: base\localization\pl-pl\onscreens\ecraft.json
     it-it: base\localization\it-it\onscreens\ecraft.json
     kr-kr: base\localization\kr-kr\onscreens\ecraft.json
+    ar-ar: base\localization\ar-ar\onscreens\ecraft.json
