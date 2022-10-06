@@ -223,21 +223,120 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
-  @runtimeProperty("ModSettings.displayName", "LocKey#36886")
+  @runtimeProperty("ModSettings.displayName", "LocKey#15716")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
   @runtimeProperty("ModSettings.step", "1")
   @runtimeProperty("ModSettings.min", "0")
   @runtimeProperty("ModSettings.max", "50") 
-  let enemiesKillCost: Int32 = 2;
+  let killCostArasaka: Int32 = 5;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
-  @runtimeProperty("ModSettings.displayName", "LocKey#37213")
+  @runtimeProperty("ModSettings.displayName", "LocKey#20947")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
   @runtimeProperty("ModSettings.step", "1")
   @runtimeProperty("ModSettings.min", "0")
   @runtimeProperty("ModSettings.max", "50") 
-  let copsKillCost: Int32 = 10;
+  let killCostKangTao: Int32 = 5;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
+  @runtimeProperty("ModSettings.displayName", "LocKey#20937")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "50") 
+  let killCostMilitech: Int32 = 5;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
+  @runtimeProperty("ModSettings.displayName", "LocKey#1184")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "50") 
+  let killCostNCPD: Int32 = 10;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
+  @runtimeProperty("ModSettings.displayName", "LocKey#20979")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "50") 
+  let killCostNetWatch: Int32 = 5;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
+  @runtimeProperty("ModSettings.displayName", "LocKey#20602")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "50") 
+  let killCostAnimals: Int32 = 2;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
+  @runtimeProperty("ModSettings.displayName", "LocKey#20953")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "50") 
+  let killCostMaelstrom: Int32 = 1;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
+  @runtimeProperty("ModSettings.displayName", "LocKey#21009")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "50") 
+  let killCostScavengers: Int32 = 1;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
+  @runtimeProperty("ModSettings.displayName", "LocKey#20936")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "50") 
+  let killCostSixthStreet: Int32 = 2;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
+  @runtimeProperty("ModSettings.displayName", "LocKey#21023")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "50") 
+  let killCostTygerClaws: Int32 = 2;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
+  @runtimeProperty("ModSettings.displayName", "LocKey#19900")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "50") 
+  let killCostValentinos: Int32 = 2;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
+  @runtimeProperty("ModSettings.displayName", "LocKey#21032")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "50") 
+  let killCostVoodooBoys: Int32 = 2;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
+  @runtimeProperty("ModSettings.displayName", "LocKey#20994")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "50") 
+  let killCostWraiths: Int32 = 2;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
@@ -246,7 +345,16 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.step", "1")
   @runtimeProperty("ModSettings.min", "0")
   @runtimeProperty("ModSettings.max", "50") 
-  let civiliansKillCost: Int32 = 20;
+  let killCostCivilian: Int32 = 20;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
+  @runtimeProperty("ModSettings.displayName", "LocKey#42782")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Other-Desc")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "50") 
+  let killCostOther: Int32 = 1;
 
   public func GetHeatStage() -> EPreventionHeatStage {
     switch this.psychoHeatLevel {

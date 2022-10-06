@@ -174,9 +174,9 @@ public class EdgerunningSystem extends ScriptableSystem {
     let sr1 = upper / Cast<Int32>(Cast<Float>(sandevistan) * this.config.qualityMultiplierRare);
     let su1 = upper / Cast<Int32>(Cast<Float>(sandevistan) * this.config.qualityMultiplierUncommon);
     let sc1 = upper / Cast<Int32>(Cast<Float>(sandevistan) * this.config.qualityMultiplierCommon);
-    let enm1 = upper / this.config.enemiesKillCost;
-    let cop1 = upper / this.config.copsKillCost;
-    let civ1 = upper / this.config.civiliansKillCost;
+    let enm1 = upper / this.config.killCostOther;
+    let cop1 = upper / this.config.killCostNCPD;
+    let civ1 = upper / this.config.killCostCivilian;
     E("------------------------------------------------------------");
     let bl2 = lower / Cast<Int32>(Cast<Float>(berserk) * this.config.qualityMultiplierLegendary);
     let be2 = lower / Cast<Int32>(Cast<Float>(berserk) * this.config.qualityMultiplierEpic);
@@ -188,9 +188,9 @@ public class EdgerunningSystem extends ScriptableSystem {
     let sr2 = lower / Cast<Int32>(Cast<Float>(sandevistan) * this.config.qualityMultiplierRare);
     let su2 = lower / Cast<Int32>(Cast<Float>(sandevistan) * this.config.qualityMultiplierUncommon);
     let sc2 = lower / Cast<Int32>(Cast<Float>(sandevistan) * this.config.qualityMultiplierCommon);
-    let enm2 = lower / this.config.enemiesKillCost;
-    let cop2 = lower / this.config.copsKillCost;
-    let civ2 = lower / this.config.civiliansKillCost;
+    let enm2 = upper / this.config.killCostOther;
+    let cop2 = upper / this.config.killCostNCPD;
+    let civ2 = upper / this.config.killCostCivilian;
     E(s"Glitches threshold: \(this.upperThreshold), cyberpsychosis threshold: \(this.lowerThreshold)");
     E(s"Berserk usages before glitches: Legendary \(bl1), Epic \(be1), Rare \(br1), Uncommon \(bu1), Common \(bc1)");
     E(s"Berserk usages before psycho: Legendary \(bl2), Epic \(be2), Rare \(br2), Uncommon \(bu2), Common \(bc2)");
@@ -222,23 +222,66 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.InvalidateCurrentState();
   }
 
-  public func OnEnemyKilled(affiliation: gamedataAffiliation) -> Void {
+  public func GetEnemyCost(affiliation: gamedataAffiliation) -> Int32 {
     let cost: Int32 = 0;
-    
-    if Equals(affiliation, gamedataAffiliation.NCPD) {
-      cost = this.config.copsKillCost;
-      E(s"! Policeman killed, humanity -\(cost)");
-    } else {
-      if Equals(affiliation, gamedataAffiliation.Civilian) {
-        cost = this.config.civiliansKillCost;
-        E(s"! Civilian killed, humanity -\(cost)");
-      } else {
-        cost = this.config.enemiesKillCost;
-        E(s"! Enemy killed, humanity -\(cost)");
-      };
+
+    switch affiliation {
+      case gamedataAffiliation.Arasaka:
+        cost = this.config.killCostArasaka;
+        break;
+      case gamedataAffiliation.KangTao:
+        cost = this.config.killCostKangTao;
+        break;
+      case gamedataAffiliation.Maelstrom:
+        cost = this.config.killCostMaelstrom;
+        break;
+      case gamedataAffiliation.Militech:
+        cost = this.config.killCostMilitech;
+        break;
+      case gamedataAffiliation.NCPD:
+        cost = this.config.killCostNCPD;
+        break;
+      case gamedataAffiliation.NetWatch:
+        cost = this.config.killCostNetWatch;
+        break;
+      case gamedataAffiliation.Animals:
+        cost = this.config.killCostAnimals;
+        break;
+      case gamedataAffiliation.Scavengers:
+        cost = this.config.killCostScavengers;
+        break;
+      case gamedataAffiliation.SixthStreet:
+        cost = this.config.killCostSixthStreet;
+        break;
+      case gamedataAffiliation.TygerClaws:
+        cost = this.config.killCostTygerClaws;
+        break;
+      case gamedataAffiliation.Valentinos:
+        cost = this.config.killCostValentinos;
+        break;
+      case gamedataAffiliation.VoodooBoys:
+        cost = this.config.killCostVoodooBoys;
+        break;
+      case gamedataAffiliation.Wraiths:
+        cost = this.config.killCostWraiths;
+        break;
+      case gamedataAffiliation.Civilian:
+        cost = this.config.killCostCivilian;
+        break;
+      default:
+        cost = this.config.killCostOther;
+        break;
     };
 
+    E(s"! \(affiliation) killed, humanity -\(cost)");
+
+    return cost;
+  }
+
+  public func OnEnemyKilled(affiliation: gamedataAffiliation) -> Void {
+    let cost: Int32;
     if !this.IsHumanityChangeBlocked() {
+      cost = this.GetEnemyCost(affiliation);
       this.currentHumanityDamage += cost;
       this.InvalidateCurrentState();
     } else {
@@ -538,8 +581,6 @@ public class EdgerunningSystem extends ScriptableSystem {
     E(s"Zone: \(zoneEnum) \(zone), is in interior: \(isInInterior)");
     
     this.ApplyStatusEffect(t"BaseStatusEffect.ActivePsychosisBuff", 0.1);
-    // this.PlayVFXDelayed(n"ono_v_pain_short", 0.1);
-    // this.PlaySFXDelayed(n"ono_v_fear_panic_scream", 0.7);
     this.drawWeaponDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new TriggerDrawWeaponRequest(), 4.5);
     this.randomShotsDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new TriggerRandomShotRequest(), 6.5);
 
