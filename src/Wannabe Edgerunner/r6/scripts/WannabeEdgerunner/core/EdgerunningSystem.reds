@@ -233,6 +233,7 @@ public class EdgerunningSystem extends ScriptableSystem {
       cost = this.GetEnemyCost(affiliation);
       this.currentHumanityDamage += cost;
       this.InvalidateCurrentState();
+      E(s"! Killed \(affiliation), humanity -\(cost)");
     } else {
       E("! Humanity freezed, kill costs no humanity");
     };
@@ -659,8 +660,6 @@ public class EdgerunningSystem extends ScriptableSystem {
         cost = this.config.killCostOther;
         break;
     };
-
-    E(s"! \(affiliation) killed, humanity -\(cost)");
 
     return cost;
   }
