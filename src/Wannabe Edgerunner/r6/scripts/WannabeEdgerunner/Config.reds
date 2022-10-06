@@ -1,5 +1,3 @@
-module Edgerunning.Common
-
 public class EdgerunningConfig {
 
   public static func Get() -> ref<EdgerunningConfig> {

@@ -1,5 +1,4 @@
 module Edgerunning.System
-import Edgerunning.Common.EdgerunningConfig
 import Edgerunning.Common.E
 
 public class EdgerunningSystem extends ScriptableSystem {
@@ -63,6 +62,7 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public func RefreshConfig() -> Void {
     this.config = new EdgerunningConfig();
+    this.InvalidateCurrentState();
   }
 
   public func IsPsychosisActive() -> Bool {
@@ -678,12 +678,6 @@ public final const func GetCyberwareFromSlots() -> array<ref<Item_Record>> {
 
   E(s"Detected cyberware: \(ArraySize(result))");
   return result;
-}
-
-@wrapMethod(PlayerPuppet)
-protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpawn>) -> Bool {
-  wrappedMethod(evt);
-  EdgerunningSystem.GetInstance(this.GetGame()).InvalidateCurrentState();
 }
 
 public class TriggerDrawWeaponRequest extends ScriptableSystemRequest {}

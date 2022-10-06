@@ -1,5 +1,4 @@
 import Edgerunning.System.EdgerunningSystem
-import Edgerunning.Common.EdgerunningConfig
 
 @addMethod(PreventionSystem)
 public func SpawnPoliceForPsychosis(config: ref<EdgerunningConfig>) -> Void {
