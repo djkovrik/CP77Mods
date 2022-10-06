@@ -180,8 +180,8 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.category", "Mod-Edg-Quality")
   @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Items-Quality-Common")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Quality-Desc")
-  @runtimeProperty("ModSettings.step", "1.0")
-  @runtimeProperty("ModSettings.min", "1.0")
+  @runtimeProperty("ModSettings.step", "0.2")
+  @runtimeProperty("ModSettings.min", "0.0")
   @runtimeProperty("ModSettings.max", "10.0") 
   let qualityMultiplierCommon: Float = 2.0;
 
@@ -189,37 +189,37 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.category", "Mod-Edg-Quality")
   @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Items-Quality-Uncommon")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Quality-Desc")
-  @runtimeProperty("ModSettings.step", "1.0")
-  @runtimeProperty("ModSettings.min", "1.0")
+  @runtimeProperty("ModSettings.step", "0.2")
+  @runtimeProperty("ModSettings.min", "0.0")
   @runtimeProperty("ModSettings.max", "10.0") 
-  let qualityMultiplierUncommon: Float = 1.75;
+  let qualityMultiplierUncommon: Float = 1.8;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Quality")
   @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Items-Quality-Rare")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Quality-Desc")
-  @runtimeProperty("ModSettings.step", "1.0")
-  @runtimeProperty("ModSettings.min", "1.0")
+  @runtimeProperty("ModSettings.step", "0.2")
+  @runtimeProperty("ModSettings.min", "0.0")
   @runtimeProperty("ModSettings.max", "10.0") 
-  let qualityMultiplierRare: Float = 1.5;
+  let qualityMultiplierRare: Float = 1.6;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Quality")
   @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Items-Quality-Epic")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Quality-Desc")
-  @runtimeProperty("ModSettings.step", "1.0")
-  @runtimeProperty("ModSettings.min", "1.0")
+  @runtimeProperty("ModSettings.step", "0.2")
+  @runtimeProperty("ModSettings.min", "0.0")
   @runtimeProperty("ModSettings.max", "10.0") 
-  let qualityMultiplierEpic: Float = 1.25;
+  let qualityMultiplierEpic: Float = 1.4;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Quality")
   @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Items-Quality-Legendary")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Quality-Desc")
-  @runtimeProperty("ModSettings.step", "1.0")
-  @runtimeProperty("ModSettings.min", "1.0")
+  @runtimeProperty("ModSettings.step", "0.2")
+  @runtimeProperty("ModSettings.min", "0.0")
   @runtimeProperty("ModSettings.max", "10.0") 
-  let qualityMultiplierLegendary: Float = 1.0;
+  let qualityMultiplierLegendary: Float = 1.2;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
