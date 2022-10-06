@@ -3,10 +3,8 @@ import Edgerunning.System.EdgerunningSystem
 @addMethod(PreventionSystem)
 public func SpawnPoliceForPsychosis(config: ref<EdgerunningConfig>) -> Void {
   if IsDefined(this.m_player) {
-    this.SetHeatStage(config.GetHeatStage());
-    PreventionSystem.CrimeWitnessRequestToPreventionSystem(this.m_player.GetGame(), this.m_player.GetWorldPosition());
-    PreventionSystem.CombatStartedRequestToPreventionSystem(this.m_player.GetGame(), this.m_player);
-    this.OnHeatChanged();
+    this.AddGeneralPercent(Cast<Float>(config.psychoHeatLevel));
+    this.HeatPipeline();
   };
 }
 

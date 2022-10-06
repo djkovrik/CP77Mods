@@ -361,16 +361,6 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.min", "0")
   @runtimeProperty("ModSettings.max", "50") 
   let killCostOther: Int32 = 1;
-
-  public func GetHeatStage() -> EPreventionHeatStage {
-    switch this.psychoHeatLevel {
-      case 1: return EPreventionHeatStage.Heat_1;
-      case 2: return EPreventionHeatStage.Heat_2;
-      case 3: return EPreventionHeatStage.Heat_3;
-    };
-
-    return EPreventionHeatStage.Heat_4;
-  }
 }
 
 // Replace false with true to show full debug logs in CET console

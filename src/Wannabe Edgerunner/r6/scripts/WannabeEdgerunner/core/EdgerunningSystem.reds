@@ -468,9 +468,11 @@ public class EdgerunningSystem extends ScriptableSystem {
   // -------------------------------------
 
 
-  public func TempDamage() -> Void {
-    this.currentHumanityDamage += 10;
-    this.InvalidateCurrentState();
+  public func Debug() -> Void {
+    // this.currentHumanityDamage += 10;
+    // this.InvalidateCurrentState();
+    this.RunSecondStageIfNotActive();
+    this.RunLastStageIfNotActive();
   }
 
   public func RefreshConfig() -> Void {
