@@ -392,11 +392,11 @@ public class EdgerunningSystem extends ScriptableSystem {
     if this.currentHumanityPool < this.upperThreshold && this.currentHumanityPool >= this.lowerThreshold {
       this.RunLowHumanityGlitch();
     } else {
-      if this.currentHumanityPool < this.lowerThreshold {
+      if this.currentHumanityPool < this.lowerThreshold && this.currentHumanityPool > 0 {
         this.RunPrePsychosisGlitch();
         this.RunPsychosisChecks();
       } else {
-        if Equals(this.currentHumanityPool, 0) {
+        if Equals(this.currentHumanityPool, 0) && this.config.alwaysRunAtZero {
           this.RunPsychosis();
         };
       };

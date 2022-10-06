@@ -60,6 +60,12 @@ public class EdgerunningConfig {
   let psychoHeatLevel: Int32 = 3;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Gameplay-Devices-Interactions-MadnessHack")
+  @runtimeProperty("ModSettings.displayName", "Mod-Edg-Trigger-Zero")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Trigger-Zero-Desc")
+  let alwaysRunAtZero: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Implants-Cost")
   @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-EquipmentAreas-FrontalCortexCW")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Implants-Cost-Desc")
