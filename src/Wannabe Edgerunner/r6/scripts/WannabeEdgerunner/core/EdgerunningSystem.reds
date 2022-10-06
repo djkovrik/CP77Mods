@@ -238,11 +238,11 @@ public class EdgerunningSystem extends ScriptableSystem {
       };
     };
 
-    if !this.RipperdocBuffIsActive() {
+    if !this.IsHumanityChangeBlocked() {
       this.currentHumanityDamage += cost;
       this.InvalidateCurrentState();
     } else {
-      E("! Ripperdoc buff is active, kill costs no humanity");
+      E("! Humanity freezed, kill costs no humanity");
     };
   }
 
@@ -292,12 +292,12 @@ public class EdgerunningSystem extends ScriptableSystem {
 
     let cost: Int32 = this.config.berserkUsageCost * Cast<Int32>(qualityMult);
 
-    if !this.RipperdocBuffIsActive() {
+    if !this.IsHumanityChangeBlocked() {
       this.currentHumanityDamage += cost;
       E(s"! Berserk activated: \(quality) - costs \(cost) humanity");
       this.InvalidateCurrentState();
     } else {
-      E("! Ripperdoc buff is active, berserk costs no humanity");
+      E("! Humanity freezed, berserk costs no humanity");
     };
   }
 
@@ -325,12 +325,12 @@ public class EdgerunningSystem extends ScriptableSystem {
 
     let cost: Int32 = this.config.sandevistanUsageCost * Cast<Int32>(qualityMult);
 
-    if !this.RipperdocBuffIsActive() {
+    if !this.IsHumanityChangeBlocked() {
       this.currentHumanityDamage += cost;
       E(s"! Sandevistan activated: \(quality) - costs \(cost) humanity");
       this.InvalidateCurrentState();
     } else {
-      E("! Ripperdoc buff is active, sandevistan costs no humanity");
+      E("! Humanity freezed, sandevistan costs no humanity");
     };
   }
 
@@ -389,8 +389,16 @@ public class EdgerunningSystem extends ScriptableSystem {
     return installedCyberwarePool;
   }
 
+  private func IsHumanityChangeBlocked() -> Bool {
+    return this.IsPossessed() || this.RipperdocBuffIsActive();
+  }
+
   private func RipperdocBuffIsActive() -> Bool {
     return Equals(StatusEffectSystem.ObjectHasStatusEffect(this.player, t"BaseStatusEffect.RipperDocMedBuff"), true);
+  }
+
+  private func IsPossessed() -> Bool {
+    return this.player.IsPossessedE();
   }
 
   private func HasStatusEffect(id: TweakDBID) -> Bool {
@@ -398,7 +406,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func RunLowHumanityGlitch() -> Void {
-    if this.HasStatusEffect(t"BaseStatusEffect.ActiveLowHumanityGlitch") || this.RipperdocBuffIsActive() {
+    if this.HasStatusEffect(t"BaseStatusEffect.ActiveLowHumanityGlitch") || this.IsHumanityChangeBlocked() {
       return ;
     };
 
@@ -420,7 +428,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   };
 
   public func RunPrePsychosisGlitch() -> Void {
-    if this.HasStatusEffect(t"BaseStatusEffect.ActivePrePsychosisGlitch") || this.RipperdocBuffIsActive() {
+    if this.HasStatusEffect(t"BaseStatusEffect.ActivePrePsychosisGlitch") || this.IsHumanityChangeBlocked() {
       return ;
     };
 
@@ -499,8 +507,8 @@ public class EdgerunningSystem extends ScriptableSystem {
       return false;
     };
 
-    if this.RipperdocBuffIsActive() {
-      E("- has active buff");
+    if this.IsHumanityChangeBlocked() {
+      E("- has buff or is Johnny");
       return false;
     };
 
