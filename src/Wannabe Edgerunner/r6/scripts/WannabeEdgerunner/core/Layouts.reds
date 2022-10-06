@@ -6,13 +6,9 @@ let humanityCounter: ref<inkText>;
 @addField(InventoryTooltipData)
 public let humanity: Int32;
 
-public class UpdateHumanityCounterEvent extends Event {
-  public let current: Int32;
-  public let total: Int32;
-  public let color: CName;
-}
 
 // -- Cyberware screen
+
 @addField(RipperDocGameController)
 public let edgerunningSystem: wref<EdgerunningSystem>;
 
@@ -39,8 +35,6 @@ public func CreateHumanityIcon() -> ref<inkImage> {
   icon.SetBrushTileType(inkBrushTileType.NoTile);
   icon.SetContentHAlign(inkEHorizontalAlign.Center);
   icon.SetContentVAlign(inkEVerticalAlign.Center);
-  // icon.SetTileHAlign(inkEHorizontalAlign.Center);
-  // icon.SetTileVAlign(inkEVerticalAlign.Center);
   icon.SetMargin(new inkMargin(20.0, 20.0, 20.0, 20.0));
   icon.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
   icon.BindProperty(n"tintColor", n"MainColors.Blue");
@@ -196,6 +190,7 @@ private final func ShowCWTooltip(itemData: InventoryItemData, itemTooltipData: r
 protected cb func OnUpdateHumanityCounterEvent(evt: ref<UpdateHumanityCounterEvent>) -> Bool {
   this.RefreshHumanityBars(evt.current, evt.total);
 }
+
 
 // -- Cyberdeck popup
 

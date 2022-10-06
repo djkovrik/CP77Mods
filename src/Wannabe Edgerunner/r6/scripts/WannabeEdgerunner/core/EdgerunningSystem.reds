@@ -55,6 +55,418 @@ public class EdgerunningSystem extends ScriptableSystem {
     return system;
   }
 
+
+  // -- INVALIDATE
+
+  public func InvalidateCurrentState() -> Void {
+    let evt: ref<UpdateHumanityCounterEvent> = new UpdateHumanityCounterEvent();
+    let basePool: Int32 = this.config.baseHumanityPool;
+    let installedCyberware: Int32 = this.GetCurrentCyberwareCost(true);
+    this.cyberwareCost = installedCyberware;
+    this.currentHumanityPool = basePool - installedCyberware - this.currentHumanityDamage;
+    if this.currentHumanityPool < 0 { this.currentHumanityPool = 0; };
+    this.upperThreshold = this.config.glitchesThreshold;
+    this.lowerThreshold = this.config.psychosisThreshold;
+    E("Current humanity points state:");
+    E(s" - total: \(basePool) humanity, installed cyberware cost: \(installedCyberware), points left: \(this.currentHumanityPool), can be recovered: \(this.currentHumanityDamage)");
+    E(s" - debuffs for \(this.upperThreshold) and lower, cyberpsychosis for \(this.lowerThreshold) and lower");
+    if this.currentHumanityPool < this.upperThreshold && this.currentHumanityPool >= this.lowerThreshold {
+      this.RunFirstStageIfNotActive();
+    } else {
+      if this.currentHumanityPool < this.lowerThreshold && this.currentHumanityPool > 0 {
+        this.RunSecondStageIfNotActive();
+      } else {
+        if Equals(this.currentHumanityPool, 0) && this.config.alwaysRunAtZero {
+          this.RunLastStageIfNotActive();
+        };
+      };
+    };
+
+    evt.current = this.GetHumanityCurrent();
+    evt.total = this.GetHumanityTotal();
+    evt.color = this.GetHumanityColor();
+    GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(evt);
+    this.PrintRemainingPoolDetails();
+  }
+
+  public func RunFirstStageIfNotActive() -> Void {
+    if this.IsGlitchesActive() { return; };
+
+    if this.IsPrePsychosisActive() {
+      this.StopPrePsychosislitch();
+      this.StopPsychoChecks();
+      this.StopPsychosis();
+    };
+
+    this.RunLowHumanityGlitch();
+  }
+
+  public func RunSecondStageIfNotActive() -> Void {
+    if this.IsPrePsychosisActive() { return; };
+    if this.IsGlitchesActive() { this.StopLowHumanityGlitch(); }
+
+    this.RunPrePsychosisGlitch();
+    this.ScheduleNextPsychoCheck();
+  }
+
+  public func RunLastStageIfNotActive() -> Void {
+    if this.IsPsychosisActive() { return; };
+    
+    this.RunPsychosis();
+  }
+
+  // -- CONTROL EFFECTS FLOW
+
+  public func RunLowHumanityGlitch() -> Void {
+    E("!!! RUN STAGE 1 - GLITCHES");
+    this.StopVFX(n"hacking_glitch_low");
+    this.PlayVFXDelayed(n"fx_damage_high", 0.5);
+    this.PlaySFXDelayed(n"ono_v_pain_short", 0.5);
+    this.PlayVFXDelayed(n"personal_link_glitch", 0.75);
+    this.PlaySFXDelayed(n"ono_v_fear_panic_scream ", 1.7);
+    this.PlayVFXDelayed(n"disabling_connectivity_glitch", 1.8);
+    this.PlayVFXDelayed(n"hacking_glitch_low", 3.0);
+    this.ApplyStatusEffect(t"BaseStatusEffect.ActiveLowHumanityGlitch", 0.1);
+  }
+
+  public func RunPrePsychosisGlitch() -> Void {
+    E("!!! RUN STAGE 2 - PRE-PSYCHOSIS");
+    this.StopVFX(n"hacking_glitch_low");
+    this.StopVFX(n"reboot_glitch");
+    this.PlaySFXDelayed(n"ono_v_pain_short", 0.5);
+    this.PlayVFXDelayed(n"reboot_glitch", 0.5);
+    this.PlayVFXDelayed(n"hacking_glitch_low", 2.0);
+    this.ApplyStatusEffect(t"BaseStatusEffect.ActiveLowHumanityGlitch", 3.0);
+    this.ApplyStatusEffect(t"BaseStatusEffect.ActivePrePsychosisGlitch", 4.0);
+  }
+
+  private func RunPsychosis() -> Void {
+    E("!!! RUN STAGE 2 - PSYCHOSIS");
+
+    this.ScheduleNextPsychoCheck();
+
+    if this.IsPsychosisBlocked() {
+      E("? Skipped");
+      return ;
+    };
+    
+    this.StopVFX(n"hacking_glitch_low");
+    this.ApplyStatusEffect(t"BaseStatusEffect.ActivePsychosisBuff", 0.1);
+    this.PlayVFXDelayed(n"hacking_glitch_low", 7.0);
+    this.drawWeaponDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new TriggerDrawWeaponRequest(), 4.5);
+    this.randomShotsDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new TriggerRandomShotRequest(), 6.5);
+
+    if this.CanSpawnPolice() {
+      this.policeActivityDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new LaunchPoliceActivityRequest(), 6.0);
+    };
+
+    this.cycledSFXDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new LaunchCycledSFXRequest(), 7.0);
+  }
+
+  public func ScheduleNextPsychoCheck() -> Void {
+    E("!!! RUN STAGE 2 - CHECKS");
+    this.StopPsychoChecks();
+    let nextRun: Float = Cast<Float>(this.config.pcychoCheckPeriod) * 60.0;
+    E(s"? Scheduled next psycho check from ScheduleNextPsychoCheck after \(nextRun) seconds");
+    this.psychosisCheckDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new LaunchCycledPsychosisCheckRequest(), nextRun);
+  }
+
+  public func RemoveAllEffects() -> Void {
+    this.StopLowHumanityGlitch();
+    this.StopPrePsychosislitch();
+    this.StopPsychosis();
+    this.StopPsychoChecks();
+  }
+
+  public func StopLowHumanityGlitch() -> Void {
+    E("!!! STOP STAGE 1 - GLITCHES");
+    this.RemoveStatusEffect(t"BaseStatusEffect.ActiveLowHumanityGlitch", 0.1);
+    this.StopVFX(n"hacking_glitch_low");
+  };
+
+  public func StopPrePsychosislitch() -> Void {
+    E("!!! STOP STAGE 2 - PRE-PSYCHOSIS");
+    this.RemoveStatusEffect(t"BaseStatusEffect.ActivePrePsychosisGlitch", 0.1);
+    this.StopVFX(n"hacking_glitch_low");
+  };
+
+  private func StopPsychosis() -> Void {
+    E("!!! STOP STAGE 2 - PSYCHOSIS");
+    this.RemoveStatusEffect(t"BaseStatusEffect.ActivePsychosisBuff", 0.1);
+    this.delaySystem.CancelCallback(this.drawWeaponDelayId);
+    this.delaySystem.CancelCallback(this.randomShotsDelayId);
+    this.delaySystem.CancelCallback(this.policeActivityDelayId);
+    this.delaySystem.CancelCallback(this.cycledSFXDelayId);
+  };
+
+  public func StopPsychoChecks() -> Void {
+    E("!!! STOP PRE STAGE 2 - CHECKS");
+    this.delaySystem.CancelCallback(this.psychosisCheckDelayId);
+  }
+
+  // -- CONTROL HUMANITY
+
+  public func OnCyberwareInstalled(itemId: ItemID) -> Void {
+    E(s"Call for OnCyberwareInstalled for \(TDBID.ToStringDEBUG(ItemID.GetTDBID(itemId))), current cost: \(this.cyberwareCost)");
+    let record: ref<Item_Record> = RPGManager.GetItemRecord(itemId);
+    let name: CName = record.DisplayName();
+    let quality: gamedataQuality = record.Quality().Type();
+    let system: ref<EdgerunningSystem> = EdgerunningSystem.GetInstance(this.player.GetGame());
+    let cost: Int32 = system.GetCyberwareCost(record);
+    E(s">>> Installed \(GetLocalizedTextByKey(name)) - \(quality) by \(cost) humanity");
+    this.InvalidateCurrentState();
+  }
+
+  public func OnCyberwareUninstalled(itemId: ItemID) -> Void {
+    let record: ref<Item_Record> = RPGManager.GetItemRecord(itemId);
+    let name: CName = record.DisplayName();
+    let quality: gamedataQuality = record.Quality().Type();
+    let system: ref<EdgerunningSystem> = EdgerunningSystem.GetInstance(this.player.GetGame());
+    let cost: Int32 = system.GetCyberwareCost(record);
+    E(s"<<< Uninstalled \(GetLocalizedTextByKey(name)) - \(quality) by \(cost) humanity");
+    this.InvalidateCurrentState();
+  }
+
+  public func OnEnemyKilled(affiliation: gamedataAffiliation) -> Void {
+    let cost: Int32;
+    if !this.IsHumanityChangeBlocked() {
+      cost = this.GetEnemyCost(affiliation);
+      this.currentHumanityDamage += cost;
+      this.InvalidateCurrentState();
+    } else {
+      E("! Humanity freezed, kill costs no humanity");
+    };
+  }
+
+  public func OnBuff() -> Void {
+    this.RemoveAllEffects();
+    E("! Buff applied, all effects stopped");
+  }
+
+  public func OnBuffEnded() -> Void {
+    this.InvalidateCurrentState();
+  }
+
+  public func OnSleep() -> Void {
+    this.RemoveAllEffects();
+    this.currentHumanityDamage = 0;
+    E("! Rested, humanity value restored.");
+    this.InvalidateCurrentState();
+  }
+
+  public func OnBerserkActivation(item: ItemID) -> Void {
+    let itemRecord: ref<Item_Record> = RPGManager.GetItemRecord(item);
+    let quality: gamedataQuality = itemRecord.Quality().Type();
+    let qualityMult: Float;
+    switch (quality) {
+      case gamedataQuality.Common:
+        qualityMult = this.config.qualityMultiplierCommon;
+        break;
+      case gamedataQuality.Uncommon:
+        qualityMult = this.config.qualityMultiplierUncommon;
+        break;
+      case gamedataQuality.Rare:
+        qualityMult = this.config.qualityMultiplierRare;
+        break;
+      case gamedataQuality.Epic:
+        qualityMult = this.config.qualityMultiplierEpic;
+        break;
+      case gamedataQuality.Legendary:
+        qualityMult = this.config.qualityMultiplierLegendary;
+        break;
+    };
+
+    let cost: Int32 = this.config.berserkUsageCost * Cast<Int32>(qualityMult);
+
+    if !this.IsHumanityChangeBlocked() {
+      this.currentHumanityDamage += cost;
+      E(s"! Berserk activated: \(quality) - costs \(cost) humanity");
+      this.InvalidateCurrentState();
+    } else {
+      E("! Humanity freezed, berserk costs no humanity");
+    };
+  }
+
+  public func OnSandevistanActivation(item: ItemID) -> Void {
+    let itemRecord: ref<Item_Record> = RPGManager.GetItemRecord(item);
+    let quality: gamedataQuality = itemRecord.Quality().Type();
+    let qualityMult: Float;
+    switch (quality) {
+      case gamedataQuality.Common:
+        qualityMult = this.config.qualityMultiplierCommon;
+        break;
+      case gamedataQuality.Uncommon:
+        qualityMult = this.config.qualityMultiplierUncommon;
+        break;
+      case gamedataQuality.Rare:
+        qualityMult = this.config.qualityMultiplierRare;
+        break;
+      case gamedataQuality.Epic:
+        qualityMult = this.config.qualityMultiplierEpic;
+        break;
+      case gamedataQuality.Legendary:
+        qualityMult = this.config.qualityMultiplierLegendary;
+        break;
+    };
+
+    let cost: Int32 = this.config.sandevistanUsageCost * Cast<Int32>(qualityMult);
+
+    if !this.IsHumanityChangeBlocked() {
+      this.currentHumanityDamage += cost;
+      E(s"! Sandevistan activated: \(quality) - costs \(cost) humanity");
+      this.InvalidateCurrentState();
+    } else {
+      E("! Humanity freezed, sandevistan costs no humanity");
+    };
+  }
+
+
+  // -- CHECKERS
+
+  private func CanSpawnPolice() -> Bool {
+    let zone: Int32 = this.player.GetPlayerStateMachineBlackboard().GetInt(GetAllBlackboardDefs().PlayerStateMachine.Zones);
+    let zoneEnum: gamePSMZones = IntEnum(zone);
+    let isInInterior: Bool = IsEntityInInteriorArea(this.player);
+    let result: Bool = zone < 3 && !isInInterior;
+    E(s"CanSpawnPolice - zone: \(zoneEnum) \(zone), is in interior: \(isInInterior) -> can spawn: \(result)");
+    return result;
+  }
+
+  private func IsHumanityChangeBlocked() -> Bool {
+    return this.IsPossessed() || this.IsRipperdocBuffActive();
+  }
+
+  private func IsPsychosisBlocked() -> Bool {
+    let psmBlackboard: ref<IBlackboard> = this.player.GetPlayerStateMachineBlackboard();
+    let tier: Int32 = this.player.GetPlayerStateMachineBlackboard().GetInt(GetAllBlackboardDefs().PlayerStateMachine.HighLevel);
+    E("? Check if psychosis available...");
+    
+    if psmBlackboard.GetBool(GetAllBlackboardDefs().PlayerStateMachine.Carrying) {
+      E("- carrying");
+      return true;
+    };
+
+    if psmBlackboard.GetBool(GetAllBlackboardDefs().PlayerStateMachine.IsInLoreAnimationScene)  {
+      E("- animation scene");
+      return true;
+    };
+
+    if GameInstance.GetPhoneManager(this.player.GetGame()).IsPhoneCallActive() {
+      E("- active phone call");
+      return true;
+    };
+
+    if psmBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Swimming) == EnumInt(gamePSMSwimming.Diving) {
+      E("- diving");
+      return true;
+    };
+
+    if this.player.IsMovingVertically() {
+      E("- moving vertically");
+      return true;
+    };
+    
+    if this.IsPsychosisActive() {
+      E("- already active");
+      return true;
+    };
+
+    if VehicleComponent.IsMountedToVehicle(this.player.GetGame(), this.player) {
+      E("- mounted to vehicle");
+      return true;
+    };
+
+    if this.player.GetHudManager().IsBraindanceActive() {
+      E("- braindance is active");
+      return true;
+    };
+
+    if this.IsHumanityChangeBlocked() {
+      E("- has buff or is Johnny");
+      return true;
+    };
+
+    if tier >= EnumInt(gamePSMHighLevel.SceneTier3) && tier <= EnumInt(gamePSMHighLevel.SceneTier5) {
+      E("- has blocking scene active");
+      return true;
+    };
+
+    return false;
+  }
+
+  private func IsRipperdocBuffActive() -> Bool {
+    return Equals(StatusEffectSystem.ObjectHasStatusEffect(this.player, t"BaseStatusEffect.RipperDocMedBuff"), true);
+  }
+
+  public func IsGlitchesActive() -> Bool {
+    return this.HasStatusEffect(t"BaseStatusEffect.ActiveLowHumanityGlitch");
+  }
+
+  public func IsPrePsychosisActive() -> Bool {
+    return this.HasStatusEffect(t"BaseStatusEffect.ActivePrePsychosisGlitch");
+  }
+
+  public func IsPsychosisActive() -> Bool {
+    return this.HasStatusEffect(t"BaseStatusEffect.ActivePsychosisBuff");
+  }
+
+  private func IsPossessed() -> Bool {
+    return this.player.IsPossessedE();
+  }
+
+  private func HasStatusEffect(id: TweakDBID) -> Bool {
+    return Equals(StatusEffectSystem.ObjectHasStatusEffect(this.player, id), true);
+  }
+
+
+  // -- REQUESTS
+
+  private final func OnTriggerDrawWeaponRequest(request: ref<TriggerDrawWeaponRequest>) -> Void {
+    E("!!! DRAW WEAPON");
+    let equipmentSystem: wref<EquipmentSystem> = this.player.GetEquipmentSystem();
+    let drawItemRequest: ref<DrawItemRequest> = new DrawItemRequest();
+    drawItemRequest.itemID = EquipmentSystem.GetData(this.player).GetItemInEquipSlot(gamedataEquipmentArea.WeaponWheel, 0);
+    drawItemRequest.owner = this.player;
+    equipmentSystem.QueueRequest(drawItemRequest);
+  }
+
+  private final func OnTriggerRandomShotRequest(request: ref<TriggerRandomShotRequest>) -> Void {
+    E("!!! SHOT");
+    let weaponObject: ref<WeaponObject> = GameObject.GetActiveWeapon(this.player);
+    let simTime = EngineTime.ToFloat(GameInstance.GetSimTime(this.player.GetGame()));
+    AIWeapon.Fire(this.player, weaponObject, simTime, 1.0, weaponObject.GetWeaponRecord().PrimaryTriggerMode().Type());
+  }
+
+  private final func OnLaunchPoliceActivityRequest(request: ref<LaunchPoliceActivityRequest>) -> Void {
+    E("!!! LAUNCH POLICE FLOW");
+    this.player.GetPreventionSystem().SpawnPoliceForPsychosis(this.config);
+  }
+
+  private final func OnLaunchCycledSFXRequest(request: ref<LaunchCycledSFXRequest>) -> Void {
+    let random: Int32 = RandRange(0, ArraySize(this.cyberpsychosisSFX));
+    let bundle: ref<SFXBundle> = this.cyberpsychosisSFX[random];
+    this.PlaySFX(bundle.name);
+    this.cycledSFXDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new LaunchCycledSFXRequest(), bundle.duration);
+  }
+
+  private final func OnLaunchCycledPsychosisCheckRequest(request: ref<LaunchCycledPsychosisCheckRequest>) -> Void {
+    let random: Int32 = RandRange(0, 100);
+    let threshold: Int32 = this.config.psychoChance;
+    let triggered: Bool = random <= threshold;
+    let forcedRun: Bool = Equals(this.currentHumanityPool, 0) && this.config.alwaysRunAtZero;
+    E(s"? Run psychosis trigger check: roll \(random) against \(threshold), triggered: \(triggered), forced run: \(forcedRun)");
+    let nextRun: Float = Cast<Float>(this.config.pcychoCheckPeriod) * 60.0;
+    if triggered || forcedRun {
+      this.RunPsychosis();
+    };
+
+    E(s"? Rescheduled next psycho check after \(nextRun) seconds");
+    this.psychosisCheckDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new LaunchCycledPsychosisCheckRequest(), nextRun);
+  }
+
+  // -------------------------------------
+
+
   public func TempDamage() -> Void {
     this.currentHumanityDamage += 10;
     this.InvalidateCurrentState();
@@ -63,10 +475,6 @@ public class EdgerunningSystem extends ScriptableSystem {
   public func RefreshConfig() -> Void {
     this.config = new EdgerunningConfig();
     this.InvalidateCurrentState();
-  }
-
-  public func IsPsychosisActive() -> Bool {
-    return this.HasStatusEffect(t"BaseStatusEffect.ActivePsychosisBuff");
   }
 
   public func GetCyberwareCost(item: ref<Item_Record>) -> Int32 {
@@ -201,27 +609,6 @@ public class EdgerunningSystem extends ScriptableSystem {
     E("------------------------------------------------------------");
   }
 
-  public func OnCyberwareInstalled(itemId: ItemID) -> Void {
-    E(s"Call for OnCyberwareInstalled for \(TDBID.ToStringDEBUG(ItemID.GetTDBID(itemId))), current cost: \(this.cyberwareCost)");
-    let record: ref<Item_Record> = RPGManager.GetItemRecord(itemId);
-    let name: CName = record.DisplayName();
-    let quality: gamedataQuality = record.Quality().Type();
-    let system: ref<EdgerunningSystem> = EdgerunningSystem.GetInstance(this.player.GetGame());
-    let cost: Int32 = system.GetCyberwareCost(record);
-    E(s">>> Installed \(GetLocalizedTextByKey(name)) - \(quality) by \(cost) humanity");
-    this.InvalidateCurrentState();
-  }
-
-  public func OnCyberwareUninstalled(itemId: ItemID) -> Void {
-    let record: ref<Item_Record> = RPGManager.GetItemRecord(itemId);
-    let name: CName = record.DisplayName();
-    let quality: gamedataQuality = record.Quality().Type();
-    let system: ref<EdgerunningSystem> = EdgerunningSystem.GetInstance(this.player.GetGame());
-    let cost: Int32 = system.GetCyberwareCost(record);
-    E(s"<<< Uninstalled \(GetLocalizedTextByKey(name)) - \(quality) by \(cost) humanity");
-    this.InvalidateCurrentState();
-  }
-
   public func GetEnemyCost(affiliation: gamedataAffiliation) -> Int32 {
     let cost: Int32 = 0;
 
@@ -278,137 +665,6 @@ public class EdgerunningSystem extends ScriptableSystem {
     return cost;
   }
 
-  public func OnEnemyKilled(affiliation: gamedataAffiliation) -> Void {
-    let cost: Int32;
-    if !this.IsHumanityChangeBlocked() {
-      cost = this.GetEnemyCost(affiliation);
-      this.currentHumanityDamage += cost;
-      this.InvalidateCurrentState();
-    } else {
-      E("! Humanity freezed, kill costs no humanity");
-    };
-  }
-
-  public func OnBuff() -> Void {
-    this.StopLowHumanityGlitch();
-    this.StopPrePsychosislitch();
-    this.StopPsychosisChecks();
-    this.StopPsychosis();
-    E("! Buff applied, all effects stopped");
-  }
-
-  public func OnBuffEnded() -> Void {
-    this.InvalidateCurrentState();
-  }
-
-  public func OnSleep() -> Void {
-    this.StopLowHumanityGlitch();
-    this.StopPrePsychosislitch();
-    this.StopPsychosisChecks();
-    this.StopPsychosis();
-    this.currentHumanityDamage = 0;
-    E("! Rested, humanity value restored.");
-    this.InvalidateCurrentState();
-  }
-
-  public func OnBerserkActivation(item: ItemID) -> Void {
-    let itemRecord: ref<Item_Record> = RPGManager.GetItemRecord(item);
-    let quality: gamedataQuality = itemRecord.Quality().Type();
-    let qualityMult: Float;
-    switch (quality) {
-      case gamedataQuality.Common:
-        qualityMult = this.config.qualityMultiplierCommon;
-        break;
-      case gamedataQuality.Uncommon:
-        qualityMult = this.config.qualityMultiplierUncommon;
-        break;
-      case gamedataQuality.Rare:
-        qualityMult = this.config.qualityMultiplierRare;
-        break;
-      case gamedataQuality.Epic:
-        qualityMult = this.config.qualityMultiplierEpic;
-        break;
-      case gamedataQuality.Legendary:
-        qualityMult = this.config.qualityMultiplierLegendary;
-        break;
-    };
-
-    let cost: Int32 = this.config.berserkUsageCost * Cast<Int32>(qualityMult);
-
-    if !this.IsHumanityChangeBlocked() {
-      this.currentHumanityDamage += cost;
-      E(s"! Berserk activated: \(quality) - costs \(cost) humanity");
-      this.InvalidateCurrentState();
-    } else {
-      E("! Humanity freezed, berserk costs no humanity");
-    };
-  }
-
-  public func OnSandevistanActivation(item: ItemID) -> Void {
-    let itemRecord: ref<Item_Record> = RPGManager.GetItemRecord(item);
-    let quality: gamedataQuality = itemRecord.Quality().Type();
-    let qualityMult: Float;
-    switch (quality) {
-      case gamedataQuality.Common:
-        qualityMult = this.config.qualityMultiplierCommon;
-        break;
-      case gamedataQuality.Uncommon:
-        qualityMult = this.config.qualityMultiplierUncommon;
-        break;
-      case gamedataQuality.Rare:
-        qualityMult = this.config.qualityMultiplierRare;
-        break;
-      case gamedataQuality.Epic:
-        qualityMult = this.config.qualityMultiplierEpic;
-        break;
-      case gamedataQuality.Legendary:
-        qualityMult = this.config.qualityMultiplierLegendary;
-        break;
-    };
-
-    let cost: Int32 = this.config.sandevistanUsageCost * Cast<Int32>(qualityMult);
-
-    if !this.IsHumanityChangeBlocked() {
-      this.currentHumanityDamage += cost;
-      E(s"! Sandevistan activated: \(quality) - costs \(cost) humanity");
-      this.InvalidateCurrentState();
-    } else {
-      E("! Humanity freezed, sandevistan costs no humanity");
-    };
-  }
-
-  public func InvalidateCurrentState() -> Void {
-    let evt: ref<UpdateHumanityCounterEvent> = new UpdateHumanityCounterEvent();
-    let basePool: Int32 = this.config.baseHumanityPool;
-    let installedCyberware: Int32 = this.GetCurrentCyberwareCost(true);
-    this.cyberwareCost = installedCyberware;
-    this.currentHumanityPool = basePool - installedCyberware - this.currentHumanityDamage;
-    if this.currentHumanityPool < 0 { this.currentHumanityPool = 0; };
-    this.upperThreshold = this.config.glitchesThreshold;
-    this.lowerThreshold = this.config.psychosisThreshold;
-    E("Current humanity points state:");
-    E(s" - total: \(basePool) humanity, installed cyberware cost: \(installedCyberware), points left: \(this.currentHumanityPool), can be recovered: \(this.currentHumanityDamage)");
-    E(s" - debuffs for \(this.upperThreshold) and lower, cyberpsychosis for \(this.lowerThreshold) and lower");
-    if this.currentHumanityPool < this.upperThreshold && this.currentHumanityPool >= this.lowerThreshold {
-      this.RunLowHumanityGlitch();
-    } else {
-      if this.currentHumanityPool < this.lowerThreshold && this.currentHumanityPool > 0 {
-        this.RunPrePsychosisGlitch();
-        this.RunPsychosisChecks();
-      } else {
-        if Equals(this.currentHumanityPool, 0) && this.config.alwaysRunAtZero {
-          this.RunPsychosis();
-        };
-      };
-    };
-
-    evt.current = this.GetHumanityCurrent();
-    evt.total = this.GetHumanityTotal();
-    evt.color = this.GetHumanityColor();
-    GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(evt);
-    this.PrintRemainingPoolDetails();
-  }
-
   private func GetCurrentCyberwareCost(showLog: Bool) -> Int32 {
     let cyberware: array<ref<Item_Record>> = EquipmentSystem.GetData(this.player).GetCyberwareFromSlots();
     let installedCyberwarePool: Int32 = 0;
@@ -430,219 +686,6 @@ public class EdgerunningSystem extends ScriptableSystem {
     };
   
     return installedCyberwarePool;
-  }
-
-  private func IsHumanityChangeBlocked() -> Bool {
-    return this.IsPossessed() || this.RipperdocBuffIsActive();
-  }
-
-  private func RipperdocBuffIsActive() -> Bool {
-    return Equals(StatusEffectSystem.ObjectHasStatusEffect(this.player, t"BaseStatusEffect.RipperDocMedBuff"), true);
-  }
-
-  private func IsPossessed() -> Bool {
-    return this.player.IsPossessedE();
-  }
-
-  private func HasStatusEffect(id: TweakDBID) -> Bool {
-    return Equals(StatusEffectSystem.ObjectHasStatusEffect(this.player, id), true);
-  }
-
-  public func RunLowHumanityGlitch() -> Void {
-    if this.HasStatusEffect(t"BaseStatusEffect.ActiveLowHumanityGlitch") || this.IsHumanityChangeBlocked() {
-      return ;
-    };
-
-    E("!!! RUN STAGE 1 - GLITCHES");
-    this.StopVFX(n"hacking_glitch_low");
-    this.PlayVFXDelayed(n"fx_damage_high", 0.5);
-    this.PlaySFXDelayed(n"ono_v_pain_short", 0.5);
-    this.PlayVFXDelayed(n"personal_link_glitch", 0.75);
-    this.PlaySFXDelayed(n"ono_v_fear_panic_scream ", 1.7);
-    this.PlayVFXDelayed(n"disabling_connectivity_glitch", 1.8);
-    this.PlayVFXDelayed(n"hacking_glitch_low", 3.0);
-    this.ApplyStatusEffect(t"BaseStatusEffect.ActiveLowHumanityGlitch", 0.1);
-  }
-
-  public func StopLowHumanityGlitch() -> Void {
-    E("!!! STOP STAGE 1");
-    this.RemoveStatusEffect(t"BaseStatusEffect.ActiveLowHumanityGlitch", 0.1);
-    this.StopVFX(n"hacking_glitch_low");
-  };
-
-  public func RunPrePsychosisGlitch() -> Void {
-    if this.HasStatusEffect(t"BaseStatusEffect.ActivePrePsychosisGlitch") || this.IsHumanityChangeBlocked() {
-      return ;
-    };
-
-    E("!!! RUN STAGE 2 - MORE GLITCHES");
-    this.StopVFX(n"hacking_glitch_low");
-    this.StopVFX(n"reboot_glitch");
-    this.PlaySFXDelayed(n"ono_v_pain_short", 0.5);
-    this.PlayVFXDelayed(n"reboot_glitch", 0.5);
-    this.PlayVFXDelayed(n"hacking_glitch_low", 2.0);
-    this.ApplyStatusEffect(t"BaseStatusEffect.ActiveLowHumanityGlitch", 3.0);
-    this.ApplyStatusEffect(t"BaseStatusEffect.ActivePrePsychosisGlitch", 4.0);
-  }
-
-  public func StopPrePsychosislitch() -> Void {
-    E("!!! STOP STAGE 2 - MORE GLITCHES");
-    this.RemoveStatusEffect(t"BaseStatusEffect.ActivePrePsychosisGlitch", 0.1);
-    this.RemoveStatusEffect(t"BaseStatusEffect.ActiveLowHumanityGlitch", 0.1);
-    this.StopVFX(n"hacking_glitch_low");
-  };
-
-  public func RunPsychosisChecks() -> Void {
-    E("!!! RUN PRE STAGE 2 - CYBERPSYCHOSIS CHECKS");
-    this.StopPsychosisChecks();
-    let nextRun: Float = Cast<Float>(this.config.pcychoCheckPeriod) * 60.0;
-    E(s"? Scheduled next psycho check from RunPsychosisChecks after \(nextRun) seconds");
-    this.psychosisCheckDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new LaunchCycledPsychosisCheckRequest(), nextRun);
-  }
-
-  public func StopPsychosisChecks() -> Void {
-    E("!!! STOP PRE STAGE 2");
-    this.delaySystem.CancelCallback(this.psychosisCheckDelayId);
-  }
-
-  private func CanRunPsychosis() -> Bool {
-    let psmBlackboard: ref<IBlackboard> = this.player.GetPlayerStateMachineBlackboard();
-    let tier: Int32 = this.player.GetPlayerStateMachineBlackboard().GetInt(GetAllBlackboardDefs().PlayerStateMachine.HighLevel);
-    E("? Check if psychosis available...");
-    
-    if psmBlackboard.GetBool(GetAllBlackboardDefs().PlayerStateMachine.Carrying) {
-      E("- carrying");
-      return false;
-    };
-
-    if psmBlackboard.GetBool(GetAllBlackboardDefs().PlayerStateMachine.IsInLoreAnimationScene)  {
-      E("- animation scene");
-      return false;
-    };
-
-    if GameInstance.GetPhoneManager(this.player.GetGame()).IsPhoneCallActive() {
-      E("- active phone call");
-      return false;
-    };
-
-    if psmBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Swimming) == EnumInt(gamePSMSwimming.Diving) {
-      E("- diving");
-      return false;
-    };
-
-    if this.player.IsMovingVertically() {
-      E("- moving vertically");
-      return false;
-    };
-    
-    if this.HasStatusEffect(t"BaseStatusEffect.ActivePsychosisBuff") {
-      E("- already active");
-      return false;
-    };
-
-    if VehicleComponent.IsMountedToVehicle(this.player.GetGame(), this.player) {
-      E("- mounted to vehicle");
-      return false;
-    };
-
-    if this.player.GetHudManager().IsBraindanceActive() {
-      E("- braindance is active");
-      return false;
-    };
-
-    if this.IsHumanityChangeBlocked() {
-      E("- has buff or is Johnny");
-      return false;
-    };
-
-    if tier >= EnumInt(gamePSMHighLevel.SceneTier3) && tier <= EnumInt(gamePSMHighLevel.SceneTier5) {
-      E("- has blocking scene active");
-      return false;
-    };
-
-    return true;
-  }
-
-  private func RunPsychosis() -> Void {
-    E("!!! RUN STAGE 2 - CYBERPSYCHOSIS");
-
-    if !this.CanRunPsychosis() {
-      E("? Skipped");
-      let nextRun: Float = Cast<Float>(this.config.pcychoCheckPeriod) * 60.0;
-      this.StopPsychosisChecks();
-      E(s"? Scheduled next psycho check from RunPsychosis - has active psycho - \(nextRun) seconds");
-      this.psychosisCheckDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new LaunchCycledPsychosisCheckRequest(), nextRun);
-      return ;
-    };
-
-    let zone: Int32 = this.player.GetPlayerStateMachineBlackboard().GetInt(GetAllBlackboardDefs().PlayerStateMachine.Zones);
-    let zoneEnum: gamePSMZones = IntEnum(zone);
-    let isInInterior: Bool = IsEntityInInteriorArea(this.player);
-    E(s"Zone: \(zoneEnum) \(zone), is in interior: \(isInInterior)");
-    
-    this.ApplyStatusEffect(t"BaseStatusEffect.ActivePsychosisBuff", 0.1);
-    this.drawWeaponDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new TriggerDrawWeaponRequest(), 4.5);
-    this.randomShotsDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new TriggerRandomShotRequest(), 6.5);
-
-    if zone < 3 && !isInInterior {
-      E("!!! Player not in danger zone or interior - call police");
-      this.policeActivityDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new LaunchPoliceActivityRequest(), 6.0);
-    } else {
-      E("!!! Player is in interior or danger zone - police call aborted");
-    };
-
-    this.cycledSFXDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new LaunchCycledSFXRequest(), 7.0);
-  }
-
-  private func StopPsychosis() -> Void {
-    E("!!! STOP STAGE 2");
-    this.RemoveStatusEffect(t"BaseStatusEffect.ActivePsychosisBuff", 0.1);
-    this.delaySystem.CancelCallback(this.drawWeaponDelayId);
-    this.delaySystem.CancelCallback(this.randomShotsDelayId);
-    this.delaySystem.CancelCallback(this.policeActivityDelayId);
-    this.delaySystem.CancelCallback(this.cycledSFXDelayId);
-  };
-
-  private final func OnTriggerDrawWeaponRequest(request: ref<TriggerDrawWeaponRequest>) -> Void {
-    E("!!! DRAW WEAPON");
-    let equipmentSystem: wref<EquipmentSystem> = this.player.GetEquipmentSystem();
-    let drawItemRequest: ref<DrawItemRequest> = new DrawItemRequest();
-    drawItemRequest.itemID = EquipmentSystem.GetData(this.player).GetItemInEquipSlot(gamedataEquipmentArea.WeaponWheel, 0);
-    drawItemRequest.owner = this.player;
-    equipmentSystem.QueueRequest(drawItemRequest);
-  }
-
-  private final func OnTriggerRandomShotRequest(request: ref<TriggerRandomShotRequest>) -> Void {
-    E("!!! SHOT");
-    let weaponObject: ref<WeaponObject> = GameObject.GetActiveWeapon(this.player);
-    let simTime = EngineTime.ToFloat(GameInstance.GetSimTime(this.player.GetGame()));
-    AIWeapon.Fire(this.player, weaponObject, simTime, 1.0, weaponObject.GetWeaponRecord().PrimaryTriggerMode().Type());
-  }
-
-  private final func OnLaunchPoliceActivityRequest(request: ref<LaunchPoliceActivityRequest>) -> Void {
-    E("!!! LAUNCH POLICE FLOW");
-    this.player.GetPreventionSystem().SpawnPoliceForPsychosis(this.config);
-  }
-
-  private final func OnLaunchCycledSFXRequest(request: ref<LaunchCycledSFXRequest>) -> Void {
-    let random: Int32 = RandRange(0, ArraySize(this.cyberpsychosisSFX));
-    let bundle: ref<SFXBundle> = this.cyberpsychosisSFX[random];
-    this.PlaySFX(bundle.name);
-    this.cycledSFXDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new LaunchCycledSFXRequest(), bundle.duration);
-  }
-
-  private final func OnLaunchCycledPsychosisCheckRequest(request: ref<LaunchCycledPsychosisCheckRequest>) -> Void {
-    let random: Int32 = RandRange(0, 100);
-    let threshold: Int32 = this.config.psychoChance;
-    let triggered: Bool = random <= threshold;
-    E(s"? Run psychosis trigger check: roll \(random) against \(threshold), triggered: \(triggered)");
-    let nextRun: Float = Cast<Float>(this.config.pcychoCheckPeriod) * 60.0;
-    if triggered {
-      this.RunPsychosis();
-    };
-
-    E(s"? Rescheduled next psycho check after \(nextRun) seconds");
-    this.psychosisCheckDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new LaunchCycledPsychosisCheckRequest(), nextRun);
   }
 
   private func PlaySFX(name: CName) -> Void {
@@ -691,98 +734,5 @@ public class EdgerunningSystem extends ScriptableSystem {
     callback.id = id;
     callback.player = this.player;
     this.delaySystem.DelayCallback(callback, delay);
-  }
-}
-
-@addMethod(EquipmentSystemPlayerData)
-public final const func GetCyberwareFromSlots() -> array<ref<Item_Record>> {
-  let result: array<ref<Item_Record>>;
-  let record: ref<Item_Record>;
-  let equipSlots: array<SEquipSlot>;
-  let i: Int32;
-
-  for slot in [
-      gamedataEquipmentArea.FrontalCortexCW,
-      gamedataEquipmentArea.SystemReplacementCW,
-      gamedataEquipmentArea.EyesCW,
-      gamedataEquipmentArea.MusculoskeletalSystemCW,
-      gamedataEquipmentArea.NervousSystemCW,
-      gamedataEquipmentArea.CardiovascularSystemCW,
-      gamedataEquipmentArea.ImmuneSystemCW,
-      gamedataEquipmentArea.IntegumentarySystemCW,
-      gamedataEquipmentArea.HandsCW,
-      gamedataEquipmentArea.ArmsCW,
-      gamedataEquipmentArea.LegsCW
-    ] {
-      equipSlots = this.m_equipment.equipAreas[this.GetEquipAreaIndex(slot)].equipSlots;
-      i = 0;
-      while i < ArraySize(equipSlots) {
-        if ItemID.IsValid(equipSlots[i].itemID) {
-          record = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(equipSlots[i].itemID));
-          ArrayPush(result, record);
-        };
-        i += 1;
-      };
-    };
-
-  E(s"Detected cyberware: \(ArraySize(result))");
-  return result;
-}
-
-public class TriggerDrawWeaponRequest extends ScriptableSystemRequest {}
-public class TriggerRandomShotRequest extends ScriptableSystemRequest {}
-public class LaunchPoliceActivityRequest extends ScriptableSystemRequest {}
-public class LaunchCycledSFXRequest extends ScriptableSystemRequest {}
-public class LaunchCycledPsychosisCheckRequest extends ScriptableSystemRequest {}
-
-public class SFXBundle {
-  public let name: CName;
-  public let duration: Float;
-
-  public static func Create(name: CName, duration: Float) -> ref<SFXBundle> {
-    let bundle: ref<SFXBundle> = new SFXBundle();
-    bundle.name = name;
-    bundle.duration = duration;
-    return bundle;
-  }
-}
-
-public class PlaySFXCallback extends DelayCallback {
-	public let player: wref<PlayerPuppet>;
-	public let sfxName: CName;
-
-	public func Call() -> Void {
-    GameObject.PlaySoundEvent(this.player, this.sfxName);
-    E(s"Run \(this.sfxName) sfx");
-	}
-}
-
-public class PlayVFXCallback extends DelayCallback {
-	public let player: wref<PlayerPuppet>;
-	public let vfxName: CName;
-
-	public func Call() -> Void {
-    GameObjectEffectHelper.StartEffectEvent(this.player, this.vfxName, false);
-    E(s"Run \(this.vfxName) vfx");
-	}
-}
-
-public class ApplyStatusEffectCallback extends DelayCallback {
-	public let player: wref<PlayerPuppet>;
-  public let id: TweakDBID;
-
-	public func Call() -> Void {
-    GameInstance.GetStatusEffectSystem(this.player.GetGame()).ApplyStatusEffect(this.player.GetEntityID(), this.id, this.player.GetRecordID(), this.player.GetEntityID());
-    E(s"Apply \(TDBID.ToStringDEBUG(this.id)) effect to player");
-	}
-}
-
-public class RemoveStatusEffectCallback extends DelayCallback {
-	public let player: wref<PlayerPuppet>;
-  public let id: TweakDBID;
-
-	public func Call() -> Void {
-    GameInstance.GetStatusEffectSystem(this.player.GetGame()).RemoveStatusEffect(this.player.GetEntityID(), this.id);
-    E(s"Remove \(TDBID.ToStringDEBUG(this.id)) effect from player");
   }
 }

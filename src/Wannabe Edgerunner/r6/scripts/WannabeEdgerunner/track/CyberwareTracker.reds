@@ -1,4 +1,5 @@
 import Edgerunning.System.EdgerunningSystem
+import Edgerunning.Common.E
 
 @wrapMethod(EquipmentSystemPlayerData)
 private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt blockActiveSlotsUpdate: Bool, opt forceEquipWeapon: Bool) -> Void {
@@ -76,4 +77,41 @@ public final static func IsEquipmentAreaCyberware(areaType: gamedataEquipmentAre
       return true;
   };
   return false;
+}
+
+
+// Get installed cyberware
+@addMethod(EquipmentSystemPlayerData)
+public final const func GetCyberwareFromSlots() -> array<ref<Item_Record>> {
+  let result: array<ref<Item_Record>>;
+  let record: ref<Item_Record>;
+  let equipSlots: array<SEquipSlot>;
+  let i: Int32;
+
+  for slot in [
+      gamedataEquipmentArea.FrontalCortexCW,
+      gamedataEquipmentArea.SystemReplacementCW,
+      gamedataEquipmentArea.EyesCW,
+      gamedataEquipmentArea.MusculoskeletalSystemCW,
+      gamedataEquipmentArea.NervousSystemCW,
+      gamedataEquipmentArea.CardiovascularSystemCW,
+      gamedataEquipmentArea.ImmuneSystemCW,
+      gamedataEquipmentArea.IntegumentarySystemCW,
+      gamedataEquipmentArea.HandsCW,
+      gamedataEquipmentArea.ArmsCW,
+      gamedataEquipmentArea.LegsCW
+    ] {
+      equipSlots = this.m_equipment.equipAreas[this.GetEquipAreaIndex(slot)].equipSlots;
+      i = 0;
+      while i < ArraySize(equipSlots) {
+        if ItemID.IsValid(equipSlots[i].itemID) {
+          record = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(equipSlots[i].itemID));
+          ArrayPush(result, record);
+        };
+        i += 1;
+      };
+    };
+
+  E(s"Detected cyberware: \(ArraySize(result))");
+  return result;
 }
