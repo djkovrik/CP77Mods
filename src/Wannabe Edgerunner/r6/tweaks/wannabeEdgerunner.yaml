@@ -103,10 +103,15 @@ BaseStatusEffect.ActivePsychosisBuff:
       name: johnny_sickness_blackout
 
 BaseStatusEffect.RipperDocMedBuff:
-  $type: StatusEffect_Record
+  $base: BaseStatusEffect.ConsumableBuff
   duration: Items.LongLastingConsumableDuration
-  gameplayTags: [ Buff ]
-  statusEffectType: BaseStatusEffectTypes.Misc
+  packages:
+   - $type: GameplayLogicPackage_Record
+     stats:
+     - $type: ConstantStatModifier_Record
+       statType: BaseStats.Armor
+       modifierType: Multiplier
+       value: 1.0
   uiData: 
     $type: StatusEffectUIData_Record
     description: "LocKey#Mod-Edg-Ripper-Med-Desc"
@@ -120,7 +125,7 @@ Price.RipperdocMedModifier:
   value: 2000
 
 Items.ripperdoc_med:
-  $base: Items.BlackLaceV0
+  $base: Items.Inhaler
   displayName: l"Mod-Edg-Ripper-Med"
   localizedDescription: l"Mod-Edg-Ripper-Med-Desc"
   quality: t"Quality.Rare"
