@@ -21,7 +21,7 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.displayName", "Mod-Edg-Glitches-Threshold")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Glitches-Threshold-Desc")
   @runtimeProperty("ModSettings.step", "5")
-  @runtimeProperty("ModSettings.min", "20")
+  @runtimeProperty("ModSettings.min", "5")
   @runtimeProperty("ModSettings.max", "500")
   let glitchesThreshold: Int32 = 40;
 
@@ -30,7 +30,7 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.displayName", "Mod-Edg-Psychosis-Threshold")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Psychosis-Threshold-Desc")
   @runtimeProperty("ModSettings.step", "5")
-  @runtimeProperty("ModSettings.min", "10")
+  @runtimeProperty("ModSettings.min", "5")
   @runtimeProperty("ModSettings.max", "500")
   let psychosisThreshold: Int32 = 20;
 
@@ -228,8 +228,8 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.displayName", "LocKey#36886")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
   @runtimeProperty("ModSettings.step", "1")
-  @runtimeProperty("ModSettings.min", "1")
-  @runtimeProperty("ModSettings.max", "25") 
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "50") 
   let enemiesKillCost: Int32 = 2;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
@@ -237,8 +237,8 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.displayName", "LocKey#37213")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
   @runtimeProperty("ModSettings.step", "1")
-  @runtimeProperty("ModSettings.min", "1")
-  @runtimeProperty("ModSettings.max", "25") 
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "50") 
   let copsKillCost: Int32 = 10;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
@@ -246,8 +246,8 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.displayName", "LocKey#44337")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
   @runtimeProperty("ModSettings.step", "1")
-  @runtimeProperty("ModSettings.min", "1")
-  @runtimeProperty("ModSettings.max", "25") 
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "50") 
   let civiliansKillCost: Int32 = 20;
 
   public func GetHeatStage() -> EPreventionHeatStage {
@@ -262,4 +262,4 @@ public class EdgerunningConfig {
 }
 
 // Replace false with true to show full debug logs in CET console
-public static func ShowDebugLogsEdgerunner() -> Bool = false
+public static func ShowDebugLogsEdgerunner() -> Bool = true
