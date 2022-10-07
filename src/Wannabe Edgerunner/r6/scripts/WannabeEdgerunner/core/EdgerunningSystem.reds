@@ -736,4 +736,10 @@ public class EdgerunningSystem extends ScriptableSystem {
     callback.player = this.player;
     this.delaySystem.DelayCallback(callback, delay);
   }
+
+  public func StopFX() -> Void {
+    this.StopVFX(n"reboot_glitch");
+    this.StopVFX(n"hacking_glitch_low");
+    this.delaySystem.CancelCallback(this.cycledSFXDelayId);
+  }
 }

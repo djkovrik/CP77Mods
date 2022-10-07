@@ -20,3 +20,8 @@ public func IsPossessedE() -> Bool {
   let posessed: Bool = Cast<Bool>(GameInstance.GetQuestsSystem(this.GetGame()).GetFactStr("isPlayerPossessedByJohnny"));
   return this.IsJohnnyReplacer() || posessed;
 }
+
+// CET command to stop FX effects
+public static exec func EdgerunnerClear(gi: GameInstance) -> Void {
+  EdgerunningSystem.GetInstance(gi).StopFX();
+}
