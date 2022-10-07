@@ -78,6 +78,8 @@ public class EdgerunningSystem extends ScriptableSystem {
       } else {
         if Equals(this.currentHumanityPool, 0) && this.config.alwaysRunAtZero {
           this.RunLastStageIfNotActive();
+        } else {
+          this.RemoveAllEffects();
         };
       };
     };
@@ -106,12 +108,14 @@ public class EdgerunningSystem extends ScriptableSystem {
     if this.IsGlitchesActive() { this.StopLowHumanityGlitch(); }
 
     this.RunPrePsychosisGlitch();
+    this.StopPsychoChecks();
     this.ScheduleNextPsychoCheck();
   }
 
   public func RunLastStageIfNotActive() -> Void {
     if this.IsPsychosisActive() { return; };
-    
+
+    this.StopPsychoChecks();
     this.RunPsychosis();
   }
 
@@ -142,9 +146,6 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   private func RunPsychosis() -> Void {
     E("!!! RUN STAGE 2 - PSYCHOSIS");
-
-    this.ScheduleNextPsychoCheck();
-
     if this.IsPsychosisBlocked() {
       E("? Skipped");
       return ;
@@ -165,7 +166,6 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public func ScheduleNextPsychoCheck() -> Void {
     E("!!! RUN STAGE 2 - CHECKS");
-    this.StopPsychoChecks();
     let nextRun: Float = Cast<Float>(this.config.pcychoCheckPeriod) * 60.0;
     E(s"? Scheduled next psycho check from ScheduleNextPsychoCheck after \(nextRun) seconds");
     this.psychosisCheckDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new LaunchCycledPsychosisCheckRequest(), nextRun);
@@ -447,7 +447,13 @@ public class EdgerunningSystem extends ScriptableSystem {
     let random: Int32 = RandRange(0, ArraySize(this.cyberpsychosisSFX));
     let bundle: ref<SFXBundle> = this.cyberpsychosisSFX[random];
     this.PlaySFX(bundle.name);
-    this.cycledSFXDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new LaunchCycledSFXRequest(), bundle.duration);
+
+    let hasNoBuff: Bool = !this.IsRipperdocBuffActive();
+    let hasPrePsychoStage: Bool = this.IsPrePsychosisActive();
+
+    if hasNoBuff && hasPrePsychoStage {
+      this.cycledSFXDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new LaunchCycledSFXRequest(), bundle.duration);
+    };
   }
 
   private final func OnLaunchCycledPsychosisCheckRequest(request: ref<LaunchCycledPsychosisCheckRequest>) -> Void {
@@ -459,20 +465,20 @@ public class EdgerunningSystem extends ScriptableSystem {
     let nextRun: Float = Cast<Float>(this.config.pcychoCheckPeriod) * 60.0;
     if triggered || forcedRun {
       this.RunPsychosis();
+    } else {
+      E(s"? Rescheduled next psycho check after \(nextRun) seconds");
+      this.psychosisCheckDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new LaunchCycledPsychosisCheckRequest(), nextRun);
     };
-
-    E(s"? Rescheduled next psycho check after \(nextRun) seconds");
-    this.psychosisCheckDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new LaunchCycledPsychosisCheckRequest(), nextRun);
   }
 
   // -------------------------------------
 
 
   public func Debug() -> Void {
-    // this.currentHumanityDamage += 10;
-    // this.InvalidateCurrentState();
-    this.RunSecondStageIfNotActive();
-    this.RunLastStageIfNotActive();
+    this.currentHumanityDamage += 10;
+    this.InvalidateCurrentState();
+    // this.RunSecondStageIfNotActive();
+    // this.RunLastStageIfNotActive();
   }
 
   public func RefreshConfig() -> Void {
