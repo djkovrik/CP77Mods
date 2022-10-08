@@ -70,6 +70,8 @@ public class EdgerunningSystem extends ScriptableSystem {
     E("Current humanity points state:");
     E(s" - total: \(basePool) humanity, installed cyberware cost: \(installedCyberware), points left: \(this.currentHumanityPool), can be recovered: \(this.currentHumanityDamage)");
     E(s" - debuffs for \(this.upperThreshold) and lower, cyberpsychosis for \(this.lowerThreshold) and lower");
+    if this.IsRipperdocBuffActive() { return; };
+    
     if this.currentHumanityPool < this.upperThreshold && this.currentHumanityPool >= this.lowerThreshold {
       this.RunFirstStageIfNotActive();
     } else {
