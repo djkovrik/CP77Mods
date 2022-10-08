@@ -70,6 +70,12 @@ public class EdgerunningSystem extends ScriptableSystem {
     E("Current humanity points state:");
     E(s" - total: \(basePool) humanity, installed cyberware cost: \(installedCyberware), points left: \(this.currentHumanityPool), can be recovered: \(this.currentHumanityDamage)");
     E(s" - debuffs for \(this.upperThreshold) and lower, cyberpsychosis for \(this.lowerThreshold) and lower");
+
+    evt.current = this.GetHumanityCurrent();
+    evt.total = this.GetHumanityTotal();
+    evt.color = this.GetHumanityColor();
+    GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(evt);
+
     if this.IsRipperdocBuffActive() { return; };
     
     if this.currentHumanityPool < this.upperThreshold && this.currentHumanityPool >= this.lowerThreshold {
@@ -86,10 +92,6 @@ public class EdgerunningSystem extends ScriptableSystem {
       };
     };
 
-    evt.current = this.GetHumanityCurrent();
-    evt.total = this.GetHumanityTotal();
-    evt.color = this.GetHumanityColor();
-    GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(evt);
     this.PrintRemainingPoolDetails();
   }
 
