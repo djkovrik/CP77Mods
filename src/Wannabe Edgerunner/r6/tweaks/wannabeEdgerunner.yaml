@@ -1,12 +1,96 @@
+# === Duration modifiers === 
+
+Items.EdgerunnerDebuffDuration:
+  $type: StatModifierGroup_Record
+  statModifiers:
+  - $type: ConstantStatModifier_Record
+    modifierType: Additive
+    statType: BaseStats.MaxDuration
+    value: 3600
+
+Items.EdgerunnerPsychosisDuration:
+  $type: StatModifierGroup_Record
+  statModifiers:
+  - $type: ConstantStatModifier_Record
+    modifierType: Additive
+    statType: BaseStats.MaxDuration
+    value: 66
+
+Items.RipperdocMedDurationCommon:
+  $type: StatModifierGroup_Record
+  statModifiers:
+  - $type: ConstantStatModifier_Record
+    modifierType: Additive
+    statType: BaseStats.MaxDuration
+    value: 500
+  - $type: CombinedStatModifier_Record
+    modifierType: AdditiveMultiplier
+    statType: BaseStats.MaxDuration
+    refStat: BaseStats.CraftingBonusConsumableDuration
+    opSymbol: "*"
+    value: 1.0
+
+Items.RipperdocMedDurationUncommon:
+  $type: StatModifierGroup_Record
+  statModifiers:
+  - $type: ConstantStatModifier_Record
+    modifierType: Additive
+    statType: BaseStats.MaxDuration
+    value: 1000
+  - $type: CombinedStatModifier_Record
+    modifierType: AdditiveMultiplier
+    statType: BaseStats.MaxDuration
+    refStat: BaseStats.CraftingBonusConsumableDuration
+    opSymbol: "*"
+    value: 1.0
+
+Items.RipperdocMedDurationRare:
+  $type: StatModifierGroup_Record
+  statModifiers:
+  - $type: ConstantStatModifier_Record
+    modifierType: Additive
+    statType: BaseStats.MaxDuration
+    value: 1800
+  - $type: CombinedStatModifier_Record
+    modifierType: AdditiveMultiplier
+    statType: BaseStats.MaxDuration
+    refStat: BaseStats.CraftingBonusConsumableDuration
+    opSymbol: "*"
+    value: 1.0
+
+
+# === Price modifiers ===
+
+Price.RipperdocMedModifierCommon:
+  $base: Price.PriceMultiplier
+  value: 2600
+
+Price.RipperdocMedModifierUncommon:
+  $base: Price.PriceMultiplier
+  value: 2400
+
+Price.RipperdocMedModifierRare:
+  $base: Price.PriceMultiplier
+  value: 1800
+
+Price.RipperdocMedModifierRecipeCommon:
+  $base: Price.PriceMultiplier
+  value: 3000
+
+Price.RipperdocMedModifierRecipeUncommon:
+  $base: Price.PriceMultiplier
+  value: 4000
+
+Price.RipperdocMedModifierRecipeRare:
+  $base: Price.PriceMultiplier
+  value: 5000
+
+
+# === Effects ===
+
 BaseStatusEffect.ActiveLowHumanityGlitch:
   $type: StatusEffect_Record
-  duration:
-    $type: StatModifierGroup_Record
-    statModifiers:
-    - $type: ConstantStatModifier_Record
-      modifierType: Additive
-      statType: t"BaseStats.MaxDuration"
-      value: 3600
+  duration: Items.EdgerunnerDebuffDuration
   gameplayTags: [ Debuff ]
   packages:
    - $type: GameplayLogicPackage_Record
@@ -24,13 +108,7 @@ BaseStatusEffect.ActiveLowHumanityGlitch:
 
 BaseStatusEffect.ActivePrePsychosisGlitch:
   $type: StatusEffect_Record
-  duration:
-    $type: StatModifierGroup_Record
-    statModifiers:
-    - $type: ConstantStatModifier_Record
-      modifierType: Additive
-      statType: t"BaseStats.MaxDuration"
-      value: 3600
+  duration: Items.EdgerunnerDebuffDuration
   gameplayTags: [ Debuff ]
   packages:
    - $type: GameplayLogicPackage_Record
@@ -51,13 +129,7 @@ BaseStatusEffect.ActivePrePsychosisGlitch:
 
 BaseStatusEffect.ActivePsychosisBuff:
   $type: StatusEffect_Record
-  duration:
-    $type: StatModifierGroup_Record
-    statModifiers:
-    - $type: ConstantStatModifier_Record
-      modifierType: Additive
-      statType: t"BaseStats.MaxDuration"
-      value: 66
+  duration: Items.EdgerunnerPsychosisDuration
   gameplayTags: [ Buff ]
   packages:
    - $type: GameplayLogicPackage_Record
@@ -102,9 +174,12 @@ BaseStatusEffect.ActivePsychosisBuff:
     - $type: StatusEffectFX_Record
       name: johnny_sickness_blackout
 
+
+# === Buffs ===
+
 BaseStatusEffect.RipperDocMedBuff:
   $base: BaseStatusEffect.ConsumableBuff
-  duration: Items.LongLastingConsumableDuration
+  duration: Items.RipperdocMedDurationRare
   packages:
    - $type: GameplayLogicPackage_Record
      stats:
@@ -120,10 +195,18 @@ BaseStatusEffect.RipperDocMedBuff:
   VFX:
     - BaseStatusEffect.InhalerBuff_inline0
 
-Price.RipperdocMedModifier:
-  $base: Price.PriceMultiplier
-  value: 2000
+BaseStatusEffect.RipperDocMedBuffUncommon:
+  $base: BaseStatusEffect.RipperDocMedBuff
+  duration: Items.RipperdocMedDurationUncommon
 
+BaseStatusEffect.RipperDocMedBuffCommon:
+  $base: BaseStatusEffect.RipperDocMedBuff
+  duration: Items.RipperdocMedDurationCommon
+
+
+# === Inhalers ===
+
+# - Rare
 Items.ripperdoc_med:
   $base: Items.Inhaler
   displayName: l"Mod-Edg-Ripper-Med"
@@ -143,7 +226,7 @@ Items.ripperdoc_med:
       amount: 20
       ingredient: Items.UncommonMaterial1
     - $type: RecipeElement_Record
-      amount: 15
+      amount: 20
       ingredient: Items.RareMaterial1
   objectActions:
     - t"ItemAction.Drop"
@@ -162,19 +245,86 @@ Items.ripperdoc_med:
         localizedDescription: l"Mod-Edg-Ripper-Med-Desc"
         intValues: [ 1 ]
   statModifierGroups:
-    - t"Items.LongLastingConsumableDuration"
+    - t"Items.RipperdocMedDurationRare"
   buyPrice:
    - Price.BasePrice
    - Price.BuyMultiplier
    - Price.ItemQualityMultiplier
    - Price.IconicMultiplier
    - Price.BuyPriceIntrinsicModMult
-   - Price.RipperdocMedModifier
+   - Price.RipperdocMedModifierRare
 
-Price.RipperdocMedModifierRecipe:
-  $base: Price.PriceMultiplier
-  value: 5000
+# - Uncommon
+Items.ripperdoc_med_uncommon:
+  $base: Items.ripperdoc_med
+  quality: t"Quality.Uncommon"
+  CraftingData:
+    $type: CraftingPackage_Record
+    craftingExpModifier: 1
+    overcraftPenaltyModifier: 1
+    craftingRecipe:
+    - $type: RecipeElement_Record
+      amount: 35
+      ingredient: Items.CommonMaterial1
+    - $type: RecipeElement_Record
+      amount: 25
+      ingredient: Items.UncommonMaterial1
+  objectActions:
+    - t"ItemAction.Drop"
+    - t"ItemAction.Disassemble"
+    - t"ItemAction.ConsumableDisassemble"
+    - $type: ItemAction_Record
+      actionName: Consume
+      objectActionType: ObjectActionType.Item
+      completionEffects:
+      - $type: ObjectActionEffect_Record
+        statusEffect: BaseStatusEffect.RipperDocMedBuffUncommon
+  statModifierGroups:
+    - t"Items.RipperdocMedDurationUncommon"
+  buyPrice:
+   - Price.BasePrice
+   - Price.BuyMultiplier
+   - Price.ItemQualityMultiplier
+   - Price.IconicMultiplier
+   - Price.BuyPriceIntrinsicModMult
+   - Price.RipperdocMedModifierUncommon
 
+# - Common
+Items.ripperdoc_med_common:
+  $base: Items.ripperdoc_med
+  quality: t"Quality.Common"
+  CraftingData:
+    $type: CraftingPackage_Record
+    craftingExpModifier: 1
+    overcraftPenaltyModifier: 1
+    craftingRecipe:
+    - $type: RecipeElement_Record
+      amount: 40
+      ingredient: Items.CommonMaterial1
+  objectActions:
+    - t"ItemAction.Drop"
+    - t"ItemAction.Disassemble"
+    - t"ItemAction.ConsumableDisassemble"
+    - $type: ItemAction_Record
+      actionName: Consume
+      objectActionType: ObjectActionType.Item
+      completionEffects:
+      - $type: ObjectActionEffect_Record
+        statusEffect: BaseStatusEffect.RipperDocMedBuffCommon
+  statModifierGroups:
+    - t"Items.RipperdocMedDurationCommon"
+  buyPrice:
+   - Price.BasePrice
+   - Price.BuyMultiplier
+   - Price.ItemQualityMultiplier
+   - Price.IconicMultiplier
+   - Price.BuyPriceIntrinsicModMult
+   - Price.RipperdocMedModifierCommon
+
+
+# === Recipes === 
+
+# Rare
 Items.recipe_ripperdoc_med:
   $base: Items.RecipeConsumableRareBase
   displayName: l"Mod-Edg-Ripper-Med"
@@ -188,48 +338,120 @@ Items.recipe_ripperdoc_med:
     - Price.ItemQualityMultiplier
     - Price.IconicMultiplier
     - Price.BuyPriceIntrinsicModMult
-    - Price.RipperdocMedModifierRecipe
+    - Price.RipperdocMedModifierRare
+
+# Uncommon
+Items.recipe_ripperdoc_med_uncommon:
+  $base: Items.RecipeConsumableRareBase
+  displayName: l"Mod-Edg-Ripper-Med"
+  craftingResult:
+    $type: CraftingResult_Record
+    amount: 1
+    item: Items.ripperdoc_med_uncommon
+  buyPrice:
+    - Price.BasePrice
+    - Price.BuyMultiplier
+    - Price.ItemQualityMultiplier
+    - Price.IconicMultiplier
+    - Price.BuyPriceIntrinsicModMult
+    - Price.RipperdocMedModifierRecipeUncommon
+
+# Common
+Items.recipe_ripperdoc_med_common:
+  $base: Items.RecipeConsumableRareBase
+  displayName: l"Mod-Edg-Ripper-Med"
+  craftingResult:
+    $type: CraftingResult_Record
+    amount: 1
+    item: Items.ripperdoc_med_common
+  buyPrice:
+    - Price.BasePrice
+    - Price.BuyMultiplier
+    - Price.ItemQualityMultiplier
+    - Price.IconicMultiplier
+    - Price.BuyPriceIntrinsicModMult
+    - Price.RipperdocMedModifierRecipeCommon
 
 
-# -- Add inhalers to reapers
+# === Add inhalers to reapers ===
 
-# Cassius
-Vendors.wat_nid_ripperdoc_01: &AddInhaler
+# Common - Cassius
+Vendors.wat_nid_ripperdoc_01: &AddInhalerCommon
+  itemStock:
+    - !append
+      item: Items.ripperdoc_med_common
+      quantity: [ Vendors.MedicStore_inline11 ]
+
+# Common - Instant Implants
+Vendors.wat_kab_ripperdoc_01 : *AddInhalerCommon
+# Common - Bucks' Clinic
+Vendors.wat_kab_ripperdoc_02 : *AddInhalerCommon
+
+# Uncommon - Fingers M.D.
+Vendors.wbr_jpn_ripperdoc_02: &AddInhalerUncommon
+  itemStock:
+    - !append
+      item: Items.ripperdoc_med_uncommon
+      quantity: [ Vendors.MedicStore_inline5 ]
+
+# Uncommon - Octavio's Clinic
+Vendors.std_rcr_ripperdoc_01 : *AddInhalerUncommon
+
+# Rare - Kraviz's Clinic
+Vendors.wbr_hil_ripdoc_01: &AddInhalerRare
   itemStock:
     - !append
       item: Items.ripperdoc_med
       quantity: [ Vendors.MedicStore_inline5 ]
+    - !append
+      item: Items.ripperdoc_med_uncommon
+      quantity: [ Vendors.MedicStore_inline5 ]
+    - !append
+      item: Items.ripperdoc_med_common
+      quantity: [ Vendors.MedicStore_inline5 ]
 
-# Kraviz's Clinic
-Vendors.wbr_hil_ripdoc_01: *AddInhaler
-# Fingers M.D.
-Vendors.wbr_jpn_ripperdoc_02: *AddInhaler
-# Viktor's Clinic
-Vendors.wat_lch_ripperdoc_01 : *AddInhaler
+# Rare - Viktor's Clinic
+Vendors.wat_lch_ripperdoc_01 : *AddInhalerRare
 
 
-# -- Add recipe to medstores
+# === Add recipe to medstores ===
 
-Vendors.bls_ina_se1_medicstore_01: &AddRecipe
+Vendors.bls_ina_se1_medicstore_01: &AddRecipeRare
   itemStock:
     - !append
       item: Items.recipe_ripperdoc_med
       quantity: [ Vendors.IsPresent ]
 
-Vendors.wat_kab_medicstore_01: *AddRecipe
-Vendors.wat_nid_medicstore_01: *AddRecipe
-Vendors.wat_nid_medicstore_02: *AddRecipe
-Vendors.wat_lch_medicstore_01: *AddRecipe
-Vendors.wbr_jpn_medicstore_01: *AddRecipe
-Vendors.wbr_jpn_medicstore_02: *AddRecipe
-Vendors.wbr_jpn_medicstore_03: *AddRecipe
-Vendors.wbr_nok_medic_01: *AddRecipe
-Vendors.cct_dtn_medic_01: *AddRecipe
-Vendors.cct_cpz_medic_01: *AddRecipe
-Vendors.hey_spr_medicstore_01: *AddRecipe
-Vendors.std_arr_medicstore_01: *AddRecipe
-Vendors.std_rcr_medicstore_01: *AddRecipe
-Vendors.pac_cvi_medicstore_01: *AddRecipe
+Vendors.bls_ina_se1_medicstore_01: &AddRecipeUncommon
+  itemStock:
+    - !append
+      item: Items.recipe_ripperdoc_med_uncommon
+      quantity: [ Vendors.IsPresent ]
 
-# Game.AddToInventory("Items.ripperdoc_med", 5)
-# Game.AddToInventory("Items.recipe_ripperdoc_med", 1)
+Vendors.bls_ina_se1_medicstore_01: &AddRecipeCommon
+  itemStock:
+    - !append
+      item: Items.recipe_ripperdoc_med_common
+      quantity: [ Vendors.IsPresent ]
+
+Vendors.wat_kab_medicstore_01: *AddRecipeRare
+Vendors.wat_nid_medicstore_01: *AddRecipeUncommon
+Vendors.wat_nid_medicstore_02: *AddRecipeCommon
+Vendors.wat_lch_medicstore_01: *AddRecipeRare
+Vendors.wbr_jpn_medicstore_01: *AddRecipeUncommon
+Vendors.wbr_jpn_medicstore_02: *AddRecipeCommon
+Vendors.wbr_jpn_medicstore_03: *AddRecipeRare
+Vendors.wbr_nok_medic_01: *AddRecipeUncommon
+Vendors.cct_dtn_medic_01: *AddRecipeCommon
+Vendors.cct_cpz_medic_01: *AddRecipeRare
+Vendors.hey_spr_medicstore_01: *AddRecipeUncommon
+Vendors.std_arr_medicstore_01: *AddRecipeCommon
+Vendors.std_rcr_medicstore_01: *AddRecipeRare
+Vendors.pac_cvi_medicstore_01: *AddRecipeUncommon
+
+#Game.AddToInventory("Items.ripperdoc_med", 1)
+#Game.AddToInventory("Items.ripperdoc_med_uncommon", 1)
+#Game.AddToInventory("Items.ripperdoc_med_common", 1)
+#Game.AddToInventory("Items.recipe_ripperdoc_med", 1)
+#Game.AddToInventory("Items.recipe_ripperdoc_med_uncommon", 1)
+#Game.AddToInventory("Items.recipe_ripperdoc_med_common", 1)

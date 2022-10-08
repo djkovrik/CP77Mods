@@ -407,7 +407,9 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   private func IsRipperdocBuffActive() -> Bool {
-    return Equals(StatusEffectSystem.ObjectHasStatusEffect(this.player, t"BaseStatusEffect.RipperDocMedBuff"), true);
+    return Equals(StatusEffectSystem.ObjectHasStatusEffect(this.player, t"BaseStatusEffect.RipperDocMedBuff"), true)
+      || Equals(StatusEffectSystem.ObjectHasStatusEffect(this.player, t"BaseStatusEffect.RipperDocMedBuffUncommon"), true)
+      || Equals(StatusEffectSystem.ObjectHasStatusEffect(this.player, t"BaseStatusEffect.RipperDocMedBuffCommon"), true);
   }
 
   public func IsGlitchesActive() -> Bool {
