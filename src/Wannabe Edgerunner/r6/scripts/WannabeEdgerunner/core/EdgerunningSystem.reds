@@ -337,11 +337,20 @@ public class EdgerunningSystem extends ScriptableSystem {
     return this.IsPossessed() || this.IsRipperdocBuffActive();
   }
 
+  private func IsHumanityRestored() -> Bool {
+    return this.currentHumanityPool > this.lowerThreshold;
+  }
+
   private func IsPsychosisBlocked() -> Bool {
     let psmBlackboard: ref<IBlackboard> = this.player.GetPlayerStateMachineBlackboard();
     let tier: Int32 = this.player.GetPlayerStateMachineBlackboard().GetInt(GetAllBlackboardDefs().PlayerStateMachine.HighLevel);
     E("? Check if psychosis available...");
     
+    if this.IsHumanityRestored() {
+      E("- Humanity value restored");
+      return true;
+    };
+
     if psmBlackboard.GetBool(GetAllBlackboardDefs().PlayerStateMachine.Carrying) {
       E("- carrying");
       return true;
@@ -466,8 +475,10 @@ public class EdgerunningSystem extends ScriptableSystem {
     if triggered || forcedRun {
       this.RunPsychosis();
     } else {
-      E(s"? Rescheduled next psycho check after \(nextRun) seconds");
-      this.psychosisCheckDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new LaunchCycledPsychosisCheckRequest(), nextRun);
+      if !this.IsHumanityRestored() {
+        E(s"? Rescheduled next psycho check after \(nextRun) seconds");
+        this.psychosisCheckDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new LaunchCycledPsychosisCheckRequest(), nextRun);
+      };
     };
   }
 
