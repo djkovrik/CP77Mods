@@ -193,7 +193,7 @@ BaseStatusEffect.RipperDocMedBuff:
     displayName: "LocKey#Mod-Edg-Ripper-Med"
     iconPath: inhaler_buff_icon
   VFX:
-    - BaseStatusEffect.InhalerBuff_inline0
+    - BaseStatusEffect.InjectorBuff_inline0
 
 BaseStatusEffect.RipperDocMedBuffUncommon:
   $base: BaseStatusEffect.RipperDocMedBuff
@@ -204,16 +204,16 @@ BaseStatusEffect.RipperDocMedBuffCommon:
   duration: Items.RipperdocMedDurationCommon
 
 
-# === Inhalers ===
+# === Injectors ===
 
 # - Rare
 Items.ripperdoc_med:
-  $base: Items.Inhaler
+  $base: Items.Injector
   displayName: l"Mod-Edg-Ripper-Med"
   localizedDescription: l"Mod-Edg-Ripper-Med-Desc"
   quality: t"Quality.Rare"
-  iconPath: inhaler_6_ripperdoc_med
-  appearanceName: drug_3
+  iconPath: injector_1_orange
+  appearanceName: injector___2
   CraftingData:
     $type: CraftingPackage_Record
     craftingExpModifier: 1
@@ -288,7 +288,7 @@ Items.ripperdoc_med_uncommon:
    - Price.IconicMultiplier
    - Price.BuyPriceIntrinsicModMult
    - Price.RipperdocMedModifierUncommon
-
+   
 # - Common
 Items.ripperdoc_med_common:
   $base: Items.ripperdoc_med
@@ -373,39 +373,39 @@ Items.recipe_ripperdoc_med_common:
     - Price.RipperdocMedModifierRecipeCommon
 
 
-# === Add inhalers to reapers ===
+# === Add injector to reapers ===
 
 # Common - Cassius
-Vendors.wat_nid_ripperdoc_01: &AddInhalerCommon
+Vendors.wat_nid_ripperdoc_01: &AddInjectorCommon
   itemStock:
     - !append
       item: Items.ripperdoc_med_common
       quantity: [ Vendors.MedicStore_inline11 ]
 
 # Common - Instant Implants
-Vendors.wat_kab_ripperdoc_01 : *AddInhalerCommon
+Vendors.wat_kab_ripperdoc_01 : *AddInjectorCommon
 # Common - Bucks' Clinic
-Vendors.wat_kab_ripperdoc_02 : *AddInhalerCommon
+Vendors.wat_kab_ripperdoc_02 : *AddInjectorCommon
 
 # Uncommon - Fingers M.D.
-Vendors.wbr_jpn_ripperdoc_02: &AddInhalerUncommon
+Vendors.wbr_jpn_ripperdoc_02: &AddInjectorUncommon
   itemStock:
     - !append
       item: Items.ripperdoc_med_uncommon
       quantity: [ Vendors.MedicStore_inline5 ]
 
 # Uncommon - Octavio's Clinic
-Vendors.std_rcr_ripperdoc_01 : *AddInhalerUncommon
+Vendors.std_rcr_ripperdoc_01 : *AddInjectorUncommon
 
 # Rare - Kraviz's Clinic
-Vendors.wbr_hil_ripdoc_01: &AddInhalerRare
+Vendors.wbr_hil_ripdoc_01: &AddInjectorRare
   itemStock:
     - !append
       item: Items.ripperdoc_med
       quantity: [ Vendors.MedicStore_inline5 ]
 
 # Rare - Viktor's Clinic
-Vendors.wat_lch_ripperdoc_01 : *AddInhalerRare
+Vendors.wat_lch_ripperdoc_01 : *AddInjectorRare
 
 
 # === Add recipe to medstores ===
