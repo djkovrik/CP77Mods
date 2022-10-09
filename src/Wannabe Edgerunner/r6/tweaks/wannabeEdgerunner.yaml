@@ -403,12 +403,6 @@ Vendors.wbr_hil_ripdoc_01: &AddInhalerRare
     - !append
       item: Items.ripperdoc_med
       quantity: [ Vendors.MedicStore_inline5 ]
-    - !append
-      item: Items.ripperdoc_med_uncommon
-      quantity: [ Vendors.MedicStore_inline5 ]
-    - !append
-      item: Items.ripperdoc_med_common
-      quantity: [ Vendors.MedicStore_inline5 ]
 
 # Rare - Viktor's Clinic
 Vendors.wat_lch_ripperdoc_01 : *AddInhalerRare
