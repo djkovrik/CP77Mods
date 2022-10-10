@@ -214,6 +214,8 @@ Items.ripperdoc_med:
   quality: t"Quality.Rare"
   iconPath: injector_1_orange
   appearanceName: injector___2
+  consumableBaseName: ConsumableBaseName.BonesMcCoy70
+  consumableType: ConsumableType.Medical
   CraftingData:
     $type: CraftingPackage_Record
     craftingExpModifier: 1
@@ -234,10 +236,11 @@ Items.ripperdoc_med:
     - t"ItemAction.ConsumableDisassemble"
     - $type: ItemAction_Record
       actionName: Consume
-      objectActionType: ObjectActionType.Item
       completionEffects:
       - $type: ObjectActionEffect_Record
         statusEffect: BaseStatusEffect.RipperDocMedBuff
+      objectActionType: ObjectActionType.Item
+      removeAfterUse: true
   OnEquip:
     - $type: GameplayLogicPackage_Record
       UIData:
@@ -256,8 +259,14 @@ Items.ripperdoc_med:
 
 # - Uncommon
 Items.ripperdoc_med_uncommon:
-  $base: Items.ripperdoc_med
+  $base: Items.Injector
+  displayName: l"Mod-Edg-Ripper-Med"
+  localizedDescription: l"Mod-Edg-Ripper-Med-Desc"
   quality: t"Quality.Uncommon"
+  iconPath: injector_1_orange
+  appearanceName: injector___2
+  consumableBaseName: ConsumableBaseName.BonesMcCoy70
+  consumableType: ConsumableType.Medical
   CraftingData:
     $type: CraftingPackage_Record
     craftingExpModifier: 1
@@ -275,10 +284,17 @@ Items.ripperdoc_med_uncommon:
     - t"ItemAction.ConsumableDisassemble"
     - $type: ItemAction_Record
       actionName: Consume
-      objectActionType: ObjectActionType.Item
       completionEffects:
       - $type: ObjectActionEffect_Record
         statusEffect: BaseStatusEffect.RipperDocMedBuffUncommon
+      objectActionType: ObjectActionType.Item
+      removeAfterUse: true
+  OnEquip:
+    - $type: GameplayLogicPackage_Record
+      UIData:
+        $type: GameplayLogicPackageUIData_Record
+        localizedDescription: l"Mod-Edg-Ripper-Med-Desc"
+        intValues: [ 1 ]
   statModifierGroups:
     - t"Items.RipperdocMedDurationUncommon"
   buyPrice:
@@ -291,15 +307,21 @@ Items.ripperdoc_med_uncommon:
    
 # - Common
 Items.ripperdoc_med_common:
-  $base: Items.ripperdoc_med
+  $base: Items.Injector
+  displayName: l"Mod-Edg-Ripper-Med"
+  localizedDescription: l"Mod-Edg-Ripper-Med-Desc"
   quality: t"Quality.Common"
+  iconPath: injector_1_orange
+  appearanceName: injector___2
+  consumableBaseName: ConsumableBaseName.BonesMcCoy70
+  consumableType: ConsumableType.Medical
   CraftingData:
     $type: CraftingPackage_Record
     craftingExpModifier: 1
     overcraftPenaltyModifier: 1
     craftingRecipe:
     - $type: RecipeElement_Record
-      amount: 40
+      amount: 45
       ingredient: Items.CommonMaterial1
   objectActions:
     - t"ItemAction.Drop"
@@ -307,10 +329,17 @@ Items.ripperdoc_med_common:
     - t"ItemAction.ConsumableDisassemble"
     - $type: ItemAction_Record
       actionName: Consume
-      objectActionType: ObjectActionType.Item
       completionEffects:
       - $type: ObjectActionEffect_Record
         statusEffect: BaseStatusEffect.RipperDocMedBuffCommon
+      objectActionType: ObjectActionType.Item
+      removeAfterUse: true
+  OnEquip:
+    - $type: GameplayLogicPackage_Record
+      UIData:
+        $type: GameplayLogicPackageUIData_Record
+        localizedDescription: l"Mod-Edg-Ripper-Med-Desc"
+        intValues: [ 1 ]
   statModifierGroups:
     - t"Items.RipperdocMedDurationCommon"
   buyPrice:
@@ -320,7 +349,6 @@ Items.ripperdoc_med_common:
    - Price.IconicMultiplier
    - Price.BuyPriceIntrinsicModMult
    - Price.RipperdocMedModifierCommon
-
 
 # === Recipes === 
 
