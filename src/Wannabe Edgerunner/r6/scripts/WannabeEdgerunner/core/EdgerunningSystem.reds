@@ -38,6 +38,7 @@ public class EdgerunningSystem extends ScriptableSystem {
       this.delaySystem = GameInstance.GetDelaySystem(this.player.GetGame());
 
       this.RefreshConfig();
+      this.InvalidateCurrentState();
 
       ArrayPush(this.cyberpsychosisSFX, SFXBundle.Create(n"ono_v_breath_heavy", 3.0));
       ArrayPush(this.cyberpsychosisSFX, SFXBundle.Create(n"ono_v_pain_short", 7.0));
@@ -50,11 +51,24 @@ public class EdgerunningSystem extends ScriptableSystem {
     };
   }
 
+  private func OnAttach() -> Void {
+    ModSettings.RegisterListenerToModifications(this);
+  }
+
+  private func OnDetach() -> Void {
+    ModSettings.UnregisterListenerToModifications(this);
+  }
+
   public final static func GetInstance(gameInstance: GameInstance) -> ref<EdgerunningSystem> {
     let system: ref<EdgerunningSystem> = GameInstance.GetScriptableSystemsContainer(gameInstance).Get(n"Edgerunning.System.EdgerunningSystem") as EdgerunningSystem;
     return system;
   }
 
+  public func OnModSettingsChange() -> Void {
+    E("Settings changed!");
+    this.RefreshConfig();
+    this.InvalidateCurrentState();
+  }
 
   // -- INVALIDATE
 
@@ -502,7 +516,6 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public func RefreshConfig() -> Void {
     this.config = new EdgerunningConfig();
-    this.InvalidateCurrentState();
   }
 
   public func GetCyberwareCost(item: ref<Item_Record>) -> Int32 {
@@ -583,10 +596,10 @@ public class EdgerunningSystem extends ScriptableSystem {
   public func GetHumanityColor() -> CName {
     let color: CName = n"MainColors.White";
     if this.currentHumanityPool < this.upperThreshold && this.currentHumanityPool > this.lowerThreshold {
-      color = n"MainColors.ActiveRed"; 
+      color = n"MainColors.Orange"; 
     } else {
       if this.currentHumanityPool <= this.lowerThreshold {
-        color = n"MainColors.Orange"; 
+        color = n"MainColors.ActiveRed"; 
       } else {
         color = n"MainColors.MildGreen"; 
       };
