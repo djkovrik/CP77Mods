@@ -84,8 +84,10 @@ public class EdgerunningSystem extends ScriptableSystem {
       if this.currentHumanityPool < this.lowerThreshold && this.currentHumanityPool > 0 {
         this.RunSecondStageIfNotActive();
       } else {
-        if Equals(this.currentHumanityPool, 0) && this.config.alwaysRunAtZero {
-          this.RunLastStageIfNotActive();
+        if Equals(this.currentHumanityPool, 0) {
+          if this.config.alwaysRunAtZero {
+            this.RunLastStageIfNotActive();
+          };
         } else {
           this.RemoveAllEffects();
         };
