@@ -214,8 +214,7 @@ Items.ripperdoc_med:
   quality: t"Quality.Rare"
   iconPath: injector_1_orange
   appearanceName: injector___2
-  consumableBaseName: ConsumableBaseName.BonesMcCoy70
-  consumableType: ConsumableType.Medical
+  consumableType: ConsumableType.Drug
   CraftingData:
     $type: CraftingPackage_Record
     craftingExpModifier: 1
@@ -265,8 +264,7 @@ Items.ripperdoc_med_uncommon:
   quality: t"Quality.Uncommon"
   iconPath: injector_1_orange
   appearanceName: injector___2
-  consumableBaseName: ConsumableBaseName.BonesMcCoy70
-  consumableType: ConsumableType.Medical
+  consumableType: ConsumableType.Drug
   CraftingData:
     $type: CraftingPackage_Record
     craftingExpModifier: 1
@@ -313,8 +311,7 @@ Items.ripperdoc_med_common:
   quality: t"Quality.Common"
   iconPath: injector_1_orange
   appearanceName: injector___2
-  consumableBaseName: ConsumableBaseName.BonesMcCoy70
-  consumableType: ConsumableType.Medical
+  consumableType: ConsumableType.Drug
   CraftingData:
     $type: CraftingPackage_Record
     craftingExpModifier: 1
