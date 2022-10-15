@@ -287,6 +287,11 @@ private func ShouldBeScrappedSS(data: wref<gameItemData>, quality: gamedataQuali
 @addMethod(PlayerPuppet)
 private func ShouldBeScrappedConsumableSS(data: wref<gameItemData>, quality: gamedataQuality) -> Bool {
   let type: gamedataItemType = data.GetItemType();
+  // Prevent neuroblockers from scrapping
+  let tdbid: TweakDBID = ItemID.GetTDBID(data.GetID());
+  if Equals(tdbid, t"Items.ripperdoc_med") || Equals(tdbid, t"Items.ripperdoc_med_uncommon") || Equals(tdbid, t"Items.ripperdoc_med_common") {
+    return false;
+  };
   
   if Equals(type, gamedataItemType.Gad_Grenade) {
     switch quality {
