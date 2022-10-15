@@ -9,15 +9,22 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   private let cyberpsychosisSFX: array<ref<SFXBundle>>;
 
+  // Psychosis
   private let cycledSFXDelayId: DelayID;
-
   private let policeActivityDelayId: DelayID;
-
   private let drawWeaponDelayId: DelayID;
-
   private let randomShotsDelayId: DelayID;
-
   private let psychosisCheckDelayId: DelayID;
+  // Teleport
+  private let prepareTeleportDelayId: DelayID; 
+  private let teleportDelayId: DelayID; 
+  private let postTeleportEffectsDelayId: DelayID; 
+  // Dead NPCs
+  private let victimSpawnDelayId1: DelayID;
+  private let victimSpawnDelayId2: DelayID;
+  private let victimSpawnDelayId3: DelayID;
+  private let victimSpawnDelayId4: DelayID;
+  private let killRequests: array<DelayID>;
 
   private let config: ref<EdgerunningConfig>;
 
@@ -30,6 +37,8 @@ public class EdgerunningSystem extends ScriptableSystem {
   private let lowerThreshold: Int32;
 
   private persistent let currentHumanityDamage: Int32 = 0;
+
+  private let teleportHelper: ref<TeleportHelper>;
 
   private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
     let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(request.owner.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
@@ -47,6 +56,8 @@ public class EdgerunningSystem extends ScriptableSystem {
       ArrayPush(this.cyberpsychosisSFX, SFXBundle.Create(n"ONO_V_LongPain", 7.0));
       ArrayPush(this.cyberpsychosisSFX, SFXBundle.Create(n"ono_v_fear_panic_scream", 6.0));
 
+      this.teleportHelper = new TeleportHelper();
+      this.teleportHelper.Init();
       E("Edgerunning System initialized");
     };
   }
@@ -182,6 +193,11 @@ public class EdgerunningSystem extends ScriptableSystem {
     };
 
     this.cycledSFXDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new LaunchCycledSFXRequest(), 7.0);
+
+    if this.config.teleportOnEnd {
+      this.ClearTeleportDelays();
+      this.prepareTeleportDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new PrepareTeleportRequest(), 66.0);
+    };
   }
 
   public func ScheduleNextPsychoCheck() -> Void {
@@ -196,6 +212,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.StopPrePsychosislitch();
     this.StopPsychosis();
     this.StopPsychoChecks();
+    this.ClearTeleportDelays();
   }
 
   public func StopLowHumanityGlitch() -> Void {
@@ -213,15 +230,15 @@ public class EdgerunningSystem extends ScriptableSystem {
   private func StopPsychosis() -> Void {
     E("!!! STOP STAGE 2 - PSYCHOSIS");
     this.RemoveStatusEffect(t"BaseStatusEffect.ActivePsychosisBuff", 0.1);
-    this.delaySystem.CancelCallback(this.drawWeaponDelayId);
-    this.delaySystem.CancelCallback(this.randomShotsDelayId);
-    this.delaySystem.CancelCallback(this.policeActivityDelayId);
-    this.delaySystem.CancelCallback(this.cycledSFXDelayId);
+    this.delaySystem.CancelDelay(this.drawWeaponDelayId);
+    this.delaySystem.CancelDelay(this.randomShotsDelayId);
+    this.delaySystem.CancelDelay(this.policeActivityDelayId);
+    this.delaySystem.CancelDelay(this.cycledSFXDelayId);
   };
 
   public func StopPsychoChecks() -> Void {
     E("!!! STOP PRE STAGE 2 - CHECKS");
-    this.delaySystem.CancelCallback(this.psychosisCheckDelayId);
+    this.delaySystem.CancelDelay(this.psychosisCheckDelayId);
   }
 
   // -- CONTROL HUMANITY
@@ -341,6 +358,42 @@ public class EdgerunningSystem extends ScriptableSystem {
     };
   }
 
+  public func OnKerenzikovActivation() -> Void {
+    let itemRecord: ref<Item_Record> = this.GetCurrentKerenzikov();
+    if !IsDefined(itemRecord) {
+      return;
+    };
+
+    let quality: gamedataQuality = itemRecord.Quality().Type();
+    let qualityMult: Float;
+    switch (quality) {
+      case gamedataQuality.Common:
+        qualityMult = this.config.qualityMultiplierCommon;
+        break;
+      case gamedataQuality.Uncommon:
+        qualityMult = this.config.qualityMultiplierUncommon;
+        break;
+      case gamedataQuality.Rare:
+        qualityMult = this.config.qualityMultiplierRare;
+        break;
+      case gamedataQuality.Epic:
+        qualityMult = this.config.qualityMultiplierEpic;
+        break;
+      case gamedataQuality.Legendary:
+        qualityMult = this.config.qualityMultiplierLegendary;
+        break;
+    };
+
+    let cost: Int32 = this.config.kerenzikovUsageCost * Cast<Int32>(qualityMult);
+
+    if !this.IsHumanityChangeBlocked() {
+      this.currentHumanityDamage += cost;
+      E(s"! Kerenzikov activated: \(quality) - costs \(cost) humanity");
+      this.InvalidateCurrentState();
+    } else {
+      E("! Humanity freezed, kerenzikov costs no humanity");
+    };
+  }
 
   // -- CHECKERS
 
@@ -504,10 +557,150 @@ public class EdgerunningSystem extends ScriptableSystem {
     };
   }
 
+  // -- TELEPORT
+
+  private func BuildSpawnRequest(id: TweakDBID, position: Vector4) -> ref<VictimsSpawnRequest> {
+    let request: ref<VictimsSpawnRequest> = new VictimsSpawnRequest();
+    request.characterId = id;
+    request.position = position;
+    return request;
+  }
+
+  private final func OnPrepareTeleportRequest(request: ref<PrepareTeleportRequest>) -> Void {
+    let currentDistrict: gamedataDistrict = this.player.GetPreventionSystem().GetDistrictE();
+    let isPrologDone: Bool = this.player.IsPrologFinishedE();
+    let destination: ref<TeleportData>;
+    if isPrologDone {
+      destination = this.teleportHelper.GetRandomTeleportData(currentDistrict);
+    } else {
+      destination = this.teleportHelper.GetRandomTeleportDataPrologue();
+    };
+
+    if !IsDefined(destination) { return ; };
+
+    let position: Vector4 = TeleportHelper.GetRandomCoordinates(destination);
+    E(s"SELECTED DESTINATION: \(position) at \(destination.district)");
+
+    this.victimSpawnDelayId1 = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), this.BuildSpawnRequest(destination.maleVictim, position), 0.1);
+    this.victimSpawnDelayId2 = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), this.BuildSpawnRequest(destination.femaleVictim, position), 0.2);
+    this.victimSpawnDelayId3 = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), this.BuildSpawnRequest(destination.maleVictim, position), 0.3);
+    this.victimSpawnDelayId4 = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), this.BuildSpawnRequest(destination.femaleVictim, position), 0.4);
+
+    this.PlayVFXDelayed(n"fast_travel_glitch", 0.3);
+
+    let teleportRequest: ref<PlayerTeleportRequest> = new PlayerTeleportRequest();
+    teleportRequest.position = position;
+    this.teleportDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), teleportRequest, 0.9);
+  }
+
+  private final func OnVictimsSpawnRequest(request: ref<VictimsSpawnRequest>) -> Void {
+    let position: Vector4 = request.position;
+    let randX: Float = RandRangeF(-2.5, 2.5);
+    let randY: Float = RandRangeF(-2.5, 2.5);
+    let newPosition: Vector4 = new Vector4(position.X + randX, position.Y + randY, position.Z, position.W);
+    let worldTransform: WorldTransform;
+    WorldTransform.SetPosition(worldTransform, newPosition);
+    let entityId: EntityID = GameInstance.GetPreventionSpawnSystem(this.player.GetGame()).RequestSpawn(request.characterId, 5u, worldTransform);
+    let killRequest: ref<VictimKillRequest> = new VictimKillRequest();
+    killRequest.entityId = entityId;
+    E(s"SPAWN VICTIM \(TDBID.ToStringDEBUG(request.characterId)) AT POSITION \(newPosition)");
+
+    let delayId: DelayID = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), killRequest, 0.05);
+    ArrayPush(this.killRequests, delayId);
+  }
+
+  private final func OnPlayerTeleportRequest(request: ref<PlayerTeleportRequest>) -> Void {
+    if IsEntityInInteriorArea(this.player) { 
+      E("PLAYER IS IN INTERIOR, TELEPORT ABORTED");
+      return ; 
+    };
+
+    if this.IsPsychosisBlocked() {
+      E("PSYCHOSIS EFFECTS NOT AVAILABLE ATM, TELEPORT ABORTED");
+      return ; 
+    };
+
+    E(s"TELEPORTING TO \(request.position)");
+    let rotation: EulerAngles;
+    let position: Vector4 = request.position;
+    GameInstance.GetTeleportationFacility(this.player.GetGame()).Teleport(this.player, position, rotation);
+    this.postTeleportEffectsDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new PostTeleportEffectsRequest(), 1.0);
+  }
+
+  private final func OnVictimKillRequest(request: ref<VictimKillRequest>) -> Void {
+    let npc: ref<NPCPuppet> = GameInstance.FindEntityByID(this.player.GetGame(), request.entityId) as NPCPuppet;
+    if IsDefined(npc) {
+      npc.Kill(null, true, true);
+      this.SpawnBloodPuddle(npc);
+      E("NPC SPAWNED - KILL");
+    } else {
+      let delayId: DelayID = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), request, 0.05);
+      ArrayPush(this.killRequests, delayId);
+    };
+  }
+
+  private final func OnPostTeleportEffectsRequest(request: ref<PostTeleportEffectsRequest>) -> Void {
+    E("APPLY POST TELEPORT EFFECTS");
+    let timeSystem: ref<TimeSystem> = GameInstance.GetTimeSystem(this.player.GetGame());
+    let sps: ref<StatPoolsSystem> = GameInstance.GetStatPoolsSystem(this.player.GetGame());
+    let currentHealth: Float = sps.GetStatPoolValue(Cast<StatsObjectID>(this.player.GetEntityID()), gamedataStatPoolType.Health, false);
+    let targetHealth: Float = 20.0;
+    let diff: Float = AbsF(currentHealth - targetHealth);
+    // Damage health
+    E(s"DAMAGE HEALTH FROM \(currentHealth) to \(targetHealth) (diff \(diff))");
+    sps.RequestChangingStatPoolValue(Cast<StatsObjectID>(this.player.GetEntityID()), gamedataStatPoolType.Health, -diff, null, false, false);
+    // Increase humanity a bit
+    this.currentHumanityPool = this.currentHumanityPool + 2;
+    E(s"CURRENT HUMANITY: \(this.currentHumanityPool)");
+    // Skip time
+    let currentTimestamp: Float = timeSystem.GetGameTimeStamp();
+    let diff: Float = 4.0 * 3600.0;
+    let newTimeStamp: Float = currentTimestamp + diff;
+    timeSystem.SetGameTimeBySeconds(Cast<Int32>(newTimeStamp));
+    GameTimeUtils.FastForwardPlayerState(this.player);
+    this.RunSecondStageIfNotActive();
+    // Equip weapon
+    PlayerGameplayRestrictions.RequestLastUsedWeapon(this.player, gameEquipAnimationType.Instant);
+    // Clear wanted level
+    this.player.GetPreventionSystem().ClearWantedLevel();
+    // Stop cycled sound
+    this.delaySystem.CancelDelay(this.cycledSFXDelayId);
+  }
+
+ private func SpawnBloodPuddle(puppet: wref<ScriptedPuppet>) -> Void {
+    let evt: ref<BloodPuddleEvent> = new BloodPuddleEvent();
+    if !IsDefined(puppet) || VehicleComponent.IsMountedToVehicle(puppet.GetGame(), puppet) {
+      return;
+    };
+    evt = new BloodPuddleEvent();
+    evt.m_slotName = n"Chest";
+    evt.cyberBlood = NPCManager.HasVisualTag(puppet, n"CyberTorso");
+    GameInstance.GetDelaySystem(puppet.GetGame()).DelayEventNextFrame(puppet, evt);
+  }
+
+  private func CancelKillRequests() -> Void {
+    for request in this.killRequests {
+      this.delaySystem.CancelDelay(request);
+    };
+    ArrayClear(this.killRequests);
+  }
+  
+  private func ClearTeleportDelays() -> Void {
+    this.delaySystem.CancelDelay(this.prepareTeleportDelayId);
+    this.delaySystem.CancelDelay(this.teleportDelayId);
+    this.delaySystem.CancelDelay(this.postTeleportEffectsDelayId);
+    this.delaySystem.CancelDelay(this.victimSpawnDelayId1);
+    this.delaySystem.CancelDelay(this.victimSpawnDelayId2);
+    this.delaySystem.CancelDelay(this.victimSpawnDelayId3);
+    this.delaySystem.CancelDelay(this.victimSpawnDelayId4);
+    this.CancelKillRequests();
+  }
+
   // -------------------------------------
 
 
   public func Debug() -> Void {
+    // this.prepareTeleportDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new PrepareTeleportRequest(), 0.1);
     this.currentHumanityDamage += 10;
     this.InvalidateCurrentState();
     // this.RunSecondStageIfNotActive();
@@ -727,6 +920,26 @@ public class EdgerunningSystem extends ScriptableSystem {
     return installedCyberwarePool;
   }
 
+  private func GetCurrentKerenzikov() -> ref<Item_Record> {
+    let cyberware: array<ref<Item_Record>> = EquipmentSystem.GetData(this.player).GetCyberwareFromSlots();
+    for record in cyberware {
+      if this.IsKerenzikov(record) {
+        return record;
+      };
+    };
+
+    return null;
+  }
+
+  private func IsKerenzikov(record: ref<Item_Record>) -> Bool {
+    let id: TweakDBID = record.GetID();
+    return Equals(id, t"Items.KerenzikovCommon") 
+      || Equals(id, t"Items.KerenzikovUncommon")
+      || Equals(id, t"Items.KerenzikovRare")
+      || Equals(id, t"Items.KerenzikovEpic")
+      || Equals(id, t"Items.KerenzikovLegendary");
+  }
+
   private func PlaySFX(name: CName) -> Void {
     GameObject.PlaySoundEvent(this.player, name);
     E(s"+ Play \(name) sfx");
@@ -778,6 +991,6 @@ public class EdgerunningSystem extends ScriptableSystem {
   public func StopFX() -> Void {
     this.StopVFX(n"reboot_glitch");
     this.StopVFX(n"hacking_glitch_low");
-    this.delaySystem.CancelCallback(this.cycledSFXDelayId);
+    this.delaySystem.CancelDelay(this.cycledSFXDelayId);
   }
 }

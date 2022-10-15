@@ -1,10 +1,5 @@
 public class EdgerunningConfig {
 
-  public static func Get() -> ref<EdgerunningConfig> {
-    let self: ref<EdgerunningConfig> = new EdgerunningConfig();
-    return self;
-  }
-
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Humanity")
   @runtimeProperty("ModSettings.displayName", "Mod-Edg-Humanity-Pool")
@@ -64,6 +59,12 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.displayName", "Mod-Edg-Trigger-Zero")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Trigger-Zero-Desc")
   let alwaysRunAtZero: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Gameplay-Devices-Interactions-MadnessHack")
+  @runtimeProperty("ModSettings.displayName", "Mod-Edg-Teleport-On-End")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Teleport-On-End-Desc")
+  let teleportOnEnd: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Implants-Cost")
@@ -181,6 +182,15 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.min", "1")
   @runtimeProperty("ModSettings.max", "20")
   let sandevistanUsageCost: Int32 = 7;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Implants-Usage-Cost")
+  @runtimeProperty("ModSettings.displayName", "Gameplay-Cyberware-NervousSystem-DisplayName-Kerenzikov")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Implants-Usage-Cost-Desc")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "1")
+  @runtimeProperty("ModSettings.max", "20")
+  let kerenzikovUsageCost: Int32 = 3;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Quality")
@@ -364,4 +374,4 @@ public class EdgerunningConfig {
 }
 
 // Replace false with true to show full debug logs in CET console
-public static func ShowDebugLogsEdgerunner() -> Bool = false
+public static func ShowDebugLogsEdgerunner() -> Bool = true
