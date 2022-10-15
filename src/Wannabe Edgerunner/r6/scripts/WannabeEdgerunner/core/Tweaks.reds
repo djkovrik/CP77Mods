@@ -16,7 +16,15 @@ public func IsPrologFinishedE() -> Bool {
   return Equals(prologueFact, 1);
 }
 
+// Get discrict name
 @addMethod(PreventionSystem)
 public func GetDistrictE() -> gamedataDistrict {
   return this.m_districtManager.GetCurrentDistrict().CreateDistrictRecord().Type();
+}
+
+// Cancel scheduled teleport on player death
+@wrapMethod(ScriptedPuppet)
+protected cb func OnDeath(evt: ref<gameDeathEvent>) -> Bool {
+  wrappedMethod(evt);
+  EdgerunningSystem.GetInstance(this.GetGame()).ClearTeleportDelays();
 }

@@ -920,7 +920,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     return installedCyberwarePool;
   }
 
-  private func GetCurrentKerenzikov() -> ref<Item_Record> {
+  public func GetCurrentKerenzikov() -> ref<Item_Record> {
     let cyberware: array<ref<Item_Record>> = EquipmentSystem.GetData(this.player).GetCyberwareFromSlots();
     for record in cyberware {
       if this.IsKerenzikov(record) {

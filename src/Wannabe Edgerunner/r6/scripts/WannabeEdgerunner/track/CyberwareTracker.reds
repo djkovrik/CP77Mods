@@ -41,17 +41,23 @@ private final func EquipCyberware(itemData: wref<gameItemData>) -> Void {
 @wrapMethod(PlayerPuppet)
 private final func ActivateIconicCyberware() -> Void {
   wrappedMethod();
-  let item: ItemID = EquipmentSystem.GetData(this).GetActiveItem(gamedataEquipmentArea.SystemReplacementCW);
-  if !ItemID.IsValid(item) {
-    return;
-  };
+
+  let item: ItemID;
   if GameInstance.GetStatsSystem(this.GetGame()).GetStatBoolValue(Cast<StatsObjectID>(this.GetEntityID()), gamedataStatType.HasBerserk) {
     if !StatusEffectSystem.ObjectHasStatusEffect(this, t"BaseStatusEffect.BerserkPlayerBuff") {
+      item = this.GetCurrentBerserk();
+      if !ItemID.IsValid(item) {
+        return ;
+      };
       EdgerunningSystem.GetInstance(this.GetGame()).OnBerserkActivation(item);
     };
   } else {
     if GameInstance.GetStatsSystem(this.GetGame()).GetStatBoolValue(Cast<StatsObjectID>(this.GetEntityID()), gamedataStatType.HasSandevistan) {
       if !StatusEffectSystem.ObjectHasStatusEffect(this, t"BaseStatusEffect.SandevistanPlayerBuff") {
+        item = this.GetCurrentSandevistan();
+        if !ItemID.IsValid(item) {
+          return ;
+        };
         EdgerunningSystem.GetInstance(this.GetGame()).OnSandevistanActivation(item);
       };
     };
@@ -120,4 +126,52 @@ public final const func GetCyberwareFromSlots() -> array<ref<Item_Record>> {
 
   E(s"Detected cyberware: \(ArraySize(result))");
   return result;
+}
+
+// -- System-Ex compat
+
+@if(ModuleExists("SystemEx"))
+@addMethod(PlayerPuppet)
+public func GetCurrentBerserk() -> ItemID {
+  let cyberware: array<ref<Item_Record>> = EquipmentSystem.GetData(this).GetCyberwareFromSlots();
+  let tags: array<CName> = [ n"Berserk" ];
+  let result: ItemID;
+  let id: ItemID;
+  for record in cyberware {
+    id = ItemID.FromTDBID(record.GetID());
+    if EquipmentSystem.GetData(this).CheckTagsInItem(id, tags) {
+      result = id;
+    };
+  };
+
+  return result;
+}
+
+@if(ModuleExists("SystemEx"))
+@addMethod(PlayerPuppet)
+public func GetCurrentSandevistan() -> ItemID {
+  let cyberware: array<ref<Item_Record>> = EquipmentSystem.GetData(this).GetCyberwareFromSlots();
+  let tags: array<CName> = [ n"Sandevistan" ];
+  let result: ItemID;
+  let id: ItemID;
+  for record in cyberware {
+    id = ItemID.FromTDBID(record.GetID());
+    if EquipmentSystem.GetData(this).CheckTagsInItem(id, tags) {
+      result = id;
+    };
+  };
+
+  return result;
+}
+
+@if(!ModuleExists("SystemEx"))
+@addMethod(PlayerPuppet)
+public func GetCurrentBerserk() -> ItemID {
+  return EquipmentSystem.GetData(this).GetActiveItem(gamedataEquipmentArea.SystemReplacementCW);
+}
+
+@if(!ModuleExists("SystemEx"))
+@addMethod(PlayerPuppet)
+public func GetCurrentSandevistan() -> ItemID {
+  return EquipmentSystem.GetData(this).GetActiveItem(gamedataEquipmentArea.SystemReplacementCW);
 }
