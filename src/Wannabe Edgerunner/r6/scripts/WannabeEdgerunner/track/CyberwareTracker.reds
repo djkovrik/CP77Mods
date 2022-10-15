@@ -58,6 +58,12 @@ private final func ActivateIconicCyberware() -> Void {
   };
 }
 
+@wrapMethod(KerenzikovEvents)
+protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  wrappedMethod(stateContext, scriptInterface);
+  EdgerunningSystem.GetInstance(scriptInterface.GetGame()).OnKerenzikovActivation();
+}
+
 @replaceMethod(InventoryDataManagerV2)
 public final static func IsEquipmentAreaCyberware(areaType: gamedataEquipmentArea) -> Bool {
   switch areaType {

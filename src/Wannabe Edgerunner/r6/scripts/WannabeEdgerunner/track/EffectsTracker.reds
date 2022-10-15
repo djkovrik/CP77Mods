@@ -34,7 +34,7 @@ private func IsRipperdocMedBuff(id: TweakDBID) -> Bool {
 private func IsHousingEffect(id: TweakDBID) -> Bool {
   return Equals(t"HousingStatusEffect.Rested", id)
     || Equals(t"HousingStatusEffect.Refreshed", id)
-    || Equals(t"ousingStatusEffect.Energized", id);
+    || Equals(t"HousingStatusEffect.Energized", id);
 }
 
 // Reset on bed interaction

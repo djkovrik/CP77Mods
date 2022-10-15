@@ -8,6 +8,11 @@ public func SpawnPoliceForPsychosis(config: ref<EdgerunningConfig>) -> Void {
   };
 }
 
+@addMethod(PreventionSystem)
+public func ClearWantedLevel() -> Void {
+  this.execInstructionSafe();
+}
+
 @wrapMethod(PreventionSystem)
 private final func ShouldSpawnVehicle() -> Bool {
   let shouldSpawn: Bool = wrappedMethod();

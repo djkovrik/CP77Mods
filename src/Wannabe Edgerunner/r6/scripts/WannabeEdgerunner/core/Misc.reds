@@ -1,21 +1,13 @@
 import Edgerunning.System.EdgerunningSystem
 
-// Refresh on player visible
-@wrapMethod(PlayerPuppet)
-protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpawn>) -> Bool {
-  wrappedMethod(evt);
-  EdgerunningSystem.GetInstance(this.GetGame()).RefreshConfig();
-  EdgerunningSystem.GetInstance(this.GetGame()).InvalidateCurrentState();
-}
-
-// Is Johnny
-@addMethod(PlayerPuppet)
-public func IsPossessedE() -> Bool {
-  let posessed: Bool = Cast<Bool>(GameInstance.GetQuestsSystem(this.GetGame()).GetFactStr("isPlayerPossessedByJohnny"));
-  return this.IsJohnnyReplacer() || posessed;
-}
-
-// CET command to stop FX effects
+// CET command to stop FX effects - Game.EdgerunnerClear()
 public static exec func EdgerunnerClear(gi: GameInstance) -> Void {
   EdgerunningSystem.GetInstance(gi).StopFX();
+}
+
+// CET command to get current coords - Game.GetDistrict()
+public static exec func GetDistrict(gi: GameInstance) -> Void {
+  let player: ref<PlayerPuppet> = GetPlayer(gi);
+  let district: gamedataDistrict = player.GetPreventionSystem().GetDistrictE();
+  LogChannel(n"DEBUG", s"Position: \(player.GetWorldPosition()) , district: \(district)");
 }
