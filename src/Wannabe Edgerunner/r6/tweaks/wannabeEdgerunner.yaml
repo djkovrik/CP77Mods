@@ -367,7 +367,7 @@ Items.recipe_ripperdoc_med:
 
 # Uncommon
 Items.recipe_ripperdoc_med_uncommon:
-  $base: Items.RecipeConsumableRareBase
+  $base: Items.RecipeConsumableUncommonBase
   displayName: l"Mod-Edg-Ripper-Med"
   craftingResult:
     $type: CraftingResult_Record
@@ -383,7 +383,7 @@ Items.recipe_ripperdoc_med_uncommon:
 
 # Common
 Items.recipe_ripperdoc_med_common:
-  $base: Items.RecipeConsumableRareBase
+  $base: Items.RecipeConsumableCommonBase
   displayName: l"Mod-Edg-Ripper-Med"
   craftingResult:
     $type: CraftingResult_Record
