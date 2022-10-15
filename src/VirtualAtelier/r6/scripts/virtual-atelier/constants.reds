@@ -28,8 +28,8 @@ public class VendorPreviewButtonHint {
     let lastUsedPad: Bool = playerPuppet.PlayerLastUsedPad();
 
     if lastUsedPad {
-      vendorPreviewButtonHint.previewModeToggleName = n"world_map_menu_toggle_custom_filter";
-      vendorPreviewButtonHint.previewModeToggleNameBackpack = n"world_map_menu_toggle_custom_filter";
+      vendorPreviewButtonHint.previewModeToggleName = n"world_map_menu_cycle_filter_prev";
+      vendorPreviewButtonHint.previewModeToggleNameBackpack = n"world_map_menu_cycle_filter_prev";
       vendorPreviewButtonHint.resetGarmentName = n"world_map_filter_navigation_down";
       vendorPreviewButtonHint.removeAllGarmentName = n"world_map_menu_open_quest_static";
       vendorPreviewButtonHint.removePreviewGarmentName = n"world_map_filter_navigation_up";
