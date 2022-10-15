@@ -374,4 +374,4 @@ public class EdgerunningConfig {
 }
 
 // Replace false with true to show full debug logs in CET console
-public static func ShowDebugLogsEdgerunner() -> Bool = true
+public static func ShowDebugLogsEdgerunner() -> Bool = false

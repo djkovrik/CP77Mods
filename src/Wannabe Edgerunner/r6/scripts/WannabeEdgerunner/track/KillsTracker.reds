@@ -4,6 +4,10 @@ import Edgerunning.Common.E
 @wrapMethod(ScriptedPuppet)
 protected func RewardKiller(killer: wref<GameObject>, killType: gameKillType, isAnyDamageNonlethal: Bool) -> Void {
   wrappedMethod(killer, killType, isAnyDamageNonlethal);
+
+  // Additional check for johnny
+  if this.IsPlayer() && this.IsPossessedE() { return ; };
+
   let record: ref<Character_Record> = this.GetRecord();
   let affiliation: gamedataAffiliation = record.Affiliation().Type();
   let type: ENeutralizeType;
