@@ -7,3 +7,5 @@ localization:
     ar-ar: base\localization\ar-ar\onscreens\imz.json
     it-it: base\localization\it-it\onscreens\imz.json
     zh-cn: base\localization\zh-cn\onscreens\imz.json
+    cz-cz: base\localization\cz-cz\onscreens\imz.json
+    jp-jp: base\localization\jp-jp\onscreens\imz.json
