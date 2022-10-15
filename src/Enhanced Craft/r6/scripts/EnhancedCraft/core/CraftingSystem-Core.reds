@@ -209,7 +209,7 @@ private final func CraftItem(target: wref<GameObject>, itemRecord: ref<Item_Reco
   
   // Notify that weapon was crafted
   let event: ref<EnhancedCraftRecipeCrafted>;
-  if ECraftUtils.IsWeapon(craftedItem.GetItemType()) && NotEquals(this.m_requestedDamageType, gamedataStatType.Invalid) {
+  if ECraftUtils.IsWeapon(craftedItem.GetItemType()) {
     event = new EnhancedCraftRecipeCrafted();
     event.isWeapon = true;
     event.itemId = craftedItem.GetID();
