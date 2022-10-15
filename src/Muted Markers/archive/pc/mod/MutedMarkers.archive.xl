@@ -4,3 +4,4 @@ localization:
     ru-ru: base\localization\ru-ru\onscreens\muted-markers.json
     fr-fr: base\localization\fr-fr\onscreens\muted-markers.json
     zh-cn: base\localization\zh-cn\onscreens\muted-markers.json
+    cz-cz: base\localization\cz-cz\onscreens\muted-markers.json

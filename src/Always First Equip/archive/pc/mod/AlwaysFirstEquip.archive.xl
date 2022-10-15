@@ -9,3 +9,5 @@ localization:
     jp-jp: base\localization\jp-jp\onscreens\first-equip.json
     es-es: base\localization\es-es\onscreens\first-equip.json
     pl-pl: base\localization\pl-pl\onscreens\first-equip.json
+    cz-cz: base\localization\cz-cz\onscreens\first-equip.json
+    pt-br: base\localization\pt-br\onscreens\first-equip.json

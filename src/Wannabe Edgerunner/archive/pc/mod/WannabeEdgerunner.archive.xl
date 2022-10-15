@@ -11,3 +11,4 @@ localization:
     zh-cn: base\localization\zh-cn\onscreens\wannabeedgerunner.json
     zh-tw: base\localization\zh-tw\onscreens\wannabeedgerunner.json
     de-de: base\localization\de-de\onscreens\wannabeedgerunner.json
+    es-es: base\localization\es-es\onscreens\wannabeedgerunner.json

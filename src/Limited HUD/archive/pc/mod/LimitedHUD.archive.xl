@@ -6,3 +6,5 @@ localization:
     zh-tw: base\localization\zh-tw\onscreens\lhud.json
     es-es: base\localization\es-es\onscreens\lhud.json
     zh-cn: base\localization\zh-cn\onscreens\lhud.json
+    cz-cz: base\localization\cz-cz\onscreens\lhud.json
+    jp-jp: base\localization\jp-jp\onscreens\lhud.json

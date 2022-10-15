@@ -66,6 +66,7 @@ public class EnhancedCraftItemsGenerator extends ScriptableTweak {
         TweakDBManager.SetFlat(newRecordIdStrName + n".isPresetIconic", isPresetIconic);
         TweakDBManager.SetFlat(newRecordIdStrName + n".usesVariants", true);
         TweakDBManager.SetFlat(newRecordIdStrName + n".visualTags", variantVisualTags);
+        TweakDBManager.SetFlat(newRecordIdStrName + n".iconPath", variantRecord.IconPath());
         // Add projectiles for knives
         if Equals(baseRecordType, gamedataItemType.Wea_Knife) {
           projectileTemplateName = TweakDBInterface.GetCName(baseRecordId + t".projectileTemplateName", n"");
