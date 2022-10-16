@@ -110,6 +110,7 @@ public class EdgerunningSystem extends ScriptableSystem {
         this.RunSecondStageIfNotActive();
       } else {
         if Equals(this.currentHumanityPool, 0) {
+          this.RunSecondStageIfNotActive();
           if this.config.alwaysRunAtZero {
             this.RunLastStageIfNotActive();
           };
