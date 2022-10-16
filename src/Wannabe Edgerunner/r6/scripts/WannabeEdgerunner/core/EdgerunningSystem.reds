@@ -443,11 +443,6 @@ public class EdgerunningSystem extends ScriptableSystem {
       E("- diving");
       return true;
     };
-
-    if this.player.IsMovingVertically() {
-      E("- moving vertically");
-      return true;
-    };
     
     if this.IsPsychosisActive() {
       E("- already active");
@@ -567,6 +562,16 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   private final func OnPrepareTeleportRequest(request: ref<PrepareTeleportRequest>) -> Void {
+    if IsEntityInInteriorArea(this.player) { 
+      E("PLAYER IS IN INTERIOR, TELEPORT ABORTED");
+      return ; 
+    };
+
+    if this.IsPsychosisBlocked() {
+      E("PSYCHOSIS EFFECTS NOT AVAILABLE ATM, TELEPORT ABORTED");
+      return ; 
+    };
+
     let currentDistrict: gamedataDistrict = this.player.GetPreventionSystem().GetDistrictE();
     let isPrologDone: Bool = this.player.IsPrologFinishedE();
     let destination: ref<TeleportData>;
@@ -610,21 +615,11 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   private final func OnPlayerTeleportRequest(request: ref<PlayerTeleportRequest>) -> Void {
-    if IsEntityInInteriorArea(this.player) { 
-      E("PLAYER IS IN INTERIOR, TELEPORT ABORTED");
-      return ; 
-    };
-
-    if this.IsPsychosisBlocked() {
-      E("PSYCHOSIS EFFECTS NOT AVAILABLE ATM, TELEPORT ABORTED");
-      return ; 
-    };
-
     E(s"TELEPORTING TO \(request.position)");
     let rotation: EulerAngles;
     let position: Vector4 = request.position;
     GameInstance.GetTeleportationFacility(this.player.GetGame()).Teleport(this.player, position, rotation);
-    this.postTeleportEffectsDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new PostTeleportEffectsRequest(), 1.0);
+    this.postTeleportEffectsDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new PostTeleportEffectsRequest(), 1.5);
   }
 
   private final func OnVictimKillRequest(request: ref<VictimKillRequest>) -> Void {
@@ -686,6 +681,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
   
   private func ClearTeleportDelays() -> Void {
+    E("Cancel scheduled deleport");
     this.delaySystem.CancelDelay(this.prepareTeleportDelayId);
     this.delaySystem.CancelDelay(this.teleportDelayId);
     this.delaySystem.CancelDelay(this.postTeleportEffectsDelayId);

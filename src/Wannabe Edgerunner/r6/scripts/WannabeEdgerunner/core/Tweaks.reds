@@ -26,5 +26,7 @@ public func GetDistrictE() -> gamedataDistrict {
 @wrapMethod(ScriptedPuppet)
 protected cb func OnDeath(evt: ref<gameDeathEvent>) -> Bool {
   wrappedMethod(evt);
-  EdgerunningSystem.GetInstance(this.GetGame()).ClearTeleportDelays();
+  if this.IsPlayer() {
+    EdgerunningSystem.GetInstance(this.GetGame()).ClearTeleportDelays();
+  };
 }
