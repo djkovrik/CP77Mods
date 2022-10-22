@@ -2,14 +2,6 @@ import LimitedHudConfig.LHUDAddonsConfig
 
 // kudos to psiberx for redscript snippets
 
-/*
-  Available keybind names and related hotkeys:
-    "restore_default_settings" for 'F1' hotkey
-    "UI_Unequip" for 'U' hotkey
-*/
-
-public static func KeybindName_ToggleHUD() -> String = "restore_default_settings"
-
 public class ToggleHudEvent extends Event {}
 
 public class SimpleToggleGlobalInputListener {
@@ -26,7 +18,7 @@ public class SimpleToggleGlobalInputListener {
     }
 
     protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
-        if this.m_config.EnableHUDToggle && ListenerAction.IsAction(action, StringToName(KeybindName_ToggleHUD())) && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED)  {
+        if this.m_config.EnableHUDToggle && ListenerAction.IsAction(action, n"LHUD_Toggle") && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED)  {
           this.m_uiSystem.QueueEvent(new ToggleHudEvent());
         };
     }

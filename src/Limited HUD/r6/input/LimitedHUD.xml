@@ -4,6 +4,7 @@
     <context name="LimitedHUD" >
 		<action name="LHUD_Minimap" map="LHUD_Minimap_Button" />
 		<action name="LHUD_Global" map="LHUD_Global_Button" />
+		<action name="LHUD_Toggle" map="LHUD_Toggle_Button" />
     </context>
 
     <context name="UIToggles" append="true">
@@ -16,5 +17,8 @@
     </mapping>
 	<mapping name="LHUD_Global_Button" type="Button" >
         <button id="IK_Y" />
+    </mapping>
+	<mapping name="LHUD_Toggle_Button" type="Button" >
+        <button id="IK_F1" />
     </mapping>
 </bindings>
