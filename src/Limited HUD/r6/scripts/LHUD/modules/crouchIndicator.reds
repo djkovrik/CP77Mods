@@ -10,7 +10,7 @@ protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
 
 @addMethod(CrouchIndicatorGameController)
 public func DetermineCurrentVisibility() -> Void {
-  if !this.lhudConfig.IsEnabled || this.lhud_isBraindanceActive {
+  if !this.lhudConfig.IsEnabled {
     return ;
   };
 
@@ -22,6 +22,7 @@ public func DetermineCurrentVisibility() -> Void {
   let showForZoom: Bool =  this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
 
   let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForWeapon || showForZoom;
+  if this.lhud_isBraindanceActive { isVisible = false; };
   if NotEquals(this.lhud_isVisibleNow, isVisible) {
     this.lhud_isVisibleNow = isVisible;
     if isVisible {

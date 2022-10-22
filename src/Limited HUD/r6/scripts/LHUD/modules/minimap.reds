@@ -10,7 +10,7 @@ protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
 
 @addMethod(MinimapContainerController)
 public func DetermineCurrentVisibility() -> Void {
-  if !this.lhudConfig.IsEnabled || this.lhud_isBraindanceActive {
+  if !this.lhudConfig.IsEnabled {
     return ;
   };
 
@@ -25,6 +25,7 @@ public func DetermineCurrentVisibility() -> Void {
   let showForZoom: Bool =  this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
 
   let isVisible: Bool = showForGlobalHotkey || showForMinimapHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;
+  if this.lhud_isBraindanceActive { isVisible = false; };
   if NotEquals(this.lhud_isVisibleNow, isVisible) {
     this.lhud_isVisibleNow = isVisible;
     if isVisible {

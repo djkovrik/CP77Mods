@@ -61,7 +61,7 @@ private func UpdateVisibility() -> Void {
     let showForScanner: Bool =  this.lhud_isScannerActive && this.lhudConfigVehicles.ShowWithScanner;
     let showForZoom: Bool =  this.lhud_isZoomActive && this.lhudConfigVehicles.ShowWithZoom;
     let isVisible: Bool = showForGlobalHotkey || showForVehicle || showForScanner || showForZoom;
-    this.lhud_isVisibleNow = shouldBeVisible && isVisible;
+    this.lhud_isVisibleNow = shouldBeVisible && isVisible && !this.lhud_isBraindanceActive;
     this.SetRootVisible(this.lhud_isVisibleNow);
     // LHUDLog(s" --- \(this.m_mappin.GetVariant()) detected as Vehicle marker, visibility: \(this.lhud_isVisibleNow)");
     return ;
@@ -78,7 +78,7 @@ private func UpdateVisibility() -> Void {
     let showForZoom: Bool =  this.lhud_isZoomActive && this.lhudConfigPOI.ShowWithZoom;
     let showIfTracked: Bool = this.lhudConfigPOI.AlwaysShowTrackedMarker && MappinChecker.IsTracked(this.m_mappin);
     let isVisible: Bool = showIfTracked || showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;
-    this.lhud_isVisibleNow = shouldBeVisible && isVisible;
+    this.lhud_isVisibleNow = shouldBeVisible && isVisible && !this.lhud_isBraindanceActive;
     this.SetRootVisible(this.lhud_isVisibleNow);
     // LHUDLog(s" --- \(this.m_mappin.GetVariant()) detected as POI marker, visibility: \(this.lhud_isVisibleNow)");
     return ;
