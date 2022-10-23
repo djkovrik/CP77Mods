@@ -8,6 +8,22 @@ private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt blockActiveSl
   let isCyberware: Bool = InventoryDataManagerV2.IsEquipmentAreaCyberware(area);
   if isCyberware {
     EdgerunningSystem.GetInstance(this.m_owner.GetGame()).OnCyberwareInstalled(itemID);
+    this.AddNeuroblockersIfVik();
+  };
+}
+
+@addMethod(EquipmentSystemPlayerData)
+private func AddNeuroblockersIfVik() -> Void {
+  let journalManager: wref<JournalManager> = GameInstance.GetJournalManager(this.m_owner.GetGame());
+  let trackedObjective: wref<JournalQuestObjective> = journalManager.GetTrackedEntry() as JournalQuestObjective;
+  let questsSystem: ref<QuestsSystem> = GameInstance.GetQuestsSystem(this.m_owner.GetGame());
+  let transactionSystem: ref<TransactionSystem>;
+  let neuroblockersFact: Int32 = questsSystem.GetFact(n"neuroblockers_added");
+  let id: String = trackedObjective.GetId();
+  if Equals(id, "install_cyberware") && Equals(neuroblockersFact, 0) {
+    transactionSystem = GameInstance.GetTransactionSystem(this.m_owner.GetGame());
+    transactionSystem.GiveItemByTDBID(this.m_owner, t"Items.ripperdoc_med_common", 1);
+    questsSystem.SetFact(n"neuroblockers_added", 1);
   };
 }
 
