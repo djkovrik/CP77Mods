@@ -366,7 +366,7 @@ protected cb func OnEquipmentClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
 private final func SetButtonHintsHoverOver(display: ref<InventoryItemDisplayController>) -> Void {
   wrappedMethod(display);
   if NotEquals(display.GetDisplayContext(), ItemDisplayContext.GearPanel) {
-    this.m_buttonHintsController.AddButtonHint(n"activate_secondary", GetLocalizedText("LocKey#17833"));
+    this.m_buttonHintsController.AddButtonHint(n"activate_secondary", GetLocalizedTextByKey(n"UI-Inventory-Tooltips-HideItem"));
   };
 }
 
