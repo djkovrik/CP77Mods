@@ -1,4 +1,7 @@
 @addField(MinimapContainerController)
+public let m_districtContainer: ref<inkWidget>;
+
+@addField(MinimapContainerController)
 public let m_districtName: ref<inkText>;
 
 @wrapMethod(MinimapContainerController)
@@ -14,6 +17,8 @@ protected cb func OnInitialize() -> Bool {
   container.SetFitToContent(true);
   container.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
   container.Reparent(root);
+
+  this.m_districtContainer = container;
 
   let background: ref<inkRectangle> = new inkRectangle();
   background.SetAnchor(inkEAnchor.Fill);
@@ -47,4 +52,24 @@ protected cb func OnInitialize() -> Bool {
 protected cb func OnLocationUpdated(value: String) -> Bool {
   wrappedMethod(value);
   this.m_districtName.SetText(value);
+}
+
+@wrapMethod(MinimapContainerController)
+private final func SecurityZoneUpdate(zone: ESecurityAreaType) -> Void {
+  wrappedMethod(zone);
+
+  let visible: Bool = !this.m_playerInCombat && this.m_inPublicOrRestrictedZone;
+  if IsDefined(this.m_districtContainer) {
+    this.m_districtContainer.SetVisible(visible);
+  };
+}
+
+@wrapMethod(MinimapContainerController)
+protected cb func OnPSMCombatChanged(psmCombatArg: gamePSMCombat) -> Bool {
+  wrappedMethod(psmCombatArg);
+
+  let visible: Bool = !this.m_playerInCombat && this.m_inPublicOrRestrictedZone;
+  if IsDefined(this.m_districtContainer) {
+    this.m_districtContainer.SetVisible(visible);
+  };
 }
