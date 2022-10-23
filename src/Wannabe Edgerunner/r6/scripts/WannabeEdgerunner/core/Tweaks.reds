@@ -1,7 +1,7 @@
 import Edgerunning.System.EdgerunningSystem
 
 // Is Johnny
-@addMethod(ScriptedPuppet)
+@addMethod(PlayerPuppet)
 public func IsPossessedE() -> Bool {
   let posessed: Bool = Cast<Bool>(GameInstance.GetQuestsSystem(this.GetGame()).GetFactStr("isPlayerPossessedByJohnny"));
   let isReplacer: Bool = this.GetRecord().GetID() == t"Character.johnny_replacer";

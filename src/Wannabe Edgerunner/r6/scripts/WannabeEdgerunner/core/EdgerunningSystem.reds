@@ -267,7 +267,7 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public func OnEnemyKilled(affiliation: gamedataAffiliation) -> Void {
     let cost: Int32;
-    if !this.IsHumanityChangeBlocked() {
+    if !this.IsRipperdocBuffActive() {
       cost = this.GetEnemyCost(affiliation);
       this.currentHumanityDamage += cost;
       this.InvalidateCurrentState();
@@ -317,7 +317,7 @@ public class EdgerunningSystem extends ScriptableSystem {
 
     let cost: Int32 = this.config.berserkUsageCost * Cast<Int32>(qualityMult);
 
-    if !this.IsHumanityChangeBlocked() {
+    if !this.IsRipperdocBuffActive() {
       this.currentHumanityDamage += cost;
       E(s"! Berserk activated: \(quality) - costs \(cost) humanity");
       this.InvalidateCurrentState();
@@ -350,7 +350,7 @@ public class EdgerunningSystem extends ScriptableSystem {
 
     let cost: Int32 = this.config.sandevistanUsageCost * Cast<Int32>(qualityMult);
 
-    if !this.IsHumanityChangeBlocked() {
+    if !this.IsRipperdocBuffActive() {
       this.currentHumanityDamage += cost;
       E(s"! Sandevistan activated: \(quality) - costs \(cost) humanity");
       this.InvalidateCurrentState();
@@ -387,7 +387,7 @@ public class EdgerunningSystem extends ScriptableSystem {
 
     let cost: Int32 = this.config.kerenzikovUsageCost * Cast<Int32>(qualityMult);
 
-    if !this.IsHumanityChangeBlocked() {
+    if !this.IsRipperdocBuffActive() {
       this.currentHumanityDamage += cost;
       E(s"! Kerenzikov activated: \(quality) - costs \(cost) humanity");
       this.InvalidateCurrentState();
@@ -405,10 +405,6 @@ public class EdgerunningSystem extends ScriptableSystem {
     let result: Bool = zone < 3 && !isInInterior;
     E(s"CanSpawnPolice - zone: \(zoneEnum) \(zone), is in interior: \(isInInterior) -> can spawn: \(result)");
     return result;
-  }
-
-  private func IsHumanityChangeBlocked() -> Bool {
-    return this.IsPossessed() || this.IsRipperdocBuffActive();
   }
 
   private func IsHumanityRestored() -> Bool {
@@ -460,7 +456,7 @@ public class EdgerunningSystem extends ScriptableSystem {
       return true;
     };
 
-    if this.IsHumanityChangeBlocked() {
+    if this.IsRipperdocBuffActive() {
       E("- has buff or is Johnny");
       return true;
     };
@@ -489,10 +485,6 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public func IsPsychosisActive() -> Bool {
     return this.HasStatusEffect(t"BaseStatusEffect.ActivePsychosisBuff");
-  }
-
-  private func IsPossessed() -> Bool {
-    return this.player.IsPossessedE();
   }
 
   private func HasStatusEffect(id: TweakDBID) -> Bool {

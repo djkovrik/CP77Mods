@@ -6,7 +6,16 @@ protected func RewardKiller(killer: wref<GameObject>, killType: gameKillType, is
   wrappedMethod(killer, killType, isAnyDamageNonlethal);
 
   // Additional check for johnny
-  if this.IsPlayer() && this.IsPossessedE() { return ; };
+  let playerPuppet: ref<PlayerPuppet> = killer as PlayerPuppet;
+  let isJohnny: Bool = false;
+  if IsDefined(playerPuppet) {
+    isJohnny = playerPuppet.IsPossessedE(); 
+  };
+
+  if isJohnny { 
+    E("Player is Johnny - kill costs no humanity");
+    return ; 
+  };
 
   let record: ref<Character_Record> = this.GetRecord();
   let affiliation: gamedataAffiliation = record.Affiliation().Type();
