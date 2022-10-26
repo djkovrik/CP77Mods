@@ -70,7 +70,7 @@ private final func SecurityZoneUpdate(zone: ESecurityAreaType) -> Void {
   wrappedMethod(zone);
 
   let player: wref<PlayerPuppet> = this.GetPlayerControlledObject() as PlayerPuppet;
-  if IsDefined(player) { return ; };
+  if !IsDefined(player) { return ; };
   let isJohnny: Bool = player.IsJohnnyReplacer();
   let visible: Bool = !this.m_playerInCombat && this.m_inPublicOrRestrictedZone && !isJohnny;
   if IsDefined(this.m_districtContainer) {
@@ -83,7 +83,7 @@ protected cb func OnPSMCombatChanged(psmCombatArg: gamePSMCombat) -> Bool {
   wrappedMethod(psmCombatArg);
 
   let player: wref<PlayerPuppet> = this.GetPlayerControlledObject() as PlayerPuppet;
-  if IsDefined(player) { return false; };
+  if !IsDefined(player) { return false; };
   let isJohnny: Bool = player.IsJohnnyReplacer();
   let visible: Bool = !this.m_playerInCombat && this.m_inPublicOrRestrictedZone && !isJohnny;
   if IsDefined(this.m_districtContainer) {
