@@ -193,6 +193,33 @@ public class EdgerunningConfig {
   let kerenzikovUsageCost: Int32 = 3;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Implants-Usage-Cost")
+  @runtimeProperty("ModSettings.displayName", "Gameplay-Items-Item Type-Cyb_Launcher")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Implants-Usage-Cost-Desc")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "20")
+  let launcherUsageCost: Int32 = 1;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Implants-Usage-Cost")
+  @runtimeProperty("ModSettings.displayName", "Gameplay-Items-Item Type-Cyb_MantisBlades")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Implants-Usage-Cost-Desc")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "20")
+  let mantisBladesUsageCost: Int32 = 0;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Implants-Usage-Cost")
+  @runtimeProperty("ModSettings.displayName", "Gameplay-Items-Item Type-Cyb_NanoWires")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Implants-Usage-Cost-Desc")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "20")
+  let monowireUsageCost: Int32 = 0;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Quality")
   @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Items-Quality-Common")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Quality-Desc")

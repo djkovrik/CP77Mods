@@ -396,6 +396,60 @@ public class EdgerunningSystem extends ScriptableSystem {
     };
   }
 
+  public func OnArmsCyberwareActivation(type: gamedataItemType) -> Void {
+    let itemId: ItemID = EquipmentSystem.GetInstance(this.player).GetActiveItem(this.player, gamedataEquipmentArea.ArmsCW);
+    let itemRecord: ref<Item_Record> = RPGManager.GetItemRecord(itemId);
+    let itemType: gamedataItemType = RPGManager.GetItemType(itemId);
+    
+    if !IsDefined(itemRecord) {
+      return;
+    };
+
+    let quality: gamedataQuality = itemRecord.Quality().Type();
+    let qualityMult: Float;
+    switch (quality) {
+      case gamedataQuality.Common:
+        qualityMult = this.config.qualityMultiplierCommon;
+        break;
+      case gamedataQuality.Uncommon:
+        qualityMult = this.config.qualityMultiplierUncommon;
+        break;
+      case gamedataQuality.Rare:
+        qualityMult = this.config.qualityMultiplierRare;
+        break;
+      case gamedataQuality.Epic:
+        qualityMult = this.config.qualityMultiplierEpic;
+        break;
+      case gamedataQuality.Legendary:
+        qualityMult = this.config.qualityMultiplierLegendary;
+        break;
+    };
+
+    let cost: Int32;
+    switch itemType {
+      case gamedataItemType.Cyb_Launcher:
+        cost = this.config.launcherUsageCost * Cast<Int32>(qualityMult);
+        break;
+      case gamedataItemType.Cyb_MantisBlades:
+        cost = this.config.mantisBladesUsageCost * Cast<Int32>(qualityMult);
+        break;
+      case gamedataItemType.Cyb_NanoWires:
+        cost = this.config.monowireUsageCost * Cast<Int32>(qualityMult);
+        break;
+      default:
+        cost = 0;
+        break;
+    };
+
+    if !this.IsRipperdocBuffActive() {
+      this.currentHumanityDamage += cost;
+      E(s"! Arms cyberware activated: \(itemType) \(quality) - costs \(cost) humanity");
+      this.InvalidateCurrentState();
+    } else {
+      E("! Humanity freezed, arms cyberware costs no humanity");
+    };
+  }
+
   // -- CHECKERS
 
   private func CanSpawnPolice() -> Bool {

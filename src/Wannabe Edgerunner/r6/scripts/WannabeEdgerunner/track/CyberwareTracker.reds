@@ -191,3 +191,33 @@ public func GetCurrentBerserk() -> ItemID {
 public func GetCurrentSandevistan() -> ItemID {
   return EquipmentSystem.GetData(this).GetActiveItem(gamedataEquipmentArea.SystemReplacementCW);
 }
+
+// -- Arms cyberware usage
+@wrapMethod(RPGManager)
+public final static func AwardExperienceFromDamage(hitEvent: ref<gameHitEvent>, damagePercentage: Float) -> Void {
+  wrappedMethod(hitEvent, damagePercentage);
+
+  let record: wref<Item_Record>;
+  let data: ref<AttackData> = hitEvent.attackData;
+  let type: gamedataItemType;
+  if data.GetInstigator().IsPlayer() && !hitEvent.target.IsPlayer() {
+    record = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(data.GetWeapon().GetItemID()));
+    type = record.ItemType().Type();
+    switch type {
+      case gamedataItemType.Cyb_NanoWires:
+      case gamedataItemType.Cyb_MantisBlades:
+      // case gamedataItemType.Cyb_Launcher:
+        EdgerunningSystem.GetInstance(data.GetInstigator().GetGame()).OnArmsCyberwareActivation(type);
+        break;
+    };
+  };
+}
+
+
+// -- Projectile launcher usage
+@wrapMethod(LeftHandCyberwareTransition)
+public final func DetachProjectile(scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  wrappedMethod(scriptInterface);
+  EdgerunningSystem.GetInstance(scriptInterface.executionOwner.GetGame()).OnArmsCyberwareActivation(gamedataItemType.Cyb_Launcher);
+}
+
