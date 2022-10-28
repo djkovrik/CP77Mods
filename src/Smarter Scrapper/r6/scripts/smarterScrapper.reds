@@ -181,6 +181,9 @@ private func IsWeaponSS(type: gamedataItemType) -> Bool {
     Equals(type, gamedataItemType.Wea_SniperRifle) ||
     Equals(type, gamedataItemType.Wea_SubmachineGun) ||
     Equals(type, gamedataItemType.Wea_TwoHandedClub) ||
+    Equals(type, gamedataItemType.Wea_Axe) ||
+    Equals(type, gamedataItemType.Wea_Chainsword) ||
+    Equals(type, gamedataItemType.Wea_Machete) ||
   false;
 }
 
