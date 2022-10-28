@@ -58,7 +58,7 @@ public class EdgerunningSystem extends ScriptableSystem {
 
       this.teleportHelper = new TeleportHelper();
       this.teleportHelper.Init();
-      E("Edgerunning System initialized");
+      // E("Edgerunning System initialized");
     };
   }
 
@@ -758,7 +758,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     let area: gamedataEquipmentArea = item.EquipArea().Type();
     let quality: gamedataQuality = item.Quality().Type();
 
-    let baseCost: Float = 1.0;
+    let baseCost: Float = 0.0;
     switch(area) {
       case gamedataEquipmentArea.FrontalCortexCW:
         baseCost = Cast<Float>(this.config.frontalCortexCost);

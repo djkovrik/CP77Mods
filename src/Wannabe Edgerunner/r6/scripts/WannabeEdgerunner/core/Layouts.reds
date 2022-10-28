@@ -178,12 +178,19 @@ public func RefreshHumanityHUD() -> Void {
   this.RefreshHumanityBars(current, total);
 }
 
-@wrapMethod(RipperDocGameController)
-private final func ShowCWTooltip(itemData: InventoryItemData, itemTooltipData: ref<InventoryTooltipData>) -> Void {
-  let record: ref<Item_Record> = RPGManager.GetItemRecord(InventoryItemData.GetID(itemData));
-  let cost: Int32 = this.edgerunningSystem.GetCyberwareCost(record);
-  itemTooltipData.humanity = cost;
-  wrappedMethod(itemData, itemTooltipData);
+@wrapMethod(InventoryDataManagerV2)
+public final func GetTooltipDataForInventoryItem(tooltipItemData: InventoryItemData, equipped: Bool, opt vendorItem: Bool, opt overrideRarity: Bool) -> ref<InventoryTooltipData> {
+  let result: ref<InventoryTooltipData> = wrappedMethod(tooltipItemData, equipped, vendorItem, overrideRarity);
+  let area: gamedataEquipmentArea = EquipmentSystem.GetEquipAreaType(InventoryItemData.GetID(tooltipItemData));
+  let isCyberware: Bool = InventoryDataManagerV2.IsEquipmentAreaCyberware(area);
+  let record: ref<Item_Record>;
+  let cost: Int32;
+  if isCyberware {
+    record = RPGManager.GetItemRecord(InventoryItemData.GetID(tooltipItemData));
+    cost = EdgerunningSystem.GetInstance(this.m_Player.GetGame()).GetCyberwareCost(record);
+    result.humanity = cost;
+  };
+  return result;
 }
 
 @addMethod(RipperDocGameController)
