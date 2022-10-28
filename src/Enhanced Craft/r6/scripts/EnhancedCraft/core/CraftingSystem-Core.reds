@@ -207,14 +207,19 @@ private final func CraftItem(target: wref<GameObject>, itemRecord: ref<Item_Reco
   let craftedItem: wref<gameItemData> = wrappedMethod(target, itemRecord, amount, ammoBulletAmount);
   L(s"CRAFTED: \(craftedItem.GetID()) \(TDBID.ToStringDEBUG(ItemID.GetTDBID(craftedItem.GetID()))) \(RPGManager.GetItemDataQuality(craftedItem)) - \(this.m_requestedDamageType)");
   
-  // Notify that weapon was crafted
-  let event: ref<EnhancedCraftRecipeCrafted>;
+  // Notify that weapon or clothes was crafted
+  let event: ref<EnhancedCraftRecipeCrafted> = new EnhancedCraftRecipeCrafted();
   if ECraftUtils.IsWeapon(craftedItem.GetItemType()) {
-    event = new EnhancedCraftRecipeCrafted();
     event.isWeapon = true;
     event.itemId = craftedItem.GetID();
     this.SwitchCraftedWeaponType(craftedItem);
     GameInstance.GetUISystem(player.GetGame()).QueueEvent(event);
+  } else {
+    if ECraftUtils.IsClothes(craftedItem.GetItemType()) {
+      event.isClothes = true;
+      event.itemId = craftedItem.GetID();
+      GameInstance.GetUISystem(player.GetGame()).QueueEvent(event);
+    };
   };
   return craftedItem;
 }

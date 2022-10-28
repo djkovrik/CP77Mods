@@ -1,4 +1,5 @@
 module EnhancedCraft.Core
+import EnhancedCraft.Events.*
 import EnhancedCraft.Common.*
 import EnhancedCraft.Config.*
 
@@ -17,6 +18,7 @@ public func LoadPrevItemVariant() -> Void {
     tdbid = recipe.id.GetID();
     this.iconicSelected = ECraftUtils.IsPresetIconic(tdbid);
     this.UpdateRecipePreviewPanel(recipe);
+    this.LaunchVariantSwitchedEvent();
     L(s"LoadPrevItemVariant for index \(this.selectedItemIndex) and id \(TDBID.ToStringDEBUG(tdbid)) with quality \(recipe.id.Quality().Type()), iconic: \(this.iconicSelected)");
   };
 }
@@ -36,7 +38,16 @@ public func LoadNextItemVariant() -> Void {
     tdbid = recipe.id.GetID();
     this.iconicSelected = ECraftUtils.IsPresetIconic(tdbid);
     this.UpdateRecipePreviewPanel(recipe);
+    this.LaunchVariantSwitchedEvent();
     L(s"LoadNextItemVariant for index \(this.selectedItemIndex) and id \(TDBID.ToStringDEBUG(tdbid)) with quality \(recipe.id.Quality().Type()), iconic: \(this.iconicSelected)");
+  };
+}
+
+@addMethod(CraftingLogicController)
+private func LaunchVariantSwitchedEvent() -> Void {
+  let player: wref<PlayerPuppet> = this.m_craftingGameController.GetPlayer();
+  if IsDefined(player) {
+    GameInstance.GetUISystem(player.GetGame()).QueueEvent(new EnhancedCraftRecipeVariantChanged());
   };
 }
 

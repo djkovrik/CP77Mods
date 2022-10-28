@@ -248,7 +248,7 @@ public func RestorePersistedDamageType(itemData: ref<gameItemData>, originalStat
 protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
   wrappedMethod(evt);
   let itemData: ref<gameItemData> = evt.itemData;
-  if ECraftUtils.IsWeapon(itemData.GetItemType()) {
+  if ECraftUtils.IsWeapon(itemData.GetItemType()) || ECraftUtils.IsClothes(itemData.GetItemType()) {
     EnhancedCraftSystem.GetInstance(this.GetGame()).RefreshSingleItem(itemData);
   };
 }

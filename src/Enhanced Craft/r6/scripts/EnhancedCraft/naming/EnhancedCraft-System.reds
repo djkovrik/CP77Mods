@@ -17,14 +17,13 @@ public class EnhancedCraftSystem extends ScriptableSystem {
   private let m_config: ref<ECraftConfig>;
 
   private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
-    L(s"Persisted data loaded, stored names: \(ToString(ArraySize(this.m_nameRecords)))");
-    L(s"Persisted data loaded, stored damage: \(ToString(ArraySize(this.m_damageRecords)))");
+    // L(s"Persisted data loaded, stored names: \(ToString(ArraySize(this.m_nameRecords)))");
+    // L(s"Persisted data loaded, stored damage: \(ToString(ArraySize(this.m_damageRecords)))");
     let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(request.owner.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
     if IsDefined(player) {
       this.m_player = player;
       this.m_inventoryManager = new InventoryDataManagerV2();
       this.m_inventoryManager.Initialize(this.m_player);
-      L("Inventory manager initialzied");
       this.RefreshPlayerInventory();
     };
     this.m_config = new ECraftConfig();
@@ -44,10 +43,10 @@ public class EnhancedCraftSystem extends ScriptableSystem {
     let playerItems: array<ItemID>;
     let playerItemsData: array<ref<gameItemData>>;
 
-    this.m_inventoryManager.GetPlayerItemsDataByCategory(gamedataItemCategory.Weapon, playerItemsData);
+    this.m_inventoryManager.GetPlayerItemsDataByCategory(playerItemsData);
     this.GetItemsIdsFromGameData(playerItemsData, playerItems);
    
-    L(s"RefreshPlayerInventory: player weapons detected: \(ArraySize(playerItems))");
+    L(s"RefreshPlayerInventory: player items detected: \(ArraySize(playerItems))");
     this.RefreshNamesAndDamages(playerItemsData, false);
   }
 
@@ -55,7 +54,7 @@ public class EnhancedCraftSystem extends ScriptableSystem {
     let playerItems: array<ItemID>;
     let playerItemsData: array<ref<gameItemData>>;
 
-    this.m_inventoryManager.GetPlayerItemsDataByCategory(gamedataItemCategory.Weapon, playerItemsData);
+    this.m_inventoryManager.GetPlayerItemsDataByCategory(playerItemsData);
     this.GetItemsIdsFromGameData(playerItemsData, playerItems);
 
     // Add storage items into gamedata array
@@ -63,7 +62,7 @@ public class EnhancedCraftSystem extends ScriptableSystem {
       ArrayPush(playerItemsData, item);
     };
 
-    L(s"RefreshPlayerInventoryAndStash: player weapons detected: \(ArraySize(playerItems))");
+    L(s"RefreshPlayerInventoryAndStash: player items detected: \(ArraySize(playerItems))");
     this.RefreshNamesAndDamages(playerItemsData, true);
   }
 
@@ -164,11 +163,11 @@ public class EnhancedCraftSystem extends ScriptableSystem {
     let playerItems: array<ItemID>;
     let playerItemsData: array<ref<gameItemData>>;
 
-    this.m_inventoryManager.GetPlayerItemsDataByCategory(gamedataItemCategory.Weapon, playerItemsData);
+    this.m_inventoryManager.GetPlayerItemsDataByCategory(playerItemsData);
     this.GetItemsIdsFromGameData(playerItemsData, playerItems);
-    L(s"RefreshStoredNames: player weapons detected: \(ArraySize(playerItems))");
+    L(s"RefreshStoredNames: player items detected: \(ArraySize(playerItems))");
 
-    // Iterate through player weapons and assign custom names
+    // Iterate through player items and assign custom names
     for data in playerItemsData {
       data.hasCustomName = this.HasCustomName(data.GetID());
       data.customName = this.GetCustomName(data.GetID());
@@ -198,7 +197,7 @@ public class EnhancedCraftSystem extends ScriptableSystem {
     let commonItemIds: array<ItemID>;
     let commonItemHashes: array<Uint64>;
 
-    this.m_inventoryManager.GetPlayerItemsDataByCategory(gamedataItemCategory.Weapon, items);
+    this.m_inventoryManager.GetPlayerItemsDataByCategory(items);
     // Check all
     this.GetItemsIdsFromGameData(items, commonItemIds);
     this.GetInventoryHashes(commonItemIds, commonItemHashes);

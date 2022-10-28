@@ -33,6 +33,15 @@ public class ECraftUtils {
     let typeStr: String = ToString(type);
     return StrBeginsWith(typeStr, "Clo_");
   }
+
+  public static func IsWeapon(equipmentArea: gamedataEquipmentArea) -> Bool {
+    return Equals(equipmentArea, gamedataEquipmentArea.Weapon);
+  }
+
+  public static func IsClothes(equipmentArea: gamedataEquipmentArea) -> Bool {
+    return Equals(equipmentArea, gamedataEquipmentArea.Head) || Equals(equipmentArea, gamedataEquipmentArea.Face) || Equals(equipmentArea, gamedataEquipmentArea.OuterChest) || Equals(equipmentArea, gamedataEquipmentArea.InnerChest) || Equals(equipmentArea, gamedataEquipmentArea.Legs) || Equals(equipmentArea, gamedataEquipmentArea.Feet);
+  }
+
 }
 
 // -- Basic logging function

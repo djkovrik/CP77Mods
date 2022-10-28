@@ -5,16 +5,18 @@ import EnhancedCraft.Common.L
 
 // -- Returns gameItemData array for weapons from player inventory
 @addMethod(InventoryDataManagerV2)
-public final func GetPlayerItemsDataByCategory(category: gamedataItemCategory, out items: array<ref<gameItemData>>) -> Void {
+public final func GetPlayerItemsDataByCategory(out items: array<ref<gameItemData>>) -> Void {
   let unfilteredItems: array<wref<gameItemData>> = this.GetPlayerInventoryItems();
   let data: ref<gameItemData>;
   let itemId: ItemID;
   let limit: Int32 = ArraySize(unfilteredItems);
+  let category: gamedataItemCategory;
   let i: Int32 = 0;
   while i < limit {
     data = unfilteredItems[i];
     itemId = data.GetID();
-    if Equals(RPGManager.GetItemCategory(itemId), category) {
+    category = RPGManager.GetItemCategory(itemId);
+    if Equals(category, gamedataItemCategory.Weapon) || Equals(category, gamedataItemCategory.Clothing) {
       ArrayPush(items, data);
     };
     i += 1;

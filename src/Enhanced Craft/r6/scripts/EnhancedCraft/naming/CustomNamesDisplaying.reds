@@ -5,7 +5,9 @@ import EnhancedCraft.Common.*
 // -- Item data
 @wrapMethod(InventoryItemData)
 public final static func GetName(self: InventoryItemData) -> String {
-  if InventoryItemData.GetGameItemData(self).hasCustomName && Equals(InventoryItemData.GetEquipmentArea(self), gamedataEquipmentArea.Weapon) {
+  let area: gamedataEquipmentArea = InventoryItemData.GetEquipmentArea(self);
+  let showCustomData: Bool = ECraftUtils.IsClothes(area) || ECraftUtils.IsWeapon(area);
+  if InventoryItemData.GetGameItemData(self).hasCustomName && showCustomData {
     return InventoryItemData.GetGameItemData(self).customName; 
   };
   return wrappedMethod(self);
@@ -14,7 +16,9 @@ public final static func GetName(self: InventoryItemData) -> String {
 // -- Tooltips
 @wrapMethod(UIItemsHelper)
 public final static func GetItemName(itemRecord: ref<Item_Record>, itemData: wref<gameItemData>) -> String {
-  if itemData.hasCustomName && Equals(itemRecord.EquipArea().Type(), gamedataEquipmentArea.Weapon) {
+  let area: gamedataEquipmentArea = itemRecord.EquipArea().Type();
+  let showCustomData: Bool = ECraftUtils.IsClothes(area) || ECraftUtils.IsWeapon(area);
+  if itemData.hasCustomName && showCustomData {
     return itemData.customName;
   };
   return wrappedMethod(itemRecord, itemData);

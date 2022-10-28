@@ -74,7 +74,7 @@ public class ECraftConfig {
   @runtimeProperty("ModSettings.description", "Mod-Craft-Settings-Randomizer-Desc")
   let randomizerEnabled: Bool = false;
 
-  // If enabled then you can rename your crafted weapons
+  // If enabled then you can rename your crafted weapons and clothes
   @runtimeProperty("ModSettings.mod", "ECraft")
   @runtimeProperty("ModSettings.category", "Mod-Craft-Settings-Misc")
   @runtimeProperty("ModSettings.displayName", "Mod-Craft-Settings-Naming")
