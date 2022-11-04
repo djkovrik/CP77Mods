@@ -33,19 +33,19 @@ protected cb func OnRelativeInput(e: ref<inkPointerEvent>) -> Bool {
 
         if (finalXScale < 0.25) {
             finalXScale = 0.25;
-        }
+        };
 
         if (finalYScale > 2.0) {
             finalYScale = 2.0;
-        }
+        };
 
         if (finalYScale < 0.25) {
             finalYScale = 0.25;
-        }
+        };
 
         if (finalXScale > 2.0) {
             finalXScale = 2.0;
-        }
+        };
       
         previewWidget.SetScale(new Vector2(finalXScale, finalYScale));
     };

@@ -241,7 +241,7 @@ private final func HandleVirtualSlotClick(evt: ref<ItemDisplayClickEvent>) -> Vo
     let isWeapon = IsItemWeapon(itemId);
     let isClothing = IsItemClothing(itemId);
 
-    AtelierLog(s"CLICK: weapon \(isWeapon), clothing \(isClothing) - \(GetLocalizedText(evt.itemData.Name))");
+    AtelierDebug(s"CLICK: weapon \(isWeapon), clothing \(isClothing) - \(GetLocalizedText(evt.itemData.Name))");
 
     if isClothing || isWeapon {
       ItemPreviewManager.GetInstance().TogglePreviewItem(itemId);
@@ -419,7 +419,7 @@ private final func FillVirtualStock() -> Void {
     let itemTDBID: TweakDBID = TDBID.Create(storeItems[virtualItemIndex]);
     let itemId = ItemID.FromTDBID(itemTDBID);
     let itemData: ref<gameItemData> = inventoryManager.CreateBasicItemData(itemId, this.m_player);
-    AtelierLog(s"Store item: \(ToString(storeItems[virtualItemIndex]))");
+    AtelierDebug(s"Store item: \(ToString(storeItems[virtualItemIndex]))");
     itemData.isVirtualItem = true;
     stockItem = new VirtualStockItem();
     stockItem.itemID = itemId;
@@ -427,12 +427,12 @@ private final func FillVirtualStock() -> Void {
     stockItem.price = Cast<Float>(itemsPrices[virtualItemIndex]);
     stockItem.quality = itemsQualities[virtualItemIndex];
     stockItem.quantity = itemsQuantities[virtualItemIndex];
-    AtelierLog(s"   Dynamic tags: \(ToString(itemData.GetDynamicTags()))");
-    AtelierLog(s"   VirtPrice: \(ToString(stockItem.price))");
+    AtelierDebug(s"   Dynamic tags: \(ToString(itemData.GetDynamicTags()))");
+    AtelierDebug(s"   VirtPrice: \(ToString(stockItem.price))");
     if (RoundF(stockItem.price) == 0) {
       stockItem.price = Cast<Float>(this.ScaleItemPriceToPlayer(itemId, stockItem.quality) * stockItem.quantity);
      };
-    AtelierLog(s"   CalcPrice: \(ToString(stockItem.price))");
+    AtelierDebug(s"   CalcPrice: \(ToString(stockItem.price))");
     stockItem.itemData = itemData;
     ArrayPush(this.m_virtualStock, stockItem);
     virtualItemIndex += 1;
@@ -483,14 +483,14 @@ private final func ScaleItemPriceToPlayer(itemId: ItemID, itemQuality: CName) ->
   let itemData: ref<gameItemData> = Inventory.CreateItemData(itemModParams, this.m_player);
   let statsSystem: ref<StatsSystem> = GameInstance.GetStatsSystem(this.m_player.GetGame());
   let powerLevelPlayer: Float = statsSystem.GetStatValue(Cast<StatsObjectID>(this.m_player.GetEntityID()), gamedataStatType.PowerLevel);
-  AtelierLog(s"   powerLevelPlayer \(ToString(powerLevelPlayer))");
+  AtelierDebug(s"   powerLevelPlayer \(ToString(powerLevelPlayer))");
   if (Cast<Int32>(powerLevelPlayer) < 1) {
     powerLevelPlayer = 1.0;
   };
   let qualMulti : Float = 1.0;
 
-  AtelierLog(s"   is iconic: \(ToString(RPGManager.IsItemIconic(itemData)))");
-  AtelierLog(s"   quality: \(ToString(itemQuality)))");
+  AtelierDebug(s"   is iconic: \(ToString(RPGManager.IsItemIconic(itemData)))");
+  AtelierDebug(s"   quality: \(ToString(itemQuality)))");
 
   if Equals(itemData.GetItemType(), gamedataItemType.Gen_Misc) {
     powerLevelPlayer = 1.0;
@@ -649,9 +649,9 @@ private final func ScaleItemPriceToPlayer(itemId: ItemID, itemQuality: CName) ->
   }
 
   let price: Int32 = RPGManager.CalculateBuyPrice(this.m_player.GetGame(), this.m_VendorDataManager.GetVendorInstance(), itemData.GetID(), 1.0);
-  AtelierLog(s"   BasePrice: \(ToString(price))");
-  AtelierLog(s"   qualMulti: \(ToString(qualMulti))");
-  AtelierLog(s"   powerLevelPlayer \(ToString(powerLevelPlayer))");
+  AtelierDebug(s"   BasePrice: \(ToString(price))");
+  AtelierDebug(s"   qualMulti: \(ToString(qualMulti))");
+  AtelierDebug(s"   powerLevelPlayer \(ToString(powerLevelPlayer))");
   return RoundF((powerLevelPlayer * qualMulti) * Cast<Float>(price));
 }
 
@@ -671,7 +671,7 @@ private final func PopulateVendorInventory() -> Void {
     vendorInventorySize = ArraySize(vendorInventory);
     playerMoney = this.m_VendorDataManager.GetLocalPlayerCurrencyAmount();
 
-    AtelierLog(s"Resulting list size: \(vendorInventorySize)");
+    AtelierDebug(s"Resulting list size: \(vendorInventorySize)");
 
     i = 0;
     while i < vendorInventorySize {

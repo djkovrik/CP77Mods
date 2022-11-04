@@ -127,7 +127,7 @@ public class AtelierTextButton extends inkCustomController {
   protected func SetPressedState(isPressed: Bool) -> Void {
     if !Equals(this.m_isPressed, isPressed) {
       this.m_isPressed = isPressed;
-    }
+    };
   }
 
   protected cb func OnHoverOver(evt: ref<inkPointerEvent>) -> Bool {
@@ -215,7 +215,6 @@ public class AtelierTextButton extends inkCustomController {
   public func SetClickable(clickable: Bool) -> Void {
     this.m_clickable = clickable;
   }
-
 
   public func SetPosition(x: Float, y: Float) -> Void {
     this.m_root.SetMargin(x, y, 0, 0);

@@ -6,7 +6,7 @@ import VendorPreview.config.VirtualAtelierConfig
 private final func GetPartInventoryItemData(owner: wref<GameObject>, itemId: ItemID, innerItemData: InnerItemData, opt itemData: wref<gameItemData>, opt record: wref<Item_Record>) -> InventoryItemData {
   if !(ItemID.IsValid(itemId)) && itemData.isVirtualItem {
     itemId = itemData.GetID();
-  }
+  };
   return wrappedMethod(owner, itemId, innerItemData, itemData);
 }
 
@@ -142,7 +142,8 @@ public func CheckDuplicates(stores: array<ref<VirtualShop>>, controller: ref<Web
         storeIndex += 1;
       };
 
-      LogChannel(n"DEBUG", s"Atelier: \(duplicatesInfo)");
+      duplicatesInfo += " ]";
+      AtelierLog(duplicatesInfo);
     };
 
     mapItemIndex += 1;
@@ -154,5 +155,9 @@ public func CheckDuplicates(stores: array<ref<VirtualShop>>, controller: ref<Web
 }
 
 public func AtelierLog(str: String) -> Void {
-  // LogChannel(n"DEBUG", s"Atelier: \(str)");
+  LogChannel(n"DEBUG", s"Atelier: \(str)");
+}
+
+public func AtelierDebug(str: String) -> Void {
+  // LogChannel(n"DEBUG", s"Atelier DEBUG: \(str)");
 }

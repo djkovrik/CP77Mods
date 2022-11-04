@@ -55,8 +55,8 @@ private func PopulateAtelierView(owner: ref<GameObject>) {
     i += 1;
   };
 
-  AtelierLog(s"TOTAL STORES: \(this.atelierTotalStores)");
-  AtelierLog(s"TOTAL PAGES: \(this.atelierTotalPages)");
+  AtelierDebug(s"TOTAL STORES: \(this.atelierTotalStores)");
+  AtelierDebug(s"TOTAL PAGES: \(this.atelierTotalPages)");
 
   if this.atelierTotalStores >= 1 {
     this.ShowSideImages();
@@ -104,7 +104,7 @@ private func PopulateAtelierPages() {
     };
     let storeContainer: ref<inkVerticalPanel> = this.GetStore(store);
     row.AddChildWidget(storeContainer);
-    //AtelierLog(s"Store \(storeIndex) added to row \(rowCounter) of page \(pageIndex), current row children: \(row.GetNumChildren()), current page children: \(parentPage.GetNumChildren())");
+    //AtelierDebug(s"Store \(storeIndex) added to row \(rowCounter) of page \(pageIndex), current row children: \(row.GetNumChildren()), current page children: \(parentPage.GetNumChildren())");
 
     insideRowIndex += 1;
     insidePageIndex += 1;
@@ -344,7 +344,7 @@ protected cb func OnShopClick(evt: ref<inkPointerEvent>) -> Bool {
         } else {
           i += 1;
         }
-      }
+      };
 
       if Equals(virtualStore.storeID, n"") {
         this.DisplayWarning("Could not find requested " + NameToString(widgetName) + " store instance");
@@ -354,7 +354,7 @@ protected cb func OnShopClick(evt: ref<inkPointerEvent>) -> Bool {
         vendorData.data.isActive = true;
         vendorData.virtualStore = virtualStore;
         uiSystem.RequestVendorMenu(vendorData);
-      }
-    }
+      };
+    };
   }
 }

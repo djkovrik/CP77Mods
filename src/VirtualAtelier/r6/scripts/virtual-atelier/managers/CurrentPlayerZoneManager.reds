@@ -6,7 +6,7 @@ public class CurrentPlayerZoneManager {
     let bb: ref<IBlackboard> = player.GetPlayerStateMachineBlackboard();
     let zone: Int32 = bb.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Zones);
     let inDanger: Bool = zone > 2;
-    // AtelierLog(s"Detected zone: \(zone)");
+    AtelierDebug(s"Detected zone: \(zone)");
     return inDanger;
   }
 }

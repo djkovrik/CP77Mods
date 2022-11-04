@@ -4,10 +4,12 @@ import VendorPreview.utils.*
 public func InitializeMenuButtons(gameController: ref<ComputerInkGameController>, widgetsData: array<SComputerMenuButtonWidgetPackage>) -> Void {
   wrappedMethod(gameController, widgetsData);
 
+  AtelierLog("Virtual Atelier initialized");
   let inDangerZone: Bool = CurrentPlayerZoneManager.IsInDangerZone(gameController.GetPlayerControlledObject() as PlayerPuppet);
 
   // Do nothing if zone is danger
   if inDangerZone {
+    AtelierLog("PC is in danger or restricted zone, Atelier tab was hidden");
     return ;
   };
 
@@ -29,8 +31,10 @@ public func InitializeMenuButtons(gameController: ref<ComputerInkGameController>
       this.InitializeMenuButtonWidget(gameController, widget, widgetData);
     } else {
       i += 1;
-    }
+    };
   };
+
+  AtelierLog("New tab was added to PC layout");
 }
 
 @wrapMethod(ComputerInkGameController)
@@ -39,7 +43,7 @@ private final func ShowMenuByName(elementName: String) -> Void {
     this.ShowCustomInternet();
   } else {
     wrappedMethod(elementName);
-  }
+  };
 }
 
 // TODO: Change the tab icon from Internet to something new

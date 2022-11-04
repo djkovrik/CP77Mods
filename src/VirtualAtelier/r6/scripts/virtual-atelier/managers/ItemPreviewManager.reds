@@ -80,10 +80,10 @@ public class ItemPreviewManager {
     while i < ArraySize(this.givenItems) {
       if !Equals(currentItem, this.givenItems[i]) {
         ArrayPush(updatedGivenItems, this.givenItems[i]);
-      }
+      };
 
       i += 1;
-    }
+    };
 
     this.givenItems = updatedGivenItems;
   }
@@ -106,7 +106,7 @@ public class ItemPreviewManager {
 
     if !IsDefined(puppet) { 
       return;
-    }
+    };
 
     transactionSystem = this.GetTransactionSystem();
 
@@ -126,7 +126,7 @@ public class ItemPreviewManager {
 
     if !IsDefined(puppet) { 
       return;
-    }
+    };
 
     transactionSystem = this.GetTransactionSystem();
     let isEquipped = this.GetIsEquipped(itemId);
@@ -151,7 +151,7 @@ public class ItemPreviewManager {
       transactionSystem.AddItemToSlot(puppet, placementSlot, itemId);
 
       this.UpdateGivenItems(itemId);
-    }
+    };
   }
 
   public func RemoveAllGarment() -> Void {
@@ -159,13 +159,13 @@ public class ItemPreviewManager {
 
     if !IsDefined(puppet) { 
       return;
-    }
+    };
 
     let transactionSystem = this.GetTransactionSystem();
 
     if ArraySize(this.initialItems) < 1 {
       return;
-    }
+    };
 
     let j: Int32 = 0;
 
@@ -192,7 +192,7 @@ public class ItemPreviewManager {
 
     if !IsDefined(puppet) { 
       return;
-    }
+    };
 
     let transactionSystem = this.GetTransactionSystem();
 
@@ -220,22 +220,20 @@ public class ItemPreviewManager {
 
     if !IsDefined(puppet) { 
       return;
-    }
+    };
 
     let transactionSystem = this.GetTransactionSystem();
 
     if ArraySize(this.initialItems) < 1 {
       return;
-    }
+    };
 
     let j: Int32 = 0;
 
     while j < ArraySize(this.initialItems) {
       let currItemId: ItemID = this.initialItems[j].GetID();
       let currSlot = EquipmentSystem.GetPlacementSlot(currItemId);
-
       transactionSystem.AddItemToSlot(puppet, currSlot, currItemId);
-     
       j += 1;
     };
   }
@@ -252,15 +250,12 @@ public class ItemPreviewManager {
 
   public static func GetGarmentPreviewNotificationToken(controller: ref<gameuiMenuGameController>, displayContext: ItemDisplayContext) -> ref<inkGameNotificationToken> {
     let notificationName = n"base\\gameplay\\gui\\widgets\\notifications\\garment_item_preview.inkwidget";
-
     let previewData: ref<PreviewInventoryItemPreviewData> = new PreviewInventoryItemPreviewData();
-
     previewData.queueName = n"modal_popup";
     previewData.notificationName = notificationName;
     previewData.isBlocking = false;
     previewData.useCursor = false;
     previewData.displayContext = displayContext;
-    
     return controller.ShowGameNotification(previewData);
   }
   
@@ -288,7 +283,7 @@ public class ItemPreviewManager {
       currController.GetRootWidget().SetVisible(!isPreviewMode);
 
       i += 1;
-    }
+    };
   }
 
   public static func TogglePlayerPanel(controller: ref<FullscreenVendorGameController>, isPreviewMode: Bool) -> Void {
@@ -307,7 +302,7 @@ public class ItemPreviewManager {
         vendorPreviewButtonHint.previewModeToggleName,
         vendorPreviewButtonHint.previewModeToggleEnableLabel
       );
-    }
+    };
   }
 
   public static func UpdateButtonHints(controller: ref<FullscreenVendorGameController>, isPreviewMode: Bool) {
@@ -342,12 +337,12 @@ public class ItemPreviewManager {
 
       if (!isVirtual) {
         controller.m_buttonHintsController.AddButtonHint(vendorPreviewButtonHint.previewModeToggleName, vendorPreviewButtonHint.previewModeToggleEnableLabel);
-      }
+      };
       
       controller.m_buttonHintsController.AddButtonHint(n"back", GetLocalizedText("Common-Access-Close"));
       controller.m_buttonHintsController.AddButtonHint(n"sell_junk", GetLocalizedText("UI-UserActions-SellJunk"));
       controller.m_buttonHintsController.AddButtonHint(n"toggle_comparison_tooltip", GetLocalizedText(controller.m_isComparisionDisabled ? "UI-UserActions-EnableComparison" : "UI-UserActions-DisableComparison"));
-    }
+    };
   }
 
   public static func ToggleVendorFilters(controller: ref<FullscreenVendorGameController>, isPreviewMode: Bool) {
@@ -360,10 +355,9 @@ public class ItemPreviewManager {
         controller.ToggleFilter(controller.m_vendorFiltersContainer, EnumInt(ItemFilterCategory.Clothes));
       } else {
         inkWidgetRef.SetVisible(controller.m_vendorFiltersContainer, true);
-
         controller.PopulateVendorInventory();
-      }
-    }
+      };
+    };
   }
 
   public static func OnToggleGarmentPreview(controller: ref<FullscreenVendorGameController>, isPreviewMode: Bool) {
@@ -420,7 +414,7 @@ public class ItemPreviewManager {
           controller.Rotate(amount * 60.0);
         };
       };
-    }
+    };
   }      
 
   public static func OnGarmentPreviewRelativeInput(controller: ref<WardrobeSetPreviewGameController>, event: ref<inkPointerEvent>) -> Bool {
@@ -456,19 +450,19 @@ public class ItemPreviewManager {
 
         if (finalXScale < 0.5) {
           finalXScale = 0.5;
-        }
+        };
 
         if (finalYScale > 3.0) {
           finalYScale = 3.0;
-        }
+        };
 
         if (finalYScale < 0.5) {
           finalYScale = 0.5;
-        }
+        };
 
         if (finalXScale > 3.0) {
           finalXScale = 3.0;
-        }
+        };
             
         previewWidget.SetScale(new Vector2(finalXScale, finalYScale));
       }; 
