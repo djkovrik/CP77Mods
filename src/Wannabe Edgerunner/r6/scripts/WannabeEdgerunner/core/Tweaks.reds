@@ -10,7 +10,7 @@ public func IsPossessedE() -> Bool {
 
 // Check prologue
 @addMethod(PlayerPuppet)
-public func IsPrologFinishedE() -> Bool {
+public func IsPrologueFinishedE() -> Bool {
   let questsSystem: ref<QuestsSystem> = GameInstance.GetQuestsSystem(this.GetGame());
   let prologueFact: Int32 = questsSystem.GetFact(n"watson_prolog_unlock");
   return Equals(prologueFact, 1);

@@ -620,7 +620,8 @@ public class EdgerunningSystem extends ScriptableSystem {
     };
 
     let currentDistrict: gamedataDistrict = this.player.GetPreventionSystem().GetDistrictE();
-    let isPrologDone: Bool = this.player.IsPrologFinishedE();
+    let isPrologDone: Bool = this.player.IsPrologueFinishedE();
+    let isJohnny: Bool = this.player.IsPossessedE();
     let destination: ref<TeleportData>;
     if isPrologDone {
       destination = this.teleportHelper.GetRandomTeleportData(currentDistrict);
@@ -629,6 +630,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     };
 
     if !IsDefined(destination) { return ; };
+    if isJohnny { return ; };
 
     let position: Vector4 = TeleportHelper.GetRandomCoordinates(destination);
     E(s"SELECTED DESTINATION: \(position) at \(destination.district)");
