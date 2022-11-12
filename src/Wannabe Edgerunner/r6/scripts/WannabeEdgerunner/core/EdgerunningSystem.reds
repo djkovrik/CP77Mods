@@ -58,7 +58,7 @@ public class EdgerunningSystem extends ScriptableSystem {
 
       this.teleportHelper = new TeleportHelper();
       this.teleportHelper.Init();
-      // E("Edgerunning System initialized");
+      this.PublishHumanityDamageOnLoad();
     };
   }
 
@@ -269,7 +269,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     let cost: Int32;
     if !this.IsRipperdocBuffActive() {
       cost = this.GetEnemyCost(affiliation);
-      this.currentHumanityDamage += cost;
+      this.IncreaseHumanityDamage(cost);
       this.InvalidateCurrentState();
       E(s"! Killed \(affiliation), humanity -\(cost)");
     } else {
@@ -288,7 +288,7 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public func OnSleep() -> Void {
     this.RemoveAllEffects();
-    this.currentHumanityDamage = 0;
+    this.ResetHumanityDamage();
     E("! Rested, humanity value restored.");
     this.InvalidateCurrentState();
   }
@@ -318,7 +318,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     let cost: Int32 = this.config.berserkUsageCost * Cast<Int32>(qualityMult);
 
     if !this.IsRipperdocBuffActive() {
-      this.currentHumanityDamage += cost;
+      this.IncreaseHumanityDamage(cost);
       E(s"! Berserk activated: \(quality) - costs \(cost) humanity");
       this.InvalidateCurrentState();
     } else {
@@ -351,7 +351,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     let cost: Int32 = this.config.sandevistanUsageCost * Cast<Int32>(qualityMult);
 
     if !this.IsRipperdocBuffActive() {
-      this.currentHumanityDamage += cost;
+      this.IncreaseHumanityDamage(cost);
       E(s"! Sandevistan activated: \(quality) - costs \(cost) humanity");
       this.InvalidateCurrentState();
     } else {
@@ -388,7 +388,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     let cost: Int32 = this.config.kerenzikovUsageCost * Cast<Int32>(qualityMult);
 
     if !this.IsRipperdocBuffActive() {
-      this.currentHumanityDamage += cost;
+      this.IncreaseHumanityDamage(cost);
       E(s"! Kerenzikov activated: \(quality) - costs \(cost) humanity");
       this.InvalidateCurrentState();
     } else {
@@ -442,7 +442,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     };
 
     if !this.IsRipperdocBuffActive() {
-      this.currentHumanityDamage += cost;
+      this.IncreaseHumanityDamage(cost);
       E(s"! Arms cyberware activated: \(itemType) \(quality) - costs \(cost) humanity");
       this.InvalidateCurrentState();
     } else {
@@ -746,7 +746,7 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public func Debug() -> Void {
     // this.prepareTeleportDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new PrepareTeleportRequest(), 0.1);
-    this.currentHumanityDamage += 10;
+    this.IncreaseHumanityDamage(10);
     this.InvalidateCurrentState();
     // this.RunSecondStageIfNotActive();
     // this.RunLastStageIfNotActive();
@@ -976,6 +976,14 @@ public class EdgerunningSystem extends ScriptableSystem {
     return null;
   }
 
+  public func StopFX() -> Void {
+    this.StopVFX(n"reboot_glitch");
+    this.StopVFX(n"hacking_glitch_low");
+    this.StopVFX(n"personal_link_glitch");
+    this.StopVFX(n"disabling_connectivity_glitch");
+    this.RemoveAllEffects();
+  }
+
   private func IsKerenzikov(record: ref<Item_Record>) -> Bool {
     let id: TweakDBID = record.GetID();
     return Equals(id, t"Items.KerenzikovCommon") 
@@ -1033,9 +1041,20 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.delaySystem.DelayCallback(callback, delay);
   }
 
-  public func StopFX() -> Void {
-    this.StopVFX(n"reboot_glitch");
-    this.StopVFX(n"hacking_glitch_low");
-    this.delaySystem.CancelDelay(this.cycledSFXDelayId);
+  private func PublishHumanityDamageOnLoad() -> Void {
+    let psmBB: ref<IBlackboard> = this.player.GetPlayerStateMachineBlackboard();
+    psmBB.SetInt(GetAllBlackboardDefs().PlayerStateMachine.HumanityDamage, this.currentHumanityDamage, false);
+  }
+
+  private func IncreaseHumanityDamage(cost: Int32) -> Void {
+    let psmBB: ref<IBlackboard> = this.player.GetPlayerStateMachineBlackboard();
+    this.currentHumanityDamage += cost;
+    psmBB.SetInt(GetAllBlackboardDefs().PlayerStateMachine.HumanityDamage, this.currentHumanityDamage, true);
+  }
+
+  private func ResetHumanityDamage() -> Void {
+    let psmBB: ref<IBlackboard> = this.player.GetPlayerStateMachineBlackboard();
+    this.currentHumanityDamage = 0;
+    psmBB.SetInt(GetAllBlackboardDefs().PlayerStateMachine.HumanityDamage, 0, true);
   }
 }

@@ -78,3 +78,6 @@ public class RemoveStatusEffectCallback extends DelayCallback {
     E(s"Remove \(TDBID.ToStringDEBUG(this.id)) effect from player");
   }
 }
+
+@addField(PlayerStateMachineDef)
+public let HumanityDamage: BlackboardID_Int;
