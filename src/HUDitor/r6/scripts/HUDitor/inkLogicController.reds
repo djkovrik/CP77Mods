@@ -1,5 +1,5 @@
 // Called when gameplay actually starts & widgets are loaded
-@wrapMethod(QuestTrackerGameController)
+@wrapMethod(dialogWidgetGameController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
 

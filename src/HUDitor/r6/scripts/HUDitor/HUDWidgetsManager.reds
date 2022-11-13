@@ -16,6 +16,7 @@ module HUDrag.HUDWidgetsManager
 // - NewInputHint - Input hints
 // - NewCarHud - Speedometer
 // - NewBossHealthbar - Boss healthbar
+// - NewDialogChoices - Dialog choices
 
 @addField(PlayerPuppet)
 public let hudWidgetsManager: ref<HUDWidgetsManager>;
@@ -72,12 +73,14 @@ public class HUDWidgetsManager {
       case n"NewPhoneControl": return n"NewInputHint";
       case n"NewInputHint": return n"NewCarHud";
       case n"NewCarHud": return n"NewBossHealthbar";
+      case n"NewBossHealthbar": return n"NewDialogChoices";
       default: return n"NewMinimap"; 
     };
   }
 
   public static func GetPreviousWidget(widgetName: CName) -> CName {
     switch widgetName {
+      case n"NewDialogChoices": return n"NewBossHealthbar";
       case n"NewBossHealthbar": return n"NewCarHud";
       case n"NewCarHud": return n"NewInputHint";
       case n"NewInputHint": return n"NewPhoneControl";
@@ -92,7 +95,7 @@ public class HUDWidgetsManager {
       case n"NewQuestNotifications": return n"NewWanted";
       case n"NewWanted": return n"NewTracker";
       case n"NewTracker": return n"NewMinimap";
-      default: return n"NewBossHealthbar"; 
+      default: return n"NewDialogChoices"; 
     };
   }
 

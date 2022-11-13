@@ -13,6 +13,7 @@
 @addField(inkGameController) let itemNotificationsSlot: ref<HUDitorCustomSlot>;
 @addField(inkGameController) let carHudSlot: ref<HUDitorCustomSlot>;
 @addField(inkGameController) let bossHealthbarSlot: ref<HUDitorCustomSlot>;
+@addField(inkGameController) let dialogChoicesSlot: ref<HUDitorCustomSlot>;
 
 @addMethod(inkGameController)
 protected cb func OnScannerDetailsAppearedEvent(event: ref<ScannerDetailsAppearedEvent>) -> Bool {
@@ -40,6 +41,7 @@ protected cb func OnGameSessionInitialized(event: ref<GameSessionInitializedEven
     this.itemNotificationsSlot.OnGameSessionInitialized(event);
     this.carHudSlot.OnGameSessionInitialized(event);
     this.bossHealthbarSlot.OnGameSessionInitialized(event);
+    this.dialogChoicesSlot.OnGameSessionInitialized(event);
   };
 }
 
@@ -61,6 +63,7 @@ protected cb func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidget>) 
     this.itemNotificationsSlot.OnEnableHUDEditorWidget(event);
     this.carHudSlot.OnEnableHUDEditorWidget(event);
     this.bossHealthbarSlot.OnEnableHUDEditorWidget(event);
+    this.dialogChoicesSlot.OnEnableHUDEditorWidget(event);
   };
 }
 
@@ -82,6 +85,7 @@ protected cb func OnDisableHUDEditorWidgets(event: ref<DisableHUDEditor>) -> Boo
     this.itemNotificationsSlot.OnDisableHUDEditorWidgets(event);
     this.carHudSlot.OnDisableHUDEditorWidgets(event);
     this.bossHealthbarSlot.OnDisableHUDEditorWidgets(event);
+    this.dialogChoicesSlot.OnDisableHUDEditorWidgets(event);
   };
 }
 
@@ -103,6 +107,7 @@ protected cb func OnResetHUDWidgets(event: ref<ResetAllHUDWidgets>) {
     this.itemNotificationsSlot.OnResetHUDWidgets(event);
     this.carHudSlot.OnResetHUDWidgets(event);
     this.bossHealthbarSlot.OnResetHUDWidgets(event);
+    this.dialogChoicesSlot.OnResetHUDWidgets(event);
   };
 }
 
@@ -124,6 +129,7 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
     this.itemNotificationsSlot.OnAction(action, consumer);
     this.carHudSlot.OnAction(action, consumer);
     this.bossHealthbarSlot.OnAction(action, consumer);
+    this.dialogChoicesSlot.OnAction(action, consumer);
   };
 }
 
@@ -131,7 +137,6 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
 protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
   if this.IsA(n"gameuiRootHudGameController") {
     let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
-
     // let topRightMainSlot: ref<inkCompoundWidget> = root.GetWidgetByPath(inkWidgetPath.Build(n"TopRightMain")) as inkCompoundWidget;
     let topRightSlot: ref<inkCompoundWidget> = root.GetWidgetByPath(inkWidgetPath.Build(n"TopRightMain", n"TopRight")) as inkCompoundWidget;
     let leftCenterSlot = root.GetWidgetByPath(inkWidgetPath.Build(n"LeftCenter")) as inkCompoundWidget;
@@ -151,6 +156,8 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
     let itemNotifications: ref<inkWidget> = leftCenterSlot.GetWidgetByIndex(0) as inkWidget;
     let carHud: ref<inkWidget> = root.GetWidgetByPath(inkWidgetPath.Build(n"car hud")) as inkWidget;
     let bossHealthbar: ref<inkWidget> = root.GetWidgetByPath(inkWidgetPath.Build(n"boss_healthbar")) as inkWidget;
+    let interactionsHub: ref<inkCompoundWidget> = this.SearchForWidget(root, n"HUDMiddleWidget", n"InteractionsHub") as inkCompoundWidget;
+    let dialogChoices: ref<inkWidget> = interactionsHub.GetWidgetByIndex(4) as inkWidget;
 
     this.minimapSlot = new HUDitorCustomSlot();
     this.minimapSlot.SetName(n"NewMinimap");
@@ -513,6 +520,30 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
 
     bossHealthbar.Reparent(this.bossHealthbarSlot);
     this.bossHealthbarSlot.Reparent(root, 14);
+
+    this.dialogChoicesSlot = new HUDitorCustomSlot();
+    this.dialogChoicesSlot.SetName(n"NewDialogChoices");
+    this.dialogChoicesSlot.SetFitToContent(true);
+    this.dialogChoicesSlot.SetInteractive(false);
+    this.dialogChoicesSlot.SetAffectsLayoutWhenHidden(false);
+    this.dialogChoicesSlot.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+    this.dialogChoicesSlot.SetHAlign(inkEHorizontalAlign.Fill);
+    this.dialogChoicesSlot.SetVAlign(inkEVerticalAlign.Fill);
+    this.dialogChoicesSlot.SetAnchor(inkEAnchor.Centered);
+    this.dialogChoicesSlot.SetAnchorPoint(new Vector2(0.0, 0.5));
+    this.dialogChoicesSlot.SetLayout(
+      new inkWidgetLayout(
+        new inkMargin(0.0, 0.0, 0.0, 0.0),
+        new inkMargin(0.0, 0.0, 0.0, 0.0),
+        inkEHorizontalAlign.Fill,
+        inkEVerticalAlign.Fill,
+        inkEAnchor.Centered,
+        new Vector2(0.0, 0.5)
+      )
+    );
+
+    dialogChoices.Reparent(this.dialogChoicesSlot);
+    this.dialogChoicesSlot.Reparent(root, 15);
   };
 }
 
@@ -542,4 +573,15 @@ private func GetCompounds(root: ref<inkCompoundWidget>, first: CName) -> array<r
     i += 1;
   };
   return result;
+}
+
+// Reparent dialog window to make it moveable
+@wrapMethod(InteractionsHubGameController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+  let dialogContainer: ref<inkWidget> = root.GetWidget(n"botWidgets/hubVert");
+  root.SetName(n"InteractionsHub");
+  dialogContainer.SetName(n"DialogChoicesWidget");
+  dialogContainer.Reparent(root);
 }

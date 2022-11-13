@@ -23,6 +23,7 @@ protected cb func OnDisplayPreviewEvent(event: ref<DisplayPreviewEvent>) -> Bool
   this.ShowStaminaBar(true);
   this.ShowVehicleSummonNotification(true);
   this.ShowBossHealthbar(true);
+  this.ShowDialogPreview(true);
 }
 
 @addMethod(inkGameController)
@@ -40,6 +41,7 @@ protected cb func OnHidePreviewEvent(event: ref<HidePreviewEvent>) -> Bool {
   this.ShowStaminaBar(false);
   this.ShowVehicleSummonNotification(false);
   this.ShowBossHealthbar(false);
+  this.ShowDialogPreview(false);
 }
 
 
@@ -325,6 +327,32 @@ private func ShowBossHealthbar(show: Bool) -> Void {
         controller.m_foldAnimation.Stop();
       };
       controller.m_foldAnimation = this.PlayLibraryAnimation(n"fold");
+    };
+  };
+}
+
+@addMethod(inkGameController)
+private func ShowDialogPreview(show: Bool) -> Void {
+  let controller: ref<dialogWidgetGameController>;
+  let root: ref<inkCompoundWidget>;
+  let preview: ref<inkWidget>;
+  if this.IsA(n"dialogWidgetGameController") {
+    controller = this as dialogWidgetGameController;
+    root = this.GetRootCompoundWidget();
+    if show {
+      preview = new inkRectangle();
+      preview.SetName(n"previewFill");
+      preview.SetAnchor(inkEAnchor.Fill);
+      preview.SetTintColor(new HDRColor(1.0, 0.0, 0.0, 1.0));
+      preview.SetSize(new Vector2(460.0, 140.0));
+      if Equals(ArraySize(controller.m_data.choiceHubs), 0) {
+        preview.Reparent(root);
+      };
+    } else {
+      preview = root.GetWidget(n"previewFill");
+      if IsDefined(preview) {
+        root.RemoveChild(preview);
+      };
     };
   };
 }
