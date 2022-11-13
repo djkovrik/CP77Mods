@@ -71,8 +71,9 @@ private func IsThisVehicleOwned(id: TweakDBID) -> Bool {
 @wrapMethod(PlayerPuppet)
 protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
   wrappedMethod(action, consumer);
+  let isMounted: Bool = VehicleComponent.IsMountedToVehicle(this.GetGame(), this);
   let currentTarget: ref<VehicleObject>;
-  if Equals(ListenerAction.GetName(action), VehicleSummonDismissConfig.Action()) && this.IsLookingAtOwnedVehicle() && this.m_dismissPromptVisible {
+  if Equals(ListenerAction.GetName(action), VehicleSummonDismissConfig.Action()) && this.IsLookingAtOwnedVehicle() && this.m_dismissPromptVisible && !isMounted {
     currentTarget = GameInstance.GetTargetingSystem(this.GetGame()).GetLookAtObject(this) as VehicleObject;
     GameInstance.GetPreventionSpawnSystem(this.GetGame()).JoinTraffic(currentTarget);
     let callback: ref<VehicleSummonDismissCallback> = new VehicleSummonDismissCallback();
