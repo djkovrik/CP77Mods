@@ -17,6 +17,8 @@ module HUDitorReparent
 @addField(inkGameController) let bossHealthbarSlot: ref<HUDitorCustomSlot>;
 @addField(inkGameController) let compassSlotScale: ref<HUDitorCustomSlot>;
 @addField(inkGameController) let compassSlotMarkers: ref<HUDitorCustomSlot>;
+@addField(inkGameController) let dialogChoicesSlot: ref<HUDitorCustomSlot>;
+@addField(inkGameController) let dialogSubtitlesSlot: ref<HUDitorCustomSlot>;
 
 @addMethod(inkGameController)
 protected cb func OnScannerDetailsAppearedEvent(event: ref<ScannerDetailsAppearedEvent>) -> Bool {
@@ -46,6 +48,8 @@ protected cb func OnGameSessionInitialized(event: ref<GameSessionInitializedEven
     this.bossHealthbarSlot.OnGameSessionInitialized(event);
     this.compassSlotScale.OnGameSessionInitialized(event);
     this.compassSlotMarkers.OnGameSessionInitialized(event);
+    this.dialogChoicesSlot.OnGameSessionInitialized(event);
+    this.dialogSubtitlesSlot.OnGameSessionInitialized(event);
   };
 }
 
@@ -69,6 +73,8 @@ protected cb func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidget>) 
     this.bossHealthbarSlot.OnEnableHUDEditorWidget(event);
     this.compassSlotScale.OnEnableHUDEditorWidget(event);
     this.compassSlotMarkers.OnEnableHUDEditorWidget(event);
+    this.dialogChoicesSlot.OnEnableHUDEditorWidget(event);
+    this.dialogSubtitlesSlot.OnEnableHUDEditorWidget(event);
   };
 }
 
@@ -92,6 +98,8 @@ protected cb func OnDisableHUDEditorWidgets(event: ref<DisableHUDEditor>) -> Boo
     this.bossHealthbarSlot.OnDisableHUDEditorWidgets(event);
     this.compassSlotScale.OnDisableHUDEditorWidgets(event);
     this.compassSlotMarkers.OnDisableHUDEditorWidgets(event);
+    this.dialogChoicesSlot.OnDisableHUDEditorWidgets(event);
+    this.dialogSubtitlesSlot.OnDisableHUDEditorWidgets(event);
   };
 }
 
@@ -115,6 +123,8 @@ protected cb func OnResetHUDWidgets(event: ref<ResetAllHUDWidgets>) {
     this.bossHealthbarSlot.OnResetHUDWidgets(event);
     this.compassSlotScale.OnResetHUDWidgets(event);
     this.compassSlotMarkers.OnResetHUDWidgets(event);
+    this.dialogChoicesSlot.OnResetHUDWidgets(event);
+    this.dialogSubtitlesSlot.OnResetHUDWidgets(event);
   };
 }
 
@@ -138,6 +148,8 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
     this.bossHealthbarSlot.OnAction(action, consumer);
     this.compassSlotScale.OnAction(action, consumer);
     this.compassSlotMarkers.OnAction(action, consumer);
+    this.dialogChoicesSlot.OnAction(action, consumer);
+    this.dialogSubtitlesSlot.OnAction(action, consumer);
   };
 }
 
@@ -167,6 +179,9 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
     let bossHealthbar: ref<inkWidget> = root.GetWidgetByPath(inkWidgetPath.Build(n"boss_healthbar")) as inkWidget;
     let compassScale: ref<inkWidget> = this.SearchForWidget(root, n"HUDMiddleWidget", n"CompassCompat") as inkWidget;
     let compassMakers: ref<inkWidget> = root.GetWidgetByPath(inkWidgetPath.Build(n"minimap")) as inkWidget;
+    let interactionsHub: ref<inkCompoundWidget> = this.SearchForWidget(root, n"HUDMiddleWidget", n"InteractionsHub") as inkCompoundWidget;
+    let dialogChoices: ref<inkWidget> = interactionsHub.GetWidgetByIndex(4) as inkWidget;
+    let dialogSubtitles: ref<inkWidget>  = this.SearchForWidget(root, n"HUDMiddleWidget", n"Subtitles") as inkWidget;																									 
 
     this.minimapSlot = new HUDitorCustomSlot();
     this.minimapSlot.SetName(n"NewMinimap");
@@ -293,7 +308,7 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
     this.wantedSlot.SetFitToContent(true);
     this.wantedSlot.SetInteractive(false);
     this.wantedSlot.SetAffectsLayoutWhenHidden(false);
-    this.wantedSlot.SetMargin(new inkMargin(0.0, 60.0, 40.0, 0.0));
+    this.wantedSlot.SetMargin(new inkMargin(0.0, 60.0, 160.0, 0.0));
     this.wantedSlot.SetHAlign(inkEHorizontalAlign.Right);
     this.wantedSlot.SetVAlign(inkEVerticalAlign.Center);
     this.wantedSlot.SetAnchor(inkEAnchor.CenterRight);
@@ -301,7 +316,7 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
     this.wantedSlot.SetLayout(
       new inkWidgetLayout(
         new inkMargin(0.0, 0.0, 0.0, 0.0),
-        new inkMargin(0.0, 60.0, 40.0, 0.0),
+        new inkMargin(0.0, 60.0, 160.0, 0.0),
         inkEHorizontalAlign.Right,
         inkEVerticalAlign.Center,
         inkEAnchor.CenterRight,
@@ -578,6 +593,57 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
 
     compassScale.Reparent(this.compassSlotScale);
     this.compassSlotScale.Reparent(root, 16);
+	
+
+    this.dialogChoicesSlot = new HUDitorCustomSlot();
+    this.dialogChoicesSlot.SetName(n"NewDialogChoices");
+    this.dialogChoicesSlot.SetFitToContent(true);
+    this.dialogChoicesSlot.SetInteractive(false);
+    this.dialogChoicesSlot.SetAffectsLayoutWhenHidden(false);
+    this.dialogChoicesSlot.SetMargin(new inkMargin(0.0, 220.0, 0.0, 0.0));
+    this.dialogChoicesSlot.SetHAlign(inkEHorizontalAlign.Fill);
+    this.dialogChoicesSlot.SetVAlign(inkEVerticalAlign.Fill);
+    this.dialogChoicesSlot.SetAnchor(inkEAnchor.Centered);
+    this.dialogChoicesSlot.SetAnchorPoint(new Vector2(0.5, 0.0));
+    this.dialogChoicesSlot.SetLayout(
+      new inkWidgetLayout(
+        new inkMargin(0.0, 0.0, 0.0, 0.0),
+        new inkMargin(0.0, 220.0, 0.0, 0.0),
+        inkEHorizontalAlign.Fill,
+        inkEVerticalAlign.Fill,
+        inkEAnchor.Centered,
+        new Vector2(0.5, 0.0)
+      )
+    );
+
+    dialogChoices.Reparent(this.dialogChoicesSlot);
+    this.dialogChoicesSlot.Reparent(root, 17);
+
+    this.dialogSubtitlesSlot = new HUDitorCustomSlot();
+    this.dialogSubtitlesSlot.SetName(n"NewDialogSubtitles");
+    this.dialogSubtitlesSlot.SetFitToContent(false);
+    this.dialogSubtitlesSlot.SetInteractive(false);
+    this.dialogSubtitlesSlot.SetAffectsLayoutWhenHidden(false);
+    this.dialogSubtitlesSlot.SetMargin(new inkMargin(0.0, 0.0, 0.0, 16.0));
+    this.dialogSubtitlesSlot.SetHAlign(inkEHorizontalAlign.Fill);
+    this.dialogSubtitlesSlot.SetVAlign(inkEVerticalAlign.Fill);
+    this.dialogSubtitlesSlot.SetAnchor(inkEAnchor.BottomFillHorizontaly);
+    this.dialogSubtitlesSlot.SetAnchorPoint(new Vector2(0.0, 1.0));
+																
+    this.dialogSubtitlesSlot.SetLayout(
+      new inkWidgetLayout(
+        new inkMargin(0.0, 0.0, 0.0, 0.0),
+										  
+        new inkMargin(0.0, 0.0, 0.0, 16.0),
+        inkEHorizontalAlign.Fill,
+        inkEVerticalAlign.Fill,
+        inkEAnchor.BottomFillHorizontaly,
+        new Vector2(0.0, 1.0)
+      )
+    );
+
+    dialogSubtitles.Reparent(this.dialogSubtitlesSlot);
+    this.dialogSubtitlesSlot.Reparent(root, 18);
   };
 }
 
@@ -609,7 +675,6 @@ private func GetCompounds(root: ref<inkCompoundWidget>, first: CName) -> array<r
   return result;
 }
 
-
 // Compass fixes
 @addField(inkWidget)
 native let parentWidget: wref<inkWidget>;
@@ -617,4 +682,22 @@ native let parentWidget: wref<inkWidget>;
 @addMethod(CompassController)
 protected cb func OnInitialize() -> Bool {
   this.GetRootCompoundWidget().parentWidget.SetName(n"CompassCompat");
+}
+
+// Reparent dialog window to make it moveable
+@wrapMethod(InteractionsHubGameController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+  let dialogContainer: ref<inkWidget> = root.GetWidget(n"botWidgets/hubVert");
+  root.SetName(n"InteractionsHub");
+  dialogContainer.SetName(n"DialogChoicesWidget");
+  dialogContainer.Reparent(root);
+}
+
+// Rename subtitles controller
+@wrapMethod(SubtitlesGameController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+  this.GetRootCompoundWidget().SetName(n"Subtitles");
 }

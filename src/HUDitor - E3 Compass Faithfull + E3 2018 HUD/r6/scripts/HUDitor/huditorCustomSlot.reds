@@ -71,7 +71,9 @@ public class HUDitorCustomSlot extends inkVerticalPanel {
         n"NewCarHud",
         n"NewBossHealthbar",
         n"NewCompassScale",
-        n"NewCompassMarkers"
+        n"NewCompassMarkers",
+        n"NewDialogChoices",
+        n"NewDialogSubtitles"
       ];
       return ArrayContains(hudWidgets, widgetName);
     } else {
@@ -89,7 +91,12 @@ public class HUDitorCustomSlot extends inkVerticalPanel {
   protected cb func OnResetHUDWidgets(event: ref<ResetAllHUDWidgets>) {
     if this.IsHUDWidget() {
       let scale: Vector2;
-      if Equals(this.GetName(), n"NewPhoneControl") || Equals(this.GetName(), n"NewItemNotifications") || Equals(this.GetName(), n"NewCompassScale") {
+      if Equals(this.GetName(), n"NewDialogSubtitles") 
+        || Equals(this.GetName(), n"NewPhoneControl") 
+        || Equals(this.GetName(), n"NewItemNotifications") 
+        || Equals(this.GetName(), n"NewQuestNotifications") 
+        || Equals(this.GetName(), n"NewCompassScale") 
+        || Equals(this.GetName(), n"NewDialogChoices") {											
         scale = new Vector2(0.666667, 0.666667);
       } else {
         scale = new Vector2(1.0, 1.0);
@@ -138,8 +145,6 @@ public class HUDitorCustomSlot extends inkVerticalPanel {
     };
 
     if Equals(ListenerAction.GetName(action), n"mouse_wheel") {
-      let widgetName = this.GetName();
-
       let amount = ListenerAction.GetValue(action);
       let currentScale = this.GetScale();
       let zoomRatio: Float = 0.1;

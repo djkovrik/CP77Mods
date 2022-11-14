@@ -291,7 +291,7 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
     this.wantedSlot.SetFitToContent(true);
     this.wantedSlot.SetInteractive(false);
     this.wantedSlot.SetAffectsLayoutWhenHidden(false);
-    this.wantedSlot.SetMargin(new inkMargin(0.0, 60.0, 40.0, 0.0));
+    this.wantedSlot.SetMargin(new inkMargin(0.0, 60.0, 160.0, 0.0));
     this.wantedSlot.SetHAlign(inkEHorizontalAlign.Right);
     this.wantedSlot.SetVAlign(inkEVerticalAlign.Center);
     this.wantedSlot.SetAnchor(inkEAnchor.CenterRight);
@@ -299,7 +299,7 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
     this.wantedSlot.SetLayout(
       new inkWidgetLayout(
         new inkMargin(0.0, 0.0, 0.0, 0.0),
-        new inkMargin(0.0, 60.0, 40.0, 0.0),
+        new inkMargin(0.0, 60.0, 160.0, 0.0),
         inkEHorizontalAlign.Right,
         inkEVerticalAlign.Center,
         inkEAnchor.CenterRight,

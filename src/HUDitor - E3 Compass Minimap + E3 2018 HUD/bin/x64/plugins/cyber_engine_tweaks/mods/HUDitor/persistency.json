@@ -75,8 +75,8 @@
          "X":0.0
       },
       "scale":{
-         "Y":1.0,
-         "X":1.0
+         "Y":0.666667,
+         "X":0.666667
       }
    },
    "NewItemNotifications":{
@@ -167,6 +167,26 @@
       "scale":{
          "Y":1.0,
          "X":1.0
+      }
+   },
+   "NewDialogChoices":{
+      "translation":{
+         "Y":0.0,
+         "X":0.0
+      },
+      "scale":{
+         "Y":0.666667,
+         "X":0.666667
+      }
+   },
+   "NewDialogSubtitles":{
+      "translation":{
+         "Y":0.0,
+         "X":0.0
+      },
+      "scale":{
+         "Y":0.666667,
+         "X":0.666667
       }
    }
 }

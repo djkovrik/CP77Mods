@@ -18,6 +18,8 @@ module HUDrag.HUDWidgetsManager
 // - NewBossHealthbar - Boss healthbar
 // - NewCompassScale - E3 Compass scale
 // - NewCompassMarkers - E3 Compass markers
+// - NewDialogChoices - Dialog choices
+// - NewDialogSubtitles - Dialog subtitles
 
 @addField(PlayerPuppet)
 public let hudWidgetsManager: ref<HUDWidgetsManager>;
@@ -75,12 +77,17 @@ public class HUDWidgetsManager {
       case n"NewCarHud": return n"NewBossHealthbar";
       case n"NewBossHealthbar": return n"NewCompassScale";
       case n"NewCompassScale": return n"NewCompassMarkers";
+      case n"NewCompassMarkers": return n"NewDialogChoices";
+      case n"NewDialogChoices": return n"NewDialogSubtitles";
       default: return n"NewTracker"; 
     };
   }
 
   public static func GetPreviousWidget(widgetName: CName) -> CName {
     switch widgetName {
+    switch widgetName {
+      case n"NewDialogSubtitles": return n"NewDialogChoices";
+      case n"NewDialogChoices": return n"NewCompassMarkers";
       case n"NewCompassMarkers": return n"NewCompassScale";
       case n"NewCompassScale": return n"NewBossHealthbar";
       case n"NewBossHealthbar": return n"NewCarHud";
@@ -96,7 +103,7 @@ public class HUDWidgetsManager {
       case n"NewItemNotifications": return n"NewQuestNotifications";
       case n"NewQuestNotifications": return n"NewWanted";
       case n"NewWanted": return n"NewTracker";
-      default: return n"NewCompassMarkers"; 
+      default: return n"NewDialogSubtitles"; 
     };
   }
 
@@ -132,4 +139,4 @@ public class HUDWidgetsManager {
     player.UnregisterInputListener(customSlot, n"mouse_wheel");
     player.UnregisterInputListener(customSlot, n"click");
   }
-} 
+}

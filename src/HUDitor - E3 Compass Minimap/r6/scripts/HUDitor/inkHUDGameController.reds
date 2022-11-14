@@ -143,7 +143,7 @@ private let huditorListener: ref<HUDitorInputListener>;
 
 @addMethod(inkHUDGameController)
 protected cb func OnPlayerAttach(playerPuppet: ref<GameObject>) -> Bool {
-  if (this.IsA(n"gameuiDamageIndicatorGameController")) {
+  if (this.IsA(n"gameuiWorldMappinsContainerController")) {
     let player: ref<PlayerPuppet> = playerPuppet as PlayerPuppet;
     HUDWidgetsManager.CreateInstance(player, this);
     this.huditorListener = new HUDitorInputListener();
@@ -154,7 +154,7 @@ protected cb func OnPlayerAttach(playerPuppet: ref<GameObject>) -> Bool {
 
 @addMethod(inkHUDGameController)
 protected cb func OnPlayerDetach(playerPuppet: ref<GameObject>) -> Bool {
-  if (this.IsA(n"gameuiDamageIndicatorGameController")) {
+  if (this.IsA(n"gameuiWorldMappinsContainerController")) {
     let player: ref<PlayerPuppet> = playerPuppet as PlayerPuppet;
     player.UnregisterInputListener(this.huditorListener);
     this.huditorListener = null;
