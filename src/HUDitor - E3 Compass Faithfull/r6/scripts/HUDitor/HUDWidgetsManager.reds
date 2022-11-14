@@ -76,8 +76,9 @@ public class HUDWidgetsManager {
       case n"NewInputHint": return n"NewCarHud";
       case n"NewCarHud": return n"NewBossHealthbar";
       case n"NewBossHealthbar": return n"NewCompassScale";
-      case n"NewCompassScale": return n"NewDialogChoices";
-	  case n"NewDialogChoices": return n"NewDialogSubtitles";
+      case n"NewCompassScale": return n"NewCompassMarkers";
+      case n"NewCompassMarkers": return n"NewDialogChoices";
+	    case n"NewDialogChoices": return n"NewDialogSubtitles";
       default: return n"NewTracker"; 
     };
   }

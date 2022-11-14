@@ -85,7 +85,6 @@ public class HUDWidgetsManager {
 
   public static func GetPreviousWidget(widgetName: CName) -> CName {
     switch widgetName {
-    switch widgetName {
       case n"NewDialogSubtitles": return n"NewDialogChoices";
       case n"NewDialogChoices": return n"NewCompassMarkers";
       case n"NewCompassMarkers": return n"NewCompassScale";

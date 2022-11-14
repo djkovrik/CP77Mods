@@ -158,7 +158,7 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
   if this.IsA(n"gameuiRootHudGameController") {
     let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
 
-    let topRightMainSlot: ref<inkCompoundWidget> = root.GetWidgetByPath(inkWidgetPath.Build(n"TopRightMain")) as inkCompoundWidget;
+    //let topRightMainSlot: ref<inkCompoundWidget> = root.GetWidgetByPath(inkWidgetPath.Build(n"TopRightMain")) as inkCompoundWidget;
     let topRightSlot: ref<inkCompoundWidget> = root.GetWidgetByPath(inkWidgetPath.Build(n"TopRightMain", n"TopRight")) as inkCompoundWidget;
     let leftCenterSlot = root.GetWidgetByPath(inkWidgetPath.Build(n"LeftCenter")) as inkCompoundWidget;
     let bottomRightHorizontalSlot = root.GetWidgetByPath(inkWidgetPath.Build(n"BottomRightMain", n"BottomRight", n"BottomRightHorizontal")) as inkCompoundWidget;
@@ -179,6 +179,7 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
     let bossHealthbar: ref<inkWidget> = root.GetWidgetByPath(inkWidgetPath.Build(n"boss_healthbar")) as inkWidget;
     let compassScale: ref<inkWidget> = this.SearchForWidget(root, n"HUDMiddleWidget", n"CompassCompat") as inkWidget;
     let compassMakers: ref<inkWidget> = root.GetWidgetByPath(inkWidgetPath.Build(n"cumpass_mappins")) as inkWidget;
+    let interactionsHub: ref<inkCompoundWidget> = this.SearchForWidget(root, n"HUDMiddleWidget", n"InteractionsHub") as inkCompoundWidget;
     let dialogChoices: ref<inkWidget> = interactionsHub.GetWidgetByIndex(4) as inkWidget;
     let dialogSubtitles: ref<inkWidget>  = this.SearchForWidget(root, n"HUDMiddleWidget", n"Subtitles") as inkWidget;									   
 
@@ -642,7 +643,6 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
 
     dialogSubtitles.Reparent(this.dialogSubtitlesSlot);
     this.dialogSubtitlesSlot.Reparent(root, 18);
-  };
   };
 }
 

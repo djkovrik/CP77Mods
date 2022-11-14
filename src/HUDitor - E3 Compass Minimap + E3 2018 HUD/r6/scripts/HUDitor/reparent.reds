@@ -179,6 +179,7 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
     let bossHealthbar: ref<inkWidget> = root.GetWidgetByPath(inkWidgetPath.Build(n"boss_healthbar")) as inkWidget;
     let compassScale: ref<inkWidget> = this.SearchForWidget(root, n"HUDMiddleWidget", n"CompassCompat") as inkWidget;
     let compassMakers: ref<inkWidget> = root.GetWidgetByPath(inkWidgetPath.Build(n"cumpass_mappins")) as inkWidget;
+    let interactionsHub: ref<inkCompoundWidget> = this.SearchForWidget(root, n"HUDMiddleWidget", n"InteractionsHub") as inkCompoundWidget;
     let dialogChoices: ref<inkWidget> = interactionsHub.GetWidgetByIndex(4) as inkWidget;
     let dialogSubtitles: ref<inkWidget>  = this.SearchForWidget(root, n"HUDMiddleWidget", n"Subtitles") as inkWidget;																											 
 
