@@ -70,7 +70,8 @@ public class HUDitorCustomSlot extends inkVerticalPanel {
         n"NewHealthBar",
         n"NewCarHud",
         n"NewBossHealthbar",
-        n"NewDialogChoices"
+        n"NewDialogChoices",
+        n"NewDialogSubtitles"
       ];
       return ArrayContains(hudWidgets, widgetName);
     } else {
@@ -88,7 +89,11 @@ public class HUDitorCustomSlot extends inkVerticalPanel {
   protected cb func OnResetHUDWidgets(event: ref<ResetAllHUDWidgets>) {
     if this.IsHUDWidget() {
       let scale: Vector2;
-      if Equals(this.GetName(), n"NewPhoneControl") || Equals(this.GetName(), n"NewItemNotifications") || Equals(this.GetName(), n"NewQuestNotifications") || Equals(this.GetName(), n"NewDialogChoices") {
+      if Equals(this.GetName(), n"NewDialogSubtitles") 
+        || Equals(this.GetName(), n"NewPhoneControl") 
+        || Equals(this.GetName(), n"NewItemNotifications") 
+        || Equals(this.GetName(), n"NewQuestNotifications") 
+        || Equals(this.GetName(), n"NewDialogChoices") {
         scale = new Vector2(0.666667, 0.666667);
       } else {
         scale = new Vector2(1.0, 1.0);

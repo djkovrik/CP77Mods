@@ -24,6 +24,7 @@ protected cb func OnDisplayPreviewEvent(event: ref<DisplayPreviewEvent>) -> Bool
   this.ShowVehicleSummonNotification(true);
   this.ShowBossHealthbar(true);
   this.ShowDialogPreview(true);
+  this.ShowSubtitlesPreview(true);
 }
 
 @addMethod(inkGameController)
@@ -42,6 +43,7 @@ protected cb func OnHidePreviewEvent(event: ref<HidePreviewEvent>) -> Bool {
   this.ShowVehicleSummonNotification(false);
   this.ShowBossHealthbar(false);
   this.ShowDialogPreview(false);
+  this.ShowSubtitlesPreview(false);
 }
 
 
@@ -353,6 +355,30 @@ private func ShowDialogPreview(show: Bool) -> Void {
       if IsDefined(preview) {
         root.RemoveChild(preview);
       };
+    };
+  };
+}
+
+
+@addMethod(inkGameController)
+private func ShowSubtitlesPreview(show: Bool) -> Void {
+  let controller: ref<SubtitlesGameController>;
+  let data: ref<LineSpawnData>;
+  let dataStruct: scnDialogLineData;
+  if this.IsA(n"SubtitlesGameController") {
+    controller = this as SubtitlesGameController;
+    if show {
+      data = new LineSpawnData();
+      dataStruct.text = "Good morning, Night City! Yesterday's body-count lottery rounded out to a solid 'n' sturdy thirty! Ten outta Heywood thanks to unabated gang wars!";
+      dataStruct.speaker = this.GetPlayerControlledObject();
+      dataStruct.speakerName = "Speaker";
+      dataStruct.isPersistent = false;
+      dataStruct.type = scnDialogLineType.Regular;
+      dataStruct.duration = 20.0;
+      data.m_lineData = dataStruct;
+      controller.CreateLine(data);
+    } else {
+      controller.m_subtitlesPanel.RemoveAllChildren();
     };
   };
 }
