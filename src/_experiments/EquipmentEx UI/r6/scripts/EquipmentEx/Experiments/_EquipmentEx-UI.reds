@@ -7,6 +7,7 @@ private func IsTargetSlotArea(area: gamedataEquipmentArea) -> Bool {
     || Equals(area, gamedataEquipmentArea.Face)
     || Equals(area, gamedataEquipmentArea.Legs)
     || Equals(area, gamedataEquipmentArea.Feet)
+    || Equals(area, gamedataEquipmentArea.Outfit)
     || Equals(area, gamedataEquipmentArea.InnerChest)
     || Equals(area, gamedataEquipmentArea.OuterChest);
 }

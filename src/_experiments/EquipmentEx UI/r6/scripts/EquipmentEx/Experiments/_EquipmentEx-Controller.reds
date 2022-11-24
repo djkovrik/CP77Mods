@@ -41,7 +41,9 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
 
   private let m_itemDisplayContext: ref<ItemDisplayContextData>;
 
-  private let m_textInput: ref<HubTextInput>;
+  private let m_outfitNameInput: ref<HubTextInput>;
+
+  private let m_searchFieldInput: ref<HubTextInput>;
 
   private let m_outfitsList: ref<inkVerticalPanel>;
 
@@ -79,17 +81,19 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
     this.m_filterManager = ItemCategoryFliterManager.Make();
     this.m_filtersRadioGroup = this.m_filtersContainer.GetController() as FilterRadioGroup;
     this.m_lastVendorFilter = ItemFilterCategory.AllItems;
-    this.m_itemDisplayContext = ItemDisplayContextData.Make(this.m_player, ItemDisplayContext.Backpack);
+    this.m_itemDisplayContext = ItemDisplayContextData.Make(this.m_player, ItemDisplayContext.GearPanel);
 
     this.RegisterToGlobalInputCallback(n"OnPostOnRelease", this, n"OnGlobalInput");
 
-    // Hide some stuff
+    // Hide eddies label and sorting dropdown
+    // TODO edit inkwidget maybe?
     root.GetWidget(n"Root/wrapper/wrapper/vendorPanel/vendorHeader/vendoHeaderWrapper/vendorBalanceWrapper").SetVisible(false);
     root.GetWidget(n"Root/wrapper/wrapper/vendorPanel/vendorHeader/vendoHeaderWrapper/filtersorting_txt").SetVisible(false);
     root.GetWidget(n"Root/wrapper/wrapper/vendorPanel/vendorHeader/inkHorizontalPanelWidget2/dropdownButton5").SetVisible(false);
     
     this.InitializeVirtualItemLists();
     this.InitializeOutfitsLayout();
+    this.InitializeSearchField();
     this.RefreshOutfitList();
     this.RefreshOutfitControls();
   }
@@ -107,7 +111,8 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
     this.m_playerItemsDataSource = null;
 
     this.UnregisterFromGlobalInputCallback(n"OnPostOnRelease", this, n"OnGlobalInput");
-    this.m_textInput.UnregisterFromCallback(n"OnInput", this, n"OnTextInput");
+    this.m_searchFieldInput.UnregisterFromCallback(n"OnInput", this, n"OnSearchFieldInput");
+    this.m_outfitNameInput.UnregisterFromCallback(n"OnInput", this, n"OnOutfitNameInput");
   }
 
   protected cb func OnFilterChange(controller: wref<inkRadioGroupController>, selectedIndex: Int32) -> Bool {
@@ -120,20 +125,18 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
     this.m_scrollController.SetScrollPosition(0.0);
   }
 
-  protected cb func OnFilterRadioItemHoverOver(evt: ref<FilterRadioItemHoverOver>) -> Bool {
-    let tooltipData: ref<MessageTooltipData> = new MessageTooltipData();
-    tooltipData.Title = NameToString(ItemFilterCategories.GetLabelKey(evt.identifier));
-    this.m_TooltipsManager.ShowTooltipAtWidget(n"descriptionTooltip", evt.target, tooltipData, gameuiETooltipPlacement.RightTop, true);
-  }
+  // protected cb func OnFilterRadioItemHoverOver(evt: ref<FilterRadioItemHoverOver>) -> Bool {
+  //   let tooltipData: ref<MessageTooltipData> = new MessageTooltipData();
+  //   tooltipData.Title = NameToString(ItemFilterCategories.GetLabelKey(evt.identifier));
+  //   this.m_TooltipsManager.ShowTooltipAtWidget(n"descriptionTooltip", evt.target, tooltipData, gameuiETooltipPlacement.RightTop, true);
+  // }
 
   protected cb func OnInventoryClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
     let isEquipped: Bool = this.m_outfitSystem.IsEquipped(evt.uiInventoryItem.ID);
     if !isEquipped && evt.actionName.IsAction(n"equip_item") {
-      EX(s">> equip \(GetLocalizedTextByKey(evt.uiInventoryItem.m_itemRecord.DisplayName()))");
       this.EquipItem(evt.uiInventoryItem.ID, evt.uiInventoryItem.targetPlacementSlot);
     } else {
       if isEquipped && evt.actionName.IsAction(n"unequip_item") {
-        EX(s"<< uneqip \(GetLocalizedTextByKey(evt.uiInventoryItem.m_itemRecord.DisplayName()))");
         this.UnequipItem(evt.uiInventoryItem.ID, evt.uiInventoryItem.targetPlacementSlot);
       };
     }
@@ -175,35 +178,56 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
     };
   }
 
-  protected cb func OnTextInput(widget: wref<inkWidget>) -> Bool {
+  protected cb func OnOutfitNameInput(widget: wref<inkWidget>) -> Bool {
     this.RefreshOutfitControls();
   }
 
-  protected cb func OnButtonClick(widget: wref<inkWidget>) -> Bool {
-    let name: CName = widget.GetName();
-    this.PlaySound(n"Button", n"OnPress");
-    EX(s"BUTTON CLICKED: \(name)");
-
-    switch name {
-      case n"ButtonCreate":
-        this.HandleCreateOutfitClick();
-        break;
-      case n"ButtonDelete":
-        this.HandleDeleteOutfitClick();
-        break;
-      case n"ButtonEquip":
-        this.HandleEquipOutfitClick();
-        break;
+  protected cb func OnSearchFieldInput(widget: wref<inkWidget>) -> Bool {
+    let text: String = this.m_searchFieldInput.GetText();
+    this.PopulateItemsList();
+    if Equals(text, "") {
+      this.m_scrollController.SetScrollPosition(0.0);
     };
   }
 
   protected cb func OnOutfitItemClick(widget: wref<inkWidget>) -> Bool {
     let name: CName = widget.GetName();
     this.PlaySound(n"Button", n"OnPress");
-    EX(s"OUTFIT CLICKED: \(name)");
     this.m_selectedOutfit = name;
-    this.m_textInput.SetText("");
+    this.m_outfitNameInput.SetText("");
     this.RefreshOutfitList();
+    this.RefreshOutfitControls();
+  }
+
+  protected cb func OnCreateOutfitClick(widget: wref<inkWidget>) -> Bool {
+    let name: CName = StringToName(this.m_outfitNameInput.GetText());
+    this.PlaySound(n"Button", n"OnPress");
+    this.m_outfitSystem.SaveOutfit(name, true);
+    this.m_selectedOutfit = name;
+    this.m_equippedOutfit = name;
+    this.m_outfitNameInput.SetText("");
+    this.RefreshOutfitList();
+    this.RefreshOutfitControls();
+  }
+
+  protected cb func OnDeleteOutfitClick(widget: wref<inkWidget>) -> Bool {
+    this.PlaySound(n"Button", n"OnPress");
+    this.m_outfitSystem.DeleteOutfit(this.m_selectedOutfit);
+    if Equals(this.m_selectedOutfit, this.m_equippedOutfit) {
+      this.m_equippedOutfit = n"";
+    };
+    this.m_selectedOutfit = n"";
+    this.m_outfitNameInput.SetText("");
+    this.RefreshOutfitList();
+    this.RefreshOutfitControls();
+  }
+
+  protected cb func OnEquipOutfitClick(widget: wref<inkWidget>) -> Bool {
+    this.PlaySound(n"Button", n"OnPress");
+    this.m_outfitSystem.LoadOutfit(this.m_selectedOutfit);
+    this.m_equippedOutfit = this.m_selectedOutfit;
+    this.RefreshOutfitList();
+    this.PopulateItemsList();
     this.RefreshOutfitControls();
   }
 
@@ -227,7 +251,6 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
   }
 
   private func PopulateItemsList() -> Void {
-    EX("PopulateItemsList");
     let items: array<ref<IScriptable>>;
     let playerItems: array<ref<gameItemData>>;
     this.m_filterManager.Clear();
@@ -248,14 +271,31 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
     this.m_filtersRadioGroup.ToggleData(data);
   }
 
-  private func GetAllClothesForSlot(playerItems: array<ref<gameItemData>>, slot: TweakDBID) -> array<ref<gameItemData>> {
+  private func GetAllClothesForSlot(playerItems: array<ref<gameItemData>>, slot: TweakDBID, searchQuery: String) -> array<ref<gameItemData>> {
     let result: array<ref<gameItemData>>;
     for item in playerItems {
-      if ArrayContains(item.supportedSlots, slot) && this.m_outfitSystem.IsEquippable(item.GetID(), slot) {
+      if this.ShouldDisplayInCategory(item, slot, searchQuery) {
         ArrayPush(result, item);
       };
     };
     return result;
+  }
+
+  private func ShouldDisplayInCategory(item: ref<gameItemData>, slot: TweakDBID, searchQuery: String) -> Bool {
+    let isSlotSupported: Bool = ArrayContains(item.supportedSlots, slot);
+    let isEquippable: Bool = this.m_outfitSystem.IsEquippable(item.GetID(), slot);
+    let isNameContainsQuery: Bool = this.IsNameContainsStr(item, searchQuery);
+    return isSlotSupported && isEquippable && isNameContainsQuery;
+  }
+
+  private func IsNameContainsStr(item: ref<gameItemData>, searchQuery: String) -> Bool {
+    if Equals(searchQuery, "") {
+      return true;
+    };
+
+    let itemRecord: ref<Item_Record> = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(item.GetID()));
+    let localizedName: String = StrLower(GetLocalizedTextByKey(itemRecord.DisplayName()));
+    return StrContains(localizedName, searchQuery);
   }
 
   private func GetCurrentlyEquippedItemName(categoryItems: array<ref<gameItemData>>) -> String {
@@ -270,6 +310,7 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
   }
 
   private func BuildCategorizedClothingList(playerItems: array<ref<gameItemData>>) -> array<ref<IScriptable>> {
+    let searchQuery: String = StrLower(this.m_searchFieldInput.GetText());
     let managedSlots: array<TweakDBID> = this.m_outfitSystem.GetManagedSlots();
     let result: array<ref<IScriptable>>;
     let slotItems: array<ref<gameItemData>>;
@@ -280,7 +321,7 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
     let secondaryInfo: String;
 
     for supportedSlot in managedSlots {
-      slotItems = this.GetAllClothesForSlot(playerItems, supportedSlot);
+      slotItems = this.GetAllClothesForSlot(playerItems, supportedSlot, searchQuery);
       itemsCount = ArraySize(slotItems);
       if itemsCount > 0 {
         secondaryInfo = s"\(GetLocalizedTextByKey(n"UI-ItemLabel-Equipped")): ";
@@ -336,7 +377,7 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
     inputLabel.SetName(n"InputLabel");
     inputLabel.SetText("Manage outfits:");
     inputLabel.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-    inputLabel.SetFontSize(48);
+    inputLabel.SetFontSize(42);
     inputLabel.SetHAlign(inkEHorizontalAlign.Left);
     inputLabel.SetVAlign(inkEVerticalAlign.Top);
     inputLabel.SetAnchor(inkEAnchor.TopLeft);
@@ -347,11 +388,11 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
     inputLabel.BindProperty(n"tintColor", n"MainColors.Blue");
     inputLabel.Reparent(verticalContainer);
 
-    this.m_textInput = HubTextInput.Create();
-    this.m_textInput.SetName(n"TextInput");
-    this.m_textInput.SetMaxLength(64);
-    this.m_textInput.RegisterToCallback(n"OnInput", this, n"OnTextInput");
-    this.m_textInput.Reparent(verticalContainer);
+    this.m_outfitNameInput = HubTextInput.Create();
+    this.m_outfitNameInput.SetName(n"OutfitNameTextInput");
+    this.m_outfitNameInput.SetMaxLength(64);
+    this.m_outfitNameInput.RegisterToCallback(n"OnInput", this, n"OnOutfitNameInput");
+    this.m_outfitNameInput.Reparent(verticalContainer);
 
     let buttonsContainer: ref<inkHorizontalPanel> = new inkHorizontalPanel();
     buttonsContainer.SetName(n"Horizontal");
@@ -362,13 +403,13 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
     this.m_buttonCreate = SimpleButton.Create();
     this.m_buttonCreate.SetName(n"ButtonCreate");
     this.m_buttonCreate.SetText("Create");
-    this.m_buttonCreate.RegisterToCallback(n"OnBtnClick", this, n"OnButtonClick");
+    this.m_buttonCreate.RegisterToCallback(n"OnBtnClick", this, n"OnCreateOutfitClick");
     this.m_buttonCreate.Reparent(buttonsContainer);
 
     this.m_buttonDelete = SimpleButton.Create();
     this.m_buttonDelete.SetName(n"ButtonDelete");
     this.m_buttonDelete.SetText("Delete");
-    this.m_buttonDelete.RegisterToCallback(n"OnBtnClick", this, n"OnButtonClick");
+    this.m_buttonDelete.RegisterToCallback(n"OnBtnClick", this, n"OnDeleteOutfitClick");
     this.m_buttonDelete.Reparent(buttonsContainer);
 
     let bottomButtonContainer: ref<inkVerticalPanel> = new inkVerticalPanel();
@@ -381,7 +422,7 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
     this.m_buttonEquip = SimpleButton.Create();
     this.m_buttonEquip.SetName(n"ButtonEquip");
     this.m_buttonEquip.SetText("Equip");
-    this.m_buttonEquip.RegisterToCallback(n"OnBtnClick", this, n"OnButtonClick");
+    this.m_buttonEquip.RegisterToCallback(n"OnBtnClick", this, n"OnEquipOutfitClick");
     this.m_buttonEquip.SetFlipped(true);
     this.m_buttonEquip.Reparent(bottomButtonContainer);
 
@@ -391,7 +432,42 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
     this.m_outfitsList.SetVAlign(inkEVerticalAlign.Fill);
     this.m_outfitsList.SetMargin(new inkMargin(0.0, 20.0, 0.0, 0.0));
     this.m_outfitsList.Reparent(verticalContainer);
+  }
 
+  private func InitializeSearchField() -> Void {
+    let parentContainer: ref<inkCanvas> = this.GetRootCompoundWidget().GetWidget(n"Root/wrapper/wrapper") as inkCanvas;
+    let searchContainer: ref<inkVerticalPanel> = new inkVerticalPanel();
+    searchContainer.SetName(n"SearchContainer");
+    searchContainer.SetMargin(new inkMargin(0.0, 180.0, 440.0, 0.0));
+    searchContainer.SetHAlign(inkEHorizontalAlign.Right);
+    searchContainer.SetVAlign(inkEVerticalAlign.Top);
+    searchContainer.SetAnchor(inkEAnchor.TopRight);
+    searchContainer.SetFitToContent(true);
+    searchContainer.SetAnchorPoint(1.0, 0.0);
+    searchContainer.SetChildMargin(new inkMargin(0.0, 0.0, 20.0, 0.0));
+    searchContainer.Reparent(parentContainer);
+
+    let inputLabel: ref<inkText> = new inkText();
+    inputLabel = new inkText();
+    inputLabel.SetName(n"SearchLabel");
+    inputLabel.SetText("Search:");
+    inputLabel.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+    inputLabel.SetFontSize(42);
+    inputLabel.SetHAlign(inkEHorizontalAlign.Left);
+    inputLabel.SetVAlign(inkEVerticalAlign.Top);
+    inputLabel.SetAnchor(inkEAnchor.TopLeft);
+    inputLabel.SetAnchorPoint(1.0, 1.0);
+    inputLabel.SetLetterCase(textLetterCase.OriginalCase);
+    inputLabel.SetMargin(new inkMargin(0.0, 0.0, 0.0, 15.0));
+    inputLabel.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    inputLabel.BindProperty(n"tintColor", n"MainColors.Blue");
+    inputLabel.Reparent(searchContainer);
+
+    this.m_searchFieldInput = HubTextInput.Create();
+    this.m_searchFieldInput.SetName(n"SearchTextInput");
+    this.m_searchFieldInput.SetMaxLength(64);
+    this.m_searchFieldInput.RegisterToCallback(n"OnInput", this, n"OnSearchFieldInput");
+    this.m_searchFieldInput.Reparent(searchContainer);
   }
 
   private func RefreshOutfitList() -> Void {
@@ -413,40 +489,11 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
   }
 
   private func RefreshOutfitControls() -> Void {
-    let enableCreateButton: Bool = NotEquals(this.m_textInput.GetText(), "");
+    let enableCreateButton: Bool = NotEquals(this.m_outfitNameInput.GetText(), "");
     let enableDeleteButton: Bool = NotEquals(this.m_selectedOutfit, n"");
     let enableEquipButton: Bool = NotEquals(this.m_selectedOutfit, n"") && NotEquals(this.m_selectedOutfit, this.m_equippedOutfit);
     this.m_buttonCreate.SetDisabled(!enableCreateButton);
     this.m_buttonDelete.SetDisabled(!enableDeleteButton);
     this.m_buttonEquip.SetDisabled(!enableEquipButton);
-  }
-
-  private func HandleCreateOutfitClick() -> Void {
-    let name: CName = StringToName(this.m_textInput.GetText());
-    this.m_outfitSystem.SaveOutfit(name, true);
-    this.m_selectedOutfit = name;
-    this.m_equippedOutfit = name;
-    this.m_textInput.SetText("");
-    this.RefreshOutfitList();
-    this.RefreshOutfitControls();
-  }
-
-  private func HandleDeleteOutfitClick() -> Void {
-    this.m_outfitSystem.DeleteOutfit(this.m_selectedOutfit);
-    if Equals(this.m_selectedOutfit, this.m_equippedOutfit) {
-      this.m_equippedOutfit = n"";
-    };
-    this.m_selectedOutfit = n"";
-    this.m_textInput.SetText("");
-    this.RefreshOutfitList();
-    this.RefreshOutfitControls();
-  }
-
-  private func HandleEquipOutfitClick() -> Void {
-    this.m_outfitSystem.LoadOutfit(this.m_selectedOutfit);
-    this.m_equippedOutfit = this.m_selectedOutfit;
-    this.RefreshOutfitList();
-    this.PopulateItemsList();
-    this.RefreshOutfitControls();
   }
 }
