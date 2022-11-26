@@ -8,3 +8,4 @@ localization:
     pl-pl: base\localization\pl-pl\onscreens\vdealer.json
     es-es: base\localization\es-es\onscreens\vdealer.json
     it-it: base\localization\it-it\onscreens\vdealer.json
+    tr-tr: base\localization\tr-tr\onscreens\vdealer.json
