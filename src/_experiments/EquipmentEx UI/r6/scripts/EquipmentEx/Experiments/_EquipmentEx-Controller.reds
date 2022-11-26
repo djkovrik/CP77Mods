@@ -61,6 +61,10 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
     super.OnInitialize();
     this.SpawnFromExternal(this.GetRootCompoundWidget(), r"base\\gameplay\\gui\\ex\\outfit.inkwidget", n"Root");
 
+    let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+    let scrollable: ref<inkWidget> = root.GetWidget(n"Root/wrapper/wrapper/vendorPanel/inventoryContainer");
+    let grid: ref<inkWidget> = root.GetWidget(n"Root/wrapper/wrapper/vendorPanel/inventoryContainer/stash_scroll_area_cache/scrollArea/vendor_virtualgrid");
+    
     this.m_player = this.GetPlayerControlledObject() as PlayerPuppet;
     this.m_uiScriptableSystem = UIScriptableSystem.GetInstance(this.m_player.GetGame());
     this.m_TooltipsManager = this.GetControllerByType(n"gameuiTooltipsManager", inkWidgetPath.Build(n"Root")) as gameuiTooltipsManager;
@@ -71,10 +75,6 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
     this.m_InventoryManager.Initialize(this.m_player);
     this.m_uiInventorySystem = UIInventoryScriptableSystem.GetInstance(this.m_player.GetGame());
     this.m_outfitSystem = OutfitSystem.GetInstance(this.m_player.GetGame());
-
-    let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
-    let scrollable: ref<inkWidget> = root.GetWidget(n"Root/wrapper/wrapper/vendorPanel/inventoryContainer");
-    let grid: ref<inkWidget> = root.GetWidget(n"Root/wrapper/wrapper/vendorPanel/inventoryContainer/stash_scroll_area_cache/scrollArea/vendor_virtualgrid");
     this.m_playerItemsVirtualListController = grid.GetController() as inkVirtualGridController;
     this.m_scrollController = scrollable.GetController() as inkScrollController;
     this.m_filtersContainer = root.GetWidget(n"Root/wrapper/wrapper/vendorPanel/vendorHeader/inkHorizontalPanelWidget2/filtersContainer");
@@ -155,7 +155,7 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
 
   private final func ShowTooltipForUIInventoryItem(widget: wref<inkWidget>, inspectedItem: wref<UIInventoryItem>) -> Void {
     let data: ref<UIInventoryItemTooltipWrapper>;
-    let placement: gameuiETooltipPlacement = gameuiETooltipPlacement.LeftTop; // RightTop
+    let placement: gameuiETooltipPlacement = gameuiETooltipPlacement.RightTop;
     this.m_TooltipsManager.HideTooltips();
     if IsDefined(inspectedItem) {
       data = UIInventoryItemTooltipWrapper.Make(inspectedItem, this.m_itemDisplayContext);
@@ -364,6 +364,7 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
 
   private func InitializeOutfitsLayout() -> Void {
     let outerContainer: ref<inkCanvas> = new inkCanvas();
+    outerContainer.SetName(n"OuterContainer");
     outerContainer.SetMargin(new inkMargin(100.0, 180.0, 0.0, 0.0));
     outerContainer.Reparent(this.GetRootCompoundWidget());
 

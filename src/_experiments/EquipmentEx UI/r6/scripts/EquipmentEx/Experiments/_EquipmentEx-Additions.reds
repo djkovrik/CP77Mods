@@ -63,6 +63,3 @@ public func GetPlayerClothingItems() -> array<ref<gameItemData>> {
 
   return result;
 }
-
-
-public static func EX(str: String) -> Void { LogChannel(n"DEBUG", s"Slots: \(str)"); }

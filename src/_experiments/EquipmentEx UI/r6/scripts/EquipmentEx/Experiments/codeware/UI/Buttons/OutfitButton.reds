@@ -15,6 +15,7 @@ public class OutfitButton extends CustomButton {
 		root.SetInteractive(true);
 
     let marker: ref<inkRectangle> = new inkRectangle();
+    marker.SetName(n"RectangleMarker");
     marker.SetAnchor(inkEAnchor.CenterLeft);
     marker.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     marker.BindProperty(n"tintColor", n"MainColors.Red");

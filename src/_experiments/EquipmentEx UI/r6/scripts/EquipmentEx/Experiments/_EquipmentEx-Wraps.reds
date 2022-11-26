@@ -5,6 +5,7 @@ protected cb func OnInitialize() -> Bool {
   wrappedMethod();
 
   let container: ref<inkVerticalPanel> = new inkVerticalPanel();
+  container.SetName(n"CustomHeaders");
   container.SetVisible(false);
   container.SetHAlign(inkEHorizontalAlign.Left);
   container.SetVAlign(inkEVerticalAlign.Center);
