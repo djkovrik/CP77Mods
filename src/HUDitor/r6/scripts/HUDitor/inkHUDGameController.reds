@@ -3,14 +3,12 @@ import HUDrag.HUDWidgetsManager.*
 public class HUDitorInputListener {
   let systemRequestsHandler: wref<inkISystemRequestsHandler>;
   let uiSystem: wref<UISystem>;
-  let hudManager: wref<HUDManager>;
   let cursor: ref<inkImage>;
   let isShiftDown: Bool;
 
   public func Initialize(parent: ref<inkHUDGameController>) {
     let player: ref<PlayerPuppet> = parent.GetPlayerControlledObject() as PlayerPuppet;
     this.uiSystem = GameInstance.GetUISystem(player.GetGame());
-    this.hudManager = player.GetHudManager();
     this.systemRequestsHandler = parent.GetSystemRequestsHandler();
     this.AddCursor(parent.GetRootCompoundWidget());
   }
@@ -27,10 +25,6 @@ public class HUDitorInputListener {
     this.cursor.SetVisible(false);
     this.cursor.SetBrushMirrorType(inkBrushMirrorType.NoMirror);
     this.cursor.Reparent(root);
-  }
-
-  private func IsScannerActive() -> Bool {
-    return Equals(this.hudManager.GetActiveMode(), ActiveMode.FOCUS);
   }
 
   protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {

@@ -7,58 +7,43 @@ public let originalOpacity: Float;
 public let originalVisibility: Bool;
 
 @addMethod(inkGameController)
-private func IsScannerEnabled() -> Bool {
-  return Equals(this.GetPlayerControlledObject().GetHudManager().GetActiveMode(), ActiveMode.FOCUS);
-}
-
-@addMethod(inkGameController)
 protected cb func OnDisplayPreviewEvent(event: ref<DisplayPreviewEvent>) -> Bool {
-  if this.IsScannerEnabled() {
-    this.ShowQuickhacksPreview(true);
-    this.ShowScannerDetailsPreview(true);
-  } else {
-    this.ShowMinimap(true);
-    this.ShowQuestTracker(true);
-    this.ShowAmmoCounter(true);
-    this.ShowCrouchIndicator(true);
-    this.ShowDpad(true);
-    this.ShowInputHints(true);
-    this.ShowHealthbar(true);
-    this.ShowIncomingPhoneCall(n"jackie", true);
-    this.ShowIncomingCallController(n"jackie", true);
-    this.ShowWantedBar(true);
-    this.ShowJournalNotification();
-    this.ShowItemsNotification();
-    this.ShowStaminaBar(true);
-    this.ShowVehicleSummonNotification(true);
-    this.ShowBossHealthbar(true);
-    this.ShowDialogPreview(true);
-    this.ShowSubtitlesPreview(true);
-  }
+  this.ShowMinimap(true);
+  this.ShowQuestTracker(true);
+  this.ShowAmmoCounter(true);
+  this.ShowCrouchIndicator(true);
+  this.ShowDpad(true);
+  this.ShowInputHints(true);
+  this.ShowHealthbar(true);
+  this.ShowIncomingPhoneCall(n"jackie", true);
+  this.ShowIncomingCallController(n"jackie", true);
+  this.ShowWantedBar(true);
+  this.ShowJournalNotification();
+  this.ShowItemsNotification();
+  this.ShowStaminaBar(true);
+  this.ShowVehicleSummonNotification(true);
+  this.ShowBossHealthbar(true);
+  this.ShowDialogPreview(true);
+  this.ShowSubtitlesPreview(true);
 }
 
 @addMethod(inkGameController)
 protected cb func OnHidePreviewEvent(event: ref<HidePreviewEvent>) -> Bool {
-  if this.IsScannerEnabled() {
-    this.ShowQuickhacksPreview(false);
-    this.ShowScannerDetailsPreview(false);
-  } else {
-    this.ShowMinimap(false);
-    this.ShowQuestTracker(false);
-    this.ShowAmmoCounter(false);
-    this.ShowCrouchIndicator(false);
-    this.ShowDpad(false);
-    this.ShowInputHints(false);
-    this.ShowHealthbar(false);
-    this.ShowIncomingPhoneCall(n"jackie", false);
-    this.ShowIncomingCallController(n"jackie", false);
-    this.ShowWantedBar(false);
-    this.ShowStaminaBar(false);
-    this.ShowVehicleSummonNotification(false);
-    this.ShowBossHealthbar(false);
-    this.ShowDialogPreview(false);
-    this.ShowSubtitlesPreview(false);
-  };
+  this.ShowMinimap(false);
+  this.ShowQuestTracker(false);
+  this.ShowAmmoCounter(false);
+  this.ShowCrouchIndicator(false);
+  this.ShowDpad(false);
+  this.ShowInputHints(false);
+  this.ShowHealthbar(false);
+  this.ShowIncomingPhoneCall(n"jackie", false);
+  this.ShowIncomingCallController(n"jackie", false);
+  this.ShowWantedBar(false);
+  this.ShowStaminaBar(false);
+  this.ShowVehicleSummonNotification(false);
+  this.ShowBossHealthbar(false);
+  this.ShowDialogPreview(false);
+  this.ShowSubtitlesPreview(false);
 }
 
 
@@ -395,121 +380,5 @@ private func ShowSubtitlesPreview(show: Bool) -> Void {
     } else {
       controller.m_subtitlesPanel.RemoveAllChildren();
     };
-  };
-}
-
-@addMethod(inkGameController)
-private func ShowQuickhacksPreview(show: Bool) -> Void {
-  let controller: ref<QuickhacksListGameController>;
-  if this.IsA(n"QuickhacksListGameController") {
-    controller = this as QuickhacksListGameController;
-    controller.GetRootWidget().SetVisible(show);
-    controller.SetVisibility(show);
-    controller.SetupQuickhacksMemoryBar();
-    controller.UpdateQuickhacksMemoryBarSize(20);
-
-    let i: Int32 = 1;
-    let data: array<ref<QuickhackData>>;
-    let item: ref<QuickhackData>;
-    while i <= 8 {
-      item = new QuickhackData();
-      item.m_icon = t"UIIcon.Quickhack_Suicide";
-      item.m_title = s"Some quickhack \(i)";
-      item.m_titleAlternative = s"Some quickhack title \(i)";
-      item.m_description = s"Some quickhack description \(i)";
-      item.m_type = gamedataObjectActionType.PuppetQuickHack;
-      item.m_networkBreached = true;
-      item.m_cost = 7;
-      item.m_costRaw = 8;
-      ArrayPush(data, item);
-      i += 1;
-    };
-
-    controller.PopulateData(data);
-  };
-}
-
-@addMethod(inkGameController)
-private func ShowScannerDetailsPreview(show: Bool) -> Void {
-  let controller: ref<scannerDetailsGameController>;
-  if this.IsA(n"scannerDetailsGameController") {
-    controller = this as scannerDetailsGameController;
-    controller.ShowDummyScannerDetails(show);
-  };
-}
-
-@addField(scannerDetailsGameController)
-private let m_dummyPreviewActive: Bool = false;
-
-@addMethod(scannerDetailsGameController)
-private const func ShowDummyScannerDetails(show: Bool) -> Void {
-  let scannerBlackboard: ref<IBlackboard> = this.m_uiScannerChunkBlackboard;
-  this.m_dummyPreviewActive = show;
-
-  if show {
-    this.AsyncSpawnScannerModule(n"ScannerNPCHeaderWidget");
-    this.AsyncSpawnScannerModule(n"ScannerNPCBodyWidget");
-    this.AsyncSpawnScannerModule(n"ScannerBountySystemWidget");
-    this.AsyncSpawnScannerModule(n"ScannerRequirementsWidget");
-    this.AsyncSpawnScannerModule(n"ScannerAbilitiesWidget");
-    this.AsyncSpawnScannerModule(n"ScannerResistancesWidget");
-    this.AsyncSpawnScannerModule(n"ScannerDeviceDescriptionWidget");
-    this.AsyncSpawnScannerModule(n"ScannerVehicleBody");
-  } else {
-      ArrayClear(this.m_asyncSpawnRequests);
-      inkCompoundRef.RemoveAllChildren(this.m_scannerCountainer);
-      inkCompoundRef.RemoveAllChildren(this.m_quickhackContainer);
-  };
-
-  this.GetRootWidget().SetVisible(show);
-
-  if show {
-    let nameChunk: ref<ScannerName> = new ScannerName();
-    nameChunk.Set("Some random name");
-    scannerBlackboard.SetVariant(GetAllBlackboardDefs().UI_ScannerModules.ScannerName, ToVariant(nameChunk), true);
-    scannerBlackboard.SetInt(GetAllBlackboardDefs().UI_ScannerModules.ObjectType, EnumInt(ScannerObjectType.PUPPET), true);
-
-    let descriptionChunk: ref<ScannerDescription> = new ScannerDescription();
-    let defaultDescription: String = "Some very basic description";
-    let customDescriptions: array<String>;
-    ArrayPush(customDescriptions, "First");
-    ArrayPush(customDescriptions, "Second");
-    ArrayPush(customDescriptions, "Third");
-    descriptionChunk.Set(defaultDescription, customDescriptions);
-    scannerBlackboard.SetVariant(GetAllBlackboardDefs().UI_ScannerModules.ScannerDescription, ToVariant(descriptionChunk), true);
-
-    let healthChunk: ref<ScannerHealth> = new ScannerHealth();
-    healthChunk.Set(100, 200);
-    scannerBlackboard.SetVariant(GetAllBlackboardDefs().UI_ScannerModules.ScannerHealth, ToVariant(healthChunk));
-
-    let archtypeChunk: ref<ScannerArchetype> = new ScannerArchetype();
-    archtypeChunk.Set(gamedataArchetypeType.ShotgunnerT2);
-    scannerBlackboard.SetVariant(GetAllBlackboardDefs().UI_ScannerModules.ScannerArchetype, ToVariant(archtypeChunk));
-
-    let factionChunk: ref<ScannerFaction> = new ScannerFaction();
-    factionChunk.Set("Faction");
-    scannerBlackboard.SetVariant(GetAllBlackboardDefs().UI_ScannerModules.ScannerFaction, ToVariant(factionChunk));
-
-    let levelChunk: ref<ScannerLevel> = new ScannerLevel();
-    levelChunk.Set(50);
-    levelChunk.SetIndicator(true);
-    scannerBlackboard.SetVariant(GetAllBlackboardDefs().UI_ScannerModules.ScannerLevel, ToVariant(levelChunk));
-
-    let vehicleInfoChunk: ref<ScannerVehicleInfo> = new ScannerVehicleInfo();
-    let text: String = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. " + 
-    "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit " + 
-    "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit " + 
-    "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit " + 
-    "in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt " + 
-    "mollit anim id est laborum. ";
-    vehicleInfoChunk.Set(text);
-    scannerBlackboard.SetVariant(GetAllBlackboardDefs().UI_ScannerModules.ScannerVehicleInfo, ToVariant(vehicleInfoChunk));
-  };
-}
-
-@wrapMethod(scannerDetailsGameController)
-private final func PlayCloseScannerAnimation() -> Void {
-  if !this.m_dummyPreviewActive {
-    wrappedMethod();
   };
 }
