@@ -65,6 +65,8 @@ public class HUDitorCustomSlot extends inkVerticalPanel {
         n"NewQuestNotifications", 
         n"NewItemNotifications", 
         n"NewWeaponCrouch", 
+        n"NewCompassScale",
+        n"NewCompassMarkers",
         n"NewDpad",
         n"NewHealthBar",
         n"NewCarHud",
@@ -92,6 +94,7 @@ public class HUDitorCustomSlot extends inkVerticalPanel {
       || Equals(this.GetName(), n"NewPhoneControl") 
       || Equals(this.GetName(), n"NewItemNotifications") 
       || Equals(this.GetName(), n"NewQuestNotifications") 
+      || Equals(this.GetName(), n"NewCompassScale") 
       || Equals(this.GetName(), n"NewDialogChoices") {
         scale = new Vector2(0.666667, 0.666667);
       } else {

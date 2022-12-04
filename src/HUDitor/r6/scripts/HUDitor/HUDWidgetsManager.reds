@@ -1,8 +1,8 @@
 module HUDrag.HUDWidgetsManager
 
 // Widgets and order:
-// - NewMinimap - Minimap
 // - NewTracker - Quest tracker
+// - NewMinimap - Minimap
 // - NewWanted - Wanted bar
 // - NewQuestNotifications - Quest notifications area
 // - NewItemNotifications - Items notifications area
@@ -57,10 +57,10 @@ public class HUDWidgetsManager {
     return GameInstance.FindEntityByID(this.gameInstance, this.puppetId) as PlayerPuppet;
   }
 
-  public static func GetNextWidget(widgetName: CName) -> CName {
+  public static func GetNextWidgetDefault(widgetName: CName) -> CName {
     switch widgetName {
-      case n"NewMinimap": return n"NewTracker";
-      case n"NewTracker": return n"NewWanted";
+      case n"NewTracker": return n"NewMinimap";
+      case n"NewMinimap": return n"NewWanted";
       case n"NewWanted": return n"NewQuestNotifications";
       case n"NewQuestNotifications": return n"NewItemNotifications";
       case n"NewItemNotifications": return n"NewVehicleSummon";
@@ -75,11 +75,11 @@ public class HUDWidgetsManager {
       case n"NewCarHud": return n"NewBossHealthbar";
       case n"NewBossHealthbar": return n"NewDialogChoices";
       case n"NewDialogChoices": return n"NewDialogSubtitles";
-      default: return n"NewMinimap"; 
+      default: return n"NewTracker"; 
     };
   }
 
-  public static func GetPreviousWidget(widgetName: CName) -> CName {
+  public static func GetPreviousWidgetDefault(widgetName: CName) -> CName {
     switch widgetName {
       case n"NewDialogSubtitles": return n"NewDialogChoices";
       case n"NewDialogChoices": return n"NewBossHealthbar";
@@ -95,8 +95,103 @@ public class HUDWidgetsManager {
       case n"NewVehicleSummon": return n"NewItemNotifications";
       case n"NewItemNotifications": return n"NewQuestNotifications";
       case n"NewQuestNotifications": return n"NewWanted";
+      case n"NewWanted": return n"NewMinimap";
+      case n"NewMinimap": return n"NewTracker";
+      default: return n"NewDialogSubtitles"; 
+    };
+  }
+
+  public static func GetNextWidgetCompassFaithful(widgetName: CName) -> CName {
+    switch widgetName {
+      case n"NewTracker": return n"NewWanted";
+      case n"NewWanted": return n"NewQuestNotifications";
+      case n"NewQuestNotifications": return n"NewItemNotifications";
+      case n"NewItemNotifications": return n"NewVehicleSummon";
+      case n"NewVehicleSummon": return n"NewWeaponCrouch";
+      case n"NewWeaponCrouch": return n"NewDpad";
+      case n"NewDpad": return n"NewHealthBar";
+      case n"NewHealthBar": return n"NewStaminaBar";
+      case n"NewStaminaBar": return n"NewPhoneAvatar";
+      case n"NewPhoneAvatar": return n"NewPhoneControl";
+      case n"NewPhoneControl": return n"NewInputHint";
+      case n"NewInputHint": return n"NewCarHud";
+      case n"NewCarHud": return n"NewBossHealthbar";
+      case n"NewBossHealthbar": return n"NewCompassScale";
+      case n"NewCompassScale": return n"NewCompassMarkers";
+      case n"NewCompassMarkers": return n"NewDialogChoices";
+      case n"NewDialogChoices": return n"NewDialogSubtitles";
+      default: return n"NewTracker"; 
+    };
+  }
+
+  public static func GetPreviousWidgetCompassFaithful(widgetName: CName) -> CName {
+    switch widgetName {
+      case n"NewDialogSubtitles": return n"NewDialogChoices";
+      case n"NewDialogChoices": return n"NewCompassMarkers";
+      case n"NewCompassMarkers": return n"NewCompassScale";
+      case n"NewCompassScale": return n"NewBossHealthbar";
+      case n"NewBossHealthbar": return n"NewCarHud";
+      case n"NewCarHud": return n"NewInputHint";
+      case n"NewInputHint": return n"NewPhoneControl";
+      case n"NewPhoneControl": return n"NewPhoneAvatar";
+      case n"NewPhoneAvatar": return n"NewStaminaBar";
+      case n"NewStaminaBar": return n"NewHealthBar";
+      case n"NewHealthBar": return n"NewDpad";
+      case n"NewDpad": return n"NewWeaponCrouch";
+      case n"NewWeaponCrouch": return n"NewVehicleSummon";
+      case n"NewVehicleSummon": return n"NewItemNotifications";
+      case n"NewItemNotifications": return n"NewQuestNotifications";
+      case n"NewQuestNotifications": return n"NewWanted";
       case n"NewWanted": return n"NewTracker";
+      default: return n"NewDialogSubtitles"; 
+    };
+  }
+
+
+  public static func GetNextWidgetCompassMinimap(widgetName: CName) -> CName {
+    switch widgetName {
       case n"NewTracker": return n"NewMinimap";
+      case n"NewMinimap": return n"NewWanted";
+      case n"NewWanted": return n"NewQuestNotifications";
+      case n"NewQuestNotifications": return n"NewItemNotifications";
+      case n"NewItemNotifications": return n"NewVehicleSummon";
+      case n"NewVehicleSummon": return n"NewWeaponCrouch";
+      case n"NewWeaponCrouch": return n"NewDpad";
+      case n"NewDpad": return n"NewHealthBar";
+      case n"NewHealthBar": return n"NewStaminaBar";
+      case n"NewStaminaBar": return n"NewPhoneAvatar";
+      case n"NewPhoneAvatar": return n"NewPhoneControl";
+      case n"NewPhoneControl": return n"NewInputHint";
+      case n"NewInputHint": return n"NewCarHud";
+      case n"NewCarHud": return n"NewBossHealthbar";
+      case n"NewBossHealthbar": return n"NewCompassScale";
+      case n"NewCompassScale": return n"NewCompassMarkers";
+      case n"NewCompassMarkers": return n"NewDialogChoices";
+      case n"NewDialogChoices": return n"NewDialogSubtitles";
+      default: return n"NewTracker"; 
+    };
+  }
+
+  public static func GetPreviousWidgetCompassMinimap(widgetName: CName) -> CName {
+    switch widgetName {
+      case n"NewDialogSubtitles": return n"NewDialogChoices";
+      case n"NewDialogChoices": return n"NewCompassMarkers";
+      case n"NewCompassMarkers": return n"NewCompassScale";
+      case n"NewCompassScale": return n"NewBossHealthbar";
+      case n"NewBossHealthbar": return n"NewCarHud";
+      case n"NewCarHud": return n"NewInputHint";
+      case n"NewInputHint": return n"NewPhoneControl";
+      case n"NewPhoneControl": return n"NewPhoneAvatar";
+      case n"NewPhoneAvatar": return n"NewStaminaBar";
+      case n"NewStaminaBar": return n"NewHealthBar";
+      case n"NewHealthBar": return n"NewDpad";
+      case n"NewDpad": return n"NewWeaponCrouch";
+      case n"NewWeaponCrouch": return n"NewVehicleSummon";
+      case n"NewVehicleSummon": return n"NewItemNotifications";
+      case n"NewItemNotifications": return n"NewQuestNotifications";
+      case n"NewQuestNotifications": return n"NewWanted";
+      case n"NewWanted": return n"NewMinimap";
+      case n"NewMinimap": return n"NewTracker";
       default: return n"NewDialogSubtitles"; 
     };
   }

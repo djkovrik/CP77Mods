@@ -5,12 +5,18 @@ public class HUDitorInputListener {
   let uiSystem: wref<UISystem>;
   let cursor: ref<inkImage>;
   let isShiftDown: Bool;
+  let compatMode: HUDitorCompatMode = HUDitorCompatMode.Default;
 
   public func Initialize(parent: ref<inkHUDGameController>) {
     let player: ref<PlayerPuppet> = parent.GetPlayerControlledObject() as PlayerPuppet;
     this.uiSystem = GameInstance.GetUISystem(player.GetGame());
     this.systemRequestsHandler = parent.GetSystemRequestsHandler();
     this.AddCursor(parent.GetRootCompoundWidget());
+  }
+
+  public func SetCompatMode(mode: HUDitorCompatMode) -> Void {
+    this.compatMode = mode;
+    LogChannel(n"DEBUG", s"HUDitor compat mode: \(this.compatMode)");
   }
 
   private func AddCursor(root: ref<inkCompoundWidget>) {
@@ -25,6 +31,7 @@ public class HUDitorInputListener {
     this.cursor.SetVisible(false);
     this.cursor.SetBrushMirrorType(inkBrushMirrorType.NoMirror);
     this.cursor.Reparent(root);
+    this.cursor.ChangeTranslation(new Vector2(600.0, 600.0));
   }
 
   protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
@@ -67,24 +74,54 @@ public class HUDitorInputListener {
 
     if ListenerAction.IsButtonJustPressed(action) {
       if Equals(actionName, n"right_button") && isActive {
-        let nextActiveWidget = HUDWidgetsManager.GetNextWidget(HUDWidgetsManager.GetInstance().activeWidget);
+        let nextActiveWidget: CName;
+        switch this.compatMode {
+          case HUDitorCompatMode.E3CompassFaithful: 
+            nextActiveWidget = HUDWidgetsManager.GetNextWidgetCompassFaithful(HUDWidgetsManager.GetInstance().activeWidget);
+            break;
+          case HUDitorCompatMode.E3CompassFaithfulE3HUD: 
+            nextActiveWidget = HUDWidgetsManager.GetNextWidgetCompassFaithful(HUDWidgetsManager.GetInstance().activeWidget);
+            break;
+          case HUDitorCompatMode.E3CompassMinimap: 
+            nextActiveWidget = HUDWidgetsManager.GetNextWidgetCompassMinimap(HUDWidgetsManager.GetInstance().activeWidget);
+            break;
+          case HUDitorCompatMode.E3CompassMinimapE3HUD: 
+            nextActiveWidget = HUDWidgetsManager.GetNextWidgetCompassMinimap(HUDWidgetsManager.GetInstance().activeWidget);
+            break;
+          default: 
+            nextActiveWidget = HUDWidgetsManager.GetNextWidgetDefault(HUDWidgetsManager.GetInstance().activeWidget);
+            break;
+        };
         
         HUDWidgetsManager.GetInstance().activeWidget = nextActiveWidget;
-
         let enableHUDEditorEvent = new SetActiveHUDEditorWidget();
         enableHUDEditorEvent.activeWidget = nextActiveWidget;
-
         this.uiSystem.QueueEvent(enableHUDEditorEvent);
       };
 
       if Equals(actionName, n"left_button") && isActive {
-        let previousActiveWidget = HUDWidgetsManager.GetPreviousWidget(HUDWidgetsManager.GetInstance().activeWidget);
+        let previousActiveWidget: CName;
+        switch this.compatMode {
+          case HUDitorCompatMode.E3CompassFaithful: 
+            previousActiveWidget = HUDWidgetsManager.GetPreviousWidgetCompassFaithful(HUDWidgetsManager.GetInstance().activeWidget);
+            break;
+          case HUDitorCompatMode.E3CompassFaithfulE3HUD: 
+            previousActiveWidget = HUDWidgetsManager.GetPreviousWidgetCompassFaithful(HUDWidgetsManager.GetInstance().activeWidget);
+            break;
+          case HUDitorCompatMode.E3CompassMinimap: 
+            previousActiveWidget = HUDWidgetsManager.GetPreviousWidgetCompassMinimap(HUDWidgetsManager.GetInstance().activeWidget);
+            break;
+          case HUDitorCompatMode.E3CompassMinimapE3HUD: 
+            previousActiveWidget = HUDWidgetsManager.GetPreviousWidgetCompassMinimap(HUDWidgetsManager.GetInstance().activeWidget);
+            break;
+          default: 
+            previousActiveWidget = HUDWidgetsManager.GetPreviousWidgetDefault(HUDWidgetsManager.GetInstance().activeWidget);
+            break;
+        };
         
         HUDWidgetsManager.GetInstance().activeWidget = previousActiveWidget;
-
         let enableHUDEditorEvent = new SetActiveHUDEditorWidget();
         enableHUDEditorEvent.activeWidget = previousActiveWidget;
-
         this.uiSystem.QueueEvent(enableHUDEditorEvent);
       };
 
@@ -111,9 +148,9 @@ public class HUDitorInputListener {
           if !isActive {
             this.systemRequestsHandler.PauseGame();
             let enableHUDEditorEvent = new SetActiveHUDEditorWidget();
-            enableHUDEditorEvent.activeWidget = n"NewMinimap";
+            enableHUDEditorEvent.activeWidget = n"NewTracker";
             HUDWidgetsManager.GetInstance().isActive = true;
-            HUDWidgetsManager.GetInstance().activeWidget = n"NewMinimap";
+            HUDWidgetsManager.GetInstance().activeWidget = n"NewTracker";
 
             this.uiSystem.QueueEvent(new DisplayPreviewEvent());
             this.uiSystem.QueueEvent(enableHUDEditorEvent);
@@ -158,5 +195,12 @@ protected cb func OnPlayerDetach(playerPuppet: ref<GameObject>) -> Bool {
     let player: ref<PlayerPuppet> = playerPuppet as PlayerPuppet;
     player.UnregisterInputListener(this.huditorListener);
     this.huditorListener = null;
+  }
+}
+
+@addMethod(inkHUDGameController)
+protected cb func OnCompatModeChanged(evt: ref<SetHUDitorCompatMode>) -> Bool {
+  if (this.IsA(n"gameuiWorldMappinsContainerController")) {
+     this.huditorListener.SetCompatMode(evt.mode);
   }
 }

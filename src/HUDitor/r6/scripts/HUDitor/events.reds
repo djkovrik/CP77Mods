@@ -18,3 +18,16 @@ public class ScannerDetailsAppearedEvent extends Event {
   let isVisible: Bool;
   let isHackable: Bool;
 }
+
+enum HUDitorCompatMode {
+  Default = 0,
+  E3HUD = 1,
+  E3CompassFaithful = 2,
+  E3CompassFaithfulE3HUD = 3,
+  E3CompassMinimap = 4,
+  E3CompassMinimapE3HUD = 5,
+}
+
+public class SetHUDitorCompatMode extends Event {
+  let mode: HUDitorCompatMode;
+}
