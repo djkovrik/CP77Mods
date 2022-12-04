@@ -29,6 +29,26 @@
          "X":1.0
       }
    },
+   "NewCompassScale":{
+      "translation":{
+         "Y":0.0,
+         "X":0.0
+      },
+      "scale":{
+         "Y":0.666667,
+         "X":0.666667
+      }
+   },
+   "NewCompassMarkers":{
+      "translation":{
+         "Y":0.0,
+         "X":0.0
+      },
+      "scale":{
+         "Y":1.0,
+         "X":1.0
+      }
+   },
    "NewPhoneAvatar":{
       "translation":{
          "Y":0.0,
