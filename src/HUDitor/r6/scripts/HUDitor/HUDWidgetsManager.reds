@@ -42,7 +42,6 @@ public class HUDWidgetsManager {
     let instance: ref<HUDWidgetsManager> = new HUDWidgetsManager();
     let gameInstance = puppet.GetGame();
     let puppetEntityId = puppet.GetEntityID();
-
     instance.Initialize(gameInstance, puppetEntityId, hudGameController);
 
     let player = GetPlayer(gameInstance);
@@ -104,7 +103,6 @@ public class HUDWidgetsManager {
 
   public func SetHUDEditorListener(hudGameController: ref<inkGameController>) -> Void {
     let player: wref<PlayerPuppet> = this.GetPlayerPuppet();
-
     player.RegisterInputListener(hudGameController, n"ToggleSprint");
     player.RegisterInputListener(hudGameController, n"UI_Unequip");
     player.RegisterInputListener(hudGameController, n"world_map_filter_navigation_down");
@@ -119,19 +117,25 @@ public class HUDWidgetsManager {
 
   public func AssignHUDWidgetListeners(customSlot: ref<HUDitorCustomSlot>) {
     let player: wref<PlayerPuppet> = this.GetPlayerPuppet();
-
     player.RegisterInputListener(customSlot, n"mouse_wheel");
     player.RegisterInputListener(customSlot, n"CameraMouseX");
     player.RegisterInputListener(customSlot, n"CameraMouseY");
     player.RegisterInputListener(customSlot, n"click");
+    player.RegisterInputListener(customSlot, n"Forward");
+    player.RegisterInputListener(customSlot, n"Right");
+    player.RegisterInputListener(customSlot, n"Back");
+    player.RegisterInputListener(customSlot, n"Left");
   }
 
    public func RemoveHUDWidgetListeners(customSlot: ref<HUDitorCustomSlot>) {
     let player: wref<PlayerPuppet> = this.GetPlayerPuppet();
-
     player.UnregisterInputListener(customSlot, n"CameraMouseX");
     player.UnregisterInputListener(customSlot, n"CameraMouseY");
     player.UnregisterInputListener(customSlot, n"mouse_wheel");
     player.UnregisterInputListener(customSlot, n"click");
+    player.UnregisterInputListener(customSlot, n"Forward");
+    player.UnregisterInputListener(customSlot, n"Right");
+    player.UnregisterInputListener(customSlot, n"Back");
+    player.UnregisterInputListener(customSlot, n"Left");
   }
 } 
