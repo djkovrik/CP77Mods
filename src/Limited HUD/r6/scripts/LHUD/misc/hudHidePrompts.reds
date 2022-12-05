@@ -19,20 +19,31 @@ protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> 
 private final func SetLabel(data: script_ref<InteractionChoiceData>) -> Void {
   wrappedMethod(data);
   let dataLocalizedName: String = Deref(data).localizedName;
-  // LogChannel(n"DEBUG", s"LocKey = \(Deref(data).localizedName) = \(GetLocalizedText(dataLocalizedName))");
 
   // Get in / Get on
   if Equals(dataLocalizedName, "LocKey#23295") || Equals(dataLocalizedName, "LocKey#23296") {
-    this.GetRootCompoundWidget().SetVisible(!this.lhudAddonsConfig.HidePromptGetIn);
+    if this.lhudAddonsConfig.HidePromptGetIn {
+      this.GetRootCompoundWidget().SetOpacity(0.0);
+    } else {
+      this.GetRootCompoundWidget().SetOpacity(1.0);
+    };
   };
 
   // Pick Up Body
   if Equals(dataLocalizedName, "LocKey#238") {
-    this.GetRootCompoundWidget().SetVisible(!this.lhudAddonsConfig.HidePromptPickUpBody);
+    if this.lhudAddonsConfig.HidePromptPickUpBody {
+      this.GetRootCompoundWidget().SetOpacity(0.0);
+    } else {
+      this.GetRootCompoundWidget().SetOpacity(1.0);
+    };
   };
 
   // Talk
   if Equals(dataLocalizedName, "LocKey#312") {
-    this.GetRootCompoundWidget().SetVisible(!this.lhudAddonsConfig.HidePromptTalk);
+    if this.lhudAddonsConfig.HidePromptTalk {
+      this.GetRootCompoundWidget().SetOpacity(0.0);
+    } else {
+      this.GetRootCompoundWidget().SetOpacity(1.0);
+    };
   };
 }
