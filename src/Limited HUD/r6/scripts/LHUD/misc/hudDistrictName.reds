@@ -6,8 +6,14 @@ public let m_districtName: ref<inkText>;
 
 @wrapMethod(MinimapContainerController)
 protected cb func OnInitialize() -> Bool {
-  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget() as inkCompoundWidget;
+  this.InitDistrictLabel();
+  wrappedMethod();
+}
 
+@if(!ModuleExists("e3hud"))
+@addMethod(MinimapContainerController)
+private func InitDistrictLabel() {
+  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget() as inkCompoundWidget;
   let player: wref<PlayerPuppet> = this.GetPlayerControlledObject() as PlayerPuppet;
   let isJohnny: Bool = false;
   
@@ -53,7 +59,12 @@ protected cb func OnInitialize() -> Bool {
 
     this.m_districtName = text;
   };
-  wrappedMethod();
+}
+
+@if(ModuleExists("e3hud"))
+@addMethod(MinimapContainerController)
+private func InitDistrictLabel() {
+  
 }
 
 @wrapMethod(MinimapContainerController)
