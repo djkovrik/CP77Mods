@@ -1,6 +1,7 @@
 module Sleeves
 
 private class SleevesConfig {
+
   // Equipment exclusion list
   public static func Exclude(itemID: ItemID) -> Bool {
     let id: TweakDBID = ItemID.GetTDBID(itemID);
@@ -12,18 +13,16 @@ private class SleevesConfig {
       Equals(id, t"Items.sq030_diving_suit_female") ||      // Judy's Diving Suit
       Equals(id, t"Items.sq030_diving_suit_male") ||        // Judy's Diving Suit
       Equals(id, t"Items.SQ030_Diving_Suit_NoShoes") ||     // Judy's Diving Suit
+      Equals(id, t"Items.MQ049_martinez_jacket") ||         // David's Jacket
       false;
   }
-  // Equip areas which swapped between FPP and TPP variants
-  public static func TargetSlots() -> array<gamedataEquipmentArea> = [
-    // gamedataEquipmentArea.Head,
-    // gamedataEquipmentArea.Face,
-    // gamedataEquipmentArea.Legs,
-    // gamedataEquipmentArea.Feet,
-    gamedataEquipmentArea.InnerChest,
-    gamedataEquipmentArea.OuterChest,
-    gamedataEquipmentArea.Outfit
+
+  public static func TargetSlots() -> array<TweakDBID> = [
+    t"AttachmentSlots.Torso", 
+    t"AttachmentSlots.Chest",
+    t"AttachmentSlots.Outfit"
   ]
+
   // Uncomment any line to treat cyberware as incompatible what means that 
   // sleeves will be rolled up if have it installed (no matter equipped or not)
   public static func IncompatibleCyberware() -> array<gamedataItemType> = [
@@ -42,22 +41,19 @@ public class SleevesControlSystem extends ScriptableSystem {
 
   private let playerPuppet: wref<PlayerPuppet>;
 
-  private let equipmentSystemPlayerData: wref<EquipmentSystemPlayerData>;
+  private let transactionSystem: wref<TransactionSystem>;
 
   private let hasLauncher: Bool;
 
-  private let switchedToFpp: Bool;
-
   private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
     this.playerPuppet = GameInstance.GetPlayerSystem(request.owner.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
-    this.equipmentSystemPlayerData = EquipmentSystem.GetData(this.playerPuppet);
+    this.transactionSystem = GameInstance.GetTransactionSystem(request.owner.GetGame());
     this.hasLauncher = false;
-    this.switchedToFpp = false;
   }
 
   private final func OnPlayerDetach(request: ref<PlayerDetachRequest>) -> Void {
     this.playerPuppet = null;
-    this.equipmentSystemPlayerData = null;
+    this.transactionSystem = null;
   }
 
   public func SetHasLauncher(value: Bool) -> Void {
@@ -68,38 +64,37 @@ public class SleevesControlSystem extends ScriptableSystem {
     // Check for cyberware
     if this.hasLauncher || this.HasIncompatibleCyberware() {
       this.SwapTargetSlotsToFPP();
-      // LogChannel(n"DEBUG", "Switch to FPP");
     } else {
       this.SwapTargetSlotsToTPP();
-      // LogChannel(n"DEBUG", "Switch to TPP");
     };
   }
 
-  private func SwapItemAppearance(itemID: ItemID, from: String, to: String) -> Void {
+  private func SwapItemAppearance(slot: TweakDBID, from: String, to: String) -> Void {
+    let itemObject: ref<ItemObject> = this.transactionSystem.GetItemInSlot(this.playerPuppet, slot);
+    let itemID: ItemID = itemObject.GetItemID();
     if SleevesConfig.Exclude(itemID) {
       return ;
     };
-    let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.playerPuppet.GetGame());
-    let appearanceString: String = ToString(transactionSystem.GetItemAppearance(this.playerPuppet, itemID));
+
+    let appearanceString: String = ToString(this.transactionSystem.GetItemAppearance(this.playerPuppet, itemID));
     let newAppearanceString: String;
     if StrFindLast(appearanceString, from) != -1 {
       newAppearanceString = StrReplace(appearanceString, from, to);
-      transactionSystem.ChangeItemAppearanceByName(this.playerPuppet, itemID, StringToName(newAppearanceString));
-      this.equipmentSystemPlayerData.OnEquipProcessVisualTags(itemID);
+      this.transactionSystem.ChangeItemAppearanceByName(this.playerPuppet, itemID, StringToName(newAppearanceString));
     };
   }
 
   // -- Swap item appearance from target slots to FPP variant
   private func SwapTargetSlotsToFPP() -> Void {
     for slot in SleevesConfig.TargetSlots() {
-      this.SwapItemAppearance(this.equipmentSystemPlayerData.GetActiveItem(slot), "&TPP", "&FPP");
+      this.SwapItemAppearance(slot, "&TPP", "&FPP");
     };
   }
 
   // -- Swap item appearance from target slots to TPP variant
   private func SwapTargetSlotsToTPP() -> Void {
     for slot in SleevesConfig.TargetSlots() {
-      this.SwapItemAppearance(this.equipmentSystemPlayerData.GetActiveItem(slot), "&FPP", "&TPP");
+      this.SwapItemAppearance(slot, "&FPP", "&TPP");
     };
   }
 
@@ -141,7 +136,6 @@ private final func PlayerAttachedCallback(playerPuppet: ref<GameObject>) -> Void
 @wrapMethod(PlayerPuppet)
 protected cb func OnAppearanceChangeFinishEvent(evt: ref<entAppearanceChangeFinishEvent>) -> Bool {
   wrappedMethod(evt);
-  // LogChannel(n"DEBUG", "OnAppearanceChangeFinishEvent");
   this.m_sleevesControlSystem.RunAppearanceSwap();
 }
 
@@ -182,9 +176,6 @@ private func UpdateCyberwareState(scriptInterface: ref<StateGameScriptInterface>
   let container: ref<ScriptableSystemsContainer> = GameInstance.GetScriptableSystemsContainer(scriptInterface.executionOwner.GetGame());
   let sleevesSystem: ref<SleevesControlSystem> =  container.Get(n"Sleeves.SleevesControlSystem") as SleevesControlSystem;
   let launcher: Bool = UpperBodyTransition.HasLauncherEquipped(scriptInterface);
-  // let mantis: Bool = UpperBodyTransition.HasCyberwareEquipped(scriptInterface, gamedataItemType.Cyb_MantisBlades);
-  // let nanowires: Bool = UpperBodyTransition.HasCyberwareEquipped(scriptInterface, gamedataItemType.Cyb_NanoWires);
-
   sleevesSystem.SetHasLauncher(launcher);
   sleevesSystem.RunAppearanceSwap();
 }
@@ -223,7 +214,6 @@ private final func OnGameAttach() -> Void {
   this.m_delaySystem = GameInstance.GetDelaySystem(this.GetVehicle().GetGame());
   this.m_sleevesControlSystem = GameInstance.GetScriptableSystemsContainer(this.GetVehicle().GetGame()).Get(n"Sleeves.SleevesControlSystem") as SleevesControlSystem;
 }
-
 
 @wrapMethod(VehicleComponent)
 protected final func OnVehicleCameraChange(state: Bool) -> Void {
