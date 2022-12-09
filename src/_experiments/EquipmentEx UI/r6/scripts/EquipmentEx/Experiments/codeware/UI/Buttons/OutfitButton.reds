@@ -10,19 +10,19 @@ public class OutfitButton extends CustomButton {
 	protected func CreateWidgets() -> Void {
 		let root: ref<inkCanvas> = new inkCanvas();
 		root.SetName(n"OutfitButton");
-		root.SetSize(600.0, 80.0);
+		root.SetSize(600.0, 60.0);
 		root.SetAnchorPoint(new Vector2(0.5, 0.5));
 		root.SetInteractive(true);
 
     let marker: ref<inkRectangle> = new inkRectangle();
     marker.SetName(n"RectangleMarker");
-    marker.SetAnchor(inkEAnchor.CenterLeft);
     marker.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     marker.BindProperty(n"tintColor", n"MainColors.Red");
     marker.SetOpacity(0.7);
-    marker.SetSize(8.0, 50.0);
-    marker.SetVisible(false);
+    marker.SetAnchor(inkEAnchor.LeftFillVerticaly);
     marker.SetMargin(new inkMargin(-30.0, 0.0, 0.0, 0.0));
+    marker.SetSize(8.0, 0.0);
+    marker.SetVisible(false);
     marker.Reparent(root);
 
 		let label: ref<inkText> = new inkText();
@@ -34,6 +34,7 @@ public class OutfitButton extends CustomButton {
     label.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     label.BindProperty(n"tintColor", n"MainColors.Red");
 		label.SetAnchor(inkEAnchor.CenterLeft);
+    label.SetAnchorPoint(new Vector2(0.0, 0.5));
 		label.SetHorizontalAlignment(textHorizontalAlignment.Left);
 		label.SetVerticalAlignment(textVerticalAlignment.Center);
 		label.SetText("BUTTON");
