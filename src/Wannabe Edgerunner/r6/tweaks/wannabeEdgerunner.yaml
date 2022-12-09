@@ -102,8 +102,8 @@ BaseStatusEffect.ActiveLowHumanityGlitch:
   statusEffectType: BaseStatusEffectTypes.Misc
   uiData: 
     $type: StatusEffectUIData_Record
-    description: "LocKey#Mod-Edg-Low-Humanity-Desc"
-    displayName: "LocKey#Mod-Edg-Low-Humanity"
+    description: LocKey#Mod-Edg-Low-Humanity-Desc
+    displayName: LocKey#Mod-Edg-Low-Humanity
     iconPath: decreased_stats_icon
 
 BaseStatusEffect.ActivePrePsychosisGlitch:
@@ -120,8 +120,8 @@ BaseStatusEffect.ActivePrePsychosisGlitch:
   statusEffectType: BaseStatusEffectTypes.Misc
   uiData: 
     $type: StatusEffectUIData_Record
-    description: "LocKey#Mod-Edg-Pre-Psychosis-Desc"
-    displayName: "LocKey#Mod-Edg-Pre-Psychosis"
+    description: LocKey#Mod-Edg-Pre-Psychosis-Desc
+    displayName: LocKey#Mod-Edg-Pre-Psychosis
     iconPath: decreased_stats_icon
   VFX:
     - $type: StatusEffectFX_Record
@@ -164,8 +164,8 @@ BaseStatusEffect.ActivePsychosisBuff:
   statusEffectType: BaseStatusEffectTypes.Misc
   uiData: 
     $type: StatusEffectUIData_Record
-    description: "LocKey#Mod-Edg-Cyberpsychosis-Desc"
-    displayName: "LocKey#Mod-Edg-Cyberpsychosis"
+    description: LocKey#Mod-Edg-Cyberpsychosis-Desc
+    displayName: LocKey#Mod-Edg-Cyberpsychosis
     iconPath: immunity_icon
   SFX:
     - $type: StatusEffectFX_Record
@@ -189,8 +189,8 @@ BaseStatusEffect.RipperDocMedBuff:
        value: 1.0
   uiData: 
     $type: StatusEffectUIData_Record
-    description: "LocKey#Mod-Edg-Ripper-Med-Desc"
-    displayName: "LocKey#Mod-Edg-Ripper-Med"
+    description: LocKey#Mod-Edg-Ripper-Med-Desc
+    displayName: LocKey#Mod-Edg-Ripper-Med
     iconPath: inhaler_buff_icon
   VFX:
     - BaseStatusEffect.InjectorBuff_inline0

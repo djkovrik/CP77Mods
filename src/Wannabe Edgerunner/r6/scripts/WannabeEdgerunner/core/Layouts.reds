@@ -217,7 +217,6 @@ protected cb func OnInitialize() -> Bool {
   this.humanityLabel.SetVAlign(inkEVerticalAlign.Top);
   this.humanityLabel.SetAnchor(inkEAnchor.TopLeft);
   this.humanityLabel.SetAnchorPoint(1.0, 1.0);
-  this.humanityLabel.SetVisible(true);
   this.humanityLabel.SetLetterCase(textLetterCase.OriginalCase);
   this.humanityLabel.SetMargin(new inkMargin(0.0, -30.0, 0.0, 0.0));
   this.humanityLabel.SetVisible(false);
@@ -328,7 +327,6 @@ protected cb func OnInitialize() -> Bool {
   this.humanityBarContainer.SetAnchor(inkEAnchor.TopLeft);
   this.humanityBarContainer.SetAnchorPoint(new Vector2(0.0, 0.0));
   this.humanityBarContainer.SetSize(new Vector2(530.0, 10.0));
-  this.humanityBarContainer.SetVisible(false);
   this.humanityBarContainer.Reparent(container, 0);
 
   let progressContainer: ref<inkCanvas> = new inkCanvas();
@@ -363,9 +361,5 @@ protected cb func OnInitialize() -> Bool {
 
 @addMethod(healthbarWidgetGameController)
 protected cb func OnUpdateHumanityCounterEvent(evt: ref<UpdateHumanityCounterEvent>) -> Bool {
-  if !this.humanityBarContainer.IsVisible() {
-    this.humanityBarContainer.SetVisible(true);
-  };
-
   this.RefreshHumanityBars(evt.current, evt.total, evt.color);
 }

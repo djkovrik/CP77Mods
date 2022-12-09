@@ -1,4 +1,5 @@
 import EquipmentEx.OutfitSystem
+import EquipmentEx.StashSystem
 import EquipmentEx.Codeware.UI.*
 
 public class EquipmentExSlotsGameController extends inkPuppetPreviewGameController {
@@ -23,9 +24,9 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
 
   private let m_outfitSystem: wref<OutfitSystem>;
 
-  private let m_itemsClassifier: ref<CustomItemDisplayTemplateClassifier>;
+  private let m_itemsClassifier: ref<EquipmentExTemplateClassifier>;
 
-  private let m_playerItemsDataView: ref<VendorDataView>;
+  private let m_playerItemsDataView: ref<BackpackDataView>;
 
   private let m_playerItemsDataSource: ref<ScriptableDataSource>;
 
@@ -53,9 +54,17 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
 
   private let m_buttonEquip: ref<SimpleButton>;
 
+  private let m_preview: wref<inkWidget>;
+
   private let m_selectedOutfit: CName;
 
   private let m_equippedOutfit: CName;
+
+  private let m_previewInputThreshold: Float;
+
+  private let m_leftMouseButtonPressed: Bool;
+
+  private let m_rightMouseButtonPressed: Bool;
 
   protected cb func OnInitialize() -> Bool {
     super.OnInitialize();
@@ -64,13 +73,16 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
     let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
     let scrollable: ref<inkWidget> = root.GetWidget(n"Root/wrapper/wrapper/vendorPanel/inventoryContainer");
     let grid: ref<inkWidget> = root.GetWidget(n"Root/wrapper/wrapper/vendorPanel/inventoryContainer/stash_scroll_area_cache/scrollArea/vendor_virtualgrid");
-    
+
     this.m_player = this.GetPlayerControlledObject() as PlayerPuppet;
     this.m_uiScriptableSystem = UIScriptableSystem.GetInstance(this.m_player.GetGame());
     this.m_TooltipsManager = this.GetControllerByType(n"gameuiTooltipsManager", inkWidgetPath.Build(n"Root")) as gameuiTooltipsManager;
     this.m_TooltipsManager.Setup(ETooltipsStyle.Menus);
     this.m_buttonHintsController = this.SpawnFromExternal(this.GetRootCompoundWidget().GetWidget(n"Root/button_hints"), r"base\\gameplay\\gui\\common\\buttonhints.inkwidget", n"Root").GetController() as ButtonHints;
     this.m_buttonHintsController.AddButtonHint(n"back", GetLocalizedText("Common-Access-Close"));
+    this.m_buttonHintsController.AddButtonHint(n"world_map_fake_rotate", GetLocalizedTextByKey(n"Gameplay-Player-ButtonHelper-Move"));
+    this.m_buttonHintsController.AddButtonHint(n"mouse_wheel", GetLocalizedTextByKey(n"Gameplay-Devices-DisplayNames-Scale"));
+    this.m_buttonHintsController.AddButtonHint(n"mouse_left", GetLocalizedTextByKey(n"UI-ResourceExports-Rotate"));
     this.m_InventoryManager = new InventoryDataManagerV2();
     this.m_InventoryManager.Initialize(this.m_player);
     this.m_uiInventorySystem = UIInventoryScriptableSystem.GetInstance(this.m_player.GetGame());
@@ -82,8 +94,12 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
     this.m_filtersRadioGroup = this.m_filtersContainer.GetController() as FilterRadioGroup;
     this.m_lastVendorFilter = ItemFilterCategory.AllItems;
     this.m_itemDisplayContext = ItemDisplayContextData.Make(this.m_player, ItemDisplayContext.GearPanel);
+    this.m_preview = root.GetWidget(n"Root/wrapper/wrapper/preview");
+    this.m_previewInputThreshold = this.GetScreenWidthLimit();
 
-    this.RegisterToGlobalInputCallback(n"OnPostOnRelease", this, n"OnGlobalInput");
+    this.RegisterToGlobalInputCallback(n"OnPostOnPress", this, n"OnGlobalPress");
+    this.RegisterToGlobalInputCallback(n"OnPostOnRelease", this, n"OnGlobalRelease");
+    this.RegisterToGlobalInputCallback(n"OnPostOnRelative", this, n"OnRelativeInput");
 
     // Hide eddies label and sorting dropdown
     // TODO edit inkwidget maybe?
@@ -100,6 +116,10 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
 
   protected cb func OnUninitialize() -> Bool {
     this.PlaySound(n"GameMenu", n"OnClose");
+    this.m_buttonHintsController.RemoveButtonHint(n"back");
+    this.m_buttonHintsController.RemoveButtonHint(n"world_map_fake_rotate");
+    this.m_buttonHintsController.RemoveButtonHint(n"mouse_wheel");
+    this.m_buttonHintsController.RemoveButtonHint(n"mouse_left");
     this.m_InventoryManager.ClearInventoryItemDataCache();
     this.m_InventoryManager.UnInitialize();
     this.m_uiInventorySystem.FlushFullscreenCache();
@@ -109,10 +129,12 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
     this.m_itemsClassifier = null;
     this.m_playerItemsDataView = null;
     this.m_playerItemsDataSource = null;
-
-    this.UnregisterFromGlobalInputCallback(n"OnPostOnRelease", this, n"OnGlobalInput");
     this.m_searchFieldInput.UnregisterFromCallback(n"OnInput", this, n"OnSearchFieldInput");
     this.m_outfitNameInput.UnregisterFromCallback(n"OnInput", this, n"OnOutfitNameInput");
+
+    this.UnregisterFromGlobalInputCallback(n"OnPostOnPress", this, n"OnGlobalPress");
+    this.UnregisterFromGlobalInputCallback(n"OnPostOnRelease", this, n"OnGlobalRelease");
+    this.UnregisterFromGlobalInputCallback(n"OnPostOnRelative", this, n"OnRelativeInput");
   }
 
   protected cb func OnFilterChange(controller: wref<inkRadioGroupController>, selectedIndex: Int32) -> Bool {
@@ -132,23 +154,25 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
   // }
 
   protected cb func OnInventoryClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
-    let isEquipped: Bool = this.m_outfitSystem.IsEquipped(evt.uiInventoryItem.ID);
-    if !isEquipped && evt.actionName.IsAction(n"equip_item") {
-      this.EquipItem(evt.uiInventoryItem.ID, evt.uiInventoryItem.targetPlacementSlot);
+    if evt.actionName.IsAction(n"equip_item") {
+      if !evt.uiInventoryItem.IsEquipped() {
+        this.EquipItem(evt.uiInventoryItem.ID);
+      }
     } else {
-      if isEquipped && evt.actionName.IsAction(n"unequip_item") {
-        this.UnequipItem(evt.uiInventoryItem.ID, evt.uiInventoryItem.targetPlacementSlot);
-      };
+      if evt.actionName.IsAction(n"unequip_item") {
+        if evt.uiInventoryItem.IsEquipped() {
+          this.UnequipItem(evt.uiInventoryItem.ID);
+        }
+      }
     }
   }
 
   protected cb func OnInventoryItemHoverOver(evt: ref<ItemDisplayHoverOverEvent>) -> Bool {
-    let isEquipped: Bool = this.m_outfitSystem.IsEquipped(evt.uiInventoryItem.ID);
-    if isEquipped {
+    if evt.uiInventoryItem.IsEquipped() {
       this.m_buttonHintsController.AddButtonHint(n"unequip_item", GetLocalizedText("UI-UserActions-Unequip"));
     } else {
       this.m_buttonHintsController.AddButtonHint(n"equip_item", GetLocalizedText("UI-UserActions-Equip"));
-    };
+    }
 
     this.ShowTooltipForUIInventoryItem(evt.widget, evt.uiInventoryItem);
   }
@@ -170,12 +194,92 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
     this.m_lastItemHoverOverEvent = null;
   }
 
-  protected cb func OnGlobalInput(evt: ref<inkPointerEvent>) -> Void {
+  protected cb func OnGlobalPress(evt: ref<inkPointerEvent>) -> Bool {
     if evt.IsAction(n"mouse_left") {
+      this.m_leftMouseButtonPressed = true;
       if !IsDefined(evt.GetTarget()) || !evt.GetTarget().CanSupportFocus() {
         this.RequestSetFocus(null);
       };
     };
+    if evt.IsAction(n"world_map_fake_rotate") {
+      this.m_rightMouseButtonPressed = true;
+    };
+  }
+
+  protected cb func OnGlobalRelease(evt: ref<inkPointerEvent>) -> Bool {
+    if this.m_leftMouseButtonPressed && evt.IsAction(n"mouse_left") {
+      this.m_leftMouseButtonPressed = false;
+    };
+    if this.m_rightMouseButtonPressed && evt.IsAction(n"world_map_fake_rotate") {
+      this.m_rightMouseButtonPressed = false;
+    };
+  }
+
+  protected cb func OnRelativeInput(evt: ref<inkPointerEvent>) -> Bool {
+    let screenPosition: Vector2 = evt.GetScreenSpacePosition();
+    let isPreviewInputAllowed: Bool = screenPosition.X < this.m_previewInputThreshold;
+    let amount: Float = evt.GetAxisData();
+
+    if this.m_rightMouseButtonPressed && isPreviewInputAllowed {
+      if evt.IsAction(n"mouse_x") {
+        this.m_preview.ChangeTranslation(new Vector2(amount, 0.0));      
+      };
+      if evt.IsAction(n"mouse_y") {
+        this.m_preview.ChangeTranslation(new Vector2(0.0, -1.0 * amount));
+      };
+    };
+
+    if this.m_leftMouseButtonPressed && isPreviewInputAllowed && evt.IsAction(n"mouse_x") {
+      this.RotatePuppetOnInput(evt);
+    };
+
+    // disable items scroll for preview scaling
+    this.m_scrollController.SetInputDisabled(isPreviewInputAllowed);
+
+    let zoomRatio: Float = 0.1;
+    if evt.IsAction(n"mouse_wheel") && isPreviewInputAllowed {
+      let currentScale = this.m_preview.GetScale();
+      let finalXScale = currentScale.X + (amount * zoomRatio);
+      let finalYScale = currentScale.Y + (amount * zoomRatio);
+
+      if (finalXScale < 0.5) {
+        finalXScale = 0.5;
+      };
+
+      if (finalYScale > 3.0) {
+        finalYScale = 3.0;
+      };
+
+      if (finalYScale < 0.5) {
+        finalYScale = 0.5;
+      };
+
+      if (finalXScale > 3.0) {
+        finalXScale = 3.0;
+      };
+          
+      this.m_preview.SetScale(new Vector2(finalXScale, finalYScale));
+    }; 
+
+    return true;
+  }
+
+  private func RotatePuppetOnInput(evt: ref<inkPointerEvent>) -> Void {
+    let ratio: Float;
+    let velocity: Float;
+    let offset: Float = evt.GetAxisData();
+    if offset > 0.00 {
+      ratio = ClampF(offset / 40.0, 0.50, 1.00);
+    } else {
+      ratio = ClampF(offset / 40.0, -1.00, -0.50);
+    };
+    velocity = ratio * 250.0;
+    this.Rotate(velocity);
+  }
+
+  private func GetAnimFeature(out animFeature: ref<AnimFeature_Paperdoll>) -> Void {
+    animFeature = new AnimFeature_Paperdoll();
+    animFeature.inventoryScreen = true;
   }
 
   protected cb func OnOutfitNameInput(widget: wref<inkWidget>) -> Bool {
@@ -240,9 +344,9 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
   }
 
   private func InitializeVirtualItemLists() -> Void {
-    this.m_itemsClassifier = new CustomItemDisplayTemplateClassifier();
-    this.m_playerItemsDataView = new VendorDataView();
+    this.m_itemsClassifier = new EquipmentExTemplateClassifier();
     this.m_playerItemsDataSource = new ScriptableDataSource();
+    this.m_playerItemsDataView = new BackpackDataView(); // VendorDataView
     this.m_playerItemsDataView.BindUIScriptableSystem(this.m_uiScriptableSystem);
     this.m_playerItemsDataView.SetSource(this.m_playerItemsDataSource);
     this.m_playerItemsVirtualListController.SetClassifier(this.m_itemsClassifier);
@@ -250,20 +354,23 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
     this.PopulateItemsList();
   }
 
+
   private func PopulateItemsList() -> Void {
-    let items: array<ref<IScriptable>>;
-    let playerItems: array<ref<gameItemData>>;
+    let playerItems: array<wref<gameItemData>> = this.m_InventoryManager.GetPlayerClothingItems();
+    StashSystem.GetInstance(this.m_player.GetGame()).GetItemList(playerItems);
+    let items: array<ref<IScriptable>> = this.BuildCategorizedClothingList(playerItems);
+
     this.m_filterManager.Clear();
     this.m_filterManager.AddFilter(ItemFilterCategory.AllItems);
-    playerItems = this.m_InventoryManager.GetPlayerClothingItems();
-    items = this.BuildCategorizedClothingList(playerItems);
-    this.m_playerItemsDataSource.Reset(items);
     this.m_filterManager.SortFiltersList();
-    this.m_filterManager.InsertFilter(0, ItemFilterCategory.AllItems);
-    this.SetFilters(this.m_filterManager.GetIntFiltersList(), n"OnFilterChange");
+    // this.m_filterManager.InsertFilter(0, ItemFilterCategory.AllItems);
+    // this.SetFilters(this.m_filterManager.GetIntFiltersList(), n"OnFilterChange");
     this.m_playerItemsDataView.SetFilterType(this.m_lastVendorFilter);
-    this.ToggleFilter(EnumInt(this.m_lastVendorFilter));
-    this.m_filtersContainer.SetVisible(ArraySize(items) > 0);
+    // this.ToggleFilter(EnumInt(this.m_lastVendorFilter));
+    // this.m_filtersContainer.SetVisible(ArraySize(items) > 0);
+
+    this.m_playerItemsDataSource.Reset(items);
+
     this.PlayLibraryAnimation(n"vendor_grid_show");
   }
 
@@ -271,8 +378,8 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
     this.m_filtersRadioGroup.ToggleData(data);
   }
 
-  private func GetAllClothesForSlot(playerItems: array<ref<gameItemData>>, slot: TweakDBID, searchQuery: String) -> array<ref<gameItemData>> {
-    let result: array<ref<gameItemData>>;
+  private func GetAllClothesForSlot(playerItems: array<wref<gameItemData>>, slot: TweakDBID, searchQuery: String) -> array<wref<gameItemData>> {
+    let result: array<wref<gameItemData>>;
     for item in playerItems {
       if this.ShouldDisplayInCategory(item, slot, searchQuery) {
         ArrayPush(result, item);
@@ -282,10 +389,10 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
   }
 
   private func ShouldDisplayInCategory(item: ref<gameItemData>, slot: TweakDBID, searchQuery: String) -> Bool {
-    let isSlotSupported: Bool = ArrayContains(item.supportedSlots, slot);
+    //let isSlotSupported: Bool = ArrayContains(item.supportedSlots, slot);
     let isEquippable: Bool = this.m_outfitSystem.IsEquippable(item.GetID(), slot);
     let isNameContainsQuery: Bool = this.IsNameContainsStr(item, searchQuery);
-    return isSlotSupported && isEquippable && isNameContainsQuery;
+    return /*isSlotSupported &&*/ isEquippable && isNameContainsQuery;
   }
 
   private func IsNameContainsStr(item: ref<gameItemData>, searchQuery: String) -> Bool {
@@ -298,66 +405,82 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
     return StrContains(localizedName, searchQuery);
   }
 
-  private func GetCurrentlyEquippedItemName(categoryItems: array<ref<gameItemData>>) -> String {
-    let itemRecord: ref<Item_Record>;
-    for item in categoryItems {
-      if this.m_outfitSystem.IsEquipped(item.GetID()) {
-        itemRecord = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(item.GetID()));
-        return GetLocalizedTextByKey(itemRecord.DisplayName());
-      };
-    };
-    return GetLocalizedTextByKey(n"UI-CharacterCreation-None");
-  }
+  // private func GetCurrentlyEquippedItemName(categoryItems: array<ref<gameItemData>>) -> String {
+  //   let itemRecord: ref<Item_Record>;
+  //   for item in categoryItems {
+  //     if this.m_outfitSystem.IsEquipped(item.GetID()) {
+  //       itemRecord = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(item.GetID()));
+  //       return GetLocalizedTextByKey(itemRecord.DisplayName());
+  //     };
+  //   };
+  //   return GetLocalizedTextByKey(n"UI-CharacterCreation-None");
+  // }
 
-  private func BuildCategorizedClothingList(playerItems: array<ref<gameItemData>>) -> array<ref<IScriptable>> {
+  private func BuildCategorizedClothingList(playerItems: array<wref<gameItemData>>) -> array<ref<IScriptable>> {
     let searchQuery: String = StrLower(this.m_searchFieldInput.GetText());
-    let managedSlots: array<TweakDBID> = this.m_outfitSystem.GetManagedSlots();
+    let outfitSlots: array<TweakDBID> = this.m_outfitSystem.GetOutfitSlots();
     let result: array<ref<IScriptable>>;
-    let slotItems: array<ref<gameItemData>>;
-    let uiInventoryItem: ref<UIInventoryItem>;
+    let slotItems: array<wref<gameItemData>>;
+    // let uiInventoryItem: ref<UIInventoryItem>;
     let header: ref<VendorUIInventoryItemData>;
     let itemData: ref<VendorUIInventoryItemData>;
     let itemsCount: Int32;
-    let secondaryInfo: String;
+    // let secondaryInfo: String;
+    // let isEquipped: Bool;
 
-    for supportedSlot in managedSlots {
-      slotItems = this.GetAllClothesForSlot(playerItems, supportedSlot, searchQuery);
+    for outfitSlot in outfitSlots {
+      slotItems = this.GetAllClothesForSlot(playerItems, outfitSlot, searchQuery);
       itemsCount = ArraySize(slotItems);
       if itemsCount > 0 {
-        secondaryInfo = s"\(GetLocalizedTextByKey(n"UI-ItemLabel-Equipped")): ";
-        secondaryInfo += this.GetCurrentlyEquippedItemName(slotItems);
-        secondaryInfo += s" | \(GetLocalizedTextByKey(n"Gameplay-Devices-Interactions-Total")): \(itemsCount)";
-        header = this.BuildHeaderItem(this.m_outfitSystem.GetSlotName(supportedSlot), secondaryInfo);
+        // secondaryInfo = s"\(GetLocalizedTextByKey(n"UI-ItemLabel-Equipped")): ";
+        // secondaryInfo += this.GetCurrentlyEquippedItemName(slotItems);
+        // secondaryInfo += s" | \(GetLocalizedTextByKey(n"Gameplay-Devices-Interactions-Total")): \(itemsCount)";
+        // header = this.BuildHeaderItem(this.m_outfitSystem.GetSlotName(outfitSlot), secondaryInfo);
+
+        header = new VendorUIInventoryItemData();
+        header.Item = new UIInventoryItem();
+        header.ItemData.SlotID = outfitSlot;
+        header.ItemData.CategoryName = this.m_outfitSystem.GetSlotName(outfitSlot);
+        
         ArrayPush(result, header);
+
         for item in slotItems {
-          uiInventoryItem = UIInventoryItem.Make(this.m_player, item, this.m_uiInventorySystem.GetInventoryItemsManager());
-          uiInventoryItem.targetPlacementSlot = supportedSlot;
+          // uiInventoryItem = UIInventoryItem.Make(this.m_player, item, this.m_uiInventorySystem.GetInventoryItemsManager());
+          // uiInventoryItem.targetPlacementSlot = outfitSlot;
+
           itemData = new VendorUIInventoryItemData();
-          itemData.Item = uiInventoryItem;
+          itemData.Item = UIInventoryItem.Make(this.m_player, item, this.m_uiInventorySystem.GetInventoryItemsManager());
           itemData.DisplayContextData = this.m_itemDisplayContext;
+
           ArrayPush(result, itemData);
+
+          if itemData.Item.IsEquipped() {
+            header.ItemData.ID = item.GetID();
+            header.ItemData.Name = this.m_outfitSystem.GetItemName(item.GetID());
+          }
+
           // this.m_filterManager.AddItem(itemData.Item.GetFilterCategory());
-        };
-      };
-    };
+        }
+      }
+    }
 
     return result;
   }
 
-  private func BuildHeaderItem(title: String, subtitle: String) -> ref<VendorUIInventoryItemData> {
-    let header: ref<VendorUIInventoryItemData> = new VendorUIInventoryItemData();
-    header.Item = new UIInventoryItem();
-    header.customHeaderPrimary = title;
-    header.customHeaderSecondary = subtitle;
-    return header;
-  }
+  // private func BuildHeaderItem(title: String, subtitle: String) -> ref<VendorUIInventoryItemData> {
+  //   let header: ref<VendorUIInventoryItemData> = new VendorUIInventoryItemData();
+  //   header.Item = new UIInventoryItem();
+  //   header.customHeaderPrimary = title;
+  //   header.customHeaderSecondary = subtitle;
+  //   return header;
+  // }
 
-  private func EquipItem(itemId: ItemID, targetSlot: TweakDBID) -> Void {
-    this.m_outfitSystem.EquipItem(itemId, targetSlot);
+  private func EquipItem(itemId: ItemID/*, targetSlot: TweakDBID*/) -> Void {
+    this.m_outfitSystem.EquipItem(itemId/*, targetSlot*/);
     this.PopulateItemsList();
   }
 
-  private func UnequipItem(itemId: ItemID, targetSlot: TweakDBID) -> Void {
+  private func UnequipItem(itemId: ItemID/*, targetSlot: TweakDBID*/) -> Void {
     this.m_outfitSystem.UnequipItem(itemId);
     this.PopulateItemsList();
   }
@@ -439,7 +562,7 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
     let parentContainer: ref<inkCanvas> = this.GetRootCompoundWidget().GetWidget(n"Root/wrapper/wrapper") as inkCanvas;
     let searchContainer: ref<inkVerticalPanel> = new inkVerticalPanel();
     searchContainer.SetName(n"SearchContainer");
-    searchContainer.SetMargin(new inkMargin(0.0, 180.0, 440.0, 0.0));
+    searchContainer.SetMargin(new inkMargin(0.0, 140.0, 440.0, 0.0));
     searchContainer.SetHAlign(inkEHorizontalAlign.Right);
     searchContainer.SetVAlign(inkEVerticalAlign.Top);
     searchContainer.SetAnchor(inkEAnchor.TopRight);
@@ -496,5 +619,23 @@ public class EquipmentExSlotsGameController extends inkPuppetPreviewGameControll
     this.m_buttonCreate.SetDisabled(!enableCreateButton);
     this.m_buttonDelete.SetDisabled(!enableDeleteButton);
     this.m_buttonEquip.SetDisabled(!enableEquipButton);
+  }
+
+  private func GetScreenWidthLimit() -> Float {
+    let settings: ref<UserSettings> = GameInstance.GetSettingsSystem(this.GetPlayerControlledObject().GetGame());
+    let config: ref<ConfigVarListString> = settings.GetVar(n"/video/display", n"Resolution") as ConfigVarListString;
+    let resolution: String = config.GetValue();
+    let dimensions: array<String> = StrSplit(resolution, "x");
+    return StringToFloat(dimensions[0]) / 2.0;
+  }
+}
+
+public class EquipmentExTemplateClassifier extends inkVirtualItemTemplateClassifier {
+  public func ClassifyItem(data: Variant) -> Uint32 {
+    let wrappedData: ref<WrappedInventoryItemData> = FromVariant<ref<IScriptable>>(data) as WrappedInventoryItemData;
+    if IsDefined(wrappedData) && wrappedData.IsSlotHeader() {
+      return 1u;
+    }
+    return 0u;
   }
 }
