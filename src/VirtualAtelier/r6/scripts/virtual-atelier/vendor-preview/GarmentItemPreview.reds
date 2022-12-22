@@ -83,8 +83,8 @@ protected cb func OnRelativeInput(event: ref<inkPointerEvent>) -> Bool {
 protected cb func OnPreviewInitialized() -> Bool {
   wrappedMethod();
   if this.m_atelierActive && this.m_isNotification {
-    let p: ref<gamePuppet> = this.GetGamePuppet();
-    ItemPreviewManager.CreateInstance(p, this);
+    let puppet: ref<gamePuppet> = this.GetGamePuppet();
+    ItemPreviewManager.CreateInstance(puppet, this);
   };
 }
 

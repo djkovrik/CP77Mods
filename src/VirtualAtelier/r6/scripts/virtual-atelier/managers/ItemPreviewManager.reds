@@ -19,36 +19,31 @@ public class PreviewInventoryItemPreviewData extends InventoryItemPreviewData {
 public class ItemPreviewManager {
   public let gameInstance: GameInstance;
   public let puppetId: EntityID;
-  public let garmentPreviewController: ref<BaseGarmentItemPreviewGameController>;
-
+  public let compatibilityHelper: wref<gameuiMenuGameController>;
   public let givenItems: array<ItemID>;
   public let initialItems: array<wref<gameItemData>>;
-
   public let screenWidthLimit: Float;
 
-  private func Initialize(gameInstance: GameInstance, puppetId: EntityID, opt garmentPreviewController: ref<BaseGarmentItemPreviewGameController>) {
-    this.gameInstance = gameInstance;
-    this.puppetId = puppetId;
-    this.garmentPreviewController = garmentPreviewController;
-
-    let transactionSystem: wref<TransactionSystem> = this.GetTransactionSystem();
-    let gamePuppet: ref<gamePuppet> = this.GetGamePuppet();
-    transactionSystem.GetItemList(gamePuppet, this.initialItems);
-  }
-
-  public static func CreateInstance(puppet: ref<gamePuppet>, opt garmentPreviewController: ref<BaseGarmentItemPreviewGameController>) {
+  public static func CreateInstance(puppet: ref<gamePuppet>, helper: ref<gameuiMenuGameController>) {
     let instance: ref<ItemPreviewManager> = new ItemPreviewManager();
+    let gameInstance: GameInstance = puppet.GetGame();
+    let puppetEntityId: EntityID = puppet.GetEntityID();
+    instance.Initialize(gameInstance, puppetEntityId, helper);
 
-    let gameInstance = puppet.GetGame();
-    let puppetEntityId = puppet.GetEntityID();
-
-    instance.Initialize(gameInstance, puppetEntityId, garmentPreviewController);
-
-    let player = GetPlayer(gameInstance);
+    let player: ref<PlayerPuppet> = GetPlayer(gameInstance);
     player.itemPreviewManager = instance;
     GetAllBlackboardDefs().itemPreviewManager = instance;
-
     instance.screenWidthLimit = instance.CalculateScreenWidthLimit();
+  }
+
+  private func Initialize(gameInstance: GameInstance, puppetId: EntityID, helper: ref<gameuiMenuGameController>) {
+    this.gameInstance = gameInstance;
+    this.puppetId = puppetId;
+    this.compatibilityHelper = helper;
+
+    let transactionSystem: ref<TransactionSystem> = this.GetTransactionSystem();
+    let gamePuppet: ref<gamePuppet> = this.GetGamePuppet();
+    transactionSystem.GetItemList(gamePuppet, this.initialItems);
   }
   
   public static func GetInstance() -> wref<ItemPreviewManager> {
@@ -68,20 +63,17 @@ public class ItemPreviewManager {
   }
 
   public func RemoveGivenItem(itemId: ItemID) -> Void {
-    let puppet: ref<gamePuppet> = this.GetGamePuppet();
     let transactionSystem: ref<TransactionSystem> = this.GetTransactionSystem();
-      
-    let placementSlot: TweakDBID = EquipmentSystem.GetPlacementSlot(itemId);
+    let puppet: ref<gamePuppet> = this.GetGamePuppet();
+    let placementSlot: TweakDBID = this.compatibilityHelper.GetAtelierPlacementSlot(itemId);
     let currentItem: ItemID = transactionSystem.GetItemInSlot(puppet, placementSlot).GetItemID();
-
     let updatedGivenItems: array<ItemID>;
-    let i: Int32 = 0;
 
+    let i: Int32 = 0;
     while i < ArraySize(this.givenItems) {
       if !Equals(currentItem, this.givenItems[i]) {
         ArrayPush(updatedGivenItems, this.givenItems[i]);
       };
-
       i += 1;
     };
 
@@ -90,28 +82,18 @@ public class ItemPreviewManager {
 
   public func GetIsEquipped(itemId: ItemID) -> Bool {
     let puppet: ref<gamePuppet> = this.GetGamePuppet();
-    let transactionSystem: ref<TransactionSystem> = this.GetTransactionSystem();
-      
-    let placementSlot: TweakDBID = EquipmentSystem.GetPlacementSlot(itemId);
-    let currentItem: ItemID = transactionSystem.GetItemInSlot(puppet, placementSlot).GetItemID();
-
-    return Equals(currentItem, itemId);
+    return this.compatibilityHelper.IsAtelierItemEquipped(puppet, itemId);
   }
 
   public func UnequipItem(itemId: ItemID) -> Void {
-    let puppet: ref<gamePuppet>;
-    let transactionSystem: ref<TransactionSystem>;
-
-    puppet = this.GetGamePuppet();
+    let transactionSystem: ref<TransactionSystem> = this.GetTransactionSystem();
+    let puppet: ref<gamePuppet> = this.GetGamePuppet();
 
     if !IsDefined(puppet) { 
       return;
     };
 
-    transactionSystem = this.GetTransactionSystem();
-
-    let itemSlot = EquipmentSystem.GetPlacementSlot(itemId);
-
+    let itemSlot: TweakDBID = this.compatibilityHelper.GetAtelierPlacementSlot(itemId);
     transactionSystem.RemoveItemFromSlot(puppet, itemSlot, true);
     transactionSystem.RemoveItem(puppet, itemId, 1);
 
@@ -119,34 +101,23 @@ public class ItemPreviewManager {
   }
 
   public func TogglePreviewItem(itemId: ItemID) -> Void {
-    let puppet: ref<gamePuppet>;
-    let transactionSystem: ref<TransactionSystem>;
-
-    puppet = this.GetGamePuppet();
+    let transactionSystem: ref<TransactionSystem> = this.GetTransactionSystem();
+    let puppet: ref<gamePuppet> = this.GetGamePuppet();
 
     if !IsDefined(puppet) { 
       return;
     };
-
-    transactionSystem = this.GetTransactionSystem();
-    let isEquipped = this.GetIsEquipped(itemId);
   
-    if isEquipped {
+    if this.GetIsEquipped(itemId) {
       this.UnequipItem(itemId);
     } else {
-      let placementSlot: TweakDBID;
-      let initialItem: ItemID;
-      
-      placementSlot = EquipmentSystem.GetPlacementSlot(itemId);
-      initialItem = transactionSystem.GetItemInSlot(puppet, placementSlot).GetItemID();
-  
+      let placementSlot: TweakDBID = this.compatibilityHelper.GetAtelierPlacementSlot(itemId);      
       transactionSystem.RemoveItemFromSlot(puppet, placementSlot, true);
 
       let board: wref<IBlackboard> = GameInstance.GetBlackboardSystem(puppet.GetGame()).Get(GetAllBlackboardDefs().VirtualShop);
       let atelierItems: array<ItemID> = FromVariant(board.GetVariant(GetAllBlackboardDefs().VirtualShop.AtelierItems));
       ArrayPush(atelierItems, itemId);
       board.SetVariant(GetAllBlackboardDefs().VirtualShop.AtelierItems, ToVariant(atelierItems));
-
       transactionSystem.GiveItem(puppet, itemId, 1);
       transactionSystem.AddItemToSlot(puppet, placementSlot, itemId);
 
@@ -155,29 +126,25 @@ public class ItemPreviewManager {
   }
 
   public func RemoveAllGarment() -> Void {
-    let puppet = this.GetGamePuppet();
+    let transactionSystem: ref<TransactionSystem> = this.GetTransactionSystem();
+    let puppet: ref<gamePuppet> = this.GetGamePuppet();
 
     if !IsDefined(puppet) { 
       return;
     };
-
-    let transactionSystem = this.GetTransactionSystem();
 
     if ArraySize(this.initialItems) < 1 {
       return;
     };
 
     let j: Int32 = 0;
-
     while j < ArraySize(this.initialItems) {
       let currItemId: ItemID = this.initialItems[j].GetID();
-
-      let isWeapon = IsItemWeapon(currItemId);
-      let isClothing = IsItemClothing(currItemId);
+      let isWeapon: Bool = IsItemWeapon(currItemId);
+      let isClothing: Bool = IsItemClothing(currItemId);
 
       if (isWeapon || isClothing) {
-        let currSlot = EquipmentSystem.GetPlacementSlot(currItemId);
-
+        let currSlot: TweakDBID = this.compatibilityHelper.GetAtelierPlacementSlot(currItemId);
         transactionSystem.RemoveItemFromSlot(puppet, currSlot, true);
       }
      
@@ -188,24 +155,21 @@ public class ItemPreviewManager {
   }
 
   public func RemovePreviewGarment() -> Void {
-    let puppet = this.GetGamePuppet();
+    let transactionSystem: ref<TransactionSystem> = this.GetTransactionSystem();
+    let puppet: ref<gamePuppet> = this.GetGamePuppet();
 
     if !IsDefined(puppet) { 
       return;
     };
-
-    let transactionSystem = this.GetTransactionSystem();
 
     if ArraySize(this.givenItems) < 1 {
       return;
     };
 
     let i: Int32 = 0;
-
     while i < ArraySize(this.givenItems) {
       let currItemId: ItemID = this.givenItems[i];
-      let currSlot = EquipmentSystem.GetPlacementSlot(currItemId);
-
+      let currSlot: TweakDBID = this.compatibilityHelper.GetAtelierPlacementSlot(currItemId);
       transactionSystem.RemoveItemFromSlot(puppet, currSlot, true);
       transactionSystem.RemoveItem(puppet, currItemId, 1);
 
@@ -216,23 +180,21 @@ public class ItemPreviewManager {
   }
 
   public func RevertInitialGarment() -> Void {
-    let puppet = this.GetGamePuppet();
+    let transactionSystem: ref<TransactionSystem> = this.GetTransactionSystem();
+    let puppet: ref<gamePuppet> = this.GetGamePuppet();
 
     if !IsDefined(puppet) { 
       return;
     };
-
-    let transactionSystem = this.GetTransactionSystem();
 
     if ArraySize(this.initialItems) < 1 {
       return;
     };
 
     let j: Int32 = 0;
-
     while j < ArraySize(this.initialItems) {
       let currItemId: ItemID = this.initialItems[j].GetID();
-      let currSlot = EquipmentSystem.GetPlacementSlot(currItemId);
+      let currSlot = this.compatibilityHelper.GetAtelierPlacementSlot(currItemId);
       transactionSystem.AddItemToSlot(puppet, currSlot, currItemId);
       j += 1;
     };
@@ -261,27 +223,22 @@ public class ItemPreviewManager {
   
   public static func GetGarmentPreviewNotificationToken(controller: ref<gameuiInGameMenuGameController>, displayContext: ItemDisplayContext) -> ref<inkGameNotificationToken> {
     let notificationName = n"base\\gameplay\\gui\\widgets\\notifications\\garment_item_preview.inkwidget";
-
     let previewData: ref<PreviewInventoryItemPreviewData> = new PreviewInventoryItemPreviewData();
-
     previewData.queueName = n"modal_popup";
     previewData.notificationName = notificationName;
     previewData.isBlocking = false;
     previewData.useCursor = false;
     previewData.displayContext = displayContext;
-    
     return controller.ShowGameNotification(previewData);
   }
 
   public static func ToggleCraftableItemsPanel(controller: ref<BackpackMainGameController>, isPreviewMode: Bool) {
-    let i = 0;
-    let count = ArraySize(controller.m_craftingMaterialsListItems);
+    let i: Int32 = 0;
+    let count: Int32 = ArraySize(controller.m_craftingMaterialsListItems);
 
     while i <= count {
       let currController = controller.m_craftingMaterialsListItems[i];
-
       currController.GetRootWidget().SetVisible(!isPreviewMode);
-
       i += 1;
     };
   }
@@ -289,15 +246,13 @@ public class ItemPreviewManager {
   public static func TogglePlayerPanel(controller: ref<FullscreenVendorGameController>, isPreviewMode: Bool) -> Void {
     // Toggle the left side of the vendor inventory, which holds the player's items
     // It's hidden when previewing garments on puppet
-	  let playerPanelPath = inkWidgetPath.Build(n"wrapper", n"wrapper", n"playerPanel");
-
+	  let playerPanelPath: inkWidgetPath = inkWidgetPath.Build(n"wrapper", n"wrapper", n"playerPanel");
 	  controller.GetRootCompoundWidget().GetWidgetByPath(playerPanelPath).SetVisible(!isPreviewMode);
   }
 
   public static func AddPreviewModeToggleButtonHint(controller: ref<FullscreenVendorGameController>) {
     if !controller.GetIsVirtual() {
-      let vendorPreviewButtonHint = VendorPreviewButtonHint.Get(controller.GetPlayerControlledObject());
-
+      let vendorPreviewButtonHint: ref<VendorPreviewButtonHint> = VendorPreviewButtonHint.Get(controller.GetPlayerControlledObject());
       controller.m_buttonHintsController.AddButtonHint(
         vendorPreviewButtonHint.previewModeToggleName,
         vendorPreviewButtonHint.previewModeToggleEnableLabel
@@ -306,7 +261,7 @@ public class ItemPreviewManager {
   }
 
   public static func UpdateButtonHints(controller: ref<FullscreenVendorGameController>, isPreviewMode: Bool) {
-    let vendorPreviewButtonHint = VendorPreviewButtonHint.Get(controller.GetPlayerControlledObject());
+    let vendorPreviewButtonHint: ref<VendorPreviewButtonHint> = VendorPreviewButtonHint.Get(controller.GetPlayerControlledObject());
     let isVirtual: Bool = controller.GetIsVirtual();
 
     if (isPreviewMode) {
@@ -367,7 +322,6 @@ public class ItemPreviewManager {
   }
 
   public static func RegisterGlobalInputListeners(controller: ref<WardrobeSetPreviewGameController>) {
-
     controller.RegisterToGlobalInputCallback(n"OnPostOnPress", controller, n"OnGlobalPress");
     controller.RegisterToGlobalInputCallback(n"OnPostOnPress", controller, n"OnReleaseButton");
     controller.RegisterToGlobalInputCallback(n"OnPostOnRelative", controller, n"OnRelativeInput");
@@ -376,11 +330,10 @@ public class ItemPreviewManager {
 
   public static func AdjustGarmentPreviewWidgets(controller: ref<WardrobeSetPreviewGameController>) {
     ItemPreviewManager.RegisterGlobalInputListeners(controller);
-
-    let rootCompoundWidget = controller.GetRootCompoundWidget();
+    let rootCompoundWidget: ref<inkCompoundWidget> = controller.GetRootCompoundWidget();
     let backgroundWidget: wref<inkWidget> = rootCompoundWidget.GetWidget(n"bg");
-    let previewWidget = rootCompoundWidget.GetWidget(n"wrapper/preview") as inkImage;
-    let windowWidget = rootCompoundWidget.GetWidget(n"wrapper/window") as inkWidget;
+    let previewWidget: ref<inkImage> = rootCompoundWidget.GetWidget(n"wrapper/preview") as inkImage;
+    let windowWidget: ref<inkWidget> = rootCompoundWidget.GetWidget(n"wrapper/window") as inkWidget;
 
     previewWidget.SetMargin(0, 0, 960, 0);
     backgroundWidget.SetVisible(false);
@@ -418,8 +371,7 @@ public class ItemPreviewManager {
   }      
 
   public static func OnGarmentPreviewRelativeInput(controller: ref<WardrobeSetPreviewGameController>, event: ref<inkPointerEvent>) -> Bool {
-    let previewWidget = controller.GetRootCompoundWidget().GetWidgetByPath(inkWidgetPath.Build(n"wrapper", n"preview")) as inkImage;
-
+    let previewWidget: ref<inkImage> = controller.GetRootCompoundWidget().GetWidgetByPath(inkWidgetPath.Build(n"wrapper", n"preview")) as inkImage;
     let widget: ref<inkWidget> = event.GetTarget();
     
     // Allow player puppet dragging and scrolling only for left side of the screen

@@ -11,7 +11,7 @@ private let m_isPreviewMode: Bool;
 @wrapMethod(BackpackMainGameController)
 protected cb func OnPlayerAttach(playerPuppet: ref<GameObject>) -> Bool {
   wrappedMethod(playerPuppet);
-  ItemPreviewManager.CreateInstance(playerPuppet as gamePuppet);
+  ItemPreviewManager.CreateInstance(playerPuppet as gamePuppet, this);
 }
 
 @addMethod(BackpackMainGameController)
