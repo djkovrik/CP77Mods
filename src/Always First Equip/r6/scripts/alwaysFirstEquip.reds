@@ -806,46 +806,56 @@ protected final func OnTick(timeDelta: Float, stateContext: ref<StateContext>, s
   scriptInterface.SetAnimationParameterFeature(n"WeaponHandlingData", animFeature, scriptInterface.executionOwner);
 }
 
-// -- ArchiveXL checker
-@addField(SingleplayerMenuGameController)
-public let archiveXlChecked: Bool;
+// -- AXL checker
 
 @wrapMethod(SingleplayerMenuGameController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
 
-  let warning: ref<inkText>;
-  let str: String = GetLocalizedTextByKey(n"Mod-First-Equip-Hotkey");
-  if Equals(str, "Mod-First-Equip-Hotkey") || Equals(str, "") {
-    if !this.archiveXlChecked {
-      this.archiveXlChecked = true;
-      warning = new inkText();
-      warning.SetName(n"CustomWarning");
-      warning.SetText("Archive XL not detected! Make sure that it was installed correctly.");
-      warning.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-      warning.SetFontSize(64);
-      warning.SetHAlign(inkEHorizontalAlign.Fill);
-      warning.SetVAlign(inkEVerticalAlign.Bottom);
-      warning.SetAnchor(inkEAnchor.BottomFillHorizontaly);
-      warning.SetAnchorPoint(0.5, 1.0);
-      warning.SetLetterCase(textLetterCase.OriginalCase);
-      warning.SetMargin(new inkMargin(20.0, 0.0, 0.0, 10.0));
-      warning.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-      warning.BindProperty(n"tintColor", n"MainColors.Red");
-      warning.Reparent(this.GetRootCompoundWidget());
-    };
+  if NotEquals(GetLocalizedTextByKey(n"Mod-First-Equip-Hotkey"), "") { return true; };
+  this.ShowFirstEquipWarningAXL();
+}
+
+@addField(SingleplayerMenuGameController)
+public let firstEquipCheckedAXL: Bool;
+
+@addMethod(SingleplayerMenuGameController)
+private func ShowFirstEquipWarningAXL() -> Void {
+  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+  let container: ref<inkCompoundWidget> = root.GetWidgetByPathName(n"warningsAXL") as inkCompoundWidget;
+  if !IsDefined(container) {
+    container = new inkVerticalPanel();
+    container.SetName(n"warningsAXL");
+    container.SetHAlign(inkEHorizontalAlign.Fill);
+    container.SetVAlign(inkEVerticalAlign.Bottom);
+    container.SetAnchor(inkEAnchor.BottomFillHorizontaly);
+    container.SetAnchorPoint(0.5, 1.0);
+    container.SetMargin(new inkMargin(20.0, 0.0, 0.0, 10.0));
+    container.Reparent(root);
   };
-}
 
-public class RefreshFirstEquipConfigEvent extends Event {}
+  let firstEquipWarning1: ref<inkText>;
+  let firstEquipWarning2: ref<inkText>;
+  if !this.firstEquipCheckedAXL {
+    this.firstEquipCheckedAXL = true;
+    firstEquipWarning1 = new inkText();
+    firstEquipWarning1.SetName(n"FirstEquipWarning1");
+    firstEquipWarning1.SetText("Always First Equip: resource files not detected!");
+    firstEquipWarning1.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+    firstEquipWarning1.SetFontSize(42);
+    firstEquipWarning1.SetLetterCase(textLetterCase.OriginalCase);
+    firstEquipWarning1.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    firstEquipWarning1.BindProperty(n"tintColor", n"MainColors.Red");
+    firstEquipWarning1.Reparent(container);
 
-@addMethod(PlayerPuppet)
-protected cb func OnRefreshFirstEquipConfig(evt: ref<RefreshFirstEquipConfigEvent>) -> Bool {
-  this.firstEquipConfig = FirstEquipConfig.Create();
-}
-
-@wrapMethod(PauseMenuBackgroundGameController)
-protected cb func OnUninitialize() -> Bool {
-  this.GetPlayerControlledObject().QueueEvent(new RefreshFirstEquipConfigEvent());
-  wrappedMethod();
+    firstEquipWarning2 = new inkText();
+    firstEquipWarning2.SetName(n"FirstEquipWarning2");
+    firstEquipWarning2.SetText("-> Please make sure that you have AlwaysFirstEquip.archive and .xl files inside your archive\\pc\\mod folder.");
+    firstEquipWarning2.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+    firstEquipWarning2.SetFontSize(38);
+    firstEquipWarning2.SetLetterCase(textLetterCase.OriginalCase);
+    firstEquipWarning2.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    firstEquipWarning2.BindProperty(n"tintColor", n"MainColors.Blue");
+    firstEquipWarning2.Reparent(container);
+  };
 }
