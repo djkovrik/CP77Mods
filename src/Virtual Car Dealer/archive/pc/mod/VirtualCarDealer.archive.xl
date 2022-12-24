@@ -9,3 +9,5 @@ localization:
     es-es: base\localization\es-es\onscreens\vdealer.json
     it-it: base\localization\it-it\onscreens\vdealer.json
     tr-tr: base\localization\tr-tr\onscreens\vdealer.json
+    pt-br: base\localization\pt-br\onscreens\vdealer.json
+    jp-jp: base\localization\jp-jp\onscreens\vdealer.json
