@@ -69,7 +69,6 @@ private final func ShowMenuByName(elementName: String) -> Void {
 
 @addMethod(ComputerInkGameController)
 protected final func ShowCarDealer() -> Void {
-  let internetData: SInternetData = (this.GetOwner().GetDevicePS() as ComputerControllerPS).GetInternetData();
   this.GetMainLayoutController().ShowInternet("CarDealer");
   this.RequestMainMenuButtonWidgetsUpdate();
 }

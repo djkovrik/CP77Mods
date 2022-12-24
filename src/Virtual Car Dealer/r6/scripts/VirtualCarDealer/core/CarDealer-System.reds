@@ -137,7 +137,6 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
     let currentBundle: ref<PurchasableVehicleBundle>;
     let currentVariant: ref<PurchasableVehicleVariant>;
     let targetBundle: ref<PurchasableVehicleBundle>;
-    let targetId: TweakDBID;
     // Find target bundle
     let i: Int32 = 0;
     let j: Int32;
