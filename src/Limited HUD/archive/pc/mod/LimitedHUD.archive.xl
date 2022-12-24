@@ -8,3 +8,4 @@ localization:
     zh-cn: base\localization\zh-cn\onscreens\lhud.json
     cz-cz: base\localization\cz-cz\onscreens\lhud.json
     jp-jp: base\localization\jp-jp\onscreens\lhud.json
+    pt-br: base\localization\pt-br\onscreens\lhud.json
