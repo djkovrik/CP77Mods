@@ -1,30 +1,53 @@
-// -- ArchiveXL checker
-@addField(SingleplayerMenuGameController)
-public let archiveXlChecked: Bool;
+// -- AXL checker
 
 @wrapMethod(SingleplayerMenuGameController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
 
-  let warning: ref<inkText>;
-  let str: String = GetLocalizedTextByKey(n"Mod-Craft-Settings-Base");
-  if Equals(str, "Mod-Craft-Settings-Base") || Equals(str, "") {
-    if !this.archiveXlChecked {
-      this.archiveXlChecked = true;
-      warning = new inkText();
-      warning.SetName(n"CustomWarning");
-      warning.SetText("Archive XL not detected! Make sure that it was installed correctly.");
-      warning.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-      warning.SetFontSize(64);
-      warning.SetHAlign(inkEHorizontalAlign.Fill);
-      warning.SetVAlign(inkEVerticalAlign.Bottom);
-      warning.SetAnchor(inkEAnchor.BottomFillHorizontaly);
-      warning.SetAnchorPoint(0.5, 1.0);
-      warning.SetLetterCase(textLetterCase.OriginalCase);
-      warning.SetMargin(new inkMargin(20.0, 0.0, 0.0, 10.0));
-      warning.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-      warning.BindProperty(n"tintColor", n"MainColors.Red");
-      warning.Reparent(this.GetRootCompoundWidget());
-    };
+  if NotEquals(GetLocalizedTextByKey(n"Mod-Craft-Settings-Base"), "") { return true; };
+  this.ShowECraftWarningAXL();
+}
+
+@addField(SingleplayerMenuGameController)
+public let ecraftCheckedAXL: Bool;
+
+@addMethod(SingleplayerMenuGameController)
+private func ShowECraftWarningAXL() -> Void {
+  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+  let container: ref<inkCompoundWidget> = root.GetWidgetByPathName(n"warningsAXL") as inkCompoundWidget;
+  if !IsDefined(container) {
+    container = new inkVerticalPanel();
+    container.SetName(n"warningsAXL");
+    container.SetHAlign(inkEHorizontalAlign.Fill);
+    container.SetVAlign(inkEVerticalAlign.Bottom);
+    container.SetAnchor(inkEAnchor.BottomFillHorizontaly);
+    container.SetAnchorPoint(0.5, 1.0);
+    container.SetMargin(new inkMargin(20.0, 0.0, 0.0, 10.0));
+    container.Reparent(root);
+  };
+
+  let ecraftWarning1: ref<inkText>;
+  let ecraftWarning2: ref<inkText>;
+  if !this.ecraftCheckedAXL {
+    this.ecraftCheckedAXL = true;
+    ecraftWarning1 = new inkText();
+    ecraftWarning1.SetName(n"EcraftWarning1");
+    ecraftWarning1.SetText("Enhanced Craft: resource files not detected!");
+    ecraftWarning1.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+    ecraftWarning1.SetFontSize(42);
+    ecraftWarning1.SetLetterCase(textLetterCase.OriginalCase);
+    ecraftWarning1.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    ecraftWarning1.BindProperty(n"tintColor", n"MainColors.Red");
+    ecraftWarning1.Reparent(container);
+
+    ecraftWarning2 = new inkText();
+    ecraftWarning2.SetName(n"EcraftWarning2");
+    ecraftWarning2.SetText("-> Please make sure that you have EnhancedCraft.archive and .xl files inside your archive\\pc\\mod folder.");
+    ecraftWarning2.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+    ecraftWarning2.SetFontSize(38);
+    ecraftWarning2.SetLetterCase(textLetterCase.OriginalCase);
+    ecraftWarning2.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    ecraftWarning2.BindProperty(n"tintColor", n"MainColors.Blue");
+    ecraftWarning2.Reparent(container);
   };
 }
