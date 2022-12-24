@@ -40,33 +40,57 @@ public static func IMZLog(message: String) -> Void {
 
 public static func IMZAction() -> CName = n"imzPeek"
 
-// -- ArchiveXL checker
-@addField(SingleplayerMenuGameController)
-public let archiveXlChecked: Bool;
+
+// -- AXL checker
 
 @wrapMethod(SingleplayerMenuGameController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
 
-  let warning: ref<inkText>;
-  let str: String = GetLocalizedTextByKey(n"Mod-IMZ-Combat");
-  if Equals(str, "Mod-IMZ-Combat") || Equals(str, "") {
-    if !this.archiveXlChecked {
-      this.archiveXlChecked = true;
-      warning = new inkText();
-      warning.SetName(n"CustomWarning");
-      warning.SetText("Archive XL not detected! Make sure that it was installed correctly.");
-      warning.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-      warning.SetFontSize(64);
-      warning.SetHAlign(inkEHorizontalAlign.Fill);
-      warning.SetVAlign(inkEVerticalAlign.Bottom);
-      warning.SetAnchor(inkEAnchor.BottomFillHorizontaly);
-      warning.SetAnchorPoint(0.5, 1.0);
-      warning.SetLetterCase(textLetterCase.OriginalCase);
-      warning.SetMargin(new inkMargin(20.0, 0.0, 0.0, 10.0));
-      warning.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-      warning.BindProperty(n"tintColor", n"MainColors.Red");
-      warning.Reparent(this.GetRootCompoundWidget());
-    };
+  if NotEquals(GetLocalizedTextByKey(n"Mod-IMZ-Combat"), "") { return true; };
+  this.ShowIMZWarningAXL();
+}
+
+@addField(SingleplayerMenuGameController)
+public let imzCheckedAXL: Bool;
+
+@addMethod(SingleplayerMenuGameController)
+private func ShowIMZWarningAXL() -> Void {
+  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+  let container: ref<inkCompoundWidget> = root.GetWidgetByPathName(n"warningsAXL") as inkCompoundWidget;
+  if !IsDefined(container) {
+    container = new inkVerticalPanel();
+    container.SetName(n"warningsAXL");
+    container.SetHAlign(inkEHorizontalAlign.Fill);
+    container.SetVAlign(inkEVerticalAlign.Bottom);
+    container.SetAnchor(inkEAnchor.BottomFillHorizontaly);
+    container.SetAnchorPoint(0.5, 1.0);
+    container.SetMargin(new inkMargin(20.0, 0.0, 0.0, 10.0));
+    container.Reparent(root);
+  };
+
+  let imzWarning1: ref<inkText>;
+  let imzWarning2: ref<inkText>;
+  if !this.imzCheckedAXL {
+    this.imzCheckedAXL = true;
+    imzWarning1 = new inkText();
+    imzWarning1.SetName(n"IMZWarning1");
+    imzWarning1.SetText("Improved Minimap Zoom: resource files not detected!");
+    imzWarning1.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+    imzWarning1.SetFontSize(42);
+    imzWarning1.SetLetterCase(textLetterCase.OriginalCase);
+    imzWarning1.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    imzWarning1.BindProperty(n"tintColor", n"MainColors.Red");
+    imzWarning1.Reparent(container);
+
+    imzWarning2 = new inkText();
+    imzWarning2.SetName(n"IMZWarning2");
+    imzWarning2.SetText("-> Please make sure that you have ImprovedMinimapZoom.archive and .xl files inside your archive\\pc\\mod folder.");
+    imzWarning2.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+    imzWarning2.SetFontSize(38);
+    imzWarning2.SetLetterCase(textLetterCase.OriginalCase);
+    imzWarning2.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    imzWarning2.BindProperty(n"tintColor", n"MainColors.Blue");
+    imzWarning2.Reparent(container);
   };
 }
