@@ -20,6 +20,10 @@ public class ECraftConfig {
   @runtimeProperty("ModSettings.category", "Mod-Craft-UI-Damage-Type")
   @runtimeProperty("ModSettings.displayName", "Mod-Craft-UI-Damage-Perk")
   @runtimeProperty("ModSettings.description", "Mod-Craft-UI-Damage-Perk-Desc")
+  @runtimeProperty("ModSettings.displayValues.NoPerk", "Mod-Craft-Settings-Perk-None")
+  @runtimeProperty("ModSettings.displayValues.TrueCraftsman", "Mod-Craft-Settings-Perk-Craftsman")
+  @runtimeProperty("ModSettings.displayValues.GreaseMonkey", "Mod-Craft-Settings-Perk-Monkey")
+  @runtimeProperty("ModSettings.displayValues.EdgerunnerArtisan", "Mod-Craft-Settings-Perk-Artisan")
   let perkToUnlockDamageTypes: ECraftPerkToUnlockDamageTypes = ECraftPerkToUnlockDamageTypes.TrueCraftsman;
 
   // Required perk to unlock standard weapon variants
@@ -27,6 +31,10 @@ public class ECraftConfig {
   @runtimeProperty("ModSettings.category", "Mod-Craft-Settings-Base")
   @runtimeProperty("ModSettings.displayName", "Mod-Craft-Settings-Basic")
   @runtimeProperty("ModSettings.description", "Mod-Craft-Settings-Basic-Desc")
+  @runtimeProperty("ModSettings.displayValues.NoPerk", "Mod-Craft-Settings-Perk-None")
+  @runtimeProperty("ModSettings.displayValues.TrueCraftsman", "Mod-Craft-Settings-Perk-Craftsman")
+  @runtimeProperty("ModSettings.displayValues.GreaseMonkey", "Mod-Craft-Settings-Perk-Monkey")
+  @runtimeProperty("ModSettings.displayValues.EdgerunnerArtisan", "Mod-Craft-Settings-Perk-Artisan")
   let perkToUnlockStandard: ECraftPerkToUnlockStandard = ECraftPerkToUnlockStandard.GreaseMonkey;
 
   // Required perk to unlock iconic weapon variants
@@ -34,6 +42,11 @@ public class ECraftConfig {
   @runtimeProperty("ModSettings.category", "Mod-Craft-Settings-Iconic")
   @runtimeProperty("ModSettings.displayName", "Mod-Craft-Settings-Iconic-Unlock")
   @runtimeProperty("ModSettings.description", "Mod-Craft-Settings-Iconic-Unlock-Desc")
+  @runtimeProperty("ModSettings.displayValues.NoPerk", "Mod-Craft-Settings-Perk-None")
+  @runtimeProperty("ModSettings.displayValues.DisableIconics", "Mod-Craft-Settings-Perk-Block")
+  @runtimeProperty("ModSettings.displayValues.TrueCraftsman", "Mod-Craft-Settings-Perk-Craftsman")
+  @runtimeProperty("ModSettings.displayValues.GreaseMonkey", "Mod-Craft-Settings-Perk-Monkey")
+  @runtimeProperty("ModSettings.displayValues.EdgerunnerArtisan", "Mod-Craft-Settings-Perk-Artisan")
   let perkToUnlockIconics: ECraftPerkToUnlockIconics = ECraftPerkToUnlockIconics.EdgerunnerArtisan;
 
   // Quality requirement for iconic variants craft
@@ -41,6 +54,9 @@ public class ECraftConfig {
   @runtimeProperty("ModSettings.category", "Mod-Craft-Settings-Iconic")
   @runtimeProperty("ModSettings.displayName", "Mod-Craft-Settings-Iconic-Condition")
   @runtimeProperty("ModSettings.description", "Mod-Craft-Settings-Iconic-Condition-Desc")
+  @runtimeProperty("ModSettings.displayValues.Rare", "Mod-Craft-Settings-Quality-Rare")
+  @runtimeProperty("ModSettings.displayValues.Epic", "Mod-Craft-Settings-Quality-Epic")
+  @runtimeProperty("ModSettings.displayValues.Legendary", "Mod-Craft-Settings-Quality-Legendary")
   let iconicRecipeCondition: ECraftIconicRecipeCondition = ECraftIconicRecipeCondition.Epic;
 
   // Ingredients quantity multiplier for Iconic variants
@@ -58,6 +74,10 @@ public class ECraftConfig {
   @runtimeProperty("ModSettings.category", "Mod-Craft-Settings-Clothes")
   @runtimeProperty("ModSettings.displayName", "Mod-Craft-UI-Damage-Perk")
   @runtimeProperty("ModSettings.description", "Mod-Craft-Settings-Clothes-Unlock-Desc")
+  @runtimeProperty("ModSettings.displayValues.NoPerk", "Mod-Craft-Settings-Perk-None")
+  @runtimeProperty("ModSettings.displayValues.TrueCraftsman", "Mod-Craft-Settings-Perk-Craftsman")
+  @runtimeProperty("ModSettings.displayValues.GreaseMonkey", "Mod-Craft-Settings-Perk-Monkey")
+  @runtimeProperty("ModSettings.displayValues.EdgerunnerArtisan", "Mod-Craft-Settings-Perk-Artisan")
   let perkToUnlockClothes: ECraftPerkToUnlockClothes = ECraftPerkToUnlockClothes.TrueCraftsman;
 
   // If enabled then adds jacket variants from DLC
