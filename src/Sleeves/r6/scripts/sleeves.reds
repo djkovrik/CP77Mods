@@ -20,7 +20,11 @@ private class SleevesConfig {
   public static func TargetSlots() -> array<TweakDBID> = [
     t"AttachmentSlots.Torso", 
     t"AttachmentSlots.Chest",
-    t"AttachmentSlots.Outfit"
+    t"AttachmentSlots.Outfit",
+    t"OutfitSlots.TorsoUnder",
+    t"OutfitSlots.TorsoInner",
+    t"OutfitSlots.TorsoMiddle",
+    t"OutfitSlots.TorsoOuter"
   ]
 
   // Uncomment any line to treat cyberware as incompatible what means that 
