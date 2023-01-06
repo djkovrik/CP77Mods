@@ -221,3 +221,18 @@ public final func DetachProjectile(scriptInterface: ref<StateGameScriptInterface
   EdgerunningSystem.GetInstance(scriptInterface.executionOwner.GetGame()).OnArmsCyberwareActivation(gamedataItemType.Cyb_Launcher);
 }
 
+@wrapMethod(UseAction)
+public func StartAction(gameInstance: GameInstance) -> Void {
+  wrappedMethod(gameInstance);
+  let data: ref<gameItemData> = this.GetItemData();
+  if !IsDefined(data) || !this.m_executor.IsPlayer() {
+    return;
+  };
+  
+  let id: TweakDBID = ItemID.GetTDBID(data.GetID());
+
+  // Optical cammo
+  if Equals(id, t"Items.OpticalCamoRare") || Equals(id, t"Items.OpticalCamoEpic") || Equals(id, t"Items.OpticalCamoLegendary") {
+    EdgerunningSystem.GetInstance(gameInstance).OnOpticalCamoActivation();
+  };
+}

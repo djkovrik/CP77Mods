@@ -396,6 +396,43 @@ public class EdgerunningSystem extends ScriptableSystem {
     };
   }
 
+  public func OnOpticalCamoActivation() -> Void {
+    let itemRecord: ref<Item_Record> = this.GetCurrentOpticalCamo();
+    if !IsDefined(itemRecord) {
+      return;
+    };
+
+    let quality: gamedataQuality = itemRecord.Quality().Type();
+    let qualityMult: Float;
+    switch (quality) {
+      case gamedataQuality.Common:
+        qualityMult = this.config.qualityMultiplierCommon;
+        break;
+      case gamedataQuality.Uncommon:
+        qualityMult = this.config.qualityMultiplierUncommon;
+        break;
+      case gamedataQuality.Rare:
+        qualityMult = this.config.qualityMultiplierRare;
+        break;
+      case gamedataQuality.Epic:
+        qualityMult = this.config.qualityMultiplierEpic;
+        break;
+      case gamedataQuality.Legendary:
+        qualityMult = this.config.qualityMultiplierLegendary;
+        break;
+    };
+
+    let cost: Int32 = this.config.opticalCamoUsageCost * Cast<Int32>(qualityMult);
+
+    if !this.IsRipperdocBuffActive() {
+      this.IncreaseHumanityDamage(cost);
+      E(s"! Optical camo activated: \(quality) - costs \(cost) humanity");
+      this.InvalidateCurrentState();
+    } else {
+      E("! Humanity freezed, optical camo costs no humanity");
+    };
+  }
+
   public func OnArmsCyberwareActivation(type: gamedataItemType) -> Void {
     let itemId: ItemID = EquipmentSystem.GetInstance(this.player).GetActiveItem(this.player, gamedataEquipmentArea.ArmsCW);
     let itemRecord: ref<Item_Record> = RPGManager.GetItemRecord(itemId);
@@ -979,6 +1016,17 @@ public class EdgerunningSystem extends ScriptableSystem {
     return null;
   }
 
+  public func GetCurrentOpticalCamo() -> ref<Item_Record> {
+    let cyberware: array<ref<Item_Record>> = EquipmentSystem.GetData(this.player).GetCyberwareFromSlots();
+    for record in cyberware {
+      if this.IsOpticalCamo(record) {
+        return record;
+      };
+    };
+
+    return null;
+  }
+
   public func StopFX() -> Void {
     this.StopVFX(n"reboot_glitch");
     this.StopVFX(n"hacking_glitch_low");
@@ -994,6 +1042,13 @@ public class EdgerunningSystem extends ScriptableSystem {
       || Equals(id, t"Items.KerenzikovRare")
       || Equals(id, t"Items.KerenzikovEpic")
       || Equals(id, t"Items.KerenzikovLegendary");
+  }
+
+  private func IsOpticalCamo(record: ref<Item_Record>) -> Bool {
+    let id: TweakDBID = record.GetID();
+    return Equals(id, t"Items.OpticalCamoRare") 
+      || Equals(id, t"Items.OpticalCamoEpic")
+      || Equals(id, t"Items.OpticalCamoLegendary");
   }
 
   private func PlaySFX(name: CName) -> Void {

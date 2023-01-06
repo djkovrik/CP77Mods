@@ -229,6 +229,15 @@ public class EdgerunningConfig {
   let monowireUsageCost: Int32 = 0;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Implants-Usage-Cost")
+  @runtimeProperty("ModSettings.displayName", "Gameplay-Cyberware-IntegumentarySystem-DisplayName-OpticalCamo")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Implants-Usage-Cost-Desc")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "20")
+  let opticalCamoUsageCost: Int32 = 0;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Quality")
   @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Items-Quality-Common")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Quality-Desc")
