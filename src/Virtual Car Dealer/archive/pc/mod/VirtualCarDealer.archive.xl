@@ -11,3 +11,4 @@ localization:
     tr-tr: base\localization\tr-tr\onscreens\vdealer.json
     pt-br: base\localization\pt-br\onscreens\vdealer.json
     jp-jp: base\localization\jp-jp\onscreens\vdealer.json
+    cz-cz: base\localization\cz-cz\onscreens\vdealer.json
