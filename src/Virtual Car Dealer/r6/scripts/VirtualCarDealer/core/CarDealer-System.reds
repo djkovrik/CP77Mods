@@ -2,7 +2,7 @@ module CarDealer.System
 import CarDealer.Classes.PurchasableVehicleBundle
 import CarDealer.Classes.PurchasableVehicleVariant
 import CarDealer.Config.CarDealerConfig
-import CarDealer.Utils.P
+import CarDealer.Utils.CarDealerLog
 
 public class PurchasableVehicleSystem extends ScriptableSystem {
 
@@ -19,7 +19,7 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
     if IsDefined(player) {
       this.m_vehicleSystem = GameInstance.GetVehicleSystem(player.GetGame());
       this.PopulateVehicleList();
-      P(s"PurchasableVehicleSystem initialized, detected vehicles: \(ArraySize(this.m_storeVehicles))");
+      CarDealerLog(s"PurchasableVehicleSystem initialized, detected vehicles: \(ArraySize(this.m_storeVehicles))");
     };
   }
 
@@ -35,7 +35,7 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
       let currentPrice: Int32 = TweakDBInterface.GetInt(currentId + t".dealerPrice", 0);
       // Dealer record detected
       if NotEquals(currentPrice, 0) {
-        P(s" - vehicle detected: \(TDBID.ToStringDEBUG(currentId)) \(GetLocalizedTextByKey(currentRecord.DisplayName())): \(currentPrice) $");
+        CarDealerLog(s" - vehicle detected: \(TDBID.ToStringDEBUG(currentId)) \(GetLocalizedTextByKey(currentRecord.DisplayName())): \(currentPrice) $");
         // Let's make a new bundle
         newBundle = new PurchasableVehicleBundle();
         newBundle.cred = currentCred;
@@ -58,7 +58,7 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
           newVariant.dealerAtlasPath = ResRef.FromString(TweakDBInterface.GetString(currentVehicleVariantId + t".dealerAtlasPath", ""));
           newVariant.dealerPartName = StringToName(TweakDBInterface.GetString(currentVehicleVariantId + t".dealerPartName", ""));
           ArrayPush(detectedVariants, newVariant);
-          P(s" --- variant: \(newVariant.dealerPartName)");
+          CarDealerLog(s" --- variant: \(newVariant.dealerPartName)");
         };
         newBundle.variants = detectedVariants;
         ArrayPush(result, newBundle);
@@ -110,7 +110,7 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
     let bb: ref<IBlackboard> = player.GetPlayerStateMachineBlackboard();
     let zone: Int32 = bb.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Zones);
     let inDanger: Bool = zone > 2;
-    P(s"Detected zone: \(zone)");
+    CarDealerLog(s"Detected zone: \(zone)");
     return inDanger;
   }
 

@@ -23,6 +23,7 @@ public func InitializeMenuButtons(gameController: ref<ComputerInkGameController>
 
   // Do not show tab for danger zone PCs
   if isInDangerZone {
+    LogChannel(n"DEBUG", "PC is in danger or restricted zone, Car Dealer tab not available.");
     return ;
   };
 

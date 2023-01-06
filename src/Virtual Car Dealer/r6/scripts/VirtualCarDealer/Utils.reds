@@ -1,7 +1,7 @@
 module CarDealer.Utils
 
-public static func P(str: String) -> Void {
-  // LogChannel(n"DEBUG", s"Vehicles: \(str)");
+public static func CarDealerLog(str: String) -> Void {
+  LogChannel(n"DEBUG", s"Vehicles: \(str)");
 }
 
 public class DealerTexts {

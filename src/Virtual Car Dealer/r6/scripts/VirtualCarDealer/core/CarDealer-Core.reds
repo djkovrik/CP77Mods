@@ -3,7 +3,7 @@ import CarDealer.Classes.PurchasableVehicleBundle
 import CarDealer.Classes.PurchasableVehicleVariant
 import CarDealer.System.PurchasableVehicleSystem
 import CarDealer.Utils.DealerTexts
-import CarDealer.Utils.P
+import CarDealer.Utils.CarDealerLog
 
 // Show core dealer page
 @addMethod(WebPage)
@@ -17,7 +17,6 @@ private func PopulateDealerView(owner: ref<GameObject>) {
     this.purchaseSystem = PurchasableVehicleSystem.GetInstance(player.GetGame());
     this.vehiclesStock = this.purchaseSystem.m_storeVehicles;
     stockSize = ArraySize(this.vehiclesStock);
-    P(s"Stock size: \(stockSize)");
     if Equals(stockSize, 0) {
       this.ShowDealerEmptyScreen();
     } else {
@@ -241,7 +240,6 @@ private func GetDealerButtonsContainer() -> ref<inkVerticalPanel> {
 // Register buttons listeners
 @addMethod(WebPage)
 protected func RegisterDealerListeners() -> Void {
-  P("RegisterDealerListeners...");
   this.buttonPrev.RegisterToCallback(n"OnClick", this, n"OnDealerButtonClick");
   this.buttonPrev.RegisterToCallback(n"OnEnter", this, n"OnDealerButtonEnter");
   this.buttonPrev.RegisterToCallback(n"OnLeave", this, n"OnDealerButtonLeave");
@@ -334,10 +332,8 @@ protected cb func OnDealerButtonLeave(evt: ref<inkPointerEvent>) -> Bool {
 @addMethod(WebPage)
 private func PreviousDealerLot() -> Void {
   this.vehicleIndex = this.vehicleIndex - 1;
-  P(s"PreviousDealerLot click: new index \(this.vehicleIndex )");
   if this.vehicleIndex < 0 {
     this.vehicleIndex = this.vehicleLastIndex;
-    P(s"PreviousDealerLot: index switched to \(this.vehicleIndex )");
   };
   this.vehicleVariantIndex = 0;
   this.vehicleVariantLastIndex = ArraySize(this.vehiclesStock[this.vehicleIndex].variants) - 1;
@@ -348,10 +344,8 @@ private func PreviousDealerLot() -> Void {
 @addMethod(WebPage)
 private func NextDealerLot() -> Void {
   this.vehicleIndex = this.vehicleIndex + 1;
-  P(s"NextDealerLot click: new index \(this.vehicleIndex)");
   if this.vehicleIndex > this.vehicleLastIndex {
     this.vehicleIndex = 0;
-    P(s"NextDealerLot: index switched to \(this.vehicleIndex)");
   };
   this.vehicleVariantIndex = 0;
   this.vehicleVariantLastIndex = ArraySize(this.vehiclesStock[this.vehicleIndex].variants) - 1;
@@ -361,10 +355,8 @@ private func NextDealerLot() -> Void {
 @addMethod(WebPage)
 private func NextDealerColor() -> Void {
   this.vehicleVariantIndex = this.vehicleVariantIndex + 1;
-  P(s"NextDealerColor click: new index \(this.vehicleVariantIndex)");
   if this.vehicleVariantIndex > this.vehicleVariantLastIndex {
     this.vehicleVariantIndex = 0;
-    P(s"NextDealerColor: index switched to \(this.vehicleVariantIndex)");
   };
   this.ShowDealerCurrentPage();
 }

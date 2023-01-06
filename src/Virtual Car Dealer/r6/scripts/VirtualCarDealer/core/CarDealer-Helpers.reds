@@ -1,13 +1,13 @@
 import CarDealer.Classes.PurchasableVehicleBundle
 import CarDealer.Classes.PurchasableVehicleVariant
 import CarDealer.System.PurchasableVehicleSystem
-import CarDealer.Utils.P
+import CarDealer.Utils.CarDealerLog
 
 // Check if player has enough money to pay the price
 @addMethod(WebPage)
 private func HasEnoughMoneyDealer(price: Int32) -> Bool {
   let playerBalance: Int32 = GameInstance.GetTransactionSystem(this.playerPuppet.GetGame()).GetItemQuantity(this.playerPuppet, MarketSystem.Money());
-  P(s"HasEnoughMoneyDealer: player \(playerBalance), required: \(price)");
+  CarDealerLog(s"has enough money: player \(playerBalance), required: \(price)");
   return playerBalance >= price;
 }
 
@@ -17,7 +17,7 @@ private func HasEnoughStreetCredDealer(cred: Int32) -> Bool {
   let statsSystem: ref<StatsSystem> = GameInstance.GetStatsSystem(this.playerPuppet.GetGame());
   let streetCredStat: Float = statsSystem.GetStatValue(Cast<StatsObjectID>(this.playerPuppet.GetEntityID()), gamedataStatType.StreetCred);
   let streetCred: Int32 = Cast<Int32>(streetCredStat);
-  P(s"HasEnoughStreetCredDealer: player \(streetCred), required: \(cred)");
+  CarDealerLog(s"has enough street cred: player \(streetCred), required: \(cred)");
   return streetCred >= cred;
 }
 
