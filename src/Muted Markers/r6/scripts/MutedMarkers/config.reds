@@ -12,6 +12,11 @@ public class LootConfig {
   @runtimeProperty("ModSettings.category", "Mod-Markers-Loot-Markers")
   @runtimeProperty("ModSettings.displayName", "Mod-Markers-Iconic")
   @runtimeProperty("ModSettings.description", "Mod-Markers-Iconic-Desc")
+  @runtimeProperty("ModSettings.displayValues.ThroughWalls", "Mod-Markers-Visibility-ThroughWalls")
+  @runtimeProperty("ModSettings.displayValues.LineOfSight", "Mod-Markers-Visibility-LineOfSight")
+  @runtimeProperty("ModSettings.displayValues.Scanner", "Mod-Markers-Visibility-Scanner")
+  @runtimeProperty("ModSettings.displayValues.Hidden", "Mod-Markers-Visibility-Hidden")
+  @runtimeProperty("ModSettings.displayValues.Default", "UI-Sorting-Default")
   let iconic: MarkerVisibility = MarkerVisibility.ThroughWalls;
   
   // Visibility for Legendary items (gold)
@@ -19,6 +24,11 @@ public class LootConfig {
   @runtimeProperty("ModSettings.category", "Mod-Markers-Loot-Markers")
   @runtimeProperty("ModSettings.displayName", "Mod-Markers-Legendary")
   @runtimeProperty("ModSettings.description", "Mod-Markers-Legendary-Desc")
+  @runtimeProperty("ModSettings.displayValues.ThroughWalls", "Mod-Markers-Visibility-ThroughWalls")
+  @runtimeProperty("ModSettings.displayValues.LineOfSight", "Mod-Markers-Visibility-LineOfSight")
+  @runtimeProperty("ModSettings.displayValues.Scanner", "Mod-Markers-Visibility-Scanner")
+  @runtimeProperty("ModSettings.displayValues.Hidden", "Mod-Markers-Visibility-Hidden")
+  @runtimeProperty("ModSettings.displayValues.Default", "UI-Sorting-Default")
   let legendary: MarkerVisibility = MarkerVisibility.ThroughWalls;
 
   // Visibility for Epic items (purple)
@@ -26,6 +36,11 @@ public class LootConfig {
   @runtimeProperty("ModSettings.category", "Mod-Markers-Loot-Markers")
   @runtimeProperty("ModSettings.displayName", "Mod-Markers-Epic")
   @runtimeProperty("ModSettings.description", "Mod-Markers-Epic-Desc")
+  @runtimeProperty("ModSettings.displayValues.ThroughWalls", "Mod-Markers-Visibility-ThroughWalls")
+  @runtimeProperty("ModSettings.displayValues.LineOfSight", "Mod-Markers-Visibility-LineOfSight")
+  @runtimeProperty("ModSettings.displayValues.Scanner", "Mod-Markers-Visibility-Scanner")
+  @runtimeProperty("ModSettings.displayValues.Hidden", "Mod-Markers-Visibility-Hidden")
+  @runtimeProperty("ModSettings.displayValues.Default", "UI-Sorting-Default")
   let epic: MarkerVisibility = MarkerVisibility.LineOfSight;
 
   // Visibility for Rate items (blue)
@@ -33,6 +48,11 @@ public class LootConfig {
   @runtimeProperty("ModSettings.category", "Mod-Markers-Loot-Markers")
   @runtimeProperty("ModSettings.displayName", "Mod-Markers-Rare")
   @runtimeProperty("ModSettings.description", "Mod-Markers-Rare-Desc")
+  @runtimeProperty("ModSettings.displayValues.ThroughWalls", "Mod-Markers-Visibility-ThroughWalls")
+  @runtimeProperty("ModSettings.displayValues.LineOfSight", "Mod-Markers-Visibility-LineOfSight")
+  @runtimeProperty("ModSettings.displayValues.Scanner", "Mod-Markers-Visibility-Scanner")
+  @runtimeProperty("ModSettings.displayValues.Hidden", "Mod-Markers-Visibility-Hidden")
+  @runtimeProperty("ModSettings.displayValues.Default", "UI-Sorting-Default")
   let rare: MarkerVisibility = MarkerVisibility.LineOfSight;
 
   // Visibility for Uncommon items (green)
@@ -40,6 +60,11 @@ public class LootConfig {
   @runtimeProperty("ModSettings.category", "Mod-Markers-Loot-Markers")
   @runtimeProperty("ModSettings.displayName", "Mod-Markers-Uncommon")
   @runtimeProperty("ModSettings.description", "Mod-Markers-Uncommon-Desc")
+  @runtimeProperty("ModSettings.displayValues.ThroughWalls", "Mod-Markers-Visibility-ThroughWalls")
+  @runtimeProperty("ModSettings.displayValues.LineOfSight", "Mod-Markers-Visibility-LineOfSight")
+  @runtimeProperty("ModSettings.displayValues.Scanner", "Mod-Markers-Visibility-Scanner")
+  @runtimeProperty("ModSettings.displayValues.Hidden", "Mod-Markers-Visibility-Hidden")
+  @runtimeProperty("ModSettings.displayValues.Default", "UI-Sorting-Default")
   let uncommon: MarkerVisibility = MarkerVisibility.Scanner;
 
   // Visibility for Common items (white)
@@ -47,6 +72,11 @@ public class LootConfig {
   @runtimeProperty("ModSettings.category", "Mod-Markers-Loot-Markers")
   @runtimeProperty("ModSettings.displayName", "Mod-Markers-Common")
   @runtimeProperty("ModSettings.description", "Mod-Markers-Common-Desc")
+  @runtimeProperty("ModSettings.displayValues.ThroughWalls", "Mod-Markers-Visibility-ThroughWalls")
+  @runtimeProperty("ModSettings.displayValues.LineOfSight", "Mod-Markers-Visibility-LineOfSight")
+  @runtimeProperty("ModSettings.displayValues.Scanner", "Mod-Markers-Visibility-Scanner")
+  @runtimeProperty("ModSettings.displayValues.Hidden", "Mod-Markers-Visibility-Hidden")
+  @runtimeProperty("ModSettings.displayValues.Default", "UI-Sorting-Default")
   let common: MarkerVisibility = MarkerVisibility.Scanner;
 
   // Hide delay after scaner disabled
@@ -64,6 +94,11 @@ public class LootConfig {
   @runtimeProperty("ModSettings.category", "Mod-Markers-Loot-Markers")
   @runtimeProperty("ModSettings.displayName", "Mod-Markers-Shards")
   @runtimeProperty("ModSettings.description", "Mod-Markers-Shards-Desc")
+  @runtimeProperty("ModSettings.displayValues.ThroughWalls", "Mod-Markers-Visibility-ThroughWalls")
+  @runtimeProperty("ModSettings.displayValues.LineOfSight", "Mod-Markers-Visibility-LineOfSight")
+  @runtimeProperty("ModSettings.displayValues.Scanner", "Mod-Markers-Visibility-Scanner")
+  @runtimeProperty("ModSettings.displayValues.Hidden", "Mod-Markers-Visibility-Hidden")
+  @runtimeProperty("ModSettings.displayValues.Default", "UI-Sorting-Default")
   let shards: MarkerVisibility = MarkerVisibility.LineOfSight;
 }
 
