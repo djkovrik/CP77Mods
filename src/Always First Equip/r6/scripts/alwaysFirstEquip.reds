@@ -46,6 +46,8 @@ public class FirstEquipConfig {
   @runtimeProperty("ModSettings.category", "Mod-First-Equip-Triggering")
   @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Cooldowns-Time-Unit")
   @runtimeProperty("ModSettings.description", "Mod-First-Equip-Cooldowns-Time-Unit-Desc")
+  @runtimeProperty("ModSettings.displayValues.Seconds", "Mod-First-Equip-Seconds")
+  @runtimeProperty("ModSettings.displayValues.Minutes", "Mod-First-Equip-Minutes")
   let cooldownTimeUnit: FirstEquipTimeUnit = FirstEquipTimeUnit.Seconds;
 
   // Replace false with true if you want see firstEquip animation while in combat mode
