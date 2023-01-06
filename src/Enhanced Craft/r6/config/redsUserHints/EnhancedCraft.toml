@@ -1,0 +1,20 @@
+[[UNRESOLVED_TYPE]]
+id = "MISSING_TWEAKXL"
+file = "EnhancedCraft/EnhancedCraft-GenerateItems.reds"
+line_contains  = "ScriptableTweak"
+message = "Enhanced Craft depends on TweakXL but you don't have it installed. Try to (re)install it and make sure that you have \"r6\\scripts\\TweakXL\" and \"red4ext\\plugins\\TweakXL\" folders."
+
+[[UNRESOLVED_METHOD]]
+id = "MISSING_TWEAKXL"
+line_contains  = "TweakDBInterface"
+message = "One of your mods depends on TweakXL but you don't have it installed. Try to (re)install it and make sure that you have \"r6\\scripts\\TweakXL\" and \"red4ext\\plugins\\TweakXL\" folders."
+
+[[UNRESOLVED_METHOD]]
+id = "MISSING_TWEAKXL"
+line_contains  = "TweakDBManager"
+message = "One of your mods depends on TweakXL but you don't have it installed. Try to (re)install it and make sure that you have \"r6\\scripts\\TweakXL\" and \"red4ext\\plugins\\TweakXL\" folders."
+
+[[UNRESOLVED_REF]]
+id = "MISSING_MOD_SETTINGS"
+line_contains  = "ModSettings"
+message = "One of your mods depends on Mod Settings but you don't have it installed. Try to (re)install it and make sure that you have \"r6\\scripts\\mod_settings\" and \"red4ext\\plugins\\mod_settings\" folders."
