@@ -11,6 +11,15 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Humanity")
+  @runtimeProperty("ModSettings.displayName", "Mod-Edg-Humanity-Bonus")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Humanity-Bonus-Desc")
+  @runtimeProperty("ModSettings.step", "0.1")
+  @runtimeProperty("ModSettings.min", "0.0")
+  @runtimeProperty("ModSettings.max", "50")
+  let humanityBonusPerLevel: Float = 0.0;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Humanity")
   @runtimeProperty("ModSettings.displayName", "Mod-Edg-Glitches-Threshold")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Glitches-Threshold-Desc")
   @runtimeProperty("ModSettings.step", "5")

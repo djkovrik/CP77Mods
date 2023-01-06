@@ -85,7 +85,7 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public func InvalidateCurrentState() -> Void {
     let evt: ref<UpdateHumanityCounterEvent> = new UpdateHumanityCounterEvent();
-    let basePool: Int32 = this.config.baseHumanityPool;
+    let basePool: Int32 = this.GetHumanityTotal();
     let installedCyberware: Int32 = this.GetCurrentCyberwareCost(true);
     this.cyberwareCost = installedCyberware;
     this.currentHumanityPool = basePool - installedCyberware - this.currentHumanityDamage;
@@ -828,7 +828,10 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public func GetHumanityTotal() -> Int32 {
     let basePool: Int32 = this.config.baseHumanityPool;
-    return basePool;
+    let playerLevel: Int32 = Cast<Int32>(GameInstance.GetStatsSystem(this.player.GetGame()).GetStatValue(Cast<StatsObjectID>(this.player.GetEntityID()), gamedataStatType.Level));
+    let additionalPool: Int32 = Cast<Int32>(this.config.humanityBonusPerLevel ) * playerLevel;
+    E(s"basePool: \(basePool), playerLevel: \(playerLevel), additionalPool: \(additionalPool)");
+    return basePool + additionalPool;
   }
 
   public func GetHumanityColor() -> CName {
