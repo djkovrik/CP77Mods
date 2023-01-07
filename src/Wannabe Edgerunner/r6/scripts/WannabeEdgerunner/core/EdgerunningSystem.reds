@@ -178,7 +178,7 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   private func RunPsychosis() -> Void {
     E("!!! RUN STAGE 2 - PSYCHOSIS");
-    if this.IsPsychosisBlocked() {
+    if this.IsPsychosisBlocked() || this.IsPsychosisActive() {
       E("? Skipped");
       return ;
     };
@@ -531,11 +531,6 @@ public class EdgerunningSystem extends ScriptableSystem {
       E("- diving");
       return true;
     };
-    
-    if this.IsPsychosisActive() {
-      E("- already active");
-      return true;
-    };
 
     if VehicleComponent.IsMountedToVehicle(this.player.GetGame(), this.player) {
       E("- mounted to vehicle");
@@ -651,7 +646,7 @@ public class EdgerunningSystem extends ScriptableSystem {
       return ; 
     };
 
-    if this.IsPsychosisBlocked() {
+    if this.IsPsychosisBlocked() || !this.IsPsychosisActive() {
       E("PSYCHOSIS EFFECTS NOT AVAILABLE ATM, TELEPORT ABORTED");
       return ; 
     };
