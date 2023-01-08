@@ -14,6 +14,15 @@ private class SleevesConfig {
       Equals(id, t"Items.sq030_diving_suit_male") ||        // Judy's Diving Suit
       Equals(id, t"Items.SQ030_Diving_Suit_NoShoes") ||     // Judy's Diving Suit
       Equals(id, t"Items.MQ049_martinez_jacket") ||         // David's Jacket
+      Equals(id, t"Items.nd_alt_jacket_default") ||         // ND Alt's Jacket
+      Equals(id, t"Items.nd_alt_jacket_black") ||         // ND Alt's Jacket
+      Equals(id, t"Items.nd_alt_jacket_blue") ||         // ND Alt's Jacket
+      Equals(id, t"Items.nd_alt_jacket_green") ||         // ND Alt's Jacket
+      Equals(id, t"Items.nd_alt_jacket_pink") ||         // ND Alt's Jacket
+      Equals(id, t"Items.nd_alt_jacket_red") ||         // ND Alt's Jacket
+      Equals(id, t"Items.nd_alt_jacket_white") ||         // ND Alt's Jacket
+      Equals(id, t"Items.nd_alt_jacket_burgundy") ||         // ND Alt's Jacket
+      Equals(id, t"Items.nd_alt_jacket_brown") ||         // ND Alt's Jacket
       false;
   }
 
