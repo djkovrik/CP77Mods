@@ -5,7 +5,6 @@ import VendorPreview.Utils.AtelierDebug
 @addMethod(FullscreenVendorGameController)
 private func BuyItemFromVirtualVendor(inventoryItemData: InventoryItemData) {
   let itemID: ItemID = InventoryItemData.GetID(inventoryItemData);
-  // let tweakDBID: TweakDBID = ItemID.GetTDBID(itemID);
   let price = InventoryItemData.GetPrice(inventoryItemData);
   let quantity: Int32 = InventoryItemData.GetQuantity(inventoryItemData);
   let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.m_player.GetGame());
@@ -21,19 +20,17 @@ private func BuyItemFromVirtualVendor(inventoryItemData: InventoryItemData) {
     transactionSystem.RemoveItemByTDBID(this.m_player, t"Items.money", Cast(price));
     // Refresh stock to regenerate ItemIDs
     this.PopulateVendorInventory();
-  }
+  };
 }
 
 @addMethod(FullscreenVendorGameController)
 private final func ShowTooltipsForItemController(targetWidget: wref<inkWidget>, equippedItem: InventoryItemData, inspectedItemData: InventoryItemData, iconErrorInfo: ref<DEBUG_IconErrorInfo>, isBuybackStack: Bool) -> Void {
-  if this.GetIsVirtual() {
-    let data: ref<InventoryTooltipData>;
-    data = this.m_InventoryManager.GetTooltipDataForInventoryItem(inspectedItemData, InventoryItemData.IsEquipped(inspectedItemData), iconErrorInfo, InventoryItemData.IsVendorItem(inspectedItemData));
-    data.displayContext = InventoryTooltipDisplayContext.Vendor;
-    data.isVirtualItem = true;
-    data.virtualInventoryItemData = inspectedItemData;
-    this.m_TooltipsManager.ShowTooltipAtWidget(n"itemTooltip", targetWidget, data, gameuiETooltipPlacement.LeftTop);
-  };
+  let data: ref<InventoryTooltipData>;
+  data = this.m_InventoryManager.GetTooltipDataForInventoryItem(inspectedItemData, InventoryItemData.IsEquipped(inspectedItemData), iconErrorInfo, InventoryItemData.IsVendorItem(inspectedItemData));
+  data.displayContext = InventoryTooltipDisplayContext.Vendor;
+  data.isVirtualItem = true;
+  data.virtualInventoryItemData = inspectedItemData;
+  this.m_TooltipsManager.ShowTooltipAtWidget(n"itemTooltip", targetWidget, data, gameuiETooltipPlacement.RightTop);
 }
 
 

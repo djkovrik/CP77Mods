@@ -193,7 +193,7 @@ protected cb func OnHandleGlobalInput(event: ref<inkPointerEvent>) -> Bool {
 
 @wrapMethod(FullscreenVendorGameController)
 protected cb func OnInventoryItemHoverOver(evt: ref<ItemDisplayHoverOverEvent>) -> Bool {
-  if (this.m_isPreviewMode) {
+  if this.m_isPreviewMode || this.GetIsVirtual() {
     let itemId: ItemID = InventoryItemData.GetID(evt.itemData);
     let isEquipped: Bool = this.m_previewManager.GetIsEquipped(itemId);
     let isWeapon: Bool = RPGManager.IsItemWeapon(itemId);
