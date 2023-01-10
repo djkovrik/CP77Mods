@@ -1,4 +1,4 @@
-module VendorPreview.constants
+module VendorPreview.Constants
 
 public class VendorPreviewButtonHint {
 
@@ -53,12 +53,7 @@ public class VendorPreviewButtonHint {
     vendorPreviewButtonHint.removePreviewGarmentLabel = VirtualAtelierText.PreviewRemovePreviewGarment();
     vendorPreviewButtonHint.moveLabel = VirtualAtelierText.PreviewMove();
     vendorPreviewButtonHint.zoomLabel = VirtualAtelierText.PreviewRotate();
+
     return vendorPreviewButtonHint;
   }
-}
-
-public class VirtualAtelierConfig {
-  public static func NumOfVirtualStoresPerRow() -> Int32 = 5
-  public static func NumOfRowsTotal() -> Int32  = 2
-  public static func StoresPerPage() -> Int32 = VirtualAtelierConfig.NumOfVirtualStoresPerRow() * VirtualAtelierConfig.NumOfRowsTotal()
 }

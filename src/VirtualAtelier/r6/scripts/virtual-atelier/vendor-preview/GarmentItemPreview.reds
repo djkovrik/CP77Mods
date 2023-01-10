@@ -1,27 +1,26 @@
-module VendorPreview.GarmentItemPreviewGameController
-
-import VendorPreview.ItemPreviewManager.*
-import VendorPreview.utils.*
-
-@addField(WardrobeSetPreviewGameController)
-private let m_isLeftMouseDown: Bool;
-
-@addField(WardrobeSetPreviewGameController)
-private let m_additionalData: ref<PreviewInventoryItemPreviewData>;
-
-@addField(WardrobeSetPreviewGameController)
-private let m_atelierActive: Bool;
+import VendorPreview.ItemPreviewManager.VirtualAtelierPreviewManager
 
 @wrapMethod(WardrobeSetPreviewGameController)
 protected cb func OnInitialize() -> Bool {
-  this.m_atelierActive = GetAllBlackboardDefs().atelierPreviewActive;
+  this.m_atelierSystem = VirtualAtelierPreviewManager.GetInstance(this.GetPlayerControlledObject());
+  this.m_atelierActive = this.m_atelierSystem.IsPreviewActive();
   
   wrappedMethod();
 
   if this.m_atelierActive {
     this.RegisterToGlobalInputCallback(n"OnPostOnPress", this, n"OnGlobalPress");
     this.m_additionalData = this.GetRootWidget().GetUserData(n"InventoryItemPreviewData") as PreviewInventoryItemPreviewData;
-    ItemPreviewManager.AdjustGarmentPreviewWidgets(this);
+    AtelierWidgetsHelper.AdjustGarmentPreviewWidgets(this);
+  };
+}
+
+@wrapMethod(WardrobeSetPreviewGameController)
+protected cb func OnPreviewInitialized() -> Bool {
+  wrappedMethod();
+
+  if this.m_atelierActive && this.m_isNotification {
+    this.m_atelierSystem.InitializePuppet(this.GetGamePuppet());
+    this.m_atelierSystem.InitializeCompatibilityHelper(this);
   };
 }
 
@@ -29,16 +28,11 @@ protected cb func OnInitialize() -> Bool {
 protected cb func OnUninitialize() -> Bool {
   if this.m_atelierActive {
     this.UnregisterFromGlobalInputCallback(n"OnPostOnPress", this, n"OnGlobalPress");
-    ItemPreviewManager.GetInstance().ResetGarment();
+    this.m_atelierSystem.ResetGarment();
   };
+
   wrappedMethod();
 }
-
-@addMethod(WardrobeSetPreviewGameController)
-private func GetIsVirtual() -> Bool {
-  return Equals(this.m_additionalData.displayContext, ItemDisplayContext.VendorPlayer);
-}
-
 
 @addMethod(WardrobeSetPreviewGameController)
 protected cb func OnGlobalPress(e: ref<inkPointerEvent>) -> Bool {
@@ -64,7 +58,7 @@ protected cb func OnGlobalRelease(e: ref<inkPointerEvent>) -> Bool {
 @wrapMethod(WardrobeSetPreviewGameController)
 protected func HandleAxisInput(event: ref<inkPointerEvent>) -> Void {
   if this.m_atelierActive {
-    ItemPreviewManager.OnGarmentPreviewAxisInput(this, event);
+    AtelierInputHelper.OnGarmentPreviewAxisInput(this, event);
   } else {
     wrappedMethod(event);
   };
@@ -73,19 +67,15 @@ protected func HandleAxisInput(event: ref<inkPointerEvent>) -> Void {
 @wrapMethod(WardrobeSetPreviewGameController)
 protected cb func OnRelativeInput(event: ref<inkPointerEvent>) -> Bool {
   if this.m_atelierActive  {
-    ItemPreviewManager.OnGarmentPreviewRelativeInput(this, event);
+    AtelierInputHelper.OnGarmentPreviewRelativeInput(this, event);
   } else {
     wrappedMethod(event);
   };
 }
 
-@wrapMethod(WardrobeSetPreviewGameController)
-protected cb func OnPreviewInitialized() -> Bool {
-  wrappedMethod();
-  if this.m_atelierActive && this.m_isNotification {
-    let puppet: ref<gamePuppet> = this.GetGamePuppet();
-    ItemPreviewManager.CreateInstance(puppet, this);
-  };
+@addMethod(WardrobeSetPreviewGameController)
+private func GetIsVirtual() -> Bool {
+  return Equals(this.m_additionalData.displayContext, ItemDisplayContext.VendorPlayer);
 }
 
 @addMethod(WardrobeSetPreviewGameController)

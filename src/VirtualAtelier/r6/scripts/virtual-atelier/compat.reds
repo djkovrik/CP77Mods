@@ -1,6 +1,8 @@
 @if(ModuleExists("EquipmentEx"))
 import EquipmentEx.OutfitSystem
 
+import VendorPreview.ItemPreviewManager.VirtualAtelierPreviewManager
+
 @if(!ModuleExists("EquipmentEx"))
 @addMethod(gameuiMenuGameController)
 public func IsAtelierItemEquipped(puppet: ref<gamePuppet>, itemId: ItemID) -> Bool {
@@ -32,4 +34,14 @@ public func GetAtelierPlacementSlot(itemId: ItemID) -> TweakDBID {
 
   let outfitSystem: ref<OutfitSystem> = OutfitSystem.GetInstance(this.GetPlayerControlledObject().GetGame());
   return outfitSystem.GetItemSlot(itemId);
+}
+
+
+// Darkcopse itemParts fix
+@wrapMethod(InventoryDataManagerV2)
+private final func GetPartInventoryItemData(owner: wref<GameObject>, itemId: ItemID, innerItemData: InnerItemData, opt itemData: wref<gameItemData>, opt record: wref<Item_Record>) -> InventoryItemData {
+  if !(ItemID.IsValid(itemId)) && itemData.isVirtualItem {
+    itemId = itemData.GetID();
+  };
+  return wrappedMethod(owner, itemId, innerItemData, itemData);
 }

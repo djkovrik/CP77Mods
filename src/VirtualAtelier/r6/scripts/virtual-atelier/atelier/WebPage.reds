@@ -1,48 +1,30 @@
-import VendorPreview.utils.*
-import VendorPreview.constants.*
-import VendorPreview.UI.*
+import VendorPreview.StoresManager.VirtualAtelierStoresSystem
+import VendorPreview.Config.VirtualAtelierInternals
+import VendorPreview.Utils.AtelierDebug
+import VendorPreview.Utils.AtelierUtils
 import VendorPreview.Codeware.UI.*
+import VendorPreview.UI.*
 
-@addField(WebPage)
-let owner: wref<GameObject>;
+@addMethod(WebPage)
+public func DisplayWarning(message: String) {
+  let simpleScreenMessage: SimpleScreenMessage;
+  simpleScreenMessage.isShown = true;
+  simpleScreenMessage.duration = 8.0;
+  simpleScreenMessage.message = message;
+  simpleScreenMessage.isInstant = true;
 
-@addField(WebPage)
-let stores: array<ref<VirtualShop>>;
-
-// array does not work for some reason -_-
-@addField(WebPage)
-let atelierPages: ref<inkCompoundWidget>;
-
-@addField(WebPage)
-let atelierTotalStores: Int32;
-
-@addField(WebPage)
-let atelierCurrentPageIndex: Int32;
-
-@addField(WebPage)
-let atelierTotalPages: Int32;
-
-@addField(WebPage)
-let navigationButtonPrev: ref<AtelierTextButton>;
-
-@addField(WebPage)
-let navigationButtonNext: ref<AtelierTextButton>;
-
-@addField(WebPage)
-let navigationLabel: ref<AtelierTextButton>;
-
-@addField(WebPage)
-let rootAtelierPanel: ref<inkVerticalPanel>;
+  GameInstance.GetBlackboardSystem(this.owner.GetGame()).Get(GetAllBlackboardDefs().UI_Notifications).SetVariant(GetAllBlackboardDefs().UI_Notifications.WarningMessage, ToVariant(simpleScreenMessage), true);
+}
 
 @addMethod(WebPage)
 private func PopulateAtelierView(owner: ref<GameObject>) {
   this.owner = owner;
+  this.system = VirtualAtelierStoresSystem.GetInstance(owner);
   this.atelierPages = new inkVerticalPanel();
   this.rootAtelierPanel = this.GetWidget(n"page/linkPanel/panel") as inkVerticalPanel;
   this.rootAtelierPanel.RemoveAllChildren();
 
-  let board: wref<IBlackboard> = GameInstance.GetBlackboardSystem(this.owner.GetGame()).Get(GetAllBlackboardDefs().VirtualShop);
-  this.stores = FromVariant(board.GetVariant(GetAllBlackboardDefs().VirtualShop.Stores));
+  this.stores = this.system.GetStores();
   this.atelierTotalStores = ArraySize(this.stores);
 
   this.atelierCurrentPageIndex = 0;
@@ -102,26 +84,26 @@ private func PopulateAtelierPages() {
       row.SetPadding(new inkMargin(150.0, 90.0, 150.0, 0.0));
       parentPage.AddChildWidget(row);
     };
+
     let storeContainer: ref<inkVerticalPanel> = this.GetStore(store);
     row.AddChildWidget(storeContainer);
-    //AtelierDebug(s"Store \(storeIndex) added to row \(rowCounter) of page \(pageIndex), current row children: \(row.GetNumChildren()), current page children: \(parentPage.GetNumChildren())");
 
     insideRowIndex += 1;
     insidePageIndex += 1;
     storeIndex += 1;
 
-    if insideRowIndex >= VirtualAtelierConfig.NumOfVirtualStoresPerRow() {
+    if insideRowIndex >= VirtualAtelierInternals.NumOfVirtualStoresPerRow() {
       insideRowIndex = 0;
     };
 
-    if insidePageIndex >= VirtualAtelierConfig.StoresPerPage() {
+    if insidePageIndex >= VirtualAtelierInternals.StoresPerPage() {
       insidePageIndex = 0;
       rowCounter = 0;
       pageIndex += 1;
     };
   };
 
-  CheckDuplicates(this.stores, this);
+  AtelierUtils.CheckDuplicates(this.stores, this);
 }
 
 @addMethod(WebPage)
@@ -142,7 +124,7 @@ public func PopulatePaginationControls() -> Void {
   panel.SetAnchorPoint(new Vector2(0.5, 0.5));
   panel.SetMargin(new inkMargin(0.0, 120.0, 0.0, 0.0));
 
-  this.navigationButtonPrev = AtelierTextButton.Create(n"ButtonPrev", VirtualAtelierText.PaginationPrev(), 58, n"MainColors.Blue", new inkMargin(0.0, 0.0, 0.0, 0.0), true);
+  this.navigationButtonPrev = AtelierTextButton.Create(n"ButtonPrev", VirtualAtelierText.PaginationPrev(), 58, n"MainColors.ActiveBlue", new inkMargin(0.0, 0.0, 0.0, 0.0), true);
   this.navigationButtonPrev.RegisterToCallback(n"OnClick", this, n"OnClickPagination");
   this.navigationButtonPrev.Reparent(panel);
 
@@ -302,36 +284,20 @@ private func GetStore(store: ref<VirtualShop>) -> ref<inkVerticalPanel> {
   return link;
 }
 
-@addField(VendorPanelData)
-let virtualStore: ref<VirtualShop>;
-
-@addMethod(WebPage)
-public func DisplayWarning(message: String) {
-  let simpleScreenMessage: SimpleScreenMessage;
-  simpleScreenMessage.isShown = true;
-  simpleScreenMessage.duration = 8.0;
-  simpleScreenMessage.message = message;
-  simpleScreenMessage.isInstant = true;
-
-  GameInstance.GetBlackboardSystem(this.owner.GetGame()).Get(GetAllBlackboardDefs().UI_Notifications).SetVariant(GetAllBlackboardDefs().UI_Notifications.WarningMessage, ToVariant(simpleScreenMessage), true);
-}
-
 @addMethod(WebPage)
 protected cb func OnShopClick(evt: ref<inkPointerEvent>) -> Bool {
   if evt.IsAction(n"click") {
     let uiSystem: ref<UISystem> = GameInstance.GetUISystem(this.owner.GetGame());
 
     if IsDefined(uiSystem) {
-      let widgetName = evt.GetTarget().GetName();
+      let widgetName: CName = evt.GetTarget().GetName();
 
       if Equals(n"", widgetName) {
           return true;
-      }
+      };
 
       let vendorData: ref<VendorPanelData> = new VendorPanelData();
-
-      let board: wref<IBlackboard> = GameInstance.GetBlackboardSystem(this.owner.GetGame()).Get(GetAllBlackboardDefs().VirtualShop);
-      let stores: array<ref<VirtualShop>> = FromVariant(board.GetVariant(GetAllBlackboardDefs().VirtualShop.Stores));
+      let stores: array<ref<VirtualShop>> = this.system.GetStores();
 
       let virtualStore: ref<VirtualShop>;
       let i = 0;
@@ -343,7 +309,7 @@ protected cb func OnShopClick(evt: ref<inkPointerEvent>) -> Bool {
           break;
         } else {
           i += 1;
-        }
+        };
       };
 
       if Equals(virtualStore.storeID, n"") {
@@ -356,5 +322,5 @@ protected cb func OnShopClick(evt: ref<inkPointerEvent>) -> Bool {
         uiSystem.RequestVendorMenu(vendorData);
       };
     };
-  }
+  };
 }

@@ -1,12 +1,15 @@
-import VendorPreview.utils.*
+import VendorPreview.Config.VirtualAtelierConfig
 
 public class CurrentPlayerZoneManager {
 
-  public static func IsInDangerZone(player: ref<PlayerPuppet>) -> Bool {
+  public static func IsInSafeZone(player: ref<PlayerPuppet>) -> Bool {
+    if VirtualAtelierConfig.DisableDangerZoneChecker() {
+      return false;
+    };
+    
     let bb: ref<IBlackboard> = player.GetPlayerStateMachineBlackboard();
     let zone: Int32 = bb.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Zones);
-    let inDanger: Bool = zone > 2;
-    AtelierDebug(s"Detected zone: \(zone)");
-    return inDanger;
+    let safeZone: Bool = zone < 3;
+    return safeZone;
   }
 }

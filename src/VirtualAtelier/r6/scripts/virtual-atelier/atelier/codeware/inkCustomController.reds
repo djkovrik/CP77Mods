@@ -109,8 +109,6 @@ public abstract class inkCustomController extends inkLogicController {
   protected cb func OnInitialize() -> Void
 
   protected cb func OnUninitialize() ->  Void {
-    //this.m_isCreated = false;
-    //this.m_isInitialized = false;
     this.m_detachedWidget = null;
   }
 

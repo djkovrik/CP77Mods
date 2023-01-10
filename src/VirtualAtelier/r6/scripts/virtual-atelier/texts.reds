@@ -27,7 +27,6 @@ public class VirtualAtelierText {
   // Preview button hint
   public static func PreviewMove() -> String = "Move"
   // Preview button hint
-  // "Rotate" replaced with "Zoom" here
   public static func PreviewRotate() -> String = "Zoom"
   // Preview button hint
   public static func PreviewEquip() -> String = "Equip"

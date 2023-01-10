@@ -1,31 +1,19 @@
 module VendorPreview.UI
-
 import VendorPreview.Codeware.UI.*
 
 public class AtelierTextButton extends inkCustomController {
 
   private let m_root: wref<inkCompoundWidget>;
-
   private let m_text: ref<inkText>;
-
   private let m_name: CName;
-
   private let m_label: String;
-
   private let m_fontSize: Int32;
-
   private let m_tintColor: CName;
-
   private let m_margin: inkMargin;
-  
   private let m_clickable: Bool;
-
   private let m_enabled: Bool;
-
   private let m_useSounds: Bool;
-
   private let m_isHovered: Bool;
-
   private let m_isPressed: Bool;
 
   public static func Create(name: CName, label: String, fontSize: Int32, tint: CName, margin: inkMargin, clickable: Bool) -> ref<AtelierTextButton> {
@@ -39,7 +27,6 @@ public class AtelierTextButton extends inkCustomController {
     self.SetClickable(clickable);
     self.SetEnabled(true);
     self.CreateInstance();
-
     return self;
   }
 
@@ -68,10 +55,9 @@ public class AtelierTextButton extends inkCustomController {
     text.SetAnchor(inkEAnchor.Centered);
     text.SetVAlign(inkEVerticalAlign.Center);
     text.SetMargin(this.m_margin);
-    text.SetAnchorPoint(0.5, 0.5);
+    text.SetAnchorPoint(0.0, 0.0);
     text.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     text.BindProperty(n"tintColor", this.m_tintColor);
-
     text.Reparent(root);
 
     this.m_root = root;
@@ -142,6 +128,8 @@ public class AtelierTextButton extends inkCustomController {
       return false;
     };
     this.SetHoveredState(false);
+    this.m_text.UnbindProperty(n"tintColor");
+    this.m_text.BindProperty(n"tintColor", this.m_tintColor);
   }
 
   protected cb func OnPress(evt: ref<inkPointerEvent>) -> Bool {

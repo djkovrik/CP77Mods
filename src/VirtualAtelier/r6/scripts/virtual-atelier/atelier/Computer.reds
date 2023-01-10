@@ -1,54 +1,36 @@
-import VendorPreview.utils.*
-
-@wrapMethod(ComputerMainLayoutWidgetController)
-public func InitializeMenuButtons(gameController: ref<ComputerInkGameController>, widgetsData: array<SComputerMenuButtonWidgetPackage>) -> Void {
-  wrappedMethod(gameController, widgetsData);
-
-  AtelierLog("Virtual Atelier initialized");
-  let inDangerZone: Bool = CurrentPlayerZoneManager.IsInDangerZone(gameController.GetPlayerControlledObject() as PlayerPuppet);
-
-  // Do nothing if zone is danger
-  if inDangerZone {
-    AtelierLog("PC is in danger or restricted zone, Atelier tab was hidden");
-    return ;
-  };
-
-  let i = 0;
-  // Add another tab for "Atelier"
-  while i < ArraySize(widgetsData) {
-    let widgetData = widgetsData[i];
-    let widgetName = widgetData.widgetName;
-
-    if Equals("internet", widgetName) {
-      i = ArraySize(widgetsData);
-
-      widgetData.displayName = VirtualAtelierText.Name();
-      widgetData.widgetName = "Atelier";
-
-      // TODO: Find a way to show a badge for newly installed stores (+ add a border around new stores?)
-      let widget = this.CreateMenuButtonWidget(gameController, inkWidgetRef.Get(this.m_menuButtonList), widgetData);
-      this.AddMenuButtonWidget(widget, widgetData, gameController);
-      this.InitializeMenuButtonWidget(gameController, widget, widgetData);
-    } else {
-      i += 1;
-    };
-  };
-
-  AtelierLog("New tab was added to PC layout");
-}
+import VendorPreview.Config.VirtualAtelierConfig
+import VendorPreview.Utils.AtelierLog
 
 @wrapMethod(ComputerInkGameController)
 private final func ShowMenuByName(elementName: String) -> Void {
   if Equals(elementName, "Atelier") {
-    this.ShowCustomInternet();
+    this.GetMainLayoutController().ShowInternet("Atelier");
+    this.RequestMainMenuButtonWidgetsUpdate();
   } else {
     wrappedMethod(elementName);
   };
 }
 
-// TODO: Change the tab icon from Internet to something new
-@addMethod(ComputerInkGameController)
-protected final func ShowCustomInternet() -> Void {
-  this.GetMainLayoutController().ShowInternet("Atelier");
-  this.RequestMainMenuButtonWidgetsUpdate();
+@wrapMethod(ComputerControllerPS)
+public final func GetMenuButtonWidgets() -> array<SComputerMenuButtonWidgetPackage> {
+  let packages: array<SComputerMenuButtonWidgetPackage> = wrappedMethod();
+  let package: SComputerMenuButtonWidgetPackage;
+
+  let isInSafeZone: Bool = CurrentPlayerZoneManager.IsInSafeZone(this.GetLocalPlayerControlledGameObject() as PlayerPuppet) || VirtualAtelierConfig.DisableDangerZoneChecker();
+
+  if isInSafeZone {
+    if this.IsMenuEnabled(EComputerMenuType.INTERNET) && ArraySize(packages) > 0 {
+      package.widgetName = "Atelier";
+      package.displayName = VirtualAtelierText.Name();
+      package.ownerID = this.GetID();
+      package.iconID = n"iconInternet";
+      package.widgetTweakDBID = this.GetMenuButtonWidgetTweakDBID();
+      package.isValid = true;
+      ArrayPush(packages, package);
+    };
+  } else {
+    AtelierLog("PC is in dangerous or restricted zone, Atelier tab was hidden");
+  };
+
+  return packages;
 }

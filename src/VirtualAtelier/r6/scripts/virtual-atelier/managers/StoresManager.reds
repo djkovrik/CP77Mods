@@ -1,56 +1,35 @@
-@addField(AllBlackboardDefinitions)
-public let VirtualShop: ref<VirtualShopDef>;
+module VendorPreview.StoresManager
+import VendorPreview.Utils.AtelierLog
 
-public class VirtualShopDef extends BlackboardDefinition {
-  public let Stores: BlackboardID_Variant;
+public class VirtualAtelierStoresSystem extends ScriptableSystem {
 
-  public let AtelierItems: BlackboardID_Variant;
+  private let stores: array<ref<VirtualShop>>;
 
-  public final const func AutoCreateInSystem() -> Bool {
-    return true;
+  public static func GetInstance(player: ref<GameObject>) -> ref<VirtualAtelierStoresSystem> {
+    let system: ref<VirtualAtelierStoresSystem> = GameInstance.GetScriptableSystemsContainer(player.GetGame()).Get(n"VendorPreview.StoresManager.VirtualAtelierStoresSystem") as VirtualAtelierStoresSystem;
+    return system;
   }
-}
 
-public class VirtualShop extends IScriptable {
-  let storeID: CName;
-  let storeName: String;
-  let items: array<String>;
-  let qualities: array<String>;
-  let quantities: array<Int32>;
-  let prices: array<Int32>;
-  let atlasResource: ResRef;
-  let texturePart: CName;
-}
+  public func GetStores() -> array<ref<VirtualShop>> {
+    return this.stores;
+  }
 
-public class VirtualShopRegistration extends Event {
-  let owner: wref<GameObject>;
+  public func SetStores(stores: array<ref<VirtualShop>>) -> Void {
+    this.stores = stores;
+  }
 
-  private func AddStore(storeID: CName, storeName: String, items: array<String>, prices: array<Int32>, atlasResource: ResRef, texturePart: CName, opt qualities: array<String>, opt quantities: array<Int32>) -> Void {
-    let board: wref<IBlackboard> = GameInstance.GetBlackboardSystem(this.owner.GetGame()).Get(GetAllBlackboardDefs().VirtualShop);
-    let stores: array<ref<VirtualShop>> = FromVariant(board.GetVariant(GetAllBlackboardDefs().VirtualShop.Stores));
+  public func BuildStoresList() -> Void {
+    ArrayClear(this.stores);
 
-    let store = new VirtualShop();
-    store.storeID = storeID;
-    store.storeName = storeName;
-    store.items = items;
-    store.prices = prices;
-    store.atlasResource = atlasResource;
-    store.texturePart = texturePart;
-    store.qualities = qualities;
-    store.quantities = quantities;
-
-    ArrayPush(stores, store);
-
-    board.SetVariant(GetAllBlackboardDefs().VirtualShop.Stores, ToVariant(stores));
+    let event: ref<VirtualShopRegistration> = new VirtualShopRegistration();
+    event.SetSystemInstance(this);
+    GameInstance.GetUISystem(this.GetGameInstance()).QueueEvent(event);
+    AtelierLog("Initialized.");
   }
 }
 
 @wrapMethod(gameuiInGameMenuGameController)
 protected cb func OnInitialize() -> Bool {
-  let event = new VirtualShopRegistration();
-  event.owner = this.GetPlayerControlledObject();
-
-  this.QueueEvent(event);
-
   wrappedMethod();
+  VirtualAtelierStoresSystem.GetInstance(this.GetPlayerControlledObject()).BuildStoresList();
 }
