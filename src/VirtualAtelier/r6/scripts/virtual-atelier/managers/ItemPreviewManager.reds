@@ -25,6 +25,7 @@ public class VirtualAtelierPreviewManager extends ScriptableSystem {
   }
 
   public func InitializePuppet(puppet: ref<gamePuppet>) -> Void {
+    ArrayClear(this.initialItems);
     this.puppetId = puppet.GetEntityID();
     let gamePuppet: ref<gamePuppet> = this.GetGamePuppet();
     this.transactionSystem.GetItemList(gamePuppet, this.initialItems);
@@ -46,44 +47,30 @@ public class VirtualAtelierPreviewManager extends ScriptableSystem {
     this.isPreviewActive = active;
   }
 
-  public func AddGivenItems(itemId: ItemID) -> Void {
-    ArrayPush(this.givenItems, itemId);
-  }
-
-  public func RemoveGivenItem(itemId: ItemID) -> Void {
-    ArrayRemove(this.givenItems, itemId);
-  }
-
   public func GetIsEquipped(itemId: ItemID) -> Bool {
-    let puppet: ref<gamePuppet> = this.GetGamePuppet();
-    return this.compatibilityHelper.IsAtelierItemEquipped(puppet, itemId) || ArrayContains(this.givenItems, itemId);
+    return ArrayContains(this.givenItems, itemId);
   }
 
   public func EquipItem(itemId: ItemID) -> Void {
     let puppet: ref<gamePuppet> = this.GetGamePuppet();
-    if !IsDefined(puppet) { 
-      return;
+    let placementSlot: TweakDBID = this.compatibilityHelper.GetAtelierPlacementSlot(itemId);
+
+    let currentItemInSlot: ItemID = this.transactionSystem.GetItemInSlot(puppet, placementSlot).GetItemID();
+    if this.GetIsEquipped(currentItemInSlot) {
+      this.UnequipItem(currentItemInSlot);
     };
 
-    let placementSlot: TweakDBID = this.compatibilityHelper.GetAtelierPlacementSlot(itemId);      
-    this.transactionSystem.RemoveItemFromSlot(puppet, placementSlot, true);
     this.transactionSystem.GiveItem(puppet, itemId, 1);
     this.transactionSystem.AddItemToSlot(puppet, placementSlot, itemId);
-
-    this.AddGivenItems(itemId);
+    ArrayPush(this.givenItems, itemId);
   }
 
   public func UnequipItem(itemId: ItemID) -> Void {
     let puppet: ref<gamePuppet> = this.GetGamePuppet();
-    if !IsDefined(puppet) { 
-      return;
-    };
-
     let placementSlot: TweakDBID = this.compatibilityHelper.GetAtelierPlacementSlot(itemId);
     this.transactionSystem.RemoveItemFromSlot(puppet, placementSlot, true);
     this.transactionSystem.RemoveItem(puppet, itemId, 1);
-
-    this.RemoveGivenItem(itemId);
+    ArrayRemove(this.givenItems, itemId);
   }
 
   public func RemoveAllGarment() -> Void {

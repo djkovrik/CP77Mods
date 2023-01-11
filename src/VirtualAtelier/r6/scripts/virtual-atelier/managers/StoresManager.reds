@@ -24,7 +24,7 @@ public class VirtualAtelierStoresSystem extends ScriptableSystem {
     let event: ref<VirtualShopRegistration> = new VirtualShopRegistration();
     event.SetSystemInstance(this);
     GameInstance.GetUISystem(this.GetGameInstance()).QueueEvent(event);
-    AtelierLog("Initialized.");
+    AtelierLog("Initialized");
   }
 }
 

@@ -1,3 +1,4 @@
+import VendorPreview.ItemPreviewManager.VirtualAtelierPreviewManager
 import VendorPreview.StoresManager.VirtualAtelierStoresSystem
 import VendorPreview.Utils.AtelierDebug
 
@@ -54,10 +55,14 @@ public class VirtualShopRegistration extends Event {
     ArrayPush(stores, store);
 
     this.system.SetStores(stores);
-    // fixdis AtelierDebug(s"Store initialized: \(storeName)");
+    AtelierDebug(s"Store initialized: \(storeName)");
   }
 }
 
 public class PreviewInventoryItemPreviewData extends InventoryItemPreviewData {
   let displayContext: ItemDisplayContext;
+}
+
+public class VendorInventoryEquipStateChanged extends Event {
+  public let system: wref<VirtualAtelierPreviewManager>;
 }

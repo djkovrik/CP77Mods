@@ -36,6 +36,7 @@ protected cb func OnSetUserData(userData: ref<IScriptable>) -> Bool {
 @wrapMethod(FullscreenVendorGameController)
 protected cb func OnUninitialize() -> Bool {
   this.SetPreviewStateActive(false);
+  this.m_previewManager.RemovePreviewGarment();
 
   wrappedMethod();
 
@@ -122,6 +123,10 @@ private final func HandleVirtualSlotClick(evt: ref<ItemDisplayClickEvent>) -> Vo
     if isClothing || isWeapon {
       this.m_previewManager.TogglePreviewItem(itemId);
 
+      if this.GetIsVirtual() {
+        this.RefreshEquippedState();
+      };
+
       if isEquipped {
         hintLabel = VirtualAtelierText.PreviewEquip();
       } else {
@@ -161,15 +166,19 @@ protected cb func OnHandleGlobalInput(event: ref<inkPointerEvent>) -> Bool {
       break;
     case event.IsAction(vendorPreviewButtonHint.resetGarmentName):
       this.m_previewManager.ResetGarment();
+      this.RefreshEquippedState();
       break;
     case event.IsAction(vendorPreviewButtonHint.removeAllGarmentName):
       this.m_previewManager.RemoveAllGarment();
+      this.RefreshEquippedState();
       break;
     case event.IsAction(vendorPreviewButtonHint.removePreviewGarmentName):
       this.m_previewManager.RemovePreviewGarment();
+      this.RefreshEquippedState();
       break;
     case (event.IsAction(n"back") && isVirtual && this.m_isPreviewMode):
     case (event.IsAction(n"cancel") && isVirtual && this.m_isPreviewMode):
+      this.m_previewManager.RemovePreviewGarment();
       this.m_menuEventDispatcher.SpawnEvent(n"OnVendorClose");
       break;
 
@@ -181,6 +190,7 @@ protected cb func OnHandleGlobalInput(event: ref<inkPointerEvent>) -> Bool {
 
     // Force shop closing on C for keyboards to prevent preview screw up
     case (event.IsAction(n"world_map_menu_toggle_custom_filter") && isVirtual && this.m_isPreviewMode && lastUsedKBM):
+      this.m_previewManager.RemovePreviewGarment();
       this.m_menuEventDispatcher.SpawnEvent(n"OnVendorClose");
       break;
 
@@ -226,4 +236,11 @@ protected cb func OnInventoryItemHoverOver(evt: ref<ItemDisplayHoverOverEvent>) 
   } else {
     wrappedMethod(evt);
   };
+}
+
+@addMethod(FullscreenVendorGameController)
+private func RefreshEquippedState() -> Void {
+  let evt: ref<VendorInventoryEquipStateChanged> = new VendorInventoryEquipStateChanged();
+  evt.system = this.m_previewManager;
+  GameInstance.GetUISystem(this.m_player.GetGame()).QueueEvent(evt);
 }
