@@ -9,6 +9,7 @@ public class AtelierTextButton extends inkCustomController {
   private let m_label: String;
   private let m_fontSize: Int32;
   private let m_tintColor: CName;
+  private let m_tintHoveredColor: CName;
   private let m_margin: inkMargin;
   private let m_clickable: Bool;
   private let m_enabled: Bool;
@@ -16,13 +17,14 @@ public class AtelierTextButton extends inkCustomController {
   private let m_isHovered: Bool;
   private let m_isPressed: Bool;
 
-  public static func Create(name: CName, label: String, fontSize: Int32, tint: CName, margin: inkMargin, clickable: Bool) -> ref<AtelierTextButton> {
+  public static func Create(name: CName, label: String, fontSize: Int32, tint: CName, tintHovered: CName, margin: inkMargin, clickable: Bool) -> ref<AtelierTextButton> {
     let self: ref<AtelierTextButton> = new AtelierTextButton();
     self.SetName(name);
     self.SetBaseName(name);
     self.SetLabel(label);
     self.SetFontSize(fontSize);
     self.SetTint(tint);
+    self.SetTintHovered(tintHovered);
     self.SetMargin(margin);
     self.SetClickable(clickable);
     self.SetEnabled(true);
@@ -50,12 +52,13 @@ public class AtelierTextButton extends inkCustomController {
     text.SetName(this.m_name);
     text.SetText(this.m_label);
     text.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-    text.SetFontStyle(n"Semi-Bold");
+    text.SetFontStyle(n"Medium");
     text.SetFontSize(this.m_fontSize);
-    text.SetAnchor(inkEAnchor.Centered);
-    text.SetVAlign(inkEVerticalAlign.Center);
-    text.SetMargin(this.m_margin);
+    text.SetAnchor(inkEAnchor.Fill);
     text.SetAnchorPoint(0.0, 0.0);
+    text.SetHAlign(inkEHorizontalAlign.Fill);
+    text.SetVAlign(inkEVerticalAlign.Fill);
+    text.SetMargin(this.m_margin);
     text.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     text.BindProperty(n"tintColor", this.m_tintColor);
     text.Reparent(root);
@@ -93,6 +96,10 @@ public class AtelierTextButton extends inkCustomController {
     this.m_tintColor = tint;
   }
 
+  public func SetTintHovered(tint: CName) -> Void {
+    this.m_tintHoveredColor = tint;
+  }
+
   public func SetLabel(label: String) -> Void {
     this.m_label = label;
   }
@@ -128,8 +135,6 @@ public class AtelierTextButton extends inkCustomController {
       return false;
     };
     this.SetHoveredState(false);
-    this.m_text.UnbindProperty(n"tintColor");
-    this.m_text.BindProperty(n"tintColor", this.m_tintColor);
   }
 
   protected cb func OnPress(evt: ref<inkPointerEvent>) -> Bool {
@@ -160,7 +165,7 @@ public class AtelierTextButton extends inkCustomController {
     if enabled {
       this.m_text.SetOpacity(1.0);
     } else {
-      this.m_text.SetOpacity(0.5);
+      this.m_text.SetOpacity(0.25);
     };
   }
 
@@ -214,5 +219,14 @@ public class AtelierTextButton extends inkCustomController {
 
   public func ToggleSounds(useSounds: Bool) -> Void {
     this.m_useSounds = useSounds;
+  }
+
+  public func SetHighlighted(highlighted: Bool) -> Void {
+    this.m_text.UnbindProperty(n"tintColor");
+    if highlighted {
+      this.m_text.BindProperty(n"tintColor", this.m_tintHoveredColor);
+    } else {
+      this.m_text.BindProperty(n"tintColor", this.m_tintColor);
+    };
   }
 }

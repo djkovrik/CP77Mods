@@ -124,20 +124,53 @@ public func PopulatePaginationControls() -> Void {
   panel.SetAnchorPoint(new Vector2(0.5, 0.5));
   panel.SetMargin(new inkMargin(0.0, 120.0, 0.0, 0.0));
 
-  this.navigationButtonPrev = AtelierTextButton.Create(n"ButtonPrev", VirtualAtelierText.PaginationPrev(), 58, n"MainColors.ActiveBlue", new inkMargin(0.0, 0.0, 0.0, 0.0), true);
+  this.navigationButtonPrev = AtelierTextButton.Create(n"ButtonPrev", VirtualAtelierText.PaginationPrev(), 68, n"MainColors.Blue", n"MainColors.ActiveBlue", new inkMargin(0.0, 0.0, 0.0, 0.0), true);
   this.navigationButtonPrev.RegisterToCallback(n"OnClick", this, n"OnClickPagination");
   this.navigationButtonPrev.Reparent(panel);
 
-  this.navigationLabel = AtelierTextButton.Create(n"NavLabel", this.GetPaginationLabel(), 60, n"MainColors.Red", new inkMargin(40.0, 0.0, 40.0, 0.0), false);
+  this.navigationLabel = AtelierTextButton.Create(n"NavLabel", this.GetPaginationLabel(), 70, n"MainColors.Red", n"", new inkMargin(40.0, 0.0, 40.0, 0.0), false);
   this.navigationLabel.Reparent(panel);
 
-  this.navigationButtonNext = AtelierTextButton.Create(n"ButtonNext", VirtualAtelierText.PaginationNext(), 58, n"MainColors.Blue", new inkMargin(0.0, 0.0, 0.0, 0.0), true);
+  this.navigationButtonNext = AtelierTextButton.Create(n"ButtonNext", VirtualAtelierText.PaginationNext(), 68, n"MainColors.Blue", n"MainColors.ActiveBlue", new inkMargin(0.0, 0.0, 0.0, 0.0), true);
   this.navigationButtonNext.RegisterToCallback(n"OnClick", this, n"OnClickPagination");
   this.navigationButtonNext.Reparent(panel);
 
   panel.Reparent(this.rootAtelierPanel);
 
   this.RefreshPaginationControlsState();
+
+  this.RegisterToCallback(n"OnHoverOver", this, n"OnElementHoverOver");
+  this.RegisterToCallback(n"OnHoverOut", this, n"OnElementHoverOut");
+}
+
+@addMethod(WebPage)
+protected cb func OnElementHoverOver(evt: ref<inkPointerEvent>) -> Bool {
+  switch evt.GetTarget().GetName() {
+    case n"ButtonPrev":
+      if this.navigationButtonPrev.IsEnabled() {
+        GameObject.PlaySoundEvent(this.owner, n"ui_menu_hover");
+        this.navigationButtonPrev.SetHighlighted(true);
+      };
+      break;
+    case n"ButtonNext":
+      if this.navigationButtonNext.IsEnabled() {
+        GameObject.PlaySoundEvent(this.owner, n"ui_menu_hover");
+        this.navigationButtonNext.SetHighlighted(true);
+      };
+      break;
+  };
+}
+
+@addMethod(WebPage)
+protected cb func OnElementHoverOut(evt: ref<inkPointerEvent>) -> Bool {
+  switch evt.GetTarget().GetName() {
+    case n"ButtonPrev":
+      this.navigationButtonPrev.SetHighlighted(false);
+      break;
+    case n"ButtonNext":
+      this.navigationButtonNext.SetHighlighted(false);
+      break;
+  };
 }
 
 @addMethod(WebPage)
@@ -152,11 +185,13 @@ protected cb func OnClickPagination(evt: ref<inkPointerEvent>) -> Bool {
   if evt.IsAction(n"click") {
     let widgetName: CName = evt.GetTarget().GetName();
     if Equals(widgetName, n"ButtonPrev") && this.navigationButtonPrev.IsEnabled() {
+      GameObject.PlaySoundEvent(this.owner, n"ui_menu_onpress");
       this.atelierCurrentPageIndex = this.atelierCurrentPageIndex - 1;
       this.RefreshPaginationControlsState();
       this.ShowCurrentPage();
     };
     if Equals(widgetName, n"ButtonNext") && this.navigationButtonNext.IsEnabled() {
+      GameObject.PlaySoundEvent(this.owner, n"ui_menu_onpress");
       this.atelierCurrentPageIndex = this.atelierCurrentPageIndex + 1;
       this.RefreshPaginationControlsState();
       this.ShowCurrentPage();
