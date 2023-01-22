@@ -4,10 +4,14 @@ import Edgerunning.Common.E
 public class EdgerunningSystem extends ScriptableSystem {
 
   private let player: wref<PlayerPuppet>;
-
   private let delaySystem: ref<DelaySystem>;
-
   private let cyberpsychosisSFX: array<ref<SFXBundle>>;
+  private let config: ref<EdgerunningConfig>;
+  private let teleportHelper: ref<TeleportHelper>;
+  private let currentHumanityPool: Int32;
+  private let cyberwareCost: Int32;
+  private let upperThreshold: Int32;
+  private let lowerThreshold: Int32;
 
   // Psychosis
   private let cycledSFXDelayId: DelayID;
@@ -26,28 +30,14 @@ public class EdgerunningSystem extends ScriptableSystem {
   private let victimSpawnDelayId4: DelayID;
   private let killRequests: array<DelayID>;
 
-  private let config: ref<EdgerunningConfig>;
-
-  private let currentHumanityPool: Int32;
-
-  private let cyberwareCost: Int32;
-
-  private let upperThreshold: Int32;
-
-  private let lowerThreshold: Int32;
-
   private persistent let currentHumanityDamage: Int32 = 0;
 
-  private let teleportHelper: ref<TeleportHelper>;
 
   private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
     let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(request.owner.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
     if IsDefined(player) {
       this.player = player;
       this.delaySystem = GameInstance.GetDelaySystem(this.player.GetGame());
-
-      this.RefreshConfig();
-      this.InvalidateCurrentState();
 
       ArrayPush(this.cyberpsychosisSFX, SFXBundle.Create(n"ono_v_breath_heavy", 3.0));
       ArrayPush(this.cyberpsychosisSFX, SFXBundle.Create(n"ono_v_pain_short", 7.0));
@@ -58,6 +48,9 @@ public class EdgerunningSystem extends ScriptableSystem {
 
       this.teleportHelper = new TeleportHelper();
       this.teleportHelper.Init();
+
+      this.RefreshConfig();
+      this.InvalidateCurrentState(true);
       this.PublishHumanityDamageOnLoad();
     };
   }
@@ -83,7 +76,7 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   // -- INVALIDATE
 
-  public func InvalidateCurrentState() -> Void {
+  public func InvalidateCurrentState(opt onLoad: Bool) -> Void {
     let evt: ref<UpdateHumanityCounterEvent> = new UpdateHumanityCounterEvent();
     let basePool: Int32 = this.GetHumanityTotal();
     let installedCyberware: Int32 = this.GetCurrentCyberwareCost(true);
@@ -102,20 +95,23 @@ public class EdgerunningSystem extends ScriptableSystem {
     GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(evt);
 
     if this.IsRipperdocBuffActive() { return; };
+
+    if this.currentHumanityPool > this.upperThreshold {
+      this.RemoveAllEffects();
+      return ;
+    }
     
     if this.currentHumanityPool < this.upperThreshold && this.currentHumanityPool >= this.lowerThreshold {
-      this.RunFirstStageIfNotActive();
+      this.RunFirstStageIfNotActive(onLoad);
     } else {
       if this.currentHumanityPool < this.lowerThreshold && this.currentHumanityPool > 0 {
-        this.RunSecondStageIfNotActive();
+        this.RunSecondStageIfNotActive(onLoad);
       } else {
         if Equals(this.currentHumanityPool, 0) {
-          this.RunSecondStageIfNotActive();
+          this.RunSecondStageIfNotActive(onLoad);
           if this.config.alwaysRunAtZero {
-            this.RunLastStageIfNotActive();
+            this.RunLastStageIfNotActive(onLoad);
           };
-        } else {
-          this.RemoveAllEffects();
         };
       };
     };
@@ -123,11 +119,11 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.PrintRemainingPoolDetails();
   }
 
-  public func RunFirstStageIfNotActive() -> Void {
-    if this.IsGlitchesActive() { return; };
+  public func RunFirstStageIfNotActive(opt onLoad: Bool) -> Void {
+    if this.IsGlitchesActive() && !onLoad { return; };
 
     if this.IsPrePsychosisActive() {
-      this.StopPrePsychosislitch();
+      this.StopPrePsychosisGlitch();
       this.StopPsychoChecks();
       this.StopPsychosis();
     };
@@ -135,8 +131,8 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.RunLowHumanityGlitch();
   }
 
-  public func RunSecondStageIfNotActive() -> Void {
-    if this.IsPrePsychosisActive() { return; };
+  public func RunSecondStageIfNotActive(opt onLoad: Bool) -> Void {
+    if this.IsPrePsychosisActive() && !onLoad { return; };
     if this.IsGlitchesActive() { this.StopLowHumanityGlitch(); }
 
     this.RunPrePsychosisGlitch();
@@ -144,8 +140,8 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.ScheduleNextPsychoCheck();
   }
 
-  public func RunLastStageIfNotActive() -> Void {
-    if this.IsPsychosisActive() { return; };
+  public func RunLastStageIfNotActive(opt onLoad: Bool) -> Void {
+    if this.IsPsychosisActive() && !onLoad { return; };
 
     this.StopPsychoChecks();
     this.RunPsychosis();
@@ -210,7 +206,7 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public func RemoveAllEffects() -> Void {
     this.StopLowHumanityGlitch();
-    this.StopPrePsychosislitch();
+    this.StopPrePsychosisGlitch();
     this.StopPsychosis();
     this.StopPsychoChecks();
     this.ClearTeleportDelays();
@@ -222,7 +218,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.StopVFX(n"hacking_glitch_low");
   };
 
-  public func StopPrePsychosislitch() -> Void {
+  public func StopPrePsychosisGlitch() -> Void {
     E("!!! STOP STAGE 2 - PRE-PSYCHOSIS");
     this.RemoveStatusEffect(t"BaseStatusEffect.ActivePrePsychosisGlitch", 0.1);
     this.StopVFX(n"hacking_glitch_low");
@@ -762,7 +758,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
   
   private func ClearTeleportDelays() -> Void {
-    E("Cancel scheduled deleport");
+    E("Cancel scheduled teleport");
     this.delaySystem.CancelDelay(this.prepareTeleportDelayId);
     this.delaySystem.CancelDelay(this.teleportDelayId);
     this.delaySystem.CancelDelay(this.postTeleportEffectsDelayId);
@@ -993,7 +989,7 @@ public class EdgerunningSystem extends ScriptableSystem {
       cost = this.GetCyberwareCost(record);
       if showLog {
         E(s"\(GetLocalizedTextByKey(name)) - \(area) - \(quality): costs -\(cost) humanity");
-      }
+      };
       installedCyberwarePool += cost;
     };
   
