@@ -1,6 +1,86 @@
 import VendorPreview.ItemPreviewManager.VirtualAtelierPreviewManager
 import VendorPreview.Utils.AtelierUtils
 import VendorPreview.Utils.AtelierDebug
+import VendorPreview.Codeware.UI.*
+
+@wrapMethod(FullscreenVendorGameController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+
+  let parentContainer: ref<inkCompoundWidget>;
+  let searchContainer: ref<inkCanvas>;
+  if this.GetIsVirtual() {
+    parentContainer = this.GetRootCompoundWidget().GetWidget(n"wrapper/wrapper/vendorPanel/vendorHeader") as inkCompoundWidget;
+    searchContainer = new inkCanvas();
+    searchContainer.SetMargin(new inkMargin(0.0, 8.0, 0.0, 32.0));
+    searchContainer.Reparent(parentContainer);
+    this.m_searchInput = HubTextInput.Create();
+    this.m_searchInput.SetName(n"SearchTextInput");
+    this.m_searchInput.SetLetterCase(textLetterCase.UpperCase);
+    this.m_searchInput.SetMaxLength(30);
+    this.m_searchInput.SetDefaultText(GetLocalizedText("LocKey#48662"));
+    this.m_searchInput.RegisterToCallback(n"OnInput", this, n"OnSearchInput");
+    this.m_searchInput.Reparent(searchContainer);
+
+    this.m_vendorItemsDataView.SetIsVirtual(true);
+  };
+}
+
+@addMethod(VendorDataView)
+public func SetIsVirtual(isVirtual: Bool) -> Void {
+  this.m_isVirtual = isVirtual;
+}
+
+@addMethod(VendorDataView)
+public func SetSearchQuery(query: String) -> Void {
+  this.m_searchQuery = query;
+}
+
+@wrapMethod(FullscreenVendorGameController)
+protected cb func OnVendorFilterChange(controller: wref<inkRadioGroupController>, selectedIndex: Int32) -> Bool {
+  this.m_vendorItemsDataView.SetSearchQuery("");
+  this.m_searchInput.SetText("");
+  return wrappedMethod(controller, selectedIndex);
+}
+
+@addMethod(FullscreenVendorGameController)
+protected cb func OnSearchInput(widget: wref<inkWidget>) {
+  this.m_vendorItemsDataView.SetSearchQuery(this.m_searchInput.GetText());
+  this.m_vendorItemsDataView.Filter();
+  this.m_vendorItemsDataView.EnableSorting();
+  this.m_vendorItemsDataView.SetFilterType(this.m_lastVendorFilter);
+  this.m_vendorItemsDataView.SetSortMode(this.m_vendorItemsDataView.GetSortMode());
+  this.m_vendorItemsDataView.DisableSorting();
+}
+
+@wrapMethod(VendorDataView)
+public func DerivedFilterItem(data: ref<IScriptable>) -> DerivedFilterResult {
+  let wrapped: DerivedFilterResult = wrappedMethod(data);
+  let data: ref<VendorInventoryItemData> = data as VendorInventoryItemData;
+  let query: String = StrLower(this.m_searchQuery);
+
+  if !IsDefined(data) || !this.m_isVirtual {
+    return wrapped;
+  };
+
+  let itemName: String = StrLower(GetLocalizedText(InventoryItemData.GetName(data.ItemData)));
+
+  if !StrContains(itemName, query) && NotEquals(query, "") {
+    return DerivedFilterResult.False;
+  };
+
+  return wrapped;
+}
+
+@wrapMethod(FullscreenVendorGameController)
+protected cb func OnHandleGlobalInput(evt: ref<inkPointerEvent>) -> Bool {
+  wrappedMethod(evt);
+  if evt.IsAction(n"mouse_left") {
+    if !IsDefined(evt.GetTarget()) || !evt.GetTarget().CanSupportFocus() {
+      this.RequestSetFocus(null);
+    };
+  };
+}
 
 @addMethod(FullscreenVendorGameController)
 private func BuyItemFromVirtualVendor(inventoryItemData: InventoryItemData) {

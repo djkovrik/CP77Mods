@@ -25,12 +25,16 @@ import VendorPreview.UI.*
 @addField(FullscreenVendorGameController) public let m_virtualStock: array<ref<VirtualStockItem>>;
 @addField(FullscreenVendorGameController) public let m_storesManager: wref<VirtualAtelierStoresSystem>;
 @addField(FullscreenVendorGameController) public let m_previewManager: wref<VirtualAtelierPreviewManager>;
+@addField(FullscreenVendorGameController) public let m_searchInput: ref<HubTextInput>;
 
 @addField(BackpackMainGameController) public let m_previewItemPopupToken: ref<inkGameNotificationToken>;
 @addField(BackpackMainGameController) public let m_isPreviewMode: Bool;
 
 @addField(InventoryTooltipData) public let virtualInventoryItemData: InventoryItemData;
 @addField(InventoryTooltipData) public let isVirtualItem: Bool;
+
+@addField(VendorDataView) public let m_isVirtual: Bool;
+@addField(VendorDataView) public let m_searchQuery: String;
 
 @addField(VendorPanelData) public let virtualStore: ref<VirtualShop>;
 @addField(MinimalItemTooltipData) public let isVirtualItem: Bool;
