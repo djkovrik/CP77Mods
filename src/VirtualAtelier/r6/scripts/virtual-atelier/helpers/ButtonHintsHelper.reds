@@ -32,7 +32,8 @@ public abstract class AtelierButtonHintsHelper {
       controller.m_buttonHintsController.AddButtonHint(vendorPreviewButtonHint.removeAllGarmentName, vendorPreviewButtonHint.removeAllGarmentLabel);
       controller.m_buttonHintsController.AddButtonHint(vendorPreviewButtonHint.removePreviewGarmentName, vendorPreviewButtonHint.removePreviewGarmentLabel);
       controller.m_buttonHintsController.AddButtonHint(vendorPreviewButtonHint.moveName, vendorPreviewButtonHint.moveLabel);
-      controller.m_buttonHintsController.AddCharacterRoatateButtonHint();
+      // Rotate hint looks weird with all caps - hide for now
+      // controller.m_buttonHintsController.AddCharacterRoatateButtonHint();
     } else {
       controller.m_buttonHintsController.RemoveButtonHint(vendorPreviewButtonHint.previewModeToggleName);
       controller.m_buttonHintsController.RemoveButtonHint(vendorPreviewButtonHint.resetGarmentName);
@@ -40,7 +41,7 @@ public abstract class AtelierButtonHintsHelper {
       controller.m_buttonHintsController.RemoveButtonHint(vendorPreviewButtonHint.zoomName);
       controller.m_buttonHintsController.RemoveButtonHint(vendorPreviewButtonHint.moveName);
       controller.m_buttonHintsController.RemoveButtonHint(vendorPreviewButtonHint.removePreviewGarmentName);
-      controller.m_buttonHintsController.HideCharacterRotateButtonHint();
+      // controller.m_buttonHintsController.HideCharacterRotateButtonHint();
 
       if (!isVirtual) {
         controller.m_buttonHintsController.AddButtonHint(vendorPreviewButtonHint.previewModeToggleName, vendorPreviewButtonHint.previewModeToggleEnableLabel);
@@ -49,6 +50,32 @@ public abstract class AtelierButtonHintsHelper {
       controller.m_buttonHintsController.AddButtonHint(n"back", GetLocalizedText("Common-Access-Close"));
       controller.m_buttonHintsController.AddButtonHint(n"sell_junk", GetLocalizedText("UI-UserActions-SellJunk"));
       controller.m_buttonHintsController.AddButtonHint(n"toggle_comparison_tooltip", GetLocalizedText(controller.m_isComparisionDisabled ? "UI-UserActions-EnableComparison" : "UI-UserActions-DisableComparison"));
+    };
+  }
+
+  public static func UpdatePurchaseHints(controller: ref<FullscreenVendorGameController>, show: Bool) -> Void {
+    let isVirtual: Bool = controller.GetIsVirtual();
+    if !isVirtual {
+      return ;
+    };
+
+    let vendorPreviewButtonHint: ref<VendorPreviewButtonHint> = VendorPreviewButtonHint.Get(controller.GetPlayerControlledObject());
+
+    if show {
+      controller.m_buttonHintsController.AddButtonHint(vendorPreviewButtonHint.previewModeToggleName, vendorPreviewButtonHint.previewModeTogglePurchaseLabel);
+    } else {
+      controller.m_buttonHintsController.RemoveButtonHint(vendorPreviewButtonHint.previewModeToggleName);
+    };
+  }
+
+  public static func UpdatePurchaseAllHint(controller: ref<FullscreenVendorGameController>, show: Bool) -> Void {
+    let vendorPreviewButtonHint: ref<VendorPreviewButtonHint> = VendorPreviewButtonHint.Get(controller.GetPlayerControlledObject());
+    let total: Int32 = controller.GetTotalVirtualStorePrice();
+    let label: String = s"\(vendorPreviewButtonHint.previewModeTogglePurchaseLabel) - \(GetLocalizedTextByKey(n"UI-Filters-AllItems")) (\(total) \(GetLocalizedTextByKey(n"Common-Characters-EuroDollar")))";
+    if show {
+      controller.m_buttonHintsController.AddButtonHint(vendorPreviewButtonHint.purchaseAll, label);
+    } else {
+      controller.m_buttonHintsController.RemoveButtonHint(vendorPreviewButtonHint.purchaseAll);
     };
   }
 }

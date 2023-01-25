@@ -17,21 +17,11 @@ public class VirtualAtelierText {
   // Preview button hint
   public static func PreviewDisable() -> String = "Disable Preview"
   // Preview button hint
-  public static func PreviewPurchase() -> String = "Purchase"
-  // Preview button hint
   public static func PreviewReset() -> String = "Reset Preview"
   // Preview button hint
   public static func PreviewRemoveAllGarment() -> String = "Remove All Garment"
   // Preview button hint
   public static func PreviewRemovePreviewGarment() -> String = "Remove Preview Garment"
-  // Preview button hint
-  public static func PreviewMove() -> String = "Move"
-  // Preview button hint
-  public static func PreviewRotate() -> String = "Zoom"
-  // Preview button hint
-  public static func PreviewEquip() -> String = "Equip"
-  // Preview button hint
-  public static func PreviewUnequip() -> String = "Unequip"
   // Preview button hint
   public static func PreviewItem() -> String = "Preview Item"
   // Duplicate items warning

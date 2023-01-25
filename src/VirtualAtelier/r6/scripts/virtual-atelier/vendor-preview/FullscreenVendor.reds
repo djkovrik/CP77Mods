@@ -128,9 +128,9 @@ private final func HandleVirtualSlotClick(evt: ref<ItemDisplayClickEvent>) -> Vo
       };
 
       if isEquipped {
-        hintLabel = VirtualAtelierText.PreviewEquip();
+        hintLabel = GetLocalizedTextByKey(n"UI-UserActions-Equip");
       } else {
-        hintLabel = VirtualAtelierText.PreviewUnequip();
+        hintLabel = GetLocalizedTextByKey(n"UI-UserActions-Unequip");
       };
 
       this.m_buttonHintsController.RemoveButtonHint(n"select");
@@ -150,7 +150,12 @@ protected cb func OnHandleGlobalInput(event: ref<inkPointerEvent>) -> Bool {
   let lastUsedKBM: Bool = this.GetPlayerControlledObject().PlayerLastUsedKBM();
   let isVirtual: Bool = this.GetIsVirtual();
 
-  if (isVirtual && event.IsAction(VendorPreviewButtonHint.Get(this.GetPlayerControlledObject()).previewModeToggleName)) {
+  if (isVirtual && event.IsAction(VendorPreviewButtonHint.Get(this.GetPlayerControlledObject()).purchaseAll)) {
+    this.BuyAllItemsFromVirtualVendor();
+    return false;
+  };
+
+  if (isVirtual && event.IsAction(VendorPreviewButtonHint.Get(this.GetPlayerControlledObject()).previewModeToggleName)) && this.m_lastItemHoverOverEvent != null {
     this.BuyItemFromVirtualVendor(this.m_lastItemHoverOverEvent.itemData);
     return false;
   };
@@ -209,12 +214,16 @@ protected cb func OnInventoryItemHoverOver(evt: ref<ItemDisplayHoverOverEvent>) 
     let isWeapon: Bool = RPGManager.IsItemWeapon(itemId);
     let isClothing: Bool = RPGManager.IsItemClothing(itemId);
 
+    if this.GetIsVirtual() {
+      AtelierButtonHintsHelper.UpdatePurchaseHints(this, true);
+    };
+
     let hintLabel: String;
     if (isWeapon || isClothing) {
       if isEquipped {
-        hintLabel = VirtualAtelierText.PreviewUnequip();
+        hintLabel = GetLocalizedTextByKey(n"UI-UserActions-Unequip");
       } else {
-        hintLabel = VirtualAtelierText.PreviewEquip();
+        hintLabel = GetLocalizedTextByKey(n"UI-UserActions-Equip");
       };
 
       this.m_buttonHintsController.RemoveButtonHint(n"select");
@@ -223,19 +232,20 @@ protected cb func OnInventoryItemHoverOver(evt: ref<ItemDisplayHoverOverEvent>) 
       this.m_buttonHintsController.RemoveButtonHint(n"select");
     };
 
-    if this.GetIsVirtual() {
-      let vendorPreviewButtonHint = VendorPreviewButtonHint.Get(this.GetPlayerControlledObject());
-      this.m_buttonHintsController.RemoveButtonHint(vendorPreviewButtonHint.previewModeToggleName);
-      this.m_buttonHintsController.AddButtonHint(vendorPreviewButtonHint.previewModeToggleName, vendorPreviewButtonHint.previewModeTogglePurchaseLabel);
-    };
-
     this.m_lastItemHoverOverEvent = evt;
+    this.RequestSetFocus(null);
 
     let noCompare: InventoryItemData;
     this.ShowTooltipsForItemController(evt.widget, noCompare, evt.itemData, evt.display.DEBUG_GetIconErrorInfo(), false);
   } else {
     wrappedMethod(evt);
   };
+}
+
+@wrapMethod(FullscreenVendorGameController)
+protected cb func OnInventoryItemHoverOut(evt: ref<ItemDisplayHoverOutEvent>) -> Bool {
+  wrappedMethod(evt);
+  AtelierButtonHintsHelper.UpdatePurchaseHints(this, false);
 }
 
 @addMethod(FullscreenVendorGameController)
