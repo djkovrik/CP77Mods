@@ -1,7 +1,7 @@
 module QHHotkeys
 
 private class QHConfig {
-  public static func ApplyOnSelect() -> Bool = false
+  public static func ApplyOnSelect() -> Bool = true
 }
 
 @wrapMethod(QuickhacksListGameController)
@@ -91,10 +91,17 @@ private func OnQuckhackByHotkeyActivation(requestedIndex: Int32) -> Void {
     return ;
   };
 
-  if Equals(requestedIndex, currentActiveIndex) {
+  if QHConfig.ApplyOnSelect() {
+    if NotEquals(requestedIndex, currentActiveIndex) {
+      this.m_listController.SetSelectedIndex(requestedIndex, QHConfig.ApplyOnSelect());
+    };
     this.ApplyQuickHack();
   } else {
-    this.m_listController.SetSelectedIndex(requestedIndex, QHConfig.ApplyOnSelect());
+    if Equals(requestedIndex, currentActiveIndex) {
+      this.ApplyQuickHack();
+    } else {
+      this.m_listController.SetSelectedIndex(requestedIndex, false);
+    };
   };
 }
 
