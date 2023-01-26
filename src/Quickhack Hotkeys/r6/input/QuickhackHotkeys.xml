@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<bindings>
+    <context name="QuickhackHotkeys" >
+		<action name="SelectHack1" map="SelectHack1_Button" />
+		<action name="SelectHack2" map="SelectHack2_Button" />
+		<action name="SelectHack3" map="SelectHack3_Button" />
+		<action name="SelectHack4" map="SelectHack4_Button" />
+		<action name="SelectHack5" map="SelectHack5_Button" />
+		<action name="SelectHack6" map="SelectHack6_Button" />
+		<action name="SelectHack7" map="SelectHack7_Button" />
+		<action name="SelectHack8" map="SelectHack8_Button" />
+		<action name="SelectHack9" map="SelectHack9_Button" />
+		<action name="SelectHack10" map="SelectHack10_Button" />
+    </context>
+
+    <context name="VisionActions" append="true">
+        <include name="QuickhackHotkeys" />
+    </context>
+
+	<mapping name="SelectHack1_Button" type="Button" >
+		<button id="IK_1" />
+	</mapping>
+	<mapping name="SelectHack2_Button" type="Button" >
+		<button id="IK_2" />
+	</mapping>
+	<mapping name="SelectHack3_Button" type="Button" >
+		<button id="IK_3" />
+	</mapping>
+	<mapping name="SelectHack4_Button" type="Button" >
+		<button id="IK_4" />
+	</mapping>
+	<mapping name="SelectHack5_Button" type="Button" >
+		<button id="IK_5" />
+	</mapping>
+	<mapping name="SelectHack6_Button" type="Button" >
+		<button id="IK_6" />
+	</mapping>
+	<mapping name="SelectHack7_Button" type="Button" >
+		<button id="IK_7" />
+	</mapping>
+	<mapping name="SelectHack8_Button" type="Button" >
+		<button id="IK_8" />
+	</mapping>
+	<mapping name="SelectHack9_Button" type="Button" >
+		<button id="IK_9" />
+	</mapping>
+	<mapping name="SelectHack10_Button" type="Button" >
+		<button id="IK_0" />
+	</mapping>
+	
+</bindings>
