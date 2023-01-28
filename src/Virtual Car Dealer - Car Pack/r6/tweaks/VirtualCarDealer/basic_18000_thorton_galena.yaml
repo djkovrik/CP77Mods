@@ -1,5 +1,5 @@
 Vehicle.vcd_galena_purchasable:
-  $base: Vehicle.v_standard2_thorton_galena
+  $base: Vehicle.v_standard2_thorton_galena_player
 
 #
 UIIcon.vcd_galena_purchasable.deathrace01:
@@ -8,7 +8,7 @@ UIIcon.vcd_galena_purchasable.deathrace01:
   atlasPartName: n"basic-deathrace-galena"
 
 Vehicle.vcd_galena_purchasable.deathrace01:
-  $base: Vehicle.v_standard2_thorton_galena_quest
+  $base: Vehicle.v_standard2_thorton_galena_gt
   appearanceName: n"thorton_galena__basic_deathrace_galena"
   icon: UIIcon.vcd_galena_purchasable.deathrace01
 Vehicle.vcd_galena_purchasable.deathrace01.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_galena_basic_full.inkatlas"
@@ -21,7 +21,7 @@ UIIcon.vcd_galena_purchasable.deathrace02:
   atlasPartName: n"basic-deathrace-galena-02"
 
 Vehicle.vcd_galena_purchasable.deathrace02:
-  $base: Vehicle.v_standard2_thorton_galena_quest
+  $base: Vehicle.v_standard2_thorton_galena_gt
   appearanceName: n"thorton_galena__basic_deathrace_galena_02"
   icon: UIIcon.vcd_galena_purchasable.deathrace02
 Vehicle.vcd_galena_purchasable.deathrace02.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_galena_basic_full.inkatlas"
@@ -85,8 +85,9 @@ UIIcon.vcd_galena_purchasable.suburban01:
   atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_galena_special_preview.inkatlas"
   atlasPartName: n"basic-suburban-01"
 
+
 Vehicle.vcd_galena_purchasable.suburban01:
-  $base: Vehicle.v_standard2_thorton_galena
+  $base: Vehicle.v_standard2_thorton_galena_player
   appearanceName: n"thorton_galena__basic_suburban_01"
   icon: UIIcon.vcd_galena_purchasable.suburban01
 Vehicle.vcd_galena_purchasable.suburban01.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_galena_special_full.inkatlas"
@@ -99,7 +100,7 @@ UIIcon.vcd_galena_purchasable.suburban02:
   atlasPartName: n"basic-suburban-02"
 
 Vehicle.vcd_galena_purchasable.suburban02:
-  $base: Vehicle.v_standard2_thorton_galena
+  $base: Vehicle.v_standard2_thorton_galena_player
   appearanceName: n"thorton_galena__basic_suburban_02"
   icon: UIIcon.vcd_galena_purchasable.suburban02
 Vehicle.vcd_galena_purchasable.suburban02.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_galena_special_full.inkatlas"
@@ -112,7 +113,7 @@ UIIcon.vcd_galena_purchasable.suburban03:
   atlasPartName: n"basic-suburban-03"
 
 Vehicle.vcd_galena_purchasable.suburban03:
-  $base: Vehicle.v_standard2_thorton_galena
+  $base: Vehicle.v_standard2_thorton_galena_player
   appearanceName: n"thorton_galena__basic_suburban_03"
   icon: UIIcon.vcd_galena_purchasable.suburban03
 Vehicle.vcd_galena_purchasable.suburban03.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_galena_basic_full.inkatlas"
@@ -125,24 +126,24 @@ UIIcon.vcd_galena_purchasable.suburban04:
   atlasPartName: n"basic-suburban-04"
 
 Vehicle.vcd_galena_purchasable.suburban04:
-  $base: Vehicle.v_standard2_thorton_galena
+  $base: Vehicle.v_standard2_thorton_galena_player
   appearanceName: n"thorton_galena__basic_suburban_04"
   icon: UIIcon.vcd_galena_purchasable.suburban04
 Vehicle.vcd_galena_purchasable.suburban04.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_galena_special_full.inkatlas"
 Vehicle.vcd_galena_purchasable.suburban04.dealerPartName: "basic-suburban-04"
 
 #
-UIIcon.vcd_galena_purchasable.suburban05:
-  $type: UIIcon_Record
-  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_galena_basic_preview.inkatlas"
-  atlasPartName: n"basic-suburban-05"
-
-Vehicle.vcd_galena_purchasable.suburban05:
-  $base: Vehicle.v_standard2_thorton_galena
-  appearanceName: n"thorton_galena__basic_suburban_5"
-  icon: UIIcon.vcd_galena_purchasable.suburban05
-Vehicle.vcd_galena_purchasable.suburban05.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_galena_basic_full.inkatlas"
-Vehicle.vcd_galena_purchasable.suburban05.dealerPartName: "basic-suburban-05"
+#UIIcon.vcd_galena_purchasable.suburban05:
+#  $type: UIIcon_Record
+#  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_galena_basic_preview.inkatlas"
+#  atlasPartName: n"basic-suburban-05"
+#
+#Vehicle.vcd_galena_purchasable.suburban05:
+#  $base: Vehicle.v_standard2_thorton_galena_player
+#  appearanceName: n"thorton_galena__basic_suburban_5"
+#  icon: UIIcon.vcd_galena_purchasable.suburban05
+#Vehicle.vcd_galena_purchasable.suburban05.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_galena_basic_full.inkatlas"
+#Vehicle.vcd_galena_purchasable.suburban05.dealerPartName: "basic-suburban-05"
 
 #
 UIIcon.vcd_galena_purchasable.suburban06:
@@ -151,7 +152,7 @@ UIIcon.vcd_galena_purchasable.suburban06:
   atlasPartName: n"basic-suburban-06"
 
 Vehicle.vcd_galena_purchasable.suburban06:
-  $base: Vehicle.v_standard2_thorton_galena
+  $base: Vehicle.v_standard2_thorton_galena_player
   appearanceName: n"thorton_galena__basic_suburban_06"
   icon: UIIcon.vcd_galena_purchasable.suburban06
 Vehicle.vcd_galena_purchasable.suburban06.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_galena_basic_full.inkatlas"
@@ -164,7 +165,7 @@ UIIcon.vcd_galena_purchasable.suburban07:
   atlasPartName: n"basic-suburban-07"
 
 Vehicle.vcd_galena_purchasable.suburban07:
-  $base: Vehicle.v_standard2_thorton_galena
+  $base: Vehicle.v_standard2_thorton_galena_player
   appearanceName: n"thorton_galena__basic_suburban_07"
   icon: UIIcon.vcd_galena_purchasable.suburban07
 Vehicle.vcd_galena_purchasable.suburban07.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_galena_special_full.inkatlas"
@@ -184,7 +185,7 @@ Vehicle.vcd_galena_purchasable.dealerVariants:
   - "Vehicle.vcd_galena_purchasable.suburban02"
   - "Vehicle.vcd_galena_purchasable.suburban03"
   - "Vehicle.vcd_galena_purchasable.suburban04"
-  #- "Vehicle.vcd_galena_purchasable.suburban05"
+#  - "Vehicle.vcd_galena_purchasable.suburban05"
   - "Vehicle.vcd_galena_purchasable.suburban06"
   - "Vehicle.vcd_galena_purchasable.suburban07"
 
@@ -200,6 +201,6 @@ Vehicle.vehicle_list.list:
   - !append t"Vehicle.vcd_galena_purchasable.suburban02"
   - !append t"Vehicle.vcd_galena_purchasable.suburban03"
   - !append t"Vehicle.vcd_galena_purchasable.suburban04"
-  #- !append t"Vehicle.vcd_galena_purchasable.suburban05"
+#  - !append t"Vehicle.vcd_galena_purchasable.suburban05"
   - !append t"Vehicle.vcd_galena_purchasable.suburban06"
   - !append t"Vehicle.vcd_galena_purchasable.suburban07"

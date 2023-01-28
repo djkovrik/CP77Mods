@@ -1,7 +1,7 @@
 module QHHotkeys
 
 private class QHConfig {
-  public static func ApplyOnSelect() -> Bool = true
+  public static func ApplyOnSelect() -> Bool = false
 }
 
 @wrapMethod(QuickhacksListGameController)
