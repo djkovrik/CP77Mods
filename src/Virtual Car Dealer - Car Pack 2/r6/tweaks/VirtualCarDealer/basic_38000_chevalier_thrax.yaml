@@ -1,0 +1,130 @@
+Vehicle.vcd_chevalier_thrax_purchasable:
+  $base: Vehicle.v_standard2_chevalier_thrax
+
+#
+UIIcon.vcd_chevalier_thrax_purchasable.suburban01:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_thrax_preview.inkatlas"
+  atlasPartName: n"suburban-01"
+
+Vehicle.vcd_chevalier_thrax_purchasable.suburban01:
+  $base: Vehicle.v_standard2_chevalier_thrax
+  appearanceName: n"chevalier_thrax__basic_suburban_01"
+  icon: UIIcon.vcd_chevalier_thrax_purchasable.suburban01
+Vehicle.vcd_chevalier_thrax_purchasable.suburban01.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_thrax_full.inkatlas"
+Vehicle.vcd_chevalier_thrax_purchasable.suburban01.dealerPartName: "suburban-01"
+
+#
+UIIcon.vcd_chevalier_thrax_purchasable.suburban02:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_thrax_preview.inkatlas"
+  atlasPartName: n"suburban-02"
+
+Vehicle.vcd_chevalier_thrax_purchasable.suburban02:
+  $base: Vehicle.v_standard2_chevalier_thrax
+  appearanceName: n"chevalier_thrax__basic_suburban_02"
+  icon: UIIcon.vcd_chevalier_thrax_purchasable.suburban02
+Vehicle.vcd_chevalier_thrax_purchasable.suburban02.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_thrax_full.inkatlas"
+Vehicle.vcd_chevalier_thrax_purchasable.suburban02.dealerPartName: "suburban-02"
+
+#
+UIIcon.vcd_chevalier_thrax_purchasable.suburban03:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_thrax_preview.inkatlas"
+  atlasPartName: n"suburban-03"
+
+Vehicle.vcd_chevalier_thrax_purchasable.suburban03:
+  $base: Vehicle.v_standard2_chevalier_thrax
+  appearanceName: n"chevalier_thrax__basic_suburban_03"
+  icon: UIIcon.vcd_chevalier_thrax_purchasable.suburban03
+Vehicle.vcd_chevalier_thrax_purchasable.suburban03.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_thrax_full.inkatlas"
+Vehicle.vcd_chevalier_thrax_purchasable.suburban03.dealerPartName: "suburban-03"
+
+#
+UIIcon.vcd_chevalier_thrax_purchasable.suburban04:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_thrax_preview.inkatlas"
+  atlasPartName: n"suburban-04"
+
+Vehicle.vcd_chevalier_thrax_purchasable.suburban04:
+  $base: Vehicle.v_standard2_chevalier_thrax
+  appearanceName: n"chevalier_thrax__basic_suburban_04"
+  icon: UIIcon.vcd_chevalier_thrax_purchasable.suburban04
+Vehicle.vcd_chevalier_thrax_purchasable.suburban04.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_thrax_full.inkatlas"
+Vehicle.vcd_chevalier_thrax_purchasable.suburban04.dealerPartName: "suburban-04"
+
+#
+UIIcon.vcd_chevalier_thrax_purchasable.suburban05:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_thrax_preview.inkatlas"
+  atlasPartName: n"suburban-05"
+
+Vehicle.vcd_chevalier_thrax_purchasable.suburban05:
+  $base: Vehicle.v_standard2_chevalier_thrax
+  appearanceName: n"chevalier_thrax__basic_suburban_05"
+  icon: UIIcon.vcd_chevalier_thrax_purchasable.suburban05
+Vehicle.vcd_chevalier_thrax_purchasable.suburban05.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_thrax_full.inkatlas"
+Vehicle.vcd_chevalier_thrax_purchasable.suburban05.dealerPartName: "suburban-05"
+
+#
+UIIcon.vcd_chevalier_thrax_purchasable.suburban06:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_thrax_preview.inkatlas"
+  atlasPartName: n"suburban-06"
+
+Vehicle.vcd_chevalier_thrax_purchasable.suburban06:
+  $base: Vehicle.v_standard2_chevalier_thrax
+  appearanceName: n"chevalier_thrax__basic_suburban_06"
+  icon: UIIcon.vcd_chevalier_thrax_purchasable.suburban06
+Vehicle.vcd_chevalier_thrax_purchasable.suburban06.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_thrax_full.inkatlas"
+Vehicle.vcd_chevalier_thrax_purchasable.suburban06.dealerPartName: "suburban-06"
+
+#
+UIIcon.vcd_chevalier_thrax_purchasable.suburban07:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_thrax_preview.inkatlas"
+  atlasPartName: n"suburban-07"
+
+Vehicle.vcd_chevalier_thrax_purchasable.suburban07:
+  $base: Vehicle.v_standard2_chevalier_thrax
+  appearanceName: n"chevalier_thrax__basic_suburban_07"
+  icon: UIIcon.vcd_chevalier_thrax_purchasable.suburban07
+Vehicle.vcd_chevalier_thrax_purchasable.suburban07.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_thrax_full.inkatlas"
+Vehicle.vcd_chevalier_thrax_purchasable.suburban07.dealerPartName: "suburban-07"
+
+
+#
+UIIcon.vcd_chevalier_thrax_purchasable.urban01:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_thrax_preview.inkatlas"
+  atlasPartName: n"urban-01"
+
+Vehicle.vcd_chevalier_thrax_purchasable.urban01:
+  $base: Vehicle.v_standard2_chevalier_thrax_premium
+  appearanceName: n"chevalier_thrax__basic_urban_01"
+  icon: UIIcon.vcd_chevalier_thrax_purchasable.urban01
+Vehicle.vcd_chevalier_thrax_purchasable.urban01.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_thrax_full.inkatlas"
+Vehicle.vcd_chevalier_thrax_purchasable.urban01.dealerPartName: "urban-01"
+
+# Core
+Vehicle.vcd_chevalier_thrax_purchasable.dealerPrice: 38000
+Vehicle.vcd_chevalier_thrax_purchasable.dealerCred: 10
+Vehicle.vcd_chevalier_thrax_purchasable.dealerVariants: 
+  - "Vehicle.vcd_chevalier_thrax_purchasable.suburban01"
+  - "Vehicle.vcd_chevalier_thrax_purchasable.suburban02"
+  - "Vehicle.vcd_chevalier_thrax_purchasable.suburban03"
+  - "Vehicle.vcd_chevalier_thrax_purchasable.suburban04"
+  - "Vehicle.vcd_chevalier_thrax_purchasable.suburban05"
+  - "Vehicle.vcd_chevalier_thrax_purchasable.suburban06"
+  - "Vehicle.vcd_chevalier_thrax_purchasable.suburban07"
+  - "Vehicle.vcd_chevalier_thrax_purchasable.urban01"
+
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_chevalier_thrax_purchasable.suburban01"
+  - !append t"Vehicle.vcd_chevalier_thrax_purchasable.suburban02"
+  - !append t"Vehicle.vcd_chevalier_thrax_purchasable.suburban03"
+  - !append t"Vehicle.vcd_chevalier_thrax_purchasable.suburban04"
+  - !append t"Vehicle.vcd_chevalier_thrax_purchasable.suburban05"
+  - !append t"Vehicle.vcd_chevalier_thrax_purchasable.suburban06"
+  - !append t"Vehicle.vcd_chevalier_thrax_purchasable.suburban07"
+  - !append t"Vehicle.vcd_chevalier_thrax_purchasable.urban01"

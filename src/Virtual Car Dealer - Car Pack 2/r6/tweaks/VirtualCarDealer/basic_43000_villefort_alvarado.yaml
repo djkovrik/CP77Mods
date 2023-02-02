@@ -1,0 +1,221 @@
+Vehicle.vcd_villefort_alvarado_purchasable:
+  $base: Vehicle.v_sport2_villefort_alvarado
+
+#
+UIIcon.vcd_villefort_alvarado_purchasable.suburban01:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_alvarado_preview.inkatlas"
+  atlasPartName: n"suburban-01"
+
+Vehicle.vcd_villefort_alvarado_purchasable.suburban01:
+  $base: Vehicle.v_sport2_villefort_alvarado_poor
+  appearanceName: n"villefort_alvarado__basic_suburban_01"
+  icon: UIIcon.vcd_villefort_alvarado_purchasable.suburban01
+Vehicle.vcd_villefort_alvarado_purchasable.suburban01.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_alvarado_suburban_full.inkatlas"
+Vehicle.vcd_villefort_alvarado_purchasable.suburban01.dealerPartName: "suburban-01"
+
+#
+UIIcon.vcd_villefort_alvarado_purchasable.suburban02:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_alvarado_preview.inkatlas"
+  atlasPartName: n"suburban-02"
+
+Vehicle.vcd_villefort_alvarado_purchasable.suburban02:
+  $base: Vehicle.v_sport2_villefort_alvarado_poor
+  appearanceName: n"villefort_alvarado__basic_suburban_02"
+  icon: UIIcon.vcd_villefort_alvarado_purchasable.suburban02
+Vehicle.vcd_villefort_alvarado_purchasable.suburban02.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_alvarado_suburban_full.inkatlas"
+Vehicle.vcd_villefort_alvarado_purchasable.suburban02.dealerPartName: "suburban-02"
+
+#
+UIIcon.vcd_villefort_alvarado_purchasable.suburban03:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_alvarado_preview.inkatlas"
+  atlasPartName: n"suburban-03"
+
+Vehicle.vcd_villefort_alvarado_purchasable.suburban03:
+  $base: Vehicle.v_sport2_villefort_alvarado_poor
+  appearanceName: n"villefort_alvarado__basic_suburban_03"
+  icon: UIIcon.vcd_villefort_alvarado_purchasable.suburban03
+Vehicle.vcd_villefort_alvarado_purchasable.suburban03.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_alvarado_suburban_full.inkatlas"
+Vehicle.vcd_villefort_alvarado_purchasable.suburban03.dealerPartName: "suburban-03"
+
+#
+UIIcon.vcd_villefort_alvarado_purchasable.suburban04:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_alvarado_preview.inkatlas"
+  atlasPartName: n"suburban-04"
+
+Vehicle.vcd_villefort_alvarado_purchasable.suburban04:
+  $base: Vehicle.v_sport2_villefort_alvarado_poor
+  appearanceName: n"villefort_alvarado__basic_suburban_04"
+  icon: UIIcon.vcd_villefort_alvarado_purchasable.suburban04
+Vehicle.vcd_villefort_alvarado_purchasable.suburban04.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_alvarado_suburban_full.inkatlas"
+Vehicle.vcd_villefort_alvarado_purchasable.suburban04.dealerPartName: "suburban-04"
+
+#
+UIIcon.vcd_villefort_alvarado_purchasable.suburban05:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_alvarado_preview.inkatlas"
+  atlasPartName: n"suburban-05"
+
+Vehicle.vcd_villefort_alvarado_purchasable.suburban05:
+  $base: Vehicle.v_sport2_villefort_alvarado_poor
+  appearanceName: n"villefort_alvarado__basic_suburban_05"
+  icon: UIIcon.vcd_villefort_alvarado_purchasable.suburban05
+Vehicle.vcd_villefort_alvarado_purchasable.suburban05.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_alvarado_suburban_full.inkatlas"
+Vehicle.vcd_villefort_alvarado_purchasable.suburban05.dealerPartName: "suburban-05"
+
+#
+UIIcon.vcd_villefort_alvarado_purchasable.suburban06:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_alvarado_preview.inkatlas"
+  atlasPartName: n"suburban-06"
+
+Vehicle.vcd_villefort_alvarado_purchasable.suburban06:
+  $base: Vehicle.v_sport2_villefort_alvarado_poor
+  appearanceName: n"villefort_alvarado__basic_suburban_06"
+  icon: UIIcon.vcd_villefort_alvarado_purchasable.suburban06
+Vehicle.vcd_villefort_alvarado_purchasable.suburban06.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_alvarado_suburban_full.inkatlas"
+Vehicle.vcd_villefort_alvarado_purchasable.suburban06.dealerPartName: "suburban-06"
+
+#
+UIIcon.vcd_villefort_alvarado_purchasable.suburban07:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_alvarado_preview.inkatlas"
+  atlasPartName: n"suburban-07"
+
+Vehicle.vcd_villefort_alvarado_purchasable.suburban07:
+  $base: Vehicle.v_sport2_villefort_alvarado_poor
+  appearanceName: n"villefort_alvarado__basic_suburban_07"
+  icon: UIIcon.vcd_villefort_alvarado_purchasable.suburban07
+Vehicle.vcd_villefort_alvarado_purchasable.suburban07.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_alvarado_suburban_full.inkatlas"
+Vehicle.vcd_villefort_alvarado_purchasable.suburban07.dealerPartName: "suburban-07"
+
+
+#
+UIIcon.vcd_villefort_alvarado_purchasable.urban01:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_alvarado_preview.inkatlas"
+  atlasPartName: n"urban-01"
+
+Vehicle.vcd_villefort_alvarado_purchasable.urban01:
+  $base: Vehicle.v_sport2_villefort_alvarado_premium
+  appearanceName: n"villefort_alvarado__basic_urban_01"
+  icon: UIIcon.vcd_villefort_alvarado_purchasable.urban01
+Vehicle.vcd_villefort_alvarado_purchasable.urban01.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_alvarado_urban_full.inkatlas"
+Vehicle.vcd_villefort_alvarado_purchasable.urban01.dealerPartName: "urban-01"
+
+#
+UIIcon.vcd_villefort_alvarado_purchasable.urban02:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_alvarado_preview.inkatlas"
+  atlasPartName: n"urban-02"
+
+Vehicle.vcd_villefort_alvarado_purchasable.urban02:
+  $base: Vehicle.v_sport2_villefort_alvarado_premium
+  appearanceName: n"villefort_alvarado__basic_urban_02"
+  icon: UIIcon.vcd_villefort_alvarado_purchasable.urban02
+Vehicle.vcd_villefort_alvarado_purchasable.urban02.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_alvarado_urban_full.inkatlas"
+Vehicle.vcd_villefort_alvarado_purchasable.urban02.dealerPartName: "urban-02"
+
+#
+UIIcon.vcd_villefort_alvarado_purchasable.urban03:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_alvarado_preview.inkatlas"
+  atlasPartName: n"urban-03"
+
+Vehicle.vcd_villefort_alvarado_purchasable.urban03:
+  $base: Vehicle.v_sport2_villefort_alvarado_premium
+  appearanceName: n"villefort_alvarado__basic_urban_03"
+  icon: UIIcon.vcd_villefort_alvarado_purchasable.urban03
+Vehicle.vcd_villefort_alvarado_purchasable.urban03.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_alvarado_urban_full.inkatlas"
+Vehicle.vcd_villefort_alvarado_purchasable.urban03.dealerPartName: "urban-03"
+
+#
+UIIcon.vcd_villefort_alvarado_purchasable.urban04:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_alvarado_preview.inkatlas"
+  atlasPartName: n"urban-04"
+
+Vehicle.vcd_villefort_alvarado_purchasable.urban04:
+  $base: Vehicle.v_sport2_villefort_alvarado_premium
+  appearanceName: n"villefort_alvarado__basic_urban_04"
+  icon: UIIcon.vcd_villefort_alvarado_purchasable.urban04
+Vehicle.vcd_villefort_alvarado_purchasable.urban04.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_alvarado_urban_full.inkatlas"
+Vehicle.vcd_villefort_alvarado_purchasable.urban04.dealerPartName: "urban-04"
+
+#
+UIIcon.vcd_villefort_alvarado_purchasable.urban05:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_alvarado_preview.inkatlas"
+  atlasPartName: n"urban-05"
+
+Vehicle.vcd_villefort_alvarado_purchasable.urban05:
+  $base: Vehicle.v_sport2_villefort_alvarado_premium
+  appearanceName: n"villefort_alvarado__basic_urban_05"
+  icon: UIIcon.vcd_villefort_alvarado_purchasable.urban05
+Vehicle.vcd_villefort_alvarado_purchasable.urban05.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_alvarado_urban_full.inkatlas"
+Vehicle.vcd_villefort_alvarado_purchasable.urban05.dealerPartName: "urban-05"
+
+#
+UIIcon.vcd_villefort_alvarado_purchasable.urban06:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_alvarado_preview.inkatlas"
+  atlasPartName: n"urban-06"
+
+Vehicle.vcd_villefort_alvarado_purchasable.urban06:
+  $base: Vehicle.v_sport2_villefort_alvarado_premium
+  appearanceName: n"villefort_alvarado__basic_urban_06"
+  icon: UIIcon.vcd_villefort_alvarado_purchasable.urban06
+Vehicle.vcd_villefort_alvarado_purchasable.urban06.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_alvarado_urban_full.inkatlas"
+Vehicle.vcd_villefort_alvarado_purchasable.urban06.dealerPartName: "urban-06"
+
+#
+UIIcon.vcd_villefort_alvarado_purchasable.urban07:
+  $type: UIIcon_Record
+  atlasResourcePath: r"base/gameplay/gui/common/icons/cardealer/cardealer_alvarado_preview.inkatlas"
+  atlasPartName: n"urban-07"
+
+Vehicle.vcd_villefort_alvarado_purchasable.urban07:
+  $base: Vehicle.v_sport2_villefort_alvarado_premium
+  appearanceName: n"villefort_alvarado__basic_urban_07"
+  icon: UIIcon.vcd_villefort_alvarado_purchasable.urban07
+Vehicle.vcd_villefort_alvarado_purchasable.urban07.dealerAtlasPath: "base/gameplay/gui/common/icons/cardealer/cardealer_alvarado_urban_full.inkatlas"
+Vehicle.vcd_villefort_alvarado_purchasable.urban07.dealerPartName: "urban-07"
+
+
+# Core
+Vehicle.vcd_villefort_alvarado_purchasable.dealerPrice: 43000
+Vehicle.vcd_villefort_alvarado_purchasable.dealerCred: 20
+Vehicle.vcd_villefort_alvarado_purchasable.dealerVariants: 
+  - "Vehicle.vcd_villefort_alvarado_purchasable.suburban01"
+  - "Vehicle.vcd_villefort_alvarado_purchasable.suburban02"
+  - "Vehicle.vcd_villefort_alvarado_purchasable.suburban03"
+  - "Vehicle.vcd_villefort_alvarado_purchasable.suburban04"
+  - "Vehicle.vcd_villefort_alvarado_purchasable.suburban05"
+  - "Vehicle.vcd_villefort_alvarado_purchasable.suburban06"
+  - "Vehicle.vcd_villefort_alvarado_purchasable.suburban07"
+  - "Vehicle.vcd_villefort_alvarado_purchasable.urban01"
+  - "Vehicle.vcd_villefort_alvarado_purchasable.urban02"
+  - "Vehicle.vcd_villefort_alvarado_purchasable.urban03"
+  - "Vehicle.vcd_villefort_alvarado_purchasable.urban04"
+  - "Vehicle.vcd_villefort_alvarado_purchasable.urban05"
+  - "Vehicle.vcd_villefort_alvarado_purchasable.urban06"
+  - "Vehicle.vcd_villefort_alvarado_purchasable.urban07"
+
+Vehicle.vehicle_list.list:
+  - !append t"Vehicle.vcd_villefort_alvarado_purchasable.suburban01"
+  - !append t"Vehicle.vcd_villefort_alvarado_purchasable.suburban02"
+  - !append t"Vehicle.vcd_villefort_alvarado_purchasable.suburban03"
+  - !append t"Vehicle.vcd_villefort_alvarado_purchasable.suburban04"
+  - !append t"Vehicle.vcd_villefort_alvarado_purchasable.suburban05"
+  - !append t"Vehicle.vcd_villefort_alvarado_purchasable.suburban06"
+  - !append t"Vehicle.vcd_villefort_alvarado_purchasable.suburban07"
+  - !append t"Vehicle.vcd_villefort_alvarado_purchasable.urban01"
+  - !append t"Vehicle.vcd_villefort_alvarado_purchasable.urban02"
+  - !append t"Vehicle.vcd_villefort_alvarado_purchasable.urban03"
+  - !append t"Vehicle.vcd_villefort_alvarado_purchasable.urban04"
+  - !append t"Vehicle.vcd_villefort_alvarado_purchasable.urban05"
+  - !append t"Vehicle.vcd_villefort_alvarado_purchasable.urban06"
+  - !append t"Vehicle.vcd_villefort_alvarado_purchasable.urban07"
