@@ -20,14 +20,28 @@ private func PopulateDealerView(owner: ref<GameObject>) {
     if Equals(stockSize, 0) {
       this.ShowDealerEmptyScreen();
     } else {
-      this.vehicleIndex = 0;
-      this.vehicleLastIndex = stockSize - 1;
-      this.vehicleVariantIndex = 0;
-      this.vehicleVariantLastIndex = ArraySize(this.vehiclesStock[this.vehicleIndex].variants) - 1;
-      this.ShowDealerCommonElements();
-      this.ShowDealerCurrentPage();
+      this.ShowDealerScreen(stockSize);
     };
   };
+}
+
+// -- Play click sound + open autofixer screen
+@addMethod(WebPage)
+private func DealerOpenFixerScreen() {
+  this.PlayCustomSoundDealer(n"ui_menu_onpress");
+  this.dealerPanelRoot.RemoveAllChildren();
+  this.SpawnFromExternal(this.dealerPanelRoot, r"base\\gameplay\\gui\\autofixer.inkwidget", n"AutofixerManager:CarDealer.AutofixerVirtualController");
+}
+
+// Show dealer screen
+@addMethod(WebPage)
+private func ShowDealerScreen(stockSize: Int32) -> Void {
+  this.vehicleIndex = 0;
+  this.vehicleLastIndex = stockSize - 1;
+  this.vehicleVariantIndex = 0;
+  this.vehicleVariantLastIndex = ArraySize(this.vehiclesStock[this.vehicleIndex].variants) - 1;
+  this.ShowDealerCommonElements();
+  this.ShowDealerCurrentPage();
 }
 
 // Show empty screen
@@ -211,11 +225,22 @@ private func GetDealerButtonsContainer() -> ref<inkVerticalPanel> {
   let rowBottom: ref<inkHorizontalPanel> = new inkHorizontalPanel();
   rowBottom.SetName(n"ButtonsBottom");
   rowBottom.SetFitToContent(true);
-  rowBottom.SetHAlign(inkEHorizontalAlign.Right);
+  rowBottom.SetHAlign(inkEHorizontalAlign.Fill);
   rowBottom.SetAnchor(inkEAnchor.CenterRight);
   rowBottom.SetAnchorPoint(new Vector2(0.5, 0.5));
   rowBottom.SetMargin(new inkMargin(0.0, 40.0, 0.0, 0.0));
   rowBottom.SetChildMargin(new inkMargin(20.0, 0.0, 20.0, 0.0));
+
+  this.buttonFixer = CustomHubButton.Create();
+  this.buttonFixer.SetName(n"ButtonFixer");
+  this.buttonFixer.SetText(GetLocalizedText("LocKey#80281"));
+  this.buttonFixer.ToggleAnimations(true);
+  this.buttonFixer.ToggleSounds(true);
+  this.buttonFixer.SetTextColor(n"MainColors.Green");
+  this.buttonFixer.SetHoverColor(n"MainColors.Green");
+  this.buttonFixer.SetFluffColor(n"MainColors.ActiveGreen");
+  this.buttonFixer.SetLeftSideColor(n"MainColors.ActiveGreen");
+  this.buttonFixer.Reparent(rowBottom);
 
   this.buttonBuy = CustomHubButton.Create();
   this.buttonBuy.SetName(n"ButtonBuy");
@@ -227,7 +252,6 @@ private func GetDealerButtonsContainer() -> ref<inkVerticalPanel> {
   this.buttonBuy.SetFluffColor(n"MainColors.Yellow");
   this.buttonBuy.SetLeftSideColor(n"MainColors.Yellow");
   this.buttonBuy.Reparent(rowBottom);
-
 
   this.RegisterDealerListeners();
 
@@ -255,6 +279,10 @@ protected func RegisterDealerListeners() -> Void {
   this.buttonColor.RegisterToCallback(n"OnClick", this, n"OnDealerButtonClick");
   this.buttonColor.RegisterToCallback(n"OnEnter", this, n"OnDealerButtonEnter");
   this.buttonColor.RegisterToCallback(n"OnLeave", this, n"OnDealerButtonLeave");
+
+  this.buttonFixer.RegisterToCallback(n"OnClick", this, n"OnDealerButtonClick");
+  this.buttonFixer.RegisterToCallback(n"OnEnter", this, n"OnDealerButtonEnter");
+  this.buttonFixer.RegisterToCallback(n"OnLeave", this, n"OnDealerButtonLeave");
 }
 
 // Handle click
@@ -279,6 +307,9 @@ protected cb func OnDealerButtonClick(evt: ref<inkPointerEvent>) -> Bool {
         break;
       case n"ButtonBuy":
         this.DealerBuyCurrentVehicle();
+        break;
+      case n"ButtonFixer":
+        this.DealerOpenFixerScreen();
         break;
     };
   };
@@ -305,6 +336,10 @@ protected cb func OnDealerButtonEnter(evt: ref<inkPointerEvent>) -> Bool {
       this.buttonColor.SetHoveredState(true);
       this.PlayCustomSoundDealer(n"ui_menu_hover");
       break;
+    case n"ButtonFixer":
+      this.buttonFixer.SetHoveredState(true);
+      this.PlayCustomSoundDealer(n"ui_menu_hover");
+      break;
   };
 }
 
@@ -324,6 +359,9 @@ protected cb func OnDealerButtonLeave(evt: ref<inkPointerEvent>) -> Bool {
       break;
     case n"ButtonColor":
       this.buttonColor.SetHoveredState(false);
+      break;
+    case n"ButtonFixer":
+      this.buttonFixer.SetHoveredState(false);
       break;
   };
 }

@@ -39,6 +39,9 @@ let buttonBuy: ref<CustomHubButton>;
 let buttonColor: ref<CustomHubButton>;
 
 @addField(WebPage)
+let buttonFixer: ref<CustomHubButton>;
+
+@addField(WebPage)
 let playerPuppet: wref<PlayerPuppet>;
 
 @addField(WebPage)

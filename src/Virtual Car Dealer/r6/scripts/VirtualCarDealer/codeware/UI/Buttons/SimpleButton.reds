@@ -28,7 +28,7 @@ public class SimpleButton extends CustomButton {
 	protected func CreateWidgets() -> Void {
 		let root: ref<inkCanvas> = new inkCanvas();
 		root.SetName(n"button");
-		root.SetSize(400.0, 100.0);
+		root.SetSize(360.0, 100.0);
 		root.SetAnchorPoint(new Vector2(0.5, 0.5));
 		root.SetInteractive(true);
 
@@ -64,7 +64,7 @@ public class SimpleButton extends CustomButton {
 		label.SetName(n"label");
 		label.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
 		label.SetFontStyle(n"Medium");
-		label.SetFontSize(50);
+		label.SetFontSize(44);
 		label.SetLetterCase(textLetterCase.UpperCase);
 		label.SetTintColor(ThemeColors.ElectricBlue());
 		label.SetAnchor(inkEAnchor.Fill);

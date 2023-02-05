@@ -1,6 +1,7 @@
 module CarDealer.System
 import CarDealer.Classes.PurchasableVehicleBundle
 import CarDealer.Classes.PurchasableVehicleVariant
+import CarDealer.Classes.AutofixerItemData
 import CarDealer.Config.CarDealerConfig
 import CarDealer.Utils.CarDealerLog
 
@@ -10,6 +11,14 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
 
   private let m_vehicleSystem: ref<VehicleSystem>;
 
+  private let m_transactionSystem: ref<TransactionSystem>;
+
+  private let m_sellPriceModifier: Float = 0.25;
+
+  private let m_fallbackPrice: Int32 = 40000;
+
+  private persistent let m_soldVehicles: array<TweakDBID>;
+
   public final static func GetInstance(gameInstance: GameInstance) -> ref<PurchasableVehicleSystem> {
     let system: ref<PurchasableVehicleSystem> = GameInstance.GetScriptableSystemsContainer(gameInstance).Get(n"CarDealer.System.PurchasableVehicleSystem") as PurchasableVehicleSystem;
     return system;
@@ -18,8 +27,16 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
   public final func Initialize(player: ref<PlayerPuppet>) -> Void {
     if IsDefined(player) {
       this.m_vehicleSystem = GameInstance.GetVehicleSystem(player.GetGame());
+      this.m_transactionSystem = GameInstance.GetTransactionSystem(player.GetGame());
       this.PopulateVehicleList();
       CarDealerLog(s"PurchasableVehicleSystem initialized, detected vehicles: \(ArraySize(this.m_storeVehicles))");
+      this.DeactivateSoldVehicles();
+    };
+  }
+
+  private func DeactivateSoldVehicles() -> Void {
+    for id in this.m_soldVehicles {
+      this.m_vehicleSystem.EnablePlayerVehicle(TDBID.ToStringDEBUG(id), false, true);
     };
   }
 
@@ -92,10 +109,12 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
   }
 
   public func Purchase(id: TweakDBID) -> Void {
-    if IsDefined(this.m_vehicleSystem) {
-      Log("Vehicle system available");
-    };
     this.m_vehicleSystem.EnablePlayerVehicle(TDBID.ToStringDEBUG(id), true, false);
+    let soldVehicles: array<TweakDBID> = this.m_soldVehicles;
+    if ArrayContains(soldVehicles, id) {
+      ArrayRemove(soldVehicles, id);
+      this.m_soldVehicles = soldVehicles;
+    };
   }
 
   public func BuyAll() -> Void {
@@ -112,6 +131,55 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
     let inDanger: Bool = zone > 2;
     CarDealerLog(s"Detected zone: \(zone)");
     return inDanger;
+  }
+
+  public func GetOwnedVehiclesData() -> array<ref<AutofixerItemData>> {
+    let result: array<ref<AutofixerItemData>>;
+    let playerVehicles: array<PlayerVehicle>;
+    let vehicleRecord: ref<Vehicle_Record>;
+    let vehicleId: TweakDBID;
+    let item: ref<AutofixerItemData>;
+    let price: Int32;
+    let sellPrice: Float;
+
+    this.DeactivateSoldVehicles();
+    this.m_vehicleSystem.GetPlayerUnlockedVehicles(playerVehicles);
+
+    for playerVehicle in playerVehicles {
+      if TDBID.IsValid(playerVehicle.recordID) {
+        vehicleRecord = TweakDBInterface.GetVehicleRecord(playerVehicle.recordID);
+        vehicleId = vehicleRecord.GetID();
+        price = TweakDBInterface.GetInt(vehicleId + t".autofixer", 0);
+        if Equals(price, 0) { 
+          price = this.FindPriceInBundles(vehicleId); 
+        };
+        sellPrice = Cast<Float>(price) * this.m_sellPriceModifier;
+        item = new AutofixerItemData();
+        item.title = GetLocalizedTextByKey(vehicleRecord.DisplayName());
+        item.price = Cast<Int32>(sellPrice);
+        item.atlasResource = vehicleRecord.Icon().AtlasResourcePath();
+        item.textureName = vehicleRecord.Icon().AtlasPartName();
+        item.vehicleID = playerVehicle.recordID;
+        item.sold = false;
+        CarDealerLog(s"Owned vehicle: \(TDBID.ToStringDEBUG(item.vehicleID)) \(item.title) with price \(price) and sell price \(item.price)");
+        ArrayPush(result, item);
+      };
+    };
+
+    return result;
+  }
+
+  public func SellOwnedVehicle(player: ref<GameObject>, data: ref<AutofixerItemData>) -> Void {
+    if ArrayContains(this.m_soldVehicles, data.vehicleID) {
+      return ;
+    };
+
+    if this.m_vehicleSystem.EnablePlayerVehicle(TDBID.ToStringDEBUG(data.vehicleID), false, true) {
+      this.m_transactionSystem.GiveItem(player, MarketSystem.Money(), data.price);
+      ArrayPush(this.m_soldVehicles, data.vehicleID);
+    } else {
+      CarDealerLog(s"Failed to sell vehicle: \(data.title)");
+    };
   }
 
   private func GetTDBIDs(items: array<String>) -> array<TweakDBID> {
@@ -165,5 +233,34 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
     };
 
     return false;
+  }
+
+  private func FindPriceInBundles(id: TweakDBID) -> Int32 {
+    let currentBundle: ref<PurchasableVehicleBundle>;
+    let currentVariant: ref<PurchasableVehicleVariant>;
+    let targetBundle: ref<PurchasableVehicleBundle>;
+    // Find target bundle
+    let i: Int32 = 0;
+    let j: Int32;
+    let bundleFound: Bool = false;
+    while i < ArraySize(this.m_storeVehicles) && !bundleFound {
+      currentBundle = this.m_storeVehicles[i];
+      j = 0;
+      while j < ArraySize(currentBundle.variants)  && !bundleFound {
+        currentVariant = currentBundle.variants[j];
+        if Equals(currentVariant.record.GetID(), id) {
+          targetBundle = currentBundle;
+          bundleFound = true;
+        };
+        j += 1;
+      };
+      i += 1;
+    };
+
+    if bundleFound {
+      return targetBundle.price;
+    };
+
+    return this.m_fallbackPrice;
   }
 }
