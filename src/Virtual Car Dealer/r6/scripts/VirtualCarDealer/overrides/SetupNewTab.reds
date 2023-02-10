@@ -1,42 +1,7 @@
 import CarDealer.System.PurchasableVehicleSystem
 
 
-// Inspired (aka copy-pasted) by Virtual Atelier :) kudos to Pacings
-
-// Add new button
-@wrapMethod(ComputerMainLayoutWidgetController)
-public func InitializeMenuButtons(gameController: ref<ComputerInkGameController>, widgetsData: array<SComputerMenuButtonWidgetPackage>) -> Void {
-  wrappedMethod(gameController, widgetsData);
-
-  // Find internet tab
-  let i: Int32 = 0;
-  let internetData: SComputerMenuButtonWidgetPackage;
-  while i < ArraySize(widgetsData) {
-    if Equals("internet", widgetsData[i].widgetName) {
-      internetData = widgetsData[i];
-    };
-    i += 1;
-  };
-
-  let player: ref<PlayerPuppet> = gameController.GetPlayerControlledObject() as PlayerPuppet;
-  let isInDangerZone: Bool = PurchasableVehicleSystem.GetInstance(player.GetGame()).IsInDangerZone(player);
-
-  // Do not show tab for danger zone PCs
-  if isInDangerZone {
-    LogChannel(n"DEBUG", "PC is in danger or restricted zone, Car Dealer tab not available.");
-    return ;
-  };
-
-  // Add Car Dealer tab
-  let widget: ref<inkWidget>;
-  if Equals(internetData.widgetName, "internet") {
-    internetData.displayName = "Car Dealer";
-    internetData.widgetName = "CarDealer";
-    widget = this.CreateMenuButtonWidget(gameController, inkWidgetRef.Get(this.m_menuButtonList), internetData);
-    this.AddMenuButtonWidget(widget, internetData, gameController);
-    this.InitializeMenuButtonWidget(gameController, widget, internetData);
-  };
-}
+// Inspired (aka copy-pasted) by Virtual Atelier :)
 
 @wrapMethod(BrowserController)
 private final func TryGetWebsiteData(address: String) -> wref<JournalInternetPage> {
@@ -72,4 +37,29 @@ private final func ShowMenuByName(elementName: String) -> Void {
 protected final func ShowCarDealer() -> Void {
   this.GetMainLayoutController().ShowInternet("CarDealer");
   this.RequestMainMenuButtonWidgetsUpdate();
+}
+
+@wrapMethod(ComputerControllerPS)
+public final func GetMenuButtonWidgets() -> array<SComputerMenuButtonWidgetPackage> {
+  let packages: array<SComputerMenuButtonWidgetPackage> = wrappedMethod();
+  let package: SComputerMenuButtonWidgetPackage;
+
+  let player: ref<PlayerPuppet> = this.GetLocalPlayerControlledGameObject() as PlayerPuppet;
+  let isInDangerZone: Bool = PurchasableVehicleSystem.GetInstance(player.GetGame()).IsInDangerZone(player);
+
+  if !isInDangerZone {
+    if this.IsMenuEnabled(EComputerMenuType.INTERNET) && ArraySize(packages) > 0 {
+      package.widgetName = "CarDealer";
+      package.displayName = "Car Dealer";
+      package.ownerID = this.GetID();
+      package.iconID = n"iconInternet";
+      package.widgetTweakDBID = this.GetMenuButtonWidgetTweakDBID();
+      package.isValid = true;
+      ArrayPush(packages, package);
+    };
+  } else {
+    LogChannel(n"DEBUG", "PC is in danger or restricted zone, Car Dealer tab not available.");
+  };
+
+  return packages;
 }
