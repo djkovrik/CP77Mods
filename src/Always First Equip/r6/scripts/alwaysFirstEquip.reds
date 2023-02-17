@@ -162,10 +162,13 @@ public let HotkeyHoldEQ: BlackboardID_Bool;
 @addField(UI_SystemDef)
 public let LastUsedSlotEQ: BlackboardID_Int;
 
+@addField(UI_SystemDef)
+public let SafeStatePressedEQ: BlackboardID_Bool;
 
 // --- CUSTOM HOTKEY
 
 private static func AlwaysFirstEquipAction() -> CName = n"AlwaysFirstEquip"
+private static func SafeWeaponAction() -> CName = n"SafeWeapon"
 
 public class FirstEquipGlobalInputListener {
     private let m_player: wref<PlayerPuppet>;
@@ -183,12 +186,16 @@ public class FirstEquipGlobalInputListener {
         return false;
       };
 
+      if Equals(ListenerAction.GetName(action), SafeWeaponAction()) && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED) {
+        if this.m_player.HasAnyWeaponEquippedEQ() {
+          GameInstance.GetBlackboardSystem(this.m_player.GetGame()).Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.SafeStatePressedEQ, true, false);
+        };
+      };
+
       if Equals(ListenerAction.GetName(action), AlwaysFirstEquipAction()) {
         let pressed: Bool = Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED);
         let released: Bool = Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED);
         let hold: Bool = Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_HOLD_COMPLETE);
-
-        // EQ(s"pressed = \(pressed), released = \(released), hold = \(hold)");
 
         if this.m_player.HasAnyWeaponEquippedEQ() {
           // If weapon equipped set flags
@@ -626,9 +633,21 @@ enum FirstEquipHotkeyState {
   HOLD_ENDED = 4,
 }
 
+enum SafeStanceHotkeyState {
+  IDLE = 0,
+  TAPPED = 1,
+}
+
 // Track custom hotkey states
 @addField(ReadyEvents)
 private let customHotkeyStateEQ: FirstEquipHotkeyState;
+
+// Track custom hotkey states
+@addField(ReadyEvents)
+private let safeStanceHotkeyStateEQ: SafeStanceHotkeyState;
+
+@addField(PlayerPuppet)
+private let safeStateForcedEQ: Bool;
 
 // Timestamp field to control the mod logic periods
 @addField(ReadyEvents)
@@ -658,6 +677,7 @@ protected final func OnEnter(stateContext: ref<StateContext>, scriptInterface: r
   wrappedMethod(stateContext, scriptInterface);
   // Initialize new fields
   this.customHotkeyStateEQ = FirstEquipHotkeyState.IDLE;
+  this.safeStanceHotkeyStateEQ = SafeStanceHotkeyState.IDLE;
   this.savedIdleTimestampEQ = this.m_timeStamp;
   this.safeAnimFeatureEQ = new AnimFeature_SafeAction();
   this.weaponObjectIDEQ = TweakDBInterface.GetWeaponItemRecord(ItemID.GetTDBID(DefaultTransition.GetActiveWeapon(scriptInterface).GetItemID())).GetID();
@@ -695,6 +715,7 @@ protected final func OnTick(timeDelta: Float, stateContext: ref<StateContext>, s
   let pressed: Bool;
   let released: Bool;
   let hold: Bool;
+  let doSafeAction: Bool;
 
   // New logic
   if DefaultTransition.HasRightWeaponEquipped(scriptInterface) {
@@ -703,8 +724,27 @@ protected final func OnTick(timeDelta: Float, stateContext: ref<StateContext>, s
     pressed = GameInstance.GetBlackboardSystem(gameInstance).Get(GetAllBlackboardDefs().UI_System).GetBool(GetAllBlackboardDefs().UI_System.HotkeyPressedEQ);
     released = GameInstance.GetBlackboardSystem(gameInstance).Get(GetAllBlackboardDefs().UI_System).GetBool(GetAllBlackboardDefs().UI_System.HotkeyReleasedEQ);
     hold = GameInstance.GetBlackboardSystem(gameInstance).Get(GetAllBlackboardDefs().UI_System).GetBool(GetAllBlackboardDefs().UI_System.HotkeyHoldEQ);
+    doSafeAction = GameInstance.GetBlackboardSystem(gameInstance).Get(GetAllBlackboardDefs().UI_System).GetBool(GetAllBlackboardDefs().UI_System.SafeStatePressedEQ);
 
-    // EQ(s"OnTick: pressed = \(pressed), released = \(released), hold = \(hold), state = \(ToString(this.customHotkeyStateEQ))");
+    // Safe stance check
+    if Equals(this.safeStanceHotkeyStateEQ, SafeStanceHotkeyState.TAPPED) {
+      GameInstance.GetBlackboardSystem(gameInstance).Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.SafeStatePressedEQ, false, false);
+      this.safeStanceHotkeyStateEQ = SafeStanceHotkeyState.IDLE;
+      doSafeAction = false;
+      let state: Float;
+      if player.safeStateForcedEQ {
+        state = 0.0;
+      } else {
+        state = 1.0;
+      };
+      player.safeStateForcedEQ = !player.safeStateForcedEQ;
+      scriptInterface.SetAnimationParameterFloat(n"safe", state);
+    };
+    
+    // Safe stance requested
+    if Equals(this.safeStanceHotkeyStateEQ, SafeStanceHotkeyState.IDLE) && doSafeAction {
+      this.safeStanceHotkeyStateEQ = SafeStanceHotkeyState.TAPPED;
+    };
 
     // Force weapon ready state if requested
     if this.readyStateRequestedEQ {
@@ -806,6 +846,14 @@ protected final func OnTick(timeDelta: Float, stateContext: ref<StateContext>, s
   animFeature.weaponRecoil = statsSystem.GetStatValue(Cast<StatsObjectID>(ownerID), gamedataStatType.RecoilAnimation);
   animFeature.weaponSpread = statsSystem.GetStatValue(Cast<StatsObjectID>(ownerID), gamedataStatType.SpreadAnimation);
   scriptInterface.SetAnimationParameterFeature(n"WeaponHandlingData", animFeature, scriptInterface.executionOwner);
+}
+
+@wrapMethod(ZoomLevelAimEvents)
+public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  wrappedMethod(stateContext, scriptInterface);
+  if this.isAmingWithWeapon {
+    scriptInterface.SetAnimationParameterFloat(n"safe", 0.0);
+  };
 }
 
 // -- AXL checker

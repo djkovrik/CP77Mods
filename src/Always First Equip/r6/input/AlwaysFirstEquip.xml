@@ -3,6 +3,7 @@
     <!-- inputContexts -->
     <context name="AlwaysFirstEquip" >
         <action name="AlwaysFirstEquip" map="AlwaysFirstEquip_Button" />
+        <action name="SafeWeapon" map="SafeWeapon_Button" />
     </context>
 
     <context name="Items" append="true">
@@ -14,5 +15,8 @@
     <!-- inputUserMapping -->
 	<mapping name="AlwaysFirstEquip_Button" type="Button" >
         <button id="IK_F2" />
+    </mapping>
+	<mapping name="SafeWeapon_Button" type="Button" >
+        <button id="IK_F3" />
     </mapping>
 </bindings>
