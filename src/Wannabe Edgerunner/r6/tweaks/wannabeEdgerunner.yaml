@@ -363,7 +363,7 @@ Items.recipe_ripperdoc_med:
     - Price.ItemQualityMultiplier
     - Price.IconicMultiplier
     - Price.BuyPriceIntrinsicModMult
-    - Price.RipperdocMedModifierRare
+    - Price.RipperdocMedModifierRecipeRare
 
 # Uncommon
 Items.recipe_ripperdoc_med_uncommon:
