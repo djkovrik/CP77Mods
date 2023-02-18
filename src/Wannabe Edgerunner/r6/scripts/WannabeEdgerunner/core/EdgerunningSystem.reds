@@ -55,20 +55,12 @@ public class EdgerunningSystem extends ScriptableSystem {
     };
   }
 
-  private func OnAttach() -> Void {
-    ModSettings.RegisterListenerToModifications(this);
-  }
-
-  private func OnDetach() -> Void {
-    ModSettings.UnregisterListenerToModifications(this);
-  }
-
   public final static func GetInstance(gameInstance: GameInstance) -> ref<EdgerunningSystem> {
     let system: ref<EdgerunningSystem> = GameInstance.GetScriptableSystemsContainer(gameInstance).Get(n"Edgerunning.System.EdgerunningSystem") as EdgerunningSystem;
     return system;
   }
 
-  public func OnModSettingsChange() -> Void {
+  public func OnSettingsChange() -> Void {
     E("Settings changed!");
     this.RefreshConfig();
     this.InvalidateCurrentState();

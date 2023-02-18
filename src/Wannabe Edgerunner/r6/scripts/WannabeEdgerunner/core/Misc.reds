@@ -11,3 +11,9 @@ public static exec func GetDistrict(gi: GameInstance) -> Void {
   let district: gamedataDistrict = player.GetPreventionSystem().GetDistrictE();
   LogChannel(n"DEBUG", s"Position: \(player.GetWorldPosition()) , district: \(district)");
 }
+
+@wrapMethod(PauseMenuGameController)
+protected cb func OnUninitialize() -> Bool {
+  wrappedMethod();
+  EdgerunningSystem.GetInstance(this.GetPlayerControlledObject().GetGame()).OnSettingsChange();
+}
