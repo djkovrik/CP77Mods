@@ -13,6 +13,9 @@ public class EdgerunningSystem extends ScriptableSystem {
   private let upperThreshold: Int32;
   private let lowerThreshold: Int32;
 
+  // Johnny
+  private let possessed: Bool;
+
   // Psychosis
   private let cycledSFXDelayId: DelayID;
   private let policeActivityDelayId: DelayID;
@@ -55,6 +58,10 @@ public class EdgerunningSystem extends ScriptableSystem {
     };
   }
 
+  public func OnPossessionChanged(playerPossesion: gamedataPlayerPossesion) -> Void {
+    this.possessed = Equals(playerPossesion, gamedataPlayerPossesion.Johnny);
+  }
+
   public final static func GetInstance(gameInstance: GameInstance) -> ref<EdgerunningSystem> {
     let system: ref<EdgerunningSystem> = GameInstance.GetScriptableSystemsContainer(gameInstance).Get(n"Edgerunning.System.EdgerunningSystem") as EdgerunningSystem;
     return system;
@@ -86,7 +93,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     evt.color = this.GetHumanityColor();
     GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(evt);
 
-    if this.IsRipperdocBuffActive() { return; };
+    if this.IsRipperdocBuffActive() || this.IsPossessed() { return; };
 
     if this.currentHumanityPool > this.upperThreshold {
       this.RemoveAllEffects();
@@ -255,7 +262,7 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public func OnEnemyKilled(affiliation: gamedataAffiliation) -> Void {
     let cost: Int32;
-    if !this.IsRipperdocBuffActive() {
+    if !this.IsRipperdocBuffActive() && !this.IsPossessed() {
       cost = this.GetEnemyCost(affiliation);
       this.IncreaseHumanityDamage(cost);
       this.InvalidateCurrentState();
@@ -531,7 +538,12 @@ public class EdgerunningSystem extends ScriptableSystem {
     };
 
     if this.IsRipperdocBuffActive() {
-      E("- has buff or is Johnny");
+      E("- has buff");
+      return true;
+    };
+
+    if this.IsPossessed() {
+      E("- Johnny");
       return true;
     };
 
@@ -547,6 +559,10 @@ public class EdgerunningSystem extends ScriptableSystem {
     return Equals(StatusEffectSystem.ObjectHasStatusEffect(this.player, t"BaseStatusEffect.RipperDocMedBuff"), true)
       || Equals(StatusEffectSystem.ObjectHasStatusEffect(this.player, t"BaseStatusEffect.RipperDocMedBuffUncommon"), true)
       || Equals(StatusEffectSystem.ObjectHasStatusEffect(this.player, t"BaseStatusEffect.RipperDocMedBuffCommon"), true);
+  }
+
+  private func IsPossessed() -> Bool {
+    return this.possessed;
   }
 
   public func IsGlitchesActive() -> Bool {

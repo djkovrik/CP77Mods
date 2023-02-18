@@ -38,3 +38,10 @@ protected func RewardKiller(killer: wref<GameObject>, killType: gameKillType, is
     };
   };
 }
+
+@wrapMethod(PlayerSystem)
+protected final cb func OnLocalPlayerPossesionChanged(playerPossesion: gamedataPlayerPossesion) -> Bool {
+  wrappedMethod(playerPossesion);
+  E(s"Player possession changed: \(playerPossesion)");
+  EdgerunningSystem.GetInstance(this.GetGameInstance()).OnPossessionChanged(playerPossesion);
+}
