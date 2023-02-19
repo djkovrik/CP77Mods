@@ -790,8 +790,18 @@ protected final func OnTick(timeDelta: Float, stateContext: ref<StateContext>, s
 @wrapMethod(ZoomLevelAimEvents)
 public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
   wrappedMethod(stateContext, scriptInterface);
-  if this.isAmingWithWeapon {
-    let player: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
+  let player: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
+  if this.isAmingWithWeapon && player.IsSafeStateForcedEQ() {
+    scriptInterface.SetAnimationParameterFloat(n"safe", 0.0);
+    player.SetSafeStateForced(false);
+  };
+}
+
+@wrapMethod(ShootEvents)
+protected final func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  wrappedMethod(stateContext, scriptInterface);
+  let player: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
+  if player.IsSafeStateForcedEQ() {
     scriptInterface.SetAnimationParameterFloat(n"safe", 0.0);
     player.SetSafeStateForced(false);
   };
