@@ -6,27 +6,6 @@ public class UpdateHumanityCounterEvent extends Event {
   public let color: CName;
 }
 
-public class TriggerDrawWeaponRequest extends ScriptableSystemRequest {}
-public class TriggerRandomShotRequest extends ScriptableSystemRequest {}
-public class LaunchPoliceActivityRequest extends ScriptableSystemRequest {}
-public class LaunchCycledSFXRequest extends ScriptableSystemRequest {}
-public class LaunchCycledPsychosisCheckRequest extends ScriptableSystemRequest {}
-public class PrepareTeleportRequest extends ScriptableSystemRequest {}
-public class PostTeleportEffectsRequest extends ScriptableSystemRequest {}
-
-public class PlayerTeleportRequest extends ScriptableSystemRequest {
-  public let position: Vector4;
-}
-
-public class VictimsSpawnRequest extends ScriptableSystemRequest {
-  public let characterId: TweakDBID;
-  public let position: Vector4;
-}
-
-public class VictimKillRequest extends ScriptableSystemRequest {
-  public let entityId: EntityID;
-}
-
 public class SFXBundle {
   public let name: CName;
   public let duration: Float;

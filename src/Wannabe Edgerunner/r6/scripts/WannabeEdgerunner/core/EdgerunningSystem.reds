@@ -181,18 +181,18 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.StopVFX(n"hacking_glitch_low");
     this.ApplyStatusEffect(t"BaseStatusEffect.ActivePsychosisBuff", 0.1);
     this.PlayVFXDelayed(n"hacking_glitch_low", 7.0);
-    this.drawWeaponDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new TriggerDrawWeaponRequest(), 4.5);
-    this.randomShotsDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new TriggerRandomShotRequest(), 6.5);
+    this.drawWeaponDelayId = this.delaySystem.DelayCallback(TriggerDrawWeaponCallback.Create(this), 4.5, false);
+    this.randomShotsDelayId = this.delaySystem.DelayCallback(TriggerRandomShotCallback.Create(this), 6.5, false);
 
     if this.CanSpawnPolice() {
-      this.policeActivityDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new LaunchPoliceActivityRequest(), 6.0);
+      this.policeActivityDelayId = this.delaySystem.DelayCallback(LaunchPoliceActivityCallback.Create(this), 6.0, false);
     };
 
-    this.cycledSFXDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new LaunchCycledSFXRequest(), 7.0);
+    this.cycledSFXDelayId = this.delaySystem.DelayCallback(LaunchCycledSFXCallback.Create(this), 7.0, false);
 
     if this.config.teleportOnEnd {
       this.ClearTeleportDelays();
-      this.prepareTeleportDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new PrepareTeleportRequest(), 66.0);
+      this.prepareTeleportDelayId = this.delaySystem.DelayCallback(PrepareTeleportCallback.Create(this), 66.0, false);
     };
   }
 
@@ -200,7 +200,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     E("!!! RUN STAGE 2 - CHECKS");
     let nextRun: Float = Cast<Float>(this.config.pcychoCheckPeriod) * 60.0;
     E(s"? Scheduled next psycho check from ScheduleNextPsychoCheck after \(nextRun) seconds");
-    this.psychosisCheckDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new LaunchCycledPsychosisCheckRequest(), nextRun);
+    this.psychosisCheckDelayId = this.delaySystem.DelayCallback(LaunchCycledPsychosisCheckCallback.Create(this), nextRun, false);
   }
 
   public func RemoveAllEffects() -> Void {
@@ -582,9 +582,9 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
 
-  // -- REQUESTS
+  // -- CALLBACKS
 
-  private final func OnTriggerDrawWeaponRequest(request: ref<TriggerDrawWeaponRequest>) -> Void {
+  public final func OnTriggerDrawWeaponCallback() -> Void {
     E("!!! DRAW WEAPON");
     let equipmentSystem: wref<EquipmentSystem> = this.player.GetEquipmentSystem();
     let drawItemRequest: ref<DrawItemRequest> = new DrawItemRequest();
@@ -593,19 +593,19 @@ public class EdgerunningSystem extends ScriptableSystem {
     equipmentSystem.QueueRequest(drawItemRequest);
   }
 
-  private final func OnTriggerRandomShotRequest(request: ref<TriggerRandomShotRequest>) -> Void {
+  public final func OnTriggerRandomShotCallback() -> Void {
     E("!!! SHOT");
     let weaponObject: ref<WeaponObject> = GameObject.GetActiveWeapon(this.player);
     let simTime = EngineTime.ToFloat(GameInstance.GetSimTime(this.player.GetGame()));
     AIWeapon.Fire(this.player, weaponObject, simTime, 1.0, weaponObject.GetWeaponRecord().PrimaryTriggerMode().Type());
   }
 
-  private final func OnLaunchPoliceActivityRequest(request: ref<LaunchPoliceActivityRequest>) -> Void {
+  public final func OnLaunchPoliceActivityCallback() -> Void {
     E("!!! LAUNCH POLICE FLOW");
     this.player.GetPreventionSystem().SpawnPoliceForPsychosis(this.config);
   }
 
-  private final func OnLaunchCycledSFXRequest(request: ref<LaunchCycledSFXRequest>) -> Void {
+  public final func OnLaunchCycledSFXCallback() -> Void {
     let random: Int32 = RandRange(0, ArraySize(this.cyberpsychosisSFX));
     let bundle: ref<SFXBundle> = this.cyberpsychosisSFX[random];
     this.PlaySFX(bundle.name);
@@ -614,11 +614,11 @@ public class EdgerunningSystem extends ScriptableSystem {
     let hasPrePsychoStage: Bool = this.IsPrePsychosisActive();
 
     if hasNoBuff && hasPrePsychoStage {
-      this.cycledSFXDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new LaunchCycledSFXRequest(), bundle.duration);
+      this.cycledSFXDelayId = this.delaySystem.DelayCallback(LaunchCycledSFXCallback.Create(this), bundle.duration, false);
     };
   }
 
-  private final func OnLaunchCycledPsychosisCheckRequest(request: ref<LaunchCycledPsychosisCheckRequest>) -> Void {
+  public final func OnLaunchCycledPsychosisCheckCallback() -> Void {
     let random: Int32 = RandRange(0, 100);
     let threshold: Int32 = this.config.psychoChance;
     let triggered: Bool = random <= threshold;
@@ -630,21 +630,14 @@ public class EdgerunningSystem extends ScriptableSystem {
     } else {
       if !this.IsHumanityRestored() {
         E(s"? Rescheduled next psycho check after \(nextRun) seconds");
-        this.psychosisCheckDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new LaunchCycledPsychosisCheckRequest(), nextRun);
+        this.psychosisCheckDelayId = this.delaySystem.DelayCallback(LaunchCycledPsychosisCheckCallback.Create(this), nextRun, false);
       };
     };
   }
 
   // -- TELEPORT
 
-  private func BuildSpawnRequest(id: TweakDBID, position: Vector4) -> ref<VictimsSpawnRequest> {
-    let request: ref<VictimsSpawnRequest> = new VictimsSpawnRequest();
-    request.characterId = id;
-    request.position = position;
-    return request;
-  }
-
-  private final func OnPrepareTeleportRequest(request: ref<PrepareTeleportRequest>) -> Void {
+  public final func OnPrepareTeleportCallback() -> Void {
     if IsEntityInInteriorArea(this.player) { 
       E("PLAYER IS IN INTERIOR, TELEPORT ABORTED");
       return ; 
@@ -671,55 +664,51 @@ public class EdgerunningSystem extends ScriptableSystem {
     let position: Vector4 = TeleportHelper.GetRandomCoordinates(destination);
     E(s"SELECTED DESTINATION: \(position) at \(destination.district)");
 
-    this.victimSpawnDelayId1 = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), this.BuildSpawnRequest(destination.maleVictim, position), 0.1);
-    this.victimSpawnDelayId2 = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), this.BuildSpawnRequest(destination.femaleVictim, position), 0.2);
-    this.victimSpawnDelayId3 = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), this.BuildSpawnRequest(destination.maleVictim, position), 0.3);
-    this.victimSpawnDelayId4 = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), this.BuildSpawnRequest(destination.femaleVictim, position), 0.4);
+    this.victimSpawnDelayId1 = this.delaySystem.DelayCallback(VictimsSpawnCallback.Create(this, position, destination.maleVictim), 0.1, false);
+    this.victimSpawnDelayId2 = this.delaySystem.DelayCallback(VictimsSpawnCallback.Create(this, position,  destination.femaleVictim), 0.2, false);
+    this.victimSpawnDelayId3 = this.delaySystem.DelayCallback(VictimsSpawnCallback.Create(this, position, destination.maleVictim), 0.3, false);
+    this.victimSpawnDelayId4 = this.delaySystem.DelayCallback(VictimsSpawnCallback.Create(this, position, destination.femaleVictim), 0.4, false);
 
     this.PlayVFXDelayed(n"fast_travel_glitch", 0.3);
 
-    let teleportRequest: ref<PlayerTeleportRequest> = new PlayerTeleportRequest();
-    teleportRequest.position = position;
-    this.teleportDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), teleportRequest, 0.9);
+    let teleportCallback: ref<PlayerTeleportCallback> = PlayerTeleportCallback.Create(this, position);
+    this.teleportDelayId = this.delaySystem.DelayCallback(teleportCallback, 0.9, false);
   }
 
-  private final func OnVictimsSpawnRequest(request: ref<VictimsSpawnRequest>) -> Void {
-    let position: Vector4 = request.position;
+  public final func OnVictimsSpawnCallback(position: Vector4, characterId: TweakDBID) -> Void {
     let randX: Float = RandRangeF(-2.5, 2.5);
     let randY: Float = RandRangeF(-2.5, 2.5);
     let newPosition: Vector4 = new Vector4(position.X + randX, position.Y + randY, position.Z, position.W);
     let worldTransform: WorldTransform;
     WorldTransform.SetPosition(worldTransform, newPosition);
-    let entityId: EntityID = GameInstance.GetPreventionSpawnSystem(this.player.GetGame()).RequestSpawn(request.characterId, 5u, worldTransform);
-    let killRequest: ref<VictimKillRequest> = new VictimKillRequest();
-    killRequest.entityId = entityId;
-    E(s"SPAWN VICTIM \(TDBID.ToStringDEBUG(request.characterId)) AT POSITION \(newPosition)");
+    let entityId: EntityID = GameInstance.GetPreventionSpawnSystem(this.player.GetGame()).RequestSpawn(characterId, 5u, worldTransform);
+    let killCallback: ref<VictimKillCallback> = VictimKillCallback.Create(this, entityId);
+    E(s"SPAWN VICTIM \(TDBID.ToStringDEBUG(characterId)) AT POSITION \(newPosition)");
 
-    let delayId: DelayID = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), killRequest, 0.05);
+    let delayId: DelayID = this.delaySystem.DelayCallback(killCallback, 0.05, false);
     ArrayPush(this.killRequests, delayId);
   }
 
-  private final func OnPlayerTeleportRequest(request: ref<PlayerTeleportRequest>) -> Void {
-    E(s"TELEPORTING TO \(request.position)");
+  public final func OnPlayerTeleportCallback(position: Vector4) -> Void {
+    E(s"TELEPORTING TO \(position)");
     let rotation: EulerAngles;
-    let position: Vector4 = request.position;
     GameInstance.GetTeleportationFacility(this.player.GetGame()).Teleport(this.player, position, rotation);
-    this.postTeleportEffectsDelayId = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), new PostTeleportEffectsRequest(), 1.5);
+    this.postTeleportEffectsDelayId = this.delaySystem.DelayCallback(PostTeleportEffectsCallback.Create(this), 1.5, false);
   }
 
-  private final func OnVictimKillRequest(request: ref<VictimKillRequest>) -> Void {
-    let npc: ref<NPCPuppet> = GameInstance.FindEntityByID(this.player.GetGame(), request.entityId) as NPCPuppet;
+  public final func OnVictimKillCallback(entityId: EntityID) -> Void {
+    let npc: ref<NPCPuppet> = GameInstance.FindEntityByID(this.player.GetGame(), entityId) as NPCPuppet;
     if IsDefined(npc) {
       npc.Kill(null, true, true);
       this.SpawnBloodPuddle(npc);
       E("NPC SPAWNED - KILL");
     } else {
-      let delayId: DelayID = this.delaySystem.DelayScriptableSystemRequest(this.GetClassName(), request, 0.05);
+      let delayId: DelayID = this.delaySystem.DelayCallback(VictimKillCallback.Create(this, entityId),  0.05, false);
       ArrayPush(this.killRequests, delayId);
     };
   }
 
-  private final func OnPostTeleportEffectsRequest(request: ref<PostTeleportEffectsRequest>) -> Void {
+  public final func OnPostTeleportEffectsCallback() -> Void {
     E("APPLY POST TELEPORT EFFECTS");
     let timeSystem: ref<TimeSystem> = GameInstance.GetTimeSystem(this.player.GetGame());
     let sps: ref<StatPoolsSystem> = GameInstance.GetStatPoolsSystem(this.player.GetGame());
@@ -745,6 +734,8 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.player.GetPreventionSystem().ClearWantedLevel();
     // Stop cycled sound
     this.delaySystem.CancelDelay(this.cycledSFXDelayId);
+    // Stop FX
+    this.StopVFX(n"hacking_glitch_low");
   }
 
  private func SpawnBloodPuddle(puppet: wref<ScriptedPuppet>) -> Void {
