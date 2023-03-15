@@ -26,6 +26,7 @@ enum HUDitorCompatMode {
   E3CompassFaithfulE3HUD = 3,
   E3CompassMinimap = 4,
   E3CompassMinimapE3HUD = 5,
+  LTBF = 6,
 }
 
 public class SetHUDitorCompatMode extends Event {

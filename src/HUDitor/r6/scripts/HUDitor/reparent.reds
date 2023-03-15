@@ -293,12 +293,33 @@ private func InitBaseWidgets() -> Void {
     };
 }
 
+@if(ModuleExists("LetThereBeFlight"))
+@addMethod(inkGameController)
+public func AdjustLTBFCompatParams() -> Void {
+    let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+    let minimap: ref<inkWidget> = root.GetWidgetByPath(inkWidgetPath.Build(n"TopRightMain", n"TopRight", n"minimap")) as inkWidget;
+    let questList: ref<inkWidget> = root.GetWidgetByPath(inkWidgetPath.Build(n"TopRightMain", n"TopRight", n"quest_list")) as inkWidget;
+
+    minimap.SetMargin(new inkMargin(0.0, 47.0, 23.0, -67.0));
+    questList.SetMargin(new inkMargin(0.0, 67.0, 5.0, 0.0));
+    questList.SetVAlign(inkEVerticalAlign.Top);
+    questList.SetAnchor(inkEAnchor.TopRight);
+    this.compatMode = HUDitorCompatMode.LTBF;
+}
+
+@if(!ModuleExists("LetThereBeFlight"))
+@addMethod(inkGameController)
+public func AdjustLTBFCompatParams() -> Void {
+  // do nothing
+}
+
 @addMethod(inkGameController)
 protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
   if this.IsA(n"gameuiRootHudGameController") {
 
     this.compatMode = HUDitorCompatMode.Default;
     this.InitBaseWidgets();
+    this.AdjustLTBFCompatParams();
 
     let evt: ref<SetHUDitorCompatMode> = new SetHUDitorCompatMode();
     evt.mode = this.compatMode;
