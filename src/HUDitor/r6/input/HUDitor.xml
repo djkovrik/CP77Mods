@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<bindings>
+    <!-- inputContexts -->
+    <context name="HUDitor" >
+		<action name="HUDitor_Editor" map="HUDitor_Editor_Button" />
+    </context>
+
+    <context name="UIToggles" append="true">
+        <include name="HUDitor" />
+    </context>
+
+    <!-- inputUserMapping -->
+	<mapping name="HUDitor_Editor_Button" type="Button" >
+        <button id="IK_F7" />
+    </mapping>
+</bindings>

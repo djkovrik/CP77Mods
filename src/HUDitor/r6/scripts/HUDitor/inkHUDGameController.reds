@@ -143,8 +143,8 @@ public class HUDitorInputListener {
         };
       };
 
-      if this.isShiftDown {
-        if Equals(actionName, n"UI_Unequip") {
+      if this.isShiftDown || Equals(actionName, n"HUDitor_Editor") {
+        if Equals(actionName, n"UI_Unequip") || Equals(actionName, n"HUDitor_Editor")  {
           if !isActive {
             this.systemRequestsHandler.PauseGame();
             let enableHUDEditorEvent = new SetActiveHUDEditorWidget();

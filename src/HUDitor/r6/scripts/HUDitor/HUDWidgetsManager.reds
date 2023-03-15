@@ -200,6 +200,7 @@ public class HUDWidgetsManager {
     let player: wref<PlayerPuppet> = this.GetPlayerPuppet();
     player.RegisterInputListener(hudGameController, n"ToggleSprint");
     player.RegisterInputListener(hudGameController, n"UI_Unequip");
+    player.RegisterInputListener(hudGameController, n"HUDitor_Editor");
     player.RegisterInputListener(hudGameController, n"world_map_filter_navigation_down");
     player.RegisterInputListener(hudGameController, n"back");
     player.RegisterInputListener(hudGameController, n"cancel");
