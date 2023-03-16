@@ -3,10 +3,7 @@ import Codeware.UI.*
 import NamedSaves.Utils.*
 
 @addField(SaveGameMenuGameController)
-private let m_nameInput: ref<HubTextInput>;
-
-@addField(SaveGameMenuGameController)
-private let m_nameInputContainer: ref<inkCompoundWidget>;
+private let m_nameInput: wref<HubTextInput>;
 
 @wrapMethod(SaveGameMenuGameController)
 protected cb func OnInitialize() -> Bool {
@@ -15,19 +12,23 @@ protected cb func OnInitialize() -> Bool {
   // Insert input
   let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
   let outerContainer: ref<inkCompoundWidget> = root.GetWidget(n"holder") as inkCompoundWidget;
-  this.m_nameInputContainer = new inkVerticalPanel();
-  this.m_nameInputContainer.SetName(n"InputContainer");
-  this.m_nameInputContainer.SetFitToContent(true);
-  this.m_nameInputContainer.SetTranslation(new Vector2(730.0, 140.0));
-  this.m_nameInputContainer.SetHAlign(inkEHorizontalAlign.Left);
-  this.m_nameInputContainer.SetVAlign(inkEVerticalAlign.Center);
-  this.m_nameInputContainer.SetAnchor(inkEAnchor.CenterLeft );
-  this.m_nameInputContainer.SetAnchorPoint(new Vector2(1.0, 0.0));
-  this.m_nameInputContainer.Reparent(outerContainer, 1);
-  this.m_nameInput = HubTextInput.Create();
-  this.m_nameInput.SetName(n"InputText");
-  this.m_nameInput.SetMaxLength(64);
-  this.m_nameInput.Reparent(this.m_nameInputContainer);
+
+  let container = new inkVerticalPanel();
+  container.SetName(n"InputContainer");
+  container.SetFitToContent(true);
+  container.SetTranslation(new Vector2(730.0, 140.0));
+  container.SetHAlign(inkEHorizontalAlign.Left);
+  container.SetVAlign(inkEVerticalAlign.Center);
+  container.SetAnchor(inkEAnchor.CenterLeft );
+  container.SetAnchorPoint(new Vector2(1.0, 0.0));
+  container.Reparent(outerContainer, 1);
+
+  let input = HubTextInput.Create(); 
+  input = HubTextInput.Create();
+  input.SetName(n"InputText");
+  input.SetMaxLength(64);
+  input.Reparent(container);
+  this.m_nameInput = input;
 }
 
 // Reset input focus on elsewhere click - copy-pasted from psiberx samples ^^
@@ -54,7 +55,7 @@ protected cb func OnSavingComplete(success: Bool, locks: array<gameSaveLock>) ->
 }
 
 @addField(LoadListItem)
-private let m_customNote: ref<inkText>;
+private let m_customNote: wref<inkText>;
 
 @wrapMethod(LoadListItem)
 protected cb func OnInitialize() -> Bool {
@@ -62,7 +63,7 @@ protected cb func OnInitialize() -> Bool {
   let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
   let container: ref<inkCompoundWidget> = root.GetWidget(n"Not_Empty_Slot/inkHorizontalPanelWidget3") as inkCompoundWidget;
 
-  let newText: ref<inkText> = new inkText();
+  let newText = new inkText();
   newText.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
   newText.SetName(n"NamedSaveLabel");
   newText.SetFontStyle(n"Regular");
