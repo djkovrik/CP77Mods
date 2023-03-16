@@ -1,5 +1,5 @@
 module NamedSaves.UI
-import NamedSaves.Codeware.UI.*
+import Codeware.UI.*
 import NamedSaves.Utils.*
 
 @addField(SaveGameMenuGameController)
