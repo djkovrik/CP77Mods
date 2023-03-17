@@ -1,4 +1,4 @@
-import CarDealer.Codeware.UI.*
+import Codeware.UI.*
 import CarDealer.Classes.PurchasableVehicleBundle
 import CarDealer.Classes.PurchasableVehicleVariant
 import CarDealer.System.PurchasableVehicleSystem
@@ -142,10 +142,11 @@ private func ShowDealerCommonElements() {
   horizontalPanel.SetAnchorPoint(new Vector2(0.5, 0.5));
   horizontalPanel.Reparent(rootCanvas);
 
-  this.dealerPanelInfoContainer = new inkVerticalPanel();
-  this.dealerPanelInfoContainer.SetName(n"DynamicContentContainer");
-  this.dealerPanelInfoContainer.SetFitToContent(true);
-  this.dealerPanelInfoContainer.Reparent(horizontalPanel);
+  let dynamicContentContainer: ref<inkVerticalPanel> = new inkVerticalPanel();
+  dynamicContentContainer.SetName(n"DynamicContentContainer");
+  dynamicContentContainer.SetFitToContent(true);
+  dynamicContentContainer.Reparent(horizontalPanel);
+  this.dealerPanelInfoContainer = dynamicContentContainer;
 
   let buttons: ref<inkVerticalPanel> = this.GetDealerButtonsContainer();
   buttons.Reparent(horizontalPanel);
@@ -186,25 +187,27 @@ private func GetDealerButtonsContainer() -> ref<inkVerticalPanel> {
   rowTop.SetMargin(new inkMargin(0.0, 140.0, 0.0, 0.0));
   rowTop.SetChildMargin(new inkMargin(20.0, 0.0, 20.0, 0.0));
 
-  this.buttonPrev = CustomHubButton.Create();
-  this.buttonPrev.SetName(n"ButtonPrev");
-  this.buttonPrev.SetText(DealerTexts.Previous());
-  this.buttonPrev.ToggleAnimations(true);
-  this.buttonPrev.ToggleSounds(true);
-  this.buttonPrev.SetTextColor(n"MainColors.MediumBlue");
-  this.buttonPrev.SetHoverColor(n"MainColors.MediumBlue");
-  this.buttonPrev.SetFluffColor(n"MainColors.Blue");
-  this.buttonPrev.Reparent(rowTop);
+  let prev: ref<CustomHubButton> = CustomHubButton.Create();
+  prev.SetName(n"ButtonPrev");
+  prev.SetText(DealerTexts.Previous());
+  prev.ToggleAnimations(true);
+  prev.ToggleSounds(true);
+  prev.SetTextColor(n"MainColors.MediumBlue");
+  prev.SetHoverColor(n"MainColors.MediumBlue");
+  prev.SetFluffColor(n"MainColors.Blue");
+  prev.Reparent(rowTop);
+  this.buttonPrev = prev;
 
-  this.buttonNext = CustomHubButton.Create();
-  this.buttonNext.SetName(n"ButtonNext");
-  this.buttonNext.SetText(DealerTexts.Next());
-  this.buttonNext.ToggleAnimations(true);
-  this.buttonNext.ToggleSounds(true);
-  this.buttonNext.SetTextColor(n"MainColors.MediumBlue");
-  this.buttonNext.SetHoverColor(n"MainColors.MediumBlue");
-  this.buttonNext.SetFluffColor(n"MainColors.Blue");
-  this.buttonNext.Reparent(rowTop);
+  let next: ref<CustomHubButton> = CustomHubButton.Create();
+  next.SetName(n"ButtonNext");
+  next.SetText(DealerTexts.Next());
+  next.ToggleAnimations(true);
+  next.ToggleSounds(true);
+  next.SetTextColor(n"MainColors.MediumBlue");
+  next.SetHoverColor(n"MainColors.MediumBlue");
+  next.SetFluffColor(n"MainColors.Blue");
+  next.Reparent(rowTop);
+  this.buttonNext = next;
 
   let colorContainer: ref<inkVerticalPanel> = new inkVerticalPanel();
   colorContainer.SetName(n"ButtonBuyContainer");
@@ -212,15 +215,17 @@ private func GetDealerButtonsContainer() -> ref<inkVerticalPanel> {
   colorContainer.SetHAlign(inkEHorizontalAlign.Center);
   colorContainer.SetChildMargin(new inkMargin(240.0, 0.0, 0.0, 0.0));
   colorContainer.Reparent(rowTop);
-  this.buttonColor = CustomHubButton.Create();
-  this.buttonColor.SetName(n"ButtonColor");
-  this.buttonColor.SetText(DealerTexts.ChangeColor());
-  this.buttonColor.ToggleAnimations(true);
-  this.buttonColor.ToggleSounds(true);
-  this.buttonColor.SetTextColor(n"MainColors.MediumBlue");
-  this.buttonColor.SetHoverColor(n"MainColors.MediumBlue");
-  this.buttonColor.SetFluffColor(n"MainColors.Blue");
-  this.buttonColor.Reparent(colorContainer);
+
+  let color: ref<CustomHubButton> = CustomHubButton.Create();
+  color.SetName(n"ButtonColor");
+  color.SetText(DealerTexts.ChangeColor());
+  color.ToggleAnimations(true);
+  color.ToggleSounds(true);
+  color.SetTextColor(n"MainColors.MediumBlue");
+  color.SetHoverColor(n"MainColors.MediumBlue");
+  color.SetFluffColor(n"MainColors.Blue");
+  color.Reparent(colorContainer);
+  this.buttonColor = color;
 
   let rowBottom: ref<inkHorizontalPanel> = new inkHorizontalPanel();
   rowBottom.SetName(n"ButtonsBottom");
@@ -231,27 +236,29 @@ private func GetDealerButtonsContainer() -> ref<inkVerticalPanel> {
   rowBottom.SetMargin(new inkMargin(0.0, 40.0, 0.0, 0.0));
   rowBottom.SetChildMargin(new inkMargin(20.0, 0.0, 20.0, 0.0));
 
-  this.buttonFixer = CustomHubButton.Create();
-  this.buttonFixer.SetName(n"ButtonFixer");
-  this.buttonFixer.SetText(GetLocalizedText("LocKey#80281"));
-  this.buttonFixer.ToggleAnimations(true);
-  this.buttonFixer.ToggleSounds(true);
-  this.buttonFixer.SetTextColor(n"MainColors.Green");
-  this.buttonFixer.SetHoverColor(n"MainColors.Green");
-  this.buttonFixer.SetFluffColor(n"MainColors.ActiveGreen");
-  this.buttonFixer.SetLeftSideColor(n"MainColors.ActiveGreen");
-  this.buttonFixer.Reparent(rowBottom);
+  let fixer: ref<CustomHubButton> = CustomHubButton.Create();
+  fixer.SetName(n"ButtonFixer");
+  fixer.SetText(GetLocalizedText("LocKey#80281"));
+  fixer.ToggleAnimations(true);
+  fixer.ToggleSounds(true);
+  fixer.SetTextColor(n"MainColors.Green");
+  fixer.SetHoverColor(n"MainColors.Green");
+  fixer.SetFluffColor(n"MainColors.ActiveGreen");
+  fixer.SetLeftSideColor(n"MainColors.ActiveGreen");
+  fixer.Reparent(rowBottom);
+  this.buttonFixer = fixer;
 
-  this.buttonBuy = CustomHubButton.Create();
-  this.buttonBuy.SetName(n"ButtonBuy");
-  this.buttonBuy.SetText(DealerTexts.Buy());
-  this.buttonBuy.ToggleAnimations(true);
-  this.buttonBuy.ToggleSounds(true);
-  this.buttonBuy.SetTextColor(n"MainColors.Yellow");
-  this.buttonBuy.SetHoverColor(n"MainColors.Yellow");
-  this.buttonBuy.SetFluffColor(n"MainColors.Yellow");
-  this.buttonBuy.SetLeftSideColor(n"MainColors.Yellow");
-  this.buttonBuy.Reparent(rowBottom);
+  let buy: ref<CustomHubButton> = CustomHubButton.Create();
+  buy.SetName(n"ButtonBuy");
+  buy.SetText(DealerTexts.Buy());
+  buy.ToggleAnimations(true);
+  buy.ToggleSounds(true);
+  buy.SetTextColor(n"MainColors.Yellow");
+  buy.SetHoverColor(n"MainColors.Yellow");
+  buy.SetFluffColor(n"MainColors.Yellow");
+  buy.SetLeftSideColor(n"MainColors.Yellow");
+  buy.Reparent(rowBottom);
+  this.buttonBuy = buy;
 
   this.RegisterDealerListeners();
 

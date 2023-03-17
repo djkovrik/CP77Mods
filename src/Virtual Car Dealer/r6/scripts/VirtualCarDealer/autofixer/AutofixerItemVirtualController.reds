@@ -1,7 +1,7 @@
 module CarDealer
 import CarDealer.Classes.AutofixerSellEvent
 import CarDealer.Classes.AutofixerItemData
-import CarDealer.Codeware.UI.*
+import Codeware.UI.*
 
 class AutofixerItemVirtualController extends inkVirtualCompoundItemController {
   private let m_root: ref<inkCompoundWidget>;
@@ -183,6 +183,7 @@ class AutofixerItemVirtualController extends inkVirtualCompoundItemController {
     this.m_button.SetText(GetLocalizedText("LocKey#17848"));
     this.m_button.ToggleAnimations(true);
     this.m_button.ToggleSounds(true);
+    this.m_button.SetWidth(360.0);
     this.m_button.Reparent(buttonPricePanel);
 
     let frame: ref<inkImage> = new inkImage();
