@@ -1,23 +1,23 @@
 module EnhancedCraft.Naming
-import EnhancedCraft.Codeware.UI.*
 import EnhancedCraft.Common.L
 import EnhancedCraft.System.EnhancedCraftSystem
 import EnhancedCraft.Config.*
+import Codeware.UI.*
 
 // -- Custom text input
 @addField(CraftingMainGameController)
-private let m_nameInput: ref<HubTextInput>;
+private let m_nameInput: wref<HubTextInput>;
 
 @addField(CraftingMainGameController)
 private let m_originalName: String;
 
 // -- Custom text input container
 @addField(CraftingMainGameController)
-private let m_nameInputContainer: ref<inkCompoundWidget>;
+private let m_nameInputContainer: wref<inkCompoundWidget>;
 
 // -- Recipe item name
 @addField(CraftingMainGameController)
-private let m_craftedItemName: ref<inkText>;
+private let m_craftedItemName: wref<inkText>;
 
 // -- Inject text input into CraftingLogicController
 @wrapMethod(CraftingMainGameController)
@@ -34,17 +34,20 @@ protected cb func OnInitialize() -> Bool {
   // Insert input
   let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
   let outerContainer: ref<inkCompoundWidget> = root.GetWidget(n"craftingPanel/inkCanvasWidget2/itemDetailsContainer") as inkCompoundWidget;
-  this.m_nameInputContainer = new inkVerticalPanel();
-  this.m_nameInputContainer.SetSize(600.0, 100.0);
-  this.m_nameInputContainer.SetFitToContent(true);
-  this.m_nameInputContainer.SetHAlign(inkEHorizontalAlign.Left);
-  this.m_nameInputContainer.SetAnchor(inkEAnchor.TopLeft);
-  this.m_nameInputContainer.SetMargin(new inkMargin(0.0, 165.0, 0.0, 0.0));
-  this.m_nameInputContainer.Reparent(outerContainer);
-  this.m_nameInput = HubTextInput.Create();
-  this.m_nameInput.RegisterToCallback(n"OnInput", this, n"OnTextInput");
-  this.m_nameInput.Reparent(this.m_nameInputContainer );
-  this.m_nameInputContainer .SetVisible(false);
+  let container: ref<inkVerticalPanel> = new inkVerticalPanel();
+  container.SetSize(600.0, 100.0);
+  container.SetFitToContent(true);
+  container.SetHAlign(inkEHorizontalAlign.Left);
+  container.SetAnchor(inkEAnchor.TopLeft);
+  container.SetMargin(new inkMargin(0.0, 165.0, 0.0, 0.0));
+  container.Reparent(outerContainer);
+  container.SetVisible(false);
+  this.m_nameInputContainer = container;
+
+  let input: ref<HubTextInput> = HubTextInput.Create();
+  input.RegisterToCallback(n"OnInput", this, n"OnTextInput");
+  input.Reparent(this.m_nameInputContainer);
+  this.m_nameInput = input;
 
   this.RegisterToGlobalInputCallback(n"OnPostOnRelease", this, n"OnGlobalInput");
 

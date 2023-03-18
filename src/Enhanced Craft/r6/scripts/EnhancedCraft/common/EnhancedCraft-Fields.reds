@@ -96,19 +96,19 @@ private let m_damagesTitle: ref<inkText>;
 
 // Ref to chemical damage item
 @addField(ItemTooltipRecipeDataModule)
-private let m_chemicalDamageItem: ref<ItemTooltipStatController>;
+private let m_chemicalDamageItem: wref<ItemTooltipStatController>;
 
 // Ref to electrical damage item
 @addField(ItemTooltipRecipeDataModule)
-private let m_electricalDamageItem: ref<ItemTooltipStatController>;
+private let m_electricalDamageItem: wref<ItemTooltipStatController>;
 
 // Ref to physical damage item
 @addField(ItemTooltipRecipeDataModule)
-private let m_physicalDamageItem: ref<ItemTooltipStatController>;
+private let m_physicalDamageItem: wref<ItemTooltipStatController>;
 
 // Ref to thermal damage item
 @addField(ItemTooltipRecipeDataModule)
-private let m_thermalDamageItem: ref<ItemTooltipStatController>;
+private let m_thermalDamageItem: wref<ItemTooltipStatController>;
 
 // Service flag for HUD init state
 @addField(ItemTooltipRecipeDataModule)
@@ -125,7 +125,7 @@ private let m_settingsDamageEnabled: Bool;
 // -- CraftingGarmentItemPreviewGameController
 
 @addField(CraftingGarmentItemPreviewGameController)
-private let m_preview: ref<inkWidget>;
+private let m_preview: wref<inkWidget>;
 
 @addField(CraftingGarmentItemPreviewGameController)
 private let m_isHoveredByCursor: Bool;

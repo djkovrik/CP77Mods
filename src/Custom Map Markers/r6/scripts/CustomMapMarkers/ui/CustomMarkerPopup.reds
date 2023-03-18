@@ -1,7 +1,7 @@
 module CustomMarkers.UI
 
-import CustomMapMarkers.Codeware.UI.*
-import CustomMapMarkers.Codeware.Localization.*
+import Codeware.UI.*
+import Codeware.Localization.*
 import CustomMarkers.Config.*
 import CustomMarkers.Common.*
 import CustomMarkers.UI.*
@@ -41,38 +41,48 @@ public class CustomMarkerPopup extends InGamePopup {
     this.m_input.UnregisterFromCallback(n"OnInput", this, n"OnInput");
   }
 
-  protected cb func OnClick(widget: wref<inkWidget>) -> Bool {
-    let name: CName = widget.GetName();
-    let nameString: String = NameToString(name);
-    this.PlaySound(n"Button", n"OnPress");
-    if StrContains(nameString, "button") {
-      this.HandleButtonClick(name);
-    } else {
-      this.HandleIconClick(widget);
+  protected cb func OnIconClick(widget: wref<inkWidget>) -> Bool {
+    // everything fires onClick since 1.5
+    if Equals(widget.GetClassName(), n"inkCanvasWidget") {
+      this.m_selectedIcon = widget.GetName();
+      for icon in this.m_icons {
+        if Equals(this.m_selectedIcon, icon.GetName()) {
+          icon.Tint();
+        } else {
+          icon.Dim();
+        };
+      };
+    };
+  }
+
+  protected cb func OnCancelButtonClick(evt: ref<inkPointerEvent>) -> Bool {
+    if evt.IsAction(n"click") {
+      this.PlaySound(n"Button", n"OnPress");
+      this.Close();
+    };
+  }
+
+  protected cb func OnCreateButtonClick(evt: ref<inkPointerEvent>) -> Bool {
+    let text = this.m_input.GetText();
+    let createdEvent: ref<RequestMarkerCreationEvent>;
+    if evt.IsAction(n"click") {
+      if NotEquals(text, "") {
+        createdEvent = new RequestMarkerCreationEvent();
+        createdEvent.m_description = text;
+        createdEvent.m_texturePart = this.m_selectedIcon;
+        this.m_uiSystem.QueueEvent(createdEvent);
+      } else {
+        CMM("You have not entered marker description");
+      };
+
+      this.PlaySound(n"MapPin", n"OnCreate");
+      this.Close();
     };
   }
 
   protected cb func OnInput(event: ref<inkCharacterEvent>) -> Void {
     let isDisabled: Bool = StrLen(this.m_input.GetText()) == 0;
     this.m_buttonOk.SetDisabled(isDisabled);
-  }
-
-  private func HandleButtonClick(name: CName) -> Void {
-    let evt: ref<RequestMarkerCreationEvent>;
-    let text: String;
-    if Equals(name, n"buttonOk") {
-      text = this.m_input.GetText();
-      if NotEquals(text, "") {
-        evt = new RequestMarkerCreationEvent();
-        evt.m_description = text;
-        evt.m_texturePart = this.m_selectedIcon;
-        this.m_uiSystem.QueueEvent(evt);
-      } else {
-        CMM("You have not entered marker description");
-      };
-    };
-
-    this.Close();
   }
 
   public func SetUISystemInstance(uiSystem: ref<UISystem>) -> Void {
@@ -87,20 +97,6 @@ public class CustomMarkerPopup extends InGamePopup {
     let popup: ref<CustomMarkerPopup> = new CustomMarkerPopup();
     popup.SetUISystemInstance(GameInstance.GetUISystem(player.GetGame()));
     popup.Open(requester);
-  }
-
-  private func HandleIconClick(widget: wref<inkWidget>) -> Void {
-    // everything fires onClick since 1.5
-    if Equals(widget.GetClassName(), n"inkCanvasWidget") {
-      this.m_selectedIcon = widget.GetName();
-      for icon in this.m_icons {
-        if Equals(this.m_selectedIcon, icon.GetName()) {
-          icon.Tint();
-        } else {
-          icon.Dim();
-        };
-      };
-    };
   }
 
   private func CreateWidgets() -> Void {
@@ -145,7 +141,7 @@ public class CustomMarkerPopup extends InGamePopup {
     let margin: inkMargin = new inkMargin(20.0, 0.0, 0.0, 0.0);
     for name in iconNames1 {
       newIcon = IconPreviewItem.Create(atlasResource, name, margin, CustomMarkersConfig.IconColorActive(), CustomMarkersConfig.IconColorInactive());
-      newIcon.RegisterToCallback(n"OnClick", this, n"OnClick");
+      newIcon.RegisterToCallback(n"OnClick", this, n"OnIconClick");
       newIcon.Reparent(iconsPanel1);
       ArrayPush(this.m_icons, newIcon);
     };
@@ -154,7 +150,7 @@ public class CustomMarkerPopup extends InGamePopup {
     let iconNames2: array<CName> = Icons.Row2();
     for name in iconNames2 {
       newIcon = IconPreviewItem.Create(atlasResource, name, margin, CustomMarkersConfig.IconColorActive(), CustomMarkersConfig.IconColorInactive());
-      newIcon.RegisterToCallback(n"OnClick", this, n"OnClick");
+      newIcon.RegisterToCallback(n"OnClick", this, n"OnIconClick");
       newIcon.Reparent(iconsPanel2);
       ArrayPush(this.m_icons, newIcon);
     };
@@ -171,8 +167,8 @@ public class CustomMarkerPopup extends InGamePopup {
     // BOTTOM PANNEL
 
     // Buttons
-    this.m_buttonCancel = this.CreateButton(n"buttonCancel", GetLocalizedText("Gameplay-Devices-Interactions-Cancel"));
-    this.m_buttonOk = this.CreateButton(n"buttonOk", GetLocalizedText("Gameplay-Devices-Interactions-Ok"));
+    this.m_buttonCancel = this.CreateButton(n"buttonCancel", GetLocalizedText("Gameplay-Devices-Interactions-Cancel"), n"OnCancelButtonClick");
+    this.m_buttonOk = this.CreateButton(n"buttonOk", GetLocalizedText("Gameplay-Devices-Interactions-Ok"), n"OnCreateButtonClick");
 
     // Bottom panel
     let bottomPanel: ref<inkHorizontalPanel> = new inkHorizontalPanel();
@@ -248,13 +244,13 @@ public class CustomMarkerPopup extends InGamePopup {
     return label;
   }
 
-  private func CreateButton(name: CName, text: String) -> ref<MarkerPopupButton> {
+  private func CreateButton(name: CName, text: String, callback: CName) -> ref<MarkerPopupButton> {
     let button: ref<MarkerPopupButton> = MarkerPopupButton.Create();
     button.SetName(name);
     button.SetText(text);
     button.SetWidth(300.0);
     button.SetScale(0.75);
-    button.RegisterToCallback(n"OnClick", this, n"OnClick");
+    button.RegisterToCallback(n"OnClick", this, callback);
     return button;
   }
 }

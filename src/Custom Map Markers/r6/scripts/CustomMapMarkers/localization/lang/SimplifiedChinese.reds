@@ -1,6 +1,6 @@
 module CustomMarkers.Localization
 
-import CustomMapMarkers.Codeware.Localization.*
+import Codeware.Localization.*
 
 public class SimplifiedChinese extends ModLocalizationPackage {
   protected func DefineTexts() -> Void {

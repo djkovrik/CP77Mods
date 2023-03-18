@@ -1,8 +1,8 @@
 module EnhancedCraft.Naming
-import EnhancedCraft.Codeware.UI.*
 import EnhancedCraft.Common.L
 import EnhancedCraft.Events.*
 import EnhancedCraft.System.*
+import Codeware.UI.*
 
 // -- Clear input field and refreshes input text visibility
 @addMethod(CraftingMainGameController)

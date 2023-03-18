@@ -1,4 +1,4 @@
-import CustomMapMarkers.Codeware.Localization.*
+import Codeware.Localization.*
 import CustomMarkers.System.*
 import CustomMarkers.Common.*
 import CustomMarkers.UI.*

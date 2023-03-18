@@ -3,15 +3,15 @@ import EnhancedCraft.Config.*
 
 // -- New text label for available skins counter
 @addField(CraftingLogicController)
-private let m_availableSkinsText: ref<inkText>;
+private let m_availableSkinsText: wref<inkText>;
 
 // -- New text label for available clothes counter
 @addField(CraftingLogicController)
-private let m_availableClothesText: ref<inkText>;
+private let m_availableClothesText: wref<inkText>;
 
 // -- New text label for Randomizer status
 @addField(CraftingLogicController)
-private let m_randomizerText: ref<inkText>;
+private let m_randomizerText: wref<inkText>;
 
 // -- Inject new text labels into CraftingLogicController root compound widget
 @wrapMethod(CraftingLogicController)
@@ -23,54 +23,57 @@ public func Init(craftingGameController: wref<CraftingMainGameController>) -> Vo
   let garmentContainer: ref<inkCompoundWidget> = root.GetWidget(n"inkCanvasWidget2/itemDetailsContainer/garmentPreview") as inkCompoundWidget;
   
   if !IsDefined(this.m_availableSkinsText) || NotEquals(this.m_availableSkinsText.GetName(), n"AvailableSkinsLabel") {
-    this.m_availableSkinsText = new inkText();
-    this.m_availableSkinsText.SetName(n"AvailableSkinsLabel");
-    this.m_availableSkinsText.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-    this.m_availableSkinsText.SetFontStyle(inkTextRef.GetFontStyle(this.m_perkNotificationText));
-    this.m_availableSkinsText.SetFontSize(inkTextRef.GetFontSize(this.m_perkNotificationText));
-    this.m_availableSkinsText.SetHAlign(inkEHorizontalAlign.Left);
-    this.m_availableSkinsText.SetVAlign(inkEVerticalAlign.Bottom);
-    this.m_availableSkinsText.SetAnchor(inkEAnchor.BottomLeft);
-    this.m_availableSkinsText.SetAnchorPoint(0.0, 1.0);
-    this.m_availableSkinsText.SetMargin(new inkMargin(50.0, 0.0, 0.0, 65.0));
-    this.m_availableSkinsText.SetLetterCase(textLetterCase.UpperCase);
-    this.m_availableSkinsText.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-    this.m_availableSkinsText.BindProperty(n"tintColor", n"MainColors.Red");
-    this.m_availableSkinsText.Reparent(textContainer);
+    let skins: ref<inkText> = new inkText();
+    skins.SetName(n"AvailableSkinsLabel");
+    skins.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+    skins.SetFontStyle(inkTextRef.GetFontStyle(this.m_perkNotificationText));
+    skins.SetFontSize(inkTextRef.GetFontSize(this.m_perkNotificationText));
+    skins.SetHAlign(inkEHorizontalAlign.Left);
+    skins.SetVAlign(inkEVerticalAlign.Bottom);
+    skins.SetAnchor(inkEAnchor.BottomLeft);
+    skins.SetAnchorPoint(0.0, 1.0);
+    skins.SetMargin(new inkMargin(50.0, 0.0, 0.0, 65.0));
+    skins.SetLetterCase(textLetterCase.UpperCase);
+    skins.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    skins.BindProperty(n"tintColor", n"MainColors.Red");
+    skins.Reparent(textContainer);
+    this.m_availableSkinsText = skins;
   };
 
   if !IsDefined(this.m_randomizerText) || NotEquals(this.m_randomizerText.GetName(), n"RandomizerLabel") {
-    this.m_randomizerText = new inkText();
-    this.m_randomizerText.SetName(n"RandomizerLabel");
-    this.m_randomizerText.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-    this.m_randomizerText.SetFontStyle(inkTextRef.GetFontStyle(this.m_perkNotificationText));
-    this.m_randomizerText.SetFontSize(inkTextRef.GetFontSize(this.m_perkNotificationText));
-    this.m_randomizerText.SetHAlign(inkEHorizontalAlign.Left);
-    this.m_randomizerText.SetVAlign(inkEVerticalAlign.Bottom);
-    this.m_randomizerText.SetAnchor(inkEAnchor.BottomLeft);
-    this.m_randomizerText.SetAnchorPoint(0.0, 1.0);
-    this.m_randomizerText.SetMargin(new inkMargin(50.0, 0.0, 0.0, 20.0));
-    this.m_randomizerText.SetLetterCase(textLetterCase.UpperCase);
-    this.m_randomizerText.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-    this.m_randomizerText.BindProperty(n"tintColor", n"MainColors.Red");
-    this.m_randomizerText.Reparent(textContainer);
+    let randomizer: ref<inkText> = new inkText();
+    randomizer.SetName(n"RandomizerLabel");
+    randomizer.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+    randomizer.SetFontStyle(inkTextRef.GetFontStyle(this.m_perkNotificationText));
+    randomizer.SetFontSize(inkTextRef.GetFontSize(this.m_perkNotificationText));
+    randomizer.SetHAlign(inkEHorizontalAlign.Left);
+    randomizer.SetVAlign(inkEVerticalAlign.Bottom);
+    randomizer.SetAnchor(inkEAnchor.BottomLeft);
+    randomizer.SetAnchorPoint(0.0, 1.0);
+    randomizer.SetMargin(new inkMargin(50.0, 0.0, 0.0, 20.0));
+    randomizer.SetLetterCase(textLetterCase.UpperCase);
+    randomizer.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    randomizer.BindProperty(n"tintColor", n"MainColors.Red");
+    randomizer.Reparent(textContainer);
+    this.m_randomizerText = randomizer;
   };
 
   if !IsDefined(this.m_availableClothesText) || NotEquals(this.m_availableClothesText.GetName(), n"AvailableClothesLabel") {
-    this.m_availableClothesText = new inkText();
-    this.m_availableClothesText.SetName(n"AvailableClothesLabel");
-    this.m_availableClothesText.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-    this.m_availableClothesText.SetFontStyle(inkTextRef.GetFontStyle(this.m_perkNotificationText));
-    this.m_availableClothesText.SetFontSize(inkTextRef.GetFontSize(this.m_perkNotificationText));
-    this.m_availableClothesText.SetHAlign(inkEHorizontalAlign.Left);
-    this.m_availableClothesText.SetVAlign(inkEVerticalAlign.Bottom);
-    this.m_availableClothesText.SetAnchor(inkEAnchor.BottomLeft);
-    this.m_availableClothesText.SetAnchorPoint(0.0, 1.0);
-    this.m_availableClothesText.SetMargin(new inkMargin(0.0, 0.0, 0.0, 300.0));
-    this.m_availableClothesText.SetLetterCase(textLetterCase.UpperCase);
-    this.m_availableClothesText.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-    this.m_availableClothesText.BindProperty(n"tintColor", n"MainColors.Red");
-    this.m_availableClothesText.Reparent(garmentContainer);
+    let clothes: ref<inkText> = new inkText();
+    clothes.SetName(n"AvailableClothesLabel");
+    clothes.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+    clothes.SetFontStyle(inkTextRef.GetFontStyle(this.m_perkNotificationText));
+    clothes.SetFontSize(inkTextRef.GetFontSize(this.m_perkNotificationText));
+    clothes.SetHAlign(inkEHorizontalAlign.Left);
+    clothes.SetVAlign(inkEVerticalAlign.Bottom);
+    clothes.SetAnchor(inkEAnchor.BottomLeft);
+    clothes.SetAnchorPoint(0.0, 1.0);
+    clothes.SetMargin(new inkMargin(0.0, 0.0, 0.0, 300.0));
+    clothes.SetLetterCase(textLetterCase.UpperCase);
+    clothes.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    clothes.BindProperty(n"tintColor", n"MainColors.Red");
+    clothes.Reparent(garmentContainer);
+    this.m_availableClothesText = clothes;
   };
 }
 

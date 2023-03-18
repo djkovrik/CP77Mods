@@ -1,6 +1,6 @@
 module CustomMarkers.UI
 
-import CustomMapMarkers.Codeware.UI.*
+import Codeware.UI.*
 
 public class MarkerPopupButton extends SimpleButton {
 

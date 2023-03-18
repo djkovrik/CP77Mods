@@ -1,6 +1,6 @@
 module CustomMarkers.System
 
-import CustomMapMarkers.Codeware.Localization.*
+import Codeware.Localization.*
 import CustomMarkers.Common.*
 import CustomMarkers.Config.*
 

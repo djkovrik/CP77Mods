@@ -1,4 +1,4 @@
-import CustomMapMarkers.Codeware.Localization.*
+import Codeware.Localization.*
 import CustomMarkers.Config.*
 
 // Set custom data for worldmap mappin popup
@@ -25,7 +25,6 @@ public func SetData(data: WorldMapTooltipData, menu: ref<WorldMapMenuGameControl
   let mappinData: ref<GameplayRoleMappinData>;
   let newTitleStr: String;
   let newDescStr: String;
-  let newInputZoomToStr: String;
   if data.controller != null && data.mappin != null && menu.GetPlayer() != null {
     mappinData = data.mappin.GetScriptData() as GameplayRoleMappinData;
     if IsDefined(mappinData) && mappinData.m_isMappinCustom {
