@@ -1,3 +1,4 @@
+import ImmersiveTimeskip.Events.InterruptCustomTimeSkipEvent
 import ImmersiveTimeskip.Hotkey.CustomTimeSkipListener
 
 @wrapMethod(PlayerPuppet)
@@ -14,4 +15,10 @@ protected cb func OnDetach() -> Bool {
     wrappedMethod();
     this.UnregisterInputListener(this.itsTimeskipListener);
     this.itsTimeskipListener = null;
+}
+
+@wrapMethod(PlayerPuppet)
+protected cb func OnDeath(evt: ref<gameDeathEvent>) -> Bool {
+  wrappedMethod(evt);
+  GameInstance.GetUISystem(this.GetGame()).QueueEvent(new InterruptCustomTimeSkipEvent());
 }
