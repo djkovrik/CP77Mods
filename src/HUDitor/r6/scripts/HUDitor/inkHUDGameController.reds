@@ -8,7 +8,7 @@ public class HUDitorInputListener {
   let compatMode: HUDitorCompatMode = HUDitorCompatMode.Default;
 
   public func Initialize(parent: ref<inkHUDGameController>) {
-    let player: ref<PlayerPuppet> = parent.GetPlayerControlledObject() as PlayerPuppet;
+    let player: wref<PlayerPuppet> = parent.GetPlayerControlledObject() as PlayerPuppet;
     this.uiSystem = GameInstance.GetUISystem(player.GetGame());
     this.systemRequestsHandler = parent.GetSystemRequestsHandler();
     this.AddCursor(parent.GetRootCompoundWidget());
@@ -36,9 +36,8 @@ public class HUDitorInputListener {
 
   protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
     let currentInput: Float;
-    let actionName = ListenerAction.GetName(action);
-
-    let isActive = HUDWidgetsManager.GetInstance().isActive;
+    let actionName: CName = ListenerAction.GetName(action);
+    let isActive: Bool = HUDWidgetsManager.GetInstance().isActive;
 
     if (isActive) {
       if Equals(actionName, n"CameraMouseX") {
@@ -120,14 +119,14 @@ public class HUDitorInputListener {
         };
         
         HUDWidgetsManager.GetInstance().activeWidget = previousActiveWidget;
-        let enableHUDEditorEvent = new SetActiveHUDEditorWidget();
+        let enableHUDEditorEvent: ref<SetActiveHUDEditorWidget> = new SetActiveHUDEditorWidget();
         enableHUDEditorEvent.activeWidget = previousActiveWidget;
         this.uiSystem.QueueEvent(enableHUDEditorEvent);
       };
 
       if isActive {
         if Equals(actionName, n"world_map_filter_navigation_down") {
-          let resetEvent = new ResetAllHUDWidgets();
+          let resetEvent: ref<ResetAllHUDWidgets> = new ResetAllHUDWidgets();
           this.uiSystem.QueueEvent(resetEvent);
         };
 
@@ -147,7 +146,7 @@ public class HUDitorInputListener {
         if Equals(actionName, n"UI_Unequip") || Equals(actionName, n"HUDitor_Editor")  {
           if !isActive {
             this.systemRequestsHandler.PauseGame();
-            let enableHUDEditorEvent = new SetActiveHUDEditorWidget();
+            let enableHUDEditorEvent: ref<SetActiveHUDEditorWidget> = new SetActiveHUDEditorWidget();
             enableHUDEditorEvent.activeWidget = n"NewTracker";
             HUDWidgetsManager.GetInstance().isActive = true;
             HUDWidgetsManager.GetInstance().activeWidget = n"NewTracker";
@@ -181,7 +180,7 @@ private let huditorListener: ref<HUDitorInputListener>;
 @addMethod(inkHUDGameController)
 protected cb func OnPlayerAttach(playerPuppet: ref<GameObject>) -> Bool {
   if (this.IsA(n"gameuiWorldMappinsContainerController")) {
-    let player: ref<PlayerPuppet> = playerPuppet as PlayerPuppet;
+    let player: wref<PlayerPuppet> = playerPuppet as PlayerPuppet;
     HUDWidgetsManager.CreateInstance(player, this);
     this.huditorListener = new HUDitorInputListener();
     this.huditorListener.Initialize(this);
@@ -192,7 +191,7 @@ protected cb func OnPlayerAttach(playerPuppet: ref<GameObject>) -> Bool {
 @addMethod(inkHUDGameController)
 protected cb func OnPlayerDetach(playerPuppet: ref<GameObject>) -> Bool {
   if (this.IsA(n"gameuiWorldMappinsContainerController")) {
-    let player: ref<PlayerPuppet> = playerPuppet as PlayerPuppet;
+    let player: wref<PlayerPuppet> = playerPuppet as PlayerPuppet;
     player.UnregisterInputListener(this.huditorListener);
     this.huditorListener = null;
   }

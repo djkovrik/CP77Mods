@@ -304,7 +304,6 @@ public func AdjustLTBFCompatParams() -> Void {
     questList.SetMargin(new inkMargin(0.0, 67.0, 5.0, 0.0));
     questList.SetVAlign(inkEVerticalAlign.Top);
     questList.SetAnchor(inkEAnchor.TopRight);
-    this.compatMode = HUDitorCompatMode.LTBF;
 }
 
 @if(!ModuleExists("LetThereBeFlight"))
@@ -842,9 +841,6 @@ protected cb func OnInitialize() -> Bool {
 }
 
 // Compass fixes
-@addField(inkWidget)
-native let parentWidget: wref<inkWidget>;
-
 @addMethod(CompassController)
 protected cb func OnInitialize() -> Bool {
   this.GetRootCompoundWidget().parentWidget.SetName(n"CompassCompat");

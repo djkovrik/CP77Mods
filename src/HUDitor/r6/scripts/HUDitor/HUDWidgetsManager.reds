@@ -26,7 +26,6 @@ public let hudWidgetsManager: ref<HUDWidgetsManager>;
 public let hudWidgetsManager: wref<HUDWidgetsManager>;
 
 public class HUDWidgetsManager {
-
   public let gameInstance: GameInstance;
   public let puppetId: EntityID;
   public let isActive: Bool;
@@ -40,11 +39,11 @@ public class HUDWidgetsManager {
 
   public static func CreateInstance(puppet: ref<gamePuppet>, hudGameController: ref<inkGameController>) {
     let instance: ref<HUDWidgetsManager> = new HUDWidgetsManager();
-    let gameInstance = puppet.GetGame();
-    let puppetEntityId = puppet.GetEntityID();
+    let gameInstance: GameInstance = puppet.GetGame();
+    let puppetEntityId: EntityID = puppet.GetEntityID();
     instance.Initialize(gameInstance, puppetEntityId, hudGameController);
 
-    let player = GetPlayer(gameInstance);
+    let player: wref<PlayerPuppet> = GetPlayer(gameInstance);
     player.hudWidgetsManager = instance;
     GetAllBlackboardDefs().hudWidgetsManager = instance;
   }

@@ -19,15 +19,15 @@ public class HUDitorCustomSlot extends inkVerticalPanel {
 
   // Used in Lua
   private func SetPersistedState(locationX: Float, locationY: Float, scaleX: Float, scaleY: Float) {
-    let persistedTranslation = new Vector2(locationX, locationY);
-    let persistedScale = new Vector2(scaleX, scaleY);
+    let persistedTranslation: Vector2 = new Vector2(locationX, locationY);
+    let persistedScale: Vector2 = new Vector2(scaleX, scaleY);
     this.SetTranslation(persistedTranslation);
     this.SetScale(persistedScale);
   }
 
   protected cb func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidget>) -> Bool {
-    let widgetName = this.GetName();
-    let hudEditorWidgetName = event.activeWidget;
+    let widgetName: CName = this.GetName();
+    let hudEditorWidgetName: CName = event.activeWidget;
 
     if (this.IsHUDWidget()) {
       if Equals(widgetName, hudEditorWidgetName) {
@@ -50,7 +50,7 @@ public class HUDitorCustomSlot extends inkVerticalPanel {
   }
 
   private func IsHUDWidget() -> Bool {
-    let widgetName = this.GetName();
+    let widgetName: CName = this.GetName();
 
     if !Equals(widgetName, n"") {
       let hudWidgets = [
@@ -110,7 +110,6 @@ public class HUDitorCustomSlot extends inkVerticalPanel {
 
   protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
     let currentInput: Float;
-
     let translationAdjustValue: Float = 1.0;
 
     if Equals(ListenerAction.GetName(action), n"click") {
@@ -123,10 +122,11 @@ public class HUDitorCustomSlot extends inkVerticalPanel {
       };
     };
 
+    let currentTranslation: Vector2;
     if (this.isMouseDown) {
       if Equals(ListenerAction.GetName(action), n"CameraMouseX") {
         currentInput = ListenerAction.GetValue(action);
-        let currentTranslation = this.GetTranslation();
+        currentTranslation = this.GetTranslation();
         currentTranslation.X += currentInput * 0.6;
         this.ChangeTranslation(new Vector2(currentInput * 0.6, 0));
         this.UpdatePersistedState(currentTranslation, this.GetScale());
@@ -134,7 +134,7 @@ public class HUDitorCustomSlot extends inkVerticalPanel {
 
       if Equals(ListenerAction.GetName(action), n"CameraMouseY") {
         currentInput = -ListenerAction.GetValue(action);
-        let currentTranslation = this.GetTranslation();
+        currentTranslation = this.GetTranslation();
         currentTranslation.Y += currentInput * 0.6;
         this.ChangeTranslation(new Vector2(0, currentInput * 0.6));
         this.UpdatePersistedState(currentTranslation, this.GetScale());
@@ -142,40 +142,40 @@ public class HUDitorCustomSlot extends inkVerticalPanel {
     };
 
     if Equals(ListenerAction.GetName(action), n"Forward") && ListenerAction.IsButtonJustPressed(action) {
-      let currentTranslation: Vector2 = this.GetTranslation();
+      currentTranslation = this.GetTranslation();
       currentTranslation.Y -= translationAdjustValue;
       this.SetTranslation(currentTranslation);
       this.UpdatePersistedState(currentTranslation, this.GetScale());
     };
 
     if Equals(ListenerAction.GetName(action), n"Back") && ListenerAction.IsButtonJustPressed(action) {
-      let currentTranslation: Vector2 = this.GetTranslation();
+      currentTranslation = this.GetTranslation();
       currentTranslation.Y += translationAdjustValue;
       this.SetTranslation(currentTranslation);
       this.UpdatePersistedState(currentTranslation, this.GetScale());
     };
 
     if Equals(ListenerAction.GetName(action), n"Left") && ListenerAction.IsButtonJustPressed(action) {
-      let currentTranslation: Vector2 = this.GetTranslation();
+      currentTranslation = this.GetTranslation();
       currentTranslation.X -= translationAdjustValue;
       this.SetTranslation(currentTranslation);
       this.UpdatePersistedState(currentTranslation, this.GetScale());
     };
 
     if Equals(ListenerAction.GetName(action), n"Right") && ListenerAction.IsButtonJustPressed(action) {
-      let currentTranslation: Vector2 = this.GetTranslation();
+      currentTranslation = this.GetTranslation();
       currentTranslation.X += translationAdjustValue;
       this.SetTranslation(currentTranslation);
       this.UpdatePersistedState(currentTranslation, this.GetScale());
     };
 
     if Equals(ListenerAction.GetName(action), n"mouse_wheel") {
-      let amount = ListenerAction.GetValue(action);
-      let currentScale = this.GetScale();
+      let amount: Float = ListenerAction.GetValue(action);
+      let currentScale: Vector2 = this.GetScale();
       let zoomRatio: Float = 0.1;
 
-      let finalXScale = currentScale.X + (amount * zoomRatio);
-      let finalYScale = currentScale.Y + (amount * zoomRatio);
+      let finalXScale: Float = currentScale.X + (amount * zoomRatio);
+      let finalYScale: Float = currentScale.Y + (amount * zoomRatio);
 
       if (finalXScale < 0.1) {
         finalXScale = 0.1;
