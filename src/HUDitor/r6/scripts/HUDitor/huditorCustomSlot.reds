@@ -25,7 +25,7 @@ public class HUDitorCustomSlot extends inkVerticalPanel {
     this.SetScale(persistedScale);
   }
 
-  protected cb func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidget>) -> Bool {
+  protected cb func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidgetEvent>) -> Bool {
     let widgetName: CName = this.GetName();
     let hudEditorWidgetName: CName = event.activeWidget;
 

@@ -290,7 +290,7 @@ private func ShowInputHints(show: Bool) -> Void {
 }
 
 @addMethod(hudCarController)
-protected cb func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidget>) -> Bool {
+protected cb func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidgetEvent>) -> Bool {
   let widgetName: CName = n"NewCarHud";
   let hudEditorWidgetName: CName = event.activeWidget;
   let isEnabled: Bool = Equals(widgetName, hudEditorWidgetName);
@@ -340,8 +340,7 @@ private func ShowBossHealthbar(show: Bool) -> Void {
 private func ShowDialogPreview(show: Bool) -> Void {
   let controller: ref<dialogWidgetGameController>;
   let root: ref<inkCompoundWidget>;
-  let preview: wref<inkWidget>;
-  let label: wref<inkText>;
+  let preview: ref<inkWidget>;
   if this.IsA(n"dialogWidgetGameController") {
     controller = this as dialogWidgetGameController;
     root = this.GetRootCompoundWidget();
@@ -353,23 +352,11 @@ private func ShowDialogPreview(show: Bool) -> Void {
       preview.SetAnchor(inkEAnchor.Fill);
       preview.SetTintColor(new HDRColor(1.0, 0.0, 0.0, 1.0));
       preview.SetSize(new Vector2(500.0, 200.0));
-
-      label = new inkText();
-      label.SetName(n"previewLabel");
-      label.SetText("Dialog widget preview");
-      label.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-      label.SetFontSize(30);
-      label.SetLetterCase(textLetterCase.OriginalCase);
-      label.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-      label.BindProperty(n"tintColor", n"MainColors.White");
-
       if Equals(ArraySize(controller.m_data.choiceHubs), 0) {
         preview.Reparent(root);
-        label.Reparent(root);
       };
     } else {
       root.RemoveChildByName(n"previewFill");
-      root.RemoveChildByName(n"previewLabel");
     };
   };
 }

@@ -1,3 +1,5 @@
+@addField(inkGameController) let huditorWidgetName: wref<inkText>;
+
 @addField(inkGameController) let minimapSlot: wref<HUDitorCustomSlot>;
 @addField(inkGameController) let questTrackerSlot: wref<HUDitorCustomSlot>;
 @addField(inkGameController) let wantedSlot: wref<HUDitorCustomSlot>;
@@ -50,7 +52,7 @@ protected cb func OnGameSessionInitialized(event: ref<GameSessionInitializedEven
 }
 
 @addMethod(inkGameController)
-protected cb func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidget>) -> Bool {
+protected cb func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidgetEvent>) -> Bool {
   if this.IsA(n"gameuiRootHudGameController") {
     this.minimapSlot.OnEnableHUDEditorWidget(event);
     this.questTrackerSlot.OnEnableHUDEditorWidget(event);
@@ -70,6 +72,8 @@ protected cb func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidget>) 
     this.bossHealthbarSlot.OnEnableHUDEditorWidget(event);
     this.dialogChoicesSlot.OnEnableHUDEditorWidget(event);
     this.dialogSubtitlesSlot.OnEnableHUDEditorWidget(event);
+    this.huditorWidgetName.SetVisible(true);
+    this.huditorWidgetName.SetText(NameToString(event.activeWidget));
   };
 }
 
@@ -94,6 +98,7 @@ protected cb func OnDisableHUDEditorWidgets(event: ref<DisableHUDEditor>) -> Boo
     this.bossHealthbarSlot.OnDisableHUDEditorWidgets(event);
     this.dialogChoicesSlot.OnDisableHUDEditorWidgets(event);
     this.dialogSubtitlesSlot.OnDisableHUDEditorWidgets(event);
+    this.huditorWidgetName.SetVisible(false);
   };
 }
 
@@ -145,6 +150,22 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
   };
 }
 
+@addMethod(inkGameController)
+private func InitWidgetNameLabel() -> Void {
+  let uiSystem: wref<UISystem> = GameInstance.GetUISystem(this.GetPlayerControlledObject().GetGame());
+  let root: ref<inkCompoundWidget> = uiSystem.GetLayer(n"inkHUDLayer").GetVirtualWindow();
+  root.RemoveChildByName(n"huditorLabel");
+
+  let label: ref<inkText> = new inkText();
+  label.SetName(n"huditorLabel");
+  label.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+  label.SetFontSize(24);
+  label.SetLetterCase(textLetterCase.OriginalCase);
+  label.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+  label.BindProperty(n"tintColor", n"MainColors.Yellow");
+  label.Reparent(root);
+  this.huditorWidgetName = label;
+}
 
 @addMethod(inkGameController)
 private func CreateCustomSlots() -> Void {
@@ -692,6 +713,7 @@ private func InitBaseWidgets() -> Void {
 @addMethod(inkGameController)
 protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
   if this.IsA(n"gameuiRootHudGameController") {
+    this.InitWidgetNameLabel();
     this.CreateCustomSlots();
     this.InitBaseWidgets();
   };

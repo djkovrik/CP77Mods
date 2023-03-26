@@ -1,4 +1,4 @@
-public class SetActiveHUDEditorWidget extends Event {
+public class SetActiveHUDEditorWidgetEvent extends Event {
   let activeWidget: CName;
 }
 

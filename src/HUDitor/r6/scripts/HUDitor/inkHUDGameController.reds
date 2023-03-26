@@ -70,14 +70,14 @@ public class HUDitorInputListener {
     if ListenerAction.IsButtonJustPressed(action) {
       if Equals(actionName, n"right_button") && isActive {
         this.hudWidgetsManager.SwitchToNextWidget();
-        let enableHUDEditorEvent: ref<SetActiveHUDEditorWidget> = new SetActiveHUDEditorWidget();
+        let enableHUDEditorEvent: ref<SetActiveHUDEditorWidgetEvent> = new SetActiveHUDEditorWidgetEvent();
         enableHUDEditorEvent.activeWidget = this.hudWidgetsManager.GetActiveWidget();
         this.uiSystem.QueueEvent(enableHUDEditorEvent);
       };
 
       if Equals(actionName, n"left_button") && isActive {
         this.hudWidgetsManager.SwitchToPrevWidget();
-        let enableHUDEditorEvent: ref<SetActiveHUDEditorWidget> = new SetActiveHUDEditorWidget();
+        let enableHUDEditorEvent: ref<SetActiveHUDEditorWidgetEvent> = new SetActiveHUDEditorWidgetEvent();
         enableHUDEditorEvent.activeWidget = this.hudWidgetsManager.GetActiveWidget();
         this.uiSystem.QueueEvent(enableHUDEditorEvent);
       };
@@ -104,7 +104,7 @@ public class HUDitorInputListener {
         if Equals(actionName, n"UI_Unequip") || Equals(actionName, n"HUDitor_Editor")  {
           if !isActive {
             this.systemRequestsHandler.PauseGame();
-            let enableHUDEditorEvent: ref<SetActiveHUDEditorWidget> = new SetActiveHUDEditorWidget();
+            let enableHUDEditorEvent: ref<SetActiveHUDEditorWidgetEvent> = new SetActiveHUDEditorWidgetEvent();
             enableHUDEditorEvent.activeWidget = n"NewTracker";
             HUDWidgetsManager.GetInstance().isActive = true;
             HUDWidgetsManager.GetInstance().activeWidget = n"NewTracker";
