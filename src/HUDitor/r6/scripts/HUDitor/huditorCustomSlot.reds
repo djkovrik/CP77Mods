@@ -50,29 +50,10 @@ public class HUDitorCustomSlot extends inkVerticalPanel {
   }
 
   private func IsHUDWidget() -> Bool {
+    let hudWidgets: array<CName> = HUDWidgetsManager.GetInstance().GetSlots();
     let widgetName: CName = this.GetName();
 
     if !Equals(widgetName, n"") {
-      let hudWidgets = [
-        n"NewMinimap",
-        n"NewTracker",
-        n"NewWanted",
-        n"NewQuestNotifications",
-        n"NewItemNotifications",
-        n"NewVehicleSummon",
-        n"NewWeaponRoster",
-        n"NewCrouchIndicator",
-        n"NewDpad",
-        n"NewHealthBar",
-        n"NewStaminaBar",
-        n"NewPhoneAvatar",
-        n"NewPhoneControl",
-        n"NewInputHint",
-        n"NewCarHud",
-        n"NewBossHealthbar",
-        n"NewDialogChoices",
-        n"NewDialogSubtitles"
-      ];
       return ArrayContains(hudWidgets, widgetName);
     } else {
       return false;

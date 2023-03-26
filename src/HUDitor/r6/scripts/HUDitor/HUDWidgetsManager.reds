@@ -1,24 +1,5 @@
 module HUDrag.HUDWidgetsManager
-
-// Widgets and order:
-// - NewTracker - Quest tracker
-// - NewMinimap - Minimap
-// - NewWanted - Wanted bar
-// - NewQuestNotifications - Quest notifications area
-// - NewItemNotifications - Items notifications area
-// - NewVehicleSummon - Vehicle summon
-// - NewWeaponRoster - Ammo counter
-// - NewCrouchIndicator - Crouch indicator
-// - NewDpad - Dpad hint
-// - NewHealthBar - Player healthbar
-// - NewStaminaBar - Stamina
-// - NewPhoneAvatar - Phone call avatar
-// - NewPhoneControl - Phone call input control
-// - NewInputHint - Input hints
-// - NewCarHud - Speedometer
-// - NewBossHealthbar - Boss healthbar
-// - NewDialogChoices - Dialog choices
-// - NewDialogSubtitles - Dialog subtitles
+import HUDrag.HUDitorConfig
 
 @addField(PlayerPuppet)
 public let hudWidgetsManager: ref<HUDWidgetsManager>;
@@ -36,30 +17,29 @@ public class HUDWidgetsManager {
   public let slots: array<CName>;
 
   private func Initialize(gameInstance: GameInstance, puppetId: EntityID, hudGameController: ref<inkGameController>) {
+    let config: ref<HUDitorConfig> = new HUDitorConfig();
     this.gameInstance = gameInstance;
     this.puppetId = puppetId;
     this.SetHUDEditorListener(hudGameController);
     this.currentIndex = 0;
-    this.slots = [
-      n"NewTracker",
-      n"NewMinimap",
-      n"NewWanted",
-      n"NewQuestNotifications",
-      n"NewItemNotifications",
-      n"NewVehicleSummon",
-      n"NewWeaponRoster",
-      n"NewCrouchIndicator",
-      n"NewDpad",
-      n"NewHealthBar",
-      n"NewStaminaBar",
-      n"NewPhoneAvatar",
-      n"NewPhoneControl",
-      n"NewInputHint",
-      n"NewCarHud",
-      n"NewBossHealthbar",
-      n"NewDialogChoices",
-      n"NewDialogSubtitles"
-    ];
+    if config.questTrackerEnabled { ArrayPush(this.slots, n"NewTracker"); }
+    if config.minimapEnabled { ArrayPush(this.slots, n"NewMinimap"); }
+    if config.wantedBarEnabled { ArrayPush(this.slots, n"NewWanted"); }
+    if config.questNotificationsEnabled { ArrayPush(this.slots, n"NewQuestNotifications"); }
+    if config.itemNotificationsEnabled { ArrayPush(this.slots, n"NewItemNotifications"); }
+    if config.vehicleSummonEnabled { ArrayPush(this.slots, n"NewVehicleSummon"); }
+    if config.weaponRosterEnabled { ArrayPush(this.slots, n"NewWeaponRoster"); }
+    if config.crouchIndicatorEnabled { ArrayPush(this.slots, n"NewCrouchIndicator"); }
+    if config.dpadEnabled { ArrayPush(this.slots, n"NewDpad"); }
+    if config.playerHealthbarEnabled { ArrayPush(this.slots, n"NewHealthBar"); }
+    if config.playerStaminabarEnabled { ArrayPush(this.slots, n"NewStaminaBar"); }
+    if config.incomingCallAvatarEnabled { ArrayPush(this.slots, n"NewPhoneAvatar"); }
+    if config.incomingCallButtonEnabled { ArrayPush(this.slots, n"NewPhoneControl"); }
+    if config.inputHintsEnabled { ArrayPush(this.slots, n"NewInputHint"); }
+    if config.speedometerEnabled { ArrayPush(this.slots, n"NewCarHud"); }
+    if config.bossHealthbarEnabled { ArrayPush(this.slots, n"NewBossHealthbar"); }
+    if config.dialogChoicesEnabled { ArrayPush(this.slots, n"NewDialogChoices"); }
+    if config.dialogSubtitlesEnabled { ArrayPush(this.slots, n"NewDialogSubtitles"); }
     this.maxIndex = ArraySize(this.slots) - 1;
   }
 
@@ -98,6 +78,10 @@ public class HUDWidgetsManager {
     };
 
     return n"";
+  }
+
+  public func GetSlots() -> array<CName> {
+    return this.slots;
   }
 
   public func SetHUDEditorListener(hudGameController: ref<inkGameController>) -> Void {

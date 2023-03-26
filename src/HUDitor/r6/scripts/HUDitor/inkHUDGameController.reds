@@ -103,11 +103,16 @@ public class HUDitorInputListener {
       if this.isShiftDown || Equals(actionName, n"HUDitor_Editor") {
         if Equals(actionName, n"UI_Unequip") || Equals(actionName, n"HUDitor_Editor")  {
           if !isActive {
+            let activeWidget: CName = n"";
+            let slots: array<CName> = this.hudWidgetsManager.GetSlots();
+            if ArraySize(slots) > 0 {
+              activeWidget = slots[0];
+            };
             this.systemRequestsHandler.PauseGame();
             let enableHUDEditorEvent: ref<SetActiveHUDEditorWidgetEvent> = new SetActiveHUDEditorWidgetEvent();
-            enableHUDEditorEvent.activeWidget = n"NewTracker";
+            enableHUDEditorEvent.activeWidget = activeWidget;
             HUDWidgetsManager.GetInstance().isActive = true;
-            HUDWidgetsManager.GetInstance().activeWidget = n"NewTracker";
+            HUDWidgetsManager.GetInstance().activeWidget = activeWidget;
 
             this.uiSystem.QueueEvent(new DisplayPreviewEvent());
             this.uiSystem.QueueEvent(enableHUDEditorEvent);

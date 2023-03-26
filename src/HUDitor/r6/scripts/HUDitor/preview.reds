@@ -1,4 +1,4 @@
-// Widgets previewing stuff
+import HUDrag.HUDitorConfig
 
 @addField(inkGameController)
 public let originalOpacity: Float;
@@ -8,23 +8,25 @@ public let originalVisibility: Bool;
 
 @addMethod(inkGameController)
 protected cb func OnDisplayPreviewEvent(event: ref<DisplayPreviewEvent>) -> Bool {
-  this.ShowQuestTracker(true);
-  this.ShowMinimap(true);
-  this.ShowWantedBar(true);
-  this.ShowJournalNotification();
-  this.ShowItemsNotification();
-  this.ShowVehicleSummonNotification(true);
-  this.ShowAmmoCounter(true);
-  this.ShowCrouchIndicator(true);
-  this.ShowDpad(true);
-  this.ShowHealthbar(true);
-  this.ShowStaminaBar(true);
-  this.ShowIncomingPhoneCall(n"jackie", true);
-  this.ShowIncomingCallController(n"jackie", true);
-  this.ShowInputHints(true);
-  this.ShowBossHealthbar(true);
-  this.ShowDialogPreview(true);
-  this.ShowSubtitlesPreview(true);
+  let config: ref<HUDitorConfig> = new HUDitorConfig();
+  if config.questTrackerEnabled { this.ShowQuestTracker(true); }
+  if config.minimapEnabled { this.ShowMinimap(true); }
+  if config.wantedBarEnabled { this.ShowWantedBar(true); }
+  if config.questNotificationsEnabled { this.ShowJournalNotification(); }
+  if config.itemNotificationsEnabled { this.ShowItemsNotification(); }
+  if config.vehicleSummonEnabled { this.ShowVehicleSummonNotification(true); }
+  if config.weaponRosterEnabled { this.ShowAmmoCounter(true); }
+  if config.crouchIndicatorEnabled { this.ShowCrouchIndicator(true); }
+  if config.dpadEnabled { this.ShowDpad(true); }
+  if config.playerHealthbarEnabled { this.ShowHealthbar(true); }
+  if config.playerStaminabarEnabled { this.ShowStaminaBar(true); }
+  if config.incomingCallAvatarEnabled { this.ShowIncomingPhoneCall(n"jackie", true); }
+  if config.incomingCallButtonEnabled { this.ShowIncomingCallController(n"jackie", true); }
+  if config.inputHintsEnabled { this.ShowInputHints(true); }
+  // if config.speedometerEnabled no preview here;
+  if config.bossHealthbarEnabled { this.ShowBossHealthbar(true); }
+  if config.dialogChoicesEnabled { this.ShowDialogPreview(true); }
+  if config.dialogSubtitlesEnabled { this.ShowSubtitlesPreview(true); }
 }
 
 @addMethod(inkGameController)
@@ -291,9 +293,10 @@ private func ShowInputHints(show: Bool) -> Void {
 
 @addMethod(hudCarController)
 protected cb func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidgetEvent>) -> Bool {
+  let config: ref<HUDitorConfig> = new HUDitorConfig();
   let widgetName: CName = n"NewCarHud";
   let hudEditorWidgetName: CName = event.activeWidget;
-  let isEnabled: Bool = Equals(widgetName, hudEditorWidgetName);
+  let isEnabled: Bool = Equals(widgetName, hudEditorWidgetName) && config.speedometerEnabled;
   this.ShowCarHUD(isEnabled);
 }
 
