@@ -5,18 +5,14 @@ public class HUDitorInputListener {
   let uiSystem: wref<UISystem>;
   let cursor: ref<inkImage>;
   let isShiftDown: Bool;
-  let compatMode: HUDitorCompatMode = HUDitorCompatMode.Default;
+  let hudWidgetsManager: wref<HUDWidgetsManager>;
 
   public func Initialize(parent: ref<inkHUDGameController>) {
     let player: wref<PlayerPuppet> = parent.GetPlayerControlledObject() as PlayerPuppet;
     this.uiSystem = GameInstance.GetUISystem(player.GetGame());
     this.systemRequestsHandler = parent.GetSystemRequestsHandler();
     this.AddCursor(parent.GetRootCompoundWidget());
-  }
-
-  public func SetCompatMode(mode: HUDitorCompatMode) -> Void {
-    this.compatMode = mode;
-    LogChannel(n"DEBUG", s"HUDitor compat mode: \(this.compatMode)");
+    this.hudWidgetsManager = HUDWidgetsManager.GetInstance();
   }
 
   private func AddCursor(root: ref<inkCompoundWidget>) {
@@ -73,54 +69,16 @@ public class HUDitorInputListener {
 
     if ListenerAction.IsButtonJustPressed(action) {
       if Equals(actionName, n"right_button") && isActive {
-        let nextActiveWidget: CName;
-        switch this.compatMode {
-          case HUDitorCompatMode.E3CompassFaithful: 
-            nextActiveWidget = HUDWidgetsManager.GetNextWidgetCompassFaithful(HUDWidgetsManager.GetInstance().activeWidget);
-            break;
-          case HUDitorCompatMode.E3CompassFaithfulE3HUD: 
-            nextActiveWidget = HUDWidgetsManager.GetNextWidgetCompassFaithful(HUDWidgetsManager.GetInstance().activeWidget);
-            break;
-          case HUDitorCompatMode.E3CompassMinimap: 
-            nextActiveWidget = HUDWidgetsManager.GetNextWidgetCompassMinimap(HUDWidgetsManager.GetInstance().activeWidget);
-            break;
-          case HUDitorCompatMode.E3CompassMinimapE3HUD: 
-            nextActiveWidget = HUDWidgetsManager.GetNextWidgetCompassMinimap(HUDWidgetsManager.GetInstance().activeWidget);
-            break;
-          default: 
-            nextActiveWidget = HUDWidgetsManager.GetNextWidgetDefault(HUDWidgetsManager.GetInstance().activeWidget);
-            break;
-        };
-        
-        HUDWidgetsManager.GetInstance().activeWidget = nextActiveWidget;
-        let enableHUDEditorEvent = new SetActiveHUDEditorWidget();
-        enableHUDEditorEvent.activeWidget = nextActiveWidget;
+        this.hudWidgetsManager.SwitchToNextWidget();
+        let enableHUDEditorEvent: ref<SetActiveHUDEditorWidget> = new SetActiveHUDEditorWidget();
+        enableHUDEditorEvent.activeWidget = this.hudWidgetsManager.GetActiveWidget();
         this.uiSystem.QueueEvent(enableHUDEditorEvent);
       };
 
       if Equals(actionName, n"left_button") && isActive {
-        let previousActiveWidget: CName;
-        switch this.compatMode {
-          case HUDitorCompatMode.E3CompassFaithful: 
-            previousActiveWidget = HUDWidgetsManager.GetPreviousWidgetCompassFaithful(HUDWidgetsManager.GetInstance().activeWidget);
-            break;
-          case HUDitorCompatMode.E3CompassFaithfulE3HUD: 
-            previousActiveWidget = HUDWidgetsManager.GetPreviousWidgetCompassFaithful(HUDWidgetsManager.GetInstance().activeWidget);
-            break;
-          case HUDitorCompatMode.E3CompassMinimap: 
-            previousActiveWidget = HUDWidgetsManager.GetPreviousWidgetCompassMinimap(HUDWidgetsManager.GetInstance().activeWidget);
-            break;
-          case HUDitorCompatMode.E3CompassMinimapE3HUD: 
-            previousActiveWidget = HUDWidgetsManager.GetPreviousWidgetCompassMinimap(HUDWidgetsManager.GetInstance().activeWidget);
-            break;
-          default: 
-            previousActiveWidget = HUDWidgetsManager.GetPreviousWidgetDefault(HUDWidgetsManager.GetInstance().activeWidget);
-            break;
-        };
-        
-        HUDWidgetsManager.GetInstance().activeWidget = previousActiveWidget;
+        this.hudWidgetsManager.SwitchToPrevWidget();
         let enableHUDEditorEvent: ref<SetActiveHUDEditorWidget> = new SetActiveHUDEditorWidget();
-        enableHUDEditorEvent.activeWidget = previousActiveWidget;
+        enableHUDEditorEvent.activeWidget = this.hudWidgetsManager.GetActiveWidget();
         this.uiSystem.QueueEvent(enableHUDEditorEvent);
       };
 
@@ -194,12 +152,5 @@ protected cb func OnPlayerDetach(playerPuppet: ref<GameObject>) -> Bool {
     let player: wref<PlayerPuppet> = playerPuppet as PlayerPuppet;
     player.UnregisterInputListener(this.huditorListener);
     this.huditorListener = null;
-  }
-}
-
-@addMethod(inkHUDGameController)
-protected cb func OnCompatModeChanged(evt: ref<SetHUDitorCompatMode>) -> Bool {
-  if (this.IsA(n"gameuiWorldMappinsContainerController")) {
-     this.huditorListener.SetCompatMode(evt.mode);
   }
 }

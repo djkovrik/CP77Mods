@@ -54,21 +54,20 @@ public class HUDitorCustomSlot extends inkVerticalPanel {
 
     if !Equals(widgetName, n"") {
       let hudWidgets = [
-        n"NewMinimap", 
-        n"NewTracker", 
-        n"NewWanted", 
-        n"NewVehicleSummon", 
-        n"NewStaminaBar", 
-        n"NewInputHint", 
-        n"NewPhoneAvatar",
-        n"NewPhoneControl",
-        n"NewQuestNotifications", 
-        n"NewItemNotifications", 
-        n"NewWeaponCrouch", 
-        n"NewCompassScale",
-        n"NewCompassMarkers",
+        n"NewMinimap",
+        n"NewTracker",
+        n"NewWanted",
+        n"NewQuestNotifications",
+        n"NewItemNotifications",
+        n"NewVehicleSummon",
+        n"NewWeaponRoster",
+        n"NewCrouchIndicator",
         n"NewDpad",
         n"NewHealthBar",
+        n"NewStaminaBar",
+        n"NewPhoneAvatar",
+        n"NewPhoneControl",
+        n"NewInputHint",
         n"NewCarHud",
         n"NewBossHealthbar",
         n"NewDialogChoices",
@@ -89,18 +88,7 @@ public class HUDitorCustomSlot extends inkVerticalPanel {
 
   protected cb func OnResetHUDWidgets(event: ref<ResetAllHUDWidgets>) {
     if this.IsHUDWidget() {
-      let scale: Vector2;
-      if Equals(this.GetName(), n"NewDialogSubtitles") 
-      || Equals(this.GetName(), n"NewPhoneControl") 
-      || Equals(this.GetName(), n"NewItemNotifications") 
-      || Equals(this.GetName(), n"NewQuestNotifications") 
-      || Equals(this.GetName(), n"NewCompassScale") 
-      || Equals(this.GetName(), n"NewDialogChoices") {
-        scale = new Vector2(0.666667, 0.666667);
-      } else {
-        scale = new Vector2(1.0, 1.0);
-      };
-
+      let scale: Vector2 = new Vector2(0.666667, 0.666667);
       this.SetTranslation(new Vector2(0.0, 0.0));
       this.SetScale(scale);
       this.UpdatePersistedState(new Vector2(0.0, 0.0), scale);

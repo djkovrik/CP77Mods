@@ -8,20 +8,20 @@ public let originalVisibility: Bool;
 
 @addMethod(inkGameController)
 protected cb func OnDisplayPreviewEvent(event: ref<DisplayPreviewEvent>) -> Bool {
-  this.ShowMinimap(true);
   this.ShowQuestTracker(true);
-  this.ShowAmmoCounter(true);
-  this.ShowCrouchIndicator(true);
-  this.ShowDpad(true);
-  this.ShowInputHints(true);
-  this.ShowHealthbar(true);
-  this.ShowIncomingPhoneCall(n"jackie", true);
-  this.ShowIncomingCallController(n"jackie", true);
+  this.ShowMinimap(true);
   this.ShowWantedBar(true);
   this.ShowJournalNotification();
   this.ShowItemsNotification();
-  this.ShowStaminaBar(true);
   this.ShowVehicleSummonNotification(true);
+  this.ShowAmmoCounter(true);
+  this.ShowCrouchIndicator(true);
+  this.ShowDpad(true);
+  this.ShowHealthbar(true);
+  this.ShowStaminaBar(true);
+  this.ShowIncomingPhoneCall(n"jackie", true);
+  this.ShowIncomingCallController(n"jackie", true);
+  this.ShowInputHints(true);
   this.ShowBossHealthbar(true);
   this.ShowDialogPreview(true);
   this.ShowSubtitlesPreview(true);
@@ -29,18 +29,18 @@ protected cb func OnDisplayPreviewEvent(event: ref<DisplayPreviewEvent>) -> Bool
 
 @addMethod(inkGameController)
 protected cb func OnHidePreviewEvent(event: ref<HidePreviewEvent>) -> Bool {
-  this.ShowMinimap(false);
   this.ShowQuestTracker(false);
+  this.ShowMinimap(false);
+  this.ShowWantedBar(false);
+  this.ShowVehicleSummonNotification(false);
   this.ShowAmmoCounter(false);
   this.ShowCrouchIndicator(false);
   this.ShowDpad(false);
-  this.ShowInputHints(false);
   this.ShowHealthbar(false);
+  this.ShowStaminaBar(false);
   this.ShowIncomingPhoneCall(n"jackie", false);
   this.ShowIncomingCallController(n"jackie", false);
-  this.ShowWantedBar(false);
-  this.ShowStaminaBar(false);
-  this.ShowVehicleSummonNotification(false);
+  this.ShowInputHints(false);
   this.ShowBossHealthbar(false);
   this.ShowDialogPreview(false);
   this.ShowSubtitlesPreview(false);
@@ -48,6 +48,18 @@ protected cb func OnHidePreviewEvent(event: ref<HidePreviewEvent>) -> Bool {
 
 
 // Preview helpers
+@addMethod(inkGameController)
+private func ShowQuestTracker(show: Bool) -> Void {
+  if this.IsA(n"QuestTrackerGameController") {
+    if show {
+      this.originalOpacity = this.GetRootWidget().GetOpacity();
+      this.GetRootWidget().SetOpacity(1.0);
+    } else {
+      this.GetRootWidget().SetOpacity(this.originalOpacity);
+    };
+  };
+}
+
 @addMethod(inkGameController)
 private func ShowMinimap(show: Bool) -> Void {
   if this.IsA(n"gameuiMinimapContainerController") {
@@ -61,14 +73,76 @@ private func ShowMinimap(show: Bool) -> Void {
 }
 
 @addMethod(inkGameController)
-private func ShowQuestTracker(show: Bool) -> Void {
-  if this.IsA(n"QuestTrackerGameController") {
+private func ShowWantedBar(show: Bool) -> Void {
+  if this.IsA(n"WantedBarGameController") {
+    let controller = this as WantedBarGameController;
+    let stars: Int32;
     if show {
-      this.originalOpacity = this.GetRootWidget().GetOpacity();
-      this.GetRootWidget().SetOpacity(1.0);
+      stars = 5;
     } else {
-      this.GetRootWidget().SetOpacity(this.originalOpacity);
-    };
+      stars = 0;
+    }
+    controller.OnWantedDataChange(stars);
+  };
+}
+
+
+@addMethod(inkGameController)
+private func ShowJournalNotification() -> Void {
+  if this.IsA(n"JournalNotificationQueue") {
+    let controller = this as JournalNotificationQueue;
+    let userData: ref<PhoneMessageNotificationViewData> = new PhoneMessageNotificationViewData();
+    let notificationData: gameuiGenericNotificationData;
+    userData.entryHash = -1;
+    userData.threadHash = -1;
+    userData.contactHash = -1;
+    userData.title = "Preview notifications";
+    userData.SMSText = "Will disappear after 20 seconds";
+    userData.action = new GenericNotificationBaseAction();
+    userData.animation = n"notification_phone_MSG";
+    userData.soundEvent = n"PhoneSmsPopup";
+    userData.soundAction = n"OnOpen";
+    notificationData.time = 20.0;
+    notificationData.widgetLibraryItemName = controller.m_messageNotification;
+    notificationData.notificationData = userData;
+    controller.AddNewNotificationData(notificationData);
+  };
+}
+
+@addMethod(inkGameController)
+private func ShowItemsNotification() -> Void {
+  if this.IsA(n"ItemsNotificationQueue") {
+    let controller = this as ItemsNotificationQueue;
+    let data: ref<ItemAddedNotificationViewData>;
+    let notificationData: gameuiGenericNotificationData;
+    data = new ItemAddedNotificationViewData();
+    data.animation = n"Item_Received";
+    data.itemRarity = n"epic";
+    data.itemID = ItemID.FromTDBID(t"Items.Pants_03_rich_01");
+    data.title = GetLocalizedText("Story-base-gameplay-gui-widgets-notifications-quest_update-_localizationString19");
+    notificationData.time = 20.0;
+    notificationData.widgetLibraryItemName = controller.m_itemNotification;
+    notificationData.notificationData = data;
+    controller.AddNewNotificationData(notificationData);
+  };
+}
+
+@addMethod(inkGameController)
+private func ShowVehicleSummonNotification(show: Bool) -> Void {
+  if this.IsA(n"VehicleSummonWidgetGameController") {
+    let controller = this as VehicleSummonWidgetGameController;
+    controller.OnVehicleSummonStateChanged(1u);
+    controller.m_rootWidget.SetVisible(show);
+    controller.m_textParams = new inkTextParams();
+    controller.m_textParams.AddMeasurement("distance", Cast<Float>(controller.m_distance), EMeasurementUnit.Meter);
+    controller.m_textParams.AddString("unit", GetLocalizedText(NameToString(MeasurementUtils.GetUnitLocalizationKey(UILocalizationHelper.GetSystemBaseUnit()))));
+    inkTextRef.SetText(controller.m_distanceLabel, "123M", controller.m_textParams);
+    controller.PlayAnim(n"intro", n"OnIntroFinished");
+    controller.m_optionCounter.loopType = inkanimLoopType.Cycle;
+    controller.m_optionCounter.loopCounter = 35u;
+    controller.m_animationCounterProxy = controller.PlayLibraryAnimation(n"counter", controller.m_optionCounter);
+    GameInstance.GetAudioSystem(controller.m_gameInstance).Play(n"ui_jingle_car_call");
+    inkTextRef.SetLocalizedTextScript(controller.m_vehicleNameLabel, "Your vehicle name");
   };
 }
 
@@ -114,18 +188,6 @@ private func ShowDpad(show: Bool) -> Void {
 }
 
 @addMethod(inkGameController)
-private func ShowInputHints(show: Bool) -> Void {
-  if this.IsA(n"gameuiInputHintManagerGameController") {
-    if show {
-      this.originalOpacity = this.GetRootWidget().GetOpacity();
-      this.GetRootWidget().SetOpacity(1.0);
-    } else {
-      this.GetRootWidget().SetOpacity(this.originalOpacity);
-    };
-  };
-}
-
-@addMethod(inkGameController)
 private func ShowHealthbar(show: Bool) -> Void {
   if this.IsA(n"healthbarWidgetGameController") {
     let controller = this as healthbarWidgetGameController;
@@ -136,6 +198,24 @@ private func ShowHealthbar(show: Bool) -> Void {
     };
   };
 }
+
+@addMethod(inkGameController)
+private func ShowStaminaBar(show: Bool) -> Void {
+  if this.IsA(n"StaminabarWidgetGameController") {
+    let controller = this as StaminabarWidgetGameController;
+    controller.m_currentStamina = 87.7;
+    controller.m_staminaPoolListener.OnStatPoolValueChanged(70.0, 87.7, 11.0);
+
+    if show {
+      controller.m_RootWidget.SetOpacity(1.0);
+      controller.m_RootWidget.SetVisible(true);
+    } else {
+      controller.m_RootWidget.SetOpacity(0.0);
+      controller.m_RootWidget.SetVisible(false);
+    };
+  };
+}
+
 
 @addMethod(inkGameController)
 private func ShowIncomingPhoneCall(name: CName, show: Bool) -> Void {
@@ -163,96 +243,6 @@ private func ShowIncomingPhoneCall(name: CName, show: Bool) -> Void {
   };
 }
 
-@addMethod(inkGameController)
-private func ShowWantedBar(show: Bool) -> Void {
-  if this.IsA(n"WantedBarGameController") {
-    let controller = this as WantedBarGameController;
-    let stars: Int32;
-    if show {
-      stars = 5;
-    } else {
-      stars = 0;
-    }
-    controller.OnWantedDataChange(stars);
-  };
-}
-
-@addMethod(inkGameController)
-private func ShowJournalNotification() -> Void {
-  if this.IsA(n"JournalNotificationQueue") {
-    let controller = this as JournalNotificationQueue;
-    let userData: ref<PhoneMessageNotificationViewData> = new PhoneMessageNotificationViewData();
-    let notificationData: gameuiGenericNotificationData;
-    userData.entryHash = -1;
-    userData.threadHash = -1;
-    userData.contactHash = -1;
-    userData.title = "Preview notifications";
-    userData.SMSText = "Will disappear after 20 seconds";
-    userData.action = new GenericNotificationBaseAction();
-    userData.animation = n"notification_phone_MSG";
-    userData.soundEvent = n"PhoneSmsPopup";
-    userData.soundAction = n"OnOpen";
-    notificationData.time = 20.0;
-    notificationData.widgetLibraryItemName = controller.m_messageNotification;
-    notificationData.notificationData = userData;
-    controller.AddNewNotificationData(notificationData);
-  };
-}
-
-@addMethod(inkGameController)
-private func ShowItemsNotification() -> Void {
-  if this.IsA(n"ItemsNotificationQueue") {
-    let controller = this as ItemsNotificationQueue;
-    let data: ref<ItemAddedNotificationViewData>;
-    let notificationData: gameuiGenericNotificationData;
-    data = new ItemAddedNotificationViewData();
-    data.animation = n"Item_Received";
-    data.itemRarity = n"epic";
-    data.itemID = ItemID.FromTDBID(t"Items.Pants_03_rich_01");
-    data.title = GetLocalizedText("Story-base-gameplay-gui-widgets-notifications-quest_update-_localizationString19");
-    notificationData.time = 20.0;
-    notificationData.widgetLibraryItemName = controller.m_itemNotification;
-    notificationData.notificationData = data;
-    controller.AddNewNotificationData(notificationData);
-  };
-}
-
-
-@addMethod(inkGameController)
-private func ShowStaminaBar(show: Bool) -> Void {
-  if this.IsA(n"StaminabarWidgetGameController") {
-    let controller = this as StaminabarWidgetGameController;
-    controller.m_currentStamina = 87.7;
-    controller.m_staminaPoolListener.OnStatPoolValueChanged(70.0, 87.7, 11.0);
-
-    if show {
-      controller.m_RootWidget.SetOpacity(1.0);
-      controller.m_RootWidget.SetVisible(true);
-    } else {
-      controller.m_RootWidget.SetOpacity(0.0);
-      controller.m_RootWidget.SetVisible(false);
-    };
-  };
-}
-
-@addMethod(inkGameController)
-private func ShowVehicleSummonNotification(show: Bool) -> Void {
-  if this.IsA(n"VehicleSummonWidgetGameController") {
-    let controller = this as VehicleSummonWidgetGameController;
-    controller.OnVehicleSummonStateChanged(1u);
-    controller.m_rootWidget.SetVisible(show);
-    controller.m_textParams = new inkTextParams();
-    controller.m_textParams.AddMeasurement("distance", Cast<Float>(controller.m_distance), EMeasurementUnit.Meter);
-    controller.m_textParams.AddString("unit", GetLocalizedText(NameToString(MeasurementUtils.GetUnitLocalizationKey(UILocalizationHelper.GetSystemBaseUnit()))));
-    inkTextRef.SetText(controller.m_distanceLabel, "123M", controller.m_textParams);
-    controller.PlayAnim(n"intro", n"OnIntroFinished");
-    controller.m_optionCounter.loopType = inkanimLoopType.Cycle;
-    controller.m_optionCounter.loopCounter = 35u;
-    controller.m_animationCounterProxy = controller.PlayLibraryAnimation(n"counter", controller.m_optionCounter);
-    GameInstance.GetAudioSystem(controller.m_gameInstance).Play(n"ui_jingle_car_call");
-    inkTextRef.SetLocalizedTextScript(controller.m_vehicleNameLabel, "Your vehicle name");
-  };
-}
 
 @addMethod(inkGameController)
 private func ShowIncomingCallController(name: CName, show: Bool) -> Void {
@@ -282,6 +272,19 @@ private func ShowIncomingCallController(name: CName, show: Bool) -> Void {
     };
     if show {
       controller.m_animProxy = this.PlayLibraryAnimation(n"ring", options);
+    };
+  };
+}
+
+
+@addMethod(inkGameController)
+private func ShowInputHints(show: Bool) -> Void {
+  if this.IsA(n"gameuiInputHintManagerGameController") {
+    if show {
+      this.originalOpacity = this.GetRootWidget().GetOpacity();
+      this.GetRootWidget().SetOpacity(1.0);
+    } else {
+      this.GetRootWidget().SetOpacity(this.originalOpacity);
     };
   };
 }
@@ -337,28 +340,39 @@ private func ShowBossHealthbar(show: Bool) -> Void {
 private func ShowDialogPreview(show: Bool) -> Void {
   let controller: ref<dialogWidgetGameController>;
   let root: ref<inkCompoundWidget>;
-  let preview: ref<inkWidget>;
+  let preview: wref<inkWidget>;
+  let label: wref<inkText>;
   if this.IsA(n"dialogWidgetGameController") {
     controller = this as dialogWidgetGameController;
     root = this.GetRootCompoundWidget();
     if show {
       preview = new inkRectangle();
       preview.SetName(n"previewFill");
+      preview.SetHAlign(inkEHorizontalAlign.Fill);
+      preview.SetVAlign(inkEVerticalAlign.Fill);
       preview.SetAnchor(inkEAnchor.Fill);
       preview.SetTintColor(new HDRColor(1.0, 0.0, 0.0, 1.0));
-      preview.SetSize(new Vector2(460.0, 140.0));
+      preview.SetSize(new Vector2(500.0, 200.0));
+
+      label = new inkText();
+      label.SetName(n"previewLabel");
+      label.SetText("Dialog widget preview");
+      label.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+      label.SetFontSize(30);
+      label.SetLetterCase(textLetterCase.OriginalCase);
+      label.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+      label.BindProperty(n"tintColor", n"MainColors.White");
+
       if Equals(ArraySize(controller.m_data.choiceHubs), 0) {
         preview.Reparent(root);
+        label.Reparent(root);
       };
     } else {
-      preview = root.GetWidget(n"previewFill");
-      if IsDefined(preview) {
-        root.RemoveChild(preview);
-      };
+      root.RemoveChildByName(n"previewFill");
+      root.RemoveChildByName(n"previewLabel");
     };
   };
 }
-
 
 @addMethod(inkGameController)
 private func ShowSubtitlesPreview(show: Bool) -> Void {
