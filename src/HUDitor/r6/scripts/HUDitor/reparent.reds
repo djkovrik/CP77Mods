@@ -19,6 +19,7 @@ import HUDrag.HUDitorConfig
 @addField(inkGameController) let bossHealthbarSlot: wref<HUDitorCustomSlot>;
 @addField(inkGameController) let dialogChoicesSlot: wref<HUDitorCustomSlot>;
 @addField(inkGameController) let dialogSubtitlesSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) let e3CompassSlot: wref<HUDitorCustomSlot>;
 
 @addMethod(inkGameController)
 protected cb func OnScannerDetailsAppearedEvent(event: ref<ScannerDetailsAppearedEvent>) -> Bool {
@@ -49,6 +50,7 @@ protected cb func OnGameSessionInitialized(event: ref<GameSessionInitializedEven
     this.bossHealthbarSlot.OnGameSessionInitialized(event);
     this.dialogChoicesSlot.OnGameSessionInitialized(event);
     this.dialogSubtitlesSlot.OnGameSessionInitialized(event);
+    this.e3CompassSlot.OnGameSessionInitialized(event);
   };
 }
 
@@ -73,6 +75,7 @@ protected cb func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidgetEve
     this.bossHealthbarSlot.OnEnableHUDEditorWidget(event);
     this.dialogChoicesSlot.OnEnableHUDEditorWidget(event);
     this.dialogSubtitlesSlot.OnEnableHUDEditorWidget(event);
+    this.e3CompassSlot.OnEnableHUDEditorWidget(event);
     this.huditorWidgetName.SetVisible(true);
     this.huditorWidgetName.SetText(HUDitorTexts.GetWidgetName(event.activeWidget));
   };
@@ -99,6 +102,7 @@ protected cb func OnDisableHUDEditorWidgets(event: ref<DisableHUDEditor>) -> Boo
     this.bossHealthbarSlot.OnDisableHUDEditorWidgets(event);
     this.dialogChoicesSlot.OnDisableHUDEditorWidgets(event);
     this.dialogSubtitlesSlot.OnDisableHUDEditorWidgets(event);
+    this.e3CompassSlot.OnDisableHUDEditorWidgets(event);
     this.huditorWidgetName.SetVisible(false);
   };
 }
@@ -124,6 +128,7 @@ protected cb func OnResetHUDWidgets(event: ref<ResetAllHUDWidgets>) {
     this.bossHealthbarSlot.OnResetHUDWidgets(event);
     this.dialogChoicesSlot.OnResetHUDWidgets(event);
     this.dialogSubtitlesSlot.OnResetHUDWidgets(event);
+    this.e3CompassSlot.OnResetHUDWidgets(event);
   };
 }
 
@@ -148,6 +153,7 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
     this.bossHealthbarSlot.OnAction(action, consumer);
     this.dialogChoicesSlot.OnAction(action, consumer);
     this.dialogSubtitlesSlot.OnAction(action, consumer);
+    this.e3CompassSlot.OnAction(action, consumer);
   };
 }
 
@@ -201,7 +207,7 @@ private func CreateCustomSlots() -> Void {
     this.questTrackerSlot = questTrackerSlot;
   };
 
-  if config.minimapEnabled {
+  if config.minimapEnabled && !config.compatE3CompassEnabled {
     let minimapSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
     minimapSlot.SetName(n"NewMinimap");
     minimapSlot.SetFitToContent(true);
@@ -660,6 +666,33 @@ private func CreateCustomSlots() -> Void {
     dialogSubtitlesSlot.Reparent(root, 16);
     this.dialogSubtitlesSlot = dialogSubtitlesSlot;
   };
+
+  if config.compatE3CompassEnabled {
+    let e3CompassSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
+    e3CompassSlot.SetName(n"NewCompass");
+    e3CompassSlot.SetFitToContent(false);
+    e3CompassSlot.SetInteractive(false);
+    e3CompassSlot.SetAffectsLayoutWhenHidden(false);
+    e3CompassSlot.SetMargin(new inkMargin(0.0, 20.0, 0.0, 0.0));
+    e3CompassSlot.SetHAlign(inkEHorizontalAlign.Center);
+    e3CompassSlot.SetVAlign(inkEVerticalAlign.Top);
+    e3CompassSlot.SetAnchor(inkEAnchor.TopCenter);
+    e3CompassSlot.SetAnchorPoint(new Vector2(0.5, 0.5));
+    e3CompassSlot.SetLayout(
+      new inkWidgetLayout(
+        new inkMargin(0.0, 0.0, 0.0, 0.0),
+        new inkMargin(0.0, 20.0, 0.0, 0.0),
+        inkEHorizontalAlign.Center,
+        inkEVerticalAlign.Top,
+        inkEAnchor.TopCenter,
+        new Vector2(0.5, 0.5)
+      )
+    );
+
+    root.RemoveChildByName(n"NewCompass");
+    e3CompassSlot.Reparent(root, 17);
+    this.e3CompassSlot = e3CompassSlot;
+  };
 }
 
 @addMethod(inkGameController)
@@ -762,6 +795,11 @@ private func InitBaseWidgets() -> Void {
         if !config.dialogSubtitlesEnabled { break; }
         targetWidget = controller.GetRootCompoundWidget();
         targetWidget.Reparent(this.dialogSubtitlesSlot);
+        break;
+      case n"IronsightGameController":
+        if !config.compatE3CompassEnabled { break; }
+        targetWidget = controller.GetRootCompoundWidget();
+        targetWidget.Reparent(this.e3CompassSlot);
         break;
     };
   }

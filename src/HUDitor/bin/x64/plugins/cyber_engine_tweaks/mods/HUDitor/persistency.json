@@ -29,26 +29,6 @@
          "X":0.666667
       }
    },
-   "NewCompassScale":{
-      "translation":{
-         "Y":0.0,
-         "X":0.0
-      },
-      "scale":{
-         "Y":0.666667,
-         "X":0.666667
-      }
-   },
-   "NewCompassMarkers":{
-      "translation":{
-         "Y":0.0,
-         "X":0.0
-      },
-      "scale":{
-         "Y":0.666667,
-         "X":0.666667
-      }
-   },
    "NewPhoneAvatar":{
       "translation":{
          "Y":0.0,
@@ -190,6 +170,16 @@
       }
    },
    "NewDialogSubtitles":{
+      "translation":{
+         "Y":0.0,
+         "X":0.0
+      },
+      "scale":{
+         "Y":0.666667,
+         "X":0.666667
+      }
+   },
+   "NewCompass":{
       "translation":{
          "Y":0.0,
          "X":0.0

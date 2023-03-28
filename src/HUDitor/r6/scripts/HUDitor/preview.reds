@@ -10,7 +10,7 @@ public let originalVisibility: Bool;
 protected cb func OnDisplayPreviewEvent(event: ref<DisplayPreviewEvent>) -> Bool {
   let config: ref<HUDitorConfig> = new HUDitorConfig();
   if config.questTrackerEnabled { this.ShowQuestTracker(true); }
-  if config.minimapEnabled { this.ShowMinimap(true); }
+  if config.minimapEnabled && !config.compatE3CompassEnabled { this.ShowMinimap(true); }
   if config.wantedBarEnabled { this.ShowWantedBar(true); }
   if config.questNotificationsEnabled { this.ShowJournalNotification(); }
   if config.itemNotificationsEnabled { this.ShowItemsNotification(); }

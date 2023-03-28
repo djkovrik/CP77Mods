@@ -23,7 +23,7 @@ public class HUDWidgetsManager {
     this.SetHUDEditorListener(hudGameController);
     this.currentIndex = 0;
     if config.questTrackerEnabled { ArrayPush(this.slots, n"NewTracker"); }
-    if config.minimapEnabled { ArrayPush(this.slots, n"NewMinimap"); }
+    if config.minimapEnabled && !config.compatE3CompassEnabled { ArrayPush(this.slots, n"NewMinimap"); }
     if config.wantedBarEnabled { ArrayPush(this.slots, n"NewWanted"); }
     if config.questNotificationsEnabled { ArrayPush(this.slots, n"NewQuestNotifications"); }
     if config.itemNotificationsEnabled { ArrayPush(this.slots, n"NewItemNotifications"); }
@@ -40,6 +40,7 @@ public class HUDWidgetsManager {
     if config.bossHealthbarEnabled { ArrayPush(this.slots, n"NewBossHealthbar"); }
     if config.dialogChoicesEnabled { ArrayPush(this.slots, n"NewDialogChoices"); }
     if config.dialogSubtitlesEnabled { ArrayPush(this.slots, n"NewDialogSubtitles"); }
+    if config.compatE3CompassEnabled { ArrayPush(this.slots, n"NewCompass"); }
     this.maxIndex = ArraySize(this.slots) - 1;
   }
 
@@ -122,4 +123,4 @@ public class HUDWidgetsManager {
     player.UnregisterInputListener(customSlot, n"Back");
     player.UnregisterInputListener(customSlot, n"Left");
   }
-} 
+}

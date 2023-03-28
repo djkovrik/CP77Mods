@@ -57,6 +57,9 @@ public class HUDitorTexts {
       case n"NewDialogSubtitles":
         nameString = GetLocalizedTextByKey(n"Mod-HUDitor-Widget-Dialog-Subs"); 
         break;
+      case n"NewCompass":
+        nameString = "E3 Compass"; 
+        break;
       default: 
         nameString = "Unknown"; 
         break;
