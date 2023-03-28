@@ -57,12 +57,6 @@ public class HUDitorTexts {
       case n"NewDialogSubtitles":
         nameString = GetLocalizedTextByKey(n"Mod-HUDitor-Widget-Dialog-Subs"); 
         break;
-      case n"NewScannerQuickHacks":
-        nameString = GetLocalizedTextByKey(n"Mod-HUDitor-Widget-Scanner-Quickhacks"); 
-        break;
-      case n"NewScannerDetails":
-        nameString = GetLocalizedTextByKey(n"Mod-HUDitor-Widget-Scanner-Details"); 
-        break;
       default: 
         nameString = "Unknown"; 
         break;

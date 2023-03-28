@@ -104,7 +104,7 @@ private func ShowJournalNotification() -> Void {
     userData.animation = n"notification_phone_MSG";
     userData.soundEvent = n"PhoneSmsPopup";
     userData.soundAction = n"OnOpen";
-    notificationData.time = 20.0;
+    notificationData.time = 60.0;
     notificationData.widgetLibraryItemName = controller.m_messageNotification;
     notificationData.notificationData = userData;
     controller.AddNewNotificationData(notificationData);
@@ -122,7 +122,7 @@ private func ShowItemsNotification() -> Void {
     data.itemRarity = n"epic";
     data.itemID = ItemID.FromTDBID(t"Items.Pants_03_rich_01");
     data.title = GetLocalizedText("Story-base-gameplay-gui-widgets-notifications-quest_update-_localizationString19");
-    notificationData.time = 20.0;
+    notificationData.time = 60.0;
     notificationData.widgetLibraryItemName = controller.m_itemNotification;
     notificationData.notificationData = data;
     controller.AddNewNotificationData(notificationData);

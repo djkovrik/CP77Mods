@@ -109,7 +109,7 @@ public class HUDitorConfig {
   @runtimeProperty("ModSettings.displayName", "Mod-HUDitor-Widget-Dialog-Subs")
   @runtimeProperty("ModSettings.description", "Mod-HUDitor-Toggles-Desc")
   public let dialogSubtitlesEnabled: Bool = false;
-  
+
   // @runtimeProperty("ModSettings.mod", "HUDitor")
   // @runtimeProperty("ModSettings.category", "Mod-HUDitor-Compatibility")
   // @runtimeProperty("ModSettings.displayName", "E3 Compass")
