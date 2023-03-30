@@ -159,8 +159,8 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
 
 @addMethod(inkGameController)
 private func InitWidgetNameLabel() -> Void {
-  let uiSystem: wref<UISystem> = GameInstance.GetUISystem(this.GetPlayerControlledObject().GetGame());
-  let root: ref<inkCompoundWidget> = uiSystem.GetLayer(n"inkHUDLayer").GetVirtualWindow();
+  let system: ref<inkSystem> = GameInstance.GetInkSystem();
+  let root: ref<inkCompoundWidget> = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
   root.RemoveChildByName(n"huditorLabel");
 
   let label: ref<inkText> = new inkText();
@@ -168,6 +168,7 @@ private func InitWidgetNameLabel() -> Void {
   label.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
   label.SetFontSize(24);
   label.SetLetterCase(textLetterCase.OriginalCase);
+  label.SetMargin(new inkMargin(10.0, 5.0, 0.0, 0.0));
   label.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
   label.BindProperty(n"tintColor", n"MainColors.Yellow");
   label.Reparent(root);
@@ -176,8 +177,8 @@ private func InitWidgetNameLabel() -> Void {
 
 @addMethod(inkGameController)
 private func CreateCustomSlots() -> Void {
-  let uiSystem: wref<UISystem> = GameInstance.GetUISystem(this.GetPlayerControlledObject().GetGame());
-  let root: ref<inkCompoundWidget> = uiSystem.GetLayer(n"inkHUDLayer").GetVirtualWindow();
+  let system: ref<inkSystem> = GameInstance.GetInkSystem();
+  let root: ref<inkCompoundWidget> = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
   let config: ref<HUDitorConfig> = new HUDitorConfig();
 
   if config.questTrackerEnabled {
@@ -186,21 +187,9 @@ private func CreateCustomSlots() -> Void {
     questTrackerSlot.SetFitToContent(true);
     questTrackerSlot.SetInteractive(false);
     questTrackerSlot.SetAffectsLayoutWhenHidden(false);
-    questTrackerSlot.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
-    questTrackerSlot.SetHAlign(inkEHorizontalAlign.Right);
-    questTrackerSlot.SetVAlign(inkEVerticalAlign.Top);
+    questTrackerSlot.SetMargin(new inkMargin(0.0, 460.0, 480.0, 0.0));
     questTrackerSlot.SetAnchor(inkEAnchor.TopRight);
-    questTrackerSlot.SetAnchorPoint(new Vector2(1.0, 0.0));
-    questTrackerSlot.SetLayout(
-      new inkWidgetLayout(
-        new inkMargin(0.0, 0.0, 0.0, 0.0),
-        new inkMargin(0.0, 0.0, 0.0, 0.0),
-        inkEHorizontalAlign.Right,
-        inkEVerticalAlign.Top,
-        inkEAnchor.TopRight,
-        new Vector2(1.0, 0.0)
-      )
-    );
+    questTrackerSlot.SetAnchorPoint(new Vector2(1.0, 1.0));
 
     root.RemoveChildByName(n"NewTracker");
     questTrackerSlot.Reparent(root, 0);
@@ -213,21 +202,9 @@ private func CreateCustomSlots() -> Void {
     minimapSlot.SetFitToContent(true);
     minimapSlot.SetInteractive(false);
     minimapSlot.SetAffectsLayoutWhenHidden(false);
-    minimapSlot.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
-    minimapSlot.SetHAlign(inkEHorizontalAlign.Right);
-    minimapSlot.SetVAlign(inkEVerticalAlign.Top);
+    minimapSlot.SetMargin(new inkMargin(0.0, 80.0, 400.0, 0.0));
     minimapSlot.SetAnchor(inkEAnchor.TopRight);
-    minimapSlot.SetAnchorPoint(new Vector2(1.0, 0.0));
-    minimapSlot.SetLayout(
-      new inkWidgetLayout(
-        new inkMargin(0.0, 0.0, 0.0, 0.0),
-        new inkMargin(0.0, 0.0, 0.0, 0.0),
-        inkEHorizontalAlign.Right,
-        inkEVerticalAlign.Top,
-        inkEAnchor.TopRight,
-        new Vector2(1.0, 0.0)
-      )
-    );
+    minimapSlot.SetAnchorPoint(new Vector2(1.0, 1.0));
 
     root.RemoveChildByName(n"NewMinimap");
     minimapSlot.Reparent(root, 1);
@@ -240,21 +217,9 @@ private func CreateCustomSlots() -> Void {
     wantedSlot.SetFitToContent(true);
     wantedSlot.SetInteractive(false);
     wantedSlot.SetAffectsLayoutWhenHidden(false);
-    wantedSlot.SetMargin(new inkMargin(0.0, 60.0, 160.0, 0.0));
-    wantedSlot.SetHAlign(inkEHorizontalAlign.Center);
-    wantedSlot.SetVAlign(inkEVerticalAlign.Center);
+    wantedSlot.SetMargin(new inkMargin(220.0, 60.0, 0.0, 0.0));
     wantedSlot.SetAnchor(inkEAnchor.Centered);
-    wantedSlot.SetAnchorPoint(new Vector2(1.0, 0.0));
-    wantedSlot.SetLayout(
-      new inkWidgetLayout(
-        new inkMargin(0.0, 0.0, 0.0, 0.0),
-        new inkMargin(0.0, 0.0, 0.0, 0.0),
-        inkEHorizontalAlign.Center,
-        inkEVerticalAlign.Center,
-        inkEAnchor.Centered,
-        new Vector2(1.0, 0.0)
-      )
-    );
+    wantedSlot.SetAnchorPoint(new Vector2(1.0, 1.0));
 
     root.RemoveChildByName(n"NewWanted");
     wantedSlot.Reparent(root, 2);
@@ -267,21 +232,9 @@ private func CreateCustomSlots() -> Void {
     questNotificationsSlot.SetFitToContent(true);
     questNotificationsSlot.SetInteractive(false);
     questNotificationsSlot.SetAffectsLayoutWhenHidden(false);
-    questNotificationsSlot.SetMargin(new inkMargin(0.0, 0.0, 0.0, 120.0));
-    questNotificationsSlot.SetHAlign(inkEHorizontalAlign.Left);
-    questNotificationsSlot.SetVAlign(inkEVerticalAlign.Center);
+    questNotificationsSlot.SetMargin(new inkMargin(40.0, 0.0, 0.0, 120.0));
     questNotificationsSlot.SetAnchor(inkEAnchor.CenterLeft);
-    questNotificationsSlot.SetAnchorPoint(new Vector2(0.0, 0.0));
-    questNotificationsSlot.SetLayout(
-      new inkWidgetLayout(
-        new inkMargin(0.0, 0.0, 0.0, 0.0),
-        new inkMargin(0.0, 0.0, 0.0, 120.0),
-        inkEHorizontalAlign.Left,
-        inkEVerticalAlign.Center,
-        inkEAnchor.CenterLeft,
-        new Vector2(0.0, 0.0)
-      )
-    );
+    questNotificationsSlot.SetAnchorPoint(new Vector2(1.0, 1.0));
 
     root.RemoveChildByName(n"NewQuestNotifications");
     questNotificationsSlot.Reparent(root, 3);
@@ -294,21 +247,9 @@ private func CreateCustomSlots() -> Void {
     itemNotificationsSlot.SetFitToContent(true);
     itemNotificationsSlot.SetInteractive(false);
     itemNotificationsSlot.SetAffectsLayoutWhenHidden(false);
-    itemNotificationsSlot.SetMargin(new inkMargin(0.0, 120.0, 0.0, 0.0));
-    itemNotificationsSlot.SetHAlign(inkEHorizontalAlign.Left);
-    itemNotificationsSlot.SetVAlign(inkEVerticalAlign.Center);
+    itemNotificationsSlot.SetMargin(new inkMargin(40.0, 120.0, 0.0, 0.0));
     itemNotificationsSlot.SetAnchor(inkEAnchor.CenterLeft);
-    itemNotificationsSlot.SetAnchorPoint(new Vector2(0.0, 0.0));
-    itemNotificationsSlot.SetLayout(
-      new inkWidgetLayout(
-        new inkMargin(0.0, 0.0, 0.0, 0.0),
-        new inkMargin(0.0, 120.0, 0.0, 0.0),
-        inkEHorizontalAlign.Left,
-        inkEVerticalAlign.Center,
-        inkEAnchor.CenterLeft,
-        new Vector2(0.0, 0.0)
-      )
-    );
+    itemNotificationsSlot.SetAnchorPoint(new Vector2(1.0, 1.0));
 
     root.RemoveChildByName(n"NewItemNotifications");
     itemNotificationsSlot.Reparent(root, 4);
@@ -322,20 +263,8 @@ private func CreateCustomSlots() -> Void {
     vehicleSummonSlot.SetInteractive(false);
     vehicleSummonSlot.SetAffectsLayoutWhenHidden(false);
     vehicleSummonSlot.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
-    vehicleSummonSlot.SetHAlign(inkEHorizontalAlign.Center);
-    vehicleSummonSlot.SetVAlign(inkEVerticalAlign.Center);
     vehicleSummonSlot.SetAnchor(inkEAnchor.Centered);
-    vehicleSummonSlot.SetAnchorPoint(new Vector2(0.5, 1.0));
-    vehicleSummonSlot.SetLayout(
-      new inkWidgetLayout(
-        new inkMargin(0.0, 0.0, 0.0, 0.0),
-        new inkMargin(0.0, 0.0, 0.0, 0.0),
-        inkEHorizontalAlign.Center,
-        inkEVerticalAlign.Bottom,
-        inkEAnchor.Centered,
-        new Vector2(0.5, 1.0)
-      )
-    );
+    vehicleSummonSlot.SetAnchorPoint(new Vector2(1.0, 1.0));
 
     root.RemoveChildByName(n"NewVehicleSummon");
     vehicleSummonSlot.Reparent(root, 5);
@@ -348,21 +277,9 @@ private func CreateCustomSlots() -> Void {
     weaponRosterSlot.SetFitToContent(true);
     weaponRosterSlot.SetInteractive(false);
     weaponRosterSlot.SetAffectsLayoutWhenHidden(false);
-    weaponRosterSlot.SetMargin(new inkMargin(0.0, 0.0, 40.0, 100.0));
-    weaponRosterSlot.SetHAlign(inkEHorizontalAlign.Right);
-    weaponRosterSlot.SetVAlign(inkEVerticalAlign.Bottom);
+    weaponRosterSlot.SetMargin(new inkMargin(0.0, 0.0, 880.0, 200.0));
     weaponRosterSlot.SetAnchor(inkEAnchor.BottomRight);
     weaponRosterSlot.SetAnchorPoint(new Vector2(1.0, 1.0));
-    weaponRosterSlot.SetLayout(
-      new inkWidgetLayout(
-        new inkMargin(0.0, 0.0, 0.0, 0.0),
-        new inkMargin(0.0, 0.0, 40.0, 100.0),
-        inkEHorizontalAlign.Right,
-        inkEVerticalAlign.Bottom,
-        inkEAnchor.BottomRight,
-        new Vector2(1.0, 1.0)
-      )
-    );
 
     root.RemoveChildByName(n"NewWeaponRoster");
     weaponRosterSlot.Reparent(root, 6);
@@ -375,21 +292,9 @@ private func CreateCustomSlots() -> Void {
     crouchIndicatorSlot.SetFitToContent(true);
     crouchIndicatorSlot.SetInteractive(false);
     crouchIndicatorSlot.SetAffectsLayoutWhenHidden(false);
-    crouchIndicatorSlot.SetMargin(new inkMargin(0.0, 0.0, 0.0, 100.0));
-    crouchIndicatorSlot.SetHAlign(inkEHorizontalAlign.Right);
-    crouchIndicatorSlot.SetVAlign(inkEVerticalAlign.Bottom);
+    crouchIndicatorSlot.SetMargin(new inkMargin(0.0, 0.0, 200.0, 150.0));
     crouchIndicatorSlot.SetAnchor(inkEAnchor.BottomRight);
     crouchIndicatorSlot.SetAnchorPoint(new Vector2(1.0, 1.0));
-    crouchIndicatorSlot.SetLayout(
-      new inkWidgetLayout(
-        new inkMargin(0.0, 0.0, 0.0, 0.0),
-        new inkMargin(0.0, 0.0, 0.0, 100.0),
-        inkEHorizontalAlign.Right,
-        inkEVerticalAlign.Bottom,
-        inkEAnchor.BottomRight,
-        new Vector2(1.0, 1.0)
-      )
-    );
 
     root.RemoveChildByName(n"NewCrouchIndicator");
     crouchIndicatorSlot.Reparent(root, 7);
@@ -402,21 +307,9 @@ private func CreateCustomSlots() -> Void {
     dpadSlot.SetFitToContent(true);
     dpadSlot.SetInteractive(false);
     dpadSlot.SetAffectsLayoutWhenHidden(false);
-    dpadSlot.SetMargin(new inkMargin(20.0, 0.0, 0.0, 50.0));
-    dpadSlot.SetHAlign(inkEHorizontalAlign.Fill);
-    dpadSlot.SetVAlign(inkEVerticalAlign.Fill);
+    dpadSlot.SetMargin(new inkMargin(20.0, 0.0, 0.0, 250.0));
     dpadSlot.SetAnchor(inkEAnchor.BottomLeft);
     dpadSlot.SetAnchorPoint(new Vector2(0.0, 1.0));
-    dpadSlot.SetLayout(
-      new inkWidgetLayout(
-        new inkMargin(0.0, 0.0, 0.0, 0.0),
-        new inkMargin(20.0, 0.0, 0.0, 50.0),
-        inkEHorizontalAlign.Fill,
-        inkEVerticalAlign.Fill,
-        inkEAnchor.BottomLeft,
-        new Vector2(0.0, 1.0)
-      )
-    );
 
     root.RemoveChildByName(n"NewDpad");
     dpadSlot.Reparent(root, 8);
@@ -429,21 +322,9 @@ private func CreateCustomSlots() -> Void {
     healthbarSlot.SetFitToContent(true);
     healthbarSlot.SetInteractive(false);
     healthbarSlot.SetAffectsLayoutWhenHidden(false);
-    healthbarSlot.SetMargin(new inkMargin(30.0, 50.0, 0.0, 0.0));
-    healthbarSlot.SetHAlign(inkEHorizontalAlign.Left);
-    healthbarSlot.SetVAlign(inkEVerticalAlign.Top);
+    healthbarSlot.SetMargin(new inkMargin(25.0, 25.0, 0.0, 0.0));
     healthbarSlot.SetAnchor(inkEAnchor.TopLeft);
     healthbarSlot.SetAnchorPoint(new Vector2(0.0, 0.0));
-    healthbarSlot.SetLayout(
-      new inkWidgetLayout(
-        new inkMargin(0.0, 0.0, 0.0, 0.0),
-        new inkMargin(30.0, 50.0, 0.0, 0.0),
-        inkEHorizontalAlign.Left,
-        inkEVerticalAlign.Top,
-        inkEAnchor.TopLeft,
-        new Vector2(0.0, 0.0)
-      )
-    );
 
     root.RemoveChildByName(n"NewHealthBar");
     healthbarSlot.Reparent(root, 9);
@@ -456,21 +337,9 @@ private func CreateCustomSlots() -> Void {
     staminaBarSlot.SetFitToContent(true);
     staminaBarSlot.SetInteractive(false);
     staminaBarSlot.SetAffectsLayoutWhenHidden(false);
-    staminaBarSlot.SetMargin(new inkMargin(0.0, 180.0, 0.0, 0.0));
-    staminaBarSlot.SetHAlign(inkEHorizontalAlign.Center);
-    staminaBarSlot.SetVAlign(inkEVerticalAlign.Top);
-    staminaBarSlot.SetAnchor(inkEAnchor.TopCenter);
+    staminaBarSlot.SetMargin(new inkMargin(25.0, 240.0, 0.0, 0.0));
+    staminaBarSlot.SetAnchor(inkEAnchor.TopLeft);
     staminaBarSlot.SetAnchorPoint(new Vector2(0.0, 0.0));
-    staminaBarSlot.SetLayout(
-      new inkWidgetLayout(
-        new inkMargin(0.0, 0.0, 0.0, 0.0),
-        new inkMargin(0.0, 180.0, 0.0, 0.0),
-        inkEHorizontalAlign.Center,
-        inkEVerticalAlign.Top,
-        inkEAnchor.TopCenter,
-        new Vector2(0.0, 0.0)
-      )
-    );
 
     root.RemoveChildByName(n"NewStaminaBar");
     staminaBarSlot.Reparent(root, 10);
@@ -484,20 +353,8 @@ private func CreateCustomSlots() -> Void {
     phoneCallAvatarSlot.SetInteractive(false);
     phoneCallAvatarSlot.SetAffectsLayoutWhenHidden(false);
     phoneCallAvatarSlot.SetMargin(new inkMargin(60.0, 300.0, 0.0, 0.0));
-    phoneCallAvatarSlot.SetHAlign(inkEHorizontalAlign.Left);
-    phoneCallAvatarSlot.SetVAlign(inkEVerticalAlign.Top);
     phoneCallAvatarSlot.SetAnchor(inkEAnchor.TopLeft);
-    phoneCallAvatarSlot.SetAnchorPoint(new Vector2(0.0, 0.0));
-    phoneCallAvatarSlot.SetLayout(
-      new inkWidgetLayout(
-        new inkMargin(0.0, 0.0, 0.0, 0.0),
-        new inkMargin(60.0, 300.0, 0.0, 0.0),
-        inkEHorizontalAlign.Left,
-        inkEVerticalAlign.Top,
-        inkEAnchor.TopLeft,
-        new Vector2(0.0, 0.0)
-      )
-    );
+    phoneCallAvatarSlot.SetAnchorPoint(new Vector2(1.0, 1.0));
 
     root.RemoveChildByName(n"NewPhoneAvatar");
     phoneCallAvatarSlot.Reparent(root, 11);
@@ -511,21 +368,8 @@ private func CreateCustomSlots() -> Void {
     phoneControlSlot.SetInteractive(false);
     phoneControlSlot.SetAffectsLayoutWhenHidden(false);
     phoneControlSlot.SetMargin(new inkMargin(0.0, 100.0, 0.0, 0.0));
-    phoneControlSlot.SetHAlign(inkEHorizontalAlign.Center);
-    phoneControlSlot.SetVAlign(inkEVerticalAlign.Top);
     phoneControlSlot.SetAnchor(inkEAnchor.TopCenter);
-    phoneControlSlot.SetScale(new Vector2(0.666667, 0.666667));
-    phoneControlSlot.SetAnchorPoint(new Vector2(0.5, 0.5));
-    phoneControlSlot.SetLayout(
-      new inkWidgetLayout(
-        new inkMargin(0.0, 0.0, 0.0, 0.0),
-        new inkMargin(0.0, 100.0, 0.0, 0.0),
-        inkEHorizontalAlign.Center,
-        inkEVerticalAlign.Top,
-        inkEAnchor.TopCenter,
-        new Vector2(0.5, 0.5)
-      )
-    );
+    phoneControlSlot.SetAnchorPoint(new Vector2(1.0, 1.0));
 
     root.RemoveChildByName(n"NewPhoneControl");
     phoneControlSlot.Reparent(root, 12);
@@ -538,21 +382,9 @@ private func CreateCustomSlots() -> Void {
     inputHintSlot.SetFitToContent(true);
     inputHintSlot.SetInteractive(false);
     inputHintSlot.SetAffectsLayoutWhenHidden(false);
-    inputHintSlot.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
-    inputHintSlot.SetHAlign(inkEHorizontalAlign.Center);
-    inputHintSlot.SetVAlign(inkEVerticalAlign.Center);
+    inputHintSlot.SetMargin(new inkMargin(360.0, 0.0, 0.0, 0.0));
     inputHintSlot.SetAnchor(inkEAnchor.Centered);
     inputHintSlot.SetAnchorPoint(new Vector2(1.0, 1.0));
-    inputHintSlot.SetLayout(
-      new inkWidgetLayout(
-        new inkMargin(0.0, 0.0, 0.0, 0.0),
-        new inkMargin(0.0, 0.0, 0.0, 0.0),
-        inkEHorizontalAlign.Center,
-        inkEVerticalAlign.Center,
-        inkEAnchor.Centered,
-        new Vector2(1.0, 1.0)
-      )
-    );
 
     root.RemoveChildByName(n"NewInputHint");
     inputHintSlot.Reparent(root, 13);
@@ -565,21 +397,9 @@ private func CreateCustomSlots() -> Void {
     carHudSlot.SetFitToContent(true);
     carHudSlot.SetInteractive(false);
     carHudSlot.SetAffectsLayoutWhenHidden(false);
-    carHudSlot.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
-    carHudSlot.SetHAlign(inkEHorizontalAlign.Center);
-    carHudSlot.SetVAlign(inkEVerticalAlign.Bottom);
+    carHudSlot.SetMargin(new inkMargin(0.0, 0.0, 0.0, 200.0));
     carHudSlot.SetAnchor(inkEAnchor.BottomCenter);
     carHudSlot.SetAnchorPoint(new Vector2(0.5, 0.5));
-    carHudSlot.SetLayout(
-      new inkWidgetLayout(
-        new inkMargin(0.0, 0.0, 0.0, 0.0),
-        new inkMargin(0.0, 0.0, 0.0, 0.0),
-        inkEHorizontalAlign.Center,
-        inkEVerticalAlign.Bottom,
-        inkEAnchor.BottomCenter,
-        new Vector2(0.5, 0.5)
-      )
-    );
 
     root.RemoveChildByName(n"NewCarHud");
     carHudSlot.Reparent(root, 14);
@@ -592,21 +412,9 @@ private func CreateCustomSlots() -> Void {
     bossHealthbarSlot.SetFitToContent(true);
     bossHealthbarSlot.SetInteractive(false);
     bossHealthbarSlot.SetAffectsLayoutWhenHidden(false);
-    bossHealthbarSlot.SetMargin(new inkMargin(60.0, 100.0, 0.0, 0.0));
-    bossHealthbarSlot.SetHAlign(inkEHorizontalAlign.Fill);
-    bossHealthbarSlot.SetVAlign(inkEVerticalAlign.Fill);
+    bossHealthbarSlot.SetMargin(new inkMargin(0.0, 100.0, 0.0, 0.0));
     bossHealthbarSlot.SetAnchor(inkEAnchor.TopCenter);
     bossHealthbarSlot.SetAnchorPoint(new Vector2(0.5, 0.5));
-    bossHealthbarSlot.SetLayout(
-      new inkWidgetLayout(
-        new inkMargin(0.0, 0.0, 0.0, 0.0),
-        new inkMargin(60.0, 100.0, 0.0, 0.0),
-        inkEHorizontalAlign.Fill,
-        inkEVerticalAlign.Fill,
-        inkEAnchor.TopCenter,
-        new Vector2(0.5, 0.5)
-      )
-    );
 
     root.RemoveChildByName(n"NewBossHealthbar");
     bossHealthbarSlot.Reparent(root, 15);
@@ -620,20 +428,8 @@ private func CreateCustomSlots() -> Void {
     dialogChoicesSlot.SetInteractive(false);
     dialogChoicesSlot.SetAffectsLayoutWhenHidden(false);
     dialogChoicesSlot.SetMargin(new inkMargin(0.0, 120.0, 0.0, 0.0));
-    dialogChoicesSlot.SetHAlign(inkEHorizontalAlign.Fill);
-    dialogChoicesSlot.SetVAlign(inkEVerticalAlign.Fill);
     dialogChoicesSlot.SetAnchor(inkEAnchor.Centered);
-    dialogChoicesSlot.SetAnchorPoint(new Vector2(0.5, 0.0));
-    dialogChoicesSlot.SetLayout(
-      new inkWidgetLayout(
-        new inkMargin(0.0, 0.0, 0.0, 0.0),
-        new inkMargin(0.0, 120.0, 0.0, 0.0),
-        inkEHorizontalAlign.Fill,
-        inkEVerticalAlign.Fill,
-        inkEAnchor.Centered,
-        new Vector2(0.5, 0.0)
-      )
-    );
+    dialogChoicesSlot.SetAnchorPoint(new Vector2(0.5, 0.5));
 
     root.RemoveChildByName(n"NewDialogChoices");
     dialogChoicesSlot.Reparent(root, 16);
@@ -647,21 +443,8 @@ private func CreateCustomSlots() -> Void {
     dialogSubtitlesSlot.SetInteractive(false);
     dialogSubtitlesSlot.SetAffectsLayoutWhenHidden(false);
     dialogSubtitlesSlot.SetMargin(new inkMargin(0.0, 0.0, 0.0, 16.0));
-    dialogSubtitlesSlot.SetHAlign(inkEHorizontalAlign.Fill);
-    dialogSubtitlesSlot.SetVAlign(inkEVerticalAlign.Fill);
     dialogSubtitlesSlot.SetAnchor(inkEAnchor.BottomFillHorizontaly);
     dialogSubtitlesSlot.SetAnchorPoint(new Vector2(0.0, 1.0));
-    dialogSubtitlesSlot.SetLayout(
-      new inkWidgetLayout(
-        new inkMargin(0.0, 0.0, 0.0, 0.0),
-        new inkMargin(0.0, 0.0, 0.0, 16.0),
-        inkEHorizontalAlign.Fill,
-        inkEVerticalAlign.Fill,
-        inkEAnchor.BottomFillHorizontaly,
-        new Vector2(0.0, 1.0)
-      )
-    );
-
     root.RemoveChildByName(n"NewDialogSubtitles");
     dialogSubtitlesSlot.Reparent(root, 16);
     this.dialogSubtitlesSlot = dialogSubtitlesSlot;
@@ -674,20 +457,8 @@ private func CreateCustomSlots() -> Void {
     e3CompassSlot.SetInteractive(false);
     e3CompassSlot.SetAffectsLayoutWhenHidden(false);
     e3CompassSlot.SetMargin(new inkMargin(0.0, 20.0, 0.0, 0.0));
-    e3CompassSlot.SetHAlign(inkEHorizontalAlign.Center);
-    e3CompassSlot.SetVAlign(inkEVerticalAlign.Top);
     e3CompassSlot.SetAnchor(inkEAnchor.TopCenter);
     e3CompassSlot.SetAnchorPoint(new Vector2(0.5, 0.5));
-    e3CompassSlot.SetLayout(
-      new inkWidgetLayout(
-        new inkMargin(0.0, 0.0, 0.0, 0.0),
-        new inkMargin(0.0, 20.0, 0.0, 0.0),
-        inkEHorizontalAlign.Center,
-        inkEVerticalAlign.Top,
-        inkEAnchor.TopCenter,
-        new Vector2(0.5, 0.5)
-      )
-    );
 
     root.RemoveChildByName(n"NewCompass");
     e3CompassSlot.Reparent(root, 17);
@@ -698,8 +469,8 @@ private func CreateCustomSlots() -> Void {
 @addMethod(inkGameController)
 private func InitBaseWidgets() -> Void {
   let config: ref<HUDitorConfig> = new HUDitorConfig();
-  let uiSystem = GameInstance.GetUISystem(this.GetPlayerControlledObject().GetGame());
-  let hudLayer: ref<inkLayerWrapper> = uiSystem.GetLayer(n"inkHUDLayer");
+  let system: ref<inkSystem> = GameInstance.GetInkSystem();
+  let hudLayer: ref<inkLayerWrapper> = system.GetLayer(n"inkHUDLayer");
 
   let name: CName;
   let targetWidget: ref<inkCompoundWidget>; 

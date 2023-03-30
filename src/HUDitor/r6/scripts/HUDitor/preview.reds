@@ -205,8 +205,7 @@ private func ShowHealthbar(show: Bool) -> Void {
 private func ShowStaminaBar(show: Bool) -> Void {
   if this.IsA(n"StaminabarWidgetGameController") {
     let controller = this as StaminabarWidgetGameController;
-    controller.m_currentStamina = 87.7;
-    controller.m_staminaPoolListener.OnStatPoolValueChanged(70.0, 87.7, 11.0);
+    controller.UpdateStaminaValue(70.0, 87.7, 11.0);
 
     if show {
       controller.m_RootWidget.SetOpacity(1.0);

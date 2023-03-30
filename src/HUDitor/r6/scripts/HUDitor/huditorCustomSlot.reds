@@ -1,6 +1,6 @@
 import HUDrag.HUDWidgetsManager.*
 
-public class HUDitorCustomSlot extends inkVerticalPanel {
+public class HUDitorCustomSlot extends inkCanvas {
   
   private let isMouseDown: Bool;
 
