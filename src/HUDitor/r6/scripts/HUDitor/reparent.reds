@@ -456,8 +456,8 @@ private func CreateCustomSlots() -> Void {
     e3CompassSlot.SetFitToContent(false);
     e3CompassSlot.SetInteractive(false);
     e3CompassSlot.SetAffectsLayoutWhenHidden(false);
-    e3CompassSlot.SetMargin(new inkMargin(0.0, 20.0, 0.0, 0.0));
-    e3CompassSlot.SetAnchor(inkEAnchor.TopCenter);
+    e3CompassSlot.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+    e3CompassSlot.SetAnchor(inkEAnchor.Centered);
     e3CompassSlot.SetAnchorPoint(new Vector2(0.5, 0.5));
 
     root.RemoveChildByName(n"NewCompass");
