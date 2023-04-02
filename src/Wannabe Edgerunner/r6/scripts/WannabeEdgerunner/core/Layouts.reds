@@ -147,8 +147,14 @@ protected cb func OnHumanityIconHoverOver(evt: ref<inkPointerEvent>) -> Bool {
   let data: ref<MessageTooltipData> = new MessageTooltipData();
   let current: Int32 = this.edgerunningSystem.GetHumanityCurrent();
   let total: Int32 = this.edgerunningSystem.GetHumanityTotal();
+  let description: String = GetLocalizedTextByKey(n"Mod-Edg-Humanity-Desc");
+  let additionalDescription = this.edgerunningSystem.GetAdditionalPenaltiesDescription();
   data.Title = s"\(GetLocalizedTextByKey(n"Mod-Edg-Humanity")): \(current) / \(total)";
-  data.Description = GetLocalizedTextByKey(n"Mod-Edg-Humanity-Desc");
+  if NotEquals(additionalDescription, "") {
+    data.Description = description + additionalDescription;
+  } else {
+    data.Description = description;
+  };
   this.m_TooltipsManager.ShowTooltip(data);
 }
 

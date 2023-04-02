@@ -35,12 +35,15 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   private persistent let currentHumanityDamage: Int32 = 0;
 
+  private let additionalPenalties: ref<inkIntHashMap>;
+  private let additionalPenaltiesKeys: array<String>;
 
   private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
     let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(request.owner.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
     if IsDefined(player) {
       this.player = player;
       this.delaySystem = GameInstance.GetDelaySystem(this.player.GetGame());
+      this.additionalPenalties = new inkIntHashMap();
 
       ArrayPush(this.cyberpsychosisSFX, SFXBundle.Create(n"ono_v_breath_heavy", 3.0));
       ArrayPush(this.cyberpsychosisSFX, SFXBundle.Create(n"ono_v_pain_short", 7.0));
@@ -58,13 +61,13 @@ public class EdgerunningSystem extends ScriptableSystem {
     };
   }
 
-  public func OnPossessionChanged(playerPossesion: gamedataPlayerPossesion) -> Void {
-    this.possessed = Equals(playerPossesion, gamedataPlayerPossesion.Johnny);
-  }
-
   public final static func GetInstance(gameInstance: GameInstance) -> ref<EdgerunningSystem> {
     let system: ref<EdgerunningSystem> = GameInstance.GetScriptableSystemsContainer(gameInstance).Get(n"Edgerunning.System.EdgerunningSystem") as EdgerunningSystem;
     return system;
+  }
+
+  public func OnPossessionChanged(playerPossesion: gamedataPlayerPossesion) -> Void {
+    this.possessed = Equals(playerPossesion, gamedataPlayerPossesion.Johnny);
   }
 
   public func OnSettingsChange() -> Void {
@@ -73,20 +76,96 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.InvalidateCurrentState();
   }
 
+  // Positive value for penalty, negative for boost
+  public func AddHumanityPenalty(key: String, value: Int32) -> Void {
+    if !ArrayContains(this.additionalPenaltiesKeys, key) {
+      ArrayPush(this.additionalPenaltiesKeys, key);
+    };
+
+    let hash: Uint64 = this.Hash(key);
+    if this.additionalPenalties.KeyExist(hash) {
+      this.additionalPenalties.Set(hash, value);
+    } else {
+      this.additionalPenalties.Insert(hash, value);
+    };
+    this.InvalidateCurrentState();
+  }
+
+  public func RemoveHumanityPenalty(key: String) -> Void {
+    ArrayRemove(this.additionalPenaltiesKeys, key);
+    let hash: Uint64 = this.Hash(key);
+    if this.additionalPenalties.Remove(hash) {
+      this.InvalidateCurrentState();
+    };
+  }
+
+  public func GetPenaltyByKey(key: String) -> Int32 {
+    let hash: Uint64 = this.Hash(key);
+    if !this.additionalPenalties.KeyExist(hash) {
+      return -1;
+    };
+
+    return this.additionalPenalties.Get(hash);
+  }
+
+  public func GetTotalPenalty() -> Int32 {
+    let penalties: array<Int32>;
+    let sum: Int32 = 0;
+    this.additionalPenalties.GetValues(penalties);
+    for penalty in penalties {
+      sum += penalty;
+    };
+
+    return sum;
+  }
+
+  public func GetAdditionalPenaltiesDescription() -> String {
+    if Equals(ArraySize(this.additionalPenaltiesKeys), 0) {
+      return "";
+    };
+
+    let desc: String = "\n\n**********";
+    let hash: Uint64;
+    let value: Int32;
+    let presentation: String;
+    let localized: String;
+    for key in this.additionalPenaltiesKeys {
+      hash = this.Hash(key);
+      value = this.additionalPenalties.Get(hash);
+      localized = GetLocalizedTextByKey(StringToName(key));
+      // Swap signs for displaying penalty as negative and boost as positive
+      if value > 0 {
+        presentation = s"-\(value)";
+      } else {
+        presentation = s"+\(Abs(value))";
+      };
+      // Check localized
+      if NotEquals(localized, key) && NotEquals(localized, "") {
+        desc += s"\n\(localized): \(presentation)";
+      } else {
+        desc += s"\n\(key): \(presentation)";
+      };
+    };
+
+    return desc;
+  }
+
   // -- INVALIDATE
 
   public func InvalidateCurrentState(opt onLoad: Bool) -> Void {
+    let penalty: Int32 = this.GetTotalPenalty();
     let evt: ref<UpdateHumanityCounterEvent> = new UpdateHumanityCounterEvent();
     let basePool: Int32 = this.GetHumanityTotal();
     let installedCyberware: Int32 = this.GetCurrentCyberwareCost(true);
     this.cyberwareCost = installedCyberware;
-    this.currentHumanityPool = basePool - installedCyberware - this.currentHumanityDamage;
+    this.currentHumanityPool = basePool - installedCyberware - this.currentHumanityDamage - penalty;
     if this.currentHumanityPool < 0 { this.currentHumanityPool = 0; };
     this.upperThreshold = this.config.glitchesThreshold;
     this.lowerThreshold = this.config.psychosisThreshold;
     E("Current humanity points state:");
     E(s" - total: \(basePool) humanity, installed cyberware cost: \(installedCyberware), points left: \(this.currentHumanityPool), can be recovered: \(this.currentHumanityDamage)");
     E(s" - debuffs for \(this.upperThreshold) and lower, cyberpsychosis for \(this.lowerThreshold) and lower");
+    E(s"Total penalty from mods: \(penalty)");
 
     evt.current = this.GetHumanityCurrent();
     evt.total = this.GetHumanityTotal();
@@ -1104,5 +1183,10 @@ public class EdgerunningSystem extends ScriptableSystem {
     let psmBB: ref<IBlackboard> = this.player.GetPlayerStateMachineBlackboard();
     this.currentHumanityDamage = 0;
     psmBB.SetInt(GetAllBlackboardDefs().PlayerStateMachine.HumanityDamage, 0, true);
+  }
+
+  // from codeware
+  private func Hash(str: String) -> Uint64 {
+    return TDBID.ToNumber(TDBID.Create(str));
   }
 }
