@@ -23,7 +23,7 @@ protected cb func OnDisplayPreviewEvent(event: ref<DisplayPreviewEvent>) -> Bool
   if config.incomingCallAvatarEnabled { this.ShowIncomingPhoneCall(n"jackie", true); }
   if config.incomingCallButtonEnabled { this.ShowIncomingCallController(n"jackie", true); }
   if config.inputHintsEnabled { this.ShowInputHints(true); }
-  // if config.speedometerEnabled no preview here;
+  if config.speedometerEnabled { this.ShowCarHUD(true); }
   if config.bossHealthbarEnabled { this.ShowBossHealthbar(true); }
   if config.dialogChoicesEnabled { this.ShowDialogPreview(true); }
   if config.dialogSubtitlesEnabled { this.ShowSubtitlesPreview(true); }
@@ -42,6 +42,7 @@ protected cb func OnHidePreviewEvent(event: ref<HidePreviewEvent>) -> Bool {
   this.ShowStaminaBar(false);
   this.ShowIncomingPhoneCall(n"jackie", false);
   this.ShowIncomingCallController(n"jackie", false);
+  this.ShowCarHUD(false);
   this.ShowInputHints(false);
   this.ShowBossHealthbar(false);
   this.ShowDialogPreview(false);
@@ -177,15 +178,29 @@ private func ShowCrouchIndicator(show: Bool) -> Void {
   };
 }
 
+@if(!ModuleExists("CustomQuickslotsConfig"))
+@addMethod(HotkeysWidgetController)
+public func RefreshHUDitor() -> Void {
+  // do nothing
+}
+
+@if(ModuleExists("CustomQuickslotsConfig"))
+@addMethod(HotkeysWidgetController)
+public func RefreshHUDitor() -> Void {
+  this.CustomQuickslotsRefreshSlots();
+}
+
 @addMethod(inkGameController)
 private func ShowDpad(show: Bool) -> Void {
   if this.IsA(n"HotkeysWidgetController") {
+    let controller = this as HotkeysWidgetController;
     if show {
       this.originalOpacity = this.GetRootWidget().GetOpacity();
       this.GetRootWidget().SetOpacity(1.0);
     } else {
       this.GetRootWidget().SetOpacity(this.originalOpacity);
     };
+    controller.RefreshHUDitor();
   };
 }
 
@@ -290,29 +305,10 @@ private func ShowInputHints(show: Bool) -> Void {
   };
 }
 
-@addMethod(hudCarController)
-protected cb func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidgetEvent>) -> Bool {
-  let config: ref<HUDitorConfig> = new HUDitorConfig();
-  let widgetName: CName = n"NewCarHud";
-  let hudEditorWidgetName: CName = event.activeWidget;
-  let isEnabled: Bool = Equals(widgetName, hudEditorWidgetName) && config.speedometerEnabled;
-  this.ShowCarHUD(isEnabled);
-}
-
-@addMethod(hudCarController)
+@addMethod(inkGameController)
 private func ShowCarHUD(show: Bool) -> Void {
-  let player: ref<GameObject> = this.GetPlayerControlledObject();
-  let uiSystem: ref<UISystem> = GameInstance.GetUISystem(player.GetGame());
-  if show {
-    uiSystem.PushGameContext(UIGameContext.VehicleMounted);
-    this.GetRootWidget().SetVisible(true);
-    this.RegisterToVehicle(true);
-    this.OnSpeedValueChanged(145.0);
-    this.OnRpmValueChanged(2500.0);
-    inkTextRef.SetText(this.m_SpeedValue, ToString(145));
-  } else {
-    this.GetRootWidget().SetVisible(false);
-    uiSystem.ResetGameContext();
+  if IsDefined(this.carHudSlotPreview) {
+    this.carHudSlotPreview.SetVisible(show);
   };
 }
 

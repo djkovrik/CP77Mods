@@ -90,7 +90,7 @@ public class HUDitorConfig {
   @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")
   @runtimeProperty("ModSettings.displayName", "Mod-HUDitor-Widget-Speedometer")
   @runtimeProperty("ModSettings.description", "Mod-HUDitor-Toggles-Desc")
-  public let speedometerEnabled: Bool = true;
+  public let speedometerEnabled: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "HUDitor")
   @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")
