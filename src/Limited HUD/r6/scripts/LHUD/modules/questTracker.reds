@@ -3,6 +3,15 @@ import LimitedHudCommon.LHUDEventType
 import LimitedHudCommon.LHUDConfigUpdatedEvent
 import LimitedHudCommon.LHUDEvent
 
+// @if(ModuleExists("StealthRunner")) 
+// import StealthRunner.StealthRunnerObjectiveUpdate
+
+// @if(ModuleExists("StealthRunner")) 
+// @addMethod(QuestTrackerGameController)
+// protected cb func OnStealthRunnerObjectiveUpdateLhud(evt: ref<StealthRunnerObjectiveUpdate>) -> Bool {
+//   this.ShowForJournalUpdate();
+// }
+
 @addMethod(QuestTrackerGameController)
 protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
   this.ConsumeLHUDEvent(evt);
@@ -29,8 +38,9 @@ public func DetermineCurrentVisibility() -> Void {
   let showForScanner: Bool =  this.lhud_isScannerActive && this.lhudConfig.ShowWithScanner;
   let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfig.ShowWithWeapon;
   let showForZoom: Bool =  this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
+  let forced: Bool = this.lhud_isVisibilityForced;
 
-  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;
+  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom || forced;
   if NotEquals(this.lhud_isVisibleNow, isVisible) {
     this.lhud_isVisibleNow = isVisible;
     if isVisible {
@@ -61,28 +71,41 @@ protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> 
 }
 
 // -- Temporarily show tracker and then schedule hiding
-@wrapMethod(QuestTrackerGameController)
-protected cb func OnTrackedEntryChanges(hash: Uint32, className: CName, notifyOption: JournalNotifyOption, changeType: JournalChangeType) -> Bool {
-  wrappedMethod(hash, className, notifyOption, changeType);
+@addField(QuestTrackerGameController)
+private let lhudDelayId: DelayID;
 
+@wrapMethod(QuestTrackerGameController)
+protected cb func OnStateChanges(hash: Uint32, className: CName, notifyOption: JournalNotifyOption, changeType: JournalChangeType) -> Bool {
+  wrappedMethod(hash, className, notifyOption, changeType);
+  if Equals(notifyOption, JournalNotifyOption.Notify) && Equals(changeType, JournalChangeType.Direct) {
+    this.ShowForJournalUpdate();
+  };
+}
+
+@addMethod(QuestTrackerGameController)
+private func ShowForJournalUpdate() -> Void {
   let callback: ref<LHUDHideQuestTrackerCallback>;
+  let delaySystem: ref<DelaySystem>;
+  let player: ref<PlayerPuppet>;
   if this.lhudConfig.IsEnabled && this.lhudConfig.DisplayForQuestUpdates {
+    player = this.m_player as PlayerPuppet;
+    if !IsDefined(player) {
+      return ;
+    };
     // Show tracker
-    this.lhud_isVisibleNow = true;
-    this.AnimateAlphaLHUD(this.GetRootWidget(), 1.0, 0.3);
+    player.QueueLHUDEvent(LHUDEventType.ForceVisibility, true);
     // Schedule hiding
+    delaySystem = GameInstance.GetDelaySystem(player.GetGame());
+    delaySystem.CancelCallback(this.lhudDelayId);
     callback = new LHUDHideQuestTrackerCallback();
-    callback.uiSystem = GameInstance.GetUISystem(this.GetPlayerControlledObject().GetGame());
-    GameInstance.GetDelaySystem(this.GetPlayerControlledObject().GetGame()).DelayCallback(callback, this.lhudConfig.QuestUpdateDisplayingTime);
+    callback.player = player;
+    this.lhudDelayId = delaySystem.DelayCallback(callback, this.lhudConfig.QuestUpdateDisplayingTime);
   };
 }
 
 public class LHUDHideQuestTrackerCallback extends DelayCallback {
-  public let uiSystem: wref<UISystem>;
+  public let player: wref<PlayerPuppet>;
   public func Call() -> Void {
-    let evt: ref<LHUDEvent> = new LHUDEvent();
-    evt.type = LHUDEventType.Refresh;
-    evt.isActive = false;
-    this.uiSystem.QueueEvent(evt);
+    this.player.QueueLHUDEvent(LHUDEventType.ForceVisibility, false);
   }
 }
