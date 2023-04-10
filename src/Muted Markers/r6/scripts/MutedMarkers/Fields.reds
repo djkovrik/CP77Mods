@@ -1,17 +1,22 @@
-@addField(scannerGameController)
-public let mutedMarkersCallback: DelayID;
+import MutedMarkersConfig.MiniMapConfig
 
 @addField(UI_ScannerDef)
-public let IsEnabled_mm: BlackboardID_Bool;
+let MutedMarkerEnabled: BlackboardID_Bool;
+
+@addField(scannerGameController)
+let hideCallbackId: DelayID;
+
+@addField(GameplayRoleComponent)
+let isScannerActive: Bool;
+
+@addField(GameplayRoleComponent)
+let scannerStateBlackboard: ref<IBlackboard>;
+
+@addField(GameplayRoleComponent)
+let scannerStateCallback: ref<CallbackHandle>;
+
+@addField(GameplayRoleComponent)
+let checker: ref<MutedMarkersVisibilityChecker>;
 
 @addField(GameplayRoleMappinData)
-public let isShard_mm: Bool;
-
-@addField(GameplayRoleComponent)
-public let isScannerActive_mm: Bool;
-
-@addField(GameplayRoleComponent)
-public let scannerBlackboard_mm: ref<IBlackboard>;
-
-@addField(GameplayRoleComponent)
-public let scannerCallback_mm: ref<CallbackHandle>;
+let isMMShard: Bool;

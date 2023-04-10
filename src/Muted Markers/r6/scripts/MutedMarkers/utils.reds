@@ -1,114 +1,125 @@
 import MutedMarkersConfig.*
 
+public class MutedMarkersVisibilityChecker {
+  private let component: wref<GameplayRoleComponent>;
+  private let lootConfig: ref<LootConfig>;
+  private let minimapConfig: ref<MiniMapConfig>;
+  private let worldConfig: ref<WorldConfig>;
 
-public class MMUtils {
+  public func Init(component: ref<GameplayRoleComponent>) -> Void {
+    this.component = component;
+    this.lootConfig = new LootConfig();
+    this.minimapConfig = new MiniMapConfig();
+    this.worldConfig = new WorldConfig();
+  }
 
-  public static func GetVisibilityTypeFor(data: SDeviceMappinData, component: ref<GameplayRoleComponent>, loot: ref<LootConfig>, world: ref<WorldConfig>) -> MarkerVisibility {
+  public func GetVisibility(data: SDeviceMappinData) -> MutedMarkerVisibility {
     let isIconic: Bool = data.visualStateData.m_isIconic;
     let role: EGameplayRole = data.gameplayRole;
     let quality: gamedataQuality = data.visualStateData.m_quality;
-    let puppet: ref<ScriptedPuppet> = component.GetOwner() as ScriptedPuppet;
-    let container: ref<gameLootContainerBase> = component.GetOwner() as gameLootContainerBase;
-    let alreadyLooted: Bool = false;
+    let puppet: ref<ScriptedPuppet> = this.component.GetOwner() as ScriptedPuppet;
+    let container: ref<gameLootContainerBase> = this.component.GetOwner() as gameLootContainerBase;
+    let notReady: Bool = false;
 
-    // Check if looted
+    // Check if puppet & looted
     if IsDefined(puppet) && puppet.IsLooted() {
-      alreadyLooted = true;
+      notReady = true;
     };
 
-    if IsDefined(container) && container.IsEmpty() {
-      alreadyLooted = true;
+    // Check if container & looted
+    if IsDefined(container) && (container.IsEmpty() || !container.IsLogicReady() ) {
+      notReady = true;
     };
 
-    if alreadyLooted {
-      return MarkerVisibility.Hidden;
+    if notReady {
+      return MutedMarkerVisibility.Hidden;
     };
 
     // Shard check
-    if data.visualStateData.isShard_mm {
-      return loot.shards;
+    if data.visualStateData.isMMShard {
+      return this.lootConfig.shards;
     };
 
     // Iconic check
     if isIconic {
-      return loot.iconic;
+      return this.lootConfig.iconic;
     };
 
     // Access point check
-    if world.hideAccessPoints && Equals(role, EGameplayRole.ControlNetwork) {
-      return MarkerVisibility.Hidden;
+    if this.worldConfig.hideAccessPoints && Equals(role, EGameplayRole.ControlNetwork) {
+      return MutedMarkerVisibility.Hidden;
     };
 
     // Body container check
-    if world.hideBodyContainers && Equals(role, EGameplayRole.HideBody) {
-      return MarkerVisibility.Hidden;
+    if this.worldConfig.hideBodyContainers && Equals(role, EGameplayRole.HideBody) {
+      return MutedMarkerVisibility.Hidden;
     };
 
     // Camera check
-    if world.hideCameras && Equals(role, EGameplayRole.Alarm) {
-      return MarkerVisibility.Hidden;
+    if this.worldConfig.hideCameras && Equals(role, EGameplayRole.Alarm) {
+      return MutedMarkerVisibility.Hidden;
     };
 
     // Door check
-    if world.hideDoors && Equals(role, EGameplayRole.OpenPath) {
-      return MarkerVisibility.Hidden;
+    if this.worldConfig.hideDoors && Equals(role, EGameplayRole.OpenPath) {
+      return MutedMarkerVisibility.Hidden;
     };
 
     // Distraction check
-    if world.hideDistractions && (Equals(role, EGameplayRole.Distract) || Equals(role, EGameplayRole.Fall)) {
-      return MarkerVisibility.Hidden;
+    if this.worldConfig.hideDistractions && (Equals(role, EGameplayRole.Distract) || Equals(role, EGameplayRole.Fall)) {
+      return MutedMarkerVisibility.Hidden;
     };
 
     // Explosive check
-    if world.hideExplosives && (Equals(role, EGameplayRole.ExplodeLethal) || Equals(role, EGameplayRole.ExplodeNoneLethal)) {
-      return MarkerVisibility.Hidden;
+    if this.worldConfig.hideExplosives && (Equals(role, EGameplayRole.ExplodeLethal) || Equals(role, EGameplayRole.ExplodeNoneLethal)) {
+      return MutedMarkerVisibility.Hidden;
     };
 
     // Networking check
-    if world.hideNetworking && (Equals(role, EGameplayRole.ControlSelf) || Equals(role, EGameplayRole.GrantInformation)) {
-      return MarkerVisibility.Hidden;
+    if this.worldConfig.hideNetworking && (Equals(role, EGameplayRole.ControlSelf) || Equals(role, EGameplayRole.GrantInformation)) {
+      return MutedMarkerVisibility.Hidden;
     };
 
     // Quality check
     if Equals(data.visualStateData.m_textureID, t"MappinIcons.LootMappin") {
       switch(quality) {
-        case gamedataQuality.Iconic: return loot.iconic;
-        case gamedataQuality.Legendary: return loot.legendary;
-        case gamedataQuality.Epic: return loot.epic;
-        case gamedataQuality.Rare: return loot.rare;
-        case gamedataQuality.Uncommon: return loot.uncommon;
-        case gamedataQuality.Common: return loot.common;
+        case gamedataQuality.Iconic: return this.lootConfig.iconic;
+        case gamedataQuality.Legendary: return this.lootConfig.legendary;
+        case gamedataQuality.Epic: return this.lootConfig.epic;
+        case gamedataQuality.Rare: return this.lootConfig.rare;
+        case gamedataQuality.Uncommon: return this.lootConfig.uncommon;
+        case gamedataQuality.Common: return this.lootConfig.common;
       };
     };
 
-    return MarkerVisibility.Default;
+    return MutedMarkerVisibility.Default;
   }
 
-  public static func ShouldShowOnMinimap(data: SDeviceMappinData, roleMappinData: ref<GameplayRoleMappinData>, component: ref<GameplayRoleComponent>, loot: ref<LootConfig>, minimap: ref<MiniMapConfig>, world: ref<WorldConfig>) -> Bool {
+  public func ShouldShowOnMinimap(data: SDeviceMappinData, roleMappinData: ref<GameplayRoleMappinData>) -> Bool {
     let quality: gamedataQuality = roleMappinData.m_quality;
 
-    if roleMappinData.isShard_mm {
-      return !minimap.hideShards;
+    if roleMappinData.isMMShard {
+      return !this.minimapConfig.hideShards;
     };
 
     if Equals(quality, gamedataQuality.Legendary) {
-      return !minimap.hideLegendary;
+      return !this.minimapConfig.hideLegendary;
     };
 
     if Equals(quality, gamedataQuality.Epic) {
-      return !minimap.hideEpic;
+      return !this.minimapConfig.hideEpic;
     };
 
     if Equals(quality, gamedataQuality.Rare) {
-      return !minimap.hideRare;
+      return !this.minimapConfig.hideRare;
     };
 
     if Equals(quality, gamedataQuality.Uncommon) {
-      return !minimap.hideUncommon;
+      return !this.minimapConfig.hideUncommon;
     };
 
     if Equals(quality, gamedataQuality.Common) {
-      return !minimap.hideCommon;
+      return !this.minimapConfig.hideCommon;
     };
 
     if Equals(data.mappinVariant, gamedataMappinVariant.LootVariant) {
@@ -123,7 +134,7 @@ public class MMUtils {
       if roleMappinData.m_isQuest || roleMappinData.m_isTagged {
         showOnMiniMap = true;
       } else {
-        if roleMappinData.m_isCurrentTarget || roleMappinData.m_visibleThroughWalls || Equals(MMUtils.GetVisibilityTypeFor(data, component, loot, world), MarkerVisibility.ThroughWalls) {
+        if roleMappinData.m_isCurrentTarget || roleMappinData.m_visibleThroughWalls || Equals(this.GetVisibility(data), MutedMarkerVisibility.ThroughWalls) {
           showOnMiniMap = true;
         } else {
           showOnMiniMap = false;
@@ -135,10 +146,10 @@ public class MMUtils {
   }
 }
 
-public static func MM(const str: script_ref<String>) -> Void {
-  // LogChannel(n"DEBUG", s"Markers: \(str)");
+public static func PrintDump(title: String, data: SDeviceMappinData, source: ref<GameplayRoleComponent>) -> Void {
+  MM(title + " " + ToString(data.id) + " / variant: " + ToString(data.mappinVariant) + " / role: " + ToString(data.gameplayRole) + ", enabled: " + ToString(data.enabled)  + ", active: " + ToString(data.active)+ ", range: " + ToString(data.range) + " - visual state data - " + ToString(data.visualStateData.m_mappinVisualState) + ", isQuest: " + ToString(data.visualStateData.m_isQuest) + ", through walls: " + ToString(data.visualStateData.m_visibleThroughWalls) + ", range: " + ToString(data.visualStateData.m_range) + ", duration: " + ToString(data.visualStateData.m_duration) + ", role: " + ToString(data.visualStateData.m_gameplayRole) + ", quality: " + ToString(data.visualStateData.m_quality) + ", is shard: " + ToString(data.visualStateData.isMMShard));
 }
 
-public static func PrintDump(title: String, data: SDeviceMappinData, source: ref<GameplayRoleComponent>) -> Void {
-  MM(title + " " + ToString(data.id) + " / variant: " + ToString(data.mappinVariant) + " / role: " + ToString(data.gameplayRole) + ", enabled: " + ToString(data.enabled)  + ", active: " + ToString(data.active)+ ", range: " + ToString(data.range) + " - visual state data - " + ToString(data.visualStateData.m_mappinVisualState) + ", isQuest: " + ToString(data.visualStateData.m_isQuest) + ", through walls: " + ToString(data.visualStateData.m_visibleThroughWalls) + ", range: " + ToString(data.visualStateData.m_range) + ", duration: " + ToString(data.visualStateData.m_duration) + ", role: " + ToString(data.visualStateData.m_gameplayRole) + ", quality: " + ToString(data.visualStateData.m_quality) + ", is shard: " + ToString(data.visualStateData.isShard_mm));
+public static func MM(const str: script_ref<String>) -> Void {
+  // LogChannel(n"DEBUG", s"Markers: \(str)");
 }

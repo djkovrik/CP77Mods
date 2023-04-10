@@ -1,4 +1,4 @@
-enum MarkerVisibility { 
+enum MutedMarkerVisibility { 
   ThroughWalls = 0,
   LineOfSight = 1,
   Scanner = 2,
@@ -7,11 +7,3 @@ enum MarkerVisibility {
 }
 
 public class EvaluateVisibilitiesEvent extends Event {}
-
-public class EvaluateMutedMarkersCallback extends DelayCallback {
-  let blackboard: wref<IBlackboard>;
-
-  public func Call() -> Void {
-    this.blackboard.SetBool(GetAllBlackboardDefs().UI_Scanner.IsEnabled_mm, false, true);
-  }
-}

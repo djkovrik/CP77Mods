@@ -1,42 +1,51 @@
 import MutedMarkersConfig.LootConfig
 
+// Toggle new bb value on scanner state change
 
 @wrapMethod(scannerGameController)
 private final func ShowScanner(show: Bool) -> Void {
   wrappedMethod(show);
+
   let config: ref<LootConfig> = new LootConfig();
-  let bb: ref<IBlackboard> = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_Scanner);
-  let delay: Float = config.hideDelay;
+  let blackboard: ref<IBlackboard> = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_Scanner);
   let delaySystem: ref<DelaySystem> = GameInstance.GetDelaySystem(this.m_gameInstance);
   let callback: ref<EvaluateMutedMarkersCallback> = new EvaluateMutedMarkersCallback();
 
   if show {
-    bb.SetBool(GetAllBlackboardDefs().UI_Scanner.IsEnabled_mm, true, true);
+    blackboard.SetBool(GetAllBlackboardDefs().UI_Scanner.MutedMarkerEnabled, true, true);
   } else {
-    callback.blackboard = bb;
-    delaySystem.CancelCallback(this.mutedMarkersCallback);
-    this.mutedMarkersCallback = delaySystem.DelayCallback(callback, delay);
+    callback.blackboard = blackboard;
+    delaySystem.CancelCallback(this.hideCallbackId);
+    this.hideCallbackId = delaySystem.DelayCallback(callback, config.hideDelay);
   };
 }
 
+public class EvaluateMutedMarkersCallback extends DelayCallback {
+  let blackboard: wref<IBlackboard>;
 
-// Watch for scanner state
+  public func Call() -> Void {
+    this.blackboard.SetBool(GetAllBlackboardDefs().UI_Scanner.MutedMarkerEnabled, false, true);
+  }
+}
+
+
+// Watch for MutedMarkerEnabled value
 
 @wrapMethod(GameplayRoleComponent)
 protected final func OnGameAttach() -> Void {
   wrappedMethod();
-  this.scannerBlackboard_mm = GameInstance.GetBlackboardSystem(this.GetOwner().GetGame()).Get(GetAllBlackboardDefs().UI_Scanner);
-  this.scannerCallback_mm = this.scannerBlackboard_mm.RegisterListenerBool(GetAllBlackboardDefs().UI_Scanner.IsEnabled_mm, this, n"OnScannerToggled");
+  this.scannerStateBlackboard = GameInstance.GetBlackboardSystem(this.GetOwner().GetGame()).Get(GetAllBlackboardDefs().UI_Scanner);
+  this.scannerStateCallback = this.scannerStateBlackboard.RegisterListenerBool(GetAllBlackboardDefs().UI_Scanner.MutedMarkerEnabled, this, n"OnScannerToggled");
 }
 
 @wrapMethod(GameplayRoleComponent)
 protected final func OnGameDetach() -> Void {
   wrappedMethod();
-  this.scannerBlackboard_mm.UnregisterListenerBool(GetAllBlackboardDefs().UI_Scanner.IsEnabled_mm, this.scannerCallback_mm);
+  this.scannerStateBlackboard.UnregisterListenerBool(GetAllBlackboardDefs().UI_Scanner.MutedMarkerEnabled, this.scannerStateCallback);
 }
 
 @addMethod(GameplayRoleComponent)
 protected cb func OnScannerToggled(value: Bool) -> Bool {
-  this.isScannerActive_mm = value;
-  this.EvaluateVisibilityMM();
+  this.isScannerActive = value;
+  this.GetOwner().QueueEvent(new EvaluateVisibilitiesEvent());
 }
