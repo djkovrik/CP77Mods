@@ -24,11 +24,19 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
     return system;
   }
 
-  public final func Initialize(player: ref<PlayerPuppet>) -> Void {
+  private func OnPlayerAttach(request: ref<PlayerAttachRequest>) {
+    // Check if the game actually loaded
+    if GameInstance.GetSystemRequestsHandler().IsPreGame() {
+      CarDealerLog("Main menu detected, skip Car Dealer init");
+      return ;
+    };
+
+    let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(request.owner.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
     if IsDefined(player) {
       this.m_vehicleSystem = GameInstance.GetVehicleSystem(player.GetGame());
       this.m_transactionSystem = GameInstance.GetTransactionSystem(player.GetGame());
       this.PopulateVehicleList();
+      CarDealerLog(s"ArchiveXL detected: \(ArchiveXL.Version())");
       CarDealerLog(s"PurchasableVehicleSystem initialized, detected vehicles: \(ArraySize(this.m_storeVehicles))");
       this.DeactivateSoldVehicles();
     };
@@ -36,7 +44,7 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
 
   private func DeactivateSoldVehicles() -> Void {
     for id in this.m_soldVehicles {
-      this.m_vehicleSystem.EnablePlayerVehicle(TDBID.ToStringDEBUG(id), false, true);
+      this.m_vehicleSystem.EnablePlayerVehicleID(id, false);
     };
   }
 
@@ -109,7 +117,7 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
   }
 
   public func Purchase(id: TweakDBID) -> Void {
-    this.m_vehicleSystem.EnablePlayerVehicle(TDBID.ToStringDEBUG(id), true, false);
+    this.m_vehicleSystem.EnablePlayerVehicleID(id, true);
     let soldVehicles: array<TweakDBID> = this.m_soldVehicles;
     if ArrayContains(soldVehicles, id) {
       ArrayRemove(soldVehicles, id);
@@ -174,7 +182,7 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
       return ;
     };
 
-    if this.m_vehicleSystem.EnablePlayerVehicle(TDBID.ToStringDEBUG(data.vehicleID), false, true) {
+    if this.m_vehicleSystem.EnablePlayerVehicleID(data.vehicleID, false) {
       this.m_transactionSystem.GiveItem(player, MarketSystem.Money(), data.price);
       ArrayPush(this.m_soldVehicles, data.vehicleID);
     } else {

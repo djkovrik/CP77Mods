@@ -24,10 +24,11 @@ public class DealerTexts {
 
 @wrapMethod(SingleplayerMenuGameController)
 protected cb func OnInitialize() -> Bool {
-  wrappedMethod();
+  if !GameInstance.GetResourceDepot().ArchiveExists("VirtualCarDealer.archive")  { 
+    this.ShowCarDealerWarningAXL();
+   };
 
-  if NotEquals(GetLocalizedTextByKey(n"Mod-Car-Dealer-Lot"), "") { return true; };
-  this.ShowCarDealerWarningAXL();
+   return wrappedMethod();
 }
 
 @addField(SingleplayerMenuGameController)

@@ -3,3 +3,15 @@ id = "MISSING_TWEAKXL"
 file = "VirtualCarDealer/core/CarDealer-System.reds"
 line_contains  = "TweakDBInterface"
 message = "Virtual Car Dealer depends on TweakXL but you don't have it installed. Try to (re)install it and make sure that you have \"r6\\scripts\\TweakXL\" and \"red4ext\\plugins\\TweakXL\" folders."
+
+[[UNRESOLVED_IMPORT]]
+id = "MISSING_CODEWARE"
+file = "VirtualCarDealer/autofixer/AutofixerItemVirtualController.reds"
+line_contains  = "Codeware"
+message = "Virtual Car Dealer depends on Codeware but you don't have it installed."
+
+[[UNRESOLVED_REF]]
+id = "MISSING_ARCHIVEXL"
+file = "VirtualCarDealer/core/CarDealer-System.reds"
+line_contains  = "ArchiveXL"
+message = "Virtual Car Dealer depends on ArchiveXL but you don't have it installed. Try to (re)install it and make sure that you have \"r6\\scripts\\ArchiveXL\" and \"red4ext\\plugins\\ArchiveXL\" folders."

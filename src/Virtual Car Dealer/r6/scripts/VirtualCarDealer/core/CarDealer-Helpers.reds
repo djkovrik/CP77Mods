@@ -11,7 +11,7 @@ private func HasEnoughMoneyDealer(price: Int32) -> Bool {
   return playerBalance >= price;
 }
 
-// Check if player has enough money to pay the price
+// Check if player has enough street cred
 @addMethod(WebPage)
 private func HasEnoughStreetCredDealer(cred: Int32) -> Bool {
   let statsSystem: ref<StatsSystem> = GameInstance.GetStatsSystem(this.playerPuppet.GetGame());
@@ -57,10 +57,4 @@ private func DealerBuyCurrentVehicle() {
     this.PushPurchasedNotificationDealer(id);
     this.ShowDealerCurrentPage();
   };
-}
-
-@wrapMethod(PlayerPuppet)
-protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpawn>) -> Bool {
-  wrappedMethod(evt);
-  PurchasableVehicleSystem.GetInstance(this.GetGame()).Initialize(this);
 }

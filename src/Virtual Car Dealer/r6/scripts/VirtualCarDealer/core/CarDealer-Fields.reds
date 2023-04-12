@@ -1,6 +1,6 @@
-import Codeware.UI.*
 import CarDealer.Classes.PurchasableVehicleBundle
 import CarDealer.System.PurchasableVehicleSystem
+import Codeware.UI.*
 
 @addField(WebPage) let purchaseSystem: ref<PurchasableVehicleSystem>;
 @addField(WebPage) let vehiclesStock: array<ref<PurchasableVehicleBundle>>;
@@ -17,4 +17,3 @@ import CarDealer.System.PurchasableVehicleSystem
 @addField(WebPage) let buttonBuy: wref<CustomHubButton>;
 @addField(WebPage) let buttonColor: wref<CustomHubButton>;
 @addField(WebPage) let buttonFixer: wref<CustomHubButton>;
-
