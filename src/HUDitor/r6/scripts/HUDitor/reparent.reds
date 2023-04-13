@@ -170,9 +170,11 @@ private func InitWidgetNameLabel() -> Void {
   label.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
   label.SetFontSize(24);
   label.SetLetterCase(textLetterCase.OriginalCase);
-  label.SetMargin(new inkMargin(10.0, 5.0, 0.0, 0.0));
+  label.SetMargin(new inkMargin(0.0, 0.0, 0.0, 20.0));
   label.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
   label.BindProperty(n"tintColor", n"MainColors.Yellow");
+  label.SetAnchor(inkEAnchor.BottomCenter);
+  label.SetAnchorPoint(new Vector2(0.5, 1.0));
   label.Reparent(root);
   this.huditorWidgetName = label;
 }
