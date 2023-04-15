@@ -2,7 +2,7 @@ import Edgerunning.System.EdgerunningSystem
 
 // CET command to stop FX effects - Game.EdgerunnerClear()
 public static exec func EdgerunnerClear(gi: GameInstance) -> Void {
-  EdgerunningSystem.GetInstance(gi).StopFX();
+  EdgerunningSystem.GetInstance(gi).StopEffects();
 }
 
 // CET command to get current coords - Game.GetDistrict()

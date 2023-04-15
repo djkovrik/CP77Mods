@@ -1,13 +1,5 @@
 import Edgerunning.System.EdgerunningSystem
 
-// Is Johnny
-@addMethod(PlayerPuppet)
-public func IsPossessedE() -> Bool {
-  let posessed: Bool = Cast<Bool>(GameInstance.GetQuestsSystem(this.GetGame()).GetFactStr("isPlayerPossessedByJohnny"));
-  let isReplacer: Bool = this.GetRecord().GetID() == t"Character.johnny_replacer";
-  return isReplacer || posessed;
-}
-
 // Check prologue
 @addMethod(PlayerPuppet)
 public func IsPrologueFinishedE() -> Bool {
@@ -27,6 +19,7 @@ public func GetDistrictE() -> gamedataDistrict {
 protected cb func OnDeath(evt: ref<gameDeathEvent>) -> Bool {
   wrappedMethod(evt);
   if this.IsPlayer() {
+    EdgerunningSystem.GetInstance(this.GetGame()).RemoveAllEffects();
     EdgerunningSystem.GetInstance(this.GetGame()).ClearTeleportDelays();
   };
 }

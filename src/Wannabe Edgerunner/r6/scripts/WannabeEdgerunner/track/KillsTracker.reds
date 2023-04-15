@@ -5,18 +5,6 @@ import Edgerunning.Common.E
 protected func RewardKiller(killer: wref<GameObject>, killType: gameKillType, isAnyDamageNonlethal: Bool) -> Void {
   wrappedMethod(killer, killType, isAnyDamageNonlethal);
 
-  // Additional check for johnny
-  let playerPuppet: ref<PlayerPuppet> = killer as PlayerPuppet;
-  let isJohnny: Bool = false;
-  if IsDefined(playerPuppet) {
-    isJohnny = playerPuppet.IsPossessedE(); 
-  };
-
-  if isJohnny { 
-    E("Player is Johnny - kill costs no humanity");
-    return ; 
-  };
-
   let record: ref<Character_Record> = this.GetRecord();
   let affiliation: gamedataAffiliation = record.Affiliation().Type();
   let type: ENeutralizeType;

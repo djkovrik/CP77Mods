@@ -5,6 +5,8 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   private let player: wref<PlayerPuppet>;
   private let delaySystem: ref<DelaySystem>;
+  private let questsSystem: ref<QuestsSystem>;
+  private let playerSystem: ref<PlayerSystem>;
   private let cyberpsychosisSFX: array<ref<SFXBundle>>;
   private let config: ref<EdgerunningConfig>;
   private let teleportHelper: ref<TeleportHelper>;
@@ -43,6 +45,8 @@ public class EdgerunningSystem extends ScriptableSystem {
     if IsDefined(player) {
       this.player = player;
       this.delaySystem = GameInstance.GetDelaySystem(this.player.GetGame());
+      this.questsSystem = GameInstance.GetQuestsSystem(this.player.GetGame());
+      this.playerSystem = GameInstance.GetPlayerSystem(this.player.GetGame());
       this.additionalPenalties = new inkIntHashMap();
 
       ArrayPush(this.cyberpsychosisSFX, SFXBundle.Create(n"ono_v_breath_heavy", 3.0));
@@ -68,6 +72,10 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public func OnPossessionChanged(playerPossesion: gamedataPlayerPossesion) -> Void {
     this.possessed = Equals(playerPossesion, gamedataPlayerPossesion.Johnny);
+    if this.possessed {
+      this.RemoveAllEffects();
+      this.ResetHumanityDamage();
+    };
   }
 
   public func OnSettingsChange() -> Void {
@@ -347,7 +355,7 @@ public class EdgerunningSystem extends ScriptableSystem {
       this.InvalidateCurrentState();
       E(s"! Killed \(affiliation), humanity -\(cost)");
     } else {
-      E("! Humanity freezed, kill costs no humanity");
+      E(s"! Humanity freezed, kill costs no humanity, current humanity: \(this.GetHumanityCurrent())");
     };
   }
 
@@ -635,13 +643,19 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   private func IsRipperdocBuffActive() -> Bool {
-    return Equals(StatusEffectSystem.ObjectHasStatusEffect(this.player, t"BaseStatusEffect.RipperDocMedBuff"), true)
-      || Equals(StatusEffectSystem.ObjectHasStatusEffect(this.player, t"BaseStatusEffect.RipperDocMedBuffUncommon"), true)
-      || Equals(StatusEffectSystem.ObjectHasStatusEffect(this.player, t"BaseStatusEffect.RipperDocMedBuffCommon"), true);
+    let checked: Bool = StatusEffectSystem.ObjectHasStatusEffectWithTag(this.player, n"Neuroblockers");
+    E(s"? Check for neuroblockers tag: \(checked)");
+    return checked;
   }
 
   private func IsPossessed() -> Bool {
-    return this.possessed;
+    return this.possessed || this.IsJohnny();
+  }
+
+  private func IsJohnny() -> Bool {
+    let localPuppet: ref<PlayerPuppet> = this.playerSystem.GetLocalPlayerControlledGameObject() as PlayerPuppet;
+    let factName: String = GameInstance.GetPlayerSystem(this.player.GetGame()).GetPossessedByJohnnyFactName();
+    return localPuppet.IsJohnnyReplacer() || this.questsSystem.GetFactStr(factName) == 1;
   }
 
   public func IsGlitchesActive() -> Bool {
@@ -729,7 +743,7 @@ public class EdgerunningSystem extends ScriptableSystem {
 
     let currentDistrict: gamedataDistrict = this.player.GetPreventionSystem().GetDistrictE();
     let isPrologDone: Bool = this.player.IsPrologueFinishedE();
-    let isJohnny: Bool = this.player.IsPossessedE();
+    let isJohnny: Bool = this.IsPossessed();
     let destination: ref<TeleportData>;
     if isPrologDone {
       destination = this.teleportHelper.GetRandomTeleportData(currentDistrict);
@@ -1096,12 +1110,15 @@ public class EdgerunningSystem extends ScriptableSystem {
     return null;
   }
 
-  public func StopFX() -> Void {
+  public func StopEffects() -> Void {
     this.StopVFX(n"reboot_glitch");
+    this.StopVFX(n"status_bleeding");
     this.StopVFX(n"hacking_glitch_low");
     this.StopVFX(n"personal_link_glitch");
     this.StopVFX(n"disabling_connectivity_glitch");
+    this.StopVFX(n"johnny_sickness_blackout");
     this.RemoveAllEffects();
+    this.ResetHumanityDamage();
   }
 
   private func IsKerenzikov(record: ref<Item_Record>) -> Bool {
