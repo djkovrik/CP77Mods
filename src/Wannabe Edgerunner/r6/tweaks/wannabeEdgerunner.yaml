@@ -179,6 +179,8 @@ BaseStatusEffect.ActivePsychosisBuff:
 
 BaseStatusEffect.RipperDocMedBuff:
   $base: BaseStatusEffect.ConsumableBuff
+  gameplayTags:
+    - !append Neuroblockers
   duration: Items.RipperdocMedDurationRare
   packages:
    - $type: GameplayLogicPackage_Record
