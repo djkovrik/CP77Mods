@@ -75,6 +75,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     if this.possessed {
       this.RemoveAllEffects();
       this.ResetHumanityDamage();
+      this.InvalidateCurrentState();
     };
   }
 
@@ -180,7 +181,12 @@ public class EdgerunningSystem extends ScriptableSystem {
     evt.color = this.GetHumanityColor();
     GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(evt);
 
-    if this.IsRipperdocBuffActive() || this.IsPossessed() { return; };
+    if this.IsRipperdocBuffActive() { return; };
+
+    if this.IsPossessed() {
+      this.CleanupEffectsForJohnny();
+      return ;
+    };
 
     if this.currentHumanityPool > this.upperThreshold {
       this.RemoveAllEffects();
@@ -348,6 +354,12 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func OnEnemyKilled(affiliation: gamedataAffiliation) -> Void {
+    if this.IsPossessed() {
+      this.CleanupEffectsForJohnny();
+      E(s"! Playing as Johnny, kill costs no humanity | current humanity: \(this.GetHumanityCurrent())");
+      return ;
+    };
+
     let cost: Int32;
     if !this.IsRipperdocBuffActive() && !this.IsPossessed() {
       cost = this.GetEnemyCost(affiliation);
@@ -355,7 +367,7 @@ public class EdgerunningSystem extends ScriptableSystem {
       this.InvalidateCurrentState();
       E(s"! Killed \(affiliation), humanity -\(cost)");
     } else {
-      E(s"! Humanity freezed, kill costs no humanity, current humanity: \(this.GetHumanityCurrent())");
+      E(s"! Humanity freezed, kill costs no humanity | current humanity: \(this.GetHumanityCurrent())");
     };
   }
 
@@ -650,6 +662,14 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   private func IsPossessed() -> Bool {
     return this.possessed || this.IsJohnny();
+  }
+
+  private func CleanupEffectsForJohnny() -> Void {
+    this.ResetHumanityDamage();
+
+    if this.IsGlitchesActive() || this.IsPrePsychosisActive() || this.IsPsychosisActive() {
+      this.RemoveAllEffects();
+    };
   }
 
   private func IsJohnny() -> Bool {
