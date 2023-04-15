@@ -16,14 +16,15 @@ private class SleevesConfig {
       Equals(id, t"Items.MQ049_martinez_jacket") ||         // David's Jacket
       Equals(id, t"Items.nd_alt_jacket_default") ||         // ND Alt's Jacket
       Equals(id, t"Items.nd_alt_jacket_black") ||         // ND Alt's Jacket
-      Equals(id, t"Items.nd_alt_jacket_blue") ||         // ND Alt's Jacket
+      Equals(id, t"Items.nd_alt_jacket_blue") ||          // ND Alt's Jacket
       Equals(id, t"Items.nd_alt_jacket_green") ||         // ND Alt's Jacket
-      Equals(id, t"Items.nd_alt_jacket_pink") ||         // ND Alt's Jacket
-      Equals(id, t"Items.nd_alt_jacket_red") ||         // ND Alt's Jacket
+      Equals(id, t"Items.nd_alt_jacket_pink") ||          // ND Alt's Jacket
+      Equals(id, t"Items.nd_alt_jacket_red") ||           // ND Alt's Jacket
       Equals(id, t"Items.nd_alt_jacket_white") ||         // ND Alt's Jacket
-      Equals(id, t"Items.nd_alt_jacket_burgundy") ||         // ND Alt's Jacket
+      Equals(id, t"Items.nd_alt_jacket_burgundy") ||      // ND Alt's Jacket
       Equals(id, t"Items.nd_alt_jacket_brown") ||         // ND Alt's Jacket
-      false;
+      Equals(id, t"Items.Media_01_Set_Shirt") ||          // Heat-Resistant Nanoweave Media Shirt
+    false;
   }
 
   public static func TargetSlots() -> array<TweakDBID> = [
