@@ -674,7 +674,7 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   private func IsJohnny() -> Bool {
     let localPuppet: ref<PlayerPuppet> = this.playerSystem.GetLocalPlayerControlledGameObject() as PlayerPuppet;
-    let factName: String = GameInstance.GetPlayerSystem(this.player.GetGame()).GetPossessedByJohnnyFactName();
+    let factName: String = this.playerSystem.GetPossessedByJohnnyFactName();
     return localPuppet.IsJohnnyReplacer() || this.questsSystem.GetFactStr(factName) == 1;
   }
 

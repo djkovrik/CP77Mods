@@ -17,3 +17,14 @@ protected cb func OnUninitialize() -> Bool {
   wrappedMethod();
   EdgerunningSystem.GetInstance(this.GetPlayerControlledObject().GetGame()).OnSettingsChange();
 }
+
+// Is Johnny
+@addMethod(PlayerPuppet)
+public func IsPossessedE() -> Bool {
+  let playerSystem: ref<PlayerSystem> = GameInstance.GetPlayerSystem(this.GetGame());
+  let puppet: ref<PlayerPuppet> = playerSystem.GetLocalPlayerMainGameObject() as PlayerPuppet;
+  let factName: String = playerSystem.GetPossessedByJohnnyFactName();
+  let posessed: Bool = GameInstance.GetQuestsSystem(this.GetGame()).GetFactStr(factName) == 1;
+  let isReplacer: Bool = puppet.IsJohnnyReplacer();
+  return isReplacer || posessed;
+}
