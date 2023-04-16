@@ -1,10 +1,10 @@
 module MutedMarkersConfig
 
 // Visibility types:
-//   * MutedMarkerVisibility.ThroughWalls - visible through walls
-//   * MutedMarkerVisibility.LineOfSight - visible when V sees it (very similar to default in-game behavior)
-//   * MutedMarkerVisibility.Scanner - visible only when scanner is active 
-//   * MutedMarkerVisibility.Hidden - not visible at all
+//   * MarkerVisibility.ThroughWalls - visible through walls
+//   * MarkerVisibility.LineOfSight - visible when V sees it (very similar to default in-game behavior)
+//   * MarkerVisibility.Scanner - visible only when scanner is active 
+//   * MarkerVisibility.Hidden - not visible at all
 
 public class LootConfig {
   // Visibility for Iconic items
@@ -17,7 +17,7 @@ public class LootConfig {
   @runtimeProperty("ModSettings.displayValues.Scanner", "Mod-Markers-Visibility-Scanner")
   @runtimeProperty("ModSettings.displayValues.Hidden", "Mod-Markers-Visibility-Hidden")
   @runtimeProperty("ModSettings.displayValues.Default", "UI-Sorting-Default")
-  let iconic: MutedMarkerVisibility = MutedMarkerVisibility.ThroughWalls;
+  let iconic: MarkerVisibility = MarkerVisibility.ThroughWalls;
   
   // Visibility for Legendary items (gold)
   @runtimeProperty("ModSettings.mod", "Muted Markers")
@@ -29,7 +29,7 @@ public class LootConfig {
   @runtimeProperty("ModSettings.displayValues.Scanner", "Mod-Markers-Visibility-Scanner")
   @runtimeProperty("ModSettings.displayValues.Hidden", "Mod-Markers-Visibility-Hidden")
   @runtimeProperty("ModSettings.displayValues.Default", "UI-Sorting-Default")
-  let legendary: MutedMarkerVisibility = MutedMarkerVisibility.ThroughWalls;
+  let legendary: MarkerVisibility = MarkerVisibility.ThroughWalls;
 
   // Visibility for Epic items (purple)
   @runtimeProperty("ModSettings.mod", "Muted Markers")
@@ -41,7 +41,7 @@ public class LootConfig {
   @runtimeProperty("ModSettings.displayValues.Scanner", "Mod-Markers-Visibility-Scanner")
   @runtimeProperty("ModSettings.displayValues.Hidden", "Mod-Markers-Visibility-Hidden")
   @runtimeProperty("ModSettings.displayValues.Default", "UI-Sorting-Default")
-  let epic: MutedMarkerVisibility = MutedMarkerVisibility.LineOfSight;
+  let epic: MarkerVisibility = MarkerVisibility.LineOfSight;
 
   // Visibility for Rate items (blue)
   @runtimeProperty("ModSettings.mod", "Muted Markers")
@@ -53,7 +53,7 @@ public class LootConfig {
   @runtimeProperty("ModSettings.displayValues.Scanner", "Mod-Markers-Visibility-Scanner")
   @runtimeProperty("ModSettings.displayValues.Hidden", "Mod-Markers-Visibility-Hidden")
   @runtimeProperty("ModSettings.displayValues.Default", "UI-Sorting-Default")
-  let rare: MutedMarkerVisibility = MutedMarkerVisibility.LineOfSight;
+  let rare: MarkerVisibility = MarkerVisibility.LineOfSight;
 
   // Visibility for Uncommon items (green)
   @runtimeProperty("ModSettings.mod", "Muted Markers")
@@ -65,7 +65,7 @@ public class LootConfig {
   @runtimeProperty("ModSettings.displayValues.Scanner", "Mod-Markers-Visibility-Scanner")
   @runtimeProperty("ModSettings.displayValues.Hidden", "Mod-Markers-Visibility-Hidden")
   @runtimeProperty("ModSettings.displayValues.Default", "UI-Sorting-Default")
-  let uncommon: MutedMarkerVisibility = MutedMarkerVisibility.Scanner;
+  let uncommon: MarkerVisibility = MarkerVisibility.Scanner;
 
   // Visibility for Common items (white)
   @runtimeProperty("ModSettings.mod", "Muted Markers")
@@ -77,7 +77,7 @@ public class LootConfig {
   @runtimeProperty("ModSettings.displayValues.Scanner", "Mod-Markers-Visibility-Scanner")
   @runtimeProperty("ModSettings.displayValues.Hidden", "Mod-Markers-Visibility-Hidden")
   @runtimeProperty("ModSettings.displayValues.Default", "UI-Sorting-Default")
-  let common: MutedMarkerVisibility = MutedMarkerVisibility.Scanner;
+  let common: MarkerVisibility = MarkerVisibility.Scanner;
 
   // Hide delay after scaner disabled
   @runtimeProperty("ModSettings.mod", "Muted Markers")
@@ -99,7 +99,7 @@ public class LootConfig {
   @runtimeProperty("ModSettings.displayValues.Scanner", "Mod-Markers-Visibility-Scanner")
   @runtimeProperty("ModSettings.displayValues.Hidden", "Mod-Markers-Visibility-Hidden")
   @runtimeProperty("ModSettings.displayValues.Default", "UI-Sorting-Default")
-  let shards: MutedMarkerVisibility = MutedMarkerVisibility.LineOfSight;
+  let shards: MarkerVisibility = MarkerVisibility.LineOfSight;
 }
 
 public class MiniMapConfig {

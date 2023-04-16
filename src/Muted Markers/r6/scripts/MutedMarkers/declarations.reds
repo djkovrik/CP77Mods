@@ -1,4 +1,4 @@
-enum MutedMarkerVisibility { 
+enum MarkerVisibility { 
   ThroughWalls = 0,
   LineOfSight = 1,
   Scanner = 2,
