@@ -17,6 +17,10 @@ public func GetAtelierPlacementSlot(itemId: ItemID) -> TweakDBID {
   };
 
   let outfitSystem: ref<OutfitSystem> = OutfitSystem.GetInstance(this.GetPlayerControlledObject().GetGame());
+  if !outfitSystem.IsActive() {
+    return EquipmentSystem.GetPlacementSlot(itemId);
+  };
+
   return outfitSystem.GetItemSlot(itemId);
 }
 
