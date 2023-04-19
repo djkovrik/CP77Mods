@@ -23,7 +23,6 @@ private class SleevesConfig {
       Equals(id, t"Items.nd_alt_jacket_white") ||         // ND Alt's Jacket
       Equals(id, t"Items.nd_alt_jacket_burgundy") ||      // ND Alt's Jacket
       Equals(id, t"Items.nd_alt_jacket_brown") ||         // ND Alt's Jacket
-      Equals(id, t"Items.Media_01_Set_Shirt") ||          // Heat-Resistant Nanoweave Media Shirt
     false;
   }
 
