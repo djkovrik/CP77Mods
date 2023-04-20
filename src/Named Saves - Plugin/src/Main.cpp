@@ -71,7 +71,7 @@ RED4EXT_C_EXPORT void RED4EXT_CALL Query(RED4ext::PluginInfo* aInfo)
 {
     aInfo->name = L"NamedSaves";
     aInfo->author = L"DJ_Kovrik";
-    aInfo->version = RED4EXT_SEMVER(1, 3, 0);
+    aInfo->version = RED4EXT_SEMVER(1, 6, 0);
     aInfo->runtime = RED4EXT_RUNTIME_LATEST;
     aInfo->sdk = RED4EXT_SDK_0_3_0;
 }
