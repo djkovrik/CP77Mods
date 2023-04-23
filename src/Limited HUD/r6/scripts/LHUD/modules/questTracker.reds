@@ -1,16 +1,22 @@
 import LimitedHudConfig.QuestTrackerModuleConfig
 import LimitedHudCommon.LHUDEventType
+import LimitedHudCommon.LHUDStealthRunnerRefreshed
 import LimitedHudCommon.LHUDConfigUpdatedEvent
 import LimitedHudCommon.LHUDEvent
 
-// @if(ModuleExists("StealthRunner")) 
-// import StealthRunner.StealthRunnerObjectiveUpdate
+@if(ModuleExists("StealthRunner")) 
+import StealthRunner.StealthrunnerObjectiveTextUpdatedEvt
 
-// @if(ModuleExists("StealthRunner")) 
-// @addMethod(QuestTrackerGameController)
-// protected cb func OnStealthRunnerObjectiveUpdateLhud(evt: ref<StealthRunnerObjectiveUpdate>) -> Bool {
-//   this.ShowForJournalUpdate();
-// }
+@if(ModuleExists("StealthRunner")) 
+@addMethod(PlayerPuppet)
+protected cb func OnStealthrunnerCompatEvent(evt: ref<StealthrunnerObjectiveTextUpdatedEvt>) -> Bool {
+  GameInstance.GetUISystem(this.GetGame()).QueueEvent(new LHUDStealthRunnerRefreshed());
+}
+
+@addMethod(QuestTrackerGameController)
+protected cb func OnLHUDStealthRunnerRefreshed(evt: ref<LHUDStealthRunnerRefreshed>) -> Void {
+  this.ShowForJournalUpdate();
+}
 
 @addMethod(QuestTrackerGameController)
 protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
