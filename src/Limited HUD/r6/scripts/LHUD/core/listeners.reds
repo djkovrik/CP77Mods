@@ -158,7 +158,9 @@ public class LHUDBlackboardsListener {
 
   // Mounted state bb callback
   protected cb func OnMountedStateChanged(value: Bool) -> Bool {
-    this.playerInstance.QueueLHUDEvent(LHUDEventType.InVehicle, value);
+    let isDriver: Bool = VehicleComponent.IsDriver(this.playerInstance.GetGame(), this.playerInstance);
+    let show: Bool = isDriver && value;
+    this.playerInstance.QueueLHUDEvent(LHUDEventType.InVehicle, show);
   }
 
   // Weapon state bb callback
