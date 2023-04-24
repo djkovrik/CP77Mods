@@ -251,11 +251,6 @@ Items.ripperdoc_med:
   statModifierGroups:
     - t"Items.RipperdocMedDurationRare"
   buyPrice:
-   - Price.BasePrice
-   - Price.BuyMultiplier
-   - Price.ItemQualityMultiplier
-   - Price.IconicMultiplier
-   - Price.BuyPriceIntrinsicModMult
    - Price.RipperdocMedModifierRare
 
 # - Uncommon
@@ -298,11 +293,6 @@ Items.ripperdoc_med_uncommon:
   statModifierGroups:
     - t"Items.RipperdocMedDurationUncommon"
   buyPrice:
-   - Price.BasePrice
-   - Price.BuyMultiplier
-   - Price.ItemQualityMultiplier
-   - Price.IconicMultiplier
-   - Price.BuyPriceIntrinsicModMult
    - Price.RipperdocMedModifierUncommon
    
 # - Common
@@ -342,11 +332,6 @@ Items.ripperdoc_med_common:
   statModifierGroups:
     - t"Items.RipperdocMedDurationCommon"
   buyPrice:
-   - Price.BasePrice
-   - Price.BuyMultiplier
-   - Price.ItemQualityMultiplier
-   - Price.IconicMultiplier
-   - Price.BuyPriceIntrinsicModMult
    - Price.RipperdocMedModifierCommon
 
 # === Recipes === 
@@ -360,11 +345,6 @@ Items.recipe_ripperdoc_med:
     amount: 1
     item: Items.ripperdoc_med
   buyPrice:
-    - Price.BasePrice
-    - Price.BuyMultiplier
-    - Price.ItemQualityMultiplier
-    - Price.IconicMultiplier
-    - Price.BuyPriceIntrinsicModMult
     - Price.RipperdocMedModifierRecipeRare
 
 # Uncommon
@@ -376,11 +356,6 @@ Items.recipe_ripperdoc_med_uncommon:
     amount: 1
     item: Items.ripperdoc_med_uncommon
   buyPrice:
-    - Price.BasePrice
-    - Price.BuyMultiplier
-    - Price.ItemQualityMultiplier
-    - Price.IconicMultiplier
-    - Price.BuyPriceIntrinsicModMult
     - Price.RipperdocMedModifierRecipeUncommon
 
 # Common
@@ -392,11 +367,6 @@ Items.recipe_ripperdoc_med_common:
     amount: 1
     item: Items.ripperdoc_med_common
   buyPrice:
-    - Price.BasePrice
-    - Price.BuyMultiplier
-    - Price.ItemQualityMultiplier
-    - Price.IconicMultiplier
-    - Price.BuyPriceIntrinsicModMult
     - Price.RipperdocMedModifierRecipeCommon
 
 

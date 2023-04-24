@@ -416,6 +416,60 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.min", "0")
   @runtimeProperty("ModSettings.max", "50") 
   let killCostOther: Int32 = 1;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Neuro-Price")
+  @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Items-Quality-Common")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Restart")
+  @runtimeProperty("ModSettings.step", "200")
+  @runtimeProperty("ModSettings.min", "200")
+  @runtimeProperty("ModSettings.max", "20000")
+  let neuroblockersPriceCommon: Int32 = 3800;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Neuro-Price")
+  @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Items-Quality-Uncommon")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Restart")
+  @runtimeProperty("ModSettings.step", "200")
+  @runtimeProperty("ModSettings.min", "200")
+  @runtimeProperty("ModSettings.max", "20000")
+  let neuroblockersPriceUncommon: Int32 = 4600;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Neuro-Price")
+  @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Items-Quality-Rare")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Restart")
+  @runtimeProperty("ModSettings.step", "200")
+  @runtimeProperty("ModSettings.min", "200")
+  @runtimeProperty("ModSettings.max", "20000")
+  let neuroblockersPriceRare: Int32 = 5400;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Neuro-Recipe-Price")
+  @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Items-Quality-Common")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Restart")
+  @runtimeProperty("ModSettings.step", "200")
+  @runtimeProperty("ModSettings.min", "200")
+  @runtimeProperty("ModSettings.max", "20000")
+  let neuroblockersRecipePriceCommon: Int32 = 6000;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Neuro-Recipe-Price")
+  @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Items-Quality-Uncommon")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Restart")
+  @runtimeProperty("ModSettings.step", "200")
+  @runtimeProperty("ModSettings.min", "200")
+  @runtimeProperty("ModSettings.max", "20000")
+  let neuroblockersRecipePriceUncommon: Int32 = 9000;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Neuro-Recipe-Price")
+  @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Items-Quality-Rare")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Restart")
+  @runtimeProperty("ModSettings.step", "200")
+  @runtimeProperty("ModSettings.min", "200")
+  @runtimeProperty("ModSettings.max", "20000")
+  let neuroblockersRecipePriceRare: Int32 = 12000;
 }
 
 // Replace false with true to show full debug logs in CET console
