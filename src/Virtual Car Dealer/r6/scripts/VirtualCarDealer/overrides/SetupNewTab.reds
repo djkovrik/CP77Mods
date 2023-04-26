@@ -55,6 +55,7 @@ public final func GetMenuButtonWidgets() -> array<SComputerMenuButtonWidgetPacka
       package.iconID = n"iconInternet";
       package.widgetTweakDBID = this.GetMenuButtonWidgetTweakDBID();
       package.isValid = true;
+      SWidgetPackageBase.ResolveWidgetTweakDBData(package.widgetTweakDBID, package.libraryID, package.libraryPath);
       ArrayPush(packages, package);
     };
   } else {
@@ -62,4 +63,15 @@ public final func GetMenuButtonWidgets() -> array<SComputerMenuButtonWidgetPacka
   };
 
   return packages;
+}
+
+// kudos to NexusGuy999 for tab widget hack ^^
+@wrapMethod(ComputerMenuButtonController)
+public func Initialize(gameController: ref<ComputerInkGameController>, widgetData: SComputerMenuButtonWidgetPackage) -> Void {
+  wrappedMethod(gameController, widgetData);
+
+  if Equals(widgetData.widgetName, "CarDealer") {
+    inkImageRef.SetTexturePart(this.m_iconWidget, n"dealer");
+    inkImageRef.SetAtlasResource(this.m_iconWidget, r"base\\gameplay\\gui\\dealer_icon.inkatlas");
+  };
 }
