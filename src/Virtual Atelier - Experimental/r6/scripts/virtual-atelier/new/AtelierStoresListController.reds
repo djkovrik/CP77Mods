@@ -86,7 +86,7 @@ public class AtelierStoresListController extends inkGameController {
 
   protected cb func OnAtelierStoreHoverOverEvent(evt: ref<AtelierStoreHoverOverEvent>) -> Bool {
     let hintText: String;
-    if evt.store.bookmarked {
+    if evt.store.isBookmarked {
       hintText = VirtualAtelierText.RemoveFromFavorites();
     } else {
       hintText = VirtualAtelierText.AddToFavorites();
@@ -138,6 +138,7 @@ public class AtelierStoresListController extends inkGameController {
 
   private func RefreshStores() -> Void {
     this.system.RefreshPersistedBookmarks();
+    this.system.RefreshNewLabels();
     this.stores = this.system.GetStores();
     AtelierLog(s"Detected stores: \(ArraySize(this.stores))");
   }
@@ -156,13 +157,13 @@ public class AtelierStoresListController extends inkGameController {
     let store: ref<VirtualShop> = this.latestHovered;
     if IsDefined(store) {
       AtelierDebug(s"HandleBookmarkAction: \(store.storeID)");
-      if store.bookmarked {
+      if store.isBookmarked {
         AtelierDebug(s" - remove bookmark \(store.storeID)");
-        store.bookmarked = false;
+        store.isBookmarked = false;
         this.system.RemoveBookmark(store.storeID);
       } else {
         AtelierDebug(s"- add bookmark \(store.storeID)");
-        store.bookmarked = true;
+        store.isBookmarked = true;
         this.system.AddBookmark(store.storeID);
       };
 

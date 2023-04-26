@@ -32,7 +32,8 @@ public class VirtualShop {
   let prices: array<Int32>;
   let atlasResource: ResRef;
   let texturePart: CName;
-  let bookmarked: Bool;
+  let isBookmarked: Bool;
+  let isNew: Bool;
 }
 
 public class VirtualShopRegistration extends Event {
@@ -53,7 +54,7 @@ public class VirtualShopRegistration extends Event {
     store.texturePart = texturePart;
     store.qualities = qualities;
     store.quantities = quantities;
-    store.bookmarked = this.system.IsBookmarked(storeID);
+    store.isBookmarked = this.system.IsBookmarked(storeID);
     ArrayPush(stores, store);
 
     this.system.SetStores(stores);

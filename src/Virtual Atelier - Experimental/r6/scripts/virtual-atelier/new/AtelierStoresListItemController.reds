@@ -3,6 +3,7 @@ import VendorPreview.Utils.AtelierDebug
 
 class AtelierStoresListItemController extends inkVirtualCompoundItemController {
   private let data: ref<VirtualShop>;
+  private let isNewController: wref<ItemLabelController>;
   private let itemContainer: wref<inkVerticalPanel>;
   private let storeImage: wref<inkImage>;
   private let storeLabel: wref<inkText>;
@@ -33,6 +34,7 @@ class AtelierStoresListItemController extends inkVirtualCompoundItemController {
 
   protected cb func OnShopHoverOver(evt: ref<inkPointerEvent>) -> Bool {
     AtelierDebug(s"OnShopHoverOver: \(this.data.storeID)");
+    this.ShowNewLabel(false);
     this.QueueEvent(AtelierStoreSoundEvent.Create(n"ui_menu_hover"));
     this.QueueEvent(AtelierStoreHoverOverEvent.Create(this.data));
     this.AnimateHoverOver();
@@ -47,39 +49,48 @@ class AtelierStoresListItemController extends inkVirtualCompoundItemController {
   protected cb func OnDataChanged(value: Variant) {
     this.data = FromVariant<ref<IScriptable>>(value) as VirtualShop;
     if IsDefined(this.data) {
-      AtelierDebug(s"REFRESH BY DATA CHANGE - bookmarked \(this.data.bookmarked)");
+      AtelierDebug(s"REFRESH BY DATA CHANGE - bookmarked \(this.data.isBookmarked)");
       this.RefreshView();
     };
   }
 
   protected cb func OnAtelierStoresRefreshEvent(evt: ref<AtelierStoresRefreshEvent>) -> Bool {
     if Equals(this.data.storeID, evt.store.storeID) {
-      AtelierDebug(s"REFRESH BY EVENT - bookmarked \(evt.store.bookmarked)");
+      AtelierDebug(s"REFRESH BY EVENT - bookmarked \(evt.store.isBookmarked)");
       this.data = evt.store;
       this.RefreshView();
     };
   }
 
   private func RefreshView() -> Void {
-    AtelierDebug(s"RefreshView: \(this.data.storeID): bookmarked \(this.data.bookmarked)");
+    AtelierDebug(s"RefreshView: \(this.data.storeID): bookmarked \(this.data.isBookmarked)");
     this.itemContainer.SetName(this.data.storeID);
     this.storeImage.SetName(this.data.storeID);
     this.storeLabel.SetName(this.data.storeID);
     this.storeImage.SetAtlasResource(this.data.atlasResource);
     this.storeImage.SetTexturePart(this.data.texturePart);
     this.storeLabel.SetText(this.data.storeName);
-    this.bookmarked.SetVisible(this.data.bookmarked);
+    this.bookmarked.SetVisible(this.data.isBookmarked);
 
-    if this.data.bookmarked {
+    if this.data.isBookmarked {
       this.storeLabel.BindProperty(n"tintColor", n"MainColors.Yellow");
     } else {
       this.storeLabel.BindProperty(n"tintColor", n"MainColors.Blue");
     };
-    // this.AnimateHoverOut();
+
+    this.ShowNewLabel(this.data.isNew);
   }
 
   private func InitializeWidgets() -> Void {
     let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+
+    this.isNewController = this.SpawnFromExternal(
+      root, 
+      r"base\\gameplay\\gui\\common\\components\\slots.inkwidget", 
+      n"itemNewLabel"
+    ).GetController() as ItemLabelController;
+
+    this.isNewController.GetRootCompoundWidget().SetMargin(new inkMargin(60.0, 60.0, 0.0, 0.0));
 
     let itemContainer: ref<inkVerticalPanel> = new inkVerticalPanel();
     itemContainer.SetSize(new Vector2(360.0, 360.0));
@@ -128,11 +139,19 @@ class AtelierStoresListItemController extends inkVirtualCompoundItemController {
     bookmarkFrame.BindProperty(n"tintColor", n"MainColors.Yellow");
     bookmarkFrame.SetOpacity(0.8);
     bookmarkFrame.Reparent(root);
-    
+
     this.itemContainer = itemContainer;
     this.storeImage = storeImage;
     this.storeLabel = storeLabel;
     this.bookmarked = bookmarkFrame;
+  }
+
+  private func ShowNewLabel(show: Bool) -> Void {
+    if show {
+      this.isNewController.Setup(ItemLabelType.New);
+    } else {
+      this.isNewController.Setup(ItemLabelType.Money);
+    };
   }
 
   private func RegisterCallbacks() -> Void {

@@ -5,6 +5,7 @@ public class VirtualAtelierStoresSystem extends ScriptableSystem {
 
   private let stores: array<ref<VirtualShop>>;
   private persistent let bookmarked: array<CName>;
+  private persistent let prevStores: array<CName>;
 
   public static func GetInstance(gi: GameInstance) -> ref<VirtualAtelierStoresSystem> {
     let system: ref<VirtualAtelierStoresSystem> = GameInstance.GetScriptableSystemsContainer(gi).Get(n"VendorPreview.StoresManager.VirtualAtelierStoresSystem") as VirtualAtelierStoresSystem;
@@ -46,12 +47,26 @@ public class VirtualAtelierStoresSystem extends ScriptableSystem {
     AtelierLog("Initialized");
   }
 
+  public func RefreshNewLabels() -> Void {
+    let current: array<ref<VirtualShop>> = this.stores;
+    let refreshed: array<ref<VirtualShop>>;
+    let previousIds: array<CName> = this.prevStores;
+    let id: CName;
+    for store in current {
+      id = store.storeID;
+      store.isNew = !ArrayContains(previousIds, id) && ArraySize(previousIds) > 0 ;
+      ArrayPush(refreshed, store);
+    };
+    this.stores = refreshed;
+    this.prevStores = this.GetStoresIds();
+  }
+
   private func RefreshBookmarks() -> Void {
     let newStores: array<ref<VirtualShop>>;
     let newStore: ref<VirtualShop>;
     for store in this.stores {
       newStore = store;
-      newStore.bookmarked = this.IsBookmarked(store.storeID);
+      newStore.isBookmarked = this.IsBookmarked(store.storeID);
       ArrayPush(newStores, newStore);
     };
 
@@ -75,6 +90,15 @@ public class VirtualAtelierStoresSystem extends ScriptableSystem {
     };
 
     this.bookmarked = actuallyBookmarked;
+  }
+
+  private func GetStoresIds() -> array<CName> {
+    let result: array<CName>;
+    for store in this.stores {
+      ArrayPush(result, store.storeID);
+    };
+
+    return result;
   }
 }
 
