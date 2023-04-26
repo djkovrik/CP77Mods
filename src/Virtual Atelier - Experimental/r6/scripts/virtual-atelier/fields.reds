@@ -1,6 +1,5 @@
 import VendorPreview.ItemPreviewManager.VirtualAtelierPreviewManager
 import VendorPreview.StoresManager.VirtualAtelierStoresSystem
-import VendorPreview.UI.*
 import Codeware.UI.*
 
 @addField(WardrobeSetPreviewGameController) public let m_atelierSystem: wref<VirtualAtelierPreviewManager>;

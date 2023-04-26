@@ -26,4 +26,7 @@ public class VirtualAtelierText {
   public static func PreviewItem() -> String = "Preview Item"
   // Duplicate items warning
   public static func Warning() -> String = "Duplicate Atelier items detected! Check Cyber Engine Tweaks console log for more details."
+  // Bookmark hints
+  public static func AddToFavorites() -> String = "Add to favorites"
+  public static func RemoveFromFavorites() -> String = "Remove from favorites"
 }

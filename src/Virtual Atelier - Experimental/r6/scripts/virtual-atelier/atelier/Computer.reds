@@ -26,6 +26,7 @@ public final func GetMenuButtonWidgets() -> array<SComputerMenuButtonWidgetPacka
       package.iconID = n"iconInternet";
       package.widgetTweakDBID = this.GetMenuButtonWidgetTweakDBID();
       package.isValid = true;
+      SWidgetPackageBase.ResolveWidgetTweakDBData(package.widgetTweakDBID, package.libraryID, package.libraryPath);
       ArrayPush(packages, package);
     };
   } else {

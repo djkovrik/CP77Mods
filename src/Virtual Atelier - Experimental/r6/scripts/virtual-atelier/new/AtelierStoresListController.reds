@@ -4,37 +4,57 @@ import VendorPreview.Utils.AtelierDebug
 import VendorPreview.Utils.AtelierLog
 
 public class AtelierStoresListController extends inkGameController {
+  private let player: wref<PlayerPuppet>;
   private let system: wref<VirtualAtelierStoresSystem>;
   private let stores: array<ref<VirtualShop>>;
-  private let storesList: ref<inkVirtualGridController>;
+  private let buttonhints: wref<ButtonHints>;
+  private let storesList: wref<inkVirtualGridController>;
   private let storesListScrollController: wref<inkScrollController>;
   private let storesDataSource: ref<ScriptableDataSource>;
   private let storesDataView: ref<AtelierStoresDataView>;
   private let storesTemplateClassifier: ref<AtelierStoresTemplateClassifier>;
+  private let latestHovered: ref<VirtualShop>;
 
   protected cb func OnInitialize() {
-    this.system = VirtualAtelierStoresSystem.GetInstance(this.GetPlayerControlledObject().GetGame());
-    this.stores = this.system.GetStores();
-    AtelierLog(s"Detected stores: \(ArraySize(this.stores))");
+    let inkSystem: ref<inkSystem> = GameInstance.GetInkSystem();
+    let hudRoot: ref<inkCompoundWidget> = inkSystem.GetLayer(n"inkHUDLayer").GetVirtualWindow();
+    let hintsContainer = hudRoot.GetWidget(n"AtelierButtonHints") as inkCompoundWidget;
+    this.buttonhints = hintsContainer.GetWidgetByIndex(0).GetController() as ButtonHints;
     
-    this.storesList = this.GetChildWidgetByPath(n"scrollWrapper/scrollArea/StoresList").GetController() as inkVirtualGridController;
-    this.storesListScrollController = this.GetChildWidgetByPath(n"scrollWrapper").GetControllerByType(n"inkScrollController") as inkScrollController;
-    this.storesDataSource = new ScriptableDataSource();
-    this.storesDataView = new AtelierStoresDataView();
-    this.storesDataView.SetSource(this.storesDataSource);
-    this.storesTemplateClassifier = new AtelierStoresTemplateClassifier();
-    this.storesList.SetClassifier(this.storesTemplateClassifier);
-    this.storesList.SetSource(this.storesDataView);
+    this.player = this.GetPlayerControlledObject() as PlayerPuppet;
+    this.system = VirtualAtelierStoresSystem.GetInstance(this.player.GetGame());
 
-    this.PopulateDataSource();
+    this.RegisterToCallback(n"OnRelease", this, n"OnRelease");
+
+    this.RefreshStores();
+
+    if Equals(ArraySize(this.stores), 0) {
+      this.ShowEmptyAtelierPage();
+    } else {
+      this.InitializeData();
+      this.ShowSideImages();
+      this.RefreshDataSource();
+    };
   }
 
-  protected cb func OnUninitialize() {
-    
+  protected cb func OnUninitialize() -> Bool {
+    this.UnregisterFromCallback(n"OnRelease", this, n"OnRelease");
+    this.storesList.SetSource(null);
+    this.storesList.SetClassifier(null);
+    this.storesDataView.SetSource(null);
+    this.storesDataView = null;
+    this.storesDataSource = null;
+    this.storesTemplateClassifier = null;
+  }
+
+  protected cb func OnRelease(evt: ref<inkPointerEvent>) -> Bool {
+    if evt.IsAction(this.GetBookmarkAction()) {
+      this.HandleBookmarkAction();
+    };
   }
 
   protected cb func OnAtelierStoreSoundEvent(evt: ref<AtelierStoreSoundEvent>) -> Bool {
-    GameObject.PlaySoundEvent(this.GetPlayerControlledObject(), evt.name);
+    this.PlaySound(evt.name);
   }
 
   protected cb func OnAtelierStoreClickEvent(evt: ref<AtelierStoreClickEvent>) -> Bool {
@@ -55,17 +75,74 @@ public class AtelierStoresListController extends inkGameController {
       return false;
     };
 
-    let player: ref<GameObject> = this.GetPlayerControlledObject();
     let vendorData: ref<VendorPanelData> = new VendorPanelData();
     vendorData.data.vendorId = "VirtualVendor";
-    vendorData.data.entityID = player.GetEntityID();
+    vendorData.data.entityID = this.player.GetEntityID();
     vendorData.data.isActive = true;
     vendorData.virtualStore = virtualStore;
-    GameInstance.GetUISystem(player.GetGame()).RequestVendorMenu(vendorData);
+    GameInstance.GetUISystem(this.player.GetGame()).RequestVendorMenu(vendorData);
     return true;
   }
 
-  private func PopulateDataSource() -> Void {
+  protected cb func OnAtelierStoreHoverOverEvent(evt: ref<AtelierStoreHoverOverEvent>) -> Bool {
+    let hintText: String;
+    if evt.store.bookmarked {
+      hintText = VirtualAtelierText.RemoveFromFavorites();
+    } else {
+      hintText = VirtualAtelierText.AddToFavorites();
+    };
+
+    this.buttonhints.AddButtonHint(this.GetBookmarkAction(), hintText);
+    this.latestHovered = evt.store;
+  }
+
+  protected cb func OnAtelierStoreHoverOutEvent(evt: ref<AtelierStoreHoverOutEvent>) -> Bool {
+    this.buttonhints.RemoveButtonHint(this.GetBookmarkAction());
+    this.latestHovered = null;
+  }
+
+  private func InitializeData() -> Void {
+    this.storesList = this.GetChildWidgetByPath(n"scrollWrapper/scrollArea/StoresList").GetController() as inkVirtualGridController;
+    this.storesListScrollController = this.GetChildWidgetByPath(n"scrollWrapper").GetControllerByType(n"inkScrollController") as inkScrollController;
+    this.storesDataSource = new ScriptableDataSource();
+    this.storesDataView = new AtelierStoresDataView();
+    this.storesDataView.SetSource(this.storesDataSource);
+    this.storesTemplateClassifier = new AtelierStoresTemplateClassifier();
+    this.storesList.SetClassifier(this.storesTemplateClassifier);
+    this.storesList.SetSource(this.storesDataView);
+  }
+
+  private func ShowSideImages() -> Void {
+    let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+    let leftImage: ref<inkImage> = new inkImage();
+    leftImage.SetAtlasResource(r"base/gameplay/gui/world/adverts/jingujishop/jingujishop.inkatlas");
+    leftImage.SetTexturePart(n"chick V");
+    leftImage.SetInteractive(false);
+    leftImage.SetAnchorPoint(new Vector2(0.5, 0.5));
+    leftImage.SetFitToContent(true);
+    leftImage.SetMargin(new inkMargin(0.0, 500.0, 0.0, 0.0));
+    leftImage.SetTranslation(new Vector2(-560.0, 0.0));
+    leftImage.Reparent(root);
+
+    let rightImage: ref<inkImage> = new inkImage();
+    rightImage.SetAtlasResource(r"base/gameplay/gui/world/adverts/jingujishop/jingujishop.inkatlas");
+    rightImage.SetTexturePart(n"dude V");
+    rightImage.SetInteractive(false);
+    rightImage.SetHAlign(inkEHorizontalAlign.Right);
+    rightImage.SetVAlign(inkEVerticalAlign.Bottom);
+    rightImage.SetAnchorPoint(new Vector2(0.5, 0.5));
+    rightImage.SetFitToContent(true);
+    rightImage.SetMargin(new inkMargin(3100.0, 600.0, 0.0, 0.0));
+    rightImage.Reparent(root);
+  }
+
+  private func RefreshStores() -> Void {
+    this.system.RefreshPersistedBookmarks();
+    this.stores = this.system.GetStores();
+    AtelierLog(s"Detected stores: \(ArraySize(this.stores))");
+  }
+
+  private func RefreshDataSource() -> Void {
     let items: array<ref<IScriptable>>;
     for store in this.stores {
       ArrayPush(items, store);
@@ -73,5 +150,75 @@ public class AtelierStoresListController extends inkGameController {
 
     this.storesDataSource.Reset(items);
     this.storesDataView.UpdateView();
+  }
+
+  private func HandleBookmarkAction() -> Void {
+    let store: ref<VirtualShop> = this.latestHovered;
+    if IsDefined(store) {
+      AtelierDebug(s"HandleBookmarkAction: \(store.storeID)");
+      if store.bookmarked {
+        AtelierDebug(s" - remove bookmark \(store.storeID)");
+        store.bookmarked = false;
+        this.system.RemoveBookmark(store.storeID);
+      } else {
+        AtelierDebug(s"- add bookmark \(store.storeID)");
+        store.bookmarked = true;
+        this.system.AddBookmark(store.storeID);
+      };
+
+      this.latestHovered = store;
+      this.QueueEvent(AtelierStoresRefreshEvent.Create(store));
+      this.PlaySound(n"ui_menu_onpress");
+    };
+  }
+
+  private func ShowEmptyAtelierPage() -> Void {
+    let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+    let panel: ref<inkVerticalPanel> = new inkVerticalPanel();
+    panel.SetName(n"emptyPanel");
+    panel.SetFitToContent(true);
+    panel.SetAnchor(inkEAnchor.Centered);
+    panel.SetAnchorPoint(new Vector2(0.5, 0.5));
+    panel.SetMargin(new inkMargin(0.0, 0.0, 160.0, 0.0));
+    panel.Reparent(root);
+
+    let emptyStateImage: ref<inkImage> = new inkImage();
+    emptyStateImage.SetAtlasResource(r"base/gameplay/gui/world/adverts/jingujishop/jingujishop.inkatlas");
+    emptyStateImage.SetName(n"empty");
+    emptyStateImage.SetTexturePart(n"chick V");
+    emptyStateImage.SetInteractive(false);
+    emptyStateImage.SetAnchorPoint(new Vector2(0.5, 0.5));
+    emptyStateImage.SetFitToContent(true);
+    emptyStateImage.Reparent(this.GetRootCompoundWidget());
+    emptyStateImage.SetHAlign(inkEHorizontalAlign.Center);
+    emptyStateImage.SetVAlign(inkEVerticalAlign.Center);
+    emptyStateImage.Reparent(panel);
+
+    let emptyStateMessage: ref<inkText> = new inkText();
+    emptyStateMessage.SetName(n"empty");
+    emptyStateMessage.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+    emptyStateMessage.SetFontStyle(n"Semi-Bold");
+    emptyStateMessage.SetFontSize(50);
+    emptyStateMessage.SetLetterCase(textLetterCase.UpperCase);
+    emptyStateMessage.SetText(VirtualAtelierText.EmptyPlaceholder());
+    emptyStateMessage.SetFitToContent(true);
+    emptyStateMessage.SetHAlign(inkEHorizontalAlign.Center);
+    emptyStateMessage.SetVAlign(inkEVerticalAlign.Center);
+    emptyStateMessage.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    emptyStateMessage.BindProperty(n"tintColor", n"MainColors.Blue");
+    emptyStateMessage.SetSize(new Vector2(100.0, 32.0));
+    emptyStateMessage.Reparent(panel);
+  }
+
+  private func GetBookmarkAction() -> CName {
+    if this.player.PlayerLastUsedPad() {
+      return n"restore_default_settings";
+    };
+
+    return n"world_map_menu_zoom_to_mappin";
+  }
+
+  private func PlaySound(name: CName) -> Void {
+    GameObject.PlaySoundEvent(this.player, name);
   }
 }

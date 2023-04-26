@@ -1,5 +1,6 @@
 import VendorPreview.StoresManager.VirtualAtelierStoresSystem
 import VirtualAtelier.UI.AtelierStoresListController
+import VendorPreview.Utils.AtelierDebug
 
 @addMethod(WebPage)
 private func PopulateAtelierView() {
@@ -220,62 +221,6 @@ public func ShowCurrentPage() -> Void {
     this.rootAtelierPanel.RemoveChildByIndex(1);
   };
   this.rootAtelierPanel.AddChildWidget(page);
-}
-
-@addMethod(WebPage)
-private func ShowSideImages() -> Void {
-  // Images
-  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
-  let leftImage: ref<inkImage> = new inkImage();
-  leftImage.SetAtlasResource(r"base/gameplay/gui/world/adverts/jingujishop/jingujishop.inkatlas");
-  leftImage.SetTexturePart(n"chick V");
-  leftImage.SetInteractive(false);
-  leftImage.SetAnchorPoint(new Vector2(0.5, 0.5));
-  leftImage.SetFitToContent(true);
-  leftImage.SetMargin(0, 500, 0, 0);
-  leftImage.SetTranslation(new Vector2(-200.0, 0.0));
-  leftImage.Reparent(root);
-
-  let rightImage: ref<inkImage> = new inkImage();
-  rightImage.SetAtlasResource(r"base/gameplay/gui/world/adverts/jingujishop/jingujishop.inkatlas");
-  rightImage.SetTexturePart(n"dude V");
-  rightImage.SetInteractive(false);
-  rightImage.SetHAlign(inkEHorizontalAlign.Right);
-  rightImage.SetVAlign(inkEVerticalAlign.Bottom);
-  rightImage.SetAnchorPoint(new Vector2(0.5, 0.5));
-  rightImage.SetFitToContent(true);
-  rightImage.SetMargin(3500, 800, 0, 0);
-  rightImage.Reparent(root);
-}
-
-@addMethod(WebPage)
-private func ShowEmptyAtelierPage() -> Void {
-  let emptyStateImage: ref<inkImage> = new inkImage();
-  emptyStateImage.SetAtlasResource(r"base/gameplay/gui/world/adverts/jingujishop/jingujishop.inkatlas");
-  emptyStateImage.SetTexturePart(n"chick V");
-  emptyStateImage.SetInteractive(false);
-  emptyStateImage.SetAnchorPoint(new Vector2(0.5, 0.5));
-  emptyStateImage.SetFitToContent(true);
-  emptyStateImage.Reparent(this.GetRootCompoundWidget());
-  emptyStateImage.SetHAlign(inkEHorizontalAlign.Center);
-  emptyStateImage.SetVAlign(inkEVerticalAlign.Center);
-  emptyStateImage.SetTranslation(new Vector2(0, 170)); 
-  emptyStateImage.Reparent(this.rootAtelierPanel);
-
-  let emptyStateMessage: ref<inkText> = new inkText();
-  emptyStateMessage.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-  emptyStateMessage.SetFontStyle(n"Semi-Bold");
-  emptyStateMessage.SetFontSize(50);
-  emptyStateMessage.SetLetterCase(textLetterCase.UpperCase);
-  emptyStateMessage.SetText(VirtualAtelierText.EmptyPlaceholder());
-  emptyStateMessage.SetFitToContent(true);
-  emptyStateMessage.SetHAlign(inkEHorizontalAlign.Center);
-  emptyStateMessage.SetVAlign(inkEVerticalAlign.Center);
-  emptyStateMessage.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-  emptyStateMessage.BindProperty(n"tintColor", n"MainColors.Blue");
-  emptyStateMessage.SetSize(new Vector2(100.0, 32.0));
-  emptyStateMessage.SetTranslation(new Vector2(0.0, 200.0));
-  emptyStateMessage.Reparent(this.rootAtelierPanel);
 }
 
 
