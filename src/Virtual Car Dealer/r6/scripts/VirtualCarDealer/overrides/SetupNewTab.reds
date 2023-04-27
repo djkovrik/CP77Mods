@@ -52,7 +52,7 @@ public final func GetMenuButtonWidgets() -> array<SComputerMenuButtonWidgetPacka
       package.widgetName = "CarDealer";
       package.displayName = "Car Dealer";
       package.ownerID = this.GetID();
-      package.iconID = n"iconInternet";
+      package.iconID = n"iconCarDealer";
       package.widgetTweakDBID = this.GetMenuButtonWidgetTweakDBID();
       package.isValid = true;
       SWidgetPackageBase.ResolveWidgetTweakDBData(package.widgetTweakDBID, package.libraryID, package.libraryPath);
@@ -71,7 +71,7 @@ public func Initialize(gameController: ref<ComputerInkGameController>, widgetDat
   wrappedMethod(gameController, widgetData);
 
   if Equals(widgetData.widgetName, "CarDealer") {
-    inkImageRef.SetTexturePart(this.m_iconWidget, n"dealer");
-    inkImageRef.SetAtlasResource(this.m_iconWidget, r"base\\gameplay\\gui\\dealer_icon.inkatlas");
+    inkImageRef.SetTexturePart(this.m_iconWidget, n"thorton_logo");
+    inkImageRef.SetAtlasResource(this.m_iconWidget, r"base\\gameplay\\gui\\widgets\\vehicle\\thorton_all\\thorton_inkatlas.inkatlas");
   };
 }
