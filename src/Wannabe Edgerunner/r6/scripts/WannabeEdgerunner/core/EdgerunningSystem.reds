@@ -968,8 +968,8 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public func GetHumanityTotal() -> Int32 {
     let basePool: Int32 = this.config.baseHumanityPool;
-    let playerLevel: Int32 = Cast<Int32>(GameInstance.GetStatsSystem(this.player.GetGame()).GetStatValue(Cast<StatsObjectID>(this.player.GetEntityID()), gamedataStatType.Level));
-    let additionalPool: Int32 = Cast<Int32>(this.config.humanityBonusPerLevel ) * playerLevel;
+    let playerLevel: Float = GameInstance.GetStatsSystem(this.player.GetGame()).GetStatValue(Cast<StatsObjectID>(this.player.GetEntityID()), gamedataStatType.Level);
+    let additionalPool: Int32 = Cast<Int32>(this.config.humanityBonusPerLevel * playerLevel);
     E(s"basePool: \(basePool), playerLevel: \(playerLevel), additionalPool: \(additionalPool)");
     return basePool + additionalPool;
   }
