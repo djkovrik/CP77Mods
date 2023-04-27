@@ -83,7 +83,9 @@ private let lhudDelayId: DelayID;
 @wrapMethod(QuestTrackerGameController)
 protected cb func OnStateChanges(hash: Uint32, className: CName, notifyOption: JournalNotifyOption, changeType: JournalChangeType) -> Bool {
   wrappedMethod(hash, className, notifyOption, changeType);
-  if Equals(notifyOption, JournalNotifyOption.Notify) && Equals(changeType, JournalChangeType.Direct) {
+
+  let isCurrentQuestUpdated: Bool = Equals(this.m_journalManager.GetTrackedEntry().GetId(), this.m_journalManager.GetEntry(hash).GetId());
+  if isCurrentQuestUpdated && Equals(notifyOption, JournalNotifyOption.Notify) {
     this.ShowForJournalUpdate();
   };
 }
