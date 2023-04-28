@@ -23,7 +23,7 @@ public final func GetMenuButtonWidgets() -> array<SComputerMenuButtonWidgetPacka
       package.widgetName = "Atelier";
       package.displayName = VirtualAtelierText.Name();
       package.ownerID = this.GetID();
-      package.iconID = n"iconInternet";
+      package.iconID = n"iconAtelier";
       package.widgetTweakDBID = this.GetMenuButtonWidgetTweakDBID();
       package.isValid = true;
       SWidgetPackageBase.ResolveWidgetTweakDBData(package.widgetTweakDBID, package.libraryID, package.libraryPath);
@@ -34,4 +34,16 @@ public final func GetMenuButtonWidgets() -> array<SComputerMenuButtonWidgetPacka
   };
 
   return packages;
+}
+
+
+// kudos to NexusGuy999 for tab widget hack ^^
+@wrapMethod(ComputerMenuButtonController)
+public func Initialize(gameController: ref<ComputerInkGameController>, widgetData: SComputerMenuButtonWidgetPackage) -> Void {
+  wrappedMethod(gameController, widgetData);
+
+  if Equals(widgetData.widgetName, "Atelier") {
+    inkImageRef.SetTexturePart(this.m_iconWidget, n"logo_wdb_large");
+    inkImageRef.SetAtlasResource(this.m_iconWidget, r"base\\gameplay\\gui\\fullscreen\\wardrobe\\atlas_wardrobe.inkatlas");
+  };
 }
