@@ -1,5 +1,4 @@
 module VirtualAtelier.UI
-import VendorPreview.Utils.AtelierDebug
 
 class AtelierStoresListItemController extends inkVirtualCompoundItemController {
   private let data: ref<VirtualShop>;
@@ -25,7 +24,6 @@ class AtelierStoresListItemController extends inkVirtualCompoundItemController {
 
   protected cb func OnShopClick(evt: ref<inkPointerEvent>) -> Bool {
     if evt.IsAction(n"click") {
-      AtelierDebug(s"OnShopClick: \(this.data.storeID)");
       this.StopAnimProxy();
       this.QueueEvent(AtelierStoreSoundEvent.Create(n"ui_menu_onpress"));
       this.QueueEvent(AtelierStoreClickEvent.Create(this.data.storeID));
@@ -33,7 +31,6 @@ class AtelierStoresListItemController extends inkVirtualCompoundItemController {
   }
 
   protected cb func OnShopHoverOver(evt: ref<inkPointerEvent>) -> Bool {
-    AtelierDebug(s"OnShopHoverOver: \(this.data.storeID)");
     this.ShowNewLabel(false);
     this.QueueEvent(AtelierStoreSoundEvent.Create(n"ui_menu_hover"));
     this.QueueEvent(AtelierStoreHoverOverEvent.Create(this.data));
@@ -41,7 +38,6 @@ class AtelierStoresListItemController extends inkVirtualCompoundItemController {
   }
 
   protected cb func OnShopHoverOut(evt: ref<inkPointerEvent>) -> Bool {
-    AtelierDebug(s"OnShopHoverOut: \(this.data.storeID)");
     this.QueueEvent(AtelierStoreHoverOutEvent.Create());
     this.AnimateHoverOut();
   }
@@ -49,21 +45,18 @@ class AtelierStoresListItemController extends inkVirtualCompoundItemController {
   protected cb func OnDataChanged(value: Variant) {
     this.data = FromVariant<ref<IScriptable>>(value) as VirtualShop;
     if IsDefined(this.data) {
-      AtelierDebug(s"REFRESH BY DATA CHANGE - bookmarked \(this.data.isBookmarked)");
       this.RefreshView();
     };
   }
 
   protected cb func OnAtelierStoresRefreshEvent(evt: ref<AtelierStoresRefreshEvent>) -> Bool {
     if Equals(this.data.storeID, evt.store.storeID) {
-      AtelierDebug(s"REFRESH BY EVENT - bookmarked \(evt.store.isBookmarked)");
       this.data = evt.store;
       this.RefreshView();
     };
   }
 
   private func RefreshView() -> Void {
-    AtelierDebug(s"RefreshView: \(this.data.storeID): bookmarked \(this.data.isBookmarked)");
     this.itemContainer.SetName(this.data.storeID);
     this.storeImage.SetName(this.data.storeID);
     this.storeLabel.SetName(this.data.storeID);
