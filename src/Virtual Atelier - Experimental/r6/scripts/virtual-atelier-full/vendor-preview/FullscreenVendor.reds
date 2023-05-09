@@ -214,3 +214,13 @@ private func RefreshEquippedState() -> Void {
   evt.system = this.previewManager;
   GameInstance.GetUISystem(this.m_player.GetGame()).QueueEvent(evt);
 }
+
+@addMethod(FullscreenVendorGameController)
+private final func GetIsVirtual() -> Bool {
+  return Equals(this.m_vendorUserData.vendorData.data.vendorId, "VirtualVendor");
+}
+
+@addMethod(FullscreenVendorGameController)
+private final func SetPreviewStateActive(active: Bool) -> Void {
+  this.previewManager.SetPreviewState(active);
+}

@@ -5,6 +5,7 @@ import VirtualAtelier.Core.*
 public class VirtualAtelierStoresSystem extends ScriptableSystem {
 
   private let stores: array<ref<VirtualShop>>;
+  private let current: ref<VirtualShop>;
   private persistent let bookmarked: array<CName>;
   private persistent let prevStores: array<CName>;
 
@@ -19,6 +20,14 @@ public class VirtualAtelierStoresSystem extends ScriptableSystem {
 
   public func SetStores(stores: array<ref<VirtualShop>>) -> Void {
     this.stores = stores;
+  }
+
+  public func SetCurrentStore(store: ref<VirtualShop>) -> Void {
+    this.current = store;
+  }
+
+  public func GetCurrentStore() -> ref<VirtualShop> {
+    return this.current;
   }
 
   public func AddBookmark(storeID: CName) -> Void {
