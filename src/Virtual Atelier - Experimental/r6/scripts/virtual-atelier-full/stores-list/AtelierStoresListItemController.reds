@@ -31,7 +31,6 @@ class AtelierStoresListItemController extends inkVirtualCompoundItemController {
   }
 
   protected cb func OnShopHoverOver(evt: ref<inkPointerEvent>) -> Bool {
-    this.ShowNewLabel(false);
     this.QueueEvent(AtelierStoreSoundEvent.Create(n"ui_menu_hover"));
     this.QueueEvent(AtelierStoreHoverOverEvent.Create(this.data));
     this.AnimateHoverOver();
@@ -115,28 +114,28 @@ class AtelierStoresListItemController extends inkVirtualCompoundItemController {
     storeLabel.SetWrapping(true, 320.0, textWrappingPolicy.Default);
     storeLabel.Reparent(itemContainer);
 
-    let bookmarkFrame: ref<inkImage> = new inkImage();
-    bookmarkFrame.SetName(n"bookmarkFrame");
-    bookmarkFrame.SetNineSliceScale(true);
-    bookmarkFrame.SetBrushMirrorType(inkBrushMirrorType.NoMirror);
-    bookmarkFrame.SetBrushTileType(inkBrushTileType.NoTile);
-    bookmarkFrame.SetAtlasResource(r"base\\gameplay\\gui\\common\\shapes\\atlas_shapes_sync.inkatlas");
-    bookmarkFrame.SetTexturePart(n"rect_shape_fg");
-    bookmarkFrame.SetContentHAlign(inkEHorizontalAlign.Fill);
-    bookmarkFrame.SetContentVAlign(inkEVerticalAlign.Fill);
-    bookmarkFrame.SetTileHAlign(inkEHorizontalAlign.Left);
-    bookmarkFrame.SetTileVAlign(inkEVerticalAlign.Top);
-    bookmarkFrame.SetSize(new Vector2(380.0, 420.0));
-    bookmarkFrame.SetMargin(new inkMargin(10.0, 0.0, 0.0, 0.0));
-    bookmarkFrame.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-    bookmarkFrame.BindProperty(n"tintColor", n"MainColors.Yellow");
-    bookmarkFrame.SetOpacity(0.7);
-    bookmarkFrame.Reparent(root);
+    let bookmarkIcon: ref<inkImage> = new inkImage();
+    bookmarkIcon.SetName(n"bookmarkIcon");
+    bookmarkIcon.SetNineSliceScale(true);
+    bookmarkIcon.SetBrushMirrorType(inkBrushMirrorType.NoMirror);
+    bookmarkIcon.SetBrushTileType(inkBrushTileType.NoTile);
+    bookmarkIcon.SetAtlasResource(r"base\\gameplay\\gui\\common\\icons\\mappin_icons.inkatlas");
+    bookmarkIcon.SetTexturePart(n"interaction");
+    bookmarkIcon.SetContentHAlign(inkEHorizontalAlign.Fill);
+    bookmarkIcon.SetContentVAlign(inkEVerticalAlign.Fill);
+    bookmarkIcon.SetTileHAlign(inkEHorizontalAlign.Left);
+    bookmarkIcon.SetTileVAlign(inkEVerticalAlign.Top);
+    bookmarkIcon.SetSize(new Vector2(64.0, 64.0));
+    bookmarkIcon.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+    bookmarkIcon.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    bookmarkIcon.BindProperty(n"tintColor", n"MainColors.Yellow");
+    bookmarkIcon.SetOpacity(0.7);
+    bookmarkIcon.Reparent(root);
 
     this.itemContainer = itemContainer;
     this.storeImage = storeImage;
     this.storeLabel = storeLabel;
-    this.bookmarked = bookmarkFrame;
+    this.bookmarked = bookmarkIcon;
   }
 
   private func ShowNewLabel(show: Bool) -> Void {

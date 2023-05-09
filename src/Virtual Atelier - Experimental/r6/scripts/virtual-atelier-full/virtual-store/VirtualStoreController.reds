@@ -21,8 +21,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
   private let tooltipsManager: wref<gameuiTooltipsManager>;
   private let scrollController: wref<inkScrollController>;
   private let filtersContainer: wref<inkWidget>;
-  private let filterManager: wref<ItemCategoryFliterManager>;
-  private let filtersRadioGroup: wref<FilterRadioGroup>;
+  private let filterManager: ref<ItemCategoryFliterManager>;
   private let vendorName: wref<inkText>;
   private let vendorSortingButton: ref<inkWidget>;
   private let sortingDropdown: ref<inkWidget>;
@@ -162,18 +161,17 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.scrollController = scrollable.GetController() as inkScrollController;
     this.filtersContainer = root.GetWidget(n"wrapper/wrapper/vendorPanel/vendorHeader/inkHorizontalPanelWidget2/filtersContainer");
     this.filterManager = ItemCategoryFliterManager.Make();
-    this.filtersRadioGroup = this.filtersContainer.GetController() as FilterRadioGroup;
     this.vendorName = vendorHeader.GetWidget(n"vendorNameWrapper/value") as inkText;
     this.vendorSortingButton = root.GetWidget(n"wrapper/wrapper/vendorPanel/vendorHeader/inkHorizontalPanelWidget2/dropdownButton5");
     this.sortingDropdown = root.GetWidget(n"dropdownContainer");
 
     let searchContainer: ref<inkCanvas> = new inkCanvas();
-    searchContainer = new inkCanvas();
-    searchContainer.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+    searchContainer.SetName(n"searchContainer");
+    searchContainer.SetMargin(new inkMargin(0.0, 340.0, 0.0, 0.0));
     searchContainer.Reparent(vendorHeader);
 
     let searchInput: ref<HubTextInput> = HubTextInput.Create();
-    searchInput.SetName(n"SearchTextInput");
+    searchInput.SetName(n"searchInput");
     searchInput.SetLetterCase(textLetterCase.UpperCase);
     searchInput.SetMaxLength(30);
     searchInput.SetDefaultText(GetLocalizedText("LocKey#48662"));
@@ -215,8 +213,8 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.storeDataView.SetSortMode(FromVariant<ItemSortMode>(data.identifier));
   }
 
-  private final func SetFilters(root: ref<inkWidget>, data: array<Int32>, callback: CName) -> Void {
-    let radioGroup: ref<FilterRadioGroup> = root.GetControllerByType(n"FilterRadioGroup") as FilterRadioGroup;
+  private final func SetFilters(widget: ref<inkWidget>, data: array<Int32>, callback: CName) -> Void {
+    let radioGroup: ref<FilterRadioGroup> = widget.GetController() as FilterRadioGroup;
     radioGroup.SetData(data);
     radioGroup.RegisterToCallback(n"OnValueChanged", this, callback);
     if ArraySize(data) == 1 {
@@ -224,8 +222,8 @@ public class VirtualStoreController extends gameuiMenuGameController {
     };
   }
 
-  private final func ToggleFilter(root: ref<inkWidget>, data: Int32) -> Void {
-    let radioGroup: ref<FilterRadioGroup> = root.GetControllerByType(n"FilterRadioGroup") as FilterRadioGroup;
+  private final func ToggleFilter(widget: ref<inkWidget>, data: Int32) -> Void {
+    let radioGroup: ref<FilterRadioGroup> = widget.GetController() as FilterRadioGroup;
     radioGroup.ToggleData(data);
   }
 
