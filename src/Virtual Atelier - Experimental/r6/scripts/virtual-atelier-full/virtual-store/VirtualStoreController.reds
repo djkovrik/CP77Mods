@@ -37,6 +37,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
 
   private let currentTutorialsFact: Int32;
   private let lastVendorFilter: ItemFilterCategory;
+  private let lastItemHoverOverEvent: ref<ItemDisplayHoverOverEvent>;
   private let totalItemsPrice: Float;
 
   protected cb func OnInitialize() -> Bool {
@@ -112,18 +113,6 @@ public class VirtualStoreController extends gameuiMenuGameController {
     };
   }
 
-  protected cb func OnInventoryItemHoverOut(evt: ref<ItemDisplayHoverOutEvent>) -> Bool {
-    this.tooltipsManager.HideTooltips();
-  }
-
-  protected cb func OnHandleGlobalInput(evt: ref<inkPointerEvent>) -> Bool {
-    if evt.IsAction(n"mouse_left") {
-      if !IsDefined(evt.GetTarget()) || !evt.GetTarget().CanSupportFocus() {
-        this.RequestSetFocus(null);
-      };
-    };
-  }
-
   protected cb func OnSearchInput(widget: wref<inkWidget>) {
     this.storeDataView.SetSearchQuery(this.searchInput.GetText());
     this.storeDataView.Filter();
@@ -146,6 +135,76 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.PlayLibraryAnimation(n"vendor_grid_show");
     this.PlaySound(n"Button", n"OnPress");
     this.scrollController.SetScrollPosition(0.0);
+  }
+
+  protected cb func OnHandleGlobalInput(evt: ref<inkPointerEvent>) -> Bool {
+    if evt.IsAction(n"mouse_left") {
+      if !IsDefined(evt.GetTarget()) || !evt.GetTarget().CanSupportFocus() {
+        this.RequestSetFocus(null);
+      };
+    };
+  }
+
+  protected cb func OnInventoryItemHoverOver(evt: ref<ItemDisplayHoverOverEvent>) -> Bool {
+    let itemId: ItemID = InventoryItemData.GetID(evt.itemData);
+    let isEquipped: Bool = this.previewManager.GetIsEquipped(itemId);
+    let isWeapon: Bool = RPGManager.IsItemWeapon(itemId);
+    let isClothing: Bool = RPGManager.IsItemClothing(itemId);
+    let hintLabel: String;
+
+    if (isWeapon || isClothing) {
+      if isEquipped {
+        hintLabel = GetLocalizedTextByKey(n"UI-UserActions-Unequip");
+      } else {
+        hintLabel = GetLocalizedTextByKey(n"UI-UserActions-Equip");
+      };
+
+      this.buttonHintsController.RemoveButtonHint(n"select");
+      this.buttonHintsController.AddButtonHint(n"select", hintLabel);
+    } else {
+      this.buttonHintsController.RemoveButtonHint(n"select");
+    };
+
+    this.lastItemHoverOverEvent = evt;
+    this.RequestSetFocus(null);
+
+    let noCompare: InventoryItemData;
+    this.ShowTooltipsForItemController(evt.widget, noCompare, evt.itemData, evt.display.DEBUG_GetIconErrorInfo(), false);
+  }
+
+  protected cb func OnInventoryItemHoverOut(evt: ref<ItemDisplayHoverOutEvent>) -> Bool {
+    this.tooltipsManager.HideTooltips();
+    this.buttonHintsController.RemoveButtonHint(n"select");
+  }
+
+  protected cb func OnInventoryClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
+    let itemID: ItemID;
+    let isEquipped: Bool;
+    let isWeapon: Bool;
+    let isClothing: Bool;
+    let hintLabel: String;
+
+    if evt.actionName.IsAction(n"click") {
+      itemID = InventoryItemData.GetID(evt.itemData);
+      isEquipped = this.previewManager.GetIsEquipped(itemID);
+      isWeapon = RPGManager.IsItemWeapon(itemID);
+      isClothing = RPGManager.IsItemClothing(itemID);
+
+      if isClothing || isWeapon {
+        this.previewManager.TogglePreviewItem(itemID);
+        this.RefreshEquippedState();
+        if isEquipped {
+          hintLabel = GetLocalizedTextByKey(n"UI-UserActions-Equip");
+        } else {
+          hintLabel = GetLocalizedTextByKey(n"UI-UserActions-Unequip");
+        };
+
+        this.buttonHintsController.RemoveButtonHint(n"select");
+        this.buttonHintsController.AddButtonHint(n"select", hintLabel);
+      } else {
+        this.buttonHintsController.RemoveButtonHint(n"select");
+      };
+    };
   }
 
   private func InitializeWidgetRefs() -> Void {
@@ -227,20 +286,13 @@ public class VirtualStoreController extends gameuiMenuGameController {
     radioGroup.ToggleData(data);
   }
 
-  private final func GetVirtualStoreName() -> String {
-    return this.virtualStore.storeName;
-  }
-
-  private final func GetVirtualStoreID() -> CName {
-    return this.virtualStore.storeID;
-  }
-
-  private final func GetVirtualStoreItems() -> array<String> {
-    return this.virtualStore.items;
-  }
-  
-  public final func SetTimeDilatation(enable: Bool) -> Void {
-    TimeDilationHelper.SetTimeDilationWithProfile(this.player, "radialMenu", enable);
+  private final func ShowTooltipsForItemController(targetWidget: wref<inkWidget>, equippedItem: InventoryItemData, inspectedItemData: InventoryItemData, iconErrorInfo: ref<DEBUG_IconErrorInfo>, isBuybackStack: Bool) -> Void {
+    let data: ref<InventoryTooltipData>;
+    data = this.inventoryManager.GetTooltipDataForInventoryItem(inspectedItemData, InventoryItemData.IsEquipped(inspectedItemData), iconErrorInfo, InventoryItemData.IsVendorItem(inspectedItemData));
+    data.displayContext = InventoryTooltipDisplayContext.Vendor;
+    data.isVirtualItem = true;
+    data.virtualInventoryItemData = inspectedItemData;
+    this.tooltipsManager.ShowTooltipAtWidget(n"itemTooltip", targetWidget, data, gameuiETooltipPlacement.RightTop);
   }
 
   private final func FillVirtualStock() -> Void {
@@ -430,5 +482,27 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.ToggleFilter(this.filtersContainer, EnumInt(this.lastVendorFilter));
     this.filtersContainer.SetVisible(ArraySize(items) > 0);
     this.PlayLibraryAnimation(n"vendor_grid_show");
+  }
+
+  private func RefreshEquippedState() -> Void {
+    let evt: ref<VendorInventoryEquipStateChanged> = new VendorInventoryEquipStateChanged();
+    evt.system = this.previewManager;
+    GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(evt);
+  }
+
+  private final func GetVirtualStoreName() -> String {
+    return this.virtualStore.storeName;
+  }
+
+  private final func GetVirtualStoreID() -> CName {
+    return this.virtualStore.storeID;
+  }
+
+  private final func GetVirtualStoreItems() -> array<String> {
+    return this.virtualStore.items;
+  }
+  
+  public final func SetTimeDilatation(enable: Bool) -> Void {
+    TimeDilationHelper.SetTimeDilationWithProfile(this.player, "radialMenu", enable);
   }
 }
