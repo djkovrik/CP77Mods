@@ -1,5 +1,6 @@
 module VirtualAtelier.UI
 import VirtualAtelier.Config.VirtualAtelierConfig
+import VirtualAtelier.Core.AtelierActions
 import VirtualAtelier.Logs.AtelierDebug
 import VirtualAtelier.Helpers.*
 import VirtualAtelier.Systems.*
@@ -138,10 +139,30 @@ public class VirtualStoreController extends gameuiMenuGameController {
   }
 
   protected cb func OnHandleGlobalInput(evt: ref<inkPointerEvent>) -> Bool {
-    if evt.IsAction(n"mouse_left") {
-      if !IsDefined(evt.GetTarget()) || !evt.GetTarget().CanSupportFocus() {
-        this.RequestSetFocus(null);
-      };
+    let atelierActions: ref<AtelierActions> = AtelierActions.Get(this.player);
+
+    switch true {
+      case evt.IsAction(atelierActions.resetGarment):
+        this.previewManager.ResetGarment();
+        this.RefreshEquippedState();
+        break;
+      case evt.IsAction(atelierActions.removeAllGarment):
+        this.previewManager.RemoveAllGarment();
+        this.RefreshEquippedState();
+        break;
+      case evt.IsAction(atelierActions.removePreviewGarment):
+        this.previewManager.RemovePreviewGarment();
+        this.RefreshEquippedState();
+        break;
+      case evt.IsAction(n"back"):
+      case evt.IsAction(n"cancel"):
+        this.previewManager.RemovePreviewGarment();
+        break;
+      case evt.IsAction(n"mouse_left"):
+        if !IsDefined(evt.GetTarget()) || !evt.GetTarget().CanSupportFocus() {
+          this.RequestSetFocus(null);
+        };
+        break;
     };
   }
 
@@ -167,7 +188,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
 
     this.lastItemHoverOverEvent = evt;
     this.RequestSetFocus(null);
-
+    
     let noCompare: InventoryItemData;
     this.ShowTooltipsForItemController(evt.widget, noCompare, evt.itemData, evt.display.DEBUG_GetIconErrorInfo(), false);
   }
@@ -251,6 +272,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.storeListController.SetSource(this.storeDataView);
 
     this.vendorName.SetText(this.GetVirtualStoreName());
+    AtelierButtonHintsHelper.ToggleAtelierControlHints(this.buttonHintsController, this.player, true);
   }
 
   private final func InitializeListeners() -> Void {

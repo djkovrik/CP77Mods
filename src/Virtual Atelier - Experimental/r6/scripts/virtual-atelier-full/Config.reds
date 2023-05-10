@@ -8,17 +8,20 @@ public class VirtualAtelierConfig {
   }
 
   @runtimeProperty("ModSettings.mod", "Virtual Atelier")
-  @runtimeProperty("ModSettings.category", "Misc")
-  @runtimeProperty("ModSettings.displayName", "Disable duplicates checker")
+  @runtimeProperty("ModSettings.category", "VA-Category-Misc")
+  @runtimeProperty("ModSettings.displayName", "VA-Duplicate-Checker")
+  @runtimeProperty("ModSettings.description", "VA-Duplicate-Checker-Desc")
   let disableDuplicatesChecker: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Virtual Atelier")
-  @runtimeProperty("ModSettings.category", "Misc")
-  @runtimeProperty("ModSettings.displayName", "Disable danger zone checker")
+  @runtimeProperty("ModSettings.category", "VA-Category-Misc")
+  @runtimeProperty("ModSettings.displayName", "VA-Danger-Zone-Checker")
+  @runtimeProperty("ModSettings.description", "VA-Danger-Zone-Checker-Desc")
   let disableDangerZoneChecker: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Virtual Atelier")
-  @runtimeProperty("ModSettings.category", "Debug")
-  @runtimeProperty("ModSettings.displayName", "Display debug logs for CET console")
+  @runtimeProperty("ModSettings.category", "VA-Category-Debug")
+  @runtimeProperty("ModSettings.displayName", "VA-Logs")
+  @runtimeProperty("ModSettings.description", "VA-Logs-Desc")
   let showDebugLogs: Bool = false;
 }

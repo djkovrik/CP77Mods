@@ -11,7 +11,7 @@ private func InitialzieAtelierSystems() -> Void {
 @wrapMethod(FullscreenVendorGameController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
-  AtelierButtonHintsHelper.AddPreviewModeToggleButtonHint(this);
+  AtelierButtonHintsHelper.AddInitialPreviewHint(this);
 }
 
 @wrapMethod(FullscreenVendorGameController)
@@ -115,13 +115,12 @@ private final func HandleVirtualSlotClick(evt: ref<ItemDisplayClickEvent>) -> Vo
 protected cb func OnHandleGlobalInput(event: ref<inkPointerEvent>) -> Bool {
   wrappedMethod(event);
 
-  let vendorPreviewButtonHint: ref<VendorPreviewButtonHint> = VendorPreviewButtonHint.Get(this.GetPlayerControlledObject());
-  let lastUsedPad: Bool = this.GetPlayerControlledObject().PlayerLastUsedPad();
-  let lastUsedKBM: Bool = this.GetPlayerControlledObject().PlayerLastUsedKBM();
-  let isVirtual: Bool = this.GetIsVirtual();
+  let atelierActions: ref<AtelierActions> = AtelierActions.Get(this.GetPlayerControlledObject());
+  // let lastUsedPad: Bool = this.GetPlayerControlledObject().PlayerLastUsedPad();
+  // let lastUsedKBM: Bool = this.GetPlayerControlledObject().PlayerLastUsedKBM();
 
   switch true {
-    case event.IsAction(vendorPreviewButtonHint.previewModeToggleName) && !isVirtual:
+    case event.IsAction(atelierActions.togglePreviewVendor):
       if (this.isPreviewMode) {
         this.m_lastVendorFilter = ItemFilterCategory.AllItems;
         this.m_itemPreviewPopupToken.TriggerCallback(null);
@@ -129,83 +128,71 @@ protected cb func OnHandleGlobalInput(event: ref<inkPointerEvent>) -> Bool {
         this.ShowGarmentPreview();
       };
       break;
-    case event.IsAction(vendorPreviewButtonHint.resetGarmentName):
+    case event.IsAction(atelierActions.resetGarment):
       this.previewManager.ResetGarment();
       this.RefreshEquippedState();
       break;
-    case event.IsAction(vendorPreviewButtonHint.removeAllGarmentName):
+    case event.IsAction(atelierActions.removeAllGarment):
       this.previewManager.RemoveAllGarment();
       this.RefreshEquippedState();
       break;
-    case event.IsAction(vendorPreviewButtonHint.removePreviewGarmentName):
+    case event.IsAction(atelierActions.removePreviewGarment):
       this.previewManager.RemovePreviewGarment();
       this.RefreshEquippedState();
       break;
-    case (event.IsAction(n"back") && isVirtual && this.isPreviewMode):
-    case (event.IsAction(n"cancel") && isVirtual && this.isPreviewMode):
+    case (event.IsAction(n"back") && this.isPreviewMode):
+    case (event.IsAction(n"cancel") && this.isPreviewMode):
       this.previewManager.RemovePreviewGarment();
       this.m_menuEventDispatcher.SpawnEvent(n"OnVendorClose");
       break;
 
-    // Since patch 1.5 right mouse click closes menus and for Atelier it just removes preview
-    // without closing the shop so Consume just blocks it
-    case (event.IsAction(n"world_map_fake_rotate") && isVirtual):
-      event.Consume();
-      break;
+    // // Since patch 1.5 right mouse click closes menus and for Atelier it just removes preview
+    // // without closing the shop so Consume just blocks it
+    // case event.IsAction(n"world_map_fake_rotate"):
+    //   event.Consume();
+    //   break;
 
-    // Force shop closing on C for keyboards to prevent preview screw up
-    case (event.IsAction(n"world_map_menu_toggle_custom_filter") && isVirtual && this.isPreviewMode && lastUsedKBM):
-      this.previewManager.RemovePreviewGarment();
-      this.m_menuEventDispatcher.SpawnEvent(n"OnVendorClose");
-      break;
+    // // Force shop closing on C for keyboards to prevent preview screw up
+    // case (event.IsAction(n"world_map_menu_toggle_custom_filter") && this.isPreviewMode && lastUsedKBM):
+    //   this.previewManager.RemovePreviewGarment();
+    //   this.m_menuEventDispatcher.SpawnEvent(n"OnVendorClose");
+    //   break;
 
-    // Consume SQUARE for Pad to prevent conflicts with Purchase action which also uses world_map_menu_toggle_custom_filter
-    case (event.IsAction(n"world_map_menu_toggle_custom_filter") && isVirtual && this.isPreviewMode && lastUsedPad):
-      event.Consume();
-      break;
+    // // Consume SQUARE for Pad to prevent conflicts with Purchase action which also uses world_map_menu_toggle_custom_filter
+    // case (event.IsAction(n"world_map_menu_toggle_custom_filter") && this.isPreviewMode && lastUsedPad):
+    //   event.Consume();
+    //   break;
   };
 }
 
 @wrapMethod(FullscreenVendorGameController)
 protected cb func OnInventoryItemHoverOver(evt: ref<ItemDisplayHoverOverEvent>) -> Bool {
-  // if this.isPreviewMode || this.GetIsVirtual() {
-  //   let itemId: ItemID = InventoryItemData.GetID(evt.itemData);
-  //   let isEquipped: Bool = this.previewManager.GetIsEquipped(itemId);
-  //   let isWeapon: Bool = RPGManager.IsItemWeapon(itemId);
-  //   let isClothing: Bool = RPGManager.IsItemClothing(itemId);
+  if this.isPreviewMode {
+    let itemId: ItemID = InventoryItemData.GetID(evt.itemData);
+    let isEquipped: Bool = this.previewManager.GetIsEquipped(itemId);
+    let isWeapon: Bool = RPGManager.IsItemWeapon(itemId);
+    let isClothing: Bool = RPGManager.IsItemClothing(itemId);
 
-  //   if this.GetIsVirtual() {
-  //     AtelierButtonHintsHelper.UpdatePurchaseHints(this, true);
-  //   };
+    let hintLabel: String;
+    if (isWeapon || isClothing) {
+      if isEquipped {
+        hintLabel = GetLocalizedTextByKey(n"UI-UserActions-Unequip");
+      } else {
+        hintLabel = GetLocalizedTextByKey(n"UI-UserActions-Equip");
+      };
 
-  //   let hintLabel: String;
-  //   if (isWeapon || isClothing) {
-  //     if isEquipped {
-  //       hintLabel = GetLocalizedTextByKey(n"UI-UserActions-Unequip");
-  //     } else {
-  //       hintLabel = GetLocalizedTextByKey(n"UI-UserActions-Equip");
-  //     };
+      this.m_buttonHintsController.RemoveButtonHint(n"select");
+      this.m_buttonHintsController.AddButtonHint(n"select", hintLabel);
+    } else {
+      this.m_buttonHintsController.RemoveButtonHint(n"select");
+    };
 
-  //     this.m_buttonHintsController.RemoveButtonHint(n"select");
-  //     this.m_buttonHintsController.AddButtonHint(n"select", hintLabel);
-  //   } else {
-  //     this.m_buttonHintsController.RemoveButtonHint(n"select");
-  //   };
+    this.m_lastItemHoverOverEvent = evt;
+    this.RequestSetFocus(null);
 
-  //   this.m_lastItemHoverOverEvent = evt;
-  //   this.RequestSetFocus(null);
-
-  //   let noCompare: InventoryItemData;
-  //   this.ShowTooltipsForItemController(evt.widget, noCompare, evt.itemData, evt.display.DEBUG_GetIconErrorInfo(), false);
-  // } else {
-  //   wrappedMethod(evt);
-  // };
-}
-
-@wrapMethod(FullscreenVendorGameController)
-protected cb func OnInventoryItemHoverOut(evt: ref<ItemDisplayHoverOutEvent>) -> Bool {
-  wrappedMethod(evt);
-  AtelierButtonHintsHelper.UpdatePurchaseHints(this, false);
+    let noCompare: InventoryItemData;
+    this.ShowTooltipsForItemController(evt.widget, noCompare, evt.itemData, evt.display.DEBUG_GetIconErrorInfo(), false);
+  };
 }
 
 @addMethod(FullscreenVendorGameController)
@@ -223,4 +210,14 @@ private final func GetIsVirtual() -> Bool {
 @addMethod(FullscreenVendorGameController)
 private final func SetPreviewStateActive(active: Bool) -> Void {
   this.previewManager.SetPreviewState(active);
+}
+
+@addMethod(FullscreenVendorGameController)
+private final func ShowTooltipsForItemController(targetWidget: wref<inkWidget>, equippedItem: InventoryItemData, inspectedItemData: InventoryItemData, iconErrorInfo: ref<DEBUG_IconErrorInfo>, isBuybackStack: Bool) -> Void {
+  let data: ref<InventoryTooltipData>;
+  data = this.m_InventoryManager.GetTooltipDataForInventoryItem(inspectedItemData, InventoryItemData.IsEquipped(inspectedItemData), iconErrorInfo, InventoryItemData.IsVendorItem(inspectedItemData));
+  data.displayContext = InventoryTooltipDisplayContext.Vendor;
+  data.isVirtualItem = true;
+  data.virtualInventoryItemData = inspectedItemData;
+  this.m_TooltipsManager.ShowTooltipAtWidget(n"itemTooltip", targetWidget, data, gameuiETooltipPlacement.RightTop);
 }

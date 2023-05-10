@@ -44,7 +44,7 @@ public final func GetMenuButtonWidgets() -> array<SComputerMenuButtonWidgetPacka
   if isInSafeZone {
     if this.IsMenuEnabled(EComputerMenuType.INTERNET) && ArraySize(packages) > 0 {
       package.widgetName = "Atelier";
-      package.displayName = AtelierTexts.Name();
+      package.displayName = AtelierTexts.TabName();
       package.ownerID = this.GetID();
       package.iconID = n"iconAtelier";
       package.widgetTweakDBID = this.GetMenuButtonWidgetTweakDBID();
