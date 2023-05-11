@@ -2,24 +2,16 @@ module VirtualAtelier.UI
 
 public class VirtualStoreDataView extends BackpackDataView {
 
-  protected let m_isVendorGrid: Bool;
-  protected let m_openTime: GameTime;
-  protected let m_searchQuery: String;
+  private let searchQuery: String;
   
   public func SetSearchQuery(query: String) -> Void {
-    this.m_searchQuery = query;
+    this.searchQuery = query;
   }
 
-  public final func SetVendorGrid(value: Bool) -> Void {
-    this.m_isVendorGrid = value;
-  }
-
-  public final func SetOpenTime(time: GameTime) -> Void {
-    this.m_openTime = time;
-  }
-
-  protected func PreSortingInjection(builder: ref<ItemCompareBuilder>) -> ref<ItemCompareBuilder> {
-    return builder.QuestItem();
+  public func UpdateView() -> Void {
+    this.EnableSorting();
+    this.Sort();
+    this.DisableSorting();
   }
 
   public func DerivedFilterItem(data: ref<IScriptable>) -> DerivedFilterResult {
@@ -30,7 +22,7 @@ public class VirtualStoreDataView extends BackpackDataView {
       return default;
     };
 
-    let query: String = StrLower(this.m_searchQuery);
+    let query: String = StrLower(this.searchQuery);
     let itemName: String = StrLower(GetLocalizedText(InventoryItemData.GetName(data.ItemData)));
 
     if !StrContains(itemName, query) && NotEquals(query, "") {
@@ -40,17 +32,21 @@ public class VirtualStoreDataView extends BackpackDataView {
     return default;
   }
 
+  protected func PreSortingInjection(builder: ref<ItemCompareBuilder>) -> ref<ItemCompareBuilder> {
+    return builder.QuestItem();
+  }
+
   private func DefaultSorting(data: ref<IScriptable>) -> DerivedFilterResult {
-    let m_wrappedData: ref<VendorUIInventoryItemData> = data as VendorUIInventoryItemData;
-    if !IsDefined(m_wrappedData) {
+    let wrappedData: ref<VendorUIInventoryItemData> = data as VendorUIInventoryItemData;
+    if !IsDefined(wrappedData) {
       return DerivedFilterResult.Pass;
     };
     if Equals(this.m_itemFilterType, ItemFilterCategory.Buyback) {
-      return m_wrappedData.IsBuybackStack ? DerivedFilterResult.True : DerivedFilterResult.False;
+      return wrappedData.IsBuybackStack ? DerivedFilterResult.True : DerivedFilterResult.False;
     };
     if Equals(this.m_itemFilterType, ItemFilterCategory.NewWardrobeAppearances) {
-      return m_wrappedData.IsNotInWardrobe ? DerivedFilterResult.True : DerivedFilterResult.False;
+      return wrappedData.IsNotInWardrobe ? DerivedFilterResult.True : DerivedFilterResult.False;
     };
-    return m_wrappedData.IsBuybackStack ? DerivedFilterResult.False : DerivedFilterResult.Pass;
+    return wrappedData.IsBuybackStack ? DerivedFilterResult.False : DerivedFilterResult.Pass;
   }
 }

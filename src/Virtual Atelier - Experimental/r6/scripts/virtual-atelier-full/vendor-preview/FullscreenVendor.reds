@@ -145,23 +145,6 @@ protected cb func OnHandleGlobalInput(event: ref<inkPointerEvent>) -> Bool {
       this.previewManager.RemovePreviewGarment();
       this.m_menuEventDispatcher.SpawnEvent(n"OnVendorClose");
       break;
-
-    // // Since patch 1.5 right mouse click closes menus and for Atelier it just removes preview
-    // // without closing the shop so Consume just blocks it
-    // case event.IsAction(n"world_map_fake_rotate"):
-    //   event.Consume();
-    //   break;
-
-    // // Force shop closing on C for keyboards to prevent preview screw up
-    // case (event.IsAction(n"world_map_menu_toggle_custom_filter") && this.isPreviewMode && lastUsedKBM):
-    //   this.previewManager.RemovePreviewGarment();
-    //   this.m_menuEventDispatcher.SpawnEvent(n"OnVendorClose");
-    //   break;
-
-    // // Consume SQUARE for Pad to prevent conflicts with Purchase action which also uses world_map_menu_toggle_custom_filter
-    // case (event.IsAction(n"world_map_menu_toggle_custom_filter") && this.isPreviewMode && lastUsedPad):
-    //   event.Consume();
-    //   break;
   };
 }
 
@@ -197,9 +180,7 @@ protected cb func OnInventoryItemHoverOver(evt: ref<ItemDisplayHoverOverEvent>) 
 
 @addMethod(FullscreenVendorGameController)
 private func RefreshEquippedState() -> Void {
-  let evt: ref<VendorInventoryEquipStateChanged> = new VendorInventoryEquipStateChanged();
-  evt.system = this.previewManager;
-  GameInstance.GetUISystem(this.m_player.GetGame()).QueueEvent(evt);
+  GameInstance.GetUISystem(this.m_player.GetGame()).QueueEvent(VendorInventoryEquipStateChanged.Create(this.previewManager));
 }
 
 @addMethod(FullscreenVendorGameController)

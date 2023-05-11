@@ -2,6 +2,12 @@ import VirtualAtelier.Systems.VirtualAtelierPreviewManager
 
 public class VendorInventoryEquipStateChanged extends Event {
   public let system: wref<VirtualAtelierPreviewManager>;
+
+  public static func Create(system: ref<VirtualAtelierPreviewManager>) -> ref<VendorInventoryEquipStateChanged> {
+    let evt: ref<VendorInventoryEquipStateChanged> = new VendorInventoryEquipStateChanged();
+    evt.system = system;
+    return evt;
+  }
 }
 
 public class AtelierStoreSoundEvent extends Event {

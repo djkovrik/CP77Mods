@@ -138,9 +138,18 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.scrollController.SetScrollPosition(0.0);
   }
 
+  protected cb func OnFilterRadioItemHoverOver(evt: ref<FilterRadioItemHoverOver>) -> Bool {
+    let tooltipData: ref<MessageTooltipData> = new MessageTooltipData();
+    tooltipData.Title = NameToString(ItemFilterCategories.GetLabelKey(evt.identifier));
+    this.tooltipsManager.ShowTooltipAtWidget(n"descriptionTooltip", evt.target, tooltipData, gameuiETooltipPlacement.RightTop, true);
+  }
+
+  protected cb func OnFilterRadioItemHoverOut(evt: ref<FilterRadioItemHoverOut>) -> Bool {
+    this.tooltipsManager.HideTooltips();
+  }
+
   protected cb func OnHandleGlobalInput(evt: ref<inkPointerEvent>) -> Bool {
     let atelierActions: ref<AtelierActions> = AtelierActions.Get(this.player);
-
     switch true {
       case evt.IsAction(atelierActions.resetGarment):
         this.previewManager.ResetGarment();
@@ -266,7 +275,6 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.storeDataView.BindUIScriptableSystem(this.uiScriptableSystem);
     this.storeDataView.SetSource(this.storeDataSource);
     this.storeDataView.EnableSorting();
-    this.storeDataView.SetVendorGrid(true);
     this.storeItemsClassifier = new VirtualStoreTemplateClassifier();
     this.storeListController.SetClassifier(this.storeItemsClassifier);
     this.storeListController.SetSource(this.storeDataView);
@@ -507,9 +515,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
   }
 
   private func RefreshEquippedState() -> Void {
-    let evt: ref<VendorInventoryEquipStateChanged> = new VendorInventoryEquipStateChanged();
-    evt.system = this.previewManager;
-    GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(evt);
+    GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(VendorInventoryEquipStateChanged.Create(this.previewManager));
   }
 
   private final func GetVirtualStoreName() -> String {
