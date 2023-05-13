@@ -1,11 +1,22 @@
+import VirtualAtelier.Systems.VirtualAtelierCartManager
 import VirtualAtelier.Systems.VirtualAtelierPreviewManager
 
-public class VendorInventoryEquipStateChanged extends Event {
-  public let system: wref<VirtualAtelierPreviewManager>;
+public class AtelierEquipStateChangedEvent extends Event {
+  public let manager: wref<VirtualAtelierPreviewManager>;
 
-  public static func Create(system: ref<VirtualAtelierPreviewManager>) -> ref<VendorInventoryEquipStateChanged> {
-    let evt: ref<VendorInventoryEquipStateChanged> = new VendorInventoryEquipStateChanged();
-    evt.system = system;
+  public static func Create(manager: ref<VirtualAtelierPreviewManager>) -> ref<AtelierEquipStateChangedEvent> {
+    let evt: ref<AtelierEquipStateChangedEvent> = new AtelierEquipStateChangedEvent();
+    evt.manager = manager;
+    return evt;
+  }
+}
+
+public class AtelierCartStateChangedEvent extends Event {
+  public let manager: wref<VirtualAtelierCartManager>;
+
+  public static func Create(manager: ref<VirtualAtelierCartManager>) -> ref<AtelierCartStateChangedEvent> {
+    let evt: ref<AtelierCartStateChangedEvent> = new AtelierCartStateChangedEvent();
+    evt.manager = manager;
     return evt;
   }
 }

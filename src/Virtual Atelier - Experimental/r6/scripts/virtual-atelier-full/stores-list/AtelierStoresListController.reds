@@ -1,12 +1,12 @@
 module VirtualAtelier.UI
-import VirtualAtelier.Systems.VirtualAtelierStoresSystem
+import VirtualAtelier.Systems.VirtualAtelierStoresManager
 import VirtualAtelier.Config.VirtualAtelierConfig
 import VirtualAtelier.Core.AtelierTexts
 import VirtualAtelier.Logs.*
 
 public class AtelierStoresListController extends inkGameController {
   private let player: wref<PlayerPuppet>;
-  private let system: wref<VirtualAtelierStoresSystem>;
+  private let system: wref<VirtualAtelierStoresManager>;
   private let stores: array<ref<VirtualShop>>;
   private let buttonhints: wref<ButtonHints>;
   private let storesList: wref<inkVirtualGridController>;
@@ -24,7 +24,7 @@ public class AtelierStoresListController extends inkGameController {
     this.buttonhints = hintsContainer.GetWidgetByIndex(0).GetController() as ButtonHints;
     
     this.player = this.GetPlayerControlledObject() as PlayerPuppet;
-    this.system = VirtualAtelierStoresSystem.GetInstance(this.player.GetGame());
+    this.system = VirtualAtelierStoresManager.GetInstance(this.player.GetGame());
     this.config = VirtualAtelierConfig.Get();
 
     this.RegisterToCallback(n"OnRelease", this, n"OnRelease");

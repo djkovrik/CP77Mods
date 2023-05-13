@@ -180,7 +180,7 @@ protected cb func OnInventoryItemHoverOver(evt: ref<ItemDisplayHoverOverEvent>) 
 
 @addMethod(FullscreenVendorGameController)
 private func RefreshEquippedState() -> Void {
-  GameInstance.GetUISystem(this.m_player.GetGame()).QueueEvent(VendorInventoryEquipStateChanged.Create(this.previewManager));
+  GameInstance.GetUISystem(this.m_player.GetGame()).QueueEvent(AtelierEquipStateChangedEvent.Create(this.previewManager));
 }
 
 @addMethod(FullscreenVendorGameController)

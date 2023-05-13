@@ -2,15 +2,15 @@ module VirtualAtelier.Systems
 import VirtualAtelier.Logs.AtelierLog
 import VirtualAtelier.Core.*
 
-public class VirtualAtelierStoresSystem extends ScriptableSystem {
+public class VirtualAtelierStoresManager extends ScriptableSystem {
 
   private let stores: array<ref<VirtualShop>>;
   private let current: ref<VirtualShop>;
   private persistent let bookmarked: array<CName>;
   private persistent let prevStores: array<CName>;
 
-  public static func GetInstance(gi: GameInstance) -> ref<VirtualAtelierStoresSystem> {
-    let system: ref<VirtualAtelierStoresSystem> = GameInstance.GetScriptableSystemsContainer(gi).Get(n"VirtualAtelier.Systems.VirtualAtelierStoresSystem") as VirtualAtelierStoresSystem;
+  public static func GetInstance(gi: GameInstance) -> ref<VirtualAtelierStoresManager> {
+    let system: ref<VirtualAtelierStoresManager> = GameInstance.GetScriptableSystemsContainer(gi).Get(n"VirtualAtelier.Systems.VirtualAtelierStoresManager") as VirtualAtelierStoresManager;
     return system;
   }
 
@@ -115,5 +115,5 @@ public class VirtualAtelierStoresSystem extends ScriptableSystem {
 @wrapMethod(gameuiInGameMenuGameController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
-  VirtualAtelierStoresSystem.GetInstance(this.GetPlayerControlledObject().GetGame()).BuildStoresList();
+  VirtualAtelierStoresManager.GetInstance(this.GetPlayerControlledObject().GetGame()).BuildStoresList();
 }

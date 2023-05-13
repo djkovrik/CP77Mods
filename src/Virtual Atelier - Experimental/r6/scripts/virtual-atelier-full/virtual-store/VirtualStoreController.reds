@@ -9,7 +9,8 @@ import Codeware.UI.*
 public class VirtualStoreController extends gameuiMenuGameController {
   private let player: wref<PlayerPuppet>;
   private let previewManager: wref<VirtualAtelierPreviewManager>;
-  private let storesManager: wref<VirtualAtelierStoresSystem>;
+  private let storeCartManager: wref<VirtualAtelierCartManager>;
+  private let storesManager: wref<VirtualAtelierStoresManager>;
   private let questsSystem: wref<QuestsSystem>;
   private let uiScriptableSystem: wref<UIScriptableSystem>;
   private let previewPopupToken: ref<inkGameNotificationToken>;
@@ -45,8 +46,9 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.player = this.GetPlayerControlledObject() as PlayerPuppet;
     this.previewManager = VirtualAtelierPreviewManager.GetInstance(this.player.GetGame());
     this.previewManager.SetPreviewState(true);
+    this.storeCartManager = VirtualAtelierCartManager.GetInstance(this.player.GetGame());
     this.previewPopupToken = AtelierNotificationTokensHelper.GetGarmentPreviewNotificationToken(this, ItemDisplayContext.VendorPlayer) as inkGameNotificationToken;
-    this.storesManager = VirtualAtelierStoresSystem.GetInstance(this.player.GetGame());
+    this.storesManager = VirtualAtelierStoresManager.GetInstance(this.player.GetGame());
     this.virtualStore = this.storesManager.GetCurrentStore();
     this.questsSystem = GameInstance.GetQuestsSystem(this.player.GetGame());
     this.uiScriptableSystem = UIScriptableSystem.GetInstance(this.player.GetGame());
@@ -73,6 +75,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
   }
 
   protected cb func OnUninitialize() -> Bool {
+    this.storeCartManager.ClearCart();
     this.previewManager.SetPreviewState(false);
     this.previewPopupToken.TriggerCallback(null);
     this.questsSystem.SetFact(n"disable_tutorials", this.currentTutorialsFact);
@@ -172,15 +175,29 @@ public class VirtualStoreController extends gameuiMenuGameController {
           this.RequestSetFocus(null);
         };
         break;
+      case evt.IsAction(atelierActions.addToVirtualCart):
+        this.HandleCartAction();
+        break;
     };
   }
 
   protected cb func OnInventoryItemHoverOver(evt: ref<ItemDisplayHoverOverEvent>) -> Bool {
-    let itemId: ItemID = InventoryItemData.GetID(evt.itemData);
-    let isEquipped: Bool = this.previewManager.GetIsEquipped(itemId);
-    let isWeapon: Bool = RPGManager.IsItemWeapon(itemId);
-    let isClothing: Bool = RPGManager.IsItemClothing(itemId);
+    let atelierActions: ref<AtelierActions> = AtelierActions.Get(this.player);
+    let itemID: ItemID = InventoryItemData.GetID(evt.itemData);
+    let isEquipped: Bool = this.previewManager.GetIsEquipped(itemID);
+    let isAddedToCart: Bool = this.storeCartManager.IsAddedToCart(itemID);
+    let isWeapon: Bool = RPGManager.IsItemWeapon(itemID);
+    let isClothing: Bool = RPGManager.IsItemClothing(itemID);
     let hintLabel: String;
+
+    if isAddedToCart {
+      hintLabel = GetLocalizedTextByKey(n"VA-Cart-Remove");
+    } else {
+      hintLabel = GetLocalizedTextByKey(n"VA-Cart-Add");
+    };
+
+    this.buttonHintsController.RemoveButtonHint(atelierActions.addToVirtualCart);
+    this.buttonHintsController.AddButtonHint(atelierActions.addToVirtualCart, hintLabel);
 
     if (isWeapon || isClothing) {
       if isEquipped {
@@ -203,8 +220,11 @@ public class VirtualStoreController extends gameuiMenuGameController {
   }
 
   protected cb func OnInventoryItemHoverOut(evt: ref<ItemDisplayHoverOutEvent>) -> Bool {
+    let atelierActions: ref<AtelierActions> = AtelierActions.Get(this.player);
     this.tooltipsManager.HideTooltips();
+    this.buttonHintsController.RemoveButtonHint(atelierActions.addToVirtualCart);
     this.buttonHintsController.RemoveButtonHint(n"select");
+    this.lastItemHoverOverEvent = null;
   }
 
   protected cb func OnInventoryClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
@@ -514,8 +534,37 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.PlayLibraryAnimation(n"vendor_grid_show");
   }
 
+  private func HandleCartAction() -> Void {
+    if !IsDefined(this.lastItemHoverOverEvent) {
+      return ;
+    };
+
+    let atelierActions: ref<AtelierActions> = AtelierActions.Get(this.player);
+    let itemID: ItemID = InventoryItemData.GetID(this.lastItemHoverOverEvent.itemData);
+    let isAddedToCart: Bool = this.storeCartManager.IsAddedToCart(itemID);
+    let hintLabel: String;
+
+    if isAddedToCart {
+      if this.storeCartManager.RemoveFromCart(itemID) {
+        hintLabel = GetLocalizedTextByKey(n"VA-Cart-Add");
+      };
+    } else {
+      if this.storeCartManager.AddToCart(itemID) {
+        hintLabel = GetLocalizedTextByKey(n"VA-Cart-Remove");
+      };
+    };
+
+    this.buttonHintsController.RemoveButtonHint(atelierActions.addToVirtualCart);
+    this.buttonHintsController.AddButtonHint(atelierActions.addToVirtualCart, hintLabel);
+    this.RefreshCartState();
+  }
+
   private func RefreshEquippedState() -> Void {
-    GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(VendorInventoryEquipStateChanged.Create(this.previewManager));
+    GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(AtelierEquipStateChangedEvent.Create(this.previewManager));
+  }
+
+  private func RefreshCartState() -> Void {
+    GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(AtelierCartStateChangedEvent.Create(this.storeCartManager));
   }
 
   private final func GetVirtualStoreName() -> String {

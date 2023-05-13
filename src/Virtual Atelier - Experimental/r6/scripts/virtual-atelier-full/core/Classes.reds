@@ -1,11 +1,11 @@
-import VirtualAtelier.Systems.VirtualAtelierStoresSystem
+import VirtualAtelier.Systems.VirtualAtelierStoresManager
 import VirtualAtelier.Config.VirtualAtelierConfig
 import VirtualAtelier.Logs.AtelierDebug
 
 public class VirtualShopRegistration extends Event {
-  let system: wref<VirtualAtelierStoresSystem>;
+  let system: wref<VirtualAtelierStoresManager>;
 
-  public func SetSystemInstance(system: ref<VirtualAtelierStoresSystem>) -> Void {
+  public func SetSystemInstance(system: ref<VirtualAtelierStoresManager>) -> Void {
     this.system = system;
   }
 
