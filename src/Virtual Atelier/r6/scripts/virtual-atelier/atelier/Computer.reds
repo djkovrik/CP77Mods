@@ -15,7 +15,6 @@ private final func ShowMenuByName(elementName: String) -> Void {
 public final func GetMenuButtonWidgets() -> array<SComputerMenuButtonWidgetPackage> {
   let packages: array<SComputerMenuButtonWidgetPackage> = wrappedMethod();
   let package: SComputerMenuButtonWidgetPackage;
-
   let isInSafeZone: Bool = CurrentPlayerZoneManager.IsInSafeZone(this.GetLocalPlayerControlledGameObject() as PlayerPuppet) || VirtualAtelierConfig.DisableDangerZoneChecker();
 
   if isInSafeZone {
@@ -26,6 +25,7 @@ public final func GetMenuButtonWidgets() -> array<SComputerMenuButtonWidgetPacka
       package.iconID = n"iconInternet";
       package.widgetTweakDBID = this.GetMenuButtonWidgetTweakDBID();
       package.isValid = true;
+      SWidgetPackageBase.ResolveWidgetTweakDBData(package.widgetTweakDBID, package.libraryID, package.libraryPath);
       ArrayPush(packages, package);
     };
   } else {
@@ -33,4 +33,14 @@ public final func GetMenuButtonWidgets() -> array<SComputerMenuButtonWidgetPacka
   };
 
   return packages;
+}
+
+@wrapMethod(ComputerMenuButtonController)
+public func Initialize(gameController: ref<ComputerInkGameController>, widgetData: SComputerMenuButtonWidgetPackage) -> Void {
+  wrappedMethod(gameController, widgetData);
+
+  if Equals(widgetData.widgetName, "Atelier") {
+    inkImageRef.SetTexturePart(this.m_iconWidget, n"logo_wdb_large");
+    inkImageRef.SetAtlasResource(this.m_iconWidget, r"base\\gameplay\\gui\\fullscreen\\wardrobe\\atlas_wardrobe.inkatlas");
+  };
 }
