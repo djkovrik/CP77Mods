@@ -28,6 +28,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
   private let vendorSortingButton: ref<inkWidget>;
   private let sortingDropdown: ref<inkWidget>;
   private let searchInput: wref<HubTextInput>;
+  // private let shoppingCart: wref<inkImage>;
 
   // Store data
   private let virtualStock: array<ref<VirtualStockItem>>;
@@ -190,15 +191,6 @@ public class VirtualStoreController extends gameuiMenuGameController {
     let isClothing: Bool = RPGManager.IsItemClothing(itemID);
     let hintLabel: String;
 
-    if isAddedToCart {
-      hintLabel = GetLocalizedTextByKey(n"VA-Cart-Remove");
-    } else {
-      hintLabel = GetLocalizedTextByKey(n"VA-Cart-Add");
-    };
-
-    this.buttonHintsController.RemoveButtonHint(atelierActions.addToVirtualCart);
-    this.buttonHintsController.AddButtonHint(atelierActions.addToVirtualCart, hintLabel);
-
     if (isWeapon || isClothing) {
       if isEquipped {
         hintLabel = GetLocalizedTextByKey(n"UI-UserActions-Unequip");
@@ -211,6 +203,15 @@ public class VirtualStoreController extends gameuiMenuGameController {
     } else {
       this.buttonHintsController.RemoveButtonHint(n"select");
     };
+
+    if isAddedToCart {
+      hintLabel = GetLocalizedTextByKey(n"VA-Cart-Remove");
+    } else {
+      hintLabel = GetLocalizedTextByKey(n"VA-Cart-Add");
+    };
+
+    this.buttonHintsController.RemoveButtonHint(atelierActions.addToVirtualCart);
+    this.buttonHintsController.AddButtonHint(atelierActions.addToVirtualCart, hintLabel);
 
     this.lastItemHoverOverEvent = evt;
     this.RequestSetFocus(null);
@@ -287,6 +288,18 @@ public class VirtualStoreController extends gameuiMenuGameController {
     searchInput.RegisterToCallback(n"OnInput", this, n"OnSearchInput");
     searchInput.Reparent(searchContainer);
     this.searchInput = searchInput;
+
+    // let cart: ref<inkImage> = new inkImage();
+    // cart.SetName(n"cartImage");
+    // cart.SetAtlasResource(r"base\\gameplay\\gui\\virtual_atelier_cart.inkatlas");
+    // cart.SetTexturePart(n"cart");
+    // cart.SetAnchor(inkEAnchor.Centered);
+    // cart.SetAnchorPoint(new Vector2(0.5, 0.5));
+    // cart.SetSize(new Vector2(160.0, 240.0));
+    // cart.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    // cart.BindProperty(n"tintColor", n"MainColors.Blue");
+    // cart.Reparent(vendorHeader);
+    // this.shoppingCart = cart;
   }
 
   private func InitializeWidgetData() -> Void {
@@ -564,7 +577,9 @@ public class VirtualStoreController extends gameuiMenuGameController {
   }
 
   private func RefreshCartState() -> Void {
-    GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(AtelierCartStateChangedEvent.Create(this.storeCartManager));
+    if IsDefined(this.lastItemHoverOverEvent) {
+      GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(AtelierCartStateChangedEvent.Create(this.storeCartManager));
+    };
   }
 
   private final func GetVirtualStoreName() -> String {

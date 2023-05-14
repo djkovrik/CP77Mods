@@ -16,6 +16,7 @@ import Codeware.UI.*
 @addField(InventoryTooltipData) public let virtualInventoryItemData: InventoryItemData;
 @addField(InventoryTooltipData) public let isVirtualItem: Bool;
 
+@addField(InventoryItemDisplayController) public let cartIndicator: wref<inkWidget>;
 @addField(VendorPanelData) public let virtualStore: ref<VirtualShop>;
 @addField(MinimalItemTooltipData) public let isVirtualItem: Bool;
 @addField(gameItemData) public let isVirtualItem: Bool;
