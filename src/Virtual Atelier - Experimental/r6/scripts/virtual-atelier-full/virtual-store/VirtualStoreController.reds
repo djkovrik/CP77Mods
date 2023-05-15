@@ -1,6 +1,7 @@
 module VirtualAtelier.UI
 import VirtualAtelier.Config.VirtualAtelierConfig
 import VirtualAtelier.Core.AtelierActions
+import VirtualAtelier.Core.AtelierTexts
 import VirtualAtelier.Logs.AtelierDebug
 import VirtualAtelier.Helpers.*
 import VirtualAtelier.Systems.*
@@ -28,7 +29,6 @@ public class VirtualStoreController extends gameuiMenuGameController {
   private let vendorSortingButton: ref<inkWidget>;
   private let sortingDropdown: ref<inkWidget>;
   private let searchInput: wref<HubTextInput>;
-  // private let shoppingCart: wref<inkImage>;
 
   // Store data
   private let virtualStock: array<ref<VirtualStockItem>>;
@@ -275,9 +275,24 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.vendorSortingButton = root.GetWidget(n"wrapper/wrapper/vendorPanel/vendorHeader/inkHorizontalPanelWidget2/dropdownButton5");
     this.sortingDropdown = root.GetWidget(n"dropdownContainer");
 
+    let cartControls: ref<inkHorizontalPanel> = new inkHorizontalPanel();
+    cartControls.SetMargin(new inkMargin(0.0, 190.0, 0.0, 0.0));
+    cartControls.SetAnchor(inkEAnchor.TopLeft);
+    cartControls.SetHAlign(inkEHorizontalAlign.Left);
+    cartControls.SetChildOrder(inkEChildOrder.Forward);
+    cartControls.Reparent(vendorHeader);
+
+    let cart: ref<VirtualCartImageButton> = VirtualCartImageButton.Create();
+    let buttonClear: ref<VirtualCartTextButton> = VirtualCartTextButton.Create(AtelierTexts.ButtonClear());
+    let buttonAddAll: ref<VirtualCartTextButton> = VirtualCartTextButton.Create(AtelierTexts.ButtonAddAll());
+    cart.Reparent(cartControls);
+    buttonClear.Reparent(cartControls);
+    buttonAddAll.Reparent(cartControls);
+
     let searchContainer: ref<inkCanvas> = new inkCanvas();
     searchContainer.SetName(n"searchContainer");
-    searchContainer.SetMargin(new inkMargin(0.0, 340.0, 0.0, 0.0));
+    searchContainer.SetAnchor(inkEAnchor.TopRight);
+    searchContainer.SetMargin(new inkMargin(0.0, 170.0, 600.0, 0.0));
     searchContainer.Reparent(vendorHeader);
 
     let searchInput: ref<HubTextInput> = HubTextInput.Create();
@@ -288,18 +303,6 @@ public class VirtualStoreController extends gameuiMenuGameController {
     searchInput.RegisterToCallback(n"OnInput", this, n"OnSearchInput");
     searchInput.Reparent(searchContainer);
     this.searchInput = searchInput;
-
-    // let cart: ref<inkImage> = new inkImage();
-    // cart.SetName(n"cartImage");
-    // cart.SetAtlasResource(r"base\\gameplay\\gui\\virtual_atelier_cart.inkatlas");
-    // cart.SetTexturePart(n"cart");
-    // cart.SetAnchor(inkEAnchor.Centered);
-    // cart.SetAnchorPoint(new Vector2(0.5, 0.5));
-    // cart.SetSize(new Vector2(160.0, 240.0));
-    // cart.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-    // cart.BindProperty(n"tintColor", n"MainColors.Blue");
-    // cart.Reparent(vendorHeader);
-    // this.shoppingCart = cart;
   }
 
   private func InitializeWidgetData() -> Void {

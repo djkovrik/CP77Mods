@@ -10,10 +10,10 @@ protected cb func OnInitialize() -> Bool {
   indicator.SetNineSliceScale(true);
   indicator.SetAtlasResource(r"base\\gameplay\\gui\\common\\shapes\\atlas_shapes_sync.inkatlas");
   indicator.SetTexturePart(n"item_bg");
-  indicator.SetOpacity(0.6);
+  indicator.SetOpacity(0.5);
   indicator.SetVisible(false);
   indicator.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-  indicator.BindProperty(n"tintColor", n"MainColors.Yellow");
+  indicator.BindProperty(n"tintColor", n"MainColors.ActiveGreen");
   indicator.Reparent(this.GetRootCompoundWidget(), 10);
   this.cartIndicator = indicator;
 }

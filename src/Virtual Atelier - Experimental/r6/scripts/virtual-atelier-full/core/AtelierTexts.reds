@@ -13,4 +13,7 @@ public class AtelierTexts {
   public static func RemoveFromFavorites() -> String = GetLocalizedTextByKey(n"VA-Favorites-Remove")
   public static func Zoom() -> String = GetLocalizedTextByKey(n"UI-ResourceExports-OpticalZoom")
   public static func Move() -> String = GetLocalizedTextByKey(n"UI-ScriptExports-Move0")
+  public static func ButtonBuy() -> String = "Buy"
+  public static func ButtonClear() -> String = "Clear"
+  public static func ButtonAddAll() -> String = "Add all"
 }
