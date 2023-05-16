@@ -38,6 +38,11 @@ class VirtualStockItem {
   public let itemData: ref<gameItemData>;
 }
 
+class VirtualCartItem {
+  public let stockItem: ref<VirtualStockItem>;
+  public let purchaseAmount: Int32;
+}
+
 public class StoreGoods {
   let key: Uint64;
   let item: String;
@@ -68,5 +73,3 @@ public class PreviewInventoryItemPreviewData extends InventoryItemPreviewData {
 }
 
 public class AtelierStoresTemplateClassifier extends inkVirtualItemTemplateClassifier {}
-
-public class AtelierVirtualList extends inkVirtualCompoundWidget {}

@@ -13,6 +13,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
   private let storeCartManager: wref<VirtualAtelierCartManager>;
   private let storesManager: wref<VirtualAtelierStoresManager>;
   private let questsSystem: wref<QuestsSystem>;
+  private let uiSystem: wref<UISystem>;
   private let uiScriptableSystem: wref<UIScriptableSystem>;
   private let previewPopupToken: ref<inkGameNotificationToken>;
   private let vendorDataManager: ref<VendorDataManager>;
@@ -30,6 +31,11 @@ public class VirtualStoreController extends gameuiMenuGameController {
   private let sortingDropdown: ref<inkWidget>;
   private let searchInput: wref<HubTextInput>;
 
+  // Cart
+  private let cartIcon: wref<VirtualCartImageButton>;
+  private let cartButtonClear: wref<VirtualCartTextButton>;
+  private let cartButtonAddAll: wref<VirtualCartTextButton>;
+
   // Store data
   private let virtualStock: array<ref<VirtualStockItem>>;
   private let virtualStore: ref<VirtualShop>;
@@ -38,10 +44,12 @@ public class VirtualStoreController extends gameuiMenuGameController {
   private let storeDataSource: ref<ScriptableDataSource>;
   private let storeItemsClassifier: ref<VirtualStoreTemplateClassifier>;
 
+  private let popupToken: ref<inkGameNotificationToken>;
   private let currentTutorialsFact: Int32;
   private let lastVendorFilter: ItemFilterCategory;
   private let lastItemHoverOverEvent: ref<ItemDisplayHoverOverEvent>;
-  private let totalItemsPrice: Float;
+  private let totalItemsPrice: Int32;
+  private let allItemsAdded: Bool;
 
   protected cb func OnInitialize() -> Bool {
     this.player = this.GetPlayerControlledObject() as PlayerPuppet;
@@ -52,6 +60,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.storesManager = VirtualAtelierStoresManager.GetInstance(this.player.GetGame());
     this.virtualStore = this.storesManager.GetCurrentStore();
     this.questsSystem = GameInstance.GetQuestsSystem(this.player.GetGame());
+    this.uiSystem = GameInstance.GetUISystem(this.player.GetGame());
     this.uiScriptableSystem = UIScriptableSystem.GetInstance(this.player.GetGame());
     this.vendorDataManager = new VendorDataManager();
     this.vendorDataManager.Initialize(this.player, this.player.GetEntityID());
@@ -73,6 +82,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.PlaySound(n"GameMenu", n"OnOpen");
 
     this.PopulateVirtualShop();
+    this.RefreshCartControls();
   }
 
   protected cb func OnUninitialize() -> Bool {
@@ -258,6 +268,23 @@ public class VirtualStoreController extends gameuiMenuGameController {
     };
   }
 
+  protected cb func OnVirtualAtelierControlClickEvent(evt: ref<VirtualAtelierControlClickEvent>) -> Bool {
+    let name: CName = evt.name;
+    switch name {
+      case n"buy":
+        break;
+      case n"addAll":
+        this.ShowAddAllConfirmationPopup();
+        break;
+      case n"clear":
+        this.ShowRemoveAllConfirmationPopup();
+        break;
+      default:
+        // do nothing
+        break;
+    }
+  }
+
   private func InitializeWidgetRefs() -> Void {
     let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
     let scrollable: ref<inkWidget> = root.GetWidget(n"wrapper/wrapper/vendorPanel/inventoryContainer");
@@ -276,18 +303,29 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.sortingDropdown = root.GetWidget(n"dropdownContainer");
 
     let cartControls: ref<inkHorizontalPanel> = new inkHorizontalPanel();
+    cartControls.SetName(n"cartControls");
     cartControls.SetMargin(new inkMargin(0.0, 190.0, 0.0, 0.0));
     cartControls.SetAnchor(inkEAnchor.TopLeft);
     cartControls.SetHAlign(inkEHorizontalAlign.Left);
     cartControls.SetChildOrder(inkEChildOrder.Forward);
+    cartControls.SetInteractive(true);
     cartControls.Reparent(vendorHeader);
 
-    let cart: ref<VirtualCartImageButton> = VirtualCartImageButton.Create();
+    let buttonCart: ref<VirtualCartImageButton> = VirtualCartImageButton.Create();
+    buttonCart.SetName(n"buy");
+    buttonCart.Reparent(cartControls);
+
     let buttonClear: ref<VirtualCartTextButton> = VirtualCartTextButton.Create(AtelierTexts.ButtonClear());
-    let buttonAddAll: ref<VirtualCartTextButton> = VirtualCartTextButton.Create(AtelierTexts.ButtonAddAll());
-    cart.Reparent(cartControls);
+    buttonClear.SetName(n"clear");
     buttonClear.Reparent(cartControls);
+
+    let buttonAddAll: ref<VirtualCartTextButton> = VirtualCartTextButton.Create(AtelierTexts.ButtonAddAll());
+    buttonAddAll.SetName(n"addAll");
     buttonAddAll.Reparent(cartControls);
+
+    this.cartIcon = buttonCart;
+    this.cartButtonClear = buttonClear;
+    this.cartButtonAddAll = buttonAddAll;
 
     let searchContainer: ref<inkCanvas> = new inkCanvas();
     searchContainer.SetName(n"searchContainer");
@@ -397,7 +435,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
       totalPrice += stockItem.price;
     };
 
-    this.totalItemsPrice = totalPrice;
+    this.totalItemsPrice = Cast<Int32>(totalPrice);
     this.ScaleStockItems();
   }
 
@@ -560,12 +598,13 @@ public class VirtualStoreController extends gameuiMenuGameController {
     let isAddedToCart: Bool = this.storeCartManager.IsAddedToCart(itemID);
     let hintLabel: String;
 
+    let stockItem: ref<VirtualStockItem> = this.GetStockItem(itemID);
     if isAddedToCart {
-      if this.storeCartManager.RemoveFromCart(itemID) {
+      if this.storeCartManager.RemoveFromCart(stockItem) {
         hintLabel = GetLocalizedTextByKey(n"VA-Cart-Add");
       };
     } else {
-      if this.storeCartManager.AddToCart(itemID) {
+      if this.storeCartManager.AddToCart(stockItem) {
         hintLabel = GetLocalizedTextByKey(n"VA-Cart-Remove");
       };
     };
@@ -573,17 +612,66 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.buttonHintsController.RemoveButtonHint(atelierActions.addToVirtualCart);
     this.buttonHintsController.AddButtonHint(atelierActions.addToVirtualCart, hintLabel);
     this.RefreshCartState();
+    this.RefreshCartControls();
   }
 
   private func RefreshEquippedState() -> Void {
-    GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(AtelierEquipStateChangedEvent.Create(this.previewManager));
+   this.uiSystem.QueueEvent(AtelierEquipStateChangedEvent.Create(this.previewManager));
   }
 
   private func RefreshCartState() -> Void {
     if IsDefined(this.lastItemHoverOverEvent) {
-      GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(AtelierCartStateChangedEvent.Create(this.storeCartManager));
+      this.uiSystem.QueueEvent(AtelierCartStateChangedEvent.Create(this.storeCartManager));
     };
   }
+
+  private func RefreshCartControls() -> Void {
+    let playerMoney: Int32 = this.GetPlayerMoney();
+    let cartSize: Int32 = this.storeCartManager.GetCartSize();
+    this.cartIcon.SetCounter(cartSize);
+
+    let cartIsNotEmpty: Bool = cartSize > 0;
+    this.cartIcon.Dim(!cartIsNotEmpty);
+    this.cartIcon.SetEnabled(cartIsNotEmpty);
+    this.cartButtonClear.Dim(!cartIsNotEmpty);
+    this.cartButtonClear.SetEnabled(cartIsNotEmpty);
+
+    let enoughMoneyForBuyAll: Bool = playerMoney >= this.totalItemsPrice;
+    let addAllButtonEnabled: Bool = enoughMoneyForBuyAll && !this.allItemsAdded;
+    this.cartButtonAddAll.Dim(!addAllButtonEnabled);
+    this.cartButtonAddAll.SetEnabled(addAllButtonEnabled);
+  }
+
+  // TODO GenericMessageNotificationType.ConfirmCancel
+  private func ShowAddAllConfirmationPopup() -> Void {
+    LogChannel(n"DEBUG", "ShowAddAllConfirmationPopup");
+    this.popupToken = GenericMessageNotification.Show(this, this.virtualStore.storeName, AtelierTexts.ConfirmationAddAll());
+    // this.popupToken.RegisterListener(this, n"OnAddAllConfirmationPopupClosed");
+  }
+
+  private func ShowRemoveAllConfirmationPopup() -> Void {
+    LogChannel(n"DEBUG", "ShowRemoveAllConfirmationPopup");
+    this.popupToken = GenericMessageNotification.Show(this, this.virtualStore.storeName, AtelierTexts.ConfirmationRemoveAll());
+    // this.popupToken.RegisterListener(this, n"OnRemoveAllConfirmationPopupClosed");
+  }
+
+  // protected cb func OnAddAllConfirmationPopupClosed(data: ref<inkGameNotificationData>) {
+  //   let resultData: ref<GenericMessageNotificationCloseData> = data as GenericMessageNotificationCloseData;
+  //   if Equals(resultData.result, GenericMessageNotificationResult.Confirm) {
+
+  //   };
+
+  //   this.popupToken = null;
+  // }
+
+  // protected cb func OnRemoveAllConfirmationPopupClosed(data: ref<inkGameNotificationData>) {
+  //   let resultData: ref<GenericMessageNotificationCloseData> = data as GenericMessageNotificationCloseData;
+  //   if Equals(resultData.result, GenericMessageNotificationResult.Confirm) {
+
+  //   };
+
+  //   this.popupToken = null;
+  // }
 
   private final func GetVirtualStoreName() -> String {
     return this.virtualStore.storeName;
@@ -597,7 +685,20 @@ public class VirtualStoreController extends gameuiMenuGameController {
     return this.virtualStore.items;
   }
   
-  public final func SetTimeDilatation(enable: Bool) -> Void {
+  private final func SetTimeDilatation(enable: Bool) -> Void {
     TimeDilationHelper.SetTimeDilationWithProfile(this.player, "radialMenu", enable);
+  }
+
+  private final func GetStockItem(itemID: ItemID) -> ref<VirtualStockItem> {
+    for stockItem in this.virtualStock {
+      if Equals(stockItem.itemID, itemID) {
+        return stockItem;
+      };
+    };
+    return null;
+  }
+
+  public final func GetPlayerMoney() -> Int32 {
+    return GameInstance.GetTransactionSystem(this.player.GetGame()).GetItemQuantity(this.player, MarketSystem.Money());
   }
 }

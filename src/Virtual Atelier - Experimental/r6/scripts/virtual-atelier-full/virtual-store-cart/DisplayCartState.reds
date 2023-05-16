@@ -27,7 +27,7 @@ protected cb func OnAtelierCartStateChangedEvent(evt: ref<AtelierCartStateChange
   this.cartIndicator.SetVisible(isAddedToCart);
   let scale: Float;
   if isAddedToCart {
-    scale = 0.9;
+    scale = 0.97;
   } else {
     scale = 1.0;
   };

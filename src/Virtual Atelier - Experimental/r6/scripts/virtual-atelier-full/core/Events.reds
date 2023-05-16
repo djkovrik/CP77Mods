@@ -67,3 +67,13 @@ public class AtelierStoresRefreshEvent extends Event {
     return evt;
   }
 }
+
+public class VirtualAtelierControlClickEvent extends Event {
+  let name: CName;
+
+  public static func Create(name: CName) -> ref<VirtualAtelierControlClickEvent> {
+    let evt: ref<VirtualAtelierControlClickEvent> = new VirtualAtelierControlClickEvent();
+    evt.name = name;
+    return evt;
+  }
+}

@@ -2,36 +2,81 @@ module VirtualAtelier.Systems
 
 public class VirtualAtelierCartManager extends ScriptableSystem {
 
-  private let cart: array<ItemID>;
+  private let cart: ref<inkHashMap>;
 
   public static func GetInstance(gi: GameInstance) -> ref<VirtualAtelierCartManager> {
     let system: ref<VirtualAtelierCartManager> = GameInstance.GetScriptableSystemsContainer(gi).Get(n"VirtualAtelier.Systems.VirtualAtelierCartManager") as VirtualAtelierCartManager;
     return system;
   }
 
-  public final func AddToCart(itemID: ItemID) -> Bool {
-    if !this.IsAddedToCart(itemID) {
-      ArrayPush(this.cart, itemID);
+  private func OnPlayerAttach(request: ref<PlayerAttachRequest>) {
+    this.cart = new inkHashMap();
+  }
+
+  public final func AddToCart(stockItem: ref<VirtualStockItem>) -> Bool {
+    let itemID: ItemID;
+    let cartItem: ref<VirtualCartItem>;
+    if IsDefined(stockItem) {
+      itemID = stockItem.itemID;
+      cartItem = this.GetOrCreateCartItem(stockItem);
+      cartItem.purchaseAmount = cartItem.purchaseAmount + 1;
+      if this.IsAddedToCart(itemID) {
+        this.cart.Set(this.Hash(itemID), cartItem);
+      } else {
+        this.cart.Insert(this.Hash(itemID), cartItem);
+      };
       return true;
+    } else {
+      return false;
     };
 
     return false;
   }
 
-  public final func RemoveFromCart(itemID: ItemID) -> Bool {
-    if this.IsAddedToCart(itemID) {
-      ArrayRemove(this.cart, itemID);
-      return true;
+  public final func RemoveFromCart(stockItem: ref<VirtualStockItem>) -> Bool {
+    let itemID: ItemID;
+    if IsDefined(stockItem) {
+      itemID = stockItem.itemID;
+      if this.IsAddedToCart(itemID) {
+        this.cart.Remove(this.Hash(itemID));
+        return true;
+      } else {
+        return false;
+      };
     };
-    
+
     return false;
   }
 
   public final func IsAddedToCart(itemID: ItemID) -> Bool {
-    return ArrayContains(this.cart, itemID);
+    return this.cart.KeyExist(this.Hash(itemID));
+  }
+
+  public final func GetCartSize() -> Int32 {
+    let values: array<wref<IScriptable>>;
+    this.cart.GetValues(values);
+    return ArraySize(values);
   }
 
   public final func ClearCart() -> Void {
-    ArrayClear(this.cart);
+    this.cart.Clear();
+  }
+
+  private func GetOrCreateCartItem(stockItem: ref<VirtualStockItem>) -> ref<VirtualCartItem> {
+    let hash: Uint64 = this.Hash(stockItem.itemID);
+    let cartItem: ref<VirtualCartItem>;
+    if this.cart.KeyExist(hash) {
+      cartItem = this.cart.Get(hash) as VirtualCartItem;
+    } else {
+      cartItem = new VirtualCartItem();
+      cartItem.stockItem = stockItem;
+      cartItem.purchaseAmount = 0;
+    }
+
+    return cartItem;
+  }
+
+  private final func Hash(itemID: ItemID) -> Uint64 {
+    return ItemID.GetCombinedHash(itemID);
   }
 }

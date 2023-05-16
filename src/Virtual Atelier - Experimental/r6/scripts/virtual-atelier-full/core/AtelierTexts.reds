@@ -16,4 +16,6 @@ public class AtelierTexts {
   public static func ButtonBuy() -> String = "Buy"
   public static func ButtonClear() -> String = "Clear"
   public static func ButtonAddAll() -> String = "Add all"
+  public static func ConfirmationAddAll() -> String = "Add all items from this store to cart?"
+  public static func ConfirmationRemoveAll() -> String = "Remove all added items from cart?"
 }
