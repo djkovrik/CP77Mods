@@ -618,9 +618,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
   }
 
   private func RefreshCartState() -> Void {
-    if IsDefined(this.lastItemHoverOverEvent) {
-      this.uiSystem.QueueEvent(AtelierCartStateChangedEvent.Create(this.storeCartManager));
-    };
+    this.uiSystem.QueueEvent(AtelierCartStateChangedEvent.Create(this.storeCartManager));
   }
 
   private func RefreshCartControls() -> Void {
@@ -640,36 +638,41 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.cartButtonAddAll.SetEnabled(addAllButtonEnabled);
   }
 
-  // TODO GenericMessageNotificationType.ConfirmCancel
   private func ShowAddAllConfirmationPopup() -> Void {
-    LogChannel(n"DEBUG", "ShowAddAllConfirmationPopup");
-    // this.popupToken = GenericMessageNotification.Show(this, this.virtualStore.storeName, AtelierTexts.ConfirmationAddAll());
-    // this.popupToken.RegisterListener(this, n"OnAddAllConfirmationPopupClosed");
+    this.popupToken = GenericMessageNotification.Show(this, this.virtualStore.storeName, AtelierTexts.ConfirmationAddAll(), GenericMessageNotificationType.ConfirmCancel);
+    this.popupToken.RegisterListener(this, n"OnAddAllConfirmationPopupClosed");
   }
 
   private func ShowRemoveAllConfirmationPopup() -> Void {
-    LogChannel(n"DEBUG", "ShowRemoveAllConfirmationPopup");
-    // this.popupToken = GenericMessageNotification.Show(this, this.virtualStore.storeName, AtelierTexts.ConfirmationRemoveAll());
-    // this.popupToken.RegisterListener(this, n"OnRemoveAllConfirmationPopupClosed");
+    this.popupToken = GenericMessageNotification.Show(this, this.virtualStore.storeName, AtelierTexts.ConfirmationRemoveAll(), GenericMessageNotificationType.ConfirmCancel);
+    this.popupToken.RegisterListener(this, n"OnRemoveAllConfirmationPopupClosed");
   }
 
-  // protected cb func OnAddAllConfirmationPopupClosed(data: ref<inkGameNotificationData>) {
-  //   let resultData: ref<GenericMessageNotificationCloseData> = data as GenericMessageNotificationCloseData;
-  //   if Equals(resultData.result, GenericMessageNotificationResult.Confirm) {
+  protected cb func OnAddAllConfirmationPopupClosed(data: ref<inkGameNotificationData>) {
+    let resultData: ref<GenericMessageNotificationCloseData> = data as GenericMessageNotificationCloseData;
+    if Equals(resultData.result, GenericMessageNotificationResult.Confirm) {
+      for stockItem in this.virtualStock {
+        this.storeCartManager.AddToCart(stockItem);
+      };
+      this.allItemsAdded = true;
+      this.RefreshCartState();
+      this.RefreshCartControls();
+    };
 
-  //   };
+    this.popupToken = null;
+  }
 
-  //   this.popupToken = null;
-  // }
+  protected cb func OnRemoveAllConfirmationPopupClosed(data: ref<inkGameNotificationData>) {
+    let resultData: ref<GenericMessageNotificationCloseData> = data as GenericMessageNotificationCloseData;
+    if Equals(resultData.result, GenericMessageNotificationResult.Confirm) {
+      this.storeCartManager.ClearCart();
+      this.allItemsAdded = false;
+      this.RefreshCartState();
+      this.RefreshCartControls();
+    };
 
-  // protected cb func OnRemoveAllConfirmationPopupClosed(data: ref<inkGameNotificationData>) {
-  //   let resultData: ref<GenericMessageNotificationCloseData> = data as GenericMessageNotificationCloseData;
-  //   if Equals(resultData.result, GenericMessageNotificationResult.Confirm) {
-
-  //   };
-
-  //   this.popupToken = null;
-  // }
+    this.popupToken = null;
+  }
 
   private final func GetVirtualStoreName() -> String {
     return this.virtualStore.storeName;
