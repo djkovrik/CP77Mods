@@ -19,7 +19,7 @@ protected cb func OnInitialize() -> Bool {
 protected cb func OnPreviewInitialized() -> Bool {
   wrappedMethod();
 
-  if this.atelierActive && this.m_isNotification {
+  if this.atelierActive {
     this.previewManager.InitializePuppet(this.GetGamePuppet());
     this.previewManager.InitializeCompatibilityHelper(this);
   };
@@ -39,6 +39,13 @@ protected cb func OnUninitialize() -> Bool {
 protected cb func OnGlobalPress(e: ref<inkPointerEvent>) -> Bool {
   if e.IsAction(n"mouse_left") {
     this.isLeftMouseDown = true;
+  };
+}
+
+@wrapMethod(WardrobeSetPreviewGameController)
+protected cb func OnPress(e: ref<inkPointerEvent>) -> Bool {
+  if !this.atelierActive {
+    wrappedMethod(e);
   };
 }
 

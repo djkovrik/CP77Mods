@@ -15,7 +15,6 @@ public class VirtualStoreController extends gameuiMenuGameController {
   private let questsSystem: wref<QuestsSystem>;
   private let uiSystem: wref<UISystem>;
   private let uiScriptableSystem: wref<UIScriptableSystem>;
-  private let previewPopupToken: ref<inkGameNotificationToken>;
   private let vendorDataManager: ref<VendorDataManager>;
   private let inventoryManager: ref<InventoryDataManagerV2>;
   private let config: ref<VirtualAtelierConfig>;
@@ -56,7 +55,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.previewManager = VirtualAtelierPreviewManager.GetInstance(this.player.GetGame());
     this.previewManager.SetPreviewState(true);
     this.storeCartManager = VirtualAtelierCartManager.GetInstance(this.player.GetGame());
-    this.previewPopupToken = AtelierNotificationTokensHelper.GetGarmentPreviewNotificationToken(this, ItemDisplayContext.VendorPlayer) as inkGameNotificationToken;
+    this.SpawnPreviewPuppet();
     this.storesManager = VirtualAtelierStoresManager.GetInstance(this.player.GetGame());
     this.virtualStore = this.storesManager.GetCurrentStore();
     this.questsSystem = GameInstance.GetQuestsSystem(this.player.GetGame());
@@ -88,7 +87,6 @@ public class VirtualStoreController extends gameuiMenuGameController {
   protected cb func OnUninitialize() -> Bool {
     this.storeCartManager.ClearCart();
     this.previewManager.SetPreviewState(false);
-    this.previewPopupToken.TriggerCallback(null);
     this.questsSystem.SetFact(n"disable_tutorials", this.currentTutorialsFact);
     this.storeDataView.SetSource(null);
     this.storeListController.SetSource(null);
@@ -645,13 +643,13 @@ public class VirtualStoreController extends gameuiMenuGameController {
   // TODO GenericMessageNotificationType.ConfirmCancel
   private func ShowAddAllConfirmationPopup() -> Void {
     LogChannel(n"DEBUG", "ShowAddAllConfirmationPopup");
-    this.popupToken = GenericMessageNotification.Show(this, this.virtualStore.storeName, AtelierTexts.ConfirmationAddAll());
+    // this.popupToken = GenericMessageNotification.Show(this, this.virtualStore.storeName, AtelierTexts.ConfirmationAddAll());
     // this.popupToken.RegisterListener(this, n"OnAddAllConfirmationPopupClosed");
   }
 
   private func ShowRemoveAllConfirmationPopup() -> Void {
     LogChannel(n"DEBUG", "ShowRemoveAllConfirmationPopup");
-    this.popupToken = GenericMessageNotification.Show(this, this.virtualStore.storeName, AtelierTexts.ConfirmationRemoveAll());
+    // this.popupToken = GenericMessageNotification.Show(this, this.virtualStore.storeName, AtelierTexts.ConfirmationRemoveAll());
     // this.popupToken.RegisterListener(this, n"OnRemoveAllConfirmationPopupClosed");
   }
 
@@ -698,7 +696,14 @@ public class VirtualStoreController extends gameuiMenuGameController {
     return null;
   }
 
-  public final func GetPlayerMoney() -> Int32 {
+  private final func GetPlayerMoney() -> Int32 {
     return GameInstance.GetTransactionSystem(this.player.GetGame()).GetItemQuantity(this.player, MarketSystem.Money());
+  }
+
+  private final func SpawnPreviewPuppet() -> Void {
+    let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+    let wrapper: ref<inkCompoundWidget> = root.GetWidgetByPathName(n"wrapper") as inkCompoundWidget;
+    wrapper.SetInteractive(true);
+    this.SpawnFromExternal(wrapper, r"base\\gameplay\\gui\\virtual_atelier_preview.inkwidget", n"Root");
   }
 }
