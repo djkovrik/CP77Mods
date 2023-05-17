@@ -383,6 +383,25 @@ public class VirtualStoreController extends gameuiMenuGameController {
     playerMoneyValues.SetChildOrder(inkEChildOrder.Backward);
     playerMoneyValues.Reparent(balancesContainer);
 
+    let eddiesAmount: ref<inkText> = new inkText();
+    eddiesAmount.SetName(n"eddiesAmount");
+    eddiesAmount.SetAnchor(inkEAnchor.CenterRight);
+    eddiesAmount.SetAnchorPoint(new Vector2(0.5, 0.5));
+    eddiesAmount.SetHAlign(inkEHorizontalAlign.Right);
+    eddiesAmount.SetText("1000");
+    eddiesAmount.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+    eddiesAmount.SetFontSize(50);
+    eddiesAmount.SetFontStyle(n"Medium");
+    eddiesAmount.SetFitToContent(true);
+    eddiesAmount.SetLetterCase(textLetterCase.UpperCase);
+    eddiesAmount.SetMargin(new inkMargin(20.0, 0.0, 0.0, 0.0));
+    eddiesAmount.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    eddiesAmount.BindProperty(n"tintColor", n"MainColors.PanelRed");
+    eddiesAmount.BindProperty(n"fontSize", n"MainColors.ReadableFontSize");
+    eddiesAmount.BindProperty(n"fontWeight", n"MainColors.BodyFontWeight");
+    eddiesAmount.Reparent(playerMoneyValues);
+    this.playerMoney = eddiesAmount;
+
     let eddiesIcon: ref<inkImage> = new inkImage();
     eddiesIcon.SetName(n"eddiesIcon");
     eddiesIcon.SetAnchor(inkEAnchor.Centered);
@@ -400,25 +419,6 @@ public class VirtualStoreController extends gameuiMenuGameController {
     eddiesIcon.SetTileHAlign(inkEHorizontalAlign.Center);
     eddiesIcon.SetTileVAlign(inkEVerticalAlign.Center);
     eddiesIcon.Reparent(playerMoneyValues);
-
-    let eddiesAmount: ref<inkText> = new inkText();
-    eddiesAmount.SetName(n"eddiesAmount");
-    eddiesAmount.SetAnchor(inkEAnchor.CenterRight);
-    eddiesAmount.SetAnchorPoint(new Vector2(0.5, 0.5));
-    eddiesAmount.SetHAlign(inkEHorizontalAlign.Right);
-    eddiesAmount.SetText("1000");
-    eddiesAmount.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-    eddiesAmount.SetFontSize(50);
-    eddiesAmount.SetFontStyle(n"Medium");
-    eddiesAmount.SetFitToContent(true);
-    eddiesAmount.SetLetterCase(textLetterCase.UpperCase);
-    eddiesAmount.SetMargin(new inkMargin(0.0, 0.0, 20.0, 0.0));
-    eddiesAmount.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-    eddiesAmount.BindProperty(n"tintColor", n"MainColors.PanelRed");
-    eddiesAmount.BindProperty(n"fontSize", n"MainColors.ReadableFontSize");
-    eddiesAmount.BindProperty(n"fontWeight", n"MainColors.BodyFontWeight");
-    eddiesAmount.Reparent(playerMoneyValues);
-    this.playerMoney = eddiesAmount;
 
     // Cart
     let cartMoneyHeader: ref<inkText> = new inkText();
@@ -446,6 +446,25 @@ public class VirtualStoreController extends gameuiMenuGameController {
     cartMoneyValues.SetChildOrder(inkEChildOrder.Backward);
     cartMoneyValues.Reparent(balancesContainer);
 
+    let cartEddiesAmount: ref<inkText> = new inkText();
+    cartEddiesAmount.SetName(n"cartEddiesAmount");
+    cartEddiesAmount.SetAnchor(inkEAnchor.CenterRight);
+    cartEddiesAmount.SetAnchorPoint(new Vector2(0.5, 0.5));
+    cartEddiesAmount.SetHAlign(inkEHorizontalAlign.Right);
+    cartEddiesAmount.SetText("0");
+    cartEddiesAmount.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+    cartEddiesAmount.SetFontSize(50);
+    cartEddiesAmount.SetFontStyle(n"Medium");
+    cartEddiesAmount.SetFitToContent(true);
+    cartEddiesAmount.SetLetterCase(textLetterCase.UpperCase);
+    cartEddiesAmount.SetMargin(new inkMargin(20.0, 0.0, 0.0, 0.0));
+    cartEddiesAmount.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    cartEddiesAmount.BindProperty(n"tintColor", n"MainColors.PanelRed");
+    cartEddiesAmount.BindProperty(n"fontSize", n"MainColors.ReadableFontSize");
+    cartEddiesAmount.BindProperty(n"fontWeight", n"MainColors.BodyFontWeight");
+    cartEddiesAmount.Reparent(cartMoneyValues);
+    this.cartMoney = cartEddiesAmount;
+
     let cartEddiesIcon: ref<inkImage> = new inkImage();
     cartEddiesIcon.SetName(n"cartEddiesIcon");
     cartEddiesIcon.SetAnchor(inkEAnchor.Centered);
@@ -463,25 +482,6 @@ public class VirtualStoreController extends gameuiMenuGameController {
     cartEddiesIcon.SetTileHAlign(inkEHorizontalAlign.Center);
     cartEddiesIcon.SetTileVAlign(inkEVerticalAlign.Center);
     cartEddiesIcon.Reparent(cartMoneyValues);
-
-    let cartEddiesAmount: ref<inkText> = new inkText();
-    cartEddiesAmount.SetName(n"cartEddiesAmount");
-    cartEddiesAmount.SetAnchor(inkEAnchor.CenterRight);
-    cartEddiesAmount.SetAnchorPoint(new Vector2(0.5, 0.5));
-    cartEddiesAmount.SetHAlign(inkEHorizontalAlign.Right);
-    cartEddiesAmount.SetText("0");
-    cartEddiesAmount.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-    cartEddiesAmount.SetFontSize(50);
-    cartEddiesAmount.SetFontStyle(n"Medium");
-    cartEddiesAmount.SetFitToContent(true);
-    cartEddiesAmount.SetLetterCase(textLetterCase.UpperCase);
-    cartEddiesAmount.SetMargin(new inkMargin(0.0, 0.0, 20.0, 0.0));
-    cartEddiesAmount.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-    cartEddiesAmount.BindProperty(n"tintColor", n"MainColors.PanelRed");
-    cartEddiesAmount.BindProperty(n"fontSize", n"MainColors.ReadableFontSize");
-    cartEddiesAmount.BindProperty(n"fontWeight", n"MainColors.BodyFontWeight");
-    cartEddiesAmount.Reparent(cartMoneyValues);
-    this.cartMoney = cartEddiesAmount;
   }
 
   private final func InitializeDataSource() -> Void {

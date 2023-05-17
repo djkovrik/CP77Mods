@@ -1,20 +1,30 @@
 import VirtualAtelier.Systems.VirtualAtelierCartManager
+import VirtualAtelier.UI.VirtualAtelierControlStyle
+
+@addField(InventoryItemDisplayController)
+public let cartBackground: wref<inkImage>;
 
 @wrapMethod(InventoryItemDisplayController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
+  let source: ref<inkImage> = inkWidgetRef.Get(this.m_iconicTint) as inkImage;
+  let container: ref<inkCompoundWidget> = source.GetParentWidget() as inkCompoundWidget;
+  container.RemoveChildByName(n"cartBg");
   let indicator: ref<inkImage> = new inkImage();
-  indicator.SetName(n"bg1");
-  indicator.SetAnchor(inkEAnchor.Fill);
-  indicator.SetAnchorPoint(new Vector2(0.5, 0.5));
-  indicator.SetNineSliceScale(true);
-  indicator.SetAtlasResource(r"base\\gameplay\\gui\\common\\shapes\\atlas_shapes_sync.inkatlas");
-  indicator.SetTexturePart(n"item_bg");
-  indicator.SetOpacity(0.2);
+  indicator.SetName(n"cartBg");
+  indicator.SetAnchor(source.GetAnchor());
+  indicator.SetAnchorPoint(source.GetAnchorPoint());
+  indicator.SetNineSliceScale(source.UsesNineSliceScale());
+  indicator.SetAtlasResource(r"base\\gameplay\\gui\\fullscreen\\inventory\\atlas_inventory.inkatlas");
+  indicator.SetTexturePart(source.GetTexturePart());
+  indicator.SetOpacity(source.GetOpacity());
   indicator.SetVisible(false);
+  indicator.SetSize(source.GetSize());
+  indicator.SetTileHAlign(source.GetTileHAlign());
+  indicator.SetTileVAlign(source.GetTileVAlign());
   indicator.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-  indicator.BindProperty(n"tintColor", n"MainColors.ActiveGreen");
-  indicator.Reparent(this.GetRootCompoundWidget(), 0);
+  indicator.BindProperty(n"tintColor", VirtualAtelierControlStyle.CartItemBackground());
+  indicator.Reparent(container, 20);
   this.cartIndicator = indicator;
 }
 
