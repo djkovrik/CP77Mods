@@ -29,6 +29,8 @@ public class VirtualStoreController extends gameuiMenuGameController {
   private let vendorSortingButton: ref<inkWidget>;
   private let sortingDropdown: ref<inkWidget>;
   private let searchInput: wref<HubTextInput>;
+  private let playerMoney: wref<inkText>;
+  private let cartMoney: wref<inkText>;
 
   // Cart
   private let cartIcon: wref<VirtualCartImageButton>;
@@ -51,37 +53,18 @@ public class VirtualStoreController extends gameuiMenuGameController {
   private let allItemsAdded: Bool;
 
   protected cb func OnInitialize() -> Bool {
-    this.player = this.GetPlayerControlledObject() as PlayerPuppet;
-    this.previewManager = VirtualAtelierPreviewManager.GetInstance(this.player.GetGame());
-    this.previewManager.SetPreviewState(true);
-    this.storeCartManager = VirtualAtelierCartManager.GetInstance(this.player.GetGame());
-    this.SpawnPreviewPuppet();
-    this.storesManager = VirtualAtelierStoresManager.GetInstance(this.player.GetGame());
-    this.virtualStore = this.storesManager.GetCurrentStore();
-    this.questsSystem = GameInstance.GetQuestsSystem(this.player.GetGame());
-    this.uiSystem = GameInstance.GetUISystem(this.player.GetGame());
-    this.uiScriptableSystem = UIScriptableSystem.GetInstance(this.player.GetGame());
-    this.vendorDataManager = new VendorDataManager();
-    this.vendorDataManager.Initialize(this.player, this.player.GetEntityID());
-    this.inventoryManager = new InventoryDataManagerV2();
-    this.inventoryManager.Initialize(this.player);
-    this.config = VirtualAtelierConfig.Get();
-
-    this.currentTutorialsFact = this.questsSystem.GetFact(n"disable_tutorials");
-    this.questsSystem.SetFact(n"disable_tutorials", 1);
-
-    this.lastVendorFilter = ItemFilterCategory.AllItems;
-
-    this.InitializeWidgetRefs();
-    this.InitializeWidgetData();
+    this.InitializeCoreSystems();
+    this.InitializeWidgets();
+    this.InitializeDataSource();
     this.InitializeListeners();
     this.SetupDropdown();
 
-    this.SetTimeDilatation(true);
-    this.PlaySound(n"GameMenu", n"OnOpen");
-
     this.PopulateVirtualShop();
     this.RefreshCartControls();
+    this.RefreshMoneyLabels();
+
+    this.SetTimeDilatation(true);
+    this.PlaySound(n"GameMenu", n"OnOpen");
   }
 
   protected cb func OnUninitialize() -> Bool {
@@ -283,8 +266,32 @@ public class VirtualStoreController extends gameuiMenuGameController {
     }
   }
 
-  private func InitializeWidgetRefs() -> Void {
+  private final func InitializeCoreSystems() -> Void {
+    this.player = this.GetPlayerControlledObject() as PlayerPuppet;
+    this.previewManager = VirtualAtelierPreviewManager.GetInstance(this.player.GetGame());
+    this.previewManager.SetPreviewState(true);
+    this.storeCartManager = VirtualAtelierCartManager.GetInstance(this.player.GetGame());
+    this.SpawnPreviewPuppet();
+    this.storesManager = VirtualAtelierStoresManager.GetInstance(this.player.GetGame());
+    this.virtualStore = this.storesManager.GetCurrentStore();
+    this.questsSystem = GameInstance.GetQuestsSystem(this.player.GetGame());
+    this.uiSystem = GameInstance.GetUISystem(this.player.GetGame());
+    this.uiScriptableSystem = UIScriptableSystem.GetInstance(this.player.GetGame());
+    this.vendorDataManager = new VendorDataManager();
+    this.vendorDataManager.Initialize(this.player, this.player.GetEntityID());
+    this.inventoryManager = new InventoryDataManagerV2();
+    this.inventoryManager.Initialize(this.player);
+    this.config = VirtualAtelierConfig.Get();
+
+    this.currentTutorialsFact = this.questsSystem.GetFact(n"disable_tutorials");
+    this.questsSystem.SetFact(n"disable_tutorials", 1);
+
+    this.lastVendorFilter = ItemFilterCategory.AllItems;
+  }
+
+  private final func InitializeWidgets() -> Void {
     let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+    let wrapper: wref<inkCompoundWidget> = root.GetWidget(n"wrapper/wrapper") as inkCompoundWidget;
     let scrollable: ref<inkWidget> = root.GetWidget(n"wrapper/wrapper/vendorPanel/inventoryContainer");
     let grid: ref<inkWidget> = root.GetWidget(n"wrapper/wrapper/vendorPanel/inventoryContainer/stash_scroll_area_cache/scrollArea/vendor_virtualgrid");
     let vendorHeader: ref<inkCompoundWidget> = root.GetWidget(n"wrapper/wrapper/vendorPanel/vendorHeader/vendoHeaderWrapper") as inkCompoundWidget;
@@ -299,6 +306,9 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.vendorName = vendorHeader.GetWidget(n"vendorNameWrapper/value") as inkText;
     this.vendorSortingButton = root.GetWidget(n"wrapper/wrapper/vendorPanel/vendorHeader/inkHorizontalPanelWidget2/dropdownButton5");
     this.sortingDropdown = root.GetWidget(n"dropdownContainer");
+
+    this.vendorName.SetText(this.GetVirtualStoreName());
+    AtelierButtonHintsHelper.ToggleAtelierControlHints(this.buttonHintsController, this.player, true);
 
     let cartControls: ref<inkHorizontalPanel> = new inkHorizontalPanel();
     cartControls.SetName(n"cartControls");
@@ -339,9 +349,140 @@ public class VirtualStoreController extends gameuiMenuGameController {
     searchInput.RegisterToCallback(n"OnInput", this, n"OnSearchInput");
     searchInput.Reparent(searchContainer);
     this.searchInput = searchInput;
+
+    let balancesContainer: ref<inkVerticalPanel> = new inkVerticalPanel();
+    balancesContainer.SetName(n"balancesContainer");
+    balancesContainer.SetAnchor(inkEAnchor.TopCenter);
+    balancesContainer.SetAnchorPoint(new Vector2(1.0, 0.5));
+    balancesContainer.SetMargin(new inkMargin(0.0, 200.0, 0.0, 0.0));
+    balancesContainer.SetSize(new Vector2(800.0, 400.0));
+    balancesContainer.Reparent(wrapper);
+
+    // Player
+    let playerMoneyHeader: ref<inkText> = new inkText();
+    playerMoneyHeader.SetName(n"playerMoneyHeader");
+    playerMoneyHeader.SetAnchor(inkEAnchor.CenterRight);
+    playerMoneyHeader.SetHAlign(inkEHorizontalAlign.Right);
+    playerMoneyHeader.SetText(AtelierTexts.PlayerMoney());
+    playerMoneyHeader.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+    playerMoneyHeader.SetFontSize(38);
+    playerMoneyHeader.SetFontStyle(n"Medium");
+    playerMoneyHeader.SetLetterCase(textLetterCase.UpperCase);
+    playerMoneyHeader.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    playerMoneyHeader.BindProperty(n"tintColor", n"MainColors.PanelRed");
+    playerMoneyHeader.BindProperty(n"fontSize", n"MainColors.ReadableSmall");
+    playerMoneyHeader.BindProperty(n"fontWeight", n"MainColors.BodyFontWeight");
+    playerMoneyHeader.SetFitToContent(true);
+    playerMoneyHeader.Reparent(balancesContainer);
+
+    let playerMoneyValues: ref<inkHorizontalPanel> = new inkHorizontalPanel();
+    playerMoneyValues.SetName(n"playerMoneyValues");
+    playerMoneyValues.SetAnchor(inkEAnchor.CenterRight);
+    playerMoneyValues.SetHAlign(inkEHorizontalAlign.Right);
+    playerMoneyValues.SetFitToContent(true);
+    playerMoneyValues.Reparent(balancesContainer);
+
+    let eddiesIcon: ref<inkImage> = new inkImage();
+    eddiesIcon.SetName(n"eddiesIcon");
+    eddiesIcon.SetAnchor(inkEAnchor.Centered);
+    eddiesIcon.SetAnchorPoint(new Vector2(0.5, 0.5));
+    eddiesIcon.SetHAlign(inkEHorizontalAlign.Right);
+    eddiesIcon.SetAtlasResource(r"base\\gameplay\\gui\\common\\icons\\atlas_cash.inkatlas");
+    eddiesIcon.SetTexturePart(n"cash_symbol_normal");
+    eddiesIcon.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    eddiesIcon.BindProperty(n"tintColor", n"MainColors.Yellow");
+    eddiesIcon.SetSize(new Vector2(58.0, 35.0));
+    eddiesIcon.SetBrushMirrorType(inkBrushMirrorType.NoMirror);
+    eddiesIcon.SetBrushTileType(inkBrushTileType.NoTile);
+    eddiesIcon.SetContentHAlign(inkEHorizontalAlign.Center);
+    eddiesIcon.SetContentVAlign(inkEVerticalAlign.Center);
+    eddiesIcon.SetTileHAlign(inkEHorizontalAlign.Center);
+    eddiesIcon.SetTileVAlign(inkEVerticalAlign.Center);
+    eddiesIcon.Reparent(playerMoneyValues);
+
+    let eddiesAmount: ref<inkText> = new inkText();
+    eddiesAmount.SetName(n"eddiesAmount");
+    eddiesAmount.SetAnchor(inkEAnchor.CenterRight);
+    eddiesAmount.SetAnchorPoint(new Vector2(0.5, 0.5));
+    eddiesAmount.SetHAlign(inkEHorizontalAlign.Right);
+    eddiesAmount.SetText("1000");
+    eddiesAmount.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+    eddiesAmount.SetFontSize(50);
+    eddiesAmount.SetFontStyle(n"Medium");
+    eddiesAmount.SetFitToContent(true);
+    eddiesAmount.SetLetterCase(textLetterCase.UpperCase);
+    eddiesAmount.SetMargin(new inkMargin(24.0, 0.0, 0.0, 0.0));
+    eddiesAmount.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    eddiesAmount.BindProperty(n"tintColor", n"MainColors.PanelRed");
+    eddiesAmount.BindProperty(n"fontSize", n"MainColors.ReadableFontSize");
+    eddiesAmount.BindProperty(n"fontWeight", n"MainColors.BodyFontWeight");
+    eddiesAmount.Reparent(playerMoneyValues);
+    this.playerMoney = eddiesAmount;
+
+    // Cart
+    let cartMoneyHeader: ref<inkText> = new inkText();
+    cartMoneyHeader.SetName(n"cartMoneyHeader");
+    cartMoneyHeader.SetAnchor(inkEAnchor.CenterRight);
+    cartMoneyHeader.SetHAlign(inkEHorizontalAlign.Right);
+    cartMoneyHeader.SetText(AtelierTexts.Cart());
+    cartMoneyHeader.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+    cartMoneyHeader.SetFontSize(38);
+    cartMoneyHeader.SetFontStyle(n"Medium");
+    cartMoneyHeader.SetLetterCase(textLetterCase.UpperCase);
+    cartMoneyHeader.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    cartMoneyHeader.BindProperty(n"tintColor", n"MainColors.PanelRed");
+    cartMoneyHeader.BindProperty(n"fontSize", n"MainColors.ReadableSmall");
+    cartMoneyHeader.BindProperty(n"fontWeight", n"MainColors.BodyFontWeight");
+    cartMoneyHeader.SetFitToContent(true);
+    cartMoneyHeader.SetMargin(new inkMargin(0.0, 20.0, 0.0, 0.0));
+    cartMoneyHeader.Reparent(balancesContainer);
+
+    let cartMoneyValues: ref<inkHorizontalPanel> = new inkHorizontalPanel();
+    cartMoneyValues.SetName(n"cartMoneyValues");
+    cartMoneyValues.SetAnchor(inkEAnchor.CenterRight);
+    cartMoneyValues.SetHAlign(inkEHorizontalAlign.Right);
+    cartMoneyValues.SetFitToContent(true);
+    cartMoneyValues.Reparent(balancesContainer);
+
+    let cartEddiesIcon: ref<inkImage> = new inkImage();
+    cartEddiesIcon.SetName(n"cartEddiesIcon");
+    cartEddiesIcon.SetAnchor(inkEAnchor.Centered);
+    cartEddiesIcon.SetAnchorPoint(new Vector2(0.5, 0.5));
+    cartEddiesIcon.SetHAlign(inkEHorizontalAlign.Right);
+    cartEddiesIcon.SetAtlasResource(r"base\\gameplay\\gui\\common\\icons\\atlas_cash.inkatlas");
+    cartEddiesIcon.SetTexturePart(n"cash_symbol_normal");
+    cartEddiesIcon.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    cartEddiesIcon.BindProperty(n"tintColor", n"MainColors.Yellow");
+    cartEddiesIcon.SetSize(new Vector2(58.0, 35.0));
+    cartEddiesIcon.SetBrushMirrorType(inkBrushMirrorType.NoMirror);
+    cartEddiesIcon.SetBrushTileType(inkBrushTileType.NoTile);
+    cartEddiesIcon.SetContentHAlign(inkEHorizontalAlign.Center);
+    cartEddiesIcon.SetContentVAlign(inkEVerticalAlign.Center);
+    cartEddiesIcon.SetTileHAlign(inkEHorizontalAlign.Center);
+    cartEddiesIcon.SetTileVAlign(inkEVerticalAlign.Center);
+    cartEddiesIcon.Reparent(cartMoneyValues);
+
+    let cartEddiesAmount: ref<inkText> = new inkText();
+    cartEddiesAmount.SetName(n"cartEddiesAmount");
+    cartEddiesAmount.SetAnchor(inkEAnchor.CenterRight);
+    cartEddiesAmount.SetAnchorPoint(new Vector2(0.5, 0.5));
+    cartEddiesAmount.SetHAlign(inkEHorizontalAlign.Right);
+    cartEddiesAmount.SetText("0");
+    cartEddiesAmount.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+    cartEddiesAmount.SetFontSize(50);
+    cartEddiesAmount.SetFontStyle(n"Medium");
+    cartEddiesAmount.SetFitToContent(true);
+    cartEddiesAmount.SetLetterCase(textLetterCase.UpperCase);
+    cartEddiesAmount.SetMargin(new inkMargin(24.0, 0.0, 0.0, 0.0));
+    cartEddiesAmount.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    cartEddiesAmount.BindProperty(n"tintColor", n"MainColors.PanelRed");
+    cartEddiesAmount.BindProperty(n"fontSize", n"MainColors.ReadableFontSize");
+    cartEddiesAmount.BindProperty(n"fontWeight", n"MainColors.BodyFontWeight");
+    cartEddiesAmount.Reparent(cartMoneyValues);
+    this.cartMoney = cartEddiesAmount;
   }
 
-  private func InitializeWidgetData() -> Void {
+  private final func InitializeDataSource() -> Void {
     this.storeDataView = new VirtualStoreDataView();
     this.storeDataSource = new ScriptableDataSource();
     this.storeDataView.BindUIScriptableSystem(this.uiScriptableSystem);
@@ -350,9 +491,6 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.storeItemsClassifier = new VirtualStoreTemplateClassifier();
     this.storeListController.SetClassifier(this.storeItemsClassifier);
     this.storeListController.SetSource(this.storeDataView);
-
-    this.vendorName.SetText(this.GetVirtualStoreName());
-    AtelierButtonHintsHelper.ToggleAtelierControlHints(this.buttonHintsController, this.player, true);
   }
 
   private final func InitializeListeners() -> Void {
@@ -539,7 +677,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
   private func PopulateVirtualShop() -> Void {
     let i: Int32;
     let items: array<ref<IScriptable>>;
-    let playerMoney: Int32;
+    let currentPlayerMoney: Int32;
     let vendorInventory: array<InventoryItemData>;
     let vendorInventoryData: ref<VendorInventoryItemData>;
     let vendorInventorySize: Int32;
@@ -548,7 +686,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.FillVirtualStock();
     vendorInventory = this.ConvertGameDataIntoInventoryData(this.virtualStock, this.vendorDataManager.GetVendorInstance());
     vendorInventorySize = ArraySize(vendorInventory);
-    playerMoney = this.vendorDataManager.GetLocalPlayerCurrencyAmount();
+    currentPlayerMoney = this.vendorDataManager.GetLocalPlayerCurrencyAmount();
 
     AtelierDebug(s"Resulting list size: \(vendorInventorySize)", this.config);
 
@@ -564,7 +702,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
       InventoryItemData.SetIsEquippable(vendorInventoryData.ItemData, EquipmentSystem.GetInstance(this.player).GetPlayerData(this.player).IsEquippable(InventoryItemData.GetGameItemData(vendorInventoryData.ItemData)));
 
       vendorInventoryData.IsVendorItem = true;
-      vendorInventoryData.IsEnoughMoney = playerMoney >= Cast<Int32>(InventoryItemData.GetBuyPrice(vendorInventory[i]));
+      vendorInventoryData.IsEnoughMoney = currentPlayerMoney >= Cast<Int32>(InventoryItemData.GetBuyPrice(vendorInventory[i]));
       vendorInventoryData.IsDLCAddedActiveItem = this.uiScriptableSystem.IsDLCAddedActiveItem(ItemID.GetTDBID(InventoryItemData.GetID(vendorInventory[i])));
 
       this.inventoryManager.GetOrCreateInventoryItemSortData(vendorInventoryData.ItemData, this.uiScriptableSystem);      
@@ -611,6 +749,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.buttonHintsController.AddButtonHint(atelierActions.addToVirtualCart, hintLabel);
     this.RefreshCartState();
     this.RefreshCartControls();
+    this.RefreshMoneyLabels();
   }
 
   private func RefreshEquippedState() -> Void {
@@ -622,7 +761,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
   }
 
   private func RefreshCartControls() -> Void {
-    let playerMoney: Int32 = this.GetPlayerMoney();
+    let playerMoney: Int32 = this.storeCartManager.GetPlayerMoney();
     let cartSize: Int32 = this.storeCartManager.GetCartSize();
     this.cartIcon.SetCounter(cartSize);
 
@@ -636,6 +775,13 @@ public class VirtualStoreController extends gameuiMenuGameController {
     let addAllButtonEnabled: Bool = enoughMoneyForBuyAll && !this.allItemsAdded;
     this.cartButtonAddAll.Dim(!addAllButtonEnabled);
     this.cartButtonAddAll.SetEnabled(addAllButtonEnabled);
+  }
+
+  private func RefreshMoneyLabels() -> Void {
+    let playerAmount: Int32 = this.storeCartManager.GetPlayerMoney();
+    let cartAmount: Int32 = this.storeCartManager.GetCurrentCartPrice();
+    this.playerMoney.SetText(s"\(playerAmount)");
+    this.cartMoney.SetText(s"\(cartAmount)");
   }
 
   private func ShowAddAllConfirmationPopup() -> Void {
@@ -657,6 +803,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
       this.allItemsAdded = true;
       this.RefreshCartState();
       this.RefreshCartControls();
+      this.RefreshMoneyLabels();
     };
 
     this.popupToken = null;
@@ -669,6 +816,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
       this.allItemsAdded = false;
       this.RefreshCartState();
       this.RefreshCartControls();
+      this.RefreshMoneyLabels();
     };
 
     this.popupToken = null;
@@ -699,13 +847,8 @@ public class VirtualStoreController extends gameuiMenuGameController {
     return null;
   }
 
-  private final func GetPlayerMoney() -> Int32 {
-    return GameInstance.GetTransactionSystem(this.player.GetGame()).GetItemQuantity(this.player, MarketSystem.Money());
-  }
-
   private final func SpawnPreviewPuppet() -> Void {
-    let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
-    let wrapper: ref<inkCompoundWidget> = root.GetWidgetByPathName(n"wrapper") as inkCompoundWidget;
+    let wrapper: ref<inkCompoundWidget> = this.GetRootCompoundWidget().GetWidgetByPathName(n"wrapper") as inkCompoundWidget;
     wrapper.SetInteractive(true);
     this.SpawnFromExternal(wrapper, r"base\\gameplay\\gui\\virtual_atelier_preview.inkwidget", n"Root");
   }

@@ -2,6 +2,8 @@ module VirtualAtelier.Systems
 
 public class VirtualAtelierCartManager extends ScriptableSystem {
 
+  private let player: wref<PlayerPuppet>;
+  private let transactionSystem: wref<TransactionSystem>;
   private let cart: ref<inkHashMap>;
 
   public static func GetInstance(gi: GameInstance) -> ref<VirtualAtelierCartManager> {
@@ -10,6 +12,8 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
   }
 
   private func OnPlayerAttach(request: ref<PlayerAttachRequest>) {
+    this.player = GameInstance.GetPlayerSystem(this.GetGameInstance()).GetLocalPlayerMainGameObject() as PlayerPuppet;
+    this.transactionSystem = GameInstance.GetTransactionSystem(this.GetGameInstance());
     this.cart = new inkHashMap();
   }
 
@@ -60,6 +64,28 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
 
   public final func ClearCart() -> Void {
     this.cart.Clear();
+  }
+
+  public final func GetPlayerMoney() -> Int32 {
+    return this.transactionSystem.GetItemQuantity(this.player, MarketSystem.Money());
+  }
+
+  public final func GetCurrentCartPrice() -> Int32 {
+    let values: array<wref<IScriptable>>;
+    let current: ref<VirtualCartItem>;
+    let currentPrice: Float;
+    let total: Float = 0.0;
+
+    this.cart.GetValues(values);
+
+    for value in values {
+      current = value as VirtualCartItem;
+      currentPrice = current.stockItem.price * Cast<Float>(current.purchaseAmount);
+      total += currentPrice;
+    };
+
+
+    return Cast<Int32>(total);
   }
 
   private func GetOrCreateCartItem(stockItem: ref<VirtualStockItem>) -> ref<VirtualCartItem> {
