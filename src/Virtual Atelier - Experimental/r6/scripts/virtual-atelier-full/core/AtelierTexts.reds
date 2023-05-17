@@ -19,5 +19,5 @@ public class AtelierTexts {
   public static func ConfirmationAddAll() -> String = "Add all items from this store to cart?"
   public static func ConfirmationRemoveAll() -> String = "Remove all added items from cart?"
   public static func PlayerMoney() -> String = "Player's money"
-  public static func Cart() -> String = "Cart"
+  public static func Cart() -> String = "Checkout price"
 }

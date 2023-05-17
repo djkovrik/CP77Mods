@@ -10,7 +10,7 @@ import Codeware.UI.*
 public class VirtualStoreController extends gameuiMenuGameController {
   private let player: wref<PlayerPuppet>;
   private let previewManager: wref<VirtualAtelierPreviewManager>;
-  private let storeCartManager: wref<VirtualAtelierCartManager>;
+  private let cartManager: wref<VirtualAtelierCartManager>;
   private let storesManager: wref<VirtualAtelierStoresManager>;
   private let questsSystem: wref<QuestsSystem>;
   private let uiSystem: wref<UISystem>;
@@ -68,7 +68,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
   }
 
   protected cb func OnUninitialize() -> Bool {
-    this.storeCartManager.ClearCart();
+    this.cartManager.ClearCart();
     this.previewManager.SetPreviewState(false);
     this.questsSystem.SetFact(n"disable_tutorials", this.currentTutorialsFact);
     this.storeDataView.SetSource(null);
@@ -177,7 +177,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     let atelierActions: ref<AtelierActions> = AtelierActions.Get(this.player);
     let itemID: ItemID = InventoryItemData.GetID(evt.itemData);
     let isEquipped: Bool = this.previewManager.GetIsEquipped(itemID);
-    let isAddedToCart: Bool = this.storeCartManager.IsAddedToCart(itemID);
+    let isAddedToCart: Bool = this.cartManager.IsAddedToCart(itemID);
     let isWeapon: Bool = RPGManager.IsItemWeapon(itemID);
     let isClothing: Bool = RPGManager.IsItemClothing(itemID);
     let hintLabel: String;
@@ -270,7 +270,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.player = this.GetPlayerControlledObject() as PlayerPuppet;
     this.previewManager = VirtualAtelierPreviewManager.GetInstance(this.player.GetGame());
     this.previewManager.SetPreviewState(true);
-    this.storeCartManager = VirtualAtelierCartManager.GetInstance(this.player.GetGame());
+    this.cartManager = VirtualAtelierCartManager.GetInstance(this.player.GetGame());
     this.SpawnPreviewPuppet();
     this.storesManager = VirtualAtelierStoresManager.GetInstance(this.player.GetGame());
     this.virtualStore = this.storesManager.GetCurrentStore();
@@ -380,6 +380,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     playerMoneyValues.SetAnchor(inkEAnchor.CenterRight);
     playerMoneyValues.SetHAlign(inkEHorizontalAlign.Right);
     playerMoneyValues.SetFitToContent(true);
+    playerMoneyValues.SetChildOrder(inkEChildOrder.Backward);
     playerMoneyValues.Reparent(balancesContainer);
 
     let eddiesIcon: ref<inkImage> = new inkImage();
@@ -411,7 +412,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     eddiesAmount.SetFontStyle(n"Medium");
     eddiesAmount.SetFitToContent(true);
     eddiesAmount.SetLetterCase(textLetterCase.UpperCase);
-    eddiesAmount.SetMargin(new inkMargin(24.0, 0.0, 0.0, 0.0));
+    eddiesAmount.SetMargin(new inkMargin(0.0, 0.0, 20.0, 0.0));
     eddiesAmount.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     eddiesAmount.BindProperty(n"tintColor", n"MainColors.PanelRed");
     eddiesAmount.BindProperty(n"fontSize", n"MainColors.ReadableFontSize");
@@ -442,6 +443,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     cartMoneyValues.SetAnchor(inkEAnchor.CenterRight);
     cartMoneyValues.SetHAlign(inkEHorizontalAlign.Right);
     cartMoneyValues.SetFitToContent(true);
+    cartMoneyValues.SetChildOrder(inkEChildOrder.Backward);
     cartMoneyValues.Reparent(balancesContainer);
 
     let cartEddiesIcon: ref<inkImage> = new inkImage();
@@ -473,7 +475,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     cartEddiesAmount.SetFontStyle(n"Medium");
     cartEddiesAmount.SetFitToContent(true);
     cartEddiesAmount.SetLetterCase(textLetterCase.UpperCase);
-    cartEddiesAmount.SetMargin(new inkMargin(24.0, 0.0, 0.0, 0.0));
+    cartEddiesAmount.SetMargin(new inkMargin(0.0, 0.0, 20.0, 0.0));
     cartEddiesAmount.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     cartEddiesAmount.BindProperty(n"tintColor", n"MainColors.PanelRed");
     cartEddiesAmount.BindProperty(n"fontSize", n"MainColors.ReadableFontSize");
@@ -722,6 +724,8 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.ToggleFilter(this.filtersContainer, EnumInt(this.lastVendorFilter));
     this.filtersContainer.SetVisible(ArraySize(items) > 0);
     this.PlayLibraryAnimation(n"vendor_grid_show");
+
+    this.cartManager.StoreVendorInventory(vendorInventory);
   }
 
   private func HandleCartAction() -> Void {
@@ -731,16 +735,21 @@ public class VirtualStoreController extends gameuiMenuGameController {
 
     let atelierActions: ref<AtelierActions> = AtelierActions.Get(this.player);
     let itemID: ItemID = InventoryItemData.GetID(this.lastItemHoverOverEvent.itemData);
-    let isAddedToCart: Bool = this.storeCartManager.IsAddedToCart(itemID);
+    let isAddedToCart: Bool = this.cartManager.IsAddedToCart(itemID);
+    let isEnoughMoney: Bool = this.cartManager.PlayerHasEnoughMoneyFor(itemID);
     let hintLabel: String;
+
+    if !isEnoughMoney && !isAddedToCart {
+      return ;
+    };
 
     let stockItem: ref<VirtualStockItem> = this.GetStockItem(itemID);
     if isAddedToCart {
-      if this.storeCartManager.RemoveFromCart(stockItem) {
+      if this.cartManager.RemoveFromCart(stockItem) {
         hintLabel = GetLocalizedTextByKey(n"VA-Cart-Add");
       };
     } else {
-      if this.storeCartManager.AddToCart(stockItem) {
+      if this.cartManager.AddToCart(stockItem) {
         hintLabel = GetLocalizedTextByKey(n"VA-Cart-Remove");
       };
     };
@@ -750,6 +759,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.RefreshCartState();
     this.RefreshCartControls();
     this.RefreshMoneyLabels();
+    this.RefreshMoneyRequirements();
   }
 
   private func RefreshEquippedState() -> Void {
@@ -757,12 +767,16 @@ public class VirtualStoreController extends gameuiMenuGameController {
   }
 
   private func RefreshCartState() -> Void {
-    this.uiSystem.QueueEvent(AtelierCartStateChangedEvent.Create(this.storeCartManager));
+    this.uiSystem.QueueEvent(AtelierCartStateChangedEvent.Create(this.cartManager));
+  }
+
+  private func RefreshMoneyRequirements() -> Void {
+    this.uiSystem.QueueEvent(AtelierMoneyRequirementChangedEvent.Create(this.cartManager));
   }
 
   private func RefreshCartControls() -> Void {
-    let playerMoney: Int32 = this.storeCartManager.GetPlayerMoney();
-    let cartSize: Int32 = this.storeCartManager.GetCartSize();
+    let playerMoney: Int32 = this.cartManager.GetCurrentPlayerMoney();
+    let cartSize: Int32 = this.cartManager.GetCartSize();
     this.cartIcon.SetCounter(cartSize);
 
     let cartIsNotEmpty: Bool = cartSize > 0;
@@ -778,8 +792,8 @@ public class VirtualStoreController extends gameuiMenuGameController {
   }
 
   private func RefreshMoneyLabels() -> Void {
-    let playerAmount: Int32 = this.storeCartManager.GetPlayerMoney();
-    let cartAmount: Int32 = this.storeCartManager.GetCurrentCartPrice();
+    let playerAmount: Int32 = this.cartManager.GetCurrentPlayerMoney();
+    let cartAmount: Int32 = this.cartManager.GetCurrentGoodsPrice();
     this.playerMoney.SetText(s"\(playerAmount)");
     this.cartMoney.SetText(s"\(cartAmount)");
   }
@@ -798,7 +812,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     let resultData: ref<GenericMessageNotificationCloseData> = data as GenericMessageNotificationCloseData;
     if Equals(resultData.result, GenericMessageNotificationResult.Confirm) {
       for stockItem in this.virtualStock {
-        this.storeCartManager.AddToCart(stockItem);
+        this.cartManager.AddToCart(stockItem);
       };
       this.allItemsAdded = true;
       this.RefreshCartState();
@@ -812,11 +826,12 @@ public class VirtualStoreController extends gameuiMenuGameController {
   protected cb func OnRemoveAllConfirmationPopupClosed(data: ref<inkGameNotificationData>) {
     let resultData: ref<GenericMessageNotificationCloseData> = data as GenericMessageNotificationCloseData;
     if Equals(resultData.result, GenericMessageNotificationResult.Confirm) {
-      this.storeCartManager.ClearCart();
+      this.cartManager.ClearCart();
       this.allItemsAdded = false;
       this.RefreshCartState();
       this.RefreshCartControls();
       this.RefreshMoneyLabels();
+      this.RefreshMoneyRequirements();
     };
 
     this.popupToken = null;

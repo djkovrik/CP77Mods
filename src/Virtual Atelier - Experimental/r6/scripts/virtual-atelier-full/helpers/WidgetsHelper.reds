@@ -63,7 +63,7 @@ public abstract class AtelierWidgetsHelper {
 
   public static func OnToggleGarmentPreview(controller: ref<FullscreenVendorGameController>, isPreviewMode: Bool) {
     AtelierWidgetsHelper.TogglePlayerPanel(controller, isPreviewMode);
-    AtelierWidgetsHelper.ToggleVendorFilters(controller, isPreviewMode);
+    // AtelierWidgetsHelper.ToggleVendorFilters(controller, isPreviewMode);
     AtelierButtonHintsHelper.ToggleVendorButtonHints(controller, isPreviewMode);
   }
 }

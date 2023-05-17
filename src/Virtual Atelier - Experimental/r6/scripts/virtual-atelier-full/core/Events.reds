@@ -11,6 +11,16 @@ public class AtelierEquipStateChangedEvent extends Event {
   }
 }
 
+public class AtelierMoneyRequirementChangedEvent extends Event {
+  public let manager: wref<VirtualAtelierCartManager>;
+
+  public static func Create(manager: ref<VirtualAtelierCartManager>) -> ref<AtelierMoneyRequirementChangedEvent> {
+    let evt: ref<AtelierMoneyRequirementChangedEvent> = new AtelierMoneyRequirementChangedEvent();
+    evt.manager = manager;
+    return evt;
+  }
+}
+
 public class AtelierCartStateChangedEvent extends Event {
   public let manager: wref<VirtualAtelierCartManager>;
 

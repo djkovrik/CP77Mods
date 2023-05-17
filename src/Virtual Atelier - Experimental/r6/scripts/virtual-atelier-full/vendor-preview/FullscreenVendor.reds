@@ -22,8 +22,9 @@ protected cb func OnSetUserData(userData: ref<IScriptable>) -> Bool {
 
 @wrapMethod(FullscreenVendorGameController)
 protected cb func OnUninitialize() -> Bool {
-  this.SetPreviewStateActive(false);
+  this.previewManager.SetPreviewState(false);
   this.previewManager.RemovePreviewGarment();
+
   wrappedMethod();
 
   if NotEquals(this.m_itemPreviewPopupToken, null) {
@@ -49,10 +50,9 @@ protected cb func OnTogglePreviewMode(evt: ref<inkPointerEvent>) -> Bool {
 
 @addMethod(FullscreenVendorGameController)
 private final func ShowGarmentPreview() -> Void {
-  let displayContext: ItemDisplayContext;
+  let displayContext: ItemDisplayContext = ItemDisplayContext.Vendor;
   this.isPreviewMode = true;
-  this.SetPreviewStateActive(true);
-  displayContext = ItemDisplayContext.Vendor;
+  this.previewManager.SetPreviewState(true);
   this.m_itemPreviewPopupToken = AtelierNotificationTokensHelper.GetGarmentPreviewNotificationToken(this, displayContext) as inkGameNotificationToken;
   this.m_itemPreviewPopupToken.RegisterListener(this, n"OnEquipPreviewClosed");
   AtelierWidgetsHelper.OnToggleGarmentPreview(this, true);
@@ -61,9 +61,8 @@ private final func ShowGarmentPreview() -> Void {
 @addMethod(FullscreenVendorGameController)
 protected cb func OnEquipPreviewClosed(data: ref<inkGameNotificationData>) -> Bool {
   this.isPreviewMode = false;
-  this.SetPreviewStateActive(false);
+  this.previewManager.SetPreviewState(false);
   this.m_itemPreviewPopupToken = null;
-  
   AtelierWidgetsHelper.OnToggleGarmentPreview(this, false);
 }
 
@@ -97,6 +96,7 @@ private final func HandleVirtualSlotClick(evt: ref<ItemDisplayClickEvent>) -> Vo
 
     if isClothing || isWeapon {
       this.previewManager.TogglePreviewItem(itemId);
+      this.RefreshEquippedState();
       if isEquipped {
         hintLabel = GetLocalizedTextByKey(n"UI-UserActions-Equip");
       } else {
@@ -116,8 +116,6 @@ protected cb func OnHandleGlobalInput(event: ref<inkPointerEvent>) -> Bool {
   wrappedMethod(event);
 
   let atelierActions: ref<AtelierActions> = AtelierActions.Get(this.GetPlayerControlledObject());
-  // let lastUsedPad: Bool = this.GetPlayerControlledObject().PlayerLastUsedPad();
-  // let lastUsedKBM: Bool = this.GetPlayerControlledObject().PlayerLastUsedKBM();
 
   switch true {
     case event.IsAction(atelierActions.togglePreviewVendor):
@@ -173,8 +171,13 @@ protected cb func OnInventoryItemHoverOver(evt: ref<ItemDisplayHoverOverEvent>) 
     this.m_lastItemHoverOverEvent = evt;
     this.RequestSetFocus(null);
 
-    let noCompare: InventoryItemData;
-    this.ShowTooltipsForItemController(evt.widget, noCompare, evt.itemData, evt.display.DEBUG_GetIconErrorInfo(), false);
+    if IsDefined(evt.uiInventoryItem) {
+      this.ShowTooltipsForUIInventoryItem(evt.widget, evt.uiInventoryItem);
+    } else {
+      this.ShowTooltipsForItemData(evt.widget, evt.itemData, evt.display.DEBUG_GetIconErrorInfo());
+    };
+  } else {
+    wrappedMethod(evt);
   };
 }
 
@@ -189,16 +192,38 @@ private final func GetIsVirtual() -> Bool {
 }
 
 @addMethod(FullscreenVendorGameController)
-private final func SetPreviewStateActive(active: Bool) -> Void {
-  this.previewManager.SetPreviewState(active);
+private final func ShowTooltipsForUIInventoryItem(targetWidget: wref<inkWidget>, inspectedItem: wref<UIInventoryItem>) -> Void {
+  let placement: gameuiETooltipPlacement = gameuiETooltipPlacement.RightTop;
+  let data: ref<UIInventoryItemTooltipWrapper>;
+  this.m_TooltipsManager.HideTooltips();
+  if IsDefined(inspectedItem) {
+    data = UIInventoryItemTooltipWrapper.Make(inspectedItem, this.m_vendorItemDisplayContext);
+    if Equals(inspectedItem.GetItemType(), gamedataItemType.Prt_Program) {
+      this.m_TooltipsManager.ShowTooltipAtWidget(n"programTooltip", targetWidget, data, placement);
+    } else {
+      if Equals(inspectedItem.GetEquipmentArea(), gamedataEquipmentArea.SystemReplacementCW) {
+        this.m_TooltipsManager.ShowTooltipAtWidget(n"cyberdeckTooltip", targetWidget, data, placement);
+      } else {
+        this.m_TooltipsManager.ShowTooltipAtWidget(n"itemTooltip", targetWidget, data, placement);
+      };
+    };
+  };
 }
 
 @addMethod(FullscreenVendorGameController)
-private final func ShowTooltipsForItemController(targetWidget: wref<inkWidget>, equippedItem: InventoryItemData, inspectedItemData: InventoryItemData, iconErrorInfo: ref<DEBUG_IconErrorInfo>, isBuybackStack: Bool) -> Void {
-  let data: ref<InventoryTooltipData>;
-  data = this.m_InventoryManager.GetTooltipDataForInventoryItem(inspectedItemData, InventoryItemData.IsEquipped(inspectedItemData), iconErrorInfo, InventoryItemData.IsVendorItem(inspectedItemData));
+private final func ShowTooltipsForItemData(targetWidget: wref<inkWidget>, inspectedItemData: InventoryItemData, iconErrorInfo: ref<DEBUG_IconErrorInfo>) -> Void {
+  let placement: gameuiETooltipPlacement = gameuiETooltipPlacement.RightTop;
+  let data: ref<InventoryTooltipData> = this.m_InventoryManager.GetTooltipDataForInventoryItem(inspectedItemData, InventoryItemData.IsEquipped(inspectedItemData), iconErrorInfo, InventoryItemData.IsVendorItem(inspectedItemData));
   data.displayContext = InventoryTooltipDisplayContext.Vendor;
-  data.isVirtualItem = true;
-  data.virtualInventoryItemData = inspectedItemData;
-  this.m_TooltipsManager.ShowTooltipAtWidget(n"itemTooltip", targetWidget, data, gameuiETooltipPlacement.RightTop);
+
+  this.m_TooltipsManager.HideTooltips();
+  if Equals(InventoryItemData.GetItemType(inspectedItemData), gamedataItemType.Prt_Program) {
+    this.m_TooltipsManager.ShowTooltipAtWidget(n"programTooltip", targetWidget, data, placement);
+  } else {
+    if Equals(InventoryItemData.GetEquipmentArea(inspectedItemData), gamedataEquipmentArea.SystemReplacementCW) {
+      this.m_TooltipsManager.ShowTooltipAtWidget(n"cyberdeckTooltip", targetWidget, data, placement);
+    } else {
+      this.m_TooltipsManager.ShowTooltipAtWidget(n"itemTooltip", targetWidget, data, placement);
+    };
+  };
 }

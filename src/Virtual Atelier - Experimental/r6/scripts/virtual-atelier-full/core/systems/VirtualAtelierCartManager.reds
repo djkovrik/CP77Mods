@@ -5,6 +5,9 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
   private let player: wref<PlayerPuppet>;
   private let transactionSystem: wref<TransactionSystem>;
   private let cart: ref<inkHashMap>;
+  private let vendorInventory: array<InventoryItemData>;
+  private let currentPlayerMoney: Int32;
+  private let currentGoodsPrice: Int32;
 
   public static func GetInstance(gi: GameInstance) -> ref<VirtualAtelierCartManager> {
     let system: ref<VirtualAtelierCartManager> = GameInstance.GetScriptableSystemsContainer(gi).Get(n"VirtualAtelier.Systems.VirtualAtelierCartManager") as VirtualAtelierCartManager;
@@ -15,6 +18,25 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
     this.player = GameInstance.GetPlayerSystem(this.GetGameInstance()).GetLocalPlayerMainGameObject() as PlayerPuppet;
     this.transactionSystem = GameInstance.GetTransactionSystem(this.GetGameInstance());
     this.cart = new inkHashMap();
+    this.RefreshCurrentBalances();
+  }
+
+  public final func StoreVendorInventory(inventory: array<InventoryItemData>) -> Void {
+    this.vendorInventory = inventory;
+  }
+
+  public final func PlayerHasEnoughMoneyFor(itemID: ItemID) -> Bool {
+    let price: Int32;
+    let availableMoney: Int32;
+    for item in this.vendorInventory {
+      if Equals(InventoryItemData.GetID(item), itemID) {
+        price = Cast<Int32>(InventoryItemData.GetBuyPrice(item));
+        availableMoney = this.GetCurrentPlayerMoney() - this.GetCurrentGoodsPrice();
+        return availableMoney >= price;
+      };
+    };
+
+    return false;
   }
 
   public final func AddToCart(stockItem: ref<VirtualStockItem>) -> Bool {
@@ -29,6 +51,7 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
       } else {
         this.cart.Insert(this.Hash(itemID), cartItem);
       };
+      this.RefreshCurrentBalances();
       return true;
     } else {
       return false;
@@ -43,6 +66,7 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
       itemID = stockItem.itemID;
       if this.IsAddedToCart(itemID) {
         this.cart.Remove(this.Hash(itemID));
+        this.RefreshCurrentBalances();
         return true;
       } else {
         return false;
@@ -64,13 +88,18 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
 
   public final func ClearCart() -> Void {
     this.cart.Clear();
+    this.currentGoodsPrice = 0;
   }
 
-  public final func GetPlayerMoney() -> Int32 {
-    return this.transactionSystem.GetItemQuantity(this.player, MarketSystem.Money());
+  public final func GetCurrentPlayerMoney() -> Int32 {
+    return this.currentPlayerMoney;
   }
 
-  public final func GetCurrentCartPrice() -> Int32 {
+  public final func GetCurrentGoodsPrice() -> Int32 {
+    return this.currentGoodsPrice;
+  }
+
+  private final func RefreshCurrentBalances() -> Void {
     let values: array<wref<IScriptable>>;
     let current: ref<VirtualCartItem>;
     let currentPrice: Float;
@@ -84,11 +113,11 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
       total += currentPrice;
     };
 
-
-    return Cast<Int32>(total);
+    this.currentGoodsPrice = Cast<Int32>(total);
+    this.currentPlayerMoney = this.transactionSystem.GetItemQuantity(this.player, MarketSystem.Money());
   }
 
-  private func GetOrCreateCartItem(stockItem: ref<VirtualStockItem>) -> ref<VirtualCartItem> {
+  private final func GetOrCreateCartItem(stockItem: ref<VirtualStockItem>) -> ref<VirtualCartItem> {
     let hash: Uint64 = this.Hash(stockItem.itemID);
     let cartItem: ref<VirtualCartItem>;
     if this.cart.KeyExist(hash) {
