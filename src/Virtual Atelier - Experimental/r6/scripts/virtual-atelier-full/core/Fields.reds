@@ -1,4 +1,5 @@
 import VirtualAtelier.Systems.VirtualAtelierPreviewManager
+import VirtualAtelier.Systems.VirtualAtelierCartManager
 import VirtualAtelier.Config.VirtualAtelierConfig
 import Codeware.UI.*
 
@@ -17,6 +18,9 @@ import Codeware.UI.*
 @addField(InventoryTooltipData) public let isVirtualItem: Bool;
 
 @addField(InventoryItemDisplayController) public let cartIndicator: wref<inkWidget>;
+@addField(InventoryItemDisplayController) public let cartManager: wref<VirtualAtelierCartManager>;
+@addField(InventoryItemDisplayController) public let previewManager: wref<VirtualAtelierPreviewManager>;
+
 @addField(VendorPanelData) public let virtualStore: ref<VirtualShop>;
 @addField(MinimalItemTooltipData) public let isVirtualItem: Bool;
 @addField(gameItemData) public let isVirtualItem: Bool;

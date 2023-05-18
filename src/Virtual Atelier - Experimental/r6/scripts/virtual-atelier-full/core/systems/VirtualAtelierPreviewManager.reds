@@ -47,30 +47,30 @@ public class VirtualAtelierPreviewManager extends ScriptableSystem {
     this.isPreviewActive = active;
   }
 
-  public func GetIsEquipped(itemId: ItemID) -> Bool {
-    return ArrayContains(this.givenItems, itemId);
+  public func GetIsEquipped(itemID: ItemID) -> Bool {
+    return ArrayContains(this.givenItems, itemID);
   }
 
-  public func EquipItem(itemId: ItemID) -> Void {
+  public func EquipItem(itemID: ItemID) -> Void {
     let puppet: ref<gamePuppet> = this.GetGamePuppet();
-    let placementSlot: TweakDBID = this.compatibilityHelper.GetAtelierPlacementSlot(itemId);
+    let placementSlot: TweakDBID = this.compatibilityHelper.GetAtelierPlacementSlot(itemID);
 
     let currentItemInSlot: ItemID = this.transactionSystem.GetItemInSlot(puppet, placementSlot).GetItemID();
     if this.GetIsEquipped(currentItemInSlot) {
       this.UnequipItem(currentItemInSlot);
     };
 
-    this.transactionSystem.GiveItem(puppet, itemId, 1);
-    this.transactionSystem.AddItemToSlot(puppet, placementSlot, itemId);
-    ArrayPush(this.givenItems, itemId);
+    this.transactionSystem.GiveItem(puppet, itemID, 1);
+    this.transactionSystem.AddItemToSlot(puppet, placementSlot, itemID);
+    ArrayPush(this.givenItems, itemID);
   }
 
-  public func UnequipItem(itemId: ItemID) -> Void {
+  public func UnequipItem(itemID: ItemID) -> Void {
     let puppet: ref<gamePuppet> = this.GetGamePuppet();
-    let placementSlot: TweakDBID = this.compatibilityHelper.GetAtelierPlacementSlot(itemId);
+    let placementSlot: TweakDBID = this.compatibilityHelper.GetAtelierPlacementSlot(itemID);
     this.transactionSystem.RemoveItemFromSlot(puppet, placementSlot, true);
-    this.transactionSystem.RemoveItem(puppet, itemId, 1);
-    ArrayRemove(this.givenItems, itemId);
+    this.transactionSystem.RemoveItem(puppet, itemID, 1);
+    ArrayRemove(this.givenItems, itemID);
   }
 
   public func RemoveAllGarment() -> Void {
@@ -147,11 +147,11 @@ public class VirtualAtelierPreviewManager extends ScriptableSystem {
     this.RevertInitialGarment();
   }
 
-  public func TogglePreviewItem(itemId: ItemID) -> Void {
-    if this.GetIsEquipped(itemId) {
-      this.UnequipItem(itemId);
+  public func TogglePreviewItem(itemID: ItemID) -> Void {
+    if this.GetIsEquipped(itemID) {
+      this.UnequipItem(itemID);
     } else {
-      this.EquipItem(itemId);
+      this.EquipItem(itemID);
     };
   }
 

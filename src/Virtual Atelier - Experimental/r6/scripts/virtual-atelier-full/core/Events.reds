@@ -1,36 +1,6 @@
 import VirtualAtelier.Systems.VirtualAtelierCartManager
 import VirtualAtelier.Systems.VirtualAtelierPreviewManager
 
-public class AtelierEquipStateChangedEvent extends Event {
-  public let manager: wref<VirtualAtelierPreviewManager>;
-
-  public static func Create(manager: ref<VirtualAtelierPreviewManager>) -> ref<AtelierEquipStateChangedEvent> {
-    let evt: ref<AtelierEquipStateChangedEvent> = new AtelierEquipStateChangedEvent();
-    evt.manager = manager;
-    return evt;
-  }
-}
-
-public class AtelierMoneyRequirementChangedEvent extends Event {
-  public let manager: wref<VirtualAtelierCartManager>;
-
-  public static func Create(manager: ref<VirtualAtelierCartManager>) -> ref<AtelierMoneyRequirementChangedEvent> {
-    let evt: ref<AtelierMoneyRequirementChangedEvent> = new AtelierMoneyRequirementChangedEvent();
-    evt.manager = manager;
-    return evt;
-  }
-}
-
-public class AtelierCartStateChangedEvent extends Event {
-  public let manager: wref<VirtualAtelierCartManager>;
-
-  public static func Create(manager: ref<VirtualAtelierCartManager>) -> ref<AtelierCartStateChangedEvent> {
-    let evt: ref<AtelierCartStateChangedEvent> = new AtelierCartStateChangedEvent();
-    evt.manager = manager;
-    return evt;
-  }
-}
-
 public class AtelierStoreSoundEvent extends Event {
   let name: CName;
 
@@ -84,6 +54,20 @@ public class VirtualAtelierControlClickEvent extends Event {
   public static func Create(name: CName) -> ref<VirtualAtelierControlClickEvent> {
     let evt: ref<VirtualAtelierControlClickEvent> = new VirtualAtelierControlClickEvent();
     evt.name = name;
+    return evt;
+  }
+}
+
+public class VendorItemStateRefreshEvent extends Event {
+  public static func Create() -> ref<VendorItemStateRefreshEvent> {
+    let evt: ref<VendorItemStateRefreshEvent> = new VendorItemStateRefreshEvent();
+    return evt;
+  }
+}
+
+public class VirtualItemStateRefreshEvent extends Event {
+  public static func Create() -> ref<VirtualItemStateRefreshEvent> {
+    let evt: ref<VirtualItemStateRefreshEvent> = new VirtualItemStateRefreshEvent();
     return evt;
   }
 }

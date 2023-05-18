@@ -148,15 +148,15 @@ public class VirtualStoreController extends gameuiMenuGameController {
     switch true {
       case evt.IsAction(atelierActions.resetGarment):
         this.previewManager.ResetGarment();
-        this.RefreshEquippedState();
+        this.RefreshVirtualItemState();
         break;
       case evt.IsAction(atelierActions.removeAllGarment):
         this.previewManager.RemoveAllGarment();
-        this.RefreshEquippedState();
+        this.RefreshVirtualItemState();
         break;
       case evt.IsAction(atelierActions.removePreviewGarment):
         this.previewManager.RemovePreviewGarment();
-        this.RefreshEquippedState();
+        this.RefreshVirtualItemState();
         break;
       case evt.IsAction(n"back"):
       case evt.IsAction(n"cancel"):
@@ -234,7 +234,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
 
       if isClothing || isWeapon {
         this.previewManager.TogglePreviewItem(itemID);
-        this.RefreshEquippedState();
+        this.RefreshVirtualItemState();
         if isEquipped {
           hintLabel = GetLocalizedTextByKey(n"UI-UserActions-Equip");
         } else {
@@ -756,22 +756,13 @@ public class VirtualStoreController extends gameuiMenuGameController {
 
     this.buttonHintsController.RemoveButtonHint(atelierActions.addToVirtualCart);
     this.buttonHintsController.AddButtonHint(atelierActions.addToVirtualCart, hintLabel);
-    this.RefreshCartState();
     this.RefreshCartControls();
     this.RefreshMoneyLabels();
-    this.RefreshMoneyRequirements();
+    this.RefreshVirtualItemState();
   }
 
-  private func RefreshEquippedState() -> Void {
-   this.uiSystem.QueueEvent(AtelierEquipStateChangedEvent.Create(this.previewManager));
-  }
-
-  private func RefreshCartState() -> Void {
-    this.uiSystem.QueueEvent(AtelierCartStateChangedEvent.Create(this.cartManager));
-  }
-
-  private func RefreshMoneyRequirements() -> Void {
-    this.uiSystem.QueueEvent(AtelierMoneyRequirementChangedEvent.Create(this.cartManager));
+  private func RefreshVirtualItemState() -> Void {
+    this.uiSystem.QueueEvent(VirtualItemStateRefreshEvent.Create());
   }
 
   private func RefreshCartControls() -> Void {
@@ -815,9 +806,9 @@ public class VirtualStoreController extends gameuiMenuGameController {
         this.cartManager.AddToCart(stockItem);
       };
       this.allItemsAdded = true;
-      this.RefreshCartState();
       this.RefreshCartControls();
       this.RefreshMoneyLabels();
+      this.RefreshVirtualItemState();
     };
 
     this.popupToken = null;
@@ -828,10 +819,9 @@ public class VirtualStoreController extends gameuiMenuGameController {
     if Equals(resultData.result, GenericMessageNotificationResult.Confirm) {
       this.cartManager.ClearCart();
       this.allItemsAdded = false;
-      this.RefreshCartState();
       this.RefreshCartControls();
       this.RefreshMoneyLabels();
-      this.RefreshMoneyRequirements();
+      this.RefreshVirtualItemState();
     };
 
     this.popupToken = null;
