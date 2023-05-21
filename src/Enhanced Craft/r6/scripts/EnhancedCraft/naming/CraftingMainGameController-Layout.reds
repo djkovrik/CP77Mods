@@ -62,7 +62,9 @@ protected cb func OnTextInput(widget: wref<inkWidget>) -> Bool {
   if NotEquals(text, "") {
     this.m_craftedItemName.SetText(text);
   } else {
-    this.m_craftedItemName.SetText(this.m_originalName);
+    if NotEquals(this.m_originalName, "") {
+      this.m_craftedItemName.SetText(this.m_originalName);
+    };
   };
 }
 
