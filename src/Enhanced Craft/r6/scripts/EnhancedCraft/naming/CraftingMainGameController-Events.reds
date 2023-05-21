@@ -10,7 +10,6 @@ protected cb func OnEnhancedCraftRecipeClickedEvent(event: ref<EnhancedCraftReci
   let visible: Bool = event.isClothes || event.isWeapon;
   this.m_nameInput.SetText("");
 	this.m_nameInputContainer.SetVisible(visible);
-  this.m_originalName = this.m_craftedItemName.GetText();
 }
 
 // -- Clear input field
@@ -36,11 +35,5 @@ protected cb func OnEnhancedCraftRecipeCraftedEvent(event: ref<EnhancedCraftReci
     system.RefreshPlayerInventory();
   };
   this.m_nameInput.SetText("");
-  this.RestoreOriginalName();
-}
-
-// -- Restore original recipe name in crafting panel
-@addMethod(CraftingMainGameController)
-public func RestoreOriginalName() -> Void {
-	this.m_craftedItemName.SetText(this.m_originalName);
+  this.m_craftedItemName.SetText(GetLocalizedTextByKey(RPGManager.GetItemRecord(itemId).DisplayName()));
 }

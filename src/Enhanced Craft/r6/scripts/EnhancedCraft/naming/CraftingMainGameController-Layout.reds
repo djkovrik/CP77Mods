@@ -8,9 +8,6 @@ import Codeware.UI.*
 @addField(CraftingMainGameController)
 private let m_nameInput: wref<HubTextInput>;
 
-@addField(CraftingMainGameController)
-private let m_originalName: String;
-
 // -- Custom text input container
 @addField(CraftingMainGameController)
 private let m_nameInputContainer: wref<inkCompoundWidget>;
@@ -61,10 +58,6 @@ protected cb func OnTextInput(widget: wref<inkWidget>) -> Bool {
   let text: String = this.m_nameInput.GetText();
   if NotEquals(text, "") {
     this.m_craftedItemName.SetText(text);
-  } else {
-    if NotEquals(this.m_originalName, "") {
-      this.m_craftedItemName.SetText(this.m_originalName);
-    };
   };
 }
 
