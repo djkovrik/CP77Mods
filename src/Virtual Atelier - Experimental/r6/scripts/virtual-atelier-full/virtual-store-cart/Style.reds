@@ -18,4 +18,5 @@ public abstract class VirtualAtelierControlStyle {
   public static func FontSizeImageButtonCounter() -> CName = n"MainColors.ReadableXSmall"
   public static func FontStyleImageButtonCounter() -> CName = n"MainColors.BodyFontWeight";
   public static func CartItemBackground() -> CName = n"MainColors.ActiveGreen";
+  public static func QuantityTextColor() -> CName = n"MainColors.ActiveGreen";
 }

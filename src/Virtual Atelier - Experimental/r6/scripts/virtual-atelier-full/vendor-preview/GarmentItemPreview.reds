@@ -4,11 +4,11 @@ import VirtualAtelier.Helpers.AtelierWidgetsHelper
 @wrapMethod(WardrobeSetPreviewGameController)
 protected cb func OnInitialize() -> Bool {
   this.previewManager = VirtualAtelierPreviewManager.GetInstance(this.GetPlayerControlledObject().GetGame());
-  this.atelierActive = this.previewManager.IsPreviewActive();
+  this.previewActive = this.previewManager.IsPreviewActive();
   
   wrappedMethod();
 
-  if this.atelierActive {
+  if this.previewActive {
     this.RegisterToGlobalInputCallback(n"OnPostOnPress", this, n"OnGlobalPress");
     this.additionalData = this.GetRootWidget().GetUserData(n"InventoryItemPreviewData") as PreviewInventoryItemPreviewData;
     AtelierWidgetsHelper.AdjustGarmentPreviewWidgets(this);
@@ -19,7 +19,7 @@ protected cb func OnInitialize() -> Bool {
 protected cb func OnPreviewInitialized() -> Bool {
   wrappedMethod();
 
-  if this.atelierActive {
+  if this.previewActive {
     this.previewManager.InitializePuppet(this.GetGamePuppet());
     this.previewManager.InitializeCompatibilityHelper(this);
   };
@@ -27,12 +27,22 @@ protected cb func OnPreviewInitialized() -> Bool {
 
 @wrapMethod(WardrobeSetPreviewGameController)
 protected cb func OnUninitialize() -> Bool {
-  if this.atelierActive {
+  if this.previewActive {
     this.UnregisterFromGlobalInputCallback(n"OnPostOnPress", this, n"OnGlobalPress");
     this.previewManager.ResetGarment();
   };
 
   wrappedMethod();
+}
+
+@addMethod(WardrobeSetPreviewGameController)
+protected cb func OnVirtualStorePickerActiveEvent(evt: ref<VirtualStorePickerActiveEvent>) -> Bool {
+  if evt.isActive {
+    this.previewActive = false;
+  } else {
+    this.previewActive = true;
+  };
+  this.isLeftMouseDown = false;
 }
 
 @addMethod(WardrobeSetPreviewGameController)
@@ -44,14 +54,14 @@ protected cb func OnGlobalPress(e: ref<inkPointerEvent>) -> Bool {
 
 @wrapMethod(WardrobeSetPreviewGameController)
 protected cb func OnPress(e: ref<inkPointerEvent>) -> Bool {
-  if !this.atelierActive {
+  if !this.previewActive {
     wrappedMethod(e);
   };
 }
 
 @wrapMethod(WardrobeSetPreviewGameController)
 protected cb func OnGlobalRelease(e: ref<inkPointerEvent>) -> Bool {
-  if this.atelierActive {
+  if this.previewActive {
     if e.IsAction(n"mouse_left") {
       this.isLeftMouseDown = false;
     };
@@ -65,7 +75,7 @@ protected cb func OnGlobalRelease(e: ref<inkPointerEvent>) -> Bool {
 
 @wrapMethod(WardrobeSetPreviewGameController)
 protected func HandleAxisInput(event: ref<inkPointerEvent>) -> Void {
-  if this.atelierActive {
+  if this.previewActive {
     AtelierInputHelper.OnGarmentPreviewAxisInput(this, event);
   } else {
     wrappedMethod(event);
@@ -74,7 +84,7 @@ protected func HandleAxisInput(event: ref<inkPointerEvent>) -> Void {
 
 @wrapMethod(WardrobeSetPreviewGameController)
 protected cb func OnRelativeInput(event: ref<inkPointerEvent>) -> Bool {
-  if this.atelierActive  {
+  if this.previewActive  {
     AtelierInputHelper.OnGarmentPreviewRelativeInput(this, event);
   } else {
     wrappedMethod(event);
@@ -91,7 +101,7 @@ protected cb func OnSetCameraSetupEvent(index: Uint32, slotName: CName) -> Bool 
   let animFeature: ref<AnimFeature_Paperdoll> = new AnimFeature_Paperdoll();
   let zoomArea: InventoryPaperdollZoomArea = IntEnum(index);
 
-  if this.atelierActive {
+  if this.previewActive {
     animFeature.inventoryScreen = Equals(zoomArea, InventoryPaperdollZoomArea.Default);
     animFeature.inventoryScreen_Weapon = Equals(zoomArea, InventoryPaperdollZoomArea.Weapon);
     animFeature.inventoryScreen_Legs = Equals(zoomArea, InventoryPaperdollZoomArea.Legs);

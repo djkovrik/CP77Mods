@@ -71,3 +71,13 @@ public class VirtualItemStateRefreshEvent extends Event {
     return evt;
   }
 }
+
+public class VirtualStorePickerActiveEvent extends Event {
+  let isActive: Bool;
+
+  public static func Create(isActive: Bool) -> ref<VirtualStorePickerActiveEvent> {
+    let evt: ref<VirtualStorePickerActiveEvent> = new VirtualStorePickerActiveEvent();
+    evt.isActive = isActive;
+    return evt;
+  }
+}

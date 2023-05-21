@@ -39,13 +39,27 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
     return false;
   }
 
-  public final func AddToCart(stockItem: ref<VirtualStockItem>) -> Bool {
+  public final func GetBuyableAmount(itemID: ItemID) -> Int32 {
+    let price: Int32;
+    let availableMoney: Int32;
+    for item in this.vendorInventory {
+      if Equals(InventoryItemData.GetID(item), itemID) {
+        price = Cast<Int32>(InventoryItemData.GetBuyPrice(item));
+        availableMoney = this.GetCurrentPlayerMoney() - this.GetCurrentGoodsPrice();
+        return availableMoney / price;
+      };
+    };
+
+    return 0;
+  }
+
+  public final func AddToCart(stockItem: ref<VirtualStockItem>, quantity: Int32) -> Bool {
     let itemID: ItemID;
     let cartItem: ref<VirtualCartItem>;
     if IsDefined(stockItem) {
       itemID = stockItem.itemID;
       cartItem = this.GetOrCreateCartItem(stockItem);
-      cartItem.purchaseAmount = cartItem.purchaseAmount + 1;
+      cartItem.purchaseAmount = quantity;
       if this.IsAddedToCart(itemID) {
         this.cart.Set(this.Hash(itemID), cartItem);
       } else {
@@ -78,6 +92,16 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
 
   public final func IsAddedToCart(itemID: ItemID) -> Bool {
     return this.cart.KeyExist(this.Hash(itemID));
+  }
+
+  public final func GetAddedQuantity(itemID: ItemID) -> Int32 {
+    if !this.IsAddedToCart(itemID) {
+      return 0;
+    };
+
+    let hash: Uint64 = this.Hash(itemID);
+    let cartItem: ref<VirtualCartItem> = this.cart.Get(hash) as VirtualCartItem;
+    return cartItem.purchaseAmount;
   }
 
   public final func GetCartSize() -> Int32 {

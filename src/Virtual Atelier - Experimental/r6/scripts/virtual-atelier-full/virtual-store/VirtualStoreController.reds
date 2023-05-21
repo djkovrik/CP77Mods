@@ -51,6 +51,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
   private let lastItemHoverOverEvent: ref<ItemDisplayHoverOverEvent>;
   private let totalItemsPrice: Int32;
   private let allItemsAdded: Bool;
+  private let holdInProgress: Bool;
 
   protected cb func OnInitialize() -> Bool {
     this.InitializeCoreSystems();
@@ -143,7 +144,13 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.tooltipsManager.HideTooltips();
   }
 
-  protected cb func OnHandleGlobalInput(evt: ref<inkPointerEvent>) -> Bool {
+  protected cb func OnHandleGlobalHold(evt: ref<inkPointerEvent>) -> Bool {
+    if evt.IsAction(n"upgrade_perk") {
+      this.holdInProgress = evt.GetHoldProgress() >= 0.5;
+    };
+  }
+
+  protected cb func OnHandleGlobalRelease(evt: ref<inkPointerEvent>) -> Bool {
     let atelierActions: ref<AtelierActions> = AtelierActions.Get(this.player);
     switch true {
       case evt.IsAction(atelierActions.resetGarment):
@@ -209,6 +216,13 @@ public class VirtualStoreController extends gameuiMenuGameController {
     
     let noCompare: InventoryItemData;
     this.ShowTooltipsForItemController(evt.widget, noCompare, evt.itemData, evt.display.DEBUG_GetIconErrorInfo(), false);
+
+    let cursorContext = n"Default";
+    let cursorData: ref<MenuCursorUserData> = new MenuCursorUserData();
+    cursorData.SetAnimationOverride(n"hoverOnHoldToComplete");
+    cursorData.AddAction(n"upgrade_perk");
+    cursorContext = n"HoldToComplete";
+    this.SetCursorContext(cursorContext, cursorData);
   }
 
   protected cb func OnInventoryItemHoverOut(evt: ref<ItemDisplayHoverOutEvent>) -> Bool {
@@ -227,6 +241,14 @@ public class VirtualStoreController extends gameuiMenuGameController {
     let hintLabel: String;
 
     if evt.actionName.IsAction(n"click") {
+      // Show popup on F hold
+      if this.holdInProgress {
+        this.holdInProgress = false;
+        this.OpenCartQuantityPopup();
+        return true;
+      };
+
+      // If no hold then change equip state
       itemID = InventoryItemData.GetID(evt.itemData);
       isEquipped = this.previewManager.GetIsEquipped(itemID);
       isWeapon = RPGManager.IsItemWeapon(itemID);
@@ -496,7 +518,8 @@ public class VirtualStoreController extends gameuiMenuGameController {
   }
 
   private final func InitializeListeners() -> Void {
-    this.RegisterToGlobalInputCallback(n"OnPostOnRelease", this, n"OnHandleGlobalInput");
+    this.RegisterToGlobalInputCallback(n"OnPostOnHold", this, n"OnHandleGlobalHold");
+    this.RegisterToGlobalInputCallback(n"OnPostOnRelease", this, n"OnHandleGlobalRelease");
   }
 
   private final func SetupDropdown() -> Void {
@@ -728,7 +751,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.cartManager.StoreVendorInventory(vendorInventory);
   }
 
-  private func HandleCartAction() -> Void {
+  private final func HandleCartAction() -> Void {
     if !IsDefined(this.lastItemHoverOverEvent) {
       return ;
     };
@@ -749,19 +772,68 @@ public class VirtualStoreController extends gameuiMenuGameController {
         hintLabel = GetLocalizedTextByKey(n"VA-Cart-Add");
       };
     } else {
-      if this.cartManager.AddToCart(stockItem) {
+      if this.cartManager.AddToCart(stockItem, 1) {
         hintLabel = GetLocalizedTextByKey(n"VA-Cart-Remove");
       };
     };
 
     this.buttonHintsController.RemoveButtonHint(atelierActions.addToVirtualCart);
     this.buttonHintsController.AddButtonHint(atelierActions.addToVirtualCart, hintLabel);
+    this.tooltipsManager.HideTooltips();
     this.RefreshCartControls();
     this.RefreshMoneyLabels();
     this.RefreshVirtualItemState();
   }
 
-  private func RefreshVirtualItemState() -> Void {
+  private final func OpenCartQuantityPopup() -> Void {
+    if !IsDefined(this.lastItemHoverOverEvent) {
+      return ;
+    };
+
+    let itemID: ItemID = InventoryItemData.GetID(this.lastItemHoverOverEvent.itemData);
+    let availableForPurchase: Int32 = this.cartManager.GetBuyableAmount(itemID);
+
+    if availableForPurchase < 1 {
+      return ;
+    };
+
+    this.uiSystem.QueueEvent(VirtualStorePickerActiveEvent.Create(true));
+    this.tooltipsManager.HideTooltips();
+
+    let data: ref<QuantityPickerPopupData> = new QuantityPickerPopupData();
+    data.notificationName = n"base\\gameplay\\gui\\widgets\\notifications\\item_quantity_picker.inkwidget";
+    data.isBlocking = true;
+    data.useCursor = true;
+    data.queueName = n"modal_popup";
+    data.maxValue = availableForPurchase;
+    data.gameItemData = this.lastItemHoverOverEvent.itemData;
+    data.actionType = QuantityPickerActionType.Buy;
+    data.vendor = this.player;
+    data.virtualItemPrice = Cast<Int32>(InventoryItemData.GetPrice(this.lastItemHoverOverEvent.itemData));
+    this.popupToken = this.ShowGameNotification(data);
+    this.popupToken.RegisterListener(this, n"OnQuantityPickerPopupClosed");
+    this.buttonHintsController.Hide();
+  }
+
+protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>) -> Bool {
+    let quantityData: ref<QuantityPickerPopupCloseData> = data as QuantityPickerPopupCloseData;
+    let itemID: ItemID = InventoryItemData.GetID(quantityData.itemData);
+    let stockItem: ref<VirtualStockItem> = this.GetStockItem(itemID);
+    if quantityData.choosenQuantity != -1 {
+      this.cartManager.AddToCart(stockItem, quantityData.choosenQuantity);
+    };
+
+    this.popupToken = null;
+    this.buttonHintsController.Show();
+    this.PlaySound(n"Button", n"OnPress");
+    this.uiSystem.QueueEvent(VirtualStorePickerActiveEvent.Create(false));
+
+    this.RefreshCartControls();
+    this.RefreshMoneyLabels();
+    this.RefreshVirtualItemState();
+  }
+
+  private final func RefreshVirtualItemState() -> Void {
     this.uiSystem.QueueEvent(VirtualItemStateRefreshEvent.Create());
   }
 
@@ -803,7 +875,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     let resultData: ref<GenericMessageNotificationCloseData> = data as GenericMessageNotificationCloseData;
     if Equals(resultData.result, GenericMessageNotificationResult.Confirm) {
       for stockItem in this.virtualStock {
-        this.cartManager.AddToCart(stockItem);
+        this.cartManager.AddToCart(stockItem, 1);
       };
       this.allItemsAdded = true;
       this.RefreshCartControls();
