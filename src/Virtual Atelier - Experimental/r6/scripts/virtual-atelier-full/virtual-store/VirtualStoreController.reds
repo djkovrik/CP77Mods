@@ -203,9 +203,9 @@ public class VirtualStoreController extends gameuiMenuGameController {
     };
 
     if isAddedToCart {
-      hintLabel = GetLocalizedTextByKey(n"VA-Cart-Remove");
+      hintLabel = AtelierTexts.CartRemove();
     } else {
-      hintLabel = GetLocalizedTextByKey(n"VA-Cart-Add");
+      hintLabel = AtelierTexts.CartAdd();
     };
 
     this.buttonHintsController.RemoveButtonHint(atelierActions.addToVirtualCart);
@@ -275,6 +275,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     let name: CName = evt.name;
     switch name {
       case n"buy":
+        this.ShowPurchaseAllConfirmationPopup();
         break;
       case n"addAll":
         this.ShowAddAllConfirmationPopup();
@@ -871,6 +872,12 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
     this.popupToken.RegisterListener(this, n"OnRemoveAllConfirmationPopupClosed");
   }
 
+  private func ShowPurchaseAllConfirmationPopup() -> Void {
+    let price: Int32 = this.cartManager.GetCurrentGoodsPrice();
+    this.popupToken = GenericMessageNotification.Show(this, this.virtualStore.storeName, AtelierTexts.ConfirmationPurchase(price), GenericMessageNotificationType.ConfirmCancel);
+    this.popupToken.RegisterListener(this, n"OnPurchaseConfirmationPopupClosed");
+  }
+
   protected cb func OnAddAllConfirmationPopupClosed(data: ref<inkGameNotificationData>) {
     let resultData: ref<GenericMessageNotificationCloseData> = data as GenericMessageNotificationCloseData;
     if Equals(resultData.result, GenericMessageNotificationResult.Confirm) {
@@ -890,6 +897,19 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
     let resultData: ref<GenericMessageNotificationCloseData> = data as GenericMessageNotificationCloseData;
     if Equals(resultData.result, GenericMessageNotificationResult.Confirm) {
       this.cartManager.ClearCart();
+      this.allItemsAdded = false;
+      this.RefreshCartControls();
+      this.RefreshMoneyLabels();
+      this.RefreshVirtualItemState();
+    };
+
+    this.popupToken = null;
+  }
+
+  protected cb func OnPurchaseConfirmationPopupClosed(data: ref<inkGameNotificationData>) {
+    let resultData: ref<GenericMessageNotificationCloseData> = data as GenericMessageNotificationCloseData;
+    if Equals(resultData.result, GenericMessageNotificationResult.Confirm) {
+      this.cartManager.PurchaseGoods();
       this.allItemsAdded = false;
       this.RefreshCartControls();
       this.RefreshMoneyLabels();

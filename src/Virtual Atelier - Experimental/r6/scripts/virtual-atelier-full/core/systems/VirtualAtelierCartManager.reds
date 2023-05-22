@@ -113,6 +113,30 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
   public final func ClearCart() -> Void {
     this.cart.Clear();
     this.currentGoodsPrice = 0;
+    this.RefreshCurrentBalances();
+  }
+
+  public final func PurchaseGoods() -> Void {
+    let values: array<wref<IScriptable>>;
+    let current: ref<VirtualCartItem>;
+    this.cart.GetValues(values);
+
+    let goods: array<ItemModParams>;
+    for value in values {
+      current = value as VirtualCartItem;
+      let param: ItemModParams;
+      param.itemID = current.stockItem.itemID;
+      param.quantity = current.purchaseAmount * current.stockItem.quantity;
+      ArrayPush(goods, param);
+    };
+
+    // Add items
+    this.transactionSystem.GiveItems(this.player, goods);
+
+    // Remove money
+    this.transactionSystem.RemoveItemByTDBID(this.player, t"Items.money", this.GetCurrentGoodsPrice());
+    this.currentPlayerMoney = this.GetCurrentPlayerMoney() - this.GetCurrentGoodsPrice();
+    this.RefreshCurrentBalances();
   }
 
   public final func GetCurrentPlayerMoney() -> Int32 {

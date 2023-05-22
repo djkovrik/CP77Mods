@@ -13,11 +13,15 @@ public class AtelierTexts {
   public static func RemoveFromFavorites() -> String = GetLocalizedTextByKey(n"VA-Favorites-Remove")
   public static func Zoom() -> String = GetLocalizedTextByKey(n"UI-ResourceExports-OpticalZoom")
   public static func Move() -> String = GetLocalizedTextByKey(n"UI-ScriptExports-Move0")
-  public static func ButtonBuy() -> String = "Buy"
-  public static func ButtonClear() -> String = "Clear"
-  public static func ButtonAddAll() -> String = "Add all"
-  public static func ConfirmationAddAll() -> String = "Add all items from this store to cart?"
-  public static func ConfirmationRemoveAll() -> String = "Remove all added items from cart?"
-  public static func PlayerMoney() -> String = "V's account"
-  public static func Cart() -> String = "Checkout price"
+  public static func ButtonBuy() -> String =  GetLocalizedTextByKey(n"VA-Cart-Buy")
+  public static func ButtonClear() -> String = GetLocalizedTextByKey(n"VA-Cart-Clear")
+  public static func ButtonAddAll() -> String = GetLocalizedTextByKey(n"VA-Cart-Add-All")
+  public static func PlayerMoney() -> String = GetLocalizedTextByKey(n"VA-Cart-Label-V")
+  public static func Cart() -> String = GetLocalizedTextByKey(n"VA-Cart-Label-Checkout")
+  public static func CartAdd() -> String = GetLocalizedTextByKey(n"VA-Cart-Add")
+  public static func CartRemove() -> String = GetLocalizedTextByKey(n"VA-Cart-Remove")
+  public static func ConfirmationAddAll() -> String = GetLocalizedTextByKey(n"VA-Cart-Confirm-Add")
+  public static func ConfirmationRemoveAll() -> String = GetLocalizedTextByKey(n"VA-Cart-Confirm-Remove")
+  public static func ConfirmationPurchase(price: Int32) -> String = 
+    s"\(GetLocalizedTextByKey(n"VA-Cart-Confirm-Purchase")) \(price) \(GetLocalizedText("Common-Characters-EuroDollar"))?"
 }
