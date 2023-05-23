@@ -576,7 +576,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     ArrayClear(this.virtualStock);
     while virtualItemIndex < ArraySize(storeItems) {
       let itemTDBID: TweakDBID = TDBID.Create(storeItems[virtualItemIndex]);
-      let itemId = ItemID.FromTDBID(itemTDBID);
+      let itemId: ItemID = ItemID.FromTDBID(itemTDBID);
       let itemData: ref<gameItemData> = inventoryManager.CreateBasicItemData(itemId, this.player);
       AtelierDebug(s"Store item: \(ToString(storeItems[virtualItemIndex]))", this.config);
       itemData.isVirtualItem = true;

@@ -1,10 +1,13 @@
 module VirtualAtelier.Systems
 import VirtualAtelier.Core.VirtualAtelierCart
+import VirtualAtelier.Helpers.AtelierItemsHelper
 
 public class VirtualAtelierCartManager extends ScriptableSystem {
 
   private let player: wref<PlayerPuppet>;
   private let transactionSystem: wref<TransactionSystem>;
+  private let inventoryManager: wref<InventoryManager>;
+  private let inventoryManagerV2: ref<InventoryDataManagerV2>;
   private let cart: ref<VirtualAtelierCart>;
   private let stock: array<ref<VirtualStockItem>>;
   private let currentPlayerMoney: Int32;
@@ -18,6 +21,9 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
   private func OnPlayerAttach(request: ref<PlayerAttachRequest>) {
     this.player = GameInstance.GetPlayerSystem(this.GetGameInstance()).GetLocalPlayerMainGameObject() as PlayerPuppet;
     this.transactionSystem = GameInstance.GetTransactionSystem(this.GetGameInstance());
+    this.inventoryManager = GameInstance.GetInventoryManager(this.player.GetGame());
+    this.inventoryManagerV2 = new InventoryDataManagerV2();
+    this.inventoryManagerV2.Initialize(this.player);
     this.cart = new VirtualAtelierCart();
     this.cart.Init();
     this.RefreshCurrentBalances();
@@ -86,26 +92,30 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
   }
 
   public final func PurchaseGoods() -> Void {
-    // let values: array<wref<IScriptable>>;
-    // let current: ref<VirtualCartItem>;
-    // this.cart.GetValues(values);
+    let cartItems: array<ref<VirtualCartItem>> = this.cart.GetCart();
+    let itemID: ItemID;
+    let itemData: ref<gameItemData>;
+    let stockItem: ref<VirtualStockItem>;
 
-    // let goods: array<ItemModParams>;
-    // for value in values {
-    //   current = value as VirtualCartItem;
-    //   let param: ItemModParams;
-    //   param.itemID = current.stockItem.itemID;
-    //   param.quantity = current.purchaseAmount * current.stockItem.quantity;
-    //   ArrayPush(goods, param);
-    // };
+    // Add items
+    for cartItem in cartItems {
+      let i: Int32 = 0;
+      while i < cartItem.purchaseAmount {
+        stockItem = cartItem.stockItem;
+        itemID = ItemID.FromTDBID(stockItem.itemTDBID);
+        itemData = this.inventoryManager.CreateBasicItemData(itemID, this.player);
+        itemData.isVirtualItem = true;
+        AtelierItemsHelper.ScaleItem(this.player, itemData, stockItem.quality);
+        this.transactionSystem.GiveItem(this.player, itemID, stockItem.quantity);
+        LogChannel(n"DEBUG", s"ADDING ITEM \(ItemID.GetCombinedHash(itemID)) at \(stockItem.quantity)");
+        i += 1;
+      };
+    };
 
-    // // Add items
-    // this.transactionSystem.GiveItems(this.player, goods);
-
-    // // Remove money
-    // this.transactionSystem.RemoveItemByTDBID(this.player, t"Items.money", this.GetCurrentGoodsPrice());
-    // this.currentPlayerMoney = this.GetCurrentPlayerMoney() - this.GetCurrentGoodsPrice();
-    // this.RefreshCurrentBalances();
+    // Remove money
+    this.transactionSystem.RemoveItemByTDBID(this.player, t"Items.money", this.GetCurrentGoodsPrice());
+    this.currentPlayerMoney = this.GetCurrentPlayerMoney() - this.GetCurrentGoodsPrice();
+    this.RefreshCurrentBalances();
   }
 
   public final func GetCurrentPlayerMoney() -> Int32 {
