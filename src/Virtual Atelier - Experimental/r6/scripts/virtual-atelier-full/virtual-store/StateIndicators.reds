@@ -42,15 +42,17 @@ private final func RefreshAtelierEquipLabel() -> Void {
 @addMethod(InventoryItemDisplayController)
 private final func RefreshAtelierCartIndicator() -> Void {
   let itemID: ItemID = InventoryItemData.GetID(this.m_itemData);
-  let isAddedToCart: Bool = this.cartManager.IsAddedToCart(itemID);
+  let quantity: Int32 = InventoryItemData.GetQuantity(this.m_itemData);
+  let isAddedToCart: Bool = this.cartManager.IsAddedToCart(itemID, quantity);
   this.cartIndicator.SetVisible(isAddedToCart);
 }
 
 @addMethod(InventoryItemDisplayController)
 private final func RefreshAtelierEnoughMoneyIndicator() -> Void {
   let itemID: ItemID = InventoryItemData.GetID(this.m_itemData);
+  let quantity: Int32 = InventoryItemData.GetQuantity(this.m_itemData);
   let enoughMoney: Bool = this.cartManager.PlayerHasEnoughMoneyFor(itemID);
-  let isAddedToCart: Bool = this.cartManager.IsAddedToCart(itemID);
+  let isAddedToCart: Bool = this.cartManager.IsAddedToCart(itemID, quantity);
   if !enoughMoney && !isAddedToCart {
     inkWidgetRef.SetState(this.m_requirementsWrapper, n"Money");
     this.m_requirementsMet = false;
@@ -62,9 +64,10 @@ private final func RefreshAtelierEnoughMoneyIndicator() -> Void {
 @addMethod(InventoryItemDisplayController)
 private final func RefreshAtelierQuantityIndicator() -> Void {
   let itemID: ItemID = InventoryItemData.GetID(this.m_itemData);
-  let quantity: Int32 = this.cartManager.GetAddedQuantity(itemID);
-  this.quantityIndicator.SetVisible(quantity > 1);
-  this.quantityIndicator.SetText(s"x\(quantity)");
+  let quantity: Int32 = InventoryItemData.GetQuantity(this.m_itemData);
+  let purchaseAmount: Int32 = this.cartManager.GetAddedQuantity(itemID, quantity);
+  this.quantityIndicator.SetVisible(purchaseAmount > 1);
+  this.quantityIndicator.SetText(s"x\(purchaseAmount)");
 }
 
 @addMethod(InventoryItemDisplayController)

@@ -183,8 +183,9 @@ public class VirtualStoreController extends gameuiMenuGameController {
   protected cb func OnInventoryItemHoverOver(evt: ref<ItemDisplayHoverOverEvent>) -> Bool {
     let atelierActions: ref<AtelierActions> = AtelierActions.Get(this.player);
     let itemID: ItemID = InventoryItemData.GetID(evt.itemData);
+    let quantity: Int32 = InventoryItemData.GetQuantity(evt.itemData);
     let isEquipped: Bool = this.previewManager.GetIsEquipped(itemID);
-    let isAddedToCart: Bool = this.cartManager.IsAddedToCart(itemID);
+    let isAddedToCart: Bool = this.cartManager.IsAddedToCart(itemID, quantity);
     let isWeapon: Bool = RPGManager.IsItemWeapon(itemID);
     let isClothing: Bool = RPGManager.IsItemClothing(itemID);
     let hintLabel: String;
@@ -749,7 +750,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.filtersContainer.SetVisible(ArraySize(items) > 0);
     this.PlayLibraryAnimation(n"vendor_grid_show");
 
-    this.cartManager.StoreVendorInventory(vendorInventory);
+    this.cartManager.StoreVirtualStock(this.virtualStock);
   }
 
   private final func HandleCartAction() -> Void {
@@ -759,7 +760,8 @@ public class VirtualStoreController extends gameuiMenuGameController {
 
     let atelierActions: ref<AtelierActions> = AtelierActions.Get(this.player);
     let itemID: ItemID = InventoryItemData.GetID(this.lastItemHoverOverEvent.itemData);
-    let isAddedToCart: Bool = this.cartManager.IsAddedToCart(itemID);
+    let quantity: Int32 = InventoryItemData.GetQuantity(this.lastItemHoverOverEvent.itemData);
+    let isAddedToCart: Bool = this.cartManager.IsAddedToCart(itemID, quantity);
     let isEnoughMoney: Bool = this.cartManager.PlayerHasEnoughMoneyFor(itemID);
     let hintLabel: String;
 
@@ -767,7 +769,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
       return ;
     };
 
-    let stockItem: ref<VirtualStockItem> = this.GetStockItem(itemID);
+    let stockItem: ref<VirtualStockItem> = this.GetStockItem(itemID, quantity);
     if isAddedToCart {
       if this.cartManager.RemoveFromCart(stockItem) {
         hintLabel = GetLocalizedTextByKey(n"VA-Cart-Add");
@@ -819,7 +821,8 @@ public class VirtualStoreController extends gameuiMenuGameController {
 protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>) -> Bool {
     let quantityData: ref<QuantityPickerPopupCloseData> = data as QuantityPickerPopupCloseData;
     let itemID: ItemID = InventoryItemData.GetID(quantityData.itemData);
-    let stockItem: ref<VirtualStockItem> = this.GetStockItem(itemID);
+    let quantity: Int32 = InventoryItemData.GetQuantity(quantityData.itemData);
+    let stockItem: ref<VirtualStockItem> = this.GetStockItem(itemID, quantity);
     if quantityData.choosenQuantity != -1 {
       this.cartManager.AddToCart(stockItem, quantityData.choosenQuantity);
     };
@@ -935,9 +938,9 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
     TimeDilationHelper.SetTimeDilationWithProfile(this.player, "radialMenu", enable);
   }
 
-  private final func GetStockItem(itemID: ItemID) -> ref<VirtualStockItem> {
+  private final func GetStockItem(itemID: ItemID, quantity: Int32) -> ref<VirtualStockItem> {
     for stockItem in this.virtualStock {
-      if Equals(stockItem.itemID, itemID) {
+      if Equals(stockItem.itemID, itemID) && Equals(stockItem.quantity, quantity) {
         return stockItem;
       };
     };
