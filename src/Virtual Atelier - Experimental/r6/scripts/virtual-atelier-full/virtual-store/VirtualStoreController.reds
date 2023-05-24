@@ -331,6 +331,9 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.vendorSortingButton = root.GetWidget(n"wrapper/wrapper/vendorPanel/vendorHeader/inkHorizontalPanelWidget2/dropdownButton5");
     this.sortingDropdown = root.GetWidget(n"dropdownContainer");
 
+    let notificationsRoot: ref<inkCompoundWidget> = root.GetWidget(n"itemListRoot") as inkCompoundWidget;
+    this.SpawnFromExternal(notificationsRoot, r"base\\gameplay\\gui\\widgets\\activity_log\\activity_log_panels.inkwidget", n"RootVert");
+
     this.vendorName.SetText(this.GetVirtualStoreName());
     AtelierButtonHintsHelper.ToggleAtelierControlHints(this.buttonHintsController, this.player, true);
 
