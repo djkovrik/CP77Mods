@@ -917,6 +917,7 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
       this.RefreshCartControls();
       this.RefreshMoneyLabels();
       this.RefreshVirtualItemState();
+      this.PlaySound(n"Item", n"OnBuy");
     };
 
     this.popupToken = null;

@@ -37,6 +37,11 @@ public class AtelierStoresListController extends inkGameController {
       this.ShowSideImages();
       this.RefreshDataSource();
     };
+
+    let depot: ref<ResourceDepot> = GameInstance.GetResourceDepot();
+    if !depot.ArchiveExists("VirtualAtelier.archive") {
+      AtelierLog("VirtualAtelier.archive not found, make sure that you have it installed.");
+    };
   }
 
   protected cb func OnUninitialize() -> Bool {

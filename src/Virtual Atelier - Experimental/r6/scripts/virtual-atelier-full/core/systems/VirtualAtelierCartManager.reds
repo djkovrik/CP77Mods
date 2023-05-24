@@ -107,15 +107,13 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
         itemData.isVirtualItem = true;
         AtelierItemsHelper.ScaleItem(this.player, itemData, stockItem.quality);
         this.transactionSystem.GiveItem(this.player, itemID, stockItem.quantity);
-        LogChannel(n"DEBUG", s"ADDING ITEM \(ItemID.GetCombinedHash(itemID)) at \(stockItem.quantity)");
         i += 1;
       };
     };
 
     // Remove money
     this.transactionSystem.RemoveItemByTDBID(this.player, t"Items.money", this.GetCurrentGoodsPrice());
-    this.currentPlayerMoney = this.GetCurrentPlayerMoney() - this.GetCurrentGoodsPrice();
-    this.RefreshCurrentBalances();
+    this.ClearCart();
   }
 
   public final func GetCurrentPlayerMoney() -> Int32 {

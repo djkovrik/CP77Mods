@@ -29,6 +29,19 @@ public class VirtualShopRegistration extends Event {
   }
 }
 
+public class VirtualShop {
+  let storeID: CName;
+  let storeName: String;
+  let items: array<String>;
+  let qualities: array<String>;
+  let quantities: array<Int32>;
+  let prices: array<Int32>;
+  let atlasResource: ResRef;
+  let texturePart: CName;
+  let isBookmarked: Bool;
+  let isNew: Bool;
+}
+
 class VirtualStockItem {
   public let itemID: ItemID;
   public let itemTDBID: TweakDBID;
@@ -53,19 +66,6 @@ public class StoreGoods {
       ArrayPush(this.stores, store);
     };
   };
-}
-
-public class VirtualShop {
-  let storeID: CName;
-  let storeName: String;
-  let items: array<String>;
-  let qualities: array<String>;
-  let quantities: array<Int32>;
-  let prices: array<Int32>;
-  let atlasResource: ResRef;
-  let texturePart: CName;
-  let isBookmarked: Bool;
-  let isNew: Bool;
 }
 
 public class PreviewInventoryItemPreviewData extends InventoryItemPreviewData {
