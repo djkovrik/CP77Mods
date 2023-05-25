@@ -1,7 +1,7 @@
 import VendorPreview.ItemPreviewManager.VirtualAtelierPreviewManager
 import VendorPreview.Utils.AtelierUtils
 import VendorPreview.Utils.AtelierDebug
-import Codeware.UI.*
+import VendorPreview.Codeware.UI.*
 
 @wrapMethod(FullscreenVendorGameController)
 protected cb func OnInitialize() -> Bool {
@@ -14,15 +14,13 @@ protected cb func OnInitialize() -> Bool {
     searchContainer = new inkCanvas();
     searchContainer.SetMargin(new inkMargin(0.0, 8.0, 0.0, 32.0));
     searchContainer.Reparent(parentContainer);
-
-    let searchInput = HubTextInput.Create();
-    searchInput.SetName(n"SearchTextInput");
-    searchInput.SetLetterCase(textLetterCase.UpperCase);
-    searchInput.SetMaxLength(30);
-    searchInput.SetDefaultText(GetLocalizedText("LocKey#48662"));
-    searchInput.RegisterToCallback(n"OnInput", this, n"OnSearchInput");
-    searchInput.Reparent(searchContainer);
-    this.m_searchInput = searchInput;
+    this.m_searchInput = HubTextInput.Create();
+    this.m_searchInput.SetName(n"SearchTextInput");
+    this.m_searchInput.SetLetterCase(textLetterCase.UpperCase);
+    this.m_searchInput.SetMaxLength(30);
+    this.m_searchInput.SetDefaultText(GetLocalizedText("LocKey#48662"));
+    this.m_searchInput.RegisterToCallback(n"OnInput", this, n"OnSearchInput");
+    this.m_searchInput.Reparent(searchContainer);
 
     this.m_vendorItemsDataView.SetIsVirtual(true);
   };
@@ -203,6 +201,7 @@ private final func ScaleStockItems() -> Void {
   let itemRecord: wref<Item_Record>;
   let i: Int32 = 0;
   while i < ArraySize(this.m_virtualStock) {
+    itemData = this.m_virtualStock[i].itemData;
     itemRecord = TweakDBInterface.GetItemRecord(this.m_virtualStock[i].itemTDBID);
     if !itemRecord.IsSingleInstance() && !itemData.HasTag(n"Cyberware") {
       AtelierUtils.ScaleItem(this.m_player, this.m_virtualStock[i].itemData, this.m_virtualStock[i].quality);
