@@ -67,15 +67,4 @@ public abstract class AtelierButtonHintsHelper {
       controller.m_buttonHintsController.RemoveButtonHint(vendorPreviewButtonHint.previewModeToggleName);
     };
   }
-
-  public static func UpdatePurchaseAllHint(controller: ref<FullscreenVendorGameController>, show: Bool) -> Void {
-    let vendorPreviewButtonHint: ref<VendorPreviewButtonHint> = VendorPreviewButtonHint.Get(controller.GetPlayerControlledObject());
-    let total: Int32 = controller.GetTotalVirtualStorePrice();
-    let label: String = s"\(vendorPreviewButtonHint.previewModeTogglePurchaseLabel) - \(GetLocalizedTextByKey(n"UI-Filters-AllItems")) (\(total) \(GetLocalizedTextByKey(n"Common-Characters-EuroDollar")))";
-    if show {
-      controller.m_buttonHintsController.AddButtonHint(vendorPreviewButtonHint.purchaseAll, label);
-    } else {
-      controller.m_buttonHintsController.RemoveButtonHint(vendorPreviewButtonHint.purchaseAll);
-    };
-  }
 }

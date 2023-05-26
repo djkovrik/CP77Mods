@@ -20,8 +20,6 @@ import VendorPreview.UI.*
 @addField(WardrobeSetPreviewGameController) public let m_isLeftMouseDown: Bool;
 @addField(WardrobeSetPreviewGameController) public let m_atelierActive: Bool;
 
-@addField(FullscreenVendorGameController) public let m_buyAllPrice: Float;
-@addField(FullscreenVendorGameController) public let m_calledForBuyAll: Bool;
 @addField(FullscreenVendorGameController) public let m_isPreviewMode: Bool;
 @addField(FullscreenVendorGameController) public let m_currentTutorialsFact: Int32;
 @addField(FullscreenVendorGameController) public let m_virtualStock: array<ref<VirtualStockItem>>;

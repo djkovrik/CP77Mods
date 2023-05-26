@@ -150,11 +150,6 @@ protected cb func OnHandleGlobalInput(event: ref<inkPointerEvent>) -> Bool {
   let lastUsedKBM: Bool = this.GetPlayerControlledObject().PlayerLastUsedKBM();
   let isVirtual: Bool = this.GetIsVirtual();
 
-  if (isVirtual && event.IsAction(VendorPreviewButtonHint.Get(this.GetPlayerControlledObject()).purchaseAll)) {
-    this.BuyAllItemsFromVirtualVendor();
-    return false;
-  };
-
   if (isVirtual && event.IsAction(VendorPreviewButtonHint.Get(this.GetPlayerControlledObject()).previewModeToggleName)) && this.m_lastItemHoverOverEvent != null {
     this.BuyItemFromVirtualVendor(this.m_lastItemHoverOverEvent.itemData);
     return false;

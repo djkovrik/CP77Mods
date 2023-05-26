@@ -106,32 +106,6 @@ private func BuyItemFromVirtualVendor(inventoryItemData: InventoryItemData) {
 }
 
 @addMethod(FullscreenVendorGameController)
-private func BuyAllItemsFromVirtualVendor() -> Void {
-  if !this.BuyAllAvailable() {
-    return ;
-  };
-
-  let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.m_player.GetGame());
-  let totalPrice: Int32 = Cast<Int32>(this.m_buyAllPrice);
-  transactionSystem.RemoveItemByTDBID(this.m_player, t"Items.money", totalPrice);
-
-  let item: ref<VirtualStockItem>;
-  let i: Int32 = 0;
-  while i < ArraySize(this.m_virtualStock) {
-    item = this.m_virtualStock[i];
-    transactionSystem.GiveItem(this.m_player, item.itemID, item.quantity);
-    i += 1;
-  };
-
-  this.m_calledForBuyAll = true;
-  AtelierButtonHintsHelper.UpdatePurchaseAllHint(this, this.BuyAllAvailable());
-
-  // Refresh stock to regenerate ItemIDs
-  this.PopulateVendorInventory();
-}
-
-
-@addMethod(FullscreenVendorGameController)
 private final func ShowTooltipsForItemController(targetWidget: wref<inkWidget>, equippedItem: InventoryItemData, inspectedItemData: InventoryItemData, iconErrorInfo: ref<DEBUG_IconErrorInfo>, isBuybackStack: Bool) -> Void {
   let data: ref<InventoryTooltipData>;
   data = this.m_InventoryManager.GetTooltipDataForInventoryItem(inspectedItemData, InventoryItemData.IsEquipped(inspectedItemData), iconErrorInfo, InventoryItemData.IsVendorItem(inspectedItemData));
@@ -191,7 +165,6 @@ private final func FillVirtualStock() -> Void {
     totalPrice += stockItem.price;
   };
 
-  this.m_buyAllPrice = totalPrice;
   this.ScaleStockItems();
 }
 
@@ -288,19 +261,4 @@ private func PopulateVirtualShop() -> Void {
   this.ToggleFilter(this.m_vendorFiltersContainer, EnumInt(this.m_lastVendorFilter));
   inkWidgetRef.SetVisible(this.m_vendorFiltersContainer, ArraySize(items) > 0);
   this.PlayLibraryAnimation(n"vendor_grid_show");
-  
-  AtelierButtonHintsHelper.UpdatePurchaseAllHint(this, this.BuyAllAvailable());
-}
-
-@addMethod(FullscreenVendorGameController)
-private func BuyAllAvailable() -> Bool {
-  let playerMoney: Int32 = this.m_VendorDataManager.GetLocalPlayerCurrencyAmount();
-  let totalPrice: Int32 = Cast<Int32>(this.m_buyAllPrice);
-  return playerMoney > totalPrice && !this.m_calledForBuyAll;
-}
-
-@addMethod(FullscreenVendorGameController)
-public func GetTotalVirtualStorePrice() -> Int32 {
-  let totalPrice: Int32 = Cast<Int32>(this.m_buyAllPrice);
-  return totalPrice;
 }
