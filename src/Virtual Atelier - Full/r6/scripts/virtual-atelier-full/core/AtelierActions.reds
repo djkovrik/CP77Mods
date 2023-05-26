@@ -18,11 +18,11 @@ public class AtelierActions {
     if lastUsedPad {
       instance.togglePreviewVendor = n"world_map_menu_cycle_filter_prev";   // IK_Pad_DigitLeft
       instance.togglePreviewBackpack = n"world_map_menu_cycle_filter_prev"; // IK_Pad_DigitLeft
-      instance.addToVirtualCart = n"world_map_menu_cycle_filter_prev";      // IK_Pad_DigitLeft
+      instance.addToVirtualCart = n"world_map_menu_jump_to_player";         // IK_Pad_LeftThumb
       instance.resetGarment = n"world_map_filter_navigation_down";          // IK_Pad_DigitDown
       instance.removeAllGarment = n"world_map_menu_open_quest_static";      // IK_Pad_Y_TRIANGLE
       instance.removePreviewGarment = n"world_map_filter_navigation_up";    // IK_Pad_DigitUp
-      instance.move = n"world_map_fake_move";                               // IK_Pad_LeftAxisX
+      instance.move = n"";                                                  // None
       instance.zoom = n"";                                                  // None
     } else {
       instance.togglePreviewVendor = n"UI_PrintDebug";                      // IK_P

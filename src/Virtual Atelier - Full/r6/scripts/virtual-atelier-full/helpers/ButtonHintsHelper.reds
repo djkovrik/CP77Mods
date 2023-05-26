@@ -18,10 +18,12 @@ public abstract class AtelierButtonHintsHelper {
       if NotEquals(actions.zoom, n"") {
         buttonHints.AddButtonHint(actions.zoom, AtelierTexts.Zoom());
       };
+      if NotEquals(actions.move, n"") {
+        buttonHints.AddButtonHint(actions.move, AtelierTexts.Move());
+      };
       buttonHints.AddButtonHint(actions.resetGarment, AtelierTexts.PreviewReset());
       buttonHints.AddButtonHint(actions.removeAllGarment, AtelierTexts.PreviewRemoveAllGarment());
       buttonHints.AddButtonHint(actions.removePreviewGarment, AtelierTexts.PreviewRemovePreviewGarment());
-      buttonHints.AddButtonHint(actions.move, AtelierTexts.Move());
     } else {
       buttonHints.RemoveButtonHint(actions.move);
       buttonHints.RemoveButtonHint(actions.removePreviewGarment);

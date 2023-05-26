@@ -4,7 +4,7 @@ public class CurrentPlayerZoneManager {
 
   public static func IsInSafeZone(player: ref<PlayerPuppet>) -> Bool {
     if VirtualAtelierConfig.DisableDangerZoneChecker() {
-      return false;
+      return true;
     };
     
     let bb: ref<IBlackboard> = player.GetPlayerStateMachineBlackboard();

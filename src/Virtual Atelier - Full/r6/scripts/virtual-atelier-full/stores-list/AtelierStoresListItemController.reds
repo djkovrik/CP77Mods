@@ -126,7 +126,7 @@ class AtelierStoresListItemController extends inkVirtualCompoundItemController {
     bookmarkIcon.SetTileHAlign(inkEHorizontalAlign.Left);
     bookmarkIcon.SetTileVAlign(inkEVerticalAlign.Top);
     bookmarkIcon.SetSize(new Vector2(64.0, 64.0));
-    bookmarkIcon.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+    bookmarkIcon.SetMargin(new inkMargin(-12.0, -12.0, 0.0, 0.0));
     bookmarkIcon.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     bookmarkIcon.BindProperty(n"tintColor", n"MainColors.Yellow");
     bookmarkIcon.SetOpacity(0.7);
