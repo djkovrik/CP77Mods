@@ -74,6 +74,9 @@ public func Initialize(gameController: ref<ComputerInkGameController>, widgetDat
 @addMethod(WebPage)
 private func PopulateAtelierView() {
   let root: ref<inkCompoundWidget> = this.GetWidget(n"page/linkPanel/panel") as inkCompoundWidget;
+  if (!IsDefined(root)) {
+    root = this.GetWidget(n"Page/linkPanel/panel") as inkCompoundWidget;
+  };
   root.RemoveAllChildren();
   this.SpawnFromExternal(root, r"base\\gameplay\\gui\\virtual_atelier_stores.inkwidget", n"AtelierStores:VirtualAtelier.UI.AtelierStoresListController");
 }

@@ -22,6 +22,9 @@ private func PopulateAtelierView(owner: ref<GameObject>) {
   this.system = VirtualAtelierStoresSystem.GetInstance(owner);
   this.atelierPages = new inkVerticalPanel();
   this.rootAtelierPanel = this.GetWidget(n"page/linkPanel/panel") as inkVerticalPanel;
+  if (!IsDefined(this.rootAtelierPanel)) {
+    this.rootAtelierPanel = this.GetWidget(n"Page/linkPanel/panel") as inkVerticalPanel;
+  };
   this.rootAtelierPanel.RemoveAllChildren();
 
   this.stores = this.system.GetStores();
