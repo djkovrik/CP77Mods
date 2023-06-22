@@ -8,16 +8,22 @@ public class VirtualAtelierConfig {
   }
 
   @runtimeProperty("ModSettings.mod", "Virtual Atelier")
-  @runtimeProperty("ModSettings.category", "VA-Category-Misc")
-  @runtimeProperty("ModSettings.displayName", "VA-Duplicate-Checker")
-  @runtimeProperty("ModSettings.description", "VA-Duplicate-Checker-Desc")
-  let disableDuplicatesChecker: Bool = false;
+  @runtimeProperty("ModSettings.category", "UI-Settings-GenaralInput")
+  @runtimeProperty("ModSettings.displayName", "VA-Instant-Buy")
+  @runtimeProperty("ModSettings.description", "VA-Instant-Buy-Desc")
+  let instantBuy: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Virtual Atelier")
-  @runtimeProperty("ModSettings.category", "VA-Category-Misc")
+  @runtimeProperty("ModSettings.category", "UI-Settings-GenaralInput")
   @runtimeProperty("ModSettings.displayName", "VA-Danger-Zone-Checker")
   @runtimeProperty("ModSettings.description", "VA-Danger-Zone-Checker-Desc")
   let disableDangerZoneChecker: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "Virtual Atelier")
+  @runtimeProperty("ModSettings.category", "UI-Settings-GenaralInput")
+  @runtimeProperty("ModSettings.displayName", "VA-Duplicate-Checker")
+  @runtimeProperty("ModSettings.description", "VA-Duplicate-Checker-Desc")
+  let disableDuplicatesChecker: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "Virtual Atelier")
   @runtimeProperty("ModSettings.category", "VA-Category-Debug")

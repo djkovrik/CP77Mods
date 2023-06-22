@@ -175,7 +175,14 @@ public class VirtualStoreController extends gameuiMenuGameController {
         };
         break;
       case evt.IsAction(atelierActions.addToVirtualCart):
-        this.HandleCartAction();
+        if this.config.instantBuy {
+          if this.lastItemHoverOverEvent != null {
+            this.BuyItemFromVirtualVendor(this.lastItemHoverOverEvent.itemData);
+          };
+        } else {
+          this.HandleCartAction();
+        };
+        
         break;
     };
   }
@@ -203,11 +210,15 @@ public class VirtualStoreController extends gameuiMenuGameController {
       this.buttonHintsController.RemoveButtonHint(n"select");
     };
 
-    if isAddedToCart {
-      hintLabel = AtelierTexts.CartRemove();
+    if this.config.instantBuy {
+      hintLabel = AtelierTexts.Purchase();
     } else {
-      hintLabel = AtelierTexts.CartAdd();
-    };
+      if isAddedToCart {
+        hintLabel = AtelierTexts.CartRemove();
+      } else {
+        hintLabel = AtelierTexts.CartAdd();
+      };
+    }
 
     this.buttonHintsController.RemoveButtonHint(atelierActions.addToVirtualCart);
     this.buttonHintsController.AddButtonHint(atelierActions.addToVirtualCart, hintLabel);
@@ -344,7 +355,10 @@ public class VirtualStoreController extends gameuiMenuGameController {
     cartControls.SetHAlign(inkEHorizontalAlign.Left);
     cartControls.SetChildOrder(inkEChildOrder.Forward);
     cartControls.SetInteractive(true);
-    cartControls.Reparent(vendorHeader);
+
+    if !this.config.instantBuy {
+      cartControls.Reparent(vendorHeader);
+    };
 
     let buttonCart: ref<VirtualCartImageButton> = VirtualCartImageButton.Create();
     buttonCart.SetName(n"buy");
@@ -463,7 +477,6 @@ public class VirtualStoreController extends gameuiMenuGameController {
     cartMoneyHeader.BindProperty(n"fontWeight", n"MainColors.BodyFontWeight");
     cartMoneyHeader.SetFitToContent(true);
     cartMoneyHeader.SetMargin(new inkMargin(0.0, 20.0, 0.0, 0.0));
-    cartMoneyHeader.Reparent(balancesContainer);
 
     let cartMoneyValues: ref<inkHorizontalPanel> = new inkHorizontalPanel();
     cartMoneyValues.SetName(n"cartMoneyValues");
@@ -471,7 +484,6 @@ public class VirtualStoreController extends gameuiMenuGameController {
     cartMoneyValues.SetHAlign(inkEHorizontalAlign.Right);
     cartMoneyValues.SetFitToContent(true);
     cartMoneyValues.SetChildOrder(inkEChildOrder.Backward);
-    cartMoneyValues.Reparent(balancesContainer);
 
     let cartEddiesAmount: ref<inkText> = new inkText();
     cartEddiesAmount.SetName(n"cartEddiesAmount");
@@ -489,8 +501,13 @@ public class VirtualStoreController extends gameuiMenuGameController {
     cartEddiesAmount.BindProperty(n"tintColor", n"MainColors.PanelRed");
     cartEddiesAmount.BindProperty(n"fontSize", n"MainColors.ReadableFontSize");
     cartEddiesAmount.BindProperty(n"fontWeight", n"MainColors.BodyFontWeight");
-    cartEddiesAmount.Reparent(cartMoneyValues);
     this.cartMoney = cartEddiesAmount;
+
+    if !this.config.instantBuy {
+      cartMoneyHeader.Reparent(balancesContainer);
+      cartMoneyValues.Reparent(balancesContainer);
+      cartEddiesAmount.Reparent(cartMoneyValues);
+    };
 
     let cartEddiesIcon: ref<inkImage> = new inkImage();
     cartEddiesIcon.SetName(n"cartEddiesIcon");
@@ -845,6 +862,10 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
   }
 
   private func RefreshCartControls() -> Void {
+    if this.config.instantBuy {
+      return ;
+    };
+
     let playerMoney: Int32 = this.cartManager.GetCurrentPlayerMoney();
     let cartSize: Int32 = this.cartManager.GetCartSize();
     this.cartIcon.SetCounter(cartSize);
@@ -955,5 +976,25 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
     let wrapper: ref<inkCompoundWidget> = this.GetRootCompoundWidget().GetWidgetByPathName(n"wrapper") as inkCompoundWidget;
     wrapper.SetInteractive(true);
     this.SpawnFromExternal(wrapper, r"base\\gameplay\\gui\\virtual_atelier_preview.inkwidget", n"Root");
+  }
+
+  private func BuyItemFromVirtualVendor(inventoryItemData: InventoryItemData) {
+    let itemID: ItemID = InventoryItemData.GetID(inventoryItemData);
+    let price = InventoryItemData.GetPrice(inventoryItemData);
+    let quantity: Int32 = InventoryItemData.GetQuantity(inventoryItemData);
+    let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.player.GetGame());
+    let playerMoney: Int32 = this.vendorDataManager.GetLocalPlayerCurrencyAmount();
+    let vendorNotification: ref<UIMenuNotificationEvent>;
+
+    if playerMoney < Cast(price) {
+      vendorNotification = new UIMenuNotificationEvent();
+      vendorNotification.m_notificationType = UIMenuNotificationType.VNotEnoughMoney;
+      GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(vendorNotification);
+    } else {
+      transactionSystem.GiveItem(this.player, itemID, quantity);
+      transactionSystem.RemoveItemByTDBID(this.player, t"Items.money", Cast(price));
+      // Refresh stock to regenerate ItemIDs
+      this.PopulateVirtualShop();
+    };
   }
 }

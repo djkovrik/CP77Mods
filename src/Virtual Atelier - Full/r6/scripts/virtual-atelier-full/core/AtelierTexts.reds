@@ -14,6 +14,7 @@ public class AtelierTexts {
   public static func Zoom() -> String = GetLocalizedTextByKey(n"UI-ResourceExports-OpticalZoom")
   public static func Move() -> String = GetLocalizedTextByKey(n"UI-ScriptExports-Move0")
   public static func ButtonBuy() -> String =  GetLocalizedTextByKey(n"VA-Cart-Buy")
+  public static func Purchase() -> String =  GetLocalizedTextByKey(n"UI-ResourceExports-Buy")
   public static func ButtonClear() -> String = GetLocalizedTextByKey(n"VA-Cart-Clear")
   public static func ButtonAddAll() -> String = GetLocalizedTextByKey(n"VA-Cart-Add-All")
   public static func PlayerMoney() -> String = GetLocalizedTextByKey(n"VA-Cart-Label-V")
