@@ -883,6 +883,11 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
     this.cartMoney.SetText(s"\(cartAmount)");
   }
 
+  private func RefreshMoneyLabelInstantBuy() -> Void {
+    let playerAmount: Int32 = this.vendorDataManager.GetLocalPlayerCurrencyAmount();
+    this.playerMoney.SetText(s"\(playerAmount)");
+  }
+
   private func ShowAddAllConfirmationPopup() -> Void {
     this.popupToken = GenericMessageNotification.Show(this, this.virtualStore.storeName, AtelierTexts.ConfirmationAddAll(), GenericMessageNotificationType.ConfirmCancel);
     this.popupToken.RegisterListener(this, n"OnAddAllConfirmationPopupClosed");
@@ -989,6 +994,7 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
       transactionSystem.RemoveItemByTDBID(this.player, t"Items.money", Cast(price));
       // Refresh stock to regenerate ItemIDs
       this.PopulateVirtualShop();
+      this.RefreshMoneyLabelInstantBuy();
     };
   }
 }
