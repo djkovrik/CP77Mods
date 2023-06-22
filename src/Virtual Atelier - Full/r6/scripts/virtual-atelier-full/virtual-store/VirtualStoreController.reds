@@ -51,7 +51,6 @@ public class VirtualStoreController extends gameuiMenuGameController {
   private let lastItemHoverOverEvent: ref<ItemDisplayHoverOverEvent>;
   private let totalItemsPrice: Int32;
   private let allItemsAdded: Bool;
-  private let holdInProgress: Bool;
 
   protected cb func OnInitialize() -> Bool {
     this.InitializeCoreSystems();
@@ -145,8 +144,10 @@ public class VirtualStoreController extends gameuiMenuGameController {
   }
 
   protected cb func OnHandleGlobalHold(evt: ref<inkPointerEvent>) -> Bool {
-    if evt.IsAction(n"upgrade_perk") {
-      this.holdInProgress = evt.GetHoldProgress() >= 0.5;
+    if evt.IsAction(n"upgrade_perk") && !this.config.instantBuy {
+      if evt.GetHoldProgress() >= 0.9 {
+        this.OpenCartQuantityPopup();
+      };
     };
   }
 
@@ -253,13 +254,6 @@ public class VirtualStoreController extends gameuiMenuGameController {
     let hintLabel: String;
 
     if evt.actionName.IsAction(n"click") {
-      // Show popup on F hold
-      if this.holdInProgress {
-        this.holdInProgress = false;
-        this.OpenCartQuantityPopup();
-        return true;
-      };
-
       // If no hold then change equip state
       itemID = InventoryItemData.GetID(evt.itemData);
       isEquipped = this.previewManager.GetIsEquipped(itemID);
