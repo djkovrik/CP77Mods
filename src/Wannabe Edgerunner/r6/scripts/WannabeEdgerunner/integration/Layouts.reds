@@ -1,29 +1,5 @@
 import Edgerunning.System.EdgerunningSystem
 
-@addField(inkGameController)
-let humanityCounter: ref<inkText>;  
-
-@addField(InventoryTooltipData)
-public let humanity: Int32;
-
-
-// -- Cyberware screen
-
-@addField(RipperDocGameController)
-public let edgerunningSystem: wref<EdgerunningSystem>;
-
-@addField(RipperDocGameController)
-public let humanityIcon: ref<inkImage>;
-
-@addField(RipperDocGameController)
-public let humanityLabel: ref<inkText>;
-
-@addField(RipperDocGameController)
-public let humanityBarFull: ref<inkRectangle>;
-
-@addField(RipperDocGameController)
-public let humanityBarProgress: ref<inkRectangle>;
-
 @addMethod(RipperDocGameController)
 public func CreateHumanityIcon() -> ref<inkImage> {
   let icon: ref<inkImage> = new inkImage();
@@ -204,12 +180,6 @@ protected cb func OnUpdateHumanityCounterEvent(evt: ref<UpdateHumanityCounterEve
   this.RefreshHumanityBars(evt.current, evt.total);
 }
 
-
-// -- Cyberdeck popup
-
-@addField(CyberdeckTooltip)
-public let humanityLabel: ref<inkText>;
-
 @wrapMethod(CyberdeckTooltip)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
@@ -245,12 +215,6 @@ public func SetData(tooltipData: ref<ATooltipData>) -> Void {
     this.humanityLabel.SetVisible(false);
   }
 }
-
-
-// -- Cyberware popup
-
-@addField(ItemTooltipCommonController)
-public let humanityLabel: ref<inkText>;
 
 @wrapMethod(ItemTooltipCommonController)
 public func SetData(tooltipData: ref<ATooltipData>) -> Void {
@@ -294,20 +258,6 @@ public final func UpdateData(tooltipData: ref<InventoryTooltipData>) -> Void {
     this.humanityLabel.SetVisible(false);
   }
 }
-
-// -- Healthbar indicator
-
-@addField(healthbarWidgetGameController)
-public let humanityBarContainer: ref<inkCanvas>;
-
-@addField(healthbarWidgetGameController)
-public let humanityBarFull: ref<inkRectangle>;
-
-@addField(healthbarWidgetGameController)
-public let humanityBarProgress: ref<inkRectangle>;
-
-@addField(healthbarWidgetGameController)
-public let edgerunningSystem: ref<EdgerunningSystem>;
 
 @addMethod(healthbarWidgetGameController)
 public func RefreshHumanityBars(current: Int32, total: Int32, color: CName) -> Void {

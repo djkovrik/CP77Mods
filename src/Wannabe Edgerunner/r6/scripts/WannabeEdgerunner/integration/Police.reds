@@ -17,6 +17,6 @@ public func ClearWantedLevel() -> Void {
 private final func ShouldSpawnVehicle() -> Bool {
   let shouldSpawn: Bool = wrappedMethod();
   let isInInterior: Bool = IsEntityInInteriorArea(this.m_player);
-  let isPsychosisActive: Bool = EdgerunningSystem.GetInstance(this.GetGame()).IsPsychosisActive();
+  let isPsychosisActive: Bool = Equals(StatusEffectSystem.ObjectHasStatusEffect(this.m_player, t"BaseStatusEffect.ActivePsychosisBuff"), true);
   return (isPsychosisActive && !isInInterior) || shouldSpawn;
 }

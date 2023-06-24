@@ -1,22 +1,19 @@
-public class TeleportData {
-  public let district: gamedataDistrict;
-  public let coords: array<Vector4>;
-  public let maleVictim: TweakDBID;
-  public let femaleVictim: TweakDBID;
-}
+/**
+  public func Init() -> Void
+  public func GetRandomTeleportData(current: gamedataDistrict) -> ref<TeleportData>
+  public func GetRandomTeleportDataPrologue() -> ref<TeleportData>
+*/
+public class TeleportDestinationHelper {
 
-public class TeleportHelper {
+  private let districts: array<ref<TeleportData>>;
+  private let districtsPrologue: array<ref<TeleportData>>;
 
-  private let allDistricts: array<ref<TeleportData>>;
-  private let prologueDistricts: array<ref<TeleportData>>;
-
-  public static func GetRandomCoordinates(data: ref<TeleportData>) -> Vector4 {
-    let index: Int32 = RandRange(0, ArraySize(data.coords));
-    return data.coords[index];
+  public func Init() -> Void {
+    this.PopulateDistrictsData();
   }
 
   public func GetRandomTeleportData(current: gamedataDistrict) -> ref<TeleportData> {
-    let districts: array<ref<TeleportData>> = this.allDistricts;
+    let districts: array<ref<TeleportData>> = this.districts;
     let targetDistricts: array<ref<TeleportData>>;
     for item in districts {
       if NotEquals(item.district, current) {
@@ -32,11 +29,11 @@ public class TeleportHelper {
   }
 
   public func GetRandomTeleportDataPrologue() -> ref<TeleportData> {
-    let index: Int32 = RandRange(0, ArraySize(this.prologueDistricts));
-    return this.prologueDistricts[index];
+    let index: Int32 = RandRange(0, ArraySize(this.districtsPrologue));
+    return this.districtsPrologue[index];
   }
 
-  public func Init() -> Void {
+  private func PopulateDistrictsData() -> Void {
     // Downtown
     let downtown: ref<TeleportData> = new TeleportData();
     downtown.district = gamedataDistrict.Downtown;
@@ -46,7 +43,7 @@ public class TeleportHelper {
       new Vector4(-2032.205078, 669.650024, 10.342606, 1.0),
       new Vector4(-2022.895386, 498.522583, 9.949997, 1.0)
     ];
-    ArrayPush(this.allDistricts, downtown);
+    ArrayPush(this.districts, downtown);
     // Glen
     let glen: ref<TeleportData> = new TeleportData();
     glen.district = gamedataDistrict.Glen;
@@ -56,7 +53,7 @@ public class TeleportHelper {
       new Vector4(-1609.206543, -1210.161621, 24.747269, 1.0),
       new Vector4(-1603.516479, -1317.780518, 38.519920, 1.0)
     ];
-    ArrayPush(this.allDistricts, glen);
+    ArrayPush(this.districts, glen);
     // Kabuki
     let kabuki: ref<TeleportData> = new TeleportData();
     kabuki.district = gamedataDistrict.Kabuki;
@@ -68,8 +65,8 @@ public class TeleportHelper {
       new Vector4(-877.804321, 1867.348022, 36.443108, 1.0),
       new Vector4(-1211.892090, 1080.764282, 16.313820, 1.0)
     ];
-    ArrayPush(this.allDistricts, kabuki);
-    ArrayPush(this.prologueDistricts, kabuki);
+    ArrayPush(this.districts, kabuki);
+    ArrayPush(this.districtsPrologue, kabuki);
     // Wellsprings
     let wellsprings: ref<TeleportData> = new TeleportData();
     wellsprings.district = gamedataDistrict.Wellsprings;
@@ -79,7 +76,7 @@ public class TeleportHelper {
       new Vector4(-2354.901855, -1165.460815, 1.493042, 1.0),
       new Vector4(-2435.021973, -1116.239258, 0.751671, 1.0)
     ];
-    ArrayPush(this.allDistricts, wellsprings);
+    ArrayPush(this.districts, wellsprings);
     // Coast View
     let coast: ref<TeleportData> = new TeleportData();
     coast.district = gamedataDistrict.Coastview;
@@ -92,7 +89,7 @@ public class TeleportHelper {
       new Vector4(-2235.793701, -2214.437988, 11.647858, 1.0),
       new Vector4(-2051.292236, -1790.358765, 3.306229, 1.0)
     ];
-    ArrayPush(this.allDistricts, coast);
+    ArrayPush(this.districts, coast);
     // Westwind Estate
     let westWind: ref<TeleportData> = new TeleportData();
     westWind.district = gamedataDistrict.WestWindEstate;
@@ -102,7 +99,7 @@ public class TeleportHelper {
       new Vector4(-2740.440430, -2410.323975, 7.528984, 1.0),
       new Vector4(-2854.782959, -2388.929688, 5.057793, 1.0)
     ];
-    ArrayPush(this.allDistricts, westWind);
+    ArrayPush(this.districts, westWind);
     // Arroyo
     let arroyo: ref<TeleportData> = new TeleportData();
     arroyo.district = gamedataDistrict.Arroyo;
@@ -113,7 +110,7 @@ public class TeleportHelper {
       new Vector4(-625.327515, -1315.032349, 7.558945, 1.0),
       new Vector4(-816.726685, -1352.448242, 7.709442, 1.0)
     ];
-    ArrayPush(this.allDistricts, arroyo);
+    ArrayPush(this.districts, arroyo);
     // Little China
     let littleChina: ref<TeleportData> = new TeleportData();
     littleChina.district = gamedataDistrict.LittleChina;
@@ -122,8 +119,19 @@ public class TeleportHelper {
     littleChina.coords = [
       new Vector4(-1739.493774, 1214.428101, 18.234169, 1.0)
     ];
-    ArrayPush(this.allDistricts, littleChina);
-    ArrayPush(this.prologueDistricts, littleChina);
-    // More?
+    ArrayPush(this.districts, littleChina);
+    ArrayPush(this.districtsPrologue, littleChina);
+  }
+}
+
+public class TeleportData {
+  public let district: gamedataDistrict;
+  public let coords: array<Vector4>;
+  public let maleVictim: TweakDBID;
+  public let femaleVictim: TweakDBID;
+
+  public static func GetRandomCoordinates(data: ref<TeleportData>) -> Vector4 {
+    let index: Int32 = RandRange(0, ArraySize(data.coords));
+    return data.coords[index];
   }
 }
