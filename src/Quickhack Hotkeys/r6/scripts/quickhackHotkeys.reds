@@ -202,3 +202,26 @@ protected final func RegisterToInput() -> Void {
   puppet.UnregisterInputListener(this, n"QH_MoveLeft");
   puppet.UnregisterInputListener(this, n"QH_MoveRight");
 }
+
+public class QHotkeysScannerToggledEvent extends Event {
+  let usedKBM: Bool;
+
+  public static func Create(enabled: Bool) -> ref<QHotkeysScannerToggledEvent> {
+    let self: ref<QHotkeysScannerToggledEvent> = new QHotkeysScannerToggledEvent();
+    self.usedKBM = enabled;
+    return self;
+  }
+}
+
+@addMethod(QuickhacksListItemController)
+protected cb func OnQHotkeysScannerToggledEvent(evt: ref<QHotkeysScannerToggledEvent>) -> Bool {
+  this.m_buttonHint.SetVisible(evt.usedKBM);
+}
+
+@wrapMethod(scannerGameController)
+private final func ShowScanner(show: Bool) -> Void {
+  wrappedMethod(show);
+
+  let lastUsedKBM: Bool = this.m_playerPuppet.PlayerLastUsedKBM();
+  GameInstance.GetUISystem(this.m_gameInstance).QueueEvent(QHotkeysScannerToggledEvent.Create(lastUsedKBM));
+}
