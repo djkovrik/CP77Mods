@@ -39,7 +39,8 @@ public final func GetMenuButtonWidgets() -> array<SComputerMenuButtonWidgetPacka
   let packages: array<SComputerMenuButtonWidgetPackage> = wrappedMethod();
   let config: ref<VirtualAtelierConfig> = VirtualAtelierConfig.Get();
   let package: SComputerMenuButtonWidgetPackage;
-  let isInSafeZone: Bool = CurrentPlayerZoneHelper.IsInSafeZone(this.GetLocalPlayerControlledGameObject() as PlayerPuppet, config) || config.disableDangerZoneChecker;
+  let player: ref<PlayerPuppet> = this.GetLocalPlayerControlledGameObject() as PlayerPuppet;
+  let isInSafeZone: Bool = CurrentPlayerZoneHelper.IsInSafeZone(player, config);
 
   if isInSafeZone {
     if this.IsMenuEnabled(EComputerMenuType.INTERNET) && ArraySize(packages) > 0 {

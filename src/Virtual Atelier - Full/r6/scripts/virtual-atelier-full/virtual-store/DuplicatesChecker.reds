@@ -5,7 +5,7 @@ import VirtualAtelier.Logs.AtelierLog
 public abstract class AtelierDuplicatesChecker {
   public static func Check(stores: array<ref<VirtualShop>>, controller: wref<WebPage>) -> Void {
     let config: ref<VirtualAtelierConfig> = VirtualAtelierConfig.Get();
-    if config.disableDuplicatesChecker {
+    if !config.enableDuplicatesChecker {
       return ;
     };
     

@@ -17,13 +17,13 @@ public class VirtualAtelierConfig {
   @runtimeProperty("ModSettings.category", "UI-Settings-GenaralInput")
   @runtimeProperty("ModSettings.displayName", "VA-Danger-Zone-Checker")
   @runtimeProperty("ModSettings.description", "VA-Danger-Zone-Checker-Desc")
-  let disableDangerZoneChecker: Bool = false;
+  let enableDangerZoneChecker: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Virtual Atelier")
   @runtimeProperty("ModSettings.category", "UI-Settings-GenaralInput")
   @runtimeProperty("ModSettings.displayName", "VA-Duplicate-Checker")
   @runtimeProperty("ModSettings.description", "VA-Duplicate-Checker-Desc")
-  let disableDuplicatesChecker: Bool = true;
+  let enableDuplicatesChecker: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Virtual Atelier")
   @runtimeProperty("ModSettings.category", "VA-Category-Debug")
