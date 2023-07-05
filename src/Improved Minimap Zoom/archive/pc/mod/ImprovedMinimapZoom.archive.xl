@@ -10,3 +10,4 @@ localization:
     cz-cz: base\localization\cz-cz\onscreens\imz.json
     jp-jp: base\localization\jp-jp\onscreens\imz.json
     de-de: base\localization\de-de\onscreens\imz.json
+    es-es: base\localization\es-es\onscreens\imz.json
