@@ -1,4 +1,4 @@
-import VirtualAtelier.Config.VirtualAtelierConfig
+import VendorPreview.Config.VirtualAtelierConfig
 import VirtualAtelier.Logs.AtelierLog
 
 // Compares items through all installed stores and check if item exists for more than a single store

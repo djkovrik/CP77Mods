@@ -1,5 +1,5 @@
 module VirtualAtelier.UI
-import VirtualAtelier.Config.VirtualAtelierConfig
+import VendorPreview.Config.VirtualAtelierConfig
 import VirtualAtelier.Core.AtelierActions
 import VirtualAtelier.Core.AtelierTexts
 import VirtualAtelier.Logs.AtelierDebug

@@ -1,4 +1,4 @@
-import VirtualAtelier.Config.VirtualAtelierConfig
+import VendorPreview.Config.VirtualAtelierConfig
 import VirtualAtelier.Systems.*
 import VirtualAtelier.Helpers.*
 import VirtualAtelier.Core.*

@@ -1,5 +1,5 @@
 module VirtualAtelier.Helpers
-import VirtualAtelier.Config.VirtualAtelierConfig
+import VendorPreview.Config.VirtualAtelierConfig
 
 public abstract class CurrentPlayerZoneHelper {
 

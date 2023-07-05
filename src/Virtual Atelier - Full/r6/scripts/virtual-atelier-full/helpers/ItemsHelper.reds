@@ -1,5 +1,5 @@
 module VirtualAtelier.Helpers
-import VirtualAtelier.Config.VirtualAtelierConfig
+import VendorPreview.Config.VirtualAtelierConfig
 import VirtualAtelier.Logs.AtelierDebug
 
 public abstract class AtelierItemsHelper {

@@ -1,6 +1,6 @@
+import VendorPreview.Config.VirtualAtelierConfig
 import VirtualAtelier.Systems.VirtualAtelierPreviewManager
 import VirtualAtelier.Systems.VirtualAtelierCartManager
-import VirtualAtelier.Config.VirtualAtelierConfig
 import Codeware.UI.*
 
 @addField(WardrobeSetPreviewGameController) public let previewManager: wref<VirtualAtelierPreviewManager>;

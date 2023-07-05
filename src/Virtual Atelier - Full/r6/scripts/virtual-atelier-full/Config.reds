@@ -1,4 +1,5 @@
-module VirtualAtelier.Config
+// kept old module name for compat reasons
+module VendorPreview.Config
 
 public class VirtualAtelierConfig {
   

@@ -1,5 +1,5 @@
+import VendorPreview.Config.VirtualAtelierConfig
 import VirtualAtelier.Helpers.CurrentPlayerZoneHelper
-import VirtualAtelier.Config.VirtualAtelierConfig
 import VirtualAtelier.Core.AtelierTexts
 import VirtualAtelier.Logs.AtelierLog
 

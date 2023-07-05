@@ -1,5 +1,5 @@
+import VendorPreview.Config.VirtualAtelierConfig
 import VirtualAtelier.Systems.VirtualAtelierStoresManager
-import VirtualAtelier.Config.VirtualAtelierConfig
 import VirtualAtelier.Logs.AtelierDebug
 
 public class VirtualShopRegistration extends Event {

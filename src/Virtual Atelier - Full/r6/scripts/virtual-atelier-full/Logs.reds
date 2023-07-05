@@ -1,5 +1,5 @@
 module VirtualAtelier.Logs
-import VirtualAtelier.Config.VirtualAtelierConfig
+import VendorPreview.Config.VirtualAtelierConfig
 
 public static func AtelierLog(str: String) -> Void {
   LogChannel(n"DEBUG", s"Atelier: \(str)");

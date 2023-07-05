@@ -1,6 +1,6 @@
 module VirtualAtelier.UI
+import VendorPreview.Config.VirtualAtelierConfig
 import VirtualAtelier.Systems.VirtualAtelierStoresManager
-import VirtualAtelier.Config.VirtualAtelierConfig
 import VirtualAtelier.Core.AtelierTexts
 import VirtualAtelier.Logs.*
 
