@@ -1,3 +1,9 @@
 localization:
   onscreens:
     en-us: base\localization\en-us\onscreens\virtual-atelier.json
+    cz-cz: base\localization\cz-cz\onscreens\virtual-atelier.json
+    de-de: base\localization\de-de\onscreens\virtual-atelier.json
+    it-it: base\localization\it-it\onscreens\virtual-atelier.json
+    ru-ru: base\localization\ru-ru\onscreens\virtual-atelier.json
+    tr-tr: base\localization\tr-tr\onscreens\virtual-atelier.json
+    zh-cn: base\localization\zh-cn\onscreens\virtual-atelier.json

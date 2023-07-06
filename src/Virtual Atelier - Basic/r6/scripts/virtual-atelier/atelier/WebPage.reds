@@ -2,7 +2,7 @@ import VendorPreview.StoresManager.VirtualAtelierStoresSystem
 import VendorPreview.Config.VirtualAtelierInternals
 import VendorPreview.Utils.AtelierDebug
 import VendorPreview.Utils.AtelierUtils
-import VendorPreview.Codeware.UI.*
+import Codeware.UI.*
 import VendorPreview.UI.*
 
 @addMethod(WebPage)

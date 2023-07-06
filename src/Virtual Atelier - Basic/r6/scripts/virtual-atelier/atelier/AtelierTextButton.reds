@@ -1,5 +1,5 @@
 module VendorPreview.UI
-import VendorPreview.Codeware.UI.*
+import Codeware.UI.*
 
 public class AtelierTextButton extends inkCustomController {
 

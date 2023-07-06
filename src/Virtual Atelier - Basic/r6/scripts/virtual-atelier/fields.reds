@@ -1,6 +1,6 @@
 import VendorPreview.ItemPreviewManager.VirtualAtelierPreviewManager
 import VendorPreview.StoresManager.VirtualAtelierStoresSystem
-import VendorPreview.Codeware.UI.*
+import Codeware.UI.*
 import VendorPreview.UI.*
 
 @addField(WebPage) public let owner: wref<GameObject>;

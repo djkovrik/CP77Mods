@@ -1,8 +1,8 @@
 module VendorPreview.Config
 
 public class VirtualAtelierConfig {
-  public static func DisableDuplicatesChecker() -> Bool = true
-  public static func DisableDangerZoneChecker() -> Bool = true
+  public static func DisableDuplicatesChecker() -> Bool = false
+  public static func DisableDangerZoneChecker() -> Bool = false
 }
 
 public class VirtualAtelierInternals {

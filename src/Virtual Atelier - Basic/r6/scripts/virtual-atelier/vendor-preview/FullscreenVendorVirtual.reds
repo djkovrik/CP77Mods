@@ -1,7 +1,7 @@
 import VendorPreview.ItemPreviewManager.VirtualAtelierPreviewManager
 import VendorPreview.Utils.AtelierUtils
 import VendorPreview.Utils.AtelierDebug
-import VendorPreview.Codeware.UI.*
+import Codeware.UI.*
 
 @wrapMethod(FullscreenVendorGameController)
 protected cb func OnInitialize() -> Bool {
