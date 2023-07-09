@@ -21,7 +21,7 @@ public class VirtualStoreItemController extends inkVirtualCompoundItemController
     if !this.isSpawnInProgress {
       if !IsDefined(this.itemViewController) {
         this.isSpawnInProgress = true;
-        ItemDisplayUtils.AsyncSpawnCommonSlotController(this, this.GetRootWidget(), displayToCreate, n"OnSpawned");
+        ItemDisplayUtils.AsyncSpawnCommonSlotControllerVA(this, this.GetRootWidget(), displayToCreate, n"OnSpawned");
       } else {
         this.UpdateControllerData();
       };

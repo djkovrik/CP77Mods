@@ -30,3 +30,11 @@ private final func GetPartInventoryItemData(owner: wref<GameObject>, itemId: Ite
   };
   return wrappedMethod(owner, itemId, innerItemData, itemData);
 }
+
+// Spawn from local slots inkwidget to fix E3 Inventory compat
+@addMethod(ItemDisplayUtils)
+public final static func AsyncSpawnCommonSlotControllerVA(logicController: ref<inkLogicController>, parent: ref<inkWidget>, slotName: CName, callbackName: CName, opt userData: ref<IScriptable>) -> Void {
+  if IsDefined(parent) {
+    logicController.AsyncSpawnFromExternal(parent, r"base\\gameplay\\gui\\virtual_atelier_slots.inkwidget", slotName, logicController, callbackName, userData);
+  };
+}
