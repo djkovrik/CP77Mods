@@ -8,7 +8,7 @@ public class AtelierStoresListController extends inkGameController {
   private let player: wref<PlayerPuppet>;
   private let system: wref<VirtualAtelierStoresManager>;
   private let stores: array<ref<VirtualShop>>;
-  private let buttonhints: wref<ButtonHints>;
+  private let buttonHints: wref<ButtonHints>;
   private let storesList: wref<inkVirtualGridController>;
   private let storesListScrollController: wref<inkScrollController>;
   private let storesDataSource: ref<ScriptableDataSource>;
@@ -21,7 +21,7 @@ public class AtelierStoresListController extends inkGameController {
     let inkSystem: ref<inkSystem> = GameInstance.GetInkSystem();
     let hudRoot: ref<inkCompoundWidget> = inkSystem.GetLayer(n"inkHUDLayer").GetVirtualWindow();
     let hintsContainer = hudRoot.GetWidget(n"AtelierButtonHints") as inkCompoundWidget;
-    this.buttonhints = hintsContainer.GetWidgetByIndex(0).GetController() as ButtonHints;
+    this.buttonHints = hintsContainer.GetWidgetByIndex(0).GetController() as ButtonHints;
     
     this.player = this.GetPlayerControlledObject() as PlayerPuppet;
     this.system = VirtualAtelierStoresManager.GetInstance(this.player.GetGame());
@@ -58,6 +58,10 @@ public class AtelierStoresListController extends inkGameController {
     if evt.IsAction(this.GetBookmarkAction()) {
       this.HandleBookmarkAction();
     };
+
+    if evt.IsAction(n"back") || evt.IsAction(n"UI_Cancel") || evt.IsAction(n"UI_Exit")  {
+      this.ClearButtonHint();
+    };    
   }
 
   protected cb func OnAtelierStoreSoundEvent(evt: ref<AtelierStoreSoundEvent>) -> Bool {
@@ -82,6 +86,8 @@ public class AtelierStoresListController extends inkGameController {
       return false;
     };
 
+    this.ClearButtonHint();
+
     let vendorData: ref<VendorPanelData> = new VendorPanelData();
     vendorData.data.vendorId = "VirtualVendor";
     vendorData.data.entityID = this.player.GetEntityID();
@@ -99,13 +105,12 @@ public class AtelierStoresListController extends inkGameController {
       hintText = AtelierTexts.AddToFavorites();
     };
 
-    this.buttonhints.AddButtonHint(this.GetBookmarkAction(), hintText);
+    this.buttonHints.AddButtonHint(this.GetBookmarkAction(), hintText);
     this.latestHovered = evt.store;
   }
 
   protected cb func OnAtelierStoreHoverOutEvent(evt: ref<AtelierStoreHoverOutEvent>) -> Bool {
-    this.buttonhints.RemoveButtonHint(this.GetBookmarkAction());
-    this.latestHovered = null;
+    this.ClearButtonHint();
   }
 
   private func InitializeData() -> Void {
@@ -228,5 +233,10 @@ public class AtelierStoresListController extends inkGameController {
 
   private func PlaySound(name: CName) -> Void {
     GameObject.PlaySoundEvent(this.player, name);
+  }
+
+  private func ClearButtonHint() -> Void {
+    this.buttonHints.RemoveButtonHint(this.GetBookmarkAction());
+    this.latestHovered = null;
   }
 }
