@@ -15,7 +15,7 @@ public class VirtualStoreDataView extends BackpackDataView {
   }
 
   public func DerivedFilterItem(data: ref<IScriptable>) -> DerivedFilterResult {
-    let default: DerivedFilterResult = this.DefaultSorting(data);
+    let default: DerivedFilterResult = DerivedFilterResult.Pass;
     let data: ref<VendorInventoryItemData> = data as VendorInventoryItemData;
 
     if !IsDefined(data) {
@@ -29,24 +29,14 @@ public class VirtualStoreDataView extends BackpackDataView {
       return DerivedFilterResult.False;
     };
 
+    if Equals(this.m_itemFilterType, ItemFilterCategory.NewWardrobeAppearances) {
+      return data.NotInWardrobe ? DerivedFilterResult.True : DerivedFilterResult.False;
+    };
+
     return default;
   }
 
   protected func PreSortingInjection(builder: ref<ItemCompareBuilder>) -> ref<ItemCompareBuilder> {
     return builder.QuestItem();
-  }
-
-  private func DefaultSorting(data: ref<IScriptable>) -> DerivedFilterResult {
-    let wrappedData: ref<VendorUIInventoryItemData> = data as VendorUIInventoryItemData;
-    if !IsDefined(wrappedData) {
-      return DerivedFilterResult.Pass;
-    };
-    if Equals(this.m_itemFilterType, ItemFilterCategory.Buyback) {
-      return wrappedData.IsBuybackStack ? DerivedFilterResult.True : DerivedFilterResult.False;
-    };
-    if Equals(this.m_itemFilterType, ItemFilterCategory.NewWardrobeAppearances) {
-      return wrappedData.IsNotInWardrobe ? DerivedFilterResult.True : DerivedFilterResult.False;
-    };
-    return wrappedData.IsBuybackStack ? DerivedFilterResult.False : DerivedFilterResult.Pass;
   }
 }

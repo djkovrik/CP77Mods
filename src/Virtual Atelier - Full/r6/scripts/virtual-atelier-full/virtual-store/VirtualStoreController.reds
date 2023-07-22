@@ -722,6 +722,12 @@ public class VirtualStoreController extends gameuiMenuGameController {
     let vendorInventory: array<InventoryItemData>;
     let vendorInventoryData: ref<VendorInventoryItemData>;
     let vendorInventorySize: Int32;
+    let isAnyNewAppearance: Bool;
+    let itemRecord: wref<Item_Record>;
+    let limit: Int32;
+    let wardrobeItemAppearances: array<CName>;
+    let wardrobeItemIDs: array<ItemID>;
+
     this.filterManager.Clear();
     this.filterManager.AddFilter(ItemFilterCategory.AllItems);
     this.FillVirtualStock();
@@ -730,6 +736,16 @@ public class VirtualStoreController extends gameuiMenuGameController {
     currentPlayerMoney = this.vendorDataManager.GetLocalPlayerCurrencyAmount();
 
     AtelierDebug(s"Resulting list size: \(vendorInventorySize)", this.config);
+
+    wardrobeItemIDs = GameInstance.GetWardrobeSystem(this.player.GetGame()).GetStoredItemIDs();
+
+    i = 0;
+    limit = ArraySize(wardrobeItemIDs);
+    while i < limit {
+      itemRecord = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(wardrobeItemIDs[i]));
+      ArrayPush(wardrobeItemAppearances, itemRecord.AppearanceName());
+      i += 1;
+    };
 
     i = 0;
     while i < vendorInventorySize {
@@ -746,8 +762,23 @@ public class VirtualStoreController extends gameuiMenuGameController {
       vendorInventoryData.IsEnoughMoney = currentPlayerMoney >= Cast<Int32>(InventoryItemData.GetBuyPrice(vendorInventory[i]));
       vendorInventoryData.IsDLCAddedActiveItem = this.uiScriptableSystem.IsDLCAddedActiveItem(ItemID.GetTDBID(InventoryItemData.GetID(vendorInventory[i])));
 
+      // Check if appearance exists in wardrobe
+      if this.HasClothingCategory(vendorInventoryData.ItemData) {
+        itemRecord = RPGManager.GetItemRecord(InventoryItemData.GetID(vendorInventoryData.ItemData));
+        vendorInventoryData.NotInWardrobe = !ArrayContains(wardrobeItemAppearances, itemRecord.AppearanceName());
+        if vendorInventoryData.NotInWardrobe {
+          isAnyNewAppearance = true;
+        };
+      };
+
       this.inventoryManager.GetOrCreateInventoryItemSortData(vendorInventoryData.ItemData, this.uiScriptableSystem);      
       this.filterManager.AddItem(vendorInventoryData.ItemData.GameItemData);
+
+      // Add not in wardrobe filter
+      if isAnyNewAppearance {
+        this.filterManager.AddFilter(ItemFilterCategory.NewWardrobeAppearances);
+      };
+
       ArrayPush(items, vendorInventoryData);
       i += 1;
     };
@@ -996,5 +1027,10 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
       this.PopulateVirtualShop();
       this.RefreshMoneyLabelInstantBuy();
     };
+  }
+
+  private final func HasClothingCategory(data: InventoryItemData) -> Bool {
+    let item: ItemID = InventoryItemData.GetID(data);
+    return EquipmentSystem.IsItemOfCategory(item, gamedataItemCategory.Clothing);
   }
 }

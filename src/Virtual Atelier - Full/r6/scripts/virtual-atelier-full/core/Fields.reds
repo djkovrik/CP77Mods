@@ -26,3 +26,4 @@ import Codeware.UI.*
 @addField(VendorPanelData) public let virtualStore: ref<VirtualShop>;
 @addField(MinimalItemTooltipData) public let isVirtualItem: Bool;
 @addField(gameItemData) public let isVirtualItem: Bool;
+@addField(VendorInventoryItemData) public let NotInWardrobe: Bool;

@@ -71,6 +71,10 @@ public func DerivedFilterItem(data: ref<IScriptable>) -> DerivedFilterResult {
     return DerivedFilterResult.False;
   };
 
+  if Equals(this.m_itemFilterType, ItemFilterCategory.NewWardrobeAppearances) {
+    return data.NotInWardrobe ? DerivedFilterResult.True : DerivedFilterResult.False;
+  };
+
   return wrapped;
 }
 
@@ -220,6 +224,12 @@ private func PopulateVirtualShop() -> Void {
   let vendorInventory: array<InventoryItemData>;
   let vendorInventoryData: ref<VendorInventoryItemData>;
   let vendorInventorySize: Int32;
+  let isAnyNewAppearance: Bool;
+  let itemRecord: wref<Item_Record>;
+  let limit: Int32;
+  let wardrobeItemAppearances: array<CName>;
+  let wardrobeItemIDs: array<ItemID> = GameInstance.GetWardrobeSystem(this.m_player.GetGame()).GetStoredItemIDs();
+
   this.m_vendorFilterManager.Clear();
   this.m_vendorFilterManager.AddFilter(ItemFilterCategory.AllItems);
   this.FillVirtualStock();
@@ -228,6 +238,14 @@ private func PopulateVirtualShop() -> Void {
   playerMoney = this.m_VendorDataManager.GetLocalPlayerCurrencyAmount();
 
   AtelierDebug(s"Resulting list size: \(vendorInventorySize)");
+
+  i = 0;
+  limit = ArraySize(wardrobeItemIDs);
+  while i < limit {
+    itemRecord = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(wardrobeItemIDs[i]));
+    ArrayPush(wardrobeItemAppearances, itemRecord.AppearanceName());
+    i += 1;
+  };
 
   i = 0;
   while i < vendorInventorySize {
@@ -244,8 +262,22 @@ private func PopulateVirtualShop() -> Void {
     vendorInventoryData.IsEnoughMoney = playerMoney >= Cast<Int32>(InventoryItemData.GetBuyPrice(vendorInventory[i]));
     vendorInventoryData.IsDLCAddedActiveItem = this.m_uiScriptableSystem.IsDLCAddedActiveItem(ItemID.GetTDBID(InventoryItemData.GetID(vendorInventory[i])));
 
+    // Check if exists in wardrobe
+    if this.HasClothingCategory(vendorInventoryData.ItemData) {
+      itemRecord = RPGManager.GetItemRecord(InventoryItemData.GetID(vendorInventoryData.ItemData));
+      vendorInventoryData.NotInWardrobe = !ArrayContains(wardrobeItemAppearances, itemRecord.AppearanceName());
+      if vendorInventoryData.NotInWardrobe {
+        isAnyNewAppearance = true;
+      };
+    };
+
     this.m_InventoryManager.GetOrCreateInventoryItemSortData(vendorInventoryData.ItemData, this.m_uiScriptableSystem);      
     this.m_vendorFilterManager.AddItem(vendorInventoryData.ItemData.GameItemData);
+
+    if isAnyNewAppearance {
+      this.m_vendorFilterManager.AddFilter(ItemFilterCategory.NewWardrobeAppearances);
+    };
+
     ArrayPush(items, vendorInventoryData);
     i += 1;
   };
@@ -261,4 +293,10 @@ private func PopulateVirtualShop() -> Void {
   this.ToggleFilter(this.m_vendorFiltersContainer, EnumInt(this.m_lastVendorFilter));
   inkWidgetRef.SetVisible(this.m_vendorFiltersContainer, ArraySize(items) > 0);
   this.PlayLibraryAnimation(n"vendor_grid_show");
+}
+
+@addMethod(FullscreenVendorGameController)
+private final func HasClothingCategory(data: InventoryItemData) -> Bool {
+  let item: ItemID = InventoryItemData.GetID(data);
+  return EquipmentSystem.IsItemOfCategory(item, gamedataItemCategory.Clothing);
 }
