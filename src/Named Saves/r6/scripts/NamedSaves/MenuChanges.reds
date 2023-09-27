@@ -85,8 +85,8 @@ protected cb func OnInitialize() -> Bool {
 
 // Read custom notes by save index
 @wrapMethod(LoadListItem)
-public final func SetMetadata(metadata: ref<SaveMetadataInfo>) -> Void {
-  wrappedMethod(metadata);
+public final func SetMetadata(metadata: ref<SaveMetadataInfo>, opt isEp1Enabled: Bool) -> Void {
+  wrappedMethod(metadata, isEp1Enabled);
 
   let index: Int32 = GetSaveIndexFromInternalName(metadata.internalName);
   let note: String = GetNoteForSaveIndex(index);
