@@ -46,20 +46,26 @@ public func DetermineCurrentVisibility() -> Void {
 @replaceMethod(StealthMappinController)
 protected cb func OnUpdate() -> Bool {
   let distance: Float;
+  let npcRarity: gamedataNPCRarity;
+  let ownerPuppet: ref<ScriptedPuppet>;
   let percent: Float;
+  let playerPuppet: ref<PlayerPuppet>;
   let shouldShow: Bool;
+  let showEliteIndicator: Bool;
   let attitude: EAIAttitude = this.m_mappin.GetAttitudeTowardsPlayer();
   this.m_isFriendly = Equals(attitude, EAIAttitude.AIA_Friendly);
   this.m_isFriendlyFromHack = this.m_mappin.IsFriendlyFromHack();
   this.m_isHostile = Equals(attitude, EAIAttitude.AIA_Hostile);
   this.m_isAggressive = this.m_mappin.IsAggressive();
   this.m_isHiddenByQuest = this.m_mappin.IsHiddenByQuestIn3D();
+  this.m_isNCPD = ScriptedPuppet.IsCharacterPolice(this.m_ownerObject);
   if this.ShouldDisableMappin() {
     inkWidgetRef.SetVisible(this.m_mainArt, false);
     inkWidgetRef.SetVisible(this.m_arrow, false);
     if this.m_isFriendlyFromHack && ScriptedPuppet.IsActive(this.m_ownerObject) {
       this.UpdateObjectMarkerAndTagging();
       this.m_root.SetState(n"Friendly");
+      this.m_mappin.UpdateCombatantState(false);
       this.m_mappin.SetVisibleIn3D(this.m_objectMarkerVisible);
       this.SetRootVisible(this.m_objectMarkerVisible);
     } else {
@@ -69,26 +75,31 @@ protected cb func OnUpdate() -> Bool {
     };
     return true;
   };
+  ownerPuppet = this.m_ownerObject as ScriptedPuppet;
+  playerPuppet = GameInstance.GetPlayerSystem(this.m_ownerObject.GetGame()).GetLocalPlayerControlledGameObject() as PlayerPuppet;
   percent = this.m_mappin.GetDetectionProgress();
   this.m_canSeePlayer = this.m_mappin.CanSeePlayer();
   this.m_squadInCombat = this.m_mappin.IsSquadInCombat();
   this.m_numberOfCombatants = Cast<Int32>(this.m_mappin.GetNumberOfCombatants());
-  if IsDefined(this.m_ownerNPC) {
-    this.UpdateNPCDetection(percent);
-  } else {
-    this.UpdateDeviceDetection(percent);
-  };
-  if !this.m_canSeePlayer && NotEquals(this.m_currentAnimState, gameEnemyStealthAwarenessState.Combat) && this.m_numberOfCombatants >= 1 {
+  this.m_isInCombatWithPlayer = IsDefined(ownerPuppet) && NPCPuppet.IsInCombatWithTarget(ownerPuppet, playerPuppet);
+  if this.m_mappin.HideUIDetection() || !this.m_canSeePlayer && NotEquals(this.m_currentAnimState, gameEnemyStealthAwarenessState.Combat) && this.m_numberOfCombatants >= 1 {
     this.m_detectionVisible = false;
   } else {
     this.m_detectionVisible = NotEquals(this.m_currentAnimState, gameEnemyStealthAwarenessState.Relaxed) && NotEquals(this.m_currentAnimState, gameEnemyStealthAwarenessState.Combat) || this.m_animationIsPlaying;
   };
   this.OverrideClamp(this.m_detectionVisible);
-  this.UpdateNameplatePart();
   this.UpdateStatusEffectIcon();
   this.UpdateCanvasOpacity();
-  shouldShow = (this.m_detectionVisible || this.m_inNameplateMode || this.m_nameplateAnimationIsPlaying) && !this.m_isHiddenByQuest && this.lhud_isVisibleNow;
+  npcRarity = ownerPuppet.GetNPCRarity();
+  showEliteIndicator = !this.m_statusEffectShowing && !this.m_detectionVisible && (Equals(npcRarity, gamedataNPCRarity.Elite) || Equals(npcRarity, gamedataNPCRarity.MaxTac));
+  inkWidgetRef.SetVisible(this.m_levelIcon, showEliteIndicator);
+  shouldShow = (this.m_detectionVisible || this.m_statusEffectShowing || this.m_inNameplateMode || this.m_nameplateAnimationIsPlaying) && !this.m_isHiddenByQuest  && this.lhud_isVisibleNow;
   inkWidgetRef.SetVisible(this.m_mainArt, shouldShow);
+  if IsDefined(this.m_ownerNPC) {
+    this.UpdateNPCDetection(percent);
+  } else {
+    this.UpdateDeviceDetection(percent);
+  };
   this.UpdateObjectMarkerAndTagging();
   this.UpdateDetectionMeter(percent);
   inkWidgetRef.SetVisible(this.m_arrow, this.isCurrentlyClamped && shouldShow);
@@ -114,6 +125,7 @@ protected cb func OnUpdate() -> Bool {
     inkWidgetRef.SetOpacity(this.m_taggedContainer, 1.0);  
   };
 }
+
 
 // -- Enemy healthbar
 

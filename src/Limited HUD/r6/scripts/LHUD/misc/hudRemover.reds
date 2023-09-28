@@ -3,7 +3,7 @@ import LimitedHudCommon.LHUDConfigUpdatedEvent
 
 // -- OVERHEAD SUBTITLES
 @addMethod(ChattersGameController)
-public func GetAffiliationLHUD(lineData: scnDialogLineData) -> gamedataAffiliation {
+public func GetAffiliationLHUD(const lineData: script_ref<scnDialogLineData>) -> gamedataAffiliation {
   let puppet: ref<gamePuppetBase> = lineData.speaker as gamePuppetBase;
   if IsDefined(puppet) {
     return TweakDBInterface.GetCharacterRecord(puppet.GetRecordID()).Affiliation().Type();
@@ -39,7 +39,7 @@ protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> 
 }
 
 @wrapMethod(ChattersGameController)
-protected func ShouldDisplayLine(lineData: scnDialogLineData) -> Bool {
+protected func ShouldDisplayLine(const lineData: script_ref<scnDialogLineData>) -> Bool {
   let affiliation: gamedataAffiliation = this.GetAffiliationLHUD(lineData);
   let shouldDisplayOriginal: Bool = wrappedMethod(lineData);
   let shouldDisplayModded: Bool = this.ShouldShowSubtitlesLHUD(affiliation);

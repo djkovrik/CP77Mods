@@ -31,7 +31,7 @@ private final func PushQuestNotification(questEntry: wref<JournalQuest>, state: 
       questAction.m_questEntry = questEntry;
       questAction.m_journalMgr = this.m_journalMgr;
       userData.action = questAction;
-      if this.lhudAddonsConfig .MuteQuestNotifications {
+      if this.lhudAddonsConfig.MuteQuestNotifications {
         userData.soundEvent = n"";
       } else {
         userData.soundEvent = n"QuestNewPopup";
@@ -45,7 +45,7 @@ private final func PushQuestNotification(questEntry: wref<JournalQuest>, state: 
       break;
     case gameJournalEntryState.Succeeded:
       userData.title = "UI-Notifications-QuestCompleted";
-      if this.lhudAddonsConfig .MuteQuestNotifications {
+      if this.lhudAddonsConfig.MuteQuestNotifications {
         userData.soundEvent = n"";
       } else {
         userData.soundEvent = n"QuestSuccessPopup";
@@ -60,7 +60,7 @@ private final func PushQuestNotification(questEntry: wref<JournalQuest>, state: 
       break;
     case gameJournalEntryState.Failed:
       userData.title = "LocKey#27566";
-      if this.lhudAddonsConfig .MuteQuestNotifications {
+      if this.lhudAddonsConfig.MuteQuestNotifications {
         userData.soundEvent = n"";
       } else {
         userData.soundEvent = n"QuestFailedPopup";
@@ -85,7 +85,7 @@ protected cb func OnCustomQuestNotificationUpdate(value: Variant) -> Bool {
   let userData: ref<QuestUpdateNotificationViewData> = new QuestUpdateNotificationViewData();
   userData.text = GetLocalizedText(data.desc);
   userData.title = GetLocalizedText(data.header);
-  if this.lhudAddonsConfig .MuteQuestNotifications {
+  if this.lhudAddonsConfig.MuteQuestNotifications {
     userData.soundEvent = n"";
   } else {
     userData.soundEvent = n"QuestUpdatePopup";
@@ -118,7 +118,7 @@ private final func PushObjectiveQuestNotification(entry: wref<JournalEntry>) -> 
   userData.entryHash = this.m_journalMgr.GetEntryHash(parentQuestEntry);
   userData.text = parentQuestEntry.GetTitle(this.m_journalMgr);
   userData.title = "UI-Notifications-QuestUpdated";
-  if this.lhudAddonsConfig .MuteQuestNotifications {
+  if this.lhudAddonsConfig.MuteQuestNotifications {
     userData.soundEvent = n"";
   } else {
     userData.soundEvent = n"QuestUpdatePopup";
@@ -137,40 +137,25 @@ private final func PushObjectiveQuestNotification(entry: wref<JournalEntry>) -> 
 }
 
 @replaceMethod(JournalNotificationQueue)
-private final func PushNotification(title: String, text: String, widget: CName, animation: CName, opt action: ref<GenericNotificationBaseAction>) -> Void {
+private final func PushNotification(const title: script_ref<String>, const text: script_ref<String>, widget: CName, animation: CName, opt action: ref<GenericNotificationBaseAction>, opt duration: Float) -> Void {
   let notificationData: gameuiGenericNotificationData;
   let userData: ref<QuestUpdateNotificationViewData> = new QuestUpdateNotificationViewData();
-  userData.title = title;
-  userData.text = text;
+  userData.title = Deref(title);
+  userData.text = Deref(text);
   userData.action = action;
   userData.animation = animation;
-  if this.lhudAddonsConfig .MuteQuestNotifications {
+  if this.lhudAddonsConfig.MuteQuestNotifications {
     userData.soundEvent = n"";
   } else {
     userData.soundEvent = n"QuestUpdatePopup";
   };
   userData.soundAction = n"OnOpen";
-  notificationData.time = this.m_showDuration;
-  notificationData.widgetLibraryItemName = widget;
-  notificationData.notificationData = userData;
-  this.AddNewNotificationData(notificationData);
-}
-
-@replaceMethod(JournalNotificationQueue)
-private final func PushNewContactNotification(title: String, text: String, widget: CName, animation: CName, opt action: ref<GenericNotificationBaseAction>) -> Void {
-  let notificationData: gameuiGenericNotificationData;
-  let userData: ref<QuestUpdateNotificationViewData> = new QuestUpdateNotificationViewData();
-  userData.title = title;
-  userData.text = text;
-  userData.action = action;
-  userData.animation = animation;
-  if this.lhudAddonsConfig .MuteQuestNotifications {
-    userData.soundEvent = n"";
+  if duration > 0.00 {
+    notificationData.time = duration;
+    userData.priority = EGenericNotificationPriority.Height;
   } else {
-    userData.soundEvent = n"QuestUpdatePopup";
+    notificationData.time = this.m_showDuration;
   };
-  userData.soundAction = n"OnOpen";
-  notificationData.time = this.m_showDuration;
   notificationData.widgetLibraryItemName = widget;
   notificationData.notificationData = userData;
   this.AddNewNotificationData(notificationData);
@@ -189,7 +174,7 @@ protected cb func OnTrackedMappinUpdated(value: Variant) -> Bool {
     userData = new QuestUpdateNotificationViewData();
     userData.title = mappinText;
     userData.text = objectiveText;
-    if this.lhudAddonsConfig .MuteQuestNotifications {
+    if this.lhudAddonsConfig.MuteQuestNotifications {
       userData.soundEvent = n"";
     } else {
       userData.soundEvent = n"QuestNewPopup";
@@ -210,7 +195,7 @@ protected cb func OnNCPDJobDoneEvent(evt: ref<NCPDJobDoneEvent>) -> Bool {
   let notificationData: gameuiGenericNotificationData;
   let userData: ref<QuestUpdateNotificationViewData> = new QuestUpdateNotificationViewData();
   userData.title = "UI-Notifications-QuestCompleted";
-  if this.lhudAddonsConfig .MuteQuestNotifications {
+  if this.lhudAddonsConfig.MuteQuestNotifications {
     userData.soundEvent = n"";
   } else {
     userData.soundEvent = n"OwCompletePopup";
@@ -231,6 +216,7 @@ private final func OnCharacterLevelUpdated(value: Variant) -> Void {
   let config: ref<LHUDAddonsConfig> = new LHUDAddonsConfig();
   let action: ref<OpenPerksNotificationAction>;
   let notificationData: gameuiGenericNotificationData;
+  let skillAction: ref<OpenSkillsNotificationAction>;
   let levelUpData: LevelUpData = FromVariant<LevelUpData>(value);
   let profString: String = EnumValueToString("gamedataProficiencyType", Cast<Int64>(EnumInt(levelUpData.type)));
   let proficiencyRecord: ref<Proficiency_Record> = TweakDBInterface.GetProficiencyRecord(TDBID.Create("Proficiencies." + profString));
@@ -240,22 +226,24 @@ private final func OnCharacterLevelUpdated(value: Variant) -> Void {
   userData.profString = proficiencyRecord.Loc_name_key();
   userData.proficiencyRecord = proficiencyRecord;
   notificationData.time = this.m_duration;
-  if Equals(levelUpData.type, gamedataProficiencyType.Level) {
-    notificationData.widgetLibraryItemName = n"LevelUp_";
+  if Equals(levelUpData.type, gamedataProficiencyType.Espionage) {
+    notificationData.widgetLibraryItemName = n"RelicUp";
     if config.MuteLevelUpNotifications {
       userData.soundEvent = n"";
     } else {
-      userData.soundEvent = n"PlayerLevelUpPopup";
+      userData.soundEvent = n"RelicPopup";
     };
-    userData.soundAction = n"OnOpen";
+    userData.soundAction = n"OnLevelUp";
+    userData.levelupdata.lvl = levelUpData.lvl - this.m_lastEspionageLevel;
+    this.m_lastEspionageLevel = levelUpData.lvl;
     if !levelUpData.disableAction {
       action = new OpenPerksNotificationAction();
       action.m_eventDispatcher = this;
       userData.action = action;
     };
   } else {
-    if Equals(levelUpData.type, gamedataProficiencyType.StreetCred) {
-      notificationData.widgetLibraryItemName = n"StreetCredUp_";
+    if Equals(levelUpData.type, gamedataProficiencyType.Level) {
+      notificationData.widgetLibraryItemName = n"LevelUp_";
       if config.MuteLevelUpNotifications {
         userData.soundEvent = n"";
       } else {
@@ -263,22 +251,37 @@ private final func OnCharacterLevelUpdated(value: Variant) -> Void {
       };
       userData.soundAction = n"OnOpen";
       if !levelUpData.disableAction {
-        action = null;
+        action = new OpenPerksNotificationAction();
         action.m_eventDispatcher = this;
         userData.action = action;
       };
     } else {
-      notificationData.widgetLibraryItemName = n"SkillUp_";
-      if config.MuteLevelUpNotifications {
-        userData.soundEvent = n"";
+      if Equals(levelUpData.type, gamedataProficiencyType.StreetCred) {
+        notificationData.widgetLibraryItemName = n"StreetCredUp_";
+        if config.MuteLevelUpNotifications {
+          userData.soundEvent = n"";
+        } else {
+          userData.soundEvent = n"PlayerLevelUpPopup";
+        };
+        userData.soundAction = n"OnOpen";
+        if !levelUpData.disableAction {
+          action = null;
+          action.m_eventDispatcher = this;
+          userData.action = action;
+        };
       } else {
-        userData.soundEvent = n"SkillLevelUpPopup";
-      };
-      userData.soundAction = n"OnOpen";
-      if !levelUpData.disableAction {
-        action = new OpenPerksNotificationAction();
-        action.m_eventDispatcher = this;
-        userData.action = action;
+        notificationData.widgetLibraryItemName = n"SkillUp_";
+        if config.MuteLevelUpNotifications {
+          userData.soundEvent = n"";
+        } else {
+          userData.soundEvent = n"SkillLevelUpPopup";
+        };
+        userData.soundAction = n"OnOpen";
+        if !levelUpData.disableAction {
+          skillAction = new OpenSkillsNotificationAction();
+          skillAction.m_eventDispatcher = this;
+          userData.action = skillAction;
+        };
       };
     };
   };
@@ -286,10 +289,8 @@ private final func OnCharacterLevelUpdated(value: Variant) -> Void {
   this.AddNewNotificationData(notificationData);
 }
 
-
 @replaceMethod(GenericNotificationController)
-public cb func SetNotificationData(notificationData: ref<GenericNotificationViewData>) -> Void {
-  // LogChannel(n"DEBUG", s"SetNotificationData( \(GetLocalizedText(notificationData.title)) \(GetLocalizedText(notificationData.text)) \(notificationData.soundEvent), \(notificationData.soundAction) \(notificationData.action))");
+public cb func SetNotificationData(notificationData: ref<GenericNotificationViewData>) -> Void {  
   let config: ref<LHUDAddonsConfig> = new LHUDAddonsConfig();
   this.m_data = notificationData;
 

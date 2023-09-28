@@ -2,9 +2,8 @@ import LimitedHudConfig.LHUDAddonsConfig
 
 private class RemoveCrouchEvent extends Event {}
 
-@wrapMethod(CrouchIndicatorGameController)
+@addMethod(CrouchIndicatorGameController)
 protected cb func OnInitialize() -> Bool {
-  wrappedMethod();
   let config: ref<LHUDAddonsConfig> = new LHUDAddonsConfig();
   let callback: ref<LHUDHideCrouchCallback>;
   if config.HideCrouchIndicator {

@@ -2,13 +2,13 @@ import LimitedHudConfig.WeaponRosterModuleConfig
 import LimitedHudCommon.LHUDConfigUpdatedEvent
 import LimitedHudCommon.LHUDEvent
 
-@addMethod(weaponRosterGameController)
+@addMethod(WeaponRosterGameController)
 protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
   this.ConsumeLHUDEvent(evt);
   this.DetermineCurrentVisibility();
 }
 
-@addMethod(weaponRosterGameController)
+@addMethod(WeaponRosterGameController)
 public func DetermineCurrentVisibility() -> Void {
   if !this.lhudConfig.IsEnabled {
     return ;
@@ -26,74 +26,79 @@ public func DetermineCurrentVisibility() -> Void {
   if NotEquals(this.lhud_isVisibleNow, isVisible) {
     this.lhud_isVisibleNow = isVisible;
     if isVisible {
-      this.PlayUnfold();
+      this.Unfold();
       this.AnimateAlphaLHUD(this.m_smartLinkFirmwareOffline, 1.0, 0.3);
       this.AnimateAlphaLHUD(this.m_smartLinkFirmwareOnline, 1.0, 0.3);
     } else {
-      this.PlayFold();
+      this.Fold();
       this.AnimateAlphaLHUD(this.m_smartLinkFirmwareOffline, 0.0, 0.3);
       this.AnimateAlphaLHUD(this.m_smartLinkFirmwareOnline, 0.0, 0.3);
     };
   };
 }
 
-@addField(weaponRosterGameController)
+@addField(WeaponRosterGameController)
 private let lhudConfig: ref<WeaponRosterModuleConfig>;
 
-@wrapMethod(weaponRosterGameController)
+@wrapMethod(WeaponRosterGameController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
   this.lhudConfig = new WeaponRosterModuleConfig();
   if this.lhudConfig.IsEnabled {
-    this.lhud_isVisibleNow = this.m_Player.HasAnyWeaponEquipped_LHUD();
+    this.lhud_isVisibleNow = this.m_player.HasAnyWeaponEquipped_LHUD();
     this.OnInitializeFinished();
     this.DetermineCurrentVisibility();
   };
 }
 
-@replaceMethod(weaponRosterGameController)
+@replaceMethod(WeaponRosterGameController)
 protected cb func OnPSMVisionStateChanged(value: Int32) -> Bool {
   let newState: gamePSMVision = IntEnum(value);
   switch newState {
     case gamePSMVision.Default:
-      if ItemID.IsValid(this.m_ActiveWeapon.weaponID) && this.lhud_isVisibleNow {
-        this.PlayUnfold();
+      if ItemID.IsValid(this.m_activeWeapon.weaponID) && this.lhud_isVisibleNow {
+        this.Unfold();
       };
       break;
     case gamePSMVision.Focus:
-      this.PlayFold();
+      this.Fold();
   };
 }
 
-@replaceMethod(weaponRosterGameController)
+@replaceMethod(WeaponRosterGameController)
 protected cb func OnWeaponDataChanged(value: Variant) -> Bool {
   let item: ref<gameItemData>;
-  let weaponItemType: gamedataItemType;
-  this.m_BufferedRosterData = FromVariant(value);
-  let currentData: SlotWeaponData = this.m_BufferedRosterData.weapon;
-  if ItemID.IsValid(currentData.weaponID) {
-    if this.m_ActiveWeapon.weaponID != currentData.weaponID {
-      item = this.m_InventoryManager.GetPlayerItemData(currentData.weaponID);
+  let weaponType: gamedataItemType;
+  let data: SlotWeaponData = FromVariant<ref<SlotDataHolder>>(value).weapon;
+  this.m_isUnholstered = ItemID.IsValid(data.weaponID);
+  if this.m_isUnholstered {
+    if this.m_activeWeapon.weaponID != data.weaponID {
+      item = this.m_InventoryManager.GetPlayerItemData(data.weaponID);
       this.m_weaponItemData = this.m_InventoryManager.GetInventoryItemData(item);
+      this.m_weaponRecord = TweakDBInterface.GetWeaponItemRecord(ItemID.GetTDBID(data.weaponID));
+      weaponType = this.m_weaponRecord.ItemTypeHandle().Type();
+      if NotEquals(weaponType, gamedataItemType.Wea_VehiclePowerWeapon) && NotEquals(weaponType, gamedataItemType.Wea_VehicleMissileLauncher) {
+        this.LoadWeaponIcon();
+        inkTextRef.SetText(this.m_weaponName, InventoryItemData.GetName(this.m_weaponItemData));
+        if NotEquals(this.m_weaponRecord.EvolutionHandle().Type(), gamedataWeaponEvolution.Smart) || this.ShouldIgnoreSmartUI() {
+          inkWidgetRef.SetVisible(this.m_smartLinkFirmwareOffline, false);
+          inkWidgetRef.SetVisible(this.m_smartLinkFirmwareOnline, false);
+        };
+      };
     };
-    this.m_ActiveWeapon = currentData;
-    weaponItemType = InventoryItemData.GetItemType(this.m_weaponItemData);
-    this.SetRosterSlotData(Equals(weaponItemType, gamedataItemType.Wea_Melee) || Equals(weaponItemType, gamedataItemType.Wea_Fists) || Equals(weaponItemType, gamedataItemType.Wea_Hammer) || Equals(weaponItemType, gamedataItemType.Wea_Katana) || Equals(weaponItemType, gamedataItemType.Wea_Knife) || Equals(weaponItemType, gamedataItemType.Wea_OneHandedClub) || Equals(weaponItemType, gamedataItemType.Wea_ShortBlade) || Equals(weaponItemType, gamedataItemType.Wea_TwoHandedClub) || Equals(weaponItemType, gamedataItemType.Wea_LongBlade));
+    this.m_activeWeapon = data;
+    this.SetRosterSlotData();
     if !this.lhudConfig.IsEnabled {
-      this.PlayUnfold();
-    };
-    if NotEquals(RPGManager.GetWeaponEvolution(InventoryItemData.GetID(this.m_weaponItemData)), gamedataWeaponEvolution.Smart) {
-      inkWidgetRef.SetVisible(this.m_smartLinkFirmwareOffline, false);
-      inkWidgetRef.SetVisible(this.m_smartLinkFirmwareOnline, false);
+      this.Unfold();
     };
   } else {
     if !this.lhudConfig.IsEnabled {
-      this.PlayFold();
+      this.Fold();
     };
   };
 }
 
-@addMethod(weaponRosterGameController)
+@addMethod(WeaponRosterGameController)
 protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> Void {
   this.lhudConfig = new WeaponRosterModuleConfig();
 }

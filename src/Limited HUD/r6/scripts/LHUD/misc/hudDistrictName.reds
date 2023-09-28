@@ -77,8 +77,8 @@ protected cb func OnLocationUpdated(value: String) -> Bool {
 }
 
 @wrapMethod(MinimapContainerController)
-private final func SecurityZoneUpdate(zone: ESecurityAreaType) -> Void {
-  wrappedMethod(zone);
+private final func SecurityZoneUpdate() -> Void {
+  wrappedMethod();
 
   let player: wref<PlayerPuppet> = this.GetPlayerControlledObject() as PlayerPuppet;
   if !IsDefined(player) { return ; };
