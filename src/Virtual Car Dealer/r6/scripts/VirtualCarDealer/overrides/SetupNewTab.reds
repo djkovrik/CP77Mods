@@ -1,43 +1,58 @@
 import CarDealer.System.PurchasableVehicleSystem
 
+// Temp flag to show atelier tab content
+// TODO Need a better way to inject, research why LoadWebPage does not work with custom internet
+@addField(BrowserController)
+private let showCarDealer: Bool;
 
-// Inspired (aka copy-pasted) by Virtual Atelier :)
-
-@wrapMethod(BrowserController)
-private final func TryGetWebsiteData(address: String) -> wref<JournalInternetPage> {
-  if Equals("CarDealer", address) {
-    return wrappedMethod("NETdir://cyber.car");
-  } else {
-    return wrappedMethod(address);
-  }
+@addMethod(BrowserController)
+protected cb func OnShowCarDealerEvent(evt: ref<ShowCarDealerEvent>) -> Bool {
+  this.showCarDealer = evt.show;
 }
 
-// Show Car Dealer page
-@wrapMethod(BrowserController)
-protected cb func OnPageSpawned(widget: ref<inkWidget>, userData: ref<IScriptable>) -> Bool {
-  wrappedMethod(widget, userData);
+public class ShowCarDealerEvent extends Event {
+  let show: Bool;
 
-  let currentController: ref<WebPage> = this.m_currentPage.GetController() as WebPage;
-  if Equals(this.m_defaultDevicePage, "CarDealer") {
-    inkTextRef.SetText(this.m_addressText, "NETdir://cyber.car");
-    currentController.PopulateDealerView(this.m_gameController.GetPlayerControlledObject());
-  };
+  public static func Create(show: Bool) -> ref<ShowCarDealerEvent> {
+    let self: ref<ShowCarDealerEvent> = new ShowCarDealerEvent();
+    self.show = show;
+    return self;
+  }
 }
 
 @wrapMethod(ComputerInkGameController)
 private final func ShowMenuByName(elementName: String) -> Void {
-  if Equals(elementName, "CarDealer") {
-    this.ShowCarDealer();
-  } else {
-    wrappedMethod(elementName);
-  }
+  if Equals(elementName, "carDealer") {
+    this.QueueEvent(ShowCarDealerEvent.Create(true));
+    let internetData: SInternetData = this.GetOwner().GetDevicePS().GetInternetData();
+    this.GetMainLayoutController().ShowInternet(internetData.startingPage);
+    this.RequestMainMenuButtonWidgetsUpdate();
+    if NotEquals(elementName, "mainMenu") {
+      this.GetMainLayoutController().MarkManuButtonAsSelected(elementName);
+    };
+
+    return ;
+  };
+
+  wrappedMethod(elementName);
 }
 
-@addMethod(ComputerInkGameController)
-protected final func ShowCarDealer() -> Void {
-  this.GetMainLayoutController().ShowInternet("CarDealer");
-  this.RequestMainMenuButtonWidgetsUpdate();
+@wrapMethod(ComputerInkGameController)
+private final func HideMenuByName(elementName: String) -> Void {
+  if Equals(elementName, "carDealer") {
+    this.GetMainLayoutController().HideInternet();
+    return; 
+  };
+
+  wrappedMethod(elementName);
 }
+
+@wrapMethod(ComputerInkGameController)
+public final func ShowInternet() -> Void {
+  this.QueueEvent(ShowCarDealerEvent.Create(false));
+  wrappedMethod();
+}
+
 
 @wrapMethod(ComputerControllerPS)
 public final func GetMenuButtonWidgets() -> array<SComputerMenuButtonWidgetPackage> {
@@ -49,7 +64,7 @@ public final func GetMenuButtonWidgets() -> array<SComputerMenuButtonWidgetPacka
 
   if !isInDangerZone {
     if this.IsMenuEnabled(EComputerMenuType.INTERNET) && ArraySize(packages) > 0 {
-      package.widgetName = "CarDealer";
+      package.widgetName = "carDealer";
       package.displayName = "Car Dealer";
       package.ownerID = this.GetID();
       package.iconID = n"iconCarDealer";
@@ -58,8 +73,6 @@ public final func GetMenuButtonWidgets() -> array<SComputerMenuButtonWidgetPacka
       SWidgetPackageBase.ResolveWidgetTweakDBData(package.widgetTweakDBID, package.libraryID, package.libraryPath);
       ArrayPush(packages, package);
     };
-  } else {
-    LogChannel(n"DEBUG", "PC is in danger or restricted zone, Car Dealer tab not available.");
   };
 
   return packages;
@@ -70,8 +83,20 @@ public final func GetMenuButtonWidgets() -> array<SComputerMenuButtonWidgetPacka
 public func Initialize(gameController: ref<ComputerInkGameController>, widgetData: SComputerMenuButtonWidgetPackage) -> Void {
   wrappedMethod(gameController, widgetData);
 
-  if Equals(widgetData.widgetName, "CarDealer") {
+  if Equals(widgetData.widgetName, "carDealer") {
     inkImageRef.SetTexturePart(this.m_iconWidget, n"thorton_logo");
     inkImageRef.SetAtlasResource(this.m_iconWidget, r"base\\gameplay\\gui\\widgets\\vehicle\\thorton_all\\thorton_inkatlas.inkatlas");
+  };
+}
+
+@wrapMethod(BrowserController)
+protected cb func OnPageSpawned(widget: ref<inkWidget>, userData: ref<IScriptable>) -> Bool {
+  wrappedMethod(widget, userData);
+
+  let currentController: ref<WebPage>;
+  if this.showCarDealer {
+    currentController = this.m_currentPage.GetController() as WebPage;
+    inkTextRef.SetText(this.m_addressText, "NETdir://cyber.car");
+    currentController.PopulateDealerView(this.m_gameController.GetPlayerControlledObject());
   };
 }

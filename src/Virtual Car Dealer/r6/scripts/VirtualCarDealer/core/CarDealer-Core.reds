@@ -9,7 +9,7 @@ import CarDealer.Utils.CarDealerLog
 @addMethod(WebPage)
 private func PopulateDealerView(owner: ref<GameObject>) {
   let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
-  this.dealerPanelRoot = root.GetWidget(n"page") as inkVerticalPanel;
+  this.dealerPanelRoot = root.GetWidget(n"page") as inkCompoundWidget;
   let player: ref<PlayerPuppet> = owner as PlayerPuppet;
   let stockSize: Int32;
   if IsDefined(player) {

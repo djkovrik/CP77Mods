@@ -19,7 +19,7 @@ private final func GetUnlockedVehiclesSize() -> Int32 {
 }
 
 @wrapMethod(QuickSlotsManager)
-public final const func GetVehicleWheel(out vehicleWheel: array<QuickSlotCommand>) -> Void {
+public final const func GetVehicleWheel(vehicleWheel: script_ref<array<QuickSlotCommand>>) -> Void {
   PurchasableVehicleSystem.GetInstance(this.m_Player.GetGame()).DeactivateSoldVehicles();
   wrappedMethod(vehicleWheel);
 }

@@ -10,7 +10,7 @@ import Codeware.UI.*
 @addField(WebPage) let vehicleVariantLastIndex: Int32;
 @addField(WebPage) let playerPuppet: wref<PlayerPuppet>;
 
-@addField(WebPage) let dealerPanelRoot: wref<inkVerticalPanel>;
+@addField(WebPage) let dealerPanelRoot: wref<inkCompoundWidget>;
 @addField(WebPage) let dealerPanelInfoContainer: wref<inkVerticalPanel>;
 @addField(WebPage) let buttonPrev: wref<CustomHubButton>;
 @addField(WebPage) let buttonNext: wref<CustomHubButton>;
