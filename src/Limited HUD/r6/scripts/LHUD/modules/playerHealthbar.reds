@@ -21,15 +21,25 @@ private func IsNonHousingEffect(id: TweakDBID) -> Bool {
 
 @replaceMethod(healthbarWidgetGameController)
 private final func ComputeHealthBarVisibility() -> Void {
-  let isMaxHP: Bool = this.m_currentHealth >= this.m_maximumHealth - 2;
+  let isMaxHP: Bool = this.m_currentHealth == this.m_maximumHealth;
   let isMultiplayer: Bool = this.IsPlayingMultiplayer();
   let areQuickhacksUsed: Bool = this.m_usedQuickhacks > 0;
   this.m_armorBar.SetVisible(isMultiplayer);
   this.UpdateGodModeVisibility();
   inkWidgetRef.SetVisible(this.m_quickhacksContainer, this.IsCyberdeckEquipped());
+  if !this.m_isInOverclockedState {
+    inkWidgetRef.Get(this.m_fullBar).SetEffectEnabled(inkEffectType.ScanlineWipe, n"ScanlineWipe_0", false);
+    this.GetRootWidget().SetState(n"Default");
+    this.m_healthMemoryJumpAnim.Stop();
+    this.m_pulseBar.Stop();
+    this.m_pulseText.Stop();
+    this.m_pulse.Stop();
+  };
   if NotEquals(this.m_currentVisionPSM, gamePSMVision.Default) {
-    this.HideRequest();
-    return;
+    if !this.m_isInOverclockedState {
+      this.HideRequest();
+      return;
+    };
   };
 
   // Check active buffs
@@ -60,7 +70,7 @@ private final func ComputeHealthBarVisibility() -> Void {
   let showForCombat: Bool = this.lhud_isCombatActive && this.lhudConfig.ShowInCombat;
   let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && this.lhudConfig.ShowOutOfCombat;
 
-  let defaultVisibility: Bool = !isMaxHP || areQuickhacksUsed || isMultiplayer || Equals(this.m_combatModePSM, gamePSMCombat.InCombat) || (this.m_quickhacksMemoryPercent > 0.0 && this.m_quickhacksMemoryPercent < 100.0) || this.m_buffsVisible;
+  let defaultVisibility: Bool = !isMaxHP || areQuickhacksUsed || isMultiplayer || Equals(this.m_combatModePSM, gamePSMCombat.InCombat) || this.m_quickhacksMemoryPercent < 100.00 || this.m_buffsVisible || this.m_isInOverclockedState;
   let moddedVisibility: Bool = showForGlobalHotkey || showForStealth || showForZoom || showForWeapon || showForHealthNotFull || showForMemoryNotFull || showForActiveBuffs || showForActiveQuickhacks || showForCombat || showForOutOfCombat;
   let isVisible: Bool = defaultVisibility;
 
