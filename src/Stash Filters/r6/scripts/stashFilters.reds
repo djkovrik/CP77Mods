@@ -43,7 +43,7 @@ protected cb func OnVendorFilterChange(controller: wref<inkRadioGroupController>
   wrappedMethod(controller, selectedIndex);
   let filter: ItemFilterCategory = this.m_vendorFilterManager.GetAt(selectedIndex);
   if !IsDefined(this.m_vendorUserData) && IsDefined(this.m_storageUserData) && NotEquals(filter, ItemFilterCategory.AllItems) && NotEquals(filter, ItemFilterCategory.Invalid)  {
-    LogChannel(n"DEBUG", s"save filter to \(filter)");
+    // LogChannel(n"DEBUG", s"save filter to \(filter)");
     this.m_lastStashFilter = filter;
   };
 }
