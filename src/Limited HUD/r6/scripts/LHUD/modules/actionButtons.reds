@@ -51,3 +51,56 @@ protected cb func OnInitialize() -> Bool {
 protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> Void {
   this.lhudConfig = new ActionButtonsModuleConfig();
 }
+
+
+// New phone controller
+
+@addMethod(gameuiNewPhoneRelatedHUDGameController)
+protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
+  this.ConsumeLHUDEvent(evt);
+  this.DetermineCurrentVisibility();
+}
+
+@addMethod(gameuiNewPhoneRelatedHUDGameController)
+public func DetermineCurrentVisibility() -> Void {
+  if !this.lhudCfg.IsEnabled {
+    return ;
+  };
+
+  let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && this.lhudCfg.BindToGlobalHotkey;
+  let showForCombat: Bool = this.lhud_isCombatActive && this.lhudCfg.ShowInCombat;
+  let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && this.lhudCfg.ShowOutOfCombat;
+  let showForStealth: Bool =  this.lhud_isStealthActive && this.lhudCfg.ShowInStealth;
+  let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudCfg.ShowWithWeapon;
+  let showForZoom: Bool =  this.lhud_isZoomActive && this.lhudCfg.ShowWithZoom;
+
+  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForWeapon || showForZoom;
+  if this.lhud_isBraindanceActive { isVisible = false; };
+  if NotEquals(this.lhud_isVisibleNow, isVisible) {
+    this.lhud_isVisibleNow = isVisible;
+    if isVisible {
+      this.AnimateAlphaLHUD(this.GetRootWidget(), 1.0, 0.3);
+    } else {
+      this.AnimateAlphaLHUD(this.GetRootWidget(), 0.0, 0.3);
+    };
+  };
+}
+
+@addField(gameuiNewPhoneRelatedHUDGameController)
+private let lhudCfg: ref<ActionButtonsModuleConfig>;
+
+@wrapMethod(gameuiNewPhoneRelatedHUDGameController)
+protected cb func OnPlayerAttach(player: ref<GameObject>) -> Bool {
+  wrappedMethod(player);
+  this.lhudCfg = new ActionButtonsModuleConfig();
+  if this.lhudCfg.IsEnabled {
+    this.lhud_isVisibleNow = false;
+    this.GetRootWidget().SetOpacity(0.0);
+    this.OnInitializeFinished();
+  };
+}
+
+@addMethod(gameuiNewPhoneRelatedHUDGameController)
+protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> Void {
+  this.lhudCfg = new ActionButtonsModuleConfig();
+}
