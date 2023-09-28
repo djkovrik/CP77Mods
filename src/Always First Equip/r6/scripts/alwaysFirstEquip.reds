@@ -528,6 +528,9 @@ public final const func HasPlayedFirstEquip(weaponID: TweakDBID) -> Bool {
 @replaceMethod(EquipmentBaseTransition)
 protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScriptInterface>, stateContext: ref<StateContext>, stateMachineInstanceData: StateMachineInstanceData, item: ItemID) -> Void {
   let animFeatureMeleeData: ref<AnimFeature_MeleeData>;
+  let autoRefillEvent: ref<SetAmmoCountEvent>;
+  let autoRefillRatio: Float;
+  let magazineCapacity: Uint32;
   let statsEvent: ref<UpdateWeaponStatsEvent>;
   let weaponEquipEvent: ref<WeaponEquipEvent>;
   let animFeature: ref<AnimFeature_EquipUnequipItem> = new AnimFeature_EquipUnequipItem();
@@ -585,6 +588,15 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
         scriptInterface.SetAnimationParameterFloat(n"safe", 1.00);
       };
     };
+  };
+
+  autoRefillRatio = statSystem.GetStatValue(Cast<StatsObjectID>(itemObject.GetEntityID()), gamedataStatType.MagazineAutoRefill);
+  if autoRefillRatio > 0.00 {
+    magazineCapacity = WeaponObject.GetMagazineCapacity(itemObject);
+    autoRefillEvent = new SetAmmoCountEvent();
+    autoRefillEvent.ammoTypeID = WeaponObject.GetAmmoType(itemObject);
+    autoRefillEvent.count = Cast<Uint32>(Cast<Float>(magazineCapacity) * autoRefillRatio);
+    itemObject.QueueEvent(autoRefillEvent);
   };
 }
 

@@ -168,9 +168,19 @@ protected cb func OnInitialize() -> Bool {
 
 @replaceMethod(NameplateVisualsLogicController)
 private final func UpdateHealthbarVisibility() -> Void {
-  let hpVisible: Bool = this.lhud_isVisibleNow && this.m_npcIsAggressive && !this.m_isBoss && (this.m_healthNotFull || this.m_playerAimingDownSights || this.m_playerInCombat || this.m_playerInStealth);
-  if NotEquals(this.m_healthbarVisible, hpVisible) {
-    this.m_healthbarVisible = hpVisible;
+  let playerPuppet: wref<PlayerPuppet>;
+  let threatPuppet: wref<NPCPuppet>;
+  let hpVisible: Bool = this.m_npcIsAggressive && (this.m_healthNotFull || this.m_playerAimingDownSights || this.m_playerInCombat || this.m_playerInStealth) && this.lhud_isVisibleNow;
+  let nameplateHpVisible: Bool = hpVisible && !this.m_isBoss;
+  if NotEquals(this.m_healthbarVisible, nameplateHpVisible) {
+    this.m_healthbarVisible = nameplateHpVisible;
     inkWidgetRef.SetVisible(this.m_healthbarWidget, this.m_healthbarVisible);
+  };
+  if this.m_isBoss && IsDefined(this.m_cachedPuppet) {
+    playerPuppet = GetPlayer(this.m_cachedPuppet.GetGame());
+    threatPuppet = this.m_cachedPuppet as NPCPuppet;
+    if ScriptedPuppet.IsAlive(threatPuppet) && hpVisible && !ScriptedPuppet.IsDefeated(threatPuppet) {
+      BossHealthBarGameController.ReevaluateBossHealthBar(threatPuppet, playerPuppet);
+    };
   };
 }
