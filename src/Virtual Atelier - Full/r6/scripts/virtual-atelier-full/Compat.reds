@@ -22,14 +22,14 @@ public func GetAtelierPlacementSlot(itemId: ItemID) -> TweakDBID {
   return outfitSystem.GetItemSlot(itemId);
 }
 
-// Darkcopse itemParts fix
-@wrapMethod(InventoryDataManagerV2)
-private final func GetPartInventoryItemData(owner: wref<GameObject>, itemId: ItemID, innerItemData: InnerItemData, opt itemData: wref<gameItemData>, opt record: wref<Item_Record>) -> InventoryItemData {
-  if !(ItemID.IsValid(itemId)) && itemData.isVirtualItem {
-    itemId = itemData.GetID();
-  };
-  return wrappedMethod(owner, itemId, innerItemData, itemData);
-}
+// Darkcopse itemParts fix - TODO check if this still required
+// @wrapMethod(InventoryDataManagerV2)
+// private final func GetPartInventoryItemData(owner: wref<GameObject>, itemId: ItemID, innerItemData: InnerItemData, opt itemData: wref<gameItemData>, opt record: wref<Item_Record>) -> InventoryItemData {
+//   if !(ItemID.IsValid(itemId)) && itemData.isVirtualItem {
+//     itemId = itemData.GetID();
+//   };
+//   return wrappedMethod(owner, itemId, innerItemData, itemData);
+// }
 
 // Spawn from local slots inkwidget to fix E3 Inventory compat
 @addMethod(ItemDisplayUtils)

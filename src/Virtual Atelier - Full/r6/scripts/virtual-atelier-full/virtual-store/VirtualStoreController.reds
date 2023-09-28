@@ -990,7 +990,7 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
   }
   
   private final func SetTimeDilatation(enable: Bool) -> Void {
-    TimeDilationHelper.SetTimeDilationWithProfile(this.player, "radialMenu", enable);
+    TimeDilationHelper.SetTimeDilationWithProfile(this.player, "radialMenu", enable, false);
   }
 
   private final func GetStockItem(itemID: ItemID, quantity: Int32) -> ref<VirtualStockItem> {

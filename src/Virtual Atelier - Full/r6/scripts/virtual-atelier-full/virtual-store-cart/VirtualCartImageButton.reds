@@ -34,7 +34,7 @@ public class VirtualCartImageButton extends VirtualAtelierControl {
     label.SetHAlign(inkEHorizontalAlign.Right);
     label.SetVAlign(inkEVerticalAlign.Center);
     label.SetAnchorPoint(new Vector2(0.5, 0.5));
-    label.SetMargin(new inkMargin(30.0, 0.0, .0, 0.0));
+    label.SetMargin(new inkMargin(30.0, 0.0, 0.0, 0.0));
     label.SetText(AtelierTexts.ButtonBuy());
     label.SetLetterCase(textLetterCase.UpperCase);
     label.Reparent(root);

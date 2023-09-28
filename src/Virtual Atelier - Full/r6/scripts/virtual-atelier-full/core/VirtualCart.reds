@@ -110,10 +110,10 @@ public class VirtualAtelierCart {
 
     let current: ref<VirtualCartItem>;
 
-    LogChannel(n"DEBUG", "Cart content:");
+    // LogChannel(n"DEBUG", "Cart content:");
     for key in this.keys {
       current = this.map.Get(key) as VirtualCartItem;
-      LogChannel(n"DEBUG", s" - key \(key): item \(ItemID.GetCombinedHash(current.stockItem.itemID)) (\(current.stockItem.quantity))");
+      // LogChannel(n"DEBUG", s" - key \(key): item \(ItemID.GetCombinedHash(current.stockItem.itemID)) (\(current.stockItem.quantity))");
     };
   }
 

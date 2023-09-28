@@ -13,7 +13,7 @@ public abstract class AtelierItemsHelper {
     statsSystem.AddSavedModifier(itemData.GetStatsObjectID(), powerLevelMod);
     statsSystem.RemoveAllModifiers(itemData.GetStatsObjectID(), gamedataStatType.Quality);
     statsSystem.AddSavedModifier(itemData.GetStatsObjectID(), qualityMod);
-    RPGManager.ForceItemQuality(player, itemData, quality);
+    RPGManager.ForceItemTier(player, itemData, quality);
   }
 
   public static func ScaleItemPrice(player: wref<PlayerPuppet>, vendor: wref<GameObject>, itemId: ItemID, itemQuality: CName) -> Int32 {
