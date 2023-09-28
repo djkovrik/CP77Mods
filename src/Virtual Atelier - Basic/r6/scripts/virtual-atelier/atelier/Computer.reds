@@ -1,14 +1,58 @@
 import VendorPreview.Config.VirtualAtelierConfig
 import VendorPreview.Utils.AtelierLog
 
+
+// Temp flag to show atelier tab content
+// TODO Need a better way to inject, research why LoadWebPage does not work with custom internet
+@addField(BrowserController)
+private let showAtelier: Bool;
+
+@addMethod(BrowserController)
+protected cb func OnShowAtelierEvent(evt: ref<ShowAtelierEvent>) -> Bool {
+  this.showAtelier = evt.show;
+}
+
+public class ShowAtelierEvent extends Event {
+  let show: Bool;
+
+  public static func Create(show: Bool) -> ref<ShowAtelierEvent> {
+    let self: ref<ShowAtelierEvent> = new ShowAtelierEvent();
+    self.show = show;
+    return self;
+  }
+}
+
 @wrapMethod(ComputerInkGameController)
 private final func ShowMenuByName(elementName: String) -> Void {
-  if Equals(elementName, "Atelier") {
-    this.GetMainLayoutController().ShowInternet("Atelier");
+  if Equals(elementName, "atelier") {
+    this.QueueEvent(ShowAtelierEvent.Create(true));
+    let internetData: SInternetData = this.GetOwner().GetDevicePS().GetInternetData();
+    this.GetMainLayoutController().ShowInternet(internetData.startingPage);
     this.RequestMainMenuButtonWidgetsUpdate();
-  } else {
-    wrappedMethod(elementName);
+    if NotEquals(elementName, "mainMenu") {
+      this.GetMainLayoutController().MarkManuButtonAsSelected(elementName);
+    };
+
+    return ;
   };
+
+  wrappedMethod(elementName);
+}
+
+@wrapMethod(ComputerInkGameController)
+private final func HideMenuByName(elementName: String) -> Void {
+  if Equals(elementName, "atelier") {
+    this.GetMainLayoutController().HideInternet();
+    return; 
+  };
+
+  wrappedMethod(elementName);
+}
+
+@wrapMethod(ComputerInkGameController)
+public final func ShowInternet() -> Void {
+  this.QueueEvent(ShowAtelierEvent.Create(false));
+  wrappedMethod();
 }
 
 @wrapMethod(ComputerControllerPS)
@@ -19,7 +63,7 @@ public final func GetMenuButtonWidgets() -> array<SComputerMenuButtonWidgetPacka
 
   if isInSafeZone {
     if this.IsMenuEnabled(EComputerMenuType.INTERNET) && ArraySize(packages) > 0 {
-      package.widgetName = "Atelier";
+      package.widgetName = "atelier";
       package.displayName = VirtualAtelierText.Name();
       package.ownerID = this.GetID();
       package.iconID = n"iconInternet";
@@ -39,7 +83,7 @@ public final func GetMenuButtonWidgets() -> array<SComputerMenuButtonWidgetPacka
 public func Initialize(gameController: ref<ComputerInkGameController>, widgetData: SComputerMenuButtonWidgetPackage) -> Void {
   wrappedMethod(gameController, widgetData);
 
-  if Equals(widgetData.widgetName, "Atelier") {
+  if Equals(widgetData.widgetName, "atelier") {
     inkImageRef.SetTexturePart(this.m_iconWidget, n"logo_wdb_large");
     inkImageRef.SetAtlasResource(this.m_iconWidget, r"base\\gameplay\\gui\\fullscreen\\wardrobe\\atlas_wardrobe.inkatlas");
   };

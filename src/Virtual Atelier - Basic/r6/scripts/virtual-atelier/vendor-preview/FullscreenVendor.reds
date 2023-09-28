@@ -50,9 +50,9 @@ protected cb func OnUninitialize() -> Bool {
 }
 
 @wrapMethod(FullscreenVendorGameController)
-private final func RequestAutoSave(opt delay: Float) -> Void {
+protected cb func OnBeforeLeaveScenario(userData: ref<IScriptable>) -> Bool {
   if !this.GetIsVirtual() {
-    wrappedMethod(delay);
+    wrappedMethod(userData);
   };
 }
 

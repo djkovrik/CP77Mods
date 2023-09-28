@@ -12,7 +12,7 @@ public abstract class AtelierUtils {
     statsSystem.AddSavedModifier(itemData.GetStatsObjectID(), powerLevelMod);
     statsSystem.RemoveAllModifiers(itemData.GetStatsObjectID(), gamedataStatType.Quality);
     statsSystem.AddSavedModifier(itemData.GetStatsObjectID(), qualityMod);
-    RPGManager.ForceItemQuality(player, itemData, quality);
+    RPGManager.ForceItemTier(player, itemData, quality);
   }
 
   public static func ScaleItemPrice(player: wref<PlayerPuppet>, vendor: wref<GameObject>, itemId: ItemID, itemQuality: CName) -> Int32 {
@@ -280,7 +280,7 @@ public abstract class AtelierUtils {
 }
 
 public static func AtelierLog(str: String) -> Void {
-  LogChannel(n"DEBUG", s"Virtual Atelier: \(str)");
+  // LogChannel(n"DEBUG", s"Virtual Atelier: \(str)");
 }
 
 public static func AtelierDebug(str: String) -> Void {

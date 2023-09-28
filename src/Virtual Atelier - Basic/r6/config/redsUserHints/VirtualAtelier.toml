@@ -1,0 +1,5 @@
+[[UNRESOLVED_IMPORT]]
+id = "MISSING_CODEWARE"
+file = "virtual-atelier-full/virtual-store/VirtualStoreController.reds"
+line_contains  = "Codeware"
+message = "Virtual Atelier depends on Codeware but you don't have it installed."
