@@ -420,7 +420,7 @@ public func ShouldSkipFirstEquipEQ() -> Bool {
 }
 
 public static func EQ(str: String) -> Void {
-  LogChannel(n"DEBUG", "> " + str);
+  // LogChannel(n"DEBUG", "> " + str);
 }
 
 
