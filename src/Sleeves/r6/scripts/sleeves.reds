@@ -301,7 +301,7 @@ public class SleevesControlSystem extends ScriptableSystem {
 
   private func Log(str: String) -> Void {
     if SleevesConfig.IsDebugLogsEnabled() {
-      LogChannel(n"DEBUG", s"Sleeves: \(str)");
+      // LogChannel(n"DEBUG", s"Sleeves: \(str)");
     };
   }
 }
@@ -325,7 +325,7 @@ private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt blockActiveSl
 }
 
 @wrapMethod(EquipmentSystemPlayerData)
-private final func UnequipItem(equipAreaIndex: Int32, opt slotIndex: Int32) -> Void {
+private final func UnequipItem(equipAreaIndex: Int32, slotIndex: Int32, opt forceRemove: Bool) -> Void {
   wrappedMethod(equipAreaIndex, slotIndex);
   SleevesControlSystem.GetInstance(this.m_owner.GetGame()).RunAppearanceSwapDelayed();
 }
