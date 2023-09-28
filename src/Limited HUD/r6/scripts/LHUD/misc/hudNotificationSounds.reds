@@ -137,31 +137,6 @@ private final func PushObjectiveQuestNotification(entry: wref<JournalEntry>) -> 
 }
 
 @replaceMethod(JournalNotificationQueue)
-private final func PushNotification(const title: script_ref<String>, const text: script_ref<String>, widget: CName, animation: CName, opt action: ref<GenericNotificationBaseAction>, opt duration: Float) -> Void {
-  let notificationData: gameuiGenericNotificationData;
-  let userData: ref<QuestUpdateNotificationViewData> = new QuestUpdateNotificationViewData();
-  userData.title = Deref(title);
-  userData.text = Deref(text);
-  userData.action = action;
-  userData.animation = animation;
-  if this.lhudAddonsConfig.MuteQuestNotifications {
-    userData.soundEvent = n"";
-  } else {
-    userData.soundEvent = n"QuestUpdatePopup";
-  };
-  userData.soundAction = n"OnOpen";
-  if duration > 0.00 {
-    notificationData.time = duration;
-    userData.priority = EGenericNotificationPriority.Height;
-  } else {
-    notificationData.time = this.m_showDuration;
-  };
-  notificationData.widgetLibraryItemName = widget;
-  notificationData.notificationData = userData;
-  this.AddNewNotificationData(notificationData);
-}
-
-@replaceMethod(JournalNotificationQueue)
 protected cb func OnTrackedMappinUpdated(value: Variant) -> Bool {
   let mappinText: String;
   let notificationData: gameuiGenericNotificationData;
