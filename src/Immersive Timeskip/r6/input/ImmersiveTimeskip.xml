@@ -25,7 +25,7 @@
 	<!-- Available keycodes: https://pastebin.com/nsQ1cqi8 -->
 	<mapping name="immersive_time_skip" type="Button" >
 		<button id="IK_O" />
-		<button id="IK_Pad_RightThumb" />
+		<button id="IK_Pad_LeftThumb" />
 	</mapping>
 	
 </bindings>
