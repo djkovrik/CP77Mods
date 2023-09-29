@@ -95,6 +95,7 @@ private class SleevesExclusions {
       Equals(id, t"Items.nd_alt_jacket_white") ||           // ND Alt's Jacket
       Equals(id, t"Items.nd_alt_jacket_burgundy") ||        // ND Alt's Jacket
       Equals(id, t"Items.nd_alt_jacket_brown") ||           // ND Alt's Jacket
+      Equals(id, t"Items.Twitch_Drop_Vest") ||              // NUS Infiltrator Jacket
     false;
   }
 }
