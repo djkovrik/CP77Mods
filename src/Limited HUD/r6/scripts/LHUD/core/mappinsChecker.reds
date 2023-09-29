@@ -36,6 +36,8 @@ public class MappinChecker {
       || Equals(variant, gamedataMappinVariant.PhoneCallVariant)
       || Equals(variant, gamedataMappinVariant.TarotVariant)
       || Equals(variant, gamedataMappinVariant.FocusClueVariant)
+      || Equals(variant, gamedataMappinVariant.Zzz09_CourierSandboxActivityVariant)
+      || Equals(variant, gamedataMappinVariant.Zzz12_WorldEncounterVariant)
       || false;
   }
 
@@ -43,7 +45,7 @@ public class MappinChecker {
     let variant: gamedataMappinVariant = mappin.GetVariant();
 
     return 
-      Equals(variant, gamedataMappinVariant.VehicleVariant) 
+         Equals(variant, gamedataMappinVariant.VehicleVariant) 
       || Equals(variant, gamedataMappinVariant.Zzz03_MotorcycleVariant)
       || false;
   }
@@ -70,6 +72,12 @@ public class MappinChecker {
       || Equals(variant, gamedataMappinVariant.ServicePointDropPointVariant)
       || Equals(variant, gamedataMappinVariant.CustomPositionVariant)
       || Equals(variant, gamedataMappinVariant.Zzz07_PlayerStashVariant)
+      || Equals(variant, gamedataMappinVariant.Zzz08_WardrobeVariant)
+      || Equals(variant, gamedataMappinVariant.Zzz11_RoadBlockadeVariant)
+      || Equals(variant, gamedataMappinVariant.Zzz13_DogtownGateVariant)
+      || Equals(variant, gamedataMappinVariant.Zzz14_ServicePointBlackMarketVariant)
+      || Equals(variant, gamedataMappinVariant.Zzz16_RelicDeviceBasicVariant)
+      || Equals(variant, gamedataMappinVariant.Zzz16_RelicDeviceSpecialVariant)
       || false;
   }
 
@@ -92,7 +100,10 @@ public class MappinChecker {
     let variant: gamedataMappinVariant = mappin.GetVariant();
 
     return 
-       Equals(variant, gamedataMappinVariant.GrenadeVariant) 
+       Equals(variant, gamedataMappinVariant.GrenadeVariant)
+    || Equals(variant, gamedataMappinVariant.Zzz12_QuickHackQueueVariant)
+    || Equals(variant, gamedataMappinVariant.Zzz15_QuickHackDurationVariant)
+    || Equals(variant, gamedataMappinVariant.Zzz10_RemoteControlDrivingVariant)
     || false;
   }
 
