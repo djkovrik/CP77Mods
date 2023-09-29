@@ -55,24 +55,24 @@ protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> 
 
 // New phone controller
 
-@addMethod(gameuiNewPhoneRelatedHUDGameController)
+@addMethod(PhoneHotkeyController)
 protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
   this.ConsumeLHUDEvent(evt);
   this.DetermineCurrentVisibility();
 }
 
-@addMethod(gameuiNewPhoneRelatedHUDGameController)
+@addMethod(PhoneHotkeyController)
 public func DetermineCurrentVisibility() -> Void {
-  if !this.lhudCfg.IsEnabled {
+  if !this.lhudConfig.IsEnabled {
     return ;
   };
 
-  let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && this.lhudCfg.BindToGlobalHotkey;
-  let showForCombat: Bool = this.lhud_isCombatActive && this.lhudCfg.ShowInCombat;
-  let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && this.lhudCfg.ShowOutOfCombat;
-  let showForStealth: Bool =  this.lhud_isStealthActive && this.lhudCfg.ShowInStealth;
-  let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudCfg.ShowWithWeapon;
-  let showForZoom: Bool =  this.lhud_isZoomActive && this.lhudCfg.ShowWithZoom;
+  let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && this.lhudConfig.BindToGlobalHotkey;
+  let showForCombat: Bool = this.lhud_isCombatActive && this.lhudConfig.ShowInCombat;
+  let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && this.lhudConfig.ShowOutOfCombat;
+  let showForStealth: Bool =  this.lhud_isStealthActive && this.lhudConfig.ShowInStealth;
+  let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfig.ShowWithWeapon;
+  let showForZoom: Bool =  this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
 
   let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForWeapon || showForZoom;
   if this.lhud_isBraindanceActive { isVisible = false; };
@@ -86,21 +86,21 @@ public func DetermineCurrentVisibility() -> Void {
   };
 }
 
-@addField(gameuiNewPhoneRelatedHUDGameController)
-private let lhudCfg: ref<ActionButtonsModuleConfig>;
+@addField(PhoneHotkeyController)
+private let lhudConfig: ref<ActionButtonsModuleConfig>;
 
-@wrapMethod(gameuiNewPhoneRelatedHUDGameController)
+@wrapMethod(PhoneHotkeyController)
 protected cb func OnPlayerAttach(player: ref<GameObject>) -> Bool {
   wrappedMethod(player);
-  this.lhudCfg = new ActionButtonsModuleConfig();
-  if this.lhudCfg.IsEnabled {
+  this.lhudConfig = new ActionButtonsModuleConfig();
+  if this.lhudConfig.IsEnabled {
     this.lhud_isVisibleNow = false;
     this.GetRootWidget().SetOpacity(0.0);
     this.OnInitializeFinished();
   };
 }
 
-@addMethod(gameuiNewPhoneRelatedHUDGameController)
+@addMethod(PhoneHotkeyController)
 protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> Void {
-  this.lhudCfg = new ActionButtonsModuleConfig();
+  this.lhudConfig = new ActionButtonsModuleConfig();
 }
