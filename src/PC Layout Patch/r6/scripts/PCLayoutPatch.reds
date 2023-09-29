@@ -1,5 +1,5 @@
 @wrapMethod(ComputerMainLayoutWidgetController)
-public func InitializeMenuButtons(gameController: ref<ComputerInkGameController>, widgetsData: array<SComputerMenuButtonWidgetPackage>) -> Void {
+public func InitializeMenuButtons(gameController: ref<ComputerInkGameController>, const widgetsData: script_ref<array<SComputerMenuButtonWidgetPackage>>) -> Void {
   wrappedMethod(gameController, widgetsData);
   inkWidgetRef.SetScale(this.m_menuButtonList, new Vector2(0.85, 0.85));
   inkWidgetRef.SetAnchor(this.m_menuButtonList, inkEAnchor.TopLeft);
