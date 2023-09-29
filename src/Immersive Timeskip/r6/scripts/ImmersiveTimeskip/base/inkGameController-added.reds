@@ -42,6 +42,7 @@ protected cb func OnOpenTimeSkipMenuEvent(evt: ref<OpenTimeSkipMenuEvent>) -> Bo
 protected cb func OnTimeSkipMenuVisibilityEvent(evt: ref<TimeSkipMenuVisibilityEvent>) -> Bool {
   let hideableWidgets: array<CName> = [
     n"HotkeysWidgetController",
+    n"gameuiNewPhoneRelatedHUDGameController",
     n"CrouchIndicatorGameController",
     n"gameuiInputHintManagerGameController",
     n"gameuiMinimapContainerController",
