@@ -36,6 +36,7 @@ private final func ShowMenuByName(elementName: String) -> Void {
     return ;
   };
 
+  this.QueueEvent(ShowAtelierEvent.Create(false));
   wrappedMethod(elementName);
 }
 
@@ -47,12 +48,6 @@ private final func HideMenuByName(elementName: String) -> Void {
   };
 
   wrappedMethod(elementName);
-}
-
-@wrapMethod(ComputerInkGameController)
-public final func ShowInternet() -> Void {
-  this.QueueEvent(ShowAtelierEvent.Create(false));
-  wrappedMethod();
 }
 
 @wrapMethod(ComputerControllerPS)

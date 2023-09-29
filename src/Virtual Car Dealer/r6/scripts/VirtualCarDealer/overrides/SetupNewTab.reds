@@ -34,6 +34,7 @@ private final func ShowMenuByName(elementName: String) -> Void {
     return ;
   };
 
+  this.QueueEvent(ShowCarDealerEvent.Create(false));
   wrappedMethod(elementName);
 }
 
@@ -46,13 +47,6 @@ private final func HideMenuByName(elementName: String) -> Void {
 
   wrappedMethod(elementName);
 }
-
-@wrapMethod(ComputerInkGameController)
-public final func ShowInternet() -> Void {
-  this.QueueEvent(ShowCarDealerEvent.Create(false));
-  wrappedMethod();
-}
-
 
 @wrapMethod(ComputerControllerPS)
 public final func GetMenuButtonWidgets() -> array<SComputerMenuButtonWidgetPackage> {
