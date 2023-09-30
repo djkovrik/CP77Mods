@@ -112,12 +112,12 @@ private func UpdateMarkForSaleHint(shouldShow: Bool, opt alreadyHasIt: Bool) {
 }
 
 @wrapMethod(InventoryItemModeLogicController)
-private final func SetInventoryItemButtonHintsHoverOver(displayingData: InventoryItemData, opt display: ref<InventoryItemDisplayController>) -> Void {
+  private final func SetInventoryItemButtonHintsHoverOver(const displayingData: script_ref<InventoryItemData>, opt display: ref<InventoryItemDisplayController>) -> Void {
   wrappedMethod(displayingData, display);
 
-  let price: Int32 = RPGManager.CalculateSellPrice(this.m_player.GetGame(), this.m_player, displayingData.ID);
-  let hasQuestTag: Bool = InventoryItemData.GetGameItemData(displayingData).HasTag(n"Quest");
-  let alreadyMarked: Bool = InventoryItemData.GetGameItemData(displayingData).modMarkedForSale;
+  let price: Int32 = RPGManager.CalculateSellPrice(this.m_player.GetGame(), this.m_player, Deref(displayingData).ID);
+  let hasQuestTag: Bool = InventoryItemData.GetGameItemData(Deref(displayingData)).HasTag(n"Quest");
+  let alreadyMarked: Bool = InventoryItemData.GetGameItemData(Deref(displayingData)).modMarkedForSale;
   if IsDefined(display) && price > 0 && !hasQuestTag {
     this.UpdateMarkForSaleHint(true, alreadyMarked);
   };
