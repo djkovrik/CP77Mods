@@ -1,5 +1,5 @@
 @wrapMethod(WorldMapTooltipController)
-public func SetData(data: WorldMapTooltipData, menu: ref<WorldMapMenuGameController>) -> Void {
+public func SetData(const data: script_ref<WorldMapTooltipData>, menu: ref<WorldMapMenuGameController>) -> Void {
   wrappedMethod(data, menu);
 
   let vendorName: String = this.GetRealVendorName(data);
@@ -9,21 +9,21 @@ public func SetData(data: WorldMapTooltipData, menu: ref<WorldMapMenuGameControl
 }
 
 @addMethod(WorldMapTooltipController)
-private func GetRealVendorName(data: WorldMapTooltipData) -> String {
-  let entry: String = data.journalEntry.GetId();
+private func GetRealVendorName(const data: script_ref<WorldMapTooltipData>) -> String {
+  let entry: String = Deref(data).journalEntry.GetId();
   let targetId: TweakDBID = TDBID.Create(s"Vendors.\(entry).localizedName");
   let vendorName: String = TweakDBInterface.GetString(targetId, "");
 
-  LogChannel(n"DEBUG", s"entry = \(entry), variant = \(data.mappin.GetVariant()), name = \(vendorName)");
+  // LogChannel(n"DEBUG", s"entry = \(entry), variant = \(Deref(data).mappin.GetVariant()), name = \(vendorName)");
 
   // Some hardcoded thingies
   switch entry {
     // Fingers M.D.
     case "wbr_jpn_netrunner_02":
-      if Equals(data.mappin.GetVariant(), gamedataMappinVariant.ServicePointRipperdocVariant) {
+      if Equals(Deref(data).mappin.GetVariant(), gamedataMappinVariant.ServicePointRipperdocVariant) {
         vendorName = "LocKey#45149";
       };
-      if Equals(data.mappin.GetVariant(), gamedataMappinVariant.ServicePointNetTrainerVariant) {
+      if Equals(Deref(data).mappin.GetVariant(), gamedataMappinVariant.ServicePointNetTrainerVariant) {
         vendorName = "LocKey#45176";
       };
       break;
