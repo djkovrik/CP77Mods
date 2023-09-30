@@ -1,7 +1,7 @@
 module VehicleSummonTweaks
 
 private abstract class VehicleSummonFavoritesConfig {
-  public static func ActionName() -> CName = n"popup_goto_messenger"
+  public static func ActionName() -> CName = n"popup_goto"
   public static func Pin() -> String = "Pin"
   public static func Unpin() -> String = "Unpin"
 }
@@ -62,7 +62,7 @@ private func CreateButtonHintWidget() -> Void {
   let container: ref<inkCompoundWidget> = this.GetRootCompoundWidget().GetWidget(n"containerRoot") as inkCompoundWidget;
 
   let buttonHint: ref<inkWidget> = this.SpawnFromExternal(container, r"base\\gameplay\\gui\\common\\buttonhints.inkwidget", n"Root");
-  buttonHint.SetMargin(new inkMargin(416.0, 80.0, 0.0, 0.0));
+  buttonHint.SetMargin(new inkMargin(460.0, 80.0, 0.0, 0.0));
   buttonHint.SetHAlign(inkEHorizontalAlign.Right);
   buttonHint.SetVAlign(inkEVerticalAlign.Bottom);
   buttonHint.SetAnchor(inkEAnchor.BottomCenter);
@@ -78,7 +78,7 @@ private func CreateButtonHintWidget() -> Void {
   buttonText.SetFontSize(36);
   buttonText.SetText(VehicleSummonFavoritesConfig.Pin());
   buttonText.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-  buttonText.SetMargin(new inkMargin(412.0, 20.0, 0.0, 0.0));
+  buttonText.SetMargin(new inkMargin(460.0, 20.0, 0.0, 0.0));
   buttonText.SetHAlign(inkEHorizontalAlign.Right);
   buttonText.SetVAlign(inkEVerticalAlign.Bottom);
   buttonText.SetAnchor(inkEAnchor.BottomCenter);
