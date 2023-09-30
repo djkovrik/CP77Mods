@@ -4,6 +4,25 @@ class ToggleQuestTagStrings {
 
 // DO NOT EDIT ANYTHING BELOW
 
+
+private abstract class ToggleTagsChecker {
+
+  public static func IsToggleable(type: gamedataItemType) -> Bool {
+    return 
+      NotEquals(type, gamedataItemType.Gad_Grenade) &&
+      NotEquals(type, gamedataItemType.Con_Ammo) &&
+      NotEquals(type, gamedataItemType.Con_Edible) &&
+      NotEquals(type, gamedataItemType.Con_Inhaler) &&
+      NotEquals(type, gamedataItemType.Con_Injector) &&
+      NotEquals(type, gamedataItemType.Con_LongLasting) &&
+      NotEquals(type, gamedataItemType.Con_Skillbook) &&
+      NotEquals(type, gamedataItemType.Gen_MoneyShard) &&
+      NotEquals(type, gamedataItemType.Gen_CraftingMaterial) &&
+      !InventoryDataManagerV2.IsAttachmentType(type) &&
+    true;
+  }
+}
+
 // // -- Backpack -- BackpackMainGameController --
 
 // Handle new button hint visibility
@@ -21,7 +40,9 @@ private func UpdateToggleTagsHints(shouldShow: Bool, opt evt: ref<ItemDisplayHov
 @wrapMethod(BackpackMainGameController)
 protected cb func OnItemDisplayHoverOver(evt: ref<ItemDisplayHoverOverEvent>) -> Bool {
   wrappedMethod(evt);
-  this.UpdateToggleTagsHints(true, evt);
+  if ToggleTagsChecker.IsToggleable(evt.uiInventoryItem.GetItemType()) {
+    this.UpdateToggleTagsHints(true, evt);
+  };
 }
 
 // Hide new hint on item hover out
@@ -35,6 +56,10 @@ protected cb func OnItemDisplayHoverOut(evt: ref<ItemDisplayHoverOutEvent>) -> B
 @addMethod(BackpackMainGameController)
 private func ToggleQuestTag() -> Void {
   let data: ref<gameItemData> = this.m_lastItemHoverOverEvent.uiInventoryItem.GetItemData();
+  if !ToggleTagsChecker.IsToggleable(data.GetItemType()) {
+    return ;
+  };
+
   if data.HasTag(n"Quest") {
     data.RemoveDynamicTag(n"Quest");
   } else {
@@ -66,63 +91,13 @@ private func UpdateToggleTagsHints(shouldShow: Bool) {
 }
 
 // Show new hint on item hover over
-@replaceMethod(InventoryItemModeLogicController)
-private final func SetInventoryItemButtonHintsHoverOver(displayingData: InventoryItemData, opt display: ref<InventoryItemDisplayController>) -> Void {
-  let cursorData: ref<MenuCursorUserData> = new MenuCursorUserData();
-  let isEquipped: Bool = InventoryItemData.IsEquipped(displayingData) || this.itemChooser.IsAttachmentItem(displayingData);
-  if IsDefined(display) {
-    if !InventoryItemData.IsEmpty(displayingData) {
-      if this.itemChooser.CanEquipVisuals(InventoryItemData.GetID(displayingData)) {
-        this.m_buttonHintsController.AddButtonHint(n"equip_visuals", GetLocalizedText("UI-UserActions-EquipVisuals"));
-      } else {
-        this.m_buttonHintsController.RemoveButtonHint(n"equip_visuals");
-      };
-      if !isEquipped {
-        if NotEquals(InventoryItemData.GetItemType(displayingData), gamedataItemType.Prt_Program) {
-          this.m_buttonHintsController.AddButtonHint(n"drop_item", GetLocalizedText("UI-ScriptExports-Drop0"));
-          this.UpdateToggleTagsHints(true);
-        };
-        if !InventoryItemData.IsPart(displayingData) {
-          if NotEquals(InventoryItemData.GetEquipmentArea(displayingData), gamedataEquipmentArea.Invalid) {
-            this.m_buttonHintsController.AddButtonHint(n"equip_item", GetLocalizedText("UI-UserActions-Equip"));
-          };
-        } else {
-          this.m_buttonHintsController.AddButtonHint(n"equip_item", GetLocalizedText("UI-UserActions-Equip"));
-        };
-        if Equals(display.GetDisplayContext(), ItemDisplayContext.Attachment) {
-          this.m_buttonHintsController.RemoveButtonHint(n"drop_item");
-          this.m_buttonHintsController.RemoveButtonHint(n"equip_item");
-          if RPGManager.CanPartBeUnequipped(InventoryItemData.GetID(displayingData)) {
-            this.m_buttonHintsController.AddButtonHint(n"unequip_item", GetLocalizedText("UI-UserActions-Unequip"));
-            this.UpdateToggleTagsHints(true);
-          } else {
-            this.m_buttonHintsController.RemoveButtonHint(n"unequip_item");
-          };
-        };
-      } else {
-        if !InventoryItemData.IsPart(displayingData) || RPGManager.CanPartBeUnequipped(InventoryItemData.GetID(displayingData)) || Equals(InventoryItemData.GetEquipmentArea(this.itemChooser.GetModifiedItemData()), gamedataEquipmentArea.SystemReplacementCW) {
-          this.m_buttonHintsController.AddButtonHint(n"unequip_item", GetLocalizedText("UI-UserActions-Unequip"));
-          this.UpdateToggleTagsHints(true);
-        };
-      };
-      if !this.m_isE3Demo {
-        if RPGManager.CanItemBeDisassembled(this.m_player.GetGame(), InventoryItemData.GetID(displayingData)) && !isEquipped {
-          this.m_buttonHintsController.AddButtonHint(n"disassemble_item", "[" + GetLocalizedText("Gameplay-Devices-Interactions-Helpers-Hold") + "] " + GetLocalizedText("UI-ScriptExports-Disassemble0"));
-          cursorData.AddAction(n"disassemble_item");
-        };
-      };
-      if Equals(InventoryItemData.GetEquipmentArea(displayingData), gamedataEquipmentArea.Consumable) {
-        this.m_buttonHintsController.AddButtonHint(n"use_item", "[" + GetLocalizedText("Gameplay-Devices-Interactions-Helpers-Hold") + "] " + GetLocalizedText("UI-UserActions-Use"));
-        cursorData.AddAction(n"use_item");
-      };
-    };
-    if cursorData.GetActionsListSize() >= 0 {
-      this.SetCursorContext(n"HoldToComplete", cursorData);
-    } else {
-      this.SetCursorContext(n"Hover");
-    };
-  } else {
-    this.SetCursorContext(n"Default");
+@wrapMethod(InventoryItemModeLogicController)
+private final func SetInventoryItemButtonHintsHoverOver(const displayingData: script_ref<InventoryItemData>, opt display: ref<InventoryItemDisplayController>) -> Void {
+  wrappedMethod(displayingData, display);
+
+  let type: gamedataItemType = InventoryItemData.GetItemType(displayingData);
+  if ToggleTagsChecker.IsToggleable(type) {
+    this.UpdateToggleTagsHints(true);
   };
 }
 
@@ -141,7 +116,9 @@ private func ToggleQuestTag(evt: ref<ItemDisplayClickEvent>) -> Void {
   let data: ref<gameItemData>;
   if !InventoryItemData.IsEmpty(itemData) {
     data = InventoryItemData.GetGameItemData(itemData);
-    LogChannel(n"DEBUG", s"2 TOGGLE FOR \(ItemID.GetCombinedHash(data.GetID()))");
+    if !ToggleTagsChecker.IsToggleable(data.GetItemType()) {
+      return ;
+    };
     if data.HasTag(n"Quest") {
       data.RemoveDynamicTag(n"Quest");
     } else {
