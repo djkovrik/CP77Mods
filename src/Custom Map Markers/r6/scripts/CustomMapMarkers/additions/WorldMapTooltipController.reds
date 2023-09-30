@@ -18,15 +18,15 @@ import CustomMarkers.Config.*
 // }
 
 @wrapMethod(WorldMapTooltipController)
-public func SetData(data: WorldMapTooltipData, menu: ref<WorldMapMenuGameController>) -> Void {
+public func SetData(const data: script_ref<WorldMapTooltipData>, menu: ref<WorldMapMenuGameController>) -> Void {
   wrappedMethod(data, menu);
 
   // CUSTOM
   let mappinData: ref<GameplayRoleMappinData>;
   let newTitleStr: String;
   let newDescStr: String;
-  if data.controller != null && data.mappin != null && menu.GetPlayer() != null {
-    mappinData = data.mappin.GetScriptData() as GameplayRoleMappinData;
+  if Deref(data).controller != null && Deref(data).mappin != null && menu.GetPlayer() != null {
+    mappinData = Deref(data).mappin.GetScriptData() as GameplayRoleMappinData;
     if IsDefined(mappinData) && mappinData.m_isMappinCustom {
       // Set title and description
       newTitleStr = mappinData.m_customMappinTitle;

@@ -59,17 +59,20 @@ private func MoveFromCustomToPlayer() -> Void {
 
 // Attach to mouse middle button clicks
 @replaceMethod(WorldMapMenuGameController)
+
+@replaceMethod(WorldMapMenuGameController)
 private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
   let customMappin: ref<IMappin>;
   let customMappinData: ref<GameplayRoleMappinData>;
   if e.IsAction(n"world_map_menu_track_waypoint") {
+    this.m_pressedRMB = true;
     this.TryTrackQuestOrSetWaypoint();
   } else {
     if e.IsAction(n"world_map_menu_jump_to_player") {
       if !this.m_justOpenedQuestJournal {
-        this.PlaySound(n"Button", n"OnPress");
         // Cycle through mappins list instead of just moving to player
         this.CycleBetweenMappins();
+        // this.PlaySound(n"Button", n"OnPress");
         // if (this.selectedMappin as WorldMapPlayerMappinController) == null {
         //   this.MoveToPlayer();
         // } else {
@@ -79,43 +82,55 @@ private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
         // };
       };
     } else {
-      if e.IsAction(n"world_map_menu_open_quest") {
-        this.PlaySound(n"Button", n"OnPress");
-        this.OpenSelectedQuest();
-      } else {
-        if e.IsAction(n"world_map_menu_zoom_to_mappin") {
-          // Default logic
-          if this.HasSelectedMappin() && this.CanZoomToMappin(this.selectedMappin) {
-            this.PlaySound(n"Button", n"OnPress");
-            this.ZoomToMappin(this.selectedMappin);
+      if e.IsAction(n"world_map_menu_zoom_to_mappin") {
+        // Default logic
+        if this.HasSelectedMappin() && this.CanZoomToMappin(this.selectedMappin) {
+          this.PlaySound(n"Button", n"OnPress");
+          this.ZoomToMappin(this.selectedMappin);
+        };
+        // Open popup when clicked on free space
+        if !this.HasSelectedMappin() {
+          this.PlaySound(n"Button", n"OnPress");
+          CustomMarkerPopup.Show(this, this.m_player);
+        } else {
+          // Delete mappin if clicked on custom
+          customMappin = this.selectedMappin.GetMappin();
+          customMappinData = customMappin.GetScriptData() as GameplayRoleMappinData;
+          if IsDefined(customMappinData) && customMappinData.m_isMappinCustom {
+            this.m_customMarkerSystem.DeleteCustomMappin(customMappin.GetWorldPosition());
+            this.PlaySound(n"MapPin", n"OnDelete");
           };
-          // Open popup when clicked on free space
-          if !this.HasSelectedMappin() {
-            this.PlaySound(n"Button", n"OnPress");
-            CustomMarkerPopup.Show(this, this.m_player);
-          } else {
-            // Delete mappin if clicked on custom
-            customMappin = this.selectedMappin.GetMappin();
-            customMappinData = customMappin.GetScriptData() as GameplayRoleMappinData;
-            if IsDefined(customMappinData) && customMappinData.m_isMappinCustom {
-              this.m_customMarkerSystem.DeleteCustomMappin(customMappin.GetWorldPosition());
-              this.PlaySound(n"MapPin", n"OnDelete");
-            };
+        };
+      } else {
+        if e.IsAction(n"world_map_menu_zoom_in_mouse") {
+          this.ZoomWithMouse(true);
+          if !this.m_isZooming {
+            this.m_audioSystem.Play(n"ui_zooming_in_step_change");
+            this.m_isZooming = true;
           };
         } else {
-          if e.IsAction(n"world_map_menu_zoom_in_mouse") {
-            this.ZoomWithMouse(true);
+          if e.IsAction(n"world_map_menu_zoom_out_mouse") {
+            this.ZoomWithMouse(false);
+            if !this.m_isZooming {
+              this.m_audioSystem.Play(n"ui_zooming_in_exit");
+              this.m_isZooming = true;
+            };
           } else {
-            if e.IsAction(n"world_map_menu_zoom_out_mouse") {
-              this.ZoomWithMouse(false);
+            if e.IsAction(n"world_map_menu_fast_travel") && this.HasSelectedMappin() && Equals(this.selectedMappin.GetMappinVariant(), gamedataMappinVariant.FastTravelVariant) && this.IsFastTravelEnabled() {
+              this.m_audioSystem.Play(n"ui_menu_item_crafting_start");
+              this.m_startedFastTraveling = true;
+              this.m_isPanning = true;
             };
           };
         };
       };
     };
   };
-  if e.IsAction(n"world_map_menu_move_mouse") {
+  if e.IsAction(n"world_map_menu_move_mouse") && !this.m_isHoveringOverFilters && !this.m_isPanning {
     this.SetMousePanEnabled(true);
+    this.SetCursorContext(n"Pan");
+    this.m_audioSystem.Play(n"ui_menu_scrolling_start");
+    this.m_isPanning = true;
   };
 }
 
