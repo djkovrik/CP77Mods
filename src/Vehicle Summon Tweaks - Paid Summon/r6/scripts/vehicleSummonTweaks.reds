@@ -5,7 +5,7 @@ private class VehicleSummonConfig {
 }
 
 @wrapMethod(QuickSlotsManager)
-public final func SummonVehicle() -> Void {
+public final func SummonVehicle(force: Bool) -> Void {
   let ts: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.m_Player.GetGame());
   let playerMoney: Int32 = ts.GetItemQuantity(this.m_Player, MarketSystem.Money());
   let price: Int32 = VehicleSummonConfig.SummonCost();
@@ -13,7 +13,7 @@ public final func SummonVehicle() -> Void {
   if playerMoney < price {
     QuickSlotsManager.ShowNoMoneyMessage(this.m_Player.GetGame());
   } else {
-    wrappedMethod();
+    wrappedMethod(force);
     ts.RemoveItemByTDBID(this.m_Player, t"Items.money", price);
   };
 }
