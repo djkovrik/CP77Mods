@@ -31,10 +31,11 @@ public class HUDWidgetsManager {
     if config.weaponRosterEnabled { ArrayPush(this.slots, n"NewWeaponRoster"); }
     if config.crouchIndicatorEnabled { ArrayPush(this.slots, n"NewCrouchIndicator"); }
     if config.dpadEnabled { ArrayPush(this.slots, n"NewDpad"); }
+    if config.phoneHotkeyEnabled { ArrayPush(this.slots, n"NewPhoneHotkey"); }
     if config.playerHealthbarEnabled { ArrayPush(this.slots, n"NewHealthBar"); }
     if config.playerStaminabarEnabled { ArrayPush(this.slots, n"NewStaminaBar"); }
-    if config.incomingCallAvatarEnabled { ArrayPush(this.slots, n"NewPhoneAvatar"); }
-    if config.incomingCallButtonEnabled { ArrayPush(this.slots, n"NewPhoneControl"); }
+    // if config.incomingCallAvatarEnabled { ArrayPush(this.slots, n"NewPhoneAvatar"); }
+    // if config.incomingCallButtonEnabled { ArrayPush(this.slots, n"NewPhoneControl"); }
     if config.inputHintsEnabled { ArrayPush(this.slots, n"NewInputHint"); }
     if config.speedometerEnabled { ArrayPush(this.slots, n"NewCarHud"); }
     if config.bossHealthbarEnabled { ArrayPush(this.slots, n"NewBossHealthbar"); }

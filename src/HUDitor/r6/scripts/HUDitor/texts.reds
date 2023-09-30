@@ -30,6 +30,9 @@ public class HUDitorTexts {
       case n"NewDpad":
         nameString = GetLocalizedTextByKey(n"Mod-HUDitor-Widget-Dpad"); 
         break;
+      case n"NewPhoneHotkey":
+        nameString = GetLocalizedTextByKey(n"Mod-HUDitor-Widget-Phone-Controller"); 
+        break;
       case n"NewHealthBar":
         nameString = GetLocalizedTextByKey(n"Mod-HUDitor-Widget-Player-Healthbar"); 
         break;

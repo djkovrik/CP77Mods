@@ -12,6 +12,6 @@ protected cb func OnScannedObjectChanged(value: EntityID) -> Bool {
   wrappedMethod(value);
   let evt: ref<ScannerDetailsAppearedEvent> = new ScannerDetailsAppearedEvent();
   evt.isVisible = EntityID.IsDefined(value);
-  evt.isHackable = this.m_hasHacks;
-  GameInstance.GetUISystem(this.m_gameInstance).QueueEvent(evt);
+  evt.isHackable = this.m_isQuickHackAble;
+  GameInstance.GetUISystem(this.m_player.GetGame()).QueueEvent(evt);
 }

@@ -12,6 +12,7 @@ import HUDrag.HUDitorConfig
 @addField(inkGameController) let weaponRosterSlot: wref<HUDitorCustomSlot>;
 @addField(inkGameController) let crouchIndicatorSlot: wref<HUDitorCustomSlot>;
 @addField(inkGameController) let dpadSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) let phoneHotkeySlot: wref<HUDitorCustomSlot>;
 @addField(inkGameController) let healthbarSlot: wref<HUDitorCustomSlot>;
 @addField(inkGameController) let staminaBarSlot: wref<HUDitorCustomSlot>;
 @addField(inkGameController) let phoneCallAvatarSlot: wref<HUDitorCustomSlot>;
@@ -43,6 +44,7 @@ protected cb func OnGameSessionInitialized(event: ref<GameSessionInitializedEven
     this.weaponRosterSlot.OnGameSessionInitialized(event);
     this.crouchIndicatorSlot.OnGameSessionInitialized(event);
     this.dpadSlot.OnGameSessionInitialized(event);
+    this.phoneHotkeySlot.OnGameSessionInitialized(event);
     this.healthbarSlot.OnGameSessionInitialized(event);
     this.staminaBarSlot.OnGameSessionInitialized(event);
     this.phoneCallAvatarSlot.OnGameSessionInitialized(event);
@@ -68,6 +70,7 @@ protected cb func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidgetEve
     this.weaponRosterSlot.OnEnableHUDEditorWidget(event);
     this.crouchIndicatorSlot.OnEnableHUDEditorWidget(event);
     this.dpadSlot.OnEnableHUDEditorWidget(event);
+    this.phoneHotkeySlot.OnEnableHUDEditorWidget(event);
     this.healthbarSlot.OnEnableHUDEditorWidget(event);
     this.staminaBarSlot.OnEnableHUDEditorWidget(event);
     this.phoneCallAvatarSlot.OnEnableHUDEditorWidget(event);
@@ -95,6 +98,7 @@ protected cb func OnDisableHUDEditorWidgets(event: ref<DisableHUDEditor>) -> Boo
     this.weaponRosterSlot.OnDisableHUDEditorWidgets(event);
     this.crouchIndicatorSlot.OnDisableHUDEditorWidgets(event);
     this.dpadSlot.OnDisableHUDEditorWidgets(event);
+    this.phoneHotkeySlot.OnDisableHUDEditorWidgets(event);
     this.healthbarSlot.OnDisableHUDEditorWidgets(event);
     this.staminaBarSlot.OnDisableHUDEditorWidgets(event);
     this.phoneCallAvatarSlot.OnDisableHUDEditorWidgets(event);
@@ -121,6 +125,7 @@ protected cb func OnResetHUDWidgets(event: ref<ResetAllHUDWidgets>) {
     this.weaponRosterSlot.OnResetHUDWidgets(event);
     this.crouchIndicatorSlot.OnResetHUDWidgets(event);
     this.dpadSlot.OnResetHUDWidgets(event);
+    this.phoneHotkeySlot.OnResetHUDWidgets(event);
     this.healthbarSlot.OnResetHUDWidgets(event);
     this.staminaBarSlot.OnResetHUDWidgets(event);
     this.phoneCallAvatarSlot.OnResetHUDWidgets(event);
@@ -146,6 +151,7 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
     this.weaponRosterSlot.OnAction(action, consumer);
     this.crouchIndicatorSlot.OnAction(action, consumer);
     this.dpadSlot.OnAction(action, consumer);
+    this.phoneHotkeySlot.OnAction(action, consumer);
     this.healthbarSlot.OnAction(action, consumer);
     this.staminaBarSlot.OnAction(action, consumer);
     this.phoneCallAvatarSlot.OnAction(action, consumer);
@@ -191,9 +197,8 @@ private func CreateCustomSlots() -> Void {
     questTrackerSlot.SetFitToContent(true);
     questTrackerSlot.SetInteractive(false);
     questTrackerSlot.SetAffectsLayoutWhenHidden(false);
-    questTrackerSlot.SetMargin(new inkMargin(0.0, 20.0, 20.0, 0.0));
-    questTrackerSlot.SetAnchor(inkEAnchor.TopRight);
-    questTrackerSlot.SetAnchorPoint(new Vector2(1.0, 0.0));
+    questTrackerSlot.SetAnchor(inkEAnchor.Centered);
+    questTrackerSlot.SetAnchorPoint(new Vector2(1.0, 1.0));
 
     root.RemoveChildByName(n"NewTracker");
     questTrackerSlot.Reparent(root, 0);
@@ -206,8 +211,7 @@ private func CreateCustomSlots() -> Void {
     minimapSlot.SetFitToContent(true);
     minimapSlot.SetInteractive(false);
     minimapSlot.SetAffectsLayoutWhenHidden(false);
-    minimapSlot.SetMargin(new inkMargin(0.0, 140.0, 80.0, 0.0));
-    minimapSlot.SetAnchor(inkEAnchor.TopRight);
+    minimapSlot.SetAnchor(inkEAnchor.Centered);
     minimapSlot.SetAnchorPoint(new Vector2(1.0, 0.0));
 
     root.RemoveChildByName(n"NewMinimap");
@@ -236,7 +240,7 @@ private func CreateCustomSlots() -> Void {
     questNotificationsSlot.SetFitToContent(true);
     questNotificationsSlot.SetInteractive(false);
     questNotificationsSlot.SetAffectsLayoutWhenHidden(false);
-    questNotificationsSlot.SetMargin(new inkMargin(40.0, 0.0, 0.0, 0.0));
+    questNotificationsSlot.SetMargin(new inkMargin(60.0, 0.0, 0.0, 0.0));
     questNotificationsSlot.SetAnchor(inkEAnchor.CenterLeft);
     questNotificationsSlot.SetAnchorPoint(new Vector2(1.0, 1.0));
 
@@ -251,7 +255,7 @@ private func CreateCustomSlots() -> Void {
     itemNotificationsSlot.SetFitToContent(true);
     itemNotificationsSlot.SetInteractive(false);
     itemNotificationsSlot.SetAffectsLayoutWhenHidden(false);
-    itemNotificationsSlot.SetMargin(new inkMargin(40.0, 0.0, 0.0, 0.0));
+    itemNotificationsSlot.SetMargin(new inkMargin(60.0, 0.0, 0.0, 0.0));
     itemNotificationsSlot.SetAnchor(inkEAnchor.CenterLeft);
     itemNotificationsSlot.SetAnchorPoint(new Vector2(1.0, 0.0));
 
@@ -266,7 +270,7 @@ private func CreateCustomSlots() -> Void {
     vehicleSummonSlot.SetFitToContent(true);
     vehicleSummonSlot.SetInteractive(false);
     vehicleSummonSlot.SetAffectsLayoutWhenHidden(false);
-    vehicleSummonSlot.SetMargin(new inkMargin(0.0, 0.0, 80.0, 0.0));
+    vehicleSummonSlot.SetMargin(new inkMargin(0.0, 0.0, 200.0, 0.0));
     vehicleSummonSlot.SetAnchor(inkEAnchor.CenterRight);
     vehicleSummonSlot.SetAnchorPoint(new Vector2(0.0, 1.0));
 
@@ -281,7 +285,7 @@ private func CreateCustomSlots() -> Void {
     weaponRosterSlot.SetFitToContent(true);
     weaponRosterSlot.SetInteractive(false);
     weaponRosterSlot.SetAffectsLayoutWhenHidden(false);
-    weaponRosterSlot.SetMargin(new inkMargin(0.0, 0.0, 340.0, 40.0));
+    weaponRosterSlot.SetMargin(new inkMargin(0.0, 0.0, 340.0, 80.0));
     weaponRosterSlot.SetAnchor(inkEAnchor.BottomRight);
     weaponRosterSlot.SetAnchorPoint(new Vector2(1.0, 1.0));
 
@@ -296,7 +300,7 @@ private func CreateCustomSlots() -> Void {
     crouchIndicatorSlot.SetFitToContent(true);
     crouchIndicatorSlot.SetInteractive(false);
     crouchIndicatorSlot.SetAffectsLayoutWhenHidden(false);
-    crouchIndicatorSlot.SetMargin(new inkMargin(0.0, 0.0, 40.0, 40.0));
+    crouchIndicatorSlot.SetMargin(new inkMargin(0.0, 0.0, 140.0, 80.0));
     crouchIndicatorSlot.SetAnchor(inkEAnchor.BottomRight);
     crouchIndicatorSlot.SetAnchorPoint(new Vector2(1.0, 1.0));
 
@@ -311,7 +315,7 @@ private func CreateCustomSlots() -> Void {
     dpadSlot.SetFitToContent(true);
     dpadSlot.SetInteractive(false);
     dpadSlot.SetAffectsLayoutWhenHidden(false);
-    dpadSlot.SetMargin(new inkMargin(40.0, 0.0, 0.0, 80.0));
+    dpadSlot.SetMargin(new inkMargin(140.0, 0.0, 0.0, 100.0));
     dpadSlot.SetAnchor(inkEAnchor.BottomLeft);
     dpadSlot.SetAnchorPoint(new Vector2(0.0, 1.0));
 
@@ -320,18 +324,33 @@ private func CreateCustomSlots() -> Void {
     this.dpadSlot = dpadSlot;
   };
 
+  if config.phoneHotkeyEnabled {
+    let phoneHotkeySlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
+    phoneHotkeySlot.SetName(n"NewPhoneHotkey");
+    phoneHotkeySlot.SetFitToContent(true);
+    phoneHotkeySlot.SetInteractive(false);
+    phoneHotkeySlot.SetAffectsLayoutWhenHidden(false);
+    phoneHotkeySlot.SetMargin(new inkMargin(140.0, 0.0, 0.0, 260.0));
+    phoneHotkeySlot.SetAnchor(inkEAnchor.BottomLeft);
+    phoneHotkeySlot.SetAnchorPoint(new Vector2(0.0, 1.0));
+
+    root.RemoveChildByName(n"NewPhoneHotkey");
+    phoneHotkeySlot.Reparent(root, 9);
+    this.phoneHotkeySlot = phoneHotkeySlot;
+  };
+
   if config.playerHealthbarEnabled {
     let healthbarSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
     healthbarSlot.SetName(n"NewHealthBar");
     healthbarSlot.SetFitToContent(true);
     healthbarSlot.SetInteractive(false);
     healthbarSlot.SetAffectsLayoutWhenHidden(false);
-    healthbarSlot.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+    healthbarSlot.SetMargin(new inkMargin(80.0, 80.0, 0.0, 0.0));
     healthbarSlot.SetAnchor(inkEAnchor.TopLeft);
     healthbarSlot.SetAnchorPoint(new Vector2(0.0, 0.0));
 
     root.RemoveChildByName(n"NewHealthBar");
-    healthbarSlot.Reparent(root, 9);
+    healthbarSlot.Reparent(root, 10);
     this.healthbarSlot = healthbarSlot;
   };
 
@@ -341,44 +360,43 @@ private func CreateCustomSlots() -> Void {
     staminaBarSlot.SetFitToContent(true);
     staminaBarSlot.SetInteractive(false);
     staminaBarSlot.SetAffectsLayoutWhenHidden(false);
-    staminaBarSlot.SetMargin(new inkMargin(30.0, 100.0, 0.0, 0.0));
+    staminaBarSlot.SetMargin(new inkMargin(80.0, 220.0, 0.0, 0.0));
     staminaBarSlot.SetAnchor(inkEAnchor.TopLeft);
     staminaBarSlot.SetAnchorPoint(new Vector2(0.0, 0.0));
 
     root.RemoveChildByName(n"NewStaminaBar");
-    staminaBarSlot.Reparent(root, 10);
+    staminaBarSlot.Reparent(root, 11);
     this.staminaBarSlot = staminaBarSlot;
   };
 
-  if config.incomingCallAvatarEnabled {
-    let phoneCallAvatarSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-    phoneCallAvatarSlot.SetName(n"NewPhoneAvatar");
-    phoneCallAvatarSlot.SetFitToContent(true);
-    phoneCallAvatarSlot.SetInteractive(false);
-    phoneCallAvatarSlot.SetAffectsLayoutWhenHidden(false);
-    phoneCallAvatarSlot.SetMargin(new inkMargin(40.0, 160.0, 0.0, 0.0));
-    phoneCallAvatarSlot.SetAnchor(inkEAnchor.TopLeft);
-    phoneCallAvatarSlot.SetAnchorPoint(new Vector2(0.0, 0.0));
+  // if config.incomingCallAvatarEnabled {
+  //   let phoneCallAvatarSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
+  //   phoneCallAvatarSlot.SetName(n"NewPhoneAvatar");
+  //   phoneCallAvatarSlot.SetFitToContent(true);
+  //   phoneCallAvatarSlot.SetInteractive(false);
+  //   phoneCallAvatarSlot.SetAffectsLayoutWhenHidden(false);
+  //   phoneCallAvatarSlot.SetAnchor(inkEAnchor.Centered);
+  //   phoneCallAvatarSlot.SetAnchorPoint(new Vector2(1.0, 1.0));
 
-    root.RemoveChildByName(n"NewPhoneAvatar");
-    phoneCallAvatarSlot.Reparent(root, 11);
-    this.phoneCallAvatarSlot = phoneCallAvatarSlot;
-  };
+  //   root.RemoveChildByName(n"NewPhoneAvatar");
+  //   phoneCallAvatarSlot.Reparent(root, 12);
+  //   this.phoneCallAvatarSlot = phoneCallAvatarSlot;
+  // };
 
-  if config.incomingCallButtonEnabled {
-    let phoneControlSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-    phoneControlSlot.SetName(n"NewPhoneControl");
-    phoneControlSlot.SetFitToContent(true);
-    phoneControlSlot.SetInteractive(false);
-    phoneControlSlot.SetAffectsLayoutWhenHidden(false);
-    phoneControlSlot.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
-    phoneControlSlot.SetAnchor(inkEAnchor.TopCenter);
-    phoneControlSlot.SetAnchorPoint(new Vector2(0.5, 0.0));
+  // if config.incomingCallButtonEnabled {
+  //   let phoneControlSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
+  //   phoneControlSlot.SetName(n"NewPhoneControl");
+  //   phoneControlSlot.SetFitToContent(true);
+  //   phoneControlSlot.SetInteractive(false);
+  //   phoneControlSlot.SetAffectsLayoutWhenHidden(false);
+  //   phoneControlSlot.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+  //   phoneControlSlot.SetAnchor(inkEAnchor.TopCenter);
+  //   phoneControlSlot.SetAnchorPoint(new Vector2(0.5, 0.0));
 
-    root.RemoveChildByName(n"NewPhoneControl");
-    phoneControlSlot.Reparent(root, 12);
-    this.phoneControlSlot = phoneControlSlot;
-  };
+  //   root.RemoveChildByName(n"NewPhoneControl");
+  //   phoneControlSlot.Reparent(root, 13);
+  //   this.phoneControlSlot = phoneControlSlot;
+  // };
 
   if config.inputHintsEnabled {
     let inputHintSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
@@ -391,7 +409,7 @@ private func CreateCustomSlots() -> Void {
     inputHintSlot.SetAnchorPoint(new Vector2(1.0, 0.5));
 
     root.RemoveChildByName(n"NewInputHint");
-    inputHintSlot.Reparent(root, 13);
+    inputHintSlot.Reparent(root, 14);
     this.inputHintSlot = inputHintSlot;
   };
 
@@ -406,7 +424,7 @@ private func CreateCustomSlots() -> Void {
     carHudSlot.SetAnchorPoint(new Vector2(0.5, 0.5));
 
     root.RemoveChildByName(n"NewCarHud");
-    carHudSlot.Reparent(root, 14);
+    carHudSlot.Reparent(root, 15);
     this.carHudSlot = carHudSlot;
   };
 
@@ -421,7 +439,7 @@ private func CreateCustomSlots() -> Void {
     bossHealthbarSlot.SetAnchorPoint(new Vector2(0.5, 0.0));
 
     root.RemoveChildByName(n"NewBossHealthbar");
-    bossHealthbarSlot.Reparent(root, 15);
+    bossHealthbarSlot.Reparent(root, 16);
     this.bossHealthbarSlot = bossHealthbarSlot;
   };
 
@@ -436,7 +454,7 @@ private func CreateCustomSlots() -> Void {
     dialogChoicesSlot.SetAnchorPoint(new Vector2(0.5, 0.5));
 
     root.RemoveChildByName(n"NewDialogChoices");
-    dialogChoicesSlot.Reparent(root, 16);
+    dialogChoicesSlot.Reparent(root, 17);
     this.dialogChoicesSlot = dialogChoicesSlot;
   };
 
@@ -450,7 +468,7 @@ private func CreateCustomSlots() -> Void {
     dialogSubtitlesSlot.SetAnchor(inkEAnchor.BottomFillHorizontaly);
     dialogSubtitlesSlot.SetAnchorPoint(new Vector2(0.5, 1.0));
     root.RemoveChildByName(n"NewDialogSubtitles");
-    dialogSubtitlesSlot.Reparent(root, 16);
+    dialogSubtitlesSlot.Reparent(root, 18);
     this.dialogSubtitlesSlot = dialogSubtitlesSlot;
   };
 
@@ -465,7 +483,7 @@ private func CreateCustomSlots() -> Void {
     e3CompassSlot.SetAnchorPoint(new Vector2(0.5, 0.5));
 
     root.RemoveChildByName(n"NewCompass");
-    e3CompassSlot.Reparent(root, 17);
+    e3CompassSlot.Reparent(root, 19);
     this.e3CompassSlot = e3CompassSlot;
   };
 }
@@ -517,7 +535,7 @@ private func InitBaseWidgets() -> Void {
         targetWidget.SetAnchorPoint(new Vector2(1.0, 1.0));
         targetWidget.Reparent(this.vehicleSummonSlot);
         break;
-      case n"weaponRosterGameController":
+      case n"gameuiWeaponRosterGameController":
         if !config.weaponRosterEnabled { break; }
         targetWidget = controller.GetRootCompoundWidget();
         targetWidget.SetAnchorPoint(new Vector2(1.0, 1.0));
@@ -546,18 +564,6 @@ private func InitBaseWidgets() -> Void {
         targetWidget = controller.GetRootCompoundWidget();
         targetWidget.SetAnchorPoint(new Vector2(0.0, 0.0));
         targetWidget.Reparent(this.staminaBarSlot);
-        break;
-      case n"HudPhoneGameController":
-        if !config.incomingCallAvatarEnabled { break; }
-        targetWidget = controller.GetRootCompoundWidget();
-        targetWidget.SetAnchorPoint(new Vector2(0.0, 0.0));
-        targetWidget.Reparent(this.phoneCallAvatarSlot);
-        break;
-      case n"IncomingCallGameController":
-        if !config.incomingCallButtonEnabled { break; }
-        targetWidget = controller.GetRootCompoundWidget();
-        targetWidget.SetAnchorPoint(new Vector2(0.5, 0.0));
-        targetWidget.Reparent(this.phoneControlSlot);
         break;
       case n"gameuiInputHintManagerGameController":
         if !config.inputHintsEnabled { break; }
@@ -618,7 +624,25 @@ private func CreateCarHudPreview() -> ref<inkRectangle> {
   preview.SetAnchorPoint(0.5, 0.5);
   preview.SetTintColor(new HDRColor(1.0, 1.0, 0.0, 1.0));
   preview.SetSize(new Vector2(440.0, 120.0));
-  preview.SetMargin(new inkMargin(250.0, 80.0, 0.0, 0.0));
+  preview.SetMargin(new inkMargin(400.0, 80.0, 0.0, 0.0));
   preview.SetVisible(false);
   return preview;
+}
+
+// Can't find related controllers with inkSystem so reparent here temporarily
+
+@wrapMethod(PhoneHotkeyController)
+protected func Initialize() -> Bool {
+  let wrap: Bool = wrappedMethod();
+  let system: ref<inkSystem> = GameInstance.GetInkSystem();
+  let config: ref<HUDitorConfig> = new HUDitorConfig();
+  let root: ref<inkCompoundWidget> = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
+  let newParent: ref<inkCompoundWidget> = root.GetWidgetByPathName(n"NewPhoneHotkey") as inkCompoundWidget;
+  let targetWidget: ref<inkCompoundWidget>;
+  if config.phoneHotkeyEnabled { 
+    targetWidget= this.GetRootCompoundWidget();
+    targetWidget.SetAnchorPoint(new Vector2(0.0, 1.0));
+    targetWidget.Reparent(newParent);
+  };
+  return wrap;
 }

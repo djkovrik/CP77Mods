@@ -58,6 +58,12 @@ public class HUDitorConfig {
 
   @runtimeProperty("ModSettings.mod", "HUDitor")
   @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")
+  @runtimeProperty("ModSettings.displayName", "Mod-HUDitor-Widget-Phone-Controller")
+  @runtimeProperty("ModSettings.description", "Mod-HUDitor-Toggles-Desc")
+  public let phoneHotkeyEnabled: Bool = true;
+
+  @runtimeProperty("ModSettings.mod", "HUDitor")
+  @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")
   @runtimeProperty("ModSettings.displayName", "Mod-HUDitor-Widget-Player-Healthbar")
   @runtimeProperty("ModSettings.description", "Mod-HUDitor-Toggles-Desc")
   public let playerHealthbarEnabled: Bool = true;
@@ -68,6 +74,7 @@ public class HUDitorConfig {
   @runtimeProperty("ModSettings.description", "Mod-HUDitor-Toggles-Desc")
   public let playerStaminabarEnabled: Bool = true;
 
+/*
   @runtimeProperty("ModSettings.mod", "HUDitor")
   @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")
   @runtimeProperty("ModSettings.displayName", "Mod-HUDitor-Widget-Call-Avatar")
@@ -79,6 +86,7 @@ public class HUDitorConfig {
   @runtimeProperty("ModSettings.displayName", "Mod-HUDitor-Widget-Call-Button")
   @runtimeProperty("ModSettings.description", "Mod-HUDitor-Toggles-Desc")
   public let incomingCallButtonEnabled: Bool = true;
+*/
 
   @runtimeProperty("ModSettings.mod", "HUDitor")
   @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")

@@ -73,6 +73,7 @@ public class HUDitorInputListener {
         let enableHUDEditorEvent: ref<SetActiveHUDEditorWidgetEvent> = new SetActiveHUDEditorWidgetEvent();
         enableHUDEditorEvent.activeWidget = this.hudWidgetsManager.GetActiveWidget();
         this.uiSystem.QueueEvent(enableHUDEditorEvent);
+        GameInstance.GetUISystem(GetGameInstance()).QueueEvent(new HijackNewPhnoneControlerEvent());
       };
 
       if Equals(actionName, n"left_button") && isActive {
