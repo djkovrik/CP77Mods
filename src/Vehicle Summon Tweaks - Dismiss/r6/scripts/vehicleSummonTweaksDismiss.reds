@@ -2,7 +2,7 @@
 
 private class VehicleSummonDismissConfig {
   public static func Label() -> String = "Dismiss"
-  public static func Action() -> CName = n"Choice2"
+  public static func Action() -> CName = n"Choice2_Hold"
   public static func Delay() -> Float = 20.0
 }
 
@@ -27,7 +27,7 @@ protected cb func OnUpdateInteraction(argValue: Variant) -> Bool {
     firstChoice = interactionChoices[0];
     newChoice.inputAction = VehicleSummonDismissConfig.Action();
     newChoice.rawInputKey = EInputKey.IK_R;
-    newChoice.isHoldAction = false;
+    newChoice.isHoldAction = true;
     newChoice.localizedName = VehicleSummonDismissConfig.Label();
     newChoice.type = firstChoice.type;
     newChoice.data = firstChoice.data;
@@ -73,10 +73,19 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
   wrappedMethod(action, consumer);
   let isMounted: Bool = VehicleComponent.IsMountedToVehicle(this.GetGame(), this);
   let currentTarget: ref<VehicleObject>;
+  let aiCommandEvent: ref<AICommandEvent>;
+  let aiVehicleJoinTrafficCommand: ref<AIVehicleJoinTrafficCommand>;
+  let callback: ref<VehicleSummonDismissCallback>;
+
   if Equals(ListenerAction.GetName(action), VehicleSummonDismissConfig.Action()) && this.IsLookingAtOwnedVehicle() && this.m_dismissPromptVisible && !isMounted {
     currentTarget = GameInstance.GetTargetingSystem(this.GetGame()).GetLookAtObject(this) as VehicleObject;
-    GameInstance.GetPreventionSpawnSystem(this.GetGame()).JoinTraffic(currentTarget);
-    let callback: ref<VehicleSummonDismissCallback> = new VehicleSummonDismissCallback();
+    aiCommandEvent = new AICommandEvent(); 
+    aiVehicleJoinTrafficCommand = new AIVehicleJoinTrafficCommand();
+    aiCommandEvent.command = aiVehicleJoinTrafficCommand;
+    currentTarget.QueueEvent(aiCommandEvent);
+    currentTarget.GetAIComponent().SetInitCmd(aiVehicleJoinTrafficCommand);
+    
+    callback = new VehicleSummonDismissCallback();
     callback.vehicleSystem = GameInstance.GetVehicleSystem(this.GetGame());
     callback.vehicleId = Cast<GarageVehicleID>(currentTarget.GetRecord().GetID());
     GameInstance.GetDelaySystem(this.GetGame()).DelayCallback(callback, VehicleSummonDismissConfig.Delay());
