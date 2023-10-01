@@ -187,7 +187,7 @@ public abstract class AtelierItemsHelper {
     
     if ((itemData.HasTag(n"Grenade")) || (itemData.HasTag(n"Ammo")) || (itemData.HasTag(n"CraftingPart")) || (itemData.HasTag(n"Consumable")) || (itemData.HasTag(n"Junk"))) {
       if itemData.HasTag(n"skillbook") {
-        qualMulti = 0.1;
+        qualMulti = 0.15;
       } else {
         powerLevelPlayer = 1.0;
       };

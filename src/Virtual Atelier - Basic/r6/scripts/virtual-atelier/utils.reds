@@ -43,43 +43,43 @@ public abstract class AtelierUtils {
       if (RPGManager.IsItemIconic(itemData)) {
         switch (itemQuality) {
           case n"Legendary":
-            qualMulti = 2.3;
+            qualMulti = 0.23;
             break;
           case n"Epic":
-              qualMulti = 1.49;
+              qualMulti = 0.149;
             break;
           case n"Rare":
-            qualMulti = 1.0;
+            qualMulti = 0.1;
             break;
           case n"Uncommon":
-            qualMulti = 0.5;
+            qualMulti = 0.05;
             break;
           case n"Common":
-            qualMulti = 0.33;
+            qualMulti = 0.033;
             break;
           default:
-            qualMulti = 1.0;
+            qualMulti = 0.1;
             break;
         };
       } else {
         switch (itemQuality) {
           case n"Legendary":
-            qualMulti = 1.85;
+            qualMulti = 0.185;
             break;
           case n"Epic":
-              qualMulti = 1.19;
+              qualMulti = 0.119;
             break;
           case n"Rare":
-            qualMulti = 0.79;
+            qualMulti = 0.079;
             break;
           case n"Uncommon":
-            qualMulti = 0.40;
+            qualMulti = 0.04;
             break;
           case n"Common":
-            qualMulti = 0.26;
+            qualMulti = 0.026;
             break;
           default:
-            qualMulti = 0.79;
+            qualMulti = 0.079;
             break;
         };
       };
@@ -89,43 +89,43 @@ public abstract class AtelierUtils {
       if (RPGManager.IsItemIconic(itemData)) {
         switch (itemQuality) {
           case n"Legendary":
-            qualMulti = 2.9;
+            qualMulti = 0.29;
             break;
           case n"Epic":
-              qualMulti = 1.8;
+              qualMulti = 0.18;
             break;
           case n"Rare":
-            qualMulti = 1.25;
+            qualMulti = 0.125;
             break;
           case n"Uncommon":
-            qualMulti = 1.025;
+            qualMulti = 0.1025;
             break;
           case n"Common":
-            qualMulti = 0.91;
+            qualMulti = 0.091;
             break;
           default:
-            qualMulti = 1.25;
+            qualMulti = 0.125;
             break;
         };
       } else {
         switch (itemQuality) {
           case n"Legendary":
-              qualMulti = 2.34;
+              qualMulti = 0.234;
               break;
           case n"Epic":
-              qualMulti = 1.5;
+              qualMulti = 0.15;
               break;
           case n"Rare":
-              qualMulti = 1.0;
+              qualMulti = 0.10;
               break;
           case n"Uncommon":
-              qualMulti = 0.5;
+              qualMulti = 0.05;
               break;
           case n"Common":
-              qualMulti = 0.33;
+              qualMulti = 0.033;
               break;
           default:
-              qualMulti = 1.0;
+              qualMulti = 0.1;
               break;
         };
       };
@@ -185,7 +185,7 @@ public abstract class AtelierUtils {
     
     if ((itemData.HasTag(n"Grenade")) || (itemData.HasTag(n"Ammo")) || (itemData.HasTag(n"CraftingPart")) || (itemData.HasTag(n"Consumable")) || (itemData.HasTag(n"Junk"))) {
       if itemData.HasTag(n"skillbook") {
-        qualMulti = 20.0;
+        qualMulti = 0.15;
       } else {
         powerLevelPlayer = 1.0;
       };
