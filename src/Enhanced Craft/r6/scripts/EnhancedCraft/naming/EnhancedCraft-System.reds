@@ -8,8 +8,6 @@ public class EnhancedCraftSystem extends ScriptableSystem {
 
   private persistent let m_nameRecords: array<ref<CustomCraftNameDataPS>>;
 
-  private persistent let m_damageRecords: array<ref<DamageTypeStatsPS>>;
-
   private let m_inventoryManager: ref<InventoryDataManagerV2>;
 
   private let m_player: wref<PlayerPuppet>;
@@ -17,8 +15,7 @@ public class EnhancedCraftSystem extends ScriptableSystem {
   private let m_config: ref<ECraftConfig>;
 
   private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
-    // L(s"Persisted data loaded, stored names: \(ToString(ArraySize(this.m_nameRecords)))");
-    // L(s"Persisted data loaded, stored damage: \(ToString(ArraySize(this.m_damageRecords)))");
+    L(s"Persisted data loaded, stored names: \(ToString(ArraySize(this.m_nameRecords)))");
     let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(request.owner.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
     if IsDefined(player) {
       this.m_player = player;
@@ -47,7 +44,7 @@ public class EnhancedCraftSystem extends ScriptableSystem {
     this.GetItemsIdsFromGameData(playerItemsData, playerItems);
    
     L(s"RefreshPlayerInventory: player items detected: \(ArraySize(playerItems))");
-    this.RefreshNamesAndDamages(playerItemsData, false);
+    this.RefreshNames(playerItemsData, false);
   }
 
   public func RefreshPlayerInventoryAndStash(storageItems: array<ref<gameItemData>>) -> Void {
@@ -63,25 +60,18 @@ public class EnhancedCraftSystem extends ScriptableSystem {
     };
 
     L(s"RefreshPlayerInventoryAndStash: player items detected: \(ArraySize(playerItems))");
-    this.RefreshNamesAndDamages(playerItemsData, true);
+    this.RefreshNames(playerItemsData, true);
   }
 
   public func RefreshSingleItem(itemData: ref<gameItemData>) -> Void {
     let hasCustomName: Bool = this.HasCustomName(itemData.GetID());
-    let hasCustomDamage: Bool = this.HasCustomDamageStats(itemData.GetID());
-    let customDamage: ref<DamageTypeStats>;
 
     if hasCustomName {
       itemData.hasCustomName = this.HasCustomName(itemData.GetID());
       itemData.customName = this.GetCustomName(itemData.GetID());
     };
 
-    if hasCustomDamage {
-      customDamage = this.GetCustomDamageStats(itemData.GetID());
-      this.m_player.RestorePersistedDamageType(itemData, customDamage);
-    };
-
-    L(s"RefreshSingleItem \(ItemID.GetCombinedHash(itemData.GetID())), name: \(hasCustomName), damage: \(hasCustomDamage)");
+    L(s"RefreshSingleItem \(ItemID.GetCombinedHash(itemData.GetID())), name: \(hasCustomName)");
   }
 
   // -- Saves custom name
@@ -96,16 +86,6 @@ public class EnhancedCraftSystem extends ScriptableSystem {
     L(s"New name \(name) persisted with id \(newId), total persisted names: \(ArraySize(this.m_nameRecords))");
   }
 
-  // -- Saves custom damage type
-  public func AddCustomDamageType(itemId: ItemID, stats: ref<DamageTypeStats>) -> Void {
-    let persistedRecords: array<ref<DamageTypeStatsPS>> = this.m_damageRecords;
-    let newRecord: ref<DamageTypeStatsPS> = DamageTypeStats.GetPS(itemId, stats);
-    ArrayPush(persistedRecords, newRecord);
-    this.m_damageRecords = persistedRecords;
-    L(s"Damage type \(IntEnum<gamedataDamageType>(newRecord.type)) persisted for id \(newRecord.id), damage \(newRecord.damage) (\(newRecord.minDamage) - \(newRecord.maxDamage)) \(newRecord.percentDamage) %");
-    L(s"Total persisted damage records: \(ArraySize(this.m_damageRecords))");
-  }
-
   // -- Checks if item has custom name persisted
   public func HasCustomName(itemId: ItemID) -> Bool {
     let id: Uint64 = ItemID.GetCombinedHash(itemId);
@@ -116,18 +96,6 @@ public class EnhancedCraftSystem extends ScriptableSystem {
     };
     return false;
   }
-
-  // -- Checks if item has custom damageStats persisted
-  public func HasCustomDamageStats(itemId: ItemID) -> Bool {
-    let id: Uint64 = ItemID.GetCombinedHash(itemId);
-    for record in this.m_damageRecords {
-      if Equals(record.id, id) {
-        return true;
-      };
-    };
-    return false;
-  }
-
 
   // -- Returns custom name by ItemID
   public func GetCustomName(itemId: ItemID) -> String {
@@ -140,18 +108,6 @@ public class EnhancedCraftSystem extends ScriptableSystem {
     return "";
   }
 
-  // -- Returns custom damage stats by ItemID
-  public func GetCustomDamageStats(itemId: ItemID) -> ref<DamageTypeStats> {
-    let id: Uint64 = ItemID.GetCombinedHash(itemId);
-    let newStats: ref<DamageTypeStats>;
-    for record in this.m_damageRecords {
-      if Equals(record.id, id) {
-        newStats = DamageTypeStatsPS.GetNormal(record);
-      };
-    };
-    return newStats;
-  }
-
   private func GetConfig() -> ref<ECraftConfig> {
     return this.m_config;
   }
@@ -159,7 +115,7 @@ public class EnhancedCraftSystem extends ScriptableSystem {
   // -- MISC
 
   // -- Refresh data in target items array
-  private func RefreshNamesAndDamages(items: array<ref<gameItemData>>, shouldClean: Bool) -> Void {
+  private func RefreshNames(items: array<ref<gameItemData>>, shouldClean: Bool) -> Void {
     let playerItems: array<ItemID>;
     let playerItemsData: array<ref<gameItemData>>;
 
@@ -173,17 +129,6 @@ public class EnhancedCraftSystem extends ScriptableSystem {
       data.customName = this.GetCustomName(data.GetID());
     };
 
-    // Iterate through player weapons and assign custom damage
-    let hasCustomDamage: Bool;
-    let customDamage: ref<DamageTypeStats>;
-    for data in playerItemsData {
-      hasCustomDamage = this.HasCustomDamageStats(data.GetID());
-      if hasCustomDamage {
-        customDamage = this.GetCustomDamageStats(data.GetID());
-        this.m_player.RestorePersistedDamageType(data, customDamage);
-      };
-    };
-
     if shouldClean {
       this.ClearUnusedRecords(items);
     };
@@ -193,7 +138,6 @@ public class EnhancedCraftSystem extends ScriptableSystem {
   private func ClearUnusedRecords(items: array<ref<gameItemData>>) -> Void {
     L("Cleaning unused records...");
     let persistedNameRecords: array<ref<CustomCraftNameDataPS>> = this.m_nameRecords;
-    let persistedDamageRecords: array<ref<DamageTypeStatsPS>> = this.m_damageRecords;
     let commonItemIds: array<ItemID>;
     let commonItemHashes: array<Uint64>;
 
@@ -209,14 +153,6 @@ public class EnhancedCraftSystem extends ScriptableSystem {
         } else {
           L(s"- name record \(record.id) not detected, deleting persistent record...");
           this.DeleteStoredNameRecord(record.id);
-        };
-      };
-      for record in persistedDamageRecords {
-        if this.HasInInventory(commonItemHashes, record.id) {
-          L(s"- damage record \(record.id) detected, keep it");
-        } else {
-          L(s"- damage record \(record.id) not detected, deleting persistent record...");
-          this.DeleteStoredDamageRecord(record.id);
         };
       };
     };
@@ -236,22 +172,6 @@ public class EnhancedCraftSystem extends ScriptableSystem {
 
     this.m_nameRecords = persistedRecords;
     L(s"Persisted name record \(id) deleted, total persisted records: \(ArraySize(this.m_nameRecords))");
-  }
-
-  // -- Deletes persisted damage record
-  private func DeleteStoredDamageRecord(id: Uint64) -> Void {
-    let persistedRecords: array<ref<DamageTypeStatsPS>> = this.m_damageRecords;
-    let index: Int32 = 0;
-    for record in this.m_damageRecords {
-      if Equals(record.id, id) {
-        ArrayErase(persistedRecords, index);
-        L(s" - damage record deleted \(record.id)");
-      };
-      index += 1;
-    };
-
-    this.m_damageRecords = persistedRecords;
-    L(s"Persisted damage record \(id) deleted, total persisted records: \(ArraySize(this.m_damageRecords))");
   }
 
   // -- Get IDs from game data array

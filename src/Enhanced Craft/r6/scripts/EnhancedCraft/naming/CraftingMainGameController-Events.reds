@@ -7,7 +7,7 @@ import Codeware.UI.*
 // -- Clear input field and refreshes input text visibility
 @addMethod(CraftingMainGameController)
 protected cb func OnEnhancedCraftRecipeClickedEvent(event: ref<EnhancedCraftRecipeClicked>) -> Bool {
-  let visible: Bool = event.isClothes || event.isWeapon;
+  let visible: Bool = event.isWeapon;
   this.m_nameInput.SetText("");
 	this.m_nameInputContainer.SetVisible(visible);
 }
@@ -25,8 +25,8 @@ protected cb func OnEnhancedCraftRecipeCraftedEvent(event: ref<EnhancedCraftReci
   let itemId: ItemID;
   let system: ref<EnhancedCraftSystem>;
   let inputText: String = this.m_nameInput.GetText();
-  let shouldPersist: Bool = event.isClothes || event.isWeapon;
-  // Persist custom name if weapon or clothes was crafted and input is not empty
+  let shouldPersist: Bool = event.isWeapon;
+  // Persist custom name if weapon was crafted and input is not empty
   if shouldPersist && NotEquals(inputText, "") {
     system = EnhancedCraftSystem.GetInstance(this.m_player.GetGame());
     itemId = event.itemId;

@@ -71,6 +71,5 @@ private final func RefreshPanelWidgets() -> Void {
     this.HideButtonHints();
   };
   this.RefreshSkinsCounter();
-  this.RefreshClothesCounter();
   this.RefreshRandomizerLabel();
 }

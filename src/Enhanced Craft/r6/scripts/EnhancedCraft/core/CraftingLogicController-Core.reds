@@ -11,12 +11,11 @@ protected func UpdateItemPreview(craftableController: ref<CraftableItemLogicCont
   let multiplier: Int32 = this.ecraftConfig.iconicIngredientsMultiplier;
   this.m_selectedRecipeVariants = this.m_craftingSystem.GetRecipesData(recipe.id, multiplier, false);
   this.m_selectedRecipeVariantsNoIconics = this.m_craftingSystem.GetRecipesData(recipe.id, multiplier, true);
-  this.m_isClothesSelected = ECraftUtils.IsClothes(recipe.id.ItemType().Type());
   this.m_isWeaponSelected = ECraftUtils.IsWeapon(recipe.id.ItemType().Type());
   this.selectedItemIndex = 0;
-  L(s"UpdateItemPreview for \(recipe.label) \(TDBID.ToStringDEBUG(recipe.id.GetID())) \(recipe.id.ItemType().Type()): weapon: \(this.m_isWeaponSelected), clothes: \(this.m_isClothesSelected), variants: \(ArraySize(this.m_selectedRecipeVariants))");
+  L(s"UpdateItemPreview for \(recipe.label) \(TDBID.ToStringDEBUG(recipe.id.GetID())) \(recipe.id.ItemType().Type()): weapon: \(this.m_isWeaponSelected), variants: \(ArraySize(this.m_selectedRecipeVariants))");
   this.RefreshPanelWidgets();
-  if ArraySize(this.m_selectedRecipeVariants) > 0 && ( this.m_isWeaponSelected || this.m_isClothesSelected ) {
+  if ArraySize(this.m_selectedRecipeVariants) > 0 && this.m_isWeaponSelected {
     recipe = this.m_selectedRecipeVariants[0];
     this.UpdateRecipePreviewPanel(recipe);
   } else {
@@ -49,7 +48,6 @@ private final func CraftItem(selectedRecipe: ref<RecipeData>, amount: Int32) -> 
         request.itemRecord = selectedRecipe.id;
       };
       request.amount = amount;
-      request.selectedDamageType = this.currentDamageType;
       this.m_craftingSystem.QueueRequest(request);
     };
   } else {
@@ -62,11 +60,4 @@ private final func CraftItem(selectedRecipe: ref<RecipeData>, amount: Int32) -> 
 protected cb func OnFilterChange(controller: wref<inkRadioGroupController>, selectedIndex: Int32) -> Bool {
   super.OnFilterChange(controller, selectedIndex);
   this.HideButtonHints();
-}
-
-// -- Catch damage type selection events
-@addMethod(CraftingLogicController)
-protected cb func OnEnhancedCraftDamageTypeClickedEvent(event: ref<EnhancedCraftDamageTypeClicked>) -> Bool {
-  L(s"--- Damage type selected: \(event.damageType)");
-  this.currentDamageType = event.damageType;
 }

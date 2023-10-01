@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<bindings>
+    <!-- inputContexts -->
+    <context name="EnhancedCraft" >
+		<action name="ECraft_Prev" map="ECraft_Prev_Button" />
+		<action name="ECraft_Next" map="ECraft_Next_Button" />
+    </context>
+
+    <context name="UIShared" append="true">
+        <include name="EnhancedCraft" />
+    </context>
+
+    <!-- inputUserMapping -->
+	<mapping name="ECraft_Prev_Button" type="Button" >
+        <button id="IK_Z" />
+        <button id="IK_Pad_Y_TRIANGLE" />
+    </mapping>
+	<mapping name="ECraft_Next_Button" type="Button" >
+        <button id="IK_C" />
+        <button id="IK_Pad_A_CROSS" />
+    </mapping>
+</bindings>

@@ -21,7 +21,7 @@ private final func PopulateVendorInventory() -> Void {
   for item in this.m_vendorUIInventoryItems {
     itemData = item.GetItemData();
     L(s" > Stash item: \(itemData.GetName()) \(itemData.GetItemType()), has custom data: \(system.HasCustomName(item.GetID()))");
-    if ECraftUtils.IsWeapon(itemData.GetItemType()) || ECraftUtils.IsClothes(itemData.GetItemType()) {
+    if ECraftUtils.IsWeapon(itemData.GetItemType()) {
       system.RefreshSingleItem(itemData);
     };
   };

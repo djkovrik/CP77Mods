@@ -16,7 +16,7 @@ public final func GetPlayerItemsDataByCategory(out items: array<ref<gameItemData
     data = unfilteredItems[i];
     itemId = data.GetID();
     category = RPGManager.GetItemCategory(itemId);
-    if Equals(category, gamedataItemCategory.Weapon) || Equals(category, gamedataItemCategory.Clothing) {
+    if Equals(category, gamedataItemCategory.Weapon) {
       ArrayPush(items, data);
     };
     i += 1;

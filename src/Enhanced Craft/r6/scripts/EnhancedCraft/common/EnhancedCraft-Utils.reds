@@ -29,22 +29,12 @@ public class ECraftUtils {
     return StrBeginsWith(typeStr, "Wea_");
   }
 
-  public static func IsClothes(type: gamedataItemType) -> Bool {
-    let typeStr: String = ToString(type);
-    return StrBeginsWith(typeStr, "Clo_");
-  }
-
   public static func IsWeapon(equipmentArea: gamedataEquipmentArea) -> Bool {
     return Equals(equipmentArea, gamedataEquipmentArea.Weapon);
   }
-
-  public static func IsClothes(equipmentArea: gamedataEquipmentArea) -> Bool {
-    return Equals(equipmentArea, gamedataEquipmentArea.Head) || Equals(equipmentArea, gamedataEquipmentArea.Face) || Equals(equipmentArea, gamedataEquipmentArea.OuterChest) || Equals(equipmentArea, gamedataEquipmentArea.InnerChest) || Equals(equipmentArea, gamedataEquipmentArea.Legs) || Equals(equipmentArea, gamedataEquipmentArea.Feet);
-  }
-
 }
 
 // -- Basic logging function
 public static func L(str: String) -> Void {
-  // LogChannel(n"DEBUG", s"Craft: \(str)");
+  LogChannel(n"DEBUG", s"Craft: \(str)");
 }
