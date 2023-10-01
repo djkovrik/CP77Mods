@@ -452,11 +452,7 @@ Items.Preset_Kenshin_Takemura.iconicVariant: true
 Items.Preset_Kenshin_Spy.iconicVariant: true
 
 # Knife
-Items.Craftable_Common_Knife.weaponVariants: &PresetKnife
-- n"Items.Preset_Knife_Default"
-- n"Items.Preset_Knife_Military"
-- n"Items.Preset_Knife_Stinger"
-- n"Items.Preset_Knife_Kurtz_1"
+# NO VARIANTS
 
 Items.Craftable_Uncommon_Knife.weaponVariants: *PresetKnife
 Items.Proficiency_Craftable_Rare_Knife.weaponVariants: *PresetKnife
