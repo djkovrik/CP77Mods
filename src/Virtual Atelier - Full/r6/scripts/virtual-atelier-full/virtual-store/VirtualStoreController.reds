@@ -839,7 +839,8 @@ public class VirtualStoreController extends gameuiMenuGameController {
     };
 
     let itemID: ItemID = InventoryItemData.GetID(this.lastItemHoverOverEvent.itemData);
-    let availableForPurchase: Int32 = this.cartManager.GetBuyableAmount(itemID);
+    let quantity: Int32 = InventoryItemData.GetQuantity(this.lastItemHoverOverEvent.itemData);
+    let availableForPurchase: Int32 = this.cartManager.GetBuyableAmount(itemID, quantity);
 
     if availableForPurchase < 1 {
       return ;

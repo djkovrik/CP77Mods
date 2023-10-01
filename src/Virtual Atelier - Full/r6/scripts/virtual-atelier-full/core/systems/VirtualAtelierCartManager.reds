@@ -38,7 +38,7 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
     let availableMoney: Int32;
     for item in this.stock {
       if Equals(item.itemID, itemID) {
-        price = Cast<Int32>(item.price);
+        price = Cast<Int32>(item.price) * this.cart.GetPurchaseAmount(itemID, item.quantity);
         availableMoney = this.GetCurrentPlayerMoney() - this.GetCurrentGoodsPrice();
         return availableMoney >= price;
       };
@@ -47,14 +47,15 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
     return false;
   }
 
-  public final func GetBuyableAmount(itemID: ItemID) -> Int32 {
+  public final func GetBuyableAmount(itemID: ItemID, quantity: Int32) -> Int32 {
     let price: Int32;
     let availableMoney: Int32;
     for item in this.stock {
       if Equals(item.itemID, itemID) {
         price = Cast<Int32>(item.price);
         availableMoney = this.GetCurrentPlayerMoney() - this.GetCurrentGoodsPrice();
-        return availableMoney / price;
+        let amount: Int32 = availableMoney / price / quantity;
+        return amount;
       };
     };
 
