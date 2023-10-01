@@ -3,10 +3,10 @@ import MutedMarkersConfig.*
 
 public class MMUtils {
 
-  public static func GetVisibilityTypeFor(data: SDeviceMappinData, component: ref<GameplayRoleComponent>, loot: ref<LootConfig>, world: ref<WorldConfig>) -> MarkerVisibility {
-    let isIconic: Bool = data.visualStateData.m_isIconic;
-    let role: EGameplayRole = data.gameplayRole;
-    let quality: gamedataQuality = data.visualStateData.m_quality;
+  public static func GetVisibilityTypeFor(const data: script_ref<SDeviceMappinData>, component: ref<GameplayRoleComponent>, loot: ref<LootConfig>, world: ref<WorldConfig>) -> MarkerVisibility {
+    let isIconic: Bool = Deref(data).visualStateData.m_isIconic;
+    let role: EGameplayRole = Deref(data).gameplayRole;
+    let quality: gamedataQuality = Deref(data).visualStateData.m_quality;
     let puppet: ref<ScriptedPuppet> = component.GetOwner() as ScriptedPuppet;
     let container: ref<gameLootContainerBase> = component.GetOwner() as gameLootContainerBase;
     let alreadyLooted: Bool = false;
@@ -25,7 +25,7 @@ public class MMUtils {
     };
 
     // Shard check
-    if data.visualStateData.isMMShard {
+    if Deref(data).visualStateData.isMMShard {
       return loot.shards;
     };
 
@@ -70,7 +70,7 @@ public class MMUtils {
     };
 
     // Quality check
-    if Equals(data.visualStateData.m_textureID, t"MappinIcons.LootMappin") {
+    if Equals(Deref(data).visualStateData.m_textureID, t"MappinIcons.LootMappin") {
       switch(quality) {
         case gamedataQuality.Iconic: return loot.iconic;
         case gamedataQuality.Legendary: return loot.legendary;
@@ -84,7 +84,7 @@ public class MMUtils {
     return MarkerVisibility.Default;
   }
 
-  public static func ShouldShowOnMinimap(data: SDeviceMappinData, roleMappinData: ref<GameplayRoleMappinData>, component: ref<GameplayRoleComponent>, loot: ref<LootConfig>, minimap: ref<MiniMapConfig>, world: ref<WorldConfig>) -> Bool {
+  public static func ShouldShowOnMinimap(const data: script_ref<SDeviceMappinData>, roleMappinData: ref<GameplayRoleMappinData>, component: ref<GameplayRoleComponent>, loot: ref<LootConfig>, minimap: ref<MiniMapConfig>, world: ref<WorldConfig>) -> Bool {
     let quality: gamedataQuality = roleMappinData.m_quality;
 
     if roleMappinData.isMMShard {
@@ -111,13 +111,13 @@ public class MMUtils {
       return !minimap.hideCommon;
     };
 
-    if Equals(data.mappinVariant, gamedataMappinVariant.LootVariant) {
+    if Equals(Deref(data).mappinVariant, gamedataMappinVariant.LootVariant) {
       return true;
     };
 
     let showOnMiniMap: Bool;
 
-    if Equals(data.mappinVariant, gamedataMappinVariant.Zzz07_PlayerStashVariant) {
+    if Equals(Deref(data).mappinVariant, gamedataMappinVariant.Zzz07_PlayerStashVariant) {
       showOnMiniMap = true;
     } else {
       if roleMappinData.m_isQuest || roleMappinData.m_isTagged {

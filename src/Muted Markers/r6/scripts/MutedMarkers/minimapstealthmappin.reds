@@ -17,9 +17,12 @@ protected func Update() -> Void {
   let config: ref<MiniMapConfig> = new MiniMapConfig();
   let gameDevice: wref<Device>;
   let hasItems: Bool;
+  let isNonHostilePreventionTurret: Bool;
   let isOnSameFloor: Bool;
+  let ownerSenseComponent: ref<SenseComponent>;
   let shouldShowMappin: Bool;
-  let shouldShowVisionCone: Bool;
+  let willStartDetectingPlayer: Bool = false;
+  let isInactiveGameDevice: Bool = false;
   let gameObject: wref<GameObject> = this.m_stealthMappin.GetGameObject();
   this.m_isAlive = this.m_stealthMappin.IsAlive();
   let isTagged: Bool = this.m_stealthMappin.IsTagged();
@@ -27,31 +30,29 @@ protected func Update() -> Void {
   let isCompanion: Bool = gameObject != null && ScriptedPuppet.IsPlayerCompanion(gameObject);
   let attitude: EAIAttitude = this.m_stealthMappin.GetAttitudeTowardsPlayer();
   let vertRelation: gamemappinsVerticalPositioning = this.GetVerticalRelationToPlayer();
-  let shotAttempts: Uint32 = this.m_stealthMappin.GetNumberOfShotAttempts();
   this.m_highLevelState = this.m_stealthMappin.GetHighLevelState();
   let isHighlighted: Bool = this.m_stealthMappin.IsHighlighted();
   this.m_isSquadInCombat = this.m_stealthMappin.IsSquadInCombat();
   let canSeePlayer: Bool = this.m_stealthMappin.CanSeePlayer();
   this.m_detectionAboveZero = this.m_stealthMappin.GetDetectionProgress() > 0.00;
   let wasDetectionAboveZero: Bool = this.m_stealthMappin.WasDetectionAboveZero();
+  let playerDetectionValue: Float = this.m_stealthMappin.GetDetectionProgress();
   let numberOfCombatantsAboveZero: Bool = this.m_stealthMappin.GetNumberOfCombatants() > 0u;
   let isUsingSenseCone: Bool = this.m_stealthMappin.IsUsingSenseCone();
   this.m_isHacking = this.m_stealthMappin.HasHackingStatusEffect();
+  let isPlayerInterestingFromSecuritySystemPOV: Bool = this.m_stealthMappin.IsPlayerInterestingFromSecuritySystemPOV();
   let lootToCheck: Uint32;
   if this.m_isDevice {
     this.m_isAggressive = NotEquals(attitude, EAIAttitude.AIA_Friendly);
     if this.m_isAggressive {
       gameDevice = gameObject as Device;
-      if IsDefined(gameDevice) {
-        isUsingSenseCone = gameDevice.GetDevicePS().IsON();
-      };
+      isInactiveGameDevice = IsDefined(gameDevice) && !gameDevice.GetDevicePS().IsON();
       if this.m_isCamera && numberOfCombatantsAboveZero {
         canSeePlayer = false;
-        isUsingSenseCone = false;
       } else {
         if this.m_isTurret {
-          isUsingSenseCone = isUsingSenseCone && (Equals(attitude, EAIAttitude.AIA_Hostile) || !this.m_isPrevention);
-          if !isUsingSenseCone {
+          isNonHostilePreventionTurret = NotEquals(attitude, EAIAttitude.AIA_Hostile) && this.m_isPrevention;
+          if isInactiveGameDevice || isNonHostilePreventionTurret {
             this.m_isSquadInCombat = false;
           };
         };
@@ -66,12 +67,10 @@ protected func Update() -> Void {
   if !this.m_cautious {
     if !this.m_isDevice && NotEquals(this.m_highLevelState, gamedataNPCHighLevelState.Relaxed) && NotEquals(this.m_highLevelState, gamedataNPCHighLevelState.Any) && !this.m_isSquadInCombat && this.m_isAlive && this.m_isAggressive {
       this.m_cautious = true;
-      this.PulseContinuous(true);
     };
   } else {
     if Equals(this.m_highLevelState, gamedataNPCHighLevelState.Relaxed) || Equals(this.m_highLevelState, gamedataNPCHighLevelState.Any) || this.m_isSquadInCombat || !this.m_isAlive {
       this.m_cautious = false;
-      this.PulseContinuous(false);
     };
   };
   if this.m_hasBeenLooted || this.m_stealthMappin.IsHiddenByQuestOnMinimap() {
@@ -91,6 +90,9 @@ protected func Update() -> Void {
       };
     };
   };
+  if shouldShowMappin && IsDefined(this.m_preventionMinimapMappinComponent) {
+    shouldShowMappin = this.m_preventionMinimapMappinComponent.CanShowMappin(this.GetDistanceToPlayer());
+  };
   // Hide enemies
   if config.hideEnemies && this.m_isAlive && NotEquals(attitude, EAIAttitude.AIA_Friendly) {
     shouldShowMappin = false;
@@ -108,17 +110,19 @@ protected func Update() -> Void {
   };
   this.SetForceHide(!shouldShowMappin);
   if shouldShowMappin {
-    if !this.m_isAlive {
-      if this.m_wasAlive {
-        if !this.m_isCamera {
-          inkImageRef.SetTexturePart(this.iconWidget, n"enemy_icon_4");
-          inkWidgetRef.SetScale(this.iconWidget, new Vector2(0.75, 0.75));
-        };
-        this.m_defaultOpacity = MinF(this.m_defaultOpacity, 0.50);
-        this.m_wasAlive = false;
-      };
+    if !this.m_isAlive && this.m_stealthMappin.HasLootProcessed() {
       hasItems = this.m_stealthMappin.HasItems();
-      if !hasItems || this.m_isDevice {
+      if hasItems {
+        if this.m_wasAlive {
+          if !this.m_isCamera {
+            inkImageRef.SetTexturePart(this.iconWidget, n"enemy_icon_4");
+            inkWidgetRef.SetScale(this.iconWidget, new Vector2(0.75, 0.75));
+          };
+          this.m_defaultOpacity = MinF(this.m_defaultOpacity, 0.50);
+          this.m_wasAlive = false;
+          this.m_lockLootQuality = false;
+        };
+      } else {
         this.FadeOut();
       };
     } else {
@@ -135,33 +139,33 @@ protected func Update() -> Void {
       };
     };
     this.m_isTagged = isTagged;
-    if this.m_isSquadInCombat && !this.m_wasSquadInCombat || this.m_numberOfShotAttempts != shotAttempts {
-      this.m_numberOfShotAttempts = shotAttempts;
-      this.Pulse(2);
-    };
     isOnSameFloor = Equals(vertRelation, gamemappinsVerticalPositioning.Same);
     this.m_adjustedOpacity = isOnSameFloor ? this.m_defaultOpacity : 0.30 * this.m_defaultOpacity;
-    shouldShowVisionCone = this.m_isAlive && isUsingSenseCone && this.m_isAggressive;
-    if NotEquals(this.m_shouldShowVisionCone, shouldShowVisionCone) {
-      this.m_shouldShowVisionCone = shouldShowVisionCone;
-      this.m_stealthMappin.UpdateSenseConeAvailable(this.m_shouldShowVisionCone);
-      if this.m_shouldShowVisionCone {
-        this.m_stealthMappin.UpdateSenseCone();
-      };
-    };
-    if this.m_shouldShowVisionCone {
-      if NotEquals(canSeePlayer, this.m_couldSeePlayer) || this.m_isSquadInCombat && !this.m_wasSquadInCombat {
-        if canSeePlayer && !this.m_isSquadInCombat {
-          inkWidgetRef.SetOpacity(this.visionConeWidget, this.m_detectingConeOpacity);
-          inkWidgetRef.SetScale(this.visionConeWidget, new Vector2(1.50, 1.50));
+    if !this.m_isAlive || isInactiveGameDevice {
+      this.ToggleVisionConeVisibility(false);
+    } else {
+      if this.m_isPrevention && this.m_stealthMappin.IsPlayerWanted() {
+        if playerDetectionValue == 100.00 {
+          this.m_wasMaxDetectionReached = true;
         } else {
-          inkWidgetRef.SetOpacity(this.visionConeWidget, this.m_defaultConeOpacity);
-          inkWidgetRef.SetScale(this.visionConeWidget, new Vector2(1.00, 1.00));
+          if playerDetectionValue < this.m_preventionDetectionDropThreshold {
+            this.m_wasMaxDetectionReached = false;
+          };
         };
-        this.m_couldSeePlayer = canSeePlayer;
+        this.ToggleVisionConeVisibility(!this.m_wasMaxDetectionReached || !(playerDetectionValue > this.m_preventionDetectionDropThreshold));
+      } else {
+        if numberOfCombatantsAboveZero || !isUsingSenseCone {
+          this.ToggleVisionConeVisibility(false);
+        } else {
+          ownerSenseComponent = gameObject.GetSensesComponent();
+          willStartDetectingPlayer = IsDefined(ownerSenseComponent) && ownerSenseComponent.GetShouldStartDetectingPlayerCached() || this.m_isCamera;
+          if !willStartDetectingPlayer && gameObject.IsConnectedToSecuritySystem() {
+            willStartDetectingPlayer = isPlayerInterestingFromSecuritySystemPOV;
+          };
+          this.ToggleVisionConeVisibility(willStartDetectingPlayer);
+        };
       };
     };
-    inkWidgetRef.SetVisible(this.visionConeWidget, this.m_shouldShowVisionCone);
     if !this.m_wasVisible {
       if IsDefined(this.m_showAnim) {
         this.m_showAnim.Stop();
@@ -189,9 +193,12 @@ protected func Update() -> Void {
   if !this.m_lockLootQuality {
     this.m_highestLootQuality = this.m_stealthMappin.GetHighestLootQuality();
   };
-  this.m_attitudeState = this.GetStateForAttitude(attitude, canSeePlayer);
+  if this.m_stealthMappin.IsPrevention() {
+    this.m_mappinState = this.GetPreventionMapinState();
+  } else {
+    this.m_mappinState = this.GetStateForAttitude(attitude, canSeePlayer);
+  };
   this.m_stealthMappin.SetVisibleOnMinimap(shouldShowMappin);
-  this.m_stealthMappin.SetIsPulsing(this.m_pulsing);
   this.m_clampingAvailable = this.m_isTagged || this.m_isAggressive && (this.m_isSquadInCombat || this.m_detectionAboveZero);
   this.OverrideClamp(this.m_clampingAvailable);
   this.m_wasCompanion = isCompanion;

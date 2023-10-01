@@ -48,7 +48,7 @@ public func EvaluateVisibilityMM() -> Void {
 }
 
 @wrapMethod(GameplayRoleComponent)
-private final func CreateRoleMappinData(data: SDeviceMappinData) -> ref<GameplayRoleMappinData> {
+private final func CreateRoleMappinData(const data: script_ref<SDeviceMappinData>) -> ref<GameplayRoleMappinData> {
   let result: ref<GameplayRoleMappinData> = wrappedMethod(data);
   let showThroughWalls: Bool = Equals(MMUtils.GetVisibilityTypeFor(data, this, this.lootConfig, this.worldConfig), MarkerVisibility.ThroughWalls);
   result.m_visibleThroughWalls = this.m_isForcedVisibleThroughWalls || this.GetOwner().IsObjectRevealed() || this.IsCurrentTarget() || showThroughWalls;
