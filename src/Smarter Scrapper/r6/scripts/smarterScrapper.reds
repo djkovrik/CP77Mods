@@ -329,10 +329,10 @@ public let boughtItem: ItemID;
 
 // Save last bought item id
 @wrapMethod(Vendor)
-private final func PerformItemTransfer(buyer: wref<GameObject>, seller: wref<GameObject>, itemTransaction: SItemTransaction) -> Bool {
+private final func PerformItemTransfer(buyer: wref<GameObject>, seller: wref<GameObject>, const itemTransaction: script_ref<SItemTransaction>) -> Bool {
   let player: ref<PlayerPuppet> = buyer as PlayerPuppet;
   if IsDefined(player) {
-    player.boughtItem = itemTransaction.itemStack.itemID;
+    player.boughtItem = Deref(itemTransaction).itemStack.itemID;
   };
   return wrappedMethod(buyer, seller, itemTransaction);
 }
@@ -362,14 +362,11 @@ protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
   let gameItemData: wref<gameItemData> = evt.itemData;
   let tweakDbId: TweakDBID = ItemID.GetTDBID(gameItemData.GetID());
   let quality: gamedataQuality = RPGManager.GetItemDataQuality(gameItemData);
-
-  if GameInstance.GetStatsSystem(this.GetGame()).GetStatValue(Cast<StatsObjectID>(this.GetEntityID()), gamedataStatType.CanAutomaticallyDisassembleJunk) > 0.00 {
-    if this.HasWeaponInInventorySS() && this.ShouldBeScrappedSS(gameItemData, quality) && !RPGManager.IsItemIconic(gameItemData) && NotEquals(this.boughtItem, gameItemData.GetID()) && !RPGManager.IsItemCrafted(gameItemData) && !gameItemData.HasTag(n"Quest") && !this.IsExclusionSS(tweakDbId) && !this.HasExcludedQuestActive() {
+  if this.HasWeaponInInventorySS() && this.ShouldBeScrappedSS(gameItemData, quality) && !RPGManager.IsItemIconic(gameItemData) && NotEquals(this.boughtItem, gameItemData.GetID()) && !RPGManager.IsItemCrafted(gameItemData) && !gameItemData.HasTag(n"Quest") && !this.IsExclusionSS(tweakDbId) && !this.HasExcludedQuestActive() {
+    ItemActionsHelper.DisassembleItem(this, evt.itemID, GameInstance.GetTransactionSystem(this.GetGame()).GetItemQuantity(this, evt.itemID));
+  } else {
+    if this.ShouldBeScrappedConsumableSS(gameItemData, quality) && !gameItemData.HasTag(n"Quest") && !this.IsExclusionSS(tweakDbId) && !this.HasExcludedQuestActive() {
       ItemActionsHelper.DisassembleItem(this, evt.itemID, GameInstance.GetTransactionSystem(this.GetGame()).GetItemQuantity(this, evt.itemID));
-    } else {
-      if this.ShouldBeScrappedConsumableSS(gameItemData, quality) && !gameItemData.HasTag(n"Quest") && !this.IsExclusionSS(tweakDbId) && !this.HasExcludedQuestActive() {
-        ItemActionsHelper.DisassembleItem(this, evt.itemID, GameInstance.GetTransactionSystem(this.GetGame()).GetItemQuantity(this, evt.itemID));
-      };
     };
   };
 }
