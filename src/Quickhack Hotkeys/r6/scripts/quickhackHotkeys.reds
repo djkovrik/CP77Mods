@@ -1,9 +1,5 @@
 module QHHotkeys
 
-private class QHConfig {
-  public static func ApplyOnSelect() -> Bool = false
-}
-
 @wrapMethod(QuickhacksListGameController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
@@ -12,23 +8,102 @@ protected cb func OnInitialize() -> Bool {
   this.GetRootCompoundWidget().GetWidget(n"input_container/input_hint/inputChangeTarget").SetVisible(false);
 }
 
-@wrapMethod(QuickhacksListGameController)
+@replaceMethod(QuickhacksListGameController)
 private final func SetVisibility(value: Bool) -> Void {
-  wrappedMethod(value);
-
+  let animOptions: inkAnimOptions;
+  let delayIntroDescritpio: ref<DelayedDescriptionIntro>;
+  let progressBarBB: wref<IBlackboard> = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_HUDProgressBar);
+  let uiQuickSlotsDataBB: ref<IBlackboard> = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UI_QuickSlotsData);
   if value {
-    this.m_playerObject.RegisterInputListener(this, n"SelectHack1");
-    this.m_playerObject.RegisterInputListener(this, n"SelectHack2");
-    this.m_playerObject.RegisterInputListener(this, n"SelectHack3");
-    this.m_playerObject.RegisterInputListener(this, n"SelectHack4");
-    this.m_playerObject.RegisterInputListener(this, n"SelectHack5");
-    this.m_playerObject.RegisterInputListener(this, n"SelectHack6");
-    this.m_playerObject.RegisterInputListener(this, n"SelectHack7");
-    this.m_playerObject.RegisterInputListener(this, n"SelectHack8");
-    this.m_playerObject.RegisterInputListener(this, n"SelectHack9");
-    this.m_playerObject.RegisterInputListener(this, n"SelectHack10");
+    if !HUDManager.HasCurrentTarget(this.m_gameInstance) {
+      return;
+    };
+    this.m_playerObject = this.GetPlayerControlledObject();
+    if !IsDefined(this.m_playerObject) {
+      return;
+    };
+    if this.m_lastCompiledTarget != this.m_data[0].m_actionOwner {
+      if EntityID.IsDefined(this.m_data[0].m_actionOwner) {
+        this.m_lastCompiledTarget = this.m_data[0].m_actionOwner;
+      };
+    } else {
+      if this.m_selectedData.m_noQuickhackData {
+        if GameInstance.GetStatsSystem(this.m_gameInstance).GetStatValue(Cast<StatsObjectID>(this.m_playerObject.GetEntityID()), gamedataStatType.HasCyberdeck) <= 0.00 {
+          return;
+        };
+      } else {
+        return;
+      };
+    };
+    this.SetupQuickhacksMemoryBar();
+    this.GetRootWidget().SetVisible(true);
+    if IsDefined(this.inkIntroAnimProxy) && this.inkIntroAnimProxy.IsPlaying() {
+      this.inkIntroAnimProxy.Stop();
+    };
+    animOptions.customTimeDilation = 2.00;
+    animOptions.applyCustomTimeDilation = true;
+    this.inkIntroAnimProxy = this.PlayLibraryAnimation(n"intro", animOptions);
+    this.PlaySound(n"QuickHackMenu", n"OnOpen");
+    if this.m_timeBetweenIntroAndDescritpionCheck {
+      GameInstance.GetDelaySystem(this.m_playerObject.GetGame()).CancelDelay(this.m_timeBetweenIntroAndDescritpionDelayID);
+    };
+    if this.m_timeBetweenIntroAndIntroDescription != 0.00 {
+      this.m_introDescriptionAnimProxy = this.PlayLibraryAnimation(n"outro_tooltip");
+    };
+    delayIntroDescritpio = new DelayedDescriptionIntro();
+    this.m_timeBetweenIntroAndDescritpionDelayID = GameInstance.GetDelaySystem(this.m_playerObject.GetGame()).DelayEvent(this.m_playerObject, delayIntroDescritpio, this.m_timeBetweenIntroAndIntroDescription, false);
+    this.m_timeBetweenIntroAndDescritpionCheck = true;
+    if !this.m_active {
+      this.m_playerObject.RegisterInputListener(this, n"UI_MoveDown");
+      this.m_playerObject.RegisterInputListener(this, n"UI_MoveUp");
+      this.m_playerObject.RegisterInputListener(this, n"context_help");
+      this.m_playerObject.RegisterInputListener(this, n"UI_ApplyAndClose");
+      this.m_playerObject.RegisterInputListener(this, n"SelectHack1");
+      this.m_playerObject.RegisterInputListener(this, n"SelectHack2");
+      this.m_playerObject.RegisterInputListener(this, n"SelectHack3");
+      this.m_playerObject.RegisterInputListener(this, n"SelectHack4");
+      this.m_playerObject.RegisterInputListener(this, n"SelectHack5");
+      this.m_playerObject.RegisterInputListener(this, n"SelectHack6");
+      this.m_playerObject.RegisterInputListener(this, n"SelectHack7");
+      this.m_playerObject.RegisterInputListener(this, n"SelectHack8");
+      this.m_playerObject.RegisterInputListener(this, n"SelectHack9");
+      this.m_playerObject.RegisterInputListener(this, n"SelectHack10");
+    };
+    this.RequestTimeDilation(this.m_playerObject, n"quickHackScreen", true);
+    this.m_memoryBoard.Signal(this.m_memoryBoardDef.MemoryPercent);
+    if IsDefined(uiQuickSlotsDataBB) {
+      uiQuickSlotsDataBB.SetBool(GetAllBlackboardDefs().UI_QuickSlotsData.quickhackPanelOpen, true);
+    };
+    GameInstance.GetUISystem(this.m_gameInstance).RequestNewVisualState(n"inkQuickHackingState");
+  } else {
+    this.PlaySound(n"QuickHackMenu", n"OnClose");
+    this.GetRootWidget().SetVisible(false);
+    if IsDefined(this.m_playerObject) {
+      GameInstance.GetTargetingSystem(this.m_playerObject.GetGame()).BreakLookAt(this.m_playerObject);
+      if this.m_active {
+        this.m_playerObject.UnregisterInputListener(this);
+      };
+      this.RequestTimeDilation(this.m_playerObject, n"quickHackScreen", false);
+    };
+    if IsDefined(uiQuickSlotsDataBB) {
+      uiQuickSlotsDataBB.SetBool(GetAllBlackboardDefs().UI_QuickSlotsData.quickhackPanelOpen, false);
+    };
+    this.m_playerObject = null;
+    GameInstance.GetUISystem(this.m_gameInstance).RestorePreviousVisualState(n"inkQuickHackingState");
+    progressBarBB.SetFloat(GetAllBlackboardDefs().UI_HUDProgressBar.ProgressBump, 0.00);
+    this.ResetQuickhackSelection();
+    if IsDefined(this.m_memorySpendAnimation) {
+      this.m_memorySpendAnimation.UnregisterFromAllCallbacks(inkanimEventType.OnFinish);
+    };
+    this.HACK_wasPlayedOnTarget = false;
+    this.m_lastCompiledTarget = new EntityID();
+    if this.m_contextHelpOverlay {
+      this.ShowTutorialOverlay(false);
+    };
   };
+  this.m_active = value;
 }
+
 
 @wrapMethod(QuickhacksListGameController)
 protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
@@ -91,18 +166,10 @@ private func OnQuckhackByHotkeyActivation(requestedIndex: Int32) -> Void {
     return ;
   };
 
-  if QHConfig.ApplyOnSelect() {
-    if NotEquals(requestedIndex, currentActiveIndex) {
-      this.m_listController.SetSelectedIndex(requestedIndex, QHConfig.ApplyOnSelect());
-    };
-    this.ApplyQuickHack();
-  } else {
-    if Equals(requestedIndex, currentActiveIndex) {
-      this.ApplyQuickHack();
-    } else {
-      this.m_listController.SetSelectedIndex(requestedIndex, false);
-    };
+  if NotEquals(requestedIndex, currentActiveIndex) {
+    this.m_listController.SetSelectedIndex(requestedIndex, true);
   };
+  this.ApplyQuickHack(true);
 }
 
 @wrapMethod(QuickhacksListGameController)
