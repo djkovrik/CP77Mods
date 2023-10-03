@@ -52,6 +52,9 @@ private final func HideMenuByName(elementName: String) -> Void {
 
 @wrapMethod(ComputerControllerPS)
 public final func GetMenuButtonWidgets() -> array<SComputerMenuButtonWidgetPackage> {
+  if !this.IsMenuEnabled(EComputerMenuType.MAIN) {
+    return wrappedMethod();
+  };
   let packages: array<SComputerMenuButtonWidgetPackage> = wrappedMethod();
   let package: SComputerMenuButtonWidgetPackage;
   let isInSafeZone: Bool = CurrentPlayerZoneManager.IsInSafeZone(this.GetLocalPlayerControlledGameObject() as PlayerPuppet) || VirtualAtelierConfig.DisableDangerZoneChecker();

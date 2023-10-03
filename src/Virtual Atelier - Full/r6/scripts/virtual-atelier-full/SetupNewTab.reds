@@ -54,12 +54,15 @@ private final func HideMenuByName(elementName: String) -> Void {
 // Add Atelier tab to PC layout
 @wrapMethod(ComputerControllerPS)
 public final func GetMenuButtonWidgets() -> array<SComputerMenuButtonWidgetPackage> {
+  if !this.IsMenuEnabled(EComputerMenuType.MAIN) {
+    return wrappedMethod();
+  };
+
   let packages: array<SComputerMenuButtonWidgetPackage> = wrappedMethod();
   let config: ref<VirtualAtelierConfig> = VirtualAtelierConfig.Get();
   let package: SComputerMenuButtonWidgetPackage;
   let player: ref<PlayerPuppet> = this.GetLocalPlayerControlledGameObject() as PlayerPuppet;
   let isInSafeZone: Bool = CurrentPlayerZoneHelper.IsInSafeZone(player, config);
-
   if isInSafeZone {
     if this.IsMenuEnabled(EComputerMenuType.INTERNET) && ArraySize(packages) > 0 {
       package.widgetName = "atelier";
