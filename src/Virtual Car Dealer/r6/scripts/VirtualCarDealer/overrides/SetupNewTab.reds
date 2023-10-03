@@ -50,6 +50,10 @@ private final func HideMenuByName(elementName: String) -> Void {
 
 @wrapMethod(ComputerControllerPS)
 public final func GetMenuButtonWidgets() -> array<SComputerMenuButtonWidgetPackage> {
+  if !this.m_computerSetup.m_mailsMenu {
+    return wrappedMethod();
+  };
+
   let packages: array<SComputerMenuButtonWidgetPackage> = wrappedMethod();
   let package: SComputerMenuButtonWidgetPackage;
 

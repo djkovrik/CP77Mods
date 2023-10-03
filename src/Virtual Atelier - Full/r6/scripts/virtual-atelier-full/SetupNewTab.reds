@@ -54,7 +54,7 @@ private final func HideMenuByName(elementName: String) -> Void {
 // Add Atelier tab to PC layout
 @wrapMethod(ComputerControllerPS)
 public final func GetMenuButtonWidgets() -> array<SComputerMenuButtonWidgetPackage> {
-  if !this.IsMenuEnabled(EComputerMenuType.MAIN) {
+  if !this.m_computerSetup.m_mailsMenu {
     return wrappedMethod();
   };
 
