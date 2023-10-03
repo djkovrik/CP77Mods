@@ -38,7 +38,7 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
     let availableMoney: Int32;
     for item in this.stock {
       if Equals(item.itemID, itemID) {
-        price = Cast<Int32>(item.price) * this.cart.GetPurchaseAmount(itemID, item.quantity);
+        price = Cast<Int32>(item.price);
         availableMoney = this.GetCurrentPlayerMoney() - this.GetCurrentGoodsPrice();
         return availableMoney >= price;
       };
