@@ -12,6 +12,11 @@ public abstract class AtelierUtils {
     statsSystem.AddSavedModifier(itemData.GetStatsObjectID(), powerLevelMod);
     statsSystem.RemoveAllModifiers(itemData.GetStatsObjectID(), gamedataStatType.Quality);
     statsSystem.AddSavedModifier(itemData.GetStatsObjectID(), qualityMod);
+
+    if itemData.HasTag(n"IconicWeapon") {
+      player.RescaleOwnedIconicsToPlayerLevel(itemData);
+    };
+
     RPGManager.ForceItemTier(player, itemData, quality);
   }
 
