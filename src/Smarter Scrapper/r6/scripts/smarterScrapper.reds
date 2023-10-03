@@ -125,6 +125,21 @@ class SmarterScrapperMaxDocConfig {
   public let uncommon: Bool = false;
 }
 
+class SmarterScrapperJunkConfig {
+  @runtimeProperty("ModSettings.mod", "Scrapper")
+  @runtimeProperty("ModSettings.category", "LocKey#46566")
+  @runtimeProperty("ModSettings.displayName", "LocKey#245")
+  public let enabled: Bool = true;
+
+  @runtimeProperty("ModSettings.mod", "Scrapper")
+  @runtimeProperty("ModSettings.category", "LocKey#46566")
+  @runtimeProperty("ModSettings.displayName", "LocKey#731")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "600")
+  public let maxPrice: Int32 = 50;
+}
+
 @addMethod(PlayerPuppet)
 public func IsExclusionSS(id: TweakDBID) -> Bool {
   return 
@@ -217,6 +232,7 @@ private func IsModSS(type: gamedataItemType) -> Bool {
 @addField(PlayerPuppet) public let scrapperGrenade: ref<SmarterScrapperGrenadeConfig>;
 @addField(PlayerPuppet) public let scrapperBounceBack: ref<SmarterScrapperBounceBackConfig>;
 @addField(PlayerPuppet) public let scrapperMaxDoc: ref<SmarterScrapperMaxDocConfig>;
+@addField(PlayerPuppet) public let scrapperJunk: ref<SmarterScrapperJunkConfig>;
 
 @wrapMethod(PlayerPuppet)
 protected cb func OnGameAttached() -> Bool {
@@ -228,6 +244,7 @@ protected cb func OnGameAttached() -> Bool {
   this.scrapperGrenade = new SmarterScrapperGrenadeConfig();
   this.scrapperBounceBack = new SmarterScrapperBounceBackConfig();
   this.scrapperMaxDoc = new SmarterScrapperMaxDocConfig();
+  this.scrapperJunk = new SmarterScrapperJunkConfig();
 }
 
 @wrapMethod(PlayerPuppet)
@@ -240,6 +257,7 @@ protected cb func OnDetach() -> Bool {
   this.scrapperGrenade = null;
   this.scrapperBounceBack = null;
   this.scrapperMaxDoc = null;
+  this.scrapperJunk = null;
 }
 
 @addMethod(PlayerPuppet)
@@ -323,6 +341,17 @@ private func ShouldBeScrappedConsumableSS(data: wref<gameItemData>, quality: gam
   return false;
 }
 
+@addMethod(PlayerPuppet)
+private func ShouldBeScrappedJunkSS(data: wref<gameItemData>) -> Bool {
+  let type: gamedataItemType = data.GetItemType();
+  let price: Int32 = RPGManager.CalculateSellPrice(this.GetGame(), this, data.GetID());
+  if Equals(type, gamedataItemType.Gen_Junk) {
+    return this.scrapperJunk.enabled && price < this.scrapperJunk.maxPrice ;
+  };
+
+  return false;
+}
+
 // Keep last bought item id
 @addField(PlayerPuppet)
 public let boughtItem: ItemID;
@@ -362,12 +391,14 @@ protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
   let gameItemData: wref<gameItemData> = evt.itemData;
   let tweakDbId: TweakDBID = ItemID.GetTDBID(gameItemData.GetID());
   let quality: gamedataQuality = RPGManager.GetItemDataQuality(gameItemData);
-  if this.HasWeaponInInventorySS() && this.ShouldBeScrappedSS(gameItemData, quality) && !RPGManager.IsItemIconic(gameItemData) && NotEquals(this.boughtItem, gameItemData.GetID()) && !RPGManager.IsItemCrafted(gameItemData) && !gameItemData.HasTag(n"Quest") && !this.IsExclusionSS(tweakDbId) && !this.HasExcludedQuestActive() {
+
+  let gear: Bool = this.HasWeaponInInventorySS() && this.ShouldBeScrappedSS(gameItemData, quality) && !RPGManager.IsItemIconic(gameItemData) && NotEquals(this.boughtItem, gameItemData.GetID()) && !RPGManager.IsItemCrafted(gameItemData) && !gameItemData.HasTag(n"Quest") && !this.IsExclusionSS(tweakDbId) && !this.HasExcludedQuestActive();
+  let consumable: Bool = this.ShouldBeScrappedConsumableSS(gameItemData, quality) && !gameItemData.HasTag(n"Quest") && !this.IsExclusionSS(tweakDbId) && !this.HasExcludedQuestActive();
+  let junk: Bool = this.ShouldBeScrappedJunkSS(gameItemData);
+
+
+  if gear || consumable || junk {
     ItemActionsHelper.DisassembleItem(this, evt.itemID, GameInstance.GetTransactionSystem(this.GetGame()).GetItemQuantity(this, evt.itemID));
-  } else {
-    if this.ShouldBeScrappedConsumableSS(gameItemData, quality) && !gameItemData.HasTag(n"Quest") && !this.IsExclusionSS(tweakDbId) && !this.HasExcludedQuestActive() {
-      ItemActionsHelper.DisassembleItem(this, evt.itemID, GameInstance.GetTransactionSystem(this.GetGame()).GetItemQuantity(this, evt.itemID));
-    };
   };
 }
 
