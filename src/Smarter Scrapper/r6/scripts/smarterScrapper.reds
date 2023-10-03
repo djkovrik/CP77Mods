@@ -149,6 +149,8 @@ public func IsExclusionSS(id: TweakDBID) -> Bool {
     Equals(id, t"Items.Preset_Hammer_Sasquatch") ||
     // Prologue
     Equals(id, t"Items.Preset_Nova_Q000_Nomad") ||
+    // Egg
+    Equals(id, t"Items.q005_iguana_egg") ||
   false;
 }
 
@@ -394,7 +396,7 @@ protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
 
   let gear: Bool = this.HasWeaponInInventorySS() && this.ShouldBeScrappedSS(gameItemData, quality) && !RPGManager.IsItemIconic(gameItemData) && NotEquals(this.boughtItem, gameItemData.GetID()) && !RPGManager.IsItemCrafted(gameItemData) && !gameItemData.HasTag(n"Quest") && !this.IsExclusionSS(tweakDbId) && !this.HasExcludedQuestActive();
   let consumable: Bool = this.ShouldBeScrappedConsumableSS(gameItemData, quality) && !gameItemData.HasTag(n"Quest") && !this.IsExclusionSS(tweakDbId) && !this.HasExcludedQuestActive();
-  let junk: Bool = this.ShouldBeScrappedJunkSS(gameItemData);
+  let junk: Bool = this.ShouldBeScrappedJunkSS(gameItemData) && !this.IsExclusionSS(tweakDbId) ;
 
 
   if gear || consumable || junk {
