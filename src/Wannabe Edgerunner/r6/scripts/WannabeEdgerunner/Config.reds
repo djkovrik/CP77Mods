@@ -60,7 +60,7 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.description", "Mod-Edg-Wanted-Level-Desc")
   @runtimeProperty("ModSettings.step", "1")
   @runtimeProperty("ModSettings.min", "1")
-  @runtimeProperty("ModSettings.max", "4")
+  @runtimeProperty("ModSettings.max", "5")
   let psychoHeatLevel: Int32 = 3;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")

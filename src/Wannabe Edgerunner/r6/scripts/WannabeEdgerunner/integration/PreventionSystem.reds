@@ -13,11 +13,6 @@ public final func DeleteSpawned(id: Uint32) -> Void {
   ArrayRemove(this.spawnedVictims, id);
 }
 
-@addMethod(PreventionSpawnSystem)
-public final func ClearSpawned() -> Void {
-  ArrayClear(this.spawnedVictims);
-}
-
 @wrapMethod(PreventionSpawnSystem)
 protected final func SpawnRequestFinished(requestResult: SpawnRequestResult) -> Void {
   wrappedMethod(requestResult);
@@ -31,6 +26,7 @@ protected final func SpawnRequestFinished(requestResult: SpawnRequestResult) -> 
       if IsDefined(npc) {
         npc.Kill(null, true, true);
         this.SpawnBloodPuddle(npc);
+        this.DeleteSpawned(id);
       };
     };
   };
