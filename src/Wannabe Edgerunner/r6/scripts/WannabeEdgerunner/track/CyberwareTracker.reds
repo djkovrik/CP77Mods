@@ -1,17 +1,6 @@
 import Edgerunning.System.EdgerunningSystem
 import Edgerunning.Common.E
 
-@wrapMethod(EquipmentSystemPlayerData)
-private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt blockActiveSlotsUpdate: Bool, opt forceEquipWeapon: Bool) -> Void {
-  wrappedMethod(itemID, slotIndex, blockActiveSlotsUpdate, forceEquipWeapon);
-  let area: gamedataEquipmentArea = EquipmentSystem.GetEquipAreaType(itemID);
-  let isCyberware: Bool = InventoryDataManagerV2.IsEquipmentAreaCyberware(area);
-  if isCyberware {
-    EdgerunningSystem.GetInstance(this.m_owner.GetGame()).OnCyberwareInstalled(itemID);
-    this.AddNeuroblockersIfVik();
-  };
-}
-
 @addMethod(EquipmentSystemPlayerData)
 private func AddNeuroblockersIfVik() -> Void {
   let journalManager: wref<JournalManager> = GameInstance.GetJournalManager(this.m_owner.GetGame());
@@ -25,33 +14,6 @@ private func AddNeuroblockersIfVik() -> Void {
     transactionSystem.GiveItemByTDBID(this.m_owner, t"Items.ripperdoc_med_common", 1);
     questsSystem.SetFact(n"neuroblockers_added", 1);
   };
-}
-
-@wrapMethod(EquipmentSystemPlayerData)
-private final func UnequipItem(itemID: ItemID) -> Void {
-  let area: gamedataEquipmentArea = EquipmentSystem.GetEquipAreaType(itemID);
-  let isCyberware: Bool = InventoryDataManagerV2.IsEquipmentAreaCyberware(area);
-  wrappedMethod(itemID);
-  if isCyberware {
-    EdgerunningSystem.GetInstance(this.m_owner.GetGame()).OnCyberwareUninstalled(itemID);
-  };
-}
-
-@wrapMethod(EquipmentSystemPlayerData)
-private final func UnequipItem(equipAreaIndex: Int32, opt slotIndex: Int32) -> Void {
-  let itemID: ItemID = this.m_equipment.equipAreas[equipAreaIndex].equipSlots[slotIndex].itemID;
-  let area: gamedataEquipmentArea = EquipmentSystem.GetEquipAreaType(itemID);
-  let isCyberware: Bool = InventoryDataManagerV2.IsEquipmentAreaCyberware(area);
-  wrappedMethod(equipAreaIndex, slotIndex);
-  if isCyberware {
-    EdgerunningSystem.GetInstance(this.m_owner.GetGame()).OnCyberwareUninstalled(itemID);
-  };
-}
-
-@wrapMethod(RipperDocGameController)
-private final func EquipCyberware(itemData: wref<gameItemData>) -> Void {
-  wrappedMethod(itemData);
-  EdgerunningSystem.GetInstance(this.m_player.GetGame()).OnCyberwareInstalled(itemData.GetID());
 }
 
 @wrapMethod(PlayerPuppet)
@@ -216,8 +178,8 @@ public final static func AwardExperienceFromDamage(hitEvent: ref<gameHitEvent>, 
 
 // -- Projectile launcher usage
 @wrapMethod(LeftHandCyberwareTransition)
-public final func DetachProjectile(scriptInterface: ref<StateGameScriptInterface>) -> Void {
-  wrappedMethod(scriptInterface);
+public final func DetachProjectile(scriptInterface: ref<StateGameScriptInterface>, opt angleOffset: Float) -> Void {
+  wrappedMethod(scriptInterface, angleOffset);
   EdgerunningSystem.GetInstance(scriptInterface.executionOwner.GetGame()).OnArmsCyberwareActivation(gamedataItemType.Cyb_Launcher);
 }
 

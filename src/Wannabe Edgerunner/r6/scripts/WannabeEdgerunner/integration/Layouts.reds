@@ -141,38 +141,11 @@ protected cb func OnHumanityIconHoverOut(evt: ref<inkPointerEvent>) -> Bool {
   this.humanityIcon.BindProperty(n"tintColor", n"MainColors.Blue");
 }
 
-@wrapMethod(RipperDocGameController)
-private final func UpdateCWAreaGrid(selectedArea: gamedataEquipmentArea) -> Void {
-  wrappedMethod(selectedArea);
-  this.RefreshHumanityHUD();
-}
-
-@wrapMethod(RipperDocGameController)
-private final func SetInventoryCWList() -> Void {
-  wrappedMethod();
-  this.RefreshHumanityHUD();
-}
-
 @addMethod(RipperDocGameController)
 public func RefreshHumanityHUD() -> Void {
   let current: Int32 = this.edgerunningSystem.GetHumanityCurrent();
   let total: Int32 = this.edgerunningSystem.GetHumanityTotal();
   this.RefreshHumanityBars(current, total);
-}
-
-@wrapMethod(InventoryDataManagerV2)
-public final func GetTooltipDataForInventoryItem(tooltipItemData: InventoryItemData, equipped: Bool, opt vendorItem: Bool, opt overrideRarity: Bool) -> ref<InventoryTooltipData> {
-  let result: ref<InventoryTooltipData> = wrappedMethod(tooltipItemData, equipped, vendorItem, overrideRarity);
-  let area: gamedataEquipmentArea = EquipmentSystem.GetEquipAreaType(InventoryItemData.GetID(tooltipItemData));
-  let isCyberware: Bool = InventoryDataManagerV2.IsEquipmentAreaCyberware(area);
-  let record: ref<Item_Record>;
-  let cost: Int32;
-  if isCyberware {
-    record = RPGManager.GetItemRecord(InventoryItemData.GetID(tooltipItemData));
-    cost = EdgerunningSystem.GetInstance(this.m_Player.GetGame()).GetCyberwareCost(record);
-    result.humanity = cost;
-  };
-  return result;
 }
 
 @addMethod(RipperDocGameController)
@@ -200,63 +173,6 @@ protected cb func OnInitialize() -> Bool {
   this.humanityLabel.BindProperty(n"tintColor", n"MainColors.White");
   
   inkCompoundRef.AddChildWidget(this.m_headerContainer, this.humanityLabel);
-}
-
-@wrapMethod(CyberdeckTooltip)
-public func SetData(tooltipData: ref<ATooltipData>) -> Void {
-  wrappedMethod(tooltipData);
-
-  let text: String;
-  if this.m_data.humanity > 0 {
-    text = s"\(GetLocalizedTextByKey(n"Mod-Edg-Humanity-Cost")) \(this.m_data.humanity)";
-    this.humanityLabel.SetText(text);
-    this.humanityLabel.SetVisible(true);
-  } else {
-    this.humanityLabel.SetVisible(false);
-  }
-}
-
-@wrapMethod(ItemTooltipCommonController)
-public func SetData(tooltipData: ref<ATooltipData>) -> Void {
-  wrappedMethod(tooltipData);
-}
-
-@wrapMethod(ItemTooltipCommonController)
-protected cb func OnInitialize() -> Bool {
-  wrappedMethod();
-
-  let container: ref<inkCompoundWidget> = inkWidgetRef.Get(this.m_itemHeaderContainer) as inkCompoundWidget;
-
-  this.humanityLabel = new inkText();
-  this.humanityLabel.SetName(n"HumanityLabel");
-  this.humanityLabel.SetText("TTTT");
-  this.humanityLabel.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-  this.humanityLabel.SetFontSize(30);
-  this.humanityLabel.SetHAlign(inkEHorizontalAlign.Right);
-  this.humanityLabel.SetVAlign(inkEVerticalAlign.Bottom);
-  this.humanityLabel.SetAnchor(inkEAnchor.BottomRight);
-  this.humanityLabel.SetAnchorPoint(1.0, 0.0);
-  this.humanityLabel.SetLetterCase(textLetterCase.OriginalCase);
-  this.humanityLabel.SetMargin(new inkMargin(0.0, 0.0, 0.0, 12.0));
-  this.humanityLabel.SetVisible(false);
-  this.humanityLabel.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-  this.humanityLabel.BindProperty(n"tintColor", n"MainColors.Blue");
-  
-  this.humanityLabel.Reparent(container);
-}
-
-@wrapMethod(ItemTooltipCommonController)
-public final func UpdateData(tooltipData: ref<InventoryTooltipData>) -> Void {
-  wrappedMethod(tooltipData);
-
-  let text: String;
-  if tooltipData.humanity > 0 {
-    text = s"\(GetLocalizedTextByKey(n"Mod-Edg-Humanity-Cost")) \(tooltipData.humanity)";
-    this.humanityLabel.SetText(text);
-    this.humanityLabel.SetVisible(true);
-  } else {
-    this.humanityLabel.SetVisible(false);
-  }
 }
 
 @addMethod(healthbarWidgetGameController)

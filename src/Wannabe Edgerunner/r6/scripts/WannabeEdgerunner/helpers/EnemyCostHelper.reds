@@ -1,6 +1,7 @@
 /**
   public static func GetEnemyCost(affiliation: gamedataAffiliation, config: ref<EdgerunningConfig>) -> Int32
 */
+// TODO Add PL factions
 public abstract class EnemyCostHelper {
   public static func GetEnemyCost(affiliation: gamedataAffiliation, config: ref<EdgerunningConfig>) -> Int32 {
     let cost: Int32 = 0;

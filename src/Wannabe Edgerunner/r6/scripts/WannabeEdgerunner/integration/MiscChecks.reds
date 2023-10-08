@@ -11,7 +11,7 @@ public func IsPrologueFinished() -> Bool {
 // Get discrict name
 @addMethod(PreventionSystem)
 public func GetCurrentDistrictForEdgerunner() -> gamedataDistrict {
-  return this.m_districtManager.GetCurrentDistrict().CreateDistrictRecord().Type();
+  return this.m_districtManager.GetCurrentDistrict().GetDistrictRecord().Type();
 }
 
 // Not used - kept for Humanity Recovery compatibility

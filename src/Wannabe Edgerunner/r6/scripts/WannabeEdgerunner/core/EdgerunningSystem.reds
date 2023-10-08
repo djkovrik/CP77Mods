@@ -13,8 +13,6 @@ import Edgerunning.Common.E
 
   public func OnPossessionChanged(playerPossesion: gamedataPlayerPossesion) -> Void
   public func OnSettingsChanged() -> Void
-  public func OnCyberwareInstalled(itemId: ItemID) -> Void
-  public func OnCyberwareUninstalled(itemId: ItemID) -> Void
   public func OnEnemyKilled(affiliation: gamedataAffiliation) -> Void
   public func OnBuff() -> Void
   public func OnBuffEnded() -> Void
@@ -41,8 +39,6 @@ import Edgerunning.Common.E
   private func IsHumanityRestored() -> Bool
   private func IsPsychosisBlocked() -> Bool
   public func OnLaunchCycledPsychosisCheckCallback() -> Void
-
-  public func GetCyberwareCost(item: ref<Item_Record>) -> Int32
 */
 public class EdgerunningSystem extends ScriptableSystem {
 
@@ -61,7 +57,6 @@ public class EdgerunningSystem extends ScriptableSystem {
   private let additionalPenaltiesKeys: array<String>;
 
   private let currentHumanityPool: Int32;
-  private let cyberwareCost: Int32;
   private let upperThreshold: Int32;
   private let lowerThreshold: Int32;
   private let psychosisCheckDelayId: DelayID;
@@ -187,24 +182,6 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public func OnSettingsChanged() -> Void {
     this.config = new EdgerunningConfig();
-  }
-  
-  public func OnCyberwareInstalled(itemId: ItemID) -> Void {
-    let record: ref<Item_Record> = RPGManager.GetItemRecord(itemId);
-    let name: CName = record.DisplayName();
-    let quality: gamedataQuality = record.Quality().Type();
-    let cost: Int32 = this.GetCyberwareCost(record);
-    E(s">>> Installed \(GetLocalizedTextByKey(name)) - \(quality) by \(cost) humanity");
-    this.InvalidateCurrentState();
-  }
-  
-  public func OnCyberwareUninstalled(itemId: ItemID) -> Void {
-    let record: ref<Item_Record> = RPGManager.GetItemRecord(itemId);
-    let name: CName = record.DisplayName();
-    let quality: gamedataQuality = record.Quality().Type();
-    let cost: Int32 = this.GetCyberwareCost(record);
-    E(s"<<< Uninstalled \(GetLocalizedTextByKey(name)) - \(quality) by \(cost) humanity");
-    this.InvalidateCurrentState();
   }
 
   public func OnEnemyKilled(affiliation: gamedataAffiliation) -> Void {
@@ -549,14 +526,12 @@ public class EdgerunningSystem extends ScriptableSystem {
     let penalty: Int32 = this.GetTotalPenalty();
     let evt: ref<UpdateHumanityCounterEvent> = new UpdateHumanityCounterEvent();
     let basePool: Int32 = this.GetHumanityTotal();
-    let installedCyberware: Int32 = this.cyberwareHelper.GetCurrentCyberwareCost(true);
-    this.cyberwareCost = installedCyberware;
-    this.currentHumanityPool = basePool - installedCyberware - this.currentHumanityDamage - penalty;
+    this.currentHumanityPool = basePool - this.currentHumanityDamage - penalty;
     if this.currentHumanityPool < 0 { this.currentHumanityPool = 0; };
     this.upperThreshold = this.config.glitchesThreshold;
     this.lowerThreshold = this.config.psychosisThreshold;
     E("Current humanity points state:");
-    E(s" - total: \(basePool) humanity, installed cyberware cost: \(installedCyberware), points left: \(this.currentHumanityPool), can be recovered: \(this.currentHumanityDamage)");
+    E(s" - total: \(basePool) humanity, points left: \(this.currentHumanityPool), can be recovered: \(this.currentHumanityDamage)");
     E(s" - debuffs for \(this.upperThreshold) and lower, cyberpsychosis for \(this.lowerThreshold) and lower");
     E(s"Total penalty from mods: \(penalty)");
 
@@ -591,6 +566,8 @@ public class EdgerunningSystem extends ScriptableSystem {
         };
       };
     };
+
+    EdgerunnerStats.Print(this, this.config);
   }
 
 
@@ -691,12 +668,6 @@ public class EdgerunningSystem extends ScriptableSystem {
         this.psychosisCheckDelayId = this.delaySystem.DelayCallback(LaunchCycledPsychosisCheckCallback.Create(this), nextRun, false);
       };
     };
-  }
-
-
-  // -- Proxified calls 
-  public func GetCyberwareCost(item: ref<Item_Record>) -> Int32 {
-    return this.cyberwareHelper.GetCyberwareCost(item);
   }
 }
 
