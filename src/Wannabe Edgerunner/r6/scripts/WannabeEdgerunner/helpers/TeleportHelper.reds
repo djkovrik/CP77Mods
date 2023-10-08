@@ -40,7 +40,6 @@ public class TeleportHelper {
     this.delaySystem.CancelDelay(this.teleportDelayId);
     this.delaySystem.CancelDelay(this.postTeleportEffectsDelayId);
     this.victimsHelper.CancelScheduledVictimSpawns();
-    this.victimsHelper.CancelScheduledVictimKills();
   }
 
   private func OnPrepareTeleportCallback() -> Void {
