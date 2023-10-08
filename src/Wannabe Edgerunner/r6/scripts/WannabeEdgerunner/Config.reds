@@ -311,6 +311,24 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
+  @runtimeProperty("ModSettings.displayName", "LocKey#86254")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "50") 
+  let killCostBarghest: Int32 = 2;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
+  @runtimeProperty("ModSettings.displayName", "LocKey#91191")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "50") 
+  let killCostNUSA: Int32 = 5;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
   @runtimeProperty("ModSettings.displayName", "LocKey#42782")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Other-Desc")
   @runtimeProperty("ModSettings.step", "1")

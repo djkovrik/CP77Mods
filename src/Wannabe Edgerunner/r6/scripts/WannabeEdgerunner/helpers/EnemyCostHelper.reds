@@ -1,7 +1,6 @@
 /**
   public static func GetEnemyCost(affiliation: gamedataAffiliation, config: ref<EdgerunningConfig>) -> Int32
 */
-// TODO Add PL factions
 public abstract class EnemyCostHelper {
   public static func GetEnemyCost(affiliation: gamedataAffiliation, config: ref<EdgerunningConfig>) -> Int32 {
     let cost: Int32 = 0;
@@ -47,6 +46,13 @@ public abstract class EnemyCostHelper {
         break;
       case gamedataAffiliation.Civilian:
         cost = config.killCostCivilian;
+        break;
+      // Phantom Liberty
+      case gamedataAffiliation.Barghest:
+        cost = config.killCostBarghest;
+        break;
+      case gamedataAffiliation.NUSA:
+        cost = config.killCostNUSA;
         break;
       default:
         cost = config.killCostOther;
