@@ -23,12 +23,6 @@ Items.RipperdocMedDurationCommon:
     modifierType: Additive
     statType: BaseStats.MaxDuration
     value: 500
-  - $type: CombinedStatModifier_Record
-    modifierType: AdditiveMultiplier
-    statType: BaseStats.MaxDuration
-    refStat: BaseStats.CraftingBonusConsumableDuration
-    opSymbol: "*"
-    value: 1.0
 
 Items.RipperdocMedDurationUncommon:
   $type: StatModifierGroup_Record
@@ -37,12 +31,6 @@ Items.RipperdocMedDurationUncommon:
     modifierType: Additive
     statType: BaseStats.MaxDuration
     value: 1000
-  - $type: CombinedStatModifier_Record
-    modifierType: AdditiveMultiplier
-    statType: BaseStats.MaxDuration
-    refStat: BaseStats.CraftingBonusConsumableDuration
-    opSymbol: "*"
-    value: 1.0
 
 Items.RipperdocMedDurationRare:
   $type: StatModifierGroup_Record
@@ -51,12 +39,6 @@ Items.RipperdocMedDurationRare:
     modifierType: Additive
     statType: BaseStats.MaxDuration
     value: 1800
-  - $type: CombinedStatModifier_Record
-    modifierType: AdditiveMultiplier
-    statType: BaseStats.MaxDuration
-    refStat: BaseStats.CraftingBonusConsumableDuration
-    opSymbol: "*"
-    value: 1.0
 
 
 # === Price modifiers ===
@@ -206,17 +188,21 @@ BaseStatusEffect.RipperDocMedBuffCommon:
   duration: Items.RipperdocMedDurationCommon
 
 
-# === Injectors ===
+# === Meds ===
 
 # - Rare
 Items.ripperdoc_med:
-  $base: Items.Injector
+  $base: Items.LongLasting
   displayName: l"Mod-Edg-Ripper-Med"
   localizedDescription: l"Mod-Edg-Ripper-Med-Desc"
   quality: t"Quality.Rare"
   iconPath: injector_1_orange
-  appearanceName: injector___2
-  consumableType: ConsumableType.Drug
+  appearanceName: base_junk_item_medicine_bottle
+  itemType: ItemType.Con_LongLasting
+  tags:
+    - "Consumable"
+    - "Drug"
+    - "Medical"
   CraftingData:
     $type: CraftingPackage_Record
     craftingExpModifier: 1
@@ -255,13 +241,17 @@ Items.ripperdoc_med:
 
 # - Uncommon
 Items.ripperdoc_med_uncommon:
-  $base: Items.Injector
+  $base: Items.LongLasting
   displayName: l"Mod-Edg-Ripper-Med"
   localizedDescription: l"Mod-Edg-Ripper-Med-Desc"
   quality: t"Quality.Uncommon"
   iconPath: injector_1_orange
-  appearanceName: injector___2
-  consumableType: ConsumableType.Drug
+  appearanceName: base_junk_item_medicine_bottle
+  itemType: ItemType.Con_LongLasting
+  tags:
+    - "Consumable"
+    - "Drug"
+    - "Medical"
   CraftingData:
     $type: CraftingPackage_Record
     craftingExpModifier: 1
@@ -297,13 +287,17 @@ Items.ripperdoc_med_uncommon:
    
 # - Common
 Items.ripperdoc_med_common:
-  $base: Items.Injector
+  $base: Items.LongLasting
   displayName: l"Mod-Edg-Ripper-Med"
   localizedDescription: l"Mod-Edg-Ripper-Med-Desc"
   quality: t"Quality.Common"
   iconPath: injector_1_orange
-  appearanceName: injector___2
-  consumableType: ConsumableType.Drug
+  appearanceName: base_junk_item_medicine_bottle
+  itemType: ItemType.Con_LongLasting
+  tags:
+    - "Consumable"
+    - "Drug"
+    - "Medical"
   CraftingData:
     $type: CraftingPackage_Record
     craftingExpModifier: 1
