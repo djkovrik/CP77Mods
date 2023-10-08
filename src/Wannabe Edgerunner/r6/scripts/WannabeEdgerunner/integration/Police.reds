@@ -12,11 +12,11 @@ public func SpawnPoliceForPsychosis(config: ref<EdgerunningConfig>) -> Void {
 @addMethod(PreventionSystem)
 public func GetHeatStageLevel(from: Int32) -> EPreventionHeatStage {
   switch (from) {
-    case 1: return EPreventionHeatStage.Heat_1;
-    case 2: return EPreventionHeatStage.Heat_2;
-    case 3: return EPreventionHeatStage.Heat_3;
-    case 4: return EPreventionHeatStage.Heat_4;
-    case 5: return EPreventionHeatStage.Heat_5;
+    case 1: return EPreventionHeatStage.Heat_0;
+    case 2: return EPreventionHeatStage.Heat_1;
+    case 3: return EPreventionHeatStage.Heat_2;
+    case 4: return EPreventionHeatStage.Heat_3;
+    case 5: return EPreventionHeatStage.Heat_4;
   };
 
   return EPreventionHeatStage.Heat_0;

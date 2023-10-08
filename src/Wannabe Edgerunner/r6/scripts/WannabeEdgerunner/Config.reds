@@ -61,7 +61,7 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.step", "1")
   @runtimeProperty("ModSettings.min", "1")
   @runtimeProperty("ModSettings.max", "5")
-  let psychoHeatLevel: Int32 = 3;
+  let psychoHeatLevel: Int32 = 2;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Gameplay-Devices-Interactions-MadnessHack")

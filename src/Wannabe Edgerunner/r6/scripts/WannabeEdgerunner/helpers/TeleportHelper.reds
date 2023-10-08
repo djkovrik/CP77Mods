@@ -94,6 +94,7 @@ public class TeleportHelper {
     this.player.GetPreventionSystem().ClearWantedLevel();
     // Stop cycled effects
     this.effectsHelper.CancelCycledFx();
+    EdgerunningSystem.GetInstance(this.player.GetGame()).PostTeleportHumanityReset();
   }
 }
 

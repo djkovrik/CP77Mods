@@ -422,6 +422,13 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.psmBB.SetInt(GetAllBlackboardDefs().PlayerStateMachine.HumanityDamage, 0, true);
   }
 
+  public func PostTeleportHumanityReset() -> Void {
+    let newDamage: Int32 = this.currentHumanityDamage - 5;
+    this.currentHumanityDamage = newDamage;
+    this.psmBB.SetInt(GetAllBlackboardDefs().PlayerStateMachine.HumanityDamage, newDamage, true);
+    this.InvalidateCurrentState(false);
+  }
+
   public func AddHumanityPenalty(key: String, value: Int32) -> Void {
     if !ArrayContains(this.additionalPenaltiesKeys, key) {
       ArrayPush(this.additionalPenaltiesKeys, key);
@@ -668,6 +675,12 @@ public class EdgerunningSystem extends ScriptableSystem {
         this.psychosisCheckDelayId = this.delaySystem.DelayCallback(LaunchCycledPsychosisCheckCallback.Create(this), nextRun, false);
       };
     };
+  }
+
+  public static func Debug(player: ref<PlayerPuppet>) -> Void {
+    let system: ref<EdgerunningSystem> = EdgerunningSystem.GetInstance(player.GetGame());
+    system.AddHumanityDamage(10);
+    system.InvalidateCurrentState(false);
   }
 }
 
