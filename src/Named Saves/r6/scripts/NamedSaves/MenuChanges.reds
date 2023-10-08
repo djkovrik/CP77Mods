@@ -1,4 +1,5 @@
 module NamedSaves.UI
+import NamedSaves.Config.*
 import Codeware.UI.*
 import NamedSaves.Utils.*
 
@@ -29,6 +30,11 @@ protected cb func OnInitialize() -> Bool {
   input.SetMaxLength(64);
   input.Reparent(container);
   this.m_nameInput = input;
+
+  if NamedSavesConfig.ShouldRememberLastUsed() && NamedSavesEnv.IsNotEmpty() {
+    let savedText: String = NamedSavesEnv.GetName();
+    this.m_nameInput.SetText(savedText);
+  }
 }
 
 // Reset input focus on elsewhere click - copy-pasted from psiberx samples ^^
@@ -47,6 +53,10 @@ protected cb func OnButtonRelease(evt: ref<inkPointerEvent>) -> Bool {
 protected cb func OnSavingComplete(success: Bool, locks: array<gameSaveLock>) -> Bool {
   let inputText: String = this.m_nameInput.GetText();
   if NotEquals(inputText, "") {
+    if NamedSavesConfig.ShouldRememberLastUsed() {
+      NamedSavesEnv.SetName(inputText);
+    };
+
     AddCustomNoteToNewestSave(inputText);
     this.m_nameInput.SetText("");
   };
