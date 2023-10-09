@@ -5,12 +5,14 @@ import Edgerunning.Common.E
 protected cb func OnStatusEffectApplied(evt: ref<ApplyStatusEffectEvent>) -> Bool {
   wrappedMethod(evt);
   let effectId: TweakDBID = evt.staticData.GetID();
+  if this.IsRipperdocMedBuff(effectId) {
+    EdgerunningSystem.GetInstance(this.GetGame()).OnBuff();
+  };
   if this.IsHousingEffect(effectId) && !evt.isAppliedOnSpawn {
     EdgerunningSystem.GetInstance(this.GetGame()).OnSleep();
-  } else {
-    if this.IsRipperdocMedBuff(effectId) {
-      EdgerunningSystem.GetInstance(this.GetGame()).OnBuff();
-    };
+  };
+  if Equals(effectId, t"BaseStatusEffect.Tech_Master_Perk_3_Buff") {
+    EdgerunningSystem.GetInstance(this.GetGame()).OnEdgerunnerPerkActivated();
   };
 }
 

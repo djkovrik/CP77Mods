@@ -7,7 +7,7 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.step", "5")
   @runtimeProperty("ModSettings.min", "50")
   @runtimeProperty("ModSettings.max", "500")
-  let baseHumanityPool: Int32 = 180;
+  let baseHumanityPool: Int32 = 120;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Humanity")
@@ -25,7 +25,7 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.step", "5")
   @runtimeProperty("ModSettings.min", "5")
   @runtimeProperty("ModSettings.max", "500")
-  let glitchesThreshold: Int32 = 40;
+  let glitchesThreshold: Int32 = 60;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Humanity")
@@ -34,7 +34,7 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.step", "5")
   @runtimeProperty("ModSettings.min", "5")
   @runtimeProperty("ModSettings.max", "500")
-  let psychosisThreshold: Int32 = 20;
+  let psychosisThreshold: Int32 = 30;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Gameplay-Devices-Interactions-MadnessHack")

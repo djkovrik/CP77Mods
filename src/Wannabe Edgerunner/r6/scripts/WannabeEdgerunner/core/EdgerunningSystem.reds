@@ -210,6 +210,10 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.InvalidateCurrentState();
   }
 
+  public func OnEdgerunnerPerkActivated() -> Void {
+    this.effectsHelper.CancelCycledFx();
+  }
+
   public func OnSleep() -> Void {
     this.StopEverything();
     this.ResetHumanityDamage();
@@ -548,6 +552,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(evt);
 
     if this.effectsChecker.IsRipperdocBuffActive() { return; };
+    if this.effectsChecker.IsPsychosisActive() { return; };
 
     if this.effectsChecker.IsPossessed() {
       this.StopEverything();
@@ -574,7 +579,7 @@ public class EdgerunningSystem extends ScriptableSystem {
       };
     };
 
-    EdgerunnerStats.Print(this, this.config);
+    // EdgerunnerStats.Print(this, this.config);
   }
 
 
@@ -679,8 +684,9 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public static func Debug(player: ref<PlayerPuppet>) -> Void {
     let system: ref<EdgerunningSystem> = EdgerunningSystem.GetInstance(player.GetGame());
-    system.AddHumanityDamage(10);
-    system.InvalidateCurrentState(false);
+    // system.AddHumanityDamage(10);
+    // system.InvalidateCurrentState(false);
+    system.RunPsychosisFlow();
   }
 }
 
