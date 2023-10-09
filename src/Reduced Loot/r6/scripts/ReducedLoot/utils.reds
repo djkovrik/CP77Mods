@@ -24,6 +24,7 @@ public class RL_Checker {
       RLog(">>> Cyberdeck detected: " + ToStr(data));
       return true; 
     };
+
     // Weapons check
     if Equals(RL_LootType.Weapon, type) {
       return RL_Utils.ProbabilityCheck(Config.Weapon(source, quality));
@@ -61,10 +62,16 @@ public class RL_Converters {
   public static func QualityToQuality(quality: gamedataQuality) -> RL_LootQuality {
     switch quality {
       case gamedataQuality.Common: return RL_LootQuality.Common;
+      case gamedataQuality.CommonPlus: return RL_LootQuality.Common;
       case gamedataQuality.Uncommon: return RL_LootQuality.Uncommon;
+      case gamedataQuality.UncommonPlus: return RL_LootQuality.Uncommon;
       case gamedataQuality.Rare: return RL_LootQuality.Rare;
+      case gamedataQuality.RarePlus: return RL_LootQuality.Rare;
       case gamedataQuality.Epic: return RL_LootQuality.Epic;
+      case gamedataQuality.EpicPlus: return RL_LootQuality.Epic;
       case gamedataQuality.Legendary: return RL_LootQuality.Legendary;
+      case gamedataQuality.LegendaryPlus: return RL_LootQuality.Legendary;
+      case gamedataQuality.LegendaryPlusPlus: return RL_LootQuality.Legendary;
       default: return RL_LootQuality.Common;
     };
   }
@@ -100,6 +107,25 @@ public class RL_Converters {
   }
 }
 
+/*
+Unhandled types: 
+  Cyberware = 19
+  CyberwareStatsShard = 20
+  CyberwareUpgradeShard = 21
+  Fla_Launcher = 22
+  Fla_Rifle = 23
+  Fla_Shock = 24
+  Fla_Support = 25
+  Gen_DataBank = 28
+  Gen_Jewellery = 29
+  Gen_Junk = 30
+  Gen_Keycard = 31
+  Gen_Misc = 32
+  Gen_Readable = 34
+  GrenadeDelivery = 35
+  Grenade_Core = 36
+  VendorToken = 73
+*/
 public class RL_Utils {
 
   public static func ProbabilityCheck(chosen: Int32) -> Bool {
@@ -109,57 +135,75 @@ public class RL_Utils {
   }
 
   public static func IsWeapon(data: ref<gameItemData>) -> Bool {
-    return RL_Utils.HasTypePrefix(data, "Wea_");
+    let type: gamedataItemType = data.GetItemType();
+    let typeValue: Int32 = RL_Utils.GetItemTypeValue(type);
+    return typeValue >= 74 && typeValue <= 100;
   }
 
   public static func IsClothes(data: ref<gameItemData>) -> Bool {
-    return RL_Utils.HasTypePrefix(data, "Clo_");
+    let type: gamedataItemType = data.GetItemType();
+    let typeValue: Int32 = RL_Utils.GetItemTypeValue(type);
+    return typeValue >= 0 && typeValue <= 6;
   }
 
   public static func IsAmmo(data: ref<gameItemData>) -> Bool {
     let type: gamedataItemType = data.GetItemType();
-    return Equals(type, gamedataItemType.Con_Ammo);
+    let typeValue: Int32 = RL_Utils.GetItemTypeValue(type);
+    return typeValue == 7;
   }
 
   public static func IsCraftingMats(data: ref<gameItemData>) -> Bool {
     let type: gamedataItemType = data.GetItemType();
-    return Equals(type, gamedataItemType.Gen_CraftingMaterial);
+    let typeValue: Int32 = RL_Utils.GetItemTypeValue(type);
+    return typeValue == 27;
   }
 
   public static func IsCyberware(data: ref<gameItemData>) -> Bool {
-    return RL_Utils.HasTypePrefix(data, "Cyb_");
+    let type: gamedataItemType = data.GetItemType();
+    let typeValue: Int32 = RL_Utils.GetItemTypeValue(type);
+    return typeValue >= 13 && typeValue <= 18;
   }
 
   public static func IsEdible(data: ref<gameItemData>) -> Bool {
     let type: gamedataItemType = data.GetItemType();
-    return Equals(type, gamedataItemType.Con_Edible) || Equals(type, gamedataItemType.Con_LongLasting);
+    let typeValue: Int32 = RL_Utils.GetItemTypeValue(type);
+    return typeValue == 8 || typeValue == 11;
   }
 
   public static func IsGrenade(data: ref<gameItemData>) -> Bool {
     let type: gamedataItemType = data.GetItemType();
-    return Equals(type, gamedataItemType.Gad_Grenade);
+    let typeValue: Int32 = RL_Utils.GetItemTypeValue(type);
+    return typeValue == 26;
   }
 
   public static func IsHealing(data: ref<gameItemData>) -> Bool {
     let type: gamedataItemType = data.GetItemType();
-    return Equals(type, gamedataItemType.Con_Inhaler) || Equals(type, gamedataItemType.Con_Injector);
+    let typeValue: Int32 = RL_Utils.GetItemTypeValue(type);
+    return typeValue == 9 || typeValue == 10;
   }
 
   public static func IsJunk(data: ref<gameItemData>) -> Bool {
-    return RL_Utils.HasTypePrefix(data, "Gen_") && !RL_Utils.IsMoney(data) && !RL_Utils.IsCraftingMats(data) && !RL_Utils.IsSchematics(data);
-  }
-
-  public static func IsMoney(data: ref<gameItemData>) -> Bool {
-    return Equals(data.GetID(), ItemID.FromTDBID(t"Items.money"));
+    let type: gamedataItemType = data.GetItemType();
+    let typeValue: Int32 = RL_Utils.GetItemTypeValue(type);
+    return typeValue == 30;
   }
 
   public static func IsMod(data: ref<gameItemData>) -> Bool {
-    return RL_Utils.HasTypePrefix(data, "Prt_") && !RL_Utils.IsQuickhack(data);
+    let type: gamedataItemType = data.GetItemType();
+    let typeValue: Int32 = RL_Utils.GetItemTypeValue(type);
+    return typeValue >= 37 && typeValue <= 72 && typeValue != 58;
+  }
+
+  public static func IsMoney(data: ref<gameItemData>) -> Bool {
+    let type: gamedataItemType = data.GetItemType();
+    let typeValue: Int32 = RL_Utils.GetItemTypeValue(type);
+    return Equals(data.GetID(), ItemID.FromTDBID(t"Items.money")) || typeValue == 33;
   }
 
   public static func IsQuickhack(data: ref<gameItemData>) -> Bool {
     let type: gamedataItemType = data.GetItemType();
-    return Equals(type, gamedataItemType.Prt_Program);
+    let typeValue: Int32 = RL_Utils.GetItemTypeValue(type);
+    return typeValue == 58;
   }
 
   public static func IsSchematics(data: ref<gameItemData>) -> Bool {
@@ -168,22 +212,24 @@ public class RL_Utils {
 
   public static func IsShard(data: ref<gameItemData>) -> Bool {
     let type: gamedataItemType = data.GetItemType();
-    return Equals(type, gamedataItemType.Gen_Readable);
+    let typeValue: Int32 = RL_Utils.GetItemTypeValue(type);
+    return typeValue == 30;
   }
 
   public static func IsSkillBook(data: ref<gameItemData>) -> Bool {
     let type: gamedataItemType = data.GetItemType();
-    return Equals(type, gamedataItemType.Con_Skillbook);
+    let typeValue: Int32 = RL_Utils.GetItemTypeValue(type);
+    return typeValue == 12;
   }
 
-  public static func HasTypePrefix(data: ref<gameItemData>, prefix: String) -> Bool {
-    let type: gamedataItemType = data.GetItemType();
-    let typeStr: String = ToString(type);
-    return StrBeginsWith(typeStr, prefix);
+  public static func GetItemTypeValue(itemType: gamedataItemType) -> Int32 {
+    return EnumInt(itemType);
   }
 }
 
 public static func ToStr(data: ref<gameItemData>) -> String {
+  // let tdbid: TweakDBID = ItemID.GetTDBID(data.GetID());
+  // let itemRecord: ref<Item_Record> = TweakDBInterface.GetItemRecord(tdbid);
   let itemType: String = UIItemsHelper.GetItemTypeKey(data.GetItemType());
   let quantity: Int32 = data.GetQuantity();
   let quality: String = UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(data));

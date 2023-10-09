@@ -2,6 +2,7 @@ import ReducedLootExclusions.RL_Exclusions
 import ReducedLootTypes.RL_LootSource
 import ReducedLootUtils.*
 
+
 @replaceMethod(VendingMachine)
 protected func CreateDispenseRequest(shouldPay: Bool, item: ItemID) -> ref<DispenseRequest> {
   let dispenseRequest: ref<DispenseRequest> = new DispenseRequest();
@@ -193,3 +194,4 @@ protected cb func OnDialogsSelectIndex(index: Int32) -> Bool {
     };
   };
 }
+

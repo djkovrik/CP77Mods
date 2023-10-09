@@ -9,7 +9,7 @@ import ReducedLootTypes.*
 
 //    WHILE YOU EDIT THE VALUES BELOW PLEASE PAY ATTENTION TO COMMAS, YOU SHOULD NOT DELETE IT
 
-// -- Reduced Loot Config version 1.1
+// -- Reduced Loot Config version 2.0
 public class Config {
 
   // -- Probability settings for weapons drop per quality and loot source
@@ -25,7 +25,7 @@ public class Config {
       case RL_LootSource.World: return wrld[RL_Converters.QualityToInt(quality)];
       case RL_LootSource.Puppet: return invt[RL_Converters.QualityToInt(quality)];
       case RL_LootSource.Held: return held[RL_Converters.QualityToInt(quality)];
-      default: return 0;
+      default: return 100;
     }
   }
 
@@ -41,7 +41,7 @@ public class Config {
       case RL_LootSource.Container: return cont[RL_Converters.QualityToInt(quality)];
       case RL_LootSource.World: return wrld[RL_Converters.QualityToInt(quality)];
       case RL_LootSource.Puppet: return invt[RL_Converters.QualityToInt(quality)];
-      default: return 0;
+      default: return 100;
     }
   }
 
@@ -54,13 +54,13 @@ public class Config {
     let edib =    [       50,           50,              50       ]; // <- Edibles
     let grnd =    [       25,           25,              25       ]; // <- Grenades
     let heal =    [       25,           25,              25       ]; // <- Healings
-    let junk =    [       50,           50,              50       ]; // <- Junk
     let mods =    [       50,           50,              50       ]; // <- Mods
     let moni =    [       25,           25,              25       ]; // <- Money
     let hack =    [       50,           50,              50       ]; // <- Quickhacks
     let schm =    [       100,          100,             100      ]; // <- Schematics
-    let shrd =    [       100,          100,             100      ]; // <- Shards
     let skll =    [       100,          100,             100      ]; // <- Skillbooks
+ // let junk =    [       50,           50,              50       ]; // <- Junk
+ // let shrd =    [       100,          100,             100      ]; // <- Shards
 
     if Equals(RL_LootSource.Held, source) { return 0; }
     switch type {
@@ -70,14 +70,14 @@ public class Config {
       case RL_LootType.Edibles: return edib[RL_Converters.SourceToInt(source)];
       case RL_LootType.Grenades: return grnd[RL_Converters.SourceToInt(source)];
       case RL_LootType.Healings: return heal[RL_Converters.SourceToInt(source)];
-      case RL_LootType.Junk: return junk[RL_Converters.SourceToInt(source)];
       case RL_LootType.Mods: return mods[RL_Converters.SourceToInt(source)];
       case RL_LootType.Money: return moni[RL_Converters.SourceToInt(source)];
       case RL_LootType.Quickhacks: return hack[RL_Converters.SourceToInt(source)];
       case RL_LootType.Schematics: return schm[RL_Converters.SourceToInt(source)];
-      case RL_LootType.Shards: return shrd[RL_Converters.SourceToInt(source)];
       case RL_LootType.SkillBooks: return skll[RL_Converters.SourceToInt(source)];
-      default: return 0;
+   // case RL_LootType.Shards: return shrd[RL_Converters.SourceToInt(source)];
+   // case RL_LootType.Junk: return junk[RL_Converters.SourceToInt(source)];
+      default: return 100;
     };
   }
 }

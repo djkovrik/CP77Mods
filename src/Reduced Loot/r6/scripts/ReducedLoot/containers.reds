@@ -3,7 +3,7 @@ import ReducedLootTypes.RL_LootSource
 import ReducedLootUtils.*
 
 @addMethod(gameLootContainerBase)
-private func EvaluateLoot() -> Void {
+private func EvaluateLootCustom() -> Void {
   let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.GetGame());
   let items: array<wref<gameItemData>>;
   let item: wref<gameItemData>;
@@ -39,15 +39,16 @@ private func EvaluateLoot() -> Void {
   };
 }
 
-@replaceMethod(gameLootContainerBase)
-protected cb func OnEvaluateLootQuality(evt: ref<EvaluateLootQualityEvent>) -> Bool {
-  this.EvaluateLootQuality();
-  this.EvaluateLoot();
+@wrapMethod(gameLootContainerBase)
+protected cb func OnEvaluateLootQuality(evt: ref<gameEvaluateLootQualityEvent>) -> Bool {
+  wrappedMethod(evt);
+  this.EvaluateLootCustom();
   this.RequestHUDRefresh();
 }
 
-@replaceMethod(gameLootContainerBase)
+@wrapMethod(gameLootContainerBase)
 protected final func EvaluateLootQualityTask(data: ref<ScriptTaskData>) -> Void {
-  this.EvaluateLootQuality();
-  this.EvaluateLoot();
+  wrappedMethod(data);
+  this.EvaluateLootCustom();
+  this.RequestHUDRefresh();
 }
