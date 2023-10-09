@@ -9,21 +9,24 @@ public class EnhancedCraftItemsGenerator extends ScriptableTweak {
     let id: TweakDBID;
     let name: String;
     this.counter = 0;
-    L("Checking weapon items...");
+
+    let batch: ref<TweakDBBatch> = TweakDBManager.StartBatch();
     for record in TweakDBInterface.GetRecords(n"WeaponItem") {
       let item = record as Item_Record;
       id = item.GetID();
       name = TweakDBInterface.GetString(id + t".stringName", "");
       weaponsVariants = TweakDBInterface.GetCNameArray(id + t".weaponVariants");
       if ArraySize(weaponsVariants) > 0 {
-        this.GenerateNewWeaponItem(name, item, weaponsVariants);
+        this.GenerateNewWeaponItem(batch, name, item, weaponsVariants);
       };
     };
+
+    batch.Commit();
 
     L(s"Generated records: \(this.counter)");
   }
 
-  private func GenerateNewWeaponItem(baseName: String, baseRecord: ref<Item_Record>, variants: array<CName>) -> Void {
+  private func GenerateNewWeaponItem(batch: ref<TweakDBBatch>, baseName: String, baseRecord: ref<Item_Record>, variants: array<CName>) -> Void {
     let baseRecordId: TweakDBID = baseRecord.GetID();
     let baseRecordType: gamedataItemType = baseRecord.ItemType().Type();
     let variantRecord: ref<Item_Record>;
@@ -37,7 +40,7 @@ public class EnhancedCraftItemsGenerator extends ScriptableTweak {
     let projectileTemplateName: CName;
     let useProjectileAppearance: Bool;
 
-    L(s"Generating variants for: \(TDBID.ToStringDEBUG(baseRecordId)) - \(baseName)");
+    //L(s"Generating variants for: \(TDBID.ToStringDEBUG(baseRecordId)) - \(baseName)");
 
     for variant in variants {
       variantRecord = TweakDBInterface.GetItemRecord(TDBID.Create(NameToString(variant)));
@@ -50,31 +53,31 @@ public class EnhancedCraftItemsGenerator extends ScriptableTweak {
         newRecordIdStr = s"\(baseName)_\(firstTag)";
         newRecordIdStrName = StringToName(newRecordIdStr);
         newRecordId = TDBID.Create(newRecordIdStr);
-        TweakDBManager.CloneRecord(newRecordIdStrName, baseRecordId);
+        batch.CloneRecord(newRecordIdStrName, baseRecordId);
         // Set flats
-        TweakDBManager.SetFlat(newRecordIdStrName + n".isPresetIconic", isPresetIconic);
-        TweakDBManager.SetFlat(newRecordIdStrName + n".usesVariants", true);
-        TweakDBManager.SetFlat(newRecordIdStrName + n".visualTags", variantVisualTags);
-        TweakDBManager.SetFlat(newRecordIdStrName + n".iconPath", variantRecord.IconPath());
+        batch.SetFlat(newRecordIdStrName + n".isPresetIconic", isPresetIconic);
+        batch.SetFlat(newRecordIdStrName + n".usesVariants", true);
+        batch.SetFlat(newRecordIdStrName + n".visualTags", variantVisualTags);
+        batch.SetFlat(newRecordIdStrName + n".iconPath", variantRecord.IconPath());
         // Add projectiles for knives
         if Equals(baseRecordType, gamedataItemType.Wea_Knife) {
           projectileTemplateName = TweakDBInterface.GetCName(baseRecordId + t".projectileTemplateName", n"");
           useProjectileAppearance = TweakDBInterface.GetBool(baseRecordId + t".useProjectileAppearance", false);
-          L(s" ---- knife detected: \(projectileTemplateName) - \(useProjectileAppearance)");
+          //L(s" ---- knife detected: \(projectileTemplateName) - \(useProjectileAppearance)");
           if NotEquals(projectileTemplateName, n"") {
-            TweakDBManager.SetFlat(newRecordIdStrName + n".projectileTemplateName", projectileTemplateName);
+            batch.SetFlat(newRecordIdStrName + n".projectileTemplateName", projectileTemplateName);
           };
-          TweakDBManager.SetFlat(newRecordIdStrName + n".useProjectileAppearance", useProjectileAppearance);
+          batch.SetFlat(newRecordIdStrName + n".useProjectileAppearance", useProjectileAppearance);
         };
-        TweakDBManager.UpdateRecord(newRecordId);
+        batch.UpdateRecord(newRecordId);
         ArrayPush(craftingVariants, newRecordId);
-        L(s" - generated - \(firstTag) variant for \(GetLocalizedTextByKey(baseRecord.DisplayName())): type \(baseRecord.Quality().Type()), iconic: \(isPresetIconic) -> \(newRecordIdStrName)");
+        //L(s" - generated - \(firstTag) variant for \(GetLocalizedTextByKey(baseRecord.DisplayName())): type \(baseRecord.Quality().Type()), iconic: \(isPresetIconic) -> \(newRecordIdStrName)");
         this.counter += 1;
       };
     };
 
     if ArraySize(craftingVariants) > 0 {
-      TweakDBManager.SetFlat(baseRecordId + t".ecraftVariants", ToVariant(craftingVariants));
+      batch.SetFlat(baseRecordId + t".ecraftVariants", ToVariant(craftingVariants));
     };
   }
 }

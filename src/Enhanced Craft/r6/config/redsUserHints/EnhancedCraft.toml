@@ -18,3 +18,9 @@ message = "One of your mods depends on TweakXL but you don't have it installed. 
 id = "MISSING_MOD_SETTINGS"
 line_contains  = "ModSettings"
 message = "One of your mods depends on Mod Settings but you don't have it installed. Try to (re)install it and make sure that you have \"r6\\scripts\\mod_settings\" and \"red4ext\\plugins\\mod_settings\" folders."
+
+[[UNRESOLVED_TYPE]]
+id = "OUTDATED_TWEAKXL"
+file = "EnhancedCraft/EnhancedCraft-GenerateItems.reds"
+line_contains  = "TweakDBBatch"
+message = "Enhanced Craft requires TweakXL version 1.4.2 or above."
