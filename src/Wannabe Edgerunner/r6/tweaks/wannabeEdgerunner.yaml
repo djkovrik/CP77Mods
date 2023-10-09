@@ -196,7 +196,7 @@ Items.ripperdoc_med:
   displayName: l"Mod-Edg-Ripper-Med"
   localizedDescription: l"Mod-Edg-Ripper-Med-Desc"
   quality: t"Quality.Rare"
-  iconPath: injector_1_orange
+  iconPath: drugs_endotrisine
   appearanceName: base_junk_item_medicine_bottle
   itemType: ItemType.Con_LongLasting
   tags:
@@ -245,7 +245,7 @@ Items.ripperdoc_med_uncommon:
   displayName: l"Mod-Edg-Ripper-Med"
   localizedDescription: l"Mod-Edg-Ripper-Med-Desc"
   quality: t"Quality.Uncommon"
-  iconPath: injector_1_orange
+  iconPath: drugs_endotrisine
   appearanceName: base_junk_item_medicine_bottle
   itemType: ItemType.Con_LongLasting
   tags:
@@ -291,7 +291,7 @@ Items.ripperdoc_med_common:
   displayName: l"Mod-Edg-Ripper-Med"
   localizedDescription: l"Mod-Edg-Ripper-Med-Desc"
   quality: t"Quality.Common"
-  iconPath: injector_1_orange
+  iconPath: drugs_endotrisine
   appearanceName: base_junk_item_medicine_bottle
   itemType: ItemType.Con_LongLasting
   tags:
@@ -364,14 +364,14 @@ Items.recipe_ripperdoc_med_common:
     - Price.RipperdocMedModifierRecipeCommon
 
 
-# === Add injector to reapers ===
+# === Add neuroblockers to reapers ===
 
 # Common - Cassius
 Vendors.wat_nid_ripperdoc_01: &AddInjectorCommon
   itemStock:
     - !append
       item: Items.ripperdoc_med_common
-      quantity: [ Vendors.MedicStore_inline11 ]
+      quantity: [ Vendors.IsPresent ]
 
 # Common - Instant Implants
 Vendors.wat_kab_ripperdoc_01 : *AddInjectorCommon
@@ -383,7 +383,7 @@ Vendors.wbr_jpn_ripperdoc_02: &AddInjectorUncommon
   itemStock:
     - !append
       item: Items.ripperdoc_med_uncommon
-      quantity: [ Vendors.MedicStore_inline5 ]
+      quantity: [ Vendors.IsPresent ]
 
 # Uncommon - Octavio's Clinic
 Vendors.std_rcr_ripperdoc_01 : *AddInjectorUncommon
@@ -393,7 +393,7 @@ Vendors.wbr_hil_ripdoc_01: &AddInjectorRare
   itemStock:
     - !append
       item: Items.ripperdoc_med
-      quantity: [ Vendors.MedicStore_inline5 ]
+      quantity: [ Vendors.IsPresent ]
 
 # Rare - Viktor's Clinic
 Vendors.wat_lch_ripperdoc_01 : *AddInjectorRare
