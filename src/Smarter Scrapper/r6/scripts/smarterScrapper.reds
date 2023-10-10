@@ -151,6 +151,10 @@ public func IsExclusionSS(id: TweakDBID) -> Bool {
     Equals(id, t"Items.Preset_Nova_Q000_Nomad") ||
     // Egg
     Equals(id, t"Items.q005_iguana_egg") ||
+    // Superfood
+    Equals(id, t"Items.PermanentHealthFood") ||
+    Equals(id, t"Items.PermanentStaminaRegenFood") ||
+    Equals(id, t"Items.PermanentMemoryRegenFood") ||
   false;
 }
 
