@@ -29,9 +29,9 @@ private func EvaluateLootCustom() -> Void {
       RLog("? Current quest objective: " + trackedObjective.GetId());
       RLog("? keep for id: " + BoolToString(shouldKeepForId) + ", keep for quest: " + BoolToString(shouldKeepForQuest));
       if RL_Checker.CanLootThis(item, RL_LootSource.Container) || this.IsQuest() || item.HasTag(n"Quest") || shouldKeepForId || shouldKeepForQuest || shouldKeepForContainer || Equals(item.GetItemType(), gamedataItemType.Gen_Keycard) {
-        RLog(s"+ kept for container \(containerHash) " + ToStr(item));
+        RLog(s"+ kept for container \(containerHash) " + RL_Utils.ToStr(item));
       } else {
-        RLog(s"- removed for container \(containerHash) " + ToStr(item));
+        RLog(s"- removed for container \(containerHash) " + RL_Utils.ToStr(item));
         transactionSystem.RemoveItem(this, item.GetID(), item.GetQuantity());
       };
       i += 1;

@@ -21,12 +21,12 @@ private final func DropHeldItems() -> Bool {
       if IsDefined(rightItem) {
         gamePuppet.ScaleDroppedItem(rightItem.GetItemData(), this);
         rightItem.GetItemData().SetShouldKeep_RL();
-        RLog("#2 set weapon was held for " + ToStr(rightItem.GetItemData()));
+        RLog("#2 set weapon was held for " + RL_Utils.ToStr(rightItem.GetItemData()));
       };
       if IsDefined(leftItem) {
         gamePuppet.ScaleDroppedItem(leftItem.GetItemData(), this);
         leftItem.GetItemData().SetShouldKeep_RL();
-        RLog("#2 set weapon was held for " + ToStr(leftItem.GetItemData()));
+        RLog("#2 set weapon was held for " + RL_Utils.ToStr(leftItem.GetItemData()));
       };
       if RPGManager.IsItemWeapon(rightItem.GetItemID()) || RPGManager.IsItemWeapon(leftItem.GetItemID()) {
         this.m_droppedWeapons = true;
@@ -49,7 +49,7 @@ public final static func DropItemFromSlot(obj: wref<GameObject>, slot: TweakDBID
   };
   if IsDefined(item) && NotEquals(RPGManager.GetItemType(itemInSlotID), gamedataItemType.Wea_Fists) && NotEquals(RPGManager.GetItemType(itemInSlotID), gamedataItemType.Cyb_StrongArms) && NotEquals(RPGManager.GetItemType(itemInSlotID), gamedataItemType.Cyb_MantisBlades) && NotEquals(RPGManager.GetItemType(itemInSlotID), gamedataItemType.Cyb_NanoWires) {
     item.GetItemData().SetShouldKeep_RL();
-    RLog("#3 set weapon was held for " + ToStr(item.GetItemData()));
+    RLog("#3 set weapon was held for " + RL_Utils.ToStr(item.GetItemData()));
     (obj as ScriptedPuppet).DropWeapons();
   };
 }
@@ -65,7 +65,7 @@ public final static func DropWeaponFromSlot(obj: wref<GameObject>, slot: TweakDB
   if IsDefined(item) {
     isBroken = RPGManager.BreakItem(obj.GetGame(), obj, item.GetItemID());
     if !isBroken {
-      RLog("#4 set weapon was held for " + ToStr(item.GetItemData()));
+      RLog("#4 set weapon was held for " + RL_Utils.ToStr(item.GetItemData()));
       item.GetItemData().SetShouldKeep_RL();
       (obj as ScriptedPuppet).DropWeapons();
     };

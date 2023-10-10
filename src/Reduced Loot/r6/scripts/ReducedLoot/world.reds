@@ -63,9 +63,9 @@ protected final func OnItemEntitySpawned(entID: EntityID) -> Void {
       RLog("? Item TDBID: " + TDBID.ToStringDEBUG(ItemID.GetTDBID(data.GetID())));
       RLog("? keep for id: " + BoolToString(shouldKeepForId) + ", no destroy: " + BoolToString(preventDestroying) + ", keep for quest: " + BoolToString(shouldKeepForQuest) + ", was held: " + BoolToString(isHeldWeapon));
       if RL_Checker.CanLootThis(data, RL_LootSource.Held) {
-        RLog("+ kept for world " + ToStr(data));
+        RLog("+ kept for world " + RL_Utils.ToStr(data));
       } else {
-        RLog("- removed from world " + ToStr(data));
+        RLog("- removed from world " + RL_Utils.ToStr(data));
         EntityGameInterface.Destroy(this.GetEntity());
         return ;
       };
@@ -76,13 +76,13 @@ protected final func OnItemEntitySpawned(entID: EntityID) -> Void {
       RLog("? keep for id: " + BoolToString(shouldKeepForId) + ", no destroy: " + BoolToString(preventDestroying) + ", keep for quest: " + BoolToString(shouldKeepForQuest) + ", was held: " + BoolToString(isHeldWeapon));
       
       if wasRemoved {
-        RLog(">>> was previously removed from world " + ToStr(data));
+        RLog(">>> was previously removed from world " + RL_Utils.ToStr(data));
         EntityGameInterface.Destroy(this.GetEntity());
         return ;
       };
 
       if wasKept {
-        RLog(">>> was previously kept for world " + ToStr(data));
+        RLog(">>> was previously kept for world " + RL_Utils.ToStr(data));
       };
 
       if preventDestroying {
@@ -90,10 +90,10 @@ protected final func OnItemEntitySpawned(entID: EntityID) -> Void {
       };
        
       if RL_Checker.CanLootThis(data, RL_LootSource.World) || preventDestroying || shouldKeepForId || shouldKeepForQuest || wasKept || Equals(data.GetItemType(), gamedataItemType.Gen_Keycard) {
-        RLog("+ kept for world " + ToStr(data));
+        RLog("+ kept for world " + RL_Utils.ToStr(data));
         playerPuppet.SaveAsKept_RL(hash);
       } else {
-        RLog("- removed from world " + ToStr(data));
+        RLog("- removed from world " + RL_Utils.ToStr(data));
         playerPuppet.SaveAsRemoved_RL(hash);
         EntityGameInterface.Destroy(this.GetEntity());
         return ;

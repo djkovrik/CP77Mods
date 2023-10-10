@@ -59,8 +59,7 @@ public class Config {
     let hack =    [       50,           50,              50       ]; // <- Quickhacks
     let schm =    [       100,          100,             100      ]; // <- Schematics
     let skll =    [       100,          100,             100      ]; // <- Skillbooks
- // let junk =    [       50,           50,              50       ]; // <- Junk
- // let shrd =    [       100,          100,             100      ]; // <- Shards
+    let junk =    [       100,          50,              100      ]; // <- Junk
 
     if Equals(RL_LootSource.Held, source) { return 0; }
     switch type {
@@ -75,8 +74,7 @@ public class Config {
       case RL_LootType.Quickhacks: return hack[RL_Converters.SourceToInt(source)];
       case RL_LootType.Schematics: return schm[RL_Converters.SourceToInt(source)];
       case RL_LootType.SkillBooks: return skll[RL_Converters.SourceToInt(source)];
-   // case RL_LootType.Shards: return shrd[RL_Converters.SourceToInt(source)];
-   // case RL_LootType.Junk: return junk[RL_Converters.SourceToInt(source)];
+      case RL_LootType.Junk: return junk[RL_Converters.SourceToInt(source)];
       default: return 100;
     };
   }

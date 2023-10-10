@@ -29,6 +29,5 @@ enum RL_LootType {
   Money = 10,
   Quickhacks = 11,
   Schematics = 12,
-  Shards = 13,
-  SkillBooks = 14,
+  SkillBooks = 13,
 }

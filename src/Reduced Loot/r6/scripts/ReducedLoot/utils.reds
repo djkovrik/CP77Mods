@@ -11,17 +11,17 @@ public class RL_Checker {
 
     // Iconics check
     if RPGManager.IsItemDataIconic(data) || Equals(RPGManager.GetItemDataQuality(data), gamedataQuality.Iconic) {
-      RLog(">>> Iconic item detected: " + ToStr(data));
+      RLog(">>> Iconic item detected: " + RL_Utils.ToStr(data));
       return true;
     };
     // Quest check
     if data.HasTag(n"Quest") { 
-      RLog(">>> Quest item detected: " + ToStr(data));
+      RLog(">>> Quest item detected: " + RL_Utils.ToStr(data));
       return true; 
     };
     // Сyberdeck check
     if data.HasTag(n"Cyberdeck") { 
-      RLog(">>> Cyberdeck detected: " + ToStr(data));
+      RLog(">>> Cyberdeck detected: " + RL_Utils.ToStr(data));
       return true; 
     };
 
@@ -100,7 +100,6 @@ public class RL_Converters {
     if RL_Utils.IsMoney(data) { return RL_LootType.Money; }
     if RL_Utils.IsQuickhack(data) { return RL_LootType.Quickhacks; }
     if RL_Utils.IsSchematics(data) { return RL_LootType.Schematics; }
-    if RL_Utils.IsShard(data) { return RL_LootType.Shards; }
     if RL_Utils.IsSkillBook(data) { return RL_LootType.SkillBooks; }
 
     return RL_LootType.Junk;
@@ -118,7 +117,6 @@ Unhandled types:
   Fla_Support = 25
   Gen_DataBank = 28
   Gen_Jewellery = 29
-  Gen_Junk = 30
   Gen_Keycard = 31
   Gen_Misc = 32
   Gen_Readable = 34
@@ -210,12 +208,6 @@ public class RL_Utils {
     return data.HasTag(n"Recipe");
   }
 
-  public static func IsShard(data: ref<gameItemData>) -> Bool {
-    let type: gamedataItemType = data.GetItemType();
-    let typeValue: Int32 = RL_Utils.GetItemTypeValue(type);
-    return typeValue == 30;
-  }
-
   public static func IsSkillBook(data: ref<gameItemData>) -> Bool {
     let type: gamedataItemType = data.GetItemType();
     let typeValue: Int32 = RL_Utils.GetItemTypeValue(type);
@@ -225,15 +217,13 @@ public class RL_Utils {
   public static func GetItemTypeValue(itemType: gamedataItemType) -> Int32 {
     return EnumInt(itemType);
   }
-}
 
-public static func ToStr(data: ref<gameItemData>) -> String {
-  // let tdbid: TweakDBID = ItemID.GetTDBID(data.GetID());
-  // let itemRecord: ref<Item_Record> = TweakDBInterface.GetItemRecord(tdbid);
-  let itemType: String = UIItemsHelper.GetItemTypeKey(data.GetItemType());
-  let quantity: Int32 = data.GetQuantity();
-  let quality: String = UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(data));
-  return itemType + " [" + quantity + "]: " + quality;
+  public static func ToStr(data: ref<gameItemData>) -> String {
+    let itemType: String = UIItemsHelper.GetItemTypeKey(data.GetItemType());
+    let quantity: Int32 = data.GetQuantity();
+    let quality: String = UIItemsHelper.QualityEnumToString(RPGManager.GetItemDataQuality(data));
+    return itemType + " [" + quantity + "]: " + quality;
+  }
 }
 
 public static func RLog(const str: script_ref<String>) -> Void {
