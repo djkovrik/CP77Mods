@@ -429,6 +429,15 @@ public class PlayerStaminabarModuleConfig {
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Zoom-Desc")
   let ShowWithZoom: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD Addons")
+  @runtimeProperty("ModSettings.category", "Addons-LHUD-Journal-Widget")
+  @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Opacity")
+  @runtimeProperty("ModSettings.description", "Addons-LHUD-Opacity-Desc")
+  @runtimeProperty("ModSettings.step", "0.1")
+  @runtimeProperty("ModSettings.min", "0.0")
+  @runtimeProperty("ModSettings.max", "1.0")
+  let StaminaWidgetOpacity: Float = 0.7;
 }
 
 public class WorldMarkersModuleConfigQuest {

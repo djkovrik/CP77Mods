@@ -29,7 +29,7 @@ public func DetermineCurrentVisibility() -> Void {
   if NotEquals(this.lhud_isVisibleNow, isVisible) {
     this.lhud_isVisibleNow = isVisible;
     if isVisible {
-      this.AnimateAlphaLHUD(this.GetRootWidget(), 1.0, 0.3);
+      this.AnimateAlphaLHUD(this.GetRootWidget(), this.lhudConfig.StaminaWidgetOpacity, 0.3);
     } else {
       this.AnimateAlphaLHUD(this.GetRootWidget(), 0.0, 0.3);
     };
