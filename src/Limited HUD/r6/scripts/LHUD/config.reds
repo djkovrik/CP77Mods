@@ -387,6 +387,50 @@ public class PlayerHealthbarModuleConfig {
   let ShowWithZoom: Bool = false;
 }
 
+public class PlayerStaminabarModuleConfig {
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Gameplay-RPG-Stats-Stamina")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Is-Enabled")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Is-Enabled-Desc")
+  let IsEnabled: Bool = true;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Gameplay-RPG-Stats-Stamina")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Global-Key")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Global-Key-Desc")
+  let BindToGlobalHotkey: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Gameplay-RPG-Stats-Stamina")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Combat")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Combat-Desc")
+  let ShowInCombat: Bool = true;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Gameplay-RPG-Stats-Stamina")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Out-Combat")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Out-Combat-Desc")
+  let ShowOutOfCombat: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Gameplay-RPG-Stats-Stamina")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Stealth")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Stealth-Desc")
+  let ShowInStealth: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Gameplay-RPG-Stats-Stamina")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Weapon")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Weapon-Desc")
+  let ShowWithWeapon: Bool = true;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Gameplay-RPG-Stats-Stamina")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Zoom")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Zoom-Desc")
+  let ShowWithZoom: Bool = false;
+}
+
 public class WorldMarkersModuleConfigQuest {
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Quest")
