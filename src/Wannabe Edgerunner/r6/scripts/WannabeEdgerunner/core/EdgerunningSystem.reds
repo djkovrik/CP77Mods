@@ -98,12 +98,9 @@ public class EdgerunningSystem extends ScriptableSystem {
 
       this.InvalidateCurrentState(true);
     };
-  }
 
-  private final func OnPlayerDetach(request: ref<PlayerDetachRequest>) -> Void {
-    // do nothing for now
+    // EdgerunnerStats.Print(this, this.config);
   }
-
 
   // -- Control effects flows
 
@@ -578,8 +575,6 @@ public class EdgerunningSystem extends ScriptableSystem {
         };
       };
     };
-
-    // EdgerunnerStats.Print(this, this.config);
   }
 
 

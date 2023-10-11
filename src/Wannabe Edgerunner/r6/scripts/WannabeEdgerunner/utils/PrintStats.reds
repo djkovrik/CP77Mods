@@ -31,10 +31,10 @@ public abstract class EdgerunnerStats {
     let sr2 = lower / Cast<Int32>(Cast<Float>(sandevistan) * config.qualityMultiplierRare);
     let su2 = lower / Cast<Int32>(Cast<Float>(sandevistan) * config.qualityMultiplierUncommon);
     let sc2 = lower / Cast<Int32>(Cast<Float>(sandevistan) * config.qualityMultiplierCommon);
-    let enm2 = upper / config.killCostOther;
-    let cop2 = upper / config.killCostNCPD;
-    let civ2 = upper / config.killCostCivilian;
-    E(s"Glitches threshold: \(system.upperThreshold), cyberpsychosis threshold: \(system.lowerThreshold)");
+    let enm2 = lower / config.killCostOther;
+    let cop2 = lower / config.killCostNCPD;
+    let civ2 = lower / config.killCostCivilian;
+    E(s"Pool: \(system.currentHumanityPool), glitches threshold: \(system.upperThreshold), cyberpsychosis threshold: \(system.lowerThreshold)");
     E(s"Berserk usages before glitches: Legendary \(bl1), Epic \(be1), Rare \(br1), Uncommon \(bu1), Common \(bc1)");
     E(s"Berserk usages before psycho: Legendary \(bl2), Epic \(be2), Rare \(br2), Uncommon \(bu2), Common \(bc2)");
     E(s"Sandevistan usages before glitches: Legendary \(sl1), Epic \(se1), Rare \(sr1), Uncommon \(su1), Common \(sc1)");

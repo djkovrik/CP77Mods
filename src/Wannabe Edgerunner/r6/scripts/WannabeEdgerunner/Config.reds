@@ -7,7 +7,7 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.step", "5")
   @runtimeProperty("ModSettings.min", "50")
   @runtimeProperty("ModSettings.max", "500")
-  let baseHumanityPool: Int32 = 120;
+  let baseHumanityPool: Int32 = 100;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Humanity")
@@ -15,8 +15,8 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.description", "Mod-Edg-Humanity-Bonus-Desc")
   @runtimeProperty("ModSettings.step", "0.1")
   @runtimeProperty("ModSettings.min", "0.0")
-  @runtimeProperty("ModSettings.max", "50")
-  let humanityBonusPerLevel: Float = 0.0;
+  @runtimeProperty("ModSettings.max", "20.0")
+  let humanityBonusPerLevel: Float = 0.5;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Humanity")
@@ -25,7 +25,7 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.step", "5")
   @runtimeProperty("ModSettings.min", "5")
   @runtimeProperty("ModSettings.max", "500")
-  let glitchesThreshold: Int32 = 60;
+  let glitchesThreshold: Int32 = 40;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Humanity")
@@ -34,7 +34,7 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.step", "5")
   @runtimeProperty("ModSettings.min", "5")
   @runtimeProperty("ModSettings.max", "500")
-  let psychosisThreshold: Int32 = 30;
+  let psychosisThreshold: Int32 = 20;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Gameplay-Devices-Interactions-MadnessHack")
@@ -73,7 +73,7 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.category", "Gameplay-Devices-Interactions-MadnessHack")
   @runtimeProperty("ModSettings.displayName", "Mod-Edg-Teleport-On-End")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Teleport-On-End-Desc")
-  let teleportOnEnd: Bool = false;
+  let teleportOnEnd: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Implants-Usage-Cost")
@@ -118,7 +118,7 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.step", "1")
   @runtimeProperty("ModSettings.min", "0")
   @runtimeProperty("ModSettings.max", "20")
-  let mantisBladesUsageCost: Int32 = 0;
+  let mantisBladesUsageCost: Int32 = 1;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Implants-Usage-Cost")
@@ -127,7 +127,7 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.step", "1")
   @runtimeProperty("ModSettings.min", "0")
   @runtimeProperty("ModSettings.max", "20")
-  let monowireUsageCost: Int32 = 0;
+  let monowireUsageCost: Int32 = 1;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Implants-Usage-Cost")
@@ -136,7 +136,7 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.step", "1")
   @runtimeProperty("ModSettings.min", "0")
   @runtimeProperty("ModSettings.max", "20")
-  let opticalCamoUsageCost: Int32 = 0;
+  let opticalCamoUsageCost: Int32 = 1;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Quality")
@@ -390,6 +390,3 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.max", "20000")
   let neuroblockersRecipePriceRare: Int32 = 12000;
 }
-
-// Replace false with true to show full debug logs in CET console
-public static func ShowDebugLogsEdgerunner() -> Bool = true
