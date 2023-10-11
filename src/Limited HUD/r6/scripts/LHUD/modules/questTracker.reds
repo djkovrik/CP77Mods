@@ -84,8 +84,9 @@ private let lhudDelayId: DelayID;
 protected cb func OnStateChanges(hash: Uint32, className: CName, notifyOption: JournalNotifyOption, changeType: JournalChangeType) -> Bool {
   wrappedMethod(hash, className, notifyOption, changeType);
 
-  let isCurrentQuestUpdated: Bool = Equals(this.m_journalManager.GetTrackedEntry().GetId(), this.m_journalManager.GetEntry(hash).GetId());
-  if isCurrentQuestUpdated && Equals(notifyOption, JournalNotifyOption.Notify) {
+  let isCurrentQuestUpdated: Bool = Equals(this.m_journalManager.GetTrackedEntry().GetId(), this.m_journalManager.GetEntry(hash).GetId()) && Equals(notifyOption, JournalNotifyOption.Notify);
+  let isDirect: Bool = Equals(notifyOption, JournalNotifyOption.Notify) && Equals(changeType, JournalChangeType.Direct);
+  if isCurrentQuestUpdated || isDirect {
     this.ShowForJournalUpdate();
   };
 }
