@@ -46,6 +46,24 @@ enum LHUDRicochetColors {
   Red = 2,
 }
 
+enum LHUDArrowAndHpAppearance {
+  Red = 0,
+  Orange = 1,
+  Green = 2,
+  Blue = 3,
+  White = 4,
+  Hide = 5,
+}
+
+enum LHUDDamagePreviewColors {
+  Red = 0,
+  Orange = 1,
+  Green = 2,
+  Blue = 3,
+  Black = 4,
+  White = 5,
+}
+
 // Basic visibility condition event
 public class LHUDEvent extends Event {
   public let isActive: Bool;

@@ -431,7 +431,7 @@ public class PlayerStaminabarModuleConfig {
   let ShowWithZoom: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
-  @runtimeProperty("ModSettings.category", "Addons-LHUD-Journal-Widget")
+  @runtimeProperty("ModSettings.category", "Gameplay-RPG-Stats-Stamina")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Opacity")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Opacity-Desc")
   @runtimeProperty("ModSettings.step", "0.1")
@@ -1257,4 +1257,28 @@ public class LHUDAddonsColoringConfig {
   @runtimeProperty("ModSettings.displayValues.Green", "Mod-LHUD-Green")
   @runtimeProperty("ModSettings.displayValues.Red", "Mod-LHUD-Red")
   let RicochetColor: LHUDRicochetColors = LHUDRicochetColors.Green;
+
+  @runtimeProperty("ModSettings.mod", "LHUD Addons")
+  @runtimeProperty("ModSettings.category", "UI-Settings-Interface-HUD-Nameplates")
+  @runtimeProperty("ModSettings.displayName", "Addons-LHUD-HP-Arrow-Color")
+  @runtimeProperty("ModSettings.description", "Addons-LHUD-HP-Arrow-Color-Desc")
+  @runtimeProperty("ModSettings.displayValues.Red", "Mod-LHUD-Red")
+  @runtimeProperty("ModSettings.displayValues.Orange", "Mod-LHUD-Orange")
+  @runtimeProperty("ModSettings.displayValues.Green", "Mod-LHUD-Green")
+  @runtimeProperty("ModSettings.displayValues.Blue", "Mod-LHUD-Blue")
+  @runtimeProperty("ModSettings.displayValues.White", "Mod-LHUD-White")
+  @runtimeProperty("ModSettings.displayValues.Hide", "LocKey#17833")
+  let NameplateHpAndArrowAppearance: LHUDArrowAndHpAppearance = LHUDArrowAndHpAppearance.Orange;
+
+  @runtimeProperty("ModSettings.mod", "LHUD Addons")
+  @runtimeProperty("ModSettings.category", "UI-Settings-Interface-HUD-Nameplates")
+  @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Damage-Preview-Color")
+  @runtimeProperty("ModSettings.description", "Addons-LHUD-Damage-Preview-Color-Desc")
+  @runtimeProperty("ModSettings.displayValues.Red", "Mod-LHUD-Red")
+  @runtimeProperty("ModSettings.displayValues.Orange", "Mod-LHUD-Orange")
+  @runtimeProperty("ModSettings.displayValues.Green", "Mod-LHUD-Green")
+  @runtimeProperty("ModSettings.displayValues.Blue", "Mod-LHUD-Blue")
+  @runtimeProperty("ModSettings.displayValues.Black", "Mod-LHUD-Black")
+  @runtimeProperty("ModSettings.displayValues.White", "Mod-LHUD-White")
+  let DamagePreviewColor: LHUDDamagePreviewColors = LHUDDamagePreviewColors.Blue;
 }

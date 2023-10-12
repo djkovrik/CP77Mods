@@ -1,9 +1,11 @@
 import LimitedHudConfig.WorldMarkersModuleConfigCombat
+import LimitedHudConfig.LHUDAddonsColoringConfig
 import LimitedHudListeners.LHUDBlackboardsListener
+import LimitedHudCommon.LHUDDamagePreviewColors
+import LimitedHudCommon.LHUDArrowAndHpAppearance
 import LimitedHudCommon.LHUDEvent
 
-// -- Enemy head nameplate icons
-
+// -- Enemy nameplate icons
 @addMethod(StealthMappinController)
 protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
   this.ConsumeLHUDEvent(evt);
@@ -13,12 +15,17 @@ protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
 @addField(StealthMappinController)
 private let lhudConfig: ref<WorldMarkersModuleConfigCombat>;
 
+@addField(StealthMappinController)
+private let lhudConfigAddons: ref<LHUDAddonsColoringConfig>;
+
 @wrapMethod(StealthMappinController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
   this.lhudConfig = new WorldMarkersModuleConfigCombat();
+  this.lhudConfigAddons = new LHUDAddonsColoringConfig();
   this.FetchInitialStateFlags();
   this.DetermineCurrentVisibility();
+  this.RefreshTaggedArrowColor();
 }
 
 @addMethod(StealthMappinController)
@@ -42,80 +49,12 @@ public func DetermineCurrentVisibility() -> Void {
   this.OnUpdate();
 }
 
-// Hiding enemy markers
-@replaceMethod(StealthMappinController)
+// -- Tagged arrow visibility
+@wrapMethod(StealthMappinController)
 protected cb func OnUpdate() -> Bool {
-  let distance: Float;
-  let npcRarity: gamedataNPCRarity;
-  let ownerPuppet: ref<ScriptedPuppet>;
-  let percent: Float;
-  let playerPuppet: ref<PlayerPuppet>;
-  let shouldShow: Bool;
-  let showEliteIndicator: Bool;
-  let attitude: EAIAttitude = this.m_mappin.GetAttitudeTowardsPlayer();
-  this.m_isFriendly = Equals(attitude, EAIAttitude.AIA_Friendly);
-  this.m_isFriendlyFromHack = this.m_mappin.IsFriendlyFromHack();
-  this.m_isHostile = Equals(attitude, EAIAttitude.AIA_Hostile);
-  this.m_isAggressive = this.m_mappin.IsAggressive();
-  this.m_isHiddenByQuest = this.m_mappin.IsHiddenByQuestIn3D();
-  this.m_isNCPD = ScriptedPuppet.IsCharacterPolice(this.m_ownerObject);
-  if this.ShouldDisableMappin() {
-    inkWidgetRef.SetVisible(this.m_mainArt, false);
-    inkWidgetRef.SetVisible(this.m_arrow, false);
-    if this.m_isFriendlyFromHack && ScriptedPuppet.IsActive(this.m_ownerObject) {
-      this.UpdateObjectMarkerAndTagging();
-      this.m_root.SetState(n"Friendly");
-      this.m_mappin.UpdateCombatantState(false);
-      this.m_mappin.SetVisibleIn3D(this.m_objectMarkerVisible);
-      this.SetRootVisible(this.m_objectMarkerVisible);
-    } else {
-      this.UpdateObjectMarkerVisibility(false, false);
-      this.m_mappin.SetVisibleIn3D(false);
-      this.SetRootVisible(false);
-    };
-    return true;
-  };
-  ownerPuppet = this.m_ownerObject as ScriptedPuppet;
-  playerPuppet = GameInstance.GetPlayerSystem(this.m_ownerObject.GetGame()).GetLocalPlayerControlledGameObject() as PlayerPuppet;
-  percent = this.m_mappin.GetDetectionProgress();
-  this.m_canSeePlayer = this.m_mappin.CanSeePlayer();
-  this.m_squadInCombat = this.m_mappin.IsSquadInCombat();
-  this.m_numberOfCombatants = Cast<Int32>(this.m_mappin.GetNumberOfCombatants());
-  this.m_isInCombatWithPlayer = IsDefined(ownerPuppet) && NPCPuppet.IsInCombatWithTarget(ownerPuppet, playerPuppet);
-  if this.m_mappin.HideUIDetection() || !this.m_canSeePlayer && NotEquals(this.m_currentAnimState, gameEnemyStealthAwarenessState.Combat) && this.m_numberOfCombatants >= 1 {
-    this.m_detectionVisible = false;
-  } else {
-    this.m_detectionVisible = NotEquals(this.m_currentAnimState, gameEnemyStealthAwarenessState.Relaxed) && NotEquals(this.m_currentAnimState, gameEnemyStealthAwarenessState.Combat) || this.m_animationIsPlaying;
-  };
-  this.OverrideClamp(this.m_detectionVisible);
-  this.UpdateStatusEffectIcon();
-  this.UpdateCanvasOpacity();
-  npcRarity = ownerPuppet.GetNPCRarity();
-  showEliteIndicator = !this.m_statusEffectShowing && !this.m_detectionVisible && (Equals(npcRarity, gamedataNPCRarity.Elite) || Equals(npcRarity, gamedataNPCRarity.MaxTac));
-  inkWidgetRef.SetVisible(this.m_levelIcon, showEliteIndicator);
-  shouldShow = (this.m_detectionVisible || this.m_statusEffectShowing || this.m_inNameplateMode || this.m_nameplateAnimationIsPlaying) && !this.m_isHiddenByQuest  && this.lhud_isVisibleNow;
-  inkWidgetRef.SetVisible(this.m_mainArt, shouldShow);
-  if IsDefined(this.m_ownerNPC) {
-    this.UpdateNPCDetection(percent);
-  } else {
-    this.UpdateDeviceDetection(percent);
-  };
-  this.UpdateObjectMarkerAndTagging();
-  this.UpdateDetectionMeter(percent);
-  inkWidgetRef.SetVisible(this.m_arrow, this.isCurrentlyClamped && shouldShow);
-  if this.ShouldShowDistance() {
-    distance = this.GetDistanceToPlayer();
-    inkTextRef.SetText(this.m_distance, UnitsLocalizationHelper.LocalizeDistance(distance));
-    inkWidgetRef.SetVisible(this.m_distance, distance >= 10.00);
-  };
-  this.m_mappin.SetStealthAwarenessState(this.m_currentAnimState);
-  this.m_mappin.SetVisibleIn3D(shouldShow || this.m_objectMarkerVisible);
-  this.SetRootVisible(shouldShow || this.m_objectMarkerVisible);
-  this.SetIgnorePriority(!this.m_detectionVisible);
-  this.m_lastPercent = percent;
+  wrappedMethod();
 
-  // Arrows
-  if !this.lhud_isVisibleNow && !this.m_mappin.IsTagged() {
+  if !this.lhud_isVisibleNow && !this.m_mappin.IsTagged() || Equals(this.lhudConfigAddons.NameplateHpAndArrowAppearance, LHUDArrowAndHpAppearance.Hide) {
     inkWidgetRef.SetOpacity(this.m_arrow, 0.0);
     inkWidgetRef.SetOpacity(this.m_objectMarker, 0.0);
     inkWidgetRef.SetOpacity(this.m_taggedContainer, 0.0);
@@ -126,13 +65,12 @@ protected cb func OnUpdate() -> Bool {
   };
 }
 
-
 // -- Enemy healthbar
-
 @addMethod(NameplateVisualsLogicController)
 protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
   this.ConsumeLHUDEvent(evt);
   this.DetermineCurrentVisibility();
+  this.RefreshHpBarColors();
 }
 
 @addMethod(NameplateVisualsLogicController)
@@ -158,10 +96,14 @@ public func DetermineCurrentVisibility() -> Void {
 @addField(NameplateVisualsLogicController)
 private let lhudConfig: ref<WorldMarkersModuleConfigCombat>;
 
+@addField(NameplateVisualsLogicController)
+private let lhudConfigAddons: ref<LHUDAddonsColoringConfig>;
+
 @wrapMethod(NameplateVisualsLogicController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
   this.lhudConfig = new WorldMarkersModuleConfigCombat();
+  this.lhudConfigAddons = new LHUDAddonsColoringConfig();
   this.FetchInitialStateFlags();
   this.DetermineCurrentVisibility();
 }
@@ -181,6 +123,185 @@ private final func UpdateHealthbarVisibility() -> Void {
     threatPuppet = this.m_cachedPuppet as NPCPuppet;
     if ScriptedPuppet.IsAlive(threatPuppet) && hpVisible && !ScriptedPuppet.IsDefeated(threatPuppet) {
       BossHealthBarGameController.ReevaluateBossHealthBar(threatPuppet, playerPuppet);
+    };
+  };
+}
+
+// -- Tag arrow color
+@addMethod(StealthMappinController)
+private final func RefreshTaggedArrowColor() -> Void {
+  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+
+  let newColor: CName;
+  switch(this.lhudConfigAddons.NameplateHpAndArrowAppearance) {
+    case LHUDArrowAndHpAppearance.Red:
+      newColor = n"MainColors.Red";
+      break;
+    case LHUDArrowAndHpAppearance.Orange:
+      newColor = n"MainColors.EnemyBase";
+      break;
+    case LHUDArrowAndHpAppearance.Green:
+      newColor = n"MainColors.Green";
+       break;
+    case LHUDArrowAndHpAppearance.Blue:
+      newColor = n"MainColors.Blue";
+      break;
+    case LHUDArrowAndHpAppearance.White:
+      newColor = n"MainColors.White";
+      break;
+    case LHUDArrowAndHpAppearance.Hide:
+      newColor = n"MainColors.White";
+      break;
+    default:
+      newColor = n"MainColors.EnemyBase";
+      break;
+  };
+
+  let objectImage: ref<inkWidget> = root.GetWidgetByPathName(n"objectMarker/objectImage");
+  objectImage.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+  objectImage.BindProperty(n"tintColor", newColor);
+
+  let arrowLeft: ref<inkWidget> = root.GetWidgetByPathName(n"objectMarker/taggedContainer/taggedArrowLeft");
+  arrowLeft.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+  arrowLeft.BindProperty(n"tintColor", newColor);
+
+  let arrowRight: ref<inkWidget> = root.GetWidgetByPathName(n"objectMarker/taggedContainer/taggedArrowRight");
+  arrowRight.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+  arrowRight.BindProperty(n"tintColor", newColor);
+
+  let arrow: ref<inkWidget> = root.GetWidgetByPathName(n"Arrow/arrowImage");
+  arrow.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+  arrow.BindProperty(n"tintColor", newColor);
+
+  if Equals(this.lhudConfigAddons.NameplateHpAndArrowAppearance, LHUDArrowAndHpAppearance.Hide) {
+    objectImage.SetOpacity(0.0);
+    arrowLeft.SetOpacity(0.0);
+    arrowRight.SetOpacity(0.0);
+    arrow.SetOpacity(0.0);
+  };
+}
+
+// -- Enemy healthbar colors
+@addMethod(NameplateVisualsLogicController)
+private final func RefreshHpBarColors() -> Void {
+  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+
+  let newHpColor: CName;
+  switch(this.lhudConfigAddons.NameplateHpAndArrowAppearance) {
+    case LHUDArrowAndHpAppearance.Red:
+      newHpColor = n"MainColors.Red";
+      break;
+    case LHUDArrowAndHpAppearance.Orange:
+      newHpColor = n"MainColors.EnemyBase";
+      break;
+    case LHUDArrowAndHpAppearance.Green:
+      newHpColor = n"MainColors.Green";
+       break;
+    case LHUDArrowAndHpAppearance.Blue:
+      newHpColor = n"MainColors.Blue";
+      break;
+    case LHUDArrowAndHpAppearance.White:
+      newHpColor = n"MainColors.White";
+      break;
+    case LHUDArrowAndHpAppearance.Hide:
+      newHpColor = n"MainColors.White";
+      break;
+    default:
+      newHpColor = n"MainColors.EnemyBase";
+      break;
+  };
+
+  if Equals(this.lhudConfigAddons.NameplateHpAndArrowAppearance, LHUDArrowAndHpAppearance.Hide) {
+    inkWidgetRef.SetOpacity(this.m_healthbarWidget, 0.0);
+    inkWidgetRef.SetOpacity(this.m_healthBarFull, 0.0);
+    inkWidgetRef.SetOpacity(this.m_healthBarFrame, 0.0);
+    inkWidgetRef.SetOpacity(this.m_damagePreviewWrapper, 0.0);
+    inkWidgetRef.SetOpacity(this.m_damagePreviewWidget, 0.0);
+    inkWidgetRef.SetOpacity(this.m_damagePreviewArrow, 0.0);
+
+    return ;
+  };
+
+  // HP
+  let strock: ref<inkWidget> = root.GetWidgetByPathName(n"name_health_horiz_panel/healthBar/wrapper/strock");
+  strock.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+  strock.BindProperty(n"tintColor", newHpColor);
+
+  let full: ref<inkWidget> = root.GetWidgetByPathName(n"name_health_horiz_panel/healthBar/wrapper/logic/full");
+  full.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+  full.BindProperty(n"tintColor", newHpColor);
+
+  let skull: ref<inkWidget> = root.GetWidgetByPathName(n"name_health_horiz_panel/healthBar/wrapper/skull");
+  skull.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+  skull.BindProperty(n"tintColor", newHpColor);
+
+  let newDamagePreviewColor: CName;
+  switch(this.lhudConfigAddons.DamagePreviewColor) {
+    case LHUDDamagePreviewColors.Red:
+      newDamagePreviewColor = n"MainColors.Red";
+      break;
+    case LHUDDamagePreviewColors.Orange:
+      newDamagePreviewColor = n"MainColors.EnemyBase";
+      break;
+    case LHUDDamagePreviewColors.Green:
+      newDamagePreviewColor = n"MainColors.Green";
+       break;
+    case LHUDDamagePreviewColors.Blue:
+      newDamagePreviewColor = n"MainColors.Blue";
+      break;
+    case LHUDDamagePreviewColors.Black:
+      newDamagePreviewColor = n"MainColors.Black";
+      break;
+    case LHUDDamagePreviewColors.White:
+      newDamagePreviewColor = n"MainColors.White";
+      break;
+    default:
+      newDamagePreviewColor = n"MainColors.Blue";
+      break;
+  };
+
+
+  // Damage preview  
+  let arrow: ref<inkWidget> = root.GetWidgetByPathName(n"name_health_horiz_panel/healthBar/wrapper/stealth_kill/arrow");
+  arrow.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+  arrow.BindProperty(n"tintColor", newDamagePreviewColor);
+
+  let sfull: ref<inkWidget> = root.GetWidgetByPathName(n"name_health_horiz_panel/healthBar/wrapper/stealth_kill/full");
+  sfull.DisableAllEffectsByType(inkEffectType.ScanlineWipe);
+  sfull.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+  sfull.BindProperty(n"tintColor", newDamagePreviewColor);
+}
+
+// Disable damage preview pulsing
+@replaceMethod(NameplateVisualsLogicController)
+public final func PreviewDamage(value: Int32) -> Void {
+  // let animOptions: inkAnimOptions;
+  let currentHealthPercentage: Float;
+  let damagePercentage: Float;
+  let offset: Float;
+  let renderTransformXPivot: Float;
+  this.m_currentDamagePreviewValue = value;
+  if value <= 0 {
+    if IsDefined(this.m_damagePreviewAnimProxy) && this.m_damagePreviewAnimProxy.IsPlaying() {
+      this.m_damagePreviewAnimProxy.Stop();
+    };
+    inkWidgetRef.SetVisible(this.m_damagePreviewWrapper, false);
+  } else {
+    if this.m_maximumHealth > 0 {
+      currentHealthPercentage = Cast<Float>(this.m_currentHealth) / Cast<Float>(this.m_maximumHealth);
+      damagePercentage = Cast<Float>(value) / Cast<Float>(this.m_maximumHealth);
+      damagePercentage = MinF(damagePercentage, currentHealthPercentage);
+      renderTransformXPivot = damagePercentage < 1.00 ? (currentHealthPercentage - damagePercentage) / (1.00 - damagePercentage) : 1.00;
+      offset = 100.00 + 150.00 * damagePercentage - 150.00 * currentHealthPercentage;
+      inkWidgetRef.SetRenderTransformPivot(this.m_damagePreviewWidget, new Vector2(renderTransformXPivot, 1.00));
+      inkWidgetRef.SetScale(this.m_damagePreviewWidget, new Vector2(damagePercentage, 1.00));
+      inkWidgetRef.SetMargin(this.m_damagePreviewArrow, 0.00, -22.00, offset, 0.00);
+      // if !IsDefined(this.m_damagePreviewAnimProxy) || !this.m_damagePreviewAnimProxy.IsPlaying() {
+      //   animOptions.loopType = inkanimLoopType.Cycle;
+      //   animOptions.loopInfinite = true;
+      //   this.m_damagePreviewAnimProxy = this.PlayLibraryAnimation(n"damage_preview_looping", animOptions);
+      // };
+      inkWidgetRef.SetVisible(this.m_damagePreviewWrapper, true);
     };
   };
 }
