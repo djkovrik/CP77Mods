@@ -61,7 +61,7 @@ protected cb func OnInitialize() -> Bool {
   outerContainer.SetAnchorPoint(new Vector2(0.0, 0.0));
   outerContainer.SetSize(new Vector2(940.0, 100.0));
   outerContainer.SetMargin(new inkMargin(180.0, 140.0, 0.0, 0.0));
-  outerContainer.Reparent(root, 2);
+  outerContainer.Reparent(root, 5);
 
   let vertical: ref<inkVerticalPanel> = new inkVerticalPanel();
   vertical.SetName(n"VerticalPanel");
