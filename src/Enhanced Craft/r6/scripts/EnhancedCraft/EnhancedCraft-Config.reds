@@ -16,6 +16,7 @@ public class ECraftConfig {
   @runtimeProperty("ModSettings.displayValues.Rare", "Mod-Craft-Settings-Quality-Rare")
   @runtimeProperty("ModSettings.displayValues.Epic", "Mod-Craft-Settings-Quality-Epic")
   @runtimeProperty("ModSettings.displayValues.Legendary", "Mod-Craft-Settings-Quality-Legendary")
+  @runtimeProperty("ModSettings.displayValues.Disable", "Mod-Craft-Settings-Perk-Block")
   let iconicRecipeCondition: ECraftIconicRecipeCondition = ECraftIconicRecipeCondition.Epic;
 
   // Ingredients quantity multiplier for Iconic variants

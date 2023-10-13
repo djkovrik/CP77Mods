@@ -12,7 +12,7 @@ private func IsWeaponVariantAvailable(variantId: TweakDBID, quality: CName, isIc
   let configQualityValue: Int32 = EnumInt(config.iconicRecipeCondition);
 
   if isIconic {
-    return recipeQualityValue < configQualityValue;
+    return recipeQualityValue >= configQualityValue;
   };
 
   return true;
