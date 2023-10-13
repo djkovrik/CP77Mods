@@ -238,13 +238,13 @@ private final func RefreshHpBarColors() -> Void {
   let newDamagePreviewColor: CName;
   switch(this.lhudConfigAddons.DamagePreviewColor) {
     case LHUDDamagePreviewColors.Red:
-      newDamagePreviewColor = n"MainColors.Red";
+      newDamagePreviewColor = n"MainColors.ActiveRed";
       break;
     case LHUDDamagePreviewColors.Orange:
       newDamagePreviewColor = n"MainColors.EnemyBase";
       break;
     case LHUDDamagePreviewColors.Green:
-      newDamagePreviewColor = n"MainColors.Green";
+      newDamagePreviewColor = n"MainColors.ActiveGreen";
        break;
     case LHUDDamagePreviewColors.Blue:
       newDamagePreviewColor = n"MainColors.Blue";

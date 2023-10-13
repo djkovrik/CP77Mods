@@ -430,7 +430,7 @@ public class PlayerStaminabarModuleConfig {
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Zoom-Desc")
   let ShowWithZoom: Bool = false;
 
-  @runtimeProperty("ModSettings.mod", "LHUD Addons")
+  @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Gameplay-RPG-Stats-Stamina")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Opacity")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Opacity-Desc")

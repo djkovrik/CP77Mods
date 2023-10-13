@@ -76,13 +76,11 @@ public func DetermineCurrentVisibility() -> Void {
 
   let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForWeapon || showForZoom;
   if this.lhud_isBraindanceActive { isVisible = false; };
-  if NotEquals(this.lhud_isVisibleNow, isVisible) {
-    this.lhud_isVisibleNow = isVisible;
-    if isVisible {
-      this.AnimateAlphaLHUD(this.GetRootWidget(), 1.0, 0.3);
-    } else {
-      this.AnimateAlphaLHUD(this.GetRootWidget(), 0.0, 0.3);
-    };
+  this.lhud_isVisibleNow = isVisible;
+  if isVisible {
+    this.AnimateAlphaLHUD(this.GetRootWidget(), 1.0, 0.3);
+  } else {
+    this.AnimateAlphaLHUD(this.GetRootWidget(), 0.0, 0.3);
   };
 }
 
@@ -90,17 +88,47 @@ public func DetermineCurrentVisibility() -> Void {
 private let lhudConfig: ref<ActionButtonsModuleConfig>;
 
 @wrapMethod(PhoneHotkeyController)
-protected cb func OnPlayerAttach(player: ref<GameObject>) -> Bool {
-  wrappedMethod(player);
+protected func Initialize() -> Bool {
+  let wrapped: Bool = wrappedMethod();
   this.lhudConfig = new ActionButtonsModuleConfig();
   if this.lhudConfig.IsEnabled {
     this.lhud_isVisibleNow = false;
     this.GetRootWidget().SetOpacity(0.0);
     this.OnInitializeFinished();
   };
+
+  return wrapped;
 }
 
 @addMethod(PhoneHotkeyController)
 protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> Void {
   this.lhudConfig = new ActionButtonsModuleConfig();
+}
+
+// Vanilla overrides
+@wrapMethod(PhoneHotkeyController)
+private final func UpdateData() -> Void {
+  wrappedMethod();
+
+  if this.lhudConfig.IsEnabled {
+    this.DetermineCurrentVisibility();
+  };
+}
+
+@wrapMethod(PhoneHotkeyController)
+private final func OnVehiclesManagerPopupIsShown(value: Bool) -> Void {
+  if value {
+    wrappedMethod(value);
+  } else {
+    this.DetermineCurrentVisibility();
+  };
+}
+
+@wrapMethod(PhoneHotkeyController)
+private final func OnRadioManagerPopupIsShown(value: Bool) -> Void {
+  if value {
+    wrappedMethod(value);
+  } else {
+    this.DetermineCurrentVisibility();
+  };
 }
