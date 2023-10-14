@@ -350,8 +350,9 @@ private func ShouldBeScrappedConsumableSS(data: wref<gameItemData>, quality: gam
 @addMethod(PlayerPuppet)
 private func ShouldBeScrappedJunkSS(data: wref<gameItemData>) -> Bool {
   let type: gamedataItemType = data.GetItemType();
-  let price: Int32 = RPGManager.CalculateSellPrice(this.GetGame(), this, data.GetID());
+  let price: Int32;
   if Equals(type, gamedataItemType.Gen_Junk) {
+    price = RPGManager.CalculateSellPrice(this.GetGame(), this, data.GetID());
     return this.scrapperJunk.enabled && price < this.scrapperJunk.maxPrice ;
   };
 
