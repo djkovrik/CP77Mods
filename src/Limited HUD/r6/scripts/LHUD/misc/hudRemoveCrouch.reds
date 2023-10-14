@@ -9,7 +9,7 @@ protected cb func OnInitialize() -> Bool {
   if config.HideCrouchIndicator {
     callback = new LHUDHideCrouchCallback();
     callback.uiSystem = GameInstance.GetUISystem(this.GetPlayerControlledObject().GetGame());
-    GameInstance.GetDelaySystem(this.GetPlayerControlledObject().GetGame()).DelayCallback(callback, 0.1);
+    GameInstance.GetDelaySystem(this.GetPlayerControlledObject().GetGame()).DelayCallback(callback, 0.2);
   };
 }
 
@@ -31,9 +31,10 @@ protected cb func OnRemoveCrouchEvent(evt: ref<RemoveCrouchEvent>) -> Bool {
 
 @if(ModuleExists("HUDrag.HUDWidgetsManager"))
 func RemoveCrouchFromHUD(root: ref<inkCompoundWidget>) -> Void {
-  let bottomRightHorizontalSlot = root.GetWidgetByPath(inkWidgetPath.Build(n"NewWeaponCrouch", n"BottomRightHorizontal")) as inkCompoundWidget;
-  let crouchIndicator: ref<inkWidget> = root.GetWidgetByPath(inkWidgetPath.Build(n"NewWeaponCrouch", n"BottomRightHorizontal", n"crouch_indicator")) as inkWidget;
-  bottomRightHorizontalSlot.RemoveChild(crouchIndicator);
+  let system: ref<inkSystem> = GameInstance.GetInkSystem();
+  let root: ref<inkCompoundWidget> = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
+  let crouch: ref<inkWidget> = root.GetWidgetByPathName(n"NewCrouchIndicator");
+  root.RemoveChild(crouch);
 }
 
 @if(!ModuleExists("HUDrag.HUDWidgetsManager"))
