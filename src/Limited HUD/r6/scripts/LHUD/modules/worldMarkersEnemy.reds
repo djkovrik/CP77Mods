@@ -132,7 +132,9 @@ protected cb func OnUpdate() -> Bool {
   };
 
   // Colors
-  this.RefreshTaggedArrowColor();
+  if this.lhudConfigAddons.EnableCustomColors {
+    this.RefreshTaggedArrowColor();
+  };
 }
 
 @addMethod(StealthMappinController)
@@ -204,7 +206,9 @@ protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
 @wrapMethod(NameplateVisualsLogicController)
 public final func SetVisualData(puppet: ref<GameObject>, const incomingData: script_ref<NPCNextToTheCrosshair>, opt isNewNpc: Bool) -> Void {
   wrappedMethod(puppet, incomingData, isNewNpc);
-  this.RefreshHpBarColors();
+  if this.lhudConfigAddons.EnableCustomColors {
+    this.RefreshHpBarColors();
+  };
 }
 
 @addMethod(NameplateVisualsLogicController)

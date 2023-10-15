@@ -1260,6 +1260,12 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "UI-Settings-Interface-HUD-Nameplates")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Custom-Colors")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Custom-Colors-Desc")
+  let EnableCustomColors: Bool = true;
+
+  @runtimeProperty("ModSettings.mod", "LHUD Addons")
+  @runtimeProperty("ModSettings.category", "UI-Settings-Interface-HUD-Nameplates")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-HP-Arrow-Color")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-HP-Arrow-Color-Desc")
   @runtimeProperty("ModSettings.displayValues.Red", "Mod-LHUD-Red")
@@ -1267,7 +1273,7 @@ public class LHUDAddonsColoringConfig {
   @runtimeProperty("ModSettings.displayValues.Green", "Mod-LHUD-Green")
   @runtimeProperty("ModSettings.displayValues.Blue", "Mod-LHUD-Blue")
   @runtimeProperty("ModSettings.displayValues.White", "Mod-LHUD-White")
-  @runtimeProperty("ModSettings.displayValues.Hide", "LocKey#17833")
+  @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
   let NameplateHpAndArrowAppearance: LHUDArrowAndHpAppearance = LHUDArrowAndHpAppearance.Orange;
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")

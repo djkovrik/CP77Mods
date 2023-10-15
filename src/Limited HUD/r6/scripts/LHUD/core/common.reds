@@ -52,7 +52,7 @@ enum LHUDArrowAndHpAppearance {
   Green = 2,
   Blue = 3,
   White = 4,
-  Hide = 5,
+  Transparent = 5,
 }
 
 enum LHUDDamagePreviewColors {
