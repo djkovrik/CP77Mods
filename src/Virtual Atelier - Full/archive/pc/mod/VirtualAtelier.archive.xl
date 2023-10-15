@@ -7,3 +7,4 @@ localization:
     ru-ru: base\localization\ru-ru\onscreens\virtual-atelier.json
     tr-tr: base\localization\tr-tr\onscreens\virtual-atelier.json
     zh-cn: base\localization\zh-cn\onscreens\virtual-atelier.json
+    fr-fr: base\localization\fr-fr\onscreens\virtual-atelier.json
