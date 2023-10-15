@@ -5,7 +5,8 @@ import LimitedHudCommon.LHUDDamagePreviewColors
 import LimitedHudCommon.LHUDArrowAndHpAppearance
 import LimitedHudCommon.LHUDEvent
 
-// -- Enemy nameplate icons
+// -- MARKERS
+
 @addMethod(StealthMappinController)
 protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
   this.ConsumeLHUDEvent(evt);
@@ -25,7 +26,6 @@ protected cb func OnInitialize() -> Bool {
   this.lhudConfigAddons = new LHUDAddonsColoringConfig();
   this.FetchInitialStateFlags();
   this.DetermineCurrentVisibility();
-  this.RefreshTaggedArrowColor();
 }
 
 @addMethod(StealthMappinController)
@@ -49,7 +49,6 @@ public func DetermineCurrentVisibility() -> Void {
   this.OnUpdate();
 }
 
-// -- Tagged arrow visibility
 @replaceMethod(StealthMappinController)
 protected cb func OnUpdate() -> Bool {
   let distance: Float;
@@ -131,13 +130,80 @@ protected cb func OnUpdate() -> Bool {
     inkWidgetRef.SetOpacity(this.m_objectMarker, 1.0);  
     inkWidgetRef.SetOpacity(this.m_taggedContainer, 1.0);  
   };
+
+  // Colors
+  this.RefreshTaggedArrowColor();
 }
 
-// -- Enemy healthbar
+@addMethod(StealthMappinController)
+private final func RefreshTaggedArrowColor() -> Void {
+  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+  let newColor: CName;
+  switch(this.lhudConfigAddons.NameplateHpAndArrowAppearance) {
+    case LHUDArrowAndHpAppearance.Red:
+      newColor = n"MainColors.Red";
+      break;
+    case LHUDArrowAndHpAppearance.Orange:
+      newColor = n"MainColors.EnemyBase";
+      break;
+    case LHUDArrowAndHpAppearance.Green:
+      newColor = n"MainColors.Green";
+       break;
+    case LHUDArrowAndHpAppearance.Blue:
+      newColor = n"MainColors.Blue";
+      break;
+    case LHUDArrowAndHpAppearance.White:
+      newColor = n"MainColors.White";
+      break;
+    case LHUDArrowAndHpAppearance.Transparent:
+      newColor = n"MainColors.White";
+      break;
+    default:
+      newColor = n"MainColors.EnemyBase";
+      break;
+  };
+
+  let objectImage: ref<inkWidget> = root.GetWidgetByPathName(n"objectMarker/objectImage");
+  let arrowLeft: ref<inkWidget> = root.GetWidgetByPathName(n"objectMarker/taggedContainer/taggedArrowLeft");
+  let arrowRight: ref<inkWidget> = root.GetWidgetByPathName(n"objectMarker/taggedContainer/taggedArrowRight");
+  let arrow: ref<inkWidget> = root.GetWidgetByPathName(n"Arrow/arrowImage");
+  objectImage.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+  arrowLeft.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+  arrowRight.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+  arrow.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+
+  if !this.m_isNCPD {
+    objectImage.BindProperty(n"tintColor", newColor);
+    arrowLeft.BindProperty(n"tintColor", newColor);
+    arrowRight.BindProperty(n"tintColor", newColor);
+    arrow.BindProperty(n"tintColor", newColor);
+  } else {
+    objectImage.UnbindProperty(n"tintColor");
+    arrowLeft.UnbindProperty(n"tintColor");
+    arrowRight.UnbindProperty(n"tintColor");
+    arrow.UnbindProperty(n"tintColor");
+  };
+
+  if Equals(this.lhudConfigAddons.NameplateHpAndArrowAppearance, LHUDArrowAndHpAppearance.Transparent) {
+    objectImage.SetOpacity(0.0);
+    arrowLeft.SetOpacity(0.0);
+    arrowRight.SetOpacity(0.0);
+    arrow.SetOpacity(0.0);
+  };
+}
+
+
+// -- HEALTHBAR
+
 @addMethod(NameplateVisualsLogicController)
 protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
   this.ConsumeLHUDEvent(evt);
   this.DetermineCurrentVisibility();
+}
+
+@wrapMethod(NameplateVisualsLogicController)
+public final func SetVisualData(puppet: ref<GameObject>, const incomingData: script_ref<NPCNextToTheCrosshair>, opt isNewNpc: Bool) -> Void {
+  wrappedMethod(puppet, incomingData, isNewNpc);
   this.RefreshHpBarColors();
 }
 
@@ -195,65 +261,20 @@ private final func UpdateHealthbarVisibility() -> Void {
   };
 }
 
-// -- Tag arrow color
-@addMethod(StealthMappinController)
-private final func RefreshTaggedArrowColor() -> Void {
-  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
-
-  let newColor: CName;
-  switch(this.lhudConfigAddons.NameplateHpAndArrowAppearance) {
-    case LHUDArrowAndHpAppearance.Red:
-      newColor = n"MainColors.Red";
-      break;
-    case LHUDArrowAndHpAppearance.Orange:
-      newColor = n"MainColors.EnemyBase";
-      break;
-    case LHUDArrowAndHpAppearance.Green:
-      newColor = n"MainColors.Green";
-       break;
-    case LHUDArrowAndHpAppearance.Blue:
-      newColor = n"MainColors.Blue";
-      break;
-    case LHUDArrowAndHpAppearance.White:
-      newColor = n"MainColors.White";
-      break;
-    case LHUDArrowAndHpAppearance.Hide:
-      newColor = n"MainColors.White";
-      break;
-    default:
-      newColor = n"MainColors.EnemyBase";
-      break;
-  };
-
-  let objectImage: ref<inkWidget> = root.GetWidgetByPathName(n"objectMarker/objectImage");
-  objectImage.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-  objectImage.BindProperty(n"tintColor", newColor);
-
-  let arrowLeft: ref<inkWidget> = root.GetWidgetByPathName(n"objectMarker/taggedContainer/taggedArrowLeft");
-  arrowLeft.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-  arrowLeft.BindProperty(n"tintColor", newColor);
-
-  let arrowRight: ref<inkWidget> = root.GetWidgetByPathName(n"objectMarker/taggedContainer/taggedArrowRight");
-  arrowRight.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-  arrowRight.BindProperty(n"tintColor", newColor);
-
-  let arrow: ref<inkWidget> = root.GetWidgetByPathName(n"Arrow/arrowImage");
-  arrow.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-  arrow.BindProperty(n"tintColor", newColor);
-
-  if Equals(this.lhudConfigAddons.NameplateHpAndArrowAppearance, LHUDArrowAndHpAppearance.Hide) {
-    objectImage.SetOpacity(0.0);
-    arrowLeft.SetOpacity(0.0);
-    arrowRight.SetOpacity(0.0);
-    arrow.SetOpacity(0.0);
-  };
-}
-
-// -- Enemy healthbar colors
 @addMethod(NameplateVisualsLogicController)
 private final func RefreshHpBarColors() -> Void {
-  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+  if Equals(this.lhudConfigAddons.NameplateHpAndArrowAppearance, LHUDArrowAndHpAppearance.Transparent) {
+    inkWidgetRef.SetOpacity(this.m_healthbarWidget, 0.0);
+    inkWidgetRef.SetOpacity(this.m_healthBarFull, 0.0);
+    inkWidgetRef.SetOpacity(this.m_healthBarFrame, 0.0);
+    inkWidgetRef.SetOpacity(this.m_damagePreviewWrapper, 0.0);
+    inkWidgetRef.SetOpacity(this.m_damagePreviewWidget, 0.0);
+    inkWidgetRef.SetOpacity(this.m_damagePreviewArrow, 0.0);
 
+    return ;
+  };
+
+  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
   let newHpColor: CName;
   switch(this.lhudConfigAddons.NameplateHpAndArrowAppearance) {
     case LHUDArrowAndHpAppearance.Red:
@@ -271,37 +292,13 @@ private final func RefreshHpBarColors() -> Void {
     case LHUDArrowAndHpAppearance.White:
       newHpColor = n"MainColors.White";
       break;
-    case LHUDArrowAndHpAppearance.Hide:
+    case LHUDArrowAndHpAppearance.Transparent:
       newHpColor = n"MainColors.White";
       break;
     default:
       newHpColor = n"MainColors.EnemyBase";
       break;
   };
-
-  if Equals(this.lhudConfigAddons.NameplateHpAndArrowAppearance, LHUDArrowAndHpAppearance.Hide) {
-    inkWidgetRef.SetOpacity(this.m_healthbarWidget, 0.0);
-    inkWidgetRef.SetOpacity(this.m_healthBarFull, 0.0);
-    inkWidgetRef.SetOpacity(this.m_healthBarFrame, 0.0);
-    inkWidgetRef.SetOpacity(this.m_damagePreviewWrapper, 0.0);
-    inkWidgetRef.SetOpacity(this.m_damagePreviewWidget, 0.0);
-    inkWidgetRef.SetOpacity(this.m_damagePreviewArrow, 0.0);
-
-    return ;
-  };
-
-  // HP
-  let strock: ref<inkWidget> = root.GetWidgetByPathName(n"name_health_horiz_panel/healthBar/wrapper/strock");
-  strock.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-  strock.BindProperty(n"tintColor", newHpColor);
-
-  let full: ref<inkWidget> = root.GetWidgetByPathName(n"name_health_horiz_panel/healthBar/wrapper/logic/full");
-  full.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-  full.BindProperty(n"tintColor", newHpColor);
-
-  let skull: ref<inkWidget> = root.GetWidgetByPathName(n"name_health_horiz_panel/healthBar/wrapper/skull");
-  skull.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-  skull.BindProperty(n"tintColor", newHpColor);
 
   let newDamagePreviewColor: CName;
   switch(this.lhudConfigAddons.DamagePreviewColor) {
@@ -328,16 +325,35 @@ private final func RefreshHpBarColors() -> Void {
       break;
   };
 
+  // HP
+  let strock: ref<inkWidget> = root.GetWidgetByPathName(n"name_health_horiz_panel/healthBar/wrapper/strock");
+  let full: ref<inkWidget> = root.GetWidgetByPathName(n"name_health_horiz_panel/healthBar/wrapper/logic/full");
+  let skull: ref<inkWidget> = root.GetWidgetByPathName(n"name_health_horiz_panel/healthBar/wrapper/skull");
+  strock.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+  full.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+  skull.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+  
 
   // Damage preview  
   let arrow: ref<inkWidget> = root.GetWidgetByPathName(n"name_health_horiz_panel/healthBar/wrapper/stealth_kill/arrow");
-  arrow.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-  arrow.BindProperty(n"tintColor", newDamagePreviewColor);
-
   let sfull: ref<inkWidget> = root.GetWidgetByPathName(n"name_health_horiz_panel/healthBar/wrapper/stealth_kill/full");
-  sfull.DisableAllEffectsByType(inkEffectType.ScanlineWipe);
+  arrow.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
   sfull.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-  sfull.BindProperty(n"tintColor", newDamagePreviewColor);
+  sfull.DisableAllEffectsByType(inkEffectType.ScanlineWipe);
+
+  if !this.m_isNCPD {
+    strock.BindProperty(n"tintColor", newHpColor);
+    full.BindProperty(n"tintColor", newHpColor);
+    skull.BindProperty(n"tintColor", newHpColor);
+    arrow.BindProperty(n"tintColor", newDamagePreviewColor);
+    sfull.BindProperty(n"tintColor", newDamagePreviewColor);
+  } else {
+    strock.UnbindProperty(n"tintColor");
+    full.UnbindProperty(n"tintColor");
+    skull.UnbindProperty(n"tintColor");
+    arrow.UnbindProperty(n"tintColor");
+    sfull.UnbindProperty(n"tintColor");
+  };
 }
 
 // Disable damage preview pulsing
