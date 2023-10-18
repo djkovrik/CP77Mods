@@ -17,7 +17,8 @@ public class VirtualAtelierSiteListener extends BrowserEventsListener {
     let root: ref<inkCompoundWidget> = this.m_deviceLogicController.GetRootCompoundWidget();
     return this.m_deviceLogicController.SpawnFromExternal(
       root, 
-      r"base\\gameplay\\gui\\virtual_atelier_stores.inkwidget", n"AtelierStores:VirtualAtelier.UI.AtelierStoresListController"
+      r"base\\gameplay\\gui\\virtual_atelier_stores.inkwidget", 
+      n"AtelierStores:VirtualAtelier.UI.AtelierStoresListController"
     ) as inkCompoundWidget;
   }
 }

@@ -2,24 +2,17 @@ import CarDealer.System.PurchasableVehicleSystem
 
 // Temp flag to show atelier tab content
 // TODO Need a better way to inject, research why LoadWebPage does not work with custom internet
+@if(!ModuleExists("BrowserExtension.System"))
 @addField(BrowserController)
 private let showCarDealer: Bool;
 
+@if(!ModuleExists("BrowserExtension.System"))
 @addMethod(BrowserController)
 protected cb func OnShowCarDealerEvent(evt: ref<ShowCarDealerEvent>) -> Bool {
   this.showCarDealer = evt.show;
 }
 
-public class ShowCarDealerEvent extends Event {
-  let show: Bool;
-
-  public static func Create(show: Bool) -> ref<ShowCarDealerEvent> {
-    let self: ref<ShowCarDealerEvent> = new ShowCarDealerEvent();
-    self.show = show;
-    return self;
-  }
-}
-
+@if(!ModuleExists("BrowserExtension.System"))
 @wrapMethod(ComputerInkGameController)
 private final func ShowMenuByName(elementName: String) -> Void {
   if Equals(elementName, "carDealer") {
@@ -38,6 +31,7 @@ private final func ShowMenuByName(elementName: String) -> Void {
   wrappedMethod(elementName);
 }
 
+@if(!ModuleExists("BrowserExtension.System"))
 @wrapMethod(ComputerInkGameController)
 private final func HideMenuByName(elementName: String) -> Void {
   if Equals(elementName, "carDealer") {
@@ -48,6 +42,7 @@ private final func HideMenuByName(elementName: String) -> Void {
   wrappedMethod(elementName);
 }
 
+@if(!ModuleExists("BrowserExtension.System"))
 @wrapMethod(ComputerControllerPS)
 public final func GetMenuButtonWidgets() -> array<SComputerMenuButtonWidgetPackage> {
   if !this.m_computerSetup.m_mailsMenu {
@@ -77,6 +72,7 @@ public final func GetMenuButtonWidgets() -> array<SComputerMenuButtonWidgetPacka
 }
 
 // kudos to NexusGuy999 for tab widget hack ^^
+@if(!ModuleExists("BrowserExtension.System"))
 @wrapMethod(ComputerMenuButtonController)
 public func Initialize(gameController: ref<ComputerInkGameController>, widgetData: SComputerMenuButtonWidgetPackage) -> Void {
   wrappedMethod(gameController, widgetData);
@@ -87,6 +83,7 @@ public func Initialize(gameController: ref<ComputerInkGameController>, widgetDat
   };
 }
 
+@if(!ModuleExists("BrowserExtension.System"))
 @wrapMethod(BrowserController)
 protected cb func OnPageSpawned(widget: ref<inkWidget>, userData: ref<IScriptable>) -> Bool {
   wrappedMethod(widget, userData);
@@ -97,4 +94,14 @@ protected cb func OnPageSpawned(widget: ref<inkWidget>, userData: ref<IScriptabl
     inkTextRef.SetText(this.m_addressText, "NETdir://cyber.car");
     currentController.PopulateDealerView(this.m_gameController.GetPlayerControlledObject());
   };
+}
+
+public class ShowCarDealerEvent extends Event {
+  let show: Bool;
+
+  public static func Create(show: Bool) -> ref<ShowCarDealerEvent> {
+    let self: ref<ShowCarDealerEvent> = new ShowCarDealerEvent();
+    self.show = show;
+    return self;
+  }
 }
