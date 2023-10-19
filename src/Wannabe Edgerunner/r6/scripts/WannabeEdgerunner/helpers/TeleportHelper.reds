@@ -67,6 +67,7 @@ public class TeleportHelper {
 
   private func OnPlayerTeleportCallback(position: Vector4) -> Void {
     E(s"Teleport - Target position: \(position)");
+    this.RequestLoadingScreen();
     let rotation: EulerAngles;
     GameInstance.GetTeleportationFacility(this.player.GetGame()).Teleport(this.player, position, rotation);
     this.postTeleportEffectsDelayId = this.delaySystem.DelayCallback(PostTeleportEffectsCallback.Create(this), 1.5, false);
@@ -95,6 +96,16 @@ public class TeleportHelper {
     // Stop cycled effects
     this.effectsHelper.CancelCycledFx();
     EdgerunningSystem.GetInstance(this.player.GetGame()).PostTeleportHumanityReset();
+  }
+
+  private func RequestLoadingScreen() {
+    E(s"Teleport - Show loading screen");
+    let controller = GameInstance.GetInkSystem().GetLayer(n"inkHUDLayer").GetGameController() as inkGameController;
+    if IsDefined(controller) {
+      let nextLoadingTypeEvt: ref<inkSetNextLoadingScreenEvent> = new inkSetNextLoadingScreenEvent();
+      nextLoadingTypeEvt.SetNextLoadingScreenType(inkLoadingScreenType.FastTravel);
+      controller.QueueBroadcastEvent(nextLoadingTypeEvt);
+    };
   }
 }
 

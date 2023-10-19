@@ -677,8 +677,8 @@ public class EdgerunningSystem extends ScriptableSystem {
     };
   }
 
-  public static func Debug(player: ref<PlayerPuppet>) -> Void {
-    let system: ref<EdgerunningSystem> = EdgerunningSystem.GetInstance(player.GetGame());
+  public static func Debug(gi: GameInstance) -> Void {
+    let system: ref<EdgerunningSystem> = EdgerunningSystem.GetInstance(gi);
     // system.AddHumanityDamage(10);
     // system.InvalidateCurrentState(false);
     system.RunPsychosisFlow();
