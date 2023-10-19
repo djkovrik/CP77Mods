@@ -17,6 +17,7 @@ import Edgerunning.Common.E
   public func OnBuff() -> Void
   public func OnBuffEnded() -> Void
   public func OnSleep() -> Void
+  public func OnKindness() -> Void
   public func OnBerserkActivation(item: ItemID) -> Void
   public func OnSandevistanActivation(item: ItemID) -> Void
   public func OnKerenzikovActivation() -> Void
@@ -218,6 +219,12 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.InvalidateCurrentState();
   }
 
+  public func OnKindness() -> Void {
+    this.RemoveHumanityDamage(2);
+    E("! Good deed, humanity restored");
+    this.InvalidateCurrentState();
+  }
+
   public func OnBerserkActivation(item: ItemID) -> Void {
     let itemRecord: ref<Item_Record> = RPGManager.GetItemRecord(item);
     let quality: gamedataQuality = itemRecord.Quality().Type();
@@ -415,6 +422,13 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public func AddHumanityDamage(cost: Int32) -> Void {
     this.currentHumanityDamage += cost;
+    this.psmBB.SetInt(GetAllBlackboardDefs().PlayerStateMachine.HumanityDamage, this.currentHumanityDamage, true);
+  }
+
+  public func RemoveHumanityDamage(cost: Int32) -> Void {
+    if this.currentHumanityDamage >= cost {
+      this.currentHumanityDamage -= cost;
+    };
     this.psmBB.SetInt(GetAllBlackboardDefs().PlayerStateMachine.HumanityDamage, this.currentHumanityDamage, true);
   }
 
