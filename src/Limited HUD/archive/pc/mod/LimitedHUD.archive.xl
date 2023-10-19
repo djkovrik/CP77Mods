@@ -9,3 +9,4 @@ localization:
     cz-cz: base\localization\cz-cz\onscreens\lhud.json
     jp-jp: base\localization\jp-jp\onscreens\lhud.json
     pt-br: base\localization\pt-br\onscreens\lhud.json
+    de-de: base\localization\de-de\onscreens\lhud.json
