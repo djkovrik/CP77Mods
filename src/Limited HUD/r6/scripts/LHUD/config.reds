@@ -500,6 +500,13 @@ public class PlayerStaminabarModuleConfig {
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Gameplay-RPG-Stats-Stamina")
   @runtimeProperty("ModSettings.category.order", "8")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Player-Stamina-Not-Full")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Player-Stamina-Not-Full-Desc")
+  let ShowNotFull: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Gameplay-RPG-Stats-Stamina")
+  @runtimeProperty("ModSettings.category.order", "8")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Opacity")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Opacity-Desc")
   @runtimeProperty("ModSettings.step", "0.1")

@@ -22,16 +22,17 @@ public func DetermineCurrentVisibility() -> Void {
   let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && this.lhudConfig.ShowOutOfCombat;
   let showForStealth: Bool =  this.lhud_isStealthActive && this.lhudConfig.ShowInStealth;
   let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfig.ShowWithWeapon;
-  let showForZoom: Bool =  this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
+  let showForZoom: Bool = this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
+  let showNotFull: Bool = this.m_currentBarValue < 1.0 && this.lhudConfig.ShowNotFull;
 
-  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForWeapon || showForZoom;
+  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForWeapon || showForZoom || showNotFull;
   if this.lhud_isBraindanceActive { isVisible = false; };
   if NotEquals(this.lhud_isVisibleNow, isVisible) {
     this.lhud_isVisibleNow = isVisible;
     if isVisible {
-      this.AnimateAlphaLHUD(this.GetRootWidget(), this.lhudConfig.StaminaWidgetOpacity, 0.3);
+      this.AnimateAlphaLHUD(this.GetRootWidget(), this.lhudConfig.StaminaWidgetOpacity, 0.25);
     } else {
-      this.AnimateAlphaLHUD(this.GetRootWidget(), 0.0, 0.3);
+      this.AnimateAlphaLHUD(this.GetRootWidget(), 0.0, 0.25);
     };
   };
 }
