@@ -4,6 +4,7 @@ import LimitedHudCommon.*
 public class ActionButtonsModuleConfig {
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Action-Buttons")
+  @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Is-Enabled")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Is-Enabled-Desc")
   let IsEnabled: Bool = true;
@@ -16,30 +17,35 @@ public class ActionButtonsModuleConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Action-Buttons")
+  @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Combat")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Combat-Desc")
   let ShowInCombat: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Action-Buttons")
+  @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Out-Combat")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Out-Combat-Desc")
   let ShowOutOfCombat: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Action-Buttons")
+  @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Stealth")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Stealth-Desc")
   let ShowInStealth: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Action-Buttons")
+  @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Weapon")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Weapon-Desc")
   let ShowWithWeapon: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Action-Buttons")
+  @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Zoom-Desc")
   let ShowWithZoom: Bool = false;
@@ -48,42 +54,49 @@ public class ActionButtonsModuleConfig {
 public class CrouchIndicatorModuleConfig {
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Crouch-Indicator")
+  @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Is-Enabled")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Is-Enabled-Desc")
   let IsEnabled: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Crouch-Indicator")
+  @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Global-Key")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Global-Key-Desc")
   let BindToGlobalHotkey: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Crouch-Indicator")
+  @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Combat")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Combat-Desc")
   let ShowInCombat: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Crouch-Indicator")
+  @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Out-Combat")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Out-Combat-Desc")
   let ShowOutOfCombat: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Crouch-Indicator")
+  @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Stealth")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Stealth-Desc")
   let ShowInStealth: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Crouch-Indicator")
+  @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Weapon")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Weapon-Desc")
   let ShowWithWeapon: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Crouch-Indicator")
+  @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Zoom-Desc")
   let ShowWithZoom: Bool = false;
@@ -92,42 +105,49 @@ public class CrouchIndicatorModuleConfig {
 public class WeaponRosterModuleConfig {
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Weapon-Roster")
+  @runtimeProperty("ModSettings.category.order", "3")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Is-Enabled")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Is-Enabled-Desc")
   let IsEnabled: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Weapon-Roster")
+  @runtimeProperty("ModSettings.category.order", "3")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Global-Key")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Global-Key-Desc")
   let BindToGlobalHotkey: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Weapon-Roster")
+  @runtimeProperty("ModSettings.category.order", "3")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Combat")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Combat-Desc")
   let ShowInCombat: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Weapon-Roster")
+  @runtimeProperty("ModSettings.category.order", "3")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Out-Combat")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Out-Combat-Desc")
   let ShowOutOfCombat: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Weapon-Roster")
+  @runtimeProperty("ModSettings.category.order", "3")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Stealth")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Stealth-Desc")
   let ShowInStealth: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Weapon-Roster")
+  @runtimeProperty("ModSettings.category.order", "3")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Weapon")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Weapon-Desc")
   let ShowWithWeapon: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Weapon-Roster")
+  @runtimeProperty("ModSettings.category.order", "3")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Zoom-Desc")
   let ShowWithZoom: Bool = false;
@@ -136,48 +156,56 @@ public class WeaponRosterModuleConfig {
 public class HintsModuleConfig {
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Hotkey-Hints")
+  @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Is-Enabled")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Is-Enabled-Desc")
   let IsEnabled: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Hotkey-Hints")
+  @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Global-Key")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Global-Key-Desc")
   let BindToGlobalHotkey: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Hotkey-Hints")
+  @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Combat")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Combat-Desc")
   let ShowInCombat: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Hotkey-Hints")
+  @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Out-Combat")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Out-Combat-Desc")
   let ShowOutOfCombat: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Hotkey-Hints")
+  @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Stealth")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Stealth-Desc")
   let ShowInStealth: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Hotkey-Hints")
+  @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Vehicle")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Vehicle-Desc")
   let ShowInVehicle: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Hotkey-Hints")
+  @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Weapon")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Weapon-Desc")
   let ShowWithWeapon: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Hotkey-Hints")
+  @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Zoom-Desc")
   let ShowWithZoom: Bool = false;
@@ -186,60 +214,70 @@ public class HintsModuleConfig {
 public class MinimapModuleConfig {
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Minimap")
+  @runtimeProperty("ModSettings.category.order", "5")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Is-Enabled")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Is-Enabled-Desc")
   let IsEnabled: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Minimap")
+  @runtimeProperty("ModSettings.category.order", "5")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Global-Key")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Global-Key-Desc")
   let BindToGlobalHotkey: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Minimap")
+  @runtimeProperty("ModSettings.category.order", "5")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Combat")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Combat-Desc")
   let ShowInCombat: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Minimap")
+  @runtimeProperty("ModSettings.category.order", "5")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Out-Combat")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Out-Combat-Desc")
   let ShowOutOfCombat: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Minimap")
+  @runtimeProperty("ModSettings.category.order", "5")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Stealth")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Stealth-Desc")
   let ShowInStealth: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Minimap")
+  @runtimeProperty("ModSettings.category.order", "5")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Vehicle")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Vehicle-Desc")
   let ShowInVehicle: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Minimap")
+  @runtimeProperty("ModSettings.category.order", "5")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Scanner")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Scanner-Desc")
   let ShowWithScanner: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Minimap")
+  @runtimeProperty("ModSettings.category.order", "5")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Weapon")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Weapon-Desc")
   let ShowWithWeapon: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Minimap")
+  @runtimeProperty("ModSettings.category.order", "5")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Zoom-Desc")
   let ShowWithZoom: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Minimap")
+  @runtimeProperty("ModSettings.category.order", "5")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Minimap-Opacity")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Minimap-Opacity-Desc")
   @runtimeProperty("ModSettings.step", "0.1")
@@ -251,66 +289,77 @@ public class MinimapModuleConfig {
 public class QuestTrackerModuleConfig {
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Quest-Tracker")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Is-Enabled")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Is-Enabled-Desc")
   let IsEnabled: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Quest-Tracker")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Global-Key")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Global-Key-Desc")
   let BindToGlobalHotkey: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Quest-Tracker")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Combat")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Combat-Desc")
   let ShowInCombat: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Quest-Tracker")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Out-Combat")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Out-Combat-Desc")
   let ShowOutOfCombat: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Quest-Tracker")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Stealth")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Stealth-Desc")
   let ShowInStealth: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Quest-Tracker")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Vehicle")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Vehicle-Desc")
   let ShowInVehicle: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Quest-Tracker")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Scanner")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Scanner-Desc")
   let ShowWithScanner: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Quest-Tracker")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Weapon")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Weapon-Desc")
   let ShowWithWeapon: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Quest-Tracker")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Zoom-Desc")
   let ShowWithZoom: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Quest-Tracker")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Quest-Tracker-Updates")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Quest-Tracker-Updates-Desc")
   let DisplayForQuestUpdates: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Quest-Tracker")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Quest-Tracker-Time")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Quest-Tracker-Time-Desc")
   @runtimeProperty("ModSettings.step", "1.0")
@@ -322,66 +371,77 @@ public class QuestTrackerModuleConfig {
 public class PlayerHealthbarModuleConfig {
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Healthbar")
+  @runtimeProperty("ModSettings.category.order", "7")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Is-Enabled")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Is-Enabled-Desc")
   let IsEnabled: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Healthbar")
+  @runtimeProperty("ModSettings.category.order", "7")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Global-Key")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Global-Key-Desc")
   let BindToGlobalHotkey: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Healthbar")
+  @runtimeProperty("ModSettings.category.order", "7")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Player-Healthbar-No-Health")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Player-Healthbar-No-Health-Desc")
   let ShowWhenHealthNotFull: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Healthbar")
+  @runtimeProperty("ModSettings.category.order", "7")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Player-Healthbar-No-Memory")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Player-Healthbar-No-Memory-Desc")
   let ShowWhenMemoryNotFull: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Healthbar")
+  @runtimeProperty("ModSettings.category.order", "7")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Player-Healthbar-Buffs")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Player-Healthbar-Buffs-Desc")
   let ShowWhenBuffsActive: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Healthbar")
+  @runtimeProperty("ModSettings.category.order", "7")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Player-Healthbar-Hacks")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Player-Healthbar-Hacks-Desc")
   let ShowWhenQuickhacksActive: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Healthbar")
+  @runtimeProperty("ModSettings.category.order", "7")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Combat")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Combat-Desc")
   let ShowInCombat: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Healthbar")
+  @runtimeProperty("ModSettings.category.order", "7")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Out-Combat")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Out-Combat-Desc")
   let ShowOutOfCombat: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Healthbar")
+  @runtimeProperty("ModSettings.category.order", "7")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Stealth")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Stealth-Desc")
   let ShowInStealth: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Healthbar")
+  @runtimeProperty("ModSettings.category.order", "7")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Weapon")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Weapon-Desc")
   let ShowWithWeapon: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Healthbar")
+  @runtimeProperty("ModSettings.category.order", "7")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Zoom-Desc")
   let ShowWithZoom: Bool = false;
@@ -390,48 +450,56 @@ public class PlayerHealthbarModuleConfig {
 public class PlayerStaminabarModuleConfig {
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Gameplay-RPG-Stats-Stamina")
+  @runtimeProperty("ModSettings.category.order", "8")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Is-Enabled")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Is-Enabled-Desc")
   let IsEnabled: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Gameplay-RPG-Stats-Stamina")
+  @runtimeProperty("ModSettings.category.order", "8")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Global-Key")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Global-Key-Desc")
   let BindToGlobalHotkey: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Gameplay-RPG-Stats-Stamina")
+  @runtimeProperty("ModSettings.category.order", "8")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Combat")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Combat-Desc")
   let ShowInCombat: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Gameplay-RPG-Stats-Stamina")
+  @runtimeProperty("ModSettings.category.order", "8")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Out-Combat")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Out-Combat-Desc")
   let ShowOutOfCombat: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Gameplay-RPG-Stats-Stamina")
+  @runtimeProperty("ModSettings.category.order", "8")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Stealth")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Stealth-Desc")
   let ShowInStealth: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Gameplay-RPG-Stats-Stamina")
+  @runtimeProperty("ModSettings.category.order", "8")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Weapon")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Weapon-Desc")
   let ShowWithWeapon: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Gameplay-RPG-Stats-Stamina")
+  @runtimeProperty("ModSettings.category.order", "8")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Zoom-Desc")
   let ShowWithZoom: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Gameplay-RPG-Stats-Stamina")
+  @runtimeProperty("ModSettings.category.order", "8")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Opacity")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Opacity-Desc")
   @runtimeProperty("ModSettings.step", "0.1")
@@ -443,54 +511,63 @@ public class PlayerStaminabarModuleConfig {
 public class WorldMarkersModuleConfigQuest {
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Quest")
+  @runtimeProperty("ModSettings.category.order", "9")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Is-Enabled")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Is-Enabled-Desc")
   let IsEnabled: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Quest")
+  @runtimeProperty("ModSettings.category.order", "9")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Global-Key")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Global-Key-Desc")
   let BindToGlobalHotkey: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Quest")
+  @runtimeProperty("ModSettings.category.order", "9")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Combat")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Combat-Desc")
   let ShowInCombat: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Quest")
+  @runtimeProperty("ModSettings.category.order", "9")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Out-Combat")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Out-Combat-Desc")
   let ShowOutOfCombat: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Quest")
+  @runtimeProperty("ModSettings.category.order", "9")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Stealth")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Stealth-Desc")
   let ShowInStealth: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Quest")
+  @runtimeProperty("ModSettings.category.order", "9")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Vehicle")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Vehicle-Desc")
   let ShowInVehicle: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Quest")
+  @runtimeProperty("ModSettings.category.order", "9")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Scanner")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Scanner-Desc")
   let ShowWithScanner: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Quest")
+  @runtimeProperty("ModSettings.category.order", "9")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Weapon")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Weapon-Desc")
   let ShowWithWeapon: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Quest")
+  @runtimeProperty("ModSettings.category.order", "9")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Zoom-Desc")
   let ShowWithZoom: Bool = true;
@@ -499,54 +576,63 @@ public class WorldMarkersModuleConfigQuest {
 public class WorldMarkersModuleConfigLoot {
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Loot")
+  @runtimeProperty("ModSettings.category.order", "10")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Is-Enabled")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Is-Enabled-Desc")
   let IsEnabled: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Loot")
+  @runtimeProperty("ModSettings.category.order", "10")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Global-Key")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Global-Key-Desc")
   let BindToGlobalHotkey: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Loot")
+  @runtimeProperty("ModSettings.category.order", "10")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Combat")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Combat-Desc")
   let ShowInCombat: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Loot")
+  @runtimeProperty("ModSettings.category.order", "10")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Out-Combat")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Out-Combat-Desc")
   let ShowOutOfCombat: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Loot")
+  @runtimeProperty("ModSettings.category.order", "10")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Stealth")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Stealth-Desc")
   let ShowInStealth: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Loot")
+  @runtimeProperty("ModSettings.category.order", "10")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Vehicle")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Vehicle-Desc")
   let ShowInVehicle: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Loot")
+  @runtimeProperty("ModSettings.category.order", "10")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Scanner")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Scanner-Desc")
   let ShowWithScanner: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Loot")
+  @runtimeProperty("ModSettings.category.order", "10")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Weapon")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Weapon-Desc")
   let ShowWithWeapon: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Loot")
+  @runtimeProperty("ModSettings.category.order", "10")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Zoom-Desc")
   let ShowWithZoom: Bool = true;
@@ -555,60 +641,70 @@ public class WorldMarkersModuleConfigLoot {
 public class WorldMarkersModuleConfigPOI {
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-POI")
+  @runtimeProperty("ModSettings.category.order", "11")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Is-Enabled")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Is-Enabled-Desc")
   let IsEnabled: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-POI")
+  @runtimeProperty("ModSettings.category.order", "11")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Global-Key")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Global-Key-Desc")
   let BindToGlobalHotkey: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-POI")
+  @runtimeProperty("ModSettings.category.order", "11")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Combat")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Combat-Desc")
   let ShowInCombat: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-POI")
+  @runtimeProperty("ModSettings.category.order", "11")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Out-Combat")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Out-Combat-Desc")
   let ShowOutOfCombat: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-POI")
+  @runtimeProperty("ModSettings.category.order", "11")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Stealth")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Stealth-Desc")
   let ShowInStealth: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-POI")
+  @runtimeProperty("ModSettings.category.order", "11")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Vehicle")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Vehicle-Desc")
   let ShowInVehicle: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-POI")
+  @runtimeProperty("ModSettings.category.order", "11")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Scanner")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Scanner-Desc")
   let ShowWithScanner: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-POI")
+  @runtimeProperty("ModSettings.category.order", "11")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Weapon")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Weapon-Desc")
   let ShowWithWeapon: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-POI")
+  @runtimeProperty("ModSettings.category.order", "11")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Zoom-Desc")
   let ShowWithZoom: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-POI")
+  @runtimeProperty("ModSettings.category.order", "11")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-POI-Tracked")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-POI-Tracked-Desc")
   let AlwaysShowTrackedMarker: Bool = false;
@@ -617,54 +713,63 @@ public class WorldMarkersModuleConfigPOI {
 public class WorldMarkersModuleConfigCombat {
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Combat")
+  @runtimeProperty("ModSettings.category.order", "12")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Is-Enabled")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Is-Enabled-Desc")
   let IsEnabled: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Combat")
+  @runtimeProperty("ModSettings.category.order", "12")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Global-Key")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Global-Key-Desc")
   let BindToGlobalHotkey: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Combat")
+  @runtimeProperty("ModSettings.category.order", "12")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Combat")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Combat-Desc")
   let ShowInCombat: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Combat")
+  @runtimeProperty("ModSettings.category.order", "12")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Out-Combat")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Out-Combat-Desc")
   let ShowOutOfCombat: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Combat")
+  @runtimeProperty("ModSettings.category.order", "12")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Stealth")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Stealth-Desc")
   let ShowInStealth: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Combat")
+  @runtimeProperty("ModSettings.category.order", "12")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Vehicle")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Vehicle-Desc")
   let ShowInVehicle: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Combat")
+  @runtimeProperty("ModSettings.category.order", "12")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Scanner")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Scanner-Desc")
   let ShowWithScanner: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Combat")
+  @runtimeProperty("ModSettings.category.order", "12")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Weapon")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Weapon-Desc")
   let ShowWithWeapon: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Combat")
+  @runtimeProperty("ModSettings.category.order", "12")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Zoom-Desc")
   let ShowWithZoom: Bool = false;
@@ -673,18 +778,21 @@ public class WorldMarkersModuleConfigCombat {
 public class WorldMarkersModuleConfigVehicles {
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Vehicles")
+  @runtimeProperty("ModSettings.category.order", "13")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Is-Enabled")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Is-Enabled-Desc")
   let IsEnabled: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Vehicles")
+  @runtimeProperty("ModSettings.category.order", "13")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Global-Key")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Global-Key-Desc")
   let BindToGlobalHotkey: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Vehicles")
+  @runtimeProperty("ModSettings.category.order", "13")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Vehicle")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Vehicle-Desc")
   let ShowInVehicle: Bool = false;
@@ -697,6 +805,7 @@ public class WorldMarkersModuleConfigVehicles {
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Vehicles")
+  @runtimeProperty("ModSettings.category.order", "13")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Zoom-Desc")
   let ShowWithZoom: Bool = true;
@@ -705,12 +814,14 @@ public class WorldMarkersModuleConfigVehicles {
 public class WorldMarkersModuleConfigDevices{
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Devices")
+  @runtimeProperty("ModSettings.category.order", "14")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Is-Enabled")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Is-Enabled-Desc")
   let IsEnabled: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Devices")
+  @runtimeProperty("ModSettings.category.order", "14")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Scanner")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Scanner-Desc")
   let ShowWithScanner: Bool = true;
@@ -719,6 +830,7 @@ public class WorldMarkersModuleConfigDevices{
 public class LHUDAddonsConfig {
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Journal-Widget")
+  @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Opacity")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Opacity-Desc")
   @runtimeProperty("ModSettings.step", "0.1")
@@ -728,6 +840,7 @@ public class LHUDAddonsConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Journal-Widget")
+  @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Scale")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Scale-Desc")
   @runtimeProperty("ModSettings.step", "0.1")
@@ -737,6 +850,7 @@ public class LHUDAddonsConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Items-Widget")
+  @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Opacity")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Opacity-Desc")
   @runtimeProperty("ModSettings.step", "0.1")
@@ -746,6 +860,7 @@ public class LHUDAddonsConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Items-Widget")
+  @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Scale")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Scale-Desc")
   @runtimeProperty("ModSettings.step", "0.1")
@@ -755,66 +870,77 @@ public class LHUDAddonsConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Notification-Sounds")
+  @runtimeProperty("ModSettings.category.order", "3")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Notification-Mute-Quest")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Notification-Mute-Quest-Desc")
   let MuteQuestNotifications: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Notification-Sounds")
+  @runtimeProperty("ModSettings.category.order", "3")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Notification-Mute-Level")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Notification-Mute-Level-Desc")
   let MuteLevelUpNotifications: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Hide-Prompt")
+  @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "LocKey#23295")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Hide-Prompt-Vehicle")
   let HidePromptGetIn: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Hide-Prompt")
+  @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "LocKey#238")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Hide-Prompt-Pick-Up")
   let HidePromptPickUpBody: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Hide-Prompt")
+  @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "LocKey#312")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Hide-Prompt-Talk")
   let HidePromptTalk: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Widgets-Remover")
+  @runtimeProperty("ModSettings.category.order", "5")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Speedometer")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Speedometer-Hide-Desc")
   let HideSpeedometer: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Widgets-Remover")
+  @runtimeProperty("ModSettings.category.order", "5")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Crouch")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Crouch-Remove-Desc")
   let HideCrouchIndicator: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Widgets-Remover")
+  @runtimeProperty("ModSettings.category.order", "5")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Healthbar-Texts")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Healthbar-Texts-Remove-Desc")
   let RemoveHealthbarTexts: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Widgets-Remover")
+  @runtimeProperty("ModSettings.category.order", "5")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Remover-Overhead")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Remover-Overhead-Desc")
   let RemoveOverheadSubtitles: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Widgets-Remover")
+  @runtimeProperty("ModSettings.category.order", "5")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-New-Area")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-New-Area-Desc")
   let RemoveNewAreaNotification: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Dialog-Resizer")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Scale")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Scale-Desc")
   @runtimeProperty("ModSettings.step", "0.1")
@@ -824,18 +950,21 @@ public class LHUDAddonsConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Pulse")
+  @runtimeProperty("ModSettings.category.order", "7")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Pulse-Disable")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Pulse-Disable-Desc")
   let RemoveMarkerPulse: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-HUD-Toggle")
+  @runtimeProperty("ModSettings.category.order", "8")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-HUD-Toggle-Enable")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-HUD-Toggle-Enable-Desc")
   let EnableHUDToggle: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Highlighting")
+  @runtimeProperty("ModSettings.category.order", "9")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Highlight-Pinged")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Highlight-Pinged-Desc")
   let HighlightUnderPingOnly: Bool = false;
@@ -844,6 +973,7 @@ public class LHUDAddonsConfig {
 public class LHUDAddonsColoringConfig {
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Coloring-Fill")
+  @runtimeProperty("ModSettings.category.order", "10")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Coloring-Interaction")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Coloring-Interaction-Fill")
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
@@ -858,6 +988,7 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Coloring-Fill")
+  @runtimeProperty("ModSettings.category.order", "10")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Coloring-Imp-Interaction")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Coloring-Imp-Interaction-Fill")
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
@@ -872,6 +1003,7 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Coloring-Fill")
+  @runtimeProperty("ModSettings.category.order", "10")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Coloring-Weakspot")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Coloring-Weakspot-Fill")
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
@@ -886,6 +1018,7 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Coloring-Fill")
+  @runtimeProperty("ModSettings.category.order", "10")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Coloring-Quest")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Coloring-Quest-Fill")
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
@@ -900,6 +1033,7 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Coloring-Fill")
+  @runtimeProperty("ModSettings.category.order", "10")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Coloring-Distraction")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Coloring-Distraction-Fill")
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
@@ -914,6 +1048,7 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Coloring-Fill")
+  @runtimeProperty("ModSettings.category.order", "10")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Coloring-Clue")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Coloring-Clue-Fill")
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
@@ -928,6 +1063,7 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Coloring-Fill")
+  @runtimeProperty("ModSettings.category.order", "10")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Coloring-NPC")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Coloring-NPC-Fill")
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
@@ -942,6 +1078,7 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Coloring-Fill")
+  @runtimeProperty("ModSettings.category.order", "10")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Coloring-AOE")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Coloring-AOE-Fill")
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
@@ -956,6 +1093,7 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Coloring-Fill")
+  @runtimeProperty("ModSettings.category.order", "10")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Coloring-Item")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Coloring-Item-Fill")
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
@@ -970,6 +1108,7 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Coloring-Fill")
+  @runtimeProperty("ModSettings.category.order", "10")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Coloring-Hostile")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Coloring-Hostile-Fill")
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
@@ -984,6 +1123,7 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Coloring-Fill")
+  @runtimeProperty("ModSettings.category.order", "10")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Coloring-Friendly")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Coloring-Friendly-Fill")
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
@@ -998,6 +1138,7 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Coloring-Fill")
+  @runtimeProperty("ModSettings.category.order", "10")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Coloring-Neutral")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Coloring-Neutral-Fill")
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
@@ -1012,6 +1153,7 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Coloring-Fill")
+  @runtimeProperty("ModSettings.category.order", "10")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Coloring-Hackable")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Coloring-Hackable-Fill")
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
@@ -1026,6 +1168,7 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Coloring-Fill")
+  @runtimeProperty("ModSettings.category.order", "10")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Coloring-Netrunner")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Coloring-Netrunner-Fill")
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
@@ -1040,6 +1183,7 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Coloring-Fill")
+  @runtimeProperty("ModSettings.category.order", "10")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Coloring-Backdoor")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Coloring-Backdoor-Fill")
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
@@ -1055,6 +1199,7 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Coloring-Outline")
+  @runtimeProperty("ModSettings.category.order", "11")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Coloring-Interaction")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Coloring-Interaction-Outline")
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
@@ -1069,6 +1214,7 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Coloring-Outline")
+  @runtimeProperty("ModSettings.category.order", "11")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Coloring-Imp-Interaction")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Coloring-Imp-Interaction-Outline")
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
@@ -1083,6 +1229,7 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Coloring-Outline")
+  @runtimeProperty("ModSettings.category.order", "11")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Coloring-Weakspot")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Coloring-Weakspot-Outline")
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
@@ -1097,6 +1244,7 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Coloring-Outline")
+  @runtimeProperty("ModSettings.category.order", "11")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Coloring-Quest")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Coloring-Quest-Outline")
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
@@ -1111,6 +1259,7 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Coloring-Outline")
+  @runtimeProperty("ModSettings.category.order", "11")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Coloring-Distraction")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Coloring-Distraction-Outline")
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
@@ -1125,6 +1274,7 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Coloring-Outline")
+  @runtimeProperty("ModSettings.category.order", "11")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Coloring-Clue")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Coloring-Clue-Outline")
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
@@ -1139,6 +1289,7 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Coloring-Outline")
+  @runtimeProperty("ModSettings.category.order", "11")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Coloring-AOE")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Coloring-AOE-Outline")
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
@@ -1153,6 +1304,7 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Coloring-Outline")
+  @runtimeProperty("ModSettings.category.order", "11")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Coloring-Item")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Coloring-Item-Outline")
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
@@ -1167,6 +1319,7 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Coloring-Outline")
+  @runtimeProperty("ModSettings.category.order", "11")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Coloring-Hostile")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Coloring-Hostile-Outline")
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
@@ -1181,6 +1334,7 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Coloring-Outline")
+  @runtimeProperty("ModSettings.category.order", "11")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Coloring-Friendly")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Coloring-Friendly-Outline")
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
@@ -1195,6 +1349,7 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Coloring-Outline")
+  @runtimeProperty("ModSettings.category.order", "11")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Coloring-Neutral")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Coloring-Neutral-Outline")
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
@@ -1209,6 +1364,7 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Coloring-Outline")
+  @runtimeProperty("ModSettings.category.order", "11")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Coloring-Hackable")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Coloring-Hackable-Outline")
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
@@ -1223,6 +1379,7 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Coloring-Outline")
+  @runtimeProperty("ModSettings.category.order", "11")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Coloring-Netrunner")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Coloring-Netrunner-Outline")
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
@@ -1237,6 +1394,7 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Coloring-Outline")
+  @runtimeProperty("ModSettings.category.order", "11")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Coloring-Backdoor")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Coloring-Backdoor-Outline")
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
@@ -1251,6 +1409,7 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Coloring-Ricochet")
+  @runtimeProperty("ModSettings.category.order", "12")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Coloring-Ricochet-NPC")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Coloring-Ricochet-NPC-Desc")
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
@@ -1260,12 +1419,14 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "UI-Settings-Interface-HUD-Nameplates")
+  @runtimeProperty("ModSettings.category.order", "13")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Custom-Colors")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Custom-Colors-Desc")
   let EnableCustomColors: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "UI-Settings-Interface-HUD-Nameplates")
+  @runtimeProperty("ModSettings.category.order", "13")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-HP-Arrow-Color")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-HP-Arrow-Color-Desc")
   @runtimeProperty("ModSettings.displayValues.Red", "Mod-LHUD-Red")
@@ -1278,6 +1439,7 @@ public class LHUDAddonsColoringConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "UI-Settings-Interface-HUD-Nameplates")
+  @runtimeProperty("ModSettings.category.order", "13")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Damage-Preview-Color")
   @runtimeProperty("ModSettings.description", "Addons-LHUD-Damage-Preview-Color-Desc")
   @runtimeProperty("ModSettings.displayValues.Red", "Mod-LHUD-Red")
