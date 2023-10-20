@@ -24,6 +24,21 @@ public class SimpleToggleGlobalInputListener {
     }
 }
 
+@if(ModuleExists("HUDrag"))
+@addMethod(inkGameController)
+protected cb func OnToggleHud(evt: ref<ToggleHudEvent>) -> Bool {
+  let system: ref<inkSystem>;
+  let root: ref<inkCompoundWidget>;
+  let isVisible: Bool;
+  if this.IsA(n"gameuiRootHudGameController") {
+    system = GameInstance.GetInkSystem();
+    root = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
+    isVisible = root.IsVisible();
+    root.SetVisible(!isVisible);
+  };
+}
+
+@if(!ModuleExists("HUDrag"))
 @addMethod(inkGameController)
 protected cb func OnToggleHud(evt: ref<ToggleHudEvent>) -> Bool {
   let isVisible: Bool;
