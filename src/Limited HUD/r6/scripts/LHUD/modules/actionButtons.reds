@@ -132,3 +132,29 @@ private final func OnRadioManagerPopupIsShown(value: Bool) -> Void {
     this.DetermineCurrentVisibility();
   };
 }
+
+@wrapMethod(PhoneHotkeyController)
+private final func OnPhoneEnabledChanged(val: Bool) -> Void {
+  if this.lhud_isVisibleNow { 
+    wrappedMethod(val);
+  } else {
+    this.DetermineCurrentVisibility();
+  };
+}
+
+@wrapMethod(PhoneHotkeyController)
+private final func IsPhoneInUse() -> Bool {
+  let wrapped: Bool = wrappedMethod();
+  this.DetermineCurrentVisibility();
+  return wrapped;
+}
+
+@wrapMethod(PhoneHotkeyController)
+protected cb func OnPhoneDeviceSlot(target: wref<inkWidget>) -> Bool {
+  if this.lhud_isVisibleNow {
+    return wrappedMethod(target);
+  };
+
+  this.DetermineCurrentVisibility();
+  return false;
+}
