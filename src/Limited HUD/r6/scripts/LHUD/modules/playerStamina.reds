@@ -64,3 +64,12 @@ public final func EvaluateStaminaBarVisibility() -> Void {
     wrappedMethod();
   };
 }
+
+@wrapMethod(StaminabarWidgetGameController)
+protected cb func OnFocusedCoolPerkActive(evt: ref<FocusPerkTriggerd>) -> Bool {
+  wrappedMethod(evt);
+  if !evt.isActive {
+    this.lhud_isVisibleNow = true;
+    this.DetermineCurrentVisibility();
+  };
+}
