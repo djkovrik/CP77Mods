@@ -1,26 +1,67 @@
 class SmarterScrapperClothesConfig {
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "LocKey#53753")
+  @runtimeProperty("ModSettings.category.order", "1")
+  @runtimeProperty("ModSettings.displayName", "LocKey#94245")
+  public let legendaryPlusPlus: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "Scrapper")
+  @runtimeProperty("ModSettings.category", "LocKey#53753")
+  @runtimeProperty("ModSettings.category.order", "1")
+  @runtimeProperty("ModSettings.displayName", "LocKey#94244")
+  public let legendaryPlus: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "Scrapper")
+  @runtimeProperty("ModSettings.category", "LocKey#53753")
+  @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "LocKey#1815")
   public let legendary: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "LocKey#53753")
+  @runtimeProperty("ModSettings.category.order", "1")
+  @runtimeProperty("ModSettings.displayName", "LocKey#94243")
+  public let epicPlus: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "Scrapper")
+  @runtimeProperty("ModSettings.category", "LocKey#53753")
+  @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "LocKey#1813")
   public let epic: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "LocKey#53753")
+  @runtimeProperty("ModSettings.category.order", "1")
+  @runtimeProperty("ModSettings.displayName", "LocKey#94242")
+  public let rarePlus: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "Scrapper")
+  @runtimeProperty("ModSettings.category", "LocKey#53753")
+  @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "LocKey#1816")
   public let rare: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "LocKey#53753")
+  @runtimeProperty("ModSettings.category.order", "1")
+  @runtimeProperty("ModSettings.displayName", "LocKey#94241")
+  public let uncommonPlus: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "Scrapper")
+  @runtimeProperty("ModSettings.category", "LocKey#53753")
+  @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "LocKey#1817")
   public let uncommon: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "LocKey#53753")
+  @runtimeProperty("ModSettings.category.order", "1")
+  @runtimeProperty("ModSettings.displayName", "LocKey#94240")
+  public let commonPlus: Bool = true;
+
+  @runtimeProperty("ModSettings.mod", "Scrapper")
+  @runtimeProperty("ModSettings.category", "LocKey#53753")
+  @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "LocKey#1814")
   public let common: Bool = true;
 }
@@ -28,31 +69,67 @@ class SmarterScrapperClothesConfig {
 class SmarterScrapperWeaponsConfig {
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "LocKey#53751")
-  @runtimeProperty("ModSettings.displayName", "LocKey#778")
-  public let knife: Bool = false;
+  @runtimeProperty("ModSettings.category.order", "2")
+  @runtimeProperty("ModSettings.displayName", "LocKey#94245")
+  public let legendaryPlusPlus: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "LocKey#53751")
+  @runtimeProperty("ModSettings.category.order", "2")
+  @runtimeProperty("ModSettings.displayName", "LocKey#94244")
+  public let legendaryPlus: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "Scrapper")
+  @runtimeProperty("ModSettings.category", "LocKey#53751")
+  @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "LocKey#1815")
   public let legendary: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "LocKey#53751")
+  @runtimeProperty("ModSettings.category.order", "2")
+  @runtimeProperty("ModSettings.displayName", "LocKey#94243")
+  public let epicPlus: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "Scrapper")
+  @runtimeProperty("ModSettings.category", "LocKey#53751")
+  @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "LocKey#1813")
   public let epic: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "LocKey#53751")
+  @runtimeProperty("ModSettings.category.order", "2")
+  @runtimeProperty("ModSettings.displayName", "LocKey#94242")
+  public let rarePlus: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "Scrapper")
+  @runtimeProperty("ModSettings.category", "LocKey#53751")
+  @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "LocKey#1816")
   public let rare: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "LocKey#53751")
+  @runtimeProperty("ModSettings.category.order", "2")
+  @runtimeProperty("ModSettings.displayName", "LocKey#94241")
+  public let uncommonPlus: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "Scrapper")
+  @runtimeProperty("ModSettings.category", "LocKey#53751")
+  @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "LocKey#1817")
   public let uncommon: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "LocKey#53751")
+  @runtimeProperty("ModSettings.category.order", "2")
+  @runtimeProperty("ModSettings.displayName", "LocKey#94240")
+  public let commonPlus: Bool = true;
+
+  @runtimeProperty("ModSettings.mod", "Scrapper")
+  @runtimeProperty("ModSettings.category", "LocKey#53751")
+  @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "LocKey#1814")
   public let common: Bool = true;
 }
@@ -60,82 +137,36 @@ class SmarterScrapperWeaponsConfig {
 class SmarterScrapperModsConfig {
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "LocKey#49863")
+  @runtimeProperty("ModSettings.category.order", "3")
   @runtimeProperty("ModSettings.displayName", "LocKey#1816")
   public let rare: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "LocKey#49863")
+  @runtimeProperty("ModSettings.category.order", "3")
   @runtimeProperty("ModSettings.displayName", "LocKey#1817")
   public let uncommon: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "LocKey#49863")
+  @runtimeProperty("ModSettings.category.order", "3")
   @runtimeProperty("ModSettings.displayName", "LocKey#1814")
   public let common: Bool = false;
-}
-
-class SmarterScrapperGrenadeConfig {
-  @runtimeProperty("ModSettings.mod", "Scrapper")
-  @runtimeProperty("ModSettings.category", "LocKey#76995")
-  @runtimeProperty("ModSettings.displayName", "LocKey#1816")
-  public let rare: Bool = false;
-
-  @runtimeProperty("ModSettings.mod", "Scrapper")
-  @runtimeProperty("ModSettings.category", "LocKey#76995")
-  @runtimeProperty("ModSettings.displayName", "LocKey#1817")
-  public let uncommon: Bool = false;
-
-  @runtimeProperty("ModSettings.mod", "Scrapper")
-  @runtimeProperty("ModSettings.category", "LocKey#76995")
-  @runtimeProperty("ModSettings.displayName", "LocKey#1814")
-  public let common: Bool = false;
-}
-
-class SmarterScrapperBounceBackConfig {
-  @runtimeProperty("ModSettings.mod", "Scrapper")
-  @runtimeProperty("ModSettings.category", "LocKey#23418")
-  @runtimeProperty("ModSettings.displayName", "LocKey#35420")
-  public let rare: Bool = false;
-
-  @runtimeProperty("ModSettings.mod", "Scrapper")
-  @runtimeProperty("ModSettings.category", "LocKey#23418")
-  @runtimeProperty("ModSettings.displayName", "LocKey#34157")
-  public let uncommon: Bool = false;
-
-  @runtimeProperty("ModSettings.mod", "Scrapper")
-  @runtimeProperty("ModSettings.category", "LocKey#23418")
-  @runtimeProperty("ModSettings.displayName", "LocKey#35418")
-  public let common: Bool = false;
-}
-
-class SmarterScrapperMaxDocConfig {
-  @runtimeProperty("ModSettings.mod", "Scrapper")
-  @runtimeProperty("ModSettings.category", "LocKey#23418")
-  @runtimeProperty("ModSettings.displayName", "LocKey#35387")
-  public let epic: Bool = false;
-
-  @runtimeProperty("ModSettings.mod", "Scrapper")
-  @runtimeProperty("ModSettings.category", "LocKey#23418")
-  @runtimeProperty("ModSettings.displayName", "LocKey#2679")
-  public let rare: Bool = false;
-
-  @runtimeProperty("ModSettings.mod", "Scrapper")
-  @runtimeProperty("ModSettings.category", "LocKey#23418")
-  @runtimeProperty("ModSettings.displayName", "LocKey#35384")
-  public let uncommon: Bool = false;
 }
 
 class SmarterScrapperJunkConfig {
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "LocKey#46566")
+  @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "LocKey#245")
   public let enabled: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "LocKey#46566")
+  @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "LocKey#731")
   @runtimeProperty("ModSettings.step", "1")
-  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.min", "1")
   @runtimeProperty("ModSettings.max", "600")
   public let maxPrice: Int32 = 50;
 }
@@ -235,9 +266,6 @@ private func IsModSS(type: gamedataItemType) -> Bool {
 @addField(PlayerPuppet) public let scrapperClothes: ref<SmarterScrapperClothesConfig>;
 @addField(PlayerPuppet) public let scrapperWeapons: ref<SmarterScrapperWeaponsConfig>;
 @addField(PlayerPuppet) public let scrapperMods: ref<SmarterScrapperModsConfig>;
-@addField(PlayerPuppet) public let scrapperGrenade: ref<SmarterScrapperGrenadeConfig>;
-@addField(PlayerPuppet) public let scrapperBounceBack: ref<SmarterScrapperBounceBackConfig>;
-@addField(PlayerPuppet) public let scrapperMaxDoc: ref<SmarterScrapperMaxDocConfig>;
 @addField(PlayerPuppet) public let scrapperJunk: ref<SmarterScrapperJunkConfig>;
 
 @wrapMethod(PlayerPuppet)
@@ -247,9 +275,6 @@ protected cb func OnGameAttached() -> Bool {
   this.scrapperClothes = new SmarterScrapperClothesConfig();
   this.scrapperWeapons = new SmarterScrapperWeaponsConfig();
   this.scrapperMods = new SmarterScrapperModsConfig();
-  this.scrapperGrenade = new SmarterScrapperGrenadeConfig();
-  this.scrapperBounceBack = new SmarterScrapperBounceBackConfig();
-  this.scrapperMaxDoc = new SmarterScrapperMaxDocConfig();
   this.scrapperJunk = new SmarterScrapperJunkConfig();
 }
 
@@ -260,9 +285,6 @@ protected cb func OnDetach() -> Bool {
   this.scrapperClothes = null;
   this.scrapperWeapons = null;
   this.scrapperMods = null;
-  this.scrapperGrenade = null;
-  this.scrapperBounceBack = null;
-  this.scrapperMaxDoc = null;
   this.scrapperJunk = null;
 }
 
@@ -272,75 +294,41 @@ private func ShouldBeScrappedSS(data: wref<gameItemData>, quality: gamedataQuali
 
   if this.IsClothesSS(type) {
     switch quality {
+      case gamedataQuality.LegendaryPlusPlus: return this.scrapperClothes.legendaryPlusPlus;
+      case gamedataQuality.LegendaryPlus: return this.scrapperClothes.legendaryPlus;
       case gamedataQuality.Legendary: return this.scrapperClothes.legendary;
+      case gamedataQuality.EpicPlus: return this.scrapperClothes.epicPlus;
       case gamedataQuality.Epic: return this.scrapperClothes.epic;
+      case gamedataQuality.RarePlus: return this.scrapperClothes.rarePlus;
       case gamedataQuality.Rare: return this.scrapperClothes.rare;
+      case gamedataQuality.UncommonPlus: return this.scrapperClothes.uncommonPlus;
       case gamedataQuality.Uncommon: return this.scrapperClothes.uncommon;
+      case gamedataQuality.CommonPlus: return this.scrapperClothes.commonPlus;
       case gamedataQuality.Common: return this.scrapperClothes.common;
     };
   };
 
   if this.IsWeaponSS(type) {
     switch quality {
+      case gamedataQuality.LegendaryPlusPlus: return this.scrapperWeapons.legendaryPlusPlus;
+      case gamedataQuality.LegendaryPlus: return this.scrapperWeapons.legendaryPlus;
       case gamedataQuality.Legendary: return this.scrapperWeapons.legendary;
+      case gamedataQuality.EpicPlus: return this.scrapperWeapons.epicPlus;
       case gamedataQuality.Epic: return this.scrapperWeapons.epic;
+      case gamedataQuality.RarePlus: return this.scrapperWeapons.rarePlus;
       case gamedataQuality.Rare: return this.scrapperWeapons.rare;
+      case gamedataQuality.UncommonPlus: return this.scrapperWeapons.uncommonPlus;
       case gamedataQuality.Uncommon: return this.scrapperWeapons.uncommon;
+      case gamedataQuality.CommonPlus: return this.scrapperWeapons.commonPlus;
       case gamedataQuality.Common: return this.scrapperWeapons.common;
     };
   };
   
-  if Equals(type, gamedataItemType.Wea_Knife) && this.scrapperWeapons.knife {
-    switch quality {
-      case gamedataQuality.Legendary: return this.scrapperWeapons.legendary;
-      case gamedataQuality.Epic: return this.scrapperWeapons.epic;
-      case gamedataQuality.Rare: return this.scrapperWeapons.rare;
-      case gamedataQuality.Uncommon: return this.scrapperWeapons.uncommon;
-      case gamedataQuality.Common: return this.scrapperWeapons.common;
-    };
-  };
-
   if this.IsModSS(type) {
     switch quality {
       case gamedataQuality.Rare: return this.scrapperMods.rare;
       case gamedataQuality.Uncommon: return this.scrapperMods.uncommon;
       case gamedataQuality.Common: return this.scrapperMods.common;
-    };
-  };
-
-  return false;
-}
-
-@addMethod(PlayerPuppet)
-private func ShouldBeScrappedConsumableSS(data: wref<gameItemData>, quality: gamedataQuality) -> Bool {
-  let type: gamedataItemType = data.GetItemType();
-  // Prevent neuroblockers from scrapping
-  let tdbid: TweakDBID = ItemID.GetTDBID(data.GetID());
-  if Equals(tdbid, t"Items.ripperdoc_med") || Equals(tdbid, t"Items.ripperdoc_med_uncommon") || Equals(tdbid, t"Items.ripperdoc_med_common") {
-    return false;
-  };
-  
-  if Equals(type, gamedataItemType.Gad_Grenade) {
-    switch quality {
-      case gamedataQuality.Rare: return this.scrapperGrenade.rare;
-      case gamedataQuality.Uncommon: return this.scrapperGrenade.uncommon;
-      case gamedataQuality.Common: return this.scrapperGrenade.common;
-    };
-  };
-  
-  if Equals(type, gamedataItemType.Con_Injector) {
-    switch quality {
-      case gamedataQuality.Rare: return this.scrapperBounceBack.rare;
-      case gamedataQuality.Uncommon: return this.scrapperBounceBack.uncommon;
-      case gamedataQuality.Common: return this.scrapperBounceBack.common;
-    };
-  };
-  
-  if Equals(type, gamedataItemType.Con_Inhaler) {
-    switch quality {
-      case gamedataQuality.Epic: return this.scrapperMaxDoc.epic;
-      case gamedataQuality.Rare: return this.scrapperMaxDoc.rare;
-      case gamedataQuality.Uncommon: return this.scrapperMaxDoc.uncommon;
     };
   };
 
@@ -399,12 +387,18 @@ protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
   let tweakDbId: TweakDBID = ItemID.GetTDBID(gameItemData.GetID());
   let quality: gamedataQuality = RPGManager.GetItemDataQuality(gameItemData);
 
-  let gear: Bool = this.HasWeaponInInventorySS() && this.ShouldBeScrappedSS(gameItemData, quality) && !RPGManager.IsItemIconic(gameItemData) && NotEquals(this.boughtItem, gameItemData.GetID()) && !RPGManager.IsItemCrafted(gameItemData) && !gameItemData.HasTag(n"Quest") && !this.IsExclusionSS(tweakDbId) && !this.HasExcludedQuestActive();
-  let consumable: Bool = this.ShouldBeScrappedConsumableSS(gameItemData, quality) && !gameItemData.HasTag(n"Quest") && !this.IsExclusionSS(tweakDbId) && !this.HasExcludedQuestActive();
-  let junk: Bool = this.ShouldBeScrappedJunkSS(gameItemData) && !this.IsExclusionSS(tweakDbId) ;
+  let gear: Bool = this.HasWeaponInInventorySS() 
+    && this.ShouldBeScrappedSS(gameItemData, quality) 
+    && !RPGManager.IsItemIconic(gameItemData) 
+    && NotEquals(this.boughtItem, gameItemData.GetID()) 
+    && !RPGManager.IsItemCrafted(gameItemData) 
+    && !gameItemData.HasTag(n"Quest") 
+    && !this.IsExclusionSS(tweakDbId) 
+    && !this.HasExcludedQuestActive();
 
+  let junk: Bool = this.ShouldBeScrappedJunkSS(gameItemData) && !this.IsExclusionSS(tweakDbId) && !this.HasExcludedQuestActive();
 
-  if gear || consumable || junk {
+  if gear || junk {
     ItemActionsHelper.DisassembleItem(this, evt.itemID, GameInstance.GetTransactionSystem(this.GetGame()).GetItemQuantity(this, evt.itemID));
   };
 }
@@ -416,9 +410,7 @@ protected cb func OnRefreshScapperConfigsEvent(evt: ref<RefreshScapperConfigsEve
   this.scrapperClothes = new SmarterScrapperClothesConfig();
   this.scrapperWeapons = new SmarterScrapperWeaponsConfig();
   this.scrapperMods = new SmarterScrapperModsConfig();
-  this.scrapperGrenade = new SmarterScrapperGrenadeConfig();
-  this.scrapperBounceBack = new SmarterScrapperBounceBackConfig();
-  this.scrapperMaxDoc = new SmarterScrapperMaxDocConfig();
+  this.scrapperJunk = new SmarterScrapperJunkConfig();
 }
 
 @wrapMethod(PauseMenuBackgroundGameController)
