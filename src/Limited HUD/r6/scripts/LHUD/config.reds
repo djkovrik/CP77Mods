@@ -291,6 +291,13 @@ public class MinimapModuleConfig {
   @runtimeProperty("ModSettings.min", "0.0")
   @runtimeProperty("ModSettings.max", "1.0")
   let Opacity: Float = 0.9;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Minimap")
+  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Minimap-District")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Minimap-District-Desc")
+  let ShowCurrentDistrict: Bool = true;
 }
 
 public class QuestTrackerModuleConfig {
