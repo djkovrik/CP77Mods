@@ -12,13 +12,13 @@
     </context>
 
     <!-- inputUserMapping -->
-	<mapping name="LHUD_Minimap_Button" type="Button" >
-        <button id="IK_L" />
-    </mapping>
-	<mapping name="LHUD_Global_Button" type="Button" >
-        <button id="IK_Y" />
-    </mapping>
 	<mapping name="LHUD_Toggle_Button" type="Button" >
         <button id="IK_F1" />
+    </mapping>
+	<mapping name="LHUD_Minimap_Button" type="Button" >
+        <button id="IK_F6" />
+    </mapping>
+	<mapping name="LHUD_Global_Button" type="Button" >
+        <button id="IK_F8" />
     </mapping>
 </bindings>
