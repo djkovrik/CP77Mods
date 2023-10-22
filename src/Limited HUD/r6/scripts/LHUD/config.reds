@@ -38,6 +38,13 @@ public class ActionButtonsModuleConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Action-Buttons")
+  @runtimeProperty("ModSettings.category.order", "4")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Vehicle")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Vehicle-Desc")
+  let ShowInVehicle: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Action-Buttons")
   @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Weapon")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Weapon-Desc")
