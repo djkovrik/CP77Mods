@@ -1,3 +1,4 @@
+module CarDealer.Site
 import BrowserExtension.DataStructures.*
 import BrowserExtension.Classes.*
 import BrowserExtension.System.*

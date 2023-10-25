@@ -5,17 +5,17 @@ import VirtualAtelier.Logs.AtelierLog
 
 // Temp flag to show atelier tab content
 // TODO Need a better way to inject, research why LoadWebPage does not work with custom internet
-@if(!ModuleExists("BrowserExtension.System"))
+@if(!ModuleExists("VirtualAtelier.Site"))
 @addField(BrowserController)
 private let showAtelier: Bool;
 
-@if(!ModuleExists("BrowserExtension.System"))
+@if(!ModuleExists("VirtualAtelier.Site"))
 @addMethod(BrowserController)
 protected cb func OnShowAtelierEvent(evt: ref<ShowAtelierEvent>) -> Bool {
   this.showAtelier = evt.show;
 }
 
-@if(!ModuleExists("BrowserExtension.System"))
+@if(!ModuleExists("VirtualAtelier.Site"))
 @wrapMethod(ComputerInkGameController)
 private final func ShowMenuByName(elementName: String) -> Void {
   if Equals(elementName, "atelier") {
@@ -34,7 +34,7 @@ private final func ShowMenuByName(elementName: String) -> Void {
   wrappedMethod(elementName);
 }
 
-@if(!ModuleExists("BrowserExtension.System"))
+@if(!ModuleExists("VirtualAtelier.Site"))
 @wrapMethod(ComputerInkGameController)
 private final func HideMenuByName(elementName: String) -> Void {
   if Equals(elementName, "atelier") {
@@ -47,7 +47,7 @@ private final func HideMenuByName(elementName: String) -> Void {
 
 
 // Add Atelier tab to PC layout
-@if(!ModuleExists("BrowserExtension.System"))
+@if(!ModuleExists("VirtualAtelier.Site"))
 @wrapMethod(ComputerControllerPS)
 public final func GetMenuButtonWidgets() -> array<SComputerMenuButtonWidgetPackage> {
   if !this.m_computerSetup.m_mailsMenu {
@@ -79,7 +79,7 @@ public final func GetMenuButtonWidgets() -> array<SComputerMenuButtonWidgetPacka
 
 
 // Spawn Atelier stores widget
-@if(!ModuleExists("BrowserExtension.System"))
+@if(!ModuleExists("VirtualAtelier.Site"))
 @addMethod(WebPage)
 private func PopulateAtelierView() {
   let root: ref<inkCompoundWidget> = this.GetWidget(n"page/linkPanel/panel") as inkCompoundWidget;
@@ -93,7 +93,7 @@ private func PopulateAtelierView() {
 
 // Switch Atelier tab icon
 // ^^ kudos to NexusGuy999 for tab widget hack ^^
-@if(!ModuleExists("BrowserExtension.System"))
+@if(!ModuleExists("VirtualAtelier.Site"))
 @wrapMethod(ComputerMenuButtonController)
 public func Initialize(gameController: ref<ComputerInkGameController>, widgetData: SComputerMenuButtonWidgetPackage) -> Void {
   wrappedMethod(gameController, widgetData);
@@ -106,7 +106,7 @@ public func Initialize(gameController: ref<ComputerInkGameController>, widgetDat
 
 
 // Show Atelier if tab was activated
-@if(!ModuleExists("BrowserExtension.System"))
+@if(!ModuleExists("VirtualAtelier.Site"))
 @wrapMethod(BrowserController)
 protected cb func OnPageSpawned(widget: ref<inkWidget>, userData: ref<IScriptable>) -> Bool {
   wrappedMethod(widget, userData);

@@ -6,7 +6,5 @@ public static func AtelierLog(str: String) -> Void {
 }
 
 public static func AtelierDebug(str: String, config: ref<VirtualAtelierConfig>) -> Void {
-  if config.showDebugLogs {
-    // LogChannel(n"DEBUG", s"Atelier DEBUG: \(str)");
-  };
+  // LogChannel(n"DEBUG", s"Atelier DEBUG: \(str)");
 }

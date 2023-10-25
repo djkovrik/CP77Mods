@@ -25,10 +25,4 @@ public class VirtualAtelierConfig {
   @runtimeProperty("ModSettings.displayName", "VA-Duplicate-Checker")
   @runtimeProperty("ModSettings.description", "VA-Duplicate-Checker-Desc")
   let enableDuplicatesChecker: Bool = false;
-
-  @runtimeProperty("ModSettings.mod", "Virtual Atelier")
-  @runtimeProperty("ModSettings.category", "VA-Category-Debug")
-  @runtimeProperty("ModSettings.displayName", "VA-Logs")
-  @runtimeProperty("ModSettings.description", "VA-Logs-Desc")
-  let showDebugLogs: Bool = false;
 }
