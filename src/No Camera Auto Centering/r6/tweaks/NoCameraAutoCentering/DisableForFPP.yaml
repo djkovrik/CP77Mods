@@ -1,2 +1,3 @@
 fppCameraParamSets.Bike.headingResetTimeout: 10000.0
 fppCameraParamSets.Vehicle.headingResetTimeout: 10000.0
+fppCameraParamSets.DriverCombat.headingResetTimeout: 10000.0
