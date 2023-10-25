@@ -80,9 +80,10 @@ protected cb func OnLocationUpdated(value: String) -> Bool {
 private final func SecurityZoneUpdate() -> Void {
   wrappedMethod();
 
+  let config: ref<MinimapModuleConfig> = new MinimapModuleConfig();
   let isJohnny: Bool = this.IsPlayingAsJohnny();
   let visible: Bool = !this.m_playerInCombat && this.m_inPublicOrRestrictedZone && !isJohnny;
-  if IsDefined(this.m_districtContainer) {
+  if IsDefined(this.m_districtContainer) && config.ShowCurrentDistrict {
     this.m_districtContainer.SetVisible(visible);
   };
 }
@@ -91,9 +92,10 @@ private final func SecurityZoneUpdate() -> Void {
 protected cb func OnPSMCombatChanged(psmCombatArg: gamePSMCombat) -> Bool {
   wrappedMethod(psmCombatArg);
 
+  let config: ref<MinimapModuleConfig> = new MinimapModuleConfig();
   let isJohnny: Bool = this.IsPlayingAsJohnny();
   let visible: Bool = !this.m_playerInCombat && this.m_inPublicOrRestrictedZone && !isJohnny;
-  if IsDefined(this.m_districtContainer) {
+  if IsDefined(this.m_districtContainer) && config.ShowCurrentDistrict {
     this.m_districtContainer.SetVisible(visible);
   };
 }
