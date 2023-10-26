@@ -209,6 +209,6 @@ protected cb func OnEquipmentClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
 protected cb func OnPostOnRelease(evt: ref<inkPointerEvent>) -> Bool {
   wrappedMethod(evt);
   if evt.IsAction(n"mark_to_sell") || evt.IsAction(n"mark_similar_to_sell") {
-    this.RefreshAvailableItems(ItemViewModes.Item, true);
+    this.RefreshAvailableItems();
   };
 }
