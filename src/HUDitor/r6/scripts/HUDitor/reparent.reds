@@ -553,7 +553,7 @@ private func InitBaseWidgets() -> Void {
         targetWidget.SetAnchorPoint(new Vector2(0.0, 1.0));
         targetWidget.Reparent(this.dpadSlot);
         break;
-      case n"healthbarWidgetGameController":
+      case n"gameuiHudHealthbarGameController":
         if !config.playerHealthbarEnabled { break; }
         targetWidget = controller.GetRootCompoundWidget();
         targetWidget.SetAnchorPoint(new Vector2(0.0, 0.0));
