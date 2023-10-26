@@ -142,21 +142,21 @@ private final func HandleVirtualSlotClick(evt: ref<ItemDisplayClickEvent>) -> Vo
 }
 
 @wrapMethod(FullscreenVendorGameController)
-protected cb func OnHandleGlobalInput(event: ref<inkPointerEvent>) -> Bool {
-  wrappedMethod(event);
+protected cb func OnHandleGlobalRelease(evt: ref<inkPointerEvent>) -> Bool {
+  wrappedMethod(evt);
 
   let vendorPreviewButtonHint: ref<VendorPreviewButtonHint> = VendorPreviewButtonHint.Get(this.GetPlayerControlledObject());
   let lastUsedPad: Bool = this.GetPlayerControlledObject().PlayerLastUsedPad();
   let lastUsedKBM: Bool = this.GetPlayerControlledObject().PlayerLastUsedKBM();
   let isVirtual: Bool = this.GetIsVirtual();
 
-  if (isVirtual && event.IsAction(VendorPreviewButtonHint.Get(this.GetPlayerControlledObject()).previewModeToggleName)) && this.m_lastItemHoverOverEvent != null {
+  if (isVirtual && evt.IsAction(VendorPreviewButtonHint.Get(this.GetPlayerControlledObject()).previewModeToggleName)) && this.m_lastItemHoverOverEvent != null {
     this.BuyItemFromVirtualVendor(this.m_lastItemHoverOverEvent.itemData);
     return false;
   };
 
   switch true {
-    case event.IsAction(vendorPreviewButtonHint.previewModeToggleName) && !isVirtual:
+    case evt.IsAction(vendorPreviewButtonHint.previewModeToggleName) && !isVirtual:
       if (this.m_isPreviewMode) {
         this.m_lastVendorFilter = ItemFilterCategory.AllItems;
         this.m_itemPreviewPopupToken.TriggerCallback(null);
@@ -164,39 +164,39 @@ protected cb func OnHandleGlobalInput(event: ref<inkPointerEvent>) -> Bool {
         this.ShowGarmentPreview();
       };
       break;
-    case event.IsAction(vendorPreviewButtonHint.resetGarmentName):
+    case evt.IsAction(vendorPreviewButtonHint.resetGarmentName):
       this.m_previewManager.ResetGarment();
       this.RefreshEquippedState();
       break;
-    case event.IsAction(vendorPreviewButtonHint.removeAllGarmentName):
+    case evt.IsAction(vendorPreviewButtonHint.removeAllGarmentName):
       this.m_previewManager.RemoveAllGarment();
       this.RefreshEquippedState();
       break;
-    case event.IsAction(vendorPreviewButtonHint.removePreviewGarmentName):
+    case evt.IsAction(vendorPreviewButtonHint.removePreviewGarmentName):
       this.m_previewManager.RemovePreviewGarment();
       this.RefreshEquippedState();
       break;
-    case (event.IsAction(n"back") && isVirtual && this.m_isPreviewMode):
-    case (event.IsAction(n"cancel") && isVirtual && this.m_isPreviewMode):
+    case (evt.IsAction(n"back") && isVirtual && this.m_isPreviewMode):
+    case (evt.IsAction(n"cancel") && isVirtual && this.m_isPreviewMode):
       this.m_previewManager.RemovePreviewGarment();
       this.m_menuEventDispatcher.SpawnEvent(n"OnVendorClose");
       break;
 
     // Since patch 1.5 right mouse click closes menus and for Atelier it just removes preview
     // without closing the shop so Consume just blocks it
-    case (event.IsAction(n"world_map_fake_rotate") && isVirtual):
-      event.Consume();
+    case (evt.IsAction(n"world_map_fake_rotate") && isVirtual):
+      evt.Consume();
       break;
 
     // Force shop closing on C for keyboards to prevent preview screw up
-    case (event.IsAction(n"world_map_menu_toggle_custom_filter") && isVirtual && this.m_isPreviewMode && lastUsedKBM):
+    case (evt.IsAction(n"world_map_menu_toggle_custom_filter") && isVirtual && this.m_isPreviewMode && lastUsedKBM):
       this.m_previewManager.RemovePreviewGarment();
       this.m_menuEventDispatcher.SpawnEvent(n"OnVendorClose");
       break;
 
     // Consume SQUARE for Pad to prevent conflicts with Purchase action which also uses world_map_menu_toggle_custom_filter
-    case (event.IsAction(n"world_map_menu_toggle_custom_filter") && isVirtual && this.m_isPreviewMode && lastUsedPad):
-      event.Consume();
+    case (evt.IsAction(n"world_map_menu_toggle_custom_filter") && isVirtual && this.m_isPreviewMode && lastUsedPad):
+      evt.Consume();
       break;
   };
 }

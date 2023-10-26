@@ -79,7 +79,7 @@ public func DerivedFilterItem(data: ref<IScriptable>) -> DerivedFilterResult {
 }
 
 @wrapMethod(FullscreenVendorGameController)
-protected cb func OnHandleGlobalInput(evt: ref<inkPointerEvent>) -> Bool {
+protected cb func OnHandleGlobalRelease(evt: ref<inkPointerEvent>) -> Bool {
   wrappedMethod(evt);
   if evt.IsAction(n"mouse_left") {
     if !IsDefined(evt.GetTarget()) || !evt.GetTarget().CanSupportFocus() {

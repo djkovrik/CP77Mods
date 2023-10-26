@@ -112,13 +112,13 @@ private final func HandleVirtualSlotClick(evt: ref<ItemDisplayClickEvent>) -> Vo
 }
 
 @wrapMethod(FullscreenVendorGameController)
-protected cb func OnHandleGlobalInput(event: ref<inkPointerEvent>) -> Bool {
-  wrappedMethod(event);
+protected cb func OnHandleGlobalRelease(evt: ref<inkPointerEvent>) -> Bool {
+  wrappedMethod(evt);
 
   let atelierActions: ref<AtelierActions> = AtelierActions.Get(this.GetPlayerControlledObject());
 
   switch true {
-    case event.IsAction(atelierActions.togglePreviewVendor):
+    case evt.IsAction(atelierActions.togglePreviewVendor):
       if (this.isPreviewMode) {
         this.m_lastVendorFilter = ItemFilterCategory.AllItems;
         this.m_itemPreviewPopupToken.TriggerCallback(null);
@@ -126,20 +126,20 @@ protected cb func OnHandleGlobalInput(event: ref<inkPointerEvent>) -> Bool {
         this.ShowGarmentPreview();
       };
       break;
-    case event.IsAction(atelierActions.resetGarment):
+    case evt.IsAction(atelierActions.resetGarment):
       this.previewManager.ResetGarment();
       this.RefreshEquippedState();
       break;
-    case event.IsAction(atelierActions.removeAllGarment):
+    case evt.IsAction(atelierActions.removeAllGarment):
       this.previewManager.RemoveAllGarment();
       this.RefreshEquippedState();
       break;
-    case event.IsAction(atelierActions.removePreviewGarment):
+    case evt.IsAction(atelierActions.removePreviewGarment):
       this.previewManager.RemovePreviewGarment();
       this.RefreshEquippedState();
       break;
-    case (event.IsAction(n"back") && this.isPreviewMode):
-    case (event.IsAction(n"cancel") && this.isPreviewMode):
+    case (evt.IsAction(n"back") && this.isPreviewMode):
+    case (evt.IsAction(n"cancel") && this.isPreviewMode):
       this.previewManager.RemovePreviewGarment();
       this.m_menuEventDispatcher.SpawnEvent(n"OnVendorClose");
       break;
