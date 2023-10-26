@@ -236,7 +236,7 @@ private func ShowHealthbar(show: Bool) -> Void {
     if show {
       controller.ShowRequest();
     } else {
-      controller.ComputeHealthBarVisibility();
+      controller.OnUpdateHealthBarVisibility();
     };
   };
 }
