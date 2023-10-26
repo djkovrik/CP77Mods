@@ -141,7 +141,7 @@ protected cb func OnEquipmentClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
 protected cb func OnPostOnRelease(evt: ref<inkPointerEvent>) -> Bool {
   wrappedMethod(evt);
   if evt.IsAction(n"toggle_quest_tag") {
-    this.RefreshAvailableItems(ItemViewModes.Item, true);
+    this.RefreshAvailableItems();
   };
 }
 
