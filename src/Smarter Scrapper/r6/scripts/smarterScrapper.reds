@@ -2,26 +2,8 @@ class SmarterScrapperClothesConfig {
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "LocKey#53753")
   @runtimeProperty("ModSettings.category.order", "1")
-  @runtimeProperty("ModSettings.displayName", "LocKey#94245")
-  public let legendaryPlusPlus: Bool = false;
-
-  @runtimeProperty("ModSettings.mod", "Scrapper")
-  @runtimeProperty("ModSettings.category", "LocKey#53753")
-  @runtimeProperty("ModSettings.category.order", "1")
-  @runtimeProperty("ModSettings.displayName", "LocKey#94244")
-  public let legendaryPlus: Bool = false;
-
-  @runtimeProperty("ModSettings.mod", "Scrapper")
-  @runtimeProperty("ModSettings.category", "LocKey#53753")
-  @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "LocKey#1815")
   public let legendary: Bool = false;
-
-  @runtimeProperty("ModSettings.mod", "Scrapper")
-  @runtimeProperty("ModSettings.category", "LocKey#53753")
-  @runtimeProperty("ModSettings.category.order", "1")
-  @runtimeProperty("ModSettings.displayName", "LocKey#94243")
-  public let epicPlus: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "LocKey#53753")
@@ -32,32 +14,14 @@ class SmarterScrapperClothesConfig {
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "LocKey#53753")
   @runtimeProperty("ModSettings.category.order", "1")
-  @runtimeProperty("ModSettings.displayName", "LocKey#94242")
-  public let rarePlus: Bool = false;
-
-  @runtimeProperty("ModSettings.mod", "Scrapper")
-  @runtimeProperty("ModSettings.category", "LocKey#53753")
-  @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "LocKey#1816")
   public let rare: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "LocKey#53753")
   @runtimeProperty("ModSettings.category.order", "1")
-  @runtimeProperty("ModSettings.displayName", "LocKey#94241")
-  public let uncommonPlus: Bool = false;
-
-  @runtimeProperty("ModSettings.mod", "Scrapper")
-  @runtimeProperty("ModSettings.category", "LocKey#53753")
-  @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "LocKey#1817")
   public let uncommon: Bool = false;
-
-  @runtimeProperty("ModSettings.mod", "Scrapper")
-  @runtimeProperty("ModSettings.category", "LocKey#53753")
-  @runtimeProperty("ModSettings.category.order", "1")
-  @runtimeProperty("ModSettings.displayName", "LocKey#94240")
-  public let commonPlus: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "LocKey#53753")
@@ -70,26 +34,8 @@ class SmarterScrapperWeaponsConfig {
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "LocKey#53751")
   @runtimeProperty("ModSettings.category.order", "2")
-  @runtimeProperty("ModSettings.displayName", "LocKey#94245")
-  public let legendaryPlusPlus: Bool = false;
-
-  @runtimeProperty("ModSettings.mod", "Scrapper")
-  @runtimeProperty("ModSettings.category", "LocKey#53751")
-  @runtimeProperty("ModSettings.category.order", "2")
-  @runtimeProperty("ModSettings.displayName", "LocKey#94244")
-  public let legendaryPlus: Bool = false;
-
-  @runtimeProperty("ModSettings.mod", "Scrapper")
-  @runtimeProperty("ModSettings.category", "LocKey#53751")
-  @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "LocKey#1815")
   public let legendary: Bool = false;
-
-  @runtimeProperty("ModSettings.mod", "Scrapper")
-  @runtimeProperty("ModSettings.category", "LocKey#53751")
-  @runtimeProperty("ModSettings.category.order", "2")
-  @runtimeProperty("ModSettings.displayName", "LocKey#94243")
-  public let epicPlus: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "LocKey#53751")
@@ -100,32 +46,14 @@ class SmarterScrapperWeaponsConfig {
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "LocKey#53751")
   @runtimeProperty("ModSettings.category.order", "2")
-  @runtimeProperty("ModSettings.displayName", "LocKey#94242")
-  public let rarePlus: Bool = false;
-
-  @runtimeProperty("ModSettings.mod", "Scrapper")
-  @runtimeProperty("ModSettings.category", "LocKey#53751")
-  @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "LocKey#1816")
   public let rare: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "LocKey#53751")
   @runtimeProperty("ModSettings.category.order", "2")
-  @runtimeProperty("ModSettings.displayName", "LocKey#94241")
-  public let uncommonPlus: Bool = false;
-
-  @runtimeProperty("ModSettings.mod", "Scrapper")
-  @runtimeProperty("ModSettings.category", "LocKey#53751")
-  @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "LocKey#1817")
   public let uncommon: Bool = false;
-
-  @runtimeProperty("ModSettings.mod", "Scrapper")
-  @runtimeProperty("ModSettings.category", "LocKey#53751")
-  @runtimeProperty("ModSettings.category.order", "2")
-  @runtimeProperty("ModSettings.displayName", "LocKey#94240")
-  public let commonPlus: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "LocKey#53751")
@@ -242,24 +170,44 @@ private func IsWeaponSS(type: gamedataItemType) -> Bool {
 @addMethod(PlayerPuppet)
 private func IsModSS(type: gamedataItemType) -> Bool {
   return
+
+    Equals(type, gamedataItemType.Prt_AR_SMG_LMGMod) ||
+    Equals(type, gamedataItemType.Prt_BladeMod) ||
+    Equals(type, gamedataItemType.Prt_BluntMod) ||
+    Equals(type, gamedataItemType.Prt_BootsFabricEnhancer) ||
+    Equals(type, gamedataItemType.Prt_Capacitor) ||
+    Equals(type, gamedataItemType.Prt_FabricEnhancer) ||
+    Equals(type, gamedataItemType.Prt_FaceFabricEnhancer) ||
+    Equals(type, gamedataItemType.Prt_Fragment) ||
+    Equals(type, gamedataItemType.Prt_HandgunMod) ||
+    Equals(type, gamedataItemType.Prt_HandgunMuzzle) ||
+    Equals(type, gamedataItemType.Prt_HeadFabricEnhancer) ||
+    Equals(type, gamedataItemType.Prt_LongScope) ||
+    Equals(type, gamedataItemType.Prt_Magazine) ||
+    Equals(type, gamedataItemType.Prt_MeleeMod) ||
     Equals(type, gamedataItemType.Prt_Mod) ||
     Equals(type, gamedataItemType.Prt_Muzzle) ||
-    Equals(type, gamedataItemType.Prt_Scope) ||
-    Equals(type, gamedataItemType.Prt_FabricEnhancer) ||
-    Equals(type, gamedataItemType.Prt_HeadFabricEnhancer) ||
-    Equals(type, gamedataItemType.Prt_FaceFabricEnhancer) ||
     Equals(type, gamedataItemType.Prt_OuterTorsoFabricEnhancer) ||
-    Equals(type, gamedataItemType.Prt_TorsoFabricEnhancer) ||
     Equals(type, gamedataItemType.Prt_PantsFabricEnhancer) ||
-    Equals(type, gamedataItemType.Prt_BootsFabricEnhancer) ||
-    // Equals(type, gamedataItemType.Prt_Program ) ||
-    // Equals(type, gamedataItemType.Prt_Capacitor) ||
-    // Equals(type, gamedataItemType.Prt_HandgunMuzzle) ||
-    // Equals(type, gamedataItemType.Prt_Magazine) ||
-    // Equals(type, gamedataItemType.Prt_RifleMuzzle) ||
-    // Equals(type, gamedataItemType.Prt_ScopeRail) ||
-    // Equals(type, gamedataItemType.Prt_Stock) ||
-    // Equals(type, gamedataItemType.Prt_TargetingSystem) ||
+    Equals(type, gamedataItemType.Prt_PowerMod) ||
+    Equals(type, gamedataItemType.Prt_PowerSniperScope) ||
+    Equals(type, gamedataItemType.Prt_Precision_Sniper_RifleMod) ||
+    Equals(type, gamedataItemType.Prt_Program) ||
+    Equals(type, gamedataItemType.Prt_RangedMod) ||
+    Equals(type, gamedataItemType.Prt_Receiver) ||
+    Equals(type, gamedataItemType.Prt_RifleMuzzle) ||
+    Equals(type, gamedataItemType.Prt_Scope) ||
+    Equals(type, gamedataItemType.Prt_ScopeRail) ||
+    Equals(type, gamedataItemType.Prt_ShortScope) ||
+    Equals(type, gamedataItemType.Prt_ShotgunMod) ||
+    Equals(type, gamedataItemType.Prt_SmartMod) ||
+    Equals(type, gamedataItemType.Prt_Stock) ||
+    Equals(type, gamedataItemType.Prt_TargetingSystem) ||
+    Equals(type, gamedataItemType.Prt_TechMod) ||
+    Equals(type, gamedataItemType.Prt_TechSniperScope) ||
+    Equals(type, gamedataItemType.Prt_ThrowableMod) ||
+    Equals(type, gamedataItemType.Prt_TorsoFabricEnhancer) ||
+
   false;
 }
 
@@ -294,33 +242,43 @@ private func ShouldBeScrappedSS(data: wref<gameItemData>, quality: gamedataQuali
 
   if this.IsClothesSS(type) {
     switch quality {
-      case gamedataQuality.LegendaryPlusPlus: return this.scrapperClothes.legendaryPlusPlus;
-      case gamedataQuality.LegendaryPlus: return this.scrapperClothes.legendaryPlus;
-      case gamedataQuality.Legendary: return this.scrapperClothes.legendary;
-      case gamedataQuality.EpicPlus: return this.scrapperClothes.epicPlus;
-      case gamedataQuality.Epic: return this.scrapperClothes.epic;
-      case gamedataQuality.RarePlus: return this.scrapperClothes.rarePlus;
-      case gamedataQuality.Rare: return this.scrapperClothes.rare;
-      case gamedataQuality.UncommonPlus: return this.scrapperClothes.uncommonPlus;
-      case gamedataQuality.Uncommon: return this.scrapperClothes.uncommon;
-      case gamedataQuality.CommonPlus: return this.scrapperClothes.commonPlus;
-      case gamedataQuality.Common: return this.scrapperClothes.common;
+      case gamedataQuality.LegendaryPlusPlus:
+      case gamedataQuality.LegendaryPlus:
+      case gamedataQuality.Legendary: 
+        return this.scrapperClothes.legendary;
+      case gamedataQuality.EpicPlus:
+      case gamedataQuality.Epic: 
+        return this.scrapperClothes.epic;
+      case gamedataQuality.RarePlus:
+      case gamedataQuality.Rare: 
+        return this.scrapperClothes.rare;
+      case gamedataQuality.UncommonPlus:
+      case gamedataQuality.Uncommon: 
+        return this.scrapperClothes.uncommon;
+      case gamedataQuality.CommonPlus:
+      case gamedataQuality.Common: 
+        return this.scrapperClothes.common;
     };
   };
 
   if this.IsWeaponSS(type) {
     switch quality {
-      case gamedataQuality.LegendaryPlusPlus: return this.scrapperWeapons.legendaryPlusPlus;
-      case gamedataQuality.LegendaryPlus: return this.scrapperWeapons.legendaryPlus;
-      case gamedataQuality.Legendary: return this.scrapperWeapons.legendary;
-      case gamedataQuality.EpicPlus: return this.scrapperWeapons.epicPlus;
-      case gamedataQuality.Epic: return this.scrapperWeapons.epic;
-      case gamedataQuality.RarePlus: return this.scrapperWeapons.rarePlus;
-      case gamedataQuality.Rare: return this.scrapperWeapons.rare;
-      case gamedataQuality.UncommonPlus: return this.scrapperWeapons.uncommonPlus;
-      case gamedataQuality.Uncommon: return this.scrapperWeapons.uncommon;
-      case gamedataQuality.CommonPlus: return this.scrapperWeapons.commonPlus;
-      case gamedataQuality.Common: return this.scrapperWeapons.common;
+      case gamedataQuality.LegendaryPlusPlus:
+      case gamedataQuality.LegendaryPlus:
+      case gamedataQuality.Legendary:
+        return this.scrapperWeapons.legendary;
+      case gamedataQuality.EpicPlus:
+      case gamedataQuality.Epic:
+        return this.scrapperWeapons.epic;
+      case gamedataQuality.RarePlus:
+      case gamedataQuality.Rare:
+        return this.scrapperWeapons.rare;
+      case gamedataQuality.UncommonPlus:
+      case gamedataQuality.Uncommon: 
+        return this.scrapperWeapons.uncommon;
+      case gamedataQuality.CommonPlus:
+      case gamedataQuality.Common:
+        return this.scrapperWeapons.common;
     };
   };
   
