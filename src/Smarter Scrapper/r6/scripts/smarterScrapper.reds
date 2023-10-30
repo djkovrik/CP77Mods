@@ -60,6 +60,11 @@ class SmarterScrapperWeaponsConfig {
   @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "LocKey#1814")
   public let common: Bool = true;
+
+  @runtimeProperty("ModSettings.mod", "Scrapper")
+  @runtimeProperty("ModSettings.category", "LocKey#53751")
+  @runtimeProperty("ModSettings.displayName", "LocKey#778")
+  public let knife: Bool = false;
 }
 
 class SmarterScrapperModsConfig {
@@ -306,6 +311,16 @@ private func ShouldBeScrappedSS(data: wref<gameItemData>, quality: gamedataQuali
       case gamedataQuality.CommonPlus:
       case gamedataQuality.Common:
         return this.scrapperWeapons.common;
+    };
+  };
+
+  if Equals(type, gamedataItemType.Wea_Knife) && this.scrapperWeapons.knife {
+    switch quality {
+      case gamedataQuality.Legendary: return this.scrapperWeapons.legendary;
+      case gamedataQuality.Epic: return this.scrapperWeapons.epic;
+      case gamedataQuality.Rare: return this.scrapperWeapons.rare;
+      case gamedataQuality.Uncommon: return this.scrapperWeapons.uncommon;
+      case gamedataQuality.Common: return this.scrapperWeapons.common;
     };
   };
   
