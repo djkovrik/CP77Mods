@@ -99,6 +99,23 @@ class SmarterScrapperJunkConfig {
   public let maxPrice: Int32 = 50;
 }
 
+class SmarterScrapperEdiblesConfig {
+  @runtimeProperty("ModSettings.mod", "Scrapper")
+  @runtimeProperty("ModSettings.category", "Gameplay-Items-Item Type-Con_Edible")
+  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.displayName", "LocKey#245")
+  public let enabled: Bool = true;
+
+  @runtimeProperty("ModSettings.mod", "Scrapper")
+  @runtimeProperty("ModSettings.category", "Gameplay-Items-Item Type-Con_Edible")
+  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.displayName", "LocKey#46543")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "1")
+  @runtimeProperty("ModSettings.max", "20")
+  public let craftComponents: Int32 = 1;
+}
+
 @addMethod(PlayerPuppet)
 public func IsExclusionSS(id: TweakDBID) -> Bool {
   return 
@@ -211,10 +228,18 @@ private func IsModSS(type: gamedataItemType) -> Bool {
   false;
 }
 
+@addMethod(PlayerPuppet)
+private func IsEdibleSS(type: gamedataItemType) -> Bool {
+  return
+    Equals(type, gamedataItemType.Con_Edible ) ||
+  false;
+}
+
 @addField(PlayerPuppet) public let scrapperClothes: ref<SmarterScrapperClothesConfig>;
 @addField(PlayerPuppet) public let scrapperWeapons: ref<SmarterScrapperWeaponsConfig>;
 @addField(PlayerPuppet) public let scrapperMods: ref<SmarterScrapperModsConfig>;
 @addField(PlayerPuppet) public let scrapperJunk: ref<SmarterScrapperJunkConfig>;
+@addField(PlayerPuppet) public let scrapperEdibles: ref<SmarterScrapperEdiblesConfig>;
 
 @wrapMethod(PlayerPuppet)
 protected cb func OnGameAttached() -> Bool {
@@ -224,6 +249,7 @@ protected cb func OnGameAttached() -> Bool {
   this.scrapperWeapons = new SmarterScrapperWeaponsConfig();
   this.scrapperMods = new SmarterScrapperModsConfig();
   this.scrapperJunk = new SmarterScrapperJunkConfig();
+  this.scrapperEdibles = new SmarterScrapperEdiblesConfig();
 }
 
 @wrapMethod(PlayerPuppet)
@@ -234,6 +260,7 @@ protected cb func OnDetach() -> Bool {
   this.scrapperWeapons = null;
   this.scrapperMods = null;
   this.scrapperJunk = null;
+  this.scrapperEdibles = null;
 }
 
 @addMethod(PlayerPuppet)
@@ -305,6 +332,17 @@ private func ShouldBeScrappedJunkSS(data: wref<gameItemData>) -> Bool {
   return false;
 }
 
+@addMethod(PlayerPuppet)
+private func ShouldBeScrappedEdibleSS(data: wref<gameItemData>) -> Bool {
+  let type: gamedataItemType = data.GetItemType();
+
+  return this.IsEdibleSS(type) 
+    && !data.HasTag(n"PermanentFood") 
+    && !data.HasTag(n"PermanentStaminaFood") 
+    && !data.HasTag(n"PermanentMemoryFood") 
+    && !data.HasTag(n"PermanentHealthFood");
+}
+
 // Keep last bought item id
 @addField(PlayerPuppet)
 public let boughtItem: ItemID;
@@ -355,9 +393,14 @@ protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
     && !this.HasExcludedQuestActive();
 
   let junk: Bool = this.ShouldBeScrappedJunkSS(gameItemData) && !this.IsExclusionSS(tweakDbId) && !this.HasExcludedQuestActive();
+  let edible: Bool = this.ShouldBeScrappedEdibleSS(gameItemData) && !this.IsExclusionSS(tweakDbId) && !this.HasExcludedQuestActive();
 
-  if gear || junk {
+  if gear || junk || edible {
     ItemActionsHelper.DisassembleItem(this, evt.itemID, GameInstance.GetTransactionSystem(this.GetGame()).GetItemQuantity(this, evt.itemID));
+  };
+
+  if edible {
+    GameInstance.GetTransactionSystem(this.GetGame()).GiveItemByTDBID(this, t"Items.CommonMaterial1", this.scrapperEdibles.craftComponents);
   };
 }
 
@@ -369,6 +412,7 @@ protected cb func OnRefreshScapperConfigsEvent(evt: ref<RefreshScapperConfigsEve
   this.scrapperWeapons = new SmarterScrapperWeaponsConfig();
   this.scrapperMods = new SmarterScrapperModsConfig();
   this.scrapperJunk = new SmarterScrapperJunkConfig();
+  this.scrapperEdibles = new SmarterScrapperEdiblesConfig();
 }
 
 @wrapMethod(PauseMenuBackgroundGameController)
