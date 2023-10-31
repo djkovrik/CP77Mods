@@ -394,6 +394,7 @@ public func HasWeaponInInventorySS() -> Bool {
 protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
   wrappedMethod(evt);
 
+  let ts: ref<TransactionSystem>;
   let gameItemData: wref<gameItemData> = evt.itemData;
   let tweakDbId: TweakDBID = ItemID.GetTDBID(gameItemData.GetID());
   let quality: gamedataQuality = RPGManager.GetItemDataQuality(gameItemData);
@@ -407,15 +408,23 @@ protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
     && !this.IsExclusionSS(tweakDbId) 
     && !this.HasExcludedQuestActive();
 
-  let junk: Bool = this.ShouldBeScrappedJunkSS(gameItemData) && !this.IsExclusionSS(tweakDbId) && !this.HasExcludedQuestActive();
-  let edible: Bool = this.ShouldBeScrappedEdibleSS(gameItemData) && !this.IsExclusionSS(tweakDbId) && !this.HasExcludedQuestActive();
+  let junk: Bool = this.ShouldBeScrappedJunkSS(gameItemData) 
+    && !this.IsExclusionSS(tweakDbId) 
+    && !this.HasExcludedQuestActive();
 
-  if gear || junk || edible {
+  let edible: Bool = this.ShouldBeScrappedEdibleSS(gameItemData) 
+    && NotEquals(this.boughtItem, gameItemData.GetID()) 
+    && !this.IsExclusionSS(tweakDbId) 
+    && !this.HasExcludedQuestActive();
+
+  if gear || junk {
     ItemActionsHelper.DisassembleItem(this, evt.itemID, GameInstance.GetTransactionSystem(this.GetGame()).GetItemQuantity(this, evt.itemID));
   };
 
   if edible {
-    GameInstance.GetTransactionSystem(this.GetGame()).GiveItemByTDBID(this, t"Items.CommonMaterial1", this.scrapperEdibles.craftComponents);
+    ts = GameInstance.GetTransactionSystem(this.GetGame());
+    ts.RemoveItem(this, gameItemData.GetID(), gameItemData.GetQuantity());
+    ts.GiveItemByTDBID(this, t"Items.CommonMaterial1", this.scrapperEdibles.craftComponents);
   };
 }
 
