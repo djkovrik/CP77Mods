@@ -16,7 +16,7 @@ protected cb func OnInitialize() -> Bool {
   wrappedMethod();
 }
 
-@if(!ModuleExists("e3hud"))
+@if(!ModuleExists("r457Minimap"))
 @addMethod(MinimapContainerController)
 private func InitDistrictLabel() -> Void {
   let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget() as inkCompoundWidget;
@@ -61,10 +61,41 @@ private func InitDistrictLabel() -> Void {
   this.m_districtName = text;
 }
 
-@if(ModuleExists("e3hud"))
+@if(ModuleExists("r457Minimap"))
 @addMethod(MinimapContainerController)
 private func InitDistrictLabel() {
-  
+let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget() as inkCompoundWidget;
+  let isJohnny: Bool = this.IsPlayingAsJohnny();
+  if isJohnny { return ; }
+
+  let container: ref<inkCanvas> = new inkCanvas();
+  container.SetHAlign(inkEHorizontalAlign.Fill);
+  container.SetVAlign(inkEVerticalAlign.Bottom);
+  container.SetAnchor(inkEAnchor.BottomFillHorizontaly);
+  container.SetAnchorPoint(0.0, 1.0);
+  container.SetSize(450.0, 34.0);
+  container.SetFitToContent(true);
+  container.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+  container.Reparent(root);
+
+  this.m_districtContainer = container;
+
+  let text: ref<inkText> = new inkText();
+  text.SetName(n"CustomDistrictLabel");
+  text.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+  text.SetFontStyle(n"Bold");
+  text.SetFontSize(30);
+  text.SetFitToContent(true);
+  text.SetHAlign(inkEHorizontalAlign.Center);
+  text.SetVAlign(inkEVerticalAlign.Center);
+  text.SetAnchor(inkEAnchor.Centered);
+  text.SetAnchorPoint(0.5, 0.5);
+  text.SetLetterCase(textLetterCase.OriginalCase);
+  text.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+  text.BindProperty(n"tintColor", n"MainColors.Blue");
+  text.Reparent(container);
+
+  this.m_districtName = text;
 }
 
 @wrapMethod(MinimapContainerController)
