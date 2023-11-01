@@ -351,7 +351,7 @@ private func ShouldBeScrappedJunkSS(data: wref<gameItemData>) -> Bool {
 private func ShouldBeScrappedEdibleSS(data: wref<gameItemData>) -> Bool {
   let type: gamedataItemType = data.GetItemType();
 
-  return this.IsEdibleSS(type) 
+  return this.scrapperEdibles.enabled && this.IsEdibleSS(type) 
     && !data.HasTag(n"PermanentFood") 
     && !data.HasTag(n"PermanentStaminaFood") 
     && !data.HasTag(n"PermanentMemoryFood") 
