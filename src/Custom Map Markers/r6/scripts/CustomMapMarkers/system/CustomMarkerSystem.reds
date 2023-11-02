@@ -108,18 +108,10 @@ public class CustomMarkerSystem extends ScriptableSystem {
     let roleMappinData: ref<GameplayRoleMappinData> = new GameplayRoleMappinData();
     let mappinData: MappinData;
 
-    roleMappinData.m_mappinVisualState = EMappinVisualState.Available;
-    roleMappinData.m_isTagged = false;
-    roleMappinData.m_isQuest = false;
-    roleMappinData.m_visibleThroughWalls = false;
+    roleMappinData.m_isQuest = true;
+    roleMappinData.m_visibleThroughWalls = true;
     roleMappinData.m_range = 100.0;
-    roleMappinData.m_isCurrentTarget = false;
-    roleMappinData.m_gameplayRole = EGameplayRole.GenericRole;
-    roleMappinData.m_braindanceLayer = braindanceVisionMode.Default;
-    roleMappinData.m_quality = gamedataQuality.Invalid;
-    roleMappinData.m_isIconic = false;
-    roleMappinData.m_hasOffscreenArrow = true;
-    roleMappinData.m_isScanningCluesBlocked = false;
+    roleMappinData.m_gameplayRole = EGameplayRole.FastTravel;
     roleMappinData.m_textureID = t"MappinIcons.GenericDeviceMappin";
     roleMappinData.m_showOnMiniMap = true;
     roleMappinData.m_isMappinCustom = true;
@@ -132,7 +124,7 @@ public class CustomMarkerSystem extends ScriptableSystem {
     mappinData.active = true;
     mappinData.debugCaption = s"Custom mappin \(description)";
     mappinData.scriptData = roleMappinData;
-    mappinData.visibleThroughWalls = false;
+    mappinData.visibleThroughWalls = true;
 
     return mappinData;
   }

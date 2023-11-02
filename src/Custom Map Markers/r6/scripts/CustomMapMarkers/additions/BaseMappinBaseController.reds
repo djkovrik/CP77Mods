@@ -39,7 +39,7 @@ protected func Update() -> Void {
     } else {
       texturePart = this.GetTexturePartForDeviceEffect(gameplayRoleData.m_gameplayRole);
       inkImageRef.SetTexturePart(this.iconWidget, texturePart);
-      isIconIDValid = NotEquals(texturePart, n"");
+      isIconIDValid = NotEquals(texturePart, n"None");
     };
     shouldShowMappin = isIconIDValid;
   } else {
