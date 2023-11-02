@@ -109,7 +109,7 @@ public class CustomMarkerSystem extends ScriptableSystem {
     let mappinData: MappinData;
 
     roleMappinData.m_isQuest = true;
-    roleMappinData.m_visibleThroughWalls = true;
+    roleMappinData.m_visibleThroughWalls = false;
     roleMappinData.m_range = 100.0;
     roleMappinData.m_gameplayRole = EGameplayRole.FastTravel;
     roleMappinData.m_textureID = t"MappinIcons.GenericDeviceMappin";
@@ -124,7 +124,7 @@ public class CustomMarkerSystem extends ScriptableSystem {
     mappinData.active = true;
     mappinData.debugCaption = s"Custom mappin \(description)";
     mappinData.scriptData = roleMappinData;
-    mappinData.visibleThroughWalls = true;
+    mappinData.visibleThroughWalls = false;
 
     return mappinData;
   }
