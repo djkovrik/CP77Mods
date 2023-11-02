@@ -136,6 +136,8 @@ public func IsExclusionSS(id: TweakDBID) -> Bool {
     Equals(id, t"Items.PermanentHealthFood") ||
     Equals(id, t"Items.PermanentStaminaRegenFood") ||
     Equals(id, t"Items.PermanentMemoryRegenFood") ||
+    // Cat food
+    Equals(id, t"Items.LowQualityFood11") ||
   false;
 }
 
