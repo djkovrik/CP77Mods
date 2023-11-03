@@ -1,5 +1,29 @@
 import Edgerunning.System.EdgerunningSystem
 
+@wrapMethod(RipperDocGameController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+  this.edgerunningSystem = EdgerunningSystem.GetInstance(this.m_player.GetGame());
+
+  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+  let outerContainer = new inkCanvas();
+  outerContainer.SetName(n"OuterContainer");
+  outerContainer.SetHAlign(inkEHorizontalAlign.Center);
+  outerContainer.SetVAlign(inkEVerticalAlign.Bottom);
+  outerContainer.SetAnchor(inkEAnchor.BottomCenter);
+  outerContainer.SetInteractive(true);
+  outerContainer.SetAnchorPoint(new Vector2(0.5, 0.5));
+  outerContainer.SetMargin(new inkMargin(0.0, 0.0, 480.0, 140.0));
+  outerContainer.Reparent(root, 5);
+
+  this.SpawnFromExternal(
+    outerContainer, 
+    r"base\\gameplay\\gui\\fullscreen\\wannabe_edgerunner_bars.inkwidget", 
+    n"Root:Edgerunning.Controller.NewHumanityBarController"
+  );
+}
+
+/*
 @addMethod(RipperDocGameController)
 public func CreateHumanityIcon() -> ref<inkImage> {
   let icon: ref<inkImage> = new inkImage();
@@ -152,28 +176,7 @@ public func RefreshHumanityHUD() -> Void {
 protected cb func OnUpdateHumanityCounterEvent(evt: ref<UpdateHumanityCounterEvent>) -> Bool {
   this.RefreshHumanityBars(evt.current, evt.total);
 }
-
-@wrapMethod(CyberdeckTooltip)
-protected cb func OnInitialize() -> Bool {
-  wrappedMethod();
-
-  this.humanityLabel = new inkText();
-  this.humanityLabel.SetName(n"HumanityLabel");
-  this.humanityLabel.SetText("-10 Humanity");
-  this.humanityLabel.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-  this.humanityLabel.SetFontSize(42);
-  this.humanityLabel.SetHAlign(inkEHorizontalAlign.Left);
-  this.humanityLabel.SetVAlign(inkEVerticalAlign.Top);
-  this.humanityLabel.SetAnchor(inkEAnchor.TopLeft);
-  this.humanityLabel.SetAnchorPoint(1.0, 1.0);
-  this.humanityLabel.SetLetterCase(textLetterCase.OriginalCase);
-  this.humanityLabel.SetMargin(new inkMargin(0.0, -30.0, 0.0, 0.0));
-  this.humanityLabel.SetVisible(false);
-  this.humanityLabel.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-  this.humanityLabel.BindProperty(n"tintColor", n"MainColors.White");
-  
-  inkCompoundRef.AddChildWidget(this.m_headerContainer, this.humanityLabel);
-}
+*/
 
 @addMethod(healthbarWidgetGameController)
 public func RefreshHumanityBars(current: Int32, total: Int32, color: CName) -> Void {

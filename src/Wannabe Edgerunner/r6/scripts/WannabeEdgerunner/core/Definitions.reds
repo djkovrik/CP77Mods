@@ -25,9 +25,6 @@ public let humanityBarFull: ref<inkRectangle>;
 @addField(RipperDocGameController)
 public let humanityBarProgress: ref<inkRectangle>;
 
-@addField(CyberdeckTooltip)
-public let humanityLabel: ref<inkText>;
-
 @addField(ItemTooltipCommonController)
 public let humanityLabel: ref<inkText>;
 
