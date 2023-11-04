@@ -1,5 +1,7 @@
 import Edgerunning.System.EdgerunningSystem
 
+// -- CYBERWARE MENU --
+
 @wrapMethod(RipperDocGameController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
@@ -29,160 +31,62 @@ protected cb func OnLastBarIntroFinished(animProxy: ref<inkAnimProxy>) -> Bool {
   this.QueueEvent(new CyberwareMenuBarAppeared());
 }
 
-/*
 @addMethod(RipperDocGameController)
-public func CreateHumanityIcon() -> ref<inkImage> {
-  let icon: ref<inkImage> = new inkImage();
-  icon.SetName(n"HumanityImage");
-  icon.SetInteractive(true);
-  icon.SetAtlasResource(r"base\\gameplay\\gui\\common\\icons\\mappin_icons.inkatlas");
-  icon.SetTexturePart(n"hunt_for_psycho");
-  icon.SetBrushMirrorType(inkBrushMirrorType.NoMirror);
-  icon.SetBrushTileType(inkBrushTileType.NoTile);
-  icon.SetContentHAlign(inkEHorizontalAlign.Center);
-  icon.SetContentVAlign(inkEVerticalAlign.Center);
-  icon.SetMargin(new inkMargin(20.0, 20.0, 20.0, 20.0));
-  icon.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-  icon.BindProperty(n"tintColor", n"MainColors.Blue");
-  return icon;
+protected cb func OnCustomBarHover(evt: ref<CustomBarHoverOverEvent>) -> Bool {
+  let tooltipData: ref<RipperdocBarTooltipTooltipData> = new RipperdocBarTooltipTooltipData();
+  tooltipData.isHumanityData = true;
+  tooltipData.humanityCurrent = evt.humanityCurrent;
+  tooltipData.humanityTotal = evt.humanityTotal;
+  tooltipData.humanityAdditionalDesc = evt.humanityAdditionalDesc;
+
+  this.m_TooltipsManager.AttachToCursor();
+  this.m_TooltipsManager.ShowTooltip(n"RipperdocBarTooltip", tooltipData, this.m_defaultTooltipsMargin);
 }
 
 @addMethod(RipperDocGameController)
-public func CreateHumanityLabel() -> ref<inkText> {
-  let label: ref<inkText> = new inkText();
-  label.SetName(n"HumanityLabel");
-  label.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-  label.SetFontSize(44);
-  label.SetText(GetLocalizedTextByKey(n"Mod-Edg-Humanity"));
-  label.SetHAlign(inkEHorizontalAlign.Left);
-  label.SetVAlign(inkEVerticalAlign.Top);
-  label.SetAnchor(inkEAnchor.TopLeft);
-  label.SetAnchorPoint(0.0, 0.0);
-  label.SetOpacity(0.4);
-  label.SetLetterCase(textLetterCase.UpperCase);
-  label.SetMargin(new inkMargin(80.0, 50.0, 0.0, 0.0));
-  label.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-  label.BindProperty(n"tintColor", n"MainColors.ActiveBlue");
-  return label;
-}
-
-@addMethod(RipperDocGameController)
-public func RefreshHumanityBars(current: Int32, total: Int32) -> Void {
-  let fullWidth: Float = this.humanityBarFull.GetWidth();
-  let step: Float = fullWidth / Cast<Float>(total);
-  let newWidth: Float = Cast<Float>(current) * step;
-  this.humanityBarProgress.SetWidth(newWidth);
-  this.humanityBarProgress.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-  this.humanityBarProgress.BindProperty(n"tintColor", this.edgerunningSystem.GetHumanityColor());
-}
-
-@wrapMethod(RipperDocGameController)
-protected cb func OnInitialize() -> Bool {
-  wrappedMethod();
-  this.edgerunningSystem = EdgerunningSystem.GetInstance(this.m_player.GetGame());
-
-  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
-  let outerContainer = new inkCanvas();
-  outerContainer.SetName(n"OuterContainer");
-  outerContainer.SetHAlign(inkEHorizontalAlign.Left);
-  outerContainer.SetVAlign(inkEVerticalAlign.Top);
-  outerContainer.SetAnchor(inkEAnchor.TopLeft);
-  outerContainer.SetInteractive(true);
-  outerContainer.SetAnchorPoint(new Vector2(0.0, 0.0));
-  outerContainer.SetSize(new Vector2(940.0, 100.0));
-  outerContainer.SetMargin(new inkMargin(180.0, 140.0, 0.0, 0.0));
-  outerContainer.Reparent(root, 5);
-
-  let vertical: ref<inkVerticalPanel> = new inkVerticalPanel();
-  vertical.SetName(n"VerticalPanel");
-  vertical.SetFitToContent(true);
-  vertical.SetHAlign(inkEHorizontalAlign.Fill);
-  vertical.SetVAlign(inkEVerticalAlign.Fill);
-  vertical.SetAnchor(inkEAnchor.Fill);
-  vertical.SetInteractive(true);
-  vertical.Reparent(outerContainer);
-
-  let label: ref<inkText> = this.CreateHumanityLabel();
-  label.Reparent(vertical);
-
-  let horizontal: ref<inkHorizontalPanel> = new inkHorizontalPanel();
-  horizontal.SetName(n"HorizontalPanel");
-  horizontal.SetFitToContent(true);
-  horizontal.SetHAlign(inkEHorizontalAlign.Fill);
-  horizontal.SetVAlign(inkEVerticalAlign.Fill);
-  horizontal.SetAnchor(inkEAnchor.Fill);
-  horizontal.SetInteractive(true);
-  horizontal.Reparent(vertical);
-
-  this.humanityIcon = this.CreateHumanityIcon();
-  this.humanityIcon.Reparent(horizontal);
-
-  vertical.RegisterToCallback(n"OnHoverOver", this, n"OnHumanityIconHoverOver");
-  vertical.RegisterToCallback(n"OnHoverOut", this, n"OnHumanityIconHoverOut");
-
-  let progressContainer: ref<inkCanvas> = new inkCanvas();
-  progressContainer.SetSize(new Vector2(640.0, 12.0));
-  progressContainer.SetMargin(40.0, 0.0, 0.0, 0.0);
-  progressContainer.Reparent(horizontal);
-
-  this.humanityBarFull = new inkRectangle();
-  this.humanityBarFull.SetName(n"ProgressFull");
-  this.humanityBarFull.SetAnchor(inkEAnchor.CenterLeft);
-  this.humanityBarFull.SetHAlign(inkEHorizontalAlign.Left);
-  this.humanityBarFull.SetVAlign(inkEVerticalAlign.Center);
-  this.humanityBarFull.SetSize(new Vector2(640.0, 12.0));
-  this.humanityBarFull.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-  this.humanityBarFull.BindProperty(n"tintColor", n"MainColors.FaintRed");
-  this.humanityBarFull.Reparent(progressContainer);
-
-  this.humanityBarProgress = new inkRectangle();
-  this.humanityBarProgress.SetName(n"ProgressCurrent");
-  this.humanityBarProgress.SetAnchor(inkEAnchor.CenterLeft);
-  this.humanityBarProgress.SetHAlign(inkEHorizontalAlign.Left);
-  this.humanityBarProgress.SetVAlign(inkEVerticalAlign.Center);
-  this.humanityBarProgress.SetSize(new Vector2(640.0, 12.0));
-  this.humanityBarProgress.Reparent(progressContainer);
-
-  this.RefreshHumanityHUD();
-}
-
-@addMethod(RipperDocGameController)
-protected cb func OnHumanityIconHoverOver(evt: ref<inkPointerEvent>) -> Bool {
-  this.humanityIcon.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-  this.humanityIcon.BindProperty(n"tintColor", n"MainColors.ActiveBlue");
-  let data: ref<MessageTooltipData> = new MessageTooltipData();
-  let current: Int32 = this.edgerunningSystem.GetHumanityCurrent();
-  let total: Int32 = this.edgerunningSystem.GetHumanityTotal();
-  let description: String = GetLocalizedTextByKey(n"Mod-Edg-Humanity-Desc");
-  let additionalDescription = this.edgerunningSystem.GetAdditionalPenaltiesDescription();
-  data.Title = s"\(GetLocalizedTextByKey(n"Mod-Edg-Humanity")): \(current) / \(total)";
-  if NotEquals(additionalDescription, "") {
-    data.Description = description + additionalDescription;
-  } else {
-    data.Description = description;
-  };
-  this.m_TooltipsManager.ShowTooltip(data);
-}
-
-@addMethod(RipperDocGameController)
-protected cb func OnHumanityIconHoverOut(evt: ref<inkPointerEvent>) -> Bool {
+protected cb func OnCustomBarHoverOutEvent(evt: ref<CustomBarHoverOutEvent>) -> Bool {
   this.m_TooltipsManager.HideTooltips();
-  this.humanityIcon.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-  this.humanityIcon.BindProperty(n"tintColor", n"MainColors.Blue");
 }
 
-@addMethod(RipperDocGameController)
-public func RefreshHumanityHUD() -> Void {
-  let current: Int32 = this.edgerunningSystem.GetHumanityCurrent();
-  let total: Int32 = this.edgerunningSystem.GetHumanityTotal();
-  this.RefreshHumanityBars(current, total);
+@wrapMethod(RipperdocBarTooltip)
+public func SetData(tooltipData: ref<ATooltipData>) -> Void {
+  let alternateTooltipData: ref<RipperdocBarTooltipTooltipData> = tooltipData as RipperdocBarTooltipTooltipData;
+  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+  root.GetWidgetByPathName(n"main/content/categories/stats").SetVisible(true);
+  root.GetWidgetByPathName(n"main/content/categories/perks").SetVisible(true);
+
+  if alternateTooltipData.isHumanityData {
+    // Title
+    inkTextRef.SetLocalizedText(this.m_titleName, n"Mod-Edg-Humanity");
+    // Top right numbers
+    inkTextRef.SetText(this.m_titleTotalValue, IntToString(alternateTooltipData.humanityCurrent));
+    inkTextRef.SetText(this.m_titleMaxValue, IntToString(alternateTooltipData.humanityTotal));
+    // Description visibility
+    inkWidgetRef.SetVisible(this.m_armorDescription, true);
+    inkWidgetRef.SetVisible(this.m_armorReductionDescription, false);
+    inkWidgetRef.SetVisible(this.m_capacityDescription, false);
+    inkWidgetRef.SetVisible(this.m_statsHolder, false);
+    inkWidgetRef.SetVisible(this.m_perk1, false);
+    inkWidgetRef.SetVisible(this.m_perk2, false);
+    inkWidgetRef.SetVisible(this.m_perkTreeInput, false);
+    inkWidgetRef.SetVisible(this.m_perkTreeIcon, false);
+    // Custom text
+    let description: String = GetLocalizedTextByKey(n"Mod-Edg-Humanity-Desc");
+    if NotEquals(alternateTooltipData.humanityAdditionalDesc, "") {
+      description = description + alternateTooltipData.humanityAdditionalDesc;
+    };
+    let descText: ref<inkText> = inkWidgetRef.Get(this.m_armorDescription) as inkText;
+    descText.SetText(description);
+    // Hide other stuff
+    root.GetWidgetByPathName(n"main/content/categories/stats").SetVisible(false);
+    root.GetWidgetByPathName(n"main/content/categories/perks").SetVisible(false);
+  } else {
+    wrappedMethod(tooltipData);
+  };
 }
 
-@addMethod(RipperDocGameController)
-protected cb func OnUpdateHumanityCounterEvent(evt: ref<UpdateHumanityCounterEvent>) -> Bool {
-  this.RefreshHumanityBars(evt.current, evt.total);
-}
-*/
+
+// -- HEALTHBAR --
 
 @addMethod(healthbarWidgetGameController)
 public func RefreshHumanityBars(current: Int32, total: Int32, color: CName) -> Void {
@@ -238,7 +142,6 @@ protected cb func OnInitialize() -> Bool {
   let color: CName = this.edgerunningSystem.GetHumanityColor();
   this.RefreshHumanityBars(current, total, color);
 }
-
 
 @addMethod(healthbarWidgetGameController)
 protected cb func OnUpdateHumanityCounterEvent(evt: ref<UpdateHumanityCounterEvent>) -> Bool {

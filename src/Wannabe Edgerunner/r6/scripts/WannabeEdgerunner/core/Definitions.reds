@@ -39,3 +39,15 @@ public let humanityBarProgress: ref<inkRectangle>;
 
 @addField(healthbarWidgetGameController)
 public let edgerunningSystem: ref<EdgerunningSystem>;
+
+@addField(RipperdocBarTooltipTooltipData)
+public let isHumanityData: Bool;
+
+@addField(RipperdocBarTooltipTooltipData)
+public let humanityCurrent: Int32;
+
+@addField(RipperdocBarTooltipTooltipData)
+public let humanityTotal: Int32;
+
+@addField(RipperdocBarTooltipTooltipData)
+public let humanityAdditionalDesc: String;

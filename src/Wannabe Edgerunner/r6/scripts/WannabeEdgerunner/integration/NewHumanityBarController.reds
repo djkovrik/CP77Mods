@@ -55,9 +55,22 @@ public class NewHumanityBarController extends inkGameController {
     };
   }
 
+  protected cb func OnCustomBarHoverOver(evt: ref<inkPointerEvent>) -> Bool {
+    let barHoverOverEvent: ref<CustomBarHoverOverEvent> = new CustomBarHoverOverEvent();
+    barHoverOverEvent.humanityCurrent = this.humanityCurrent;
+    barHoverOverEvent.humanityTotal = this.humanityTotal;
+    barHoverOverEvent.humanityAdditionalDesc = this.system.GetAdditionalPenaltiesDescription();
+    this.QueueEvent(barHoverOverEvent);
+  }
+
+  protected cb func OnCustomBarHoverOut(evt: ref<inkPointerEvent>) -> Bool {
+    let barHoverOutEvent: ref<CustomBarHoverOutEvent> = new CustomBarHoverOutEvent();
+    this.QueueEvent(barHoverOutEvent);
+  }
+
   private final func InitCoreThings() -> Void {
     this.tooltipData = new RipperdocBarTooltipTooltipData();
-    this.tooltipData.barType = BarType.Armor;
+
     ArrayPush(this.barGaps, 10);
     ArrayPush(this.barGaps, 20);
     ArrayPush(this.barGaps, 30);
@@ -71,6 +84,18 @@ public class NewHumanityBarController extends inkGameController {
     this.icon.SetOpacity(0.0);
     this.labelContainer.SetOpacity(0.0);
     this.labelText.SetText(s"\(this.humanityCurrent)");
+
+    this.icon.RegisterToCallback(n"OnHoverOver", this, n"OnCustomBarHoverOver");
+    this.icon.RegisterToCallback(n"OnHoverOut", this, n"OnCustomBarHoverOut");
+    this.labelContainer.RegisterToCallback(n"OnHoverOver", this, n"OnCustomBarHoverOver");
+    this.labelContainer.RegisterToCallback(n"OnHoverOut", this, n"OnCustomBarHoverOut");
+  }
+
+  protected cb func OnUninitialize() -> Bool {
+    this.icon.UnregisterFromCallback(n"OnHoverOver", this, n"OnCustomBarHoverOver");
+    this.icon.UnregisterFromCallback(n"OnHoverOut", this, n"OnCustomBarHoverOut");
+    this.labelContainer.UnregisterFromCallback(n"OnHoverOver", this, n"OnCustomBarHoverOver");
+    this.labelContainer.UnregisterFromCallback(n"OnHoverOut", this, n"OnCustomBarHoverOut");
   }
 
   private final func SpawnBars() -> Void {

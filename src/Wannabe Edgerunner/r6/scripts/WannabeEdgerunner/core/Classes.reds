@@ -17,3 +17,11 @@ public class SFXBundle {
 }
 
 public class CyberwareMenuBarAppeared extends Event {}
+
+public class CustomBarHoverOverEvent extends Event {
+  public let humanityCurrent: Int32;
+  public let humanityTotal: Int32;
+  public let humanityAdditionalDesc: String;
+}
+
+public class CustomBarHoverOutEvent extends Event {}
