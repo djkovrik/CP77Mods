@@ -28,6 +28,15 @@ public class PsychosisEffectsHelper {
     this.PopulateSfxArray();
   }
 
+  public func RunwNewPrePsychosisEffect() -> Void {
+    E("!!! Ff Pre-Psychosis stage");
+    this.StopVFX(n"hacking_glitch_low");
+    this.PlayVFXDelayed(n"fx_damage_high", 0.5);
+    this.PlayVFXDelayed(n"personal_link_glitch", 1.0);
+    this.PlaySFXDelayed(n"ono_v_pain_short", 0.5);
+    this.ApplyStatusEffect(t"BaseStatusEffect.NewPrePsychosisEffect", 1.5);
+  }
+
   public func RunLowHumanityEffects() -> Void {
     E("!!! Fx Stage 1 - Glitches start");
     this.StopVFX(n"hacking_glitch_low");

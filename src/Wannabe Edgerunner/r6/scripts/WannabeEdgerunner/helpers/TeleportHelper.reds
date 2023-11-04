@@ -66,6 +66,9 @@ public class TeleportHelper {
   }
 
   private func OnPlayerTeleportCallback(position: Vector4) -> Void {
+    if !this.CanBeTeleported() {
+      return ;
+    };
     E(s"Teleport - Target position: \(position)");
     this.RequestLoadingScreen();
     let rotation: EulerAngles;
@@ -106,6 +109,26 @@ public class TeleportHelper {
       nextLoadingTypeEvt.SetNextLoadingScreenType(inkLoadingScreenType.FastTravel);
       controller.QueueBroadcastEvent(nextLoadingTypeEvt);
     };
+  }
+
+  private final func CanBeTeleported() -> Bool {
+    let bb: ref<IBlackboard> = this.player.GetPlayerStateMachineBlackboard();
+    let dogtown: Bool = GameInstance.GetPreventionSpawnSystem(this.player.GetGame()).IsPlayerInDogTown();
+    let paused: Bool = GameInstance.GetTimeSystem(this.player.GetGame()).IsPausedState();
+    let blocked: Bool = StatusEffectSystem.ObjectHasStatusEffectWithTag(this.player, n"NoTimeSkip");
+    let tier: Int32 = bb.GetInt(GetAllBlackboardDefs().PlayerStateMachine.HighLevel);
+    let scene: Bool = tier >= EnumInt(gamePSMHighLevel.SceneTier3) && tier <= EnumInt(gamePSMHighLevel.SceneTier5);
+    let mounted: Bool = VehicleComponent.IsMountedToVehicle(this.player.GetGame(), this.player);
+    let condition: Bool = bb.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Swimming) == EnumInt(gamePSMSwimming.Diving)
+      || bb.GetBool(GetAllBlackboardDefs().PlayerStateMachine.Carrying)
+      || bb.GetBool(GetAllBlackboardDefs().PlayerStateMachine.IsInLoreAnimationScene);
+
+    if dogtown || paused || blocked || scene || mounted || condition {
+      E(s"Teleport canceled: Dogtown \(dogtown), paused: \(paused), blocked: \(blocked), scene: \(scene), mounted: \(mounted), condition: \(condition)");
+      return false;
+    };
+
+    return true;
   }
 }
 

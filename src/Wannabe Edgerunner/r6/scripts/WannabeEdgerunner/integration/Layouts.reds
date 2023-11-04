@@ -34,7 +34,7 @@ protected cb func OnLastBarIntroFinished(animProxy: ref<inkAnimProxy>) -> Bool {
 @addMethod(RipperDocGameController)
 protected cb func OnCustomBarHover(evt: ref<CustomBarHoverOverEvent>) -> Bool {
   let tooltipData: ref<RipperdocBarTooltipTooltipData> = new RipperdocBarTooltipTooltipData();
-  tooltipData.isHumanityData = true;
+  tooltipData.isHumanityTooltip = true;
   tooltipData.humanityCurrent = evt.humanityCurrent;
   tooltipData.humanityTotal = evt.humanityTotal;
   tooltipData.humanityAdditionalDesc = evt.humanityAdditionalDesc;
@@ -55,7 +55,7 @@ public func SetData(tooltipData: ref<ATooltipData>) -> Void {
   root.GetWidgetByPathName(n"main/content/categories/stats").SetVisible(true);
   root.GetWidgetByPathName(n"main/content/categories/perks").SetVisible(true);
 
-  if alternateTooltipData.isHumanityData {
+  if alternateTooltipData.isHumanityTooltip {
     // Title
     inkTextRef.SetLocalizedText(this.m_titleName, n"Mod-Edg-Humanity");
     // Top right numbers

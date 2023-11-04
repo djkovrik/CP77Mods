@@ -41,7 +41,7 @@ public let humanityBarProgress: ref<inkRectangle>;
 public let edgerunningSystem: ref<EdgerunningSystem>;
 
 @addField(RipperdocBarTooltipTooltipData)
-public let isHumanityData: Bool;
+public let isHumanityTooltip: Bool;
 
 @addField(RipperdocBarTooltipTooltipData)
 public let humanityCurrent: Int32;

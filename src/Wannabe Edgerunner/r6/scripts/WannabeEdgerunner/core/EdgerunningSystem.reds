@@ -695,7 +695,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     let system: ref<EdgerunningSystem> = EdgerunningSystem.GetInstance(gi);
     // system.AddHumanityDamage(10);
     // system.InvalidateCurrentState(false);
-    system.RunPsychosisFlow();
+    system.effectsHelper.RunwNewPrePsychosisEffect();
   }
 }
 
