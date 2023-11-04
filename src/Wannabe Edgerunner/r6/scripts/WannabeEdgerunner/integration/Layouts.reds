@@ -13,7 +13,7 @@ protected cb func OnInitialize() -> Bool {
   outerContainer.SetAnchor(inkEAnchor.BottomCenter);
   outerContainer.SetInteractive(true);
   outerContainer.SetAnchorPoint(new Vector2(0.5, 0.5));
-  outerContainer.SetMargin(new inkMargin(0.0, 0.0, 480.0, 140.0));
+  outerContainer.SetMargin(new inkMargin(0.0, 0.0, 434.0, 140.0));
   outerContainer.Reparent(root, 5);
 
   this.SpawnFromExternal(
@@ -21,6 +21,12 @@ protected cb func OnInitialize() -> Bool {
     r"base\\gameplay\\gui\\fullscreen\\wannabe_edgerunner_bars.inkwidget", 
     n"Root:Edgerunning.Controller.NewHumanityBarController"
   );
+}
+
+@wrapMethod(RipperdocMetersCapacity)
+protected cb func OnLastBarIntroFinished(animProxy: ref<inkAnimProxy>) -> Bool {
+  wrappedMethod(animProxy);
+  this.QueueEvent(new CyberwareMenuBarAppeared());
 }
 
 /*

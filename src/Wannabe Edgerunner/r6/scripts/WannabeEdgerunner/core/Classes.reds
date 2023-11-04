@@ -15,3 +15,5 @@ public class SFXBundle {
     return bundle;
   }
 }
+
+public class CyberwareMenuBarAppeared extends Event {}
