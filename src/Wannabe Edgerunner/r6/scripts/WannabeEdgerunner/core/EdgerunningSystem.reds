@@ -548,8 +548,8 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public func GetHumanityColor() -> CName {
     let color: CName;
-    if this.currentHumanityPool < this.psychosisThreshold {
-      color = n"MainColors.MildGreen"; 
+    if this.currentHumanityPool > this.psychosisThreshold {
+      color = n"MainColors.ActiveGreen"; 
     } else {
       color = n"MainColors.ActiveRed"; 
     };

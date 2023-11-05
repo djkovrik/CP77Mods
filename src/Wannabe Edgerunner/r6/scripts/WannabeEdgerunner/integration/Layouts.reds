@@ -111,7 +111,7 @@ protected cb func OnInitialize() -> Bool {
   this.humanityBarContainer.SetVAlign(inkEVerticalAlign.Top);
   this.humanityBarContainer.SetAnchor(inkEAnchor.TopLeft);
   this.humanityBarContainer.SetAnchorPoint(new Vector2(0.0, 0.0));
-  this.humanityBarContainer.SetSize(new Vector2(530.0, 10.0));
+  this.humanityBarContainer.SetSize(new Vector2(530.0, 12.0));
   this.humanityBarContainer.Reparent(container, 0);
 
   let progressContainer: ref<inkCanvas> = new inkCanvas();
@@ -123,7 +123,7 @@ protected cb func OnInitialize() -> Bool {
   this.humanityBarFull.SetAnchor(inkEAnchor.TopLeft);
   this.humanityBarFull.SetHAlign(inkEHorizontalAlign.Left);
   this.humanityBarFull.SetVAlign(inkEVerticalAlign.Top);
-  this.humanityBarFull.SetSize(new Vector2(530.0, 8.0));
+  this.humanityBarFull.SetSize(new Vector2(530.0, 10.0));
   this.humanityBarFull.SetOpacity(0.75);
   this.humanityBarFull.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
   this.humanityBarFull.BindProperty(n"tintColor", n"MainColors.FaintRed");
@@ -134,7 +134,7 @@ protected cb func OnInitialize() -> Bool {
   this.humanityBarProgress.SetAnchor(inkEAnchor.TopLeft);
   this.humanityBarProgress.SetHAlign(inkEHorizontalAlign.Left);
   this.humanityBarProgress.SetVAlign(inkEVerticalAlign.Center);
-  this.humanityBarProgress.SetSize(new Vector2(530.0, 8.0));
+  this.humanityBarProgress.SetSize(new Vector2(530.0, 10.0));
   this.humanityBarProgress.Reparent(progressContainer);
 
   let current: Int32 = this.edgerunningSystem.GetHumanityCurrent();
