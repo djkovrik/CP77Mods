@@ -55,7 +55,7 @@ protected cb func OnItemDisplayHoverOut(evt: ref<ItemDisplayHoverOutEvent>) -> B
 // Toggle quest tag for item data
 @addMethod(BackpackMainGameController)
 private func ToggleQuestTag() -> Void {
-  let data: ref<gameItemData> = this.m_lastItemHoverOverEvent.uiInventoryItem.GetItemData();
+  let data: ref<gameItemData> = this.m_lastItemHoverOverEvent.uiInventoryItem.GetRealItemData();
   if !ToggleTagsChecker.IsToggleable(data.GetItemType()) {
     return ;
   };
@@ -125,6 +125,14 @@ private func ToggleQuestTag(evt: ref<ItemDisplayClickEvent>) -> Void {
       data.SetDynamicTag(n"Quest");
     };
   };
+  let realItemData: ref<gameItemData> = controller.GetUIInventoryItem().GetRealItemData();
+  if IsDefined(realItemData) && ToggleTagsChecker.IsToggleable(realItemData.GetItemType()) {
+    if realItemData.HasTag(n"Quest") {
+      realItemData.RemoveDynamicTag(n"Quest");
+    } else {
+      realItemData.SetDynamicTag(n"Quest");
+    };
+  };
 }
 
 // Handle activate_secondary hotkey click
@@ -148,5 +156,5 @@ protected cb func OnPostOnRelease(evt: ref<inkPointerEvent>) -> Bool {
 @wrapMethod(InventoryItemDisplayController)
 protected func NewUpdateIndicators(itemData: ref<UIInventoryItem>) -> Void {
   wrappedMethod(itemData);
-  inkWidgetRef.SetVisible(this.m_questItemMaker, IsDefined(itemData) ? itemData.GetItemData().HasTag(n"Quest") : false);
+  inkWidgetRef.SetVisible(this.m_questItemMaker, IsDefined(itemData) ? itemData.GetRealItemData().HasTag(n"Quest") : false);
 }
