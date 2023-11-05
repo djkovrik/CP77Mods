@@ -1,14 +1,3 @@
 localization:
   onscreens:
     en-us: base\localization\en-us\onscreens\wannabeedgerunner.json
-    ru-ru: base\localization\ru-ru\onscreens\wannabeedgerunner.json
-    cz-cz: base\localization\cz-cz\onscreens\wannabeedgerunner.json
-    fr-fr: base\localization\fr-fr\onscreens\wannabeedgerunner.json
-    it-it: base\localization\it-it\onscreens\wannabeedgerunner.json
-    jp-jp: base\localization\jp-jp\onscreens\wannabeedgerunner.json
-    pl-pl: base\localization\pl-pl\onscreens\wannabeedgerunner.json
-    pt-br: base\localization\pt-br\onscreens\wannabeedgerunner.json
-    zh-cn: base\localization\zh-cn\onscreens\wannabeedgerunner.json
-    zh-tw: base\localization\zh-tw\onscreens\wannabeedgerunner.json
-    de-de: base\localization\de-de\onscreens\wannabeedgerunner.json
-    es-es: base\localization\es-es\onscreens\wannabeedgerunner.json

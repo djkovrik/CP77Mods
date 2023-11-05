@@ -5,18 +5,23 @@ public func SpawnPoliceForPsychosis(config: ref<EdgerunningConfig>) -> Void {
   if IsDefined(this.m_player) {
     this.m_heatStage = this.GetHeatStageLevel(config.psychoHeatLevel);
     this.HeatPipeline("EnterCombat");
+    if Equals(config.psychoHeatLevel, WannabeHeatLevel.MaxTac) {
+      this.ChangeHeatStage(EPreventionHeatStage.Heat_5, "EnterCombat");
+      this.CheckPossibleSpawnPosAndRequestAVSpawn();
+    };
   };
 }
 
 
 @addMethod(PreventionSystem)
-public func GetHeatStageLevel(from: Int32) -> EPreventionHeatStage {
+public func GetHeatStageLevel(from: WannabeHeatLevel) -> EPreventionHeatStage {
   switch (from) {
-    case 1: return EPreventionHeatStage.Heat_0;
-    case 2: return EPreventionHeatStage.Heat_1;
-    case 3: return EPreventionHeatStage.Heat_2;
-    case 4: return EPreventionHeatStage.Heat_3;
-    case 5: return EPreventionHeatStage.Heat_4;
+    case WannabeHeatLevel.One: return EPreventionHeatStage.Heat_0;
+    case WannabeHeatLevel.Two: return EPreventionHeatStage.Heat_1;
+    case WannabeHeatLevel.Three: return EPreventionHeatStage.Heat_2;
+    case WannabeHeatLevel.Four: return EPreventionHeatStage.Heat_3;
+    case WannabeHeatLevel.Five: return EPreventionHeatStage.Heat_4;
+    case WannabeHeatLevel.MaxTac: return EPreventionHeatStage.Heat_4;
   };
 
   return EPreventionHeatStage.Heat_0;
@@ -33,4 +38,13 @@ private final func ShouldSpawnPatrolVehicleWhenInSearch() -> Bool {
   let isInInterior: Bool = IsEntityInInteriorArea(this.m_player);
   let isPsychosisActive: Bool = Equals(StatusEffectSystem.ObjectHasStatusEffect(this.m_player, t"BaseStatusEffect.ActivePsychosisBuff"), true);
   return (isPsychosisActive && !isInInterior) || shouldSpawn;
+}
+
+@wrapMethod(PreventionSystem)
+private final func CanRequestAVSpawn() -> Bool {
+  let config: ref<EdgerunningConfig> = new EdgerunningConfig();
+  let system: ref<EdgerunningSystem> = EdgerunningSystem.GetInstance(this.m_player.GetGame());
+  let maxTacAvailable: Bool = Equals(config.psychoHeatLevel, WannabeHeatLevel.MaxTac) && system.IsPsychosisActive();
+  let wrapped: Bool = wrappedMethod();
+  return wrapped || maxTacAvailable;
 }

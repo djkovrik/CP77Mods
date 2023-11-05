@@ -68,51 +68,103 @@ Price.RipperdocMedModifierRecipeRare:
   value: 5000
 
 
-# === Effects ===
+# === Core Effects ===
 
-BaseStatusEffect.ActiveLowHumanityGlitch:
+BaseStatusEffect.NewPrePsychosisEffect:
   $type: StatusEffect_Record
   duration: Items.EdgerunnerDebuffDuration
   gameplayTags: [ Debuff ]
+  savable: false
   packages:
    - $type: GameplayLogicPackage_Record
-     stats:
-     - $type: ConstantStatModifier_Record
-       statType: BaseStats.CritDamage
-       modifierType: Multiplier
-       value: 0.25
-  statusEffectType: BaseStatusEffectTypes.Misc
+     stackable: false
+     effectors:
+     - $type: ApplyStatGroupEffector_Record
+       applicationTarget: Weapon
+       effectorClassName: ApplyStatGroupEffector
+       prereqRecord: Prereqs.AnyWeaponHeldPrereq
+       statGroup:
+         $type: StatModifierGroup_Record
+         statModifiers:
+         - $type: ConstantStatModifier_Record
+           statType: BaseStats.ReloadTime
+           modifierType: Multiplier
+           value: 1.25
+         - $type: ConstantStatModifier_Record
+           statType: BaseStats.AimInTime
+           modifierType: Multiplier
+           value: 1.25
+         - $type: ConstantStatModifier_Record
+           statType: BaseStats.AimOutTime
+           modifierType: Multiplier
+           value: 1.25
+         - $type: ConstantStatModifier_Record
+           statType: BaseStats.RecoilAngle
+           modifierType: Multiplier
+           value: 1.25
+         - $type: ConstantStatModifier_Record
+           statType: BaseStats.RecoilDriftRandomRangeMin
+           modifierType: Multiplier
+           value: 1.4
+         - $type: ConstantStatModifier_Record
+           statType: BaseStats.RecoilDriftRandomRangeMax
+           modifierType: Multiplier
+           value: 1.4
+         - $type: ConstantStatModifier_Record
+           statType: BaseStats.RecoilKickMin
+           modifierType: Multiplier
+           value: 1.35
+         - $type: ConstantStatModifier_Record
+           statType: BaseStats.RecoilKickMax
+           modifierType: Multiplier
+           value: 1.35
+         - $type: ConstantStatModifier_Record
+           statType: BaseStats.RecoilRecoveryTime
+           modifierType: Multiplier
+           value: 1.4
+         - $type: ConstantStatModifier_Record
+           statType: BaseStats.SpreadAdsMaxX
+           modifierType: Multiplier
+           value: 1.35
+         - $type: ConstantStatModifier_Record
+           statType: BaseStats.SpreadAdsMaxY
+           modifierType: Multiplier
+           value: 1.35
+         - $type: ConstantStatModifier_Record
+           statType: BaseStats.SpreadMaxX
+           modifierType: Multiplier
+           value: 1.35
+         - $type: ConstantStatModifier_Record
+           statType: BaseStats.SpreadMaxY
+           modifierType: Multiplier
+           value: 1.35
+         - $type: ConstantStatModifier_Record
+           statType: BaseStats.SpreadChangePerShot
+           modifierType: Multiplier
+           value: 1.5
+         - $type: ConstantStatModifier_Record
+           statType: BaseStats.SpreadAdsChangePerShot
+           modifierType: Multiplier
+           value: 1.5 
+  statusEffectType: BaseStatusEffectTypes.PassiveDebuff
   uiData: 
     $type: StatusEffectUIData_Record
-    description: LocKey#Mod-Edg-Low-Humanity-Desc
-    displayName: LocKey#Mod-Edg-Low-Humanity
-    iconPath: decreased_stats_icon
-
-BaseStatusEffect.ActivePrePsychosisGlitch:
-  $type: StatusEffect_Record
-  duration: Items.EdgerunnerDebuffDuration
-  gameplayTags: [ Debuff ]
-  packages:
-   - $type: GameplayLogicPackage_Record
-     stats:
-     - $type: ConstantStatModifier_Record
-       statType: BaseStats.CritChance
-       modifierType: Multiplier
-       value: 0.25
-  statusEffectType: BaseStatusEffectTypes.Misc
-  uiData: 
-    $type: StatusEffectUIData_Record
-    description: LocKey#Mod-Edg-Pre-Psychosis-Desc
     displayName: LocKey#Mod-Edg-Pre-Psychosis
+    description: LocKey#Mod-Edg-Pre-Psychosis-Desc
     iconPath: decreased_stats_icon
+    priority: 10
+  SFX:
+    - $type: StatusEffectFX_Record
+      name: ono_v_pain_short
   VFX:
     - $type: StatusEffectFX_Record
-      name: status_bleeding
+      name: hacking_glitch_low
 
-BaseStatusEffect.ActivePsychosisBuff:
+BaseStatusEffect.NewPsychosisEffect:
   $type: StatusEffect_Record
   duration: Items.EdgerunnerPsychosisDuration
-  gameplayTags: [ Buff ]
+  gameplayTags: [ Buff, Regeneration ]
+  savable: false
   packages:
    - $type: GameplayLogicPackage_Record
      stats:
@@ -121,33 +173,30 @@ BaseStatusEffect.ActivePsychosisBuff:
        modifierType: Additive
        value: 1.0
      - $type: ConstantStatModifier_Record
+       statType: BaseStats.HealthInCombatRegenRate
+       modifierType: AdditiveMultiplier
+       value: 10.0
+     - $type: ConstantStatModifier_Record
+       statType: BaseStats.HealthInCombatRegenRateMult
+       modifierType: Additive
+       value: 10.0
+     - $type: ConstantStatModifier_Record
+       statType: BaseStats.HealthInCombatRegenEndThreshold
+       modifierType: Additive
+       value: 1000.0
+     - $type: ConstantStatModifier_Record
        statType: BaseStats.MaxSpeed
        modifierType: Multiplier
-       value: 2.5
+       value: 1.5
      - $type: ConstantStatModifier_Record
        statType: BaseStats.Armor
        modifierType: Multiplier
        value: 2.0
-     effectors:
-     - $type: ModifyStatPoolModifierEffector_Record
-       effectorClassName: ModifyStatPoolModifierEffector
-       prereqRecord: Prereqs.AlwaysTruePrereq
-       effectorClassName: ModifyStatPoolModifierEffector
-       statPoolType: Health
-       modificationType: Regeneration
-       poolModifier:
-         $type: PoolValueModifier_Record
-         enabled: true
-         rangeBegin: 0
-         rangeEnd: 999
-         startDelay: 0
-         valuePerSec: 50
-         delayOnChange: false
   statusEffectType: BaseStatusEffectTypes.Misc
   uiData: 
     $type: StatusEffectUIData_Record
-    description: LocKey#Mod-Edg-Cyberpsychosis-Desc
     displayName: LocKey#Mod-Edg-Cyberpsychosis
+    description: LocKey#Mod-Edg-Cyberpsychosis-Desc
     iconPath: immunity_icon
   SFX:
     - $type: StatusEffectFX_Record
@@ -155,6 +204,121 @@ BaseStatusEffect.ActivePsychosisBuff:
   VFX:
     - $type: StatusEffectFX_Record
       name: johnny_sickness_blackout
+
+BaseStatusEffect.NewPostPsychosisEffect:
+  $type: StatusEffect_Record
+  duration: Items.EdgerunnerDebuffDuration
+  gameplayTags: [ Debuff ]
+  savable: false
+  packages:
+   - GLP.DeactivateCyberware
+   - $type: GameplayLogicPackage_Record
+     stackable: false
+     stats:
+     - $type: ConstantStatModifier_Record
+       statType: BaseStats.Accuracy
+       modifierType: Multiplier
+       value: 0.02
+     - $type: ConstantStatModifier_Record
+       statType: BaseStats.Armor
+       modifierType: Multiplier
+       value: 0.5
+     - $type: ConstantStatModifier_Record
+       statType: BaseStats.Evasion
+       modifierType: Multiplier
+       value: 0.5
+     - $type: ConstantStatModifier_Record
+       statType: BaseStats.ChemicalResistance
+       modifierType: Multiplier
+       value: 0.5
+     - $type: ConstantStatModifier_Record
+       statType: BaseStats.ThermalResistance
+       modifierType: Multiplier
+       value: 0.5
+     - $type: ConstantStatModifier_Record
+       statType: BaseStats.ElectricResistance
+       modifierType: Multiplier
+       value: 0.5
+     effectors:
+     - $type: ApplyStatGroupEffector_Record
+       applicationTarget: Weapon
+       effectorClassName: ApplyStatGroupEffector
+       prereqRecord: Prereqs.AnyWeaponHeldPrereq
+       statGroup:
+         $type: StatModifierGroup_Record
+         statModifiers:
+         - $type: ConstantStatModifier_Record
+           statType: BaseStats.ReloadTime
+           modifierType: Multiplier
+           value: 1.5
+         - $type: ConstantStatModifier_Record
+           statType: BaseStats.AimInTime
+           modifierType: Multiplier
+           value: 1.5
+         - $type: ConstantStatModifier_Record
+           statType: BaseStats.AimOutTime
+           modifierType: Multiplier
+           value: 1.5
+         - $type: ConstantStatModifier_Record
+           statType: BaseStats.RecoilAngle
+           modifierType: Multiplier
+           value: 1.25
+         - $type: ConstantStatModifier_Record
+           statType: BaseStats.RecoilDriftRandomRangeMin
+           modifierType: Multiplier
+           value: 1.4
+         - $type: ConstantStatModifier_Record
+           statType: BaseStats.RecoilDriftRandomRangeMax
+           modifierType: Multiplier
+           value: 1.4
+         - $type: ConstantStatModifier_Record
+           statType: BaseStats.RecoilKickMin
+           modifierType: Multiplier
+           value: 1.35
+         - $type: ConstantStatModifier_Record
+           statType: BaseStats.RecoilKickMax
+           modifierType: Multiplier
+           value: 1.35
+         - $type: ConstantStatModifier_Record
+           statType: BaseStats.RecoilRecoveryTime
+           modifierType: Multiplier
+           value: 1.4
+         - $type: ConstantStatModifier_Record
+           statType: BaseStats.SpreadAdsMaxX
+           modifierType: Multiplier
+           value: 1.35
+         - $type: ConstantStatModifier_Record
+           statType: BaseStats.SpreadAdsMaxY
+           modifierType: Multiplier
+           value: 1.35
+         - $type: ConstantStatModifier_Record
+           statType: BaseStats.SpreadMaxX
+           modifierType: Multiplier
+           value: 1.35
+         - $type: ConstantStatModifier_Record
+           statType: BaseStats.SpreadMaxY
+           modifierType: Multiplier
+           value: 1.35
+         - $type: ConstantStatModifier_Record
+           statType: BaseStats.SpreadChangePerShot
+           modifierType: Multiplier
+           value: 1.5
+         - $type: ConstantStatModifier_Record
+           statType: BaseStats.SpreadAdsChangePerShot
+           modifierType: Multiplier
+           value: 1.5 
+  statusEffectType: BaseStatusEffectTypes.PassiveDebuff
+  uiData: 
+    $type: StatusEffectUIData_Record
+    displayName: LocKey#Mod-Edg-Post-Psychosis
+    description: LocKey#Mod-Edg-Post-Psychosis-Desc
+    iconPath: knockdown_icon
+  SFX:
+    - $type: StatusEffectFX_Record
+      name: ono_v_pain_long
+  VFX:
+    - $type: StatusEffectFX_Record
+      name: hacking_glitch_low
 
 
 # === Buffs ===

@@ -5,6 +5,6 @@ import Edgerunning.System.EdgerunningSystem
 protected cb func OnDeath(evt: ref<gameDeathEvent>) -> Bool {
   wrappedMethod(evt);
   if this.IsPlayer() {
-    EdgerunningSystem.GetInstance(this.GetGame()).StopEverything();
+    EdgerunningSystem.GetInstance(this.GetGame()).StopEverythingNew();
   };
 }

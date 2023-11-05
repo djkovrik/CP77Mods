@@ -3,9 +3,9 @@ import Edgerunning.Common.E
 /**
   public func Init(player: ref<PlayerPuppet>) -> Void
   public func OnPossessionChanged(playerPossesion: gamedataPlayerPossesion) -> Void
-  public func IsGlitchesActive() -> Bool
-  public func IsPrePsychosisActive() -> Bool
-  public func IsPsychosisActive() -> Bool
+  public func IsNewPrePsychosisActive() -> Bool
+  public func IsNewPsychosisActive() -> Bool
+  public func IsNewPostPsychosisActive() -> Bool
   public func IsRipperdocBuffActive() -> Bool
   public func IsPossessed() -> Bool
 */
@@ -25,16 +25,16 @@ public class PsychosisEffectsChecker {
     this.possessed = Equals(playerPossesion, gamedataPlayerPossesion.Johnny);
   }
 
-  public func IsGlitchesActive() -> Bool {
-    return this.HasStatusEffect(t"BaseStatusEffect.ActiveLowHumanityGlitch");
+  public func IsNewPrePsychosisActive() -> Bool {
+    return this.HasStatusEffect(t"BaseStatusEffect.NewPrePsychosisEffect");
   }
 
-  public func IsPrePsychosisActive() -> Bool {
-    return this.HasStatusEffect(t"BaseStatusEffect.ActivePrePsychosisGlitch");
+  public func IsNewPsychosisActive() -> Bool {
+    return this.HasStatusEffect(t"BaseStatusEffect.NewPsychosisEffect");
   }
 
-  public func IsPsychosisActive() -> Bool {
-    return this.HasStatusEffect(t"BaseStatusEffect.ActivePsychosisBuff");
+  public func IsNewPostPsychosisActive() -> Bool {
+    return this.HasStatusEffect(t"BaseStatusEffect.NewPostPsychosisEffect");
   }
 
   public func IsRipperdocBuffActive() -> Bool {

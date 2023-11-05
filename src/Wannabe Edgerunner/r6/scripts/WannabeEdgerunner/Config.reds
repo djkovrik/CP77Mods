@@ -20,15 +20,6 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Humanity")
-  @runtimeProperty("ModSettings.displayName", "Mod-Edg-Glitches-Threshold")
-  @runtimeProperty("ModSettings.description", "Mod-Edg-Glitches-Threshold-Desc")
-  @runtimeProperty("ModSettings.step", "5")
-  @runtimeProperty("ModSettings.min", "5")
-  @runtimeProperty("ModSettings.max", "500")
-  let glitchesThreshold: Int32 = 40;
-
-  @runtimeProperty("ModSettings.mod", "Edgerunner")
-  @runtimeProperty("ModSettings.category", "Mod-Edg-Humanity")
   @runtimeProperty("ModSettings.displayName", "Mod-Edg-Psychosis-Threshold")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Psychosis-Threshold-Desc")
   @runtimeProperty("ModSettings.step", "5")
@@ -58,10 +49,13 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.category", "Gameplay-Devices-Interactions-MadnessHack")
   @runtimeProperty("ModSettings.displayName", "Mod-Edg-Wanted-Level")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Wanted-Level-Desc")
-  @runtimeProperty("ModSettings.step", "1")
-  @runtimeProperty("ModSettings.min", "1")
-  @runtimeProperty("ModSettings.max", "5")
-  let psychoHeatLevel: Int32 = 2;
+  @runtimeProperty("ModSettings.displayValues.One", "1")
+  @runtimeProperty("ModSettings.displayValues.Two", "2")
+  @runtimeProperty("ModSettings.displayValues.Three", "3")
+  @runtimeProperty("ModSettings.displayValues.Four", "4")
+  @runtimeProperty("ModSettings.displayValues.Five", "5")
+  @runtimeProperty("ModSettings.displayValues.MaxTac", "LocKey#20959")
+  let psychoHeatLevel: WannabeHeatLevel = WannabeHeatLevel.Three;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Gameplay-Devices-Interactions-MadnessHack")

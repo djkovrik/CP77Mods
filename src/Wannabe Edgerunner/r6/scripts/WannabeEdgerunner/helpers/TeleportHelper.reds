@@ -99,6 +99,8 @@ public class TeleportHelper {
     // Stop cycled effects
     this.effectsHelper.CancelCycledFx();
     EdgerunningSystem.GetInstance(this.player.GetGame()).PostTeleportHumanityReset();
+    // Apply post psychosis
+    this.effectsHelper.RunNewPostPsychosisEffect();
   }
 
   private func RequestLoadingScreen() {

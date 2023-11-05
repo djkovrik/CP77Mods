@@ -3,12 +3,12 @@ import Edgerunning.Common.E
 
 /**
   public func Init(player: ref<PlayerPuppet>) -> Void
-  public func RunLowHumanityEffects() -> Void
-  public func StopLowHumanityEffects() -> Void
-  public func RunPrePsychosisEffects() -> Void
-  public func StopPrePsychosisEffects() -> Void
-  public func RunPsychosisEffects() -> Void
-  public func StopPsychosisEffects() -> Void
+  public func RunNewPrePsychosisEffect() -> Void
+  public func StopNewPrePsychosisEffect() -> Void
+  public func RunNewPsychosisEffects() -> Void
+  public func StopNewPsychosisEffect() -> Void
+  public func RunNewPostPsychosisEffect() -> Void
+  public func StopNewPostPsychosisEffect() -> Void
   public func ScheduleCycledSfx(delay: Float) -> Void
   public func CancelCycledFx() -> Void
   public func PlayFastTravelFx() -> Void
@@ -28,61 +28,39 @@ public class PsychosisEffectsHelper {
     this.PopulateSfxArray();
   }
 
-  public func RunwNewPrePsychosisEffect() -> Void {
-    E("!!! Ff Pre-Psychosis stage");
-    this.StopVFX(n"hacking_glitch_low");
+  public func RunNewPrePsychosisEffect() -> Void {
+    E("!!! Fx New - Pre Psychosis");
     this.PlayVFXDelayed(n"fx_damage_high", 0.5);
     this.PlayVFXDelayed(n"personal_link_glitch", 1.0);
-    this.PlaySFXDelayed(n"ono_v_pain_short", 0.5);
     this.ApplyStatusEffect(t"BaseStatusEffect.NewPrePsychosisEffect", 1.5);
   }
 
-  public func RunLowHumanityEffects() -> Void {
-    E("!!! Fx Stage 1 - Glitches start");
-    this.StopVFX(n"hacking_glitch_low");
-    this.PlayVFXDelayed(n"fx_damage_high", 0.5);
-    this.PlayVFXDelayed(n"personal_link_glitch", 1.0);
-    this.PlaySFXDelayed(n"ono_v_pain_short", 0.5);
-    this.PlayVFXDelayed(n"hacking_glitch_low", 1.5);
-    this.ApplyStatusEffect(t"BaseStatusEffect.ActiveLowHumanityGlitch", 1.5);
+  public func StopNewPrePsychosisEffect() -> Void {
+    E("!!! Fx New - Stop Pre Psychosis");
+    this.RemoveStatusEffect(t"BaseStatusEffect.NewPrePsychosisEffect", 0.1);
   }
 
-  public func StopLowHumanityEffects() -> Void {
-    E("!!! Fx Stage 1 - Glitches stop");
-    this.RemoveStatusEffect(t"BaseStatusEffect.ActiveLowHumanityGlitch", 0.1);
-    this.StopVFX(n"hacking_glitch_low");
-  };
-
-  public func RunPrePsychosisEffects() -> Void {
-    E("!!! Fx Stage 2 - Pre-Psychosis start");
-    this.StopVFX(n"hacking_glitch_low");
-    this.PlayVFXDelayed(n"personal_link_glitch", 0.5);
-    this.PlayVFXDelayed(n"disabling_connectivity_glitch", 1.0);
-    this.PlaySFXDelayed(n"ono_v_pain_long", 1.0);
-    this.PlayVFXDelayed(n"hacking_glitch_low", 2.0);
-    this.ApplyStatusEffect(t"BaseStatusEffect.ActiveLowHumanityGlitch", 2.0);
-    this.ApplyStatusEffect(t"BaseStatusEffect.ActivePrePsychosisGlitch", 2.5);
-  }
-
-  public func StopPrePsychosisEffects() -> Void {
-    E("!!! Fx Stage 2 - Pre-Psychosis stop");
-    this.RemoveStatusEffect(t"BaseStatusEffect.ActiveLowHumanityGlitch", 0.1);
-    this.RemoveStatusEffect(t"BaseStatusEffect.ActivePrePsychosisGlitch", 0.2);
-    this.StopVFX(n"hacking_glitch_low");
-  };
-
-  public func RunPsychosisEffects() -> Void {
-    E("!!! Fx Stage 3 - Psychosis start");
-    this.StopVFX(n"hacking_glitch_low");
-    this.ApplyStatusEffect(t"BaseStatusEffect.ActivePsychosisBuff", 0.5);
+  public func RunNewPsychosisEffect() -> Void {
+    E("!!! Fx New - Psychosis start");
+    this.ApplyStatusEffect(t"BaseStatusEffect.NewPsychosisEffect", 0.5);
     this.PlaySFXDelayed(n"ONO_V_LongPain", 7.5);
-    this.PlayVFXDelayed(n"hacking_glitch_low", 7.5);
+    this.PlayVFXDelayed(n"status_bleeding", 7.5);
   }
 
-  public func StopPsychosisEffects() -> Void {
-    E("!!! Fx Stage 3 - Psychosis stop");
-    this.RemoveStatusEffect(t"BaseStatusEffect.ActivePsychosisBuff", 0.1);
-    this.StopVFX(n"hacking_glitch_low");
+  public func StopNewPsychosisEffect() -> Void {
+    E("!!! Fx New - Psychosis stop");
+    this.RemoveStatusEffect(t"BaseStatusEffect.NewPsychosisEffect", 0.1);
+    this.StopVFX(n"status_bleeding");
+  };
+
+  public func RunNewPostPsychosisEffect() -> Void {
+    E("!!! Fx New - Post Psychosis start");
+    this.ApplyStatusEffect(t"BaseStatusEffect.NewPostPsychosisEffect", 0.5);
+  }
+
+  public func StopNewPostPsychosisEffect() -> Void {
+    E("!!! Fx New - Post Psychosis stop");
+    this.RemoveStatusEffect(t"BaseStatusEffect.NewPostPsychosisEffect", 0.1);
   };
 
   public func ScheduleCycledSfx(delay: Float) -> Void {
@@ -103,12 +81,7 @@ public class PsychosisEffectsHelper {
     E("Sfx - Cancel other fxes");
     this.StopVFX(n"fx_damage_high");
     this.StopVFX(n"personal_link_glitch");
-    this.StopVFX(n"disabling_connectivity_glitch");
     this.StopVFX(n"hacking_glitch_low");
-    this.StopSFX(n"ono_v_pain_short");
-    this.StopSFX(n"ono_v_pain_long");
-    this.StopSFX(n"ono_v_fear_panic_scream");
-    this.StopSFX(n"ONO_V_LongPain");
     this.StopSFX(n"ui_gmpl_perk_edgerunner");
   }
 

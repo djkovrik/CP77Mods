@@ -57,7 +57,7 @@ public class TeleportingPreventionHelper {
   private func OnTriggerRandomShotCallback() -> Void {
     E("Prevention - Shot");
     let weaponObject: ref<WeaponObject> = GameObject.GetActiveWeapon(this.player);
-    let simTime = EngineTime.ToFloat(GameInstance.GetSimTime(this.player.GetGame()));
+    let simTime: Float = EngineTime.ToFloat(GameInstance.GetSimTime(this.player.GetGame()));
     AIWeapon.Fire(this.player, weaponObject, simTime, 1.0, weaponObject.GetWeaponRecord().PrimaryTriggerMode().Type());
   }
 }
