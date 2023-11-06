@@ -32,6 +32,9 @@ public class NewHumanityBarController extends inkGameController {
   private let barWidth: Float = 9.0;
   private let barIntroAnimDuration: Float = 0.01;
   private let iconLabelIntroAnimDuration: Float = 0.75;
+  private let thresholdIntroAnimDuration: Float = 0.5;
+  private let initialMarginIndicator: Float = 56.0;
+  private let initialMarginThreshold: Float = 98.0;
   private let barDisplayed: Bool = false;
 
   protected cb func OnInitialize() {
@@ -68,9 +71,7 @@ public class NewHumanityBarController extends inkGameController {
     this.SetupBarIntroAnimation();
     this.SetupIconAndLabelIntroAnimation();
 
-    // Setup initial indicator position with translation - move with margin then
-    this.indicator.SetTranslation(new Vector2(-56.0, 0.0));
-    this.thresholdContainer.SetTranslation(new Vector2(-112.0, -40.0));
+    this.SetIndicatorMargin(0.0);
 
     // Set label values
     this.thresholdText.SetText(s"\(this.psychosisThreshold)");
@@ -198,29 +199,46 @@ public class NewHumanityBarController extends inkGameController {
   }
 
   private final func SetupIconAndLabelIntroAnimation() -> Void {
-    let transparencyInterpolator: ref<inkAnimTransparency> = new inkAnimTransparency();
-    transparencyInterpolator.SetType(inkanimInterpolationType.Linear);
-    transparencyInterpolator.SetMode(inkanimInterpolationMode.EasyIn);
-    transparencyInterpolator.SetDirection(inkanimInterpolationDirection.To);
-    transparencyInterpolator.SetStartDelay(0.5);
-    transparencyInterpolator.SetEndTransparency(1.0);
-    transparencyInterpolator.SetDuration(this.iconLabelIntroAnimDuration);
+    let transparencyInterpolatorLabels: ref<inkAnimTransparency> = new inkAnimTransparency();
+    transparencyInterpolatorLabels.SetType(inkanimInterpolationType.Linear);
+    transparencyInterpolatorLabels.SetMode(inkanimInterpolationMode.EasyIn);
+    transparencyInterpolatorLabels.SetDirection(inkanimInterpolationDirection.To);
+    transparencyInterpolatorLabels.SetStartDelay(0.5);
+    transparencyInterpolatorLabels.SetEndTransparency(1.0);
+    transparencyInterpolatorLabels.SetDuration(this.iconLabelIntroAnimDuration);
+
+    let transparencyInterpolatorThreshold: ref<inkAnimTransparency> = new inkAnimTransparency();
+    transparencyInterpolatorThreshold.SetType(inkanimInterpolationType.Linear);
+    transparencyInterpolatorThreshold.SetMode(inkanimInterpolationMode.EasyIn);
+    transparencyInterpolatorThreshold.SetDirection(inkanimInterpolationDirection.To);
+    transparencyInterpolatorThreshold.SetStartDelay(0.5);
+    transparencyInterpolatorThreshold.SetEndTransparency(1.0);
+    transparencyInterpolatorThreshold.SetDuration(this.thresholdIntroAnimDuration);
 
     this.iconIntroAnimDef = new inkAnimDef();
-    this.iconIntroAnimDef.AddInterpolator(transparencyInterpolator);
+    this.iconIntroAnimDef.AddInterpolator(transparencyInterpolatorLabels);
 
     this.humanityLabelIntroAnimDef = new inkAnimDef();
-    this.humanityLabelIntroAnimDef.AddInterpolator(transparencyInterpolator);
+    this.humanityLabelIntroAnimDef.AddInterpolator(transparencyInterpolatorLabels);
 
     this.indicatorIntroAnimDef = new inkAnimDef();
-    this.indicatorIntroAnimDef.AddInterpolator(transparencyInterpolator);
+    this.indicatorIntroAnimDef.AddInterpolator(transparencyInterpolatorThreshold);
 
     this.thresholdLabelIntroAnimDef = new inkAnimDef();
-    this.thresholdLabelIntroAnimDef.AddInterpolator(transparencyInterpolator);
+    this.thresholdLabelIntroAnimDef.AddInterpolator(transparencyInterpolatorThreshold);
   }
 
   private final func GetBarCount() -> Int32 {
     return this.humanityCurrent * this.barCount / this.humanityTotal;
+  }
+
+  private func SetIndicatorMargin(margin: Float) -> Void {
+    let indicatorMargin: inkMargin = this.indicator.GetMargin();
+    let thresholdMargin: inkMargin = this.thresholdContainer.GetMargin();
+    indicatorMargin.left = margin - this.initialMarginIndicator;
+    thresholdMargin.left = margin - this.initialMarginThreshold;
+    this.indicator.SetMargin(indicatorMargin);
+    this.thresholdContainer.SetMargin(thresholdMargin);
   }
 
   private final func Log(str: String) -> Void {
