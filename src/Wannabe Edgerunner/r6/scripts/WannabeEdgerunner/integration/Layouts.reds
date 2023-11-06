@@ -15,7 +15,7 @@ protected cb func OnInitialize() -> Bool {
   outerContainer.SetAnchor(inkEAnchor.BottomCenter);
   outerContainer.SetInteractive(true);
   outerContainer.SetAnchorPoint(new Vector2(0.5, 0.5));
-  outerContainer.SetMargin(new inkMargin(0.0, 0.0, 434.0, 140.0));
+  outerContainer.SetMargin(new inkMargin(0.0, 0.0, 434.0, 160.0));
   outerContainer.Reparent(root, 5);
 
   this.SpawnFromExternal(

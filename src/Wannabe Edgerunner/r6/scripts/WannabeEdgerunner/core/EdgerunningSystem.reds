@@ -36,6 +36,7 @@ import Edgerunning.Common.E
   public func GetAdditionalPenaltiesDescription() -> String
   public func GetHumanityCurrent() -> Int32
   public func GetHumanityTotal() -> Int32
+  public func GetPsychosisThreshold() -> Int32
   public func GetHumanityColor() -> CName
   private func InvalidateCurrentState(opt onLoad: Bool) -> Void
 
@@ -555,6 +556,10 @@ public class EdgerunningSystem extends ScriptableSystem {
     };
 
     return color;
+  }
+
+  public func GetPsychosisThreshold() -> Int32 {
+    return this.psychosisThreshold;
   }
 
   private func InvalidateCurrentState(opt firstLoad: Bool) -> Void {
