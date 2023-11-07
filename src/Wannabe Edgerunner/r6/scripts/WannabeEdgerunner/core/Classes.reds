@@ -24,6 +24,16 @@ public class CustomBarHoverOverEvent extends Event {
   public let humanityAdditionalDesc: String;
 }
 
+public class HumanityBarUserData extends inkUserData {
+  private let danger: Bool;
+
+  public static func Create(danger: Bool) -> ref<HumanityBarUserData> {
+    let self: ref<HumanityBarUserData> = new HumanityBarUserData();
+    self.danger = danger;
+    return self;
+  }
+}
+
 public class CustomBarHoverOutEvent extends Event {}
 
 enum WannabeHeatLevel {

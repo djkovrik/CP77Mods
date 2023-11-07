@@ -10,8 +10,8 @@ public class NewHumanityBarController extends inkGameController {
   private let psychosisThreshold: Int32;
 
   private let icon: ref<inkImage>;
-  private let totalHumanityContainer: ref<inkWidget>;
-  private let totalHumanityText: ref<inkText>;
+  private let currentHumanityContainer: ref<inkWidget>;
+  private let currentHumanityText: ref<inkText>;
   private let thresholdContainer: ref<inkWidget>;
   private let thresholdText: ref<inkText>;
   private let barsContainer: ref<inkHorizontalPanel>;
@@ -33,8 +33,7 @@ public class NewHumanityBarController extends inkGameController {
   private let barIntroAnimDuration: Float = 0.01;
   private let iconLabelIntroAnimDuration: Float = 0.75;
   private let thresholdIntroAnimDuration: Float = 0.5;
-  private let initialMarginIndicator: Float = 56.0;
-  private let initialMarginThreshold: Float = 98.0;
+  private let initialMarginThreshold: Float = 20.0;
   private let barDisplayed: Bool = false;
 
   protected cb func OnInitialize() {
@@ -46,8 +45,8 @@ public class NewHumanityBarController extends inkGameController {
 
     let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
     this.icon = root.GetWidgetByPathName(n"icon") as inkImage;
-    this.totalHumanityContainer = root.GetWidgetByPathName(n"labelTotal");
-    this.totalHumanityText = root.GetWidgetByPathName(n"labelTotal/text") as inkText;
+    this.currentHumanityContainer = root.GetWidgetByPathName(n"labelCurrent");
+    this.currentHumanityText = root.GetWidgetByPathName(n"labelCurrent/text") as inkText;
     this.thresholdContainer = root.GetWidgetByPathName(n"labelThreshold");
     this.thresholdText = root.GetWidgetByPathName(n"labelThreshold/text") as inkText;
     this.barsContainer = root.GetWidgetByPathName(n"barsContainer") as inkHorizontalPanel;
@@ -75,13 +74,13 @@ public class NewHumanityBarController extends inkGameController {
 
     // Set label values
     this.thresholdText.SetText(s"\(this.psychosisThreshold)");
-    this.totalHumanityText.SetText(s"\(this.humanityCurrent)");
+    this.currentHumanityText.SetText(s"\(this.humanityCurrent)");
 
     // Register to callbacks
     this.icon.RegisterToCallback(n"OnHoverOver", this, n"OnCustomBarHoverOver");
     this.icon.RegisterToCallback(n"OnHoverOut", this, n"OnCustomBarHoverOut");
-    this.totalHumanityContainer.RegisterToCallback(n"OnHoverOver", this, n"OnCustomBarHoverOver");
-    this.totalHumanityContainer.RegisterToCallback(n"OnHoverOut", this, n"OnCustomBarHoverOut");
+    this.currentHumanityContainer.RegisterToCallback(n"OnHoverOver", this, n"OnCustomBarHoverOver");
+    this.currentHumanityContainer.RegisterToCallback(n"OnHoverOut", this, n"OnCustomBarHoverOut");
     this.indicator.RegisterToCallback(n"OnHoverOver", this, n"OnDangerSpanHoverOver");
     this.indicator.RegisterToCallback(n"OnHoverOut", this, n"OnDangerSpanHoverOut");
     this.thresholdContainer.RegisterToCallback(n"OnHoverOver", this, n"OnDangerSpanHoverOver");
@@ -91,8 +90,8 @@ public class NewHumanityBarController extends inkGameController {
   protected cb func OnUninitialize() -> Bool {
     this.icon.UnregisterFromCallback(n"OnHoverOver", this, n"OnCustomBarHoverOver");
     this.icon.UnregisterFromCallback(n"OnHoverOut", this, n"OnCustomBarHoverOut");
-    this.totalHumanityContainer.UnregisterFromCallback(n"OnHoverOver", this, n"OnCustomBarHoverOver");
-    this.totalHumanityContainer.UnregisterFromCallback(n"OnHoverOut", this, n"OnCustomBarHoverOut");
+    this.currentHumanityContainer.UnregisterFromCallback(n"OnHoverOver", this, n"OnCustomBarHoverOver");
+    this.currentHumanityContainer.UnregisterFromCallback(n"OnHoverOut", this, n"OnCustomBarHoverOut");
     this.indicator.UnregisterFromCallback(n"OnHoverOver", this, n"OnDangerSpanHoverOver");
     this.indicator.UnregisterFromCallback(n"OnHoverOut", this, n"OnDangerSpanHoverOut");
     this.thresholdContainer.UnregisterFromCallback(n"OnHoverOver", this, n"OnDangerSpanHoverOver");
@@ -101,8 +100,10 @@ public class NewHumanityBarController extends inkGameController {
 
   private final func SpawnBars() -> Void {
     let i: Int32 = 1;
+    let count: Int32 = this.GetBarCount();
+    let showDanger: Bool = this.humanityCurrent <= this.psychosisThreshold;
     let widget: ref<inkWidget>;
-    while i <= this.GetBarCount() {
+    while i <= count {
       widget = this.SpawnFromExternal(
         this.barsContainer, 
         r"base\\gameplay\\gui\\fullscreen\\wannabe_edgerunner_bars.inkwidget", 
@@ -118,8 +119,8 @@ public class NewHumanityBarController extends inkGameController {
 
       widget.SetScale(new Vector2(0.0, 1.0));
       widget.SetMargin(0.0, 0.0, rightMargin, 0.0);
+      widget.SetUserData(HumanityBarUserData.Create(showDanger));
       ArrayPush(this.bars, widget);
-
       i += 1;
     };
   }
@@ -128,7 +129,8 @@ public class NewHumanityBarController extends inkGameController {
     if !this.barDisplayed {
       this.barDisplayed = true;
       this.ShowBars();
-      this.ShowIconAndLabel();
+      this.MoveBarDecorations();
+      this.ShowBarDecorations();
     };
   }
 
@@ -147,12 +149,12 @@ public class NewHumanityBarController extends inkGameController {
 
   protected cb func OnDangerSpanHoverOver(evt: ref<inkPointerEvent>) -> Bool {
     this.indicator.UnbindProperty(n"tintColor");
-    this.indicator.BindProperty(n"tintColor", n"MainColors.ActiveGreen");
+    this.indicator.BindProperty(n"tintColor", n"MainColors.ActiveYellow");
   }
 
   protected cb func OnDangerSpanHoverOut(evt: ref<inkPointerEvent>) -> Bool {
     this.indicator.UnbindProperty(n"tintColor");
-    this.indicator.BindProperty(n"tintColor", n"MainColors.Green");
+    this.indicator.BindProperty(n"tintColor", n"MainColors.Yellow");
   }
 
   private final func ShowBars() -> Void {
@@ -171,12 +173,30 @@ public class NewHumanityBarController extends inkGameController {
     };
   }
 
-  private final func ShowIconAndLabel() -> Void {
+  private final func MoveBarDecorations() -> Void {
+    let totalMargin: Float = 0.0;
+    let temp: Float;
+    let i: Int32 = 1;
+    let count: Int32 = this.GetThresholdBarCount();
+    while i <= count {
+      if ArrayContains(this.barGaps, i) {
+        temp = this.barMarginBig + this.barWidth;
+      } else {
+        temp = this.barMarginNormal + this.barWidth;
+      };
+      totalMargin += temp;
+      i += 1;
+    };
+
+    this.SetIndicatorMargin(totalMargin);
+  }
+
+  private final func ShowBarDecorations() -> Void {
     let barsIntroDuration: Float = Cast<Float>(ArraySize(this.bars)) * this.barIntroAnimDuration;
     let options: inkAnimOptions;
     options.executionDelay = barsIntroDuration;
     this.icon.PlayAnimationWithOptions(this.iconIntroAnimDef, options);
-    this.totalHumanityContainer.PlayAnimationWithOptions(this.humanityLabelIntroAnimDef, options);
+    this.currentHumanityContainer.PlayAnimationWithOptions(this.humanityLabelIntroAnimDef, options);
     this.ShowThresholdIndicator(barsIntroDuration + 0.5);
   }
 
@@ -232,11 +252,15 @@ public class NewHumanityBarController extends inkGameController {
     return this.humanityCurrent * this.barCount / this.humanityTotal;
   }
 
+  private final func GetThresholdBarCount() -> Int32 {
+    return this.psychosisThreshold * this.barCount / this.humanityTotal;
+  }
+
   private func SetIndicatorMargin(margin: Float) -> Void {
     let indicatorMargin: inkMargin = this.indicator.GetMargin();
     let thresholdMargin: inkMargin = this.thresholdContainer.GetMargin();
-    indicatorMargin.left = margin - this.initialMarginIndicator;
-    thresholdMargin.left = margin - this.initialMarginThreshold;
+    indicatorMargin.left = margin;
+    thresholdMargin.left = margin + this.initialMarginThreshold;
     this.indicator.SetMargin(indicatorMargin);
     this.thresholdContainer.SetMargin(thresholdMargin);
   }

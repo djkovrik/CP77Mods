@@ -3,19 +3,20 @@ module Edgerunning.Controller
 public class NewHumanityBarItemController extends inkGameController {
 
   private let bar: ref<inkWidget>;
-
   private let root: wref<inkWidget>;
-
   private let sizeAnimation: ref<inkAnimProxy>;
-
   private let meterWidth: Float;
-
   private let pulse: ref<PulseAnimation>;
+
+  private let showDanger: Bool;
 
   protected cb func OnInitialize() {
     let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
     this.bar = root.GetWidgetByPathName(n"bar");
     this.root = this.GetRootWidget();
+
+    this.RefreshUserData();
+    this.RefreshBarColor();
   }
 
   public final func SetSizeAnimation(size: Float, sizeOffset: Float, delay: Float, duration: Float) -> Void {
@@ -82,5 +83,24 @@ public class NewHumanityBarItemController extends inkGameController {
       default:
         return 0.0;
     };
+  }
+
+  private final func RefreshUserData() -> Void {
+    let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+    let userData: ref<HumanityBarUserData> = root.GetUserData(n"HumanityBarUserData") as HumanityBarUserData;
+    if IsDefined(userData) {
+      this.showDanger = userData.danger;
+    };
+  }
+
+  private final func RefreshBarColor() -> Void {
+    let color: CName;
+    if this.showDanger {
+      color = n"MainColors.Red";
+    } else {
+      color = n"MainColors.MildGreen";
+    };
+
+    this.bar.BindProperty(n"tintColor", color);
   }
 }
