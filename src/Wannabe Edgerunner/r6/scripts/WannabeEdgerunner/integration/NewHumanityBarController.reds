@@ -17,6 +17,7 @@ public class NewHumanityBarController extends inkGameController {
   private let barsContainer: ref<inkHorizontalPanel>;
   private let background: ref<inkWidget>;
   private let indicator: ref<inkImage>;
+  private let hoverArea: ref<inkCanvas>;
   private let bars: array<wref<inkWidget>>;
   private let barGaps: array<Int32>;
   private let tooltipData: ref<RipperdocBarTooltipTooltipData>;
@@ -31,7 +32,7 @@ public class NewHumanityBarController extends inkGameController {
   private let barMarginBig: Float = 21.0;
   private let barWidth: Float = 9.0;
   private let barIntroAnimDuration: Float = 0.01;
-  private let iconLabelIntroAnimDuration: Float = 0.75;
+  private let iconLabelIntroAnimDuration: Float = 0.5;
   private let thresholdIntroAnimDuration: Float = 0.5;
   private let initialMarginThreshold: Float = 20.0;
   private let barDisplayed: Bool = false;
@@ -52,6 +53,7 @@ public class NewHumanityBarController extends inkGameController {
     this.barsContainer = root.GetWidgetByPathName(n"barsContainer") as inkHorizontalPanel;
     this.background = root.GetWidgetByPathName(n"background") as inkWidget;
     this.indicator = root.GetWidgetByPathName(n"indicator") as inkImage;
+    this.hoverArea = root.GetWidgetByPathName(n"hoverArea") as inkCanvas;
 
     this.Log(s"current \(this.humanityCurrent), total \(this.humanityTotal), bars \(this.GetBarCount())");
 
@@ -81,6 +83,8 @@ public class NewHumanityBarController extends inkGameController {
     this.icon.RegisterToCallback(n"OnHoverOut", this, n"OnCustomBarHoverOut");
     this.currentHumanityContainer.RegisterToCallback(n"OnHoverOver", this, n"OnCustomBarHoverOver");
     this.currentHumanityContainer.RegisterToCallback(n"OnHoverOut", this, n"OnCustomBarHoverOut");
+    this.hoverArea.RegisterToCallback(n"OnHoverOver", this, n"OnCustomBarHoverOver");
+    this.hoverArea.RegisterToCallback(n"OnHoverOut", this, n"OnCustomBarHoverOut");
     this.indicator.RegisterToCallback(n"OnHoverOver", this, n"OnDangerSpanHoverOver");
     this.indicator.RegisterToCallback(n"OnHoverOut", this, n"OnDangerSpanHoverOut");
     this.thresholdContainer.RegisterToCallback(n"OnHoverOver", this, n"OnDangerSpanHoverOver");
@@ -92,6 +96,8 @@ public class NewHumanityBarController extends inkGameController {
     this.icon.UnregisterFromCallback(n"OnHoverOut", this, n"OnCustomBarHoverOut");
     this.currentHumanityContainer.UnregisterFromCallback(n"OnHoverOver", this, n"OnCustomBarHoverOver");
     this.currentHumanityContainer.UnregisterFromCallback(n"OnHoverOut", this, n"OnCustomBarHoverOut");
+    this.hoverArea.UnregisterFromCallback(n"OnHoverOver", this, n"OnCustomBarHoverOver");
+    this.hoverArea.UnregisterFromCallback(n"OnHoverOut", this, n"OnCustomBarHoverOut");
     this.indicator.UnregisterFromCallback(n"OnHoverOver", this, n"OnDangerSpanHoverOver");
     this.indicator.UnregisterFromCallback(n"OnHoverOut", this, n"OnDangerSpanHoverOut");
     this.thresholdContainer.UnregisterFromCallback(n"OnHoverOver", this, n"OnDangerSpanHoverOver");
@@ -148,13 +154,16 @@ public class NewHumanityBarController extends inkGameController {
   }
 
   protected cb func OnDangerSpanHoverOver(evt: ref<inkPointerEvent>) -> Bool {
-    this.indicator.UnbindProperty(n"tintColor");
-    this.indicator.BindProperty(n"tintColor", n"MainColors.ActiveYellow");
+    let thresholdHoverEvent: ref<HumanityThresholdHoverOverEvent> = new HumanityThresholdHoverOverEvent();
+    thresholdHoverEvent.humanityThreshold = this.psychosisThreshold;
+    thresholdHoverEvent.humanityTotal = this.humanityTotal;
+    thresholdHoverEvent.chance = this.system.GetPsychosisChance();
+    this.QueueEvent(thresholdHoverEvent);
   }
 
   protected cb func OnDangerSpanHoverOut(evt: ref<inkPointerEvent>) -> Bool {
-    this.indicator.UnbindProperty(n"tintColor");
-    this.indicator.BindProperty(n"tintColor", n"MainColors.Yellow");
+    let barHoverOutEvent: ref<CustomBarHoverOutEvent> = new CustomBarHoverOutEvent();
+    this.QueueEvent(barHoverOutEvent);
   }
 
   private final func ShowBars() -> Void {

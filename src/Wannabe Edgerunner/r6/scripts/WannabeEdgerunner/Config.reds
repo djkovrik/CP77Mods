@@ -6,7 +6,7 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.description", "Mod-Edg-Humanity-Pool-Desc")
   @runtimeProperty("ModSettings.step", "5")
   @runtimeProperty("ModSettings.min", "50")
-  @runtimeProperty("ModSettings.max", "500")
+  @runtimeProperty("ModSettings.max", "200")
   let baseHumanityPool: Int32 = 100;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
@@ -23,8 +23,8 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.displayName", "Mod-Edg-Psychosis-Threshold")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Psychosis-Threshold-Desc")
   @runtimeProperty("ModSettings.step", "5")
-  @runtimeProperty("ModSettings.min", "5")
-  @runtimeProperty("ModSettings.max", "500")
+  @runtimeProperty("ModSettings.min", "10")
+  @runtimeProperty("ModSettings.max", "200")
   let psychosisThreshold: Int32 = 20;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
@@ -43,7 +43,7 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.step", "1")
   @runtimeProperty("ModSettings.min", "1")
   @runtimeProperty("ModSettings.max", "100")
-  let psychoChance: Int32 = 15;
+  let psychoChance: Int32 = 10;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Gameplay-Devices-Interactions-MadnessHack")

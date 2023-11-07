@@ -44,6 +44,18 @@ protected cb func OnCustomBarHover(evt: ref<CustomBarHoverOverEvent>) -> Bool {
 }
 
 @addMethod(RipperDocGameController)
+protected cb func OnHumanityThresholdHoverOverEvent(evt: ref<HumanityThresholdHoverOverEvent>) -> Bool {
+  let tooltipData: ref<RipperdocBarTooltipTooltipData> = new RipperdocBarTooltipTooltipData();
+  tooltipData.isThresholdTooltip = true;
+  tooltipData.psychosisChance = evt.chance;
+  tooltipData.humanityThreshold = evt.humanityThreshold;
+  tooltipData.humanityTotal = evt.humanityTotal;
+
+  this.m_TooltipsManager.AttachToCursor();
+  this.m_TooltipsManager.ShowTooltip(n"RipperdocBarTooltip", tooltipData, this.m_defaultTooltipsMargin);
+}
+
+@addMethod(RipperDocGameController)
 protected cb func OnCustomBarHoverOutEvent(evt: ref<CustomBarHoverOutEvent>) -> Bool {
   this.m_TooltipsManager.HideTooltips();
 }
@@ -80,9 +92,39 @@ public func SetData(tooltipData: ref<ATooltipData>) -> Void {
     // Hide other stuff
     root.GetWidgetByPathName(n"main/content/categories/stats").SetVisible(false);
     root.GetWidgetByPathName(n"main/content/categories/perks").SetVisible(false);
-  } else {
-    wrappedMethod(tooltipData);
+
+    return ;
   };
+
+  if alternateTooltipData.isThresholdTooltip {
+    // Title
+    inkTextRef.SetLocalizedText(this.m_titleName, n"Mod-Edg-Pre-Psychosis");
+    // Top right numbers
+    inkTextRef.SetText(this.m_titleTotalValue, IntToString(alternateTooltipData.humanityThreshold));
+    inkTextRef.SetText(this.m_titleMaxValue, IntToString(alternateTooltipData.humanityTotal));
+    // Description visibility
+    inkWidgetRef.SetVisible(this.m_armorDescription, true);
+    inkWidgetRef.SetVisible(this.m_armorReductionDescription, false);
+    inkWidgetRef.SetVisible(this.m_capacityDescription, false);
+    inkWidgetRef.SetVisible(this.m_statsHolder, false);
+    inkWidgetRef.SetVisible(this.m_perk1, false);
+    inkWidgetRef.SetVisible(this.m_perk2, false);
+    inkWidgetRef.SetVisible(this.m_perkTreeInput, false);
+    inkWidgetRef.SetVisible(this.m_perkTreeIcon, false);
+    // Custom text
+    let description: String = GetLocalizedTextByKey(n"Mod-Edg-Humanity-Threshold-Popup");
+    let params: ref<inkTextParams> = new inkTextParams();
+    params.AddString("chance", IntToString(alternateTooltipData.psychosisChance));
+    let descText: ref<inkText> = inkWidgetRef.Get(this.m_armorDescription) as inkText;
+    descText.SetText(description, params);
+    // Hide other stuff
+    root.GetWidgetByPathName(n"main/content/categories/stats").SetVisible(false);
+    root.GetWidgetByPathName(n"main/content/categories/perks").SetVisible(false);
+
+    return ;
+  };
+
+  wrappedMethod(tooltipData);
 }
 
 

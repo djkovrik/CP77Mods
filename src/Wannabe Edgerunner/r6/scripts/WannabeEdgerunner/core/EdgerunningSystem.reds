@@ -37,6 +37,7 @@ import Edgerunning.Common.E
   public func GetHumanityCurrent() -> Int32
   public func GetHumanityTotal() -> Int32
   public func GetPsychosisThreshold() -> Int32
+  public func GetPsychosisChance() -> Int32
   public func GetHumanityColor() -> CName
   private func InvalidateCurrentState(opt onLoad: Bool) -> Void
 
@@ -562,6 +563,10 @@ public class EdgerunningSystem extends ScriptableSystem {
     return this.psychosisThreshold;
   }
 
+  public func GetPsychosisChance() -> Int32 {
+    return this.config.psychoChance;
+  }
+
   private func InvalidateCurrentState(opt firstLoad: Bool) -> Void {
     let penalty: Int32 = this.GetTotalPenalty();
     let evt: ref<UpdateHumanityCounterEvent> = new UpdateHumanityCounterEvent();
@@ -569,6 +574,10 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.currentHumanityPool = basePool - this.currentHumanityDamage - penalty;
     if this.currentHumanityPool < 0 { this.currentHumanityPool = 0; };
     this.psychosisThreshold = this.config.psychosisThreshold;
+    // Check if threshold > pool from incorrect mod settings
+    if this.psychosisThreshold > basePool {
+      this.psychosisThreshold = basePool / 2;
+    };
     E("Current humanity points state:");
     E(s" - total: \(basePool) humanity, points left: \(this.currentHumanityPool), can be recovered: \(this.currentHumanityDamage)");
     E(s" - psychosis threshold \(this.psychosisThreshold) and lower");

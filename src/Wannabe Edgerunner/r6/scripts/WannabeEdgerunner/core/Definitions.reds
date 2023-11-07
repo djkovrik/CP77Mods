@@ -44,10 +44,19 @@ public let edgerunningSystem: ref<EdgerunningSystem>;
 public let isHumanityTooltip: Bool;
 
 @addField(RipperdocBarTooltipTooltipData)
+public let isThresholdTooltip: Bool;
+
+@addField(RipperdocBarTooltipTooltipData)
 public let humanityCurrent: Int32;
 
 @addField(RipperdocBarTooltipTooltipData)
 public let humanityTotal: Int32;
+
+@addField(RipperdocBarTooltipTooltipData)
+public let humanityThreshold: Int32;
+
+@addField(RipperdocBarTooltipTooltipData)
+public let psychosisChance: Int32;
 
 @addField(RipperdocBarTooltipTooltipData)
 public let humanityAdditionalDesc: String;

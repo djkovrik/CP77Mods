@@ -24,6 +24,12 @@ public class CustomBarHoverOverEvent extends Event {
   public let humanityAdditionalDesc: String;
 }
 
+public class HumanityThresholdHoverOverEvent extends Event {
+  public let humanityThreshold: Int32;
+  public let humanityTotal: Int32;
+  public let chance: Int32;
+}
+
 public class HumanityBarUserData extends inkUserData {
   private let danger: Bool;
 
