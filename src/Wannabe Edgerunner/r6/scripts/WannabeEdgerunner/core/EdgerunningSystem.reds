@@ -28,6 +28,7 @@ import Edgerunning.Common.E
   public func OnArmsCyberwareActivation(type: gamedataItemType) -> Void
 
   public func AddHumanityDamage(cost: Int32) -> Void
+  public func RemoveHumanityDamage(cost: Int32) -> Bool
   public func ResetHumanityDamage() -> Void
   public func AddHumanityPenalty(key: String, value: Int32) -> Void
   public func RemoveHumanityPenalty(key: String) -> Void
@@ -47,6 +48,8 @@ import Edgerunning.Common.E
   private func IsPsychosisBlocked() -> Bool
   public func OnLaunchCycledPsychosisCheckCallback() -> Void
   public func OnLaunchPostPsychosisCallback() -> Void
+
+  private func ShowHumanityRestoredMessage(amount: Int32) -> Void
 */
 public class EdgerunningSystem extends ScriptableSystem {
 
@@ -239,9 +242,12 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func OnKindness() -> Void {
-    this.RemoveHumanityDamage(2);
-    E("! Good deed, humanity restored");
-    this.InvalidateCurrentState();
+    let amountToRestore: Int32 = 2;
+    if this.RemoveHumanityDamage(amountToRestore) {
+      this.ShowHumanityRestoredMessage(amountToRestore);
+      E("! Good deed, humanity restored");
+      this.InvalidateCurrentState();
+    };
   }
 
   public func OnBerserkActivation(item: ItemID) -> Void {
@@ -444,11 +450,14 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.psmBB.SetInt(GetAllBlackboardDefs().PlayerStateMachine.HumanityDamage, this.currentHumanityDamage, true);
   }
 
-  public func RemoveHumanityDamage(cost: Int32) -> Void {
+  public func RemoveHumanityDamage(cost: Int32) -> Bool {
     if this.currentHumanityDamage >= cost {
       this.currentHumanityDamage -= cost;
+      this.psmBB.SetInt(GetAllBlackboardDefs().PlayerStateMachine.HumanityDamage, this.currentHumanityDamage, true);
+      return true;
     };
-    this.psmBB.SetInt(GetAllBlackboardDefs().PlayerStateMachine.HumanityDamage, this.currentHumanityDamage, true);
+
+    return false;
   }
 
   public func ResetHumanityDamage() -> Void {
@@ -719,9 +728,19 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.RunPostPsychosisFlow();
   }
 
+  private func ShowHumanityRestoredMessage(amount: Int32) -> Void {
+    let onScreenMessage: SimpleScreenMessage;
+    let blackboardDef = GetAllBlackboardDefs().UI_Notifications;
+    let blackboard = GameInstance.GetBlackboardSystem(this.player.GetGame()).Get(blackboardDef);
+    onScreenMessage.isShown = true;
+    onScreenMessage.message = s"+\(amount) \(GetLocalizedTextByKey(n"Mod-Edg-Humanity"))";
+    onScreenMessage.duration = 3.00;
+    blackboard.SetVariant(blackboardDef.OnscreenMessage, ToVariant(onScreenMessage), true);
+  }
+
   public static func Debug(gi: GameInstance) -> Void {
-    let system: ref<EdgerunningSystem> = EdgerunningSystem.GetInstance(gi);
-    system.RunPsychosisFlow();
+    // let system: ref<EdgerunningSystem> = EdgerunningSystem.GetInstance(gi);
+    // system.RunPsychosisFlow();
     // system.AddHumanityDamage(10);
     // system.InvalidateCurrentState(false);
     // system.effectsHelper.RunNewPrePsychosisEffect();
