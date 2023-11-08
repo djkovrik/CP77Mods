@@ -140,6 +140,14 @@ public static func IsFastTravelPointEnabled(point: ref<FastTravelPointData>) -> 
     // HasTheSameId(point, t"FastTravelPoints.hey_spr_dataterm_07") ||   // Wellsprings, Pumping Station
     // HasTheSameId(point, t"FastTravelPoints.pac_wwd_dataterm_03") ||   // West Wind Estate, West Wind Apartments
 
+    // --- Dogtown
+    HasTheSameId(point, t"FastTravelPoints.combat_zone_golden_pacific_dataterm_01") ||     // Dogtown, Golden Pacific
+    HasTheSameId(point, t"FastTravelPoints.combat_zone_longshore_stacks_dataterm_01") ||   // Dogtown, Longshore Stacks
+    HasTheSameId(point, t"FastTravelPoints.combat_zone_luxor_high_01") ||                  // Dogtown, Luxor High Wellness Spa
+    HasTheSameId(point, t"FastTravelPoints.combat_zone_squat_dataterm_01") ||              // Dogtown, Kress Street
+    HasTheSameId(point, t"FastTravelPoints.combat_zone_stadium_dataterm_01") ||            // Dogtown, EBM Petrochem Stadium
+    HasTheSameId(point, t"FastTravelPoints.combat_zone_terra_cognita_dataterm_01") ||      // Dogtown, Terra Cognita
+
     // --- Hideouts
     HasTheSameId(point, t"FastTravelPoints.wat_lch_dataterm_10") ||   // Little China, Megabuilding H10: Atrium (V's appartment)
     HasTheSameId(point, t"FastTravelPoints.wat_kab_dataterm_06") ||   // Kabuki, Charter St (near Judy's appartment)
@@ -287,7 +295,7 @@ private final func RegisterMappin() -> Void {
 public func CreateMappinUIProfile(mappin: wref<IMappin>, mappinVariant: gamedataMappinVariant, customData: ref<MappinControllerCustomData>) -> MappinUIProfile {
   let defaultRes: ResRef = r"base\\gameplay\\gui\\widgets\\mappins\\quest\\default_mappin.inkwidget";
   if Equals(mappinVariant, gamedataMappinVariant.FastTravelVariant) {
-    return MappinUIProfile.Create(defaultRes, t"MappinUISpawnProfile.ShortRange", t"WorldMappinUIProfile.FastTravel");
+    return MappinUIProfile.Create(defaultRes, t"MappinUISpawnProfile.LongRange", t"WorldMappinUIProfile.FastTravel");
   };
 
   return wrappedMethod(mappin, mappinVariant, customData);
