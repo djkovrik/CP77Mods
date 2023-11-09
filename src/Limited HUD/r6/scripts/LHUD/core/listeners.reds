@@ -52,6 +52,7 @@ public class LHUDBlackboardsListener {
   private let vehicleCallback: ref<CallbackHandle>;       // Ref for registered vehicle mount callback
   private let weaponCallback: ref<CallbackHandle>;        // Ref for registered weapon state callback
   private let zoomCallback: ref<CallbackHandle>;          // Ref for registered zoom value callback
+  private let stealthCallback: ref<CallbackHandle>;       // Ref for registered locomotion value callback
 
   private let delaySystem: ref<DelaySystem>;
   private let delayId: DelayID;
@@ -82,6 +83,7 @@ public class LHUDBlackboardsListener {
     this.vehicleCallback = this.uiSystemBlackboard.RegisterListenerBool(this.bbDefs.UI_System.IsMounted_LHUD, this, n"OnMountedStateChanged");
     this.weaponCallback = this.weaponBlackboard.RegisterListenerBool(this.bbDefs.UI_EquipmentData.HasWeaponEquipped, this, n"OnWeaponStateChanged");
     this.zoomCallback = this.stateMachineBlackboard.RegisterListenerFloat(this.bbDefs.PlayerStateMachine.ZoomLevel, this, n"OnZoomChanged");
+    this.stealthCallback = this.stateMachineBlackboard.RegisterListenerInt(this.bbDefs.PlayerStateMachine.Locomotion, this, n"OnCrouchChanged");
   }
 
   // Unregister listeners
@@ -95,6 +97,7 @@ public class LHUDBlackboardsListener {
     this.uiSystemBlackboard.UnregisterListenerBool(this.bbDefs.UI_System.IsMounted_LHUD, this.vehicleCallback);
     this.weaponBlackboard.UnregisterListenerBool(this.bbDefs.UI_EquipmentData.HasWeaponEquipped, this.weaponCallback);
     this.stateMachineBlackboard.UnregisterListenerFloat(this.bbDefs.PlayerStateMachine.ZoomLevel, this.zoomCallback);
+    this.stateMachineBlackboard.UnregisterListenerInt(this.bbDefs.PlayerStateMachine.Locomotion, this.stealthCallback);
 
     this.delaySystem.CancelCallback(this.delayId);
   }
@@ -146,11 +149,6 @@ public class LHUDBlackboardsListener {
         this.playerInstance.QueueLHUDEvent(LHUDEventType.Combat, false);
         this.playerInstance.QueueLHUDEvent(LHUDEventType.OutOfCombat, true);
         break;
-      case EnumInt(gamePSMCombat.Stealth):
-        this.playerInstance.QueueLHUDEvent(LHUDEventType.Combat, false);
-        this.playerInstance.QueueLHUDEvent(LHUDEventType.OutOfCombat, false);
-        this.playerInstance.QueueLHUDEvent(LHUDEventType.Stealth, true);
-        break;
       default:
         // do nothing
     };
@@ -173,6 +171,15 @@ public class LHUDBlackboardsListener {
     let playerHasNoWeapon: Bool = !this.playerInstance.HasAnyWeaponEquipped_LHUD();
     let zoomActive: Bool = value > 1.0;
     this.playerInstance.QueueLHUDEvent(LHUDEventType.Zoom, playerHasNoWeapon && zoomActive);
+  }
+
+  // Crouch  value bb callback
+  protected cb func OnCrouchChanged(value: Int32) -> Bool {
+    let newValue: gamePSMLocomotionStates = IntEnum<gamePSMLocomotionStates>(value);
+    let crouched: Bool = Equals(newValue, gamePSMLocomotionStates.Crouch) 
+      || Equals(newValue, gamePSMLocomotionStates.CrouchSprint) 
+      || Equals(newValue, gamePSMLocomotionStates.CrouchDodge);
+    this.playerInstance.QueueLHUDEvent(LHUDEventType.Stealth, crouched);
   }
 }
 
