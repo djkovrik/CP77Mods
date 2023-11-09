@@ -106,9 +106,9 @@ public final const func GetCyberwareFromSlots() -> array<ref<Item_Record>> {
   return result;
 }
 
-// -- System-Ex compat
+// -- CyberwareEx compat
 
-@if(ModuleExists("SystemEx"))
+@if(ModuleExists("CyberwareEx"))
 @addMethod(PlayerPuppet)
 public func GetCurrentBerserk() -> ItemID {
   let cyberware: array<ref<Item_Record>> = EquipmentSystem.GetData(this).GetCyberwareFromSlots();
@@ -125,7 +125,7 @@ public func GetCurrentBerserk() -> ItemID {
   return result;
 }
 
-@if(ModuleExists("SystemEx"))
+@if(ModuleExists("CyberwareEx"))
 @addMethod(PlayerPuppet)
 public func GetCurrentSandevistan() -> ItemID {
   let cyberware: array<ref<Item_Record>> = EquipmentSystem.GetData(this).GetCyberwareFromSlots();
@@ -142,13 +142,13 @@ public func GetCurrentSandevistan() -> ItemID {
   return result;
 }
 
-@if(!ModuleExists("SystemEx"))
+@if(!ModuleExists("CyberwareEx"))
 @addMethod(PlayerPuppet)
 public func GetCurrentBerserk() -> ItemID {
   return EquipmentSystem.GetData(this).GetActiveItem(gamedataEquipmentArea.SystemReplacementCW);
 }
 
-@if(!ModuleExists("SystemEx"))
+@if(!ModuleExists("CyberwareEx"))
 @addMethod(PlayerPuppet)
 public func GetCurrentSandevistan() -> ItemID {
   return EquipmentSystem.GetData(this).GetActiveItem(gamedataEquipmentArea.SystemReplacementCW);
@@ -194,7 +194,7 @@ public func StartAction(gameInstance: GameInstance) -> Void {
   let id: TweakDBID = ItemID.GetTDBID(data.GetID());
 
   // Optical cammo
-  if Equals(id, t"Items.OpticalCamoRare") || Equals(id, t"Items.OpticalCamoEpic") || Equals(id, t"Items.OpticalCamoLegendary") {
+  if CyberwareHelper.IsOpticalCamo(id) {
     EdgerunningSystem.GetInstance(gameInstance).OnOpticalCamoActivation();
   };
 }

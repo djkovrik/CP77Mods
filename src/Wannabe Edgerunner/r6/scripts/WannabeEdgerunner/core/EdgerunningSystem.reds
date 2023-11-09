@@ -739,10 +739,10 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public static func Debug(gi: GameInstance) -> Void {
-    // let system: ref<EdgerunningSystem> = EdgerunningSystem.GetInstance(gi);
+    let system: ref<EdgerunningSystem> = EdgerunningSystem.GetInstance(gi);
     // system.RunPsychosisFlow();
-    // system.AddHumanityDamage(10);
-    // system.InvalidateCurrentState(false);
+    system.AddHumanityDamage(10);
+    system.InvalidateCurrentState(false);
     // system.effectsHelper.RunNewPrePsychosisEffect();
     // system.effectsHelper.RunNewPsychosisEffect();
     // system.effectsHelper.RunNewPostPsychosisEffect();

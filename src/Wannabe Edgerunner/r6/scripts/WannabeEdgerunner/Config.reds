@@ -31,7 +31,7 @@ public class EdgerunningConfig {
   let psychosisThreshold: Int32 = 20;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
-  @runtimeProperty("ModSettings.category", "Gameplay-Devices-Interactions-MadnessHack")
+  @runtimeProperty("ModSettings.category", "LocKey#20638")
   @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Mod-Edg-Check-Period")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Check-Period-Desc")
@@ -41,7 +41,7 @@ public class EdgerunningConfig {
   let pcychoCheckPeriod: Int32 = 3;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
-  @runtimeProperty("ModSettings.category", "Gameplay-Devices-Interactions-MadnessHack")
+  @runtimeProperty("ModSettings.category", "LocKey#20638")
   @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Mod-Edg-Check-Probability")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Check-Probability-Desc")
@@ -51,7 +51,7 @@ public class EdgerunningConfig {
   let psychoChance: Int32 = 10;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
-  @runtimeProperty("ModSettings.category", "Gameplay-Devices-Interactions-MadnessHack")
+  @runtimeProperty("ModSettings.category", "LocKey#20638")
   @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Mod-Edg-Wanted-Level")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Wanted-Level-Desc")
@@ -64,14 +64,14 @@ public class EdgerunningConfig {
   let psychoHeatLevel: WannabeHeatLevel = WannabeHeatLevel.Three;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
-  @runtimeProperty("ModSettings.category", "Gameplay-Devices-Interactions-MadnessHack")
+  @runtimeProperty("ModSettings.category", "LocKey#20638")
   @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Mod-Edg-Trigger-Zero")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Trigger-Zero-Desc")
   let alwaysRunAtZero: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
-  @runtimeProperty("ModSettings.category", "Gameplay-Devices-Interactions-MadnessHack")
+  @runtimeProperty("ModSettings.category", "LocKey#20638")
   @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Mod-Edg-Teleport-On-End")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Teleport-On-End-Desc")

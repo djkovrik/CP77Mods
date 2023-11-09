@@ -37,8 +37,7 @@ public class CyberwareHelper {
     return null;
   }
 
-  private func IsKerenzikov(record: ref<Item_Record>) -> Bool {
-    let id: TweakDBID = record.GetID();
+  public static func IsKerenzikov(id: TweakDBID) -> Bool {
     return Equals(id, t"Items.KerenzikovCommon") 
       || Equals(id, t"Items.KerenzikovUncommon")
       || Equals(id, t"Items.KerenzikovRare")
@@ -56,8 +55,7 @@ public class CyberwareHelper {
       || Equals(id, t"Items.AdvancedKerenzikovLegendaryPlusPlus");
   }
 
-  private func IsOpticalCamo(record: ref<Item_Record>) -> Bool {
-    let id: TweakDBID = record.GetID();
+  public static func IsOpticalCamo(id: TweakDBID) -> Bool {
     return Equals(id, t"Items.OpticalCamoRare") 
       || Equals(id, t"Items.OpticalCamoEpic")
       || Equals(id, t"Items.OpticalCamoLegendary")
@@ -71,5 +69,15 @@ public class CyberwareHelper {
       || Equals(id, t"Items.AdvancedOpticalCamoLegendary")
       || Equals(id, t"Items.AdvancedOpticalCamoLegendaryPlus")
       || Equals(id, t"Items.AdvancedOpticalCamoLegendaryPlusPlus");
+  }
+
+  private func IsKerenzikov(record: ref<Item_Record>) -> Bool {
+    let id: TweakDBID = record.GetID();
+    return CyberwareHelper.IsKerenzikov(id);
+  }
+
+  private func IsOpticalCamo(record: ref<Item_Record>) -> Bool {
+    let id: TweakDBID = record.GetID();
+    return CyberwareHelper.IsOpticalCamo(id);
   }
 }
