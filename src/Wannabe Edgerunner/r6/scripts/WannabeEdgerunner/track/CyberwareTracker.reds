@@ -1,21 +1,51 @@
 import Edgerunning.System.EdgerunningSystem
 import Edgerunning.Common.E
 
-@addMethod(EquipmentSystemPlayerData)
-private func AddNeuroblockersIfVik() -> Void {
-  let journalManager: wref<JournalManager> = GameInstance.GetJournalManager(this.m_owner.GetGame());
-  let trackedObjective: wref<JournalQuestObjective> = journalManager.GetTrackedEntry() as JournalQuestObjective;
-  let questsSystem: ref<QuestsSystem> = GameInstance.GetQuestsSystem(this.m_owner.GetGame());
+// Add Neuroblockers on Vik scene
+@addField(PlayerPuppet)
+private let neuroblockersFactListener: Uint32;
+
+@wrapMethod(PlayerPuppet)
+private final func RegisterInterestingFactsListeners() -> Void {
+  wrappedMethod();
+  this.neuroblockersFactListener = GameInstance.GetQuestsSystem(this.GetGame()).RegisterListener(n"q001_hide_ammo_counter", this, n"OnNeuroblockersFactChanged");
+}
+
+@wrapMethod(PlayerPuppet)
+private final func UnregisterInterestingFactsListeners() -> Void {
+  GameInstance.GetQuestsSystem(this.GetGame()).UnregisterListener(n"q001_hide_ammo_counter", this.neuroblockersFactListener);
+}
+
+@addMethod(PlayerPuppet)
+public final func OnNeuroblockersFactChanged(val: Int32) -> Void {
   let transactionSystem: ref<TransactionSystem>;
-  let neuroblockersFact: Int32 = questsSystem.GetFact(n"neuroblockers_added");
-  let id: String = trackedObjective.GetId();
-  if Equals(id, "install_cyberware") && Equals(neuroblockersFact, 0) {
-    transactionSystem = GameInstance.GetTransactionSystem(this.m_owner.GetGame());
-    transactionSystem.GiveItemByTDBID(this.m_owner, t"Items.ripperdoc_med_common", 1);
-    questsSystem.SetFact(n"neuroblockers_added", 1);
+  let questsSystem: ref<QuestsSystem>;
+  if val == 0 {
+    transactionSystem = GameInstance.GetTransactionSystem(this.GetGame());
+    questsSystem = GameInstance.GetQuestsSystem(this.GetGame());
+    transactionSystem.GiveItemByTDBID(this, t"Items.ripperdoc_med_common", 1);
+    questsSystem.SetFact(n"vik_neuroblockers_added", 1);
   };
 }
 
+// Check if Vik scene completed and neuroblockers not added
+@wrapMethod(PlayerPuppet)
+protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpawn>) -> Bool {
+  wrappedMethod(evt);
+
+  let questsSystem: ref<QuestsSystem> = GameInstance.GetQuestsSystem(this.GetGame());
+  let transactionSystem: ref<TransactionSystem>;
+  let tutorialFact: Int32 = questsSystem.GetFact(n"q001_hide_ammo_counter");
+  let neuroblockersFact: Int32 = questsSystem.GetFact(n"vik_neuroblockers_added");
+
+  if Equals(tutorialFact, 0) && Equals(neuroblockersFact, 0) {
+    transactionSystem = GameInstance.GetTransactionSystem(this.GetGame());
+    transactionSystem.GiveItemByTDBID(this, t"Items.ripperdoc_med_common", 1);
+    questsSystem.SetFact(n"vik_neuroblockers_added", 1);
+  };
+}
+
+// Track cyberware activation
 @wrapMethod(PlayerPuppet)
 private final func ActivateIconicCyberware() -> Void {
   wrappedMethod();
