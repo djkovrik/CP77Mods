@@ -8,7 +8,7 @@ public class LHUDInputListener {
 
   // Store player instance
   public func SetPlayerInstance(player: ref<PlayerPuppet>) -> Void {
-    LHUDLog("-- LHUDInputListener initialized");
+    LHUDLogDebug("-- LHUDInputListener initialized");
     this.playerInstance = player;
   }
 
@@ -59,7 +59,7 @@ public class LHUDBlackboardsListener {
 
   // Initialise blackboards
   public func InitializeData(player: ref<PlayerPuppet>) -> Void {
-    LHUDLog("-- LHUDBlackboardsListener::InitializeData");
+    LHUDLogDebug("-- LHUDBlackboardsListener::InitializeData");
     this.playerInstance = player;
     this.bbDefs = GetAllBlackboardDefs();
     this.braindanceBlackboard =  GameInstance.GetBlackboardSystem(player.GetGame()).Get(this.bbDefs.Braindance);
@@ -74,7 +74,7 @@ public class LHUDBlackboardsListener {
 
   // Register listeners
   public func RegisterListeners() -> Void {
-    LHUDLog("-- LHUDBlackboardsListener::RegisterListeners");
+    LHUDLogDebug("-- LHUDBlackboardsListener::RegisterListeners");
     this.globalHotkeyCallback = this.uiSystemBlackboard.RegisterListenerBool(this.bbDefs.UI_System.IsGlobalFlagToggled_LHUD, this, n"OnGlobalToggle");
     this.minimapHotkeyCallback = this.uiSystemBlackboard.RegisterListenerBool(this.bbDefs.UI_System.IsMinimapToggled_LHUD, this, n"OnMinimapToggle");
     this.braindanceCallback = this.braindanceBlackboard.RegisterListenerBool(this.bbDefs.Braindance.IsActive, this, n"OnBraindanceToggle");
@@ -88,7 +88,7 @@ public class LHUDBlackboardsListener {
 
   // Unregister listeners
   public func UnregisterListeners() -> Void {
-    LHUDLog("-- LHUDBlackboardsListener::UnregisterListeners");
+    LHUDLogDebug("-- LHUDBlackboardsListener::UnregisterListeners");
     this.uiSystemBlackboard.UnregisterListenerBool(this.bbDefs.UI_System.IsGlobalFlagToggled_LHUD, this.globalHotkeyCallback);
     this.uiSystemBlackboard.UnregisterListenerBool(this.bbDefs.UI_System.IsMinimapToggled_LHUD, this.minimapHotkeyCallback);
     this.braindanceBlackboard.UnregisterListenerBool(this.bbDefs.Braindance.IsActive, this.braindanceCallback);
@@ -104,7 +104,7 @@ public class LHUDBlackboardsListener {
 
   // Trigger events which required to get some initial state
   public func LaunchInitialStateEvents() -> Void {
-    LHUDLog("-- InitialStateEvent - schedule callback");
+    LHUDLogDebug("-- InitialStateEvent - schedule callback");
     let callback: ref<LHUDLaunchCallback> = new LHUDLaunchCallback();
     callback.bbListener = this;
     this.delaySystem.CancelCallback(this.delayId);
@@ -187,7 +187,7 @@ public class LHUDLaunchCallback extends DelayCallback {
   public let bbListener: wref<LHUDBlackboardsListener>;
 
   public func Call() -> Void {
-    LHUDLog("-- InitialStateEvent - execute callback");
+    LHUDLogDebug("-- InitialStateEvent - execute callback");
     let listener: ref<LHUDBlackboardsListener> = this.bbListener;
     let globalToggled: Bool = listener.uiSystemBlackboard.GetBool(listener.bbDefs.UI_System.IsGlobalFlagToggled_LHUD);
     let minimapToggled: Bool = listener.uiSystemBlackboard.GetBool(listener.bbDefs.UI_System.IsMinimapToggled_LHUD);
@@ -291,11 +291,9 @@ public final func OnEquipmentSystemWeaponManipulationRequest(request: ref<Equipm
   let shouldSkipRequest: Bool = this.ShouldSkipThisRequest(request.requestType);
   let equipmentDataDef: ref<UI_EquipmentDataDef> = GetAllBlackboardDefs().UI_EquipmentData;
   if isUnequipRequest {
-    // LHUDLog(s"!!! Hide for request \(request.requestType)");
     GameInstance.GetBlackboardSystem(this.m_owner.GetGame()).Get(equipmentDataDef).SetBool(equipmentDataDef.HasWeaponEquipped, false);
   } else {
     if !shouldSkipRequest {
-      // LHUDLog(s"!!! Show for request \(request.requestType)");
       GameInstance.GetBlackboardSystem(this.m_owner.GetGame()).Get(equipmentDataDef).SetBool(equipmentDataDef.HasWeaponEquipped, true);
     };
   };

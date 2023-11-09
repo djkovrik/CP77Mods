@@ -7,7 +7,7 @@ import LimitedHudConfig.WorldMarkersModuleConfigDevices
 import LimitedHudMappinChecker.MappinChecker
 import LimitedHudCommon.LHUDConfigUpdatedEvent
 import LimitedHudCommon.LHUDEvent
-import LimitedHudCommon.LHUDLog
+import LimitedHudCommon.LHUDLogMarker
 
 @addMethod(QuestMappinController)
 protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
@@ -35,12 +35,10 @@ private func UpdateVisibility() -> Void {
     let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;
     this.lhud_isVisibleNow = shouldBeVisible && isVisible;
     this.SetRootVisible(this.lhud_isVisibleNow);
-    // LHUDLog(s" --- \(this.m_mappin.GetVariant()) detected as Quest marker, visibility: \(this.lhud_isVisibleNow)");
     return ;
   };
   // ---- Loot
   if this.lhudConfigLoot.IsEnabled && MappinChecker.IsLootMarker(this.m_mappin) {
-    // LHUDLog(s" --- \(this.m_mappin.GetVariant()) detected as Loot marker");
     let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && this.lhudConfigLoot.BindToGlobalHotkey;
     let showForCombat: Bool = this.lhud_isCombatActive && this.lhudConfigLoot.ShowInCombat;
     let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && this.lhudConfigLoot.ShowOutOfCombat;
@@ -63,7 +61,6 @@ private func UpdateVisibility() -> Void {
     let isVisible: Bool = showForGlobalHotkey || showForVehicle || showForScanner || showForZoom;
     this.lhud_isVisibleNow = shouldBeVisible && isVisible && !this.lhud_isBraindanceActive;
     this.SetRootVisible(this.lhud_isVisibleNow);
-    // LHUDLog(s" --- \(this.m_mappin.GetVariant()) detected as Vehicle marker, visibility: \(this.lhud_isVisibleNow)");
     return ;
   };
   // ---- POIs
@@ -80,7 +77,6 @@ private func UpdateVisibility() -> Void {
     let isVisible: Bool = showIfTracked || showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;
     this.lhud_isVisibleNow = shouldBeVisible && isVisible && !this.lhud_isBraindanceActive;
     this.SetRootVisible(this.lhud_isVisibleNow);
-    // LHUDLog(s" --- \(this.m_mappin.GetVariant()) detected as POI marker, visibility: \(this.lhud_isVisibleNow)");
     return ;
   };
   // ---- Combat
@@ -96,7 +92,6 @@ private func UpdateVisibility() -> Void {
     let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;
     this.lhud_isVisibleNow = shouldBeVisible && isVisible;
     this.SetRootVisible(this.lhud_isVisibleNow);
-    // LHUDLog(s" --- \(this.m_mappin.GetVariant()) detected as Combat marker, visibility: \(this.lhud_isVisibleNow)");
     return ;
   };
   // ---- Devices and interactions
@@ -105,14 +100,13 @@ private func UpdateVisibility() -> Void {
     let isVisible: Bool = showForScanner && shouldBeVisible;
     this.lhud_isVisibleNow = isVisible;
     this.SetRootVisible(this.lhud_isVisibleNow);
-    // LHUDLog(s" --- \(this.m_mappin.GetVariant()) detected as Device marker, visibility: \(this.lhud_isVisibleNow)");
     return ;
   };
 
   this.lhud_isVisibleNow = shouldBeVisible;
   this.SetRootVisible(shouldBeVisible);
   let data: ref<GameplayRoleMappinData> = this.m_mappin.GetScriptData() as GameplayRoleMappinData;
-  LHUDLog(s"MISSED MAPPIN: \(this.m_mappin.GetVariant()), role: \(data.m_gameplayRole), visibility \(this.lhud_isVisibleNow)");
+  LHUDLogMarker(s"MISSED MAPPIN: \(this.m_mappin.GetVariant()), role: \(data.m_gameplayRole), visibility \(this.lhud_isVisibleNow)");
 }
 
 @addField(QuestMappinController) private let lhudConfigQuest: ref<WorldMarkersModuleConfigQuest>;

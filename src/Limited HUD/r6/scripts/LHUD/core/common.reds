@@ -124,7 +124,7 @@ public class LHUDStealthRunnerRefreshed extends Event {}
 // Catch LHUDEvent inside inkGameController instances
 @addMethod(inkGameController)
 protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
-  LHUDLog(s" <- \(this.GetClassName()) consume event: " + ToString(evt.type) + " " + ToString(evt.isActive));
+  LHUDLogDebug(s" <- \(this.GetClassName()) consume event: " + ToString(evt.type) + " " + ToString(evt.isActive));
   switch(evt.type) {
     case LHUDEventType.GlobalHotkey: 
       this.lhud_isGlobalFlagToggled = evt.isActive;
@@ -173,7 +173,7 @@ protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
 // Catch LHUDEvent inside inkLogicController instances
 @addMethod(inkLogicController)
 protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
-  LHUDLog(s" <- \(this.GetClassName()) consume event: " + ToString(evt.type) + " " + ToString(evt.isActive));
+  LHUDLogDebug(s" <- \(this.GetClassName()) consume event: " + ToString(evt.type) + " " + ToString(evt.isActive));
   switch(evt.type) {
     case LHUDEventType.GlobalHotkey: 
       this.lhud_isGlobalFlagToggled = evt.isActive;
@@ -221,7 +221,7 @@ protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
 // Pass LHUDEvent to AllBlackboardDefinitions
 @addMethod(AllBlackboardDefinitions)
 protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
-  LHUDLog(s" <- \(this.GetClassName()) consume event: " + ToString(evt.type) + " " + ToString(evt.isActive));
+  LHUDLogDebug(s" <- \(this.GetClassName()) consume event: " + ToString(evt.type) + " " + ToString(evt.isActive));
   switch(evt.type) {
     case LHUDEventType.GlobalHotkey: 
       this.lhud_isGlobalFlagToggled = evt.isActive;
@@ -321,7 +321,7 @@ public func QueueLHUDEvent(type: LHUDEventType, active: Bool) -> Void {
   evt.type = type;
   evt.isActive = active;
   GameInstance.GetUISystem(this.GetGame()).QueueEvent(evt);
-  LHUDLog(" -> Queue event: " + ToString(type) + " " + ToString(active));
+  LHUDLogDebug(" -> Queue event: " + ToString(type) + " " + ToString(active));
 }
 
 // Check if player has any weapon equipped
@@ -350,7 +350,10 @@ protected cb func OnUninitialize() -> Bool {
   wrappedMethod();
 }
 
-// Print string to CET console
-public static func LHUDLog(str: String) -> Void {
+public static func LHUDLogMarker(str: String) -> Void {
+  // LogChannel(n"DEBUG", "LHUD: " + str);
+}
+
+public static func LHUDLogDebug(str: String) -> Void {
   // LogChannel(n"DEBUG", "LHUD: " + str);
 }
