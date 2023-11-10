@@ -9,6 +9,7 @@ import Edgerunning.Common.E
   public func RunPostPsychosisFlow() -> Void
   public func ScheduleNextPsychoCheck() -> Void
   public func SchedulePostPsychosisEffect(delay: Float) -> Void
+  public func ScheduleHumanityRestoreEffect(delay: Float) -> Void
   public func StopPrePsychosisFlow() -> Void
   public func StopPsychosisFlow() -> Void
   public func StopPostPsychosisFlow() -> Void
@@ -27,6 +28,8 @@ import Edgerunning.Common.E
   public func OnOpticalCamoActivation() -> Void
   public func OnArmsCyberwareActivation(type: gamedataItemType) -> Void
 
+  public func IsWentFullPsycho() -> Bool 
+  public func SetWentFullPsycho(value: Bool) -> Void 
   public func AddHumanityDamage(cost: Int32) -> Void
   public func RemoveHumanityDamage(cost: Int32) -> Bool
   public func ResetHumanityDamage() -> Void
@@ -71,8 +74,10 @@ public class EdgerunningSystem extends ScriptableSystem {
   private let psychosisThreshold: Int32;
   private let psychosisCheckDelayId: DelayID;
   private let postPsychosisDelayId: DelayID;
+  private let humanityRestoreDelayId: DelayID;
 
   private persistent let currentHumanityDamage: Int32 = 0;
+  private persistent let wentFullPsycho: Bool = false;
 
   public static func GetInstance(gameInstance: GameInstance) -> ref<EdgerunningSystem> {
     let system: ref<EdgerunningSystem> = GameInstance.GetScriptableSystemsContainer(gameInstance).Get(n"Edgerunning.System.EdgerunningSystem") as EdgerunningSystem;
@@ -134,6 +139,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     
     this.StopEverythingNew();
     this.effectsHelper.RunNewPsychosisEffect();
+    this.SetWentFullPsycho(true);
     this.preventionHelper.ScheduleRandomWeaponActions(4.5);
 
     if this.IsPoliceSpawnAvailable() {
@@ -145,8 +151,10 @@ public class EdgerunningSystem extends ScriptableSystem {
     if this.config.teleportOnEnd {
       this.teleportHelper.ScheduleTeleport(66.0);
     } else {
-      this.SchedulePostPsychosisEffect(70.0);
+      this.SchedulePostPsychosisEffect(68.0);
     };
+
+    this.ScheduleHumanityRestoreEffect(70.0);
   }
 
   public func RunPostPsychosisFlow() -> Void {
@@ -165,14 +173,20 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.postPsychosisDelayId = this.delaySystem.DelayCallback(LaunchPostPsychosisEffectCallback.Create(this), delay, false);
   }
 
+  public func ScheduleHumanityRestoreEffect(delay: Float) -> Void {
+    E(s"? Post Psycho Humanity restore - scheduled after \(delay) seconds");
+    this.humanityRestoreDelayId = this.delaySystem.DelayCallback(LaunchPostPsychosisHumanityRestoreCallback.Create(this), delay, false);
+  }
+
+
   public func StopPrePsychosisFlow() -> Void {
     E(s"? Stop pre-psychosis");
     this.effectsHelper.StopNewPrePsychosisEffect();
-   this.delaySystem.CancelDelay(this.psychosisCheckDelayId);
+    this.delaySystem.CancelDelay(this.psychosisCheckDelayId);
   }
 
   public func StopPsychosisFlow() -> Void {
-    E(s"? Stop psychosis...");
+    E(s"? Stop psychosis");
     this.effectsHelper.StopNewPsychosisEffect();
     this.effectsHelper.CancelCycledFx();
     this.effectsHelper.CancelOtherFxes();
@@ -182,11 +196,12 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func StopPostPsychosisFlow() -> Void {
-    E(s"? Stop post-psychosis...");
+    E(s"? Stop post-psychosis");
     this.effectsHelper.StopNewPostPsychosisEffect();
   }
 
   public func StopEverythingNew() -> Void {
+    E(s"? Stop everything ");
     this.StopPrePsychosisFlow();
     this.StopPsychosisFlow();
     this.StopPostPsychosisFlow();
@@ -238,6 +253,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.StopEverythingNew();
     this.ResetHumanityDamage();
     E("! Rested, humanity value restored.");
+    this.SetWentFullPsycho(false);
     this.InvalidateCurrentState();
   }
 
@@ -445,13 +461,27 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   // -- Handle Humanity
 
+  public func IsWentFullPsycho() -> Bool {
+    return this.wentFullPsycho;
+  }
+
+  public func SetWentFullPsycho(value: Bool) -> Void {
+    this.wentFullPsycho = value;
+  }
+
   public func AddHumanityDamage(cost: Int32) -> Void {
+    let total: Int32 = this.GetHumanityTotal();
     this.currentHumanityDamage += cost;
+    E(s"> AddHumanityDamage \(cost)");
+    if this.currentHumanityDamage > total {
+      this.currentHumanityDamage = total;
+    };
     this.psmBB.SetInt(GetAllBlackboardDefs().PlayerStateMachine.HumanityDamage, this.currentHumanityDamage, true);
   }
 
   public func RemoveHumanityDamage(cost: Int32) -> Bool {
     if this.currentHumanityDamage >= cost {
+      E(s"> RemoveHumanityDamage \(cost)");
       this.currentHumanityDamage -= cost;
       this.psmBB.SetInt(GetAllBlackboardDefs().PlayerStateMachine.HumanityDamage, this.currentHumanityDamage, true);
       return true;
@@ -463,13 +493,6 @@ public class EdgerunningSystem extends ScriptableSystem {
   public func ResetHumanityDamage() -> Void {
     this.currentHumanityDamage = 0;
     this.psmBB.SetInt(GetAllBlackboardDefs().PlayerStateMachine.HumanityDamage, 0, true);
-  }
-
-  public func PostTeleportHumanityReset() -> Void {
-    let newDamage: Int32 = this.currentHumanityDamage - 5;
-    this.currentHumanityDamage = newDamage;
-    this.psmBB.SetInt(GetAllBlackboardDefs().PlayerStateMachine.HumanityDamage, newDamage, true);
-    this.InvalidateCurrentState(false);
   }
 
   public func AddHumanityPenalty(key: String, value: Int32) -> Void {
@@ -553,7 +576,6 @@ public class EdgerunningSystem extends ScriptableSystem {
     let basePool: Int32 = this.config.baseHumanityPool;
     let playerLevel: Float = GameInstance.GetStatsSystem(this.player.GetGame()).GetStatValue(Cast<StatsObjectID>(this.player.GetEntityID()), gamedataStatType.Level);
     let additionalPool: Int32 = Cast<Int32>(this.config.humanityBonusPerLevel * playerLevel);
-    E(s"basePool: \(basePool), playerLevel: \(playerLevel), additionalPool: \(additionalPool)");
     return basePool + additionalPool;
   }
 
@@ -587,10 +609,11 @@ public class EdgerunningSystem extends ScriptableSystem {
     if this.psychosisThreshold > basePool {
       this.psychosisThreshold = basePool / 2;
     };
-    E("Current humanity points state:");
-    E(s" - total: \(basePool) humanity, points left: \(this.currentHumanityPool), can be recovered: \(this.currentHumanityDamage)");
-    E(s" - psychosis threshold \(this.psychosisThreshold) and lower");
-    E(s"Total penalty from mods: \(penalty)");
+    let log: String = "";
+    log += s"total \(basePool), current \(this.currentHumanityPool), damage \(this.currentHumanityDamage) |";
+    log += s" threshold \(this.psychosisThreshold) |";
+    log += s" from mods \(penalty)";
+    E(s"INVALIDATE: \(log)");
 
     evt.current = this.GetHumanityCurrent();
     evt.total = this.GetHumanityTotal();
@@ -600,23 +623,34 @@ public class EdgerunningSystem extends ScriptableSystem {
     if this.effectsChecker.IsRipperdocBuffActive() { return; };
     if this.effectsChecker.IsNewPsychosisActive() { return; };
     if this.effectsChecker.IsNewPostPsychosisActive() { return; };
-
+    
+    // Playing as Johnny - cancel effects
     if this.effectsChecker.IsPossessed() {
       this.StopEverythingNew();
       return ;
     };
 
+    // Humanity restored - cancel effects
     if this.currentHumanityPool > this.psychosisThreshold {
       this.StopEverythingNew();
       return ;
     };
 
-    if this.currentHumanityPool < this.psychosisThreshold && this.currentHumanityPool > 0 {
+    // Detect post-psychosis
+    if this.IsWentFullPsycho() && !this.effectsChecker.IsNewPostPsychosisActive() {
+      this.RunPostPsychosisFlow();
+      return ;
+    }
+
+    // Detect pre-psychosis
+    if this.currentHumanityPool < this.psychosisThreshold && this.currentHumanityPool > 0 && !this.effectsChecker.IsNewPrePsychosisActive() {
       this.RunPrePsychosisFlow();
-    } else {
-      if this.currentHumanityPool <= 0 && this.config.alwaysRunAtZero {
-        this.RunPsychosisFlow();
-      };
+      return ;
+    };
+
+    // Detect psychosis
+    if this.currentHumanityPool <= 0 && this.config.alwaysRunAtZero && !this.effectsChecker.IsNewPsychosisActive() {
+      this.RunPsychosisFlow();
     };
   }
 
@@ -779,5 +813,20 @@ public class LaunchPostPsychosisEffectCallback extends DelayCallback {
 
   public func Call() -> Void {
     this.system.OnLaunchPostPsychosisCallback();
+  }
+}
+
+public class LaunchPostPsychosisHumanityRestoreCallback extends DelayCallback {
+  let system: wref<EdgerunningSystem>;
+
+  public static func Create(system: ref<EdgerunningSystem>) -> ref<LaunchPostPsychosisHumanityRestoreCallback> {
+    let self: ref<LaunchPostPsychosisHumanityRestoreCallback> = new LaunchPostPsychosisHumanityRestoreCallback();
+    self.system = system;
+    return self;
+  }
+
+  public func Call() -> Void {
+    this.system.RemoveHumanityDamage(10);
+    this.system.InvalidateCurrentState();
   }
 }
