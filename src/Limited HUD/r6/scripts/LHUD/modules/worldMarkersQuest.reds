@@ -12,11 +12,11 @@ import LimitedHudCommon.LHUDLogMarker
 @addMethod(QuestMappinController)
 protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
   this.ConsumeLHUDEvent(evt);
-  this.UpdateVisibility();
+  this.DetermineCurrentVisibility();
 }
 
-@replaceMethod(QuestMappinController)
-private func UpdateVisibility() -> Void {
+@addMethod(QuestMappinController)
+private func DetermineCurrentVisibility() -> Void {
   // -- Default conditions
   let isInQuestArea: Bool = this.m_questMappin != null && this.m_questMappin.IsInsideTrigger();
   let showWhenClamped: Bool = this.isCurrentlyClamped ? !this.m_shouldHideWhenClamped : true;
@@ -126,12 +126,20 @@ protected cb func OnInitialize() -> Bool {
   this.lhudConfigLoot = new WorldMarkersModuleConfigLoot();
   this.lhudConfigDevices = new WorldMarkersModuleConfigDevices();
   this.FetchInitialStateFlags();
-  this.UpdateVisibility();
+  this.DetermineCurrentVisibility();
 }
 
-@replaceMethod(GameplayMappinController)
-private func UpdateVisibility() -> Void {
-  super.UpdateVisibility();
+@wrapMethod(QuestMappinController)
+protected cb func OnUpdate() -> Bool {
+  wrappedMethod();
+  this.DetermineCurrentVisibility();
+}
+
+
+@wrapMethod(GameplayMappinController)
+protected cb func OnUpdate() -> Bool {
+  wrappedMethod();
+  super.DetermineCurrentVisibility();
 }
 
 @addMethod(QuestMappinController)
