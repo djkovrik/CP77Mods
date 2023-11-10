@@ -1724,6 +1724,7 @@ public class LimitedFastTravelConfig {
 public class FtChecker extends ScriptableSystem {
   private func OnAttach() {
     ModSettings.RegisterListenerToModifications(this);
+    this.RefreshFtPointsData();
   }
 
   private func OnDetach() {
