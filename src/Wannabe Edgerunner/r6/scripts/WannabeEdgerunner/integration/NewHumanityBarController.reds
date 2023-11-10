@@ -275,6 +275,6 @@ public class NewHumanityBarController extends inkGameController {
   }
 
   private final func Log(str: String) -> Void {
-    LogChannel(n"DEBUG", s"NewHumanityBarController: \(str)");
+    // LogChannel(n"DEBUG", s"NewHumanityBarController: \(str)");
   }
 }

@@ -13,10 +13,12 @@ import Edgerunning.Common.E
   public func CancelCycledFx() -> Void
   public func PlayFastTravelFx() -> Void
   public func CancelOtherFxes() -> Void
+  public func RefreshConfig() -> Void
 */
 public class PsychosisEffectsHelper {
   private let player: wref<PlayerPuppet>;
   private let delaySystem: wref<DelaySystem>;
+  private let config: ref<EdgerunningConfig>;
 
   private let cycledSFXDelayId: DelayID;
 
@@ -25,42 +27,60 @@ public class PsychosisEffectsHelper {
   public func Init(player: ref<PlayerPuppet>) -> Void {
     this.player = player;
     this.delaySystem = GameInstance.GetDelaySystem(player.GetGame());
+    this.config = new EdgerunningConfig();
     this.PopulateSfxArray();
   }
 
   public func RunNewPrePsychosisEffect() -> Void {
     E("!!! Fx New - Pre Psychosis");
     this.PlayVFXDelayed(n"fx_damage_high", 0.5);
-    this.PlayVFXDelayed(n"personal_link_glitch", 1.0);
-    this.ApplyStatusEffect(t"BaseStatusEffect.NewPrePsychosisEffect", 1.5);
+    if this.config.lightVisuals {
+      this.ApplyStatusEffect(t"BaseStatusEffect.NewPrePsychosisEffectLightFx", 1.0);
+    } else {
+      this.PlayVFXDelayed(n"personal_link_glitch", 1.0);
+      this.ApplyStatusEffect(t"BaseStatusEffect.NewPrePsychosisEffectNormalFx", 1.5);
+    };
   }
 
   public func StopNewPrePsychosisEffect() -> Void {
     E("!!! Fx New - Stop Pre Psychosis");
-    this.RemoveStatusEffect(t"BaseStatusEffect.NewPrePsychosisEffect", 0.1);
+    this.RemoveStatusEffect(t"BaseStatusEffect.NewPrePsychosisEffectLightFx", 0.1);
+    this.RemoveStatusEffect(t"BaseStatusEffect.NewPrePsychosisEffectNormalFx", 0.2);
   }
 
   public func RunNewPsychosisEffect() -> Void {
     E("!!! Fx New - Psychosis start");
-    this.ApplyStatusEffect(t"BaseStatusEffect.NewPsychosisEffect", 0.5);
-    this.PlaySFXDelayed(n"ONO_V_LongPain", 7.5);
-    this.PlayVFXDelayed(n"status_bleeding", 7.5);
+    if this.config.lightVisuals {
+      this.PlaySFXDelayed(n"ONO_V_LongPain", 0.6);
+      this.PlayVFXDelayed(n"fx_damage_high", 0.6);
+      this.ApplyStatusEffect(t"BaseStatusEffect.NewPsychosisEffectLightFx", 0.8);
+    } else {
+      this.ApplyStatusEffect(t"BaseStatusEffect.NewPsychosisEffectNormalFx", 0.5);
+      this.PlaySFXDelayed(n"ONO_V_LongPain", 7.5);
+      this.PlayVFXDelayed(n"status_bleeding", 7.6);
+    };
   }
 
   public func StopNewPsychosisEffect() -> Void {
     E("!!! Fx New - Psychosis stop");
-    this.RemoveStatusEffect(t"BaseStatusEffect.NewPsychosisEffect", 0.1);
+    this.RemoveStatusEffect(t"BaseStatusEffect.NewPsychosisEffectLightFx", 0.1);
+    this.RemoveStatusEffect(t"BaseStatusEffect.NewPsychosisEffectNormalFx", 0.2);
     this.StopVFX(n"status_bleeding");
   };
 
   public func RunNewPostPsychosisEffect() -> Void {
     E("!!! Fx New - Post Psychosis start");
-    this.ApplyStatusEffect(t"BaseStatusEffect.NewPostPsychosisEffect", 0.5);
+    if this.config.lightVisuals {
+      this.ApplyStatusEffect(t"BaseStatusEffect.NewPostPsychosisEffectLightFx", 0.5);
+    } else {
+      this.ApplyStatusEffect(t"BaseStatusEffect.NewPostPsychosisEffectNormalFx", 0.5);
+    };
   }
 
   public func StopNewPostPsychosisEffect() -> Void {
     E("!!! Fx New - Post Psychosis stop");
-    this.RemoveStatusEffect(t"BaseStatusEffect.NewPostPsychosisEffect", 0.1);
+    this.RemoveStatusEffect(t"BaseStatusEffect.NewPostPsychosisEffectLightFx", 0.1);
+    this.RemoveStatusEffect(t"BaseStatusEffect.NewPostPsychosisEffectNormalFx", 0.2);
   };
 
   public func ScheduleCycledSfx(delay: Float) -> Void {
@@ -83,6 +103,10 @@ public class PsychosisEffectsHelper {
     this.StopVFX(n"personal_link_glitch");
     this.StopVFX(n"hacking_glitch_low");
     this.StopSFX(n"ui_gmpl_perk_edgerunner");
+  }
+
+  public func RefreshConfig() -> Void {
+    this.config = new EdgerunningConfig();
   }
 
   private func OnLaunchCycledSFXCallback() -> Void {

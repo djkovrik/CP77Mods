@@ -140,13 +140,24 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.StopEverythingNew();
     this.effectsHelper.RunNewPsychosisEffect();
     this.SetWentFullPsycho(true);
-    this.preventionHelper.ScheduleRandomWeaponActions(4.5);
 
-    if this.IsPoliceSpawnAvailable() {
-      this.preventionHelper.SchedulePoliceActivity(6.0);
+    if this.config.lightVisuals {
+      this.preventionHelper.ScheduleRandomWeaponActions(0.5);
+
+      if this.IsPoliceSpawnAvailable() {
+        this.preventionHelper.SchedulePoliceActivity(2.0);
+      };
+
+      this.effectsHelper.ScheduleCycledSfx(3.0);
+    } else {
+      this.preventionHelper.ScheduleRandomWeaponActions(4.5);
+
+      if this.IsPoliceSpawnAvailable() {
+        this.preventionHelper.SchedulePoliceActivity(6.0);
+      };
+
+      this.effectsHelper.ScheduleCycledSfx(7.0);
     };
-
-    this.effectsHelper.ScheduleCycledSfx(7.0);
 
     if this.config.teleportOnEnd {
       this.teleportHelper.ScheduleTeleport(66.0);
@@ -216,6 +227,7 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public func OnSettingsChanged() -> Void {
     this.config = new EdgerunningConfig();
+    this.effectsHelper.RefreshConfig();
   }
 
   public func OnEnemyKilled(affiliation: gamedataAffiliation) -> Void {
@@ -612,7 +624,8 @@ public class EdgerunningSystem extends ScriptableSystem {
     let log: String = "";
     log += s"total \(basePool), current \(this.currentHumanityPool), damage \(this.currentHumanityDamage) |";
     log += s" threshold \(this.psychosisThreshold) |";
-    log += s" from mods \(penalty)";
+    log += s" from mods \(penalty) |";
+    log += s" light visuals \(this.config.lightVisuals)";
     E(s"INVALIDATE: \(log)");
 
     evt.current = this.GetHumanityCurrent();

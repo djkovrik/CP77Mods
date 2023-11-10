@@ -66,6 +66,13 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "LocKey#20638")
   @runtimeProperty("ModSettings.category.order", "2")
+  @runtimeProperty("ModSettings.displayName", "Mod-Edg-Teleport-On-End")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Teleport-On-End-Desc")
+  let teleportOnEnd: Bool = true;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "LocKey#20638")
+  @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Mod-Edg-Trigger-Zero")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Trigger-Zero-Desc")
   let alwaysRunAtZero: Bool = false;
@@ -73,9 +80,9 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "LocKey#20638")
   @runtimeProperty("ModSettings.category.order", "2")
-  @runtimeProperty("ModSettings.displayName", "Mod-Edg-Teleport-On-End")
-  @runtimeProperty("ModSettings.description", "Mod-Edg-Teleport-On-End-Desc")
-  let teleportOnEnd: Bool = true;
+  @runtimeProperty("ModSettings.displayName", "Mod-Edg-Light-Visuals")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Light-Visuals-Desc")
+  let lightVisuals: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Implants-Usage-Cost")

@@ -70,7 +70,8 @@ Price.RipperdocMedModifierRecipeRare:
 
 # === Core Effects ===
 
-BaseStatusEffect.NewPrePsychosisEffect:
+# Pre-Psychosis
+BaseStatusEffect.NewPrePsychosisEffectBase:
   $type: StatusEffect_Record
   duration: Items.EdgerunnerDebuffDuration
   gameplayTags: [ Debuff ]
@@ -153,6 +154,15 @@ BaseStatusEffect.NewPrePsychosisEffect:
     description: LocKey#Mod-Edg-Pre-Psychosis-Desc
     iconPath: decreased_stats_icon
     priority: 10
+
+BaseStatusEffect.NewPrePsychosisEffectLightFx:
+  $base: BaseStatusEffect.NewPrePsychosisEffectBase
+  SFX:
+    - $type: StatusEffectFX_Record
+      name: ono_v_pain_short
+
+BaseStatusEffect.NewPrePsychosisEffectNormalFx:
+  $base: BaseStatusEffect.NewPrePsychosisEffectBase
   SFX:
     - $type: StatusEffectFX_Record
       name: ono_v_pain_short
@@ -160,7 +170,8 @@ BaseStatusEffect.NewPrePsychosisEffect:
     - $type: StatusEffectFX_Record
       name: hacking_glitch_low
 
-BaseStatusEffect.NewPsychosisEffect:
+# Cyberpsychosis
+BaseStatusEffect.NewPsychosisEffectBase:
   $type: StatusEffect_Record
   duration: Items.EdgerunnerPsychosisDuration
   gameplayTags: [ Buff, Regeneration ]
@@ -198,6 +209,15 @@ BaseStatusEffect.NewPsychosisEffect:
     displayName: LocKey#Mod-Edg-Cyberpsychosis
     description: LocKey#Mod-Edg-Cyberpsychosis-Desc
     iconPath: immunity_icon
+
+BaseStatusEffect.NewPsychosisEffectLightFx:
+  $base: BaseStatusEffect.NewPsychosisEffectBase
+  SFX:
+    - $type: StatusEffectFX_Record
+      name: ono_v_fear_panic_scream
+
+BaseStatusEffect.NewPsychosisEffectNormalFx:
+  $base: BaseStatusEffect.NewPsychosisEffectBase
   SFX:
     - $type: StatusEffectFX_Record
       name: ono_v_fear_panic_scream
@@ -205,7 +225,8 @@ BaseStatusEffect.NewPsychosisEffect:
     - $type: StatusEffectFX_Record
       name: johnny_sickness_blackout
 
-BaseStatusEffect.NewPostPsychosisEffect:
+#Post-Psychosis
+BaseStatusEffect.NewPostPsychosisEffectBase:
   $type: StatusEffect_Record
   duration: Items.EdgerunnerDebuffDuration
   gameplayTags: [ Debuff ]
@@ -313,6 +334,16 @@ BaseStatusEffect.NewPostPsychosisEffect:
     displayName: LocKey#Mod-Edg-Post-Psychosis
     description: LocKey#Mod-Edg-Post-Psychosis-Desc
     iconPath: knockdown_icon
+
+BaseStatusEffect.NewPostPsychosisEffectLightFx:
+  $base: BaseStatusEffect.NewPostPsychosisEffectBase
+  SFX:
+    - $type: StatusEffectFX_Record
+      name: ono_v_pain_long
+
+
+BaseStatusEffect.NewPostPsychosisEffectNormalFx:
+  $base: BaseStatusEffect.NewPostPsychosisEffectBase
   SFX:
     - $type: StatusEffectFX_Record
       name: ono_v_pain_long

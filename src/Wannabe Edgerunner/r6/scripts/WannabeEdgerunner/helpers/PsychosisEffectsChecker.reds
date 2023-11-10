@@ -26,15 +26,15 @@ public class PsychosisEffectsChecker {
   }
 
   public func IsNewPrePsychosisActive() -> Bool {
-    return this.HasStatusEffect(t"BaseStatusEffect.NewPrePsychosisEffect");
+    return this.HasStatusEffect(t"BaseStatusEffect.NewPrePsychosisEffectNormalFx") || this.HasStatusEffect(t"BaseStatusEffect.NewPrePsychosisEffectLightFx");
   }
 
   public func IsNewPsychosisActive() -> Bool {
-    return this.HasStatusEffect(t"BaseStatusEffect.NewPsychosisEffect");
+    return this.HasStatusEffect(t"BaseStatusEffect.NewPsychosisEffectNormalFx") || this.HasStatusEffect(t"BaseStatusEffect.NewPsychosisEffectLightFx");
   }
 
   public func IsNewPostPsychosisActive() -> Bool {
-    return this.HasStatusEffect(t"BaseStatusEffect.NewPostPsychosisEffect");
+    return this.HasStatusEffect(t"BaseStatusEffect.NewPostPsychosisEffectNormalFx") || this.HasStatusEffect(t"BaseStatusEffect.NewPostPsychosisEffectLightFx");
   }
 
   public func IsRipperdocBuffActive() -> Bool {
