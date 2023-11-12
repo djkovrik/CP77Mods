@@ -129,17 +129,14 @@ protected cb func OnInitialize() -> Bool {
   this.DetermineCurrentVisibility();
 }
 
-@wrapMethod(QuestMappinController)
-protected cb func OnUpdate() -> Bool {
-  wrappedMethod();
+@replaceMethod(QuestMappinController)
+private func UpdateVisibility() -> Void {
   this.DetermineCurrentVisibility();
 }
 
-
-@wrapMethod(GameplayMappinController)
-protected cb func OnUpdate() -> Bool {
-  wrappedMethod();
-  super.DetermineCurrentVisibility();
+@replaceMethod(GameplayMappinController)
+private func UpdateVisibility() -> Void {
+  this.DetermineCurrentVisibility();
 }
 
 @addMethod(QuestMappinController)
