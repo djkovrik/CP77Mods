@@ -34,6 +34,7 @@ public class NewHumanityBarController extends inkGameController {
   private let barIntroAnimDuration: Float = 0.01;
   private let iconLabelIntroAnimDuration: Float = 0.5;
   private let thresholdIntroAnimDuration: Float = 0.5;
+  private let indicatorIntroAnimDuration: Float = 0.3;
   private let initialMarginThreshold: Float = 20.0;
   private let barDisplayed: Bool = false;
 
@@ -244,6 +245,14 @@ public class NewHumanityBarController extends inkGameController {
     transparencyInterpolatorThreshold.SetEndTransparency(1.0);
     transparencyInterpolatorThreshold.SetDuration(this.thresholdIntroAnimDuration);
 
+    let scaleInterpolatorThreshold: ref<inkAnimScale> = new inkAnimScale();
+    scaleInterpolatorThreshold.SetMode(inkanimInterpolationMode.EasyOut);
+    scaleInterpolatorThreshold.SetType(inkanimInterpolationType.Linear);
+    scaleInterpolatorThreshold.SetStartScale(new Vector2(1.0, 0.5));
+    scaleInterpolatorThreshold.SetEndScale(new Vector2(1.0, 1.0));
+    scaleInterpolatorThreshold.SetStartDelay(this.thresholdIntroAnimDuration);
+    scaleInterpolatorThreshold.SetDuration(this.indicatorIntroAnimDuration);
+
     this.iconIntroAnimDef = new inkAnimDef();
     this.iconIntroAnimDef.AddInterpolator(transparencyInterpolatorLabels);
 
@@ -252,6 +261,7 @@ public class NewHumanityBarController extends inkGameController {
 
     this.indicatorIntroAnimDef = new inkAnimDef();
     this.indicatorIntroAnimDef.AddInterpolator(transparencyInterpolatorThreshold);
+    this.indicatorIntroAnimDef.AddInterpolator(scaleInterpolatorThreshold);
 
     this.thresholdLabelIntroAnimDef = new inkAnimDef();
     this.thresholdLabelIntroAnimDef.AddInterpolator(transparencyInterpolatorThreshold);
