@@ -60,10 +60,9 @@ public class TeleportDestinationHelper {
     kabuki.maleVictim = t"Character.LightCrowd_kabuki_ma";
     kabuki.femaleVictim = t"Character.LightCrowd_kabuki_wa";
     kabuki.coords = [
-      new Vector4(-1217.716919, 1266.807373, 17.231918, 1.0),
       new Vector4(-1017.837891, 1544.031250, 0.529869, 1.0),
-      new Vector4(-877.804321, 1867.348022, 36.443108, 1.0),
-      new Vector4(-1211.892090, 1080.764282, 16.313820, 1.0)
+      new Vector4(-831.619507, 1911.959595, 35.659103, 1.0),
+      new Vector4(-1191.495117, 1252.922729, 17.390549, 1.0)
     ];
     ArrayPush(this.districts, kabuki);
     ArrayPush(this.districtsPrologue, kabuki);
@@ -74,7 +73,7 @@ public class TeleportDestinationHelper {
     wellsprings.femaleVictim = t"Character.LightCrowd_wellsprings_wa";
     wellsprings.coords = [
       new Vector4(-2354.901855, -1165.460815, 1.493042, 1.0),
-      new Vector4(-2435.021973, -1116.239258, 0.751671, 1.0)
+      new Vector4(-2490.846680, -1060.975952, 0.175583, 1.0)
     ];
     ArrayPush(this.districts, wellsprings);
     // Coast View
@@ -85,9 +84,8 @@ public class TeleportDestinationHelper {
     coast.coords = [
       new Vector4(-1968.451904, -1663.577637, 3.290024, 1.0),
       new Vector4(-2185.085693, -1941.897461, 6.915680, 1.0),
-      new Vector4(-2307.858887, -2396.690918, 10.909409, 1.0),
       new Vector4(-2235.793701, -2214.437988, 11.647858, 1.0),
-      new Vector4(-2051.292236, -1790.358765, 3.306229, 1.0)
+      new Vector4(-2067.569580, -1767.490967, 2.241234, 1.0)
     ];
     ArrayPush(this.districts, coast);
     // Westwind Estate
