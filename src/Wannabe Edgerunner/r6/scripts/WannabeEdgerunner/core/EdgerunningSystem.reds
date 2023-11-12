@@ -20,8 +20,7 @@ import Edgerunning.Common.E
   public func OnEnemyKilled(affiliation: gamedataAffiliation) -> Void
   public func OnBuff() -> Void
   public func OnBuffEnded() -> Void
-  public func OnSleep() -> Void
-  public func OnKindness() -> Void
+  public func OnRestoreAction(action: HumanityRestoringAction) -> Void
   public func OnBerserkActivation(item: ItemID) -> Void
   public func OnSandevistanActivation(item: ItemID) -> Void
   public func OnKerenzikovActivation() -> Void
@@ -261,21 +260,46 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.effectsHelper.CancelCycledFx();
   }
 
-  public func OnSleep() -> Void {
-    this.StopEverythingNew();
-    this.ResetHumanityDamage();
-    E("! Rested, humanity value restored.");
-    this.SetWentFullPsycho(false);
-    this.InvalidateCurrentState();
-  }
-
-  public func OnKindness() -> Void {
-    let amountToRestore: Int32 = 2;
-    if this.RemoveHumanityDamage(amountToRestore) {
-      this.ShowHumanityRestoredMessage(amountToRestore);
-      E("! Good deed, humanity restored");
-      this.InvalidateCurrentState();
+  public func OnRestoreAction(action: HumanityRestoringAction) -> Void {
+    switch (action) {
+      case HumanityRestoringAction.Sleep:
+        this.StopEverythingNew();
+        this.ResetHumanityDamage();
+        E("! Rested, humanity value restored.");
+        this.SetWentFullPsycho(false);
+        this.ShowHumanityRestoredMessage();
+        break;
+      case HumanityRestoringAction.Pet:
+        let amount: Int32 = this.config.restoreOnPet;
+        if this.RemoveHumanityDamage(amount) {
+          this.ShowHumanityRestoredMessage(amount);
+          E("! Pet, humanity restored");
+        };
+        break;
+      case HumanityRestoringAction.Donation:
+        let amount: Int32 = this.config.restoreOnDonation;
+        if this.RemoveHumanityDamage(amount) {
+          this.ShowHumanityRestoredMessage(amount);
+          E("! Donated some money, humanity restored");
+        };
+        break;
+      case HumanityRestoringAction.Apartment:
+        let amount: Int32 = this.config.restoreOnApartment;
+        if this.RemoveHumanityDamage(amount) {
+          this.ShowHumanityRestoredMessage(amount);
+          E("! Apartment interaction, humanity restored");
+        };
+        break;
+      case HumanityRestoringAction.Shower:
+        let amount: Int32 = this.config.restoreOnShower;
+        if this.RemoveHumanityDamage(amount) {
+          this.ShowHumanityRestoredMessage(amount);
+          E("! Took a shower, humanity restored");
+        };
+        break;
     };
+
+    this.InvalidateCurrentState();
   }
 
   public func OnBerserkActivation(item: ItemID) -> Void {
@@ -492,9 +516,16 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func RemoveHumanityDamage(cost: Int32) -> Bool {
+    let diff: Int32;
     if this.currentHumanityDamage >= cost {
       E(s"> RemoveHumanityDamage \(cost)");
       this.currentHumanityDamage -= cost;
+      this.psmBB.SetInt(GetAllBlackboardDefs().PlayerStateMachine.HumanityDamage, this.currentHumanityDamage, true);
+      return true;
+    } else if this.currentHumanityDamage < cost && this.currentHumanityDamage > 0 {
+      diff = cost - this.currentHumanityDamage;
+      E(s"> RemoveHumanityDamage \(diff)");
+      this.currentHumanityDamage -= diff;
       this.psmBB.SetInt(GetAllBlackboardDefs().PlayerStateMachine.HumanityDamage, this.currentHumanityDamage, true);
       return true;
     };
@@ -775,12 +806,17 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.RunPostPsychosisFlow();
   }
 
-  private func ShowHumanityRestoredMessage(amount: Int32) -> Void {
+  private func ShowHumanityRestoredMessage(opt amount: Int32) -> Void {
     let onScreenMessage: SimpleScreenMessage;
     let blackboardDef = GetAllBlackboardDefs().UI_Notifications;
     let blackboard = GameInstance.GetBlackboardSystem(this.player.GetGame()).Get(blackboardDef);
+    if amount > 0 {
+      onScreenMessage.message = s"+\(amount) \(GetLocalizedTextByKey(n"Mod-Edg-Humanity"))";
+    } else {
+      onScreenMessage.message = GetLocalizedTextByKey(n"Mod-Edg-Humanity-Restored-Full");
+    };
+
     onScreenMessage.isShown = true;
-    onScreenMessage.message = s"+\(amount) \(GetLocalizedTextByKey(n"Mod-Edg-Humanity"))";
     onScreenMessage.duration = 3.00;
     blackboard.SetVariant(blackboardDef.OnscreenMessage, ToVariant(onScreenMessage), true);
   }

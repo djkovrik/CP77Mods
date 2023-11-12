@@ -50,3 +50,12 @@ enum WannabeHeatLevel {
   Five = 4,
   MaxTac = 5,
 }
+
+enum HumanityRestoringAction {
+  Sleep = 0,
+  Shower = 1,
+  Pet = 2,
+  Donation = 3,
+  Apartment = 4,
+  Unknown = 5,
+}

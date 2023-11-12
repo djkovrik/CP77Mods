@@ -85,8 +85,48 @@ public class EdgerunningConfig {
   let lightVisuals: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
-  @runtimeProperty("ModSettings.category", "Mod-Edg-Implants-Usage-Cost")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Humanity-Restoration")
   @runtimeProperty("ModSettings.category.order", "3")
+  @runtimeProperty("ModSettings.displayName", "Mod-Edg-Humanity-Restoration-Pet")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Humanity-Restoration-Desc")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "10")
+  let restoreOnPet: Int32 = 1;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Humanity-Restoration")
+  @runtimeProperty("ModSettings.category.order", "3")
+  @runtimeProperty("ModSettings.displayName", "Mod-Edg-Humanity-Restoration-Shower")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Humanity-Restoration-Desc")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "10")
+  let restoreOnShower: Int32 = 2;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Humanity-Restoration")
+  @runtimeProperty("ModSettings.category.order", "3")
+  @runtimeProperty("ModSettings.displayName", "Mod-Edg-Humanity-Restoration-Homeless")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Humanity-Restoration-Desc")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "10")
+  let restoreOnDonation: Int32 = 1;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Humanity-Restoration")
+  @runtimeProperty("ModSettings.category.order", "3")
+  @runtimeProperty("ModSettings.displayName", "Mod-Edg-Humanity-Restoration-Apartment")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Humanity-Restoration-Desc")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "10")
+  let restoreOnApartment: Int32 = 1;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Implants-Usage-Cost")
+  @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "Gameplay-StatusEffects-UIData-DisplayName-Berserk")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Implants-Usage-Cost-Desc")
   @runtimeProperty("ModSettings.step", "1")
@@ -96,7 +136,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Implants-Usage-Cost")
-  @runtimeProperty("ModSettings.category.order", "3")
+  @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "Gameplay-StatusEffects-UIData-DisplayName-Sandevistan")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Implants-Usage-Cost-Desc")
   @runtimeProperty("ModSettings.step", "1")
@@ -106,7 +146,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Implants-Usage-Cost")
-  @runtimeProperty("ModSettings.category.order", "3")
+  @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "Gameplay-Cyberware-NervousSystem-DisplayName-Kerenzikov")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Implants-Usage-Cost-Desc")
   @runtimeProperty("ModSettings.step", "1")
@@ -116,7 +156,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Implants-Usage-Cost")
-  @runtimeProperty("ModSettings.category.order", "3")
+  @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "Gameplay-Items-Item Type-Cyb_Launcher")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Implants-Usage-Cost-Desc")
   @runtimeProperty("ModSettings.step", "1")
@@ -126,7 +166,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Implants-Usage-Cost")
-  @runtimeProperty("ModSettings.category.order", "3")
+  @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "Gameplay-Items-Item Type-Cyb_MantisBlades")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Implants-Usage-Cost-Desc")
   @runtimeProperty("ModSettings.step", "1")
@@ -136,7 +176,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Implants-Usage-Cost")
-  @runtimeProperty("ModSettings.category.order", "3")
+  @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "Gameplay-Items-Item Type-Cyb_NanoWires")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Implants-Usage-Cost-Desc")
   @runtimeProperty("ModSettings.step", "1")
@@ -146,7 +186,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Implants-Usage-Cost")
-  @runtimeProperty("ModSettings.category.order", "3")
+  @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "Gameplay-Cyberware-IntegumentarySystem-DisplayName-OpticalCamo")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Implants-Usage-Cost-Desc")
   @runtimeProperty("ModSettings.step", "1")
@@ -156,7 +196,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Quality")
-  @runtimeProperty("ModSettings.category.order", "4")
+  @runtimeProperty("ModSettings.category.order", "5")
   @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Items-Quality-Common")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Quality-Desc")
   @runtimeProperty("ModSettings.step", "0.2")
@@ -166,7 +206,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Quality")
-  @runtimeProperty("ModSettings.category.order", "4")
+  @runtimeProperty("ModSettings.category.order", "5")
   @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Items-Quality-Uncommon")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Quality-Desc")
   @runtimeProperty("ModSettings.step", "0.2")
@@ -176,7 +216,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Quality")
-  @runtimeProperty("ModSettings.category.order", "4")
+  @runtimeProperty("ModSettings.category.order", "5")
   @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Items-Quality-Rare")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Quality-Desc")
   @runtimeProperty("ModSettings.step", "0.2")
@@ -186,7 +226,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Quality")
-  @runtimeProperty("ModSettings.category.order", "4")
+  @runtimeProperty("ModSettings.category.order", "5")
   @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Items-Quality-Epic")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Quality-Desc")
   @runtimeProperty("ModSettings.step", "0.2")
@@ -196,7 +236,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Quality")
-  @runtimeProperty("ModSettings.category.order", "4")
+  @runtimeProperty("ModSettings.category.order", "5")
   @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Items-Quality-Legendary")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Quality-Desc")
   @runtimeProperty("ModSettings.step", "0.2")
@@ -206,7 +246,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
-  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "LocKey#15716")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
   @runtimeProperty("ModSettings.step", "1")
@@ -216,7 +256,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
-  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "LocKey#20947")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
   @runtimeProperty("ModSettings.step", "1")
@@ -226,7 +266,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
-  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "LocKey#20937")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
   @runtimeProperty("ModSettings.step", "1")
@@ -236,7 +276,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
-  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "LocKey#1184")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
   @runtimeProperty("ModSettings.step", "1")
@@ -246,7 +286,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
-  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "LocKey#20979")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
   @runtimeProperty("ModSettings.step", "1")
@@ -256,7 +296,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
-  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "LocKey#20602")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
   @runtimeProperty("ModSettings.step", "1")
@@ -266,7 +306,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
-  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "LocKey#20953")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
   @runtimeProperty("ModSettings.step", "1")
@@ -276,7 +316,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
-  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "LocKey#21009")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
   @runtimeProperty("ModSettings.step", "1")
@@ -286,7 +326,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
-  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "LocKey#20936")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
   @runtimeProperty("ModSettings.step", "1")
@@ -296,7 +336,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
-  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "LocKey#21023")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
   @runtimeProperty("ModSettings.step", "1")
@@ -306,7 +346,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
-  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "LocKey#19900")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
   @runtimeProperty("ModSettings.step", "1")
@@ -316,7 +356,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
-  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "LocKey#21032")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
   @runtimeProperty("ModSettings.step", "1")
@@ -326,7 +366,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
-  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "LocKey#20994")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
   @runtimeProperty("ModSettings.step", "1")
@@ -336,7 +376,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
-  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "LocKey#44337")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
   @runtimeProperty("ModSettings.step", "1")
@@ -346,7 +386,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
-  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "LocKey#86254")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
   @runtimeProperty("ModSettings.step", "1")
@@ -356,7 +396,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
-  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "LocKey#91191")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Desc")
   @runtimeProperty("ModSettings.step", "1")
@@ -366,7 +406,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
-  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "LocKey#42782")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Other-Desc")
   @runtimeProperty("ModSettings.step", "1")
@@ -376,7 +416,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Neuro-Price")
-  @runtimeProperty("ModSettings.category.order", "6")
+  @runtimeProperty("ModSettings.category.order", "7")
   @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Items-Quality-Common")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Restart")
   @runtimeProperty("ModSettings.step", "200")
@@ -386,7 +426,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Neuro-Price")
-  @runtimeProperty("ModSettings.category.order", "6")
+  @runtimeProperty("ModSettings.category.order", "7")
   @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Items-Quality-Uncommon")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Restart")
   @runtimeProperty("ModSettings.step", "200")
@@ -396,7 +436,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Neuro-Price")
-  @runtimeProperty("ModSettings.category.order", "6")
+  @runtimeProperty("ModSettings.category.order", "7")
   @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Items-Quality-Rare")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Restart")
   @runtimeProperty("ModSettings.step", "200")
@@ -406,7 +446,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Neuro-Recipe-Price")
-  @runtimeProperty("ModSettings.category.order", "7")
+  @runtimeProperty("ModSettings.category.order", "8")
   @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Items-Quality-Common")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Restart")
   @runtimeProperty("ModSettings.step", "200")
@@ -416,7 +456,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Neuro-Recipe-Price")
-  @runtimeProperty("ModSettings.category.order", "7")
+  @runtimeProperty("ModSettings.category.order", "8")
   @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Items-Quality-Uncommon")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Restart")
   @runtimeProperty("ModSettings.step", "200")
@@ -426,7 +466,7 @@ public class EdgerunningConfig {
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Neuro-Recipe-Price")
-  @runtimeProperty("ModSettings.category.order", "7")
+  @runtimeProperty("ModSettings.category.order", "8")
   @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Items-Quality-Rare")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Restart")
   @runtimeProperty("ModSettings.step", "200")

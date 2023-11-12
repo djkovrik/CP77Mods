@@ -8,9 +8,6 @@ protected cb func OnStatusEffectApplied(evt: ref<ApplyStatusEffectEvent>) -> Boo
   if this.IsRipperdocMedBuff(effectId) {
     EdgerunningSystem.GetInstance(this.GetGame()).OnBuff();
   };
-  if this.IsHousingEffect(effectId) && !evt.isAppliedOnSpawn {
-    EdgerunningSystem.GetInstance(this.GetGame()).OnSleep();
-  };
   if Equals(effectId, t"BaseStatusEffect.Tech_Master_Perk_3_Buff") {
     EdgerunningSystem.GetInstance(this.GetGame()).OnEdgerunnerPerkActivated();
   };
@@ -32,14 +29,7 @@ private func IsRipperdocMedBuff(id: TweakDBID) -> Bool {
     || Equals(t"BaseStatusEffect.RipperDocMedBuffCommon", id);
 }
 
-@addMethod(PlayerPuppet)
-private func IsHousingEffect(id: TweakDBID) -> Bool {
-  return Equals(t"HousingStatusEffect.Rested", id)
-    || Equals(t"HousingStatusEffect.Refreshed", id)
-    || Equals(t"HousingStatusEffect.Energized", id);
-}
-
-// Reset on bed interaction
+// -- TRACK FOR HUB INTERACTION TITLES
 
 @addField(dialogWidgetGameController)
 private let m_lastChoiceBB: wref<IBlackboard>;
@@ -65,17 +55,16 @@ protected cb func OnDialogsSelectIndex(index: Int32) -> Bool {
   };
 }
 
-@addMethod(dialogWidgetGameController)
-protected cb func OnLastAttemptedChoiceCustom(value: Variant) -> Bool {
-  if Equals(this.m_lastSelectedHub, "LocKey#46418") {
-    this.m_lastSelectedHub = "";
-    EdgerunningSystem.GetInstance(this.GetPlayerControlledObject().GetGame()).OnSleep();
-    E("Bed activated - reset");
-  };
-}
-
 @wrapMethod(dialogWidgetGameController)
 protected cb func OnUninitialize() -> Bool {
   this.m_lastChoiceBB.UnregisterListenerVariant(GetAllBlackboardDefs().UIInteractions.LastAttemptedChoice, this.m_lastChoiceCallbackId);
   wrappedMethod();
+}
+
+@addMethod(dialogWidgetGameController)
+protected cb func OnLastAttemptedChoiceCustom(value: Variant) -> Bool {
+  let action: HumanityRestoringAction = EdgerunnerInteractionChecker.Check(this.m_lastSelectedHub);
+  if NotEquals(action, HumanityRestoringAction.Unknown) {
+    EdgerunningSystem.GetInstance(this.GetPlayerControlledObject().GetGame()).OnRestoreAction(action);
+  }
 }
