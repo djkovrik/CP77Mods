@@ -125,12 +125,12 @@ private func ToggleQuestTag(evt: ref<ItemDisplayClickEvent>) -> Void {
       data.SetDynamicTag(n"Quest");
     };
   };
-  let realItemData: ref<gameItemData> = controller.GetUIInventoryItem().GetRealItemData();
-  if IsDefined(realItemData) && ToggleTagsChecker.IsToggleable(realItemData.GetItemType()) {
-    if realItemData.HasTag(n"Quest") {
-      realItemData.RemoveDynamicTag(n"Quest");
+  let itemData: ref<gameItemData> = controller.GetUIInventoryItem().GetItemData();
+  if IsDefined(itemData) && ToggleTagsChecker.IsToggleable(itemData.GetItemType()) {
+    if itemData.HasTag(n"Quest") {
+      itemData.RemoveDynamicTag(n"Quest");
     } else {
-      realItemData.SetDynamicTag(n"Quest");
+      itemData.SetDynamicTag(n"Quest");
     };
   };
 }
@@ -153,8 +153,7 @@ protected cb func OnPostOnRelease(evt: ref<inkPointerEvent>) -> Bool {
   };
 }
 
-@wrapMethod(InventoryItemDisplayController)
-protected func NewUpdateIndicators(itemData: ref<UIInventoryItem>) -> Void {
-  wrappedMethod(itemData);
-  inkWidgetRef.SetVisible(this.m_questItemMaker, IsDefined(itemData) ? itemData.GetRealItemData().HasTag(n"Quest") : false);
+@wrapMethod(UIInventoryItem)
+public final func IsQuestItem() -> Bool {
+  return wrappedMethod() || this.m_itemData.HasTag(n"Quest");
 }
