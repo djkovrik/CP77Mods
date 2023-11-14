@@ -1,3 +1,9 @@
 fppCameraParamSets.Bike.headingResetTimeout: 10000.0
 fppCameraParamSets.Vehicle.headingResetTimeout: 10000.0
 fppCameraParamSets.DriverCombat.headingResetTimeout: 10000.0
+
+#Vertical Camera Snap Fix
+fppCameraParamSets.Vehicle.pitchRubberBandLimit: 0
+fppCameraParamSets.Vehicle.yawRubberBandLimit: 0
+fppCameraParamSets.Bike.pitchRubberBandLimit: 0
+fppCameraParamSets.Bike.yawRubberBandLimit: 0
