@@ -31,14 +31,16 @@ private func IsRipperdocMedBuff(id: TweakDBID) -> Bool {
 
 // -- TRACK FOR HUB INTERACTION TITLES
 
+public class ResetSavedHub extends Event {}
+
+@addField(InteractionUIBase)
+private let m_lastSelectedHub: String = "";
+
 @addField(dialogWidgetGameController)
 private let m_lastChoiceBB: wref<IBlackboard>;
 
 @addField(dialogWidgetGameController)
 private let m_lastChoiceCallbackId: ref<CallbackHandle>;
-
-@addField(dialogWidgetGameController)
-private let m_lastSelectedHub: String = "";
 
 @wrapMethod(dialogWidgetGameController)
 protected cb func OnInitialize() -> Bool {
@@ -66,5 +68,23 @@ protected cb func OnLastAttemptedChoiceCustom(value: Variant) -> Bool {
   let action: HumanityRestoringAction = EdgerunnerInteractionChecker.Check(this.m_lastSelectedHub);
   if NotEquals(action, HumanityRestoringAction.Unknown) {
     EdgerunningSystem.GetInstance(this.GetPlayerControlledObject().GetGame()).OnRestoreAction(action);
-  }
+  };
+  this.m_lastSelectedHub = "";
+}
+
+@wrapMethod(InteractionUIBase)
+protected cb func OnLootingData(value: Variant) -> Bool {
+  this.m_lastSelectedHub = "";
+  wrappedMethod(value);
+}
+
+@addMethod(InteractionUIBase)
+protected cb func OnResetSavedHub(evt: ref<ResetSavedHub>) -> Bool {
+  this.m_lastSelectedHub = "";
+}
+
+@wrapMethod(interactionWidgetGameController)
+protected cb func OnUpdateInteraction(argValue: Variant) -> Bool {
+  GameInstance.GetUISystem(this.GetOwner().GetGame()).QueueEvent(new ResetSavedHub());
+  return wrappedMethod(argValue);
 }
