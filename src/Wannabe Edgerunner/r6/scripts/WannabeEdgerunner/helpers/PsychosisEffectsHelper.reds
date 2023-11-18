@@ -69,6 +69,7 @@ public class PsychosisEffectsHelper {
   };
 
   public func RunNewPostPsychosisEffect() -> Void {
+    this.StopNewPsychosisEffect();
     E("!!! Fx New - Post Psychosis start");
     if this.config.lightVisuals {
       this.ApplyStatusEffect(t"BaseStatusEffect.NewPostPsychosisEffectLightFx", 0.5);
