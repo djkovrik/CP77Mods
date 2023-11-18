@@ -310,17 +310,35 @@ public class EdgerunningSystem extends ScriptableSystem {
       case gamedataQuality.Common:
         qualityMult = this.config.qualityMultiplierCommon;
         break;
+      case gamedataQuality.CommonPlus:
+        qualityMult = this.config.qualityMultiplierCommonPlus;
+        break;
       case gamedataQuality.Uncommon:
         qualityMult = this.config.qualityMultiplierUncommon;
+        break;
+      case gamedataQuality.UncommonPlus:
+        qualityMult = this.config.qualityMultiplierUncommonPlus;
         break;
       case gamedataQuality.Rare:
         qualityMult = this.config.qualityMultiplierRare;
         break;
+      case gamedataQuality.RarePlus:
+        qualityMult = this.config.qualityMultiplierRarePlus;
+        break;
       case gamedataQuality.Epic:
         qualityMult = this.config.qualityMultiplierEpic;
         break;
+      case gamedataQuality.EpicPlus:
+        qualityMult = this.config.qualityMultiplierEpicPlus;
+        break;
       case gamedataQuality.Legendary:
         qualityMult = this.config.qualityMultiplierLegendary;
+        break;
+      case gamedataQuality.LegendaryPlus:
+        qualityMult = this.config.qualityMultiplierLegendaryPlus;
+        break;
+      case gamedataQuality.LegendaryPlusPlus:
+        qualityMult = this.config.qualityMultiplierLegendaryPlusPlus;
         break;
     };
 
@@ -342,17 +360,35 @@ public class EdgerunningSystem extends ScriptableSystem {
       case gamedataQuality.Common:
         qualityMult = this.config.qualityMultiplierCommon;
         break;
+      case gamedataQuality.CommonPlus:
+        qualityMult = this.config.qualityMultiplierCommonPlus;
+        break;
       case gamedataQuality.Uncommon:
         qualityMult = this.config.qualityMultiplierUncommon;
+        break;
+      case gamedataQuality.UncommonPlus:
+        qualityMult = this.config.qualityMultiplierUncommonPlus;
         break;
       case gamedataQuality.Rare:
         qualityMult = this.config.qualityMultiplierRare;
         break;
+      case gamedataQuality.RarePlus:
+        qualityMult = this.config.qualityMultiplierRarePlus;
+        break;
       case gamedataQuality.Epic:
         qualityMult = this.config.qualityMultiplierEpic;
         break;
+      case gamedataQuality.EpicPlus:
+        qualityMult = this.config.qualityMultiplierEpicPlus;
+        break;
       case gamedataQuality.Legendary:
         qualityMult = this.config.qualityMultiplierLegendary;
+        break;
+      case gamedataQuality.LegendaryPlus:
+        qualityMult = this.config.qualityMultiplierLegendaryPlus;
+        break;
+      case gamedataQuality.LegendaryPlusPlus:
+        qualityMult = this.config.qualityMultiplierLegendaryPlusPlus;
         break;
     };
 
@@ -378,17 +414,35 @@ public class EdgerunningSystem extends ScriptableSystem {
       case gamedataQuality.Common:
         qualityMult = this.config.qualityMultiplierCommon;
         break;
+      case gamedataQuality.CommonPlus:
+        qualityMult = this.config.qualityMultiplierCommonPlus;
+        break;
       case gamedataQuality.Uncommon:
         qualityMult = this.config.qualityMultiplierUncommon;
+        break;
+      case gamedataQuality.UncommonPlus:
+        qualityMult = this.config.qualityMultiplierUncommonPlus;
         break;
       case gamedataQuality.Rare:
         qualityMult = this.config.qualityMultiplierRare;
         break;
+      case gamedataQuality.RarePlus:
+        qualityMult = this.config.qualityMultiplierRarePlus;
+        break;
       case gamedataQuality.Epic:
         qualityMult = this.config.qualityMultiplierEpic;
         break;
+      case gamedataQuality.EpicPlus:
+        qualityMult = this.config.qualityMultiplierEpicPlus;
+        break;
       case gamedataQuality.Legendary:
         qualityMult = this.config.qualityMultiplierLegendary;
+        break;
+      case gamedataQuality.LegendaryPlus:
+        qualityMult = this.config.qualityMultiplierLegendaryPlus;
+        break;
+      case gamedataQuality.LegendaryPlusPlus:
+        qualityMult = this.config.qualityMultiplierLegendaryPlusPlus;
         break;
     };
 
@@ -415,17 +469,35 @@ public class EdgerunningSystem extends ScriptableSystem {
       case gamedataQuality.Common:
         qualityMult = this.config.qualityMultiplierCommon;
         break;
+      case gamedataQuality.CommonPlus:
+        qualityMult = this.config.qualityMultiplierCommonPlus;
+        break;
       case gamedataQuality.Uncommon:
         qualityMult = this.config.qualityMultiplierUncommon;
+        break;
+      case gamedataQuality.UncommonPlus:
+        qualityMult = this.config.qualityMultiplierUncommonPlus;
         break;
       case gamedataQuality.Rare:
         qualityMult = this.config.qualityMultiplierRare;
         break;
+      case gamedataQuality.RarePlus:
+        qualityMult = this.config.qualityMultiplierRarePlus;
+        break;
       case gamedataQuality.Epic:
         qualityMult = this.config.qualityMultiplierEpic;
         break;
+      case gamedataQuality.EpicPlus:
+        qualityMult = this.config.qualityMultiplierEpicPlus;
+        break;
       case gamedataQuality.Legendary:
         qualityMult = this.config.qualityMultiplierLegendary;
+        break;
+      case gamedataQuality.LegendaryPlus:
+        qualityMult = this.config.qualityMultiplierLegendaryPlus;
+        break;
+      case gamedataQuality.LegendaryPlusPlus:
+        qualityMult = this.config.qualityMultiplierLegendaryPlusPlus;
         break;
     };
 
@@ -455,17 +527,35 @@ public class EdgerunningSystem extends ScriptableSystem {
       case gamedataQuality.Common:
         qualityMult = this.config.qualityMultiplierCommon;
         break;
+      case gamedataQuality.CommonPlus:
+        qualityMult = this.config.qualityMultiplierCommonPlus;
+        break;
       case gamedataQuality.Uncommon:
         qualityMult = this.config.qualityMultiplierUncommon;
+        break;
+      case gamedataQuality.UncommonPlus:
+        qualityMult = this.config.qualityMultiplierUncommonPlus;
         break;
       case gamedataQuality.Rare:
         qualityMult = this.config.qualityMultiplierRare;
         break;
+      case gamedataQuality.RarePlus:
+        qualityMult = this.config.qualityMultiplierRarePlus;
+        break;
       case gamedataQuality.Epic:
         qualityMult = this.config.qualityMultiplierEpic;
         break;
+      case gamedataQuality.EpicPlus:
+        qualityMult = this.config.qualityMultiplierEpicPlus;
+        break;
       case gamedataQuality.Legendary:
         qualityMult = this.config.qualityMultiplierLegendary;
+        break;
+      case gamedataQuality.LegendaryPlus:
+        qualityMult = this.config.qualityMultiplierLegendaryPlus;
+        break;
+      case gamedataQuality.LegendaryPlusPlus:
+        qualityMult = this.config.qualityMultiplierLegendaryPlusPlus;
         break;
     };
 
