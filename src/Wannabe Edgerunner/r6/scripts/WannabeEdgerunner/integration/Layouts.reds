@@ -132,6 +132,8 @@ public func SetData(tooltipData: ref<ATooltipData>) -> Void {
 
 @addMethod(healthbarWidgetGameController)
 public func RefreshHumanityBars(current: Int32, total: Int32, color: CName) -> Void {
+  if this.IsPlayingAsJohnny() {return ; };
+
   let fullWidth: Float = this.humanityBarFull.GetWidth();
   let step: Float = fullWidth / Cast<Float>(total);
   let newWidth: Float = Cast<Float>(current) * step;
@@ -143,6 +145,9 @@ public func RefreshHumanityBars(current: Int32, total: Int32, color: CName) -> V
 @wrapMethod(healthbarWidgetGameController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
+
+  if this.IsPlayingAsJohnny() {return true; };
+  
   this.edgerunningSystem = EdgerunningSystem.GetInstance(this.m_playerObject.GetGame());
 
   let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
@@ -188,4 +193,18 @@ protected cb func OnInitialize() -> Bool {
 @addMethod(healthbarWidgetGameController)
 protected cb func OnUpdateHumanityCounterEvent(evt: ref<UpdateHumanityCounterEvent>) -> Bool {
   this.RefreshHumanityBars(evt.current, evt.total, evt.color);
+}
+
+@addMethod(healthbarWidgetGameController)
+private func IsPlayingAsJohnny() -> Bool {
+  let controlledPuppet: wref<gamePuppetBase> = GetPlayer(this.m_gameInstance);
+  let controlledPuppetRecordID: TweakDBID;
+  if controlledPuppet != null {
+    controlledPuppetRecordID = controlledPuppet.GetRecordID();
+    if controlledPuppetRecordID == t"Character.johnny_replacer" {
+      return true;
+    };
+  };
+
+  return false;
 }
