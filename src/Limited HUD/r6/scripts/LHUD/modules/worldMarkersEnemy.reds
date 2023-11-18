@@ -137,6 +137,12 @@ protected cb func OnUpdate() -> Bool {
   };
 }
 
+@wrapMethod(StealthMappinController)
+private final func ShowStatusEffect(show: Bool) -> Void {
+  let shouldShow: Bool = show && this.lhud_isVisibleNow;
+  wrappedMethod(shouldShow);
+}
+
 @addMethod(StealthMappinController)
 private final func RefreshTaggedArrowColor() -> Void {
   let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
