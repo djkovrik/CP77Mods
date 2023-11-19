@@ -27,6 +27,4 @@ Items.SniperRifleAmmoCustom:
   dropCountMax: 16
   itemID: t"Ammo.SniperRifleAmmo"
 
-Ammo.AmmoLootTable.minItemsToLoot: 1
-Ammo.AmmoLootTable.maxItemsToLoot: 1
 Ammo.AmmoLootTable.lootItems: [ Items.HandgunAmmoCustom, Items.ShotgunAmmoCustom, Items.RifleAmmoCustom, Items.SniperRifleAmmoCustom ]
