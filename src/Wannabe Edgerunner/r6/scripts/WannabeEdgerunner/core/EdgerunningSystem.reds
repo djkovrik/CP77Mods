@@ -754,6 +754,12 @@ public class EdgerunningSystem extends ScriptableSystem {
     evt.color = this.GetHumanityColor();
     GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(evt);
 
+    // Detect post-psychosis
+    if this.IsWentFullPsycho() && !this.effectsChecker.IsNewPostPsychosisActive() {
+      this.RunPostPsychosisFlow();
+      return ;
+    }
+
     if this.effectsChecker.IsRipperdocBuffActive() { return; };
     if this.effectsChecker.IsNewPsychosisActive() { return; };
     if this.effectsChecker.IsNewPostPsychosisActive() { return; };
@@ -769,12 +775,6 @@ public class EdgerunningSystem extends ScriptableSystem {
       this.StopEverythingNew();
       return ;
     };
-
-    // Detect post-psychosis
-    if this.IsWentFullPsycho() && !this.effectsChecker.IsNewPostPsychosisActive() {
-      this.RunPostPsychosisFlow();
-      return ;
-    }
 
     // Detect pre-psychosis
     if this.currentHumanityPool < this.psychosisThreshold && this.currentHumanityPool > 0 && !this.effectsChecker.IsNewPrePsychosisActive() {
