@@ -2,8 +2,13 @@ import Edgerunning.System.EdgerunningSystem
 
 @addMethod(PreventionSystem)
 public func SpawnPoliceForPsychosis(config: ref<EdgerunningConfig>) -> Void {
+  let current: Int32 = EnumInt(this.m_heatStage);
+  let target: EPreventionHeatStage;
   if IsDefined(this.m_player) {
-    this.m_heatStage = this.GetHeatStageLevel(config.psychoHeatLevel);
+    target = this.GetHeatStageLevel(config.psychoHeatLevel);
+    if EnumInt(target) > current {
+      this.m_heatStage = target;
+    };
     this.HeatPipeline("EnterCombat");
     if Equals(config.psychoHeatLevel, WannabeHeatLevel.MaxTac) {
       this.ChangeHeatStage(EPreventionHeatStage.Heat_5, "EnterCombat");
