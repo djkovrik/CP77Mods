@@ -53,6 +53,16 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "LocKey#20638")
   @runtimeProperty("ModSettings.category.order", "2")
+  @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Stats-MaxDuration")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Restart")
+  @runtimeProperty("ModSettings.step", "1.0")
+  @runtimeProperty("ModSettings.min", "20.0")
+  @runtimeProperty("ModSettings.max", "120.0")
+  let psychoDuration: Float = 66.0;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "LocKey#20638")
+  @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Mod-Edg-Wanted-Level")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Wanted-Level-Desc")
   @runtimeProperty("ModSettings.displayValues.One", "1")

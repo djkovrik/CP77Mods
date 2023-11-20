@@ -158,13 +158,14 @@ public class EdgerunningSystem extends ScriptableSystem {
       this.effectsHelper.ScheduleCycledSfx(7.0);
     };
 
+    let psychoDuration: Float = this.config.psychoDuration;
     if this.config.teleportOnEnd {
-      this.teleportHelper.ScheduleTeleport(66.0);
+      this.teleportHelper.ScheduleTeleport(psychoDuration + 1.0);
     } else {
-      this.SchedulePostPsychosisEffect(68.0);
+      this.SchedulePostPsychosisEffect(psychoDuration + 2.0);
     };
 
-    this.ScheduleHumanityRestoreEffect(70.0);
+    this.ScheduleHumanityRestoreEffect(psychoDuration + 3.0);
   }
 
   public func RunPostPsychosisFlow() -> Void {
@@ -754,16 +755,16 @@ public class EdgerunningSystem extends ScriptableSystem {
     evt.color = this.GetHumanityColor();
     GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(evt);
 
+    if this.effectsChecker.IsRipperdocBuffActive() && !this.IsWentFullPsycho() { return; };
+    if this.effectsChecker.IsNewPsychosisActive() { return; };
+    if this.effectsChecker.IsNewPostPsychosisActive() { return; };
+    
     // Detect post-psychosis
     if this.IsWentFullPsycho() && !this.effectsChecker.IsNewPostPsychosisActive() {
       this.RunPostPsychosisFlow();
       return ;
     }
 
-    if this.effectsChecker.IsRipperdocBuffActive() { return; };
-    if this.effectsChecker.IsNewPsychosisActive() { return; };
-    if this.effectsChecker.IsNewPostPsychosisActive() { return; };
-    
     // Playing as Johnny - cancel effects
     if this.effectsChecker.IsPossessed() {
       this.StopEverythingNew();
