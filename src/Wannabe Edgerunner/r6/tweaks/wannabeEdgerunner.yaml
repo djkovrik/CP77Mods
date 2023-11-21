@@ -711,12 +711,15 @@ Vendors.wbr_hil_ripdoc_01: &AddInjectorRare
 Vendors.wat_lch_ripperdoc_01 : *AddInjectorRare
 
 
-# === Add recipe to medstores ===
+# === Add recipe and neuroblockers to medstores ===
 
 Vendors.bls_ina_se1_medicstore_01: &AddRecipeRare
   itemStock:
     - !append
       item: Items.recipe_ripperdoc_med
+      quantity: [ Vendors.IsPresent ]
+    - !append
+      item: Items.ripperdoc_med
       quantity: [ Vendors.IsPresent ]
 
 Vendors.bls_ina_se1_medicstore_01: &AddRecipeUncommon
@@ -724,11 +727,17 @@ Vendors.bls_ina_se1_medicstore_01: &AddRecipeUncommon
     - !append
       item: Items.recipe_ripperdoc_med_uncommon
       quantity: [ Vendors.IsPresent ]
+    - !append
+      item: Items.ripperdoc_med_uncommon
+      quantity: [ Vendors.IsPresent ]
 
 Vendors.bls_ina_se1_medicstore_01: &AddRecipeCommon
   itemStock:
     - !append
       item: Items.recipe_ripperdoc_med_common
+      quantity: [ Vendors.IsPresent ]
+    - !append
+      item: Items.ripperdoc_med_common
       quantity: [ Vendors.IsPresent ]
 
 Vendors.wat_kab_medicstore_01: *AddRecipeRare
