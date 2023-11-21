@@ -204,6 +204,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.preventionHelper.CancelScheduledPreventionActivity();
     this.teleportHelper.CancelScheduledTeleportEvents();
     this.delaySystem.CancelDelay(this.postPsychosisDelayId);
+    this.player.GetPreventionSystem().ClearWantedLevel();
   }
 
   public func StopPostPsychosisFlow() -> Void {

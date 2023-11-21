@@ -225,6 +225,123 @@ BaseStatusEffect.NewPsychosisEffectNormalFx:
     - $type: StatusEffectFX_Record
       name: johnny_sickness_blackout
 
+# Post-Psychosis cyberware block
+GLP.DeactivateCyberwarePostPsychosis:
+  $type: GameplayLogicPackage_Record
+  stats:
+  - $type: ConstantStatModifier_Record
+    statType: BaseStats.HasSandevistan
+    modifierType: Multiplier
+    value: 0
+  - $type: ConstantStatModifier_Record
+    statType: BaseStats.HasSandevistanTier2
+    modifierType: Multiplier
+    value: 0
+  - $type: ConstantStatModifier_Record
+    statType: BaseStats.CanSprintHarass
+    modifierType: Multiplier
+    value: 0
+  - $type: ConstantStatModifier_Record
+    statType: BaseStats.SandevistanDashShoot
+    modifierType: Multiplier
+    value: 0
+  - $type: ConstantStatModifier_Record
+    statType: BaseStats.HasKerenzikov
+    modifierType: Multiplier
+    value: 0
+  - $type: ConstantStatModifier_Record
+    statType: BaseStats.HasKerenzikovSlide
+    modifierType: Multiplier
+    value: 0
+  - $type: ConstantStatModifier_Record
+    statType: BaseStats.HasSuperheroFall
+    modifierType: Multiplier
+    value: 0
+  - $type: ConstantStatModifier_Record
+    statType: BaseStats.HasBerserk
+    modifierType: Multiplier
+    value: 0
+  - $type: ConstantStatModifier_Record
+    statType: BaseStats.CanUseStrongArms
+    modifierType: Multiplier
+    value: 0
+  - $type: ConstantStatModifier_Record
+    statType: BaseStats.CanUseOpticalCamo
+    modifierType: Multiplier
+    value: 0
+  - $type: ConstantStatModifier_Record
+    statType: BaseStats.CanUseTerrainCamo
+    modifierType: Multiplier
+    value: 0
+  - $type: ConstantStatModifier_Record
+    statType: BaseStats.CanUseOverclock
+    modifierType: Multiplier
+    value: 0
+  - $type: ConstantStatModifier_Record
+    statType: BaseStats.CanQuickhack
+    modifierType: Multiplier
+    value: 0
+  - $type: ConstantStatModifier_Record
+    statType: BaseStats.HasCyberdeck
+    modifierType: Multiplier
+    value: 0
+  - $type: ConstantStatModifier_Record
+    statType: BaseStats.HasAirHover
+    modifierType: Multiplier
+    value: 0
+  - $type: ConstantStatModifier_Record
+    statType: BaseStats.HasDoubleJump
+    modifierType: Multiplier
+    value: 0
+  - $type: ConstantStatModifier_Record
+    statType: BaseStats.HasChargeJump
+    modifierType: Multiplier
+    value: 0
+  - $type: ConstantStatModifier_Record
+    statType: BaseStats.CanUseCoolingSystem
+    modifierType: Multiplier
+    value: 0
+  - $type: ConstantStatModifier_Record
+    statType: BaseStats.HasGlowingTattoos
+    modifierType: Multiplier
+    value: 0
+  - $type: ConstantStatModifier_Record
+    statType: BaseStats.HasThermovision
+    modifierType: Multiplier
+    value: 0
+  - $type: ConstantStatModifier_Record
+    statType: BaseStats.HasInfravision
+    modifierType: Multiplier
+    value: 0
+  - $type: ConstantStatModifier_Record
+    statType: BaseStats.HasSpiderBotControl
+    modifierType: Multiplier
+    value: 0
+  - $type: ConstantStatModifier_Record
+    statType: BaseStats.HasSelfHealingSkin
+    modifierType: Multiplier
+    value: 0
+  - $type: ConstantStatModifier_Record
+    statType: BaseStats.HasHealthMonitorBomb
+    modifierType: Multiplier
+    value: 0
+  - $type: ConstantStatModifier_Record
+    statType: BaseStats.CanUseRetractableShield
+    modifierType: Multiplier
+    value: 0
+  - $type: ConstantStatModifier_Record
+    statType: BaseStats.IsAggressive
+    modifierType: Multiplier
+    value: 0
+  - $type: ConstantStatModifier_Record
+    statType: BaseStats.IsReckless
+    modifierType: Multiplier
+    value: 0
+#  - $type: ConstantStatModifier_Record
+#    statType: BaseStats.HasCybereye
+#    modifierType: Multiplier
+#    value: 0
+
 #Post-Psychosis
 BaseStatusEffect.NewPostPsychosisEffectBase:
   $type: StatusEffect_Record
@@ -232,7 +349,7 @@ BaseStatusEffect.NewPostPsychosisEffectBase:
   gameplayTags: [ Debuff ]
   savable: false
   packages:
-   - GLP.DeactivateCyberware
+   - GLP.DeactivateCyberwarePostPsychosis
    - $type: GameplayLogicPackage_Record
      stackable: false
      stats:
