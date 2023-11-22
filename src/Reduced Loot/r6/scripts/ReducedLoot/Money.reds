@@ -163,6 +163,78 @@ public class ReducedLootMoneyConfig {
   @runtimeProperty("ModSettings.min", "0")
   @runtimeProperty("ModSettings.max", "10000")
   let priceMoneyShardLegendary: Int32 = 9000;
+
+  @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
+  @runtimeProperty("ModSettings.category", "Mod-RL-Price-Modifiers")
+  @runtimeProperty("ModSettings.category.order", "9")
+  @runtimeProperty("ModSettings.displayName", "UI-MappinTypes-GangWatch")
+  @runtimeProperty("ModSettings.step", "50")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "5000")
+  let modifierGangWatch: Int32 = 900;
+
+  @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
+  @runtimeProperty("ModSettings.category", "Mod-RL-Price-Modifiers")
+  @runtimeProperty("ModSettings.category.order", "9")
+  @runtimeProperty("ModSettings.displayName", "UI-MappinTypes-HiddenStash")
+  @runtimeProperty("ModSettings.step", "50")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "5000")
+  let modifierHiddenStash: Int32 = 500;
+
+  @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
+  @runtimeProperty("ModSettings.category", "Mod-RL-Price-Modifiers")
+  @runtimeProperty("ModSettings.category.order", "9")
+  @runtimeProperty("ModSettings.displayName", "LocKey#31788")
+  @runtimeProperty("ModSettings.step", "50")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "5000")
+  let modifierCyberPsycho: Int32 = 1600;
+
+  @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
+  @runtimeProperty("ModSettings.category", "Mod-RL-Price-Modifiers")
+  @runtimeProperty("ModSettings.category.order", "9")
+  @runtimeProperty("ModSettings.displayName", "UI-MappinTypes-Resource")
+  @runtimeProperty("ModSettings.step", "50")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "5000")
+  let modifierOutpost: Int32 = 1300;
+
+  @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
+  @runtimeProperty("ModSettings.category", "Mod-RL-Price-Modifiers")
+  @runtimeProperty("ModSettings.category.order", "9")
+  @runtimeProperty("ModSettings.displayName", "UI-MappinTypes-FailedCrossing")
+  @runtimeProperty("ModSettings.step", "50")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "5000")
+  let modifierResource: Int32 = 400;
+
+  @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
+  @runtimeProperty("ModSettings.category", "Mod-RL-Price-Modifiers")
+  @runtimeProperty("ModSettings.category.order", "9")
+  @runtimeProperty("ModSettings.displayName", "UI-MappinTypes-FailedCrossing")
+  @runtimeProperty("ModSettings.step", "50")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "5000")
+  let modifierFailedCrossing: Int32 = 400;
+
+  @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
+  @runtimeProperty("ModSettings.category", "Mod-RL-Price-Modifiers")
+  @runtimeProperty("ModSettings.category.order", "9")
+  @runtimeProperty("ModSettings.displayName", "Mod-RL-Mini-Story")
+  @runtimeProperty("ModSettings.step", "50")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "5000")
+  let modifierMiniStory: Int32 = 250;
+
+  @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
+  @runtimeProperty("ModSettings.category", "Mod-RL-Price-Modifiers")
+  @runtimeProperty("ModSettings.category.order", "9")
+  @runtimeProperty("ModSettings.displayName", "Mod-RL-Street-Story")
+  @runtimeProperty("ModSettings.step", "50")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "5000")
+  let modifierStreetStory: Int32 = 250;
 }
 
 public abstract class ReducedLootMoneyTweaker {
@@ -179,6 +251,29 @@ public abstract class ReducedLootMoneyTweaker {
     batch.UpdateRecord(t"Price.MoneyShardRare");
     batch.UpdateRecord(t"Price.MoneyShardEpic");
     batch.UpdateRecord(t"Price.MoneyShardLegendary");
+    // Price modifiers
+    batch.SetFlat(t"Price.GangWatch_BaseMoney.value", cfg.modifierGangWatch);
+    batch.SetFlat(t"Price.HiddenStash_BaseMoney.value", cfg.modifierHiddenStash);
+    batch.SetFlat(t"Price.CyberPsycho_BaseMoney.value", cfg.modifierCyberPsycho);
+    batch.SetFlat(t"Price.Outpost_BaseMoney.value", cfg.modifierOutpost);
+    batch.SetFlat(t"Price.EndlessOutpost_BaseMoney_Big.min", cfg.modifierOutpost);
+    batch.SetFlat(t"Price.EndlessOutpost_BaseMoney_Big.max", cfg.modifierOutpost);
+    batch.SetFlat(t"Price.EndlessOutpost_BaseMoney_Small.min", cfg.modifierOutpost);
+    batch.SetFlat(t"Price.EndlessOutpost_BaseMoney_Small.max", cfg.modifierOutpost);
+    batch.SetFlat(t"Price.Resource_BaseMoney.value", cfg.modifierResource);
+    batch.SetFlat(t"Price.FailedCrossing_BaseMoney.value", cfg.modifierFailedCrossing);
+    batch.SetFlat(t"Price.BaseMiniStory_BaseMoney.value", cfg.modifierMiniStory);
+    batch.SetFlat(t"Price.StreetStory_BaseMoney.value", cfg.modifierStreetStory);
+    batch.UpdateRecord(t"Price.GangWatch_BaseMoney");
+    batch.UpdateRecord(t"Price.HiddenStash_BaseMoney");
+    batch.UpdateRecord(t"Price.CyberPsycho_BaseMoney");
+    batch.UpdateRecord(t"Price.Outpost_BaseMoney");
+    batch.UpdateRecord(t"Price.EndlessOutpost_BaseMoney_Big");
+    batch.UpdateRecord(t"Price.EndlessOutpost_BaseMoney_Small");
+    batch.UpdateRecord(t"Price.Resource_BaseMoney");
+    batch.UpdateRecord(t"Price.FailedCrossing_BaseMoney");
+    batch.UpdateRecord(t"Price.BaseMiniStory_BaseMoney");
+    batch.UpdateRecord(t"Price.StreetStory_BaseMoney");
     // Tables
     let lootTableRecords: array<ref<TweakDBRecord>> = TweakDBInterface.GetRecords(n"LootTable_Record");
     let lootItems: array<wref<LootItem_Record>>;

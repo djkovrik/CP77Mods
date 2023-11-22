@@ -378,6 +378,11 @@ BaseStatusEffect.NewPostPsychosisEffectBase:
        modifierType: Multiplier
        value: 0.5
      effectors:
+     - $base: BaseStatusEffect.BreathingAnimationEffector
+       animFeatureName: "CameraBreathingMedium"
+       amplitudeWeight: 1.0
+       blendInDuration: 5.0
+       blendOutDuration: 5.0
      - $type: ApplyStatGroupEffector_Record
        applicationTarget: Weapon
        effectorClassName: ApplyStatGroupEffector
