@@ -46,3 +46,102 @@ LootTables.HRM_safe.shouldTweakMoney: true
 LootTables.HRS_valuable.shouldTweakMoney: true
 LootTables.HIM_safe.shouldTweakMoney: true
 LootTables.HIS_valuable.shouldTweakMoney: true
+
+# NEW
+Items.MoneyLootTable.shouldTweakMoney: true
+
+Character.kab_07_enemy_1st_floor_shotgun.shouldTweakMoney: true
+Character.RoyceLoot.shouldTweakMoney: true
+Character.RoyceNPCLoot.shouldTweakMoney: true
+SasquatchLoot.RoyceLoot.shouldTweakMoney: true
+
+Character.ce_wat_lch_12_LGS_valuable.shouldTweakMoney: true
+Character.ce_hey_gle_01_LRS_crate.shouldTweakMoney: true
+Character.ce_hey_gle_03_LGS_safe.shouldTweakMoney: true
+
+Loot.WatsonNID.shouldTweakMoney: true
+
+LootTables.TrashTierMoneyLootElement.shouldTweakMoney: true
+LootTables.TrashTierMoneyLootElement.shouldTweakMoney: true
+LootTables.NormalTierMoneyLootElement.shouldTweakMoney: true
+LootTables.RareTierMoneyLootElement.shouldTweakMoney: true
+LootTables.EliteTierMoneyLootElement.shouldTweakMoney: true
+
+LootTablesGymUiRandomItems.shouldTweakMoney: true
+
+LootTables.Base_ma_reward.shouldTweakMoney: true
+LootTables.Loot_ma_bls_ina_se1_09.shouldTweakMoney: true
+LootTables.Loot_ma_cct_cpz_03.shouldTweakMoney: true
+LootTables.Loot_ma_wat_kab_13.shouldTweakMoney: true
+
+LootTables.ma_wat_kab_01_ganger_reward.shouldTweakMoney: true
+LootTables.ma_wat_kab_03_ganger_reward.shouldTweakMoney: true
+LootTables.ma_wat_kab_09_ganger_reward.shouldTweakMoney: true
+LootTables.ma_wat_lch_12_maelstrom_reward.shouldTweakMoney: true
+LootTables.ma_wat_lch_13_victim_reward.shouldTweakMoney: true
+LootTables.ma_wat_nid_01_mael_reward.shouldTweakMoney: true
+LootTables.ma_wat_nid_07_merc_reward.shouldTweakMoney: true
+LootTables.ma_wat_nid_08_ganger_reward.shouldTweakMoney: true
+LootTables.ma_wat_nid_12_tc_reward.shouldTweakMoney: true
+LootTables.ma_wat_nid_14_ganger_reward.shouldTweakMoney: true
+LootTables.ma_wat_nid_19_ganger_reward.shouldTweakMoney: true
+LootTables.ma_wat_nid_23_ganger_reward.shouldTweakMoney: true
+
+LootTables.Q000_scavengers_LGL_bodies.shouldTweakMoney: true
+LootTables.Q000_scavengers_LGS_valuable.shouldTweakMoney: true
+
+LootTables.Q003_factory_MGM_safe.shouldTweakMoney: true
+LootTables.Q003_factory_MGS_valuable.shouldTweakMoney: true
+
+LootTables.Q004_Lizzies_MGM_safe.shouldTweakMoney: true
+
+LootTables.Q103_mine_LIS_safe.shouldTweakMoney: true
+LootTables.Q103_town_LCM_safe.shouldTweakMoney: true
+LootTables.Q104_crash_kang_tao_body.shouldTweakMoney: true
+LootTables.Q104_station_MCM_safe.shouldTweakMoney: true
+LootTables.Q104_powerplant_LIS_crate.shouldTweakMoney: true
+LootTables.Q104_airstrip_LCL_body.shouldTweakMoney: true
+LootTables.Q105_dollhouse_MCS_valuable.shouldTweakMoney: true
+LootTables.Q105_braindance_LGM_safe.shouldTweakMoney: true
+LootTables.Q105_braindance_LGS_valuable.shouldTweakMoney: true
+LootTables.Q110_netrunner_MGS_valuable.shouldTweakMoney: true
+LootTables.Q110_mall_LGM_safe.shouldTweakMoney: true
+LootTables.Q110_mall_LGS_valuable.shouldTweakMoney: true
+LootTables.Q112_safehouse_MRS_valuable.shouldTweakMoney: true
+LootTables.Q113_estate_HRM_safe.shouldTweakMoney: true
+LootTables.Q113_estate_HRS_valuable.shouldTweakMoney: true
+LootTables.Q114_manufacturing_MIS_valuable.shouldTweakMoney: true
+
+LootTables.Base_ms_cash.shouldTweakMoney: true
+
+LootTables.q105_fingers_loot.shouldTweakMoney: true
+LootTables.mq005_corpo_loot.shouldTweakMoney: true
+LootTables.mq050_main_loot.shouldTweakMoney: true
+
+LootTables.SQ004_camp_LGM_safe.shouldTweakMoney: true
+LootTables.SQ004_camp_LGS_crate.shouldTweakMoney: true
+
+LootTables.SQ006_ambush_LIM_safe.shouldTweakMoney: true
+LootTables.SQ006_ambush_LIS_valuable.shouldTweakMoney: true
+LootTables.SQ011_villa_HRS_valuable.shouldTweakMoney: true
+
+LootTables.SQ012_shop_MCS_valuable.shouldTweakMoney: true
+LootTables.SQ017_nighclub_MCM_safe.shouldTweakMoney: true
+LootTables.SQ017_nighclub_MCS_valuable.shouldTweakMoney: true
+LootTables.SQ018_storage_LRS_valuable.shouldTweakMoney: true
+LootTables.SQ021_Loot.shouldTweakMoney: true
+LootTables.SQ021_farm_LRS_valuable.shouldTweakMoney: true
+LootTables.SQ025_garage_MIM_safe.shouldTweakMoney: true
+LootTables.SQ025_garage_MIM_valuable.shouldTweakMoney: true
+LootTables.SQ026_Loot.shouldTweakMoney: true
+LootTables.SQ026_apartment_HRS_valuable.shouldTweakMoney: true
+LootTables.SQ027_Loot.shouldTweakMoney: true
+LootTables.SQ028_Loot.shouldTweakMoney: true
+LootTables.SQ030_house_LRS_valuable.shouldTweakMoney: true
+LootTables.SQ031_ruinedship_LIS_valuable.shouldTweakMoney: true
+LootTables.SQ031_ruinedship_LIS_valuable.shouldTweakMoney: true
+
+LootTables.ep1_q306_cloaked_hunter_corpse.shouldTweakMoney: true
+LootTables.mq303_linas_mansion_safe.shouldTweakMoney: true
+LootTables.mq306_body_loot_angie.shouldTweakMoney: true
+LootTables.Loot_sts_ep1_06.shouldTweakMoney: true
