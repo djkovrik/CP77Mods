@@ -239,9 +239,54 @@ public class ReducedLootMoneyConfig {
 
 public abstract class ReducedLootMoneyTweaker {
 
-  public static func RefreshFlats(batch: ref<TweakDBBatch>) -> Void {
+  public static func UpdateLootRecord(batch: ref<TweakDBBatch>, cfg: ref<ReducedLootMoneyConfig>, item: ref<LootItem_Record>) -> Void {
     let cfg: ref<ReducedLootMoneyConfig> = new ReducedLootMoneyConfig();
     if !cfg.enabled { return ; };
+
+    let dropMin: Int32;
+    let dropMax: Int32;
+    let prereq: ref<IPrereq_Record> = item.PlayerPrereqID();
+    let itemID: TweakDBID = item.GetID();
+    let prereqId: TweakDBID = prereq.GetID();
+    let targetItemId: TweakDBID = item.ItemID().GetID();
+
+    if NotEquals(targetItemId, t"Items.money") { return ; };
+
+    switch (prereqId) {
+      case t"LootPrereqs.PlayerLevelTrashTierPrereq":
+        dropMin = cfg.dropCountMinTrashTier;
+        dropMax = cfg.dropCountMaxTrashTier;
+        break;
+      case t"LootPrereqs.PlayerLevelWeakTierPrereq":
+        dropMin = cfg.dropCountMinWeakTier;
+        dropMax = cfg.dropCountMaxWeakTier;
+        break;
+      case t"LootPrereqs.PlayerLevelNormalTierPrereq":
+        dropMin = cfg.dropCountMinNormalTier;
+        dropMax = cfg.dropCountMaxNormalTier;
+        break;
+      case t"LootPrereqs.PlayerLevelRareTierPrereq":
+        dropMin = cfg.dropCountMinRareTier;
+        dropMax = cfg.dropCountMaxRareTier;
+        break;
+      case t"LootPrereqs.PlayerLevelEliteTierPrereq":
+        dropMin = cfg.dropCountMinEliteTier;
+        dropMax = cfg.dropCountMaxEliteTier;
+        break;
+      default:
+        dropMin = cfg.dropCountMin;
+        dropMax = cfg.dropCountMax;  
+        break;
+    };
+
+    batch.SetFlat(itemID + t".dropCountMin", dropMin);
+    batch.SetFlat(itemID + t".dropCountMax", dropMax);
+  }
+
+  public static func UpdateShards(batch: ref<TweakDBBatch>) -> Void {
+    let cfg: ref<ReducedLootMoneyConfig> = new ReducedLootMoneyConfig();
+    if !cfg.enabled { return ; };
+
     // Money shards
     batch.SetFlat(t"Price.MoneyShardUncommon.value", cfg.priceMoneyShardUncommon);
     batch.SetFlat(t"Price.MoneyShardRare.value", cfg.priceMoneyShardRare);
@@ -251,6 +296,12 @@ public abstract class ReducedLootMoneyTweaker {
     batch.UpdateRecord(t"Price.MoneyShardRare");
     batch.UpdateRecord(t"Price.MoneyShardEpic");
     batch.UpdateRecord(t"Price.MoneyShardLegendary");
+  }
+
+  public static func UpdatePriceModifiers(batch: ref<TweakDBBatch>) -> Void {
+    let cfg: ref<ReducedLootMoneyConfig> = new ReducedLootMoneyConfig();
+    if !cfg.enabled { return ; };
+
     // Price modifiers
     batch.SetFlat(t"Price.GangWatch_BaseMoney.value", cfg.modifierGangWatch);
     batch.SetFlat(t"Price.HiddenStash_BaseMoney.value", cfg.modifierHiddenStash);
@@ -274,57 +325,5 @@ public abstract class ReducedLootMoneyTweaker {
     batch.UpdateRecord(t"Price.FailedCrossing_BaseMoney");
     batch.UpdateRecord(t"Price.BaseMiniStory_BaseMoney");
     batch.UpdateRecord(t"Price.StreetStory_BaseMoney");
-    // Tables
-    let lootTableRecords: array<ref<TweakDBRecord>> = TweakDBInterface.GetRecords(n"LootTable_Record");
-    let lootItems: array<wref<LootItem_Record>>;
-    let record: ref<LootTable_Record>;
-    let shouldUpdate: Bool;
-
-    for lootTableRecord in lootTableRecords {
-      record = lootTableRecord as LootTable_Record;
-      shouldUpdate = TweakDBInterface.GetBool(record.GetID() + t".shouldTweakMoney", false);
-      if IsDefined(record) && shouldUpdate {
-        ArrayClear(lootItems);
-        record.LootItems(lootItems);
-        for item in lootItems {
-          ReducedLootMoneyTweaker.UpdateRecords(cfg, batch, item);
-        };
-      };
-    };
-  }
-
-  public static func UpdateRecords(cfg: ref<ReducedLootMoneyConfig>, batch: ref<TweakDBBatch>, item: ref<LootItem_Record>) -> Void {
-    let dropMin: Int32 = cfg.dropCountMin;
-    let dropMax: Int32 = cfg.dropCountMax;
-    let prereq: ref<IPrereq_Record> = item.PlayerPrereqID();
-    let itemID: TweakDBID = item.GetID();
-
-    switch prereq.GetID() {
-      case t"LootPrereqs.PlayerLevelTrashTierPrereq":
-        dropMin = cfg.dropCountMinTrashTier;
-        dropMax = cfg.dropCountMaxTrashTier;
-        break;
-      case t"LootPrereqs.PlayerLevelWeakTierPrereq":
-        dropMin = cfg.dropCountMinWeakTier;
-        dropMax = cfg.dropCountMaxWeakTier;
-        break;
-      case t"LootPrereqs.PlayerLevelNormalTierPrereq":
-        dropMin = cfg.dropCountMinNormalTier;
-        dropMax = cfg.dropCountMaxNormalTier;
-        break;
-      case t"LootPrereqs.PlayerLevelRareTierPrereq":
-        dropMin = cfg.dropCountMinRareTier;
-        dropMax = cfg.dropCountMaxRareTier;
-        break;
-      case t"LootPrereqs.PlayerLevelEliteTierPrereq":
-        dropMin = cfg.dropCountMinEliteTier;
-        dropMax = cfg.dropCountMaxEliteTier;
-        break;
-      default:
-        break;
-    };
-
-    batch.SetFlat(itemID + t".dropCountMin", dropMin);
-    batch.SetFlat(itemID + t".dropCountMax", dropMax);
   }
 }

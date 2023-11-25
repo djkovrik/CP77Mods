@@ -191,56 +191,13 @@ public class ReducedLootMaterialsConfig {
 
 public abstract class ReducedLootMaterialsTweaker {
 
-  public static func RefreshFlats(batch: ref<TweakDBBatch>) -> Void {
+  public static func UpdateLootRecord(batch: ref<TweakDBBatch>, cfg: ref<ReducedLootMaterialsConfig>, item: ref<LootItem_Record>) -> Void {
     let cfg: ref<ReducedLootMaterialsConfig> = new ReducedLootMaterialsConfig();
     if !cfg.enabled { return ; };
 
-    let lootTableRecords: array<ref<TweakDBRecord>> = TweakDBInterface.GetRecords(n"LootTable_Record");
-    let controlledLootTableRecords: array<ref<TweakDBRecord>> = TweakDBInterface.GetRecords(n"ControlledLootTable_Record");
-    let lootItems: array<wref<LootItem_Record>>;
-    let lootSets: array<wref<ControlledLootSet_Record>>;
-    let record: ref<LootTable_Record>;
-    let controlledRecord: ref<ControlledLootTable_Record>;
-
-    // LootTable_Record
-    for lootTableRecord in lootTableRecords {
-      record = lootTableRecord as LootTable_Record;
-      if IsDefined(record) {
-        ArrayClear(lootItems);
-        record.LootItems(lootItems);
-        for item in lootItems {
-          ReducedLootMaterialsTweaker.UpdateRecords(cfg, batch, item);
-        };
-      };
-    };
-
-    // ControlledLootTable_Record
-    for controlledLootTableRecord in controlledLootTableRecords {
-      controlledRecord = controlledLootTableRecord as ControlledLootTable_Record;
-      if IsDefined(controlledRecord) {
-        controlledRecord.ControlledLootSets(lootSets);
-        for lootSet in lootSets {
-          ArrayClear(lootItems);
-          // Loot
-          lootSet.LootItems(lootItems);
-          for item in lootItems {
-            ReducedLootMaterialsTweaker.UpdateRecords(cfg, batch, item);
-          };
-          // Replacement loot
-          ArrayClear(lootItems);
-          lootSet.ReplacementLootItems(lootItems);
-          for item in lootItems {
-            ReducedLootMaterialsTweaker.UpdateRecords(cfg, batch, item);
-          };
-        };
-      };
-    };
-  }
-
-  public static func UpdateRecords(cfg: ref<ReducedLootMaterialsConfig>, batch: ref<TweakDBBatch>, item: ref<LootItem_Record>) -> Void {
     let itemID: TweakDBID = item.GetID();
     let targetItemId: TweakDBID = item.ItemID().GetID();
-    switch (targetItemId) {
+    switch targetItemId {
       case t"Items.CommonMaterial1": 
         batch.SetFlat(itemID + t".dropCountMin", cfg.CommonMaterial1dropMin);
         batch.SetFlat(itemID + t".dropCountMax", cfg.CommonMaterial1dropMax);
