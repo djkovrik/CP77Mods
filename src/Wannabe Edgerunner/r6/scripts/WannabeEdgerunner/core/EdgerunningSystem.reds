@@ -272,31 +272,23 @@ public class EdgerunningSystem extends ScriptableSystem {
         break;
       case HumanityRestoringAction.Pet:
         let amount: Int32 = this.config.restoreOnPet;
-        if this.RemoveHumanityDamage(amount) {
-          this.ShowHumanityRestoredMessage(amount);
-          E("! Pet, humanity restored");
-        };
+        this.RemoveHumanityDamage(amount);
+        E("! Pet, humanity restored");
         break;
       case HumanityRestoringAction.Donation:
         let amount: Int32 = this.config.restoreOnDonation;
-        if this.RemoveHumanityDamage(amount) {
-          this.ShowHumanityRestoredMessage(amount);
-          E("! Donated some money, humanity restored");
-        };
+        this.RemoveHumanityDamage(amount);
+        E("! Donated some money, humanity restored");
         break;
       case HumanityRestoringAction.Apartment:
         let amount: Int32 = this.config.restoreOnApartment;
-        if this.RemoveHumanityDamage(amount) {
-          this.ShowHumanityRestoredMessage(amount);
-          E("! Apartment interaction, humanity restored");
-        };
+        this.RemoveHumanityDamage(amount);
+        E("! Apartment interaction, humanity restored");
         break;
       case HumanityRestoringAction.Shower:
         let amount: Int32 = this.config.restoreOnShower;
-        if this.RemoveHumanityDamage(amount) {
-          this.ShowHumanityRestoredMessage(amount);
+        this.RemoveHumanityDamage(amount);
           E("! Took a shower, humanity restored");
-        };
         break;
     };
 
@@ -606,22 +598,17 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.psmBB.SetInt(GetAllBlackboardDefs().PlayerStateMachine.HumanityDamage, this.currentHumanityDamage, true);
   }
 
-  public func RemoveHumanityDamage(cost: Int32) -> Bool {
-    let diff: Int32;
-    if this.currentHumanityDamage >= cost {
-      E(s"> RemoveHumanityDamage \(cost)");
-      this.currentHumanityDamage -= cost;
-      this.psmBB.SetInt(GetAllBlackboardDefs().PlayerStateMachine.HumanityDamage, this.currentHumanityDamage, true);
-      return true;
-    } else if this.currentHumanityDamage < cost && this.currentHumanityDamage > 0 {
-      diff = cost - this.currentHumanityDamage;
-      E(s"> RemoveHumanityDamage \(diff)");
-      this.currentHumanityDamage -= diff;
-      this.psmBB.SetInt(GetAllBlackboardDefs().PlayerStateMachine.HumanityDamage, this.currentHumanityDamage, true);
-      return true;
+  public func RemoveHumanityDamage(cost: Int32) -> Void {
+    if cost > this.currentHumanityDamage {
+      cost = this.currentHumanityDamage;
     };
 
-    return false;
+    E(s"> RemoveHumanityDamage: current \(this.currentHumanityDamage), cost  \(cost ), after removal: \(this.currentHumanityDamage - cost)");
+    this.currentHumanityDamage -= cost;
+    this.psmBB.SetInt(GetAllBlackboardDefs().PlayerStateMachine.HumanityDamage, this.currentHumanityDamage, true);
+    if cost > 0 {
+      this.ShowHumanityRestoredMessage(cost);
+    };
   }
 
   public func ResetHumanityDamage() -> Void {
@@ -915,7 +902,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   public static func Debug(gi: GameInstance) -> Void {
     let system: ref<EdgerunningSystem> = EdgerunningSystem.GetInstance(gi);
     // system.RunPsychosisFlow();
-    system.AddHumanityDamage(10);
+    system.AddHumanityDamage(4);
     system.InvalidateCurrentState(false);
     // system.effectsHelper.RunNewPrePsychosisEffect();
     // system.effectsHelper.RunNewPsychosisEffect();
