@@ -5,3 +5,5 @@ localization:
     pl-pl: base\localization\pl-pl\onscreens\wannabeedgerunner.json
     ru-ru: base\localization\ru-ru\onscreens\wannabeedgerunner.json
     zh-cn: base\localization\zh-cn\onscreens\wannabeedgerunner.json
+    jp-jp: base\localization\jp-jp\onscreens\wannabeedgerunner.json
+    th-th: base\localization\th-th\onscreens\wannabeedgerunner.json
