@@ -71,6 +71,18 @@ class SmarterScrapperModsConfig {
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "LocKey#49863")
   @runtimeProperty("ModSettings.category.order", "3")
+  @runtimeProperty("ModSettings.displayName", "LocKey#1815")
+  public let legendary: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "Scrapper")
+  @runtimeProperty("ModSettings.category", "LocKey#49863")
+  @runtimeProperty("ModSettings.category.order", "3")
+  @runtimeProperty("ModSettings.displayName", "LocKey#1813")
+  public let epic: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "Scrapper")
+  @runtimeProperty("ModSettings.category", "LocKey#49863")
+  @runtimeProperty("ModSettings.category.order", "3")
   @runtimeProperty("ModSettings.displayName", "LocKey#1816")
   public let rare: Bool = false;
 
@@ -108,13 +120,37 @@ class SmarterScrapperEdiblesConfig {
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "Gameplay-Items-Item Type-Con_Edible")
   @runtimeProperty("ModSettings.category.order", "5")
-  @runtimeProperty("ModSettings.displayName", "LocKey#245")
-  public let enabled: Bool = true;
+  @runtimeProperty("ModSettings.displayName", "LocKey#1815")
+  public let legendary: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "Gameplay-Items-Item Type-Con_Edible")
   @runtimeProperty("ModSettings.category.order", "5")
-  @runtimeProperty("ModSettings.displayName", "LocKey#46543")
+  @runtimeProperty("ModSettings.displayName", "LocKey#1813")
+  public let epic: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "Scrapper")
+  @runtimeProperty("ModSettings.category", "Gameplay-Items-Item Type-Con_Edible")
+  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.displayName", "LocKey#1816")
+  public let rare: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "Scrapper")
+  @runtimeProperty("ModSettings.category", "Gameplay-Items-Item Type-Con_Edible")
+  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.displayName", "LocKey#1817")
+  public let uncommon: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "Scrapper")
+  @runtimeProperty("ModSettings.category", "Gameplay-Items-Item Type-Con_Edible")
+  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.displayName", "LocKey#1814")
+  public let common: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "Scrapper")
+  @runtimeProperty("ModSettings.category", "Gameplay-Items-Item Type-Con_Edible")
+  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.displayName", "Gameplay-Items-Item Type-Con_Edible")
   @runtimeProperty("ModSettings.step", "1")
   @runtimeProperty("ModSettings.min", "1")
   @runtimeProperty("ModSettings.max", "20")
@@ -150,6 +186,7 @@ public func HasExcludedQuestActive() -> Bool {
     Equals(trackedObjective.GetId(), "01a_pick_weapon") ||
     Equals(trackedObjective.GetId(), "01c_pick_up_reanimator") ||
     Equals(trackedObjective.GetId(), "03_pick_up_katana") ||
+    Equals(trackedObjective.GetId(), "prepare_before_leave") ||
   false;
 }
 
@@ -194,7 +231,6 @@ private func IsWeaponSS(type: gamedataItemType) -> Bool {
 @addMethod(PlayerPuppet)
 private func IsModSS(type: gamedataItemType) -> Bool {
   return
-
     Equals(type, gamedataItemType.Prt_AR_SMG_LMGMod) ||
     Equals(type, gamedataItemType.Prt_BladeMod) ||
     Equals(type, gamedataItemType.Prt_BluntMod) ||
@@ -350,14 +386,33 @@ private func ShouldBeScrappedJunkSS(data: wref<gameItemData>) -> Bool {
 }
 
 @addMethod(PlayerPuppet)
-private func ShouldBeScrappedEdibleSS(data: wref<gameItemData>) -> Bool {
+private func ShouldBeScrappedEdibleSS(data: wref<gameItemData>, quality: gamedataQuality) -> Bool {
   let type: gamedataItemType = data.GetItemType();
 
-  return this.scrapperEdibles.enabled && this.IsEdibleSS(type) 
-    && !data.HasTag(n"PermanentFood") 
-    && !data.HasTag(n"PermanentStaminaFood") 
-    && !data.HasTag(n"PermanentMemoryFood") 
-    && !data.HasTag(n"PermanentHealthFood");
+  if !this.IsEdibleSS(type) || data.HasTag(n"PermanentFood") || data.HasTag(n"PermanentStaminaFood") || data.HasTag(n"PermanentMemoryFood") || data.HasTag(n"PermanentHealthFood") {
+    return false;
+  }
+
+  switch quality {
+    case gamedataQuality.LegendaryPlusPlus:
+    case gamedataQuality.LegendaryPlus:
+    case gamedataQuality.Legendary:
+      return this.scrapperEdibles.legendary;
+    case gamedataQuality.EpicPlus:
+    case gamedataQuality.Epic:
+      return this.scrapperEdibles.epic;
+    case gamedataQuality.RarePlus:
+    case gamedataQuality.Rare:
+      return this.scrapperEdibles.rare;
+    case gamedataQuality.UncommonPlus:
+    case gamedataQuality.Uncommon: 
+      return this.scrapperEdibles.uncommon;
+    case gamedataQuality.CommonPlus:
+    case gamedataQuality.Common:
+      return this.scrapperEdibles.common;
+  };
+
+  return false;
 }
 
 // Keep last bought item id
@@ -414,7 +469,7 @@ protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
     && !this.IsExclusionSS(tweakDbId) 
     && !this.HasExcludedQuestActive();
 
-  let edible: Bool = this.ShouldBeScrappedEdibleSS(gameItemData) 
+  let edible: Bool = this.ShouldBeScrappedEdibleSS(gameItemData, quality) 
     && NotEquals(this.boughtItem, gameItemData.GetID()) 
     && !this.IsExclusionSS(tweakDbId) 
     && !this.HasExcludedQuestActive();
