@@ -9,6 +9,13 @@ public class ReducedLootMoneyConfig {
   let enabled: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
+  @runtimeProperty("ModSettings.category", "Gameplay-RPG-Items-Categories-General")
+  @runtimeProperty("ModSettings.category.order", "1")
+  @runtimeProperty("ModSettings.displayName", "Mod-RL-Money-World-Placed")
+  @runtimeProperty("ModSettings.description", "Mod-RL-Money-World-Placed-Desc")
+  let removeWorldPlaced: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
   @runtimeProperty("ModSettings.category", "Mod-RL-Base-Values")
   @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Mod-RL-Min-Drop-Count")
@@ -29,109 +36,10 @@ public class ReducedLootMoneyConfig {
   let dropCountMax: Int32 = 100;
 
   @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
-  @runtimeProperty("ModSettings.category", "Mod-RL-Trash-Tier")
-  @runtimeProperty("ModSettings.category.order", "3")
-  @runtimeProperty("ModSettings.displayName", "Mod-RL-Min-Drop-Count")
-  @runtimeProperty("ModSettings.description", "Mod-RL-Drop-Count-Desc")
-  @runtimeProperty("ModSettings.step", "10")
-  @runtimeProperty("ModSettings.min", "0")
-  @runtimeProperty("ModSettings.max", "200")
-  let dropCountMinTrashTier: Int32 = 10;
-
-  @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
-  @runtimeProperty("ModSettings.category", "Mod-RL-Trash-Tier")
-  @runtimeProperty("ModSettings.category.order", "3")
-  @runtimeProperty("ModSettings.displayName", "Mod-RL-Max-Drop-Count")
-  @runtimeProperty("ModSettings.description", "Mod-RL-Drop-Count-Desc")
-  @runtimeProperty("ModSettings.step", "10")
-  @runtimeProperty("ModSettings.min", "0")
-  @runtimeProperty("ModSettings.max", "200")
-  let dropCountMaxTrashTier: Int32 = 30;
-
-  @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
-  @runtimeProperty("ModSettings.category", "Mod-RL-Weak-Tier")
-  @runtimeProperty("ModSettings.category.order", "4")
-  @runtimeProperty("ModSettings.displayName", "Mod-RL-Min-Drop-Count")
-  @runtimeProperty("ModSettings.description", "Mod-RL-Drop-Count-Desc")
-  @runtimeProperty("ModSettings.step", "10")
-  @runtimeProperty("ModSettings.min", "0")
-  @runtimeProperty("ModSettings.max", "200")
-  let dropCountMinWeakTier: Int32 = 30;
-
-  @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
-  @runtimeProperty("ModSettings.category", "Mod-RL-Weak-Tier")
-  @runtimeProperty("ModSettings.category.order", "4")
-  @runtimeProperty("ModSettings.displayName", "Mod-RL-Max-Drop-Count")
-  @runtimeProperty("ModSettings.description", "Mod-RL-Drop-Count-Desc")
-  @runtimeProperty("ModSettings.step", "10")
-  @runtimeProperty("ModSettings.min", "0")
-  @runtimeProperty("ModSettings.max", "200")
-  let dropCountMaxWeakTier: Int32 = 50;
-
-  @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
-  @runtimeProperty("ModSettings.category", "Mod-RL-Normal-Tier")
-  @runtimeProperty("ModSettings.category.order", "5")
-  @runtimeProperty("ModSettings.displayName", "Mod-RL-Min-Drop-Count")
-  @runtimeProperty("ModSettings.description", "Mod-RL-Drop-Count-Desc")
-  @runtimeProperty("ModSettings.step", "10")
-  @runtimeProperty("ModSettings.min", "0")
-  @runtimeProperty("ModSettings.max", "300")
-  let dropCountMinNormalTier: Int32 = 50;
-
-  @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
-  @runtimeProperty("ModSettings.category", "Mod-RL-Normal-Tier")
-  @runtimeProperty("ModSettings.category.order", "5")
-  @runtimeProperty("ModSettings.displayName", "Mod-RL-Max-Drop-Count")
-  @runtimeProperty("ModSettings.description", "Mod-RL-Drop-Count-Desc")
-  @runtimeProperty("ModSettings.step", "10")
-  @runtimeProperty("ModSettings.min", "0")
-  @runtimeProperty("ModSettings.max", "300")
-  let dropCountMaxNormalTier: Int32 = 100;
-
-  @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
-  @runtimeProperty("ModSettings.category", "Mod-RL-Rare-Tier")
-  @runtimeProperty("ModSettings.category.order", "6")
-  @runtimeProperty("ModSettings.displayName", "Mod-RL-Min-Drop-Count")
-  @runtimeProperty("ModSettings.description", "Mod-RL-Drop-Count-Desc")
-  @runtimeProperty("ModSettings.step", "10")
-  @runtimeProperty("ModSettings.min", "0")
-  @runtimeProperty("ModSettings.max", "400")
-  let dropCountMinRareTier: Int32 = 100;
-
-  @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
-  @runtimeProperty("ModSettings.category", "Mod-RL-Rare-Tier")
-  @runtimeProperty("ModSettings.category.order", "6")
-  @runtimeProperty("ModSettings.displayName", "Mod-RL-Max-Drop-Count")
-  @runtimeProperty("ModSettings.description", "Mod-RL-Drop-Count-Desc")
-  @runtimeProperty("ModSettings.step", "10")
-  @runtimeProperty("ModSettings.min", "0")
-  @runtimeProperty("ModSettings.max", "400")
-  let dropCountMaxRareTier: Int32 = 200;
-
-  @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
-  @runtimeProperty("ModSettings.category", "Mod-RL-Elite-Tier")
-  @runtimeProperty("ModSettings.category.order", "7")
-  @runtimeProperty("ModSettings.displayName", "Mod-RL-Min-Drop-Count")
-  @runtimeProperty("ModSettings.description", "Mod-RL-Drop-Count-Desc")
-  @runtimeProperty("ModSettings.step", "10")
-  @runtimeProperty("ModSettings.min", "0")
-  @runtimeProperty("ModSettings.max", "500")
-  let dropCountMinEliteTier: Int32 = 200;
-
-  @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
-  @runtimeProperty("ModSettings.category", "Mod-RL-Elite-Tier")
-  @runtimeProperty("ModSettings.category.order", "7")
-  @runtimeProperty("ModSettings.displayName", "Mod-RL-Max-Drop-Count")
-  @runtimeProperty("ModSettings.description", "Mod-RL-Drop-Count-Desc")
-  @runtimeProperty("ModSettings.step", "10")
-  @runtimeProperty("ModSettings.min", "0")
-  @runtimeProperty("ModSettings.max", "500")
-  let dropCountMaxEliteTier: Int32 = 400;
-
-  @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
   @runtimeProperty("ModSettings.category", "Mod-RL-Money-Shards")
-  @runtimeProperty("ModSettings.category.order", "8")
+  @runtimeProperty("ModSettings.category.order", "3")
   @runtimeProperty("ModSettings.displayName", "Mod-RL-Money-Shard-Uncommon")
+  @runtimeProperty("ModSettings.description", "Mod-RL-Restart")
   @runtimeProperty("ModSettings.step", "100")
   @runtimeProperty("ModSettings.min", "0")
   @runtimeProperty("ModSettings.max", "10000")
@@ -139,8 +47,9 @@ public class ReducedLootMoneyConfig {
 
   @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
   @runtimeProperty("ModSettings.category", "Mod-RL-Money-Shards")
-  @runtimeProperty("ModSettings.category.order", "8")
+  @runtimeProperty("ModSettings.category.order", "3")
   @runtimeProperty("ModSettings.displayName", "Mod-RL-Money-Shard-Rare")
+  @runtimeProperty("ModSettings.description", "Mod-RL-Restart")
   @runtimeProperty("ModSettings.step", "100")
   @runtimeProperty("ModSettings.min", "0")
   @runtimeProperty("ModSettings.max", "10000")
@@ -148,8 +57,9 @@ public class ReducedLootMoneyConfig {
 
   @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
   @runtimeProperty("ModSettings.category", "Mod-RL-Money-Shards")
-  @runtimeProperty("ModSettings.category.order", "8")
+  @runtimeProperty("ModSettings.category.order", "3")
   @runtimeProperty("ModSettings.displayName", "Mod-RL-Money-Shard-Epic")
+  @runtimeProperty("ModSettings.description", "Mod-RL-Restart")
   @runtimeProperty("ModSettings.step", "100")
   @runtimeProperty("ModSettings.min", "0")
   @runtimeProperty("ModSettings.max", "10000")
@@ -157,8 +67,9 @@ public class ReducedLootMoneyConfig {
 
   @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
   @runtimeProperty("ModSettings.category", "Mod-RL-Money-Shards")
-  @runtimeProperty("ModSettings.category.order", "8")
+  @runtimeProperty("ModSettings.category.order", "3")
   @runtimeProperty("ModSettings.displayName", "Mod-RL-Money-Shard-Legendary")
+  @runtimeProperty("ModSettings.description", "Mod-RL-Restart")
   @runtimeProperty("ModSettings.step", "100")
   @runtimeProperty("ModSettings.min", "0")
   @runtimeProperty("ModSettings.max", "10000")
@@ -166,8 +77,9 @@ public class ReducedLootMoneyConfig {
 
   @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
   @runtimeProperty("ModSettings.category", "Mod-RL-Price-Modifiers")
-  @runtimeProperty("ModSettings.category.order", "9")
+  @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "UI-MappinTypes-GangWatch")
+  @runtimeProperty("ModSettings.description", "Mod-RL-Restart")
   @runtimeProperty("ModSettings.step", "50")
   @runtimeProperty("ModSettings.min", "0")
   @runtimeProperty("ModSettings.max", "5000")
@@ -175,8 +87,9 @@ public class ReducedLootMoneyConfig {
 
   @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
   @runtimeProperty("ModSettings.category", "Mod-RL-Price-Modifiers")
-  @runtimeProperty("ModSettings.category.order", "9")
+  @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "UI-MappinTypes-HiddenStash")
+  @runtimeProperty("ModSettings.description", "Mod-RL-Restart")
   @runtimeProperty("ModSettings.step", "50")
   @runtimeProperty("ModSettings.min", "0")
   @runtimeProperty("ModSettings.max", "5000")
@@ -184,8 +97,9 @@ public class ReducedLootMoneyConfig {
 
   @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
   @runtimeProperty("ModSettings.category", "Mod-RL-Price-Modifiers")
-  @runtimeProperty("ModSettings.category.order", "9")
+  @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "LocKey#31788")
+  @runtimeProperty("ModSettings.description", "Mod-RL-Restart")
   @runtimeProperty("ModSettings.step", "50")
   @runtimeProperty("ModSettings.min", "0")
   @runtimeProperty("ModSettings.max", "5000")
@@ -193,8 +107,9 @@ public class ReducedLootMoneyConfig {
 
   @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
   @runtimeProperty("ModSettings.category", "Mod-RL-Price-Modifiers")
-  @runtimeProperty("ModSettings.category.order", "9")
-  @runtimeProperty("ModSettings.displayName", "UI-MappinTypes-Resource")
+  @runtimeProperty("ModSettings.category.order", "4")
+  @runtimeProperty("ModSettings.displayName", "UI-MappinTypes-Outpost")
+  @runtimeProperty("ModSettings.description", "Mod-RL-Restart")
   @runtimeProperty("ModSettings.step", "50")
   @runtimeProperty("ModSettings.min", "0")
   @runtimeProperty("ModSettings.max", "5000")
@@ -202,8 +117,9 @@ public class ReducedLootMoneyConfig {
 
   @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
   @runtimeProperty("ModSettings.category", "Mod-RL-Price-Modifiers")
-  @runtimeProperty("ModSettings.category.order", "9")
-  @runtimeProperty("ModSettings.displayName", "UI-MappinTypes-FailedCrossing")
+  @runtimeProperty("ModSettings.category.order", "4")
+  @runtimeProperty("ModSettings.displayName", "UI-MappinTypes-Resource")
+  @runtimeProperty("ModSettings.description", "Mod-RL-Restart")
   @runtimeProperty("ModSettings.step", "50")
   @runtimeProperty("ModSettings.min", "0")
   @runtimeProperty("ModSettings.max", "5000")
@@ -211,8 +127,9 @@ public class ReducedLootMoneyConfig {
 
   @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
   @runtimeProperty("ModSettings.category", "Mod-RL-Price-Modifiers")
-  @runtimeProperty("ModSettings.category.order", "9")
+  @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "UI-MappinTypes-FailedCrossing")
+  @runtimeProperty("ModSettings.description", "Mod-RL-Restart")
   @runtimeProperty("ModSettings.step", "50")
   @runtimeProperty("ModSettings.min", "0")
   @runtimeProperty("ModSettings.max", "5000")
@@ -220,8 +137,9 @@ public class ReducedLootMoneyConfig {
 
   @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
   @runtimeProperty("ModSettings.category", "Mod-RL-Price-Modifiers")
-  @runtimeProperty("ModSettings.category.order", "9")
+  @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "Mod-RL-Mini-Story")
+  @runtimeProperty("ModSettings.description", "Mod-RL-Restart")
   @runtimeProperty("ModSettings.step", "50")
   @runtimeProperty("ModSettings.min", "0")
   @runtimeProperty("ModSettings.max", "5000")
@@ -229,8 +147,9 @@ public class ReducedLootMoneyConfig {
 
   @runtimeProperty("ModSettings.mod", "Reduced Loot - Money")
   @runtimeProperty("ModSettings.category", "Mod-RL-Price-Modifiers")
-  @runtimeProperty("ModSettings.category.order", "9")
+  @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "Mod-RL-Street-Story")
+  @runtimeProperty("ModSettings.description", "Mod-RL-Restart")
   @runtimeProperty("ModSettings.step", "50")
   @runtimeProperty("ModSettings.min", "0")
   @runtimeProperty("ModSettings.max", "5000")
@@ -238,50 +157,6 @@ public class ReducedLootMoneyConfig {
 }
 
 public abstract class ReducedLootMoneyTweaker {
-
-  public static func UpdateLootRecord(batch: ref<TweakDBBatch>, cfg: ref<ReducedLootMoneyConfig>, item: ref<LootItem_Record>) -> Void {
-    let cfg: ref<ReducedLootMoneyConfig> = new ReducedLootMoneyConfig();
-    if !cfg.enabled { return ; };
-
-    let dropMin: Int32;
-    let dropMax: Int32;
-    let prereq: ref<IPrereq_Record> = item.PlayerPrereqID();
-    let itemID: TweakDBID = item.GetID();
-    let prereqId: TweakDBID = prereq.GetID();
-    let targetItemId: TweakDBID = item.ItemID().GetID();
-
-    if NotEquals(targetItemId, t"Items.money") { return ; };
-
-    switch (prereqId) {
-      case t"LootPrereqs.PlayerLevelTrashTierPrereq":
-        dropMin = cfg.dropCountMinTrashTier;
-        dropMax = cfg.dropCountMaxTrashTier;
-        break;
-      case t"LootPrereqs.PlayerLevelWeakTierPrereq":
-        dropMin = cfg.dropCountMinWeakTier;
-        dropMax = cfg.dropCountMaxWeakTier;
-        break;
-      case t"LootPrereqs.PlayerLevelNormalTierPrereq":
-        dropMin = cfg.dropCountMinNormalTier;
-        dropMax = cfg.dropCountMaxNormalTier;
-        break;
-      case t"LootPrereqs.PlayerLevelRareTierPrereq":
-        dropMin = cfg.dropCountMinRareTier;
-        dropMax = cfg.dropCountMaxRareTier;
-        break;
-      case t"LootPrereqs.PlayerLevelEliteTierPrereq":
-        dropMin = cfg.dropCountMinEliteTier;
-        dropMax = cfg.dropCountMaxEliteTier;
-        break;
-      default:
-        dropMin = cfg.dropCountMin;
-        dropMax = cfg.dropCountMax;  
-        break;
-    };
-
-    batch.SetFlat(itemID + t".dropCountMin", dropMin);
-    batch.SetFlat(itemID + t".dropCountMax", dropMax);
-  }
 
   public static func UpdateShards(batch: ref<TweakDBBatch>) -> Void {
     let cfg: ref<ReducedLootMoneyConfig> = new ReducedLootMoneyConfig();
@@ -326,4 +201,94 @@ public abstract class ReducedLootMoneyTweaker {
     batch.UpdateRecord(t"Price.BaseMiniStory_BaseMoney");
     batch.UpdateRecord(t"Price.StreetStory_BaseMoney");
   }
+}
+
+@wrapMethod(gameItemDropObject)
+protected final func OnItemEntitySpawned(entID: EntityID) -> Void {
+  let moneyCfg: ref<ReducedLootMoneyConfig> = new ReducedLootMoneyConfig();
+  let data: ref<gameItemData> = this.GetItemObject().GetItemData();
+  let tweakDbID: TweakDBID = ItemID.GetTDBID(data.GetID());
+  if Equals(tweakDbID, t"Items.money") && moneyCfg.removeWorldPlaced {
+    EntityGameInterface.Destroy(this.GetEntity());
+    return ;
+  };
+  wrappedMethod(entID);
+}
+
+
+// --- TWEAK CONTAINERS
+
+@addField(gameLootContainerBase)
+private let moneyCfg: ref<ReducedLootMoneyConfig>;
+
+@wrapMethod(gameLootContainerBase)
+protected cb func OnGameAttached() -> Bool {
+  this.moneyCfg = new ReducedLootMoneyConfig();
+  return wrappedMethod();
+}
+
+@wrapMethod(gameLootContainerBase)
+private final func EvaluateLootQuality() -> Bool {
+  let wrapped: Bool = wrappedMethod();
+  let ts: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.GetGame());
+  let lootItems: array<wref<gameItemData>>;
+  let tweakDbID: TweakDBID;
+  if ts.GetItemList(this, lootItems) && !this.m_hasQuestItems {
+    for lootItem in lootItems {
+      tweakDbID = ItemID.GetTDBID(lootItem.GetID());
+      if Equals(tweakDbID, t"Items.money") {
+        this.HandleMoneyDrop(ts, lootItem);
+      };
+    };
+  };
+  return wrapped;
+}
+
+@addMethod(gameLootContainerBase)
+private final func HandleMoneyDrop(ts: ref<TransactionSystem>, item: wref<gameItemData>) -> Void {
+  ts.RemoveItem(this, item.GetID(), item.GetQuantity());
+  let newQuantity: Int32;
+  if this.moneyCfg.dropCountMax > this.moneyCfg.dropCountMin {
+    newQuantity = RandRange(this.moneyCfg.dropCountMin, this.moneyCfg.dropCountMax);
+    ts.GiveItem(this, item.GetID(), newQuantity);
+  };
+}
+
+
+// --- TWEAK NPCS
+
+@addField(ScriptedPuppet)
+private let moneyCfg: ref<ReducedLootMoneyConfig>;
+
+@wrapMethod(ScriptedPuppet)
+protected cb func OnGameAttached() -> Bool {
+  this.moneyCfg = new ReducedLootMoneyConfig();
+  return wrappedMethod();
+}
+
+@wrapMethod(ScriptedPuppet)
+private final func EvaluateLootQuality() -> Bool {
+  let wrapped: Bool = wrappedMethod();
+  let ts: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.GetGame());
+  let lootItems: array<wref<gameItemData>>;
+  let tweakDbID: TweakDBID;
+  if ts.GetItemList(this, lootItems) && !this.m_hasQuestItems {
+    for lootItem in lootItems {
+      tweakDbID = ItemID.GetTDBID(lootItem.GetID());
+      if Equals(tweakDbID, t"Items.money") {
+        this.HandleMoneyDrop(ts, lootItem);
+      };
+    };
+  };
+  return wrapped;
+}
+
+@addMethod(ScriptedPuppet)
+private final func HandleMoneyDrop(ts: ref<TransactionSystem>, item: wref<gameItemData>) -> Void {
+  ts.RemoveItem(this, item.GetID(), item.GetQuantity());
+  let newQuantity: Int32;
+  if this.moneyCfg.dropCountMax > this.moneyCfg.dropCountMin {
+    newQuantity = RandRange(this.moneyCfg.dropCountMin, this.moneyCfg.dropCountMax);
+    ts.GiveItem(this, item.GetID(), newQuantity);
+  };
 }

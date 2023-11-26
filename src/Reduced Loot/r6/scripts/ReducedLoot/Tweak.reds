@@ -17,7 +17,6 @@ public class ReducedLootTweaks extends ScriptableTweak {
 
     let ammoCfg: ref<ReducedLootAmmoConfig> = new ReducedLootAmmoConfig();
     let matsCfg: ref<ReducedLootMaterialsConfig> = new ReducedLootMaterialsConfig();
-    let moneyCfg: ref<ReducedLootMoneyConfig> = new ReducedLootMoneyConfig();
 
 
     // -- SEPARATE UPDATES
@@ -38,7 +37,6 @@ public class ReducedLootTweaks extends ScriptableTweak {
         for item in lootItems {
           ReducedLootAmmoTweaker.UpdateLootRecord(batch, ammoCfg, item);
           ReducedLootMaterialsTweaker.UpdateLootRecord(batch, matsCfg, item);
-          ReducedLootMoneyTweaker.UpdateLootRecord(batch, moneyCfg, item);
         };
       };
     };
@@ -55,7 +53,6 @@ public class ReducedLootTweaks extends ScriptableTweak {
           for item in lootItems {
             ReducedLootAmmoTweaker.UpdateLootRecord(batch, ammoCfg, item);
             ReducedLootMaterialsTweaker.UpdateLootRecord(batch, matsCfg, item);
-            ReducedLootMoneyTweaker.UpdateLootRecord(batch, moneyCfg, item);
           };
           // ReplacementLootItems
           ArrayClear(lootItems);
@@ -63,7 +60,6 @@ public class ReducedLootTweaks extends ScriptableTweak {
           for item in lootItems {
             ReducedLootAmmoTweaker.UpdateLootRecord(batch, ammoCfg, item);
             ReducedLootMaterialsTweaker.UpdateLootRecord(batch, matsCfg, item);
-            ReducedLootMoneyTweaker.UpdateLootRecord(batch, moneyCfg, item);
           };
         };
       };
