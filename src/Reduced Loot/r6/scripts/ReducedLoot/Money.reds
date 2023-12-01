@@ -179,116 +179,54 @@ public abstract class ReducedLootMoneyTweaker {
 
     // Price modifiers
     batch.SetFlat(t"Price.GangWatch_BaseMoney.value", cfg.modifierGangWatch);
+    batch.UpdateRecord(t"Price.GangWatch_BaseMoney");
     batch.SetFlat(t"Price.HiddenStash_BaseMoney.value", cfg.modifierHiddenStash);
+    batch.UpdateRecord(t"Price.HiddenStash_BaseMoney");
     batch.SetFlat(t"Price.CyberPsycho_BaseMoney.value", cfg.modifierCyberPsycho);
+    batch.UpdateRecord(t"Price.CyberPsycho_BaseMoney");
     batch.SetFlat(t"Price.Outpost_BaseMoney.value", cfg.modifierOutpost);
+    batch.UpdateRecord(t"Price.Outpost_BaseMoney");
     batch.SetFlat(t"Price.EndlessOutpost_BaseMoney_Big.min", cfg.modifierOutpost);
     batch.SetFlat(t"Price.EndlessOutpost_BaseMoney_Big.max", cfg.modifierOutpost);
+    batch.UpdateRecord(t"Price.EndlessOutpost_BaseMoney_Big");
     batch.SetFlat(t"Price.EndlessOutpost_BaseMoney_Small.min", cfg.modifierOutpost);
     batch.SetFlat(t"Price.EndlessOutpost_BaseMoney_Small.max", cfg.modifierOutpost);
-    batch.SetFlat(t"Price.Resource_BaseMoney.value", cfg.modifierResource);
-    batch.SetFlat(t"Price.FailedCrossing_BaseMoney.value", cfg.modifierFailedCrossing);
-    batch.SetFlat(t"Price.BaseMiniStory_BaseMoney.value", cfg.modifierMiniStory);
-    batch.SetFlat(t"Price.StreetStory_BaseMoney.value", cfg.modifierStreetStory);
-    batch.UpdateRecord(t"Price.GangWatch_BaseMoney");
-    batch.UpdateRecord(t"Price.HiddenStash_BaseMoney");
-    batch.UpdateRecord(t"Price.CyberPsycho_BaseMoney");
-    batch.UpdateRecord(t"Price.Outpost_BaseMoney");
-    batch.UpdateRecord(t"Price.EndlessOutpost_BaseMoney_Big");
     batch.UpdateRecord(t"Price.EndlessOutpost_BaseMoney_Small");
+    batch.SetFlat(t"Price.Resource_BaseMoney.value", cfg.modifierResource);
     batch.UpdateRecord(t"Price.Resource_BaseMoney");
+    batch.SetFlat(t"Price.FailedCrossing_BaseMoney.value", cfg.modifierFailedCrossing);
     batch.UpdateRecord(t"Price.FailedCrossing_BaseMoney");
+    batch.SetFlat(t"Price.BaseMiniStory_BaseMoney.value", cfg.modifierMiniStory);
     batch.UpdateRecord(t"Price.BaseMiniStory_BaseMoney");
+    batch.SetFlat(t"Price.StreetStory_BaseMoney.value", cfg.modifierStreetStory);
     batch.UpdateRecord(t"Price.StreetStory_BaseMoney");
   }
 }
 
-@wrapMethod(gameItemDropObject)
-protected final func OnItemEntitySpawned(entID: EntityID) -> Void {
-  let moneyCfg: ref<ReducedLootMoneyConfig> = new ReducedLootMoneyConfig();
-  let data: ref<gameItemData> = this.GetItemObject().GetItemData();
-  let tweakDbID: TweakDBID = ItemID.GetTDBID(data.GetID());
-  if Equals(tweakDbID, t"Items.money") && moneyCfg.removeWorldPlaced {
-    EntityGameInterface.Destroy(this.GetEntity());
-    return ;
-  };
-  wrappedMethod(entID);
-}
+public abstract class ReducedLootMoneyDrop {
 
-
-// --- TWEAK CONTAINERS
-
-@addField(gameLootContainerBase)
-private let moneyCfg: ref<ReducedLootMoneyConfig>;
-
-@wrapMethod(gameLootContainerBase)
-protected cb func OnGameAttached() -> Bool {
-  this.moneyCfg = new ReducedLootMoneyConfig();
-  return wrappedMethod();
-}
-
-@wrapMethod(gameLootContainerBase)
-private final func EvaluateLootQuality() -> Bool {
-  let wrapped: Bool = wrappedMethod();
-  let ts: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.GetGame());
-  let lootItems: array<wref<gameItemData>>;
-  let tweakDbID: TweakDBID;
-  if ts.GetItemList(this, lootItems) && !this.m_hasQuestItems {
-    for lootItem in lootItems {
-      tweakDbID = ItemID.GetTDBID(lootItem.GetID());
-      if Equals(tweakDbID, t"Items.money") {
-        this.HandleMoneyDrop(ts, lootItem);
-      };
+  public static func ShouldDelete(data: ref<gameItemData>, cfg: ref<ReducedLootMoneyConfig>) -> Bool {
+    let tweakDbID: TweakDBID = ItemID.GetTDBID(data.GetID());
+    if Equals(tweakDbID, t"Items.money") {
+      return cfg.removeWorldPlaced;
     };
-  };
-  return wrapped;
-}
 
-@addMethod(gameLootContainerBase)
-private final func HandleMoneyDrop(ts: ref<TransactionSystem>, item: wref<gameItemData>) -> Void {
-  ts.RemoveItem(this, item.GetID(), item.GetQuantity());
-  let newQuantity: Int32;
-  if this.moneyCfg.dropCountMax > this.moneyCfg.dropCountMin {
-    newQuantity = RandRange(this.moneyCfg.dropCountMin, this.moneyCfg.dropCountMax);
-    ts.GiveItem(this, item.GetID(), newQuantity);
-  };
-}
+    return false;
+  }
 
-
-// --- TWEAK NPCS
-
-@addField(ScriptedPuppet)
-private let moneyCfg: ref<ReducedLootMoneyConfig>;
-
-@wrapMethod(ScriptedPuppet)
-protected cb func OnGameAttached() -> Bool {
-  this.moneyCfg = new ReducedLootMoneyConfig();
-  return wrappedMethod();
-}
-
-@wrapMethod(ScriptedPuppet)
-private final func EvaluateLootQuality() -> Bool {
-  let wrapped: Bool = wrappedMethod();
-  let ts: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.GetGame());
-  let lootItems: array<wref<gameItemData>>;
-  let tweakDbID: TweakDBID;
-  if ts.GetItemList(this, lootItems) && !this.m_hasQuestItems {
-    for lootItem in lootItems {
-      tweakDbID = ItemID.GetTDBID(lootItem.GetID());
-      if Equals(tweakDbID, t"Items.money") {
-        this.HandleMoneyDrop(ts, lootItem);
-      };
+  public static func TweakEvaluated(owner: ref<GameObject>, ts: ref<TransactionSystem>, data: wref<gameItemData>, cfg: ref<ReducedLootMoneyConfig>) -> Void {
+    let tweakDbID: TweakDBID = ItemID.GetTDBID(data.GetID());
+    if Equals(tweakDbID, t"Items.money") {
+      ReducedLootMoneyDrop.HandleDrop(owner, ts, data, cfg);
     };
-  };
-  return wrapped;
-}
+  }
 
-@addMethod(ScriptedPuppet)
-private final func HandleMoneyDrop(ts: ref<TransactionSystem>, item: wref<gameItemData>) -> Void {
-  ts.RemoveItem(this, item.GetID(), item.GetQuantity());
-  let newQuantity: Int32;
-  if this.moneyCfg.dropCountMax > this.moneyCfg.dropCountMin {
-    newQuantity = RandRange(this.moneyCfg.dropCountMin, this.moneyCfg.dropCountMax);
-    ts.GiveItem(this, item.GetID(), newQuantity);
-  };
+  private static func HandleDrop(owner: ref<GameObject>, ts: ref<TransactionSystem>, data: wref<gameItemData>, cfg: ref<ReducedLootMoneyConfig>) -> Void {
+    ts.RemoveItem(owner, data.GetID(), data.GetQuantity());
+    let newQuantity: Int32;
+    if cfg.dropCountMax > cfg.dropCountMin {
+      newQuantity = RandRange(cfg.dropCountMin, cfg.dropCountMax);
+      ts.GiveItem(owner, data.GetID(), newQuantity);
+    };
+  }
 }
