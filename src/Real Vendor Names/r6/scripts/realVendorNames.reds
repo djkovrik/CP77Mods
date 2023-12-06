@@ -3,7 +3,8 @@ public func SetData(const data: script_ref<WorldMapTooltipData>, menu: ref<World
   wrappedMethod(data, menu);
 
   let vendorName: String = this.GetRealVendorName(data);
-  if NotEquals(vendorName, "") {
+  let variant: gamedataMappinVariant = Deref(data).mappin.GetVariant();
+  if NotEquals(vendorName, "") && NotEquals(variant, gamedataMappinVariant.ServicePointRipperdocVariant) {
     inkTextRef.SetText(this.m_titleText, vendorName);
   };
 }
