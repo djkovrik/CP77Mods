@@ -16,8 +16,8 @@ protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> 
 }
 
 @wrapMethod(interactionItemLogicController)
-private final func SetLabel(data: script_ref<InteractionChoiceData>) -> Void {
-  wrappedMethod(data);
+private final func SetLabel(data: script_ref<InteractionChoiceData>, isItemBroken: Bool) -> Void {
+  wrappedMethod(data, isItemBroken);
   let dataLocalizedName: String = Deref(data).localizedName;
 
   // Get in / Get on

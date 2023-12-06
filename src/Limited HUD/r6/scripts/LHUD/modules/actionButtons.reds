@@ -215,13 +215,13 @@ protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> 
 
 // IN VEHICLE RADIO
 
-@addMethod(HotkeyRadioWidgetController)
+@addMethod(HotkeyCustomRadioWidgetController)
 protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
   this.ConsumeLHUDEvent(evt);
   this.DetermineCurrentVisibility();
 }
 
-@addMethod(HotkeyRadioWidgetController)
+@addMethod(HotkeyCustomRadioWidgetController)
 public func DetermineCurrentVisibility() -> Void {
   if !this.lhudConfig.IsEnabled {
     return ;
@@ -245,10 +245,10 @@ public func DetermineCurrentVisibility() -> Void {
   };
 }
 
-@addField(HotkeyRadioWidgetController)
+@addField(HotkeyCustomRadioWidgetController)
 private let lhudConfig: ref<ActionButtonsModuleConfig>;
 
-@wrapMethod(HotkeyRadioWidgetController)
+@wrapMethod(HotkeyCustomRadioWidgetController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
   this.lhudConfig = new ActionButtonsModuleConfig();
@@ -259,13 +259,7 @@ protected cb func OnInitialize() -> Bool {
   };
 }
 
-@addMethod(HotkeyRadioWidgetController)
+@addMethod(HotkeyCustomRadioWidgetController)
 protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> Void {
   this.lhudConfig = new ActionButtonsModuleConfig();
-}
-
-@wrapMethod(HotkeyRadioWidgetController)
-protected final func ResolveState() -> Void {
-  wrappedMethod();
-  this.DetermineCurrentVisibility();
 }
