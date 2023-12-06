@@ -29,11 +29,6 @@ public class SleevesConfig {
   @runtimeProperty("ModSettings.displayName", "Gameplay-Items-Item Type-Cyb_MantisBlades")
   public let compatMantis: Bool = false;
 
-  @runtimeProperty("ModSettings.mod", "Sleeves")
-  @runtimeProperty("ModSettings.category", "Gameplay-Items-Item Type-Gen_Misc")
-  @runtimeProperty("ModSettings.displayName", "UI-Settings-Language-Debug")
-  public let showDebugLogs: Bool = false;
-
   public static func IncompatibleCyberware() -> array<gamedataItemType> {
     let config: ref<SleevesConfig> = new SleevesConfig();
     let result: array<gamedataItemType>;
@@ -47,11 +42,6 @@ public class SleevesConfig {
   public static func IsModDisabled() -> Bool {
     let config: ref<SleevesConfig> = new SleevesConfig();
     return config.disabled;
-  }
-
-  public static func IsDebugLogsEnabled() -> Bool {
-    let config: ref<SleevesConfig> = new SleevesConfig();
-    return config.showDebugLogs;
   }
 }
 
@@ -301,9 +291,7 @@ public class SleevesControlSystem extends ScriptableSystem {
   }
 
   private func Log(str: String) -> Void {
-    if SleevesConfig.IsDebugLogsEnabled() {
-      // LogChannel(n"DEBUG", s"Sleeves: \(str)");
-    };
+    // LogChannel(n"DEBUG", s"Sleeves: \(str)");
   }
 }
 
