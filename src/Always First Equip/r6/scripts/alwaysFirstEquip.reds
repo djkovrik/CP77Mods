@@ -31,6 +31,7 @@ public class FirstEquipConfig {
   // Defines firstEquip animation probability in percents, you can use values from 0 to 100 here
   @runtimeProperty("ModSettings.mod", "First Equip")
   @runtimeProperty("ModSettings.category", "Mod-First-Equip-Triggering")
+  @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Percentage")
   @runtimeProperty("ModSettings.description", "Mod-First-Equip-Percentage-Desc")
   @runtimeProperty("ModSettings.step", "5")
@@ -41,6 +42,7 @@ public class FirstEquipConfig {
   // Use cooldown instead of probability
   @runtimeProperty("ModSettings.mod", "First Equip")
   @runtimeProperty("ModSettings.category", "Mod-First-Equip-Triggering")
+  @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Cooldowns")
   @runtimeProperty("ModSettings.description", "Mod-First-Equip-Cooldowns-Desc")
   let useCooldownBasedCheck: Bool = false;
@@ -48,6 +50,7 @@ public class FirstEquipConfig {
   // Cooldown time
   @runtimeProperty("ModSettings.mod", "First Equip")
   @runtimeProperty("ModSettings.category", "Mod-First-Equip-Triggering")
+  @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Cooldowns-Time")
   @runtimeProperty("ModSettings.description", "Mod-First-Equip-Cooldowns-Time-Desc")
   @runtimeProperty("ModSettings.step", "1")
@@ -58,6 +61,7 @@ public class FirstEquipConfig {
   // Cooldown time units: 1 = seconds, 2 = minutes
   @runtimeProperty("ModSettings.mod", "First Equip")
   @runtimeProperty("ModSettings.category", "Mod-First-Equip-Triggering")
+  @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Cooldowns-Time-Unit")
   @runtimeProperty("ModSettings.description", "Mod-First-Equip-Cooldowns-Time-Unit-Desc")
   @runtimeProperty("ModSettings.displayValues.Seconds", "Mod-First-Equip-Seconds")
@@ -67,6 +71,7 @@ public class FirstEquipConfig {
   // Replace false with true if you want see firstEquip animation while in combat mode
   @runtimeProperty("ModSettings.mod", "First Equip")
   @runtimeProperty("ModSettings.category", "Mod-First-Equip-Restrictions")
+  @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Restrictions-Combat")
   @runtimeProperty("ModSettings.description", "Mod-First-Equip-Restrictions-Combat-Desc")
   let playInCombatMode: Bool = false;
@@ -74,6 +79,7 @@ public class FirstEquipConfig {
   // Replace false with true if you want see firstEquip animation while in stealth mode
   @runtimeProperty("ModSettings.mod", "First Equip")
   @runtimeProperty("ModSettings.category", "Mod-First-Equip-Restrictions")
+  @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Restrictions-Stealth")
   @runtimeProperty("ModSettings.description", "Mod-First-Equip-Restrictions-Stealth-Desc")
   let playInStealthMode: Bool = false;
@@ -81,6 +87,7 @@ public class FirstEquipConfig {
   // Replace false with true if you want see firstEquip animation when weapon magazine is empty
   @runtimeProperty("ModSettings.mod", "First Equip")
   @runtimeProperty("ModSettings.category", "Mod-First-Equip-Restrictions")
+  @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Restrictions-Magazine")
   @runtimeProperty("ModSettings.description", "Mod-First-Equip-Restrictions-Magazine-Desc")
   let playWhenMagazineIsEmpty: Bool = false;
@@ -88,6 +95,7 @@ public class FirstEquipConfig {
   // Replace false with true if you want see firstEquip animation while sprinting
   @runtimeProperty("ModSettings.mod", "First Equip")
   @runtimeProperty("ModSettings.category", "Mod-First-Equip-Restrictions")
+  @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Restrictions-Sprinting")
   @runtimeProperty("ModSettings.description", "Mod-First-Equip-Restrictions-Sprinting-Desc")
   let playWhileSprinting: Bool = false;
@@ -95,6 +103,7 @@ public class FirstEquipConfig {
   // Replace false with true if you want to prevent probability based animations for arms cyberware
   @runtimeProperty("ModSettings.mod", "First Equip")
   @runtimeProperty("ModSettings.category", "Mod-First-Equip-Restrictions")
+  @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Restrictions-ArmsCW")
   @runtimeProperty("ModSettings.description", "Mod-First-Equip-Restrictions-ArmsCW-Desc")
   let excludeArmsCyberware: Bool = true;
@@ -106,6 +115,7 @@ public class FirstEquipConfig {
   // if disabled then hotkey press always equips weapon from slot defined by DefaultSlotNumber
   @runtimeProperty("ModSettings.mod", "First Equip")
   @runtimeProperty("ModSettings.category", "Mod-First-Equip-Hotkey")
+  @runtimeProperty("ModSettings.category.order", "3")
   @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Hotkey-Track")
   @runtimeProperty("ModSettings.description", "Mod-First-Equip-Hotkey-Track-Desc")
   let trackLastUsedSlot: Bool = true;
@@ -113,6 +123,7 @@ public class FirstEquipConfig {
   // Default slot number
   @runtimeProperty("ModSettings.mod", "First Equip")
   @runtimeProperty("ModSettings.category", "Mod-First-Equip-Hotkey")
+  @runtimeProperty("ModSettings.category.order", "3")
   @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Hotkey-Default")
   @runtimeProperty("ModSettings.description", "Mod-First-Equip-Hotkey-Default-Desc")
   @runtimeProperty("ModSettings.step", "1")
@@ -124,6 +135,7 @@ public class FirstEquipConfig {
   // Replace true with false if you want to unbind IdleBreak animation trigger from a custom hotkey
   @runtimeProperty("ModSettings.mod", "First Equip")
   @runtimeProperty("ModSettings.category", "Mod-First-Equip-IdleBreak")
+  @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-IdleBreak-Bind")
   @runtimeProperty("ModSettings.description", "Mod-First-Equip-IdleBreak-Bind-Desc")
   let bindToHotkeyIdleBreak: Bool = true;
@@ -131,6 +143,7 @@ public class FirstEquipConfig {
   // Set IdleBreak animation probability in percents, you can use values from 0 to 100 here
   @runtimeProperty("ModSettings.mod", "First Equip")
   @runtimeProperty("ModSettings.category", "Mod-First-Equip-IdleBreak")
+  @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-IdleBreak-Probability")
   @runtimeProperty("ModSettings.description", "Mod-First-Equip-IdleBreak-Probability-Desc")
   @runtimeProperty("ModSettings.step", "5")
@@ -142,6 +155,7 @@ public class FirstEquipConfig {
   // probability value from AnimationProbability option (with default settings it runs each 5 seconds with 10% probability)
   @runtimeProperty("ModSettings.mod", "First Equip")
   @runtimeProperty("ModSettings.category", "Mod-First-Equip-IdleBreak")
+  @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-IdleBreak-Check")
   @runtimeProperty("ModSettings.description", "Mod-First-Equip-IdleBreak-Check-Desc")
   @runtimeProperty("ModSettings.step", "5.0")
