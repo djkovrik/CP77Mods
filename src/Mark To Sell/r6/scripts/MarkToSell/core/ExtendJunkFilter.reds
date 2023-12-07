@@ -19,3 +19,9 @@ public final func GetFilterCategory() -> ItemFilterCategory {
   };
   return wrappedMethod();
 }
+
+@wrapMethod(UIInventoryItem)
+public final func IsJunk() -> Bool {
+  let data: ref<gameItemData> = this.GetItemData();
+  return wrappedMethod() || data.modMarkedForSale;
+}
