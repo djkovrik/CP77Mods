@@ -150,7 +150,7 @@ class SmarterScrapperEdiblesConfig {
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "Gameplay-Items-Item Type-Con_Edible")
   @runtimeProperty("ModSettings.category.order", "5")
-  @runtimeProperty("ModSettings.displayName", "Gameplay-Items-Item Type-Con_Edible")
+  @runtimeProperty("ModSettings.displayName", "LocKey#4933")
   @runtimeProperty("ModSettings.step", "1")
   @runtimeProperty("ModSettings.min", "1")
   @runtimeProperty("ModSettings.max", "20")
