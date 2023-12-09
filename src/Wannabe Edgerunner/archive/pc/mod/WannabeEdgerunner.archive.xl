@@ -8,3 +8,4 @@ localization:
     jp-jp: base\localization\jp-jp\onscreens\wannabeedgerunner.json
     th-th: base\localization\th-th\onscreens\wannabeedgerunner.json
     es-es: base\localization\es-es\onscreens\wannabeedgerunner.json
+    pt-br: base\localization\pt-br\onscreens\wannabeedgerunner.json
