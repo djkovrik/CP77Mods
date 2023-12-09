@@ -53,6 +53,7 @@ public class LHUDBlackboardsListener {
   private let weaponCallback: ref<CallbackHandle>;        // Ref for registered weapon state callback
   private let zoomCallback: ref<CallbackHandle>;          // Ref for registered zoom value callback
   private let stealthCallback: ref<CallbackHandle>;       // Ref for registered locomotion value callback
+  private let metroCallback: ref<CallbackHandle>;         // Ref for registered metro ride value callback
 
   private let delaySystem: ref<DelaySystem>;
   private let delayId: DelayID;
@@ -84,6 +85,7 @@ public class LHUDBlackboardsListener {
     this.weaponCallback = this.weaponBlackboard.RegisterListenerBool(this.bbDefs.UI_EquipmentData.HasWeaponEquipped, this, n"OnWeaponStateChanged");
     this.zoomCallback = this.stateMachineBlackboard.RegisterListenerFloat(this.bbDefs.PlayerStateMachine.ZoomLevel, this, n"OnZoomChanged");
     this.stealthCallback = this.stateMachineBlackboard.RegisterListenerInt(this.bbDefs.PlayerStateMachine.Locomotion, this, n"OnCrouchChanged");
+    this.metroCallback = this.uiSystemBlackboard.RegisterListenerBool(this.bbDefs.UI_System.IsInMetro_LHUD, this, n"OnMetroStateChanged");
   }
 
   // Unregister listeners
@@ -98,6 +100,7 @@ public class LHUDBlackboardsListener {
     this.weaponBlackboard.UnregisterListenerBool(this.bbDefs.UI_EquipmentData.HasWeaponEquipped, this.weaponCallback);
     this.stateMachineBlackboard.UnregisterListenerFloat(this.bbDefs.PlayerStateMachine.ZoomLevel, this.zoomCallback);
     this.stateMachineBlackboard.UnregisterListenerInt(this.bbDefs.PlayerStateMachine.Locomotion, this.stealthCallback);
+    this.uiSystemBlackboard.UnregisterListenerBool(this.bbDefs.UI_System.IsInMetro_LHUD, this.metroCallback);
 
     this.delaySystem.CancelCallback(this.delayId);
   }
@@ -173,13 +176,18 @@ public class LHUDBlackboardsListener {
     this.playerInstance.QueueLHUDEvent(LHUDEventType.Zoom, playerHasNoWeapon && zoomActive);
   }
 
-  // Crouch  value bb callback
+  // Crouch value bb callback
   protected cb func OnCrouchChanged(value: Int32) -> Bool {
     let newValue: gamePSMLocomotionStates = IntEnum<gamePSMLocomotionStates>(value);
     let crouched: Bool = Equals(newValue, gamePSMLocomotionStates.Crouch) 
       || Equals(newValue, gamePSMLocomotionStates.CrouchSprint) 
       || Equals(newValue, gamePSMLocomotionStates.CrouchDodge);
     this.playerInstance.QueueLHUDEvent(LHUDEventType.Stealth, crouched);
+  }
+
+  // Metro value bb callback
+  protected cb func OnMetroStateChanged(value: Bool) -> Bool {
+    this.playerInstance.QueueLHUDEvent(LHUDEventType.Metro, value);
   }
 }
 
@@ -304,4 +312,27 @@ private final func DisarmPlayer() -> Void {
   let equipmentDataDef: ref<UI_EquipmentDataDef> = GetAllBlackboardDefs().UI_EquipmentData;
   GameInstance.GetBlackboardSystem(this.GetPlayerControlledObject().GetGame()).Get(equipmentDataDef).SetBool(equipmentDataDef.HasWeaponEquipped, false);
   wrappedMethod();
+}
+
+// METRO
+@wrapMethod(PocketRadio)
+public final func OnStatusEffectApplied(evt: ref<ApplyStatusEffectEvent>, gameplayTags: script_ref<array<CName>>) -> Void {
+  wrappedMethod(evt, gameplayTags);
+  if ArrayContains(Deref(gameplayTags), n"MetroRide") {
+    this.RefreshMetroFlag(true);
+  };
+}
+
+
+@wrapMethod(PocketRadio)
+public final func OnStatusEffectRemoved(evt: ref<RemoveStatusEffect>, gameplayTags: script_ref<array<CName>>) -> Void {
+  wrappedMethod(evt, gameplayTags);
+  if ArrayContains(Deref(gameplayTags), n"MetroRide") {
+    this.RefreshMetroFlag(false);
+  };
+}
+
+@addMethod(PocketRadio)
+private final func RefreshMetroFlag(value: Bool) -> Void {
+  GameInstance.GetBlackboardSystem(this.m_player.GetGame()).Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.IsInMetro_LHUD, value, true);
 }

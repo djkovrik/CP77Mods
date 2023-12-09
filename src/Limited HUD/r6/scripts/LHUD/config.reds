@@ -216,6 +216,13 @@ public class HintsModuleConfig {
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Zoom-Desc")
   let ShowWithZoom: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Hotkey-Hints")
+  @runtimeProperty("ModSettings.category.order", "4")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Metro")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Metro-Desc")
+  let ShowInMetro: Bool = true;
 }
 
 public class MinimapModuleConfig {

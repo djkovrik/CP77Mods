@@ -16,6 +16,7 @@ enum LHUDEventType {
   Zoom = 10,
   Refresh = 11,
   ForceVisibility = 12,
+  Metro = 13,
 }
 
 enum LHUDFillColors {
@@ -80,6 +81,7 @@ public class LHUDStealthRunnerRefreshed extends Event {}
 // Blackboard flags for global and minimap toggles
 @addField(UI_SystemDef) public let IsGlobalFlagToggled_LHUD: BlackboardID_Bool;
 @addField(UI_SystemDef) public let IsMinimapToggled_LHUD: BlackboardID_Bool;
+@addField(UI_SystemDef) public let IsInMetro_LHUD: BlackboardID_Bool;
 
 // Visibility condition flags for inkGameController instances
 @addField(inkGameController) public let lhud_isVisibilityForced: Bool;
@@ -93,6 +95,7 @@ public class LHUDStealthRunnerRefreshed extends Event {}
 @addField(inkGameController) public let lhud_isInVehicle: Bool;
 @addField(inkGameController) public let lhud_isWeaponUnsheathed: Bool;
 @addField(inkGameController) public let lhud_isZoomActive: Bool;
+@addField(inkGameController) public let lhud_isInMetro: Bool;
 @addField(inkGameController) public let lhud_isVisibleNow: Bool;
 
 // Visibility condition flags for inkLogicController instances
@@ -161,6 +164,9 @@ protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
       break;
     case LHUDEventType.Zoom: 
       this.lhud_isZoomActive = evt.isActive;
+      break;
+    case LHUDEventType.Metro:
+      this.lhud_isInMetro = evt.isActive;
       break;
     case LHUDEventType.ForceVisibility:
       this.lhud_isVisibilityForced = evt.isActive;
