@@ -764,16 +764,18 @@ public class EdgerunningSystem extends ScriptableSystem {
       return ;
     };
 
-    // Detect pre-psychosis
-    if this.currentHumanityPool < this.psychosisThreshold && this.currentHumanityPool > 0 && !this.effectsChecker.IsNewPrePsychosisActive() {
-      this.RunPrePsychosisFlow();
-      return ;
-    };
-
     // Detect psychosis
     if this.currentHumanityPool <= 0 && this.config.alwaysRunAtZero && !this.effectsChecker.IsNewPsychosisActive() {
       this.RunPsychosisFlow();
     };
+
+    // Detect pre-psychosis
+    if this.currentHumanityPool < this.psychosisThreshold && !this.effectsChecker.IsNewPrePsychosisActive() {
+      this.RunPrePsychosisFlow();
+      return ;
+    };
+
+    E("NO EFFECTS APPLIED");
   }
 
   public func IsPsychosisActive() -> Bool {
@@ -902,7 +904,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   public static func Debug(gi: GameInstance) -> Void {
     let system: ref<EdgerunningSystem> = EdgerunningSystem.GetInstance(gi);
     // system.RunPsychosisFlow();
-    system.AddHumanityDamage(4);
+    system.AddHumanityDamage(10);
     system.InvalidateCurrentState(false);
     // system.effectsHelper.RunNewPrePsychosisEffect();
     // system.effectsHelper.RunNewPsychosisEffect();
