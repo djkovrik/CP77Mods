@@ -176,17 +176,17 @@ public class EdgerunningSystem extends ScriptableSystem {
   public func ScheduleNextPsychoCheck() -> Void {
     let nextRun: Float = Cast<Float>(this.config.pcychoCheckPeriod) * 60.0;
     E(s"? Psycho check - scheduled after \(nextRun) seconds");
-    this.psychosisCheckDelayId = this.delaySystem.DelayCallback(LaunchCycledPsychosisCheckCallback.Create(this), nextRun, false);
+    this.psychosisCheckDelayId = this.delaySystem.DelayCallback(LaunchCycledPsychosisCheckCallback.Create(this), nextRun, true);
   }
 
   public func SchedulePostPsychosisEffect(delay: Float) -> Void {
     E(s"? Post Psycho effect - scheduled after \(delay) seconds");
-    this.postPsychosisDelayId = this.delaySystem.DelayCallback(LaunchPostPsychosisEffectCallback.Create(this), delay, false);
+    this.postPsychosisDelayId = this.delaySystem.DelayCallback(LaunchPostPsychosisEffectCallback.Create(this), delay, true);
   }
 
   public func ScheduleHumanityRestoreEffect(delay: Float) -> Void {
     E(s"? Post Psycho Humanity restore - scheduled after \(delay) seconds");
-    this.humanityRestoreDelayId = this.delaySystem.DelayCallback(LaunchPostPsychosisHumanityRestoreCallback.Create(this), delay, false);
+    this.humanityRestoreDelayId = this.delaySystem.DelayCallback(LaunchPostPsychosisHumanityRestoreCallback.Create(this), delay, true);
   }
 
 
@@ -877,7 +877,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     } else {
       if !this.IsHumanityRestored() {
         E(s"? Rescheduled next psycho check after \(nextRun) seconds");
-        this.psychosisCheckDelayId = this.delaySystem.DelayCallback(LaunchCycledPsychosisCheckCallback.Create(this), nextRun, false);
+        this.psychosisCheckDelayId = this.delaySystem.DelayCallback(LaunchCycledPsychosisCheckCallback.Create(this), nextRun, true);
       };
     };
   }

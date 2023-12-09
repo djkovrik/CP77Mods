@@ -86,7 +86,7 @@ public class PsychosisEffectsHelper {
 
   public func ScheduleCycledSfx(delay: Float) -> Void {
     E("Sfx - Schedule cycled fx");
-    this.cycledSFXDelayId = this.delaySystem.DelayCallback(LaunchCycledSFXCallback.Create(this), delay, false);
+    this.cycledSFXDelayId = this.delaySystem.DelayCallback(LaunchCycledSFXCallback.Create(this), delay, true);
   }
 
   public func CancelCycledFx() -> Void {
@@ -115,7 +115,7 @@ public class PsychosisEffectsHelper {
     let random: Int32 = RandRange(0, ArraySize(this.cyberpsychosisSFX));
     let bundle: ref<SFXBundle> = this.cyberpsychosisSFX[random];
     this.PlaySFX(bundle.name);
-    this.cycledSFXDelayId = this.delaySystem.DelayCallback(LaunchCycledSFXCallback.Create(this), bundle.nextDelay, false);
+    this.cycledSFXDelayId = this.delaySystem.DelayCallback(LaunchCycledSFXCallback.Create(this), bundle.nextDelay, true);
   }
 
   private func PlaySFX(name: CName) -> Void {
@@ -129,11 +129,11 @@ public class PsychosisEffectsHelper {
   }
 
   private func PlaySFXDelayed(name: CName, delay: Float) -> Void {
-    this.delaySystem.DelayCallback(PlaySFXCallback.Create(this.player, name), delay);
+    this.delaySystem.DelayCallback(PlaySFXCallback.Create(this.player, name), delay, true);
   }
 
   private func PlayVFXDelayed(name: CName, delay: Float) -> Void {
-    this.delaySystem.DelayCallback(PlayVFXCallback.Create(this.player, name), delay);
+    this.delaySystem.DelayCallback(PlayVFXCallback.Create(this.player, name), delay, true);
   }
 
   private func StopSFX(name: CName) -> Void {
@@ -147,11 +147,11 @@ public class PsychosisEffectsHelper {
   }
 
   private func ApplyStatusEffect(id: TweakDBID, delay: Float) {
-    this.delaySystem.DelayCallback(ApplyStatusEffectCallback.Create(this.player, id), delay);
+    this.delaySystem.DelayCallback(ApplyStatusEffectCallback.Create(this.player, id), delay, true);
   }
 
   private func RemoveStatusEffect(id: TweakDBID, delay: Float) {
-    this.delaySystem.DelayCallback(RemoveStatusEffectCallback.Create(this.player, id), delay);
+    this.delaySystem.DelayCallback(RemoveStatusEffectCallback.Create(this.player, id), delay, true);
   }
 
   private func PopulateSfxArray() -> Void {

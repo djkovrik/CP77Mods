@@ -32,7 +32,7 @@ public class TeleportHelper {
   public func ScheduleTeleport(delay: Float) -> Void {
     E(s"Teleport - Schedule teleport after \(delay)");
     this.CancelScheduledTeleportEvents();
-    this.prepareTeleportDelayId = this.delaySystem.DelayCallback(PrepareTeleportCallback.Create(this), delay, false);
+    this.prepareTeleportDelayId = this.delaySystem.DelayCallback(PrepareTeleportCallback.Create(this), delay, true);
   }
 
   public func CancelScheduledTeleportEvents() -> Void {
@@ -62,7 +62,7 @@ public class TeleportHelper {
     this.effectsHelper.PlayFastTravelFx();
 
     let teleportCallback: ref<PlayerTeleportCallback> = PlayerTeleportCallback.Create(this, position);
-    this.teleportDelayId = this.delaySystem.DelayCallback(teleportCallback, 0.9, false);
+    this.teleportDelayId = this.delaySystem.DelayCallback(teleportCallback, 0.9, true);
   }
 
   private func OnPlayerTeleportCallback(position: Vector4) -> Void {
@@ -73,7 +73,7 @@ public class TeleportHelper {
     this.RequestLoadingScreen();
     let rotation: EulerAngles;
     GameInstance.GetTeleportationFacility(this.player.GetGame()).Teleport(this.player, position, rotation);
-    this.postTeleportEffectsDelayId = this.delaySystem.DelayCallback(PostTeleportEffectsCallback.Create(this), 1.5, false);
+    this.postTeleportEffectsDelayId = this.delaySystem.DelayCallback(PostTeleportEffectsCallback.Create(this), 1.5, true);
   }
 
   private func OnPostTeleportEffectsCallback() -> Void {

@@ -25,10 +25,10 @@ public class TeleportVictimsHelper {
   public func ScheduleVictimsSpawn(destination: ref<TeleportData>) -> Void {
     let position: Vector4 = TeleportData.GetRandomCoordinates(destination);
     E(s"Victims - selected destination: \(position) at \(destination.district)");
-    this.victimSpawnDelayId1 = this.delaySystem.DelayCallback(VictimsSpawnCallback.Create(this, position, destination.maleVictim), 0.1, false);
-    this.victimSpawnDelayId2 = this.delaySystem.DelayCallback(VictimsSpawnCallback.Create(this, position, destination.femaleVictim), 0.2, false);
-    this.victimSpawnDelayId3 = this.delaySystem.DelayCallback(VictimsSpawnCallback.Create(this, position, destination.maleVictim), 0.3, false);
-    this.victimSpawnDelayId4 = this.delaySystem.DelayCallback(VictimsSpawnCallback.Create(this, position, destination.femaleVictim), 0.4, false);
+    this.victimSpawnDelayId1 = this.delaySystem.DelayCallback(VictimsSpawnCallback.Create(this, position, destination.maleVictim), 0.1, true);
+    this.victimSpawnDelayId2 = this.delaySystem.DelayCallback(VictimsSpawnCallback.Create(this, position, destination.femaleVictim), 0.2, true);
+    this.victimSpawnDelayId3 = this.delaySystem.DelayCallback(VictimsSpawnCallback.Create(this, position, destination.maleVictim), 0.3, true);
+    this.victimSpawnDelayId4 = this.delaySystem.DelayCallback(VictimsSpawnCallback.Create(this, position, destination.femaleVictim), 0.4, true);
   }
 
   public func CancelScheduledVictimSpawns() -> Void {

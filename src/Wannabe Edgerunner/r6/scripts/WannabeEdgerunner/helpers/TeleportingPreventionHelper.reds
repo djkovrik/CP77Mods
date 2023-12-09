@@ -24,13 +24,13 @@ public class TeleportingPreventionHelper {
 
   public func SchedulePoliceActivity(delay: Float) -> Void {
     E("Prevention - Schedule police flow");
-    this.policeActivityDelayId = this.delaySystem.DelayCallback(LaunchPoliceActivityCallback.Create(this), delay, false);
+    this.policeActivityDelayId = this.delaySystem.DelayCallback(LaunchPoliceActivityCallback.Create(this), delay, true);
   }
 
   public func ScheduleRandomWeaponActions(delay: Float) -> Void {
     E("Prevention - Schedule random shot");
-    this.drawWeaponDelayId = this.delaySystem.DelayCallback(TriggerDrawWeaponCallback.Create(this), delay, false);
-    this.randomShotsDelayId = this.delaySystem.DelayCallback(TriggerRandomShotCallback.Create(this), delay + 2.0, false);
+    this.drawWeaponDelayId = this.delaySystem.DelayCallback(TriggerDrawWeaponCallback.Create(this), delay, true);
+    this.randomShotsDelayId = this.delaySystem.DelayCallback(TriggerRandomShotCallback.Create(this), delay + 2.0, true);
   }
 
   public func CancelScheduledPreventionActivity() -> Void {
