@@ -233,7 +233,10 @@ public abstract class ReducedLootAmmoTweaker {
   }
 }
 
-@replaceMethod(PlayerHandicapSystem)
+@wrapMethod(PlayerHandicapSystem)
 public final const func CanDropAmmo() -> Bool {
-  return false;
+  let cfg: ref<ReducedLootAmmoConfig> = new ReducedLootAmmoConfig();
+  if cfg.enabled { return false; };
+
+  return wrappedMethod();
 }

@@ -206,6 +206,8 @@ public abstract class ReducedLootMoneyTweaker {
 public abstract class ReducedLootMoneyDrop {
 
   public static func ShouldDelete(data: ref<gameItemData>, cfg: ref<ReducedLootMoneyConfig>) -> Bool {
+    if !cfg.enabled { return false; };
+
     let tweakDbID: TweakDBID = ItemID.GetTDBID(data.GetID());
     if Equals(tweakDbID, t"Items.money") {
       return cfg.removeWorldPlaced;
@@ -215,6 +217,8 @@ public abstract class ReducedLootMoneyDrop {
   }
 
   public static func TweakEvaluated(owner: ref<GameObject>, ts: ref<TransactionSystem>, data: wref<gameItemData>, cfg: ref<ReducedLootMoneyConfig>) -> Void {
+     if !cfg.enabled { return ; };
+    
     let tweakDbID: TweakDBID = ItemID.GetTDBID(data.GetID());
     if Equals(tweakDbID, t"Items.money") {
       ReducedLootMoneyDrop.HandleDrop(owner, ts, data, cfg);
