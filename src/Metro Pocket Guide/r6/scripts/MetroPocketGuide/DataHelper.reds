@@ -25,6 +25,31 @@ public abstract class MetroDataHelper {
     return ENcartStations.NONE;
   }
 
+  public final static func GetStationNameByLocKey(locKey: String) -> ENcartStations {
+    switch locKey {
+      case "LocKey#44731": return ENcartStations.ARASAKA_WATERFRONT;
+      case "LocKey#44728": return ENcartStations.LITTLE_CHINA_HOSPITAL;
+      case "LocKey#44727": return ENcartStations.LITTLE_CHINA_NORTH;
+      case "LocKey#52587": return ENcartStations.LITTLE_CHINA_SOUTH;
+      case "LocKey#44715": return ENcartStations.JAPAN_TOWN_NORTH;
+      case "LocKey#44716": return ENcartStations.JAPAN_TOWN_SOUTH;
+      case "LocKey#44700": return ENcartStations.DOWNTOWN_NORTH;
+      case "LocKey#52554": return ENcartStations.ARROYO;
+      case "LocKey#44695": return ENcartStations.CITY_CENTER;
+      case "LocKey#52544": return ENcartStations.ARASAKA_TOWER;
+      case "LocKey#44679": return ENcartStations.WELLSPRINGS;
+      case "LocKey#44675": return ENcartStations.GLEN_NORTH;
+      case "LocKey#44676": return ENcartStations.GLEN_SOUTH;
+      case "LocKey#44683": return ENcartStations.VISTA_DEL_REY;
+      case "LocKey#44707": return ENcartStations.RANCHO_CORONADO;
+      case "LocKey#52585": return ENcartStations.LITTLE_CHINA_MEGABUILDING;
+      case "LocKey#52574": return ENcartStations.CHARTER_HILL;
+      case "LocKey#52532": return ENcartStations.GLEN_EBUNIKE;
+      case "LocKey#44687": return ENcartStations.PACIFICA_STADIUM;
+    };
+    return ENcartStations.NONE;
+  }
+
   public final static func GetStationLinesById(id: Int32) -> array<ModNCartLine> {
     switch id {
       case ENcartStations.ARASAKA_WATERFRONT: return [ ModNCartLine.A_RED, ModNCartLine.E_ORANGE ];
