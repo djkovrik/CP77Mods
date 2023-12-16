@@ -128,6 +128,30 @@ public class LineSwitch extends RoutePoint {
   };
 }
 
+public class PocketMetroRouteSelectionEnabledEvent extends Event {
+  public static func Create() -> ref<PocketMetroRouteSelectionEnabledEvent> {
+    let instance: ref<PocketMetroRouteSelectionEnabledEvent> = new PocketMetroRouteSelectionEnabledEvent();
+    return instance;
+  }
+}
+
+public class PocketMetroRouteSelectionDisabledEvent extends Event {
+  public static func Create() -> ref<PocketMetroRouteSelectionDisabledEvent> {
+    let instance: ref<PocketMetroRouteSelectionDisabledEvent> = new PocketMetroRouteSelectionDisabledEvent();
+    return instance;
+  }
+}
+
+public class PocketMetroPlayerMarkerVisibilityEvent extends Event {
+  public let show: Bool;
+
+  public static func Create(show: Bool) -> ref<PocketMetroPlayerMarkerVisibilityEvent> {
+    let instance: ref<PocketMetroPlayerMarkerVisibilityEvent> = new PocketMetroPlayerMarkerVisibilityEvent();
+    instance.show = show;
+    return instance;
+  }
+}
+
 enum RoutePointType {
   NONE = 0,
   STATION = 1,
