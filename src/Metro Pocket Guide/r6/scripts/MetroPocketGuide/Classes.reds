@@ -152,6 +152,16 @@ public class PocketMetroPlayerMarkerVisibilityEvent extends Event {
   }
 }
 
+public class PocketMetroResetPreviousDestinationEvent extends Event {
+  public let destination: ENcartStations;
+
+  public static func Create(destination: ENcartStations) -> ref<PocketMetroResetPreviousDestinationEvent> {
+    let instance: ref<PocketMetroResetPreviousDestinationEvent> = new PocketMetroResetPreviousDestinationEvent();
+    instance.destination = destination;
+    return instance;
+  }
+}
+
 enum RoutePointType {
   NONE = 0,
   STATION = 1,

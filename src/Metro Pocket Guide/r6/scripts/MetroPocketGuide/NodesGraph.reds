@@ -10,6 +10,7 @@ public class MetroNodesGraph extends ScriptableEnv {
     this.stations = new inkHashMap();
 
     this.PopulateGraph();
+    MetroLog("MetroNodesGraph created");
   }
 
   public static final func FindRoute(from: ENcartStations, to: ENcartStations) -> array<ref<RoutePoint>> {

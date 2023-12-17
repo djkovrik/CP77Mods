@@ -1,3 +1,4 @@
+import MetroPocketGuide.Navigator.PocketMetroNavigator
 import Codeware.UI.*
 
 // New buttons widget
@@ -26,27 +27,6 @@ public class PocketMetroNavButton extends HubLinkButton {
   }
 }
 
-@addField(WorldMapMenuGameController)
-public let metroButtonNavigate: wref<PocketMetroNavButton>;
-
-@addField(WorldMapMenuGameController)
-public let metroButtonCancel: wref<PocketMetroNavButton>;
-
-@addField(WorldMapMenuGameController)
-public let metroButtonStop: wref<PocketMetroNavButton>;
-
-@addField(WorldMapMenuGameController)
-private let routeSelectionEnabled: Bool = false;
-
-@addField(WorldMapMenuGameController)
-private let previousCustomFilters: array<Int32>;
-
-@wrapMethod(WorldMapMenuGameController)
-protected cb func OnInitialize() -> Bool {
-  wrappedMethod();
-  this.AddMetroPocketGuideControls();
-}
-
 // Create controls
 @addMethod(WorldMapMenuGameController)
 private final func AddMetroPocketGuideControls() -> Void {
@@ -57,7 +37,7 @@ private final func AddMetroPocketGuideControls() -> Void {
   buttonsContainer.SetAnchor(inkEAnchor.BottomCenter);
   buttonsContainer.SetFitToContent(true);
   buttonsContainer.SetInteractive(false);
-  buttonsContainer.SetAnchorPoint(0.0, 0.5);
+  buttonsContainer.SetAnchorPoint(0.5, 1.0);
   buttonsContainer.SetMargin(0.0, 0.0, 0.0, 120.0);
   buttonsContainer.Reparent(parent);
 
@@ -80,6 +60,13 @@ private final func AddMetroPocketGuideControls() -> Void {
   this.metroButtonStop.SetVisible(false);
   this.metroButtonStop.RegisterToCallback(n"OnClick", this, n"OnStopButtonClick");
   this.metroButtonStop.Reparent(buttonsContainer);
+
+  this.metroButtonConfirm = PocketMetroNavButton.Create();
+  this.metroButtonConfirm.SetText("Confirm");
+  this.metroButtonConfirm.SetName(n"buttonConfirm");
+  this.metroButtonConfirm.SetVisible(false);
+  this.metroButtonConfirm.RegisterToCallback(n"OnClick", this, n"OnConfirmButtonClick");
+  this.metroButtonConfirm.Reparent(buttonsContainer);
 }
 
 
@@ -93,8 +80,11 @@ protected cb func OnNavigateButtonClick(evt: ref<inkPointerEvent>) -> Bool {
     this.routeSelectionEnabled = true;
     this.RefreshFiltersVisibility();
     this.SwitchToCustomFiltersForStations();
-    GameInstance.GetUISystem(this.GetPlayerControlledObject().GetGame()).QueueEvent(PocketMetroRouteSelectionEnabledEvent.Create());
-    GameInstance.GetUISystem(this.GetPlayerControlledObject().GetGame()).QueueEvent(PocketMetroPlayerMarkerVisibilityEvent.Create(false));
+    this.SetDepartureAwaitSelection();
+    this.ShowSelectDepartureLabel();
+
+    this.mpgUiSystem.QueueEvent(PocketMetroRouteSelectionEnabledEvent.Create());
+    this.mpgUiSystem.QueueEvent(PocketMetroPlayerMarkerVisibilityEvent.Create(false));
   }
 }
 
@@ -107,8 +97,10 @@ protected cb func OnCancelButtonClick(evt: ref<inkPointerEvent>) -> Bool {
     this.routeSelectionEnabled = false;
     this.RefreshFiltersVisibility();
     this.RestorePreviousFiltersState();
-    GameInstance.GetUISystem(this.GetPlayerControlledObject().GetGame()).QueueEvent(PocketMetroRouteSelectionDisabledEvent.Create());
-    GameInstance.GetUISystem(this.GetPlayerControlledObject().GetGame()).QueueEvent(PocketMetroPlayerMarkerVisibilityEvent.Create(true));
+    this.SelectionCanceled();
+
+    this.mpgUiSystem.QueueEvent(PocketMetroRouteSelectionDisabledEvent.Create());
+    this.mpgUiSystem.QueueEvent(PocketMetroPlayerMarkerVisibilityEvent.Create(true));
   }
 }
 
@@ -117,7 +109,46 @@ protected cb func OnStopButtonClick(evt: ref<inkPointerEvent>) -> Bool {
   if evt.IsAction(n"click") {
     MetroLog("Stop");
     this.PlaySound(n"Button", n"OnPress");
+    if PocketMetroNavigator.HasActiveRoute() {
+      this.SelectionCanceled();
+      PocketMetroNavigator.OnCanceled();
+      this.metroButtonStop.SetVisible(false);
+      this.metroButtonNavigate.SetVisible(true);
+      this.activeRouteDetails.SetVisible(false);
+    };
   }
+}
+
+@addMethod(WorldMapMenuGameController)
+protected cb func OnConfirmButtonClick(evt: ref<inkPointerEvent>) -> Bool {
+  if evt.IsAction(n"click") {
+    MetroLog("Confirm");
+    this.PlaySound(n"Button", n"OnPress");
+    if PocketMetroNavigator.BuildRoute() {
+      this.routeSelectionEnabled = false;
+      this.RefreshFiltersVisibility();
+      this.RestorePreviousFiltersState();
+      this.metroButtonConfirm.SetVisible(false);
+      this.metroButtonStop.SetVisible(true);
+    } else {
+      // Should not happen but just in case
+      this.metroButtonConfirm.SetVisible(false);
+      this.metroButtonNavigate.SetVisible(true);
+      this.SelectionCanceled();
+      PocketMetroNavigator.OnCanceled();
+    };
+  }
+}
+
+// Show route details if active
+@addMethod(WorldMapMenuGameController)
+private final func InvalidateActiveRouteState() -> Void {
+  if PocketMetroNavigator.HasActiveRoute() {
+    this.metroButtonNavigate.SetVisible(false);
+    this.metroButtonStop.SetVisible(true);
+    this.activeRouteDetails.SetVisible(true);
+    this.activeRouteDetails.SetText(this.BuildShortRouteString());
+  };
 }
 
 // Skip vanilla input events for custom buttons
@@ -242,6 +273,6 @@ private final func RestorePreviousFiltersState() -> Void {
 @addMethod(WorldMapMenuGameController)
 private final func ShouldSkipEventHandle(e: ref<inkPointerEvent>) -> Bool {
   let targetName: CName = e.GetTarget().GetName();
-  let customButtons: array<CName> = [ n"buttonNavigate", n"buttonCancel", n"buttonStop" ];
+  let customButtons: array<CName> = [ n"buttonNavigate", n"buttonCancel", n"buttonStop", n"buttonConfirm" ];
   return ArrayContains(customButtons, targetName);
 }

@@ -13,11 +13,13 @@ protected cb func OnPocketMetroRouteSelectionEnabledEvent(evt: ref<PocketMetroRo
 protected cb func OnPocketMetroRouteSelectionEnabledEvent(evt: ref<PocketMetroRouteSelectionEnabledEvent>) -> Bool {
   this.routeSelectionEnabled = true;
   this.UpdateVisibilityForRouteSelection();
+  this.DeselectFromRoute();
 }
 
 @addMethod(WorldMapPlayerMappinController)
 protected cb func OnPocketMetroPlayerMarkerVisibilityEvent(evt: ref<PocketMetroPlayerMarkerVisibilityEvent>) -> Bool {
   this.GetRootWidget().SetVisible(evt.show);
+  this.GetRootWidget().SetInteractive(evt.show);
 }
 
 
