@@ -1,5 +1,6 @@
-import Codeware.UI.*
+import MetroPocketGuide.Navigator.PocketMetroNavigator
 import Codeware.Localization.*
+import Codeware.UI.*
 
 @addField(WorldMapMenuGameController)
 let mpgUiSystem: wref<UISystem>;
@@ -46,9 +47,11 @@ let currentHoveredController: ref<BaseWorldMapMappinController>;
 @addField(BaseWorldMapMappinController)
 let selectionGlow: wref<inkImage>;
 
+// Init new stuff
 @wrapMethod(WorldMapMenuGameController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
+
   this.mpgUiSystem = GameInstance.GetUISystem(this.GetPlayerControlledObject().GetGame());
 
   this.AddMetroPocketGuideControls();
@@ -60,4 +63,33 @@ protected cb func OnInitialize() -> Bool {
 
   this.pulseDestination = new PulseAnimation();
   this.pulseDestination.Configure(this.destinationLabel, 1.0, 0.05, 1.0);
+}
+
+// Handle worldmap menu closing
+@wrapMethod(WorldMapMenuGameController)
+protected cb func OnUninitialize() -> Bool {
+  if !PocketMetroNavigator.HasActiveRoute() {
+    this.SelectionCanceled();
+    PocketMetroNavigator.OnCanceled();
+  };
+
+  return wrappedMethod();
+}
+
+
+// Create selection fluff
+@wrapMethod(BaseWorldMapMappinController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+
+  this.CreateSelectedMappinGlow();
+}
+
+// Show selection fluff
+@wrapMethod(BaseWorldMapMappinController)
+protected final func Update() -> Void {
+  wrappedMethod();
+
+  let hasActiveRoute: Bool = PocketMetroNavigator.IsSelectedAsRoute(this.GetMetroStationName());
+  this.selectionGlow.SetVisible(hasActiveRoute);
 }

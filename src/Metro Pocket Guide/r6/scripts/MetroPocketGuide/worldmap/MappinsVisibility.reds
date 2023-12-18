@@ -22,6 +22,14 @@ protected cb func OnPocketMetroPlayerMarkerVisibilityEvent(evt: ref<PocketMetroP
   this.GetRootWidget().SetInteractive(evt.show);
 }
 
+@addMethod(BaseWorldMapMappinController)
+protected cb func OnPocketMetroResetPreviousDestinationEvent(evt: ref<PocketMetroResetPreviousDestinationEvent>) -> Bool {
+  let destination: ENcartStations = this.GetMetroStationName();
+  if Equals(destination, evt.destination) {
+    this.DeselectFromRoute();
+  };
+}
+
 
 // Switch visibility
 @addMethod(BaseWorldMapMappinController)
