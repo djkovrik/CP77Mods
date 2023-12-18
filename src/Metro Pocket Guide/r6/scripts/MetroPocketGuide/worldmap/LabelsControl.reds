@@ -1,8 +1,6 @@
 import MetroPocketGuide.Navigator.PocketMetroNavigator
 
-
 // Labels control - Departure
-
 @addMethod(WorldMapMenuGameController)
 private final func SetDepartureInitial() -> Void {
   this.departureLabel.SetText(" ");
@@ -29,9 +27,7 @@ private final func SetDepartureSelected(selectedTitle: String) -> Void {
   this.departureLabel.SetText(s"\(this.GetLocalizedTextCustom("PMG-From")) \(GetLocalizedText(selectedTitle))");
 }
 
-
 // Labels control - Destination
-
 @addMethod(WorldMapMenuGameController)
 private final func SetDestinationInitial() -> Void {
   this.destinationLabel.SetText(" ");

@@ -1,4 +1,3 @@
-
 // Show/hide filters panel
 @addMethod(WorldMapMenuGameController)
 private final func RefreshFiltersVisibility() -> Void {

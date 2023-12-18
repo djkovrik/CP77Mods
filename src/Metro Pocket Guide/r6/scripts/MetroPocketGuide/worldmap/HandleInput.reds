@@ -12,8 +12,8 @@ private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
   if e.IsAction(n"click") && IsDefined(controller) {
     stationName = controller.GetMetroStationName();
     selectedTitle = MetroDataHelper.GetStationTitle(stationName);
-    departureSelected = NotEquals(PocketMetroNavigator.GetDeparture(), ENcartStations.NONE);
-    destinationSelected = NotEquals(PocketMetroNavigator.GetDestination(), ENcartStations.NONE);
+    departureSelected = NotEquals(this.navigator.GetDeparture(), ENcartStations.NONE);
+    destinationSelected = NotEquals(this.navigator.GetDestination(), ENcartStations.NONE);
     selectionIsCorrect = NotEquals(stationName, ENcartStations.NONE);
     
     MetroLog(s"Has departure selected \(departureSelected), new click for \(stationName), is correct \(selectionIsCorrect)");
@@ -23,7 +23,7 @@ private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
 
       if !departureSelected && !destinationSelected {
         // nothing selected yet
-        PocketMetroNavigator.SaveDeparture(stationName);
+        this.navigator.SaveDeparture(stationName);
         this.SetDepartureSelected(selectedTitle);
         this.DepartureSelected();
         this.SetDestinationAwaitSelection();
@@ -32,7 +32,7 @@ private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
 
       } else if departureSelected && !destinationSelected {
         // departure selected but destination is not
-        PocketMetroNavigator.SaveDestination(stationName);
+        this.navigator.SaveDestination(stationName);
         this.SetDestinationSelected(selectedTitle);
         this.DestinationSelected();
         controller.SelectForRoute();
@@ -41,9 +41,9 @@ private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
 
       } else if departureSelected && destinationSelected {
         // departure selected and destination selected as well - reset prev destination and set to new
-        let prevDestination: ENcartStations = PocketMetroNavigator.GetDestination();
+        let prevDestination: ENcartStations = this.navigator.GetDestination();
         this.mpgUiSystem.QueueEvent(PocketMetroResetPreviousDestinationEvent.Create(prevDestination));
-        PocketMetroNavigator.SaveDestination(stationName);
+        this.navigator.SaveDestination(stationName);
         this.SetDestinationSelected(selectedTitle);
         this.DestinationSelected();
         controller.SelectForRoute();
@@ -96,9 +96,9 @@ protected cb func OnStopButtonClick(evt: ref<inkPointerEvent>) -> Bool {
   if evt.IsAction(n"click") {
     MetroLog("Stop");
     this.PlaySound(n"Button", n"OnPress");
-    if PocketMetroNavigator.HasActiveRoute() {
+    if this.navigator.HasActiveRoute() {
       this.SelectionCanceled();
-      PocketMetroNavigator.OnCanceled();
+      this.navigator.OnCanceled();
       this.metroButtonStop.SetVisible(false);
       this.metroButtonNavigate.SetVisible(true);
       this.activeRouteDetails.SetVisible(false);
@@ -111,7 +111,7 @@ protected cb func OnConfirmButtonClick(evt: ref<inkPointerEvent>) -> Bool {
   if evt.IsAction(n"click") {
     MetroLog("Confirm");
     this.PlaySound(n"Button", n"OnPress");
-    if PocketMetroNavigator.BuildRoute() {
+    if this.navigator.BuildRoute() {
       this.routeSelectionEnabled = false;
       this.RefreshFiltersVisibility();
       this.RestorePreviousFiltersState();
@@ -122,7 +122,7 @@ protected cb func OnConfirmButtonClick(evt: ref<inkPointerEvent>) -> Bool {
       this.metroButtonConfirm.SetVisible(false);
       this.metroButtonNavigate.SetVisible(true);
       this.SelectionCanceled();
-      PocketMetroNavigator.OnCanceled();
+      this.navigator.OnCanceled();
     };
   }
 }

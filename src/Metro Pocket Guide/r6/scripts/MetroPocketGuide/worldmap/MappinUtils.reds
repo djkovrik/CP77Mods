@@ -19,11 +19,11 @@ private final func BuildShortRouteString() -> String {
   let str: String = "";
   str += this.GetLocalizedTextCustom("PMG-From");
   str += " ";
-  str += GetLocalizedText(MetroDataHelper.GetStationTitle(PocketMetroNavigator.GetDeparture()));
+  str += GetLocalizedText(MetroDataHelper.GetStationTitle(this.navigator.GetDeparture()));
   str += "\n";
   str += this.GetLocalizedTextCustom("PMG-To");
   str += " ";
-  str += GetLocalizedText(MetroDataHelper.GetStationTitle(PocketMetroNavigator.GetDestination()));
+  str += GetLocalizedText(MetroDataHelper.GetStationTitle(this.navigator.GetDestination()));
   return str;
 }
 

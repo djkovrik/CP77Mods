@@ -18,6 +18,9 @@ let metroButtonStop: wref<PocketMetroNavButton>;
 let metroButtonConfirm: wref<PocketMetroNavButton>;
 
 @addField(WorldMapMenuGameController)
+let navigator: wref<PocketMetroNavigator>;
+
+@addField(WorldMapMenuGameController)
 let routeSelectionEnabled: Bool;
 
 @addField(WorldMapMenuGameController)
@@ -53,6 +56,7 @@ protected cb func OnInitialize() -> Bool {
   wrappedMethod();
 
   this.mpgUiSystem = GameInstance.GetUISystem(this.GetPlayerControlledObject().GetGame());
+  this.navigator = PocketMetroNavigator.Get();
 
   this.AddMetroPocketGuideControls();
   this.AddMetroPocketGuideLabels();
@@ -68,9 +72,9 @@ protected cb func OnInitialize() -> Bool {
 // Handle worldmap menu closing
 @wrapMethod(WorldMapMenuGameController)
 protected cb func OnUninitialize() -> Bool {
-  if !PocketMetroNavigator.HasActiveRoute() {
+  if !this.navigator.HasActiveRoute() {
     this.SelectionCanceled();
-    PocketMetroNavigator.OnCanceled();
+    this.navigator.OnCanceled();
   };
 
   return wrappedMethod();
