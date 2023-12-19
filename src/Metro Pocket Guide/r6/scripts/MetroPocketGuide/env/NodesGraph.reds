@@ -219,7 +219,7 @@ public class MetroNodesGraph extends ScriptableEnv {
     let E4 = MetroNode.Create(41, 4, ModNCartLine.E_ORANGE); this.SaveNode(E4);
     let E17 = MetroNode.Create(42, 17, ModNCartLine.E_ORANGE); this.SaveNode(E17);
     
-    // -- Build graph, reference: https://i.imgur.com/qAECoyE.png
+    // -- Build graph, reference: https://i.imgur.com/31FWf9N.png
     this.graph.Insert(A1.Key(), MetroGraphNode.Create([ A2.Index(), E1.Index() ])); // A1
     this.graph.Insert(A2.Key(), MetroGraphNode.Create([ A1.Index(), A3.Index(), E2.Index() ])); // A2
     this.graph.Insert(A3.Key(), MetroGraphNode.Create([ A2.Index(), A7.Index() ])); // A3
@@ -244,16 +244,16 @@ public class MetroNodesGraph extends ScriptableEnv {
     this.graph.Insert(C8.Key(), MetroGraphNode.Create([ C19.Index(), C14.Index(), A8.Index() ])); // C8
     this.graph.Insert(C19.Key(), MetroGraphNode.Create([ C8.Index(), B19.Index() ])); // C19
 
-    this.graph.Insert(D14.Key(), MetroGraphNode.Create([ D6.Index(), D10.Index(), D18.Index(), D13.Index(), A14.Index(), C14.Index(), E14.Index() ])); // D14
-    this.graph.Insert(D6.Key(), MetroGraphNode.Create([ D5.Index(), D14.Index(), E6.Index() ])); // D6
-    this.graph.Insert(D5.Key(), MetroGraphNode.Create([ D4.Index(), D6.Index(), B5.Index(), E5.Index() ])); // D5
-    this.graph.Insert(D4.Key(), MetroGraphNode.Create([ D9.Index(), D5.Index(), E4.Index() ])) ;// D4
-    this.graph.Insert(D9.Key(), MetroGraphNode.Create([ D10.Index(), D4.Index(), A9.Index() ])); // D9
-    this.graph.Insert(D10.Key(), MetroGraphNode.Create([ D14.Index(), D9.Index(), A10.Index(), C10.Index() ])); // D10
-    this.graph.Insert(D13.Key(), MetroGraphNode.Create([ D11.Index(), D14.Index(), E13.Index() ])); // D13
-    this.graph.Insert(D11.Key(), MetroGraphNode.Create([ D12.Index(), D13.Index(), E11.Index() ])); // D11
-    this.graph.Insert(D12.Key(), MetroGraphNode.Create([ D18.Index(), D11.Index(), B12.Index() ])); // D12
-    this.graph.Insert(D18.Key(), MetroGraphNode.Create([ D12.Index(), D14.Index(), B18.Index() ])); // D18
+    this.graph.Insert(D14.Key(), MetroGraphNode.Create([ D6.Index(), D13.Index(), A14.Index(), C14.Index(), E14.Index() ])); // D14
+    this.graph.Insert(D6.Key(), MetroGraphNode.Create([ D5.Index(), E6.Index() ])); // D6
+    this.graph.Insert(D5.Key(), MetroGraphNode.Create([ D4.Index(), B5.Index(), E5.Index() ])); // D5
+    this.graph.Insert(D4.Key(), MetroGraphNode.Create([ D9.Index(), E4.Index() ])) ;// D4
+    this.graph.Insert(D9.Key(), MetroGraphNode.Create([ D10.Index(), A9.Index() ])); // D9
+    this.graph.Insert(D10.Key(), MetroGraphNode.Create([ D14.Index(), A10.Index(), C10.Index() ])); // D10
+    this.graph.Insert(D13.Key(), MetroGraphNode.Create([ D11.Index(), E13.Index() ])); // D13
+    this.graph.Insert(D11.Key(), MetroGraphNode.Create([ D12.Index(), E11.Index() ])); // D11
+    this.graph.Insert(D12.Key(), MetroGraphNode.Create([ D18.Index(), B12.Index() ])); // D12
+    this.graph.Insert(D18.Key(), MetroGraphNode.Create([ D14.Index(), B18.Index() ])); // D18
 
     this.graph.Insert(E1.Key(), MetroGraphNode.Create([ E2.Index(), A1.Index() ])); // E1
     this.graph.Insert(E2.Key(), MetroGraphNode.Create([ E16.Index(), E1.Index(), A2.Index() ])); // E2
