@@ -78,6 +78,8 @@ public class MappinChecker {
       || Equals(variant, gamedataMappinVariant.Zzz14_ServicePointBlackMarketVariant)
       || Equals(variant, gamedataMappinVariant.Zzz16_RelicDeviceBasicVariant)
       || Equals(variant, gamedataMappinVariant.Zzz16_RelicDeviceSpecialVariant)
+      || Equals(variant, gamedataMappinVariant.Zzz17_NCARTVariant)
+      || Equals(variant, gamedataMappinVariant.Zzz18_RacingVariant)
       || false;
   }
 
