@@ -7,8 +7,8 @@ private final func InvalidateActiveRouteState() -> Void {
   if this.navigator.HasActiveRoute() {
     this.metroButtonNavigate.SetVisible(false);
     this.metroButtonStop.SetVisible(true);
-    this.activeRouteDetails.SetVisible(true);
-    this.activeRouteDetails.SetText(this.BuildShortRouteString());
+    this.SetDepartureSelected(MetroDataHelper.GetStationTitle(this.navigator.GetDeparture()));
+    this.SetDestinationSelected(MetroDataHelper.GetStationTitle(this.navigator.GetDestination()));
   };
 }
 

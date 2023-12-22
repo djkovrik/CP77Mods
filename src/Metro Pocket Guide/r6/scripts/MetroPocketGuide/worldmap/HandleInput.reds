@@ -101,7 +101,6 @@ protected cb func OnStopButtonClick(evt: ref<inkPointerEvent>) -> Bool {
       this.navigator.OnCanceled();
       this.metroButtonStop.SetVisible(false);
       this.metroButtonNavigate.SetVisible(true);
-      this.activeRouteDetails.SetVisible(false);
     };
   }
 }

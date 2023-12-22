@@ -73,11 +73,21 @@ public class MetroNodesQueue {
 }
 
 public abstract class RoutePoint {
+  let index: Int32;
   let type: RoutePointType;
+  let status: RoutePointStatus;
+
+  public final func SetIndex(index: Int32) -> Void {
+    this.index = index;
+  }
+
+  public final func UpdateStatus(status: RoutePointStatus) -> Void {
+    this.status = status;
+  }
 }
 
 public class StationPoint extends RoutePoint {
-  let id: Int32;
+  let stationId: Int32;
   let line: ModNCartLine;
   let startingPoint: Bool;
   let destinationPoint: Bool;
@@ -86,15 +96,15 @@ public class StationPoint extends RoutePoint {
   let district: ENcartDistricts;
   let districtTitle: String;
 
-  public static func Create(id: Int32, line: ModNCartLine, start: Bool, destination: Bool) -> ref<StationPoint> {
-    let station: ENcartStations = MetroDataHelper.GetStationNameById(id);
+  public static func Create(stationId: Int32, line: ModNCartLine, start: Bool, destination: Bool) -> ref<StationPoint> {
+    let station: ENcartStations = MetroDataHelper.GetStationNameById(stationId);
     let stationTitle: String = MetroDataHelper.GetStationTitle(station);
     let district: ENcartDistricts = MetroDataHelper.GetStationDistrict(station);
     let districtTitle: String = MetroDataHelper.GetDistrictTitle(district);
     let instance: ref<StationPoint> = new StationPoint();
 
     instance.type = RoutePointType.STATION;
-    instance.id = id;
+    instance.stationId = stationId;
     instance.line = line;
     instance.startingPoint = start;
     instance.destinationPoint = destination;
@@ -107,7 +117,7 @@ public class StationPoint extends RoutePoint {
   }
 
   public final func Str() -> String {
-    return s"[\(MetroDataHelper.LineStr(this.line)): \(GetLocalizedText(this.stationTitle))]";
+    return s"\(this.index): [\(MetroDataHelper.LineStr(this.line)): \(GetLocalizedText(this.stationTitle))]";
   };
 }
 
@@ -124,8 +134,16 @@ public class LineSwitch extends RoutePoint {
   }
 
   public final func Str() -> String {
-    return s"[ Switch line: \(MetroDataHelper.LineStr(this.from)) -> \(MetroDataHelper.LineStr(this.to)) ]";
+    return s"\(this.index): [ Switch line: \(MetroDataHelper.LineStr(this.from)) -> \(MetroDataHelper.LineStr(this.to)) ]";
   };
+}
+
+public class MissedStationInfo extends RoutePoint {
+  public static func Create() -> ref<MissedStationInfo> {
+    let instance: ref<MissedStationInfo> = new MissedStationInfo();
+    instance.type = RoutePointType.MISSED_STATION;
+    return instance;
+  }
 }
 
 public class PocketMetroRouteSelectionEnabledEvent extends Event {
@@ -166,6 +184,13 @@ enum RoutePointType {
   NONE = 0,
   STATION = 1,
   LINE_SWITCH = 2,
+  MISSED_STATION = 3,
+}
+
+enum RoutePointStatus {
+  NOT_VISITED = 0,
+  ARRIVAL = 1,
+  VISITED = 2,
 }
 
 enum ModNCartLine {

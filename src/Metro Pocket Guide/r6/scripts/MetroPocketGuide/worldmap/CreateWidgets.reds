@@ -42,29 +42,8 @@ private final func AddMetroPocketGuideLabels() -> Void {
   to.SetVerticalAlignment(textVerticalAlignment.Center);
   to.Reparent(selectionContainer);
 
-  let routeDetails: ref<inkText> = new inkText();
-  routeDetails.SetName(n"routeDetails");
-  routeDetails.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-  routeDetails.SetFontStyle(n"Medium");
-  routeDetails.SetFontSize(44);
-  routeDetails.SetLetterCase(textLetterCase.OriginalCase);
-  routeDetails.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-  routeDetails.BindProperty(n"tintColor", n"MainColors.Blue");
-  routeDetails.SetAnchor(inkEAnchor.TopCenter);
-  routeDetails.SetAnchorPoint(0.5, 0.5);
-  routeDetails.SetMargin(0.0, 240.0, 0.0, 0.0);
-  routeDetails.SetHorizontalAlignment(textHorizontalAlignment.Center);
-  routeDetails.SetVerticalAlignment(textVerticalAlignment.Center);
-  routeDetails.SetContentHAlign(inkEHorizontalAlign.Center);
-  routeDetails.SetContentVAlign(inkEVerticalAlign.Center);
-  routeDetails.SetJustificationType(textJustificationType.Center);
-  routeDetails.SetText("From: xxxxxxxxxxxxxxxxxxxxxx\nTo: xxxxxxxxxxxxxxxxxxxxxx");
-  routeDetails.SetVisible(false);
-  routeDetails.Reparent(parent);
-
   this.departureLabel = from;
   this.destinationLabel = to;
-  this.activeRouteDetails = routeDetails;
 
   this.SetDepartureInitial();
   this.SetDestinationInitial();

@@ -1,4 +1,6 @@
 module MetroPocketGuide.Graph
+import MetroPocketGuide.Navigator.* 
+// FIXME
 
 public class MetroNodesGraph extends ScriptableEnv {
   private let graph: ref<inkHashMap>;
@@ -23,21 +25,32 @@ public class MetroNodesGraph extends ScriptableEnv {
   }
 
   public final func BuildRouteDetails(path: array<ref<MetroNode>>) -> array<ref<RoutePoint>> {
+    let tempRoute: array<ref<RoutePoint>>;
     let route: array<ref<RoutePoint>>;
-    if Equals(ArraySize(path), 0) { return route; };
+    if Equals(ArraySize(path), 0) { return tempRoute; };
     let previousLine: ModNCartLine = ModNCartLine.NONE;
     let currentLine: ModNCartLine = ModNCartLine.NONE;
     let count: Int32 = ArraySize(path);
     let i: Int32 = 0;
     let node: ref<MetroNode>;
+    let point: ref<RoutePoint>;
     while i < count {
       node = path[i];
       previousLine = currentLine;
       currentLine = node.Line();
       if NotEquals(previousLine, ModNCartLine.NONE) && NotEquals(previousLine, currentLine) {
-        ArrayPush(route, LineSwitch.Create(previousLine, currentLine));
+        ArrayPush(tempRoute, LineSwitch.Create(previousLine, currentLine));
       };
-      ArrayPush(route, StationPoint.Create(node.StationId(), node.Line(), Equals(i, 0), Equals(i, count - 1)));
+      ArrayPush(tempRoute, StationPoint.Create(node.StationId(), node.Line(), Equals(i, 0), Equals(i, count - 1)));
+      i += 1;
+    };
+
+    count = ArraySize(tempRoute);
+    i = 0;
+    while i < count {
+      point = tempRoute[i];
+      point.SetIndex(i);
+      ArrayPush(route, point);
       i += 1;
     };
 
@@ -308,5 +321,29 @@ public class MetroNodesGraph extends ScriptableEnv {
         MetroLog(point.Str());
       };
     };
+  }
+
+  // FIXME
+  public static final func DoTestRoute() -> Void {
+    let env: ref<PocketMetroNavigator> = ScriptableEnv.Get(n"MetroPocketGuide.Navigator.PocketMetroNavigator") as PocketMetroNavigator;
+    let route: array<ref<RoutePoint>>;
+    let station1 = StationPoint.Create(1, ModNCartLine.A_RED, true, false);
+    let station2 = StationPoint.Create(2, ModNCartLine.A_RED, false, false);
+    let lineSwitch = LineSwitch.Create(ModNCartLine.A_RED, ModNCartLine.B_YELLOW);
+    let station3 = StationPoint.Create(3, ModNCartLine.B_YELLOW, false, true);
+    let error = MissedStationInfo.Create();
+    station1.index = 1;
+    station2.index = 2;
+    lineSwitch.index = 3;
+    station3.index = 4;
+    error.index = 5;
+
+    ArrayPush(route, station1);
+    ArrayPush(route, station2);
+    ArrayPush(route, lineSwitch);
+    ArrayPush(route, station3);
+    ArrayPush(route, error);
+    env.route = route;
+    MetroLog(s"Test route created: \(ArraySize(env.route))");
   }
 }
