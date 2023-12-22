@@ -11,13 +11,9 @@ public class TrackedRouteLineSwitchItemController extends TrackedRouteBaseItemCo
     this.from = root.GetWidgetByPathName(n"container/lineFrom") as inkImage;
     this.to = root.GetWidgetByPathName(n"container/lineTo") as inkImage;
     this.title = root.GetWidgetByPathName(n"container/label") as inkText;
-
-    MetroLog(s"TrackedRouteLineSwitchItemController::OnInitialize \(IsDefined(this.from)) \(IsDefined(this.to)) \(IsDefined(this.title))");
   }
 
-  protected cb func OnUninitialize() -> Bool {
-    MetroLog("TrackedRouteLineSwitchItemController::OnUninitialize");
-  }
+  protected cb func OnUninitialize() -> Bool {}
 
   protected cb func OnDataChanged(value: Variant) {
     this.data = FromVariant<ref<IScriptable>>(value) as LineSwitch;
@@ -27,7 +23,6 @@ public class TrackedRouteLineSwitchItemController extends TrackedRouteBaseItemCo
   }
 
   private final func RefreshView() -> Void {
-    MetroLog("TrackedRouteLineSwitchItemController::RefreshView");
     // Icons
     this.from.SetTexturePart(this.GetLinePartName(this.data.from));
     this.to.SetTexturePart(this.GetLinePartName(this.data.to));

@@ -2,18 +2,6 @@ module MetroPocketGuide.UI
 
 public class TrackedRouteBaseItemController extends inkVirtualCompoundItemController {
 
-  protected final func GetLineColor(line: ModNCartLine) -> CName {
-    switch line {
-      case ModNCartLine.A_RED: return n"MainColors.Red";
-      case ModNCartLine.B_YELLOW: return n"MainColors.Yellow";
-      case ModNCartLine.C_CYAN: return n"MainColors.Blue";
-      case ModNCartLine.D_GREEN: return n"MainColors.Green";
-      case ModNCartLine.E_ORANGE: return n"MainColors.Orange";
-    };
-
-    return n"MainColors.White";
-  }
-
   protected final func GetLineHDRColor(line: ModNCartLine) -> HDRColor {
     switch line {
       case ModNCartLine.A_RED: return new HDRColor(1.0, 0.266250998, 0.266250014, 1.0);

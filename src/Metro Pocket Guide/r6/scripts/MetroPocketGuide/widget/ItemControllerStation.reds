@@ -11,13 +11,9 @@ public class TrackedRouteStationItemController extends TrackedRouteBaseItemContr
     this.line = root.GetWidgetByPathName(n"container/lineImage") as inkImage;
     this.stationStatus = root.GetWidgetByPathName(n"container/stationStatus") as inkImage;
     this.title = root.GetWidgetByPathName(n"container/stationName") as inkText;
-
-    MetroLog(s"TrackedRouteStationItemController::OnInitialize \(IsDefined(this.line)) \(IsDefined(this.stationStatus)) \(IsDefined(this.title))");
   }
 
-  protected cb func OnUninitialize() -> Bool {
-    MetroLog("TrackedRouteStationItemController::OnUninitialize");
-  }
+  protected cb func OnUninitialize() -> Bool {}
 
   protected cb func OnDataChanged(value: Variant) {
     this.data = FromVariant<ref<IScriptable>>(value) as StationPoint;

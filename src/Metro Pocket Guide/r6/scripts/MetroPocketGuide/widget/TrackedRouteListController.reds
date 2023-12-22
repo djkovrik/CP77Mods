@@ -12,8 +12,6 @@ public class TrackedRouteListController extends inkGameController {
   private let stationsListTemplateClassifier: ref<TrackedRouteItemClassifier>;
   
   protected cb func OnInitialize() {
-    MetroLog("TrackedRouteListController::OnInitialize");
-    
     this.player = this.GetPlayerControlledObject() as PlayerPuppet;
     this.route = PocketMetroNavigator.Get().GetRoute();
 
@@ -23,9 +21,7 @@ public class TrackedRouteListController extends inkGameController {
     };
   }
 
-  protected cb func OnUninitialize() -> Bool {
-    MetroLog("TrackedRouteListController::OnUninitialize");
-  }
+  protected cb func OnUninitialize() -> Bool {}
 
   private final func InitializeWidgets() -> Void {
     this.stationsList = this.GetChildWidgetByPath(n"container/wrapper/scrollArea/virtualList").GetController() as inkVirtualListController;
@@ -36,8 +32,6 @@ public class TrackedRouteListController extends inkGameController {
     this.stationsListTemplateClassifier = new TrackedRouteItemClassifier();
     this.stationsList.SetClassifier(this.stationsListTemplateClassifier);
     this.stationsList.SetSource(this.stationsListDataView);
-
-    MetroLog(s"TrackedRouteListController::InitializeWidgets - \(IsDefined(this.stationsList)) \(IsDefined(this.stationsListScrollController))");
   }
 
   private final func RefreshDataSource() -> Void {

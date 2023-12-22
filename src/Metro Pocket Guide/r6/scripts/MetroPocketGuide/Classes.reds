@@ -142,7 +142,7 @@ public class LineSwitch extends RoutePoint {
   }
 
   public final func Str() -> String {
-    return s"\(this.index): [ Switch line: \(MetroDataHelper.LineStr(this.from)) -> \(MetroDataHelper.LineStr(this.to)) ]";
+    return s"\(this.index): [ Switch line at \(this.stationTitle): \(MetroDataHelper.LineStr(this.from)) -> \(MetroDataHelper.LineStr(this.to))]";
   };
 }
 
