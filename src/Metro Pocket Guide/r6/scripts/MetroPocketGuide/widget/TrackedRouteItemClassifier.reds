@@ -4,10 +4,6 @@ class TrackedRouteItemClassifier extends inkVirtualItemTemplateClassifier {
   public func ClassifyItem(data: Variant) -> Uint32 {
     let point: ref<RoutePoint> = FromVariant<ref<IScriptable>>(data) as RoutePoint;
     if !IsDefined(point) {
-      return 2u;
-    };
-
-    if Equals(point.type, RoutePointType.STATION) {
       return 0u;
     };
 
@@ -15,6 +11,6 @@ class TrackedRouteItemClassifier extends inkVirtualItemTemplateClassifier {
       return 1u;
     };
   
-    return 2u;
+    return 0u;
   }
 }

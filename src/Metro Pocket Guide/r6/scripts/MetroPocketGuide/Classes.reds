@@ -124,10 +124,18 @@ public class StationPoint extends RoutePoint {
 public class LineSwitch extends RoutePoint {
   let from: ModNCartLine;
   let to: ModNCartLine;
+  let stationId: Int32;
+  let station: ENcartStations;
+  let stationTitle: String;
 
-  public static func Create(from: ModNCartLine, to: ModNCartLine) -> ref<LineSwitch> {
+  public static func Create(stationId: Int32, from: ModNCartLine, to: ModNCartLine) -> ref<LineSwitch> {
+    let station: ENcartStations = MetroDataHelper.GetStationNameById(stationId);
+    let stationTitle: String = MetroDataHelper.GetStationTitle(station);
     let instance: ref<LineSwitch> = new LineSwitch();
     instance.type = RoutePointType.LINE_SWITCH;
+    instance.stationId = stationId;
+    instance.station = station;
+    instance.stationTitle = stationTitle;
     instance.from = from;
     instance.to = to;
     return instance;
@@ -136,14 +144,6 @@ public class LineSwitch extends RoutePoint {
   public final func Str() -> String {
     return s"\(this.index): [ Switch line: \(MetroDataHelper.LineStr(this.from)) -> \(MetroDataHelper.LineStr(this.to)) ]";
   };
-}
-
-public class MissedStationInfo extends RoutePoint {
-  public static func Create() -> ref<MissedStationInfo> {
-    let instance: ref<MissedStationInfo> = new MissedStationInfo();
-    instance.type = RoutePointType.MISSED_STATION;
-    return instance;
-  }
 }
 
 public class PocketMetroRouteSelectionEnabledEvent extends Event {

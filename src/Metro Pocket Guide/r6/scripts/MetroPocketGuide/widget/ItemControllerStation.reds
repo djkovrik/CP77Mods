@@ -2,9 +2,17 @@ module MetroPocketGuide.UI
 
 public class TrackedRouteStationItemController extends TrackedRouteBaseItemController {
   private let data: ref<StationPoint>;
+  private let line: wref<inkImage>;
+  private let stationStatus: wref<inkImage>;
+  private let title: wref<inkText>;
 
   protected cb func OnInitialize() -> Bool {
-    MetroLog("TrackedRouteStationItemController::OnInitialize");
+    let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+    this.line = root.GetWidgetByPathName(n"container/lineImage") as inkImage;
+    this.stationStatus = root.GetWidgetByPathName(n"container/stationStatus") as inkImage;
+    this.title = root.GetWidgetByPathName(n"container/stationName") as inkText;
+
+    MetroLog(s"TrackedRouteStationItemController::OnInitialize \(IsDefined(this.line)) \(IsDefined(this.stationStatus)) \(IsDefined(this.title))");
   }
 
   protected cb func OnUninitialize() -> Bool {
@@ -20,5 +28,18 @@ public class TrackedRouteStationItemController extends TrackedRouteBaseItemContr
 
   private final func RefreshView() -> Void {
     MetroLog("TrackedRouteStationItemController::RefreshView");
+    // Icon
+    this.line.SetTexturePart(this.GetLinePartName(this.data.line));
+    // Icon color
+    this.line.SetTintColor(this.GetLineHDRColor(this.data.line));
+    this.stationStatus.SetTintColor(this.GetLineHDRColor(this.data.line));
+    // Station title
+    this.title.SetText(this.data.stationTitle);
+    // Station status
+    if Equals(this.data.status, RoutePointStatus.VISITED) {
+      this.stationStatus.SetTexturePart(n"station-filled");
+    } else {
+      this.stationStatus.SetTexturePart(n"station");
+    };
   }
 }
