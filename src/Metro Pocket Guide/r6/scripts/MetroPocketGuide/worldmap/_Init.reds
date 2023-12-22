@@ -33,9 +33,6 @@ let departureLabel: wref<inkText>;
 let destinationLabel: wref<inkText>;
 
 @addField(WorldMapMenuGameController)
-let mpgTranslator: ref<LocalizationSystem>;
-
-@addField(WorldMapMenuGameController)
 let pulseDeparture: ref<PulseAnimation>;
 
 @addField(WorldMapMenuGameController)

@@ -13,11 +13,3 @@ public final func GetMetroStationName() -> ENcartStations {
 
   return MetroDataHelper.GetStationNameByLocKey(stationName);
 }
-
-@addMethod(WorldMapMenuGameController)
-private final func GetLocalizedTextCustom(key: String) -> String {
-  if !IsDefined(this.mpgTranslator) {
-    this.mpgTranslator = LocalizationSystem.GetInstance(GetGameInstance());
-  };
-  return this.mpgTranslator.GetText(key);
-}

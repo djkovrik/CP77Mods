@@ -8,7 +8,7 @@ private final func SetDepartureInitial() -> Void {
 
 @addMethod(WorldMapMenuGameController)
 private final func SetDepartureAwaitSelection() -> Void {
-  this.departureLabel.SetText(this.GetLocalizedTextCustom("PMG-Select-Departure"));
+  this.departureLabel.SetText(GetLocalizedTextByKey(n"PMG-Select-Departure"));
 }
 
 @addMethod(WorldMapMenuGameController)
@@ -24,7 +24,7 @@ private final func DepartureSelected() -> Void {
 
 @addMethod(WorldMapMenuGameController)
 private final func SetDepartureSelected(selectedTitle: String) -> Void {
-  this.departureLabel.SetText(s"\(this.GetLocalizedTextCustom("PMG-From")) \(GetLocalizedText(selectedTitle))");
+  this.departureLabel.SetText(s"\(GetLocalizedTextByKey(n"PMG-From")): \(GetLocalizedText(selectedTitle))");
 }
 
 // Labels control - Destination
@@ -35,7 +35,7 @@ private final func SetDestinationInitial() -> Void {
 
 @addMethod(WorldMapMenuGameController)
 private final func SetDestinationAwaitSelection() -> Void {
-  this.destinationLabel.SetText(this.GetLocalizedTextCustom("PMG-Select-Destination"));
+  this.destinationLabel.SetText(GetLocalizedTextByKey(n"PMG-Select-Destination"));
 }
 
 @addMethod(WorldMapMenuGameController)
@@ -52,5 +52,5 @@ private final func DestinationSelected() -> Void {
 
 @addMethod(WorldMapMenuGameController)
 private final func SetDestinationSelected(selectedTitle: String) -> Void {
-  this.destinationLabel.SetText(s"\(this.GetLocalizedTextCustom("PMG-To")) \(GetLocalizedText(selectedTitle))");
+  this.destinationLabel.SetText(s"\(GetLocalizedTextByKey(n"PMG-To")): \(GetLocalizedText(selectedTitle))");
 }
