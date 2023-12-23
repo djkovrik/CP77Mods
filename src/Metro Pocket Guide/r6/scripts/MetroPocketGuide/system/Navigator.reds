@@ -1,29 +1,34 @@
 module MetroPocketGuide.Navigator
 import MetroPocketGuide.Graph.MetroNodesGraph
 
-public class PocketMetroNavigator extends ScriptableEnv {
-
+public class PocketMetroNavigator extends ScriptableSystem {
   public let departure: ENcartStations;
   public let destination: ENcartStations;
   public let route: array<ref<RoutePoint>>;
 
-  private cb func OnLoad() {
-    MetroLog("PocketMetroNavigator initialized");
-  }
+  public let currentStationIndex: Int32;
+  public let currentLine: ModNCartLine;
 
-  public static final func Get() -> ref<PocketMetroNavigator> {
-    let env: ref<PocketMetroNavigator> = ScriptableEnv.Get(n"MetroPocketGuide.Navigator.PocketMetroNavigator") as PocketMetroNavigator;
-    return env;
+  public static func GetInstance(gi: GameInstance) -> ref<PocketMetroNavigator> {
+    let system: ref<PocketMetroNavigator> = GameInstance.GetScriptableSystemsContainer(gi).Get(n"MetroPocketGuide.Navigator.PocketMetroNavigator") as PocketMetroNavigator;
+    return system;
   }
 
   public static final func IsSelectedAsRoute(target: ENcartStations) -> Bool {
-    let env: ref<PocketMetroNavigator> = ScriptableEnv.Get(n"MetroPocketGuide.Navigator.PocketMetroNavigator") as PocketMetroNavigator;
-    let departure: ENcartStations = env.GetDeparture();
-    let destination: ENcartStations = env.GetDestination();
+    let system: ref<PocketMetroNavigator> = PocketMetroNavigator.GetInstance(GetGameInstance());
+    let departure: ENcartStations = system.GetDeparture();
+    let destination: ENcartStations = system.GetDestination();
     return NotEquals(target, ENcartStations.NONE) && (Equals(target, departure) || Equals(target, destination));
   }
 
-  // Non-static helpers
+  private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
+    if GameInstance.GetSystemRequestsHandler().IsPreGame() {
+      return ;
+    };
+
+    this.Reset();
+    MetroLog("PocketMetroNavigator initialized");
+  }
 
   public final func BuildRoute() -> Bool {
     if Equals(this.departure, ENcartStations.NONE) || Equals(this.destination, ENcartStations.NONE) {
@@ -58,9 +63,11 @@ public class PocketMetroNavigator extends ScriptableEnv {
     return this.route;
   }
 
-  public final func OnCanceled() -> Void {
+  public final func Reset() -> Void {
     ArrayClear(this.route);
     this.departure = ENcartStations.NONE;
     this.destination = ENcartStations.NONE;
+    this.currentStationIndex = -1;
+    this.currentLine = ModNCartLine.NONE;
   }
 }

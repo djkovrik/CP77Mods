@@ -17,6 +17,8 @@ private final func InvalidateActiveRouteState() -> Void {
 private final func SelectionCanceled() -> Void {
   this.mpgUiSystem.QueueEvent(PocketMetroResetPreviousDestinationEvent.Create(this.navigator.GetDeparture()));
   this.mpgUiSystem.QueueEvent(PocketMetroResetPreviousDestinationEvent.Create(this.navigator.GetDestination()));
+  this.mpgUiSystem.QueueEvent(new ClearPocketGuideWidgetEvent());
+  this.mpgUiSystem.QueueEvent(new HidePocketGuideWidgetEvent());
   this.departureLabel.SetVisible(false);
   this.destinationLabel.SetVisible(false);
   this.SetDepartureInitial();
@@ -25,4 +27,5 @@ private final func SelectionCanceled() -> Void {
   this.pulseDestination.Stop();
   this.navigator.SaveDeparture(ENcartStations.NONE);
   this.navigator.SaveDestination(ENcartStations.NONE);
+  this.routeSelectionEnabled = false;
 }

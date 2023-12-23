@@ -23,7 +23,6 @@ public class TrackedRouteStationItemController extends TrackedRouteBaseItemContr
   }
 
   private final func RefreshView() -> Void {
-    MetroLog("TrackedRouteStationItemController::RefreshView");
     // Icon
     this.line.SetTexturePart(this.GetLinePartName(this.data.line));
     // Icon color

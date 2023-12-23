@@ -1,6 +1,5 @@
 module MetroPocketGuide.Graph
 import MetroPocketGuide.Navigator.* 
-// FIXME
 
 public class MetroNodesGraph extends ScriptableEnv {
   private let graph: ref<inkHashMap>;
@@ -258,7 +257,7 @@ public class MetroNodesGraph extends ScriptableEnv {
     let E4 = MetroNode.Create(41, 4, ModNCartLine.E_ORANGE); this.SaveNode(E4);
     let E17 = MetroNode.Create(42, 17, ModNCartLine.E_ORANGE); this.SaveNode(E17);
     
-    // -- Build graph, reference: https://i.imgur.com/Qy2LzZl.png
+    // -- Build graph, reference: https://i.imgur.com/8lHAfiA.png
     this.graph.Insert(A1.Key(), MetroGraphNode.Create([ A2.Index(), E1.Index() ])); // A1
     this.graph.Insert(A2.Key(), MetroGraphNode.Create([ A1.Index(), A3.Index(), E2.Index() ])); // A2
     this.graph.Insert(A3.Key(), MetroGraphNode.Create([ A2.Index(), A7.Index() ])); // A3
@@ -349,9 +348,8 @@ public class MetroNodesGraph extends ScriptableEnv {
     };
   }
 
-  // FIXME
-  public static final func DoTestRoute() -> Void {
-    let env: ref<PocketMetroNavigator> = ScriptableEnv.Get(n"MetroPocketGuide.Navigator.PocketMetroNavigator") as PocketMetroNavigator;
+  public static final func DoTestRoute(gi: GameInstance) -> Void {
+    let env: ref<PocketMetroNavigator> = PocketMetroNavigator.GetInstance(gi);
     let route: array<ref<RoutePoint>>;
     let station1 = StationPoint.Create(1, ModNCartLine.A_RED, true, false);
     let station2 = StationPoint.Create(2, ModNCartLine.A_RED, false, false);

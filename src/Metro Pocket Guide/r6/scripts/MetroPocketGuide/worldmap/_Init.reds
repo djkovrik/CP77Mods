@@ -49,8 +49,9 @@ let selectionGlow: wref<inkImage>;
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
 
-  this.mpgUiSystem = GameInstance.GetUISystem(this.GetPlayerControlledObject().GetGame());
-  this.navigator = PocketMetroNavigator.Get();
+  let gi: GameInstance = this.GetPlayerControlledObject().GetGame();
+  this.mpgUiSystem = GameInstance.GetUISystem(gi);
+  this.navigator = PocketMetroNavigator.GetInstance(gi);
 
   this.AddMetroPocketGuideControls();
   this.AddMetroPocketGuideLabels();
@@ -68,7 +69,7 @@ protected cb func OnInitialize() -> Bool {
 protected cb func OnUninitialize() -> Bool {
   if !this.navigator.HasActiveRoute() {
     this.SelectionCanceled();
-    this.navigator.OnCanceled();
+    this.navigator.Reset();
   };
 
   return wrappedMethod();

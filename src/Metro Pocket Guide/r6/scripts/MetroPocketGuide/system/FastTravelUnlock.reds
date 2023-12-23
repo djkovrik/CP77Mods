@@ -1,3 +1,6 @@
+module MetroPocketGuide.Unlocker
+import MetroPocketGuide.Config.MetroPocketGuideConfig
+
 public class MetroStationsUnlocker extends ScriptableSystem {
 
   private let questsSystem: wref<QuestsSystem>;
@@ -97,7 +100,7 @@ public class MetroStationsUnlocker extends ScriptableSystem {
   }
 
   private final func CheckAndUnlock() -> Void {
-    if this.IsPrologueUnlocked() && !this.IsStationsUnlocked() {
+    if this.IsPrologueUnlocked() && !this.IsStationsUnlocked() && this.IsUnlockEnabled() {
       this.MarkAsUnlocked();
       this.UnlockMetroStationFTPoints();
     };
@@ -125,6 +128,11 @@ public class MetroStationsUnlocker extends ScriptableSystem {
     this.ftSystem.QueueRequest(request);
 
     MetroLog("Station Points unlocked");
+  }
+
+  private final func IsUnlockEnabled() -> Bool {
+    let config: ref<MetroPocketGuideConfig> = new MetroPocketGuideConfig();
+    return config.unlockMetroMappins;
   }
 
   private final func IsPrologueUnlocked() -> Bool {

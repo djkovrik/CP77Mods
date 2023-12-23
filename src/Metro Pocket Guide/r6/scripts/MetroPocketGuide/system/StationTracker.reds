@@ -4,7 +4,6 @@ public class MetroStationTracker extends ScriptableSystem {
 
   private let questsSystem: wref<QuestsSystem>;
   private let uiSystem: wref<UISystem>;
-  private let ftSystem: wref<FastTravelSystem>;
 
   private let factMetroStationActive: CName = n"ue_metro_active_station";
   private let factMetroStationNext: CName = n"ue_metro_next_station";
@@ -15,11 +14,6 @@ public class MetroStationTracker extends ScriptableSystem {
   private let metroStationNextListenerId: Uint32;
   private let metroStationArrivingListenerId: Uint32;
   private let metroLineActiveListenerId: Uint32;
-
-  public static func GetInstance(gi: GameInstance) -> ref<MetroStationTracker> {
-    let system: ref<MetroStationTracker> = GameInstance.GetScriptableSystemsContainer(gi).Get(n"MetroPocketGuide.Tracker.MetroStationTracker") as MetroStationTracker;
-    return system;
-  }
 
   private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
     if GameInstance.GetSystemRequestsHandler().IsPreGame() {
@@ -40,7 +34,6 @@ public class MetroStationTracker extends ScriptableSystem {
   private final func InitCoreData(player: ref<PlayerPuppet>) -> Void {
     this.questsSystem = GameInstance.GetQuestsSystem(player.GetGame());
     this.uiSystem = GameInstance.GetUISystem(player.GetGame());
-    this.ftSystem = player.GetFastTravelSystem();
   }
 
   private final func RegisterFactListeners() -> Void {
@@ -57,23 +50,30 @@ public class MetroStationTracker extends ScriptableSystem {
     this.questsSystem.UnregisterListener(this.factMetroLineActive, this.metroLineActiveListenerId);
   }
 
-  protected cb func OnMetroStationActiveChange(factValue: Int32) -> Bool {
-    MetroLog(s"OnMetroStationActiveChange \(MetroDataHelper.GetLocalizedStationTitleById(factValue))");
+  protected cb func OnMetroLineActiveChange(factValue: Int32) -> Bool {
+    MetroLog(s"Current line updated: \(this.FactToLineStr(factValue))");
   }
 
   protected cb func OnMetroStationNextChange(factValue: Int32) -> Bool {
-    MetroLog(s"OnMetroStationNextChange \(MetroDataHelper.GetLocalizedStationTitleById(factValue))");
+    MetroLog(s"Next station updated: \(this.FactToStationStr(factValue))");
+  }
+
+  protected cb func OnMetroStationActiveChange(factValue: Int32) -> Bool {
+    MetroLog(s"Active station updated: \(this.FactToStationStr(factValue))");
   }
 
   protected cb func OnMetroStationArrivingChange(factValue: Int32) -> Bool {
     if Equals(factValue, 1) {
-      MetroLog("Arriving");
-    } else {
-      MetroLog("Departured");
+      MetroLog(s"Arrive: \(this.FactToStationStr(factValue))");
     };
   }
 
-  protected cb func OnMetroLineActiveChange(factValue: Int32) -> Bool {
-    MetroLog(s"OnMetroLineActiveChange \(MetroDataHelper.LineStr(MetroDataHelper.LineName(factValue)))");
+  private final func FactToStationStr(factValue: Int32) -> String {
+    return s"\(MetroDataHelper.GetStationNameById(factValue)) - \(MetroDataHelper.GetLocalizedStationTitleById(factValue))";
+  }
+
+  private final func FactToLineStr(factValue: Int32) -> String {
+    let lineName: ModNCartLine = MetroDataHelper.LineName(factValue);
+    return s"\(lineName) - \(MetroDataHelper.LineStr(lineName))";
   }
 }

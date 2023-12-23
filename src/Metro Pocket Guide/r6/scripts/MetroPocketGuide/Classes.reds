@@ -76,6 +76,7 @@ public abstract class RoutePoint {
   let index: Int32;
   let type: RoutePointType;
   let status: RoutePointStatus;
+  let stationId: Int32;
 
   public final func SetIndex(index: Int32) -> Void {
     this.index = index;
@@ -87,7 +88,6 @@ public abstract class RoutePoint {
 }
 
 public class StationPoint extends RoutePoint {
-  let stationId: Int32;
   let line: ModNCartLine;
   let startingPoint: Bool;
   let destinationPoint: Bool;
@@ -124,7 +124,6 @@ public class StationPoint extends RoutePoint {
 public class LineSwitch extends RoutePoint {
   let from: ModNCartLine;
   let to: ModNCartLine;
-  let stationId: Int32;
   let station: ENcartStations;
   let stationTitle: String;
 
@@ -142,7 +141,7 @@ public class LineSwitch extends RoutePoint {
   }
 
   public final func Str() -> String {
-    return s"\(this.index): [ Switch line at \(this.stationTitle): \(MetroDataHelper.LineStr(this.from)) -> \(MetroDataHelper.LineStr(this.to))]";
+    return s"\(this.index): [ Switch line at \(GetLocalizedText(this.stationTitle)): \(MetroDataHelper.LineStr(this.from)) -> \(MetroDataHelper.LineStr(this.to))]";
   };
 }
 
@@ -179,6 +178,11 @@ public class PocketMetroResetPreviousDestinationEvent extends Event {
     return instance;
   }
 }
+
+public class RefreshPocketGuideWidgetEvent extends Event {}
+public class ClearPocketGuideWidgetEvent extends Event {}
+public class ShowPocketGuideWidgetEvent extends Event {}
+public class HidePocketGuideWidgetEvent extends Event {}
 
 enum RoutePointType {
   NONE = 0,

@@ -9,7 +9,7 @@ private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
   let selectionIsCorrect: Bool;
   let stationName: ENcartStations;
   let selectedTitle: String;
-  if e.IsAction(n"click") && IsDefined(controller) {
+  if e.IsAction(n"click") && IsDefined(controller) && this.routeSelectionEnabled {
     stationName = controller.GetMetroStationName();
     selectedTitle = MetroDataHelper.GetStationTitle(stationName);
     departureSelected = NotEquals(this.navigator.GetDeparture(), ENcartStations.NONE);
@@ -98,7 +98,7 @@ protected cb func OnStopButtonClick(evt: ref<inkPointerEvent>) -> Bool {
     this.PlaySound(n"Button", n"OnPress");
     if this.navigator.HasActiveRoute() {
       this.SelectionCanceled();
-      this.navigator.OnCanceled();
+      this.navigator.Reset();
       this.metroButtonStop.SetVisible(false);
       this.metroButtonNavigate.SetVisible(true);
     };
@@ -121,7 +121,7 @@ protected cb func OnConfirmButtonClick(evt: ref<inkPointerEvent>) -> Bool {
       this.metroButtonConfirm.SetVisible(false);
       this.metroButtonNavigate.SetVisible(true);
       this.SelectionCanceled();
-      this.navigator.OnCanceled();
+      this.navigator.Reset();
     };
   }
 }
