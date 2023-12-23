@@ -183,6 +183,8 @@ public class RefreshPocketGuideWidgetEvent extends Event {}
 public class ClearPocketGuideWidgetEvent extends Event {}
 public class ShowPocketGuideWidgetEvent extends Event {}
 public class HidePocketGuideWidgetEvent extends Event {}
+public class ShowPocketGuideInputHintsEvent extends Event {}
+public class HidePocketGuideInputHintsEvent extends Event {}
 
 enum RoutePointType {
   NONE = 0,

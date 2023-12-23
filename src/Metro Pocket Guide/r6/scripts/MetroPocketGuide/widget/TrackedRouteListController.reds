@@ -17,11 +17,23 @@ public class TrackedRouteListController extends inkGameController {
 
     this.InitializeWidgets();
     this.RefreshDataSource();
+    this.RegisterHotkeyListeners();
 
     MetroLog(s"TrackedRouteListController created: \(ArraySize(this.route))");
   }
 
-  protected cb func OnUninitialize() -> Bool {}
+  protected cb func OnUninitialize() -> Bool {
+    this.UnregisterHotkeyListeners();
+    this.HideAllNavigatorInputHints();
+  }
+
+  protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
+    let isMpgHotkey: Bool = Equals(ListenerAction.GetName(action), n"mpg_toggle_widget");
+    let isReleased: Bool = Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED);
+    if isMpgHotkey && isReleased && this.HasActiveRoute() {
+      this.ToggleVisibility();
+    };
+  }
 
   protected cb func OnRefreshPocketGuideWidgetEvent(evt: ref<RefreshPocketGuideWidgetEvent>) -> Bool {
     this.route = PocketMetroNavigator.GetInstance(this.player.GetGame()).GetRoute();
@@ -33,17 +45,40 @@ public class TrackedRouteListController extends inkGameController {
     ArrayClear(this.route);
     this.RefreshDataSource();
     this.SetVisible(false);
+    this.HideAllNavigatorInputHints();
     MetroLog("Widget cleared");
   }
 
   protected cb func OnShowPocketGuideWidgetEvent(evt: ref<ShowPocketGuideWidgetEvent>) -> Bool {
-    this.SetVisible(true);
-    MetroLog("Widget displayed");
+    if this.HasActiveRoute() {
+      this.SetVisible(true);
+      MetroLog("Widget displayed");
+    };
   }
 
   protected cb func OnHidePocketGuideWidgetEvent(evt: ref<HidePocketGuideWidgetEvent>) -> Bool {
     this.SetVisible(false);
     MetroLog("Widget hidden");
+  }
+
+  protected cb func OnShowPocketGuideInputHintsEvent(evt: ref<ShowPocketGuideInputHintsEvent>) -> Bool {
+    if this.HasActiveRoute() {
+      this.ShowNavigatorHintVisible();
+      MetroLog("Initial input hints displayed");
+    };
+  }
+
+  protected cb func OnHidePocketGuideInputHintsEvent(evt: ref<HidePocketGuideInputHintsEvent>) -> Bool {
+    this.HideAllNavigatorInputHints();
+    MetroLog("Input hints hidden");
+  }
+
+  private final func RegisterHotkeyListeners() -> Void {
+    this.player.RegisterInputListener(this, n"mpg_toggle_widget");
+  }
+
+  private final func UnregisterHotkeyListeners() -> Void {
+    this.player.UnregisterInputListener(this, n"mpg_toggle_widget");
   }
 
   private final func InitializeWidgets() -> Void {
@@ -55,6 +90,7 @@ public class TrackedRouteListController extends inkGameController {
     this.stationsListTemplateClassifier = new TrackedRouteItemClassifier();
     this.stationsList.SetClassifier(this.stationsListTemplateClassifier);
     this.stationsList.SetSource(this.stationsListDataView);
+    this.GetRootCompoundWidget().SetOpacity(0.0);
   }
 
   private final func RefreshDataSource() -> Void {
@@ -69,8 +105,84 @@ public class TrackedRouteListController extends inkGameController {
     this.stationsListDataView.UpdateView();
   }
 
+  private final func HasActiveRoute() -> Bool {
+    return ArraySize(this.route) > 0;
+  }
+
   private final func SetVisible(visible: Bool) -> Void {
-    this.GetRootCompoundWidget().SetVisible(visible);
-    MetroLog(s"SetVisible \(visible)");
+    let targetWidget: ref<inkWidget> = this.GetRootCompoundWidget();
+    let duration: Float = 0.3;
+    let targetOpacity: Float;
+    if visible {
+      targetOpacity = 1.0;
+    } else {
+      targetOpacity = 0.0;
+    };
+    this.AnimateOpacity(targetWidget, targetOpacity, duration);
+  }
+
+  private final func IsVisible() -> Bool {
+    let targetWidget: ref<inkWidget> = this.GetRootCompoundWidget();
+    return Equals(targetWidget.GetOpacity(), 1.0);
+  }
+
+  private final func ToggleVisibility() -> Void {
+    let isVisible: Bool = this.IsVisible();
+    this.SetVisible(!isVisible);
+    if isVisible {
+      this.ShowNavigatorHintVisible();
+    } else {
+      this.HideNavigatorHintVisible();
+    };
+  }
+
+  private final func ShowNavigatorHintVisible() -> Void {
+    MetroLog("ShowNavigatorHintVisible");
+    let data: InputHintData;
+    data.action = n"mpg_toggle_widget";
+    data.source = n"MetroPocketGuide";
+    data.localizedLabel = GetLocalizedTextByKey(n"PMG-Hint-Show");
+    data.sortingPriority = 10;
+    SendInputHintData(GetGameInstance(), true, data);
+  }
+
+  private final func HideNavigatorHintVisible() -> Void {
+    MetroLog("HideNavigatorHintVisible");
+    let data: InputHintData;
+    data.action = n"mpg_toggle_widget";
+    data.source = n"MetroPocketGuide";
+    data.localizedLabel = GetLocalizedTextByKey(n"PMG-Hint-Hide");
+    data.sortingPriority = 10;
+    SendInputHintData(GetGameInstance(), true, data);
+  }
+
+  private final func HideAllNavigatorInputHints() -> Void {
+    MetroLog("HideAllNavigatorInputHints");
+    let data: InputHintData;
+    data.action = n"mpg_toggle_widget";
+    data.source = n"MetroPocketGuide";
+    data.localizedLabel = GetLocalizedTextByKey(n"PMG-Hint-Show");
+    data.sortingPriority = 10;
+    SendInputHintData(GetGameInstance(), false, data);
+
+    data.action = n"mpg_toggle_widget";
+    data.source = n"MetroPocketGuide";
+    data.localizedLabel = GetLocalizedTextByKey(n"PMG-Hint-Hide");
+    data.sortingPriority = 10;
+    SendInputHintData(GetGameInstance(), false, data);
+  }
+
+  private final func AnimateOpacity(targetWidget: ref<inkWidget>, endOpacity: Float, duration: Float) -> ref<inkAnimProxy> {
+    let proxy: ref<inkAnimProxy>;
+    let animDef: ref<inkAnimDef> = new inkAnimDef();
+    let transparencyInterpolator: ref<inkAnimTransparency> = new inkAnimTransparency();
+    transparencyInterpolator.SetType(inkanimInterpolationType.Linear);
+    transparencyInterpolator.SetMode(inkanimInterpolationMode.EasyIn);
+    transparencyInterpolator.SetDirection(inkanimInterpolationDirection.To);
+    transparencyInterpolator.SetEndTransparency(endOpacity);
+    transparencyInterpolator.SetDuration(duration);
+    animDef.AddInterpolator(transparencyInterpolator);
+    proxy = targetWidget.PlayAnimation(animDef);
+    return proxy;
   }
 }

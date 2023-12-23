@@ -56,18 +56,26 @@ private final func InjectMetroPocketGuide() -> Void {
 @wrapMethod(PocketRadio)
 public final func OnStatusEffectApplied(evt: ref<ApplyStatusEffectEvent>, gameplayTags: script_ref<array<CName>>) -> Void {
   wrappedMethod(evt, gameplayTags);
+
+  let uiSystem: ref<UISystem>;
   if ArrayContains(Deref(gameplayTags), n"MetroRide") {
     MetroLog("Metro ride started");
-    GameInstance.GetUISystem(this.m_player.GetGame()).QueueEvent(new RefreshPocketGuideWidgetEvent());
-    GameInstance.GetUISystem(this.m_player.GetGame()).QueueEvent(new ShowPocketGuideWidgetEvent());
+    uiSystem = GameInstance.GetUISystem(this.m_player.GetGame());
+    uiSystem.QueueEvent(new RefreshPocketGuideWidgetEvent());
+    uiSystem.QueueEvent(new HidePocketGuideWidgetEvent());
+    uiSystem.QueueEvent(new ShowPocketGuideInputHintsEvent());
   };
 }
 
 @wrapMethod(PocketRadio)
 public final func OnStatusEffectRemoved(evt: ref<RemoveStatusEffect>, gameplayTags: script_ref<array<CName>>) -> Void {
   wrappedMethod(evt, gameplayTags);
+
+  let uiSystem: ref<UISystem>;
   if ArrayContains(Deref(gameplayTags), n"MetroRide") {
     MetroLog("Metro ride stopped");
-    GameInstance.GetUISystem(this.m_player.GetGame()).QueueEvent(new HidePocketGuideWidgetEvent());
+    uiSystem = GameInstance.GetUISystem(this.m_player.GetGame());
+    uiSystem.QueueEvent(new HidePocketGuideWidgetEvent());
+    uiSystem.QueueEvent(new HidePocketGuideInputHintsEvent());
   };
 }
