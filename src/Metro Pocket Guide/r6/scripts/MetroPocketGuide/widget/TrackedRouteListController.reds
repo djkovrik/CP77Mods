@@ -19,7 +19,7 @@ public class TrackedRouteListController extends inkGameController {
     this.RefreshDataSource();
     this.RegisterHotkeyListeners();
 
-    MetroLog(s"TrackedRouteListController created: \(ArraySize(this.route))");
+    MetroLog(s"TrackedRouteListController created");
   }
 
   protected cb func OnUninitialize() -> Bool {
@@ -38,7 +38,7 @@ public class TrackedRouteListController extends inkGameController {
   protected cb func OnRefreshPocketGuideWidgetEvent(evt: ref<RefreshPocketGuideWidgetEvent>) -> Bool {
     this.route = PocketMetroNavigator.GetInstance(this.player.GetGame()).GetRoute();
     this.RefreshDataSource();
-    MetroLog(s"Widget refreshed: \(ArraySize(this.route))");
+    MetroLog(s"TrackedRouteListController refreshed: \(ArraySize(this.route))");
   }
 
   protected cb func OnClearPocketGuideWidgetEvent(evt: ref<ClearPocketGuideWidgetEvent>) -> Bool {

@@ -85,6 +85,34 @@ public abstract class RoutePoint {
   public final func UpdateStatus(status: RoutePointStatus) -> Void {
     this.status = status;
   }
+
+  public final func GetStatus() -> RoutePointStatus {
+    return this.status;
+  }
+
+  public final func IsStationPoint() -> Bool {
+    return Equals(this.type, RoutePointType.STATION);
+  }
+
+  public final func IsLineSwitch() -> Bool {
+    return Equals(this.type, RoutePointType.LINE_SWITCH);
+  }
+
+  public final func AsStationPoint() -> ref<StationPoint> {
+    if Equals(this.type, RoutePointType.STATION) {
+      return this as StationPoint;
+    };
+
+    return null;
+  }
+
+  public final func AsLineSwitch() -> ref<LineSwitch> {
+    if Equals(this.type, RoutePointType.LINE_SWITCH) {
+      return this as LineSwitch;
+    };
+
+    return null;
+  }
 }
 
 public class StationPoint extends RoutePoint {
@@ -117,7 +145,7 @@ public class StationPoint extends RoutePoint {
   }
 
   public final func Str() -> String {
-    return s"\(this.index): [\(MetroDataHelper.LineStr(this.line)): \(GetLocalizedText(this.stationTitle))]";
+    return s"\(this.index): [\(MetroDataHelper.LineStr(this.line)): \(GetLocalizedText(this.stationTitle))] - \(this.station)";
   };
 }
 
@@ -179,6 +207,30 @@ public class PocketMetroResetPreviousDestinationEvent extends Event {
   }
 }
 
+public class PocketMetroStationActivatedEvent extends Event {
+  public let line: ModNCartLine;
+  public let station: ENcartStations;
+
+  public static func Create(line: ModNCartLine, station: ENcartStations) -> ref<PocketMetroStationActivatedEvent> {
+    let instance: ref<PocketMetroStationActivatedEvent> = new PocketMetroStationActivatedEvent();
+    instance.line = line;
+    instance.station = station;
+    return instance;
+  }
+}
+
+public class PocketMetroStationVisitedEvent extends Event {
+  public let line: ModNCartLine;
+  public let station: ENcartStations;
+
+  public static func Create(line: ModNCartLine, station: ENcartStations) -> ref<PocketMetroStationVisitedEvent> {
+    let instance: ref<PocketMetroStationVisitedEvent> = new PocketMetroStationVisitedEvent();
+    instance.line = line;
+    instance.station = station;
+    return instance;
+  }
+}
+
 public class RefreshPocketGuideWidgetEvent extends Event {}
 public class ClearPocketGuideWidgetEvent extends Event {}
 public class ShowPocketGuideWidgetEvent extends Event {}
@@ -195,7 +247,7 @@ enum RoutePointType {
 
 enum RoutePointStatus {
   NOT_VISITED = 0,
-  ARRIVAL = 1,
+  ACTIVE = 1,
   VISITED = 2,
 }
 

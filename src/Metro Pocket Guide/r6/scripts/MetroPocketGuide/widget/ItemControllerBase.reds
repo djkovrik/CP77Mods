@@ -25,4 +25,12 @@ public class TrackedRouteBaseItemController extends inkVirtualCompoundItemContro
 
     return n"line-a";
   }
+
+  protected func AnimateVisited() -> Void {
+    this.Dim();
+  }
+
+  protected func Dim() -> Void {
+    this.GetRootCompoundWidget().SetOpacity(0.2);
+  }
 }

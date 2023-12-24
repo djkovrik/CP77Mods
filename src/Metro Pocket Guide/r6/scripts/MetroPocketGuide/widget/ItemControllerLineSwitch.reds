@@ -18,11 +18,17 @@ public class TrackedRouteLineSwitchItemController extends TrackedRouteBaseItemCo
   protected cb func OnDataChanged(value: Variant) {
     this.data = FromVariant<ref<IScriptable>>(value) as LineSwitch;
     if IsDefined(this.data) {
-      this.RefreshView();
+      this.InitializeWidget();
     };
   }
 
-  private final func RefreshView() -> Void {
+  protected cb func OnPocketMetroStationVisitedEvent(evt: ref<PocketMetroStationVisitedEvent>) -> Bool {
+    if Equals(this.data.to, evt.line) && Equals(this.data.station, evt.station) {
+      this.AnimateVisited();
+    };
+  }
+
+  private final func InitializeWidget() -> Void {
     // Icons
     this.from.SetTexturePart(this.GetLinePartName(this.data.from));
     this.to.SetTexturePart(this.GetLinePartName(this.data.to));
@@ -31,5 +37,17 @@ public class TrackedRouteLineSwitchItemController extends TrackedRouteBaseItemCo
     this.to.SetTintColor(this.GetLineHDRColor(this.data.to));
     // Station title
     this.title.SetText(this.data.stationTitle);
+    // Status
+    this.UpdateStatusView();
+  }
+
+  private final func UpdateStatusView() -> Void {
+    if Equals(this.data.status, RoutePointStatus.VISITED) {
+      this.Dim();
+    };
+  }
+
+  private final func UpdateStatusData(status: RoutePointStatus) -> Void {
+    this.data.UpdateStatus(status);
   }
 }

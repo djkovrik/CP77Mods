@@ -75,6 +75,10 @@ public class MetroNodesGraph extends ScriptableEnv {
     while i < count {
       point = tempRoute[i];
       point.SetIndex(i);
+      // Start with first route point active
+      if Equals(i, 0) {
+        point.UpdateStatus(RoutePointStatus.ACTIVE);
+      };
       ArrayPush(route, point);
       i += 1;
     };

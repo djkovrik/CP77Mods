@@ -18,11 +18,23 @@ public class TrackedRouteStationItemController extends TrackedRouteBaseItemContr
   protected cb func OnDataChanged(value: Variant) {
     this.data = FromVariant<ref<IScriptable>>(value) as StationPoint;
     if IsDefined(this.data) {
-      this.RefreshView();
+      this.InitializeWidget();
     };
   }
 
-  private final func RefreshView() -> Void {
+  protected cb func OnPocketMetroStationActivatedEvent(evt: ref<PocketMetroStationActivatedEvent>) -> Bool {
+    if Equals(this.data.line, evt.line) && Equals(this.data.station, evt.station) {
+      this.AnimateActivated();
+    };
+  }
+
+  protected cb func OnPocketMetroStationVisitedEvent(evt: ref<PocketMetroStationVisitedEvent>) -> Bool {
+    if Equals(this.data.line, evt.line) && Equals(this.data.station, evt.station) {
+      this.AnimateVisited();
+    };
+  }
+
+  private final func InitializeWidget() -> Void {
     // Icon
     this.line.SetTexturePart(this.GetLinePartName(this.data.line));
     // Icon color
@@ -31,10 +43,25 @@ public class TrackedRouteStationItemController extends TrackedRouteBaseItemContr
     // Station title
     this.title.SetText(this.data.stationTitle);
     // Station status
+    this.stationStatus.SetTexturePart(n"station");
+    // Status
+    this.UpdateStatusView();
+  }
+
+  private final func UpdateStatusView() -> Void {
     if Equals(this.data.status, RoutePointStatus.VISITED) {
       this.stationStatus.SetTexturePart(n"station-filled");
-    } else {
-      this.stationStatus.SetTexturePart(n"station");
+      this.Dim();
+    } else if Equals(this.data.status, RoutePointStatus.ACTIVE) {
+      this.stationStatus.SetTexturePart(n"station-filled");
     };
+  }
+
+  private final func UpdateStatusData(status: RoutePointStatus) -> Void {
+    this.data.UpdateStatus(status);
+  }
+
+  private final func AnimateActivated() -> Void {
+    this.stationStatus.SetTexturePart(n"station-filled");
   }
 }

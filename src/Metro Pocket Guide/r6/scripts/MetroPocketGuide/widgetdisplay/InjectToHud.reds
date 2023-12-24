@@ -61,7 +61,6 @@ public final func OnStatusEffectApplied(evt: ref<ApplyStatusEffectEvent>, gamepl
   if ArrayContains(Deref(gameplayTags), n"MetroRide") {
     MetroLog("Metro ride started");
     uiSystem = GameInstance.GetUISystem(this.m_player.GetGame());
-    uiSystem.QueueEvent(new RefreshPocketGuideWidgetEvent());
     uiSystem.QueueEvent(new HidePocketGuideWidgetEvent());
     uiSystem.QueueEvent(new ShowPocketGuideInputHintsEvent());
   };

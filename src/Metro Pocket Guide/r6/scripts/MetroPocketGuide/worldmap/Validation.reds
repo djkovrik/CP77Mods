@@ -5,8 +5,7 @@ import Codeware.UI.*
 @addMethod(WorldMapMenuGameController)
 private final func InvalidateActiveRouteState() -> Void {
   if this.navigator.HasActiveRoute() {
-    this.metroButtonNavigate.SetVisible(false);
-    this.metroButtonStop.SetVisible(true);
+    this.ShowButtonStop();
     this.SetDepartureSelected(MetroDataHelper.GetStationTitle(this.navigator.GetDeparture()));
     this.SetDestinationSelected(MetroDataHelper.GetStationTitle(this.navigator.GetDestination()));
   };

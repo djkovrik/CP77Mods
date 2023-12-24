@@ -36,8 +36,7 @@ private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
         this.SetDestinationSelected(selectedTitle);
         this.DestinationSelected();
         controller.SelectForRoute();
-        this.metroButtonCancel.SetVisible(false);
-        this.metroButtonConfirm.SetVisible(true);
+        this.ShowButtonConfirm();
 
       } else if departureSelected && destinationSelected {
         // departure selected and destination selected as well - reset prev destination and set to new
@@ -62,8 +61,7 @@ private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
 protected cb func OnNavigateButtonClick(evt: ref<inkPointerEvent>) -> Bool {
   if evt.IsAction(n"click") {
     this.PlaySound(n"Button", n"OnPress");
-    this.metroButtonNavigate.SetVisible(false);
-    this.metroButtonCancel.SetVisible(true);
+    this.ShowButtonCancel();
     this.routeSelectionEnabled = true;
     this.RefreshFiltersVisibility();
     this.SwitchToCustomFiltersForStations();
@@ -79,8 +77,7 @@ protected cb func OnNavigateButtonClick(evt: ref<inkPointerEvent>) -> Bool {
 protected cb func OnCancelButtonClick(evt: ref<inkPointerEvent>) -> Bool {
   if evt.IsAction(n"click") {
     this.PlaySound(n"Button", n"OnPress");
-    this.metroButtonCancel.SetVisible(false);
-    this.metroButtonNavigate.SetVisible(true);
+    this.ShowButtonNavigate();
     this.routeSelectionEnabled = false;
     this.RefreshFiltersVisibility();
     this.RestorePreviousFiltersState();
@@ -99,8 +96,7 @@ protected cb func OnStopButtonClick(evt: ref<inkPointerEvent>) -> Bool {
     if this.navigator.HasActiveRoute() {
       this.SelectionCanceled();
       this.navigator.Reset();
-      this.metroButtonStop.SetVisible(false);
-      this.metroButtonNavigate.SetVisible(true);
+      this.ShowButtonNavigate();
     };
   }
 }
@@ -114,12 +110,10 @@ protected cb func OnConfirmButtonClick(evt: ref<inkPointerEvent>) -> Bool {
       this.routeSelectionEnabled = false;
       this.RefreshFiltersVisibility();
       this.RestorePreviousFiltersState();
-      this.metroButtonConfirm.SetVisible(false);
-      this.metroButtonStop.SetVisible(true);
+      this.ShowButtonStop();
     } else {
       // Should not happen but just in case
-      this.metroButtonConfirm.SetVisible(false);
-      this.metroButtonNavigate.SetVisible(true);
+      this.ShowButtonNavigate();
       this.SelectionCanceled();
       this.navigator.Reset();
     };
@@ -166,4 +160,39 @@ protected cb func OnHoverOverMappin(e: ref<inkPointerEvent>) -> Bool {
 protected cb func OnHoverOutMappin(e: ref<inkPointerEvent>) -> Bool {
   wrappedMethod(e);
   this.currentHoveredController = null;
+}
+
+
+// Button controls
+
+@addMethod(WorldMapMenuGameController)
+private final func ShowButtonNavigate() -> Void {
+  this.metroButtonNavigate.SetVisible(true);
+  this.metroButtonCancel.SetVisible(false);
+  this.metroButtonStop.SetVisible(false);
+  this.metroButtonConfirm.SetVisible(false);
+}
+
+@addMethod(WorldMapMenuGameController)
+private final func ShowButtonCancel() -> Void {
+  this.metroButtonNavigate.SetVisible(false);
+  this.metroButtonCancel.SetVisible(true);
+  this.metroButtonStop.SetVisible(false);
+  this.metroButtonConfirm.SetVisible(false);
+}
+
+@addMethod(WorldMapMenuGameController)
+private final func ShowButtonStop() -> Void {
+  this.metroButtonNavigate.SetVisible(false);
+  this.metroButtonCancel.SetVisible(false);
+  this.metroButtonStop.SetVisible(true);
+  this.metroButtonConfirm.SetVisible(false);
+}
+
+@addMethod(WorldMapMenuGameController)
+private final func ShowButtonConfirm() -> Void {
+  this.metroButtonNavigate.SetVisible(false);
+  this.metroButtonCancel.SetVisible(false);
+  this.metroButtonStop.SetVisible(false);
+  this.metroButtonConfirm.SetVisible(true);
 }
