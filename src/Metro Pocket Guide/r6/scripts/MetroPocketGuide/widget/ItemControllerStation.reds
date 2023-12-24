@@ -7,6 +7,7 @@ public class TrackedRouteStationItemController extends TrackedRouteBaseItemContr
   private let title: wref<inkText>;
 
   protected cb func OnInitialize() -> Bool {
+    super.OnInitialize();
     let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
     this.line = root.GetWidgetByPathName(n"container/lineImage") as inkImage;
     this.stationStatus = root.GetWidgetByPathName(n"container/stationStatus") as inkImage;
