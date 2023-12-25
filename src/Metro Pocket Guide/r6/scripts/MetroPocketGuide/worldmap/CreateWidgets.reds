@@ -65,26 +65,26 @@ private final func AddMetroPocketGuideControls() -> Void {
 
   this.metroButtonNavigate = PocketMetroNavButton.Create();
   this.metroButtonNavigate.SetName(n"buttonNavigate");
-  this.metroButtonNavigate.SetText("Navigate");
+  this.metroButtonNavigate.SetText(GetLocalizedTextByKey(n"PMG-Button-Navigate"));
   this.metroButtonNavigate.RegisterToCallback(n"OnClick", this, n"OnNavigateButtonClick");
   this.metroButtonNavigate.Reparent(buttonsContainer);
 
   this.metroButtonCancel = PocketMetroNavButton.Create();
   this.metroButtonCancel.SetName(n"buttonCancel");
-  this.metroButtonCancel.SetText("Cancel");
+  this.metroButtonCancel.SetText(GetLocalizedTextByKey(n"PMG-Button-Cancel"));
   this.metroButtonCancel.SetVisible(false);
   this.metroButtonCancel.RegisterToCallback(n"OnClick", this, n"OnCancelButtonClick");
   this.metroButtonCancel.Reparent(buttonsContainer);
 
   this.metroButtonStop = PocketMetroNavButton.Create();
-  this.metroButtonStop.SetText("Stop");
+  this.metroButtonStop.SetText(GetLocalizedTextByKey(n"PMG-Button-Stop"));
   this.metroButtonStop.SetName(n"buttonStop");
   this.metroButtonStop.SetVisible(false);
   this.metroButtonStop.RegisterToCallback(n"OnClick", this, n"OnStopButtonClick");
   this.metroButtonStop.Reparent(buttonsContainer);
 
   this.metroButtonConfirm = PocketMetroNavButton.Create();
-  this.metroButtonConfirm.SetText("Confirm");
+  this.metroButtonConfirm.SetText(GetLocalizedTextByKey(n"PMG-Button-Confirm"));
   this.metroButtonConfirm.SetName(n"buttonConfirm");
   this.metroButtonConfirm.SetVisible(false);
   this.metroButtonConfirm.RegisterToCallback(n"OnClick", this, n"OnConfirmButtonClick");
