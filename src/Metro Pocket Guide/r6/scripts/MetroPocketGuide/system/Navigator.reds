@@ -150,6 +150,15 @@ public class PocketMetroNavigator extends ScriptableSystem {
     return this.route;
   }
 
+  public final func CheckForRouteEnd() -> Void {
+    if Equals(this.destination, this.activeStation) {
+      TrackLog("+ Destination point reached");
+      this.Reset();
+      this.uiSystem.QueueEvent(new ClearPocketGuideWidgetEvent());
+    };
+  }
+
+  // Utils
   public final func PopulateWithInitialValues() -> Void {
     this.departureLine = this.route[0].AsStationPoint().line;
     this.destinationLine = this.route[ArraySize(this.route) - 1].AsStationPoint().line;
