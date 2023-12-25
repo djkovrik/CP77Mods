@@ -76,6 +76,7 @@ public abstract class RoutePoint {
   let index: Int32;
   let type: RoutePointType;
   let status: RoutePointStatus;
+  let station: ENcartStations;
   let stationId: Int32;
 
   public final func SetIndex(index: Int32) -> Void {
@@ -119,7 +120,6 @@ public class StationPoint extends RoutePoint {
   let line: ModNCartLine;
   let startingPoint: Bool;
   let destinationPoint: Bool;
-  let station: ENcartStations;
   let stationTitle: String;
   let district: ENcartDistricts;
   let districtTitle: String;
@@ -145,14 +145,13 @@ public class StationPoint extends RoutePoint {
   }
 
   public final func Str() -> String {
-    return s"\(this.index): [\(MetroDataHelper.LineStr(this.line)): \(GetLocalizedText(this.stationTitle))] - \(this.station)";
+    return s"\(this.index): [\(MetroDataHelper.LineStr(this.line)): \(GetLocalizedText(this.stationTitle))] - \(this.station) (\(this.stationId))";
   };
 }
 
 public class LineSwitch extends RoutePoint {
   let from: ModNCartLine;
   let to: ModNCartLine;
-  let station: ENcartStations;
   let stationTitle: String;
 
   public static func Create(stationId: Int32, from: ModNCartLine, to: ModNCartLine) -> ref<LineSwitch> {
@@ -169,7 +168,7 @@ public class LineSwitch extends RoutePoint {
   }
 
   public final func Str() -> String {
-    return s"\(this.index): [ Switch line at \(GetLocalizedText(this.stationTitle)): \(MetroDataHelper.LineStr(this.from)) -> \(MetroDataHelper.LineStr(this.to))]";
+    return s"\(this.index): [ Switch line at \(GetLocalizedText(this.stationTitle)) ] \(this.station) (\(this.stationId)): \(MetroDataHelper.LineStr(this.from)) -> \(MetroDataHelper.LineStr(this.to))]";
   };
 }
 
@@ -228,6 +227,40 @@ public class PocketMetroStationVisitedEvent extends Event {
     instance.line = line;
     instance.station = station;
     return instance;
+  }
+}
+
+public class LineDirectionData {
+  let path: CName;
+  let line: ModNCartLine;
+  let stations: array<Int32>;
+  let moveForward: Bool;
+
+  public static func Create(path: CName, line: ModNCartLine, stations: array<Int32>, forward: Bool) -> ref<LineDirectionData> {
+    let instance: ref<LineDirectionData> = new LineDirectionData();
+    instance.path = path;
+    instance.line = line;
+    instance.stations = stations;
+    instance.moveForward = forward;
+    return instance;
+  }
+}
+
+public class RouteSegment {
+  let activeStationId: Int32;
+  let nextStationId: Int32;
+  let line: ModNCartLine;
+
+  public static func Create(activeStationId: Int32, nextStationId: Int32, line: ModNCartLine) -> ref<RouteSegment> {
+    let instance: ref<RouteSegment> = new RouteSegment();
+    instance.activeStationId = activeStationId;
+    instance.nextStationId = nextStationId;
+    instance.line = line;
+    return instance;
+  }
+
+  public final func Str() -> String {
+    return s"[\(this.line): \(this.activeStationId) -> \(this.nextStationId)]";
   }
 }
 

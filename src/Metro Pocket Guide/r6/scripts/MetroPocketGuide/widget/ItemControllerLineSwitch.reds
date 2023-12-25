@@ -1,4 +1,5 @@
 module MetroPocketGuide.UI
+import MetroPocketGuide.Utils.MPGUtils
 
 public class TrackedRouteLineSwitchItemController extends TrackedRouteBaseItemController {
   private let data: ref<LineSwitch>;
@@ -37,11 +38,11 @@ public class TrackedRouteLineSwitchItemController extends TrackedRouteBaseItemCo
 
   private final func InitializeWidget() -> Void {
     // Icons
-    this.from.SetTexturePart(this.GetLinePartName(this.data.from));
-    this.to.SetTexturePart(this.GetLinePartName(this.data.to));
+    this.from.SetTexturePart(MPGUtils.GetLinePartName(this.data.from));
+    this.to.SetTexturePart(MPGUtils.GetLinePartName(this.data.to));
     // Icons colors
-    this.from.SetTintColor(this.GetLineHDRColor(this.data.from));
-    this.to.SetTintColor(this.GetLineHDRColor(this.data.to));
+    this.from.SetTintColor(MPGUtils.GetLineHDRColor(this.data.from));
+    this.to.SetTintColor(MPGUtils.GetLineHDRColor(this.data.to));
     // Station title
     this.title.SetText(this.data.stationTitle);
     // Status

@@ -9,11 +9,11 @@ private final func AddMetroPocketGuideLabels() -> Void {
 
   let selectionContainer: ref<inkVerticalPanel> = new inkVerticalPanel();
   selectionContainer.SetName(n"selectionLabels");
-  selectionContainer.SetAnchor(inkEAnchor.TopCenter);
+  selectionContainer.SetAnchor(inkEAnchor.BottomCenter);
   selectionContainer.SetFitToContent(true);
   selectionContainer.SetInteractive(false);
   selectionContainer.SetAnchorPoint(0.5, 0.5);
-  selectionContainer.SetMargin(0.0, 240.0, 0.0, 0.0);
+  selectionContainer.SetMargin(0.0, 0.0, 0.0, 248.0);
   selectionContainer.Reparent(parent);
 
   let from: ref<inkText> = new inkText();

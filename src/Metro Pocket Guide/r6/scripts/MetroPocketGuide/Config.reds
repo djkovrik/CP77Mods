@@ -47,7 +47,7 @@ public class MetroPocketGuideConfig {
   @runtimeProperty("ModSettings.category.order", "3")
   @runtimeProperty("ModSettings.displayName", "PMG-Visibility")
   @runtimeProperty("ModSettings.description", "PMG-Visibility-Desc")
-  let visibleByDefault: Bool = true;
+  let visibleByDefault: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Metro Guide")
   @runtimeProperty("ModSettings.category", "PMG-Worldmap-Menu")

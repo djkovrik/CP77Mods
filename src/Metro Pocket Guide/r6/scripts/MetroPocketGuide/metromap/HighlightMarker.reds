@@ -1,0 +1,20 @@
+import MetroPocketGuide.Utils.MPGUtils
+
+// line not used atm
+@addMethod(NcartMetroMapController)
+private final func CreateHighlightMarker(line: ModNCartLine) -> ref<inkImage> {
+    let icon: ref<inkImage> = new inkImage();
+    icon.SetName(n"highlight");
+    icon.SetAtlasResource(r"base\\gameplay\\gui\\metro_pocket_guide_icons.inkatlas");
+    icon.SetTexturePart(n"arrow1");
+    icon.SetFitToContent(false);
+    icon.SetAnchor(inkEAnchor.CenterLeft);
+    icon.SetAnchorPoint(new Vector2(0.5, 0.5));
+    icon.SetMargin(new inkMargin(-22.0, 0.0, 0.0, 0.0));
+    icon.SetHAlign(inkEHorizontalAlign.Left);
+    icon.SetVAlign(inkEVerticalAlign.Center);
+    icon.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    icon.BindProperty(n"tintColor", n"MainColors.Blue");
+    icon.SetSize(new Vector2(35.0, 48.0));
+    return icon;
+}

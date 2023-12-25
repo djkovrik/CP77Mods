@@ -150,6 +150,44 @@ public class PocketMetroNavigator extends ScriptableSystem {
     return this.route;
   }
 
+  public final func GetActiveRouteSegment() -> ref<RouteSegment> {
+    let point: ref<RoutePoint>;
+    let activeStationPointIndex: Int32 = -1;
+    let nextStationPointIndex: Int32 = -1;
+    let count: Int32 = ArraySize(this.route);
+    let i: Int32 = 0;
+    let shouldContinue: Bool = true;
+    while i < count && shouldContinue {
+      point = this.route[i];
+      if Equals(point.station, this.activeStation) {
+        shouldContinue = false;
+        activeStationPointIndex = i;
+      }
+      i += 1;
+    };
+
+    nextStationPointIndex = activeStationPointIndex + 1;
+
+    if Equals(activeStationPointIndex, -1) || nextStationPointIndex > (count - 1) {
+      return null;
+    };
+
+    let activeStationPoint: ref<RoutePoint> = this.route[activeStationPointIndex];
+    let nextStationPoint: ref<RoutePoint> = this.route[nextStationPointIndex];
+    let lineSwitch: ref<LineSwitch> = nextStationPoint.AsLineSwitch();
+    let stationPoint: ref<StationPoint> = nextStationPoint.AsStationPoint();
+    let segmentLine: ModNCartLine = ModNCartLine.NONE;
+    if IsDefined(lineSwitch) {
+      segmentLine = lineSwitch.from;
+    } else if IsDefined(stationPoint) {
+      segmentLine = stationPoint.line;
+    };
+
+    let segment: ref<RouteSegment> = RouteSegment.Create(activeStationPoint.stationId, nextStationPoint.stationId, segmentLine);
+    MetroLog(s"Active route segment found: \(segment.Str())");
+    return segment;
+  }
+
   public final func CheckForRouteEnd() -> Void {
     if Equals(this.destination, this.activeStation) {
       TrackLog("+ Destination point reached");
