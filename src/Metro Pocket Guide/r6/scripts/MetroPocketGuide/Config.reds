@@ -43,8 +43,15 @@ public class MetroPocketGuideConfig {
   let offsetFromTop: Int32 = 120;
 
   @runtimeProperty("ModSettings.mod", "Metro Guide")
+  @runtimeProperty("ModSettings.category", "PMG-Widget-Behavior")
+  @runtimeProperty("ModSettings.category.order", "3")
+  @runtimeProperty("ModSettings.displayName", "PMG-Visibility")
+  @runtimeProperty("ModSettings.description", "PMG-Visibility-Desc")
+  let visibleByDefault: Bool = true;
+
+  @runtimeProperty("ModSettings.mod", "Metro Guide")
   @runtimeProperty("ModSettings.category", "PMG-Worldmap-Menu")
-  @runtimeProperty("ModSettings.category.order", "2")
+  @runtimeProperty("ModSettings.category.order", "3")
   @runtimeProperty("ModSettings.displayName", "PMG-Unlock")
   @runtimeProperty("ModSettings.description", "PMG-Unlock-Desc")
   @runtimeProperty("ModSettings.step", "5")

@@ -58,11 +58,18 @@ public final func OnStatusEffectApplied(evt: ref<ApplyStatusEffectEvent>, gamepl
   wrappedMethod(evt, gameplayTags);
 
   let uiSystem: ref<UISystem>;
+  let config: ref<MetroPocketGuideConfig>;
   if ArrayContains(Deref(gameplayTags), n"MetroRide") {
     MetroLog("Metro ride started");
+    config = new MetroPocketGuideConfig();
     uiSystem = GameInstance.GetUISystem(this.m_player.GetGame());
-    uiSystem.QueueEvent(new HidePocketGuideWidgetEvent());
-    uiSystem.QueueEvent(new ShowPocketGuideInputHintsEvent());
+    if config.visibleByDefault {
+      uiSystem.QueueEvent(new ShowPocketGuideWidgetEvent());
+      uiSystem.QueueEvent(new HidePocketGuideInputHintsEvent());
+    } else {
+      uiSystem.QueueEvent(new HidePocketGuideWidgetEvent());
+      uiSystem.QueueEvent(new ShowPocketGuideInputHintsEvent());
+    };
   };
 }
 
@@ -75,6 +82,6 @@ public final func OnStatusEffectRemoved(evt: ref<RemoveStatusEffect>, gameplayTa
     MetroLog("Metro ride stopped");
     uiSystem = GameInstance.GetUISystem(this.m_player.GetGame());
     uiSystem.QueueEvent(new HidePocketGuideWidgetEvent());
-    uiSystem.QueueEvent(new HidePocketGuideInputHintsEvent());
+    uiSystem.QueueEvent(new ClearPocketGuideInputHintsEvent());
   };
 }

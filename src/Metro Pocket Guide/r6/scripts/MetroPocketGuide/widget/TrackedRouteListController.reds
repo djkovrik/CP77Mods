@@ -64,13 +64,20 @@ public class TrackedRouteListController extends inkGameController {
   protected cb func OnShowPocketGuideInputHintsEvent(evt: ref<ShowPocketGuideInputHintsEvent>) -> Bool {
     if this.HasActiveRoute() {
       this.ShowNavigatorHintVisible();
-      MetroLog("Initial input hints displayed");
+      MetroLog("Input hint visible for navigator show");
     };
   }
 
   protected cb func OnHidePocketGuideInputHintsEvent(evt: ref<HidePocketGuideInputHintsEvent>) -> Bool {
+    if this.HasActiveRoute() {
+      this.HideNavigatorHintVisible();
+      MetroLog("Input hint visible for navigator hide");
+    };
+  }
+
+  protected cb func OnClearPocketGuideInputHintsEvent(evt: ref<ClearPocketGuideInputHintsEvent>) -> Bool {
     this.HideAllNavigatorInputHints();
-    MetroLog("Input hints hidden");
+    MetroLog("Input hints removed");
   }
 
   private final func RegisterHotkeyListeners() -> Void {
