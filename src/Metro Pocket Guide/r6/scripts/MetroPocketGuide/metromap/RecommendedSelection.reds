@@ -1,15 +1,43 @@
 import MetroPocketGuide.Graph.MetroDirectionChecker
 
 @addField(NcartMetroMapController)
-private let pulseHighlight: ref<PulseAnimation>;
+let highlightAnimDef: ref<inkAnimDef>;
+
+@addField(NcartMetroMapController)
+private let highlightAnimProxy: ref<inkAnimProxy>;
 
 @addField(NcartMetroMapController)
 private let latestMarkerPath: CName = n"";
 
+@addField(NcartMetroMapController)
+private let highlightAnimDuration: Float = 0.6;
+
 @wrapMethod(NcartMetroMapController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
-  this.pulseHighlight = new PulseAnimation();
+  this.InitializeHighlightAnimation();
+}
+
+@addMethod(NcartMetroMapController)
+protected cb func InitializeHighlightAnimation() -> Bool {
+  this.highlightAnimDef = new inkAnimDef();
+
+  let translationInterpolator: ref<inkAnimTranslation> = new inkAnimTranslation();
+  translationInterpolator.SetStartTranslation(new Vector2(0.0, 0.0));
+  translationInterpolator.SetEndTranslation(new Vector2(-16.0, 0.0));
+  translationInterpolator.SetType(inkanimInterpolationType.Linear);
+  translationInterpolator.SetMode(inkanimInterpolationMode.EasyInOut);
+  translationInterpolator.SetDirection(inkanimInterpolationDirection.FromTo);
+  translationInterpolator.SetDuration(this.highlightAnimDuration);
+  this.highlightAnimDef.AddInterpolator(translationInterpolator);
+
+  let transparencyInterpolator: ref<inkAnimTransparency> = new inkAnimTransparency();
+  transparencyInterpolator.SetStartTransparency(1.0);
+  transparencyInterpolator.SetEndTransparency(0.5);
+  transparencyInterpolator.SetType(inkanimInterpolationType.Linear);
+  transparencyInterpolator.SetMode(inkanimInterpolationMode.EasyInOut);
+  transparencyInterpolator.SetDuration(this.highlightAnimDuration);
+  this.highlightAnimDef.AddInterpolator(transparencyInterpolator);
 }
 
 @wrapMethod(NcartMetroMapController)
@@ -70,8 +98,12 @@ private final func HighlightRecommendedSelection() -> Void {
     parent = root.GetWidgetByPathName(this.latestMarkerPath) as inkCompoundWidget;
     marker = this.CreateHighlightMarker(highlightData.line);
     marker.Reparent(parent);
-    this.pulseHighlight.Stop();
-    this.pulseHighlight.Configure(marker, 1.0, 0.1, 0.6);
-    this.pulseHighlight.Start();
+
+    // Animate 
+    let options: inkAnimOptions;
+    options.loopInfinite = true;
+    options.loopType = inkanimLoopType.PingPong;
+    this.highlightAnimProxy.Stop();
+    this.highlightAnimProxy = marker.PlayAnimationWithOptions(this.highlightAnimDef, options);
   };
 }

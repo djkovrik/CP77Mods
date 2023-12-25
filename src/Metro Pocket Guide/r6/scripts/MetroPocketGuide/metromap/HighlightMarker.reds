@@ -10,11 +10,11 @@ private final func CreateHighlightMarker(line: ModNCartLine) -> ref<inkImage> {
     icon.SetFitToContent(false);
     icon.SetAnchor(inkEAnchor.CenterLeft);
     icon.SetAnchorPoint(new Vector2(0.5, 0.5));
-    icon.SetMargin(new inkMargin(-22.0, 0.0, 0.0, 0.0));
+    icon.SetMargin(new inkMargin(-24.0, 0.0, 0.0, 0.0));
     icon.SetHAlign(inkEHorizontalAlign.Left);
     icon.SetVAlign(inkEVerticalAlign.Center);
     icon.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     icon.BindProperty(n"tintColor", n"MainColors.Blue");
-    icon.SetSize(new Vector2(35.0, 48.0));
+    icon.SetSize(new Vector2(30.0, 40.0));
     return icon;
 }
