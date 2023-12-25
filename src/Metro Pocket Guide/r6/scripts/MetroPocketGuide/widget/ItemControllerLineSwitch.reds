@@ -7,13 +7,13 @@ public class TrackedRouteLineSwitchItemController extends TrackedRouteBaseItemCo
   private let title: wref<inkText>;
 
   protected cb func OnInitialize() -> Bool {
-    let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
-    this.from = root.GetWidgetByPathName(n"container/lineFrom") as inkImage;
-    this.to = root.GetWidgetByPathName(n"container/lineTo") as inkImage;
-    this.title = root.GetWidgetByPathName(n"container/label") as inkText;
+    super.OnInitialize();
+    this.InitializeRefs();
   }
 
-  protected cb func OnUninitialize() -> Bool {}
+  protected cb func OnUninitialize() -> Bool {
+    super.OnUninitialize();
+  }
 
   protected cb func OnDataChanged(value: Variant) {
     this.data = FromVariant<ref<IScriptable>>(value) as LineSwitch;
@@ -26,6 +26,13 @@ public class TrackedRouteLineSwitchItemController extends TrackedRouteBaseItemCo
     if Equals(this.data.to, evt.line) && Equals(this.data.station, evt.station) {
       this.AnimateVisited();
     };
+  }
+
+  private final func InitializeRefs() -> Void {
+    let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+    this.from = root.GetWidgetByPathName(n"container/lineFrom") as inkImage;
+    this.to = root.GetWidgetByPathName(n"container/lineTo") as inkImage;
+    this.title = root.GetWidgetByPathName(n"container/label") as inkText;
   }
 
   private final func InitializeWidget() -> Void {

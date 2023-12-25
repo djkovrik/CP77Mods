@@ -7,6 +7,8 @@ public class TrackedRouteBaseItemController extends inkVirtualCompoundItemContro
   protected let visitedHideAnimDef: ref<inkAnimDef>;
   protected let visitedHideAnimProxy: ref<inkAnimProxy>;
 
+  protected let singleAnimDuration: Float = 0.75;
+
   protected cb func OnInitialize() -> Bool {
     this.InitializeVisitedAnims();
   }
@@ -68,15 +70,14 @@ public class TrackedRouteBaseItemController extends inkVirtualCompoundItemContro
   }
 
   private final func InitializeVisitedAnims() -> Void {
-    let singleAnimDuration: Float = 0.75;
     this.visitedBlinkAnimDef = new inkAnimDef();
-    let firstInterpolator: ref<inkAnimInterpolator> = this.GetTransparencyInterpolator(1.0, 0.1, singleAnimDuration, 0.0);
-    let secondInterpolator: ref<inkAnimInterpolator> = this.GetTransparencyInterpolator(0.1, 1.0, singleAnimDuration, singleAnimDuration);
+    let firstInterpolator: ref<inkAnimInterpolator> = this.GetTransparencyInterpolator(1.0, 0.1, this.singleAnimDuration, 0.0);
+    let secondInterpolator: ref<inkAnimInterpolator> = this.GetTransparencyInterpolator(0.1, 1.0, this.singleAnimDuration, this.singleAnimDuration);
     this.visitedBlinkAnimDef.AddInterpolator(firstInterpolator);
     this.visitedBlinkAnimDef.AddInterpolator(secondInterpolator);
 
     this.visitedHideAnimDef = new inkAnimDef();
-    let hideInterpolator: ref<inkAnimInterpolator> = this.GetTransparencyInterpolator(1.0, 0.2, singleAnimDuration, 0.0);
+    let hideInterpolator: ref<inkAnimInterpolator> = this.GetTransparencyInterpolator(1.0, 0.2, this.singleAnimDuration, 0.0);
     this.visitedHideAnimDef.AddInterpolator(hideInterpolator);
   }
 
