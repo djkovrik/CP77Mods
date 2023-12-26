@@ -12,6 +12,13 @@ public class TrackedRouteLineSwitchItemController extends TrackedRouteBaseItemCo
     this.InitializeRefs();
   }
 
+  private final func InitializeRefs() -> Void {
+    let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+    this.from = root.GetWidgetByPathName(n"container/lineFrom") as inkImage;
+    this.to = root.GetWidgetByPathName(n"container/lineTo") as inkImage;
+    this.title = root.GetWidgetByPathName(n"container/label") as inkText;
+  }
+
   protected cb func OnUninitialize() -> Bool {
     super.OnUninitialize();
   }
@@ -21,19 +28,6 @@ public class TrackedRouteLineSwitchItemController extends TrackedRouteBaseItemCo
     if IsDefined(this.data) {
       this.InitializeWidget();
     };
-  }
-
-  protected cb func OnPocketMetroStationVisitedEvent(evt: ref<PocketMetroStationVisitedEvent>) -> Bool {
-    if Equals(this.data.to, evt.line) && Equals(this.data.station, evt.station) {
-      this.AnimateVisited();
-    };
-  }
-
-  private final func InitializeRefs() -> Void {
-    let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
-    this.from = root.GetWidgetByPathName(n"container/lineFrom") as inkImage;
-    this.to = root.GetWidgetByPathName(n"container/lineTo") as inkImage;
-    this.title = root.GetWidgetByPathName(n"container/label") as inkText;
   }
 
   private final func InitializeWidget() -> Void {
@@ -55,7 +49,15 @@ public class TrackedRouteLineSwitchItemController extends TrackedRouteBaseItemCo
     };
   }
 
-  private final func UpdateStatusData(status: RoutePointStatus) -> Void {
-    this.data.UpdateStatus(status);
+  protected cb func OnPocketMetroStationActivatedEvent(evt: ref<PocketMetroStationActivatedEvent>) -> Bool {
+     if Equals(this.data.from, evt.line) && Equals(this.data.station, evt.station) {
+      this.AnimateActivatedBlink();
+    };
+  }
+
+  protected cb func OnPocketMetroStationVisitedEvent(evt: ref<PocketMetroStationVisitedEvent>) -> Bool {
+    if Equals(this.data.to, evt.line) && Equals(this.data.station, evt.station) {
+      this.AnimateVisitedTransparency();
+    };
   }
 }

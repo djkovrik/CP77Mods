@@ -19,7 +19,24 @@ public class TrackedRouteStationItemController extends TrackedRouteBaseItemContr
     super.OnInitialize();
 
     this.InitializeRefs();
-    this.InitializeOutlinedAnims();
+    this.InitializeStationAnimDefs();
+  }
+
+  private final func InitializeRefs() -> Void {
+    let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+    this.line = root.GetWidgetByPathName(n"container/lineImage") as inkImage;
+    this.stationStatus = root.GetWidgetByPathName(n"container/stationStatus") as inkImage;
+    this.title = root.GetWidgetByPathName(n"container/stationName") as inkText;
+  }
+
+  private final func InitializeStationAnimDefs() -> Void {
+    this.outlinedAnimDef = new inkAnimDef();
+    let hideInterpolator: ref<inkAnimInterpolator> = this.GetTransparencyInterpolator(1.0, 0.1, this.blinkAnimDuration, 0.0);
+    this.outlinedAnimDef.AddInterpolator(hideInterpolator);
+
+    this.filledAnimDef = new inkAnimDef();
+    let showInterpolator: ref<inkAnimInterpolator> = this.GetTransparencyInterpolator(0.1, 1.0, this.blinkAnimDuration, 0.0);
+    this.filledAnimDef.AddInterpolator(showInterpolator);
   }
 
   protected cb func OnUninitialize() -> Bool {
@@ -37,25 +54,6 @@ public class TrackedRouteStationItemController extends TrackedRouteBaseItemContr
     if IsDefined(this.data) {
       this.InitializeWidget();
     };
-  }
-
-  protected cb func OnPocketMetroStationActivatedEvent(evt: ref<PocketMetroStationActivatedEvent>) -> Bool {
-    if Equals(this.data.line, evt.line) && Equals(this.data.station, evt.station) {
-      this.AnimateActivated();
-    };
-  }
-
-  protected cb func OnPocketMetroStationVisitedEvent(evt: ref<PocketMetroStationVisitedEvent>) -> Bool {
-    if Equals(this.data.line, evt.line) && Equals(this.data.station, evt.station) {
-      this.AnimateVisited();
-    };
-  }
-
-  private final func InitializeRefs() -> Void {
-    let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
-    this.line = root.GetWidgetByPathName(n"container/lineImage") as inkImage;
-    this.stationStatus = root.GetWidgetByPathName(n"container/stationStatus") as inkImage;
-    this.title = root.GetWidgetByPathName(n"container/stationName") as inkText;
   }
 
   private final func InitializeWidget() -> Void {
@@ -81,11 +79,19 @@ public class TrackedRouteStationItemController extends TrackedRouteBaseItemContr
     };
   }
 
-  private final func UpdateStatusData(status: RoutePointStatus) -> Void {
-    this.data.UpdateStatus(status);
+  protected cb func OnPocketMetroStationActivatedEvent(evt: ref<PocketMetroStationActivatedEvent>) -> Bool {
+    if Equals(this.data.line, evt.line) && Equals(this.data.station, evt.station) {
+      this.AnimateActivatedIcon();
+    };
   }
 
-  private final func AnimateActivated() -> Void {
+  protected cb func OnPocketMetroStationVisitedEvent(evt: ref<PocketMetroStationVisitedEvent>) -> Bool {
+    if Equals(this.data.line, evt.line) && Equals(this.data.station, evt.station) {
+      this.AnimateVisitedTransparency();
+    };
+  }
+
+  private final func AnimateActivatedIcon() -> Void {
     this.outlinedAnimProxy.Stop();
     this.outlinedAnimProxy = this.stationStatus.PlayAnimation(this.outlinedAnimDef);
     this.outlinedAnimProxy.RegisterToCallback(inkanimEventType.OnFinish, this, n"OnOutlinedAnimFinished");
@@ -96,15 +102,11 @@ public class TrackedRouteStationItemController extends TrackedRouteBaseItemContr
     this.stationStatus.SetTexturePart(n"station-filled");
     this.filledAnimProxy.Stop();
     this.filledAnimProxy = this.stationStatus.PlayAnimation(this.filledAnimDef);
+    this.filledAnimProxy.RegisterToCallback(inkanimEventType.OnFinish, this, n"OnFilledAnimFinished");
   }
 
-  private final func InitializeOutlinedAnims() -> Void {
-    this.outlinedAnimDef = new inkAnimDef();
-    let hideInterpolator: ref<inkAnimInterpolator> = this.GetTransparencyInterpolator(1.0, 0.1, this.blinkAnimDuration, 0.0);
-    this.outlinedAnimDef.AddInterpolator(hideInterpolator);
-
-    this.filledAnimDef = new inkAnimDef();
-    let showInterpolator: ref<inkAnimInterpolator> = this.GetTransparencyInterpolator(0.1, 1.0, this.blinkAnimDuration, 0.0);
-    this.filledAnimDef.AddInterpolator(showInterpolator);
+  protected cb func OnFilledAnimFinished(e: ref<inkAnimProxy>) -> Bool {
+    e.UnregisterFromCallback(inkanimEventType.OnFinish, this, n"OnFilledAnimFinished");
+    this.AnimateActivatedBlink();
   }
 }
