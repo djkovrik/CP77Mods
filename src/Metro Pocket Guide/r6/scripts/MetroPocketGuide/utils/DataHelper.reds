@@ -182,18 +182,6 @@ public abstract class MetroDataHelper {
     return "";
   }
 
-  public final static func LineCode(line: ModNCartLine) -> Int32 {
-    switch line {
-      case ModNCartLine.A_RED: return 1;
-      case ModNCartLine.B_YELLOW: return 2;
-      case ModNCartLine.C_CYAN: return 3;
-      case ModNCartLine.D_GREEN: return 4;
-      case ModNCartLine.E_ORANGE: return 5;
-    };
-
-    return 0;
-  }
-
   public final static func LineName(code: Int32) -> ModNCartLine {
     switch code {
       case 1: return ModNCartLine.A_RED;

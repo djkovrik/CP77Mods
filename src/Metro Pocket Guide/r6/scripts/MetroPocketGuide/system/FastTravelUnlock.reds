@@ -93,7 +93,7 @@ public class MetroStationsUnlocker extends ScriptableSystem {
   }
 
   protected cb func OnFactPrologueLockChange(factValue: Int32) -> Bool {
-    if factValue <= 0 && !this.IsStationsUnlocked() {
+    if factValue <= 0 && !this.IsStationsUnlocked() && this.IsUnlockEnabled() {
       this.MarkAsUnlocked();
       this.UnlockMetroStationFTPoints();
     };
@@ -107,6 +107,7 @@ public class MetroStationsUnlocker extends ScriptableSystem {
   }
 
   private final func UnlockMetroStationFTPoints() -> Void {
+    MetroLog("Fast travel points unlocked");
     let points: array<ref<FastTravelPointData>>;
     let requesterId: EntityID = GetPlayer(GetGameInstance()).GetEntityID();
     let count: Int32 = ArraySize(this.ftPoints);

@@ -21,3 +21,5 @@ public final func OnStatusEffectRemoved(evt: ref<RemoveStatusEffect>, gameplayTa
     navigator.OnMetroExit();
   };
 }
+
+// TODO Find better solution maybe?

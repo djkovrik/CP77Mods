@@ -8,7 +8,6 @@ protected cb func OnInitialize() -> Bool {
 
 @addMethod(healthbarWidgetGameController)
 private final func InjectMetroPocketGuide() -> Void {
-  
   let config: ref<MetroPocketGuideConfig> = new MetroPocketGuideConfig();
   let system: ref<inkSystem> = GameInstance.GetInkSystem();
   let slotName: CName = n"metroPocketGuide";
