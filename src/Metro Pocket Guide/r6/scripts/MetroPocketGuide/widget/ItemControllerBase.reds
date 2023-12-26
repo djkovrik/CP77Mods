@@ -29,10 +29,8 @@ public class TrackedRouteBaseItemController extends inkVirtualCompoundItemContro
   protected cb func OnUninitialize() -> Bool {
     this.activeBlinkAnimProxy.Stop();
     this.activeBlinkAnimProxy = null;
-    this.activeBlinkAnimDef = null;
     this.visitedHideAnimProxy.Stop();
     this.visitedHideAnimProxy = null;
-    this.visitedHideAnimDef = null;
   }
 
   protected func AnimateVisitedTransparency() -> Void {

@@ -43,10 +43,8 @@ public class TrackedRouteStationItemController extends TrackedRouteBaseItemContr
     super.OnUninitialize();
     this.outlinedAnimProxy.Stop();
     this.outlinedAnimProxy = null;
-    this.outlinedAnimDef = null;
     this.filledAnimProxy.Stop();
     this.filledAnimProxy = null;
-    this.filledAnimDef = null;
   }
 
   protected cb func OnDataChanged(value: Variant) {
