@@ -70,6 +70,8 @@ protected cb func OnUninitialize() -> Bool {
   if !this.navigator.HasActiveRoute() {
     this.SelectionCanceled();
     this.navigator.Reset();
+  } else {
+    this.navigator.CheckIfShouldDisplayControls();
   };
 
   return wrappedMethod();

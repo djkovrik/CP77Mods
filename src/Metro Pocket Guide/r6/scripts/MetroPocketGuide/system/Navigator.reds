@@ -1,5 +1,6 @@
 module MetroPocketGuide.Navigator
 import MetroPocketGuide.Graph.MetroNodesGraph
+import MetroPocketGuide.Config.MetroPocketGuideConfig
 
 public class PocketMetroNavigator extends ScriptableSystem {
   private let player: wref<PlayerPuppet>;
@@ -19,6 +20,8 @@ public class PocketMetroNavigator extends ScriptableSystem {
   private let prevNextStation: ENcartStations;
   private let activeStation: ENcartStations;
   private let nextStation: ENcartStations;
+
+  private let isMetroRideActive: Bool = false;
 
   // Static helpers
   public static func GetInstance(gi: GameInstance) -> ref<PocketMetroNavigator> {
@@ -106,6 +109,43 @@ public class PocketMetroNavigator extends ScriptableSystem {
   private final func HandleStationUpdateActive() -> Void {
     if Equals(ArraySize(this.route), 0) { return ; };
     this.uiSystem.QueueEvent(PocketMetroStationActivatedEvent.Create(this.currentLine, this.activeStation));
+  }
+
+  // Metro enter/exit
+  public final func OnMetroEnter() -> Void {
+    MetroLog("Metro ride started");
+    this.InvalidateNavigatorControlsVisibility();
+    this.isMetroRideActive = true;
+  }
+
+  public final func OnMetroExit() -> Void {
+    MetroLog("Metro ride stopped");
+    this.HideNavigatorControls();
+    this.isMetroRideActive = false;
+    this.CheckForRouteEnd();
+  }
+
+  public final func CheckIfShouldDisplayControls() -> Void {
+    if this.isMetroRideActive {
+      MetroLog("Refresh controls visibility");
+      this.InvalidateNavigatorControlsVisibility();
+    };
+  }
+
+  private final func InvalidateNavigatorControlsVisibility() -> Void {
+    let config: ref<MetroPocketGuideConfig> = new MetroPocketGuideConfig();
+    if config.visibleByDefault {
+      this.uiSystem.QueueEvent(new ShowPocketGuideWidgetEvent());
+      this.uiSystem.QueueEvent(new HidePocketGuideInputHintsEvent());
+    } else {
+      this.uiSystem.QueueEvent(new HidePocketGuideWidgetEvent());
+      this.uiSystem.QueueEvent(new ShowPocketGuideInputHintsEvent());
+    };
+  }
+
+  private final func HideNavigatorControls() -> Void {
+    this.uiSystem.QueueEvent(new HidePocketGuideWidgetEvent());
+    this.uiSystem.QueueEvent(new ClearPocketGuideInputHintsEvent());
   }
 
   // Route data
@@ -223,5 +263,7 @@ public class PocketMetroNavigator extends ScriptableSystem {
     this.prevNextStation = ENcartStations.NONE;
     this.activeStation = ENcartStations.NONE;
     this.nextStation = ENcartStations.NONE;
+
+    this.isMetroRideActive = false;
   }
 }
