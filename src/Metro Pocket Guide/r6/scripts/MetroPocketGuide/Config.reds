@@ -27,10 +27,10 @@ public class MetroPocketGuideConfig {
   @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "PMG-Offset-Left")
   @runtimeProperty("ModSettings.description", "PMG-Offset-Left-Desc")
-  @runtimeProperty("ModSettings.step", "20")
+  @runtimeProperty("ModSettings.step", "25")
   @runtimeProperty("ModSettings.min", "0")
-  @runtimeProperty("ModSettings.max", "1600")
-  let offsetFromLeft: Int32 = 40;
+  @runtimeProperty("ModSettings.max", "2200")
+  let offsetFromLeft: Int32 = 60;
 
   @runtimeProperty("ModSettings.mod", "Metro Guide")
   @runtimeProperty("ModSettings.category", "PMG-Widget-Position")
@@ -39,15 +39,15 @@ public class MetroPocketGuideConfig {
   @runtimeProperty("ModSettings.description", "PMG-Offset-Top-Desc")
   @runtimeProperty("ModSettings.step", "20")
   @runtimeProperty("ModSettings.min", "0")
-  @runtimeProperty("ModSettings.max", "900")
-  let offsetFromTop: Int32 = 120;
+  @runtimeProperty("ModSettings.max", "1200")
+  let offsetFromTop: Int32 = 80;
 
   @runtimeProperty("ModSettings.mod", "Metro Guide")
   @runtimeProperty("ModSettings.category", "PMG-Widget-Behavior")
   @runtimeProperty("ModSettings.category.order", "3")
   @runtimeProperty("ModSettings.displayName", "PMG-Visibility")
   @runtimeProperty("ModSettings.description", "PMG-Visibility-Desc")
-  let visibleByDefault: Bool = false;
+  let visibleByDefault: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "Metro Guide")
   @runtimeProperty("ModSettings.category", "PMG-Worldmap-Menu")

@@ -1,0 +1,4 @@
+localization:
+  onscreens:
+    en-us: base\localization\en-us\onscreens\pocket-metro.json
+    ru-ru: base\localization\ru-ru\onscreens\pocket-metro.json
