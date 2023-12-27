@@ -120,6 +120,7 @@ public class MetroNodesGraph extends ScriptableEnv {
       };
     };
 
+    // Find the shortest route
     let minLength: Int32 = 100;
     let minIndex: Int32 = -1;
     let size: Int32 = ArraySize(allPaths);
@@ -141,6 +142,7 @@ public class MetroNodesGraph extends ScriptableEnv {
     return [];
   }
 
+  // Breadth first search
   private final func BFS(from: Int32, to: Int32) -> array<Int32> {
     let dest: array<Int32> = this.Solve(from);
     let path: array<Int32> = this.ReconstructPath(from, to, dest);
@@ -213,6 +215,8 @@ public class MetroNodesGraph extends ScriptableEnv {
   }
 
   private final func PopulateGraph() -> Void {
+    // -- Initialize nodes
+
     // Line A
     let A1 = MetroNode.Create(1, 1, ModNCartLine.A_RED); this.SaveNode(A1);
     let A2 = MetroNode.Create(2, 2, ModNCartLine.A_RED); this.SaveNode(A2);
@@ -261,7 +265,9 @@ public class MetroNodesGraph extends ScriptableEnv {
     let E4 = MetroNode.Create(41, 4, ModNCartLine.E_ORANGE); this.SaveNode(E4);
     let E17 = MetroNode.Create(42, 17, ModNCartLine.E_ORANGE); this.SaveNode(E17);
     
+
     // -- Build graph, reference: https://i.imgur.com/8lHAfiA.png
+    
     this.graph.Insert(A1.Key(), MetroGraphNode.Create([ A2.Index(), E1.Index() ])); // A1
     this.graph.Insert(A2.Key(), MetroGraphNode.Create([ A1.Index(), A3.Index(), E2.Index() ])); // A2
     this.graph.Insert(A3.Key(), MetroGraphNode.Create([ A2.Index(), A7.Index() ])); // A3
