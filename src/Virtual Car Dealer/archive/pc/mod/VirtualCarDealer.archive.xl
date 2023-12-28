@@ -13,3 +13,4 @@ localization:
     jp-jp: base\localization\jp-jp\onscreens\vdealer.json
     cz-cz: base\localization\cz-cz\onscreens\vdealer.json
     de-de: base\localization\de-de\onscreens\vdealer.json
+    kr-kr: base\localization\kr-kr\onscreens\vdealer.json
