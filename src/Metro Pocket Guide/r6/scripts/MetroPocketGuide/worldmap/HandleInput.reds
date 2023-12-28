@@ -111,6 +111,7 @@ protected cb func OnConfirmButtonClick(evt: ref<inkPointerEvent>) -> Bool {
       this.RefreshFiltersVisibility();
       this.RestorePreviousFiltersState();
       this.ShowButtonStop();
+      this.mpgUiSystem.QueueEvent(new InjectPocketGuideToHudEvent());
     } else {
       // Should not happen but just in case
       this.ShowButtonNavigate();

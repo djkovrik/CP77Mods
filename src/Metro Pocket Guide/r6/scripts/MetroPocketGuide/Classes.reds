@@ -264,13 +264,12 @@ public class RouteSegment {
   }
 }
 
-public class RefreshPocketGuideWidgetEvent extends Event {}
-public class ClearPocketGuideWidgetEvent extends Event {}
 public class ShowPocketGuideWidgetEvent extends Event {}
 public class HidePocketGuideWidgetEvent extends Event {}
 public class ShowPocketGuideInputHintsEvent extends Event {}
 public class HidePocketGuideInputHintsEvent extends Event {}
-public class ClearPocketGuideInputHintsEvent extends Event {}
+public class InjectPocketGuideToHudEvent extends Event {}
+public class RemovePocketGuideFromHudEvent extends Event {}
 
 enum RoutePointType {
   NONE = 0,

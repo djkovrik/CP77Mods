@@ -145,7 +145,6 @@ public class PocketMetroNavigator extends ScriptableSystem {
 
   private final func HideNavigatorControls() -> Void {
     this.uiSystem.QueueEvent(new HidePocketGuideWidgetEvent());
-    this.uiSystem.QueueEvent(new ClearPocketGuideInputHintsEvent());
   }
 
   // Route data
@@ -159,7 +158,6 @@ public class PocketMetroNavigator extends ScriptableSystem {
     let routeAvailable: Bool = ArraySize(this.route) > 0;
     if routeAvailable {
       this.PopulateWithInitialValues();
-      this.uiSystem.QueueEvent(new RefreshPocketGuideWidgetEvent());
     } else {
       this.Reset();
     };
@@ -232,7 +230,6 @@ public class PocketMetroNavigator extends ScriptableSystem {
     if Equals(this.destination, this.activeStation) {
       TrackLog("+ Destination point reached");
       this.Reset();
-      this.uiSystem.QueueEvent(new ClearPocketGuideWidgetEvent());
     };
   }
 
@@ -265,5 +262,10 @@ public class PocketMetroNavigator extends ScriptableSystem {
     this.nextStation = ENcartStations.NONE;
 
     this.isMetroRideActive = false;
+
+    this.uiSystem.QueueEvent(PocketMetroResetPreviousDestinationEvent.Create(this.GetDeparture()));
+    this.uiSystem.QueueEvent(PocketMetroResetPreviousDestinationEvent.Create(this.GetDestination()));
+    this.uiSystem.QueueEvent(new HidePocketGuideWidgetEvent());
+    this.uiSystem.QueueEvent(new RemovePocketGuideFromHudEvent());
   }
 }

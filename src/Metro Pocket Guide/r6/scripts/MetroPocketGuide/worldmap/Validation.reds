@@ -14,17 +14,12 @@ private final func InvalidateActiveRouteState() -> Void {
 // Cancel
 @addMethod(WorldMapMenuGameController)
 private final func SelectionCanceled() -> Void {
-  this.mpgUiSystem.QueueEvent(PocketMetroResetPreviousDestinationEvent.Create(this.navigator.GetDeparture()));
-  this.mpgUiSystem.QueueEvent(PocketMetroResetPreviousDestinationEvent.Create(this.navigator.GetDestination()));
-  this.mpgUiSystem.QueueEvent(new ClearPocketGuideWidgetEvent());
-  this.mpgUiSystem.QueueEvent(new HidePocketGuideWidgetEvent());
   this.departureLabel.SetVisible(false);
   this.destinationLabel.SetVisible(false);
   this.SetDepartureInitial();
   this.SetDestinationInitial();
   this.pulseDeparture.Stop();
   this.pulseDestination.Stop();
-  this.navigator.SaveDeparture(ENcartStations.NONE);
-  this.navigator.SaveDestination(ENcartStations.NONE);
   this.routeSelectionEnabled = false;
+  this.navigator.Reset();
 }

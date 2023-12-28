@@ -23,6 +23,7 @@ public class TrackedRouteListController extends inkGameController {
   }
 
   protected cb func OnUninitialize() -> Bool {
+    MetroLog(s"TrackedRouteListController uninit");
     this.UnregisterHotkeyListeners();
     this.HideAllNavigatorInputHints();
   }
@@ -33,20 +34,6 @@ public class TrackedRouteListController extends inkGameController {
     if isMpgHotkey && isReleased && this.HasActiveRoute() {
       this.ToggleVisibility();
     };
-  }
-
-  protected cb func OnRefreshPocketGuideWidgetEvent(evt: ref<RefreshPocketGuideWidgetEvent>) -> Bool {
-    this.route = PocketMetroNavigator.GetInstance(this.player.GetGame()).GetRoute();
-    this.RefreshDataSource();
-    MetroLog(s"TrackedRouteListController refreshed: \(ArraySize(this.route))");
-  }
-
-  protected cb func OnClearPocketGuideWidgetEvent(evt: ref<ClearPocketGuideWidgetEvent>) -> Bool {
-    ArrayClear(this.route);
-    this.RefreshDataSource();
-    this.SetVisible(false);
-    this.HideAllNavigatorInputHints();
-    MetroLog("Widget cleared");
   }
 
   protected cb func OnShowPocketGuideWidgetEvent(evt: ref<ShowPocketGuideWidgetEvent>) -> Bool {
@@ -73,11 +60,6 @@ public class TrackedRouteListController extends inkGameController {
       this.HideNavigatorHintVisible();
       MetroLog("Input hint visible for navigator hide");
     };
-  }
-
-  protected cb func OnClearPocketGuideInputHintsEvent(evt: ref<ClearPocketGuideInputHintsEvent>) -> Bool {
-    this.HideAllNavigatorInputHints();
-    MetroLog("Input hints removed");
   }
 
   private final func RegisterHotkeyListeners() -> Void {

@@ -1,21 +1,29 @@
 import MetroPocketGuide.Config.MetroPocketGuideConfig
 
+@addField(healthbarWidgetGameController)
+private let inkSystem: ref<inkSystem>;
+
+@addField(healthbarWidgetGameController)
+private let pocketGuideSlotName: CName = n"metroPocketGuideSlot";
+
+@addField(healthbarWidgetGameController)
+private let pocketGuideWidgetName: CName = n"metroPocketGuideWidget";
+
 @wrapMethod(healthbarWidgetGameController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
-  this.InjectMetroPocketGuide();
+  this.inkSystem = GameInstance.GetInkSystem();
+  this.InjectMetroPocketGuideSlot();
 }
 
 @addMethod(healthbarWidgetGameController)
-private final func InjectMetroPocketGuide() -> Void {
+private final func InjectMetroPocketGuideSlot() -> Void {
   let config: ref<MetroPocketGuideConfig> = new MetroPocketGuideConfig();
-  let system: ref<inkSystem> = GameInstance.GetInkSystem();
-  let slotName: CName = n"metroPocketGuide";
-  let root: ref<inkCompoundWidget> = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
-  let slot: ref<inkCompoundWidget> = root.GetWidgetByPathName(slotName) as inkCompoundWidget;
+  let root: ref<inkCompoundWidget> = this.inkSystem.GetLayer(n"inkHUDLayer").GetVirtualWindow();
+  let slot: ref<inkCompoundWidget> = root.GetWidgetByPathName(this.pocketGuideSlotName) as inkCompoundWidget;
   if !IsDefined(slot) {
     slot = new inkCanvas();
-    slot.SetName(slotName);
+    slot.SetName(this.pocketGuideSlotName);
     slot.SetFitToContent(true);
     slot.SetLayout(
       new inkWidgetLayout(
@@ -39,7 +47,13 @@ private final func InjectMetroPocketGuide() -> Void {
 
   let opacity: Float = config.opacity;
   slot.SetOpacity(opacity);
+}
 
+@addMethod(healthbarWidgetGameController)
+protected cb func OnInjectPocketGuideToHudEvent(evt: ref<InjectPocketGuideToHudEvent>) -> Bool {
+  let root: ref<inkCompoundWidget> = this.inkSystem.GetLayer(n"inkHUDLayer").GetVirtualWindow();
+  let slot: ref<inkCompoundWidget> = root.GetWidgetByPathName(this.pocketGuideSlotName) as inkCompoundWidget;
+  
   slot.RemoveAllChildren();
 
   let spawned: ref<inkWidget> = this.SpawnFromExternal(
@@ -48,5 +62,15 @@ private final func InjectMetroPocketGuide() -> Void {
     n"Root:MetroPocketGuide.UI.TrackedRouteListController"
   );
 
-  MetroLog(s"Widget spawned: \(IsDefined(spawned))");
+  spawned.SetName(this.pocketGuideWidgetName);
+
+  MetroLog(s"Widget added to HUD: \(IsDefined(spawned)) - \(spawned.GetName())");
+}
+
+@addMethod(healthbarWidgetGameController)
+protected cb func OnRemovePocketGuideFromHudEvent(evt: ref<RemovePocketGuideFromHudEvent>) -> Bool {
+  let root: ref<inkCompoundWidget> = this.inkSystem.GetLayer(n"inkHUDLayer").GetVirtualWindow();
+  let slot: ref<inkCompoundWidget> = root.GetWidgetByPathName(this.pocketGuideSlotName) as inkCompoundWidget;
+  slot.RemoveChildByName(this.pocketGuideWidgetName);
+  MetroLog("Widget removed from HUD");
 }
