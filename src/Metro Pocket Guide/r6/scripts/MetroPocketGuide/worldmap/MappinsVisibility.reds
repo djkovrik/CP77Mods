@@ -10,8 +10,8 @@ protected cb func OnPocketMetroRouteSelectionEnabledEvent(evt: ref<PocketMetroRo
 }
 
 @addMethod(BaseWorldMapMappinController)
-protected cb func OnPocketMetroRouteSelectionEnabledEvent(evt: ref<PocketMetroRouteSelectionEnabledEvent>) -> Bool {
-  this.routeSelectionEnabled = true;
+protected cb func OnPocketMetroRouteSelectionDisabledEvent(evt: ref<PocketMetroRouteSelectionDisabledEvent>) -> Bool {
+  this.routeSelectionEnabled = false;
   this.UpdateVisibilityForRouteSelection();
   this.DeselectFromRoute();
 }

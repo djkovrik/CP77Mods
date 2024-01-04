@@ -97,6 +97,8 @@ protected cb func OnStopButtonClick(evt: ref<inkPointerEvent>) -> Bool {
       this.SelectionCanceled();
       this.navigator.Reset();
       this.ShowButtonNavigate();
+
+      this.mpgUiSystem.QueueEvent(PocketMetroRouteSelectionDisabledEvent.Create());
     };
   }
 }
