@@ -2,3 +2,7 @@ localization:
   onscreens:
     en-us: base\localization\en-us\onscreens\pocket-metro.json
     ru-ru: base\localization\ru-ru\onscreens\pocket-metro.json
+    cz-cz: base\localization\cz-cz\onscreens\pocket-metro.json
+    fr-fr: base\localization\fr-fr\onscreens\pocket-metro.json
+    it-it: base\localization\it-it\onscreens\pocket-metro.json
+    zh-tw: base\localization\zh-tw\onscreens\pocket-metro.json
