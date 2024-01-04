@@ -1,5 +1,6 @@
 import LimitedHudConfig.HintsModuleConfig
 import LimitedHudCommon.LHUDConfigUpdatedEvent
+import LimitedHudCommon.LHUDEventType
 import LimitedHudCommon.LHUDEvent
 
 @addMethod(InputHintManagerGameController)
@@ -22,8 +23,9 @@ public func DetermineCurrentVisibility() -> Void {
   let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfig.ShowWithWeapon;
   let showForZoom: Bool = this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
   let showForMetro: Bool = this.lhud_isInMetro && this.lhudConfig.ShowInMetro;
+  let forced: Bool = this.lhud_isVisibilityForced;
 
-  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForWeapon || showForZoom || showForMetro;
+  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForWeapon || showForZoom || showForMetro || forced;
   if NotEquals(this.lhud_isVisibleNow, isVisible) {
     this.lhud_isVisibleNow = isVisible;
     if isVisible {
@@ -50,4 +52,16 @@ protected cb func OnInitialize() -> Bool {
 @addMethod(InputHintManagerGameController)
 protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> Void {
   this.lhudConfig = new HintsModuleConfig();
+}
+
+@wrapMethod(WorldMapMenuGameController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+  this.m_player.QueueLHUDEvent(LHUDEventType.ForceVisibility, true);
+}
+
+@wrapMethod(WorldMapMenuGameController)
+protected cb func OnUninitialize() -> Bool {
+  this.m_player.QueueLHUDEvent(LHUDEventType.ForceVisibility, false);
+  wrappedMethod();
 }

@@ -321,6 +321,15 @@ private final const func EnablePlayerTPPRepresenation(enable: Bool) -> Void {
 // --- UTILITY FUNCTIONS
 
 // Broadcast LHUD event
+@addMethod(GameObject)
+public func QueueLHUDEvent(type: LHUDEventType, active: Bool) -> Void {
+  let player: ref<PlayerPuppet> = this as PlayerPuppet;
+  if IsDefined(player) {
+    player.QueueLHUDEvent(LHUDEventType.ForceVisibility, true);
+  };
+}
+
+
 @addMethod(PlayerPuppet)
 public func QueueLHUDEvent(type: LHUDEventType, active: Bool) -> Void {
   let evt: ref<LHUDEvent> = new LHUDEvent();
