@@ -62,6 +62,13 @@ public class TrackedRouteListController extends inkGameController {
     };
   }
 
+  protected cb func OnClearPocketGuideInputHintsOnExitEvent(evt: ref<ClearPocketGuideInputHintsOnExitEvent>) -> Bool {
+    if this.HasActiveRoute() {
+      this.HideAllNavigatorInputHints();
+      MetroLog("Input hints hidden on metro exit");
+    };
+  }
+
   private final func RegisterHotkeyListeners() -> Void {
     this.player.RegisterInputListener(this, n"mpg_toggle_widget");
   }

@@ -268,6 +268,7 @@ public class ShowPocketGuideWidgetEvent extends Event {}
 public class HidePocketGuideWidgetEvent extends Event {}
 public class ShowPocketGuideInputHintsEvent extends Event {}
 public class HidePocketGuideInputHintsEvent extends Event {}
+public class ClearPocketGuideInputHintsOnExitEvent extends Event {}
 public class InjectPocketGuideToHudEvent extends Event {}
 public class RemovePocketGuideFromHudEvent extends Event {}
 

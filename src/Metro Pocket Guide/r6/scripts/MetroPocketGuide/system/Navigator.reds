@@ -120,7 +120,7 @@ public class PocketMetroNavigator extends ScriptableSystem {
 
   public final func OnMetroExit() -> Void {
     MetroLog("Metro ride stopped");
-    this.HideNavigatorControls();
+    this.RemoveNavigatorHints();
     this.isMetroRideActive = false;
     this.CheckForRouteEnd();
   }
@@ -143,8 +143,8 @@ public class PocketMetroNavigator extends ScriptableSystem {
     };
   }
 
-  private final func HideNavigatorControls() -> Void {
-    this.uiSystem.QueueEvent(new HidePocketGuideWidgetEvent());
+  private final func RemoveNavigatorHints() -> Void {
+    this.uiSystem.QueueEvent(new ClearPocketGuideInputHintsOnExitEvent());
   }
 
   // Route data
