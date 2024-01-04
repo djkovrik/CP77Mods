@@ -9,6 +9,8 @@ private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
   let selectionIsCorrect: Bool;
   let stationName: ENcartStations;
   let selectedTitle: String;
+
+  // Handle mappin clicks
   if e.IsAction(n"click") && IsDefined(controller) && this.routeSelectionEnabled {
     stationName = controller.GetMetroStationName();
     selectedTitle = MetroDataHelper.GetStationTitle(stationName);
@@ -53,76 +55,118 @@ private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
     };
   };
 
+  let isNCARTHovered: Bool = Equals(this.selectedMappin.GetMappinVariant(), gamedataMappinVariant.Zzz17_NCARTVariant);
+  let shouldHandlePadInput: Bool = !this.HasSelectedMappin() || (this.routeSelectionEnabled && isNCARTHovered);
+
+  // Handle pad input
+  if e.IsAction(n"world_map_menu_zoom_to_mappin") && this.IsLastUsedPad() && shouldHandlePadInput {
+    switch this.controlMode {
+      case MpgControlMode.NAVIGATE:
+        this.HandleNavigateClick();
+        break;
+      case MpgControlMode.CANCEL:
+        this.HandleCancelClick();
+        break;
+      case MpgControlMode.CONFIRM:
+        this.HandleConfirmClick();
+        break;
+      case MpgControlMode.STOP:
+        this.HandleStopClick();
+        break;
+    };
+
+    e.Handle();
+    return ;
+  };
+
   wrappedMethod(e);
 }
 
-// Button clicks
+// Button clicks events
 @addMethod(WorldMapMenuGameController)
 protected cb func OnNavigateButtonClick(evt: ref<inkPointerEvent>) -> Bool {
   if evt.IsAction(n"click") {
-    this.PlaySound(n"Button", n"OnPress");
-    this.ShowButtonCancel();
-    this.routeSelectionEnabled = true;
-    this.RefreshFiltersVisibility();
-    this.SwitchToCustomFiltersForStations();
-    this.SetDepartureAwaitSelection();
-    this.ShowSelectDepartureLabel();
-
-    this.mpgUiSystem.QueueEvent(PocketMetroRouteSelectionEnabledEvent.Create());
-    this.mpgUiSystem.QueueEvent(PocketMetroPlayerMarkerVisibilityEvent.Create(false));
-  }
+    this.HandleNavigateClick();
+  };
 }
 
 @addMethod(WorldMapMenuGameController)
 protected cb func OnCancelButtonClick(evt: ref<inkPointerEvent>) -> Bool {
   if evt.IsAction(n"click") {
-    this.PlaySound(n"Button", n"OnPress");
-    this.ShowButtonNavigate();
-    this.routeSelectionEnabled = false;
-    this.RefreshFiltersVisibility();
-    this.RestorePreviousFiltersState();
-    this.SelectionCanceled();
-
-    this.mpgUiSystem.QueueEvent(PocketMetroRouteSelectionDisabledEvent.Create());
-    this.mpgUiSystem.QueueEvent(PocketMetroPlayerMarkerVisibilityEvent.Create(true));
-  }
+    this.HandleCancelClick();
+  };
 }
 
 @addMethod(WorldMapMenuGameController)
 protected cb func OnStopButtonClick(evt: ref<inkPointerEvent>) -> Bool {
   if evt.IsAction(n"click") {
-    MetroLog("Stop");
-    this.PlaySound(n"Button", n"OnPress");
-    if this.navigator.HasActiveRoute() {
-      this.SelectionCanceled();
-      this.navigator.Reset();
-      this.ShowButtonNavigate();
-
-      this.mpgUiSystem.QueueEvent(PocketMetroRouteSelectionDisabledEvent.Create());
-    };
-  }
+    this.HandleStopClick();
+  };
 }
 
 @addMethod(WorldMapMenuGameController)
 protected cb func OnConfirmButtonClick(evt: ref<inkPointerEvent>) -> Bool {
   if evt.IsAction(n"click") {
-    MetroLog("Confirm");
-    this.PlaySound(n"Button", n"OnPress");
-    if this.navigator.BuildRoute() {
-      this.routeSelectionEnabled = false;
-      this.RefreshFiltersVisibility();
-      this.RestorePreviousFiltersState();
-      this.ShowButtonStop();
-      this.mpgUiSystem.QueueEvent(new InjectPocketGuideToHudEvent());
-    } else {
-      // Should not happen but just in case
-      this.ShowButtonNavigate();
-      this.SelectionCanceled();
-      this.navigator.Reset();
-    };
-  }
+    this.HandleConfirmClick();
+  };
 }
 
+// Button clicks logic
+@addMethod(WorldMapMenuGameController)
+private final func HandleNavigateClick() -> Void {
+  this.PlaySound(n"Button", n"OnPress");
+  this.ShowButtonCancel();
+  this.routeSelectionEnabled = true;
+  this.RefreshFiltersVisibility();
+  this.SwitchToCustomFiltersForStations();
+  this.SetDepartureAwaitSelection();
+  this.ShowSelectDepartureLabel();
+
+  this.mpgUiSystem.QueueEvent(PocketMetroRouteSelectionEnabledEvent.Create());
+  this.mpgUiSystem.QueueEvent(PocketMetroPlayerMarkerVisibilityEvent.Create(false));
+}
+
+@addMethod(WorldMapMenuGameController)
+private final func HandleCancelClick() -> Void {
+  this.PlaySound(n"Button", n"OnPress");
+  this.ShowButtonNavigate();
+  this.routeSelectionEnabled = false;
+  this.RefreshFiltersVisibility();
+  this.RestorePreviousFiltersState();
+  this.SelectionCanceled();
+
+  this.mpgUiSystem.QueueEvent(PocketMetroRouteSelectionDisabledEvent.Create());
+  this.mpgUiSystem.QueueEvent(PocketMetroPlayerMarkerVisibilityEvent.Create(true));
+}
+
+@addMethod(WorldMapMenuGameController)
+private final func HandleStopClick() -> Void {
+  this.PlaySound(n"Button", n"OnPress");
+  if this.navigator.HasActiveRoute() {
+    this.SelectionCanceled();
+    this.navigator.Reset();
+    this.ShowButtonNavigate();
+
+    this.mpgUiSystem.QueueEvent(PocketMetroRouteSelectionDisabledEvent.Create());
+  };
+}
+
+@addMethod(WorldMapMenuGameController)
+private final func HandleConfirmClick() -> Void {
+  this.PlaySound(n"Button", n"OnPress");
+  if this.navigator.BuildRoute() {
+    this.routeSelectionEnabled = false;
+    this.RefreshFiltersVisibility();
+    this.RestorePreviousFiltersState();
+    this.ShowButtonStop();
+    this.mpgUiSystem.QueueEvent(new InjectPocketGuideToHudEvent());
+  } else {
+    // Should not happen but just in case
+    this.ShowButtonNavigate();
+    this.SelectionCanceled();
+    this.navigator.Reset();
+  };
+}
 
 // Other worldmap menu input
 @wrapMethod(WorldMapMenuGameController)
@@ -170,32 +214,68 @@ protected cb func OnHoverOutMappin(e: ref<inkPointerEvent>) -> Bool {
 
 @addMethod(WorldMapMenuGameController)
 private final func ShowButtonNavigate() -> Void {
-  this.metroButtonNavigate.SetVisible(true);
-  this.metroButtonCancel.SetVisible(false);
-  this.metroButtonStop.SetVisible(false);
-  this.metroButtonConfirm.SetVisible(false);
+  if this.IsLastUsedKBM() {
+    this.metroButtonNavigate.SetVisible(true);
+    this.metroButtonCancel.SetVisible(false);
+    this.metroButtonStop.SetVisible(false);
+    this.metroButtonConfirm.SetVisible(false);
+  } else {
+    this.ShowNavigationHint(n"PMG-Button-Navigate");
+    this.controlMode = MpgControlMode.NAVIGATE;
+  };
 }
 
 @addMethod(WorldMapMenuGameController)
 private final func ShowButtonCancel() -> Void {
-  this.metroButtonNavigate.SetVisible(false);
-  this.metroButtonCancel.SetVisible(true);
-  this.metroButtonStop.SetVisible(false);
-  this.metroButtonConfirm.SetVisible(false);
+  if this.IsLastUsedKBM() {
+    this.metroButtonNavigate.SetVisible(false);
+    this.metroButtonCancel.SetVisible(true);
+    this.metroButtonStop.SetVisible(false);
+    this.metroButtonConfirm.SetVisible(false);
+  } else {
+    this.ShowNavigationHint(n"PMG-Button-Cancel");
+    this.controlMode = MpgControlMode.CANCEL;
+  };
 }
 
 @addMethod(WorldMapMenuGameController)
 private final func ShowButtonStop() -> Void {
-  this.metroButtonNavigate.SetVisible(false);
-  this.metroButtonCancel.SetVisible(false);
-  this.metroButtonStop.SetVisible(true);
-  this.metroButtonConfirm.SetVisible(false);
+  if this.IsLastUsedKBM() {
+    this.metroButtonNavigate.SetVisible(false);
+    this.metroButtonCancel.SetVisible(false);
+    this.metroButtonStop.SetVisible(true);
+    this.metroButtonConfirm.SetVisible(false);
+  } else {
+    this.ShowNavigationHint(n"PMG-Button-Stop");
+    this.controlMode = MpgControlMode.STOP;
+  };
 }
 
 @addMethod(WorldMapMenuGameController)
 private final func ShowButtonConfirm() -> Void {
-  this.metroButtonNavigate.SetVisible(false);
-  this.metroButtonCancel.SetVisible(false);
-  this.metroButtonStop.SetVisible(false);
-  this.metroButtonConfirm.SetVisible(true);
+  if this.IsLastUsedKBM() {
+    this.metroButtonNavigate.SetVisible(false);
+    this.metroButtonCancel.SetVisible(false);
+    this.metroButtonStop.SetVisible(false);
+    this.metroButtonConfirm.SetVisible(true);
+  } else {
+    this.ShowNavigationHint(n"PMG-Button-Confirm");
+    this.controlMode = MpgControlMode.CONFIRM;
+  };
+}
+
+@addMethod(WorldMapMenuGameController)
+private final func ShowNavigationHint(locKey: CName) -> Void {
+  let priority: Int32 = 10;
+  let evt: ref<UpdateInputHintMultipleEvent> = new UpdateInputHintMultipleEvent();
+  evt.targetHintContainer = n"WorldMapInputHints";
+  this.AddInputHintUpdate(evt, true, n"world_map_menu_zoom_to_mappin", GetLocalizedTextByKey(locKey), priority);
+  this.QueueEvent(evt);
+}
+
+@wrapMethod(WorldMapMenuGameController)
+private final func TryTrackQuestOrSetWaypoint() -> Void {
+  if !this.routeSelectionEnabled {
+    wrappedMethod();
+  };
 }

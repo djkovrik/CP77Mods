@@ -6,6 +6,9 @@ import Codeware.UI.*
 let mpgUiSystem: wref<UISystem>;
 
 @addField(WorldMapMenuGameController)
+let metroButtonsContainer: wref<inkWidget>;
+
+@addField(WorldMapMenuGameController)
 let metroButtonNavigate: wref<PocketMetroNavButton>;
 
 @addField(WorldMapMenuGameController)
@@ -43,6 +46,9 @@ let currentHoveredController: ref<BaseWorldMapMappinController>;
 
 @addField(BaseWorldMapMappinController)
 let selectionGlow: wref<inkImage>;
+
+@addField(WorldMapMenuGameController)
+let controlMode: MpgControlMode;
 
 // Init new stuff
 @wrapMethod(WorldMapMenuGameController)
@@ -93,4 +99,14 @@ protected final func Update() -> Void {
 
   let hasActiveRoute: Bool = PocketMetroNavigator.IsSelectedAsRoute(this.GetMetroStationName());
   this.selectionGlow.SetVisible(hasActiveRoute);
+}
+
+@addMethod(WorldMapMenuGameController)
+private final func IsLastUsedKBM() -> Bool {
+  return this.m_player.PlayerLastUsedKBM();
+}
+
+@addMethod(WorldMapMenuGameController)
+private final func IsLastUsedPad() -> Bool {
+  return this.m_player.PlayerLastUsedPad();
 }

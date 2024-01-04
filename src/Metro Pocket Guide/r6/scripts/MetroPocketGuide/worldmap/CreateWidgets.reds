@@ -62,6 +62,7 @@ private final func AddMetroPocketGuideControls() -> Void {
   buttonsContainer.SetAnchorPoint(0.5, 1.0);
   buttonsContainer.SetMargin(0.0, 0.0, 0.0, 120.0);
   buttonsContainer.Reparent(parent);
+  this.metroButtonsContainer = buttonsContainer;
 
   this.metroButtonNavigate = PocketMetroNavButton.Create();
   this.metroButtonNavigate.SetName(n"buttonNavigate");

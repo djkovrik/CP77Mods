@@ -292,3 +292,10 @@ enum ModNCartLine {
   D_GREEN = 4,
   E_ORANGE = 5,
 }
+
+enum MpgControlMode {
+  NAVIGATE = 0,
+  CANCEL = 1,
+  CONFIRM = 2,
+  STOP = 3,
+}
