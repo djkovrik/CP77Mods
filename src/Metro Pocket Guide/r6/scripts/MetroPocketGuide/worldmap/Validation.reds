@@ -10,8 +10,9 @@ private final func InvalidateActiveRouteState() -> Void {
     this.SetDestinationSelected(MetroDataHelper.GetStationTitle(this.navigator.GetDestination()));
   } else {
     this.ShowButtonNavigate();
-    this.metroButtonsContainer.SetVisible(this.IsLastUsedKBM());
   };
+
+  this.metroButtonsContainer.SetVisible(this.IsLastUsedKBM());
 }
 
 // Cancel
