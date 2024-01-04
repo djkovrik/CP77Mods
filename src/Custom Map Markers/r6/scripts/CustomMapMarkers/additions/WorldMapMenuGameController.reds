@@ -89,7 +89,7 @@ private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
           this.ZoomToMappin(this.selectedMappin);
         };
         // Open popup when clicked on free space
-        if !this.HasSelectedMappin() {
+        if !this.HasSelectedMappin() && this.m_player.PlayerLastUsedKBM() {
           this.PlaySound(n"Button", n"OnPress");
           CustomMarkerPopup.Show(this, this.m_player);
         } else {
