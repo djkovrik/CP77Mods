@@ -15,8 +15,9 @@ enum LHUDEventType {
   Weapon = 9,
   Zoom = 10,
   Refresh = 11,
-  ForceVisibility = 12,
+  QuestTracker = 12,
   Metro = 13,
+  Hints = 14,
 }
 
 enum LHUDFillColors {
@@ -84,7 +85,7 @@ public class LHUDStealthRunnerRefreshed extends Event {}
 @addField(UI_SystemDef) public let IsInMetro_LHUD: BlackboardID_Bool;
 
 // Visibility condition flags for inkGameController instances
-@addField(inkGameController) public let lhud_isVisibilityForced: Bool;
+@addField(inkGameController) public let lhud_isTrackerForced: Bool;
 @addField(inkGameController) public let lhud_isGlobalFlagToggled: Bool;
 @addField(inkGameController) public let lhud_isMinimapFlagToggled: Bool;
 @addField(inkGameController) public let lhud_isBraindanceActive: Bool;
@@ -97,9 +98,9 @@ public class LHUDStealthRunnerRefreshed extends Event {}
 @addField(inkGameController) public let lhud_isZoomActive: Bool;
 @addField(inkGameController) public let lhud_isInMetro: Bool;
 @addField(inkGameController) public let lhud_isVisibleNow: Bool;
+@addField(inkGameController) public let lhud_isHintsForced: Bool;
 
 // Visibility condition flags for inkLogicController instances
-@addField(inkLogicController) public let lhud_isVisibilityForced: Bool;
 @addField(inkLogicController) public let lhud_isGlobalFlagToggled: Bool;
 @addField(inkLogicController) public let lhud_isBraindanceActive: Bool;
 @addField(inkLogicController) public let lhud_isCombatActive: Bool;
@@ -112,7 +113,6 @@ public class LHUDStealthRunnerRefreshed extends Event {}
 @addField(inkLogicController) public let lhud_isVisibleNow: Bool;
 
 // Store actual flags in AllBlackboardDefinitions
-@addField(AllBlackboardDefinitions) public let lhud_isVisibilityForced: Bool;
 @addField(AllBlackboardDefinitions) public let lhud_isGlobalFlagToggled: Bool;
 @addField(AllBlackboardDefinitions) public let lhud_isBraindanceActive: Bool;
 @addField(AllBlackboardDefinitions) public let lhud_isCombatActive: Bool;
@@ -168,8 +168,11 @@ protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
     case LHUDEventType.Metro:
       this.lhud_isInMetro = evt.isActive;
       break;
-    case LHUDEventType.ForceVisibility:
-      this.lhud_isVisibilityForced = evt.isActive;
+    case LHUDEventType.QuestTracker:
+      this.lhud_isTrackerForced = evt.isActive;
+      break;
+    case LHUDEventType.Hints:
+      this.lhud_isHintsForced = evt.isActive;
       break;
     default:
       break;
@@ -213,9 +216,6 @@ protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
       break;
     case LHUDEventType.Zoom: 
       this.lhud_isZoomActive = evt.isActive;
-      break;
-    case LHUDEventType.ForceVisibility:
-      this.lhud_isVisibilityForced = evt.isActive;
       break;
     default:
       break;
@@ -262,9 +262,6 @@ protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
     case LHUDEventType.Zoom: 
       this.lhud_isZoomActive = evt.isActive;
       break;
-    case LHUDEventType.ForceVisibility:
-      this.lhud_isVisibilityForced = evt.isActive;
-      break;
     default:
       break;
   };
@@ -272,7 +269,6 @@ protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
 
 @addMethod(inkLogicController)
 public func FetchInitialStateFlags() -> Void {
-  this.lhud_isVisibilityForced = GetAllBlackboardDefs().lhud_isVisibilityForced;
   this.lhud_isGlobalFlagToggled = GetAllBlackboardDefs().lhud_isGlobalFlagToggled;
   this.lhud_isBraindanceActive = GetAllBlackboardDefs().lhud_isBraindanceActive;
   this.lhud_isCombatActive = GetAllBlackboardDefs().lhud_isCombatActive;

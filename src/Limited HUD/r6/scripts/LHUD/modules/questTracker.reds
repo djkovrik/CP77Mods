@@ -44,9 +44,9 @@ public func DetermineCurrentVisibility() -> Void {
   let showForScanner: Bool =  this.lhud_isScannerActive && this.lhudConfig.ShowWithScanner;
   let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfig.ShowWithWeapon;
   let showForZoom: Bool =  this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
-  let forced: Bool = this.lhud_isVisibilityForced;
+  let trackerForced: Bool = this.lhud_isTrackerForced;
 
-  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom || forced;
+  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom || trackerForced;
   if NotEquals(this.lhud_isVisibleNow, isVisible) {
     this.lhud_isVisibleNow = isVisible;
     if isVisible {
@@ -102,7 +102,7 @@ private func ShowForJournalUpdate() -> Void {
       return ;
     };
     // Show tracker
-    player.QueueLHUDEvent(LHUDEventType.ForceVisibility, true);
+    player.QueueLHUDEvent(LHUDEventType.QuestTracker, true);
     // Schedule hiding
     delaySystem = GameInstance.GetDelaySystem(player.GetGame());
     delaySystem.CancelCallback(this.lhudDelayId);
@@ -115,6 +115,6 @@ private func ShowForJournalUpdate() -> Void {
 public class LHUDHideQuestTrackerCallback extends DelayCallback {
   public let player: wref<PlayerPuppet>;
   public func Call() -> Void {
-    this.player.QueueLHUDEvent(LHUDEventType.ForceVisibility, false);
+    this.player.QueueLHUDEvent(LHUDEventType.QuestTracker, false);
   }
 }
