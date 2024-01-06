@@ -8,3 +8,5 @@ localization:
     zh-tw: base\localization\zh-tw\onscreens\pocket-metro.json
     es-es: base\localization\es-es\onscreens\pocket-metro.json
     pt-br: base\localization\pt-br\onscreens\pocket-metro.json
+    de-de: base\localization\de-de\onscreens\pocket-metro.json
+    pl-pl: base\localization\pl-pl\onscreens\pocket-metro.json
