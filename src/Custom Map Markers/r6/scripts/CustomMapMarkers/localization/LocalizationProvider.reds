@@ -11,6 +11,7 @@ public class LocalizationProvider extends ModLocalizationProvider {
       case n"zh-cn": return new SimplifiedChinese();
       case n"zh-tw": return new TraditionalChinese();
       case n"es-es": return new Spanish();
+      case n"de-de": return new German();
       default: return null;
     }
   }
