@@ -1,5 +1,29 @@
 @addField(FullscreenVendorGameController)
-public let m_lastStashFilter: ItemFilterCategory = ItemFilterCategory.AllItems;
+let m_lastStashFilter: ItemFilterCategory = ItemFilterCategory.AllItems;
+
+@addField(FullscreenVendorGameController)
+let m_currentScrollPos: Float;
+
+@wrapMethod(FullscreenVendorGameController)
+private final func HandleStorageSlotInput(evt: ref<ItemDisplayClickEvent>) -> Void {
+  wrappedMethod(evt);
+
+  let selectedItem: wref<UIInventoryItem> = evt.uiInventoryItem;
+  if evt.actionName.IsAction(n"click") && IsDefined(selectedItem) && this.NotGrenadeOrHealingItem(selectedItem) {
+    if NotEquals(this.m_lastStashFilter, ItemFilterCategory.AllItems) {
+      this.m_currentScrollPos = (inkWidgetRef.GetController(this.m_vendorInventoryGridScroll) as inkScrollController).GetScrollPosition();
+    };
+  };
+}
+
+@wrapMethod(FullscreenVendorGameController)
+protected cb func OnVendorFilterChange(controller: wref<inkRadioGroupController>, selectedIndex: Int32) -> Bool {
+  wrappedMethod(controller, selectedIndex);
+  let filter: ItemFilterCategory = this.m_vendorFilterManager.GetAt(selectedIndex);
+  if !IsDefined(this.m_vendorUserData) && IsDefined(this.m_storageUserData) && NotEquals(filter, ItemFilterCategory.AllItems) && NotEquals(filter, ItemFilterCategory.Invalid)  {
+    this.m_lastStashFilter = filter;
+  };
+}
 
 @wrapMethod(FullscreenVendorGameController)
 private final func PopulateVendorInventory() -> Void {
@@ -31,15 +55,14 @@ private final func PopulateVendorInventory() -> Void {
   this.m_vendorFilterManager.SortFiltersList();
   this.m_vendorFilterManager.InsertFilter(0, ItemFilterCategory.AllItems);
   this.SetFilters(this.m_vendorFiltersContainer, this.m_vendorFilterManager.GetIntFiltersList(), n"OnVendorFilterChange");
+  this.m_vendorItemsDataView.EnableSorting();
   this.m_vendorItemsDataView.SetFilterType(targetFilter);
+  this.m_vendorItemsDataView.SetSortMode(this.m_vendorItemsDataView.GetSortMode());
+  this.m_vendorItemsDataView.DisableSorting();
   this.ToggleFilter(this.m_vendorFiltersContainer, EnumInt(targetFilter));
-}
 
-@wrapMethod(FullscreenVendorGameController)
-protected cb func OnVendorFilterChange(controller: wref<inkRadioGroupController>, selectedIndex: Int32) -> Bool {
-  wrappedMethod(controller, selectedIndex);
-  let filter: ItemFilterCategory = this.m_vendorFilterManager.GetAt(selectedIndex);
-  if !IsDefined(this.m_vendorUserData) && IsDefined(this.m_storageUserData) && NotEquals(filter, ItemFilterCategory.AllItems) && NotEquals(filter, ItemFilterCategory.Invalid)  {
-    this.m_lastStashFilter = filter;
+  if NotEquals(this.m_lastStashFilter, ItemFilterCategory.AllItems) {
+    (inkWidgetRef.GetController(this.m_vendorInventoryGridScroll) as inkScrollController).SetScrollPosition(this.m_currentScrollPos);
+    this.m_currentScrollPos = 0.0;
   };
 }
