@@ -9,3 +9,4 @@ localization:
     zh-cn: base\localization\zh-cn\onscreens\virtual-atelier.json
     fr-fr: base\localization\fr-fr\onscreens\virtual-atelier.json
     zh-tw: base\localization\zh-tw\onscreens\virtual-atelier.json
+    pt-br: base\localization\pt-br\onscreens\virtual-atelier.json
