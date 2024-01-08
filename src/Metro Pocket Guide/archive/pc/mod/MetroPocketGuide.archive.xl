@@ -10,3 +10,4 @@ localization:
     pt-br: base\localization\pt-br\onscreens\pocket-metro.json
     de-de: base\localization\de-de\onscreens\pocket-metro.json
     pl-pl: base\localization\pl-pl\onscreens\pocket-metro.json
+    kr-kr: base\localization\kr-kr\onscreens\pocket-metro.json

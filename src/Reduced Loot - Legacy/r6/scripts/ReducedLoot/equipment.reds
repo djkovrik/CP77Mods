@@ -19,12 +19,10 @@ private final func DropHeldItems() -> Bool {
     if canLeftItemDrop || canRightItemDrop {
       this.DropWeapons();
       if IsDefined(rightItem) {
-        gamePuppet.ScaleDroppedItem(rightItem.GetItemData(), this);
         rightItem.GetItemData().SetShouldKeep_RL();
         RLog("#2 set weapon was held for " + RL_Utils.ToStr(rightItem.GetItemData()));
       };
       if IsDefined(leftItem) {
-        gamePuppet.ScaleDroppedItem(leftItem.GetItemData(), this);
         leftItem.GetItemData().SetShouldKeep_RL();
         RLog("#2 set weapon was held for " + RL_Utils.ToStr(leftItem.GetItemData()));
       };
@@ -90,4 +88,10 @@ protected cb func OnItemAddedEvent(evt: ref<ItemAddedEvent>) -> Bool {
   };
 
   return wrappedMethod(evt);
+}
+
+// hack to remove extra added ammo
+@wrapMethod(PlayerHandicapSystem)
+public final const func CanDropAmmo() -> Bool {
+  return false;
 }
