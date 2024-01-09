@@ -69,6 +69,11 @@ public class MMUtils {
       return MarkerVisibility.Hidden;
     };
 
+    // Ammo check
+    if Equals(Deref(data).visualStateData.m_textureID, t"MappinIcons.LootAmmoGenericMappin") {
+      return loot.ammo;
+    };
+
     // Quality check
     if Equals(Deref(data).visualStateData.m_textureID, t"MappinIcons.LootMappin") {
       switch(quality) {

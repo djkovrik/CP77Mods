@@ -43,7 +43,7 @@ public class LootConfig {
   @runtimeProperty("ModSettings.displayValues.Default", "UI-Sorting-Default")
   let epic: MarkerVisibility = MarkerVisibility.LineOfSight;
 
-  // Visibility for Rate items (blue)
+  // Visibility for Raкe items (blue)
   @runtimeProperty("ModSettings.mod", "Muted Markers")
   @runtimeProperty("ModSettings.category", "Mod-Markers-Loot-Markers")
   @runtimeProperty("ModSettings.displayName", "Mod-Markers-Rare")
@@ -79,16 +79,6 @@ public class LootConfig {
   @runtimeProperty("ModSettings.displayValues.Default", "UI-Sorting-Default")
   let common: MarkerVisibility = MarkerVisibility.Scanner;
 
-  // Hide delay after scaner disabled
-  @runtimeProperty("ModSettings.mod", "Muted Markers")
-  @runtimeProperty("ModSettings.category", "Mod-Markers-Loot-Markers")
-  @runtimeProperty("ModSettings.displayName", "Mod-Markers-Delay")
-  @runtimeProperty("ModSettings.description", "Mod-Markers-Delay-Desc")
-  @runtimeProperty("ModSettings.step", "1.0")
-  @runtimeProperty("ModSettings.min", "1.0")
-  @runtimeProperty("ModSettings.max", "30.0")
-  let hideDelay: Float = 5.0;
-
   // Visibility for Shards
   @runtimeProperty("ModSettings.mod", "Muted Markers")
   @runtimeProperty("ModSettings.category", "Mod-Markers-Loot-Markers")
@@ -100,6 +90,28 @@ public class LootConfig {
   @runtimeProperty("ModSettings.displayValues.Hidden", "Mod-Markers-Visibility-Hidden")
   @runtimeProperty("ModSettings.displayValues.Default", "UI-Sorting-Default")
   let shards: MarkerVisibility = MarkerVisibility.LineOfSight;
+
+  // Visibility for Ammo
+  @runtimeProperty("ModSettings.mod", "Muted Markers")
+  @runtimeProperty("ModSettings.category", "Mod-Markers-Loot-Markers")
+  @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Items-Types-Con_Ammo")
+  @runtimeProperty("ModSettings.description", "Mod-Markers-Ammo-Desc")
+  @runtimeProperty("ModSettings.displayValues.ThroughWalls", "Mod-Markers-Visibility-ThroughWalls")
+  @runtimeProperty("ModSettings.displayValues.LineOfSight", "Mod-Markers-Visibility-LineOfSight")
+  @runtimeProperty("ModSettings.displayValues.Scanner", "Mod-Markers-Visibility-Scanner")
+  @runtimeProperty("ModSettings.displayValues.Hidden", "Mod-Markers-Visibility-Hidden")
+  @runtimeProperty("ModSettings.displayValues.Default", "UI-Sorting-Default")
+  let ammo: MarkerVisibility = MarkerVisibility.LineOfSight;
+
+  // Hide delay after scaner disabled
+  @runtimeProperty("ModSettings.mod", "Muted Markers")
+  @runtimeProperty("ModSettings.category", "Mod-Markers-Loot-Markers")
+  @runtimeProperty("ModSettings.displayName", "Mod-Markers-Delay")
+  @runtimeProperty("ModSettings.description", "Mod-Markers-Delay-Desc")
+  @runtimeProperty("ModSettings.step", "1.0")
+  @runtimeProperty("ModSettings.min", "1.0")
+  @runtimeProperty("ModSettings.max", "30.0")
+  let hideDelay: Float = 5.0;
 }
 
 public class MiniMapConfig {
