@@ -226,11 +226,29 @@ public abstract class ReducedLootMoneyDrop {
   }
 
   private static func HandleDrop(owner: ref<GameObject>, ts: ref<TransactionSystem>, data: wref<gameItemData>, cfg: ref<ReducedLootMoneyConfig>) -> Void {
-    ts.RemoveItem(owner, data.GetID(), data.GetQuantity());
-    let newQuantity: Int32;
-    if cfg.dropCountMax > cfg.dropCountMin {
-      newQuantity = RandRange(cfg.dropCountMin, cfg.dropCountMax);
-      ts.GiveItem(owner, data.GetID(), newQuantity);
+    let oldQuantity: Int32 = data.GetQuantity();
+    let min: Int32;
+    let max: Int32;
+    if cfg.dropCountMin > cfg.dropCountMax {
+      min = cfg.dropCountMax;
+      max = cfg.dropCountMin;
+    } else if cfg.dropCountMin == cfg.dropCountMax {
+      min = cfg.dropCountMin;
+      max = cfg.dropCountMax + 1;
+    } else {
+      min = cfg.dropCountMin;
+      max = cfg.dropCountMax;
+    };
+
+    let diff: Int32;
+    if oldQuantity < min {
+      // add more
+      diff = min - oldQuantity;
+      ts.GiveItemByTDBID(owner, t"Items.money", diff);
+    } else if oldQuantity > max {
+      // remove extra
+      diff = oldQuantity - max;
+      ts.RemoveItemByTDBID(owner, t"Items.money", diff);
     };
   }
 }
