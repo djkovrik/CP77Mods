@@ -6,3 +6,4 @@ localization:
     zh-cn: base\localization\zh-cn\onscreens\muted-markers.json
     cz-cz: base\localization\cz-cz\onscreens\muted-markers.json
     es-es: base\localization\es-es\onscreens\muted-markers.json
+    tr-tr: base\localization\tr-tr\onscreens\muted-markers.json
