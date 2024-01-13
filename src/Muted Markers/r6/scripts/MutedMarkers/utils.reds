@@ -128,7 +128,10 @@ public class MMUtils {
       if roleMappinData.m_isQuest || roleMappinData.m_isTagged {
         showOnMiniMap = true;
       } else {
-        if roleMappinData.m_isCurrentTarget || roleMappinData.m_visibleThroughWalls || Equals(MMUtils.GetVisibilityTypeFor(data, component, loot, world), MarkerVisibility.ThroughWalls) {
+        if roleMappinData.m_isCurrentTarget 
+          || roleMappinData.m_visibleThroughWalls 
+          || Equals(MMUtils.GetVisibilityTypeFor(data, component, loot, world), MarkerVisibility.ThroughWalls)
+          || Equals(MMUtils.GetVisibilityTypeFor(data, component, loot, world), MarkerVisibility.ThroughWallsScanner) {
           showOnMiniMap = true;
         } else {
           showOnMiniMap = false;

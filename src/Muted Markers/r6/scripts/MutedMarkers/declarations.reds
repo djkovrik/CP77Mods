@@ -1,9 +1,10 @@
 enum MarkerVisibility { 
-  ThroughWalls = 0,
-  LineOfSight = 1,
+  Default = 0,
+  Hidden = 1,
   Scanner = 2,
-  Hidden = 3, 
-  Default = 4 
+  LineOfSight = 3,
+  ThroughWalls = 4,
+  ThroughWallsScanner = 5,  
 }
 
 public class EvaluateVisibilitiesEvent extends Event {}

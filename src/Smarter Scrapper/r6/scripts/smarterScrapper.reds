@@ -99,16 +99,48 @@ class SmarterScrapperModsConfig {
   public let common: Bool = false;
 }
 
+class SmarterScrapperProgramsConfig {
+  @runtimeProperty("ModSettings.mod", "Scrapper")
+  @runtimeProperty("ModSettings.category", "LocKey#54090")
+  @runtimeProperty("ModSettings.category.order", "4")
+  @runtimeProperty("ModSettings.displayName", "LocKey#1815")
+  public let legendary: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "Scrapper")
+  @runtimeProperty("ModSettings.category", "LocKey#54090")
+  @runtimeProperty("ModSettings.category.order", "4")
+  @runtimeProperty("ModSettings.displayName", "LocKey#1813")
+  public let epic: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "Scrapper")
+  @runtimeProperty("ModSettings.category", "LocKey#54090")
+  @runtimeProperty("ModSettings.category.order", "4")
+  @runtimeProperty("ModSettings.displayName", "LocKey#1816")
+  public let rare: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "Scrapper")
+  @runtimeProperty("ModSettings.category", "LocKey#54090")
+  @runtimeProperty("ModSettings.category.order", "4")
+  @runtimeProperty("ModSettings.displayName", "LocKey#1817")
+  public let uncommon: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "Scrapper")
+  @runtimeProperty("ModSettings.category", "LocKey#54090")
+  @runtimeProperty("ModSettings.category.order", "4")
+  @runtimeProperty("ModSettings.displayName", "LocKey#1814")
+  public let common: Bool = true;
+}
+
 class SmarterScrapperJunkConfig {
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "LocKey#46566")
-  @runtimeProperty("ModSettings.category.order", "4")
+  @runtimeProperty("ModSettings.category.order", "5")
   @runtimeProperty("ModSettings.displayName", "LocKey#245")
   public let enabled: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "LocKey#46566")
-  @runtimeProperty("ModSettings.category.order", "4")
+  @runtimeProperty("ModSettings.category.order", "5")
   @runtimeProperty("ModSettings.displayName", "LocKey#731")
   @runtimeProperty("ModSettings.step", "1")
   @runtimeProperty("ModSettings.min", "1")
@@ -119,37 +151,37 @@ class SmarterScrapperJunkConfig {
 class SmarterScrapperEdiblesConfig {
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "Gameplay-Items-Item Type-Con_Edible")
-  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "LocKey#1815")
   public let legendary: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "Gameplay-Items-Item Type-Con_Edible")
-  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "LocKey#1813")
   public let epic: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "Gameplay-Items-Item Type-Con_Edible")
-  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "LocKey#1816")
   public let rare: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "Gameplay-Items-Item Type-Con_Edible")
-  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "LocKey#1817")
   public let uncommon: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "Gameplay-Items-Item Type-Con_Edible")
-  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "LocKey#1814")
   public let common: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "Gameplay-Items-Item Type-Con_Edible")
-  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "LocKey#4933")
   @runtimeProperty("ModSettings.step", "1")
   @runtimeProperty("ModSettings.min", "1")
@@ -252,7 +284,6 @@ private func IsModSS(type: gamedataItemType) -> Bool {
     Equals(type, gamedataItemType.Prt_PowerMod) ||
     Equals(type, gamedataItemType.Prt_PowerSniperScope) ||
     Equals(type, gamedataItemType.Prt_Precision_Sniper_RifleMod) ||
-    Equals(type, gamedataItemType.Prt_Program) ||
     Equals(type, gamedataItemType.Prt_RangedMod) ||
     Equals(type, gamedataItemType.Prt_Receiver) ||
     Equals(type, gamedataItemType.Prt_RifleMuzzle) ||
@@ -272,6 +303,11 @@ private func IsModSS(type: gamedataItemType) -> Bool {
 }
 
 @addMethod(PlayerPuppet)
+private func IsQuickHackSS(type: gamedataItemType) -> Bool {
+  return Equals(type, gamedataItemType.Prt_Program);
+}
+
+@addMethod(PlayerPuppet)
 private func IsEdibleSS(type: gamedataItemType) -> Bool {
   return
     Equals(type, gamedataItemType.Con_Edible ) ||
@@ -281,6 +317,7 @@ private func IsEdibleSS(type: gamedataItemType) -> Bool {
 @addField(PlayerPuppet) public let scrapperClothes: ref<SmarterScrapperClothesConfig>;
 @addField(PlayerPuppet) public let scrapperWeapons: ref<SmarterScrapperWeaponsConfig>;
 @addField(PlayerPuppet) public let scrapperMods: ref<SmarterScrapperModsConfig>;
+@addField(PlayerPuppet) public let scrapperPrograms: ref<SmarterScrapperProgramsConfig>;
 @addField(PlayerPuppet) public let scrapperJunk: ref<SmarterScrapperJunkConfig>;
 @addField(PlayerPuppet) public let scrapperEdibles: ref<SmarterScrapperEdiblesConfig>;
 
@@ -291,6 +328,7 @@ protected cb func OnGameAttached() -> Bool {
   this.scrapperClothes = new SmarterScrapperClothesConfig();
   this.scrapperWeapons = new SmarterScrapperWeaponsConfig();
   this.scrapperMods = new SmarterScrapperModsConfig();
+  this.scrapperPrograms = new SmarterScrapperProgramsConfig();
   this.scrapperJunk = new SmarterScrapperJunkConfig();
   this.scrapperEdibles = new SmarterScrapperEdiblesConfig();
 }
@@ -302,6 +340,7 @@ protected cb func OnDetach() -> Bool {
   this.scrapperClothes = null;
   this.scrapperWeapons = null;
   this.scrapperMods = null;
+  this.scrapperPrograms = null;
   this.scrapperJunk = null;
   this.scrapperEdibles = null;
 }
@@ -369,6 +408,16 @@ private func ShouldBeScrappedSS(data: wref<gameItemData>, quality: gamedataQuali
       case gamedataQuality.Common: return this.scrapperMods.common;
     };
   };
+
+  if this.IsQuickHackSS(type) {
+    switch quality {
+      case gamedataQuality.Legendary: return this.scrapperPrograms.legendary;
+      case gamedataQuality.Epic: return this.scrapperPrograms.epic;
+      case gamedataQuality.Rare: return this.scrapperPrograms.rare;
+      case gamedataQuality.Uncommon: return this.scrapperPrograms.uncommon;
+      case gamedataQuality.Common: return this.scrapperPrograms.common;
+    };
+  }
 
   return false;
 }
@@ -492,6 +541,7 @@ protected cb func OnRefreshScapperConfigsEvent(evt: ref<RefreshScapperConfigsEve
   this.scrapperClothes = new SmarterScrapperClothesConfig();
   this.scrapperWeapons = new SmarterScrapperWeaponsConfig();
   this.scrapperMods = new SmarterScrapperModsConfig();
+  this.scrapperPrograms = new SmarterScrapperProgramsConfig();
   this.scrapperJunk = new SmarterScrapperJunkConfig();
   this.scrapperEdibles = new SmarterScrapperEdiblesConfig();
 }
