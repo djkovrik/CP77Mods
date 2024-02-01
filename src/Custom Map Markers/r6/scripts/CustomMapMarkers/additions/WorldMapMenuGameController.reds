@@ -59,8 +59,6 @@ private func MoveFromCustomToPlayer() -> Void {
 
 // Attach to mouse middle button clicks
 @replaceMethod(WorldMapMenuGameController)
-
-@replaceMethod(WorldMapMenuGameController)
 private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
   let customMappin: ref<IMappin>;
   let customMappinData: ref<GameplayRoleMappinData>;
