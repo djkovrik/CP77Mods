@@ -5,7 +5,7 @@ let m_lastStashFilter: ItemFilterCategory = ItemFilterCategory.AllItems;
 let m_currentScrollPos: Float;
 
 @wrapMethod(FullscreenVendorGameController)
-private final func HandleStorageSlotInput(evt: ref<ItemDisplayClickEvent>) -> Void {
+private final func HandleStorageSlotClick(evt: ref<ItemDisplayClickEvent>) -> Void {
   wrappedMethod(evt);
 
   let selectedItem: wref<UIInventoryItem> = evt.uiInventoryItem;
