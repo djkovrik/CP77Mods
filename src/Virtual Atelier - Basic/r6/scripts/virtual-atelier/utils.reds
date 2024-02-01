@@ -134,6 +134,7 @@ public abstract class AtelierUtils {
               break;
         };
       };
+      powerLevelPlayer = powerLevelPlayer * 0.1;
     };
 
     if ((itemData.HasTag(n"WeaponMod")) || (itemData.HasTag(n"FabricEnhancer")) || (itemData.HasTag(n"SoftwareShard")) || (itemData.HasTag(n"Fragment")) || (itemData.HasTag(n"Recipe"))) {
