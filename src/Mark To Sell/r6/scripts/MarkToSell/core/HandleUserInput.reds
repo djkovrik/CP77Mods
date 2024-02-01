@@ -1,5 +1,6 @@
 import MarkToSell.System.MarkToSellSystem
 import MarkToSell.Text.Labels
+import MarkToSell.Config.MarkToSellConfig
 
 // -- BACKPACK
 
@@ -18,10 +19,14 @@ private func UpdateMarkForSaleHint(shouldShow: Bool, opt alreadyHasIt: Bool) {
 
   if shouldShow {
     this.m_buttonHintsController.AddButtonHint(n"mark_to_sell", text1);
-    this.m_buttonHintsController.AddButtonHint(n"mark_similar_to_sell", text2);
+    if !MarkToSellConfig.DisableMassToggle() {
+      this.m_buttonHintsController.AddButtonHint(n"mark_similar_to_sell", text2);
+    };
   } else {
     this.m_buttonHintsController.RemoveButtonHint(n"mark_to_sell");
-    this.m_buttonHintsController.RemoveButtonHint(n"mark_similar_to_sell");
+    if !MarkToSellConfig.DisableMassToggle() {
+      this.m_buttonHintsController.RemoveButtonHint(n"mark_similar_to_sell");
+    };
   };
 }
 
@@ -79,7 +84,7 @@ protected cb func OnPostOnRelease(evt: ref<inkPointerEvent>) -> Bool {
       this.ToggleMarkForSale();
       this.RefreshUI();
     };
-    if evt.IsAction(n"mark_similar_to_sell") {
+    if evt.IsAction(n"mark_similar_to_sell") && !MarkToSellConfig.DisableMassToggle() {
       this.ToggleMarkForSaleForSimilarItems();
       this.RefreshUI();
     };
@@ -104,10 +109,14 @@ private func UpdateMarkForSaleHint(shouldShow: Bool, opt alreadyHasIt: Bool) {
 
   if shouldShow {
     this.m_buttonHintsController.AddButtonHint(n"mark_to_sell", text1);
-    this.m_buttonHintsController.AddButtonHint(n"mark_similar_to_sell", text2);
+    if !MarkToSellConfig.DisableMassToggle() {
+      this.m_buttonHintsController.AddButtonHint(n"mark_similar_to_sell", text2);
+    };
   } else {
     this.m_buttonHintsController.RemoveButtonHint(n"mark_to_sell");
-    this.m_buttonHintsController.RemoveButtonHint(n"mark_similar_to_sell");
+    if !MarkToSellConfig.DisableMassToggle() {
+      this.m_buttonHintsController.RemoveButtonHint(n"mark_similar_to_sell");
+    };
   };
 }
 
@@ -199,7 +208,7 @@ protected cb func OnEquipmentClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
     this.ToggleMarkForSale(evt);
     this.RefreshUI();
   };
-  if evt.actionName.IsAction(n"mark_similar_to_sell") {
+  if evt.actionName.IsAction(n"mark_similar_to_sell") && !MarkToSellConfig.DisableMassToggle() {
     this.ToggleMarkForSaleForSimilarItems(evt);
     this.RefreshUI();
   };
