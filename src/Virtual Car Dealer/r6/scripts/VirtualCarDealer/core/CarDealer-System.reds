@@ -5,11 +5,16 @@ import CarDealer.Classes.AutofixerItemData
 import CarDealer.Config.CarDealerConfig
 import CarDealer.Utils.CarDealerLog
 
+@if(ModuleExists("VehiclePersistence.System"))
+import VehiclePersistence.System.PersistentVehicleSystem
+
 public class PurchasableVehicleSystem extends ScriptableSystem {
 
   private let m_storeVehicles: array<ref<PurchasableVehicleBundle>>;
 
   private let m_vehicleSystem: ref<VehicleSystem>;
+
+  private let m_gameInstance: GameInstance;
 
   private let m_transactionSystem: ref<TransactionSystem>;
 
@@ -35,6 +40,7 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
     if IsDefined(player) {
       this.m_vehicleSystem = GameInstance.GetVehicleSystem(player.GetGame());
       this.m_transactionSystem = GameInstance.GetTransactionSystem(player.GetGame());
+      this.m_gameInstance = player.GetGame();
       this.PopulateVehicleList();
       CarDealerLog(s"ArchiveXL detected: \(ArchiveXL.Version())");
       CarDealerLog(s"PurchasableVehicleSystem initialized, detected vehicles: \(ArraySize(this.m_storeVehicles))");
@@ -44,7 +50,7 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
 
   private func DeactivateSoldVehicles() -> Void {
     for id in this.m_soldVehicles {
-      this.m_vehicleSystem.EnablePlayerVehicleID(id, false);
+      RemoveVehicle(this.m_gameInstance, this.m_vehicleSystem, id);
     };
   }
 
@@ -118,6 +124,7 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
 
   public func Purchase(id: TweakDBID) -> Void {
     this.m_vehicleSystem.EnablePlayerVehicleID(id, true);
+    SyncPersistentVehicles(this.m_gameInstance);
     let soldVehicles: array<TweakDBID> = this.m_soldVehicles;
     if ArrayContains(soldVehicles, id) {
       ArrayRemove(soldVehicles, id);
@@ -144,6 +151,7 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
   public func GetOwnedVehiclesData() -> array<ref<AutofixerItemData>> {
     let result: array<ref<AutofixerItemData>>;
     let playerVehicles: array<PlayerVehicle>;
+    let persistentVehicles: array<PlayerVehicle>;
     let vehicleRecord: ref<Vehicle_Record>;
     let vehicleId: TweakDBID;
     let item: ref<AutofixerItemData>;
@@ -152,6 +160,11 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
 
     this.DeactivateSoldVehicles();
     this.m_vehicleSystem.GetPlayerUnlockedVehicles(playerVehicles);
+
+    persistentVehicles = GetPersistentVehicles(this.m_gameInstance);
+    for persistentVehicle in persistentVehicles {
+      ArrayPush(playerVehicles, persistentVehicle);
+    }
 
     for playerVehicle in playerVehicles {
       if TDBID.IsValid(playerVehicle.recordID) {
@@ -181,8 +194,7 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
     if ArrayContains(this.m_soldVehicles, data.vehicleID) {
       return ;
     };
-
-    if this.m_vehicleSystem.EnablePlayerVehicleID(data.vehicleID, false) {
+    if RemoveVehicle(this.m_gameInstance, this.m_vehicleSystem, data.vehicleID) {
       this.m_transactionSystem.GiveItem(player, MarketSystem.Money(), data.price);
       ArrayPush(this.m_soldVehicles, data.vehicleID);
     } else {
@@ -206,7 +218,7 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
         return true;
       };
     };
-    return false;
+    return CheckIfVehicleIsPersistent(this.m_gameInstance, id);
   }
 
   private func IsBundlePurchased(id: TweakDBID) -> Bool {
@@ -271,4 +283,38 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
 
     return this.m_fallbackPrice;
   }
+}
+
+// conditional methods for compatibility with Improved Vehicle Persistence
+
+@if(!ModuleExists("VehiclePersistence.System"))
+func RemoveVehicle(gameInstance: GameInstance, vehicleSystem: ref<VehicleSystem>, id: TweakDBID) -> Bool {
+  return vehicleSystem.EnablePlayerVehicleID(id, false); 
+}
+@if(ModuleExists("VehiclePersistence.System"))
+func RemoveVehicle(gameInstance: GameInstance, vehicleSystem: ref<VehicleSystem>, id: TweakDBID) -> Bool {
+  let result = vehicleSystem.EnablePlayerVehicleID(id, false, true);
+  result = PersistentVehicleSystem.GetInstance(gameInstance).RemovePersistentVehicle(id) || result;
+  return result;
+}
+
+@if(!ModuleExists("VehiclePersistence.System"))
+func SyncPersistentVehicles(gameInstance: GameInstance) -> Void {}
+@if(ModuleExists("VehiclePersistence.System"))
+func SyncPersistentVehicles(gameInstance: GameInstance) -> Void {
+  PersistentVehicleSystem.GetInstance(gameInstance).SyncAllPersistentVehicles();
+}
+
+@if(!ModuleExists("VehiclePersistence.System"))
+func GetPersistentVehicles(gameInstance: GameInstance) -> array<PlayerVehicle> { return []; }
+@if(ModuleExists("VehiclePersistence.System"))
+func GetPersistentVehicles(gameInstance: GameInstance) -> array<PlayerVehicle> {
+  return PersistentVehicleSystem.GetInstance(gameInstance).GetPersistentVehicles();
+}
+
+@if(!ModuleExists("VehiclePersistence.System"))
+func CheckIfVehicleIsPersistent(gameInstance: GameInstance, id: TweakDBID) -> Bool { return false; }
+@if(ModuleExists("VehiclePersistence.System"))
+func CheckIfVehicleIsPersistent(gameInstance: GameInstance, id: TweakDBID) -> Bool {
+  return PersistentVehicleSystem.GetInstance(gameInstance).IsVehiclePersistent(id);
 }
