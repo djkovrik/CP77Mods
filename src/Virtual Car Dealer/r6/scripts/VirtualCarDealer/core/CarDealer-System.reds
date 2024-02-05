@@ -14,8 +14,6 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
 
   private let m_vehicleSystem: ref<VehicleSystem>;
 
-  private let m_gameInstance: GameInstance;
-
   private let m_transactionSystem: ref<TransactionSystem>;
 
   private let m_sellPriceModifier: Float = 0.25;
@@ -40,7 +38,6 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
     if IsDefined(player) {
       this.m_vehicleSystem = GameInstance.GetVehicleSystem(player.GetGame());
       this.m_transactionSystem = GameInstance.GetTransactionSystem(player.GetGame());
-      this.m_gameInstance = player.GetGame();
       this.PopulateVehicleList();
       CarDealerLog(s"ArchiveXL detected: \(ArchiveXL.Version())");
       CarDealerLog(s"PurchasableVehicleSystem initialized, detected vehicles: \(ArraySize(this.m_storeVehicles))");
@@ -50,7 +47,7 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
 
   private func DeactivateSoldVehicles() -> Void {
     for id in this.m_soldVehicles {
-      RemoveVehicle(this.m_gameInstance, this.m_vehicleSystem, id);
+      RemoveVehicle(this.GetGameInstance(), this.m_vehicleSystem, id);
     };
   }
 
@@ -124,7 +121,7 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
 
   public func Purchase(id: TweakDBID) -> Void {
     this.m_vehicleSystem.EnablePlayerVehicleID(id, true);
-    SyncPersistentVehicles(this.m_gameInstance);
+    SyncPersistentVehicles(this.GetGameInstance());
     let soldVehicles: array<TweakDBID> = this.m_soldVehicles;
     if ArrayContains(soldVehicles, id) {
       ArrayRemove(soldVehicles, id);
@@ -161,7 +158,7 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
     this.DeactivateSoldVehicles();
     this.m_vehicleSystem.GetPlayerUnlockedVehicles(playerVehicles);
 
-    persistentVehicles = GetPersistentVehicles(this.m_gameInstance);
+    persistentVehicles = GetPersistentVehicles(this.GetGameInstance());
     for persistentVehicle in persistentVehicles {
       ArrayPush(playerVehicles, persistentVehicle);
     }
@@ -194,7 +191,7 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
     if ArrayContains(this.m_soldVehicles, data.vehicleID) {
       return ;
     };
-    if RemoveVehicle(this.m_gameInstance, this.m_vehicleSystem, data.vehicleID) {
+    if RemoveVehicle(this.GetGameInstance(), this.m_vehicleSystem, data.vehicleID) {
       this.m_transactionSystem.GiveItem(player, MarketSystem.Money(), data.price);
       ArrayPush(this.m_soldVehicles, data.vehicleID);
     } else {
@@ -218,7 +215,7 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
         return true;
       };
     };
-    return CheckIfVehicleIsPersistent(this.m_gameInstance, id);
+    return CheckIfVehicleIsPersistent(this.GetGameInstance(), id);
   }
 
   private func IsBundlePurchased(id: TweakDBID) -> Bool {
