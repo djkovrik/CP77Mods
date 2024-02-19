@@ -571,15 +571,6 @@ private func InitBaseWidgets() -> Void {
         targetWidget.SetAnchorPoint(new Vector2(1.0, 0.5));
         targetWidget.Reparent(this.inputHintSlot);
         break;
-      case n"hudCarController":
-        if !config.speedometerEnabled { break; }
-        let slotPreview: ref<inkRectangle> = this.CreateCarHudPreview();
-        slotPreview.Reparent(this.carHudSlot);
-        this.carHudSlotPreview = slotPreview;
-
-        targetWidget = controller.GetRootCompoundWidget();
-        targetWidget.Reparent(this.carHudSlot);
-        break;
       case n"BossHealthBarGameController":
         if !config.bossHealthbarEnabled { break; }
         targetWidget = controller.GetRootCompoundWidget();
@@ -642,6 +633,24 @@ protected func Initialize() -> Bool {
   if config.phoneHotkeyEnabled { 
     targetWidget= this.GetRootCompoundWidget();
     targetWidget.SetAnchorPoint(new Vector2(0.0, 1.0));
+    targetWidget.Reparent(newParent);
+  };
+  return wrap;
+}
+
+@wrapMethod(hudCarController)
+protected cb func OnInitialize() -> Bool {
+  let wrap: Bool = wrappedMethod();
+  let system: ref<inkSystem> = GameInstance.GetInkSystem();
+  let config: ref<HUDitorConfig> = new HUDitorConfig();
+  let root: ref<inkCompoundWidget> = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
+  let newParent: ref<inkCompoundWidget> = root.GetWidgetByPathName(n"NewCarHud") as inkCompoundWidget;
+  let targetWidget: ref<inkCompoundWidget>;
+  if config.speedometerEnabled { 
+    let slotPreview: ref<inkRectangle> = this.CreateCarHudPreview();
+    slotPreview.Reparent(newParent);
+    this.carHudSlotPreview = slotPreview;
+    targetWidget = this.GetRootCompoundWidget();
     targetWidget.Reparent(newParent);
   };
   return wrap;
