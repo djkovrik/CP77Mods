@@ -38,7 +38,8 @@ protected cb func OnItemDisplayHoverOver(evt: ref<ItemDisplayHoverOverEvent>) ->
   let hasQuestTag: Bool = itemData.HasTag(n"Quest");
   let alreadyMarked: Bool = itemData.modMarkedForSale;
   let price: Int32 = RPGManager.CalculateSellPrice(this.m_player.GetGame(), this.m_player, itemData.GetID());
-  if price > 0 && !hasQuestTag {
+  let isFavorite: Bool = this.m_uiScriptableSystem.IsItemPlayerFavourite(itemData.GetID());
+  if price > 0 && !hasQuestTag && !isFavorite {
     this.UpdateMarkForSaleHint(true, alreadyMarked);
   };
 }
@@ -127,7 +128,8 @@ private func UpdateMarkForSaleHint(shouldShow: Bool, opt alreadyHasIt: Bool) {
   let price: Int32 = RPGManager.CalculateSellPrice(this.m_player.GetGame(), this.m_player, Deref(displayingData).ID);
   let hasQuestTag: Bool = InventoryItemData.GetGameItemData(Deref(displayingData)).HasTag(n"Quest");
   let alreadyMarked: Bool = InventoryItemData.GetGameItemData(Deref(displayingData)).modMarkedForSale;
-  if IsDefined(display) && price > 0 && !hasQuestTag {
+  let isFavorite: Bool = this.m_uiScriptableSystem.IsItemPlayerFavourite(Deref(displayingData).ID);
+  if IsDefined(display) && price > 0 && !hasQuestTag && !isFavorite {
     this.UpdateMarkForSaleHint(true, alreadyMarked);
   };
 }
