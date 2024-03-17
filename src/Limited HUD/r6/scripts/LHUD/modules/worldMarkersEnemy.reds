@@ -138,6 +138,12 @@ protected cb func OnUpdate() -> Bool {
 }
 
 @wrapMethod(StealthMappinController)
+private final func UpdateObjectMarkerVisibility(canHaveObjectMarker: Bool, objectMarkerVisible: Bool) -> Void {
+  let visible: Bool = objectMarkerVisible && this.lhud_isVisibleNow;
+  wrappedMethod(canHaveObjectMarker, visible);
+}
+
+@wrapMethod(StealthMappinController)
 private final func ShowStatusEffect(show: Bool) -> Void {
   let shouldShow: Bool = show && this.lhud_isVisibleNow;
   wrappedMethod(shouldShow);
