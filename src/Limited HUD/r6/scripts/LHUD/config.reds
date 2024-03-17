@@ -984,13 +984,6 @@ public class LHUDAddonsConfig {
   let RemoveMarkerPulse: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
-  @runtimeProperty("ModSettings.category", "Addons-LHUD-HUD-Toggle")
-  @runtimeProperty("ModSettings.category.order", "8")
-  @runtimeProperty("ModSettings.displayName", "Addons-LHUD-HUD-Toggle-Enable")
-  @runtimeProperty("ModSettings.description", "Addons-LHUD-HUD-Toggle-Enable-Desc")
-  let EnableHUDToggle: Bool = false;
-
-  @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Highlighting")
   @runtimeProperty("ModSettings.category.order", "9")
   @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Highlight-Pinged")

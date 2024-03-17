@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<bindings>
+    <!-- inputContexts -->
+    <context name="LimitedHUD" >
+		<action name="LHUD_Minimap" map="LHUD_Minimap_Button" />
+		<action name="LHUD_Global" map="LHUD_Global_Button" />
+		<action name="LHUD_Toggle" map="LHUD_Toggle_Button" />
+    </context>
+
+    <context name="UIToggles" append="true">
+        <include name="LimitedHUD" />
+    </context>
+
+    <!-- inputUserMapping -->
+	<mapping name="LHUD_Toggle_Button" type="Button" >
+        <button id="IK_F1" />
+    </mapping>
+	<mapping name="LHUD_Minimap_Button" type="Button" >
+        <button id="IK_F6" />
+    </mapping>
+	<mapping name="LHUD_Global_Button" type="Button" >
+        <button id="IK_F8" />
+    </mapping>
+</bindings>
