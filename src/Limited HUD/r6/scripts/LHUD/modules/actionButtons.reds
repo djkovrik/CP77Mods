@@ -58,6 +58,13 @@ protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> 
 // NEW PHONE CONTROLLER
 
 @addMethod(PhoneHotkeyController)
+private final func ShouldDisplayPhoneForLHUD() -> Bool {
+  let info: PhoneCallInformation = FromVariant<PhoneCallInformation>(this.m_comDeviceBB.GetVariant(GetAllBlackboardDefs().UI_ComDevice.PhoneCallInformation));
+  let phase: questPhoneCallPhase = info.callPhase;
+  return Equals(phase, questPhoneCallPhase.StartCall) || Equals(phase, questPhoneCallPhase.IncomingCall);
+}
+
+@addMethod(PhoneHotkeyController)
 protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
   this.ConsumeLHUDEvent(evt);
   this.DetermineCurrentVisibility();
@@ -73,11 +80,13 @@ public func DetermineCurrentVisibility() -> Void {
   let showForCombat: Bool = this.lhud_isCombatActive && this.lhudConfig.ShowInCombat;
   let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && this.lhudConfig.ShowOutOfCombat;
   let showForStealth: Bool =  this.lhud_isStealthActive && this.lhudConfig.ShowInStealth;
+  let showForVehicle: Bool =  this.lhud_isInVehicle && this.lhudConfig.ShowInVehicle;
   let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfig.ShowWithWeapon;
   let showForZoom: Bool =  this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
-  let isPhoneInUse: Bool = this.IsPhoneInUse();
+  let isPhoneInUse: Bool = this.ShouldDisplayPhoneForLHUD();
 
-  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForWeapon || showForZoom || isPhoneInUse;
+  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForWeapon || showForZoom || isPhoneInUse;
+  
   if this.lhud_isBraindanceActive { isVisible = false; };
   this.lhud_isVisibleNow = isVisible;
   if isVisible {
@@ -164,13 +173,15 @@ protected cb func OnPhoneDeviceReset(target: wref<inkWidget>) -> Bool {
   return wrapped;
 }
 
-// @wrapMethod(PhoneHotkeyController)
-// private final func IsPhoneInUse() -> Bool {
-//   let wrapped: Bool = wrappedMethod();
-//   this.DetermineCurrentVisibility();
-//   return wrapped;
-// }
-
+@wrapMethod(PhoneHotkeyController)
+private final func IsPhoneInUse() -> Bool {
+  let wrapped: Bool = wrappedMethod();
+  if this.lhud_isVisibleNow {
+    this.DetermineCurrentVisibility();
+  };
+  
+  return wrapped;
+}
 
 // IN VEHICLE ACTION BUTTONS
 
