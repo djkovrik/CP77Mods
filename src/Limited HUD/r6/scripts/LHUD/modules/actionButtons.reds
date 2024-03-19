@@ -75,8 +75,9 @@ public func DetermineCurrentVisibility() -> Void {
   let showForStealth: Bool =  this.lhud_isStealthActive && this.lhudConfig.ShowInStealth;
   let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfig.ShowWithWeapon;
   let showForZoom: Bool =  this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
+  let isPhoneInUse: Bool = this.IsPhoneInUse();
 
-  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForWeapon || showForZoom;
+  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForWeapon || showForZoom || isPhoneInUse;
   if this.lhud_isBraindanceActive { isVisible = false; };
   this.lhud_isVisibleNow = isVisible;
   if isVisible {
@@ -144,21 +145,31 @@ private final func OnPhoneEnabledChanged(val: Bool) -> Void {
 }
 
 @wrapMethod(PhoneHotkeyController)
-private final func IsPhoneInUse() -> Bool {
-  let wrapped: Bool = wrappedMethod();
-  this.DetermineCurrentVisibility();
+protected cb func OnPhoneDeviceSlot(target: wref<inkWidget>) -> Bool {
+  let wrapped: Bool = wrappedMethod(target);
+  if this.lhud_isVisibleNow {
+    this.DetermineCurrentVisibility();
+  };
+
   return wrapped;
 }
 
 @wrapMethod(PhoneHotkeyController)
-protected cb func OnPhoneDeviceSlot(target: wref<inkWidget>) -> Bool {
+protected cb func OnPhoneDeviceReset(target: wref<inkWidget>) -> Bool {
+  let wrapped: Bool = wrappedMethod(target);
   if this.lhud_isVisibleNow {
-    return wrappedMethod(target);
+    this.DetermineCurrentVisibility();
   };
-
-  this.DetermineCurrentVisibility();
-  return false;
+  
+  return wrapped;
 }
+
+// @wrapMethod(PhoneHotkeyController)
+// private final func IsPhoneInUse() -> Bool {
+//   let wrapped: Bool = wrappedMethod();
+//   this.DetermineCurrentVisibility();
+//   return wrapped;
+// }
 
 
 // IN VEHICLE ACTION BUTTONS
