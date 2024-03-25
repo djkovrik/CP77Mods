@@ -23,9 +23,10 @@ public func DetermineCurrentVisibility() -> Void {
   let showForScanner: Bool =  this.lhud_isScannerActive && this.lhudConfig.ShowWithScanner;
   let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfig.ShowWithWeapon;
   let showForZoom: Bool =  this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
+  let scannerDetailsVisible: Bool = this.lhud_isScannerDetailsActive;
 
   let isVisible: Bool = showForGlobalHotkey || showForMinimapHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;
-  if this.lhud_isBraindanceActive { isVisible = false; };
+  if this.lhud_isBraindanceActive || scannerDetailsVisible { isVisible = false; };
   if NotEquals(this.lhud_isVisibleNow, isVisible) {
     this.lhud_isVisibleNow = isVisible;
     if isVisible {

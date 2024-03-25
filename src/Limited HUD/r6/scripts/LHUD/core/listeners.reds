@@ -336,3 +336,16 @@ public final func OnStatusEffectRemoved(evt: ref<RemoveStatusEffect>, gameplayTa
 private final func RefreshMetroFlag(value: Bool) -> Void {
   GameInstance.GetBlackboardSystem(this.m_player.GetGame()).Get(GetAllBlackboardDefs().UI_System).SetBool(GetAllBlackboardDefs().UI_System.IsInMetro_LHUD, value, true);
 }
+
+// SCANNER DETAILS PANEL
+@wrapMethod(scannerDetailsGameController)
+protected cb func OnScannerDetailsShown(animationProxy: ref<inkAnimProxy>) -> Bool {
+  wrappedMethod(animationProxy);
+  this.m_player.QueueLHUDEvent(LHUDEventType.ScannerDetails, true);
+}
+
+@wrapMethod(scannerDetailsGameController)
+protected cb func OnScannerDetailsHidden(animationProxy: ref<inkAnimProxy>) -> Bool {
+  wrappedMethod(animationProxy);
+  this.m_player.QueueLHUDEvent(LHUDEventType.ScannerDetails, false);
+}

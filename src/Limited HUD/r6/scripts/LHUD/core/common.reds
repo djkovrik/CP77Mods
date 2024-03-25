@@ -18,6 +18,7 @@ enum LHUDEventType {
   QuestTracker = 12,
   Metro = 13,
   Hints = 14,
+  ScannerDetails = 15,
 }
 
 enum LHUDFillColors {
@@ -93,6 +94,7 @@ public class LHUDStealthRunnerRefreshed extends Event {}
 @addField(inkGameController) public let lhud_isOutOfCombatActive: Bool;
 @addField(inkGameController) public let lhud_isStealthActive: Bool;
 @addField(inkGameController) public let lhud_isScannerActive: Bool;
+@addField(inkGameController) public let lhud_isScannerDetailsActive: Bool;
 @addField(inkGameController) public let lhud_isInVehicle: Bool;
 @addField(inkGameController) public let lhud_isWeaponUnsheathed: Bool;
 @addField(inkGameController) public let lhud_isZoomActive: Bool;
@@ -173,6 +175,9 @@ protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
       break;
     case LHUDEventType.Hints:
       this.lhud_isHintsForced = evt.isActive;
+      break;
+    case LHUDEventType.ScannerDetails:
+      this.lhud_isScannerDetailsActive = evt.isActive;
       break;
     default:
       break;
