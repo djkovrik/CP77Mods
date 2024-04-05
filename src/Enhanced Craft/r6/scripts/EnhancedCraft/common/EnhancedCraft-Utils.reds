@@ -22,7 +22,7 @@ public class ECraftUtils {
       case n"Legendary": return 2;
     };
 
-    return 0;
+    return -1;
   }
 
   public static func IsWeapon(type: gamedataItemType) -> Bool {
@@ -37,5 +37,5 @@ public class ECraftUtils {
 
 // -- Basic logging function
 public static func L(str: String) -> Void {
-  LogChannel(n"DEBUG", s"Craft: \(str)");
+  // LogChannel(n"DEBUG", s"Craft: \(str)");
 }
