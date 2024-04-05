@@ -6,24 +6,24 @@ import EnhancedCraft.Common.*
 
 public class EnhancedCraftSystem extends ScriptableSystem {
 
-  private persistent let m_nameRecords: array<ref<CustomCraftNameDataPS>>;
+  private persistent let nameRecords: array<ref<CustomCraftNameDataPS>>;
 
-  private let m_inventoryManager: ref<InventoryDataManagerV2>;
+  private let inventoryManager: ref<InventoryDataManagerV2>;
 
-  private let m_player: wref<PlayerPuppet>;
+  private let player: wref<PlayerPuppet>;
 
-  private let m_config: ref<ECraftConfig>;
+  private let config: ref<ECraftConfig>;
 
   private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
-    L(s"Persisted data loaded, stored names: \(ToString(ArraySize(this.m_nameRecords)))");
+    L(s"Persisted data loaded, stored names: \(ToString(ArraySize(this.nameRecords)))");
     let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(request.owner.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
     if IsDefined(player) {
-      this.m_player = player;
-      this.m_inventoryManager = new InventoryDataManagerV2();
-      this.m_inventoryManager.Initialize(this.m_player);
+      this.player = player;
+      this.inventoryManager = new InventoryDataManagerV2();
+      this.inventoryManager.Initialize(this.player);
       this.RefreshPlayerInventory();
     };
-    this.m_config = new ECraftConfig();
+    this.config = new ECraftConfig();
   }
 
   public final static func GetInstance(gameInstance: GameInstance) -> ref<EnhancedCraftSystem> {
@@ -40,7 +40,7 @@ public class EnhancedCraftSystem extends ScriptableSystem {
     let playerItems: array<ItemID>;
     let playerItemsData: array<ref<gameItemData>>;
 
-    this.m_inventoryManager.GetPlayerItemsDataByCategory(playerItemsData);
+    this.inventoryManager.GetPlayerItemsDataByCategory(playerItemsData);
     this.GetItemsIdsFromGameData(playerItemsData, playerItems);
    
     L(s"RefreshPlayerInventory: player items detected: \(ArraySize(playerItems))");
@@ -51,7 +51,7 @@ public class EnhancedCraftSystem extends ScriptableSystem {
     let playerItems: array<ItemID>;
     let playerItemsData: array<ref<gameItemData>>;
 
-    this.m_inventoryManager.GetPlayerItemsDataByCategory(playerItemsData);
+    this.inventoryManager.GetPlayerItemsDataByCategory(playerItemsData);
     this.GetItemsIdsFromGameData(playerItemsData, playerItems);
 
     // Add storage items into gamedata array
@@ -76,20 +76,20 @@ public class EnhancedCraftSystem extends ScriptableSystem {
 
   // -- Saves custom name
   public func AddCustomName(itemId: ItemID, name: String) -> Void {
-    let persistedRecords: array<ref<CustomCraftNameDataPS>> = this.m_nameRecords;
+    let persistedRecords: array<ref<CustomCraftNameDataPS>> = this.nameRecords;
     let newRecord: ref<CustomCraftNameDataPS> = new CustomCraftNameDataPS();
     let newId: Uint64 = ItemID.GetCombinedHash(itemId);
     newRecord.id = newId;
     newRecord.name = StringToName(name);
     ArrayPush(persistedRecords, newRecord);
-    this.m_nameRecords = persistedRecords;
-    L(s"New name \(name) persisted with id \(newId), total persisted names: \(ArraySize(this.m_nameRecords))");
+    this.nameRecords = persistedRecords;
+    L(s"New name \(name) persisted with id \(newId), total persisted names: \(ArraySize(this.nameRecords))");
   }
 
   // -- Checks if item has custom name persisted
   public func HasCustomName(itemId: ItemID) -> Bool {
     let id: Uint64 = ItemID.GetCombinedHash(itemId);
-    for record in this.m_nameRecords {
+    for record in this.nameRecords {
       if Equals(record.id, id) {
         return true;
       };
@@ -100,7 +100,7 @@ public class EnhancedCraftSystem extends ScriptableSystem {
   // -- Returns custom name by ItemID
   public func GetCustomName(itemId: ItemID) -> String {
     let id: Uint64 = ItemID.GetCombinedHash(itemId);
-    for record in this.m_nameRecords {
+    for record in this.nameRecords {
       if Equals(record.id, id) {
         return NameToString(record.name);
       };
@@ -109,7 +109,7 @@ public class EnhancedCraftSystem extends ScriptableSystem {
   }
 
   private func GetConfig() -> ref<ECraftConfig> {
-    return this.m_config;
+    return this.config;
   }
 
   // -- MISC
@@ -119,7 +119,7 @@ public class EnhancedCraftSystem extends ScriptableSystem {
     let playerItems: array<ItemID>;
     let playerItemsData: array<ref<gameItemData>>;
 
-    this.m_inventoryManager.GetPlayerItemsDataByCategory(playerItemsData);
+    this.inventoryManager.GetPlayerItemsDataByCategory(playerItemsData);
     this.GetItemsIdsFromGameData(playerItemsData, playerItems);
     L(s"RefreshStoredNames: player items detected: \(ArraySize(playerItems))");
 
@@ -137,11 +137,11 @@ public class EnhancedCraftSystem extends ScriptableSystem {
   // Iterate through persisted records and clean unsused
   private func ClearUnusedRecords(items: array<ref<gameItemData>>) -> Void {
     L("Cleaning unused records...");
-    let persistedNameRecords: array<ref<CustomCraftNameDataPS>> = this.m_nameRecords;
+    let persistedNameRecords: array<ref<CustomCraftNameDataPS>> = this.nameRecords;
     let commonItemIds: array<ItemID>;
     let commonItemHashes: array<Uint64>;
 
-    this.m_inventoryManager.GetPlayerItemsDataByCategory(items);
+    this.inventoryManager.GetPlayerItemsDataByCategory(items);
     // Check all
     this.GetItemsIdsFromGameData(items, commonItemIds);
     this.GetInventoryHashes(commonItemIds, commonItemHashes);
@@ -160,9 +160,9 @@ public class EnhancedCraftSystem extends ScriptableSystem {
 
   // -- Deletes persisted name record
   private func DeleteStoredNameRecord(id: Uint64) -> Void {
-    let persistedRecords: array<ref<CustomCraftNameDataPS>> = this.m_nameRecords;
+    let persistedRecords: array<ref<CustomCraftNameDataPS>> = this.nameRecords;
     let index: Int32 = 0;
-    for record in this.m_nameRecords {
+    for record in this.nameRecords {
       if Equals(record.id, id) {
         ArrayErase(persistedRecords, index);
         L(s" - name record deleted \(record.name)");
@@ -170,8 +170,8 @@ public class EnhancedCraftSystem extends ScriptableSystem {
       index += 1;
     };
 
-    this.m_nameRecords = persistedRecords;
-    L(s"Persisted name record \(id) deleted, total persisted records: \(ArraySize(this.m_nameRecords))");
+    this.nameRecords = persistedRecords;
+    L(s"Persisted name record \(id) deleted, total persisted records: \(ArraySize(this.nameRecords))");
   }
 
   // -- Get IDs from game data array

@@ -6,15 +6,15 @@ import Codeware.UI.*
 
 // -- Custom text input
 @addField(CraftingMainGameController)
-private let m_nameInput: wref<HubTextInput>;
+private let nameInput: wref<HubTextInput>;
 
 // -- Custom text input container
 @addField(CraftingMainGameController)
-private let m_nameInputContainer: wref<inkCompoundWidget>;
+private let nameInputContainer: wref<inkCompoundWidget>;
 
 // -- Recipe item name
 @addField(CraftingMainGameController)
-private let m_craftedItemName: wref<inkText>;
+private let craftedItemName: wref<inkText>;
 
 // -- Inject text input into CraftingLogicController
 @wrapMethod(CraftingMainGameController)
@@ -39,25 +39,25 @@ protected cb func OnInitialize() -> Bool {
   container.SetMargin(new inkMargin(0.0, 196.0, 0.0, 0.0));
   container.Reparent(outerContainer);
   container.SetVisible(false);
-  this.m_nameInputContainer = container;
+  this.nameInputContainer = container;
 
   let input: ref<HubTextInput> = HubTextInput.Create();
   input.RegisterToCallback(n"OnInput", this, n"OnTextInput");
-  input.Reparent(this.m_nameInputContainer);
-  this.m_nameInput = input;
+  input.Reparent(this.nameInputContainer);
+  this.nameInput = input;
 
   this.RegisterToGlobalInputCallback(n"OnPostOnRelease", this, n"OnGlobalInput");
 
   // Find item name inkText
-  this.m_craftedItemName = root.GetWidget(n"craftingPanel/inkCanvasWidget2/inkCanvasWidget7/itemDetailsContainer/itemTitle/header/itemName") as inkText;
+  this.craftedItemName = root.GetWidget(n"craftingPanel/inkCanvasWidget2/inkCanvasWidget7/itemDetailsContainer/itemTitle/header/itemName") as inkText;
 }
 
 // -- Catch text input events
 @addMethod(CraftingMainGameController)
 protected cb func OnTextInput(widget: wref<inkWidget>) -> Bool {
-  let text: String = this.m_nameInput.GetText();
+  let text: String = this.nameInput.GetText();
   if NotEquals(text, "") {
-    this.m_craftedItemName.SetText(text);
+    this.craftedItemName.SetText(text);
   };
 }
 

@@ -24,7 +24,7 @@ public class EnhancedCraftHotkeyListener {
     let actionName: CName = ListenerAction.GetName(action);
     let isReleased: Bool = Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED);
     // Weapons
-    if ArraySize(this.controller.m_selectedRecipeVariants) > 1 && this.controller.m_isWeaponSelected {
+    if ArraySize(this.controller.selectedRecipeVariants) > 1 && this.controller.isWeaponSelected {
       if Equals(actionName, n"ECraft_Prev") && isReleased && !this.config.randomizerEnabled {
         this.controller.LoadPrevItemVariant();
       };
@@ -36,7 +36,7 @@ public class EnhancedCraftHotkeyListener {
 }
 
 @addField(CraftingLogicController)
-public let m_inputListener: ref<EnhancedCraftHotkeyListener>;
+public let inputListener: ref<EnhancedCraftHotkeyListener>;
 
 @wrapMethod(CraftingLogicController)
 public func Init(craftingGameController: wref<CraftingMainGameController>) -> Void {
@@ -44,15 +44,15 @@ public func Init(craftingGameController: wref<CraftingMainGameController>) -> Vo
   if !IsDefined(this.ecraftConfig) {
     this.ecraftConfig = new ECraftConfig();
   };
-  this.m_inputListener = new EnhancedCraftHotkeyListener();
-  this.m_inputListener.SetController(this);
-  this.m_inputListener.SetConfig(this.ecraftConfig);
-  this.m_craftingGameController.GetPlayer().RegisterInputListener(this.m_inputListener);
+  this.inputListener = new EnhancedCraftHotkeyListener();
+  this.inputListener.SetController(this);
+  this.inputListener.SetConfig(this.ecraftConfig);
+  this.m_craftingGameController.GetPlayer().RegisterInputListener(this.inputListener);
 }
 
 @wrapMethod(CraftingLogicController)
 protected cb func OnUninitialize() -> Bool {
-  this.m_craftingGameController.GetPlayer().UnregisterInputListener(this.m_inputListener);
-  this.m_inputListener = null;
+  this.m_craftingGameController.GetPlayer().UnregisterInputListener(this.inputListener);
+  this.inputListener = null;
   wrappedMethod();
 }

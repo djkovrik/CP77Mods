@@ -6,7 +6,7 @@ import EnhancedCraft.System.*
 
 @addMethod(CraftingSystem)
 private func IsWeaponVariantAvailable(variantId: TweakDBID, quality: CName, isIconic: Bool) -> Bool {
-  let player: wref<PlayerPuppet> = this.m_playerPuppet;
+  let player: wref<PlayerPuppet> = this.playerPuppet;
   let config: ref<ECraftConfig> = EnhancedCraftSystem.GetConfig(player.GetGame());
   let recipeQualityValue: Int32 = ECraftUtils.GetBaseQualityValue(quality);
   let configQualityValue: Int32 = EnumInt(config.iconicRecipeCondition);
@@ -89,7 +89,7 @@ public final const func GetItemCraftingCost(itemData: wref<gameItemData>) -> arr
   if !isIconic {
     return wrappedMethod(itemData);
   };
-  let config: ref<ECraftConfig> = EnhancedCraftSystem.GetConfig(this.m_playerPuppet.GetGame());
+  let config: ref<ECraftConfig> = EnhancedCraftSystem.GetConfig(this.playerPuppet.GetGame());
   let multiplier: Int32 = config.iconicIngredientsMultiplier;
   let record: wref<Item_Record> = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(itemData.GetID()));
   let ingredients: array<IngredientData> = this.GetItemCraftingCost(record);
@@ -109,19 +109,19 @@ public final const func GetItemCraftingCost(itemData: wref<gameItemData>) -> arr
 @wrapMethod(CraftingSystem)
 private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
   wrappedMethod(request);
-  this.m_playerPuppet = GameInstance.GetPlayerSystem(request.owner.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
+  this.playerPuppet = GameInstance.GetPlayerSystem(request.owner.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
 }
 
 @wrapMethod(CraftingSystem)
 private final func OnPlayerDetach(request: ref<PlayerDetachRequest>) -> Void {
-  this.m_playerPuppet = null;
+  this.playerPuppet = null;
   wrappedMethod(request);
 }
 
 // -- Log crafting result for normal requests and launch crafting completion event
 @wrapMethod(CraftingSystem)
 private final func CraftItem(target: wref<GameObject>, itemRecord: ref<Item_Record>, amount: Int32, opt ammoBulletAmount: Int32) -> wref<gameItemData> {
-  let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(this.m_playerPuppet.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
+  let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(this.playerPuppet.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
   let craftedItem: wref<gameItemData> = wrappedMethod(target, itemRecord, amount, ammoBulletAmount);
   L(s"CRAFTED: \(craftedItem.GetID()) \(TDBID.ToStringDEBUG(ItemID.GetTDBID(craftedItem.GetID()))) \(RPGManager.GetItemDataQuality(craftedItem))");
   

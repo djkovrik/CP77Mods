@@ -3,13 +3,13 @@ import EnhancedCraft.Config.ECraftConfig
 
 // -- CraftingMainLogicController
 @addField(CraftingMainLogicController)
-public let m_selectedRecipeVariants: array<ref<RecipeData>>;
+public let selectedRecipeVariants: array<ref<RecipeData>>;
 
 @addField(CraftingMainLogicController)
-public let m_selectedRecipeVariantsNoIconics: array<ref<RecipeData>>;
+public let selectedRecipeVariantsNoIconics: array<ref<RecipeData>>;
 
 @addField(CraftingMainLogicController)
-public let m_isWeaponSelected: Bool;
+public let isWeaponSelected: Bool;
 
 
 // -- gameItemData
@@ -27,7 +27,7 @@ public let customName: String;
 
 // Weak ref to player puppet
 @addField(CraftingSystem)
-private let m_playerPuppet: wref<PlayerPuppet>;
+private let playerPuppet: wref<PlayerPuppet>;
 
 
 // -- CraftingLogicController
@@ -47,13 +47,13 @@ private let ecraftConfig: ref<ECraftConfig>;
 // -- CraftingGarmentItemPreviewGameController
 
 @addField(CraftingGarmentItemPreviewGameController)
-private let m_preview: wref<inkWidget>;
+private let preview: wref<inkWidget>;
 
 @addField(CraftingGarmentItemPreviewGameController)
-private let m_isHoveredByCursor: Bool;
+private let isHoveredByCursor: Bool;
 
 
 // -- WardrobeSetPreviewGameController
 
 @addField(WardrobeSetPreviewGameController)
-private let m_isMouseDownECraft: Bool;
+private let isMouseDownECraft: Bool;

@@ -9,16 +9,17 @@ public func LoadPrevItemVariant() -> Void {
   L("LoadPrevItemVariant");
   let recipe: ref<RecipeData>;
   let tdbid: TweakDBID; 
-  if ArraySize(this.m_selectedRecipeVariants) > 1 {
+  if ArraySize(this.selectedRecipeVariants) > 1 {
     this.selectedItemIndex = this.selectedItemIndex - 1;
     if this.selectedItemIndex < 0 {
-      this.selectedItemIndex = ArraySize(this.m_selectedRecipeVariants) - 1;
+      this.selectedItemIndex = ArraySize(this.selectedRecipeVariants) - 1;
     };
-    recipe = this.m_selectedRecipeVariants[this.selectedItemIndex];
+    recipe = this.selectedRecipeVariants[this.selectedItemIndex];
     tdbid = recipe.id.GetID();
     this.iconicSelected = ECraftUtils.IsPresetIconic(tdbid);
     this.UpdateRecipePreviewPanel(recipe);
     this.LaunchVariantSwitchedEvent();
+    this.RefreshCurrentVariantIndexLabel();
     L(s"LoadPrevItemVariant for index \(this.selectedItemIndex) and id \(TDBID.ToStringDEBUG(tdbid)) with quality \(recipe.id.Quality().Type()), iconic: \(this.iconicSelected)");
   };
 }
@@ -29,16 +30,17 @@ public func LoadNextItemVariant() -> Void {
   L("LoadNextItemVariant");
   let recipe: ref<RecipeData>;
   let tdbid: TweakDBID; 
-  if ArraySize(this.m_selectedRecipeVariants) > 1 {
+  if ArraySize(this.selectedRecipeVariants) > 1 {
     this.selectedItemIndex = this.selectedItemIndex + 1;
-    if this.selectedItemIndex > ArraySize(this.m_selectedRecipeVariants) - 1 {
+    if this.selectedItemIndex > ArraySize(this.selectedRecipeVariants) - 1 {
       this.selectedItemIndex = 0;
     };
-    recipe = this.m_selectedRecipeVariants[this.selectedItemIndex];
+    recipe = this.selectedRecipeVariants[this.selectedItemIndex];
     tdbid = recipe.id.GetID();
     this.iconicSelected = ECraftUtils.IsPresetIconic(tdbid);
     this.UpdateRecipePreviewPanel(recipe);
     this.LaunchVariantSwitchedEvent();
+    this.RefreshCurrentVariantIndexLabel();
     L(s"LoadNextItemVariant for index \(this.selectedItemIndex) and id \(TDBID.ToStringDEBUG(tdbid)) with quality \(recipe.id.Quality().Type()), iconic: \(this.iconicSelected)");
   };
 }
@@ -54,8 +56,8 @@ private func LaunchVariantSwitchedEvent() -> Void {
 // -- Returns random item record (Iconics excluded)
 @addMethod(CraftingLogicController)
 public func GetRandomWeaponRecipe() -> ref<RecipeData> {
-  let index: Int32 = RandRange(0, ArraySize(this.m_selectedRecipeVariantsNoIconics));
-  let recipe: ref<RecipeData> = this.m_selectedRecipeVariantsNoIconics[index];
+  let index: Int32 = RandRange(0, ArraySize(this.selectedRecipeVariantsNoIconics));
+  let recipe: ref<RecipeData> = this.selectedRecipeVariantsNoIconics[index];
   L(s"GetRandomWeaponRecipe for index \(index) and id \(TDBID.ToStringDEBUG(recipe.id.GetID())) with quality \(recipe.id.Quality().Type())");
   return recipe;
 }
@@ -63,7 +65,7 @@ public func GetRandomWeaponRecipe() -> ref<RecipeData> {
 // -- Refresh custom crafting panel HUD
 @addMethod(CraftingLogicController)
 private final func RefreshPanelWidgets() -> Void {  
-  if ArraySize(this.m_selectedRecipeVariants) > 1 {
+  if ArraySize(this.selectedRecipeVariants) > 1 {
     L(s"RefreshPanelWidgets - show controls");
     this.ShowButtonHints();
   } else {
@@ -72,4 +74,12 @@ private final func RefreshPanelWidgets() -> Void {
   };
   this.RefreshSkinsCounter();
   this.RefreshRandomizerLabel();
+  this.RefreshCurrentVariantIndexLabel();
+}
+
+@addMethod(CraftingLogicController)
+private final func RefreshCurrentVariantIndexLabel() -> Void {
+  let current: Int32 = this.selectedItemIndex + 1;
+  let total: Int32 = ArraySize(this.selectedRecipeVariants);
+  this.RefreshCurrentVariantCounter(current, total);
 }

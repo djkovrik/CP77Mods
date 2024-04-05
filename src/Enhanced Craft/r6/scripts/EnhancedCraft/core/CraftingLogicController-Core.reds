@@ -9,14 +9,14 @@ protected func UpdateItemPreview(craftableController: ref<CraftableItemLogicCont
   this.SetItemButtonHintsHoverOut(null);
   recipe = FromVariant<ref<IScriptable>>(craftableController.GetData()) as RecipeData;
   let multiplier: Int32 = this.ecraftConfig.iconicIngredientsMultiplier;
-  this.m_selectedRecipeVariants = this.m_craftingSystem.GetRecipesData(recipe.id, multiplier, false);
-  this.m_selectedRecipeVariantsNoIconics = this.m_craftingSystem.GetRecipesData(recipe.id, multiplier, true);
-  this.m_isWeaponSelected = ECraftUtils.IsWeapon(recipe.id.ItemType().Type());
+  this.selectedRecipeVariants = this.m_craftingSystem.GetRecipesData(recipe.id, multiplier, false);
+  this.selectedRecipeVariantsNoIconics = this.m_craftingSystem.GetRecipesData(recipe.id, multiplier, true);
+  this.isWeaponSelected = ECraftUtils.IsWeapon(recipe.id.ItemType().Type());
   this.selectedItemIndex = 0;
-  L(s"UpdateItemPreview for \(recipe.label) \(TDBID.ToStringDEBUG(recipe.id.GetID())) \(recipe.id.ItemType().Type()): weapon: \(this.m_isWeaponSelected), variants: \(ArraySize(this.m_selectedRecipeVariants))");
+  L(s"UpdateItemPreview for \(recipe.label) \(TDBID.ToStringDEBUG(recipe.id.GetID())) \(recipe.id.ItemType().Type()): weapon: \(this.isWeaponSelected), variants: \(ArraySize(this.selectedRecipeVariants))");
   this.RefreshPanelWidgets();
-  if ArraySize(this.m_selectedRecipeVariants) > 0 && this.m_isWeaponSelected {
-    recipe = this.m_selectedRecipeVariants[0];
+  if ArraySize(this.selectedRecipeVariants) > 0 && this.isWeaponSelected {
+    recipe = this.selectedRecipeVariants[0];
     this.UpdateRecipePreviewPanel(recipe);
   } else {
     wrappedMethod(craftableController);
@@ -35,9 +35,9 @@ private final func UpdateRecipePreviewPanel(selectedRecipe: ref<RecipeData>) -> 
 @wrapMethod(CraftingLogicController)
 private final func CraftItem(selectedRecipe: ref<RecipeData>, amount: Int32) -> Void {
   let request: ref<CraftItemRequest>;
-  let hasVariantsToRandomize: Bool = ArraySize(this.m_selectedRecipeVariantsNoIconics) > 1;
+  let hasVariantsToRandomize: Bool = ArraySize(this.selectedRecipeVariantsNoIconics) > 1;
   let randomRecipe: ref<RecipeData>;
-  if this.m_isWeaponSelected {
+  if this.isWeaponSelected {
     if NotEquals(selectedRecipe.label, "") {
       request = new CraftItemRequest();
       request.target = this.m_craftingGameController.GetPlayer();

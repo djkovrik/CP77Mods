@@ -8,14 +8,14 @@ import Codeware.UI.*
 @addMethod(CraftingMainGameController)
 protected cb func OnEnhancedCraftRecipeClickedEvent(event: ref<EnhancedCraftRecipeClicked>) -> Bool {
   let visible: Bool = event.isWeapon;
-  this.m_nameInput.SetText("");
-	this.m_nameInputContainer.SetVisible(visible);
+  this.nameInput.SetText("");
+	this.nameInputContainer.SetVisible(visible);
 }
 
 // -- Clear input field
 @addMethod(CraftingMainGameController)
 protected cb func OnEnhancedCraftRecipeVariantChanged(event: ref<EnhancedCraftRecipeVariantChanged>) -> Bool {
-  this.m_nameInput.SetText("");
+  this.nameInput.SetText("");
 }
 
 // -- Catch crafting events to persist custom name, clear input text and restore original recipe name
@@ -24,16 +24,16 @@ protected cb func OnEnhancedCraftRecipeCraftedEvent(event: ref<EnhancedCraftReci
   let name: String;
   let itemId: ItemID;
   let system: ref<EnhancedCraftSystem>;
-  let inputText: String = this.m_nameInput.GetText();
+  let inputText: String = this.nameInput.GetText();
   let shouldPersist: Bool = event.isWeapon;
   // Persist custom name if weapon was crafted and input is not empty
   if shouldPersist && NotEquals(inputText, "") {
     system = EnhancedCraftSystem.GetInstance(this.m_player.GetGame());
     itemId = event.itemId;
-    name = this.m_nameInput.GetText();
+    name = this.nameInput.GetText();
     system.AddCustomName(itemId, name);
     system.RefreshPlayerInventory();
   };
-  this.m_nameInput.SetText("");
-  this.m_craftedItemName.SetText(GetLocalizedTextByKey(RPGManager.GetItemRecord(itemId).DisplayName()));
+  this.nameInput.SetText("");
+  this.craftedItemName.SetText(GetLocalizedTextByKey(RPGManager.GetItemRecord(itemId).DisplayName()));
 }
