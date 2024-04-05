@@ -1,0 +1,872 @@
+# -- ICONICS
+
+# --- Items.Craftable_Common_Achilles
+Items.Craftable_Common_Achilles_nusa1.isPresetIconic: true
+Items.Craftable_Common_Achilles_nusa2.isPresetIconic: true
+Items.Craftable_Common_Achilles_nash.isPresetIconic: true
+Items.Craftable_Common_Achilles_xmod2.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Achilles
+Items.Craftable_Uncommon_Achilles_nusa1.isPresetIconic: true
+Items.Craftable_Uncommon_Achilles_nusa2.isPresetIconic: true
+Items.Craftable_Uncommon_Achilles_nash.isPresetIconic: true
+Items.Craftable_Uncommon_Achilles_xmod2.isPresetIconic: true
+# --- Items.Craftable_Rare_Achilles
+Items.Craftable_Rare_Achilles_nusa1.isPresetIconic: true
+Items.Craftable_Rare_Achilles_nusa2.isPresetIconic: true
+Items.Craftable_Rare_Achilles_nash.isPresetIconic: true
+Items.Craftable_Rare_Achilles_xmod2.isPresetIconic: true
+# --- Items.Craftable_Epic_Achilles
+Items.Craftable_Epic_Achilles_nusa1.isPresetIconic: true
+Items.Craftable_Epic_Achilles_nusa2.isPresetIconic: true
+Items.Craftable_Epic_Achilles_nash.isPresetIconic: true
+Items.Craftable_Epic_Achilles_xmod2.isPresetIconic: true
+# --- Items.Craftable_Legendary_Achilles
+Items.Craftable_Legendary_Achilles_nusa1.isPresetIconic: true
+Items.Craftable_Legendary_Achilles_nusa2.isPresetIconic: true
+Items.Craftable_Legendary_Achilles_nash.isPresetIconic: true
+Items.Craftable_Legendary_Achilles_xmod2.isPresetIconic: true
+# --- Items.Craftable_Common_Ajax
+Items.Craftable_Common_Ajax_molon.isPresetIconic: true
+Items.Craftable_Common_Ajax_amazon.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Ajax
+Items.Craftable_Uncommon_Ajax_molon.isPresetIconic: true
+Items.Craftable_Uncommon_Ajax_amazon.isPresetIconic: true
+# --- Items.Craftable_Rare_Ajax
+Items.Craftable_Rare_Ajax_molon.isPresetIconic: true
+Items.Craftable_Rare_Ajax_amazon.isPresetIconic: true
+# --- Items.Craftable_Epic_Ajax
+Items.Craftable_Epic_Ajax_molon.isPresetIconic: true
+Items.Craftable_Epic_Ajax_amazon.isPresetIconic: true
+# --- Items.Craftable_Legendary_Ajax
+Items.Craftable_Legendary_Ajax_molon.isPresetIconic: true
+Items.Craftable_Legendary_Ajax_amazon.isPresetIconic: true
+# --- Items.Craftable_Common_Ashura
+Items.Craftable_Common_Ashura_ep1.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Ashura
+Items.Craftable_Uncommon_Ashura_ep1.isPresetIconic: true
+# --- Items.Craftable_Rare_Ashura
+Items.Craftable_Rare_Ashura_ep1.isPresetIconic: true
+# --- Items.Craftable_Epic_Ashura
+Items.Craftable_Epic_Ashura_ep1.isPresetIconic: true
+# --- Items.Craftable_Legendary_Ashura
+Items.Craftable_Legendary_Ashura_ep1.isPresetIconic: true
+# --- Items.Craftable_Common_Bat
+Items.Craftable_Common_Bat_basic_lizzies.isPresetIconic: true
+Items.Craftable_Common_Bat_basic_6thstreet.isPresetIconic: true
+Items.Craftable_Common_Bat_basic_tyger_claws.isPresetIconic: true
+Items.Craftable_Common_Bat_basic_aldecaldos.isPresetIconic: true
+Items.Craftable_Common_Bat_basic_wraiths.isPresetIconic: true
+Items.Craftable_Common_Bat_basic_gold2.isPresetIconic: true
+Items.Craftable_Common_Bat_perfored_valentinos.isPresetIconic: true
+Items.Craftable_Common_Bat_perfored_6thstreet.isPresetIconic: true
+Items.Craftable_Common_Bat_lina_malina.isPresetIconic: true
+Items.Craftable_Common_Bat_legendary.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Bat
+Items.Craftable_Uncommon_Bat_basic_lizzies.isPresetIconic: true
+Items.Craftable_Uncommon_Bat_basic_6thstreet.isPresetIconic: true
+Items.Craftable_Uncommon_Bat_basic_tyger_claws.isPresetIconic: true
+Items.Craftable_Uncommon_Bat_basic_aldecaldos.isPresetIconic: true
+Items.Craftable_Uncommon_Bat_basic_wraiths.isPresetIconic: true
+Items.Craftable_Uncommon_Bat_basic_gold2.isPresetIconic: true
+Items.Craftable_Uncommon_Bat_perfored_valentinos.isPresetIconic: true
+Items.Craftable_Uncommon_Bat_perfored_6thstreet.isPresetIconic: true
+Items.Craftable_Uncommon_Bat_lina_malina.isPresetIconic: true
+Items.Craftable_Uncommon_Bat_legendary.isPresetIconic: true
+# --- Items.Craftable_Rare_Bat
+Items.Craftable_Rare_Bat_basic_lizzies.isPresetIconic: true
+Items.Craftable_Rare_Bat_basic_6thstreet.isPresetIconic: true
+Items.Craftable_Rare_Bat_basic_tyger_claws.isPresetIconic: true
+Items.Craftable_Rare_Bat_basic_aldecaldos.isPresetIconic: true
+Items.Craftable_Rare_Bat_basic_wraiths.isPresetIconic: true
+Items.Craftable_Rare_Bat_basic_gold2.isPresetIconic: true
+Items.Craftable_Rare_Bat_perfored_valentinos.isPresetIconic: true
+Items.Craftable_Rare_Bat_perfored_6thstreet.isPresetIconic: true
+Items.Craftable_Rare_Bat_lina_malina.isPresetIconic: true
+Items.Craftable_Rare_Bat_legendary.isPresetIconic: true
+# --- Items.Proficiency_Craftable_Epic_Bat
+Items.Proficiency_Craftable_Epic_Bat_basic_lizzies.isPresetIconic: true
+Items.Proficiency_Craftable_Epic_Bat_basic_6thstreet.isPresetIconic: true
+Items.Proficiency_Craftable_Epic_Bat_basic_tyger_claws.isPresetIconic: true
+Items.Proficiency_Craftable_Epic_Bat_basic_aldecaldos.isPresetIconic: true
+Items.Proficiency_Craftable_Epic_Bat_basic_wraiths.isPresetIconic: true
+Items.Proficiency_Craftable_Epic_Bat_basic_gold2.isPresetIconic: true
+Items.Proficiency_Craftable_Epic_Bat_perfored_valentinos.isPresetIconic: true
+Items.Proficiency_Craftable_Epic_Bat_perfored_6thstreet.isPresetIconic: true
+Items.Proficiency_Craftable_Epic_Bat_lina_malina.isPresetIconic: true
+Items.Proficiency_Craftable_Epic_Bat_legendary.isPresetIconic: true
+# --- Items.Craftable_Legendary_Bat
+Items.Craftable_Legendary_Bat_basic_lizzies.isPresetIconic: true
+Items.Craftable_Legendary_Bat_basic_6thstreet.isPresetIconic: true
+Items.Craftable_Legendary_Bat_basic_tyger_claws.isPresetIconic: true
+Items.Craftable_Legendary_Bat_basic_aldecaldos.isPresetIconic: true
+Items.Craftable_Legendary_Bat_basic_wraiths.isPresetIconic: true
+Items.Craftable_Legendary_Bat_basic_gold2.isPresetIconic: true
+Items.Craftable_Legendary_Bat_perfored_valentinos.isPresetIconic: true
+Items.Craftable_Legendary_Bat_perfored_6thstreet.isPresetIconic: true
+Items.Craftable_Legendary_Bat_lina_malina.isPresetIconic: true
+Items.Craftable_Legendary_Bat_legendary.isPresetIconic: true
+# --- Items.Craftable_Common_Baton_Alpha
+Items.Craftable_Common_Baton_Alpha_alpha_murphy.isPresetIconic: true
+# --- Items.Proficiency_Craftable_Uncommon_Baton_Alpha
+Items.Proficiency_Craftable_Uncommon_Baton_Alpha_alpha_murphy.isPresetIconic: true
+# --- Items.Craftable_Rare_Baton_Alpha
+Items.Craftable_Rare_Baton_Alpha_alpha_murphy.isPresetIconic: true
+# --- Items.Craftable_Epic_Baton_Alpha
+Items.Craftable_Epic_Baton_Alpha_alpha_murphy.isPresetIconic: true
+# --- Items.Craftable_Legendary_Baton_Alpha
+Items.Craftable_Legendary_Baton_Alpha_alpha_murphy.isPresetIconic: true
+# --- Items.Craftable_Common_Baton_Beta
+Items.Craftable_Common_Baton_Beta_alpha_murphy.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Baton_Beta
+Items.Craftable_Uncommon_Baton_Beta_alpha_murphy.isPresetIconic: true
+# --- Items.Craftable_Rare_Baton_Beta
+Items.Craftable_Rare_Baton_Beta_alpha_murphy.isPresetIconic: true
+# --- Items.Craftable_Epic_Baton_Beta
+Items.Craftable_Epic_Baton_Beta_alpha_murphy.isPresetIconic: true
+# --- Items.Craftable_Legendary_Baton_Beta
+Items.Craftable_Legendary_Baton_Beta_alpha_murphy.isPresetIconic: true
+# --- Items.Craftable_Common_Baton_Gamma
+Items.Craftable_Common_Baton_Gamma_alpha_murphy.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Baton_Gamma
+Items.Craftable_Uncommon_Baton_Gamma_alpha_murphy.isPresetIconic: true
+# --- Items.Craftable_Rare_Baton_Gamma
+Items.Craftable_Rare_Baton_Gamma_alpha_murphy.isPresetIconic: true
+# --- Items.Craftable_Epic_Baton_Gamma
+Items.Craftable_Epic_Baton_Gamma_alpha_murphy.isPresetIconic: true
+# --- Items.Craftable_Legendary_Baton_Gamma
+Items.Craftable_Legendary_Baton_Gamma_alpha_murphy.isPresetIconic: true
+# --- Items.Craftable_Common_Burya
+Items.Craftable_Common_Burya_comrade.isPresetIconic: true
+Items.Craftable_Common_Burya_soviet.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Burya
+Items.Craftable_Uncommon_Burya_comrade.isPresetIconic: true
+Items.Craftable_Uncommon_Burya_soviet.isPresetIconic: true
+# --- Items.Craftable_Rare_Burya
+Items.Craftable_Rare_Burya_comrade.isPresetIconic: true
+Items.Craftable_Rare_Burya_soviet.isPresetIconic: true
+# --- Items.Craftable_Epic_Burya
+Items.Craftable_Epic_Burya_comrade.isPresetIconic: true
+Items.Craftable_Epic_Burya_soviet.isPresetIconic: true
+# --- Items.Craftable_Legendary_Burya
+Items.Craftable_Legendary_Burya_comrade.isPresetIconic: true
+Items.Craftable_Legendary_Burya_soviet.isPresetIconic: true
+# --- Items.Craftable_Common_Carnage
+Items.Craftable_Common_Carnage_mox.isPresetIconic: true
+Items.Craftable_Common_Carnage_edgerunner.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Carnage
+Items.Craftable_Uncommon_Carnage_mox.isPresetIconic: true
+Items.Craftable_Uncommon_Carnage_edgerunner.isPresetIconic: true
+# --- Items.Craftable_Rare_Carnage
+Items.Craftable_Rare_Carnage_mox.isPresetIconic: true
+Items.Craftable_Rare_Carnage_edgerunner.isPresetIconic: true
+# --- Items.Craftable_Epic_Carnage
+Items.Craftable_Epic_Carnage_mox.isPresetIconic: true
+Items.Craftable_Epic_Carnage_edgerunner.isPresetIconic: true
+# --- Items.Proficiency_Craftable_Legendary_Carnage
+Items.Proficiency_Craftable_Legendary_Carnage_mox.isPresetIconic: true
+Items.Proficiency_Craftable_Legendary_Carnage_edgerunner.isPresetIconic: true
+# --- Items.Craftable_Common_Chao
+Items.Craftable_Common_Chao_vdbsmart.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Chao
+Items.Craftable_Uncommon_Chao_vdbsmart.isPresetIconic: true
+# --- Items.Craftable_Rare_Chao
+Items.Craftable_Rare_Chao_vdbsmart.isPresetIconic: true
+# --- Items.Craftable_Epic_Chao
+Items.Craftable_Epic_Chao_vdbsmart.isPresetIconic: true
+# --- Items.Craftable_Legendary_Chao
+Items.Craftable_Legendary_Chao_vdbsmart.isPresetIconic: true
+# --- Items.Craftable_Common_Copperhead
+Items.Craftable_Common_Copperhead_genesis.isPresetIconic: true
+# --- Items.Proficiency_Craftable_Uncommon_Copperhead
+Items.Proficiency_Craftable_Uncommon_Copperhead_genesis.isPresetIconic: true
+# --- Items.Craftable_Rare_Copperhead
+Items.Craftable_Rare_Copperhead_genesis.isPresetIconic: true
+# --- Items.Craftable_Epic_Copperhead
+Items.Craftable_Epic_Copperhead_genesis.isPresetIconic: true
+# --- Items.Craftable_Legendary_Copperhead
+Items.Craftable_Legendary_Copperhead_genesis.isPresetIconic: true
+# --- Items.Craftable_Common_Crusher
+Items.Craftable_Common_Crusher_amazon.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Crusher
+Items.Craftable_Uncommon_Crusher_amazon.isPresetIconic: true
+# --- Items.Craftable_Rare_Crusher
+Items.Craftable_Rare_Crusher_amazon.isPresetIconic: true
+# --- Items.Craftable_Epic_Crusher
+Items.Craftable_Epic_Crusher_amazon.isPresetIconic: true
+# --- Items.Craftable_Legendary_Crusher
+Items.Craftable_Legendary_Crusher_amazon.isPresetIconic: true
+# --- Items.Craftable_Common_Defender
+Items.Craftable_Common_Defender_kurt.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Defender
+Items.Craftable_Uncommon_Defender_kurt.isPresetIconic: true
+# --- Items.Craftable_Rare_Defender
+Items.Craftable_Rare_Defender_kurt.isPresetIconic: true
+# --- Items.Craftable_Epic_Defender
+Items.Craftable_Epic_Defender_kurt.isPresetIconic: true
+# --- Items.Craftable_Legendary_Defender
+Items.Craftable_Legendary_Defender_kurt.isPresetIconic: true
+# --- Items.Craftable_Common_Dian
+Items.Craftable_Common_Dian_trauma.isPresetIconic: true
+Items.Craftable_Common_Dian_yinglong.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Dian
+Items.Craftable_Uncommon_Dian_trauma.isPresetIconic: true
+Items.Craftable_Uncommon_Dian_yinglong.isPresetIconic: true
+# --- Items.Craftable_Rare_Dian
+Items.Craftable_Rare_Dian_trauma.isPresetIconic: true
+Items.Craftable_Rare_Dian_yinglong.isPresetIconic: true
+# --- Items.Craftable_Epic_Dian
+Items.Craftable_Epic_Dian_trauma.isPresetIconic: true
+Items.Craftable_Epic_Dian_yinglong.isPresetIconic: true
+# --- Items.Craftable_Legendary_Dian
+Items.Craftable_Legendary_Dian_trauma.isPresetIconic: true
+Items.Craftable_Legendary_Dian_yinglong.isPresetIconic: true
+# --- Items.Craftable_Common_Fanged_Axe
+Items.Craftable_Common_Fanged_Axe_xmod2.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Fanged_Axe
+Items.Craftable_Uncommon_Fanged_Axe_xmod2.isPresetIconic: true
+# --- Items.Craftable_Rare_Fanged_Axe
+Items.Craftable_Rare_Fanged_Axe_xmod2.isPresetIconic: true
+# --- Items.Craftable_Epic_Fanged_Axe
+Items.Craftable_Epic_Fanged_Axe_xmod2.isPresetIconic: true
+# --- Items.Craftable_Legendary_Fanged_Axe
+Items.Craftable_Legendary_Fanged_Axe_xmod2.isPresetIconic: true
+# --- Items.Craftable_Common_Grad
+Items.Craftable_Common_Grad_buck.isPresetIconic: true
+Items.Craftable_Common_Grad_panam.isPresetIconic: true
+Items.Craftable_Common_Grad_scav.isPresetIconic: true
+Items.Craftable_Common_Grad_soviet.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Grad
+Items.Craftable_Uncommon_Grad_buck.isPresetIconic: true
+Items.Craftable_Uncommon_Grad_panam.isPresetIconic: true
+Items.Craftable_Uncommon_Grad_scav.isPresetIconic: true
+Items.Craftable_Uncommon_Grad_soviet.isPresetIconic: true
+# --- Items.Proficiency_Craftable_Rare_Grad
+Items.Proficiency_Craftable_Rare_Grad_buck.isPresetIconic: true
+Items.Proficiency_Craftable_Rare_Grad_panam.isPresetIconic: true
+Items.Proficiency_Craftable_Rare_Grad_scav.isPresetIconic: true
+Items.Proficiency_Craftable_Rare_Grad_soviet.isPresetIconic: true
+# --- Items.Craftable_Epic_Grad
+Items.Craftable_Epic_Grad_buck.isPresetIconic: true
+Items.Craftable_Epic_Grad_panam.isPresetIconic: true
+Items.Craftable_Epic_Grad_scav.isPresetIconic: true
+Items.Craftable_Epic_Grad_soviet.isPresetIconic: true
+# --- Items.Craftable_Legendary_Grad
+Items.Craftable_Legendary_Grad_buck.isPresetIconic: true
+Items.Craftable_Legendary_Grad_panam.isPresetIconic: true
+Items.Craftable_Legendary_Grad_scav.isPresetIconic: true
+Items.Craftable_Legendary_Grad_soviet.isPresetIconic: true
+# --- Items.Craftable_Common_Grit
+Items.Craftable_Common_Grit_amazon.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Grit
+Items.Craftable_Uncommon_Grit_amazon.isPresetIconic: true
+# --- Items.Craftable_Rare_Grit
+Items.Craftable_Rare_Grit_amazon.isPresetIconic: true
+# --- Items.Craftable_Epic_Grit
+Items.Craftable_Epic_Grit_amazon.isPresetIconic: true
+# --- Items.Craftable_Legendary_Grit
+Items.Craftable_Legendary_Grit_amazon.isPresetIconic: true
+# --- Items.Craftable_Common_Hammer
+Items.Craftable_Common_Hammer_boss.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Hammer
+Items.Craftable_Uncommon_Hammer_boss.isPresetIconic: true
+# --- Items.Craftable_Rare_Hammer
+Items.Craftable_Rare_Hammer_boss.isPresetIconic: true
+# --- Items.Craftable_Epic_Hammer
+Items.Craftable_Epic_Hammer_boss.isPresetIconic: true
+# --- Items.Craftable_Legendary_Hammer
+Items.Craftable_Legendary_Hammer_boss.isPresetIconic: true
+# --- Items.Craftable_Common_Igla
+Items.Craftable_Common_Igla_sovereign.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Igla
+Items.Craftable_Uncommon_Igla_sovereign.isPresetIconic: true
+# --- Items.Craftable_Rare_Igla
+Items.Craftable_Rare_Igla_sovereign.isPresetIconic: true
+# --- Items.Craftable_Epic_Igla
+Items.Craftable_Epic_Igla_sovereign.isPresetIconic: true
+# --- Items.Craftable_Legendary_Igla
+Items.Craftable_Legendary_Igla_sovereign.isPresetIconic: true
+# --- Items.Craftable_Common_Kappa
+Items.Craftable_Common_Kappa_renegate.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Kappa
+Items.Craftable_Uncommon_Kappa_renegate.isPresetIconic: true
+# --- Items.Craftable_Rare_Kappa
+Items.Craftable_Rare_Kappa_renegate.isPresetIconic: true
+# --- Items.Craftable_Epic_Kappa
+Items.Craftable_Epic_Kappa_renegate.isPresetIconic: true
+# --- Items.Craftable_Legendary_Kappa
+Items.Craftable_Legendary_Kappa_renegate.isPresetIconic: true
+# --- Items.Craftable_Common_Katana
+Items.Craftable_Common_Katana_04_default.isPresetIconic: true
+Items.Craftable_Common_Katana_02_takemura.isPresetIconic: true
+Items.Craftable_Common_Katana_03_thecocktailstick1.isPresetIconic: true
+Items.Craftable_Common_Katana_03_tyger1.isPresetIconic: true
+Items.Craftable_Common_Katana_03_tyger2.isPresetIconic: true
+Items.Craftable_Common_Katana_Witcher_Katana.isPresetIconic: true
+Items.Craftable_Common_Katana_wakako_katana.isPresetIconic: true
+Items.Craftable_Common_Katana_01_thermal_blade.isPresetIconic: true
+Items.Craftable_Common_Katana_Witcher_sword_redplay.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Katana
+Items.Craftable_Uncommon_Katana_04_default.isPresetIconic: true
+Items.Craftable_Uncommon_Katana_02_takemura.isPresetIconic: true
+Items.Craftable_Uncommon_Katana_03_thecocktailstick1.isPresetIconic: true
+Items.Craftable_Uncommon_Katana_03_tyger1.isPresetIconic: true
+Items.Craftable_Uncommon_Katana_03_tyger2.isPresetIconic: true
+Items.Craftable_Uncommon_Katana_Witcher_Katana.isPresetIconic: true
+Items.Craftable_Uncommon_Katana_wakako_katana.isPresetIconic: true
+Items.Craftable_Uncommon_Katana_01_thermal_blade.isPresetIconic: true
+Items.Craftable_Uncommon_Katana_Witcher_sword_redplay.isPresetIconic: true
+# --- Items.Craftable_Rare_Katana
+Items.Craftable_Rare_Katana_04_default.isPresetIconic: true
+Items.Craftable_Rare_Katana_02_takemura.isPresetIconic: true
+Items.Craftable_Rare_Katana_03_thecocktailstick1.isPresetIconic: true
+Items.Craftable_Rare_Katana_03_tyger1.isPresetIconic: true
+Items.Craftable_Rare_Katana_03_tyger2.isPresetIconic: true
+Items.Craftable_Rare_Katana_Witcher_Katana.isPresetIconic: true
+Items.Craftable_Rare_Katana_wakako_katana.isPresetIconic: true
+Items.Craftable_Rare_Katana_01_thermal_blade.isPresetIconic: true
+Items.Craftable_Rare_Katana_Witcher_sword_redplay.isPresetIconic: true
+# --- Items.Craftable_Epic_Katana
+Items.Craftable_Epic_Katana_04_default.isPresetIconic: true
+Items.Craftable_Epic_Katana_02_takemura.isPresetIconic: true
+Items.Craftable_Epic_Katana_03_thecocktailstick1.isPresetIconic: true
+Items.Craftable_Epic_Katana_03_tyger1.isPresetIconic: true
+Items.Craftable_Epic_Katana_03_tyger2.isPresetIconic: true
+Items.Craftable_Epic_Katana_Witcher_Katana.isPresetIconic: true
+Items.Craftable_Epic_Katana_wakako_katana.isPresetIconic: true
+Items.Craftable_Epic_Katana_01_thermal_blade.isPresetIconic: true
+Items.Craftable_Epic_Katana_Witcher_sword_redplay.isPresetIconic: true
+# --- Items.Proficiency_Craftable_Legendary_Katana
+Items.Proficiency_Craftable_Legendary_Katana_04_default.isPresetIconic: true
+Items.Proficiency_Craftable_Legendary_Katana_02_takemura.isPresetIconic: true
+Items.Proficiency_Craftable_Legendary_Katana_03_thecocktailstick1.isPresetIconic: true
+Items.Proficiency_Craftable_Legendary_Katana_03_tyger1.isPresetIconic: true
+Items.Proficiency_Craftable_Legendary_Katana_03_tyger2.isPresetIconic: true
+Items.Proficiency_Craftable_Legendary_Katana_Witcher_Katana.isPresetIconic: true
+Items.Proficiency_Craftable_Legendary_Katana_wakako_katana.isPresetIconic: true
+Items.Proficiency_Craftable_Legendary_Katana_01_thermal_blade.isPresetIconic: true
+Items.Proficiency_Craftable_Legendary_Katana_Witcher_sword_redplay.isPresetIconic: true
+# --- Items.Craftable_Common_Katana_Military
+Items.Craftable_Common_Katana_Military_04_default.isPresetIconic: true
+Items.Craftable_Common_Katana_Military_02_takemura.isPresetIconic: true
+Items.Craftable_Common_Katana_Military_03_thecocktailstick1.isPresetIconic: true
+Items.Craftable_Common_Katana_Military_03_tyger1.isPresetIconic: true
+Items.Craftable_Common_Katana_Military_03_tyger2.isPresetIconic: true
+Items.Craftable_Common_Katana_Military_Witcher_Katana.isPresetIconic: true
+Items.Craftable_Common_Katana_Military_wakako_katana.isPresetIconic: true
+Items.Craftable_Common_Katana_Military_01_thermal_blade.isPresetIconic: true
+Items.Craftable_Common_Katana_Military_Witcher_sword_redplay.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Katana_Military
+Items.Craftable_Uncommon_Katana_Military_04_default.isPresetIconic: true
+Items.Craftable_Uncommon_Katana_Military_02_takemura.isPresetIconic: true
+Items.Craftable_Uncommon_Katana_Military_03_thecocktailstick1.isPresetIconic: true
+Items.Craftable_Uncommon_Katana_Military_03_tyger1.isPresetIconic: true
+Items.Craftable_Uncommon_Katana_Military_03_tyger2.isPresetIconic: true
+Items.Craftable_Uncommon_Katana_Military_Witcher_Katana.isPresetIconic: true
+Items.Craftable_Uncommon_Katana_Military_wakako_katana.isPresetIconic: true
+Items.Craftable_Uncommon_Katana_Military_01_thermal_blade.isPresetIconic: true
+Items.Craftable_Uncommon_Katana_Military_Witcher_sword_redplay.isPresetIconic: true
+# --- Items.Craftable_Epic_Katana_Military
+Items.Craftable_Epic_Katana_Military_04_default.isPresetIconic: true
+Items.Craftable_Epic_Katana_Military_02_takemura.isPresetIconic: true
+Items.Craftable_Epic_Katana_Military_03_thecocktailstick1.isPresetIconic: true
+Items.Craftable_Epic_Katana_Military_03_tyger1.isPresetIconic: true
+Items.Craftable_Epic_Katana_Military_03_tyger2.isPresetIconic: true
+Items.Craftable_Epic_Katana_Military_Witcher_Katana.isPresetIconic: true
+Items.Craftable_Epic_Katana_Military_wakako_katana.isPresetIconic: true
+Items.Craftable_Epic_Katana_Military_01_thermal_blade.isPresetIconic: true
+Items.Craftable_Epic_Katana_Military_Witcher_sword_redplay.isPresetIconic: true
+# --- Items.Craftable_Rare_Katana_Military_1
+Items.Craftable_Rare_Katana_Military_1_04_default.isPresetIconic: true
+Items.Craftable_Rare_Katana_Military_1_02_takemura.isPresetIconic: true
+Items.Craftable_Rare_Katana_Military_1_03_thecocktailstick1.isPresetIconic: true
+Items.Craftable_Rare_Katana_Military_1_03_tyger1.isPresetIconic: true
+Items.Craftable_Rare_Katana_Military_1_03_tyger2.isPresetIconic: true
+Items.Craftable_Rare_Katana_Military_1_Witcher_Katana.isPresetIconic: true
+Items.Craftable_Rare_Katana_Military_1_wakako_katana.isPresetIconic: true
+Items.Craftable_Rare_Katana_Military_1_01_thermal_blade.isPresetIconic: true
+Items.Craftable_Rare_Katana_Military_1_Witcher_sword_redplay.isPresetIconic: true
+# --- Items.Craftable_Legendary_Katana_Military
+Items.Craftable_Legendary_Katana_Military_04_default.isPresetIconic: true
+Items.Craftable_Legendary_Katana_Military_02_takemura.isPresetIconic: true
+Items.Craftable_Legendary_Katana_Military_03_thecocktailstick1.isPresetIconic: true
+Items.Craftable_Legendary_Katana_Military_03_tyger1.isPresetIconic: true
+Items.Craftable_Legendary_Katana_Military_03_tyger2.isPresetIconic: true
+Items.Craftable_Legendary_Katana_Military_Witcher_Katana.isPresetIconic: true
+Items.Craftable_Legendary_Katana_Military_wakako_katana.isPresetIconic: true
+Items.Craftable_Legendary_Katana_Military_01_thermal_blade.isPresetIconic: true
+Items.Craftable_Legendary_Katana_Military_Witcher_sword_redplay.isPresetIconic: true
+# --- Items.Craftable_Common_Kenshin
+Items.Craftable_Common_Kenshin_frank.isPresetIconic: true
+Items.Craftable_Common_Kenshin_maelstrom.isPresetIconic: true
+Items.Craftable_Common_Kenshin_spy.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Kenshin
+Items.Craftable_Uncommon_Kenshin_frank.isPresetIconic: true
+Items.Craftable_Uncommon_Kenshin_maelstrom.isPresetIconic: true
+Items.Craftable_Uncommon_Kenshin_spy.isPresetIconic: true
+# --- Items.Craftable_Rare_Kenshin
+Items.Craftable_Rare_Kenshin_frank.isPresetIconic: true
+Items.Craftable_Rare_Kenshin_maelstrom.isPresetIconic: true
+Items.Craftable_Rare_Kenshin_spy.isPresetIconic: true
+# --- Items.Craftable_Epic_Kenshin
+Items.Craftable_Epic_Kenshin_frank.isPresetIconic: true
+Items.Craftable_Epic_Kenshin_maelstrom.isPresetIconic: true
+Items.Craftable_Epic_Kenshin_spy.isPresetIconic: true
+# --- Items.Craftable_Legendary_Kenshin
+Items.Craftable_Legendary_Kenshin_frank.isPresetIconic: true
+Items.Craftable_Legendary_Kenshin_maelstrom.isPresetIconic: true
+Items.Craftable_Legendary_Kenshin_spy.isPresetIconic: true
+# --- Items.Craftable_Common_Knife
+Items.Craftable_Common_Knife_scorpion.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Knife
+Items.Craftable_Uncommon_Knife_scorpion.isPresetIconic: true
+# --- Items.Proficiency_Craftable_Rare_Knife
+Items.Proficiency_Craftable_Rare_Knife_scorpion.isPresetIconic: true
+# --- Items.Craftable_Epic_Knife
+Items.Craftable_Epic_Knife_scorpion.isPresetIconic: true
+# --- Items.Craftable_Legendary_Knife
+Items.Craftable_Legendary_Knife_scorpion.isPresetIconic: true
+# --- Items.Craftable_Common_Kyubi
+Items.Craftable_Common_Kyubi_legendary.isPresetIconic: true
+Items.Craftable_Common_Kyubi_nusa.isPresetIconic: true
+Items.Craftable_Common_Kyubi_amazon.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Kyubi
+Items.Craftable_Uncommon_Kyubi_legendary.isPresetIconic: true
+Items.Craftable_Uncommon_Kyubi_nusa.isPresetIconic: true
+Items.Craftable_Uncommon_Kyubi_amazon.isPresetIconic: true
+# --- Items.Craftable_Rare_Kyubi
+Items.Craftable_Rare_Kyubi_legendary.isPresetIconic: true
+Items.Craftable_Rare_Kyubi_nusa.isPresetIconic: true
+Items.Craftable_Rare_Kyubi_amazon.isPresetIconic: true
+# --- Items.Craftable_Epic_Kyubi
+Items.Craftable_Epic_Kyubi_legendary.isPresetIconic: true
+Items.Craftable_Epic_Kyubi_nusa.isPresetIconic: true
+Items.Craftable_Epic_Kyubi_amazon.isPresetIconic: true
+# --- Items.Craftable_Legendary_Kyubi
+Items.Craftable_Legendary_Kyubi_legendary.isPresetIconic: true
+Items.Craftable_Legendary_Kyubi_nusa.isPresetIconic: true
+Items.Craftable_Legendary_Kyubi_amazon.isPresetIconic: true
+# --- Items.Craftable_Common_Lexington
+Items.Craftable_Common_Lexington_wilson.isPresetIconic: true
+Items.Craftable_Common_Lexington_rook.isPresetIconic: true
+Items.Craftable_Common_Lexington_dying_night.isPresetIconic: true
+Items.Craftable_Common_Lexington_jurij.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Lexington
+Items.Craftable_Uncommon_Lexington_wilson.isPresetIconic: true
+Items.Craftable_Uncommon_Lexington_rook.isPresetIconic: true
+Items.Craftable_Uncommon_Lexington_dying_night.isPresetIconic: true
+Items.Craftable_Uncommon_Lexington_jurij.isPresetIconic: true
+# --- Items.Craftable_Rare_Lexington
+Items.Craftable_Rare_Lexington_wilson.isPresetIconic: true
+Items.Craftable_Rare_Lexington_rook.isPresetIconic: true
+Items.Craftable_Rare_Lexington_dying_night.isPresetIconic: true
+Items.Craftable_Rare_Lexington_jurij.isPresetIconic: true
+# --- Items.Craftable_Epic_Lexington
+Items.Craftable_Epic_Lexington_wilson.isPresetIconic: true
+Items.Craftable_Epic_Lexington_rook.isPresetIconic: true
+Items.Craftable_Epic_Lexington_dying_night.isPresetIconic: true
+Items.Craftable_Epic_Lexington_jurij.isPresetIconic: true
+# --- Items.Craftable_Legendary_Lexington
+Items.Craftable_Legendary_Lexington_wilson.isPresetIconic: true
+Items.Craftable_Legendary_Lexington_rook.isPresetIconic: true
+Items.Craftable_Legendary_Lexington_dying_night.isPresetIconic: true
+Items.Craftable_Legendary_Lexington_jurij.isPresetIconic: true
+# --- Items.Craftable_Common_Liberty
+Items.Craftable_Common_Liberty_dex.isPresetIconic: true
+Items.Craftable_Common_Liberty_padre.isPresetIconic: true
+Items.Craftable_Common_Liberty_rogue.isPresetIconic: true
+Items.Craftable_Common_Liberty_yorinobu.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Liberty
+Items.Craftable_Uncommon_Liberty_dex.isPresetIconic: true
+Items.Craftable_Uncommon_Liberty_padre.isPresetIconic: true
+Items.Craftable_Uncommon_Liberty_rogue.isPresetIconic: true
+Items.Craftable_Uncommon_Liberty_yorinobu.isPresetIconic: true
+# --- Items.Craftable_Rare_Liberty
+Items.Craftable_Rare_Liberty_dex.isPresetIconic: true
+Items.Craftable_Rare_Liberty_padre.isPresetIconic: true
+Items.Craftable_Rare_Liberty_rogue.isPresetIconic: true
+Items.Craftable_Rare_Liberty_yorinobu.isPresetIconic: true
+# --- Items.Craftable_Epic_Liberty
+Items.Craftable_Epic_Liberty_dex.isPresetIconic: true
+Items.Craftable_Epic_Liberty_padre.isPresetIconic: true
+Items.Craftable_Epic_Liberty_rogue.isPresetIconic: true
+Items.Craftable_Epic_Liberty_yorinobu.isPresetIconic: true
+# --- Items.Craftable_Legendary_Liberty
+Items.Craftable_Legendary_Liberty_dex.isPresetIconic: true
+Items.Craftable_Legendary_Liberty_padre.isPresetIconic: true
+Items.Craftable_Legendary_Liberty_rogue.isPresetIconic: true
+Items.Craftable_Legendary_Liberty_yorinobu.isPresetIconic: true
+# --- Items.Craftable_Common_MA70
+Items.Craftable_Common_MA70_xmod2.isPresetIconic: true
+# --- Items.Craftable_Uncommon_MA70
+Items.Craftable_Uncommon_MA70_xmod2.isPresetIconic: true
+# --- Items.Craftable_Rare_MA70
+Items.Craftable_Rare_MA70_xmod2.isPresetIconic: true
+# --- Items.Craftable_Epic_MA70
+Items.Craftable_Epic_MA70_xmod2.isPresetIconic: true
+# --- Items.Craftable_Legendary_MA70
+Items.Craftable_Legendary_MA70_xmod2.isPresetIconic: true
+# --- Items.Craftable_Common_Machete_Borg
+Items.Craftable_Common_Machete_Borg_neon2.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Machete_Borg
+Items.Craftable_Uncommon_Machete_Borg_neon2.isPresetIconic: true
+# --- Items.Craftable_Rare_Machete_Borg
+Items.Craftable_Rare_Machete_Borg_neon2.isPresetIconic: true
+# --- Items.Craftable_Epic_Machete_Borg
+Items.Craftable_Epic_Machete_Borg_neon2.isPresetIconic: true
+# --- Items.Craftable_Legendary_Machete_Borg
+Items.Craftable_Legendary_Machete_Borg_neon2.isPresetIconic: true
+# --- Items.Craftable_Common_Masamune
+Items.Craftable_Common_Masamune_nowaki_2077.isPresetIconic: true
+Items.Craftable_Common_Masamune_default_flashlight.isPresetIconic: true
+Items.Craftable_Common_Masamune_default_flashlight_shadow.isPresetIconic: true
+Items.Craftable_Common_Masamune_afterlife.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Masamune
+Items.Craftable_Uncommon_Masamune_nowaki_2077.isPresetIconic: true
+Items.Craftable_Uncommon_Masamune_default_flashlight.isPresetIconic: true
+Items.Craftable_Uncommon_Masamune_default_flashlight_shadow.isPresetIconic: true
+Items.Craftable_Uncommon_Masamune_afterlife.isPresetIconic: true
+# --- Items.Craftable_Rare_Masamune
+Items.Craftable_Rare_Masamune_nowaki_2077.isPresetIconic: true
+Items.Craftable_Rare_Masamune_default_flashlight.isPresetIconic: true
+Items.Craftable_Rare_Masamune_default_flashlight_shadow.isPresetIconic: true
+Items.Craftable_Rare_Masamune_afterlife.isPresetIconic: true
+# --- Items.Craftable_Epic_Masamune
+Items.Craftable_Epic_Masamune_nowaki_2077.isPresetIconic: true
+Items.Craftable_Epic_Masamune_default_flashlight.isPresetIconic: true
+Items.Craftable_Epic_Masamune_default_flashlight_shadow.isPresetIconic: true
+Items.Craftable_Epic_Masamune_afterlife.isPresetIconic: true
+# --- Items.Craftable_Legendary_Masamune
+Items.Craftable_Legendary_Masamune_nowaki_2077.isPresetIconic: true
+Items.Craftable_Legendary_Masamune_default_flashlight.isPresetIconic: true
+Items.Craftable_Legendary_Masamune_default_flashlight_shadow.isPresetIconic: true
+Items.Craftable_Legendary_Masamune_afterlife.isPresetIconic: true
+# --- Items.Craftable_Common_Metel
+Items.Craftable_Common_Metel_kurt.isPresetIconic: true
+Items.Craftable_Common_Metel_soviet.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Metel
+Items.Craftable_Uncommon_Metel_kurt.isPresetIconic: true
+Items.Craftable_Uncommon_Metel_soviet.isPresetIconic: true
+# --- Items.Craftable_Rare_Metel
+Items.Craftable_Rare_Metel_kurt.isPresetIconic: true
+Items.Craftable_Rare_Metel_soviet.isPresetIconic: true
+# --- Items.Craftable_Epic_Metel
+Items.Craftable_Epic_Metel_kurt.isPresetIconic: true
+Items.Craftable_Epic_Metel_soviet.isPresetIconic: true
+# --- Items.Craftable_Legendary_Metel
+Items.Craftable_Legendary_Metel_kurt.isPresetIconic: true
+Items.Craftable_Legendary_Metel_soviet.isPresetIconic: true
+# --- Items.Craftable_Common_Nekomata
+Items.Craftable_Common_Nekomata_breakthrough.isPresetIconic: true
+Items.Craftable_Common_Nekomata_reed.isPresetIconic: true
+Items.Craftable_Common_Nekomata_holo.isPresetIconic: true
+Items.Craftable_Common_Nekomata_amazon.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Nekomata
+Items.Craftable_Uncommon_Nekomata_breakthrough.isPresetIconic: true
+Items.Craftable_Uncommon_Nekomata_reed.isPresetIconic: true
+Items.Craftable_Uncommon_Nekomata_holo.isPresetIconic: true
+Items.Craftable_Uncommon_Nekomata_amazon.isPresetIconic: true
+# --- Items.Craftable_Rare_Nekomata
+Items.Craftable_Rare_Nekomata_breakthrough.isPresetIconic: true
+Items.Craftable_Rare_Nekomata_reed.isPresetIconic: true
+Items.Craftable_Rare_Nekomata_holo.isPresetIconic: true
+Items.Craftable_Rare_Nekomata_amazon.isPresetIconic: true
+# --- Items.Craftable_Epic_Nekomata
+Items.Craftable_Epic_Nekomata_breakthrough.isPresetIconic: true
+Items.Craftable_Epic_Nekomata_reed.isPresetIconic: true
+Items.Craftable_Epic_Nekomata_holo.isPresetIconic: true
+Items.Craftable_Epic_Nekomata_amazon.isPresetIconic: true
+# --- Items.Proficiency_Craftable_Legendary_Nekomata
+Items.Proficiency_Craftable_Legendary_Nekomata_breakthrough.isPresetIconic: true
+Items.Proficiency_Craftable_Legendary_Nekomata_reed.isPresetIconic: true
+Items.Proficiency_Craftable_Legendary_Nekomata_holo.isPresetIconic: true
+Items.Proficiency_Craftable_Legendary_Nekomata_amazon.isPresetIconic: true
+# --- Items.Craftable_Common_Neurotoxin_Knife
+Items.Craftable_Common_Neurotoxin_Knife_neon2.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Neurotoxin_Knife
+Items.Craftable_Uncommon_Neurotoxin_Knife_neon2.isPresetIconic: true
+# --- Items.Craftable_Rare_Neurotoxin_Knife
+Items.Craftable_Rare_Neurotoxin_Knife_neon2.isPresetIconic: true
+# --- Items.Craftable_Epic_Neurotoxin_Knife
+Items.Craftable_Epic_Neurotoxin_Knife_neon2.isPresetIconic: true
+# --- Items.Craftable_Legendary_Neurotoxin_Knife
+Items.Craftable_Legendary_Neurotoxin_Knife_neon2.isPresetIconic: true
+# --- Items.Craftable_Common_Nova
+Items.Craftable_Common_Nova_doomdoom.isPresetIconic: true
+Items.Craftable_Common_Nova_russian_hitman.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Nova
+Items.Craftable_Uncommon_Nova_doomdoom.isPresetIconic: true
+Items.Craftable_Uncommon_Nova_russian_hitman.isPresetIconic: true
+# --- Items.Proficiency_Craftable_Rare_Nova
+Items.Proficiency_Craftable_Rare_Nova_doomdoom.isPresetIconic: true
+Items.Proficiency_Craftable_Rare_Nova_russian_hitman.isPresetIconic: true
+# --- Items.Craftable_Epic_Nova
+Items.Craftable_Epic_Nova_doomdoom.isPresetIconic: true
+Items.Craftable_Epic_Nova_russian_hitman.isPresetIconic: true
+# --- Items.Craftable_Legendary_Nova
+Items.Craftable_Legendary_Nova_doomdoom.isPresetIconic: true
+Items.Craftable_Legendary_Nova_russian_hitman.isPresetIconic: true
+# --- Items.Craftable_Common_Nue
+Items.Craftable_Common_Nue_fingers.isPresetIconic: true
+Items.Craftable_Common_Nue_tamayura_default.isPresetIconic: true
+Items.Craftable_Common_Nue_tamayura_2077.isPresetIconic: true
+Items.Craftable_Common_Nue_neon1.isPresetIconic: true
+# --- Items.Proficiency_Craftable_Uncommon_Nue
+Items.Proficiency_Craftable_Uncommon_Nue_fingers.isPresetIconic: true
+Items.Proficiency_Craftable_Uncommon_Nue_tamayura_default.isPresetIconic: true
+Items.Proficiency_Craftable_Uncommon_Nue_tamayura_2077.isPresetIconic: true
+Items.Proficiency_Craftable_Uncommon_Nue_neon1.isPresetIconic: true
+# --- Items.Craftable_Rare_Nue
+Items.Craftable_Rare_Nue_fingers.isPresetIconic: true
+Items.Craftable_Rare_Nue_tamayura_default.isPresetIconic: true
+Items.Craftable_Rare_Nue_tamayura_2077.isPresetIconic: true
+Items.Craftable_Rare_Nue_neon1.isPresetIconic: true
+# --- Items.Craftable_Epic_Nue
+Items.Craftable_Epic_Nue_fingers.isPresetIconic: true
+Items.Craftable_Epic_Nue_tamayura_default.isPresetIconic: true
+Items.Craftable_Epic_Nue_tamayura_2077.isPresetIconic: true
+Items.Craftable_Epic_Nue_neon1.isPresetIconic: true
+# --- Items.Craftable_Legendary_Nue
+Items.Craftable_Legendary_Nue_fingers.isPresetIconic: true
+Items.Craftable_Legendary_Nue_tamayura_default.isPresetIconic: true
+Items.Craftable_Legendary_Nue_tamayura_2077.isPresetIconic: true
+Items.Craftable_Legendary_Nue_neon1.isPresetIconic: true
+# --- Items.Craftable_Common_Omaha
+Items.Craftable_Common_Omaha_mox.isPresetIconic: true
+Items.Craftable_Common_Omaha_jurij.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Omaha
+Items.Craftable_Uncommon_Omaha_mox.isPresetIconic: true
+Items.Craftable_Uncommon_Omaha_jurij.isPresetIconic: true
+# --- Items.Craftable_Rare_Omaha
+Items.Craftable_Rare_Omaha_mox.isPresetIconic: true
+Items.Craftable_Rare_Omaha_jurij.isPresetIconic: true
+# --- Items.Craftable_Epic_Omaha
+Items.Craftable_Epic_Omaha_mox.isPresetIconic: true
+Items.Craftable_Epic_Omaha_jurij.isPresetIconic: true
+# --- Items.Craftable_Legendary_Omaha
+Items.Craftable_Legendary_Omaha_mox.isPresetIconic: true
+Items.Craftable_Legendary_Omaha_jurij.isPresetIconic: true
+# --- Items.Craftable_Common_Overture
+Items.Craftable_Common_Overture_cassidy.isPresetIconic: true
+Items.Craftable_Common_Overture_kerry.isPresetIconic: true
+Items.Craftable_Common_Overture_river.isPresetIconic: true
+Items.Craftable_Common_Overture_rosco.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Overture
+Items.Craftable_Uncommon_Overture_cassidy.isPresetIconic: true
+Items.Craftable_Uncommon_Overture_kerry.isPresetIconic: true
+Items.Craftable_Uncommon_Overture_river.isPresetIconic: true
+Items.Craftable_Uncommon_Overture_rosco.isPresetIconic: true
+# --- Items.Craftable_Rare_Overture
+Items.Craftable_Rare_Overture_cassidy.isPresetIconic: true
+Items.Craftable_Rare_Overture_kerry.isPresetIconic: true
+Items.Craftable_Rare_Overture_river.isPresetIconic: true
+Items.Craftable_Rare_Overture_rosco.isPresetIconic: true
+# --- Items.Craftable_Epic_Overture
+Items.Craftable_Epic_Overture_cassidy.isPresetIconic: true
+Items.Craftable_Epic_Overture_kerry.isPresetIconic: true
+Items.Craftable_Epic_Overture_river.isPresetIconic: true
+Items.Craftable_Epic_Overture_rosco.isPresetIconic: true
+# --- Items.Preset_Overture_Legendary
+Items.Preset_Overture_Legendary_cassidy.isPresetIconic: true
+Items.Preset_Overture_Legendary_kerry.isPresetIconic: true
+Items.Preset_Overture_Legendary_river.isPresetIconic: true
+Items.Preset_Overture_Legendary_rosco.isPresetIconic: true
+# --- Items.Craftable_Common_Pozhar
+Items.Craftable_Common_Pozhar_soviet.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Pozhar
+Items.Craftable_Uncommon_Pozhar_soviet.isPresetIconic: true
+# --- Items.Craftable_Rare_Pozhar
+Items.Craftable_Rare_Pozhar_soviet.isPresetIconic: true
+# --- Items.Craftable_Epic_Pozhar
+Items.Craftable_Epic_Pozhar_soviet.isPresetIconic: true
+# --- Items.Craftable_Legendary_Pozhar
+Items.Craftable_Legendary_Pozhar_soviet.isPresetIconic: true
+# --- Items.Craftable_Common_Pulsar
+Items.Craftable_Common_Pulsar_buzzsaw.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Pulsar
+Items.Craftable_Uncommon_Pulsar_buzzsaw.isPresetIconic: true
+# --- Items.Proficiency_Craftable_Rare_Pulsar
+Items.Proficiency_Craftable_Rare_Pulsar_buzzsaw.isPresetIconic: true
+# --- Items.Craftable_Epic_Pulsar
+Items.Craftable_Epic_Pulsar_buzzsaw.isPresetIconic: true
+# --- Items.Craftable_Legendary_Pulsar
+Items.Craftable_Legendary_Pulsar_buzzsaw.isPresetIconic: true
+# --- Items.Craftable_Common_Punk_Knife
+Items.Craftable_Common_Punk_Knife_neon1.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Punk_Knife
+Items.Craftable_Uncommon_Punk_Knife_neon1.isPresetIconic: true
+# --- Items.Craftable_Rare_Punk_Knife
+Items.Craftable_Rare_Punk_Knife_neon1.isPresetIconic: true
+# --- Items.Craftable_Epic_Punk_Knife
+Items.Craftable_Epic_Punk_Knife_neon1.isPresetIconic: true
+# --- Items.Craftable_Legendary_Punk_Knife
+Items.Craftable_Legendary_Punk_Knife_neon1.isPresetIconic: true
+# --- Items.Craftable_Common_Quasar
+Items.Craftable_Common_Quasar_gris_gris.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Quasar
+Items.Craftable_Uncommon_Quasar_gris_gris.isPresetIconic: true
+# --- Items.Craftable_Rare_Quasar
+Items.Craftable_Rare_Quasar_gris_gris.isPresetIconic: true
+# --- Items.Craftable_Epic_Quasar
+Items.Craftable_Epic_Quasar_gris_gris.isPresetIconic: true
+# --- Items.Proficiency_Craftable_Legendary_Quasar
+Items.Proficiency_Craftable_Legendary_Quasar_gris_gris.isPresetIconic: true
+# --- Items.Craftable_Common_Saratoga
+Items.Craftable_Common_Saratoga_raffenshiv.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Saratoga
+Items.Craftable_Uncommon_Saratoga_raffenshiv.isPresetIconic: true
+# --- Items.Craftable_Rare_Saratoga
+Items.Craftable_Rare_Saratoga_raffenshiv.isPresetIconic: true
+# --- Items.Craftable_Epic_Saratoga
+Items.Craftable_Epic_Saratoga_raffenshiv.isPresetIconic: true
+# --- Items.Craftable_Legendary_Saratoga
+Items.Craftable_Legendary_Saratoga_raffenshiv.isPresetIconic: true
+# --- Items.Craftable_Common_Satara
+Items.Craftable_Common_Satara_brick.isPresetIconic: true
+# --- Items.Proficiency_Craftable_Uncommon_Satara
+Items.Proficiency_Craftable_Uncommon_Satara_brick.isPresetIconic: true
+# --- Items.Craftable_Rare_Satara
+Items.Craftable_Rare_Satara_brick.isPresetIconic: true
+# --- Items.Craftable_Epic_Satara
+Items.Craftable_Epic_Satara_brick.isPresetIconic: true
+# --- Items.Craftable_Legendary_Satara
+Items.Craftable_Legendary_Satara_brick.isPresetIconic: true
+# --- Items.Craftable_Common_Shingen
+Items.Craftable_Common_Shingen_prototype.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Shingen
+Items.Craftable_Uncommon_Shingen_prototype.isPresetIconic: true
+# --- Items.Craftable_Rare_Shingen
+Items.Craftable_Rare_Shingen_prototype.isPresetIconic: true
+# --- Items.Craftable_Epic_Shingen
+Items.Craftable_Epic_Shingen_prototype.isPresetIconic: true
+# --- Items.Craftable_Legendary_Shingen
+Items.Craftable_Legendary_Shingen_prototype.isPresetIconic: true
+# --- Items.Craftable_Common_Sidewinder
+Items.Craftable_Common_Sidewinder_divided_ws.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Sidewinder
+Items.Craftable_Uncommon_Sidewinder_divided_ws.isPresetIconic: true
+# --- Items.Craftable_Rare_Sidewinder
+Items.Craftable_Rare_Sidewinder_divided_ws.isPresetIconic: true
+# --- Items.Craftable_Epic_Sidewinder
+Items.Craftable_Epic_Sidewinder_divided_ws.isPresetIconic: true
+# --- Items.Craftable_Legendary_Sidewinder
+Items.Craftable_Legendary_Sidewinder_divided_ws.isPresetIconic: true
+# --- Items.Craftable_Common_Sor22
+Items.Craftable_Common_Sor22_nusa1.isPresetIconic: true
+Items.Craftable_Common_Sor22_nusa2.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Sor22
+Items.Craftable_Uncommon_Sor22_nusa1.isPresetIconic: true
+Items.Craftable_Uncommon_Sor22_nusa2.isPresetIconic: true
+# --- Items.Craftable_Rare_Sor22
+Items.Craftable_Rare_Sor22_nusa1.isPresetIconic: true
+Items.Craftable_Rare_Sor22_nusa2.isPresetIconic: true
+# --- Items.Proficiency_Craftable_Epic_Sor22
+Items.Proficiency_Craftable_Epic_Sor22_nusa1.isPresetIconic: true
+Items.Proficiency_Craftable_Epic_Sor22_nusa2.isPresetIconic: true
+# --- Items.Craftable_Legendary_Sor22
+Items.Craftable_Legendary_Sor22_nusa1.isPresetIconic: true
+Items.Craftable_Legendary_Sor22_nusa2.isPresetIconic: true
+# --- Items.Craftable_Common_Tactician
+Items.Craftable_Common_Tactician_dinovic.isPresetIconic: true
+Items.Craftable_Common_Tactician_headsman.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Tactician
+Items.Craftable_Uncommon_Tactician_dinovic.isPresetIconic: true
+Items.Craftable_Uncommon_Tactician_headsman.isPresetIconic: true
+# --- Items.Craftable_Rare_Tactician
+Items.Craftable_Rare_Tactician_dinovic.isPresetIconic: true
+Items.Craftable_Rare_Tactician_headsman.isPresetIconic: true
+# --- Items.Proficiency_Craftable_Epic_Tactician
+Items.Proficiency_Craftable_Epic_Tactician_dinovic.isPresetIconic: true
+Items.Proficiency_Craftable_Epic_Tactician_headsman.isPresetIconic: true
+# --- Items.Craftable_Legendary_Tactician
+Items.Craftable_Legendary_Tactician_dinovic.isPresetIconic: true
+Items.Craftable_Legendary_Tactician_headsman.isPresetIconic: true
+# --- Items.Craftable_Common_Testera
+Items.Craftable_Common_Testera_fratricide.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Testera
+Items.Craftable_Uncommon_Testera_fratricide.isPresetIconic: true
+# --- Items.Craftable_Rare_Testera
+Items.Craftable_Rare_Testera_fratricide.isPresetIconic: true
+# --- Items.Craftable_Epic_Testera
+Items.Craftable_Epic_Testera_fratricide.isPresetIconic: true
+# --- Items.Craftable_Legendary_Testera
+Items.Craftable_Legendary_Testera_fratricide.isPresetIconic: true
+# --- Items.Craftable_Common_Ticon
+Items.Craftable_Common_Ticon_reed.isPresetIconic: true
+Items.Craftable_Common_Ticon_redplay_gwent.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Ticon
+Items.Craftable_Uncommon_Ticon_reed.isPresetIconic: true
+Items.Craftable_Uncommon_Ticon_redplay_gwent.isPresetIconic: true
+# --- Items.Craftable_Rare_Ticon
+Items.Craftable_Rare_Ticon_reed.isPresetIconic: true
+Items.Craftable_Rare_Ticon_redplay_gwent.isPresetIconic: true
+# --- Items.Craftable_Epic_Ticon
+Items.Craftable_Epic_Ticon_reed.isPresetIconic: true
+Items.Craftable_Epic_Ticon_redplay_gwent.isPresetIconic: true
+# --- Items.Craftable_Legendary_Ticon
+Items.Craftable_Legendary_Ticon_reed.isPresetIconic: true
+Items.Craftable_Legendary_Ticon_redplay_gwent.isPresetIconic: true
+# --- Items.Craftable_Common_Umbra
+Items.Craftable_Common_Umbra_paco.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Umbra
+Items.Craftable_Uncommon_Umbra_paco.isPresetIconic: true
+# --- Items.Craftable_Rare_Umbra
+Items.Craftable_Rare_Umbra_paco.isPresetIconic: true
+# --- Items.Craftable_Epic_Umbra
+Items.Craftable_Epic_Umbra_paco.isPresetIconic: true
+# --- Items.Craftable_Legendary_Umbra
+Items.Craftable_Legendary_Umbra_paco.isPresetIconic: true
+# --- Items.Craftable_Common_Unity
+Items.Craftable_Common_Unity_angelica.isPresetIconic: true
+Items.Craftable_Common_Unity_majesty.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Unity
+Items.Craftable_Uncommon_Unity_angelica.isPresetIconic: true
+Items.Craftable_Uncommon_Unity_majesty.isPresetIconic: true
+# --- Items.Craftable_Rare_Unity
+Items.Craftable_Rare_Unity_angelica.isPresetIconic: true
+Items.Craftable_Rare_Unity_majesty.isPresetIconic: true
+# --- Items.Craftable_Epic_Unity
+Items.Craftable_Epic_Unity_angelica.isPresetIconic: true
+Items.Craftable_Epic_Unity_majesty.isPresetIconic: true
+# --- Items.Craftable_Legendary_Unity
+Items.Craftable_Legendary_Unity_angelica.isPresetIconic: true
+Items.Craftable_Legendary_Unity_majesty.isPresetIconic: true
+# --- Items.Craftable_Common_Warden
+Items.Craftable_Common_Warden_boris.isPresetIconic: true
+Items.Craftable_Common_Warden_amazon.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Warden
+Items.Craftable_Uncommon_Warden_boris.isPresetIconic: true
+Items.Craftable_Uncommon_Warden_amazon.isPresetIconic: true
+# --- Items.Craftable_Rare_Warden
+Items.Craftable_Rare_Warden_boris.isPresetIconic: true
+Items.Craftable_Rare_Warden_amazon.isPresetIconic: true
+# --- Items.Craftable_Epic_Warden
+Items.Craftable_Epic_Warden_boris.isPresetIconic: true
+Items.Craftable_Epic_Warden_amazon.isPresetIconic: true
+# --- Items.Craftable_Legendary_Warden
+Items.Craftable_Legendary_Warden_boris.isPresetIconic: true
+Items.Craftable_Legendary_Warden_amazon.isPresetIconic: true
+# --- Items.Craftable_Common_Yukimura
+Items.Craftable_Common_Yukimura_skippy.isPresetIconic: true
+Items.Craftable_Common_Yukimura_kiji.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Yukimura
+Items.Craftable_Uncommon_Yukimura_skippy.isPresetIconic: true
+Items.Craftable_Uncommon_Yukimura_kiji.isPresetIconic: true
+# --- Items.Craftable_Rare_Yukimura
+Items.Craftable_Rare_Yukimura_skippy.isPresetIconic: true
+Items.Craftable_Rare_Yukimura_kiji.isPresetIconic: true
+# --- Items.Proficiency_Craftable_Epic_Yukimura
+Items.Proficiency_Craftable_Epic_Yukimura_skippy.isPresetIconic: true
+Items.Proficiency_Craftable_Epic_Yukimura_kiji.isPresetIconic: true
+# --- Items.Craftable_Legendary_Yukimura
+Items.Craftable_Legendary_Yukimura_skippy.isPresetIconic: true
+Items.Craftable_Legendary_Yukimura_kiji.isPresetIconic: true
+# --- Items.Craftable_Common_Zhuo
+Items.Craftable_Common_Zhuo_star_cannon.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Zhuo
+Items.Craftable_Uncommon_Zhuo_star_cannon.isPresetIconic: true
+# --- Items.Craftable_Rare_Zhuo
+Items.Craftable_Rare_Zhuo_star_cannon.isPresetIconic: true
+# --- Items.Craftable_Epic_Zhuo
+Items.Craftable_Epic_Zhuo_star_cannon.isPresetIconic: true
+# --- Items.Craftable_Legendary_Zhuo
+Items.Craftable_Legendary_Zhuo_star_cannon.isPresetIconic: true
