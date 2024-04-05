@@ -1549,155 +1549,155 @@ Items.Craftable_Rare_Bat.ecraftVariants:
  - t"Items.Craftable_Rare_Bat_lina_malina"
  - t"Items.Craftable_Rare_Bat_legendary"
 
-# --- Items.Proficiency_Craftable_Epic_Bat
-Items.Proficiency_Craftable_Epic_Bat_basic_default:
-  $base: Items.Proficiency_Craftable_Epic_Bat
+# --- Items.Craftable_Epic_Bat
+Items.Craftable_Epic_Bat_basic_default:
+  $base: Items.Craftable_Epic_Bat
   appearanceName: basic_default
   iconPath: weapon_Preset_Baseball_Bat_Default_None__Default
   visualTags: [ Default ]
 
-Items.Proficiency_Craftable_Epic_Bat_perfored_default:
-  $base: Items.Proficiency_Craftable_Epic_Bat
+Items.Craftable_Epic_Bat_perfored_default:
+  $base: Items.Craftable_Epic_Bat
   appearanceName: perfored_default
   iconPath: weapon_Preset_Baseball_Bat_Default_None__Default
   visualTags: [ Default ]
 
-Items.Proficiency_Craftable_Epic_Bat_basic_lizzies:
-  $base: Items.Proficiency_Craftable_Epic_Bat
+Items.Craftable_Epic_Bat_basic_lizzies:
+  $base: Items.Craftable_Epic_Bat
   appearanceName: basic_lizzies
   iconPath: weapon_Preset_Baseball_Bat_Default_None__The_Mox
   visualTags: [ The_Mox ]
 
-Items.Proficiency_Craftable_Epic_Bat_basic_6thstreet:
-  $base: Items.Proficiency_Craftable_Epic_Bat
+Items.Craftable_Epic_Bat_basic_6thstreet:
+  $base: Items.Craftable_Epic_Bat
   appearanceName: basic_6thstreet
   iconPath: weapon_Preset_Baseball_Bat_Default_None__6thStreet
   visualTags: [ 6thStreet ]
 
-Items.Proficiency_Craftable_Epic_Bat_basic_carbon:
-  $base: Items.Proficiency_Craftable_Epic_Bat
+Items.Craftable_Epic_Bat_basic_carbon:
+  $base: Items.Craftable_Epic_Bat
   appearanceName: basic_carbon
   iconPath: weapon_Preset_Baseball_Bat_Default_None__Default
   visualTags: [ Default ]
 
-Items.Proficiency_Craftable_Epic_Bat_basic_gold:
-  $base: Items.Proficiency_Craftable_Epic_Bat
+Items.Craftable_Epic_Bat_basic_gold:
+  $base: Items.Craftable_Epic_Bat
   appearanceName: basic_gold
   iconPath: weapon_Preset_Baseball_Bat_Default_None__Pimp
   visualTags: [ Pimp ]
 
-Items.Proficiency_Craftable_Epic_Bat_basic_pink:
-  $base: Items.Proficiency_Craftable_Epic_Bat
+Items.Craftable_Epic_Bat_basic_pink:
+  $base: Items.Craftable_Epic_Bat
   appearanceName: basic_pink
   iconPath: weapon_Preset_Baseball_Bat_Default_None__Neon
   visualTags: [ Neon ]
 
-Items.Proficiency_Craftable_Epic_Bat_basic_red:
-  $base: Items.Proficiency_Craftable_Epic_Bat
+Items.Craftable_Epic_Bat_basic_red:
+  $base: Items.Craftable_Epic_Bat
   appearanceName: basic_red
   iconPath: weapon_Preset_Baseball_Bat_Default_None__Neon
   visualTags: [ Neon ]
 
-Items.Proficiency_Craftable_Epic_Bat_basic_yellow:
-  $base: Items.Proficiency_Craftable_Epic_Bat
+Items.Craftable_Epic_Bat_basic_yellow:
+  $base: Items.Craftable_Epic_Bat
   appearanceName: basic_yellow
   iconPath: weapon_Preset_Baseball_Bat_Default_None__Default
   visualTags: [ Default ]
 
-Items.Proficiency_Craftable_Epic_Bat_basic_tyger_claws:
-  $base: Items.Proficiency_Craftable_Epic_Bat
+Items.Craftable_Epic_Bat_basic_tyger_claws:
+  $base: Items.Craftable_Epic_Bat
   appearanceName: basic_tyger_claws
   iconPath: weapon_Preset_Baseball_Bat_Default_None__Tyger_Claws
   visualTags: [ Tyger_Claws ]
 
-Items.Proficiency_Craftable_Epic_Bat_basic_aldecaldos:
-  $base: Items.Proficiency_Craftable_Epic_Bat
+Items.Craftable_Epic_Bat_basic_aldecaldos:
+  $base: Items.Craftable_Epic_Bat
   appearanceName: basic_aldecaldos
   iconPath: weapon_Preset_Baseball_Bat_Default_None__Aldecados
   visualTags: [ Aldecados ]
 
-Items.Proficiency_Craftable_Epic_Bat_basic_wraiths:
-  $base: Items.Proficiency_Craftable_Epic_Bat
+Items.Craftable_Epic_Bat_basic_wraiths:
+  $base: Items.Craftable_Epic_Bat
   appearanceName: basic_wraiths
   iconPath: weapon_Preset_Baseball_Bat_Default_None__Wraiths
   visualTags: [ Wraiths ]
 
-Items.Proficiency_Craftable_Epic_Bat_basic_gold2:
-  $base: Items.Proficiency_Craftable_Epic_Bat
+Items.Craftable_Epic_Bat_basic_gold2:
+  $base: Items.Craftable_Epic_Bat
   appearanceName: basic_gold2
   iconPath: weapon_Preset_Baseball_Bat_Default_None__Denny_Bat
   visualTags: [ Denny_Bat ]
 
-Items.Proficiency_Craftable_Epic_Bat_perfored_carbon:
-  $base: Items.Proficiency_Craftable_Epic_Bat
+Items.Craftable_Epic_Bat_perfored_carbon:
+  $base: Items.Craftable_Epic_Bat
   appearanceName: perfored_carbon
   iconPath: weapon_Preset_Baseball_Bat_Default_None__Default
   visualTags: [ Default ]
 
-Items.Proficiency_Craftable_Epic_Bat_perfored_gold:
-  $base: Items.Proficiency_Craftable_Epic_Bat
+Items.Craftable_Epic_Bat_perfored_gold:
+  $base: Items.Craftable_Epic_Bat
   appearanceName: perfored_gold
   iconPath: weapon_Preset_Baseball_Bat_Default_None__Pimp
   visualTags: [ Pimp ]
 
-Items.Proficiency_Craftable_Epic_Bat_perfored_pink:
-  $base: Items.Proficiency_Craftable_Epic_Bat
+Items.Craftable_Epic_Bat_perfored_pink:
+  $base: Items.Craftable_Epic_Bat
   appearanceName: perfored_pink
   iconPath: weapon_Preset_Baseball_Bat_Default_None__Neon
   visualTags: [ Neon ]
 
-Items.Proficiency_Craftable_Epic_Bat_perfored_red:
-  $base: Items.Proficiency_Craftable_Epic_Bat
+Items.Craftable_Epic_Bat_perfored_red:
+  $base: Items.Craftable_Epic_Bat
   appearanceName: perfored_red
   iconPath: weapon_Preset_Baseball_Bat_Default_None__Neon
   visualTags: [ Neon ]
 
-Items.Proficiency_Craftable_Epic_Bat_perfored_valentinos:
-  $base: Items.Proficiency_Craftable_Epic_Bat
+Items.Craftable_Epic_Bat_perfored_valentinos:
+  $base: Items.Craftable_Epic_Bat
   appearanceName: perfored_valentinos
   iconPath: weapon_Preset_Baseball_Bat_Default_None__Valentinos
   visualTags: [ Valentinos ]
 
-Items.Proficiency_Craftable_Epic_Bat_perfored_6thstreet:
-  $base: Items.Proficiency_Craftable_Epic_Bat
+Items.Craftable_Epic_Bat_perfored_6thstreet:
+  $base: Items.Craftable_Epic_Bat
   appearanceName: perfored_6thstreet
   iconPath: weapon_Preset_Baseball_Bat_Default_None__6thStreet
   visualTags: [ 6thStreet ]
 
-Items.Proficiency_Craftable_Epic_Bat_lina_malina:
-  $base: Items.Proficiency_Craftable_Epic_Bat
+Items.Craftable_Epic_Bat_lina_malina:
+  $base: Items.Craftable_Epic_Bat
   appearanceName: lina_malina
   iconPath: weapon_Preset_Baseball_Bat_Default_None__Malina_Bat
   visualTags: [ Malina_Bat ]
 
-Items.Proficiency_Craftable_Epic_Bat_legendary:
-  $base: Items.Proficiency_Craftable_Epic_Bat
+Items.Craftable_Epic_Bat_legendary:
+  $base: Items.Craftable_Epic_Bat
   appearanceName: legendary
   iconPath: weapon_Preset_Baseball_Bat_Default_None__Legendary
   visualTags: [ Legendary ]
 
-Items.Proficiency_Craftable_Epic_Bat.ecraftVariants:
- - t"Items.Proficiency_Craftable_Epic_Bat_basic_default"
- - t"Items.Proficiency_Craftable_Epic_Bat_perfored_default"
- - t"Items.Proficiency_Craftable_Epic_Bat_basic_lizzies"
- - t"Items.Proficiency_Craftable_Epic_Bat_basic_6thstreet"
- - t"Items.Proficiency_Craftable_Epic_Bat_basic_carbon"
- - t"Items.Proficiency_Craftable_Epic_Bat_basic_gold"
- - t"Items.Proficiency_Craftable_Epic_Bat_basic_pink"
- - t"Items.Proficiency_Craftable_Epic_Bat_basic_red"
- - t"Items.Proficiency_Craftable_Epic_Bat_basic_yellow"
- - t"Items.Proficiency_Craftable_Epic_Bat_basic_tyger_claws"
- - t"Items.Proficiency_Craftable_Epic_Bat_basic_aldecaldos"
- - t"Items.Proficiency_Craftable_Epic_Bat_basic_wraiths"
- - t"Items.Proficiency_Craftable_Epic_Bat_basic_gold2"
- - t"Items.Proficiency_Craftable_Epic_Bat_perfored_carbon"
- - t"Items.Proficiency_Craftable_Epic_Bat_perfored_gold"
- - t"Items.Proficiency_Craftable_Epic_Bat_perfored_pink"
- - t"Items.Proficiency_Craftable_Epic_Bat_perfored_red"
- - t"Items.Proficiency_Craftable_Epic_Bat_perfored_valentinos"
- - t"Items.Proficiency_Craftable_Epic_Bat_perfored_6thstreet"
- - t"Items.Proficiency_Craftable_Epic_Bat_lina_malina"
- - t"Items.Proficiency_Craftable_Epic_Bat_legendary"
+Items.Craftable_Epic_Bat.ecraftVariants:
+ - t"Items.Craftable_Epic_Bat_basic_default"
+ - t"Items.Craftable_Epic_Bat_perfored_default"
+ - t"Items.Craftable_Epic_Bat_basic_lizzies"
+ - t"Items.Craftable_Epic_Bat_basic_6thstreet"
+ - t"Items.Craftable_Epic_Bat_basic_carbon"
+ - t"Items.Craftable_Epic_Bat_basic_gold"
+ - t"Items.Craftable_Epic_Bat_basic_pink"
+ - t"Items.Craftable_Epic_Bat_basic_red"
+ - t"Items.Craftable_Epic_Bat_basic_yellow"
+ - t"Items.Craftable_Epic_Bat_basic_tyger_claws"
+ - t"Items.Craftable_Epic_Bat_basic_aldecaldos"
+ - t"Items.Craftable_Epic_Bat_basic_wraiths"
+ - t"Items.Craftable_Epic_Bat_basic_gold2"
+ - t"Items.Craftable_Epic_Bat_perfored_carbon"
+ - t"Items.Craftable_Epic_Bat_perfored_gold"
+ - t"Items.Craftable_Epic_Bat_perfored_pink"
+ - t"Items.Craftable_Epic_Bat_perfored_red"
+ - t"Items.Craftable_Epic_Bat_perfored_valentinos"
+ - t"Items.Craftable_Epic_Bat_perfored_6thstreet"
+ - t"Items.Craftable_Epic_Bat_lina_malina"
+ - t"Items.Craftable_Epic_Bat_legendary"
 
 # --- Items.Craftable_Legendary_Bat
 Items.Craftable_Legendary_Bat_basic_default:
@@ -1854,25 +1854,25 @@ Items.Craftable_Legendary_Bat.ecraftVariants:
 Items.Craftable_Common_Baton_Alpha_alpha:
   $base: Items.Craftable_Common_Baton_Alpha
   appearanceName: alpha
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Alpha
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Alpha
   visualTags: [ Baton_Alpha ]
 
 Items.Craftable_Common_Baton_Alpha_beta:
   $base: Items.Craftable_Common_Baton_Alpha
   appearanceName: beta
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Beta
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Beta
   visualTags: [ Baton_Beta ]
 
 Items.Craftable_Common_Baton_Alpha_gamma:
   $base: Items.Craftable_Common_Baton_Alpha
   appearanceName: gamma
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Gamma
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Gamma
   visualTags: [ Baton_Gamma ]
 
 Items.Craftable_Common_Baton_Alpha_alpha_murphy:
   $base: Items.Craftable_Common_Baton_Alpha
   appearanceName: alpha_murphy
-  iconPath: weapon_Preset_Baton_Alpha_None_Murphy_Baton
+  iconPath: weapon_Preset_Baton_Alpha_None__Murphy_Baton
   visualTags: [ Murphy_Baton ]
 
 Items.Craftable_Common_Baton_Alpha.ecraftVariants:
@@ -1881,60 +1881,60 @@ Items.Craftable_Common_Baton_Alpha.ecraftVariants:
  - t"Items.Craftable_Common_Baton_Alpha_gamma"
  - t"Items.Craftable_Common_Baton_Alpha_alpha_murphy"
 
-# --- Items.Proficiency_Craftable_Uncommon_Baton_Alpha
-Items.Proficiency_Craftable_Uncommon_Baton_Alpha_alpha:
-  $base: Items.Proficiency_Craftable_Uncommon_Baton_Alpha
+# --- Items.Craftable_Uncommon_Baton_Alpha
+Items.Craftable_Uncommon_Baton_Alpha_alpha:
+  $base: Items.Craftable_Uncommon_Baton_Alpha
   appearanceName: alpha
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Alpha
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Alpha
   visualTags: [ Baton_Alpha ]
 
-Items.Proficiency_Craftable_Uncommon_Baton_Alpha_beta:
-  $base: Items.Proficiency_Craftable_Uncommon_Baton_Alpha
+Items.Craftable_Uncommon_Baton_Alpha_beta:
+  $base: Items.Craftable_Uncommon_Baton_Alpha
   appearanceName: beta
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Beta
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Beta
   visualTags: [ Baton_Beta ]
 
-Items.Proficiency_Craftable_Uncommon_Baton_Alpha_gamma:
-  $base: Items.Proficiency_Craftable_Uncommon_Baton_Alpha
+Items.Craftable_Uncommon_Baton_Alpha_gamma:
+  $base: Items.Craftable_Uncommon_Baton_Alpha
   appearanceName: gamma
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Gamma
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Gamma
   visualTags: [ Baton_Gamma ]
 
-Items.Proficiency_Craftable_Uncommon_Baton_Alpha_alpha_murphy:
-  $base: Items.Proficiency_Craftable_Uncommon_Baton_Alpha
+Items.Craftable_Uncommon_Baton_Alpha_alpha_murphy:
+  $base: Items.Craftable_Uncommon_Baton_Alpha
   appearanceName: alpha_murphy
-  iconPath: weapon_Preset_Baton_Alpha_None_Murphy_Baton
+  iconPath: weapon_Preset_Baton_Alpha_None__Murphy_Baton
   visualTags: [ Murphy_Baton ]
 
-Items.Proficiency_Craftable_Uncommon_Baton_Alpha.ecraftVariants:
- - t"Items.Proficiency_Craftable_Uncommon_Baton_Alpha_alpha"
- - t"Items.Proficiency_Craftable_Uncommon_Baton_Alpha_beta"
- - t"Items.Proficiency_Craftable_Uncommon_Baton_Alpha_gamma"
- - t"Items.Proficiency_Craftable_Uncommon_Baton_Alpha_alpha_murphy"
+Items.Craftable_Uncommon_Baton_Alpha.ecraftVariants:
+ - t"Items.Craftable_Uncommon_Baton_Alpha_alpha"
+ - t"Items.Craftable_Uncommon_Baton_Alpha_beta"
+ - t"Items.Craftable_Uncommon_Baton_Alpha_gamma"
+ - t"Items.Craftable_Uncommon_Baton_Alpha_alpha_murphy"
 
 # --- Items.Craftable_Rare_Baton_Alpha
 Items.Craftable_Rare_Baton_Alpha_alpha:
   $base: Items.Craftable_Rare_Baton_Alpha
   appearanceName: alpha
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Alpha
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Alpha
   visualTags: [ Baton_Alpha ]
 
 Items.Craftable_Rare_Baton_Alpha_beta:
   $base: Items.Craftable_Rare_Baton_Alpha
   appearanceName: beta
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Beta
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Beta
   visualTags: [ Baton_Beta ]
 
 Items.Craftable_Rare_Baton_Alpha_gamma:
   $base: Items.Craftable_Rare_Baton_Alpha
   appearanceName: gamma
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Gamma
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Gamma
   visualTags: [ Baton_Gamma ]
 
 Items.Craftable_Rare_Baton_Alpha_alpha_murphy:
   $base: Items.Craftable_Rare_Baton_Alpha
   appearanceName: alpha_murphy
-  iconPath: weapon_Preset_Baton_Alpha_None_Murphy_Baton
+  iconPath: weapon_Preset_Baton_Alpha_None__Murphy_Baton
   visualTags: [ Murphy_Baton ]
 
 Items.Craftable_Rare_Baton_Alpha.ecraftVariants:
@@ -1947,25 +1947,25 @@ Items.Craftable_Rare_Baton_Alpha.ecraftVariants:
 Items.Craftable_Epic_Baton_Alpha_alpha:
   $base: Items.Craftable_Epic_Baton_Alpha
   appearanceName: alpha
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Alpha
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Alpha
   visualTags: [ Baton_Alpha ]
 
 Items.Craftable_Epic_Baton_Alpha_beta:
   $base: Items.Craftable_Epic_Baton_Alpha
   appearanceName: beta
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Beta
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Beta
   visualTags: [ Baton_Beta ]
 
 Items.Craftable_Epic_Baton_Alpha_gamma:
   $base: Items.Craftable_Epic_Baton_Alpha
   appearanceName: gamma
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Gamma
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Gamma
   visualTags: [ Baton_Gamma ]
 
 Items.Craftable_Epic_Baton_Alpha_alpha_murphy:
   $base: Items.Craftable_Epic_Baton_Alpha
   appearanceName: alpha_murphy
-  iconPath: weapon_Preset_Baton_Alpha_None_Murphy_Baton
+  iconPath: weapon_Preset_Baton_Alpha_None__Murphy_Baton
   visualTags: [ Murphy_Baton ]
 
 Items.Craftable_Epic_Baton_Alpha.ecraftVariants:
@@ -1978,25 +1978,25 @@ Items.Craftable_Epic_Baton_Alpha.ecraftVariants:
 Items.Craftable_Legendary_Baton_Alpha_alpha:
   $base: Items.Craftable_Legendary_Baton_Alpha
   appearanceName: alpha
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Alpha
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Alpha
   visualTags: [ Baton_Alpha ]
 
 Items.Craftable_Legendary_Baton_Alpha_beta:
   $base: Items.Craftable_Legendary_Baton_Alpha
   appearanceName: beta
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Beta
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Beta
   visualTags: [ Baton_Beta ]
 
 Items.Craftable_Legendary_Baton_Alpha_gamma:
   $base: Items.Craftable_Legendary_Baton_Alpha
   appearanceName: gamma
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Gamma
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Gamma
   visualTags: [ Baton_Gamma ]
 
 Items.Craftable_Legendary_Baton_Alpha_alpha_murphy:
   $base: Items.Craftable_Legendary_Baton_Alpha
   appearanceName: alpha_murphy
-  iconPath: weapon_Preset_Baton_Alpha_None_Murphy_Baton
+  iconPath: weapon_Preset_Baton_Alpha_None__Murphy_Baton
   visualTags: [ Murphy_Baton ]
 
 Items.Craftable_Legendary_Baton_Alpha.ecraftVariants:
@@ -2010,25 +2010,25 @@ Items.Craftable_Legendary_Baton_Alpha.ecraftVariants:
 Items.Craftable_Common_Baton_Beta_beta:
   $base: Items.Craftable_Common_Baton_Beta
   appearanceName: beta
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Beta
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Beta
   visualTags: [ Baton_Beta ]
 
 Items.Craftable_Common_Baton_Beta_alpha:
   $base: Items.Craftable_Common_Baton_Beta
   appearanceName: alpha
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Alpha
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Alpha
   visualTags: [ Baton_Alpha ]
 
 Items.Craftable_Common_Baton_Beta_gamma:
   $base: Items.Craftable_Common_Baton_Beta
   appearanceName: gamma
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Gamma
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Gamma
   visualTags: [ Baton_Gamma ]
 
 Items.Craftable_Common_Baton_Beta_alpha_murphy:
   $base: Items.Craftable_Common_Baton_Beta
   appearanceName: alpha_murphy
-  iconPath: weapon_Preset_Baton_Alpha_None_Murphy_Baton
+  iconPath: weapon_Preset_Baton_Alpha_None__Murphy_Baton
   visualTags: [ Murphy_Baton ]
 
 Items.Craftable_Common_Baton_Beta.ecraftVariants:
@@ -2041,25 +2041,25 @@ Items.Craftable_Common_Baton_Beta.ecraftVariants:
 Items.Craftable_Uncommon_Baton_Beta_beta:
   $base: Items.Craftable_Uncommon_Baton_Beta
   appearanceName: beta
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Beta
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Beta
   visualTags: [ Baton_Beta ]
 
 Items.Craftable_Uncommon_Baton_Beta_alpha:
   $base: Items.Craftable_Uncommon_Baton_Beta
   appearanceName: alpha
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Alpha
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Alpha
   visualTags: [ Baton_Alpha ]
 
 Items.Craftable_Uncommon_Baton_Beta_gamma:
   $base: Items.Craftable_Uncommon_Baton_Beta
   appearanceName: gamma
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Gamma
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Gamma
   visualTags: [ Baton_Gamma ]
 
 Items.Craftable_Uncommon_Baton_Beta_alpha_murphy:
   $base: Items.Craftable_Uncommon_Baton_Beta
   appearanceName: alpha_murphy
-  iconPath: weapon_Preset_Baton_Alpha_None_Murphy_Baton
+  iconPath: weapon_Preset_Baton_Alpha_None__Murphy_Baton
   visualTags: [ Murphy_Baton ]
 
 Items.Craftable_Uncommon_Baton_Beta.ecraftVariants:
@@ -2072,25 +2072,25 @@ Items.Craftable_Uncommon_Baton_Beta.ecraftVariants:
 Items.Craftable_Rare_Baton_Beta_beta:
   $base: Items.Craftable_Rare_Baton_Beta
   appearanceName: beta
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Beta
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Beta
   visualTags: [ Baton_Beta ]
 
 Items.Craftable_Rare_Baton_Beta_alpha:
   $base: Items.Craftable_Rare_Baton_Beta
   appearanceName: alpha
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Alpha
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Alpha
   visualTags: [ Baton_Alpha ]
 
 Items.Craftable_Rare_Baton_Beta_gamma:
   $base: Items.Craftable_Rare_Baton_Beta
   appearanceName: gamma
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Gamma
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Gamma
   visualTags: [ Baton_Gamma ]
 
 Items.Craftable_Rare_Baton_Beta_alpha_murphy:
   $base: Items.Craftable_Rare_Baton_Beta
   appearanceName: alpha_murphy
-  iconPath: weapon_Preset_Baton_Alpha_None_Murphy_Baton
+  iconPath: weapon_Preset_Baton_Alpha_None__Murphy_Baton
   visualTags: [ Murphy_Baton ]
 
 Items.Craftable_Rare_Baton_Beta.ecraftVariants:
@@ -2103,25 +2103,25 @@ Items.Craftable_Rare_Baton_Beta.ecraftVariants:
 Items.Craftable_Epic_Baton_Beta_beta:
   $base: Items.Craftable_Epic_Baton_Beta
   appearanceName: beta
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Beta
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Beta
   visualTags: [ Baton_Beta ]
 
 Items.Craftable_Epic_Baton_Beta_alpha:
   $base: Items.Craftable_Epic_Baton_Beta
   appearanceName: alpha
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Alpha
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Alpha
   visualTags: [ Baton_Alpha ]
 
 Items.Craftable_Epic_Baton_Beta_gamma:
   $base: Items.Craftable_Epic_Baton_Beta
   appearanceName: gamma
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Gamma
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Gamma
   visualTags: [ Baton_Gamma ]
 
 Items.Craftable_Epic_Baton_Beta_alpha_murphy:
   $base: Items.Craftable_Epic_Baton_Beta
   appearanceName: alpha_murphy
-  iconPath: weapon_Preset_Baton_Alpha_None_Murphy_Baton
+  iconPath: weapon_Preset_Baton_Alpha_None__Murphy_Baton
   visualTags: [ Murphy_Baton ]
 
 Items.Craftable_Epic_Baton_Beta.ecraftVariants:
@@ -2134,25 +2134,25 @@ Items.Craftable_Epic_Baton_Beta.ecraftVariants:
 Items.Craftable_Legendary_Baton_Beta_beta:
   $base: Items.Craftable_Legendary_Baton_Beta
   appearanceName: beta
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Beta
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Beta
   visualTags: [ Baton_Beta ]
 
 Items.Craftable_Legendary_Baton_Beta_alpha:
   $base: Items.Craftable_Legendary_Baton_Beta
   appearanceName: alpha
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Alpha
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Alpha
   visualTags: [ Baton_Alpha ]
 
 Items.Craftable_Legendary_Baton_Beta_gamma:
   $base: Items.Craftable_Legendary_Baton_Beta
   appearanceName: gamma
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Gamma
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Gamma
   visualTags: [ Baton_Gamma ]
 
 Items.Craftable_Legendary_Baton_Beta_alpha_murphy:
   $base: Items.Craftable_Legendary_Baton_Beta
   appearanceName: alpha_murphy
-  iconPath: weapon_Preset_Baton_Alpha_None_Murphy_Baton
+  iconPath: weapon_Preset_Baton_Alpha_None__Murphy_Baton
   visualTags: [ Murphy_Baton ]
 
 Items.Craftable_Legendary_Baton_Beta.ecraftVariants:
@@ -2166,25 +2166,25 @@ Items.Craftable_Legendary_Baton_Beta.ecraftVariants:
 Items.Craftable_Common_Baton_Gamma_gamma:
   $base: Items.Craftable_Common_Baton_Gamma
   appearanceName: gamma
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Gamma
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Gamma
   visualTags: [ Baton_Gamma ]
 
 Items.Craftable_Common_Baton_Gamma_alpha:
   $base: Items.Craftable_Common_Baton_Gamma
   appearanceName: alpha
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Alpha
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Alpha
   visualTags: [ Baton_Alpha ]
 
 Items.Craftable_Common_Baton_Gamma_beta:
   $base: Items.Craftable_Common_Baton_Gamma
   appearanceName: beta
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Beta
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Beta
   visualTags: [ Baton_Beta ]
 
 Items.Craftable_Common_Baton_Gamma_alpha_murphy:
   $base: Items.Craftable_Common_Baton_Gamma
   appearanceName: alpha_murphy
-  iconPath: weapon_Preset_Baton_Alpha_None_Murphy_Baton
+  iconPath: weapon_Preset_Baton_Alpha_None__Murphy_Baton
   visualTags: [ Murphy_Baton ]
 
 Items.Craftable_Common_Baton_Gamma.ecraftVariants:
@@ -2197,25 +2197,25 @@ Items.Craftable_Common_Baton_Gamma.ecraftVariants:
 Items.Craftable_Uncommon_Baton_Gamma_gamma:
   $base: Items.Craftable_Uncommon_Baton_Gamma
   appearanceName: gamma
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Gamma
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Gamma
   visualTags: [ Baton_Gamma ]
 
 Items.Craftable_Uncommon_Baton_Gamma_alpha:
   $base: Items.Craftable_Uncommon_Baton_Gamma
   appearanceName: alpha
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Alpha
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Alpha
   visualTags: [ Baton_Alpha ]
 
 Items.Craftable_Uncommon_Baton_Gamma_beta:
   $base: Items.Craftable_Uncommon_Baton_Gamma
   appearanceName: beta
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Beta
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Beta
   visualTags: [ Baton_Beta ]
 
 Items.Craftable_Uncommon_Baton_Gamma_alpha_murphy:
   $base: Items.Craftable_Uncommon_Baton_Gamma
   appearanceName: alpha_murphy
-  iconPath: weapon_Preset_Baton_Alpha_None_Murphy_Baton
+  iconPath: weapon_Preset_Baton_Alpha_None__Murphy_Baton
   visualTags: [ Murphy_Baton ]
 
 Items.Craftable_Uncommon_Baton_Gamma.ecraftVariants:
@@ -2228,25 +2228,25 @@ Items.Craftable_Uncommon_Baton_Gamma.ecraftVariants:
 Items.Craftable_Rare_Baton_Gamma_gamma:
   $base: Items.Craftable_Rare_Baton_Gamma
   appearanceName: gamma
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Gamma
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Gamma
   visualTags: [ Baton_Gamma ]
 
 Items.Craftable_Rare_Baton_Gamma_alpha:
   $base: Items.Craftable_Rare_Baton_Gamma
   appearanceName: alpha
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Alpha
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Alpha
   visualTags: [ Baton_Alpha ]
 
 Items.Craftable_Rare_Baton_Gamma_beta:
   $base: Items.Craftable_Rare_Baton_Gamma
   appearanceName: beta
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Beta
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Beta
   visualTags: [ Baton_Beta ]
 
 Items.Craftable_Rare_Baton_Gamma_alpha_murphy:
   $base: Items.Craftable_Rare_Baton_Gamma
   appearanceName: alpha_murphy
-  iconPath: weapon_Preset_Baton_Alpha_None_Murphy_Baton
+  iconPath: weapon_Preset_Baton_Alpha_None__Murphy_Baton
   visualTags: [ Murphy_Baton ]
 
 Items.Craftable_Rare_Baton_Gamma.ecraftVariants:
@@ -2259,25 +2259,25 @@ Items.Craftable_Rare_Baton_Gamma.ecraftVariants:
 Items.Craftable_Epic_Baton_Gamma_gamma:
   $base: Items.Craftable_Epic_Baton_Gamma
   appearanceName: gamma
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Gamma
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Gamma
   visualTags: [ Baton_Gamma ]
 
 Items.Craftable_Epic_Baton_Gamma_alpha:
   $base: Items.Craftable_Epic_Baton_Gamma
   appearanceName: alpha
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Alpha
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Alpha
   visualTags: [ Baton_Alpha ]
 
 Items.Craftable_Epic_Baton_Gamma_beta:
   $base: Items.Craftable_Epic_Baton_Gamma
   appearanceName: beta
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Beta
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Beta
   visualTags: [ Baton_Beta ]
 
 Items.Craftable_Epic_Baton_Gamma_alpha_murphy:
   $base: Items.Craftable_Epic_Baton_Gamma
   appearanceName: alpha_murphy
-  iconPath: weapon_Preset_Baton_Alpha_None_Murphy_Baton
+  iconPath: weapon_Preset_Baton_Alpha_None__Murphy_Baton
   visualTags: [ Murphy_Baton ]
 
 Items.Craftable_Epic_Baton_Gamma.ecraftVariants:
@@ -2290,25 +2290,25 @@ Items.Craftable_Epic_Baton_Gamma.ecraftVariants:
 Items.Craftable_Legendary_Baton_Gamma_gamma:
   $base: Items.Craftable_Legendary_Baton_Gamma
   appearanceName: gamma
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Gamma
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Gamma
   visualTags: [ Baton_Gamma ]
 
 Items.Craftable_Legendary_Baton_Gamma_alpha:
   $base: Items.Craftable_Legendary_Baton_Gamma
   appearanceName: alpha
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Alpha
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Alpha
   visualTags: [ Baton_Alpha ]
 
 Items.Craftable_Legendary_Baton_Gamma_beta:
   $base: Items.Craftable_Legendary_Baton_Gamma
   appearanceName: beta
-  iconPath: weapon_Preset_Baton_Alpha_None_Baton_Beta
+  iconPath: weapon_Preset_Baton_Alpha_None__Baton_Beta
   visualTags: [ Baton_Beta ]
 
 Items.Craftable_Legendary_Baton_Gamma_alpha_murphy:
   $base: Items.Craftable_Legendary_Baton_Gamma
   appearanceName: alpha_murphy
-  iconPath: weapon_Preset_Baton_Alpha_None_Murphy_Baton
+  iconPath: weapon_Preset_Baton_Alpha_None__Murphy_Baton
   visualTags: [ Murphy_Baton ]
 
 Items.Craftable_Legendary_Baton_Gamma.ecraftVariants:
@@ -2941,78 +2941,78 @@ Items.Craftable_Epic_Carnage.ecraftVariants:
  - t"Items.Craftable_Epic_Carnage_mox"
  - t"Items.Craftable_Epic_Carnage_edgerunner"
 
-# --- Items.Proficiency_Craftable_Legendary_Carnage
-Items.Proficiency_Craftable_Legendary_Carnage_default:
-  $base: Items.Proficiency_Craftable_Legendary_Carnage
+# --- Items.Craftable_Legendary_Carnage
+Items.Craftable_Legendary_Carnage_default:
+  $base: Items.Craftable_Legendary_Carnage
   appearanceName: default
   iconPath: weapon_Preset_Carnage_Default_None__Default
   visualTags: [ Default ]
 
-Items.Proficiency_Craftable_Legendary_Carnage_military1:
-  $base: Items.Proficiency_Craftable_Legendary_Carnage
+Items.Craftable_Legendary_Carnage_military1:
+  $base: Items.Craftable_Legendary_Carnage
   appearanceName: military1
   iconPath: weapon_Preset_Carnage_Default_None__Military
   visualTags: [ Military ]
 
-Items.Proficiency_Craftable_Legendary_Carnage_military2:
-  $base: Items.Proficiency_Craftable_Legendary_Carnage
+Items.Craftable_Legendary_Carnage_military2:
+  $base: Items.Craftable_Legendary_Carnage
   appearanceName: military2
   iconPath: weapon_Preset_Carnage_Default_None__Military
   visualTags: [ Military ]
 
-Items.Proficiency_Craftable_Legendary_Carnage_neon1:
-  $base: Items.Proficiency_Craftable_Legendary_Carnage
+Items.Craftable_Legendary_Carnage_neon1:
+  $base: Items.Craftable_Legendary_Carnage
   appearanceName: neon1
   iconPath: weapon_Preset_Carnage_Default_None__Neon
   visualTags: [ Neon ]
 
-Items.Proficiency_Craftable_Legendary_Carnage_neon2:
-  $base: Items.Proficiency_Craftable_Legendary_Carnage
+Items.Craftable_Legendary_Carnage_neon2:
+  $base: Items.Craftable_Legendary_Carnage
   appearanceName: neon2
   iconPath: weapon_Preset_Carnage_Default_None__Neon
   visualTags: [ Neon ]
 
-Items.Proficiency_Craftable_Legendary_Carnage_neon3:
-  $base: Items.Proficiency_Craftable_Legendary_Carnage
+Items.Craftable_Legendary_Carnage_neon3:
+  $base: Items.Craftable_Legendary_Carnage
   appearanceName: neon3
   iconPath: weapon_Preset_Carnage_Default_None__Neon
   visualTags: [ Neon ]
 
-Items.Proficiency_Craftable_Legendary_Carnage_pimp1:
-  $base: Items.Proficiency_Craftable_Legendary_Carnage
+Items.Craftable_Legendary_Carnage_pimp1:
+  $base: Items.Craftable_Legendary_Carnage
   appearanceName: pimp1
   iconPath: weapon_Preset_Carnage_Default_None__Pimp
   visualTags: [ Pimp ]
 
-Items.Proficiency_Craftable_Legendary_Carnage_pimp2:
-  $base: Items.Proficiency_Craftable_Legendary_Carnage
+Items.Craftable_Legendary_Carnage_pimp2:
+  $base: Items.Craftable_Legendary_Carnage
   appearanceName: pimp2
   iconPath: weapon_Preset_Carnage_Default_None__Pimp
   visualTags: [ Pimp ]
 
-Items.Proficiency_Craftable_Legendary_Carnage_mox:
-  $base: Items.Proficiency_Craftable_Legendary_Carnage
+Items.Craftable_Legendary_Carnage_mox:
+  $base: Items.Craftable_Legendary_Carnage
   appearanceName: mox
   iconPath: weapon_Preset_Carnage_Default_None__Mox_Carnage
   visualTags: [ Mox_Carnage ]
 
-Items.Proficiency_Craftable_Legendary_Carnage_edgerunner:
-  $base: Items.Proficiency_Craftable_Legendary_Carnage
+Items.Craftable_Legendary_Carnage_edgerunner:
+  $base: Items.Craftable_Legendary_Carnage
   appearanceName: edgerunner
   iconPath: weapon_Preset_Carnage_Default_None__Edgerunners_Carnage
   visualTags: [ Edgerunners_Carnage ]
 
-Items.Proficiency_Craftable_Legendary_Carnage.ecraftVariants:
- - t"Items.Proficiency_Craftable_Legendary_Carnage_default"
- - t"Items.Proficiency_Craftable_Legendary_Carnage_military1"
- - t"Items.Proficiency_Craftable_Legendary_Carnage_military2"
- - t"Items.Proficiency_Craftable_Legendary_Carnage_neon1"
- - t"Items.Proficiency_Craftable_Legendary_Carnage_neon2"
- - t"Items.Proficiency_Craftable_Legendary_Carnage_neon3"
- - t"Items.Proficiency_Craftable_Legendary_Carnage_pimp1"
- - t"Items.Proficiency_Craftable_Legendary_Carnage_pimp2"
- - t"Items.Proficiency_Craftable_Legendary_Carnage_mox"
- - t"Items.Proficiency_Craftable_Legendary_Carnage_edgerunner"
+Items.Craftable_Legendary_Carnage.ecraftVariants:
+ - t"Items.Craftable_Legendary_Carnage_default"
+ - t"Items.Craftable_Legendary_Carnage_military1"
+ - t"Items.Craftable_Legendary_Carnage_military2"
+ - t"Items.Craftable_Legendary_Carnage_neon1"
+ - t"Items.Craftable_Legendary_Carnage_neon2"
+ - t"Items.Craftable_Legendary_Carnage_neon3"
+ - t"Items.Craftable_Legendary_Carnage_pimp1"
+ - t"Items.Craftable_Legendary_Carnage_pimp2"
+ - t"Items.Craftable_Legendary_Carnage_mox"
+ - t"Items.Craftable_Legendary_Carnage_edgerunner"
 
 # Chainsword
 # --- Items.Craftable_Common_Chainsword
@@ -3582,85 +3582,85 @@ Items.Craftable_Common_Copperhead.ecraftVariants:
  - t"Items.Craftable_Common_Copperhead_krausser"
  - t"Items.Craftable_Common_Copperhead_genesis"
 
-# --- Items.Proficiency_Craftable_Uncommon_Copperhead
-Items.Proficiency_Craftable_Uncommon_Copperhead_default:
-  $base: Items.Proficiency_Craftable_Uncommon_Copperhead
+# --- Items.Craftable_Uncommon_Copperhead
+Items.Craftable_Uncommon_Copperhead_default:
+  $base: Items.Craftable_Uncommon_Copperhead
   appearanceName: default
   iconPath: weapon_Preset_Base_Copperhead_None__Default
   visualTags: [ Default ]
 
-Items.Proficiency_Craftable_Uncommon_Copperhead_clean:
-  $base: Items.Proficiency_Craftable_Uncommon_Copperhead
+Items.Craftable_Uncommon_Copperhead_clean:
+  $base: Items.Craftable_Uncommon_Copperhead
   appearanceName: clean
   iconPath: weapon_Preset_Base_Copperhead_None__Default
   visualTags: [ Default ]
 
-Items.Proficiency_Craftable_Uncommon_Copperhead_military1:
-  $base: Items.Proficiency_Craftable_Uncommon_Copperhead
+Items.Craftable_Uncommon_Copperhead_military1:
+  $base: Items.Craftable_Uncommon_Copperhead
   appearanceName: military1
   iconPath: weapon_Preset_Base_Copperhead_None__Military
   visualTags: [ Military ]
 
-Items.Proficiency_Craftable_Uncommon_Copperhead_military2:
-  $base: Items.Proficiency_Craftable_Uncommon_Copperhead
+Items.Craftable_Uncommon_Copperhead_military2:
+  $base: Items.Craftable_Uncommon_Copperhead
   appearanceName: military2
   iconPath: weapon_Preset_Base_Copperhead_None__Military
   visualTags: [ Military ]
 
-Items.Proficiency_Craftable_Uncommon_Copperhead_military3:
-  $base: Items.Proficiency_Craftable_Uncommon_Copperhead
+Items.Craftable_Uncommon_Copperhead_military3:
+  $base: Items.Craftable_Uncommon_Copperhead
   appearanceName: military3
   iconPath: weapon_Preset_Base_Copperhead_None__Military
   visualTags: [ Military ]
 
-Items.Proficiency_Craftable_Uncommon_Copperhead_neon1:
-  $base: Items.Proficiency_Craftable_Uncommon_Copperhead
+Items.Craftable_Uncommon_Copperhead_neon1:
+  $base: Items.Craftable_Uncommon_Copperhead
   appearanceName: neon1
   iconPath: weapon_Preset_Base_Copperhead_None__Neon
   visualTags: [ Neon ]
 
-Items.Proficiency_Craftable_Uncommon_Copperhead_neon2:
-  $base: Items.Proficiency_Craftable_Uncommon_Copperhead
+Items.Craftable_Uncommon_Copperhead_neon2:
+  $base: Items.Craftable_Uncommon_Copperhead
   appearanceName: neon2
   iconPath: weapon_Preset_Base_Copperhead_None__Neon
   visualTags: [ Neon ]
 
-Items.Proficiency_Craftable_Uncommon_Copperhead_pimp1:
-  $base: Items.Proficiency_Craftable_Uncommon_Copperhead
+Items.Craftable_Uncommon_Copperhead_pimp1:
+  $base: Items.Craftable_Uncommon_Copperhead
   appearanceName: pimp1
   iconPath: weapon_Preset_Base_Copperhead_None__Pimp
   visualTags: [ Pimp ]
 
-Items.Proficiency_Craftable_Uncommon_Copperhead_pimp2:
-  $base: Items.Proficiency_Craftable_Uncommon_Copperhead
+Items.Craftable_Uncommon_Copperhead_pimp2:
+  $base: Items.Craftable_Uncommon_Copperhead
   appearanceName: pimp2
   iconPath: weapon_Preset_Base_Copperhead_None__Pimp
   visualTags: [ Pimp ]
 
-Items.Proficiency_Craftable_Uncommon_Copperhead_krausser:
-  $base: Items.Proficiency_Craftable_Uncommon_Copperhead
+Items.Craftable_Uncommon_Copperhead_krausser:
+  $base: Items.Craftable_Uncommon_Copperhead
   appearanceName: krausser
   iconPath: weapon_Preset_Base_Copperhead_None__Krausser
   visualTags: [ Krausser ]
 
-Items.Proficiency_Craftable_Uncommon_Copperhead_genesis:
-  $base: Items.Proficiency_Craftable_Uncommon_Copperhead
+Items.Craftable_Uncommon_Copperhead_genesis:
+  $base: Items.Craftable_Uncommon_Copperhead
   appearanceName: genesis
   iconPath: weapon_Preset_Base_Copperhead_None__Genesis_Copperhead
   visualTags: [ Genesis_Copperhead ]
 
-Items.Proficiency_Craftable_Uncommon_Copperhead.ecraftVariants:
- - t"Items.Proficiency_Craftable_Uncommon_Copperhead_default"
- - t"Items.Proficiency_Craftable_Uncommon_Copperhead_clean"
- - t"Items.Proficiency_Craftable_Uncommon_Copperhead_military1"
- - t"Items.Proficiency_Craftable_Uncommon_Copperhead_military2"
- - t"Items.Proficiency_Craftable_Uncommon_Copperhead_military3"
- - t"Items.Proficiency_Craftable_Uncommon_Copperhead_neon1"
- - t"Items.Proficiency_Craftable_Uncommon_Copperhead_neon2"
- - t"Items.Proficiency_Craftable_Uncommon_Copperhead_pimp1"
- - t"Items.Proficiency_Craftable_Uncommon_Copperhead_pimp2"
- - t"Items.Proficiency_Craftable_Uncommon_Copperhead_krausser"
- - t"Items.Proficiency_Craftable_Uncommon_Copperhead_genesis"
+Items.Craftable_Uncommon_Copperhead.ecraftVariants:
+ - t"Items.Craftable_Uncommon_Copperhead_default"
+ - t"Items.Craftable_Uncommon_Copperhead_clean"
+ - t"Items.Craftable_Uncommon_Copperhead_military1"
+ - t"Items.Craftable_Uncommon_Copperhead_military2"
+ - t"Items.Craftable_Uncommon_Copperhead_military3"
+ - t"Items.Craftable_Uncommon_Copperhead_neon1"
+ - t"Items.Craftable_Uncommon_Copperhead_neon2"
+ - t"Items.Craftable_Uncommon_Copperhead_pimp1"
+ - t"Items.Craftable_Uncommon_Copperhead_pimp2"
+ - t"Items.Craftable_Uncommon_Copperhead_krausser"
+ - t"Items.Craftable_Uncommon_Copperhead_genesis"
 
 # --- Items.Craftable_Rare_Copperhead
 Items.Craftable_Rare_Copperhead_default:
@@ -5177,85 +5177,85 @@ Items.Craftable_Uncommon_Grad.ecraftVariants:
  - t"Items.Craftable_Uncommon_Grad_scav"
  - t"Items.Craftable_Uncommon_Grad_soviet"
 
-# --- Items.Proficiency_Craftable_Rare_Grad
-Items.Proficiency_Craftable_Rare_Grad_default:
-  $base: Items.Proficiency_Craftable_Rare_Grad
+# --- Items.Craftable_Rare_Grad
+Items.Craftable_Rare_Grad_default:
+  $base: Items.Craftable_Rare_Grad
   appearanceName: default
   iconPath: weapon_Preset_Grad_Default_None__Default
   visualTags: [ Default ]
 
-Items.Proficiency_Craftable_Rare_Grad_military1:
-  $base: Items.Proficiency_Craftable_Rare_Grad
+Items.Craftable_Rare_Grad_military1:
+  $base: Items.Craftable_Rare_Grad
   appearanceName: military1
   iconPath: weapon_Preset_Grad_Default_None__Military
   visualTags: [ Military ]
 
-Items.Proficiency_Craftable_Rare_Grad_military2:
-  $base: Items.Proficiency_Craftable_Rare_Grad
+Items.Craftable_Rare_Grad_military2:
+  $base: Items.Craftable_Rare_Grad
   appearanceName: military2
   iconPath: weapon_Preset_Grad_Default_None__Military
   visualTags: [ Military ]
 
-Items.Proficiency_Craftable_Rare_Grad_neon1:
-  $base: Items.Proficiency_Craftable_Rare_Grad
+Items.Craftable_Rare_Grad_neon1:
+  $base: Items.Craftable_Rare_Grad
   appearanceName: neon1
   iconPath: weapon_Preset_Grad_Default_None__Neon
   visualTags: [ Neon ]
 
-Items.Proficiency_Craftable_Rare_Grad_neon2:
-  $base: Items.Proficiency_Craftable_Rare_Grad
+Items.Craftable_Rare_Grad_neon2:
+  $base: Items.Craftable_Rare_Grad
   appearanceName: neon2
   iconPath: weapon_Preset_Grad_Default_None__Neon
   visualTags: [ Neon ]
 
-Items.Proficiency_Craftable_Rare_Grad_pimp1:
-  $base: Items.Proficiency_Craftable_Rare_Grad
+Items.Craftable_Rare_Grad_pimp1:
+  $base: Items.Craftable_Rare_Grad
   appearanceName: pimp1
   iconPath: weapon_Preset_Grad_Default_None__Pimp
   visualTags: [ Pimp ]
 
-Items.Proficiency_Craftable_Rare_Grad_pimp2:
-  $base: Items.Proficiency_Craftable_Rare_Grad
+Items.Craftable_Rare_Grad_pimp2:
+  $base: Items.Craftable_Rare_Grad
   appearanceName: pimp2
   iconPath: weapon_Preset_Grad_Default_None__Pimp
   visualTags: [ Pimp ]
 
-Items.Proficiency_Craftable_Rare_Grad_buck:
-  $base: Items.Proficiency_Craftable_Rare_Grad
+Items.Craftable_Rare_Grad_buck:
+  $base: Items.Craftable_Rare_Grad
   appearanceName: buck
   iconPath: weapon_Preset_Grad_Default_None__Buck_Grad
   visualTags: [ Buck_Grad ]
 
-Items.Proficiency_Craftable_Rare_Grad_panam:
-  $base: Items.Proficiency_Craftable_Rare_Grad
+Items.Craftable_Rare_Grad_panam:
+  $base: Items.Craftable_Rare_Grad
   appearanceName: panam
   iconPath: weapon_Preset_Grad_Default_None__Panam_Grad
   visualTags: [ Panam_Grad ]
 
-Items.Proficiency_Craftable_Rare_Grad_scav:
-  $base: Items.Proficiency_Craftable_Rare_Grad
+Items.Craftable_Rare_Grad_scav:
+  $base: Items.Craftable_Rare_Grad
   appearanceName: scav
   iconPath: weapon_Preset_Grad_Default_None__Scav_Grad
   visualTags: [ Scav_Grad ]
 
-Items.Proficiency_Craftable_Rare_Grad_soviet:
-  $base: Items.Proficiency_Craftable_Rare_Grad
+Items.Craftable_Rare_Grad_soviet:
+  $base: Items.Craftable_Rare_Grad
   appearanceName: soviet
   iconPath: weapon_Preset_Grad_Default_None__AirDrop_Weapon
   visualTags: [ AirDrop_Weapon ]
 
-Items.Proficiency_Craftable_Rare_Grad.ecraftVariants:
- - t"Items.Proficiency_Craftable_Rare_Grad_default"
- - t"Items.Proficiency_Craftable_Rare_Grad_military1"
- - t"Items.Proficiency_Craftable_Rare_Grad_military2"
- - t"Items.Proficiency_Craftable_Rare_Grad_neon1"
- - t"Items.Proficiency_Craftable_Rare_Grad_neon2"
- - t"Items.Proficiency_Craftable_Rare_Grad_pimp1"
- - t"Items.Proficiency_Craftable_Rare_Grad_pimp2"
- - t"Items.Proficiency_Craftable_Rare_Grad_buck"
- - t"Items.Proficiency_Craftable_Rare_Grad_panam"
- - t"Items.Proficiency_Craftable_Rare_Grad_scav"
- - t"Items.Proficiency_Craftable_Rare_Grad_soviet"
+Items.Craftable_Rare_Grad.ecraftVariants:
+ - t"Items.Craftable_Rare_Grad_default"
+ - t"Items.Craftable_Rare_Grad_military1"
+ - t"Items.Craftable_Rare_Grad_military2"
+ - t"Items.Craftable_Rare_Grad_neon1"
+ - t"Items.Craftable_Rare_Grad_neon2"
+ - t"Items.Craftable_Rare_Grad_pimp1"
+ - t"Items.Craftable_Rare_Grad_pimp2"
+ - t"Items.Craftable_Rare_Grad_buck"
+ - t"Items.Craftable_Rare_Grad_panam"
+ - t"Items.Craftable_Rare_Grad_scav"
+ - t"Items.Craftable_Rare_Grad_soviet"
 
 # --- Items.Craftable_Epic_Grad
 Items.Craftable_Epic_Grad_default:
@@ -7659,204 +7659,204 @@ Items.Craftable_Epic_Katana.ecraftVariants:
  - t"Items.Craftable_Epic_Katana_01_thermal_blade"
  - t"Items.Craftable_Epic_Katana_Witcher_sword_redplay"
 
-# --- Items.Proficiency_Craftable_Legendary_Katana
-Items.Proficiency_Craftable_Legendary_Katana_03_default:
-  $base: Items.Proficiency_Craftable_Legendary_Katana
+# --- Items.Craftable_Legendary_Katana
+Items.Craftable_Legendary_Katana_03_default:
+  $base: Items.Craftable_Legendary_Katana
   appearanceName: 03_default
   iconPath: weapon_Preset_Katana_Default_None__Default
   visualTags: [ Default ]
 
-Items.Proficiency_Craftable_Legendary_Katana_01_default:
-  $base: Items.Proficiency_Craftable_Legendary_Katana
+Items.Craftable_Legendary_Katana_01_default:
+  $base: Items.Craftable_Legendary_Katana
   appearanceName: 01_default
   iconPath: weapon_Preset_Katana_Default_None__Military
   visualTags: [ Military ]
 
-Items.Proficiency_Craftable_Legendary_Katana_02_default:
-  $base: Items.Proficiency_Craftable_Legendary_Katana
+Items.Craftable_Legendary_Katana_02_default:
+  $base: Items.Craftable_Legendary_Katana
   appearanceName: 02_default
   iconPath: weapon_Preset_Katana_Default_None__Arasaka_2020
   visualTags: [ Arasaka_2020 ]
 
-Items.Proficiency_Craftable_Legendary_Katana_04_default:
-  $base: Items.Proficiency_Craftable_Legendary_Katana
+Items.Craftable_Legendary_Katana_04_default:
+  $base: Items.Craftable_Legendary_Katana
   appearanceName: 04_default
   iconPath: weapon_Preset_Katana_Default_None__Saburo_Katana
   visualTags: [ Saburo_Katana ]
 
-Items.Proficiency_Craftable_Legendary_Katana_01_military1:
-  $base: Items.Proficiency_Craftable_Legendary_Katana
+Items.Craftable_Legendary_Katana_01_military1:
+  $base: Items.Craftable_Legendary_Katana
   appearanceName: 01_military1
   iconPath: weapon_Preset_Katana_Default_None__Military
   visualTags: [ Military ]
 
-Items.Proficiency_Craftable_Legendary_Katana_01_military2:
-  $base: Items.Proficiency_Craftable_Legendary_Katana
+Items.Craftable_Legendary_Katana_01_military2:
+  $base: Items.Craftable_Legendary_Katana
   appearanceName: 01_military2
   iconPath: weapon_Preset_Katana_Default_None__Military
   visualTags: [ Military ]
 
-Items.Proficiency_Craftable_Legendary_Katana_01_neon1:
-  $base: Items.Proficiency_Craftable_Legendary_Katana
+Items.Craftable_Legendary_Katana_01_neon1:
+  $base: Items.Craftable_Legendary_Katana
   appearanceName: 01_neon1
   iconPath: weapon_Preset_Katana_Default_None__Neon
   visualTags: [ Neon ]
 
-Items.Proficiency_Craftable_Legendary_Katana_01_neon2:
-  $base: Items.Proficiency_Craftable_Legendary_Katana
+Items.Craftable_Legendary_Katana_01_neon2:
+  $base: Items.Craftable_Legendary_Katana
   appearanceName: 01_neon2
   iconPath: weapon_Preset_Katana_Default_None__Neon
   visualTags: [ Neon ]
 
-Items.Proficiency_Craftable_Legendary_Katana_01_pimp1:
-  $base: Items.Proficiency_Craftable_Legendary_Katana
+Items.Craftable_Legendary_Katana_01_pimp1:
+  $base: Items.Craftable_Legendary_Katana
   appearanceName: 01_pimp1
   iconPath: weapon_Preset_Katana_Default_None__Pimp
   visualTags: [ Pimp ]
 
-Items.Proficiency_Craftable_Legendary_Katana_02_military1:
-  $base: Items.Proficiency_Craftable_Legendary_Katana
+Items.Craftable_Legendary_Katana_02_military1:
+  $base: Items.Craftable_Legendary_Katana
   appearanceName: 02_military1
   iconPath: weapon_Preset_Katana_Default_None__Arasaka_2020
   visualTags: [ Arasaka_2020 ]
 
-Items.Proficiency_Craftable_Legendary_Katana_02_military2:
-  $base: Items.Proficiency_Craftable_Legendary_Katana
+Items.Craftable_Legendary_Katana_02_military2:
+  $base: Items.Craftable_Legendary_Katana
   appearanceName: 02_military2
   iconPath: weapon_Preset_Katana_Default_None__Arasaka_2020
   visualTags: [ Arasaka_2020 ]
 
-Items.Proficiency_Craftable_Legendary_Katana_02_neon1:
-  $base: Items.Proficiency_Craftable_Legendary_Katana
+Items.Craftable_Legendary_Katana_02_neon1:
+  $base: Items.Craftable_Legendary_Katana
   appearanceName: 02_neon1
   iconPath: weapon_Preset_Katana_Default_None__Arasaka_2077
   visualTags: [ Arasaka_2077 ]
 
-Items.Proficiency_Craftable_Legendary_Katana_02_neon2:
-  $base: Items.Proficiency_Craftable_Legendary_Katana
+Items.Craftable_Legendary_Katana_02_neon2:
+  $base: Items.Craftable_Legendary_Katana
   appearanceName: 02_neon2
   iconPath: weapon_Preset_Katana_Default_None__Arasaka_2077
   visualTags: [ Arasaka_2077 ]
 
-Items.Proficiency_Craftable_Legendary_Katana_02_pimp1:
-  $base: Items.Proficiency_Craftable_Legendary_Katana
+Items.Craftable_Legendary_Katana_02_pimp1:
+  $base: Items.Craftable_Legendary_Katana
   appearanceName: 02_pimp1
   iconPath: weapon_Preset_Katana_Default_None__Arasaka_2077
   visualTags: [ Arasaka_2077 ]
 
-Items.Proficiency_Craftable_Legendary_Katana_02_takemura:
-  $base: Items.Proficiency_Craftable_Legendary_Katana
+Items.Craftable_Legendary_Katana_02_takemura:
+  $base: Items.Craftable_Legendary_Katana
   appearanceName: 02_takemura
   iconPath: weapon_Preset_Katana_Default_None__Takemura_Katana
   visualTags: [ Takemura_Katana ]
 
-Items.Proficiency_Craftable_Legendary_Katana_03_military1:
-  $base: Items.Proficiency_Craftable_Legendary_Katana
+Items.Craftable_Legendary_Katana_03_military1:
+  $base: Items.Craftable_Legendary_Katana
   appearanceName: 03_military1
   iconPath: weapon_Preset_Katana_Default_None__Default
   visualTags: [ Default ]
 
-Items.Proficiency_Craftable_Legendary_Katana_03_military2:
-  $base: Items.Proficiency_Craftable_Legendary_Katana
+Items.Craftable_Legendary_Katana_03_military2:
+  $base: Items.Craftable_Legendary_Katana
   appearanceName: 03_military2
   iconPath: weapon_Preset_Katana_Default_None__Default
   visualTags: [ Default ]
 
-Items.Proficiency_Craftable_Legendary_Katana_03_neon1:
-  $base: Items.Proficiency_Craftable_Legendary_Katana
+Items.Craftable_Legendary_Katana_03_neon1:
+  $base: Items.Craftable_Legendary_Katana
   appearanceName: 03_neon1
   iconPath: weapon_Preset_Katana_Default_None__Neon_03
   visualTags: [ Neon_03 ]
 
-Items.Proficiency_Craftable_Legendary_Katana_03_pimp1:
-  $base: Items.Proficiency_Craftable_Legendary_Katana
+Items.Craftable_Legendary_Katana_03_pimp1:
+  $base: Items.Craftable_Legendary_Katana
   appearanceName: 03_pimp1
   iconPath: weapon_Preset_Katana_Default_None__Pimp_03
   visualTags: [ Pimp_03 ]
 
-Items.Proficiency_Craftable_Legendary_Katana_03_pimp2:
-  $base: Items.Proficiency_Craftable_Legendary_Katana
+Items.Craftable_Legendary_Katana_03_pimp2:
+  $base: Items.Craftable_Legendary_Katana
   appearanceName: 03_pimp2
   iconPath: weapon_Preset_Katana_Default_None__Pimp_03
   visualTags: [ Pimp_03 ]
 
-Items.Proficiency_Craftable_Legendary_Katana_03_thecocktailstick1:
-  $base: Items.Proficiency_Craftable_Legendary_Katana
+Items.Craftable_Legendary_Katana_03_thecocktailstick1:
+  $base: Items.Craftable_Legendary_Katana
   appearanceName: 03_thecocktailstick1
   iconPath: weapon_Preset_Katana_Default_None__Cocktail_Stick
   visualTags: [ Cocktail_Stick ]
 
-Items.Proficiency_Craftable_Legendary_Katana_03_tyger1:
-  $base: Items.Proficiency_Craftable_Legendary_Katana
+Items.Craftable_Legendary_Katana_03_tyger1:
+  $base: Items.Craftable_Legendary_Katana
   appearanceName: 03_tyger1
   iconPath: weapon_Preset_Katana_Default_None__Surgeon_Katana
   visualTags: [ Surgeon_Katana ]
 
-Items.Proficiency_Craftable_Legendary_Katana_03_tyger2:
-  $base: Items.Proficiency_Craftable_Legendary_Katana
+Items.Craftable_Legendary_Katana_03_tyger2:
+  $base: Items.Craftable_Legendary_Katana
   appearanceName: 03_tyger2
   iconPath: weapon_Preset_Katana_Default_None__Hiromi_Katana
   visualTags: [ Hiromi_Katana ]
 
-Items.Proficiency_Craftable_Legendary_Katana_03_training:
-  $base: Items.Proficiency_Craftable_Legendary_Katana
+Items.Craftable_Legendary_Katana_03_training:
+  $base: Items.Craftable_Legendary_Katana
   appearanceName: 03_training
   iconPath: weapon_Preset_Katana_Default_None__Training
   visualTags: [ Training ]
 
-Items.Proficiency_Craftable_Legendary_Katana_Witcher_Katana:
-  $base: Items.Proficiency_Craftable_Legendary_Katana
+Items.Craftable_Legendary_Katana_Witcher_Katana:
+  $base: Items.Craftable_Legendary_Katana
   appearanceName: Witcher_Katana
   iconPath: weapon_Preset_Katana_Default_None__Witcher_Katana
   visualTags: [ Witcher_Katana ]
 
-Items.Proficiency_Craftable_Legendary_Katana_wakako_katana:
-  $base: Items.Proficiency_Craftable_Legendary_Katana
+Items.Craftable_Legendary_Katana_wakako_katana:
+  $base: Items.Craftable_Legendary_Katana
   appearanceName: wakako_katana
   iconPath: weapon_Preset_Katana_Default_None__Wakako_Katana
   visualTags: [ Wakako_Katana ]
 
-Items.Proficiency_Craftable_Legendary_Katana_01_thermal_blade:
-  $base: Items.Proficiency_Craftable_Legendary_Katana
+Items.Craftable_Legendary_Katana_01_thermal_blade:
+  $base: Items.Craftable_Legendary_Katana
   appearanceName: 01_thermal_blade
   iconPath: weapon_Preset_Katana_Default_None__Thermal_Katana
   visualTags: [ Thermal_Katana ]
 
-Items.Proficiency_Craftable_Legendary_Katana_Witcher_sword_redplay:
-  $base: Items.Proficiency_Craftable_Legendary_Katana
+Items.Craftable_Legendary_Katana_Witcher_sword_redplay:
+  $base: Items.Craftable_Legendary_Katana
   appearanceName: Witcher_sword_redplay
   iconPath: weapon_Preset_Katana_Default_None__Witcher_Sword
   visualTags: [ Witcher_Sword ]
 
-Items.Proficiency_Craftable_Legendary_Katana.ecraftVariants:
- - t"Items.Proficiency_Craftable_Legendary_Katana_03_default"
- - t"Items.Proficiency_Craftable_Legendary_Katana_01_default"
- - t"Items.Proficiency_Craftable_Legendary_Katana_02_default"
- - t"Items.Proficiency_Craftable_Legendary_Katana_04_default"
- - t"Items.Proficiency_Craftable_Legendary_Katana_01_military1"
- - t"Items.Proficiency_Craftable_Legendary_Katana_01_military2"
- - t"Items.Proficiency_Craftable_Legendary_Katana_01_neon1"
- - t"Items.Proficiency_Craftable_Legendary_Katana_01_neon2"
- - t"Items.Proficiency_Craftable_Legendary_Katana_01_pimp1"
- - t"Items.Proficiency_Craftable_Legendary_Katana_02_military1"
- - t"Items.Proficiency_Craftable_Legendary_Katana_02_military2"
- - t"Items.Proficiency_Craftable_Legendary_Katana_02_neon1"
- - t"Items.Proficiency_Craftable_Legendary_Katana_02_neon2"
- - t"Items.Proficiency_Craftable_Legendary_Katana_02_pimp1"
- - t"Items.Proficiency_Craftable_Legendary_Katana_02_takemura"
- - t"Items.Proficiency_Craftable_Legendary_Katana_03_military1"
- - t"Items.Proficiency_Craftable_Legendary_Katana_03_military2"
- - t"Items.Proficiency_Craftable_Legendary_Katana_03_neon1"
- - t"Items.Proficiency_Craftable_Legendary_Katana_03_pimp1"
- - t"Items.Proficiency_Craftable_Legendary_Katana_03_pimp2"
- - t"Items.Proficiency_Craftable_Legendary_Katana_03_thecocktailstick1"
- - t"Items.Proficiency_Craftable_Legendary_Katana_03_tyger1"
- - t"Items.Proficiency_Craftable_Legendary_Katana_03_tyger2"
- - t"Items.Proficiency_Craftable_Legendary_Katana_03_training"
- - t"Items.Proficiency_Craftable_Legendary_Katana_Witcher_Katana"
- - t"Items.Proficiency_Craftable_Legendary_Katana_wakako_katana"
- - t"Items.Proficiency_Craftable_Legendary_Katana_01_thermal_blade"
- - t"Items.Proficiency_Craftable_Legendary_Katana_Witcher_sword_redplay"
+Items.Craftable_Legendary_Katana.ecraftVariants:
+ - t"Items.Craftable_Legendary_Katana_03_default"
+ - t"Items.Craftable_Legendary_Katana_01_default"
+ - t"Items.Craftable_Legendary_Katana_02_default"
+ - t"Items.Craftable_Legendary_Katana_04_default"
+ - t"Items.Craftable_Legendary_Katana_01_military1"
+ - t"Items.Craftable_Legendary_Katana_01_military2"
+ - t"Items.Craftable_Legendary_Katana_01_neon1"
+ - t"Items.Craftable_Legendary_Katana_01_neon2"
+ - t"Items.Craftable_Legendary_Katana_01_pimp1"
+ - t"Items.Craftable_Legendary_Katana_02_military1"
+ - t"Items.Craftable_Legendary_Katana_02_military2"
+ - t"Items.Craftable_Legendary_Katana_02_neon1"
+ - t"Items.Craftable_Legendary_Katana_02_neon2"
+ - t"Items.Craftable_Legendary_Katana_02_pimp1"
+ - t"Items.Craftable_Legendary_Katana_02_takemura"
+ - t"Items.Craftable_Legendary_Katana_03_military1"
+ - t"Items.Craftable_Legendary_Katana_03_military2"
+ - t"Items.Craftable_Legendary_Katana_03_neon1"
+ - t"Items.Craftable_Legendary_Katana_03_pimp1"
+ - t"Items.Craftable_Legendary_Katana_03_pimp2"
+ - t"Items.Craftable_Legendary_Katana_03_thecocktailstick1"
+ - t"Items.Craftable_Legendary_Katana_03_tyger1"
+ - t"Items.Craftable_Legendary_Katana_03_tyger2"
+ - t"Items.Craftable_Legendary_Katana_03_training"
+ - t"Items.Craftable_Legendary_Katana_Witcher_Katana"
+ - t"Items.Craftable_Legendary_Katana_wakako_katana"
+ - t"Items.Craftable_Legendary_Katana_01_thermal_blade"
+ - t"Items.Craftable_Legendary_Katana_Witcher_sword_redplay"
 
 # Katana Military
 # --- Items.Craftable_Common_Katana_Military
@@ -9269,29 +9269,29 @@ Items.Craftable_Uncommon_Knife.ecraftVariants:
  - t"Items.Craftable_Uncommon_Knife_military2"
  - t"Items.Craftable_Uncommon_Knife_scorpion"
 
-# --- Items.Proficiency_Craftable_Rare_Knife
-Items.Proficiency_Craftable_Rare_Knife_military:
-  $base: Items.Proficiency_Craftable_Rare_Knife
+# --- Items.Craftable_Rare_Knife
+Items.Craftable_Rare_Knife_military:
+  $base: Items.Craftable_Rare_Knife
   appearanceName: military
   iconPath: weapon_Preset_Knife_Default_None__Military
   visualTags: [ Military ]
 
-Items.Proficiency_Craftable_Rare_Knife_military2:
-  $base: Items.Proficiency_Craftable_Rare_Knife
+Items.Craftable_Rare_Knife_military2:
+  $base: Items.Craftable_Rare_Knife
   appearanceName: military2
   iconPath: weapon_Preset_Knife_Default_None__Military
   visualTags: [ Military ]
 
-Items.Proficiency_Craftable_Rare_Knife_scorpion:
-  $base: Items.Proficiency_Craftable_Rare_Knife
+Items.Craftable_Rare_Knife_scorpion:
+  $base: Items.Craftable_Rare_Knife
   appearanceName: scorpion
   iconPath: weapon_Preset_Knife_Default_None__Scorpion_Knife
   visualTags: [ Scorpion_Knife ]
 
-Items.Proficiency_Craftable_Rare_Knife.ecraftVariants:
- - t"Items.Proficiency_Craftable_Rare_Knife_military"
- - t"Items.Proficiency_Craftable_Rare_Knife_military2"
- - t"Items.Proficiency_Craftable_Rare_Knife_scorpion"
+Items.Craftable_Rare_Knife.ecraftVariants:
+ - t"Items.Craftable_Rare_Knife_military"
+ - t"Items.Craftable_Rare_Knife_military2"
+ - t"Items.Craftable_Rare_Knife_scorpion"
 
 # --- Items.Craftable_Epic_Knife
 Items.Craftable_Epic_Knife_military:
@@ -9833,91 +9833,91 @@ Items.Craftable_Legendary_Kyubi.ecraftVariants:
 Items.Craftable_Common_Lexington_default:
   $base: Items.Craftable_Common_Lexington
   appearanceName: default
-  iconPath: weapon_Preset_Base_Lexington_None__WDefault
+  iconPath: weapon_Preset_Base_Lexington_None__Default
   visualTags: [ Default ]
 
 Items.Craftable_Common_Lexington_military1:
   $base: Items.Craftable_Common_Lexington
   appearanceName: military1
-  iconPath: weapon_Preset_Base_Lexington_None__WMilitary
+  iconPath: weapon_Preset_Base_Lexington_None__Military
   visualTags: [ Military ]
 
 Items.Craftable_Common_Lexington_military2:
   $base: Items.Craftable_Common_Lexington
   appearanceName: military2
-  iconPath: weapon_Preset_Base_Lexington_None__WMilitary
+  iconPath: weapon_Preset_Base_Lexington_None__Military
   visualTags: [ Military ]
 
 Items.Craftable_Common_Lexington_military3:
   $base: Items.Craftable_Common_Lexington
   appearanceName: military3
-  iconPath: weapon_Preset_Base_Lexington_None__WMilitary
+  iconPath: weapon_Preset_Base_Lexington_None__Military
   visualTags: [ Military ]
 
 Items.Craftable_Common_Lexington_military4:
   $base: Items.Craftable_Common_Lexington
   appearanceName: military4
-  iconPath: weapon_Preset_Base_Lexington_None__WMilitary
+  iconPath: weapon_Preset_Base_Lexington_None__Military
   visualTags: [ Military ]
 
 Items.Craftable_Common_Lexington_neon1:
   $base: Items.Craftable_Common_Lexington
   appearanceName: neon1
-  iconPath: weapon_Preset_Base_Lexington_None__WNeon
+  iconPath: weapon_Preset_Base_Lexington_None__Neon
   visualTags: [ Neon ]
 
 Items.Craftable_Common_Lexington_neon2:
   $base: Items.Craftable_Common_Lexington
   appearanceName: neon2
-  iconPath: weapon_Preset_Base_Lexington_None__WNeon
+  iconPath: weapon_Preset_Base_Lexington_None__Neon
   visualTags: [ Neon ]
 
 Items.Craftable_Common_Lexington_pimp1:
   $base: Items.Craftable_Common_Lexington
   appearanceName: pimp1
-  iconPath: weapon_Preset_Base_Lexington_None__WPimp
+  iconPath: weapon_Preset_Base_Lexington_None__Pimp
   visualTags: [ Pimp ]
 
 Items.Craftable_Common_Lexington_pimp2:
   $base: Items.Craftable_Common_Lexington
   appearanceName: pimp2
-  iconPath: weapon_Preset_Base_Lexington_None__WPimp
+  iconPath: weapon_Preset_Base_Lexington_None__Pimp
   visualTags: [ Pimp ]
 
 Items.Craftable_Common_Lexington_krausser:
   $base: Items.Craftable_Common_Lexington
   appearanceName: krausser
-  iconPath: weapon_Preset_Base_Lexington_None__WKrausser
+  iconPath: weapon_Preset_Base_Lexington_None__Krausser
   visualTags: [ Krausser ]
 
 Items.Craftable_Common_Lexington_wilson:
   $base: Items.Craftable_Common_Lexington
   appearanceName: wilson
-  iconPath: weapon_Preset_Base_Lexington_None__WCompetition_Lexington
+  iconPath: weapon_Preset_Base_Lexington_None__Competition_Lexington
   visualTags: [ Competition_Lexington ]
 
 Items.Craftable_Common_Lexington_toygun:
   $base: Items.Craftable_Common_Lexington
   appearanceName: toygun
-  iconPath: weapon_Preset_Base_Lexington_None__WToyGun_Lexington
+  iconPath: weapon_Preset_Base_Lexington_None__ToyGun_Lexington
   visualTags: [ ToyGun_Lexington ]
 
 Items.Craftable_Common_Lexington_rook:
   $base: Items.Craftable_Common_Lexington
   appearanceName: rook
-  iconPath: weapon_Preset_Base_Lexington_None__WRook_Lexington
+  iconPath: weapon_Preset_Base_Lexington_None__Rook_Lexington
   visualTags: [ Rook_Lexington ]
 
 Items.Craftable_Common_Lexington_dying_night:
   $base: Items.Craftable_Common_Lexington
   appearanceName: dying_night
-  iconPath: weapon_Preset_Base_Lexington_None__WWilson_Lexington
+  iconPath: weapon_Preset_Base_Lexington_None__Wilson_Lexington
   visualTags: [ Wilson_Lexington ]
 
 Items.Craftable_Common_Lexington_jurij:
   $base: Items.Craftable_Common_Lexington
   appearanceName: jurij
-  iconPath: weapon_Preset_Base_Lexington_None__WJurij_Lexington
+  iconPath: weapon_Preset_Base_Lexington_None__Jurij_Lexington
   visualTags: [ Jurij_Lexington ]
 
 Items.Craftable_Common_Lexington.ecraftVariants:
@@ -9941,91 +9941,91 @@ Items.Craftable_Common_Lexington.ecraftVariants:
 Items.Craftable_Uncommon_Lexington_default:
   $base: Items.Craftable_Uncommon_Lexington
   appearanceName: default
-  iconPath: weapon_Preset_Base_Lexington_None__WDefault
+  iconPath: weapon_Preset_Base_Lexington_None__Default
   visualTags: [ Default ]
 
 Items.Craftable_Uncommon_Lexington_military1:
   $base: Items.Craftable_Uncommon_Lexington
   appearanceName: military1
-  iconPath: weapon_Preset_Base_Lexington_None__WMilitary
+  iconPath: weapon_Preset_Base_Lexington_None__Military
   visualTags: [ Military ]
 
 Items.Craftable_Uncommon_Lexington_military2:
   $base: Items.Craftable_Uncommon_Lexington
   appearanceName: military2
-  iconPath: weapon_Preset_Base_Lexington_None__WMilitary
+  iconPath: weapon_Preset_Base_Lexington_None__Military
   visualTags: [ Military ]
 
 Items.Craftable_Uncommon_Lexington_military3:
   $base: Items.Craftable_Uncommon_Lexington
   appearanceName: military3
-  iconPath: weapon_Preset_Base_Lexington_None__WMilitary
+  iconPath: weapon_Preset_Base_Lexington_None__Military
   visualTags: [ Military ]
 
 Items.Craftable_Uncommon_Lexington_military4:
   $base: Items.Craftable_Uncommon_Lexington
   appearanceName: military4
-  iconPath: weapon_Preset_Base_Lexington_None__WMilitary
+  iconPath: weapon_Preset_Base_Lexington_None__Military
   visualTags: [ Military ]
 
 Items.Craftable_Uncommon_Lexington_neon1:
   $base: Items.Craftable_Uncommon_Lexington
   appearanceName: neon1
-  iconPath: weapon_Preset_Base_Lexington_None__WNeon
+  iconPath: weapon_Preset_Base_Lexington_None__Neon
   visualTags: [ Neon ]
 
 Items.Craftable_Uncommon_Lexington_neon2:
   $base: Items.Craftable_Uncommon_Lexington
   appearanceName: neon2
-  iconPath: weapon_Preset_Base_Lexington_None__WNeon
+  iconPath: weapon_Preset_Base_Lexington_None__Neon
   visualTags: [ Neon ]
 
 Items.Craftable_Uncommon_Lexington_pimp1:
   $base: Items.Craftable_Uncommon_Lexington
   appearanceName: pimp1
-  iconPath: weapon_Preset_Base_Lexington_None__WPimp
+  iconPath: weapon_Preset_Base_Lexington_None__Pimp
   visualTags: [ Pimp ]
 
 Items.Craftable_Uncommon_Lexington_pimp2:
   $base: Items.Craftable_Uncommon_Lexington
   appearanceName: pimp2
-  iconPath: weapon_Preset_Base_Lexington_None__WPimp
+  iconPath: weapon_Preset_Base_Lexington_None__Pimp
   visualTags: [ Pimp ]
 
 Items.Craftable_Uncommon_Lexington_krausser:
   $base: Items.Craftable_Uncommon_Lexington
   appearanceName: krausser
-  iconPath: weapon_Preset_Base_Lexington_None__WKrausser
+  iconPath: weapon_Preset_Base_Lexington_None__Krausser
   visualTags: [ Krausser ]
 
 Items.Craftable_Uncommon_Lexington_wilson:
   $base: Items.Craftable_Uncommon_Lexington
   appearanceName: wilson
-  iconPath: weapon_Preset_Base_Lexington_None__WCompetition_Lexington
+  iconPath: weapon_Preset_Base_Lexington_None__Competition_Lexington
   visualTags: [ Competition_Lexington ]
 
 Items.Craftable_Uncommon_Lexington_toygun:
   $base: Items.Craftable_Uncommon_Lexington
   appearanceName: toygun
-  iconPath: weapon_Preset_Base_Lexington_None__WToyGun_Lexington
+  iconPath: weapon_Preset_Base_Lexington_None__ToyGun_Lexington
   visualTags: [ ToyGun_Lexington ]
 
 Items.Craftable_Uncommon_Lexington_rook:
   $base: Items.Craftable_Uncommon_Lexington
   appearanceName: rook
-  iconPath: weapon_Preset_Base_Lexington_None__WRook_Lexington
+  iconPath: weapon_Preset_Base_Lexington_None__Rook_Lexington
   visualTags: [ Rook_Lexington ]
 
 Items.Craftable_Uncommon_Lexington_dying_night:
   $base: Items.Craftable_Uncommon_Lexington
   appearanceName: dying_night
-  iconPath: weapon_Preset_Base_Lexington_None__WWilson_Lexington
+  iconPath: weapon_Preset_Base_Lexington_None__Wilson_Lexington
   visualTags: [ Wilson_Lexington ]
 
 Items.Craftable_Uncommon_Lexington_jurij:
   $base: Items.Craftable_Uncommon_Lexington
   appearanceName: jurij
-  iconPath: weapon_Preset_Base_Lexington_None__WJurij_Lexington
+  iconPath: weapon_Preset_Base_Lexington_None__Jurij_Lexington
   visualTags: [ Jurij_Lexington ]
 
 Items.Craftable_Uncommon_Lexington.ecraftVariants:
@@ -10049,91 +10049,91 @@ Items.Craftable_Uncommon_Lexington.ecraftVariants:
 Items.Craftable_Rare_Lexington_default:
   $base: Items.Craftable_Rare_Lexington
   appearanceName: default
-  iconPath: weapon_Preset_Base_Lexington_None__WDefault
+  iconPath: weapon_Preset_Base_Lexington_None__Default
   visualTags: [ Default ]
 
 Items.Craftable_Rare_Lexington_military1:
   $base: Items.Craftable_Rare_Lexington
   appearanceName: military1
-  iconPath: weapon_Preset_Base_Lexington_None__WMilitary
+  iconPath: weapon_Preset_Base_Lexington_None__Military
   visualTags: [ Military ]
 
 Items.Craftable_Rare_Lexington_military2:
   $base: Items.Craftable_Rare_Lexington
   appearanceName: military2
-  iconPath: weapon_Preset_Base_Lexington_None__WMilitary
+  iconPath: weapon_Preset_Base_Lexington_None__Military
   visualTags: [ Military ]
 
 Items.Craftable_Rare_Lexington_military3:
   $base: Items.Craftable_Rare_Lexington
   appearanceName: military3
-  iconPath: weapon_Preset_Base_Lexington_None__WMilitary
+  iconPath: weapon_Preset_Base_Lexington_None__Military
   visualTags: [ Military ]
 
 Items.Craftable_Rare_Lexington_military4:
   $base: Items.Craftable_Rare_Lexington
   appearanceName: military4
-  iconPath: weapon_Preset_Base_Lexington_None__WMilitary
+  iconPath: weapon_Preset_Base_Lexington_None__Military
   visualTags: [ Military ]
 
 Items.Craftable_Rare_Lexington_neon1:
   $base: Items.Craftable_Rare_Lexington
   appearanceName: neon1
-  iconPath: weapon_Preset_Base_Lexington_None__WNeon
+  iconPath: weapon_Preset_Base_Lexington_None__Neon
   visualTags: [ Neon ]
 
 Items.Craftable_Rare_Lexington_neon2:
   $base: Items.Craftable_Rare_Lexington
   appearanceName: neon2
-  iconPath: weapon_Preset_Base_Lexington_None__WNeon
+  iconPath: weapon_Preset_Base_Lexington_None__Neon
   visualTags: [ Neon ]
 
 Items.Craftable_Rare_Lexington_pimp1:
   $base: Items.Craftable_Rare_Lexington
   appearanceName: pimp1
-  iconPath: weapon_Preset_Base_Lexington_None__WPimp
+  iconPath: weapon_Preset_Base_Lexington_None__Pimp
   visualTags: [ Pimp ]
 
 Items.Craftable_Rare_Lexington_pimp2:
   $base: Items.Craftable_Rare_Lexington
   appearanceName: pimp2
-  iconPath: weapon_Preset_Base_Lexington_None__WPimp
+  iconPath: weapon_Preset_Base_Lexington_None__Pimp
   visualTags: [ Pimp ]
 
 Items.Craftable_Rare_Lexington_krausser:
   $base: Items.Craftable_Rare_Lexington
   appearanceName: krausser
-  iconPath: weapon_Preset_Base_Lexington_None__WKrausser
+  iconPath: weapon_Preset_Base_Lexington_None__Krausser
   visualTags: [ Krausser ]
 
 Items.Craftable_Rare_Lexington_wilson:
   $base: Items.Craftable_Rare_Lexington
   appearanceName: wilson
-  iconPath: weapon_Preset_Base_Lexington_None__WCompetition_Lexington
+  iconPath: weapon_Preset_Base_Lexington_None__Competition_Lexington
   visualTags: [ Competition_Lexington ]
 
 Items.Craftable_Rare_Lexington_toygun:
   $base: Items.Craftable_Rare_Lexington
   appearanceName: toygun
-  iconPath: weapon_Preset_Base_Lexington_None__WToyGun_Lexington
+  iconPath: weapon_Preset_Base_Lexington_None__ToyGun_Lexington
   visualTags: [ ToyGun_Lexington ]
 
 Items.Craftable_Rare_Lexington_rook:
   $base: Items.Craftable_Rare_Lexington
   appearanceName: rook
-  iconPath: weapon_Preset_Base_Lexington_None__WRook_Lexington
+  iconPath: weapon_Preset_Base_Lexington_None__Rook_Lexington
   visualTags: [ Rook_Lexington ]
 
 Items.Craftable_Rare_Lexington_dying_night:
   $base: Items.Craftable_Rare_Lexington
   appearanceName: dying_night
-  iconPath: weapon_Preset_Base_Lexington_None__WWilson_Lexington
+  iconPath: weapon_Preset_Base_Lexington_None__Wilson_Lexington
   visualTags: [ Wilson_Lexington ]
 
 Items.Craftable_Rare_Lexington_jurij:
   $base: Items.Craftable_Rare_Lexington
   appearanceName: jurij
-  iconPath: weapon_Preset_Base_Lexington_None__WJurij_Lexington
+  iconPath: weapon_Preset_Base_Lexington_None__Jurij_Lexington
   visualTags: [ Jurij_Lexington ]
 
 Items.Craftable_Rare_Lexington.ecraftVariants:
@@ -10157,91 +10157,91 @@ Items.Craftable_Rare_Lexington.ecraftVariants:
 Items.Craftable_Epic_Lexington_default:
   $base: Items.Craftable_Epic_Lexington
   appearanceName: default
-  iconPath: weapon_Preset_Base_Lexington_None__WDefault
+  iconPath: weapon_Preset_Base_Lexington_None__Default
   visualTags: [ Default ]
 
 Items.Craftable_Epic_Lexington_military1:
   $base: Items.Craftable_Epic_Lexington
   appearanceName: military1
-  iconPath: weapon_Preset_Base_Lexington_None__WMilitary
+  iconPath: weapon_Preset_Base_Lexington_None__Military
   visualTags: [ Military ]
 
 Items.Craftable_Epic_Lexington_military2:
   $base: Items.Craftable_Epic_Lexington
   appearanceName: military2
-  iconPath: weapon_Preset_Base_Lexington_None__WMilitary
+  iconPath: weapon_Preset_Base_Lexington_None__Military
   visualTags: [ Military ]
 
 Items.Craftable_Epic_Lexington_military3:
   $base: Items.Craftable_Epic_Lexington
   appearanceName: military3
-  iconPath: weapon_Preset_Base_Lexington_None__WMilitary
+  iconPath: weapon_Preset_Base_Lexington_None__Military
   visualTags: [ Military ]
 
 Items.Craftable_Epic_Lexington_military4:
   $base: Items.Craftable_Epic_Lexington
   appearanceName: military4
-  iconPath: weapon_Preset_Base_Lexington_None__WMilitary
+  iconPath: weapon_Preset_Base_Lexington_None__Military
   visualTags: [ Military ]
 
 Items.Craftable_Epic_Lexington_neon1:
   $base: Items.Craftable_Epic_Lexington
   appearanceName: neon1
-  iconPath: weapon_Preset_Base_Lexington_None__WNeon
+  iconPath: weapon_Preset_Base_Lexington_None__Neon
   visualTags: [ Neon ]
 
 Items.Craftable_Epic_Lexington_neon2:
   $base: Items.Craftable_Epic_Lexington
   appearanceName: neon2
-  iconPath: weapon_Preset_Base_Lexington_None__WNeon
+  iconPath: weapon_Preset_Base_Lexington_None__Neon
   visualTags: [ Neon ]
 
 Items.Craftable_Epic_Lexington_pimp1:
   $base: Items.Craftable_Epic_Lexington
   appearanceName: pimp1
-  iconPath: weapon_Preset_Base_Lexington_None__WPimp
+  iconPath: weapon_Preset_Base_Lexington_None__Pimp
   visualTags: [ Pimp ]
 
 Items.Craftable_Epic_Lexington_pimp2:
   $base: Items.Craftable_Epic_Lexington
   appearanceName: pimp2
-  iconPath: weapon_Preset_Base_Lexington_None__WPimp
+  iconPath: weapon_Preset_Base_Lexington_None__Pimp
   visualTags: [ Pimp ]
 
 Items.Craftable_Epic_Lexington_krausser:
   $base: Items.Craftable_Epic_Lexington
   appearanceName: krausser
-  iconPath: weapon_Preset_Base_Lexington_None__WKrausser
+  iconPath: weapon_Preset_Base_Lexington_None__Krausser
   visualTags: [ Krausser ]
 
 Items.Craftable_Epic_Lexington_wilson:
   $base: Items.Craftable_Epic_Lexington
   appearanceName: wilson
-  iconPath: weapon_Preset_Base_Lexington_None__WCompetition_Lexington
+  iconPath: weapon_Preset_Base_Lexington_None__Competition_Lexington
   visualTags: [ Competition_Lexington ]
 
 Items.Craftable_Epic_Lexington_toygun:
   $base: Items.Craftable_Epic_Lexington
   appearanceName: toygun
-  iconPath: weapon_Preset_Base_Lexington_None__WToyGun_Lexington
+  iconPath: weapon_Preset_Base_Lexington_None__ToyGun_Lexington
   visualTags: [ ToyGun_Lexington ]
 
 Items.Craftable_Epic_Lexington_rook:
   $base: Items.Craftable_Epic_Lexington
   appearanceName: rook
-  iconPath: weapon_Preset_Base_Lexington_None__WRook_Lexington
+  iconPath: weapon_Preset_Base_Lexington_None__Rook_Lexington
   visualTags: [ Rook_Lexington ]
 
 Items.Craftable_Epic_Lexington_dying_night:
   $base: Items.Craftable_Epic_Lexington
   appearanceName: dying_night
-  iconPath: weapon_Preset_Base_Lexington_None__WWilson_Lexington
+  iconPath: weapon_Preset_Base_Lexington_None__Wilson_Lexington
   visualTags: [ Wilson_Lexington ]
 
 Items.Craftable_Epic_Lexington_jurij:
   $base: Items.Craftable_Epic_Lexington
   appearanceName: jurij
-  iconPath: weapon_Preset_Base_Lexington_None__WJurij_Lexington
+  iconPath: weapon_Preset_Base_Lexington_None__Jurij_Lexington
   visualTags: [ Jurij_Lexington ]
 
 Items.Craftable_Epic_Lexington.ecraftVariants:
@@ -10265,91 +10265,91 @@ Items.Craftable_Epic_Lexington.ecraftVariants:
 Items.Craftable_Legendary_Lexington_default:
   $base: Items.Craftable_Legendary_Lexington
   appearanceName: default
-  iconPath: weapon_Preset_Base_Lexington_None__WDefault
+  iconPath: weapon_Preset_Base_Lexington_None__Default
   visualTags: [ Default ]
 
 Items.Craftable_Legendary_Lexington_military1:
   $base: Items.Craftable_Legendary_Lexington
   appearanceName: military1
-  iconPath: weapon_Preset_Base_Lexington_None__WMilitary
+  iconPath: weapon_Preset_Base_Lexington_None__Military
   visualTags: [ Military ]
 
 Items.Craftable_Legendary_Lexington_military2:
   $base: Items.Craftable_Legendary_Lexington
   appearanceName: military2
-  iconPath: weapon_Preset_Base_Lexington_None__WMilitary
+  iconPath: weapon_Preset_Base_Lexington_None__Military
   visualTags: [ Military ]
 
 Items.Craftable_Legendary_Lexington_military3:
   $base: Items.Craftable_Legendary_Lexington
   appearanceName: military3
-  iconPath: weapon_Preset_Base_Lexington_None__WMilitary
+  iconPath: weapon_Preset_Base_Lexington_None__Military
   visualTags: [ Military ]
 
 Items.Craftable_Legendary_Lexington_military4:
   $base: Items.Craftable_Legendary_Lexington
   appearanceName: military4
-  iconPath: weapon_Preset_Base_Lexington_None__WMilitary
+  iconPath: weapon_Preset_Base_Lexington_None__Military
   visualTags: [ Military ]
 
 Items.Craftable_Legendary_Lexington_neon1:
   $base: Items.Craftable_Legendary_Lexington
   appearanceName: neon1
-  iconPath: weapon_Preset_Base_Lexington_None__WNeon
+  iconPath: weapon_Preset_Base_Lexington_None__Neon
   visualTags: [ Neon ]
 
 Items.Craftable_Legendary_Lexington_neon2:
   $base: Items.Craftable_Legendary_Lexington
   appearanceName: neon2
-  iconPath: weapon_Preset_Base_Lexington_None__WNeon
+  iconPath: weapon_Preset_Base_Lexington_None__Neon
   visualTags: [ Neon ]
 
 Items.Craftable_Legendary_Lexington_pimp1:
   $base: Items.Craftable_Legendary_Lexington
   appearanceName: pimp1
-  iconPath: weapon_Preset_Base_Lexington_None__WPimp
+  iconPath: weapon_Preset_Base_Lexington_None__Pimp
   visualTags: [ Pimp ]
 
 Items.Craftable_Legendary_Lexington_pimp2:
   $base: Items.Craftable_Legendary_Lexington
   appearanceName: pimp2
-  iconPath: weapon_Preset_Base_Lexington_None__WPimp
+  iconPath: weapon_Preset_Base_Lexington_None__Pimp
   visualTags: [ Pimp ]
 
 Items.Craftable_Legendary_Lexington_krausser:
   $base: Items.Craftable_Legendary_Lexington
   appearanceName: krausser
-  iconPath: weapon_Preset_Base_Lexington_None__WKrausser
+  iconPath: weapon_Preset_Base_Lexington_None__Krausser
   visualTags: [ Krausser ]
 
 Items.Craftable_Legendary_Lexington_wilson:
   $base: Items.Craftable_Legendary_Lexington
   appearanceName: wilson
-  iconPath: weapon_Preset_Base_Lexington_None__WCompetition_Lexington
+  iconPath: weapon_Preset_Base_Lexington_None__Competition_Lexington
   visualTags: [ Competition_Lexington ]
 
 Items.Craftable_Legendary_Lexington_toygun:
   $base: Items.Craftable_Legendary_Lexington
   appearanceName: toygun
-  iconPath: weapon_Preset_Base_Lexington_None__WToyGun_Lexington
+  iconPath: weapon_Preset_Base_Lexington_None__ToyGun_Lexington
   visualTags: [ ToyGun_Lexington ]
 
 Items.Craftable_Legendary_Lexington_rook:
   $base: Items.Craftable_Legendary_Lexington
   appearanceName: rook
-  iconPath: weapon_Preset_Base_Lexington_None__WRook_Lexington
+  iconPath: weapon_Preset_Base_Lexington_None__Rook_Lexington
   visualTags: [ Rook_Lexington ]
 
 Items.Craftable_Legendary_Lexington_dying_night:
   $base: Items.Craftable_Legendary_Lexington
   appearanceName: dying_night
-  iconPath: weapon_Preset_Base_Lexington_None__WWilson_Lexington
+  iconPath: weapon_Preset_Base_Lexington_None__Wilson_Lexington
   visualTags: [ Wilson_Lexington ]
 
 Items.Craftable_Legendary_Lexington_jurij:
   $base: Items.Craftable_Legendary_Lexington
   appearanceName: jurij
-  iconPath: weapon_Preset_Base_Lexington_None__WJurij_Lexington
+  iconPath: weapon_Preset_Base_Lexington_None__Jurij_Lexington
   visualTags: [ Jurij_Lexington ]
 
 Items.Craftable_Legendary_Lexington.ecraftVariants:
@@ -12389,92 +12389,92 @@ Items.Craftable_Epic_Nekomata.ecraftVariants:
  - t"Items.Craftable_Epic_Nekomata_holo"
  - t"Items.Craftable_Epic_Nekomata_amazon"
 
-# --- Items.Proficiency_Craftable_Legendary_Nekomata
-Items.Proficiency_Craftable_Legendary_Nekomata_default:
-  $base: Items.Proficiency_Craftable_Legendary_Nekomata
+# --- Items.Craftable_Legendary_Nekomata
+Items.Craftable_Legendary_Nekomata_default:
+  $base: Items.Craftable_Legendary_Nekomata
   appearanceName: default
   iconPath: weapon_Preset_Nekomata_Default_None__Default
   visualTags: [ Default ]
 
-Items.Proficiency_Craftable_Legendary_Nekomata_military1:
-  $base: Items.Proficiency_Craftable_Legendary_Nekomata
+Items.Craftable_Legendary_Nekomata_military1:
+  $base: Items.Craftable_Legendary_Nekomata
   appearanceName: military1
   iconPath: weapon_Preset_Nekomata_Default_None__Military
   visualTags: [ Military ]
 
-Items.Proficiency_Craftable_Legendary_Nekomata_military2:
-  $base: Items.Proficiency_Craftable_Legendary_Nekomata
+Items.Craftable_Legendary_Nekomata_military2:
+  $base: Items.Craftable_Legendary_Nekomata
   appearanceName: military2
   iconPath: weapon_Preset_Nekomata_Default_None__Military
   visualTags: [ Military ]
 
-Items.Proficiency_Craftable_Legendary_Nekomata_neon1:
-  $base: Items.Proficiency_Craftable_Legendary_Nekomata
+Items.Craftable_Legendary_Nekomata_neon1:
+  $base: Items.Craftable_Legendary_Nekomata
   appearanceName: neon1
   iconPath: weapon_Preset_Nekomata_Default_None__Neon
   visualTags: [ Neon ]
 
-Items.Proficiency_Craftable_Legendary_Nekomata_neon2:
-  $base: Items.Proficiency_Craftable_Legendary_Nekomata
+Items.Craftable_Legendary_Nekomata_neon2:
+  $base: Items.Craftable_Legendary_Nekomata
   appearanceName: neon2
   iconPath: weapon_Preset_Nekomata_Default_None__Neon
   visualTags: [ Neon ]
 
-Items.Proficiency_Craftable_Legendary_Nekomata_pimp1:
-  $base: Items.Proficiency_Craftable_Legendary_Nekomata
+Items.Craftable_Legendary_Nekomata_pimp1:
+  $base: Items.Craftable_Legendary_Nekomata
   appearanceName: pimp1
   iconPath: weapon_Preset_Nekomata_Default_None__Pimp
   visualTags: [ Pimp ]
 
-Items.Proficiency_Craftable_Legendary_Nekomata_pimp2:
-  $base: Items.Proficiency_Craftable_Legendary_Nekomata
+Items.Craftable_Legendary_Nekomata_pimp2:
+  $base: Items.Craftable_Legendary_Nekomata
   appearanceName: pimp2
   iconPath: weapon_Preset_Nekomata_Default_None__Pimp
   visualTags: [ Pimp ]
 
-Items.Proficiency_Craftable_Legendary_Nekomata_krausser:
-  $base: Items.Proficiency_Craftable_Legendary_Nekomata
+Items.Craftable_Legendary_Nekomata_krausser:
+  $base: Items.Craftable_Legendary_Nekomata
   appearanceName: krausser
   iconPath: weapon_Preset_Nekomata_Default_None__Krausser
   visualTags: [ Krausser ]
 
-Items.Proficiency_Craftable_Legendary_Nekomata_breakthrough:
-  $base: Items.Proficiency_Craftable_Legendary_Nekomata
+Items.Craftable_Legendary_Nekomata_breakthrough:
+  $base: Items.Craftable_Legendary_Nekomata
   appearanceName: breakthrough
   iconPath: weapon_Preset_Nekomata_Default_None__Breakthrough_Nekomata
   visualTags: [ Breakthrough_Nekomata ]
 
-Items.Proficiency_Craftable_Legendary_Nekomata_reed:
-  $base: Items.Proficiency_Craftable_Legendary_Nekomata
+Items.Craftable_Legendary_Nekomata_reed:
+  $base: Items.Craftable_Legendary_Nekomata
   appearanceName: reed
   iconPath: weapon_Preset_Nekomata_Default_None__Legendary
   visualTags: [ Legendary ]
 
-Items.Proficiency_Craftable_Legendary_Nekomata_holo:
-  $base: Items.Proficiency_Craftable_Legendary_Nekomata
+Items.Craftable_Legendary_Nekomata_holo:
+  $base: Items.Craftable_Legendary_Nekomata
   appearanceName: holo
   iconPath: weapon_Preset_Nekomata_Default_None__Boris_Nekomata_Hologram
   visualTags: [ Boris_Nekomata_Hologram ]
 
-Items.Proficiency_Craftable_Legendary_Nekomata_amazon:
-  $base: Items.Proficiency_Craftable_Legendary_Nekomata
+Items.Craftable_Legendary_Nekomata_amazon:
+  $base: Items.Craftable_Legendary_Nekomata
   appearanceName: amazon
   iconPath: weapon_Preset_Nekomata_Default_None__Amazon
   visualTags: [ Amazon ]
 
-Items.Proficiency_Craftable_Legendary_Nekomata.ecraftVariants:
- - t"Items.Proficiency_Craftable_Legendary_Nekomata_default"
- - t"Items.Proficiency_Craftable_Legendary_Nekomata_military1"
- - t"Items.Proficiency_Craftable_Legendary_Nekomata_military2"
- - t"Items.Proficiency_Craftable_Legendary_Nekomata_neon1"
- - t"Items.Proficiency_Craftable_Legendary_Nekomata_neon2"
- - t"Items.Proficiency_Craftable_Legendary_Nekomata_pimp1"
- - t"Items.Proficiency_Craftable_Legendary_Nekomata_pimp2"
- - t"Items.Proficiency_Craftable_Legendary_Nekomata_krausser"
- - t"Items.Proficiency_Craftable_Legendary_Nekomata_breakthrough"
- - t"Items.Proficiency_Craftable_Legendary_Nekomata_reed"
- - t"Items.Proficiency_Craftable_Legendary_Nekomata_holo"
- - t"Items.Proficiency_Craftable_Legendary_Nekomata_amazon"
+Items.Craftable_Legendary_Nekomata.ecraftVariants:
+ - t"Items.Craftable_Legendary_Nekomata_default"
+ - t"Items.Craftable_Legendary_Nekomata_military1"
+ - t"Items.Craftable_Legendary_Nekomata_military2"
+ - t"Items.Craftable_Legendary_Nekomata_neon1"
+ - t"Items.Craftable_Legendary_Nekomata_neon2"
+ - t"Items.Craftable_Legendary_Nekomata_pimp1"
+ - t"Items.Craftable_Legendary_Nekomata_pimp2"
+ - t"Items.Craftable_Legendary_Nekomata_krausser"
+ - t"Items.Craftable_Legendary_Nekomata_breakthrough"
+ - t"Items.Craftable_Legendary_Nekomata_reed"
+ - t"Items.Craftable_Legendary_Nekomata_holo"
+ - t"Items.Craftable_Legendary_Nekomata_amazon"
 
 # Neurotoxin Knife
 # --- Items.Craftable_Common_Neurotoxin_Knife
@@ -12870,71 +12870,71 @@ Items.Craftable_Uncommon_Nova.ecraftVariants:
  - t"Items.Craftable_Uncommon_Nova_doomdoom"
  - t"Items.Craftable_Uncommon_Nova_russian_hitman"
 
-# --- Items.Proficiency_Craftable_Rare_Nova
-Items.Proficiency_Craftable_Rare_Nova_default:
-  $base: Items.Proficiency_Craftable_Rare_Nova
+# --- Items.Craftable_Rare_Nova
+Items.Craftable_Rare_Nova_default:
+  $base: Items.Craftable_Rare_Nova
   appearanceName: default
   iconPath: weapon_Preset_Nova_Default_None__Default
   visualTags: [ Default ]
 
-Items.Proficiency_Craftable_Rare_Nova_military1:
-  $base: Items.Proficiency_Craftable_Rare_Nova
+Items.Craftable_Rare_Nova_military1:
+  $base: Items.Craftable_Rare_Nova
   appearanceName: military1
   iconPath: weapon_Preset_Nova_Default_None__Military
   visualTags: [ Military ]
 
-Items.Proficiency_Craftable_Rare_Nova_military2:
-  $base: Items.Proficiency_Craftable_Rare_Nova
+Items.Craftable_Rare_Nova_military2:
+  $base: Items.Craftable_Rare_Nova
   appearanceName: military2
   iconPath: weapon_Preset_Nova_Default_None__Military
   visualTags: [ Military ]
 
-Items.Proficiency_Craftable_Rare_Nova_neon1:
-  $base: Items.Proficiency_Craftable_Rare_Nova
+Items.Craftable_Rare_Nova_neon1:
+  $base: Items.Craftable_Rare_Nova
   appearanceName: neon1
   iconPath: weapon_Preset_Nova_Default_None__Neon
   visualTags: [ Neon ]
 
-Items.Proficiency_Craftable_Rare_Nova_neon2:
-  $base: Items.Proficiency_Craftable_Rare_Nova
+Items.Craftable_Rare_Nova_neon2:
+  $base: Items.Craftable_Rare_Nova
   appearanceName: neon2
   iconPath: weapon_Preset_Nova_Default_None__Neon
   visualTags: [ Neon ]
 
-Items.Proficiency_Craftable_Rare_Nova_pimp1:
-  $base: Items.Proficiency_Craftable_Rare_Nova
+Items.Craftable_Rare_Nova_pimp1:
+  $base: Items.Craftable_Rare_Nova
   appearanceName: pimp1
   iconPath: weapon_Preset_Nova_Default_None__Pimp
   visualTags: [ Pimp ]
 
-Items.Proficiency_Craftable_Rare_Nova_pimp2:
-  $base: Items.Proficiency_Craftable_Rare_Nova
+Items.Craftable_Rare_Nova_pimp2:
+  $base: Items.Craftable_Rare_Nova
   appearanceName: pimp2
   iconPath: weapon_Preset_Nova_Default_None__Pimp
   visualTags: [ Pimp ]
 
-Items.Proficiency_Craftable_Rare_Nova_doomdoom:
-  $base: Items.Proficiency_Craftable_Rare_Nova
+Items.Craftable_Rare_Nova_doomdoom:
+  $base: Items.Craftable_Rare_Nova
   appearanceName: doomdoom
   iconPath: weapon_Preset_Nova_Default_None__Doom_Doom_Nova
   visualTags: [ Doom_Doom_Nova ]
 
-Items.Proficiency_Craftable_Rare_Nova_russian_hitman:
-  $base: Items.Proficiency_Craftable_Rare_Nova
+Items.Craftable_Rare_Nova_russian_hitman:
+  $base: Items.Craftable_Rare_Nova
   appearanceName: russian_hitman
   iconPath: weapon_Preset_Nova_Default_None__Hitman_Nova
   visualTags: [ Hitman_Nova ]
 
-Items.Proficiency_Craftable_Rare_Nova.ecraftVariants:
- - t"Items.Proficiency_Craftable_Rare_Nova_default"
- - t"Items.Proficiency_Craftable_Rare_Nova_military1"
- - t"Items.Proficiency_Craftable_Rare_Nova_military2"
- - t"Items.Proficiency_Craftable_Rare_Nova_neon1"
- - t"Items.Proficiency_Craftable_Rare_Nova_neon2"
- - t"Items.Proficiency_Craftable_Rare_Nova_pimp1"
- - t"Items.Proficiency_Craftable_Rare_Nova_pimp2"
- - t"Items.Proficiency_Craftable_Rare_Nova_doomdoom"
- - t"Items.Proficiency_Craftable_Rare_Nova_russian_hitman"
+Items.Craftable_Rare_Nova.ecraftVariants:
+ - t"Items.Craftable_Rare_Nova_default"
+ - t"Items.Craftable_Rare_Nova_military1"
+ - t"Items.Craftable_Rare_Nova_military2"
+ - t"Items.Craftable_Rare_Nova_neon1"
+ - t"Items.Craftable_Rare_Nova_neon2"
+ - t"Items.Craftable_Rare_Nova_pimp1"
+ - t"Items.Craftable_Rare_Nova_pimp2"
+ - t"Items.Craftable_Rare_Nova_doomdoom"
+ - t"Items.Craftable_Rare_Nova_russian_hitman"
 
 # --- Items.Craftable_Epic_Nova
 Items.Craftable_Epic_Nova_default:
@@ -13142,78 +13142,78 @@ Items.Craftable_Common_Nue.ecraftVariants:
  - t"Items.Craftable_Common_Nue_tamayura_2077"
  - t"Items.Craftable_Common_Nue_neon1"
 
-# --- Items.Proficiency_Craftable_Uncommon_Nue
-Items.Proficiency_Craftable_Uncommon_Nue_default:
-  $base: Items.Proficiency_Craftable_Uncommon_Nue
+# --- Items.Craftable_Uncommon_Nue
+Items.Craftable_Uncommon_Nue_default:
+  $base: Items.Craftable_Uncommon_Nue
   appearanceName: default
   iconPath: weapon_Preset_Nue_Default_None__Default
   visualTags: [ Default ]
 
-Items.Proficiency_Craftable_Uncommon_Nue_military1:
-  $base: Items.Proficiency_Craftable_Uncommon_Nue
+Items.Craftable_Uncommon_Nue_military1:
+  $base: Items.Craftable_Uncommon_Nue
   appearanceName: military1
   iconPath: weapon_Preset_Nue_Default_None__Military
   visualTags: [ Military ]
 
-Items.Proficiency_Craftable_Uncommon_Nue_military2:
-  $base: Items.Proficiency_Craftable_Uncommon_Nue
+Items.Craftable_Uncommon_Nue_military2:
+  $base: Items.Craftable_Uncommon_Nue
   appearanceName: military2
   iconPath: weapon_Preset_Nue_Default_None__Military
   visualTags: [ Military ]
 
-Items.Proficiency_Craftable_Uncommon_Nue_neon2:
-  $base: Items.Proficiency_Craftable_Uncommon_Nue
+Items.Craftable_Uncommon_Nue_neon2:
+  $base: Items.Craftable_Uncommon_Nue
   appearanceName: neon2
   iconPath: weapon_Preset_Nue_Default_None__Neon
   visualTags: [ Neon ]
 
-Items.Proficiency_Craftable_Uncommon_Nue_pimp1:
-  $base: Items.Proficiency_Craftable_Uncommon_Nue
+Items.Craftable_Uncommon_Nue_pimp1:
+  $base: Items.Craftable_Uncommon_Nue
   appearanceName: pimp1
   iconPath: weapon_Preset_Nue_Default_None__Pimp
   visualTags: [ Pimp ]
 
-Items.Proficiency_Craftable_Uncommon_Nue_pimp2:
-  $base: Items.Proficiency_Craftable_Uncommon_Nue
+Items.Craftable_Uncommon_Nue_pimp2:
+  $base: Items.Craftable_Uncommon_Nue
   appearanceName: pimp2
   iconPath: weapon_Preset_Nue_Default_None__Pimp
   visualTags: [ Pimp ]
 
-Items.Proficiency_Craftable_Uncommon_Nue_fingers:
-  $base: Items.Proficiency_Craftable_Uncommon_Nue
+Items.Craftable_Uncommon_Nue_fingers:
+  $base: Items.Craftable_Uncommon_Nue
   appearanceName: fingers
   iconPath: weapon_Preset_Nue_Default_None__Fingers_Nue
   visualTags: [ Fingers_Nue ]
 
-Items.Proficiency_Craftable_Uncommon_Nue_tamayura_default:
-  $base: Items.Proficiency_Craftable_Uncommon_Nue
+Items.Craftable_Uncommon_Nue_tamayura_default:
+  $base: Items.Craftable_Uncommon_Nue
   appearanceName: tamayura_default
   iconPath: weapon_Preset_Nue_Default_None__Arasaka_2020
   visualTags: [ Arasaka_2020 ]
 
-Items.Proficiency_Craftable_Uncommon_Nue_tamayura_2077:
-  $base: Items.Proficiency_Craftable_Uncommon_Nue
+Items.Craftable_Uncommon_Nue_tamayura_2077:
+  $base: Items.Craftable_Uncommon_Nue
   appearanceName: tamayura_2077
   iconPath: weapon_Preset_Nue_Default_None__Arasaka_2077
   visualTags: [ Arasaka_2077 ]
 
-Items.Proficiency_Craftable_Uncommon_Nue_neon1:
-  $base: Items.Proficiency_Craftable_Uncommon_Nue
+Items.Craftable_Uncommon_Nue_neon1:
+  $base: Items.Craftable_Uncommon_Nue
   appearanceName: neon1
   iconPath: weapon_Preset_Nue_Default_None__Bree_Nue
   visualTags: [ Bree_Nue ]
 
-Items.Proficiency_Craftable_Uncommon_Nue.ecraftVariants:
- - t"Items.Proficiency_Craftable_Uncommon_Nue_default"
- - t"Items.Proficiency_Craftable_Uncommon_Nue_military1"
- - t"Items.Proficiency_Craftable_Uncommon_Nue_military2"
- - t"Items.Proficiency_Craftable_Uncommon_Nue_neon2"
- - t"Items.Proficiency_Craftable_Uncommon_Nue_pimp1"
- - t"Items.Proficiency_Craftable_Uncommon_Nue_pimp2"
- - t"Items.Proficiency_Craftable_Uncommon_Nue_fingers"
- - t"Items.Proficiency_Craftable_Uncommon_Nue_tamayura_default"
- - t"Items.Proficiency_Craftable_Uncommon_Nue_tamayura_2077"
- - t"Items.Proficiency_Craftable_Uncommon_Nue_neon1"
+Items.Craftable_Uncommon_Nue.ecraftVariants:
+ - t"Items.Craftable_Uncommon_Nue_default"
+ - t"Items.Craftable_Uncommon_Nue_military1"
+ - t"Items.Craftable_Uncommon_Nue_military2"
+ - t"Items.Craftable_Uncommon_Nue_neon2"
+ - t"Items.Craftable_Uncommon_Nue_pimp1"
+ - t"Items.Craftable_Uncommon_Nue_pimp2"
+ - t"Items.Craftable_Uncommon_Nue_fingers"
+ - t"Items.Craftable_Uncommon_Nue_tamayura_default"
+ - t"Items.Craftable_Uncommon_Nue_tamayura_2077"
+ - t"Items.Craftable_Uncommon_Nue_neon1"
 
 # --- Items.Craftable_Rare_Nue
 Items.Craftable_Rare_Nue_default:
@@ -14541,9 +14541,9 @@ Items.Craftable_Common_Pozhar_pimp2:
   iconPath: weapon_Preset_Pozhar_Default_None__Pimp
   visualTags: [ Pimp ]
 
-Items.Craftable_Common_Pozhar_egendary:
+Items.Craftable_Common_Pozhar_legendary:
   $base: Items.Craftable_Common_Pozhar
-  appearanceName: egendary
+  appearanceName: legendary
   iconPath: weapon_Preset_Pozhar_Default_None__Legendary
   visualTags: [ Legendary ]
 
@@ -14567,7 +14567,7 @@ Items.Craftable_Common_Pozhar.ecraftVariants:
  - t"Items.Craftable_Common_Pozhar_neon2"
  - t"Items.Craftable_Common_Pozhar_pimp1"
  - t"Items.Craftable_Common_Pozhar_pimp2"
- - t"Items.Craftable_Common_Pozhar_egendary"
+ - t"Items.Craftable_Common_Pozhar_legendary"
  - t"Items.Craftable_Common_Pozhar_legendary_painted"
  - t"Items.Craftable_Common_Pozhar_soviet"
 
@@ -14614,9 +14614,9 @@ Items.Craftable_Uncommon_Pozhar_pimp2:
   iconPath: weapon_Preset_Pozhar_Default_None__Pimp
   visualTags: [ Pimp ]
 
-Items.Craftable_Uncommon_Pozhar_egendary:
+Items.Craftable_Uncommon_Pozhar_legendary:
   $base: Items.Craftable_Uncommon_Pozhar
-  appearanceName: egendary
+  appearanceName: legendary
   iconPath: weapon_Preset_Pozhar_Default_None__Legendary
   visualTags: [ Legendary ]
 
@@ -14640,7 +14640,7 @@ Items.Craftable_Uncommon_Pozhar.ecraftVariants:
  - t"Items.Craftable_Uncommon_Pozhar_neon2"
  - t"Items.Craftable_Uncommon_Pozhar_pimp1"
  - t"Items.Craftable_Uncommon_Pozhar_pimp2"
- - t"Items.Craftable_Uncommon_Pozhar_egendary"
+ - t"Items.Craftable_Uncommon_Pozhar_legendary"
  - t"Items.Craftable_Uncommon_Pozhar_legendary_painted"
  - t"Items.Craftable_Uncommon_Pozhar_soviet"
 
@@ -14687,9 +14687,9 @@ Items.Craftable_Rare_Pozhar_pimp2:
   iconPath: weapon_Preset_Pozhar_Default_None__Pimp
   visualTags: [ Pimp ]
 
-Items.Craftable_Rare_Pozhar_egendary:
+Items.Craftable_Rare_Pozhar_legendary:
   $base: Items.Craftable_Rare_Pozhar
-  appearanceName: egendary
+  appearanceName: legendary
   iconPath: weapon_Preset_Pozhar_Default_None__Legendary
   visualTags: [ Legendary ]
 
@@ -14713,7 +14713,7 @@ Items.Craftable_Rare_Pozhar.ecraftVariants:
  - t"Items.Craftable_Rare_Pozhar_neon2"
  - t"Items.Craftable_Rare_Pozhar_pimp1"
  - t"Items.Craftable_Rare_Pozhar_pimp2"
- - t"Items.Craftable_Rare_Pozhar_egendary"
+ - t"Items.Craftable_Rare_Pozhar_legendary"
  - t"Items.Craftable_Rare_Pozhar_legendary_painted"
  - t"Items.Craftable_Rare_Pozhar_soviet"
 
@@ -14760,9 +14760,9 @@ Items.Craftable_Epic_Pozhar_pimp2:
   iconPath: weapon_Preset_Pozhar_Default_None__Pimp
   visualTags: [ Pimp ]
 
-Items.Craftable_Epic_Pozhar_egendary:
+Items.Craftable_Epic_Pozhar_legendary:
   $base: Items.Craftable_Epic_Pozhar
-  appearanceName: egendary
+  appearanceName: legendary
   iconPath: weapon_Preset_Pozhar_Default_None__Legendary
   visualTags: [ Legendary ]
 
@@ -14786,7 +14786,7 @@ Items.Craftable_Epic_Pozhar.ecraftVariants:
  - t"Items.Craftable_Epic_Pozhar_neon2"
  - t"Items.Craftable_Epic_Pozhar_pimp1"
  - t"Items.Craftable_Epic_Pozhar_pimp2"
- - t"Items.Craftable_Epic_Pozhar_egendary"
+ - t"Items.Craftable_Epic_Pozhar_legendary"
  - t"Items.Craftable_Epic_Pozhar_legendary_painted"
  - t"Items.Craftable_Epic_Pozhar_soviet"
 
@@ -14833,9 +14833,9 @@ Items.Craftable_Legendary_Pozhar_pimp2:
   iconPath: weapon_Preset_Pozhar_Default_None__Pimp
   visualTags: [ Pimp ]
 
-Items.Craftable_Legendary_Pozhar_egendary:
+Items.Craftable_Legendary_Pozhar_legendary:
   $base: Items.Craftable_Legendary_Pozhar
-  appearanceName: egendary
+  appearanceName: legendary
   iconPath: weapon_Preset_Pozhar_Default_None__Legendary
   visualTags: [ Legendary ]
 
@@ -14859,7 +14859,7 @@ Items.Craftable_Legendary_Pozhar.ecraftVariants:
  - t"Items.Craftable_Legendary_Pozhar_neon2"
  - t"Items.Craftable_Legendary_Pozhar_pimp1"
  - t"Items.Craftable_Legendary_Pozhar_pimp2"
- - t"Items.Craftable_Legendary_Pozhar_egendary"
+ - t"Items.Craftable_Legendary_Pozhar_legendary"
  - t"Items.Craftable_Legendary_Pozhar_legendary_painted"
  - t"Items.Craftable_Legendary_Pozhar_soviet"
 
@@ -14982,64 +14982,64 @@ Items.Craftable_Uncommon_Pulsar.ecraftVariants:
  - t"Items.Craftable_Uncommon_Pulsar_pimp2"
  - t"Items.Craftable_Uncommon_Pulsar_buzzsaw"
 
-# --- Items.Proficiency_Craftable_Rare_Pulsar
-Items.Proficiency_Craftable_Rare_Pulsar_default:
-  $base: Items.Proficiency_Craftable_Rare_Pulsar
+# --- Items.Craftable_Rare_Pulsar
+Items.Craftable_Rare_Pulsar_default:
+  $base: Items.Craftable_Rare_Pulsar
   appearanceName: default
   iconPath: weapon_Preset_Pulsar_Default_None__Default
   visualTags: [ Default ]
 
-Items.Proficiency_Craftable_Rare_Pulsar_military1:
-  $base: Items.Proficiency_Craftable_Rare_Pulsar
+Items.Craftable_Rare_Pulsar_military1:
+  $base: Items.Craftable_Rare_Pulsar
   appearanceName: military1
   iconPath: weapon_Preset_Pulsar_Default_None__Military
   visualTags: [ Military ]
 
-Items.Proficiency_Craftable_Rare_Pulsar_military2:
-  $base: Items.Proficiency_Craftable_Rare_Pulsar
+Items.Craftable_Rare_Pulsar_military2:
+  $base: Items.Craftable_Rare_Pulsar
   appearanceName: military2
   iconPath: weapon_Preset_Pulsar_Default_None__Military
   visualTags: [ Military ]
 
-Items.Proficiency_Craftable_Rare_Pulsar_neon1:
-  $base: Items.Proficiency_Craftable_Rare_Pulsar
+Items.Craftable_Rare_Pulsar_neon1:
+  $base: Items.Craftable_Rare_Pulsar
   appearanceName: neon1
   iconPath: weapon_Preset_Pulsar_Default_None__Neon
   visualTags: [ Neon ]
 
-Items.Proficiency_Craftable_Rare_Pulsar_neon2:
-  $base: Items.Proficiency_Craftable_Rare_Pulsar
+Items.Craftable_Rare_Pulsar_neon2:
+  $base: Items.Craftable_Rare_Pulsar
   appearanceName: neon2
   iconPath: weapon_Preset_Pulsar_Default_None__Neon
   visualTags: [ Neon ]
 
-Items.Proficiency_Craftable_Rare_Pulsar_pimp1:
-  $base: Items.Proficiency_Craftable_Rare_Pulsar
+Items.Craftable_Rare_Pulsar_pimp1:
+  $base: Items.Craftable_Rare_Pulsar
   appearanceName: pimp1
   iconPath: weapon_Preset_Pulsar_Default_None__Pimp
   visualTags: [ Pimp ]
 
-Items.Proficiency_Craftable_Rare_Pulsar_pimp2:
-  $base: Items.Proficiency_Craftable_Rare_Pulsar
+Items.Craftable_Rare_Pulsar_pimp2:
+  $base: Items.Craftable_Rare_Pulsar
   appearanceName: pimp2
   iconPath: weapon_Preset_Pulsar_Default_None__Pimp
   visualTags: [ Pimp ]
 
-Items.Proficiency_Craftable_Rare_Pulsar_buzzsaw:
-  $base: Items.Proficiency_Craftable_Rare_Pulsar
+Items.Craftable_Rare_Pulsar_buzzsaw:
+  $base: Items.Craftable_Rare_Pulsar
   appearanceName: buzzsaw
   iconPath: weapon_Preset_Pulsar_Default_None__Buzzsaw_Pulsar
   visualTags: [ Buzzsaw_Pulsar ]
 
-Items.Proficiency_Craftable_Rare_Pulsar.ecraftVariants:
- - t"Items.Proficiency_Craftable_Rare_Pulsar_default"
- - t"Items.Proficiency_Craftable_Rare_Pulsar_military1"
- - t"Items.Proficiency_Craftable_Rare_Pulsar_military2"
- - t"Items.Proficiency_Craftable_Rare_Pulsar_neon1"
- - t"Items.Proficiency_Craftable_Rare_Pulsar_neon2"
- - t"Items.Proficiency_Craftable_Rare_Pulsar_pimp1"
- - t"Items.Proficiency_Craftable_Rare_Pulsar_pimp2"
- - t"Items.Proficiency_Craftable_Rare_Pulsar_buzzsaw"
+Items.Craftable_Rare_Pulsar.ecraftVariants:
+ - t"Items.Craftable_Rare_Pulsar_default"
+ - t"Items.Craftable_Rare_Pulsar_military1"
+ - t"Items.Craftable_Rare_Pulsar_military2"
+ - t"Items.Craftable_Rare_Pulsar_neon1"
+ - t"Items.Craftable_Rare_Pulsar_neon2"
+ - t"Items.Craftable_Rare_Pulsar_pimp1"
+ - t"Items.Craftable_Rare_Pulsar_pimp2"
+ - t"Items.Craftable_Rare_Pulsar_buzzsaw"
 
 # --- Items.Craftable_Epic_Pulsar
 Items.Craftable_Epic_Pulsar_default:
@@ -15657,64 +15657,64 @@ Items.Craftable_Epic_Quasar.ecraftVariants:
  - t"Items.Craftable_Epic_Quasar_pimp2"
  - t"Items.Craftable_Epic_Quasar_gris_gris"
 
-# --- Items.Proficiency_Craftable_Legendary_Quasar
-Items.Proficiency_Craftable_Legendary_Quasar_default:
-  $base: Items.Proficiency_Craftable_Legendary_Quasar
+# --- Items.Craftable_Legendary_Quasar
+Items.Craftable_Legendary_Quasar_default:
+  $base: Items.Craftable_Legendary_Quasar
   appearanceName: default
   iconPath: weapon_Preset_Quasar_Default_None__Default
   visualTags: [ Default ]
 
-Items.Proficiency_Craftable_Legendary_Quasar_military1:
-  $base: Items.Proficiency_Craftable_Legendary_Quasar
+Items.Craftable_Legendary_Quasar_military1:
+  $base: Items.Craftable_Legendary_Quasar
   appearanceName: military1
   iconPath: weapon_Preset_Quasar_Default_None__Military
   visualTags: [ Military ]
 
-Items.Proficiency_Craftable_Legendary_Quasar_military2:
-  $base: Items.Proficiency_Craftable_Legendary_Quasar
+Items.Craftable_Legendary_Quasar_military2:
+  $base: Items.Craftable_Legendary_Quasar
   appearanceName: military2
   iconPath: weapon_Preset_Quasar_Default_None__Military
   visualTags: [ Military ]
 
-Items.Proficiency_Craftable_Legendary_Quasar_neon1:
-  $base: Items.Proficiency_Craftable_Legendary_Quasar
+Items.Craftable_Legendary_Quasar_neon1:
+  $base: Items.Craftable_Legendary_Quasar
   appearanceName: neon1
   iconPath: weapon_Preset_Quasar_Default_None__Neon
   visualTags: [ Neon ]
 
-Items.Proficiency_Craftable_Legendary_Quasar_neon2:
-  $base: Items.Proficiency_Craftable_Legendary_Quasar
+Items.Craftable_Legendary_Quasar_neon2:
+  $base: Items.Craftable_Legendary_Quasar
   appearanceName: neon2
   iconPath: weapon_Preset_Quasar_Default_None__Neon
   visualTags: [ Neon ]
 
-Items.Proficiency_Craftable_Legendary_Quasar_pimp1:
-  $base: Items.Proficiency_Craftable_Legendary_Quasar
+Items.Craftable_Legendary_Quasar_pimp1:
+  $base: Items.Craftable_Legendary_Quasar
   appearanceName: pimp1
   iconPath: weapon_Preset_Quasar_Default_None__Pimp
   visualTags: [ Pimp ]
 
-Items.Proficiency_Craftable_Legendary_Quasar_pimp2:
-  $base: Items.Proficiency_Craftable_Legendary_Quasar
+Items.Craftable_Legendary_Quasar_pimp2:
+  $base: Items.Craftable_Legendary_Quasar
   appearanceName: pimp2
   iconPath: weapon_Preset_Quasar_Default_None__Pimp
   visualTags: [ Pimp ]
 
-Items.Proficiency_Craftable_Legendary_Quasar_gris_gris:
-  $base: Items.Proficiency_Craftable_Legendary_Quasar
+Items.Craftable_Legendary_Quasar_gris_gris:
+  $base: Items.Craftable_Legendary_Quasar
   appearanceName: gris_gris
   iconPath: weapon_Preset_Quasar_Default_None__Baron_Quasar
   visualTags: [ Baron_Quasar ]
 
-Items.Proficiency_Craftable_Legendary_Quasar.ecraftVariants:
- - t"Items.Proficiency_Craftable_Legendary_Quasar_default"
- - t"Items.Proficiency_Craftable_Legendary_Quasar_military1"
- - t"Items.Proficiency_Craftable_Legendary_Quasar_military2"
- - t"Items.Proficiency_Craftable_Legendary_Quasar_neon1"
- - t"Items.Proficiency_Craftable_Legendary_Quasar_neon2"
- - t"Items.Proficiency_Craftable_Legendary_Quasar_pimp1"
- - t"Items.Proficiency_Craftable_Legendary_Quasar_pimp2"
- - t"Items.Proficiency_Craftable_Legendary_Quasar_gris_gris"
+Items.Craftable_Legendary_Quasar.ecraftVariants:
+ - t"Items.Craftable_Legendary_Quasar_default"
+ - t"Items.Craftable_Legendary_Quasar_military1"
+ - t"Items.Craftable_Legendary_Quasar_military2"
+ - t"Items.Craftable_Legendary_Quasar_neon1"
+ - t"Items.Craftable_Legendary_Quasar_neon2"
+ - t"Items.Craftable_Legendary_Quasar_pimp1"
+ - t"Items.Craftable_Legendary_Quasar_pimp2"
+ - t"Items.Craftable_Legendary_Quasar_gris_gris"
 
 # Saratoga
 # --- Items.Craftable_Common_Saratoga
@@ -16247,64 +16247,64 @@ Items.Craftable_Common_Satara.ecraftVariants:
  - t"Items.Craftable_Common_Satara_pimp2"
  - t"Items.Craftable_Common_Satara_brick"
 
-# --- Items.Proficiency_Craftable_Uncommon_Satara
-Items.Proficiency_Craftable_Uncommon_Satara_default:
-  $base: Items.Proficiency_Craftable_Uncommon_Satara
+# --- Items.Craftable_Uncommon_Satara
+Items.Craftable_Uncommon_Satara_default:
+  $base: Items.Craftable_Uncommon_Satara
   appearanceName: default
   iconPath: weapon_Preset_Satara_Default_None__Default
   visualTags: [ Default ]
 
-Items.Proficiency_Craftable_Uncommon_Satara_military1:
-  $base: Items.Proficiency_Craftable_Uncommon_Satara
+Items.Craftable_Uncommon_Satara_military1:
+  $base: Items.Craftable_Uncommon_Satara
   appearanceName: military1
   iconPath: weapon_Preset_Satara_Default_None__Military
   visualTags: [ Military ]
 
-Items.Proficiency_Craftable_Uncommon_Satara_military2:
-  $base: Items.Proficiency_Craftable_Uncommon_Satara
+Items.Craftable_Uncommon_Satara_military2:
+  $base: Items.Craftable_Uncommon_Satara
   appearanceName: military2
   iconPath: weapon_Preset_Satara_Default_None__Military
   visualTags: [ Military ]
 
-Items.Proficiency_Craftable_Uncommon_Satara_neon1:
-  $base: Items.Proficiency_Craftable_Uncommon_Satara
+Items.Craftable_Uncommon_Satara_neon1:
+  $base: Items.Craftable_Uncommon_Satara
   appearanceName: neon1
   iconPath: weapon_Preset_Satara_Default_None__Neon
   visualTags: [ Neon ]
 
-Items.Proficiency_Craftable_Uncommon_Satara_neon2:
-  $base: Items.Proficiency_Craftable_Uncommon_Satara
+Items.Craftable_Uncommon_Satara_neon2:
+  $base: Items.Craftable_Uncommon_Satara
   appearanceName: neon2
   iconPath: weapon_Preset_Satara_Default_None__Neon
   visualTags: [ Neon ]
 
-Items.Proficiency_Craftable_Uncommon_Satara_pimp1:
-  $base: Items.Proficiency_Craftable_Uncommon_Satara
+Items.Craftable_Uncommon_Satara_pimp1:
+  $base: Items.Craftable_Uncommon_Satara
   appearanceName: pimp1
   iconPath: weapon_Preset_Satara_Default_None__Pimp
   visualTags: [ Pimp ]
 
-Items.Proficiency_Craftable_Uncommon_Satara_pimp2:
-  $base: Items.Proficiency_Craftable_Uncommon_Satara
+Items.Craftable_Uncommon_Satara_pimp2:
+  $base: Items.Craftable_Uncommon_Satara
   appearanceName: pimp2
   iconPath: weapon_Preset_Satara_Default_None__Pimp
   visualTags: [ Pimp ]
 
-Items.Proficiency_Craftable_Uncommon_Satara_brick:
-  $base: Items.Proficiency_Craftable_Uncommon_Satara
+Items.Craftable_Uncommon_Satara_brick:
+  $base: Items.Craftable_Uncommon_Satara
   appearanceName: brick
   iconPath: weapon_Preset_Satara_Default_None__Brick_Satara
   visualTags: [ Brick_Satara ]
 
-Items.Proficiency_Craftable_Uncommon_Satara.ecraftVariants:
- - t"Items.Proficiency_Craftable_Uncommon_Satara_default"
- - t"Items.Proficiency_Craftable_Uncommon_Satara_military1"
- - t"Items.Proficiency_Craftable_Uncommon_Satara_military2"
- - t"Items.Proficiency_Craftable_Uncommon_Satara_neon1"
- - t"Items.Proficiency_Craftable_Uncommon_Satara_neon2"
- - t"Items.Proficiency_Craftable_Uncommon_Satara_pimp1"
- - t"Items.Proficiency_Craftable_Uncommon_Satara_pimp2"
- - t"Items.Proficiency_Craftable_Uncommon_Satara_brick"
+Items.Craftable_Uncommon_Satara.ecraftVariants:
+ - t"Items.Craftable_Uncommon_Satara_default"
+ - t"Items.Craftable_Uncommon_Satara_military1"
+ - t"Items.Craftable_Uncommon_Satara_military2"
+ - t"Items.Craftable_Uncommon_Satara_neon1"
+ - t"Items.Craftable_Uncommon_Satara_neon2"
+ - t"Items.Craftable_Uncommon_Satara_pimp1"
+ - t"Items.Craftable_Uncommon_Satara_pimp2"
+ - t"Items.Craftable_Uncommon_Satara_brick"
 
 # --- Items.Craftable_Rare_Satara
 Items.Craftable_Rare_Satara_default:
@@ -17535,71 +17535,71 @@ Items.Craftable_Rare_Sor22.ecraftVariants:
  - t"Items.Craftable_Rare_Sor22_nusa1"
  - t"Items.Craftable_Rare_Sor22_nusa2"
 
-# --- Items.Proficiency_Craftable_Epic_Sor22
-Items.Proficiency_Craftable_Epic_Sor22_default:
-  $base: Items.Proficiency_Craftable_Epic_Sor22
+# --- Items.Craftable_Epic_Sor22
+Items.Craftable_Epic_Sor22_default:
+  $base: Items.Craftable_Epic_Sor22
   appearanceName: default
   iconPath: weapon_Preset_Sor22_Default_None__Default
   visualTags: [ Default ]
 
-Items.Proficiency_Craftable_Epic_Sor22_military1:
-  $base: Items.Proficiency_Craftable_Epic_Sor22
+Items.Craftable_Epic_Sor22_military1:
+  $base: Items.Craftable_Epic_Sor22
   appearanceName: military1
   iconPath: weapon_Preset_Sor22_Default_None__Military
   visualTags: [ Military ]
 
-Items.Proficiency_Craftable_Epic_Sor22_military2:
-  $base: Items.Proficiency_Craftable_Epic_Sor22
+Items.Craftable_Epic_Sor22_military2:
+  $base: Items.Craftable_Epic_Sor22
   appearanceName: military2
   iconPath: weapon_Preset_Sor22_Default_None__Military
   visualTags: [ Military ]
 
-Items.Proficiency_Craftable_Epic_Sor22_neon1:
-  $base: Items.Proficiency_Craftable_Epic_Sor22
+Items.Craftable_Epic_Sor22_neon1:
+  $base: Items.Craftable_Epic_Sor22
   appearanceName: neon1
   iconPath: weapon_Preset_Sor22_Default_None__Neon
   visualTags: [ Neon ]
 
-Items.Proficiency_Craftable_Epic_Sor22_neon2:
-  $base: Items.Proficiency_Craftable_Epic_Sor22
+Items.Craftable_Epic_Sor22_neon2:
+  $base: Items.Craftable_Epic_Sor22
   appearanceName: neon2
   iconPath: weapon_Preset_Sor22_Default_None__Neon
   visualTags: [ Neon ]
 
-Items.Proficiency_Craftable_Epic_Sor22_pimp1:
-  $base: Items.Proficiency_Craftable_Epic_Sor22
+Items.Craftable_Epic_Sor22_pimp1:
+  $base: Items.Craftable_Epic_Sor22
   appearanceName: pimp1
   iconPath: weapon_Preset_Sor22_Default_None__Pimp
   visualTags: [ Pimp ]
 
-Items.Proficiency_Craftable_Epic_Sor22_pimp2:
-  $base: Items.Proficiency_Craftable_Epic_Sor22
+Items.Craftable_Epic_Sor22_pimp2:
+  $base: Items.Craftable_Epic_Sor22
   appearanceName: pimp2
   iconPath: weapon_Preset_Sor22_Default_None__Pimp
   visualTags: [ Pimp ]
 
-Items.Proficiency_Craftable_Epic_Sor22_nusa1:
-  $base: Items.Proficiency_Craftable_Epic_Sor22
+Items.Craftable_Epic_Sor22_nusa1:
+  $base: Items.Craftable_Epic_Sor22
   appearanceName: nusa1
   iconPath: weapon_Preset_Sor22_Default_None__Nusa_White
   visualTags: [ Nusa_White ]
 
-Items.Proficiency_Craftable_Epic_Sor22_nusa2:
-  $base: Items.Proficiency_Craftable_Epic_Sor22
+Items.Craftable_Epic_Sor22_nusa2:
+  $base: Items.Craftable_Epic_Sor22
   appearanceName: nusa2
   iconPath: weapon_Preset_Sor22_Default_None__Nusa_Black
   visualTags: [ Nusa_Black ]
 
-Items.Proficiency_Craftable_Epic_Sor22.ecraftVariants:
- - t"Items.Proficiency_Craftable_Epic_Sor22_default"
- - t"Items.Proficiency_Craftable_Epic_Sor22_military1"
- - t"Items.Proficiency_Craftable_Epic_Sor22_military2"
- - t"Items.Proficiency_Craftable_Epic_Sor22_neon1"
- - t"Items.Proficiency_Craftable_Epic_Sor22_neon2"
- - t"Items.Proficiency_Craftable_Epic_Sor22_pimp1"
- - t"Items.Proficiency_Craftable_Epic_Sor22_pimp2"
- - t"Items.Proficiency_Craftable_Epic_Sor22_nusa1"
- - t"Items.Proficiency_Craftable_Epic_Sor22_nusa2"
+Items.Craftable_Epic_Sor22.ecraftVariants:
+ - t"Items.Craftable_Epic_Sor22_default"
+ - t"Items.Craftable_Epic_Sor22_military1"
+ - t"Items.Craftable_Epic_Sor22_military2"
+ - t"Items.Craftable_Epic_Sor22_neon1"
+ - t"Items.Craftable_Epic_Sor22_neon2"
+ - t"Items.Craftable_Epic_Sor22_pimp1"
+ - t"Items.Craftable_Epic_Sor22_pimp2"
+ - t"Items.Craftable_Epic_Sor22_nusa1"
+ - t"Items.Craftable_Epic_Sor22_nusa2"
 
 # --- Items.Craftable_Legendary_Sor22
 Items.Craftable_Legendary_Sor22_default:
@@ -17908,85 +17908,85 @@ Items.Craftable_Rare_Tactician.ecraftVariants:
  - t"Items.Craftable_Rare_Tactician_dinovic"
  - t"Items.Craftable_Rare_Tactician_headsman"
 
-# --- Items.Proficiency_Craftable_Epic_Tactician
-Items.Proficiency_Craftable_Epic_Tactician_default:
-  $base: Items.Proficiency_Craftable_Epic_Tactician
+# --- Items.Craftable_Epic_Tactician
+Items.Craftable_Epic_Tactician_default:
+  $base: Items.Craftable_Epic_Tactician
   appearanceName: default
   iconPath: weapon_Preset_Tactician_Default_None_Default
   visualTags: [ Default ]
 
-Items.Proficiency_Craftable_Epic_Tactician_2_default:
-  $base: Items.Proficiency_Craftable_Epic_Tactician
+Items.Craftable_Epic_Tactician_2_default:
+  $base: Items.Craftable_Epic_Tactician
   appearanceName: 2_default
   iconPath: weapon_Preset_Tactician_Default_None_Default
   visualTags: [ Default ]
 
-Items.Proficiency_Craftable_Epic_Tactician_military1:
-  $base: Items.Proficiency_Craftable_Epic_Tactician
+Items.Craftable_Epic_Tactician_military1:
+  $base: Items.Craftable_Epic_Tactician
   appearanceName: military1
   iconPath: weapon_Preset_Tactician_Default_None_Military
   visualTags: [ Military ]
 
-Items.Proficiency_Craftable_Epic_Tactician_military2:
-  $base: Items.Proficiency_Craftable_Epic_Tactician
+Items.Craftable_Epic_Tactician_military2:
+  $base: Items.Craftable_Epic_Tactician
   appearanceName: military2
   iconPath: weapon_Preset_Tactician_Default_None_Military
   visualTags: [ Military ]
 
-Items.Proficiency_Craftable_Epic_Tactician_neon1:
-  $base: Items.Proficiency_Craftable_Epic_Tactician
+Items.Craftable_Epic_Tactician_neon1:
+  $base: Items.Craftable_Epic_Tactician
   appearanceName: neon1
   iconPath: weapon_Preset_Tactician_Default_None_Neon
   visualTags: [ Neon ]
 
-Items.Proficiency_Craftable_Epic_Tactician_neon2:
-  $base: Items.Proficiency_Craftable_Epic_Tactician
+Items.Craftable_Epic_Tactician_neon2:
+  $base: Items.Craftable_Epic_Tactician
   appearanceName: neon2
   iconPath: weapon_Preset_Tactician_Default_None_Neon
   visualTags: [ Neon ]
 
-Items.Proficiency_Craftable_Epic_Tactician_pimp1:
-  $base: Items.Proficiency_Craftable_Epic_Tactician
+Items.Craftable_Epic_Tactician_pimp1:
+  $base: Items.Craftable_Epic_Tactician
   appearanceName: pimp1
   iconPath: weapon_Preset_Tactician_Default_None_Pimp
   visualTags: [ Pimp ]
 
-Items.Proficiency_Craftable_Epic_Tactician_pimp2:
-  $base: Items.Proficiency_Craftable_Epic_Tactician
+Items.Craftable_Epic_Tactician_pimp2:
+  $base: Items.Craftable_Epic_Tactician
   appearanceName: pimp2
   iconPath: weapon_Preset_Tactician_Default_None_Pimp
   visualTags: [ Pimp ]
 
-Items.Proficiency_Craftable_Epic_Tactician_krausser:
-  $base: Items.Proficiency_Craftable_Epic_Tactician
+Items.Craftable_Epic_Tactician_krausser:
+  $base: Items.Craftable_Epic_Tactician
   appearanceName: krausser
   iconPath: weapon_Preset_Tactician_Default_None_Krausser
   visualTags: [ Krausser ]
 
-Items.Proficiency_Craftable_Epic_Tactician_dinovic:
-  $base: Items.Proficiency_Craftable_Epic_Tactician
+Items.Craftable_Epic_Tactician_dinovic:
+  $base: Items.Craftable_Epic_Tactician
   appearanceName: dinovic
   iconPath: weapon_Preset_Tactician_Default_None_Dino_Shotgun
   visualTags: [ Dino_Shotgun ]
 
-Items.Proficiency_Craftable_Epic_Tactician_headsman:
-  $base: Items.Proficiency_Craftable_Epic_Tactician
+Items.Craftable_Epic_Tactician_headsman:
+  $base: Items.Craftable_Epic_Tactician
   appearanceName: headsman
   iconPath: weapon_Preset_Tactician_Default_None_Headsman_Tactician
   visualTags: [ Headsman_Tactician ]
 
-Items.Proficiency_Craftable_Epic_Tactician.ecraftVariants:
- - t"Items.Proficiency_Craftable_Epic_Tactician_default"
- - t"Items.Proficiency_Craftable_Epic_Tactician_2_default"
- - t"Items.Proficiency_Craftable_Epic_Tactician_military1"
- - t"Items.Proficiency_Craftable_Epic_Tactician_military2"
- - t"Items.Proficiency_Craftable_Epic_Tactician_neon1"
- - t"Items.Proficiency_Craftable_Epic_Tactician_neon2"
- - t"Items.Proficiency_Craftable_Epic_Tactician_pimp1"
- - t"Items.Proficiency_Craftable_Epic_Tactician_pimp2"
- - t"Items.Proficiency_Craftable_Epic_Tactician_krausser"
- - t"Items.Proficiency_Craftable_Epic_Tactician_dinovic"
- - t"Items.Proficiency_Craftable_Epic_Tactician_headsman"
+Items.Craftable_Epic_Tactician.ecraftVariants:
+ - t"Items.Craftable_Epic_Tactician_default"
+ - t"Items.Craftable_Epic_Tactician_2_default"
+ - t"Items.Craftable_Epic_Tactician_military1"
+ - t"Items.Craftable_Epic_Tactician_military2"
+ - t"Items.Craftable_Epic_Tactician_neon1"
+ - t"Items.Craftable_Epic_Tactician_neon2"
+ - t"Items.Craftable_Epic_Tactician_pimp1"
+ - t"Items.Craftable_Epic_Tactician_pimp2"
+ - t"Items.Craftable_Epic_Tactician_krausser"
+ - t"Items.Craftable_Epic_Tactician_dinovic"
+ - t"Items.Craftable_Epic_Tactician_headsman"
 
 # --- Items.Craftable_Legendary_Tactician
 Items.Craftable_Legendary_Tactician_default:
@@ -19922,71 +19922,71 @@ Items.Craftable_Rare_Yukimura.ecraftVariants:
  - t"Items.Craftable_Rare_Yukimura_skippy"
  - t"Items.Craftable_Rare_Yukimura_kiji"
 
-# --- Items.Proficiency_Craftable_Epic_Yukimura
-Items.Proficiency_Craftable_Epic_Yukimura_default:
-  $base: Items.Proficiency_Craftable_Epic_Yukimura
+# --- Items.Craftable_Epic_Yukimura
+Items.Craftable_Epic_Yukimura_default:
+  $base: Items.Craftable_Epic_Yukimura
   appearanceName: default
   iconPath: weapon_Preset_Yukimura_Default_None__Default
   visualTags: [ Default ]
 
-Items.Proficiency_Craftable_Epic_Yukimura_military1:
-  $base: Items.Proficiency_Craftable_Epic_Yukimura
+Items.Craftable_Epic_Yukimura_military1:
+  $base: Items.Craftable_Epic_Yukimura
   appearanceName: military1
   iconPath: weapon_Preset_Yukimura_Default_None__Military
   visualTags: [ Military ]
 
-Items.Proficiency_Craftable_Epic_Yukimura_military2:
-  $base: Items.Proficiency_Craftable_Epic_Yukimura
+Items.Craftable_Epic_Yukimura_military2:
+  $base: Items.Craftable_Epic_Yukimura
   appearanceName: military2
   iconPath: weapon_Preset_Yukimura_Default_None__Military
   visualTags: [ Military ]
 
-Items.Proficiency_Craftable_Epic_Yukimura_neon1:
-  $base: Items.Proficiency_Craftable_Epic_Yukimura
+Items.Craftable_Epic_Yukimura_neon1:
+  $base: Items.Craftable_Epic_Yukimura
   appearanceName: neon1
   iconPath: weapon_Preset_Yukimura_Default_None__Neon
   visualTags: [ Neon ]
 
-Items.Proficiency_Craftable_Epic_Yukimura_neon2:
-  $base: Items.Proficiency_Craftable_Epic_Yukimura
+Items.Craftable_Epic_Yukimura_neon2:
+  $base: Items.Craftable_Epic_Yukimura
   appearanceName: neon2
   iconPath: weapon_Preset_Yukimura_Default_None__Neon
   visualTags: [ Neon ]
 
-Items.Proficiency_Craftable_Epic_Yukimura_pimp1:
-  $base: Items.Proficiency_Craftable_Epic_Yukimura
+Items.Craftable_Epic_Yukimura_pimp1:
+  $base: Items.Craftable_Epic_Yukimura
   appearanceName: pimp1
   iconPath: weapon_Preset_Yukimura_Default_None__Pimp
   visualTags: [ Pimp ]
 
-Items.Proficiency_Craftable_Epic_Yukimura_pimp2:
-  $base: Items.Proficiency_Craftable_Epic_Yukimura
+Items.Craftable_Epic_Yukimura_pimp2:
+  $base: Items.Craftable_Epic_Yukimura
   appearanceName: pimp2
   iconPath: weapon_Preset_Yukimura_Default_None__Pimp
   visualTags: [ Pimp ]
 
-Items.Proficiency_Craftable_Epic_Yukimura_skippy:
-  $base: Items.Proficiency_Craftable_Epic_Yukimura
+Items.Craftable_Epic_Yukimura_skippy:
+  $base: Items.Craftable_Epic_Yukimura
   appearanceName: skippy
   iconPath: weapon_Preset_Yukimura_Default_None__Skippy_Yukimura
   visualTags: [ Skippy_Yukimura ]
 
-Items.Proficiency_Craftable_Epic_Yukimura_kiji:
-  $base: Items.Proficiency_Craftable_Epic_Yukimura
+Items.Craftable_Epic_Yukimura_kiji:
+  $base: Items.Craftable_Epic_Yukimura
   appearanceName: kiji
   iconPath: weapon_Preset_Yukimura_Default_None__Kiji_Yukimura
   visualTags: [ Kiji_Yukimura ]
 
-Items.Proficiency_Craftable_Epic_Yukimura.ecraftVariants:
- - t"Items.Proficiency_Craftable_Epic_Yukimura_default"
- - t"Items.Proficiency_Craftable_Epic_Yukimura_military1"
- - t"Items.Proficiency_Craftable_Epic_Yukimura_military2"
- - t"Items.Proficiency_Craftable_Epic_Yukimura_neon1"
- - t"Items.Proficiency_Craftable_Epic_Yukimura_neon2"
- - t"Items.Proficiency_Craftable_Epic_Yukimura_pimp1"
- - t"Items.Proficiency_Craftable_Epic_Yukimura_pimp2"
- - t"Items.Proficiency_Craftable_Epic_Yukimura_skippy"
- - t"Items.Proficiency_Craftable_Epic_Yukimura_kiji"
+Items.Craftable_Epic_Yukimura.ecraftVariants:
+ - t"Items.Craftable_Epic_Yukimura_default"
+ - t"Items.Craftable_Epic_Yukimura_military1"
+ - t"Items.Craftable_Epic_Yukimura_military2"
+ - t"Items.Craftable_Epic_Yukimura_neon1"
+ - t"Items.Craftable_Epic_Yukimura_neon2"
+ - t"Items.Craftable_Epic_Yukimura_pimp1"
+ - t"Items.Craftable_Epic_Yukimura_pimp2"
+ - t"Items.Craftable_Epic_Yukimura_skippy"
+ - t"Items.Craftable_Epic_Yukimura_kiji"
 
 # --- Items.Craftable_Legendary_Yukimura
 Items.Craftable_Legendary_Yukimura_default:

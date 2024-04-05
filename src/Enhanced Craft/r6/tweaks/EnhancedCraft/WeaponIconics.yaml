@@ -83,17 +83,17 @@ Items.Craftable_Rare_Bat_perfored_valentinos.isPresetIconic: true
 Items.Craftable_Rare_Bat_perfored_6thstreet.isPresetIconic: true
 Items.Craftable_Rare_Bat_lina_malina.isPresetIconic: true
 Items.Craftable_Rare_Bat_legendary.isPresetIconic: true
-# --- Items.Proficiency_Craftable_Epic_Bat
-Items.Proficiency_Craftable_Epic_Bat_basic_lizzies.isPresetIconic: true
-Items.Proficiency_Craftable_Epic_Bat_basic_6thstreet.isPresetIconic: true
-Items.Proficiency_Craftable_Epic_Bat_basic_tyger_claws.isPresetIconic: true
-Items.Proficiency_Craftable_Epic_Bat_basic_aldecaldos.isPresetIconic: true
-Items.Proficiency_Craftable_Epic_Bat_basic_wraiths.isPresetIconic: true
-Items.Proficiency_Craftable_Epic_Bat_basic_gold2.isPresetIconic: true
-Items.Proficiency_Craftable_Epic_Bat_perfored_valentinos.isPresetIconic: true
-Items.Proficiency_Craftable_Epic_Bat_perfored_6thstreet.isPresetIconic: true
-Items.Proficiency_Craftable_Epic_Bat_lina_malina.isPresetIconic: true
-Items.Proficiency_Craftable_Epic_Bat_legendary.isPresetIconic: true
+# --- Items.Craftable_Epic_Bat
+Items.Craftable_Epic_Bat_basic_lizzies.isPresetIconic: true
+Items.Craftable_Epic_Bat_basic_6thstreet.isPresetIconic: true
+Items.Craftable_Epic_Bat_basic_tyger_claws.isPresetIconic: true
+Items.Craftable_Epic_Bat_basic_aldecaldos.isPresetIconic: true
+Items.Craftable_Epic_Bat_basic_wraiths.isPresetIconic: true
+Items.Craftable_Epic_Bat_basic_gold2.isPresetIconic: true
+Items.Craftable_Epic_Bat_perfored_valentinos.isPresetIconic: true
+Items.Craftable_Epic_Bat_perfored_6thstreet.isPresetIconic: true
+Items.Craftable_Epic_Bat_lina_malina.isPresetIconic: true
+Items.Craftable_Epic_Bat_legendary.isPresetIconic: true
 # --- Items.Craftable_Legendary_Bat
 Items.Craftable_Legendary_Bat_basic_lizzies.isPresetIconic: true
 Items.Craftable_Legendary_Bat_basic_6thstreet.isPresetIconic: true
@@ -107,8 +107,8 @@ Items.Craftable_Legendary_Bat_lina_malina.isPresetIconic: true
 Items.Craftable_Legendary_Bat_legendary.isPresetIconic: true
 # --- Items.Craftable_Common_Baton_Alpha
 Items.Craftable_Common_Baton_Alpha_alpha_murphy.isPresetIconic: true
-# --- Items.Proficiency_Craftable_Uncommon_Baton_Alpha
-Items.Proficiency_Craftable_Uncommon_Baton_Alpha_alpha_murphy.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Baton_Alpha
+Items.Craftable_Uncommon_Baton_Alpha_alpha_murphy.isPresetIconic: true
 # --- Items.Craftable_Rare_Baton_Alpha
 Items.Craftable_Rare_Baton_Alpha_alpha_murphy.isPresetIconic: true
 # --- Items.Craftable_Epic_Baton_Alpha
@@ -162,9 +162,9 @@ Items.Craftable_Rare_Carnage_edgerunner.isPresetIconic: true
 # --- Items.Craftable_Epic_Carnage
 Items.Craftable_Epic_Carnage_mox.isPresetIconic: true
 Items.Craftable_Epic_Carnage_edgerunner.isPresetIconic: true
-# --- Items.Proficiency_Craftable_Legendary_Carnage
-Items.Proficiency_Craftable_Legendary_Carnage_mox.isPresetIconic: true
-Items.Proficiency_Craftable_Legendary_Carnage_edgerunner.isPresetIconic: true
+# --- Items.Craftable_Legendary_Carnage
+Items.Craftable_Legendary_Carnage_mox.isPresetIconic: true
+Items.Craftable_Legendary_Carnage_edgerunner.isPresetIconic: true
 # --- Items.Craftable_Common_Chao
 Items.Craftable_Common_Chao_vdbsmart.isPresetIconic: true
 # --- Items.Craftable_Uncommon_Chao
@@ -177,8 +177,8 @@ Items.Craftable_Epic_Chao_vdbsmart.isPresetIconic: true
 Items.Craftable_Legendary_Chao_vdbsmart.isPresetIconic: true
 # --- Items.Craftable_Common_Copperhead
 Items.Craftable_Common_Copperhead_genesis.isPresetIconic: true
-# --- Items.Proficiency_Craftable_Uncommon_Copperhead
-Items.Proficiency_Craftable_Uncommon_Copperhead_genesis.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Copperhead
+Items.Craftable_Uncommon_Copperhead_genesis.isPresetIconic: true
 # --- Items.Craftable_Rare_Copperhead
 Items.Craftable_Rare_Copperhead_genesis.isPresetIconic: true
 # --- Items.Craftable_Epic_Copperhead
@@ -240,11 +240,11 @@ Items.Craftable_Uncommon_Grad_buck.isPresetIconic: true
 Items.Craftable_Uncommon_Grad_panam.isPresetIconic: true
 Items.Craftable_Uncommon_Grad_scav.isPresetIconic: true
 Items.Craftable_Uncommon_Grad_soviet.isPresetIconic: true
-# --- Items.Proficiency_Craftable_Rare_Grad
-Items.Proficiency_Craftable_Rare_Grad_buck.isPresetIconic: true
-Items.Proficiency_Craftable_Rare_Grad_panam.isPresetIconic: true
-Items.Proficiency_Craftable_Rare_Grad_scav.isPresetIconic: true
-Items.Proficiency_Craftable_Rare_Grad_soviet.isPresetIconic: true
+# --- Items.Craftable_Rare_Grad
+Items.Craftable_Rare_Grad_buck.isPresetIconic: true
+Items.Craftable_Rare_Grad_panam.isPresetIconic: true
+Items.Craftable_Rare_Grad_scav.isPresetIconic: true
+Items.Craftable_Rare_Grad_soviet.isPresetIconic: true
 # --- Items.Craftable_Epic_Grad
 Items.Craftable_Epic_Grad_buck.isPresetIconic: true
 Items.Craftable_Epic_Grad_panam.isPresetIconic: true
@@ -335,16 +335,16 @@ Items.Craftable_Epic_Katana_Witcher_Katana.isPresetIconic: true
 Items.Craftable_Epic_Katana_wakako_katana.isPresetIconic: true
 Items.Craftable_Epic_Katana_01_thermal_blade.isPresetIconic: true
 Items.Craftable_Epic_Katana_Witcher_sword_redplay.isPresetIconic: true
-# --- Items.Proficiency_Craftable_Legendary_Katana
-Items.Proficiency_Craftable_Legendary_Katana_04_default.isPresetIconic: true
-Items.Proficiency_Craftable_Legendary_Katana_02_takemura.isPresetIconic: true
-Items.Proficiency_Craftable_Legendary_Katana_03_thecocktailstick1.isPresetIconic: true
-Items.Proficiency_Craftable_Legendary_Katana_03_tyger1.isPresetIconic: true
-Items.Proficiency_Craftable_Legendary_Katana_03_tyger2.isPresetIconic: true
-Items.Proficiency_Craftable_Legendary_Katana_Witcher_Katana.isPresetIconic: true
-Items.Proficiency_Craftable_Legendary_Katana_wakako_katana.isPresetIconic: true
-Items.Proficiency_Craftable_Legendary_Katana_01_thermal_blade.isPresetIconic: true
-Items.Proficiency_Craftable_Legendary_Katana_Witcher_sword_redplay.isPresetIconic: true
+# --- Items.Craftable_Legendary_Katana
+Items.Craftable_Legendary_Katana_04_default.isPresetIconic: true
+Items.Craftable_Legendary_Katana_02_takemura.isPresetIconic: true
+Items.Craftable_Legendary_Katana_03_thecocktailstick1.isPresetIconic: true
+Items.Craftable_Legendary_Katana_03_tyger1.isPresetIconic: true
+Items.Craftable_Legendary_Katana_03_tyger2.isPresetIconic: true
+Items.Craftable_Legendary_Katana_Witcher_Katana.isPresetIconic: true
+Items.Craftable_Legendary_Katana_wakako_katana.isPresetIconic: true
+Items.Craftable_Legendary_Katana_01_thermal_blade.isPresetIconic: true
+Items.Craftable_Legendary_Katana_Witcher_sword_redplay.isPresetIconic: true
 # --- Items.Craftable_Common_Katana_Military
 Items.Craftable_Common_Katana_Military_04_default.isPresetIconic: true
 Items.Craftable_Common_Katana_Military_02_takemura.isPresetIconic: true
@@ -419,8 +419,8 @@ Items.Craftable_Legendary_Kenshin_spy.isPresetIconic: true
 Items.Craftable_Common_Knife_scorpion.isPresetIconic: true
 # --- Items.Craftable_Uncommon_Knife
 Items.Craftable_Uncommon_Knife_scorpion.isPresetIconic: true
-# --- Items.Proficiency_Craftable_Rare_Knife
-Items.Proficiency_Craftable_Rare_Knife_scorpion.isPresetIconic: true
+# --- Items.Craftable_Rare_Knife
+Items.Craftable_Rare_Knife_scorpion.isPresetIconic: true
 # --- Items.Craftable_Epic_Knife
 Items.Craftable_Epic_Knife_scorpion.isPresetIconic: true
 # --- Items.Craftable_Legendary_Knife
@@ -575,11 +575,11 @@ Items.Craftable_Epic_Nekomata_breakthrough.isPresetIconic: true
 Items.Craftable_Epic_Nekomata_reed.isPresetIconic: true
 Items.Craftable_Epic_Nekomata_holo.isPresetIconic: true
 Items.Craftable_Epic_Nekomata_amazon.isPresetIconic: true
-# --- Items.Proficiency_Craftable_Legendary_Nekomata
-Items.Proficiency_Craftable_Legendary_Nekomata_breakthrough.isPresetIconic: true
-Items.Proficiency_Craftable_Legendary_Nekomata_reed.isPresetIconic: true
-Items.Proficiency_Craftable_Legendary_Nekomata_holo.isPresetIconic: true
-Items.Proficiency_Craftable_Legendary_Nekomata_amazon.isPresetIconic: true
+# --- Items.Craftable_Legendary_Nekomata
+Items.Craftable_Legendary_Nekomata_breakthrough.isPresetIconic: true
+Items.Craftable_Legendary_Nekomata_reed.isPresetIconic: true
+Items.Craftable_Legendary_Nekomata_holo.isPresetIconic: true
+Items.Craftable_Legendary_Nekomata_amazon.isPresetIconic: true
 # --- Items.Craftable_Common_Neurotoxin_Knife
 Items.Craftable_Common_Neurotoxin_Knife_neon2.isPresetIconic: true
 # --- Items.Craftable_Uncommon_Neurotoxin_Knife
@@ -596,9 +596,9 @@ Items.Craftable_Common_Nova_russian_hitman.isPresetIconic: true
 # --- Items.Craftable_Uncommon_Nova
 Items.Craftable_Uncommon_Nova_doomdoom.isPresetIconic: true
 Items.Craftable_Uncommon_Nova_russian_hitman.isPresetIconic: true
-# --- Items.Proficiency_Craftable_Rare_Nova
-Items.Proficiency_Craftable_Rare_Nova_doomdoom.isPresetIconic: true
-Items.Proficiency_Craftable_Rare_Nova_russian_hitman.isPresetIconic: true
+# --- Items.Craftable_Rare_Nova
+Items.Craftable_Rare_Nova_doomdoom.isPresetIconic: true
+Items.Craftable_Rare_Nova_russian_hitman.isPresetIconic: true
 # --- Items.Craftable_Epic_Nova
 Items.Craftable_Epic_Nova_doomdoom.isPresetIconic: true
 Items.Craftable_Epic_Nova_russian_hitman.isPresetIconic: true
@@ -610,11 +610,11 @@ Items.Craftable_Common_Nue_fingers.isPresetIconic: true
 Items.Craftable_Common_Nue_tamayura_default.isPresetIconic: true
 Items.Craftable_Common_Nue_tamayura_2077.isPresetIconic: true
 Items.Craftable_Common_Nue_neon1.isPresetIconic: true
-# --- Items.Proficiency_Craftable_Uncommon_Nue
-Items.Proficiency_Craftable_Uncommon_Nue_fingers.isPresetIconic: true
-Items.Proficiency_Craftable_Uncommon_Nue_tamayura_default.isPresetIconic: true
-Items.Proficiency_Craftable_Uncommon_Nue_tamayura_2077.isPresetIconic: true
-Items.Proficiency_Craftable_Uncommon_Nue_neon1.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Nue
+Items.Craftable_Uncommon_Nue_fingers.isPresetIconic: true
+Items.Craftable_Uncommon_Nue_tamayura_default.isPresetIconic: true
+Items.Craftable_Uncommon_Nue_tamayura_2077.isPresetIconic: true
+Items.Craftable_Uncommon_Nue_neon1.isPresetIconic: true
 # --- Items.Craftable_Rare_Nue
 Items.Craftable_Rare_Nue_fingers.isPresetIconic: true
 Items.Craftable_Rare_Nue_tamayura_default.isPresetIconic: true
@@ -684,8 +684,8 @@ Items.Craftable_Legendary_Pozhar_soviet.isPresetIconic: true
 Items.Craftable_Common_Pulsar_buzzsaw.isPresetIconic: true
 # --- Items.Craftable_Uncommon_Pulsar
 Items.Craftable_Uncommon_Pulsar_buzzsaw.isPresetIconic: true
-# --- Items.Proficiency_Craftable_Rare_Pulsar
-Items.Proficiency_Craftable_Rare_Pulsar_buzzsaw.isPresetIconic: true
+# --- Items.Craftable_Rare_Pulsar
+Items.Craftable_Rare_Pulsar_buzzsaw.isPresetIconic: true
 # --- Items.Craftable_Epic_Pulsar
 Items.Craftable_Epic_Pulsar_buzzsaw.isPresetIconic: true
 # --- Items.Craftable_Legendary_Pulsar
@@ -708,8 +708,8 @@ Items.Craftable_Uncommon_Quasar_gris_gris.isPresetIconic: true
 Items.Craftable_Rare_Quasar_gris_gris.isPresetIconic: true
 # --- Items.Craftable_Epic_Quasar
 Items.Craftable_Epic_Quasar_gris_gris.isPresetIconic: true
-# --- Items.Proficiency_Craftable_Legendary_Quasar
-Items.Proficiency_Craftable_Legendary_Quasar_gris_gris.isPresetIconic: true
+# --- Items.Craftable_Legendary_Quasar
+Items.Craftable_Legendary_Quasar_gris_gris.isPresetIconic: true
 # --- Items.Craftable_Common_Saratoga
 Items.Craftable_Common_Saratoga_raffenshiv.isPresetIconic: true
 # --- Items.Craftable_Uncommon_Saratoga
@@ -722,8 +722,8 @@ Items.Craftable_Epic_Saratoga_raffenshiv.isPresetIconic: true
 Items.Craftable_Legendary_Saratoga_raffenshiv.isPresetIconic: true
 # --- Items.Craftable_Common_Satara
 Items.Craftable_Common_Satara_brick.isPresetIconic: true
-# --- Items.Proficiency_Craftable_Uncommon_Satara
-Items.Proficiency_Craftable_Uncommon_Satara_brick.isPresetIconic: true
+# --- Items.Craftable_Uncommon_Satara
+Items.Craftable_Uncommon_Satara_brick.isPresetIconic: true
 # --- Items.Craftable_Rare_Satara
 Items.Craftable_Rare_Satara_brick.isPresetIconic: true
 # --- Items.Craftable_Epic_Satara
@@ -759,9 +759,9 @@ Items.Craftable_Uncommon_Sor22_nusa2.isPresetIconic: true
 # --- Items.Craftable_Rare_Sor22
 Items.Craftable_Rare_Sor22_nusa1.isPresetIconic: true
 Items.Craftable_Rare_Sor22_nusa2.isPresetIconic: true
-# --- Items.Proficiency_Craftable_Epic_Sor22
-Items.Proficiency_Craftable_Epic_Sor22_nusa1.isPresetIconic: true
-Items.Proficiency_Craftable_Epic_Sor22_nusa2.isPresetIconic: true
+# --- Items.Craftable_Epic_Sor22
+Items.Craftable_Epic_Sor22_nusa1.isPresetIconic: true
+Items.Craftable_Epic_Sor22_nusa2.isPresetIconic: true
 # --- Items.Craftable_Legendary_Sor22
 Items.Craftable_Legendary_Sor22_nusa1.isPresetIconic: true
 Items.Craftable_Legendary_Sor22_nusa2.isPresetIconic: true
@@ -774,9 +774,9 @@ Items.Craftable_Uncommon_Tactician_headsman.isPresetIconic: true
 # --- Items.Craftable_Rare_Tactician
 Items.Craftable_Rare_Tactician_dinovic.isPresetIconic: true
 Items.Craftable_Rare_Tactician_headsman.isPresetIconic: true
-# --- Items.Proficiency_Craftable_Epic_Tactician
-Items.Proficiency_Craftable_Epic_Tactician_dinovic.isPresetIconic: true
-Items.Proficiency_Craftable_Epic_Tactician_headsman.isPresetIconic: true
+# --- Items.Craftable_Epic_Tactician
+Items.Craftable_Epic_Tactician_dinovic.isPresetIconic: true
+Items.Craftable_Epic_Tactician_headsman.isPresetIconic: true
 # --- Items.Craftable_Legendary_Tactician
 Items.Craftable_Legendary_Tactician_dinovic.isPresetIconic: true
 Items.Craftable_Legendary_Tactician_headsman.isPresetIconic: true
@@ -854,9 +854,9 @@ Items.Craftable_Uncommon_Yukimura_kiji.isPresetIconic: true
 # --- Items.Craftable_Rare_Yukimura
 Items.Craftable_Rare_Yukimura_skippy.isPresetIconic: true
 Items.Craftable_Rare_Yukimura_kiji.isPresetIconic: true
-# --- Items.Proficiency_Craftable_Epic_Yukimura
-Items.Proficiency_Craftable_Epic_Yukimura_skippy.isPresetIconic: true
-Items.Proficiency_Craftable_Epic_Yukimura_kiji.isPresetIconic: true
+# --- Items.Craftable_Epic_Yukimura
+Items.Craftable_Epic_Yukimura_skippy.isPresetIconic: true
+Items.Craftable_Epic_Yukimura_kiji.isPresetIconic: true
 # --- Items.Craftable_Legendary_Yukimura
 Items.Craftable_Legendary_Yukimura_skippy.isPresetIconic: true
 Items.Craftable_Legendary_Yukimura_kiji.isPresetIconic: true
