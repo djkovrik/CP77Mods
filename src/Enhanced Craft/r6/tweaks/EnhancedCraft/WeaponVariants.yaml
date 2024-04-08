@@ -17672,67 +17672,67 @@ Items.Craftable_Legendary_Sor22.ecraftVariants:
 Items.Craftable_Common_Tactician_default:
   $base: Items.Craftable_Common_Tactician
   appearanceName: default
-  iconPath: weapon_Preset_Tactician_Default_None_Default
+  iconPath: weapon_Preset_Tactician_Default_None__Default
   visualTags: [ Default ]
 
 Items.Craftable_Common_Tactician_2_default:
   $base: Items.Craftable_Common_Tactician
   appearanceName: 2_default
-  iconPath: weapon_Preset_Tactician_Default_None_Default
+  iconPath: weapon_Preset_Tactician_Default_None__Default
   visualTags: [ Default ]
 
 Items.Craftable_Common_Tactician_military1:
   $base: Items.Craftable_Common_Tactician
   appearanceName: military1
-  iconPath: weapon_Preset_Tactician_Default_None_Military
+  iconPath: weapon_Preset_Tactician_Default_None__Military
   visualTags: [ Military ]
 
 Items.Craftable_Common_Tactician_military2:
   $base: Items.Craftable_Common_Tactician
   appearanceName: military2
-  iconPath: weapon_Preset_Tactician_Default_None_Military
+  iconPath: weapon_Preset_Tactician_Default_None__Military
   visualTags: [ Military ]
 
 Items.Craftable_Common_Tactician_neon1:
   $base: Items.Craftable_Common_Tactician
   appearanceName: neon1
-  iconPath: weapon_Preset_Tactician_Default_None_Neon
+  iconPath: weapon_Preset_Tactician_Default_None__Neon
   visualTags: [ Neon ]
 
 Items.Craftable_Common_Tactician_neon2:
   $base: Items.Craftable_Common_Tactician
   appearanceName: neon2
-  iconPath: weapon_Preset_Tactician_Default_None_Neon
+  iconPath: weapon_Preset_Tactician_Default_None__Neon
   visualTags: [ Neon ]
 
 Items.Craftable_Common_Tactician_pimp1:
   $base: Items.Craftable_Common_Tactician
   appearanceName: pimp1
-  iconPath: weapon_Preset_Tactician_Default_None_Pimp
+  iconPath: weapon_Preset_Tactician_Default_None__Pimp
   visualTags: [ Pimp ]
 
 Items.Craftable_Common_Tactician_pimp2:
   $base: Items.Craftable_Common_Tactician
   appearanceName: pimp2
-  iconPath: weapon_Preset_Tactician_Default_None_Pimp
+  iconPath: weapon_Preset_Tactician_Default_None__Pimp
   visualTags: [ Pimp ]
 
 Items.Craftable_Common_Tactician_krausser:
   $base: Items.Craftable_Common_Tactician
   appearanceName: krausser
-  iconPath: weapon_Preset_Tactician_Default_None_Krausser
+  iconPath: weapon_Preset_Tactician_Default_None__Krausser
   visualTags: [ Krausser ]
 
 Items.Craftable_Common_Tactician_dinovic:
   $base: Items.Craftable_Common_Tactician
   appearanceName: dinovic
-  iconPath: weapon_Preset_Tactician_Default_None_Dino_Shotgun
+  iconPath: weapon_Preset_Tactician_Default_None__Dino_Shotgun
   visualTags: [ Dino_Shotgun ]
 
 Items.Craftable_Common_Tactician_headsman:
   $base: Items.Craftable_Common_Tactician
   appearanceName: headsman
-  iconPath: weapon_Preset_Tactician_Default_None_Headsman_Tactician
+  iconPath: weapon_Preset_Tactician_Default_None__Headsman_Tactician
   visualTags: [ Headsman_Tactician ]
 
 Items.Craftable_Common_Tactician.ecraftVariants:
@@ -17752,67 +17752,67 @@ Items.Craftable_Common_Tactician.ecraftVariants:
 Items.Craftable_Uncommon_Tactician_default:
   $base: Items.Craftable_Uncommon_Tactician
   appearanceName: default
-  iconPath: weapon_Preset_Tactician_Default_None_Default
+  iconPath: weapon_Preset_Tactician_Default_None__Default
   visualTags: [ Default ]
 
 Items.Craftable_Uncommon_Tactician_2_default:
   $base: Items.Craftable_Uncommon_Tactician
   appearanceName: 2_default
-  iconPath: weapon_Preset_Tactician_Default_None_Default
+  iconPath: weapon_Preset_Tactician_Default_None__Default
   visualTags: [ Default ]
 
 Items.Craftable_Uncommon_Tactician_military1:
   $base: Items.Craftable_Uncommon_Tactician
   appearanceName: military1
-  iconPath: weapon_Preset_Tactician_Default_None_Military
+  iconPath: weapon_Preset_Tactician_Default_None__Military
   visualTags: [ Military ]
 
 Items.Craftable_Uncommon_Tactician_military2:
   $base: Items.Craftable_Uncommon_Tactician
   appearanceName: military2
-  iconPath: weapon_Preset_Tactician_Default_None_Military
+  iconPath: weapon_Preset_Tactician_Default_None__Military
   visualTags: [ Military ]
 
 Items.Craftable_Uncommon_Tactician_neon1:
   $base: Items.Craftable_Uncommon_Tactician
   appearanceName: neon1
-  iconPath: weapon_Preset_Tactician_Default_None_Neon
+  iconPath: weapon_Preset_Tactician_Default_None__Neon
   visualTags: [ Neon ]
 
 Items.Craftable_Uncommon_Tactician_neon2:
   $base: Items.Craftable_Uncommon_Tactician
   appearanceName: neon2
-  iconPath: weapon_Preset_Tactician_Default_None_Neon
+  iconPath: weapon_Preset_Tactician_Default_None__Neon
   visualTags: [ Neon ]
 
 Items.Craftable_Uncommon_Tactician_pimp1:
   $base: Items.Craftable_Uncommon_Tactician
   appearanceName: pimp1
-  iconPath: weapon_Preset_Tactician_Default_None_Pimp
+  iconPath: weapon_Preset_Tactician_Default_None__Pimp
   visualTags: [ Pimp ]
 
 Items.Craftable_Uncommon_Tactician_pimp2:
   $base: Items.Craftable_Uncommon_Tactician
   appearanceName: pimp2
-  iconPath: weapon_Preset_Tactician_Default_None_Pimp
+  iconPath: weapon_Preset_Tactician_Default_None__Pimp
   visualTags: [ Pimp ]
 
 Items.Craftable_Uncommon_Tactician_krausser:
   $base: Items.Craftable_Uncommon_Tactician
   appearanceName: krausser
-  iconPath: weapon_Preset_Tactician_Default_None_Krausser
+  iconPath: weapon_Preset_Tactician_Default_None__Krausser
   visualTags: [ Krausser ]
 
 Items.Craftable_Uncommon_Tactician_dinovic:
   $base: Items.Craftable_Uncommon_Tactician
   appearanceName: dinovic
-  iconPath: weapon_Preset_Tactician_Default_None_Dino_Shotgun
+  iconPath: weapon_Preset_Tactician_Default_None__Dino_Shotgun
   visualTags: [ Dino_Shotgun ]
 
 Items.Craftable_Uncommon_Tactician_headsman:
   $base: Items.Craftable_Uncommon_Tactician
   appearanceName: headsman
-  iconPath: weapon_Preset_Tactician_Default_None_Headsman_Tactician
+  iconPath: weapon_Preset_Tactician_Default_None__Headsman_Tactician
   visualTags: [ Headsman_Tactician ]
 
 Items.Craftable_Uncommon_Tactician.ecraftVariants:
@@ -17832,67 +17832,67 @@ Items.Craftable_Uncommon_Tactician.ecraftVariants:
 Items.Craftable_Rare_Tactician_default:
   $base: Items.Craftable_Rare_Tactician
   appearanceName: default
-  iconPath: weapon_Preset_Tactician_Default_None_Default
+  iconPath: weapon_Preset_Tactician_Default_None__Default
   visualTags: [ Default ]
 
 Items.Craftable_Rare_Tactician_2_default:
   $base: Items.Craftable_Rare_Tactician
   appearanceName: 2_default
-  iconPath: weapon_Preset_Tactician_Default_None_Default
+  iconPath: weapon_Preset_Tactician_Default_None__Default
   visualTags: [ Default ]
 
 Items.Craftable_Rare_Tactician_military1:
   $base: Items.Craftable_Rare_Tactician
   appearanceName: military1
-  iconPath: weapon_Preset_Tactician_Default_None_Military
+  iconPath: weapon_Preset_Tactician_Default_None__Military
   visualTags: [ Military ]
 
 Items.Craftable_Rare_Tactician_military2:
   $base: Items.Craftable_Rare_Tactician
   appearanceName: military2
-  iconPath: weapon_Preset_Tactician_Default_None_Military
+  iconPath: weapon_Preset_Tactician_Default_None__Military
   visualTags: [ Military ]
 
 Items.Craftable_Rare_Tactician_neon1:
   $base: Items.Craftable_Rare_Tactician
   appearanceName: neon1
-  iconPath: weapon_Preset_Tactician_Default_None_Neon
+  iconPath: weapon_Preset_Tactician_Default_None__Neon
   visualTags: [ Neon ]
 
 Items.Craftable_Rare_Tactician_neon2:
   $base: Items.Craftable_Rare_Tactician
   appearanceName: neon2
-  iconPath: weapon_Preset_Tactician_Default_None_Neon
+  iconPath: weapon_Preset_Tactician_Default_None__Neon
   visualTags: [ Neon ]
 
 Items.Craftable_Rare_Tactician_pimp1:
   $base: Items.Craftable_Rare_Tactician
   appearanceName: pimp1
-  iconPath: weapon_Preset_Tactician_Default_None_Pimp
+  iconPath: weapon_Preset_Tactician_Default_None__Pimp
   visualTags: [ Pimp ]
 
 Items.Craftable_Rare_Tactician_pimp2:
   $base: Items.Craftable_Rare_Tactician
   appearanceName: pimp2
-  iconPath: weapon_Preset_Tactician_Default_None_Pimp
+  iconPath: weapon_Preset_Tactician_Default_None__Pimp
   visualTags: [ Pimp ]
 
 Items.Craftable_Rare_Tactician_krausser:
   $base: Items.Craftable_Rare_Tactician
   appearanceName: krausser
-  iconPath: weapon_Preset_Tactician_Default_None_Krausser
+  iconPath: weapon_Preset_Tactician_Default_None__Krausser
   visualTags: [ Krausser ]
 
 Items.Craftable_Rare_Tactician_dinovic:
   $base: Items.Craftable_Rare_Tactician
   appearanceName: dinovic
-  iconPath: weapon_Preset_Tactician_Default_None_Dino_Shotgun
+  iconPath: weapon_Preset_Tactician_Default_None__Dino_Shotgun
   visualTags: [ Dino_Shotgun ]
 
 Items.Craftable_Rare_Tactician_headsman:
   $base: Items.Craftable_Rare_Tactician
   appearanceName: headsman
-  iconPath: weapon_Preset_Tactician_Default_None_Headsman_Tactician
+  iconPath: weapon_Preset_Tactician_Default_None__Headsman_Tactician
   visualTags: [ Headsman_Tactician ]
 
 Items.Craftable_Rare_Tactician.ecraftVariants:
@@ -17912,67 +17912,67 @@ Items.Craftable_Rare_Tactician.ecraftVariants:
 Items.Craftable_Epic_Tactician_default:
   $base: Items.Craftable_Epic_Tactician
   appearanceName: default
-  iconPath: weapon_Preset_Tactician_Default_None_Default
+  iconPath: weapon_Preset_Tactician_Default_None__Default
   visualTags: [ Default ]
 
 Items.Craftable_Epic_Tactician_2_default:
   $base: Items.Craftable_Epic_Tactician
   appearanceName: 2_default
-  iconPath: weapon_Preset_Tactician_Default_None_Default
+  iconPath: weapon_Preset_Tactician_Default_None__Default
   visualTags: [ Default ]
 
 Items.Craftable_Epic_Tactician_military1:
   $base: Items.Craftable_Epic_Tactician
   appearanceName: military1
-  iconPath: weapon_Preset_Tactician_Default_None_Military
+  iconPath: weapon_Preset_Tactician_Default_None__Military
   visualTags: [ Military ]
 
 Items.Craftable_Epic_Tactician_military2:
   $base: Items.Craftable_Epic_Tactician
   appearanceName: military2
-  iconPath: weapon_Preset_Tactician_Default_None_Military
+  iconPath: weapon_Preset_Tactician_Default_None__Military
   visualTags: [ Military ]
 
 Items.Craftable_Epic_Tactician_neon1:
   $base: Items.Craftable_Epic_Tactician
   appearanceName: neon1
-  iconPath: weapon_Preset_Tactician_Default_None_Neon
+  iconPath: weapon_Preset_Tactician_Default_None__Neon
   visualTags: [ Neon ]
 
 Items.Craftable_Epic_Tactician_neon2:
   $base: Items.Craftable_Epic_Tactician
   appearanceName: neon2
-  iconPath: weapon_Preset_Tactician_Default_None_Neon
+  iconPath: weapon_Preset_Tactician_Default_None__Neon
   visualTags: [ Neon ]
 
 Items.Craftable_Epic_Tactician_pimp1:
   $base: Items.Craftable_Epic_Tactician
   appearanceName: pimp1
-  iconPath: weapon_Preset_Tactician_Default_None_Pimp
+  iconPath: weapon_Preset_Tactician_Default_None__Pimp
   visualTags: [ Pimp ]
 
 Items.Craftable_Epic_Tactician_pimp2:
   $base: Items.Craftable_Epic_Tactician
   appearanceName: pimp2
-  iconPath: weapon_Preset_Tactician_Default_None_Pimp
+  iconPath: weapon_Preset_Tactician_Default_None__Pimp
   visualTags: [ Pimp ]
 
 Items.Craftable_Epic_Tactician_krausser:
   $base: Items.Craftable_Epic_Tactician
   appearanceName: krausser
-  iconPath: weapon_Preset_Tactician_Default_None_Krausser
+  iconPath: weapon_Preset_Tactician_Default_None__Krausser
   visualTags: [ Krausser ]
 
 Items.Craftable_Epic_Tactician_dinovic:
   $base: Items.Craftable_Epic_Tactician
   appearanceName: dinovic
-  iconPath: weapon_Preset_Tactician_Default_None_Dino_Shotgun
+  iconPath: weapon_Preset_Tactician_Default_None__Dino_Shotgun
   visualTags: [ Dino_Shotgun ]
 
 Items.Craftable_Epic_Tactician_headsman:
   $base: Items.Craftable_Epic_Tactician
   appearanceName: headsman
-  iconPath: weapon_Preset_Tactician_Default_None_Headsman_Tactician
+  iconPath: weapon_Preset_Tactician_Default_None__Headsman_Tactician
   visualTags: [ Headsman_Tactician ]
 
 Items.Craftable_Epic_Tactician.ecraftVariants:
@@ -17992,67 +17992,67 @@ Items.Craftable_Epic_Tactician.ecraftVariants:
 Items.Craftable_Legendary_Tactician_default:
   $base: Items.Craftable_Legendary_Tactician
   appearanceName: default
-  iconPath: weapon_Preset_Tactician_Default_None_Default
+  iconPath: weapon_Preset_Tactician_Default_None__Default
   visualTags: [ Default ]
 
 Items.Craftable_Legendary_Tactician_2_default:
   $base: Items.Craftable_Legendary_Tactician
   appearanceName: 2_default
-  iconPath: weapon_Preset_Tactician_Default_None_Default
+  iconPath: weapon_Preset_Tactician_Default_None__Default
   visualTags: [ Default ]
 
 Items.Craftable_Legendary_Tactician_military1:
   $base: Items.Craftable_Legendary_Tactician
   appearanceName: military1
-  iconPath: weapon_Preset_Tactician_Default_None_Military
+  iconPath: weapon_Preset_Tactician_Default_None__Military
   visualTags: [ Military ]
 
 Items.Craftable_Legendary_Tactician_military2:
   $base: Items.Craftable_Legendary_Tactician
   appearanceName: military2
-  iconPath: weapon_Preset_Tactician_Default_None_Military
+  iconPath: weapon_Preset_Tactician_Default_None__Military
   visualTags: [ Military ]
 
 Items.Craftable_Legendary_Tactician_neon1:
   $base: Items.Craftable_Legendary_Tactician
   appearanceName: neon1
-  iconPath: weapon_Preset_Tactician_Default_None_Neon
+  iconPath: weapon_Preset_Tactician_Default_None__Neon
   visualTags: [ Neon ]
 
 Items.Craftable_Legendary_Tactician_neon2:
   $base: Items.Craftable_Legendary_Tactician
   appearanceName: neon2
-  iconPath: weapon_Preset_Tactician_Default_None_Neon
+  iconPath: weapon_Preset_Tactician_Default_None__Neon
   visualTags: [ Neon ]
 
 Items.Craftable_Legendary_Tactician_pimp1:
   $base: Items.Craftable_Legendary_Tactician
   appearanceName: pimp1
-  iconPath: weapon_Preset_Tactician_Default_None_Pimp
+  iconPath: weapon_Preset_Tactician_Default_None__Pimp
   visualTags: [ Pimp ]
 
 Items.Craftable_Legendary_Tactician_pimp2:
   $base: Items.Craftable_Legendary_Tactician
   appearanceName: pimp2
-  iconPath: weapon_Preset_Tactician_Default_None_Pimp
+  iconPath: weapon_Preset_Tactician_Default_None__Pimp
   visualTags: [ Pimp ]
 
 Items.Craftable_Legendary_Tactician_krausser:
   $base: Items.Craftable_Legendary_Tactician
   appearanceName: krausser
-  iconPath: weapon_Preset_Tactician_Default_None_Krausser
+  iconPath: weapon_Preset_Tactician_Default_None__Krausser
   visualTags: [ Krausser ]
 
 Items.Craftable_Legendary_Tactician_dinovic:
   $base: Items.Craftable_Legendary_Tactician
   appearanceName: dinovic
-  iconPath: weapon_Preset_Tactician_Default_None_Dino_Shotgun
+  iconPath: weapon_Preset_Tactician_Default_None__Dino_Shotgun
   visualTags: [ Dino_Shotgun ]
 
 Items.Craftable_Legendary_Tactician_headsman:
   $base: Items.Craftable_Legendary_Tactician
   appearanceName: headsman
-  iconPath: weapon_Preset_Tactician_Default_None_Headsman_Tactician
+  iconPath: weapon_Preset_Tactician_Default_None__Headsman_Tactician
   visualTags: [ Headsman_Tactician ]
 
 Items.Craftable_Legendary_Tactician.ecraftVariants:
