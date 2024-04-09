@@ -23,9 +23,10 @@ public class EnhancedCraftHotkeyListener {
   protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
     let actionName: CName = ListenerAction.GetName(action);
     let isReleased: Bool = Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED);
+    let lastUsedKBM: Bool =  this.controller.m_craftingGameController.GetPlayer().PlayerLastUsedKBM();
     // Weapons
     if ArraySize(this.controller.selectedRecipeVariants) > 1 && this.controller.isWeaponSelected {
-      if Equals(actionName, n"ECraft_Prev") && isReleased && !this.config.randomizerEnabled {
+      if Equals(actionName, n"ECraft_Prev") && isReleased && !this.config.randomizerEnabled && lastUsedKBM {
         this.controller.LoadPrevItemVariant();
       };
       if Equals(actionName, n"ECraft_Next") && isReleased && !this.config.randomizerEnabled {

@@ -13,10 +13,9 @@
     <!-- inputUserMapping -->
 	<mapping name="ECraft_Prev_Button" type="Button" >
         <button id="IK_Z" />
-        <button id="IK_Pad_Y_TRIANGLE" />
     </mapping>
 	<mapping name="ECraft_Next_Button" type="Button" >
         <button id="IK_C" />
-        <button id="IK_Pad_A_CROSS" />
+        <button id="IK_Pad_Y_TRIANGLE" />
     </mapping>
 </bindings>

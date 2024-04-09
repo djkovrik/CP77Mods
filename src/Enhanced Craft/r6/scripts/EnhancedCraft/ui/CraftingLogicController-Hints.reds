@@ -4,9 +4,12 @@ import EnhancedCraft.Config.ECraftConfig
 // -- Displays Previous and Next variant button hints on crafting screen
 @addMethod(CraftingLogicController)
 public func ShowButtonHints() -> Void {
+  let lastUsedKBM: Bool =  this.m_craftingGameController.GetPlayer().PlayerLastUsedKBM();
   if !this.ecraftConfig.randomizerEnabled {
     this.m_buttonHintsController.AddButtonHint(n"ECraft_Next", GetLocalizedTextByKey(n"Mod-Craft-UI-Next"));
-    this.m_buttonHintsController.AddButtonHint(n"ECraft_Prev", GetLocalizedTextByKey(n"Mod-Craft-UI-Previous"));
+    if lastUsedKBM {
+      this.m_buttonHintsController.AddButtonHint(n"ECraft_Prev", GetLocalizedTextByKey(n"Mod-Craft-UI-Previous"));
+    };
   };
 }
 
