@@ -96,7 +96,7 @@ private final func HighlightRecommendedSelection() -> Void {
     // Add new marker from actual path
     this.latestMarkerPath = highlightData.path;
     parent = root.GetWidgetByPathName(this.latestMarkerPath) as inkCompoundWidget;
-    marker = this.CreateHighlightMarker(highlightData.line);
+    marker = this.CreateHighlightMarker();
     marker.Reparent(parent);
 
     // Animate 

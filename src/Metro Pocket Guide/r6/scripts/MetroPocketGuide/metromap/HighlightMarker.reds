@@ -1,8 +1,7 @@
 import MetroPocketGuide.Utils.MPGUtils
 
-// line not used atm
 @addMethod(NcartMetroMapController)
-private final func CreateHighlightMarker(line: ModNCartLine) -> ref<inkImage> {
+private final func CreateHighlightMarker() -> ref<inkImage> {
     let icon: ref<inkImage> = new inkImage();
     icon.SetName(n"highlight");
     icon.SetAtlasResource(r"base\\gameplay\\gui\\metro_pocket_guide_icons.inkatlas");
