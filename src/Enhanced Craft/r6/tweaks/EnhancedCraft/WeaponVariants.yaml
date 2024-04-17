@@ -15164,8 +15164,8 @@ Items.Craftable_Legendary_Pulsar.ecraftVariants:
 Items.Craftable_Common_Punk_Knife_default:
   $base: Items.Craftable_Common_Punk_Knife
   appearanceName: default
-  iconPath: weapon_Preset_Punk_Knife_Default_None__default
-  visualTags: [ default ]
+  iconPath: weapon_Preset_Punk_Knife_Default_None__Default
+  visualTags: [ Default ]
 
 Items.Craftable_Common_Punk_Knife_military1:
   $base: Items.Craftable_Common_Punk_Knife
@@ -15216,8 +15216,8 @@ Items.Craftable_Common_Punk_Knife.ecraftVariants:
 Items.Craftable_Uncommon_Punk_Knife_default:
   $base: Items.Craftable_Uncommon_Punk_Knife
   appearanceName: default
-  iconPath: weapon_Preset_Punk_Knife_Default_None__default
-  visualTags: [ default ]
+  iconPath: weapon_Preset_Punk_Knife_Default_None__Default
+  visualTags: [ Default ]
 
 Items.Craftable_Uncommon_Punk_Knife_military1:
   $base: Items.Craftable_Uncommon_Punk_Knife
@@ -15268,8 +15268,8 @@ Items.Craftable_Uncommon_Punk_Knife.ecraftVariants:
 Items.Craftable_Rare_Punk_Knife_default:
   $base: Items.Craftable_Rare_Punk_Knife
   appearanceName: default
-  iconPath: weapon_Preset_Punk_Knife_Default_None__default
-  visualTags: [ default ]
+  iconPath: weapon_Preset_Punk_Knife_Default_None__Default
+  visualTags: [ Default ]
 
 Items.Craftable_Rare_Punk_Knife_military1:
   $base: Items.Craftable_Rare_Punk_Knife
@@ -15320,8 +15320,8 @@ Items.Craftable_Rare_Punk_Knife.ecraftVariants:
 Items.Craftable_Epic_Punk_Knife_default:
   $base: Items.Craftable_Epic_Punk_Knife
   appearanceName: default
-  iconPath: weapon_Preset_Punk_Knife_Default_None__default
-  visualTags: [ default ]
+  iconPath: weapon_Preset_Punk_Knife_Default_None__Default
+  visualTags: [ Default ]
 
 Items.Craftable_Epic_Punk_Knife_military1:
   $base: Items.Craftable_Epic_Punk_Knife
@@ -15372,8 +15372,8 @@ Items.Craftable_Epic_Punk_Knife.ecraftVariants:
 Items.Craftable_Legendary_Punk_Knife_default:
   $base: Items.Craftable_Legendary_Punk_Knife
   appearanceName: default
-  iconPath: weapon_Preset_Punk_Knife_Default_None__default
-  visualTags: [ default ]
+  iconPath: weapon_Preset_Punk_Knife_Default_None__Default
+  visualTags: [ Default ]
 
 Items.Craftable_Legendary_Punk_Knife_military1:
   $base: Items.Craftable_Legendary_Punk_Knife
