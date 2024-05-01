@@ -1,0 +1,20 @@
+localization:
+  onscreens:
+    en-us: base\localization\en-us\onscreens\sleeves.json
+    pl-pl: base\localization\pl-pl\onscreens\sleeves.json
+    es-es: base\localization\es-es\onscreens\sleeves.json
+    fr-fr: base\localization\fr-fr\onscreens\sleeves.json
+    it-it: base\localization\it-it\onscreens\sleeves.json
+    de-de: base\localization\de-de\onscreens\sleeves.json
+    es-mx: base\localization\es-mx\onscreens\sleeves.json
+    kr-kr: base\localization\kr-kr\onscreens\sleeves.json
+    zh-cn: base\localization\zh-cn\onscreens\sleeves.json
+    ru-ru: base\localization\ru-ru\onscreens\sleeves.json
+    pt-br: base\localization\pt-br\onscreens\sleeves.json
+    jp-jp: base\localization\jp-jp\onscreens\sleeves.json
+    zh-tw: base\localization\zh-tw\onscreens\sleeves.json
+    ar-ar: base\localization\ar-ar\onscreens\sleeves.json
+    cz-cz: base\localization\cz-cz\onscreens\sleeves.json
+    hu-hu: base\localization\hu-hu\onscreens\sleeves.json
+    tr-tr: base\localization\tr-tr\onscreens\sleeves.json
+    th-th: base\localization\th-th\onscreens\sleeves.json
