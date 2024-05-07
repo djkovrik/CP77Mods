@@ -37,3 +37,8 @@ protected cb func OnCloseMenu(userData: ref<IScriptable>) -> Bool {
   this.ShowSleevesButton(false);
   return wrappedMethod(userData);
 }
+
+@addMethod(gameuiInventoryGameController)
+protected cb func OnDropQueueUpdatedEventCustom(evt: ref<DropQueueUpdatedEvent>) -> Bool {
+  this.ShowSleevesButton(false);
+}
