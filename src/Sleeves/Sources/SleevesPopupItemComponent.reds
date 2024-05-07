@@ -181,21 +181,21 @@ public class SleevesPopupItemComponent extends inkComponent {
   protected cb func OnClick(e: ref<inkPointerEvent>) -> Bool {
     if e.IsAction(n"click") && this.IsAvailableForSelection() {
       let toggled: Bool = this.data.IsToggled();
-      let itemID: ItemID;
+      let tdbid: TweakDBID;
       if NotEquals(this.data.mode, SleevesMode.Wardrobe) {
-        itemID = this.data.itemID;
+        tdbid = this.data.itemTDBID;
       } else {
-        itemID = this.data.visualItemID;
+        tdbid = this.data.visualItemTDBID;
       };
 
       if toggled {
-        if this.system.RemoveToggle(itemID) {
+        if this.system.RemoveToggle(tdbid) {
           this.data.SetToggled(false);
           this.UpdateCheckbox();
           this.PlaySound(n"Button", n"OnPress");
         }
       } else {
-        if this.system.AddToggle(itemID) {
+        if this.system.AddToggle(tdbid) {
           this.data.SetToggled(true);
           this.UpdateCheckbox();
           this.PlaySound(n"Button", n"OnPress");

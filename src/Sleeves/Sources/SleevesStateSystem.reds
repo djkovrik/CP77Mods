@@ -5,7 +5,7 @@ class SleevesStateSystem extends ScriptableSystem {
   private let bundle: ref<SleevesInfoBundle>;
   private let cache: ref<inkHashMap>;
 
-  private persistent let toggled: array<ItemID>;
+  private persistent let toggledItems: array<TweakDBID>;
 
   public static func Get(gi: GameInstance) -> ref<SleevesStateSystem> {
     let system: ref<SleevesStateSystem> = GameInstance.GetScriptableSystemsContainer(gi).Get(n"SleevesStateSystem") as SleevesStateSystem;
@@ -42,11 +42,11 @@ class SleevesStateSystem extends ScriptableSystem {
 
   public final func HasSleevesActivated() -> Bool {
     for item in this.bundle.items {
-      if NotEquals(item.mode, SleevesMode.Wardrobe) && this.IsToggled(item.itemID)  {
+      if NotEquals(item.mode, SleevesMode.Wardrobe) && this.IsToggled(item.itemTDBID)  {
         return true;
       };
 
-      if Equals(item.mode, SleevesMode.Wardrobe) && this.IsToggled(item.visualItemID)  {
+      if Equals(item.mode, SleevesMode.Wardrobe) && this.IsToggled(item.visualItemTDBID)  {
         return true;
       };
     };
@@ -58,13 +58,13 @@ class SleevesStateSystem extends ScriptableSystem {
     return this.bundle;
   }
 
-  public final func IsToggled(id: ItemID) -> Bool {
-    return ArrayContains(this.toggled, id);
+  public final func IsToggled(id: TweakDBID) -> Bool {
+    return ArrayContains(this.toggledItems, id);
   }
 
-  public final func AddToggle(id: ItemID) -> Bool {
+  public final func AddToggle(id: TweakDBID) -> Bool {
     if !this.IsToggled(id) {
-      ArrayPush(this.toggled, id);
+      ArrayPush(this.toggledItems, id);
       this.RefreshSleevesState();
       return true;
     };
@@ -72,9 +72,9 @@ class SleevesStateSystem extends ScriptableSystem {
     return false;
   }
 
-  public final func RemoveToggle(id: ItemID) -> Bool {
+  public final func RemoveToggle(id: TweakDBID) -> Bool {
     if this.IsToggled(id) {
-      ArrayRemove(this.toggled, id);
+      ArrayRemove(this.toggledItems, id);
       this.RefreshSleevesState();
       return true;
     };
@@ -105,6 +105,7 @@ class SleevesStateSystem extends ScriptableSystem {
     let itemObject: ref<ItemObject>;
     let slotName: String;
     let itemID: ItemID;
+    let itemTDBID: TweakDBID;
     let itemName: String;
     let itemAppearance: CName;
     let visualItemID: ItemID;
@@ -129,8 +130,9 @@ class SleevesStateSystem extends ScriptableSystem {
     for slotID in targetSlots {
       itemObject = this.transactionSystem.GetItemInSlot(player, slotID);
       itemID = itemObject.GetItemID();
+      itemTDBID = ItemID.GetTDBID(itemID);
       if ItemID.IsValid(itemID) {
-        if !this.HasCached(slotID, itemID, mode) {
+        if !this.HasCached(slotID, itemTDBID, mode) {
           slotName = this.GetLocalizedSlotName(slotID, mode);
           itemName = GetLocalizedTextByKey(RPGManager.GetItemRecord(itemID).DisplayName());
           itemAppearance = this.transactionSystem.GetItemAppearance(player, itemID);
@@ -140,7 +142,7 @@ class SleevesStateSystem extends ScriptableSystem {
           this.Cache(info);
           SleevesLog(s"-> \(info.itemName) added to cache");
         } else {
-          info = this.GetCached(slotID, itemID, mode);
+          info = this.GetCached(slotID, itemTDBID, mode);
           SleevesLog(s"<- \(info.itemName) restored from cache");
         };
         ArrayPush(infoItems, info);
@@ -149,7 +151,7 @@ class SleevesStateSystem extends ScriptableSystem {
 
     // Set toggles
     for item in infoItems {
-      let toggled: Bool = NotEquals(item.mode, SleevesMode.Wardrobe) && this.IsToggled(item.itemID) || Equals(item.mode, SleevesMode.Wardrobe) && this.IsToggled(item.visualItemID);
+      let toggled: Bool = NotEquals(item.mode, SleevesMode.Wardrobe) && this.IsToggled(item.itemTDBID) || Equals(item.mode, SleevesMode.Wardrobe) && this.IsToggled(item.visualItemTDBID);
       item.SetToggled(toggled);
     };
 
@@ -162,6 +164,7 @@ class SleevesStateSystem extends ScriptableSystem {
     let itemObject: ref<ItemObject>;
     let slotName: String;
     let itemID: ItemID;
+    let itemTDBID: TweakDBID;
     let itemName: String;
     let itemAppearance: CName;
     let visualItemID: ItemID;
@@ -185,9 +188,10 @@ class SleevesStateSystem extends ScriptableSystem {
     for slotID in targetSlots {
       itemObject = this.transactionSystem.GetItemInSlot(player, slotID);
       itemID = itemObject.GetItemID();
+      itemTDBID = ItemID.GetTDBID(itemID);
       isOccupied = IsSlotOccupiedCustom(player.GetGame(), slotID);
       if ItemID.IsValid(itemID) && isOccupied {
-        if !this.HasCached(slotID, itemID, mode) {
+        if !this.HasCached(slotID, itemTDBID, mode) {
           slotName = this.GetLocalizedSlotName(slotID, mode);
           itemName = GetLocalizedTextByKey(RPGManager.GetItemRecord(itemID).DisplayName());
           itemAppearance = this.transactionSystem.GetItemAppearance(player, itemID);
@@ -197,7 +201,7 @@ class SleevesStateSystem extends ScriptableSystem {
           this.Cache(info);
           SleevesLog(s"-> \(info.itemName) added to cache");
         } else {
-          info = this.GetCached(slotID, itemID, mode);
+          info = this.GetCached(slotID, itemTDBID, mode);
           SleevesLog(s"<- \(info.itemName) restored from cache");
         };
         ArrayPush(infoItems, info);
@@ -206,7 +210,7 @@ class SleevesStateSystem extends ScriptableSystem {
 
     // Set toggles
     for item in infoItems {
-      let toggled: Bool = NotEquals(item.mode, SleevesMode.Wardrobe) && this.IsToggled(item.itemID) || Equals(item.mode, SleevesMode.Wardrobe) && this.IsToggled(item.visualItemID);
+      let toggled: Bool = NotEquals(item.mode, SleevesMode.Wardrobe) && this.IsToggled(item.itemTDBID);
       item.SetToggled(toggled);
     };
 
@@ -241,25 +245,25 @@ class SleevesStateSystem extends ScriptableSystem {
     return "";
   }
 
-  private final func Key(slotID: TweakDBID, itemID: ItemID, mode: SleevesMode) -> Uint64 {
+  private final func Key(slotID: TweakDBID, itemTDBID: TweakDBID, mode: SleevesMode) -> Uint64 {
     let slotHash: Uint64 = TDBID.ToNumber(slotID);
-    let itemHash: Uint64 = ItemID.GetCombinedHash(itemID);
+    let itemHash: Uint64 = TDBID.ToNumber(itemTDBID);
     let modeHash: Uint64 = Cast<Uint64>(EnumInt(mode));
     return slotHash + itemHash + modeHash;
   }
 
   private final func Cache(info: ref<SleevedSlotInfo>) -> Void {
-    let key: Uint64 = this.Key(info.slotID, info.itemID, info.mode);
+    let key: Uint64 = this.Key(info.slotID, info.itemTDBID, info.mode);
     this.cache.Insert(key, info);
   }
 
-  private final func HasCached(slotID: TweakDBID, itemID: ItemID, mode: SleevesMode) -> Bool {
-    let key: Uint64 = this.Key(slotID, itemID, mode);
+  private final func HasCached(slotID: TweakDBID, itemTDBID: TweakDBID, mode: SleevesMode) -> Bool {
+    let key: Uint64 = this.Key(slotID, itemTDBID, mode);
     return this.cache.KeyExist(key);
   }
 
-  private final func GetCached(slotID: TweakDBID, itemID: ItemID, mode: SleevesMode) -> ref<SleevedSlotInfo> {
-    let key: Uint64 = this.Key(slotID, itemID, mode);
+  private final func GetCached(slotID: TweakDBID, itemTDBID: TweakDBID, mode: SleevesMode) -> ref<SleevedSlotInfo> {
+    let key: Uint64 = this.Key(slotID, itemTDBID, mode);
     return this.cache.Get(key) as SleevedSlotInfo;
   }
 
@@ -269,6 +273,7 @@ class SleevesStateSystem extends ScriptableSystem {
       SleevesLog(s"- Item data: toggled \(item.IsToggled())");
       SleevesLog(s"--- Name: \(item.GetItemName()), visual \(item.GetVisualItemName())");
       SleevesLog(s"--- ID \(ItemID.GetCombinedHash(item.itemID)), visual \(ItemID.GetCombinedHash(item.visualItemID))");
+      SleevesLog(s"--- TDBID \(TDBID.ToStringDEBUG(item.itemTDBID)), visual \(TDBID.ToStringDEBUG(item.visualItemTDBID))");
       SleevesLog(s"--- Appearance: \(item.GetItemAppearance()), TPP \(item.GetItemTppAppearance())");
       SleevesLog("---");
     };

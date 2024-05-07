@@ -39,9 +39,11 @@ public class SleevedSlotInfo {
   private let slotID: TweakDBID;
   private let slotName: String;
   private let itemID: ItemID;
+  private let itemTDBID: TweakDBID;
   private let itemName: String;
   private let itemAppearance: CName;
   private let visualItemID: ItemID;
+  private let visualItemTDBID: TweakDBID;
   private let visualItemName: String;
   private let toggled: Bool;
   private let mode: SleevesMode;
@@ -61,9 +63,11 @@ public class SleevedSlotInfo {
     instance.slotID = slotID;
     instance.slotName = slotName;
     instance.itemID = itemID;
+    instance.itemTDBID = ItemID.GetTDBID(itemID);
     instance.itemName = itemName;
     instance.itemAppearance = itemAppearance;
     instance.visualItemID = visualItemID;
+    instance.visualItemTDBID = ItemID.GetTDBID(visualItemID);
     instance.visualItemName = visualItemName;
     instance.mode = mode;
     return instance;
