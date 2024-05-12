@@ -1,0 +1,94 @@
+// Based on mod settings scenario, kudos to Jack Humbert ^=^
+public class MenuScenario_HudPainter extends MenuScenario_PreGameSubMenu {
+
+  protected cb func OnEnterScenario(prevScenario: CName, userData: ref<IScriptable>) -> Bool {
+    super.OnEnterScenario(prevScenario, userData);
+    this.GetMenusState().OpenMenu(n"hud_painter", userData);
+  }
+
+  protected cb func OnLeaveScenario(nextScenario: CName) -> Bool {
+    super.OnLeaveScenario(nextScenario);
+    this.GetMenusState().CloseMenu(n"hud_painter");
+  }
+
+  protected func OnSubmenuOpen() -> Void {
+    this.GetMenusState().CloseMenu(n"hud_painter");
+  }
+
+  protected cb func OnSettingsBack() -> Bool {
+    this.CloseHudPainter(false);
+  }
+
+  protected cb func OnCloseHudPainterScreen() -> Bool {
+    this.CloseHudPainter(true);
+  }
+
+  private final func CloseHudPainter(forceClose: Bool) -> Void {
+    let menuState: wref<inkMenusState> = this.GetMenusState();
+    if forceClose {
+      menuState.CloseMenu(n"hud_painter");
+      if NotEquals(this.m_currSubMenuName, n"") {
+        if !menuState.DispatchEvent(this.m_currSubMenuName, n"OnBack") {
+          this.CloseSubMenu();
+        };
+      } else {
+        this.SwitchToScenario(this.m_prevScenario);
+      };
+    } else {
+      menuState.DispatchEvent(n"hud_painter", n"OnBack");
+    };
+  }
+
+  protected cb func OnMainMenuBack() -> Bool {
+    this.SwitchToScenario(this.m_prevScenario);
+  }
+}
+
+@addMethod(MenuScenario_SingleplayerMenu)
+protected cb func OnOpenHudPainter() -> Bool {
+  this.CloseSubMenu();
+  this.SwitchToScenario(n"MenuScenario_HudPainter");
+}
+
+@addMethod(MenuScenario_PauseMenu)
+protected cb func OnOpenHudPainter() -> Bool {
+  this.CloseSubMenu();
+  this.SwitchToScenario(n"MenuScenario_HudPainter");
+}
+
+
+class InsertHudPainterMenuItem extends ScriptableService {
+
+  private cb func OnLoad() {
+    GameInstance.GetCallbackSystem()
+      .RegisterCallback(n"Resource/Ready", this, n"OnMenuResourceReady")
+      .AddTarget(ResourceTarget.Path(r"base\\gameplay\\gui\\fullscreen\\menu.inkmenu"))
+      .AddTarget(ResourceTarget.Path(r"base\\gameplay\\gui\\fullscreen\\main_menu\\pregame_menu.inkmenu"));
+  }
+
+  private cb func OnMenuResourceReady(event: ref<ResourceEvent>) {
+    let resource: ref<inkMenuResource> = event.GetResource() as inkMenuResource;
+
+    let newMenuEntry: inkMenuEntry;
+    newMenuEntry.depth = 100u;
+    newMenuEntry.spawnMode = inkSpawnMode.SingleAndMultiplayer;
+    newMenuEntry.isAffectedByFadeout = true;
+    newMenuEntry.menuWidget *= r"base\\gameplay\\gui\\hud_painter.inkwidget";
+    newMenuEntry.name = n"hud_painter";
+
+    ArrayPush(resource.menusEntries, newMenuEntry);
+    ArrayPush(resource.scenariosNames, n"MenuScenario_HudPainter");
+  }
+}
+
+@wrapMethod(SingleplayerMenuGameController)
+private func PopulateMenuItemList() {
+  wrappedMethod();
+  this.AddMenuItem(GetLocalizedTextByKey(n"Mod-HudPainter-Name"), n"OnOpenHudPainter");
+}
+
+@wrapMethod(PauseMenuGameController)
+private func PopulateMenuItemList() {
+  wrappedMethod();
+  this.AddMenuItem(GetLocalizedTextByKey(n"Mod-HudPainter-Name"), n"OnOpenHudPainter");
+}
