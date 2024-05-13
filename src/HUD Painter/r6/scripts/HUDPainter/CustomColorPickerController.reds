@@ -66,6 +66,13 @@ public class CustomColorPickerController extends inkGameController {
   private final func RefreshColorName() -> Void {
     let colorNameWidget: ref<inkText> = inkWidgetRef.Get(this.m_colorNameLabel) as inkText;
     colorNameWidget.SetText(this.data.name);
+    if Equals(this.data.type, HudPainterColorType.Johnny) {
+      colorNameWidget.SetFontStyle(n"Semi-Bold");
+      colorNameWidget.BindProperty(n"tintColor", n"MainColors.Blue");
+    } else {
+      colorNameWidget.SetFontStyle(n"Regular");
+      colorNameWidget.BindProperty(n"tintColor", n"MainColors.Red");
+    };
   }
 
   private final func RefreshColorPreviews() -> Void {

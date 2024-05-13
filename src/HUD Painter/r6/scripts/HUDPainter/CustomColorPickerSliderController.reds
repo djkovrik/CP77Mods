@@ -52,14 +52,14 @@ public class CustomColorPickerSliderController extends inkLogicController {
     this.optionSwitchHint.SetVisible(false);
     this.hoverGeneralHighlight.SetVisible(false);
     this.indentMarker.SetVisible(false);
-    this.sliderNameLabel.SetText("RED");
+    this.sliderNameLabel.SetText(" ");
   }
 
   public final func Setup(value: Int32, sliderColor: SliderColorType) -> Void {
     this.newValue = value;
     this.color = sliderColor;
     this.sliderController.Setup(Cast<Float>(this.minValue), Cast<Float>(this.maxValue), Cast<Float>(value), Cast<Float>(this.step));
-    this.sliderNameLabel.SetText(s"\(sliderColor)");
+    this.sliderNameLabel.SetText(this.GetSliderName(sliderColor));
     this.sliderValueLabel.SetText(IntToString(value));
   }
 
@@ -178,6 +178,16 @@ public class CustomColorPickerSliderController extends inkLogicController {
   public func Refresh() -> Void {
     this.sliderValueLabel.SetText(IntToString(this.newValue));
     this.sliderController.ChangeValue(Cast<Float>(this.newValue));
+  }
+
+  private final func GetSliderName(type: SliderColorType) -> String {
+    switch type {
+      case SliderColorType.Red: return GetLocalizedTextByKey(n"Mod-HudPainter-Red");
+      case SliderColorType.Green: return GetLocalizedTextByKey(n"Mod-HudPainter-Green");
+      case SliderColorType.Blue: return GetLocalizedTextByKey(n"Mod-HudPainter-Blue");
+    };
+
+    return "Unknown";
   }
 
   private final func Log(str: String) -> Void {

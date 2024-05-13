@@ -2,6 +2,8 @@ module HudPainter
 
 public class HudPainterColorItemComponent extends inkComponent {
   private let data: ref<HudPainterColorItem>;
+  private let hovered: Bool;
+  private let selected: Bool;
 
   protected cb func OnCreate() -> ref<inkWidget> {
     let root: ref<inkCanvas> = new inkCanvas();
@@ -9,6 +11,24 @@ public class HudPainterColorItemComponent extends inkComponent {
     root.SetSize(860.0, 90.0);
     root.SetMargin(0.0, 6.0, 0.0, 6.0);
     root.SetInteractive(true);
+
+    let shadow: ref<inkImage> = new inkImage();
+    shadow.SetName(n"shadow");
+    shadow.SetNineSliceScale(true);
+    shadow.SetBrushMirrorType(inkBrushMirrorType.NoMirror);
+    shadow.SetBrushTileType(inkBrushTileType.NoTile);
+    shadow.SetAtlasResource(r"base\\gameplay\\gui\\common\\shadow_blobs.inkatlas");
+    shadow.SetTexturePart(n"shadowBlobSquare_small");
+    shadow.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    shadow.BindProperty(n"tintColor", n"MainColors.Red");
+    shadow.SetContentHAlign(inkEHorizontalAlign.Left);
+    shadow.SetContentVAlign(inkEVerticalAlign.Fill);
+    shadow.SetTileHAlign(inkEHorizontalAlign.Left);
+    shadow.SetTileVAlign(inkEVerticalAlign.Top);
+    shadow.SetMargin(-8.0, 12.0, 0.0, 0.0);
+    shadow.SetSize(860.0, 70.0);
+    shadow.SetOpacity(0.0);
+    shadow.Reparent(root);
 
     let frame: ref<inkImage> = new inkImage();
     frame.SetName(n"frame");
@@ -83,11 +103,14 @@ public class HudPainterColorItemComponent extends inkComponent {
   }
 
   protected cb func OnHoverOver(e: ref<inkPointerEvent>) -> Bool {
-    this.SetHovered(true);
+    this.QueueEvent(HudPainterSoundEmitted.Create(n"ui_menu_hover"));
+    this.hovered = true;
+    this.RefreshItemState();
   }
 
   protected cb func OnHoverOut(e: ref<inkPointerEvent>) -> Bool {
-    this.SetHovered(false);
+    this.hovered = false;
+    this.RefreshItemState();
   }
 
   protected cb func OnRelease(e: ref<inkPointerEvent>) -> Bool {
@@ -104,44 +127,54 @@ public class HudPainterColorItemComponent extends inkComponent {
   }
 
   protected cb func OnHudPainterColorSelected(evt: ref<HudPainterColorSelected>) -> Bool {
-    let toggle: Bool = Equals(this.data.type, evt.data.type) && Equals(this.data.name, evt.data.name);
-    this.SetSelected(toggle);
+    let selected: Bool = Equals(this.data.type, evt.data.type) && Equals(this.data.name, evt.data.name);
+    this.selected = selected;
+    this.RefreshItemState();
   }
 
   public final func SetData(data: ref<HudPainterColorItem>) -> Void {
     this.data = data;
-    this.Refresh();
+    this.RefreshItemData();
   }
 
   public final func UpdateCustomColor(color: HDRColor) -> Void {
     this.data.customColor = color;
-    this.Refresh();
+    this.RefreshItemData();
   }
 
-  public final func Refresh() -> Void {
+  public final func RefreshItemData() -> Void {
     let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
     root.SetName(StringToName(this.data.name));
+
     let name: ref<inkText> = root.GetWidgetByPathName(n"panel/colorName") as inkText;
+    let shadow: ref<inkWidget> = root.GetWidgetByPathName(n"shadow");
     let defaultColorWidget: ref<inkWidget> = root.GetWidgetByPathName(n"panel/previewDefault");
     let customColorWidget: ref<inkWidget> = root.GetWidgetByPathName(n"panel/previewCustom");
     name.SetText(this.data.name);
     defaultColorWidget.SetTintColor(this.data.defaultColor);
     customColorWidget.SetTintColor(this.data.customColor);
-  }
 
-  private final func SetHovered(hovered: Bool) -> Void {
-    if hovered {
-      this.GetRootCompoundWidget().GetWidgetByPathName(n"panel/colorName").BindProperty(n"tintColor", n"MainColors.Blue");
+    if Equals(this.data.type, HudPainterColorType.Johnny) {
+      name.BindProperty(n"tintColor", n"MainColors.Blue");
+      shadow.BindProperty(n"tintColor", n"MainColors.Blue");
+      name.SetFontStyle(n"Semi-Bold");
     } else {
-      this.GetRootCompoundWidget().GetWidgetByPathName(n"panel/colorName").BindProperty(n"tintColor", n"MainColors.Red");
+      name.BindProperty(n"tintColor", n"MainColors.Red");
+      shadow.BindProperty(n"tintColor", n"MainColors.Red");
     };
   }
 
-  private final func SetSelected(selected: Bool) -> Void {
-    if selected {
-      this.GetRootCompoundWidget().GetWidgetByPathName(n"frame").SetOpacity(0.25);
+  private final func RefreshItemState() -> Void {
+    if this.selected {
+      this.GetRootCompoundWidget().GetWidgetByPathName(n"frame").SetOpacity(0.2);
     } else {
       this.GetRootCompoundWidget().GetWidgetByPathName(n"frame").SetOpacity(0.0);
+    };
+
+    if this.hovered {
+      this.GetRootCompoundWidget().GetWidgetByPathName(n"shadow").SetOpacity(0.04);
+    } else {
+      this.GetRootCompoundWidget().GetWidgetByPathName(n"shadow").SetOpacity(0.0);
     };
   }
 }
