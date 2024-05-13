@@ -8,7 +8,7 @@ public class HudPainterColorItemComponent extends inkComponent {
   protected cb func OnCreate() -> ref<inkWidget> {
     let root: ref<inkCanvas> = new inkCanvas();
     root.SetName(n"Root");
-    root.SetSize(860.0, 90.0);
+    root.SetSize(880.0, 90.0);
     root.SetMargin(0.0, 6.0, 0.0, 6.0);
     root.SetInteractive(true);
 
@@ -26,7 +26,7 @@ public class HudPainterColorItemComponent extends inkComponent {
     shadow.SetTileHAlign(inkEHorizontalAlign.Left);
     shadow.SetTileVAlign(inkEVerticalAlign.Top);
     shadow.SetMargin(-8.0, 12.0, 0.0, 0.0);
-    shadow.SetSize(860.0, 70.0);
+    shadow.SetSize(880.0, 70.0);
     shadow.SetOpacity(0.0);
     shadow.Reparent(root);
 
@@ -43,13 +43,24 @@ public class HudPainterColorItemComponent extends inkComponent {
     frame.SetContentVAlign(inkEVerticalAlign.Fill);
     frame.SetTileHAlign(inkEHorizontalAlign.Left);
     frame.SetTileVAlign(inkEVerticalAlign.Top);
-    frame.SetSize(860.0, 90.0);
+    frame.SetSize(880.0, 90.0);
     frame.SetOpacity(0.0);
     frame.Reparent(root);
 
+    let modified: ref<inkText> = new inkText();
+    modified.SetName(n"modified");
+    modified.SetText("*");
+    modified.SetMargin(16.0, 20.0, 0.0, 0.0);
+    modified.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+    modified.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    modified.BindProperty(n"tintColor", n"MainColors.Red");
+    modified.BindProperty(n"fontSize", n"MainColors.SubtitleHeader");
+    modified.SetVisible(false);
+    modified.Reparent(root);
+
     let panel: ref<inkHorizontalPanel> = new inkHorizontalPanel();
     panel.SetName(n"panel");
-    panel.SetMargin(20.0, 20.0, 0.0, 0.0);
+    panel.SetMargin(40.0, 20.0, 0.0, 0.0);
     panel.Reparent(root);
 
     let colorName: ref<inkText> = new inkText();
@@ -148,6 +159,7 @@ public class HudPainterColorItemComponent extends inkComponent {
 
     let name: ref<inkText> = root.GetWidgetByPathName(n"panel/colorName") as inkText;
     let shadow: ref<inkWidget> = root.GetWidgetByPathName(n"shadow");
+    let modified: ref<inkWidget> = root.GetWidgetByPathName(n"modified");
     let defaultColorWidget: ref<inkWidget> = root.GetWidgetByPathName(n"panel/previewDefault");
     let customColorWidget: ref<inkWidget> = root.GetWidgetByPathName(n"panel/previewCustom");
     name.SetText(this.data.name);
@@ -155,13 +167,17 @@ public class HudPainterColorItemComponent extends inkComponent {
     customColorWidget.SetTintColor(this.data.customColor);
 
     if Equals(this.data.type, HudPainterColorType.Johnny) {
-      name.BindProperty(n"tintColor", n"MainColors.Blue");
-      shadow.BindProperty(n"tintColor", n"MainColors.Blue");
+      name.BindProperty(n"tintColor", n"MainColors.Green");
+      shadow.BindProperty(n"tintColor", n"MainColors.Green");
+      modified.BindProperty(n"tintColor", n"MainColors.Green");
       name.SetFontStyle(n"Semi-Bold");
     } else {
       name.BindProperty(n"tintColor", n"MainColors.Red");
       shadow.BindProperty(n"tintColor", n"MainColors.Red");
+      modified.BindProperty(n"tintColor", n"MainColors.Red");
     };
+
+    modified.SetVisible(NotEquals(this.GetColorHashInt(this.data.presetColor), this.GetColorHashInt(this.data.customColor)));
   }
 
   private final func RefreshItemState() -> Void {
@@ -176,5 +192,15 @@ public class HudPainterColorItemComponent extends inkComponent {
     } else {
       this.GetRootCompoundWidget().GetWidgetByPathName(n"shadow").SetOpacity(0.0);
     };
+  }
+
+  private final func GetColorHashInt(color: HDRColor) -> Int32 {
+    return Cast<Int32>(color.Red * 255.0) + Cast<Int32>(color.Green* 255.0) + Cast<Int32>(color.Blue * 255.0);
+  }
+
+  private final func Log(str: String) -> Void {
+    if EnableHudPainterLogs() {
+      ModLog(n"ColorItem", str);
+    }
   }
 }

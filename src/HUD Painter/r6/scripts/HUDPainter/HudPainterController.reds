@@ -54,7 +54,7 @@ class HudPainterController extends gameuiSettingsMenuGameController {
     scrollWrapper.SetHAlign(inkEHorizontalAlign.Fill);
     scrollWrapper.SetVAlign(inkEVerticalAlign.Top);
     scrollWrapper.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
-    scrollWrapper.SetSize(920.0, 1100.0);
+    scrollWrapper.SetSize(940.0, 1100.0);
     scrollWrapper.SetInteractive(true);
 
     let scrollArea: ref<inkScrollArea> = new inkScrollArea();

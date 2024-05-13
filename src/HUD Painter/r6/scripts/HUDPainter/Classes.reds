@@ -15,6 +15,7 @@ public class HudPainterColorItem {
   let name: String;
   let type: HudPainterColorType;
   let defaultColor: HDRColor;
+  let presetColor: HDRColor;
   let customColor: HDRColor;
 }
 

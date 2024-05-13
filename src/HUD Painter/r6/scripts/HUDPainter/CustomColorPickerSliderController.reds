@@ -1,8 +1,8 @@
 module HudPainter
 
 public class CustomColorPickerSliderController extends inkLogicController {
-  private let prevValue: Int32;
-  private let newValue: Int32;
+  private let presetValue: Int32;
+  private let currentValue: Int32;
   private let color: SliderColorType;
 
   private let hoverGeneralHighlight: wref<inkWidget>;
@@ -48,6 +48,7 @@ public class CustomColorPickerSliderController extends inkLogicController {
 
     this.labelsContainer.SetSize(300.0, 80.0);
     this.sliderContainer.SetSize(1200.0, 80.0);
+    this.modifiedFlag.SetMargin(1520.0, 0.0, 0.0, 0.0);
 
     this.optionSwitchHint.SetVisible(false);
     this.hoverGeneralHighlight.SetVisible(false);
@@ -55,12 +56,13 @@ public class CustomColorPickerSliderController extends inkLogicController {
     this.sliderNameLabel.SetText(" ");
   }
 
-  public final func Setup(value: Int32, sliderColor: SliderColorType) -> Void {
-    this.newValue = value;
+  public final func Setup(presetValue: Int32, currentValue: Int32, sliderColor: SliderColorType) -> Void {
+    this.presetValue = presetValue;
+    this.currentValue = currentValue;
     this.color = sliderColor;
-    this.sliderController.Setup(Cast<Float>(this.minValue), Cast<Float>(this.maxValue), Cast<Float>(value), Cast<Float>(this.step));
+    this.sliderController.Setup(Cast<Float>(this.minValue), Cast<Float>(this.maxValue), Cast<Float>(currentValue), Cast<Float>(this.step));
     this.sliderNameLabel.SetText(this.GetSliderName(sliderColor));
-    this.sliderValueLabel.SetText(IntToString(value));
+    this.sliderValueLabel.SetText(IntToString(currentValue));
   }
 
   private final func RegisterCallbacks() -> Void {
@@ -156,9 +158,9 @@ public class CustomColorPickerSliderController extends inkLogicController {
   }
 
   protected cb func OnSliderValueChanged(sliderController: wref<inkSliderController>, progress: Float, value: Float) -> Bool {
-    this.newValue = Cast<Int32>(ClampF(value, this.sliderController.GetMinValue(), this.sliderController.GetMaxValue()));
+    this.currentValue = Cast<Int32>(ClampF(value, this.sliderController.GetMinValue(), this.sliderController.GetMaxValue()));
     this.Refresh();
-    this.QueueEvent(HudPainterSliderUpdated.Create(this.color, this.newValue));
+    this.QueueEvent(HudPainterSliderUpdated.Create(this.color, this.currentValue));
   }
 
   protected cb func OnHandleReleased() -> Bool {
@@ -171,13 +173,14 @@ public class CustomColorPickerSliderController extends inkLogicController {
 
   private func ChangeValue(forward: Bool) -> Void {
     let step: Int32 = forward ? this.step : -this.step;
-    this.newValue = Clamp(this.newValue + step, this.minValue, this.maxValue);
+    this.currentValue = Clamp(this.currentValue + step, this.minValue, this.maxValue);
     this.Refresh();
   }
 
   public func Refresh() -> Void {
-    this.sliderValueLabel.SetText(IntToString(this.newValue));
-    this.sliderController.ChangeValue(Cast<Float>(this.newValue));
+    this.sliderValueLabel.SetText(IntToString(this.currentValue));
+    this.sliderController.ChangeValue(Cast<Float>(this.currentValue));
+    this.modifiedFlag.SetVisible(NotEquals(this.presetValue, this.currentValue));
   }
 
   private final func GetSliderName(type: SliderColorType) -> String {

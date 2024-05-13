@@ -48,7 +48,7 @@ public class CustomColorPickerController extends inkGameController {
       Cast<Float>(this.sliderValueR) / 255.0,
       Cast<Float>(this.sliderValueG) / 255.0,
       Cast<Float>(this.sliderValueB) / 255.0,
-      255.0
+      1.0
     );
 
     this.data.customColor = newCustomColor;
@@ -68,7 +68,7 @@ public class CustomColorPickerController extends inkGameController {
     colorNameWidget.SetText(this.data.name);
     if Equals(this.data.type, HudPainterColorType.Johnny) {
       colorNameWidget.SetFontStyle(n"Semi-Bold");
-      colorNameWidget.BindProperty(n"tintColor", n"MainColors.Blue");
+      colorNameWidget.BindProperty(n"tintColor", n"MainColors.Green");
     } else {
       colorNameWidget.SetFontStyle(n"Regular");
       colorNameWidget.BindProperty(n"tintColor", n"MainColors.Red");
@@ -81,9 +81,23 @@ public class CustomColorPickerController extends inkGameController {
   }
 
   private final func RefreshSliders() -> Void {
-    this.sliderR.Setup(Cast<Int32>(this.data.customColor.Red * 255.0), SliderColorType.Red);
-    this.sliderG.Setup(Cast<Int32>(this.data.customColor.Green * 255.0), SliderColorType.Green);
-    this.sliderB.Setup(Cast<Int32>(this.data.customColor.Blue * 255.0), SliderColorType.Blue);
+    this.sliderR.Setup(
+      Cast<Int32>(this.data.presetColor.Red * 255.0), 
+      Cast<Int32>(this.data.customColor.Red * 255.0), 
+      SliderColorType.Red
+    );
+
+    this.sliderG.Setup(
+      Cast<Int32>(this.data.presetColor.Green * 255.0), 
+      Cast<Int32>(this.data.customColor.Green * 255.0), 
+      SliderColorType.Green
+    );
+
+    this.sliderB.Setup(
+      Cast<Int32>(this.data.presetColor.Blue * 255.0), 
+      Cast<Int32>(this.data.customColor.Blue * 255.0), 
+      SliderColorType.Blue
+    );
   }
 
   private final func SpawnSliders() -> Void {
