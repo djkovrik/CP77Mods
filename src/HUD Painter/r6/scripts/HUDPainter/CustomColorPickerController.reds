@@ -1,4 +1,5 @@
 module HudPainter
+import Codeware.UI.*
 
 public class CustomColorPickerController extends inkGameController {
   private let m_colorCustom: inkWidgetRef;
@@ -6,6 +7,7 @@ public class CustomColorPickerController extends inkGameController {
   private let m_colorNameLabel: inkWidgetRef;
   private let m_slidersContainer: inkWidgetRef;
   private let m_slidersHint: inkWidgetRef;
+  private let m_resetButtonSlot: inkWidgetRef;
 
   private let player: wref<GameObject>;
   private let data: ref<HudPainterColorItem>;
@@ -13,6 +15,7 @@ public class CustomColorPickerController extends inkGameController {
   private let sliderR: wref<CustomColorPickerSliderController>;
   private let sliderG: wref<CustomColorPickerSliderController>;
   private let sliderB: wref<CustomColorPickerSliderController>;
+  private let buttonResetColor: wref<SimpleButton>;
 
   private let sliderValueR: Int32;
   private let sliderValueG: Int32;
@@ -20,6 +23,7 @@ public class CustomColorPickerController extends inkGameController {
 
   protected cb func OnInitialize() {
     this.player = this.GetPlayerControlledObject();
+    this.CreateButton();
     this.SpawnSliders();
   }
 
@@ -61,6 +65,7 @@ public class CustomColorPickerController extends inkGameController {
     this.RefreshColorName();
     this.RefreshColorPreviews();
     this.RefreshSliders();
+    this.buttonResetColor.SetDisabled(false);
   }
 
   private final func RefreshColorName() -> Void {
@@ -98,6 +103,25 @@ public class CustomColorPickerController extends inkGameController {
       Cast<Int32>(this.data.customColor.Blue * 255.0), 
       SliderColorType.Blue
     );
+  }
+
+	protected cb func OnResetClick(widget: wref<inkWidget>) -> Bool {
+    this.data.customColor = this.data.presetColor;
+    this.RefreshColorPreviews();
+    this.RefreshSliders();
+    this.QueueEvent(HudPainterColorChanged.Create(this.data.name, this.data.type, this.data.customColor));
+	}
+
+  private final func CreateButton() -> Void {
+    let button: ref<SimpleButton> = SimpleButton.Create();
+    button.SetName(n"buttonReset");
+    button.SetText(GetLocalizedTextByKey(n"Mod-HudPainter-Reset-Color"));
+    button.ToggleAnimations(true);
+    button.ToggleSounds(true);
+    button.SetDisabled(true);
+    button.RegisterToCallback(n"OnBtnClick", this, n"OnResetClick");
+    button.Reparent(inkWidgetRef.Get(this.m_resetButtonSlot) as inkCompoundWidget);
+    this.buttonResetColor = button;
   }
 
   private final func SpawnSliders() -> Void {
