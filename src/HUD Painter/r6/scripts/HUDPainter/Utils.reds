@@ -9,9 +9,10 @@ TODO:
   + Highlight default/johnny color items
   + Mark colors as changed * on slider activity (add third color to item)
   + Reset color button
-  - Presets slot
-  - Preset controls
-  - Preset logic (activate, save)
+  + Presets slot and buttons
+  + Spawn preset lists
+  - Preset item states: hovered / selected / activated
+  - Handle preset manager clicks
   - Missed .archive popup and logic
   - inkstyle reload? ask psi
   - Widget live previews?

@@ -25,10 +25,12 @@ public class CustomColorPickerController extends inkGameController {
     this.player = this.GetPlayerControlledObject();
     this.CreateButton();
     this.SpawnSliders();
+
+    this.buttonResetColor.RegisterToCallback(n"OnBtnClick", this, n"OnResetClick");
   }
 
   protected cb func OnUninitialize() -> Bool {
-    this.Log("OnUninitialize");
+    this.buttonResetColor.UnregisterFromCallback(n"OnBtnClick", this, n"OnResetClick");
   }
 
   protected cb func OnHudPainterSoundEmitted(evt: ref<HudPainterSoundEmitted>) -> Bool {
@@ -119,7 +121,6 @@ public class CustomColorPickerController extends inkGameController {
     button.ToggleAnimations(true);
     button.ToggleSounds(true);
     button.SetDisabled(true);
-    button.RegisterToCallback(n"OnBtnClick", this, n"OnResetClick");
     button.Reparent(inkWidgetRef.Get(this.m_resetButtonSlot) as inkCompoundWidget);
     this.buttonResetColor = button;
   }

@@ -31,6 +31,10 @@ public class CustomColorPickerSliderController extends inkLogicController {
     this.RegisterCallbacks();
   }
 
+  protected cb func OnUninitialize() -> Bool {
+    this.UnregisterCallbacks();
+  }
+
   private final func InitializeWidgets() -> Void {
     let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
     this.hoverGeneralHighlight = root.GetWidgetByPathName(n"bk");
@@ -75,6 +79,18 @@ public class CustomColorPickerSliderController extends inkLogicController {
 
     this.sliderController.RegisterToCallback(n"OnSliderValueChanged", this, n"OnSliderValueChanged");
     this.sliderController.RegisterToCallback(n"OnSliderHandleReleased", this, n"OnHandleReleased");
+  }
+
+  private final func UnregisterCallbacks() -> Void {
+    this.UnregisterFromCallback(n"OnHoverOver", this, n"OnHoverOver");
+    this.UnregisterFromCallback(n"OnHoverOut", this, n"OnHoverOut");
+
+    this.buttonLeft.UnregisterFromCallback(n"OnRelease", this, n"OnLeft");
+    this.buttonRight.UnregisterFromCallback(n"OnRelease", this, n"OnRight");
+    this.UnregisterFromCallback(n"OnRelease", this, n"OnShortcutPress");
+
+    this.sliderController.UnregisterFromCallback(n"OnSliderValueChanged", this, n"OnSliderValueChanged");
+    this.sliderController.UnregisterFromCallback(n"OnSliderHandleReleased", this, n"OnHandleReleased");
   }
 
   protected cb func OnHoverOver(e: ref<inkPointerEvent>) -> Bool {

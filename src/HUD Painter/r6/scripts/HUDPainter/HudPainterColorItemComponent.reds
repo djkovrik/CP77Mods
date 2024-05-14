@@ -50,7 +50,7 @@ public class HudPainterColorItemComponent extends inkComponent {
     let modified: ref<inkText> = new inkText();
     modified.SetName(n"modified");
     modified.SetText("*");
-    modified.SetMargin(16.0, 20.0, 0.0, 0.0);
+    modified.SetMargin(8.0, 20.0, 0.0, 0.0);
     modified.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
     modified.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     modified.BindProperty(n"tintColor", n"MainColors.Red");
