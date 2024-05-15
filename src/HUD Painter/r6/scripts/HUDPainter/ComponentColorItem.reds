@@ -1,6 +1,6 @@
 module HudPainter
 
-public class HudPainterColorItemComponent extends inkComponent {
+public class ComponentColorItem extends inkComponent {
   private let data: ref<HudPainterColorItem>;
   private let hovered: Bool;
   private let selected: Bool;

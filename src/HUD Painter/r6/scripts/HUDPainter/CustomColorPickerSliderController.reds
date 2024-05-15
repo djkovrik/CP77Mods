@@ -53,6 +53,7 @@ public class CustomColorPickerSliderController extends inkLogicController {
     this.labelsContainer.SetSize(300.0, 80.0);
     this.sliderContainer.SetSize(1200.0, 80.0);
     this.modifiedFlag.SetMargin(1520.0, 0.0, 0.0, 0.0);
+    this.sliderValueLabel.SetText("0");
 
     this.optionSwitchHint.SetVisible(false);
     this.hoverGeneralHighlight.SetVisible(false);

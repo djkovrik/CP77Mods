@@ -111,6 +111,7 @@ public class CustomColorPickerController extends inkGameController {
     this.data.customColor = this.data.presetColor;
     this.RefreshColorPreviews();
     this.RefreshSliders();
+    this.QueueEvent(HudPainterSoundEmitted.Create(n"ui_menu_onpress"));
     this.QueueEvent(HudPainterColorChanged.Create(this.data.name, this.data.type, this.data.customColor));
 	}
 

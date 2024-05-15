@@ -33,6 +33,7 @@ class HudPainterController extends gameuiSettingsMenuGameController {
     this.CreatePresetManagerButtons();
     this.RefereshActivePresetTitle();
     this.SpawnPresetsListContent();
+    this.RegisterCallbacks();
   }
 
   protected cb func OnSetMenuEventDispatcher(menuEventDispatcher: wref<inkMenuEventDispatcher>) -> Bool {
@@ -47,6 +48,21 @@ class HudPainterController extends gameuiSettingsMenuGameController {
 
   protected cb func OnUninitialize() -> Bool {
     this.m_menuEventDispatcher.UnregisterFromEvent(n"OnBack", this, n"OnBack");
+    this.UnregisterCallbacks();
+  }
+
+	protected cb func OnPresetActivateClick(widget: wref<inkWidget>) -> Bool {
+    this.Log(s"Activate preset clicked");
+    this.QueueEvent(HudPainterSoundEmitted.Create(n"ui_menu_onpress"));
+	}
+
+	protected cb func OnPresetSaveClick(widget: wref<inkWidget>) -> Bool {
+    this.Log(s"Save preset clicked");
+    this.QueueEvent(HudPainterSoundEmitted.Create(n"ui_menu_onpress"));
+	}
+
+  protected cb func OnHudPainterPresetSelected(evt: ref<HudPainterPresetSelected>) -> Bool {
+    this.Log(s"Preset selected: \(evt.data.name)");
   }
 
   private final func AddInitialButtonHints() -> Void {
@@ -59,9 +75,9 @@ class HudPainterController extends gameuiSettingsMenuGameController {
     this.Log(s"Active preset loaded: \(ArraySize(this.m_colorItems)) colors");
 
     let container: ref<inkCompoundWidget> = inkWidgetRef.Get(this.m_colorsListContainer) as inkCompoundWidget;
-    let component: ref<HudPainterColorItemComponent>;
+    let component: ref<ComponentColorItem>;
     for colorItem in this.m_colorItems {
-      component = new HudPainterColorItemComponent();
+      component = new ComponentColorItem();
       component.Reparent(container);
       component.SetData(colorItem);
     };
@@ -71,9 +87,9 @@ class HudPainterController extends gameuiSettingsMenuGameController {
     this.m_presetItems = this.m_storage.GetAvailablePresetsList();
     let container: ref<inkCompoundWidget> = inkWidgetRef.Get(this.m_presetsListContainer) as inkCompoundWidget;
     this.Log(s"Presets list loaded: \(ArraySize(this.m_presetItems)) items, container available: \(IsDefined(container))");
-    let component: ref<HudPainterPresetItemComponent>;
+    let component: ref<ComponentPresetItem>;
     for presetItem in this.m_presetItems {
-      component = new HudPainterPresetItemComponent();
+      component = new ComponentPresetItem();
       component.Reparent(container);
       component.SetData(presetItem);
     };
@@ -103,6 +119,16 @@ class HudPainterController extends gameuiSettingsMenuGameController {
     buttonSave.GetRootWidget();
     buttonSave.Reparent(container);
     this.m_buttonSave = buttonSave;
+  }
+
+  private final func RegisterCallbacks() -> Void {
+    this.m_buttonActivate.RegisterToCallback(n"OnBtnClick", this, n"OnPresetActivateClick");
+    this.m_buttonSave.RegisterToCallback(n"OnBtnClick", this, n"OnPresetSaveClick");
+  }
+
+  private final func UnregisterCallbacks() -> Void {
+    this.m_buttonActivate.UnregisterFromCallback(n"OnBtnClick", this, n"OnPresetActivateClick");
+    this.m_buttonSave.UnregisterFromCallback(n"OnBtnClick", this, n"OnPresetSaveClick");
   }
 
   private final func RefereshActivePresetTitle() {

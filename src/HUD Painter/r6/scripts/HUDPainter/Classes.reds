@@ -83,3 +83,13 @@ public class HudPainterColorChanged extends Event {
 }
 
 public class HudPainterPresetSaved extends Event {}
+
+public class HudPainterPresetSelected extends Event {
+  let data: ref<HudPainterPresetItem>;
+
+  public static func Create(data: ref<HudPainterPresetItem>) -> ref<HudPainterPresetSelected> {
+    let evt: ref<HudPainterPresetSelected> = new HudPainterPresetSelected();
+    evt.data = data;
+    return evt;
+  }
+}

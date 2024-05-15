@@ -13,6 +13,7 @@ TODO:
   + Spawn preset lists
   - Preset item states: hovered / selected / activated
   - Handle preset manager clicks
+  - Patch inkstyle_menu
   - Missed .archive popup and logic
   - inkstyle reload? ask psi
   - Widget live previews?

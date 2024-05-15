@@ -1,10 +1,9 @@
 module HudPainter
 
-public class HudPainterPresetItemComponent extends inkComponent {
+public class ComponentPresetItem extends inkComponent {
   private let data: ref<HudPainterPresetItem>;
   private let hovered: Bool;
   private let selected: Bool;
-  private let activated: Bool;
 
   protected cb func OnCreate() -> ref<inkWidget> {
     let root: ref<inkCanvas> = new inkCanvas();
@@ -27,9 +26,26 @@ public class HudPainterPresetItemComponent extends inkComponent {
     shadow.SetTileHAlign(inkEHorizontalAlign.Left);
     shadow.SetTileVAlign(inkEVerticalAlign.Top);
     shadow.SetMargin(-8.0, 12.0, 0.0, 0.0);
-    shadow.SetSize(600.0, 70.0);
+    shadow.SetSize(580.0, 70.0);
     shadow.SetOpacity(0.0);
     shadow.Reparent(root);
+
+    let bg: ref<inkImage> = new inkImage();
+    bg.SetName(n"bg");
+    bg.SetNineSliceScale(true);
+    bg.SetBrushMirrorType(inkBrushMirrorType.NoMirror);
+    bg.SetBrushTileType(inkBrushTileType.NoTile);
+    bg.SetAtlasResource(r"base\\gameplay\\gui\\common\\shapes\\atlas_shapes_sync.inkatlas");
+    bg.SetTexturePart(n"cell_bg");
+    bg.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    bg.BindProperty(n"tintColor", n"MainColors.Red");
+    bg.SetContentHAlign(inkEHorizontalAlign.Fill);
+    bg.SetContentVAlign(inkEVerticalAlign.Fill);
+    bg.SetTileHAlign(inkEHorizontalAlign.Left);
+    bg.SetTileVAlign(inkEVerticalAlign.Top);
+    bg.SetSize(580.0, 90.0);
+    bg.SetOpacity(0.0);
+    bg.Reparent(root);
 
     let frame: ref<inkImage> = new inkImage();
     frame.SetName(n"frame");
@@ -44,7 +60,7 @@ public class HudPainterPresetItemComponent extends inkComponent {
     frame.SetContentVAlign(inkEVerticalAlign.Fill);
     frame.SetTileHAlign(inkEHorizontalAlign.Left);
     frame.SetTileVAlign(inkEVerticalAlign.Top);
-    frame.SetSize(600.0, 90.0);
+    frame.SetSize(580.0, 90.0);
     frame.SetOpacity(0.0);
     frame.Reparent(root);
 
@@ -98,14 +114,20 @@ public class HudPainterPresetItemComponent extends inkComponent {
   protected cb func OnRelease(e: ref<inkPointerEvent>) -> Bool {
     if e.IsAction(n"click") {
       this.QueueEvent(HudPainterSoundEmitted.Create(n"ui_menu_onpress"));
-      this.Log("Select");
+      this.QueueEvent(HudPainterPresetSelected.Create(this.data));
     };
   }
 
+  protected cb func OnHudPainterPresetSelected(evt: ref<HudPainterPresetSelected>) -> Bool {
+    let selected: Bool = Equals(this.data.name, evt.data.name);
+    this.selected = selected;
+    this.RefreshItemState();
+  }
 
   public final func SetData(data: ref<HudPainterPresetItem>) -> Void {
     this.data = data;
     this.RefreshItemData();
+    this.RefreshItemState();
   }
 
   public final func RefreshItemData() -> Void {
@@ -116,7 +138,23 @@ public class HudPainterPresetItemComponent extends inkComponent {
   }
 
   private final func RefreshItemState() -> Void {
+    if this.selected {
+      this.GetRootCompoundWidget().GetWidgetByPathName(n"frame").SetOpacity(0.2);
+    } else {
+      this.GetRootCompoundWidget().GetWidgetByPathName(n"frame").SetOpacity(0.0);
+    };
 
+    if this.hovered {
+      this.GetRootCompoundWidget().GetWidgetByPathName(n"shadow").SetOpacity(0.05);
+    } else {
+      this.GetRootCompoundWidget().GetWidgetByPathName(n"shadow").SetOpacity(0.0);
+    };
+
+    if this.data.active {
+      this.GetRootCompoundWidget().GetWidgetByPathName(n"bg").SetOpacity(0.02);
+    } else {
+      this.GetRootCompoundWidget().GetWidgetByPathName(n"bg").SetOpacity(0.0);
+    };
   }
 
   private final func Log(str: String) -> Void {
