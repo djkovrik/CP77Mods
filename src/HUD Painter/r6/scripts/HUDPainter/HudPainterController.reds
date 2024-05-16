@@ -15,7 +15,7 @@ class HudPainterController extends gameuiSettingsMenuGameController {
   private let m_buttonActivate: wref<SimpleButton>;
   private let m_buttonSave: wref<SimpleButton>;
   private let m_popupToken: ref<inkGameNotificationToken>;
-  private let m_currentSelectedPreset: String;
+  private let m_currentSelectedPreset: ref<HudPainterPresetItem>;
 
   private let m_colorItems: array<ref<HudPainterColorItem>>;
   private let m_presetItems: array<ref<HudPainterPresetItem>>;
@@ -54,8 +54,10 @@ class HudPainterController extends gameuiSettingsMenuGameController {
 	protected cb func OnPresetActivateClick(widget: wref<inkWidget>) -> Bool {
     this.Log(s"Activate preset clicked");
     this.QueueEvent(HudPainterSoundEmitted.Create(n"ui_menu_onpress"));
-    this.m_storage.SaveActivePresetName(this.m_currentSelectedPreset);
+    this.m_storage.SaveActivePresetName(this.m_currentSelectedPreset.name);
     this.RefreshScreenData();
+    this.m_buttonActivate.SetDisabled(true);
+    inkWidgetRef.SetVisible(this.m_colorPickerSlot, false);
 	}
 
 	protected cb func OnPresetSaveClick(widget: wref<inkWidget>) -> Bool {
@@ -64,6 +66,12 @@ class HudPainterController extends gameuiSettingsMenuGameController {
     this.m_popupToken = GenericMessageNotification.ShowInput(this, GetLocalizedTextByKey(n"Mod-HudPainter-Save-Preset-Title"), GetLocalizedTextByKey(n"Mod-HudPainter-Save-Preset-Hint"), GenericMessageNotificationType.ConfirmCancel);
     this.m_popupToken.RegisterListener(this, n"OnSavePresetPopupClosed");
 	}
+
+  protected cb func OnHudPainterColorSelected(evt: ref<HudPainterColorSelected>) -> Bool {
+    if !inkWidgetRef.IsVisible(this.m_colorPickerSlot) {
+      inkWidgetRef.SetVisible(this.m_colorPickerSlot, true);
+    };
+  }
 
   protected cb func OnSavePresetPopupClosed(data: ref<inkGameNotificationData>) {
     let resultData: ref<GenericMessageNotificationCloseData> = data as GenericMessageNotificationCloseData;
@@ -80,11 +88,13 @@ class HudPainterController extends gameuiSettingsMenuGameController {
 
   protected cb func OnHudPainterPresetSelected(evt: ref<HudPainterPresetSelected>) -> Bool {
     this.Log(s"Preset selected: \(evt.data.name)");
-    this.m_currentSelectedPreset = evt.data.name;
+    this.m_currentSelectedPreset = evt.data;
+    this.RefreshButtonsState();
   }
 
   protected cb func OnHudPainterPresetSaved(evt: ref<HudPainterPresetSaved>) -> Bool {
     this.RefreshScreenData();
+    inkWidgetRef.SetVisible(this.m_colorPickerSlot, false);
   }
 
   private final func AddInitialButtonHints() -> Void {
@@ -121,6 +131,7 @@ class HudPainterController extends gameuiSettingsMenuGameController {
 
   private final func SpawnColorPicker() -> Void {
     this.SpawnFromLocal(inkWidgetRef.Get(this.m_colorPickerSlot), n"ColorPicker");
+    inkWidgetRef.SetVisible(this.m_colorPickerSlot, false);
   }
 
   private final func CreatePresetManagerButtons() -> Void {
@@ -131,7 +142,7 @@ class HudPainterController extends gameuiSettingsMenuGameController {
     buttonActivate.SetText(GetLocalizedTextByKey(n"Mod-HudPainter-Activate-Preset"));
     buttonActivate.ToggleAnimations(true);
     buttonActivate.ToggleSounds(true);
-    buttonActivate.GetRootWidget();
+    buttonActivate.SetDisabled(true);
     buttonActivate.Reparent(container);
     this.m_buttonActivate = buttonActivate;
 
@@ -140,7 +151,6 @@ class HudPainterController extends gameuiSettingsMenuGameController {
     buttonSave.SetText(GetLocalizedTextByKey(n"Mod-HudPainter-Save-Preset"));
     buttonSave.ToggleAnimations(true);
     buttonSave.ToggleSounds(true);
-    buttonSave.GetRootWidget();
     buttonSave.Reparent(container);
     this.m_buttonSave = buttonSave;
   }
@@ -160,6 +170,10 @@ class HudPainterController extends gameuiSettingsMenuGameController {
     let presetPrefix: String = GetLocalizedTextByKey(n"Mod-HudPainter-Presets-Active");
     let presetName: String = this.m_storage.GetActivePresetName();
     activePresetName.SetText(s"\(presetPrefix): \(presetName)");
+  }
+
+  private final func RefreshButtonsState() -> Void {
+    this.m_buttonActivate.SetDisabled(this.m_currentSelectedPreset.active);
   }
 
   private final func SaveCurrentColorsAsPreset(presetName: String) -> Void {

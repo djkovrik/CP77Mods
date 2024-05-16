@@ -194,7 +194,7 @@ public class CustomColorPickerSliderController extends inkLogicController {
     this.Refresh();
   }
 
-  public func Refresh() -> Void {
+  public final func Refresh() -> Void {
     this.sliderValueLabel.SetText(IntToString(this.currentValue));
     this.sliderController.ChangeValue(Cast<Float>(this.currentValue));
     this.modifiedFlag.SetVisible(NotEquals(this.presetValue, this.currentValue));
