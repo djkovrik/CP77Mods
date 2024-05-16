@@ -4,6 +4,10 @@ public class HudPainterStylePropertyDTO {
   let green: Float;
   let blue: Float;
   let alpha: Int32;
+
+  public final func AsHDRColor() -> HDRColor {
+    return new HDRColor(this.red, this.green, this.blue, Cast<Float>(this.alpha));
+  }
 }
 
 public class HudPainterStyleDTO {

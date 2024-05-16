@@ -15,6 +15,11 @@ public class HudPainterStorage extends ScriptableService {
       this.Log("First load, active preset set to default");
       this.SaveActivePresetName(this.defaultPreset);
     };
+
+    GameInstance.GetCallbackSystem()
+      .RegisterCallback(n"Resource/Loaded", this, n"OnStyleLoaded")
+      .AddTarget(ResourceTarget.Path(r"base\\gameplay\\gui\\common\\main_colors.inkstyle"))
+      .AddTarget(ResourceTarget.Path(r"base\\gameplay\\gui\\common\\themes\\main_colors_johnny.inkstyle"));
   }
 
   public static func Get() -> ref<HudPainterStorage> {
@@ -188,11 +193,69 @@ public class HudPainterStorage extends ScriptableService {
   }
 
   private final func GetActivePresetName() -> String {
+    this.Log(s"GetActivePresetName returns \(this.activePreset)");
     return NameToString(this.activePreset);
   }
 
   private final func SaveActivePresetName(name: String) -> Void {
+    this.Log(s"SaveActivePresetName \(name)");
     this.activePreset = StringToName(name);
+    this.Log(s"SaveActivePresetName should be \(this.activePreset)");
+  }
+
+  private cb func OnStyleLoaded(event: ref<ResourceEvent>) -> Void {
+    if Equals(this.GetActivePresetName(), this.defaultPreset) {
+      this.Log("Default preset is active, skip inkstyle patching");
+      return ;
+    };
+
+    let activePreset: ref<HudPainterStyleDTO> = this.GetPresetByName(this.GetActivePresetName());
+    let resource: ref<inkStyleResource> = event.GetResource() as inkStyleResource;
+    let path: ResRef = event.GetPath();
+    let isDefault: Bool = Equals(path, r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    let isJohnny: Bool = Equals(path, r"base\\gameplay\\gui\\common\\themes\\main_colors_johnny.inkstyle");
+    if isDefault { this.PatchTheme(resource, activePreset.propertiesDefault); };
+    if isJohnny { this.PatchTheme(resource, activePreset.propertiesJohnny); };
+  }
+
+  private final func PatchTheme(resource: ref<inkStyleResource>, props: array<ref<HudPainterStylePropertyDTO>>) -> Void {
+    if Equals(ArraySize(resource.styles), 0) {
+      this.Log("Failed to patch theme because styles array is empty");
+      return ;
+    };
+
+    this.Log("Patching inkstyle file...");
+
+    let colors: ref<inkHashMap> = new inkHashMap();
+    for property in props {
+      colors.Insert(this.Key(property.name), property);
+    };
+
+    let counter: Int32 = 0;
+    let newStyle: inkStyle = resource.styles[0];
+    let newProperties: array<inkStyleProperty>;
+    for property in resource.styles[0].properties {
+      let keyStr: String = NameToString(property.propertyPath);
+      if colors.KeyExist(this.Key(keyStr)) {
+        let newProperty: inkStyleProperty;
+        let cachedColor: ref<HudPainterStylePropertyDTO> = colors.Get(this.Key(keyStr)) as HudPainterStylePropertyDTO;
+        let newColor: HDRColor = cachedColor.AsHDRColor();
+        newProperty.propertyPath = property.propertyPath;
+        newProperty.value = ToVariant(newColor);
+        counter += 1;
+        ArrayPush(newProperties, newProperty);
+      } else {
+        ArrayPush(newProperties, property);
+      };
+    };
+
+    this.Log(s"Properties patched: \(counter)");
+    newStyle.properties = newProperties;
+    resource.styles[0] = newStyle;
+  }
+
+  public final func Key(str: String) -> Uint64 {
+    return TDBID.ToNumber(TDBID.Create(str));
   }
 
   private final func Log(str: String) -> Void {

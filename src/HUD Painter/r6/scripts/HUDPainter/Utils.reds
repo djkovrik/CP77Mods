@@ -25,7 +25,7 @@ TODO:
   + Preset item states: hovered / selected / activated
   + Handle preset manager clicks
   + Handle controls state on preset saving / activation
-  - Patch inkstyle_menu
+  + Patch inkstyle_menu
   - Missed .archive popup and logic
   - inkstyle reload? ask psi
   - Widget live previews?
