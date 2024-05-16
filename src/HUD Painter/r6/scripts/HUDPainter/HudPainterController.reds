@@ -14,6 +14,8 @@ class HudPainterController extends gameuiSettingsMenuGameController {
   private let m_buttonHintsController: wref<ButtonHints>;
   private let m_buttonActivate: wref<SimpleButton>;
   private let m_buttonSave: wref<SimpleButton>;
+  private let m_popupToken: ref<inkGameNotificationToken>;
+  private let m_currentSelectedPreset: String;
 
   private let m_colorItems: array<ref<HudPainterColorItem>>;
   private let m_presetItems: array<ref<HudPainterPresetItem>>;
@@ -28,12 +30,10 @@ class HudPainterController extends gameuiSettingsMenuGameController {
     ).GetController() as ButtonHints;
 
     this.AddInitialButtonHints();
-    this.SpawnColorsListContent();
     this.SpawnColorPicker();
     this.CreatePresetManagerButtons();
-    this.RefereshActivePresetTitle();
-    this.SpawnPresetsListContent();
     this.RegisterCallbacks();
+    this.RefreshScreenData();
   }
 
   protected cb func OnSetMenuEventDispatcher(menuEventDispatcher: wref<inkMenuEventDispatcher>) -> Bool {
@@ -54,15 +54,37 @@ class HudPainterController extends gameuiSettingsMenuGameController {
 	protected cb func OnPresetActivateClick(widget: wref<inkWidget>) -> Bool {
     this.Log(s"Activate preset clicked");
     this.QueueEvent(HudPainterSoundEmitted.Create(n"ui_menu_onpress"));
+    this.m_storage.SaveActivePresetName(this.m_currentSelectedPreset);
+    this.RefreshScreenData();
 	}
 
 	protected cb func OnPresetSaveClick(widget: wref<inkWidget>) -> Bool {
     this.Log(s"Save preset clicked");
     this.QueueEvent(HudPainterSoundEmitted.Create(n"ui_menu_onpress"));
+    this.m_popupToken = GenericMessageNotification.ShowInput(this, GetLocalizedTextByKey(n"Mod-HudPainter-Save-Preset-Title"), GetLocalizedTextByKey(n"Mod-HudPainter-Save-Preset-Hint"), GenericMessageNotificationType.ConfirmCancel);
+    this.m_popupToken.RegisterListener(this, n"OnSavePresetPopupClosed");
 	}
+
+  protected cb func OnSavePresetPopupClosed(data: ref<inkGameNotificationData>) {
+    let resultData: ref<GenericMessageNotificationCloseData> = data as GenericMessageNotificationCloseData;
+    let enteredPresetName: String;
+
+    if Equals(resultData.result, GenericMessageNotificationResult.Confirm) && NotEquals(resultData.input, "") {
+      enteredPresetName = resultData.input;
+      this.PlaySound(n"Item", n"OnBuy");
+      this.SaveCurrentColorsAsPreset(enteredPresetName);
+    };
+
+    this.m_popupToken = null;
+  }
 
   protected cb func OnHudPainterPresetSelected(evt: ref<HudPainterPresetSelected>) -> Bool {
     this.Log(s"Preset selected: \(evt.data.name)");
+    this.m_currentSelectedPreset = evt.data.name;
+  }
+
+  protected cb func OnHudPainterPresetSaved(evt: ref<HudPainterPresetSaved>) -> Bool {
+    this.RefreshScreenData();
   }
 
   private final func AddInitialButtonHints() -> Void {
@@ -70,11 +92,12 @@ class HudPainterController extends gameuiSettingsMenuGameController {
     this.m_buttonHintsController.AddButtonHint(n"back", "Common-Access-Close");
   }
 
-  private final func SpawnColorsListContent() -> Void {
+  private final func RefreshColorsList() -> Void {
     this.m_colorItems = this.m_storage.GetActivePresetData();
     this.Log(s"Active preset loaded: \(ArraySize(this.m_colorItems)) colors");
 
     let container: ref<inkCompoundWidget> = inkWidgetRef.Get(this.m_colorsListContainer) as inkCompoundWidget;
+    container.RemoveAllChildren();
     let component: ref<ComponentColorItem>;
     for colorItem in this.m_colorItems {
       component = new ComponentColorItem();
@@ -83,16 +106,17 @@ class HudPainterController extends gameuiSettingsMenuGameController {
     };
   }
 
-  private final func SpawnPresetsListContent() -> Void {
+  private final func RefreshPresetsList() -> Void {
     this.m_presetItems = this.m_storage.GetAvailablePresetsList();
     let container: ref<inkCompoundWidget> = inkWidgetRef.Get(this.m_presetsListContainer) as inkCompoundWidget;
-    this.Log(s"Presets list loaded: \(ArraySize(this.m_presetItems)) items, container available: \(IsDefined(container))");
+    container.RemoveAllChildren();
     let component: ref<ComponentPresetItem>;
     for presetItem in this.m_presetItems {
       component = new ComponentPresetItem();
       component.Reparent(container);
       component.SetData(presetItem);
     };
+    this.Log(s"Presets list loaded: \(ArraySize(this.m_presetItems)) items, container available: \(IsDefined(container))");
   }
 
   private final func SpawnColorPicker() -> Void {
@@ -136,6 +160,36 @@ class HudPainterController extends gameuiSettingsMenuGameController {
     let presetPrefix: String = GetLocalizedTextByKey(n"Mod-HudPainter-Presets-Active");
     let presetName: String = this.m_storage.GetActivePresetName();
     activePresetName.SetText(s"\(presetPrefix): \(presetName)");
+  }
+
+  private final func SaveCurrentColorsAsPreset(presetName: String) -> Void {
+    let currentColors: array<ref<HudPainterColorItem>>;
+    let colorItem: ref<HudPainterColorItem>;
+    let container: ref<inkCompoundWidget> = inkWidgetRef.Get(this.m_colorsListContainer) as inkCompoundWidget;
+    let child: ref<ComponentColorItem>;
+    let childNumber: Int32 = container.GetNumChildren();
+    let index: Int32 = 0;
+    while index < childNumber {
+      child = container.GetWidgetByIndex(index).GetController() as ComponentColorItem;
+      if IsDefined(child) {
+        colorItem = child.GetData();
+        ArrayPush(currentColors, colorItem);
+      };
+      index += 1;
+    };
+
+    if ArraySize(currentColors) > 0 {
+      this.Log(s"Saving \(ArraySize(currentColors)) items to preset \(presetName)");
+      this.m_storage.SaveNewPresetData(presetName, currentColors);
+    } else {
+      this.Log(s"Preset not saved!");
+    };
+  }
+
+  private final func RefreshScreenData() -> Void {
+    this.RefereshActivePresetTitle();
+    this.RefreshPresetsList();
+    this.RefreshColorsList();
   }
 
   private final func Log(str: String) -> Void {

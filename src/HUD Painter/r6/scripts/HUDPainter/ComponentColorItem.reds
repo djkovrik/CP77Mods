@@ -180,6 +180,10 @@ public class ComponentColorItem extends inkComponent {
     modified.SetVisible(NotEquals(this.GetColorHashInt(this.data.presetColor), this.GetColorHashInt(this.data.customColor)));
   }
 
+  public final func GetData() -> ref<HudPainterColorItem> {
+    return this.data;
+  }
+
   private final func RefreshItemState() -> Void {
     if this.selected {
       this.GetRootCompoundWidget().GetWidgetByPathName(n"frame").SetOpacity(0.2);

@@ -3,7 +3,7 @@ import RedFileSystem.*
 import RedData.Json.*
 
 public class HudPainterStorage extends ScriptableService {
-  private let defaultPreset: String = "default";
+  private let defaultPreset: String = "DEFAULT";
   
   private let storage: ref<FileSystemStorage>;
 
@@ -27,6 +27,8 @@ public class HudPainterStorage extends ScriptableService {
   }
 
   public final func SaveNewPresetData(name: String, data: array<ref<HudPainterColorItem>>) -> Void {
+    let delaySystem: ref<DelaySystem> = GameInstance.GetDelaySystem(GetGameInstance());
+    let uiSystem: ref<UISystem> = GameInstance.GetUISystem(GetGameInstance());
     let presetName: String = s"\(name).json";
     let propertiesDefault: array<ref<HudPainterStylePropertyDTO>>;
     let propertiesJohnny: array<ref<HudPainterStylePropertyDTO>>;
@@ -57,8 +59,8 @@ public class HudPainterStorage extends ScriptableService {
     let status: Bool = destination.WriteJson(json);
     if status {
       this.Log(s"Preset \(presetName) saved");
-      this.SaveActivePresetName(presetName);
-      GameInstance.GetUISystem(GetGameInstance()).QueueEvent(new HudPainterPresetSaved());
+      this.SaveActivePresetName(name);
+      delaySystem.DelayCallback(DelayedScreenRefreshCallback.Create(uiSystem), 1.0, false);
     } else {
       this.Log(s"Preset \(presetName) not saved!");
     };
@@ -197,5 +199,19 @@ public class HudPainterStorage extends ScriptableService {
     if EnableHudPainterLogs() {
       ModLog(n"Storage", str);
     };
+  }
+}
+
+private class DelayedScreenRefreshCallback extends DelayCallback {
+  private let system: wref<UISystem>;
+
+  public func Call() {
+    this.system.QueueEvent(new HudPainterPresetSaved());
+  }
+
+  public static func Create(system: ref<UISystem>) -> ref<DelayedScreenRefreshCallback> {
+    let instance = new DelayedScreenRefreshCallback();
+    instance.system = system;
+    return instance;
   }
 }

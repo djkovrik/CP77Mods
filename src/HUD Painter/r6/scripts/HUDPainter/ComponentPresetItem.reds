@@ -144,7 +144,7 @@ public class ComponentPresetItem extends inkComponent {
       this.GetRootCompoundWidget().GetWidgetByPathName(n"frame").SetOpacity(0.0);
     };
 
-    if this.hovered {
+    if this.hovered && !this.data.active {
       this.GetRootCompoundWidget().GetWidgetByPathName(n"shadow").SetOpacity(0.05);
     } else {
       this.GetRootCompoundWidget().GetWidgetByPathName(n"shadow").SetOpacity(0.0);
