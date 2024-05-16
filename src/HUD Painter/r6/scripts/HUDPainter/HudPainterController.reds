@@ -34,6 +34,11 @@ class HudPainterController extends gameuiSettingsMenuGameController {
     this.CreatePresetManagerButtons();
     this.RegisterCallbacks();
     this.RefreshScreenData();
+
+    if this.m_storage.IsDefaultPresetMissing() {
+      this.m_popupToken = HudPainterWarningPopup.Show(this, GetLocalizedTextByKey(n"Mod-HudPainter-Default-Missed"));
+      this.m_popupToken.RegisterListener(this, n"OnDefaultPresetNotFoundPopupClosed");
+    };
   }
 
   protected cb func OnSetMenuEventDispatcher(menuEventDispatcher: wref<inkMenuEventDispatcher>) -> Bool {
@@ -75,14 +80,27 @@ class HudPainterController extends gameuiSettingsMenuGameController {
 
   protected cb func OnSavePresetPopupClosed(data: ref<inkGameNotificationData>) {
     let resultData: ref<GenericMessageNotificationCloseData> = data as GenericMessageNotificationCloseData;
-    let enteredPresetName: String;
+    let isInputValid: Bool = NotEquals(resultData.input, "") && NotEquals(resultData.input, this.m_storage.GetDefaultPresetName());
 
-    if Equals(resultData.result, GenericMessageNotificationResult.Confirm) && NotEquals(resultData.input, "") {
-      enteredPresetName = resultData.input;
+    if Equals(resultData.result, GenericMessageNotificationResult.Confirm) && isInputValid {
       this.PlaySound(n"Item", n"OnBuy");
-      this.SaveCurrentColorsAsPreset(enteredPresetName);
+      this.SaveCurrentColorsAsPreset(resultData.input);
     };
 
+    this.m_popupToken = null;
+
+    if Equals(resultData.input, this.m_storage.GetDefaultPresetName()) {
+      this.m_popupToken = HudPainterWarningPopup.Show(this, GetLocalizedTextByKey(n"Mod-HudPainter-Default-Overwrite"));
+      this.m_popupToken.RegisterListener(this, n"OnDefaultPresetNamePopupClosed");
+    };
+  }
+
+  protected cb func OnDefaultPresetNotFoundPopupClosed(data: ref<inkGameNotificationData>) {
+    this.m_popupToken = null;
+    this.m_menuEventDispatcher.SpawnEvent(n"OnCloseHudPainterScreen");
+  }
+
+  protected cb func OnDefaultPresetNamePopupClosed(data: ref<inkGameNotificationData>) {
     this.m_popupToken = null;
   }
 

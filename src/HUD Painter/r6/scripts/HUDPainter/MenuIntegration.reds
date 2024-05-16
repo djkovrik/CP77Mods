@@ -81,10 +81,27 @@ class InsertHudPainterMenuItem extends ScriptableService {
   }
 }
 
+@addField(SingleplayerMenuGameController)
+private let missingArchivePopup: ref<inkGameNotificationToken>;
+
 @wrapMethod(SingleplayerMenuGameController)
 private func PopulateMenuItemList() {
   wrappedMethod();
-  this.AddMenuItem(GetLocalizedTextByKey(n"Mod-HudPainter-Name"), n"OnOpenHudPainter");
+
+  let depot: ref<ResourceDepot> = GameInstance.GetResourceDepot();
+  if depot.ArchiveExists("HUDPainter.archive") {
+    this.AddMenuItem(GetLocalizedTextByKey(n"Mod-HudPainter-Name"), n"OnOpenHudPainter");
+  } else {
+    if !IsDefined(this.missingArchivePopup) {
+      this.missingArchivePopup = HudPainterMissingArchivePopup.Show(this);
+      this.missingArchivePopup.RegisterListener(this, n"OnMissingArchivePopupClosed");
+    };
+  };
+}
+
+@addMethod(SingleplayerMenuGameController)
+protected cb func OnMissingArchivePopupClosed(data: ref<inkGameNotificationData>) {
+    this.missingArchivePopup = null;
 }
 
 @wrapMethod(PauseMenuGameController)

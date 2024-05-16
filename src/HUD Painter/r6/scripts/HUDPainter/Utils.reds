@@ -1,15 +1,4 @@
-@addMethod(GenericMessageNotification)
-public final static func ShowInputWithOriginalCase(controller: ref<worlduiIGameController>, title: String, message: String, type: GenericMessageNotificationType) -> ref<inkGameNotificationToken> {
-  let data: ref<GenericMessageNotificationData> = GenericMessageNotification.GetBaseData();
-  data.title = title;
-  data.message = message;
-  data.type = type;
-  data.isInput = true;
-  return controller.ShowGameNotification(data);
-}
-
 public final static func EnableHudPainterLogs() -> Bool = true
-
 
 /**
 TODO:
@@ -26,7 +15,7 @@ TODO:
   + Handle preset manager clicks
   + Handle controls state on preset saving / activation
   + Patch inkstyle_menu
-  - Missed .archive popup and logic
-  - inkstyle reload? ask psi
-  - Widget live previews?
+  + Missed .archive popup and logic
+  - Previews slot
+  - Live previews for healthbar, minimap, quest tracker, weapon roster, stealth and actions panel
 **/

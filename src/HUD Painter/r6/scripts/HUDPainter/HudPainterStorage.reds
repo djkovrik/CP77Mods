@@ -71,6 +71,15 @@ public class HudPainterStorage extends ScriptableService {
     };
   }
 
+  public final func IsDefaultPresetMissing() -> Bool {
+    let defaultPresetStatus: FileSystemStatus = this.storage.Exists(s"\(this.defaultPreset).json");
+    return NotEquals(defaultPresetStatus, FileSystemStatus.True);
+  }
+
+  public final func GetDefaultPresetName() -> String {
+    return this.defaultPreset;
+  }
+
   public final func GetAvailablePresetsList() -> array<ref<HudPainterPresetItem>> {
     let result: array<ref<HudPainterPresetItem>>;
     let defaultPresetStatus: FileSystemStatus = this.storage.Exists(s"\(this.defaultPreset).json");
