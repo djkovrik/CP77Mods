@@ -278,7 +278,7 @@ private class DelayedScreenRefreshCallback extends DelayCallback {
   private let system: wref<UISystem>;
 
   public func Call() {
-    this.system.QueueEvent(new HudPainterPresetSaved());
+    this.system.QueueEvent(HudPainterPresetSaved.Create());
   }
 
   public static func Create(system: ref<UISystem>) -> ref<DelayedScreenRefreshCallback> {

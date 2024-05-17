@@ -29,6 +29,20 @@ public class HudPainterPresetItem {
   let active: Bool;
 }
 
+public class HudPainterCustomColor {
+  let colorR: Int32;
+  let colorG: Int32;
+  let colorB: Int32;
+
+  public final static func Create(colorR: Int32, colorG: Int32, colorB: Int32) -> ref<HudPainterCustomColor> {
+    let instance: ref<HudPainterCustomColor> = new HudPainterCustomColor();
+    instance.colorR = colorR;
+    instance.colorG = colorG;
+    instance.colorB = colorB;
+    return instance;
+  }
+}
+
 enum HudPainterColorType {
   Default = 0,
   Johnny = 1,
@@ -43,7 +57,7 @@ enum SliderColorType {
 public class HudPainterSoundEmitted extends Event {
   let name: CName;
 
-  public static func Create(name: CName) -> ref<HudPainterSoundEmitted> {
+  public final static func Create(name: CName) -> ref<HudPainterSoundEmitted> {
     let evt: ref<HudPainterSoundEmitted> = new HudPainterSoundEmitted();
     evt.name = name;
     return evt;
@@ -54,7 +68,7 @@ public class HudPainterSliderUpdated extends Event {
   let color: SliderColorType;
   let value: Int32;
 
-  public static func Create(color: SliderColorType, value: Int32) -> ref<HudPainterSliderUpdated> {
+  public final static func Create(color: SliderColorType, value: Int32) -> ref<HudPainterSliderUpdated> {
     let evt: ref<HudPainterSliderUpdated> = new HudPainterSliderUpdated();
     evt.color = color;
     evt.value = value;
@@ -65,7 +79,7 @@ public class HudPainterSliderUpdated extends Event {
 public class HudPainterColorSelected extends Event {
   let data: ref<HudPainterColorItem>;
 
-  public static func Create(data: ref<HudPainterColorItem>) -> ref<HudPainterColorSelected> {
+  public final static func Create(data: ref<HudPainterColorItem>) -> ref<HudPainterColorSelected> {
     let evt: ref<HudPainterColorSelected> = new HudPainterColorSelected();
     evt.data = data;
     return evt;
@@ -77,7 +91,7 @@ public class HudPainterColorChanged extends Event {
   let type: HudPainterColorType;
   let color: HDRColor;
 
-  public static func Create(name: String, type: HudPainterColorType, color: HDRColor) -> ref<HudPainterColorChanged> {
+  public final static func Create(name: String, type: HudPainterColorType, color: HDRColor) -> ref<HudPainterColorChanged> {
     let evt: ref<HudPainterColorChanged> = new HudPainterColorChanged();
     evt.name = name;
     evt.type = type;
@@ -86,12 +100,17 @@ public class HudPainterColorChanged extends Event {
   };
 }
 
-public class HudPainterPresetSaved extends Event {}
+public class HudPainterPresetSaved extends Event {
+  public final static func Create() -> ref<HudPainterPresetSaved> {
+    let evt: ref<HudPainterPresetSaved> = new HudPainterPresetSaved();
+    return evt;
+  }
+}
 
 public class HudPainterPresetSelected extends Event {
   let data: ref<HudPainterPresetItem>;
 
-  public static func Create(data: ref<HudPainterPresetItem>) -> ref<HudPainterPresetSelected> {
+  public final static func Create(data: ref<HudPainterPresetItem>) -> ref<HudPainterPresetSelected> {
     let evt: ref<HudPainterPresetSelected> = new HudPainterPresetSelected();
     evt.data = data;
     return evt;

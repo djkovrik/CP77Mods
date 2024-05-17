@@ -7,34 +7,32 @@ public class CustomColorPickerController extends inkGameController {
   private let m_colorNameLabel: inkWidgetRef;
   private let m_slidersContainer: inkWidgetRef;
   private let m_slidersHint: inkWidgetRef;
-  private let m_resetButtonSlot: inkWidgetRef;
+  private let m_buttonsSlot: inkWidgetRef;
 
-  private let player: wref<GameObject>;
   private let data: ref<HudPainterColorItem>;
+  private let popupToken: ref<inkGameNotificationToken>;
 
   private let sliderR: wref<CustomColorPickerSliderController>;
   private let sliderG: wref<CustomColorPickerSliderController>;
   private let sliderB: wref<CustomColorPickerSliderController>;
   private let buttonResetColor: wref<SimpleButton>;
+  private let buttonFromHex: wref<SimpleButton>;
 
   private let sliderValueR: Int32;
   private let sliderValueG: Int32;
   private let sliderValueB: Int32;
 
   protected cb func OnInitialize() {
-    this.player = this.GetPlayerControlledObject();
-    this.CreateButton();
+    this.CreateButtons();
     this.SpawnSliders();
 
     this.buttonResetColor.RegisterToCallback(n"OnBtnClick", this, n"OnResetClick");
+    this.buttonFromHex.RegisterToCallback(n"OnBtnClick", this, n"OnFromHexClick");
   }
 
   protected cb func OnUninitialize() -> Bool {
     this.buttonResetColor.UnregisterFromCallback(n"OnBtnClick", this, n"OnResetClick");
-  }
-
-  protected cb func OnHudPainterSoundEmitted(evt: ref<HudPainterSoundEmitted>) -> Bool {
-    GameObject.PlaySoundEvent(this.player, evt.name);
+    this.buttonFromHex.UnregisterFromCallback(n"OnBtnClick", this, n"OnFromHexClick");
   }
 
   protected cb func OnHudPainterSliderUpdated(evt: ref<HudPainterSliderUpdated>) -> Bool {
@@ -67,7 +65,6 @@ public class CustomColorPickerController extends inkGameController {
     this.RefreshColorName();
     this.RefreshColorPreviews();
     this.RefreshSliders();
-    this.buttonResetColor.SetDisabled(false);
   }
 
   private final func RefreshColorName() -> Void {
@@ -107,6 +104,26 @@ public class CustomColorPickerController extends inkGameController {
     );
   }
 
+  private final func RefreshSliders(valueR: Int32, valueG: Int32, valueB: Int32) -> Void {
+    this.sliderR.Setup(
+      Cast<Int32>(this.data.presetColor.Red * 255.0), 
+      valueR, 
+      SliderColorType.Red
+    );
+
+    this.sliderG.Setup(
+      Cast<Int32>(this.data.presetColor.Green * 255.0), 
+      valueG, 
+      SliderColorType.Green
+    );
+
+    this.sliderB.Setup(
+      Cast<Int32>(this.data.presetColor.Blue * 255.0), 
+      valueB, 
+      SliderColorType.Blue
+    );
+  }
+
 	protected cb func OnResetClick(widget: wref<inkWidget>) -> Bool {
     this.data.customColor = this.data.presetColor;
     this.RefreshColorPreviews();
@@ -115,15 +132,43 @@ public class CustomColorPickerController extends inkGameController {
     this.QueueEvent(HudPainterColorChanged.Create(this.data.name, this.data.type, this.data.customColor));
 	}
 
-  private final func CreateButton() -> Void {
-    let button: ref<SimpleButton> = SimpleButton.Create();
-    button.SetName(n"buttonReset");
-    button.SetText(GetLocalizedTextByKey(n"Mod-HudPainter-Reset-Color"));
-    button.ToggleAnimations(true);
-    button.ToggleSounds(true);
-    button.SetDisabled(true);
-    button.Reparent(inkWidgetRef.Get(this.m_resetButtonSlot) as inkCompoundWidget);
-    this.buttonResetColor = button;
+	protected cb func OnFromHexClick(widget: wref<inkWidget>) -> Bool {
+    this.QueueEvent(HudPainterSoundEmitted.Create(n"ui_menu_onpress"));
+    this.popupToken = GenericMessageNotification.ShowInput(this, GetLocalizedTextByKey(n"Mod-HudPainter-From-Hex-Title"), GetLocalizedTextByKey(n"Mod-HudPainter-From-Hex-Hint"), GenericMessageNotificationType.ConfirmCancel);
+    this.popupToken.RegisterListener(this, n"OnHexInputPopupClosed");
+	}
+
+  protected cb func OnHexInputPopupClosed(data: ref<inkGameNotificationData>) {
+    let resultData: ref<GenericMessageNotificationCloseData> = data as GenericMessageNotificationCloseData;
+    let isInputValid: Bool = NotEquals(resultData.input, "") && ColorUtils.IsHexValid(resultData.input);
+
+    if Equals(resultData.result, GenericMessageNotificationResult.Confirm) && isInputValid {
+      this.PlaySound(n"Item", n"OnBuy");
+      let decodedColor: ref<HudPainterCustomColor> = ColorUtils.DecodeHex(resultData.input);
+      this.RefreshSliders(decodedColor.colorR, decodedColor.colorG, decodedColor.colorB);
+    };
+
+    this.popupToken = null;
+  }
+
+  private final func CreateButtons() -> Void {
+    let buttonReset: ref<SimpleButton> = SimpleButton.Create();
+    buttonReset.SetName(n"buttonReset");
+    buttonReset.SetText(GetLocalizedTextByKey(n"Mod-HudPainter-Reset-Color"));
+    buttonReset.ToggleAnimations(true);
+    buttonReset.ToggleSounds(true);
+    buttonReset.GetRootWidget().SetSizeRule(inkESizeRule.Stretch);
+    buttonReset.Reparent(inkWidgetRef.Get(this.m_buttonsSlot) as inkCompoundWidget);
+    this.buttonResetColor = buttonReset;
+
+    let buttonFromHex: ref<SimpleButton> = SimpleButton.Create();
+    buttonFromHex.SetName(n"buttonFromHex");
+    buttonFromHex.SetText(GetLocalizedTextByKey(n"Mod-HudPainter-From-Hex"));
+    buttonFromHex.ToggleAnimations(true);
+    buttonFromHex.ToggleSounds(true);
+    buttonFromHex.GetRootWidget().SetSizeRule(inkESizeRule.Stretch);
+    buttonFromHex.Reparent(inkWidgetRef.Get(this.m_buttonsSlot) as inkCompoundWidget);
+    this.buttonFromHex = buttonFromHex;
   }
 
   private final func SpawnSliders() -> Void {

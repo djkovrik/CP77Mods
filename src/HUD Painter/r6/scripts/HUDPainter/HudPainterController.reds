@@ -10,6 +10,7 @@ class HudPainterController extends gameuiSettingsMenuGameController {
   private let m_presetsListContainer: inkWidgetRef;
 
   private let m_storage: wref<HudPainterStorage>;
+  private let m_player: wref<GameObject>;
   private let m_menuEventDispatcher: wref<inkMenuEventDispatcher>;
   private let m_buttonHintsController: wref<ButtonHints>;
   private let m_buttonActivate: wref<SimpleButton>;
@@ -22,6 +23,7 @@ class HudPainterController extends gameuiSettingsMenuGameController {
 
   protected cb func OnInitialize() {
     this.m_storage = HudPainterStorage.Get();
+    this.m_player = this.GetPlayerControlledObject();
     
     this.m_buttonHintsController = this.SpawnFromExternal(
       inkWidgetRef.Get(this.m_buttonHintsSlot), 
@@ -54,6 +56,10 @@ class HudPainterController extends gameuiSettingsMenuGameController {
   protected cb func OnUninitialize() -> Bool {
     this.m_menuEventDispatcher.UnregisterFromEvent(n"OnBack", this, n"OnBack");
     this.UnregisterCallbacks();
+  }
+
+  protected cb func OnHudPainterSoundEmitted(evt: ref<HudPainterSoundEmitted>) -> Bool {
+    GameObject.PlaySoundEvent(this.m_player, evt.name);
   }
 
 	protected cb func OnPresetActivateClick(widget: wref<inkWidget>) -> Bool {
