@@ -15,7 +15,7 @@ public func UpdateSearchQuery(query: String) -> Void {
 public func DerivedFilterItem(data: ref<IScriptable>) -> DerivedFilterResult {
   let result: DerivedFilterResult = wrappedMethod(data);
   let wrappedData: ref<VendorUIInventoryItemData> = data as VendorUIInventoryItemData;
-  let query: String = StrLower(this.itemSearchQuery);
+  let query: String = UTF8StrLower(this.itemSearchQuery);
 
   if !IsDefined(wrappedData) || Equals(query, "") {
     return result;
@@ -26,11 +26,11 @@ public func DerivedFilterItem(data: ref<IScriptable>) -> DerivedFilterResult {
   let weaponRecord: ref<WeaponItem_Record>;
 
   // Name
-  let itemName: String = StrLower(GetLocalizedTextByKey(iteRecord.DisplayName()));
+  let itemName: String = UTF8StrLower(GetLocalizedTextByKey(iteRecord.DisplayName()));
   combined += itemName;
 
   // Type
-  let itemTypeString: String = StrLower(GetLocalizedText(UIItemsHelper.GetItemTypeKey(iteRecord.ItemType().Type())));
+  let itemTypeString: String = UTF8StrLower(GetLocalizedText(UIItemsHelper.GetItemTypeKey(iteRecord.ItemType().Type())));
   combined += itemTypeString;
 
   // Weapon evolution
@@ -39,12 +39,12 @@ public func DerivedFilterItem(data: ref<IScriptable>) -> DerivedFilterResult {
     weaponRecord = iteRecord as WeaponItem_Record;
     if IsDefined(weaponRecord) {
       evolution = UIItemsHelper.GetItemTypeKey(weaponRecord.ItemType().Type(), weaponRecord.Evolution().Type());
-      combined += StrLower(GetLocalizedText(evolution));
+      combined += UTF8StrLower(GetLocalizedText(evolution));
     };
   };
 
   // Description
-  let description: String = StrLower(GetLocalizedTextByKey(iteRecord.LocalizedDescription()));
+  let description: String = UTF8StrLower(GetLocalizedTextByKey(iteRecord.LocalizedDescription()));
   combined += description;
 
   if !StrContains(combined, query) {
