@@ -13,13 +13,13 @@ public abstract class ColorUtils {
 
   public static final func IsHexValid(from: String) -> Bool {
     if NotEquals(StrLen(from), 6) {
-      ColorUtils.Log("Incorrect hex length, return default color");
+      ColorUtils.Log("Incorrect hex length");
       return false;
     };
 
     let decoded: array<Int32> = ColorUtils.Decode(from);
     if ArrayContains(decoded, -1) {
-      ColorUtils.Log("Incorrect hex format, return default color");
+      ColorUtils.Log("Incorrect hex format");
       return false;
     }
 
@@ -85,7 +85,6 @@ TODO:
   + Handle controls state on preset saving / activation
   + Patch inkstyle_menu
   + Missed .archive popup and logic
-  - HEX color input
-  - Previews slot
+  + HEX color input
   - Live previews for healthbar, minimap, quest tracker, weapon roster, stealth and actions panel
 **/

@@ -65,15 +65,14 @@ public class HudPainterStorage extends ScriptableService {
     if status {
       this.Log(s"Preset \(presetName) saved");
       this.SaveActivePresetName(name);
-      delaySystem.DelayCallback(DelayedScreenRefreshCallback.Create(uiSystem), 1.0, false);
+      delaySystem.DelayCallback(DelayedScreenRefreshCallback.Create(uiSystem), 0.5, false);
     } else {
       this.Log(s"Preset \(presetName) not saved!");
     };
   }
 
   public final func IsDefaultPresetMissing() -> Bool {
-    let defaultPresetStatus: FileSystemStatus = this.storage.Exists(s"\(this.defaultPreset).json");
-    return NotEquals(defaultPresetStatus, FileSystemStatus.True);
+    return !this.IsPresetExists(this.defaultPreset);
   }
 
   public final func GetDefaultPresetName() -> String {
@@ -202,6 +201,11 @@ public class HudPainterStorage extends ScriptableService {
   }
 
   private final func GetActivePresetName() -> String {
+    if !this.IsPresetExists(NameToString(this.activePreset)) {
+      this.Log("Active preset was deleted, restore to default");
+      this.SaveActivePresetName(this.defaultPreset);
+    };
+
     this.Log(s"GetActivePresetName returns \(this.activePreset)");
     return NameToString(this.activePreset);
   }
@@ -263,8 +267,14 @@ public class HudPainterStorage extends ScriptableService {
     resource.styles[0] = newStyle;
   }
 
-  public final func Key(str: String) -> Uint64 {
+  private final func Key(str: String) -> Uint64 {
     return TDBID.ToNumber(TDBID.Create(str));
+  }
+
+  private final func IsPresetExists(name: String) -> Bool {
+    let presetStatus: FileSystemStatus = this.storage.Exists(s"\(name).json");
+    this.Log(s"IsPresetExists checks \(name): \(presetStatus)");
+    return Equals(presetStatus, FileSystemStatus.True);
   }
 
   private final func Log(str: String) -> Void {
