@@ -9,10 +9,13 @@ public class HudPainterStorage extends ScriptableService {
 
   private persistent let activePreset: CName;
 
+  private let defaultStyles: array<inkStyle>;
+  private let johnnyStyles: array<inkStyle>;
+
   private cb func OnLoad() {
     this.storage = FileSystem.GetStorage("HUDPainter");
     if Equals(this.activePreset, n"") {
-      this.Log("First load, active preset set to default");
+      this.Log("! First load, active preset set to default");
       this.SaveActivePresetName(this.defaultPreset);
     };
 
@@ -206,7 +209,7 @@ public class HudPainterStorage extends ScriptableService {
       this.SaveActivePresetName(this.defaultPreset);
     };
 
-    this.Log(s"GetActivePresetName returns \(this.activePreset)");
+    this.Log(s"? GetActivePresetName returns \(this.activePreset)");
     return NameToString(this.activePreset);
   }
 
@@ -217,27 +220,81 @@ public class HudPainterStorage extends ScriptableService {
   }
 
   private cb func OnStyleLoaded(event: ref<ResourceEvent>) -> Void {
+    let resource: ref<inkStyleResource> = event.GetResource() as inkStyleResource;
+    let path: ResRef = event.GetPath();
+    let isDefault: Bool = Equals(path, r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    let isJohnny: Bool = Equals(path, r"base\\gameplay\\gui\\common\\themes\\main_colors_johnny.inkstyle");
+
+    if isDefault {
+      let loadedStyles: array<inkStyle> = resource.styles;
+      for style in loadedStyles {
+        let styleToCache: inkStyle = style;
+        ArrayPush(this.defaultStyles, styleToCache);
+      };
+    };
+
+    if isJohnny {
+      let loadedStyles: array<inkStyle> = resource.styles;
+      for style in loadedStyles {
+        let styleToCache: inkStyle = style;
+        ArrayPush(this.johnnyStyles, styleToCache);
+      };
+    };
+
+    this.Log(s"Cached \(ArraySize(this.defaultStyles)) default and \(ArraySize(this.johnnyStyles)) Johnny styles");
+
     if Equals(this.GetActivePresetName(), this.defaultPreset) {
       this.Log("Default preset is active, skip inkstyle patching");
       return ;
     };
 
     let activePreset: ref<HudPainterStyleDTO> = this.GetPresetByName(this.GetActivePresetName());
-    let resource: ref<inkStyleResource> = event.GetResource() as inkStyleResource;
-    let path: ResRef = event.GetPath();
-    let isDefault: Bool = Equals(path, r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-    let isJohnny: Bool = Equals(path, r"base\\gameplay\\gui\\common\\themes\\main_colors_johnny.inkstyle");
     if isDefault { this.PatchTheme(resource, activePreset.propertiesDefault); };
     if isJohnny { this.PatchTheme(resource, activePreset.propertiesJohnny); };
   }
 
+  public final func PatchCurrentInkStyleResource() -> Void {
+    this.Log("! Refresh current inkstyle resource");
+    let mainColorsToken: ref<ResourceToken> = GameInstance.GetResourceDepot().LoadResource(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    mainColorsToken.RegisterCallback(this, n"OnMainColorsReady");
+
+    let johnnyColorsToken: ref<ResourceToken> = GameInstance.GetResourceDepot().LoadResource(r"base\\gameplay\\gui\\common\\themes\\main_colors_johnny.inkstyle");
+    johnnyColorsToken.RegisterCallback(this, n"OnJohnnyColorsReady");
+  }
+
+  private cb func OnMainColorsReady(token: ref<ResourceToken>) {
+    let resource: ref<inkStyleResource> = token.GetResource() as inkStyleResource;
+    this.Log(s"! Main colors resource has \(ArraySize(resource.styles)) styles");
+    this.Log(s"! Cache has \(ArraySize(this.defaultStyles)) default styles");
+    resource.styles = this.defaultStyles;
+
+    let activePreset: ref<HudPainterStyleDTO> = this.GetPresetByName(this.GetActivePresetName());
+    this.PatchTheme(resource, activePreset.propertiesDefault);
+    this.Log(s"! Patched main colors resource has \(ArraySize(resource.styles)) styles");
+    resource.RefreshResource();
+    this.Log("! Main colors resource refreshed");
+  }
+
+  private cb func OnJohnnyColorsReady(token: ref<ResourceToken>) {
+    let resource: ref<inkStyleResource> = token.GetResource() as inkStyleResource;
+    this.Log(s"! Johnny colors resource has \(ArraySize(resource.styles)) styles");
+    this.Log(s"! Cache has \(ArraySize(this.johnnyStyles)) styles");
+    resource.styles = this.johnnyStyles;
+
+    let activePreset: ref<HudPainterStyleDTO> = this.GetPresetByName(this.GetActivePresetName());
+    this.PatchTheme(resource, activePreset.propertiesJohnny);
+    this.Log(s"! Patched Johnny colors resource has \(ArraySize(resource.styles)) styles");
+    resource.RefreshResource();
+    this.Log("! Johnny colors resource refreshed");
+  }
+
   private final func PatchTheme(resource: ref<inkStyleResource>, props: array<ref<HudPainterStylePropertyDTO>>) -> Void {
     if Equals(ArraySize(resource.styles), 0) {
-      this.Log("Failed to patch theme because styles array is empty");
+      this.Log("> Failed to patch theme because styles array is empty");
       return ;
     };
 
-    this.Log("Patching inkstyle file...");
+    this.Log("> Patching inkstyle file...");
 
     let colors: ref<inkHashMap> = new inkHashMap();
     for property in props {
@@ -262,7 +319,7 @@ public class HudPainterStorage extends ScriptableService {
       };
     };
 
-    this.Log(s"Properties patched: \(counter)");
+    this.Log(s"> Properties patched: \(counter)");
     newStyle.properties = newProperties;
     resource.styles[0] = newStyle;
   }
@@ -273,7 +330,7 @@ public class HudPainterStorage extends ScriptableService {
 
   private final func IsPresetExists(name: String) -> Bool {
     let presetStatus: FileSystemStatus = this.storage.Exists(s"\(name).json");
-    this.Log(s"IsPresetExists checks \(name): \(presetStatus)");
+    this.Log(s"? IsPresetExists checks \(name): \(presetStatus)");
     return Equals(presetStatus, FileSystemStatus.True);
   }
 

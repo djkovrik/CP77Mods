@@ -66,6 +66,7 @@ class HudPainterController extends gameuiSettingsMenuGameController {
     this.Log(s"Activate preset clicked");
     this.QueueEvent(HudPainterSoundEmitted.Create(n"ui_menu_onpress"));
     this.m_storage.SaveActivePresetName(this.m_currentSelectedPreset.name);
+    this.RefreshInkStyle();
     this.RefreshScreenData();
     this.m_buttonActivate.SetDisabled(true);
     inkWidgetRef.SetVisible(this.m_colorPickerSlot, false);
@@ -117,6 +118,7 @@ class HudPainterController extends gameuiSettingsMenuGameController {
   }
 
   protected cb func OnHudPainterPresetSaved(evt: ref<HudPainterPresetSaved>) -> Bool {
+    this.RefreshInkStyle();
     this.RefreshScreenData();
     inkWidgetRef.SetVisible(this.m_colorPickerSlot, false);
   }
@@ -228,6 +230,10 @@ class HudPainterController extends gameuiSettingsMenuGameController {
     this.RefereshActivePresetTitle();
     this.RefreshPresetsList();
     this.RefreshColorsList();
+  }
+
+  private final func RefreshInkStyle() -> Void {
+    this.m_storage.PatchCurrentInkStyleResource();
   }
 
   private final func Log(str: String) -> Void {
