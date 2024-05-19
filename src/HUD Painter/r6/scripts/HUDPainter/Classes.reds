@@ -100,6 +100,16 @@ public class HudPainterColorChanged extends Event {
   };
 }
 
+public class HudPainterPresetSelected extends Event {
+  let data: ref<HudPainterPresetItem>;
+
+  public final static func Create(data: ref<HudPainterPresetItem>) -> ref<HudPainterPresetSelected> {
+    let evt: ref<HudPainterPresetSelected> = new HudPainterPresetSelected();
+    evt.data = data;
+    return evt;
+  }
+}
+
 public class HudPainterPresetSaved extends Event {
   public final static func Create() -> ref<HudPainterPresetSaved> {
     let evt: ref<HudPainterPresetSaved> = new HudPainterPresetSaved();
@@ -107,12 +117,9 @@ public class HudPainterPresetSaved extends Event {
   }
 }
 
-public class HudPainterPresetSelected extends Event {
-  let data: ref<HudPainterPresetItem>;
-
-  public final static func Create(data: ref<HudPainterPresetItem>) -> ref<HudPainterPresetSelected> {
-    let evt: ref<HudPainterPresetSelected> = new HudPainterPresetSelected();
-    evt.data = data;
+public class HudPainterInkStyleRefreshed extends Event {
+  public final static func Create() -> ref<HudPainterInkStyleRefreshed> {
+    let evt: ref<HudPainterInkStyleRefreshed> = new HudPainterInkStyleRefreshed();
     return evt;
   }
 }

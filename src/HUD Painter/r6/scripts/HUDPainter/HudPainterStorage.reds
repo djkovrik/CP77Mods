@@ -12,6 +12,9 @@ public class HudPainterStorage extends ScriptableService {
   private let defaultStyles: array<inkStyle>;
   private let johnnyStyles: array<inkStyle>;
 
+  private let presetDelayID: DelayID;
+  private let inkStyleDelayID: DelayID;
+
   private cb func OnLoad() {
     this.storage = FileSystem.GetStorage("HUDPainter");
     if Equals(this.activePreset, n"") {
@@ -35,8 +38,6 @@ public class HudPainterStorage extends ScriptableService {
   }
 
   public final func SaveNewPresetData(name: String, data: array<ref<HudPainterColorItem>>) -> Void {
-    let delaySystem: ref<DelaySystem> = GameInstance.GetDelaySystem(GetGameInstance());
-    let uiSystem: ref<UISystem> = GameInstance.GetUISystem(GetGameInstance());
     let presetName: String = s"\(name).json";
     let propertiesDefault: array<ref<HudPainterStylePropertyDTO>>;
     let propertiesJohnny: array<ref<HudPainterStylePropertyDTO>>;
@@ -68,7 +69,7 @@ public class HudPainterStorage extends ScriptableService {
     if status {
       this.Log(s"Preset \(presetName) saved");
       this.SaveActivePresetName(name);
-      delaySystem.DelayCallback(DelayedScreenRefreshCallback.Create(uiSystem), 0.5, false);
+      this.RunPresetSavedCallback();
     } else {
       this.Log(s"Preset \(presetName) not saved!");
     };
@@ -273,6 +274,7 @@ public class HudPainterStorage extends ScriptableService {
     this.Log(s"! Patched main colors resource has \(ArraySize(resource.styles)) styles");
     resource.RefreshResource();
     this.Log("! Main colors resource refreshed");
+    this.RunInkStyleRefreshedCallback();
   }
 
   private cb func OnJohnnyColorsReady(token: ref<ResourceToken>) {
@@ -286,6 +288,7 @@ public class HudPainterStorage extends ScriptableService {
     this.Log(s"! Patched Johnny colors resource has \(ArraySize(resource.styles)) styles");
     resource.RefreshResource();
     this.Log("! Johnny colors resource refreshed");
+    this.RunInkStyleRefreshedCallback();
   }
 
   private final func PatchTheme(resource: ref<inkStyleResource>, props: array<ref<HudPainterStylePropertyDTO>>) -> Void {
@@ -334,6 +337,22 @@ public class HudPainterStorage extends ScriptableService {
     return Equals(presetStatus, FileSystemStatus.True);
   }
 
+  private final func RunPresetSavedCallback() -> Void {
+    let delaySystem: ref<DelaySystem> = GameInstance.GetDelaySystem(GetGameInstance());
+    let uiSystem: ref<UISystem> = GameInstance.GetUISystem(GetGameInstance());
+    let callback: ref<PresetSavedCallback> = PresetSavedCallback.Create(uiSystem);
+    delaySystem.CancelCallback(this.presetDelayID);
+    this.presetDelayID = delaySystem.DelayCallback(callback, 0.5, false);
+  }
+
+  private final func RunInkStyleRefreshedCallback() -> Void {
+    let delaySystem: ref<DelaySystem> = GameInstance.GetDelaySystem(GetGameInstance());
+    let uiSystem: ref<UISystem> = GameInstance.GetUISystem(GetGameInstance());
+    let callback: ref<InkStyleRefreshedCallback> = InkStyleRefreshedCallback.Create(uiSystem);
+    delaySystem.CancelCallback(this.inkStyleDelayID);
+    this.inkStyleDelayID = delaySystem.DelayCallback(callback, 0.5, false);
+  }
+
   private final func Log(str: String) -> Void {
     if EnableHudPainterLogs() {
       ModLog(n"Storage", str);
@@ -341,15 +360,29 @@ public class HudPainterStorage extends ScriptableService {
   }
 }
 
-private class DelayedScreenRefreshCallback extends DelayCallback {
+private class PresetSavedCallback extends DelayCallback {
   private let system: wref<UISystem>;
 
   public func Call() {
     this.system.QueueEvent(HudPainterPresetSaved.Create());
   }
 
-  public static func Create(system: ref<UISystem>) -> ref<DelayedScreenRefreshCallback> {
-    let instance = new DelayedScreenRefreshCallback();
+  public static func Create(system: ref<UISystem>) -> ref<PresetSavedCallback> {
+    let instance = new PresetSavedCallback();
+    instance.system = system;
+    return instance;
+  }
+}
+
+private class InkStyleRefreshedCallback extends DelayCallback {
+  private let system: wref<UISystem>;
+
+  public func Call() {
+    this.system.QueueEvent(HudPainterInkStyleRefreshed.Create());
+  }
+
+  public static func Create(system: ref<UISystem>) -> ref<InkStyleRefreshedCallback> {
+    let instance = new InkStyleRefreshedCallback();
     instance.system = system;
     return instance;
   }
