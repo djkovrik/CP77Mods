@@ -8,6 +8,8 @@ public class CustomColorPickerController extends inkGameController {
   private let m_slidersContainer: inkWidgetRef;
   private let m_slidersHint: inkWidgetRef;
   private let m_buttonsSlot: inkWidgetRef;
+  private let m_copyPasteButtonsSlot: inkWidgetRef;
+  private let m_copiedColorLabel: inkTextRef;
 
   private let data: ref<HudPainterColorItem>;
   private let popupToken: ref<inkGameNotificationToken>;
@@ -15,24 +17,38 @@ public class CustomColorPickerController extends inkGameController {
   private let sliderR: wref<CustomColorPickerSliderController>;
   private let sliderG: wref<CustomColorPickerSliderController>;
   private let sliderB: wref<CustomColorPickerSliderController>;
+
   private let buttonResetColor: wref<SimpleButton>;
   private let buttonFromHex: wref<SimpleButton>;
+
+  private let buttonCopyColor: wref<SimpleButton>;
+  private let buttonCancelCopy: wref<SimpleButton>;
+  private let buttonPasteColor: wref<SimpleButton>;
 
   private let sliderValueR: Int32;
   private let sliderValueG: Int32;
   private let sliderValueB: Int32;
 
+  private let copiedColor: ref<HudPainterColorItem>;
+
   protected cb func OnInitialize() {
     this.CreateButtons();
+    this.UpdateButtonsState();
     this.SpawnSliders();
 
     this.buttonResetColor.RegisterToCallback(n"OnBtnClick", this, n"OnResetClick");
     this.buttonFromHex.RegisterToCallback(n"OnBtnClick", this, n"OnFromHexClick");
+    this.buttonCopyColor.RegisterToCallback(n"OnBtnClick", this, n"OnColorCopyClick");
+    this.buttonCancelCopy.RegisterToCallback(n"OnBtnClick", this, n"OnCancelCopyClick");
+    this.buttonPasteColor.RegisterToCallback(n"OnBtnClick", this, n"OnColorPasteClick");
   }
 
   protected cb func OnUninitialize() -> Bool {
     this.buttonResetColor.UnregisterFromCallback(n"OnBtnClick", this, n"OnResetClick");
     this.buttonFromHex.UnregisterFromCallback(n"OnBtnClick", this, n"OnFromHexClick");
+    this.buttonCopyColor.UnregisterFromCallback(n"OnBtnClick", this, n"OnColorCopyClick");
+    this.buttonCancelCopy.UnregisterFromCallback(n"OnBtnClick", this, n"OnCancelCopyClick");
+    this.buttonPasteColor.UnregisterFromCallback(n"OnBtnClick", this, n"OnColorPasteClick");
   }
 
   protected cb func OnHudPainterSliderUpdated(evt: ref<HudPainterSliderUpdated>) -> Bool {
@@ -138,6 +154,31 @@ public class CustomColorPickerController extends inkGameController {
     this.popupToken.RegisterListener(this, n"OnHexInputPopupClosed");
 	}
 
+  protected cb func OnColorCopyClick(widget: wref<inkWidget>) -> Bool {
+    this.copiedColor = this.data;
+    this.UpdateCopiedColorLabelState();
+    this.UpdateButtonsState();
+    this.QueueEvent(HudPainterSoundEmitted.Create(n"ui_menu_onpress"));
+  }
+
+  protected cb func OnCancelCopyClick(widget: wref<inkWidget>) -> Bool {
+    this.copiedColor = null;
+    this.UpdateCopiedColorLabelState();
+    this.UpdateButtonsState();
+    this.QueueEvent(HudPainterSoundEmitted.Create(n"ui_menu_onpress"));
+  }
+
+  protected cb func OnColorPasteClick(widget: wref<inkWidget>) -> Bool {
+    if IsDefined(this.copiedColor) {
+      this.RefreshSliders(
+        Cast<Int32>(this.copiedColor.customColor.Red * 255.0),
+        Cast<Int32>(this.copiedColor.customColor.Green * 255.0),
+        Cast<Int32>(this.copiedColor.customColor.Blue * 255.0)
+      );
+    };
+    this.QueueEvent(HudPainterSoundEmitted.Create(n"ui_menu_onpress"));
+  }
+
   protected cb func OnHexInputPopupClosed(data: ref<inkGameNotificationData>) {
     let resultData: ref<GenericMessageNotificationCloseData> = data as GenericMessageNotificationCloseData;
     let isInputValid: Bool = NotEquals(resultData.input, "") && ColorUtils.IsHexValid(resultData.input);
@@ -152,13 +193,16 @@ public class CustomColorPickerController extends inkGameController {
   }
 
   private final func CreateButtons() -> Void {
+    let resetHexSlot: ref<inkCompoundWidget> = inkWidgetRef.Get(this.m_buttonsSlot) as inkCompoundWidget;
+    let copyPasteSlot: ref<inkCompoundWidget> = inkWidgetRef.Get(this.m_copyPasteButtonsSlot) as inkCompoundWidget;
+
     let buttonReset: ref<SimpleButton> = SimpleButton.Create();
     buttonReset.SetName(n"buttonReset");
     buttonReset.SetText(GetLocalizedTextByKey(n"Mod-HudPainter-Reset-Color"));
     buttonReset.ToggleAnimations(true);
     buttonReset.ToggleSounds(true);
     buttonReset.GetRootWidget().SetSizeRule(inkESizeRule.Stretch);
-    buttonReset.Reparent(inkWidgetRef.Get(this.m_buttonsSlot) as inkCompoundWidget);
+    buttonReset.Reparent(resetHexSlot);
     this.buttonResetColor = buttonReset;
 
     let buttonFromHex: ref<SimpleButton> = SimpleButton.Create();
@@ -167,8 +211,57 @@ public class CustomColorPickerController extends inkGameController {
     buttonFromHex.ToggleAnimations(true);
     buttonFromHex.ToggleSounds(true);
     buttonFromHex.GetRootWidget().SetSizeRule(inkESizeRule.Stretch);
-    buttonFromHex.Reparent(inkWidgetRef.Get(this.m_buttonsSlot) as inkCompoundWidget);
+    buttonFromHex.Reparent(resetHexSlot);
     this.buttonFromHex = buttonFromHex;
+
+    let buttonCopyColor: ref<SimpleButton> = SimpleButton.Create();
+    buttonCopyColor.SetName(n"buttonCopyColor");
+    buttonCopyColor.SetText(GetLocalizedTextByKey(n"Mod-HudPainter-Copy-Color"));
+    buttonCopyColor.ToggleAnimations(true);
+    buttonCopyColor.ToggleSounds(true);
+    buttonCopyColor.GetRootWidget().SetSizeRule(inkESizeRule.Stretch);
+    buttonCopyColor.Reparent(copyPasteSlot);
+    this.buttonCopyColor = buttonCopyColor;
+
+    let buttonCancelCopy: ref<SimpleButton> = SimpleButton.Create();
+    buttonCancelCopy.SetName(n"buttonCancelCopy");
+    buttonCancelCopy.SetText(GetLocalizedTextByKey(n"Mod-HudPainter-Cancel-Copy"));
+    buttonCancelCopy.ToggleAnimations(true);
+    buttonCancelCopy.ToggleSounds(true);
+    buttonCancelCopy.GetRootWidget().SetSizeRule(inkESizeRule.Stretch);
+    buttonCancelCopy.Reparent(copyPasteSlot);
+    this.buttonCancelCopy = buttonCancelCopy;
+
+    let buttonPasteColor: ref<SimpleButton> = SimpleButton.Create();
+    buttonPasteColor.SetName(n"buttonPasteColor");
+    buttonPasteColor.SetText(GetLocalizedTextByKey(n"Mod-HudPainter-Paste-Color"));
+    buttonPasteColor.ToggleAnimations(true);
+    buttonPasteColor.ToggleSounds(true);
+    buttonPasteColor.GetRootWidget().SetSizeRule(inkESizeRule.Stretch);
+    buttonPasteColor.Reparent(copyPasteSlot);
+    this.buttonPasteColor = buttonPasteColor;
+  }
+
+  private final func UpdateCopiedColorLabelState() -> Void {
+    let copiedPrefix: String;
+    let copiedName: String;
+    let text: String;
+
+    if IsDefined(this.copiedColor) {
+      copiedPrefix = GetLocalizedTextByKey(n"Mod-HudPainter-Copied-Color");
+      copiedName = this.copiedColor.name;
+      text = s"\(copiedPrefix): \(copiedName)";
+    } else {
+      text = "";
+    };
+
+    inkTextRef.SetText(this.m_copiedColorLabel, text);
+  }
+
+  private final func UpdateButtonsState() -> Void {
+    let copied: Bool = IsDefined(this.copiedColor);
+    this.buttonCopyColor.GetRootWidget().SetVisible(!copied);
+    this.buttonCancelCopy.GetRootWidget().SetVisible(copied);
   }
 
   private final func SpawnSliders() -> Void {
