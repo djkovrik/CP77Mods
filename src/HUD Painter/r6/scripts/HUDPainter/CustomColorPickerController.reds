@@ -76,11 +76,16 @@ public class CustomColorPickerController extends inkGameController {
     this.QueueEvent(HudPainterColorChanged.Create(this.data.name, this.data.type, newCustomColor));
   }
 
+  protected cb func OnHudPainterSliderReleased(evt: ref<HudPainterSliderReleased>) -> Bool {
+    this.QueueEvent(HudPainterColorPreviewAvailable.Create(this.data));
+  }
+
   protected cb func OnHudPainterColorSelected(evt: ref<HudPainterColorSelected>) -> Bool {
     this.data = evt.data;
     this.RefreshColorName();
     this.RefreshColorPreviews();
     this.RefreshSliders();
+    this.QueueEvent(HudPainterColorPreviewAvailable.Create(this.data));
   }
 
   private final func RefreshColorName() -> Void {
@@ -146,6 +151,7 @@ public class CustomColorPickerController extends inkGameController {
     this.RefreshSliders();
     this.QueueEvent(HudPainterSoundEmitted.Create(n"ui_menu_onpress"));
     this.QueueEvent(HudPainterColorChanged.Create(this.data.name, this.data.type, this.data.customColor));
+    this.QueueEvent(HudPainterColorPreviewAvailable.Create(this.data));
 	}
 
 	protected cb func OnFromHexClick(widget: wref<inkWidget>) -> Bool {

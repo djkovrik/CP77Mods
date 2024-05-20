@@ -181,7 +181,7 @@ public class CustomColorPickerSliderController extends inkLogicController {
   }
 
   protected cb func OnHandleReleased() -> Bool {
-    this.Log("OnHandleReleased"); // Sent save color event?
+    this.QueueEvent(HudPainterSliderReleased.Create());
   }
 
   private func AcceptValue(forward: Bool) -> Void {

@@ -1,3 +1,18 @@
+enum HudPainterColorType {
+  Default = 0,
+  Johnny = 1,
+}
+
+enum SliderColorType {
+  Red = 0,
+  Green = 1,
+  Blue = 2,
+}
+
+enum PreviewTabType {
+  Healthbar = 0,
+}
+
 public class HudPainterStylePropertyDTO {
   let name: String;
   let red: Float;
@@ -43,15 +58,23 @@ public class HudPainterCustomColor {
   }
 }
 
-enum HudPainterColorType {
-  Default = 0,
-  Johnny = 1,
+public class HudPainterPreviewTab {
+  let tabName: String;
+  let tabType: PreviewTabType;
+  let previewResourcePath: ResRef;
+  let previewLibraryID: CName;
+  let previewAnchorPoint: Vector2;
+  let affectedColors: String;
 }
 
-enum SliderColorType {
-  Red = 0,
-  Green = 1,
-  Blue = 2,
+public class HudPainterPreviewInfo {
+  let paths: array<CName>;
+
+  public static final func Create( paths: array<CName>) -> ref<HudPainterPreviewInfo> {
+    let instance: ref<HudPainterPreviewInfo> = new HudPainterPreviewInfo();
+    instance.paths = paths;
+    return instance;
+  }
 }
 
 public class HudPainterSoundEmitted extends Event {
@@ -72,6 +95,13 @@ public class HudPainterSliderUpdated extends Event {
     let evt: ref<HudPainterSliderUpdated> = new HudPainterSliderUpdated();
     evt.color = color;
     evt.value = value;
+    return evt;
+  }
+}
+
+public class HudPainterSliderReleased extends Event {
+  public final static func Create() -> ref<HudPainterSliderReleased> {
+    let evt: ref<HudPainterSliderReleased> = new HudPainterSliderReleased();
     return evt;
   }
 }
@@ -120,6 +150,23 @@ public class HudPainterPresetSaved extends Event {
 public class HudPainterInkStyleRefreshed extends Event {
   public final static func Create() -> ref<HudPainterInkStyleRefreshed> {
     let evt: ref<HudPainterInkStyleRefreshed> = new HudPainterInkStyleRefreshed();
+    return evt;
+  }
+}
+
+public class HudPainterPreviewModeEnabled extends Event {
+  public final static func Create() -> ref<HudPainterPreviewModeEnabled> {
+    let evt: ref<HudPainterPreviewModeEnabled> = new HudPainterPreviewModeEnabled();
+    return evt;
+  }
+}
+
+public class HudPainterColorPreviewAvailable extends Event {
+  let color: ref<HudPainterColorItem>;
+
+  public final static func Create(color: ref<HudPainterColorItem>) -> ref<HudPainterColorPreviewAvailable> {
+    let evt: ref<HudPainterColorPreviewAvailable> = new HudPainterColorPreviewAvailable();
+    evt.color = color;
     return evt;
   }
 }

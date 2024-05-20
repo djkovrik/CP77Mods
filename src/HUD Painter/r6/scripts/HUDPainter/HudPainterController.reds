@@ -186,6 +186,12 @@ class HudPainterController extends gameuiSettingsMenuGameController {
     this.Log(s"Presets list loaded: \(ArraySize(this.m_presetItems)) items, container available: \(IsDefined(container))");
   }
 
+  private final func RefreshWidgetsPreview() -> Void {
+    let container: ref<inkCompoundWidget> = inkWidgetRef.Get(this.m_widgetsPreviewSlot) as inkCompoundWidget;
+    container.RemoveAllChildren();
+    this.SpawnFromLocal(container, n"WidgetsPreview");
+  }
+
   private final func RefreshTitles() {
     let presetPrefix: String = GetLocalizedTextByKey(n"Mod-HudPainter-Presets-Active");
     let presetName: String = this.m_storage.GetActivePresetName();
@@ -289,6 +295,7 @@ class HudPainterController extends gameuiSettingsMenuGameController {
     this.RefreshColorPicker();
     this.RefreshPresetManagerButtons();
     this.RefreshPresetsList();
+    this.RefreshWidgetsPreview();
     this.RefreshTitles();
   }
 

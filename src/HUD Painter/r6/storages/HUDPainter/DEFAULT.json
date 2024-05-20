@@ -8,7 +8,21 @@
          "alpha":1
       },
       {
+         "name":"MainColors.PanelRed",
+         "red":1.1761,
+         "green":0.3809,
+         "blue":0.3476,
+         "alpha":1
+      },
+      {
          "name":"MainColors.ActiveRed",
+         "red":1.3698,
+         "green":0.4437,
+         "blue":0.4049,
+         "alpha":1
+      },
+      {
+         "name":"MainColors.DamageType_Critical",
          "red":1.3698,
          "green":0.4437,
          "blue":0.4049,
@@ -29,6 +43,13 @@
          "alpha":1
       },
       {
+         "name":"MainColors.PanelDarkRed",
+         "red":0.2627451,
+         "green":0.08627451,
+         "blue":0.09411766,
+         "alpha":1
+      },
+      {
          "name":"MainColors.FaintRed",
          "red":0.28235295,
          "green":0.1137255,
@@ -43,7 +64,28 @@
          "alpha":1
       },
       {
+         "name":"MainColors.PanelBlue",
+         "red":0.36862746,
+         "green":0.96470594,
+         "blue":1.0,
+         "alpha":1
+      },
+      {
+         "name":"MainColors.DamageTypeEMP",
+         "red":0.36862746,
+         "green":0.96470594,
+         "blue":1.0,
+         "alpha":1
+      },
+      {
          "name":"MainColors.ActiveBlue",
+         "red":0.1583,
+         "green":1.3033,
+         "blue":1.4142,
+         "alpha":1
+      },
+      {
+         "name":"MainColors.DamageTypeEMP_Critical",
          "red":0.1583,
          "green":1.3033,
          "blue":1.4142,
@@ -58,6 +100,13 @@
       },
       {
          "name":"MainColors.DarkBlue",
+         "red":0.3019608,
+         "green":0.6901961,
+         "blue":0.64705884,
+         "alpha":1
+      },
+      {
+         "name":"MainColors.PanelDarkBlue",
          "red":0.3019608,
          "green":0.6901961,
          "blue":0.64705884,
@@ -85,6 +134,27 @@
          "alpha":1
       },
       {
+         "name":"MainColors.Gold",
+         "red":1.1192,
+         "green":0.8441,
+         "blue":0.2565,
+         "alpha":1
+      },
+      {
+         "name":"MainColors.PanelGold",
+         "red":1.1192,
+         "green":0.8441,
+         "blue":0.2565,
+         "alpha":1
+      },
+      {
+         "name":"MainColors.Overshield",
+         "red":1.1192,
+         "green":0.8441,
+         "blue":0.2565,
+         "alpha":1
+      },
+      {
          "name":"MainColors.ActiveYellow",
          "red":1.331,
          "green":1.0038,
@@ -96,13 +166,6 @@
          "red":0.6313726,
          "green":0.49411768,
          "blue":0.20000002,
-         "alpha":1
-      },
-      {
-         "name":"MainColors.Gold",
-         "red":1.1192,
-         "green":0.8441,
-         "blue":0.2565,
          "alpha":1
       },
       {
@@ -120,7 +183,28 @@
          "alpha":1
       },
       {
+         "name":"MainColors.PanelDarkGold",
+         "red":0.8470589,
+         "green":0.34901962,
+         "blue":0.07058824,
+         "alpha":1
+      },
+      {
          "name":"MainColors.Green",
+         "red":0.1137255,
+         "green":0.9294118,
+         "blue":0.5137255,
+         "alpha":1
+      },
+      {
+         "name":"MainColors.PanelGreen",
+         "red":0.1137255,
+         "green":0.9294118,
+         "blue":0.5137255,
+         "alpha":1
+      },
+      {
+         "name":"MainColors.DamageTypeChemical",
          "red":0.1137255,
          "green":0.9294118,
          "blue":0.5137255,
@@ -148,7 +232,21 @@
          "alpha":1
       },
       {
+         "name":"MainColors.PanelDarkGreen",
+         "red":0.0,
+         "green":0.6392157,
+         "blue":0.17254902,
+         "alpha":1
+      },
+      {
          "name":"MainColors.Black",
+         "red":0.0,
+         "green":0.0,
+         "blue":0.0,
+         "alpha":1
+      },
+      {
+         "name":"MainColors.PanelBlack",
          "red":0.0,
          "green":0.0,
          "blue":0.0,
@@ -176,10 +274,10 @@
          "alpha":1
       },
       {
-         "name":"MainColors.Orange",
-         "red":1.28,
-         "green":0.32,
-         "blue":0.0,
+         "name":"MainColors.PanelWhite",
+         "red":1.0,
+         "green":1.0,
+         "blue":1.0,
          "alpha":1
       },
       {
@@ -187,6 +285,13 @@
          "red":1.5,
          "green":1.5,
          "blue":1.5,
+         "alpha":1
+      },
+      {
+         "name":"MainColors.Orange",
+         "red":1.28,
+         "green":0.32,
+         "blue":0.0,
          "alpha":1
       },
       {
@@ -246,80 +351,10 @@
          "alpha":1
       },
       {
-         "name":"MainColors.PanelRed",
-         "red":1.1761,
-         "green":0.3809,
-         "blue":0.3476,
-         "alpha":1
-      },
-      {
-         "name":"MainColors.PanelDarkRed",
-         "red":0.2627451,
-         "green":0.08627451,
-         "blue":0.09411766,
-         "alpha":1
-      },
-      {
-         "name":"MainColors.PanelBlue",
-         "red":0.36862746,
-         "green":0.96470594,
-         "blue":1.0,
-         "alpha":1
-      },
-      {
-         "name":"MainColors.PanelDarkBlue",
-         "red":0.3019608,
-         "green":0.6901961,
-         "blue":0.64705884,
-         "alpha":1
-      },
-      {
-         "name":"MainColors.PanelGold",
-         "red":1.1192,
-         "green":0.8441,
-         "blue":0.2565,
-         "alpha":1
-      },
-      {
-         "name":"MainColors.PanelDarkGold",
-         "red":0.8470589,
-         "green":0.34901962,
-         "blue":0.07058824,
-         "alpha":1
-      },
-      {
-         "name":"MainColors.PanelGreen",
-         "red":0.1137255,
-         "green":0.9294118,
-         "blue":0.5137255,
-         "alpha":1
-      },
-      {
-         "name":"MainColors.PanelDarkGreen",
-         "red":0.0,
-         "green":0.6392157,
-         "blue":0.17254902,
-         "alpha":1
-      },
-      {
-         "name":"MainColors.PanelBlack",
-         "red":0.0,
-         "green":0.0,
-         "blue":0.0,
-         "alpha":1
-      },
-      {
          "name":"MainColors.PanelGrey",
          "red":0.68235296,
          "green":0.54509807,
          "blue":0.54901963,
-         "alpha":1
-      },
-      {
-         "name":"MainColors.PanelWhite",
-         "red":1.0,
-         "green":1.0,
-         "blue":1.0,
          "alpha":1
       },
       {
@@ -330,31 +365,10 @@
          "alpha":1
       },
       {
-         "name":"MainColors.DamageTypeChemical",
-         "red":0.1137255,
-         "green":0.9294118,
-         "blue":0.5137255,
-         "alpha":1
-      },
-      {
-         "name":"MainColors.DamageTypeEMP",
-         "red":0.36862746,
-         "green":0.96470594,
-         "blue":1.0,
-         "alpha":1
-      },
-      {
          "name":"MainColors.DamageTypeThermal",
          "red":0.94117653,
          "green":0.70980394,
          "blue":0.21568629,
-         "alpha":1
-      },
-      {
-         "name":"MainColors.DamageType_Critical",
-         "red":1.3698,
-         "green":0.4437,
-         "blue":0.4049,
          "alpha":1
       },
       {
@@ -372,13 +386,6 @@
          "alpha":1
       },
       {
-         "name":"MainColors.DamageTypeEMP_Critical",
-         "red":0.1583,
-         "green":1.3033,
-         "blue":1.4142,
-         "alpha":1
-      },
-      {
          "name":"MainColors.DamageTypeThermal_Critical",
          "red":1.4654,
          "green":0.7771,
@@ -393,17 +400,17 @@
          "alpha":1
       },
       {
-         "name":"MainColors.TutorialColor",
-         "red":0.0,
-         "green":1.0,
-         "blue":0.77647066,
-         "alpha":1
-      },
-      {
          "name":"MainColors.TutorialIntensity",
          "red":0.0,
          "green":1.18,
          "blue":0.9228,
+         "alpha":1
+      },
+      {
+         "name":"MainColors.TutorialColor",
+         "red":0.0,
+         "green":1.0,
+         "blue":0.77647066,
          "alpha":1
       },
       {
@@ -565,13 +572,6 @@
          "red":0.937255,
          "green":0.635294,
          "blue":0.282353,
-         "alpha":1
-      },
-      {
-         "name":"MainColors.Overshield",
-         "red":1.1192,
-         "green":0.8441,
-         "blue":0.2565,
          "alpha":1
       }
    ],
