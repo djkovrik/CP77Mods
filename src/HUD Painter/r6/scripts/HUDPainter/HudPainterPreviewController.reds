@@ -61,7 +61,7 @@ public class HudPainterPreviewController extends inkGameController {
     heathbar.previewResourcePath = r"base\\gameplay\\gui\\widgets\\healthbar\\playerhealthbar.inkwidget";
     heathbar.previewLibraryID = n"RootVert";
     heathbar.previewAnchorPoint = new Vector2(0.5, 0.0);
-    heathbar.affectedColors = "Red, Blue, ActiveBlue, PanelBlue";
+    heathbar.affectedColors = "Red, Blue, PanelBlue, ActiveBlue, DarkBlue, Overshield, Grey";
     ArrayPush(this.m_items, heathbar);
   }
 

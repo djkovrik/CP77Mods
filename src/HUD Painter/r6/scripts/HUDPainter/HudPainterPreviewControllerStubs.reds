@@ -1,4 +1,4 @@
-// --- HEALTHBAR
+// --- HEALTHBAR: Red, Blue, PanelBlue, ActiveBlue, DarkBlue, Overshield, Grey
 
 @addField(healthbarWidgetGameController)
 private let dynamicColorPreviewInfo: ref<inkHashMap>;
@@ -12,18 +12,30 @@ protected cb func OnInitialize() -> Bool {
     NameToHash(n"MainColors.Red"), 
     HudPainterPreviewInfo.Create([
       n"buffsHolder/healthNumberContainer/hpTextVert/hp_number_holder/percentText",
-      n"buffsHolder/barsLayout/health/health_bar_holder/wrapper/bar/full"
+      n"buffsHolder/barsLayout/health/health_bar_holder/wrapper/bar/full",
+      n"buffsHolder/barsLayout/health/health_bar_holder/wrapper/bg"
     ])
   );
 
   this.dynamicColorPreviewInfo.Insert(
     NameToHash(n"MainColors.Blue"), 
     HudPainterPreviewInfo.Create([
-      n"buffsHolder/inkVerticalPanelWidget2/buffs/Buff/timer",
       n"buffsHolder/icon_holder/level_numer_increase",
       n"buffsHolder/icon_holder/frame",
+      n"buffsHolder/inkVerticalPanelWidget2/buffs/Buff/timer",
       n"buffsHolder/inkVerticalPanelWidget2/buffs/Buff/buffCanvas/fg/glow",
-      n"buffsHolder/inkVerticalPanelWidget2/buffs/Buff/buffCanvas/fg/icon"
+      n"buffsHolder/inkVerticalPanelWidget2/buffs/Buff/buffCanvas/fg/icon",
+      n"buffsHolder/barsLayout/quickhacks/barsContainer/bar/full"
+    ])
+  );
+
+  this.dynamicColorPreviewInfo.Insert(
+    NameToHash(n"MainColors.PanelBlue"), 
+    HudPainterPreviewInfo.Create([
+      n"buffsHolder/icon_holder/level_numer",
+      n"buffsHolder/icon_holder/level_numer_increase",
+      n"buffsHolder/icon_holder/frame",
+      n"buffsHolder/icon_holder/full_frame"
     ])
   );
 
@@ -35,11 +47,23 @@ protected cb func OnInitialize() -> Bool {
   );
 
   this.dynamicColorPreviewInfo.Insert(
-    NameToHash(n"MainColors.PanelBlue"), 
+    NameToHash(n"MainColors.DarkBlue"), 
     HudPainterPreviewInfo.Create([
-      n"buffsHolder/icon_holder/level_numer",
-      n"buffsHolder/icon_holder/level_numer_increase",
-      n"buffsHolder/icon_holder/frame"
+      n"buffsHolder/inkVerticalPanelWidget2/buffs/Buff/buffCanvas/bg/frame"
+    ])
+  );
+
+  this.dynamicColorPreviewInfo.Insert(
+    NameToHash(n"MainColors.Overshield"), 
+    HudPainterPreviewInfo.Create([
+      n"buffsHolder/barsLayout/health/overshield_bar_holder/wrapper/bar/full"
+    ])
+  );
+
+  this.dynamicColorPreviewInfo.Insert(
+    NameToHash(n"MainColors.Grey"), 
+    HudPainterPreviewInfo.Create([
+      n"buffsHolder/inkVerticalPanelWidget2/buffs/Buff/buffCanvas/bg/icon"
     ])
   );
 }
@@ -55,10 +79,22 @@ protected cb func OnUninitialize() -> Bool {
 protected cb func OnHudPainterPreviewModeEnabled(evt: ref<HudPainterPreviewModeEnabled>) -> Bool {
   let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
   if IsDefined(root) && Equals(root.GetName(), StringToName(s"\(PreviewTabType.Healthbar)")) {
+    // Exp
     this.OnCharacterLevelCurrentXPUpdated(1000);
-    inkTextRef.SetText(this.m_levelTextPath, IntToString(12));
-    inkTextRef.SetText(this.m_nextLevelTextPath, IntToString(12));
-    inkTextRef.SetText(this.m_healthTextPath, IntToString(345));
+    // HP + Overshield
+    inkWidgetRef.SetWidth(this.m_fullBar, 400.0);
+    inkWidgetRef.SetVisible(this.m_overshieldBarRef, true);
+    root.GetWidgetByPathName(n"buffsHolder/barsLayout/health/overshield_bar_holder/wrapper/bar/full").SetWidth(200.0);
+    // Memory bar
+    inkCompoundRef.RemoveAllChildren(this.m_quickhacksContainer);
+    inkWidgetRef.SetVisible(this.m_quickhacksContainer, true);
+    let bar1: ref<QuickhackBarController> = this.SpawnFromLocal(
+      inkWidgetRef.Get(this.m_quickhacksContainer), 
+      n"quickhackBar"
+    ).GetController() as QuickhackBarController;
+    bar1.SetStatus(1.0);
+    // Buffs
+    this.m_buffWidget.SetVisible(true);
   };
 }
 
@@ -67,14 +103,12 @@ protected cb func OnHudPainterColorPreviewAvailable(evt: ref<HudPainterColorPrev
   let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
   let key: Uint64;
   let info: ref<HudPainterPreviewInfo>;
-  let colorName: CName;
   let widget: ref<inkWidget>;
 
   if IsDefined(root) {
     key = NameToHash(StringToName(evt.color.name));
     if this.dynamicColorPreviewInfo.KeyExist(key) {
       info = this.dynamicColorPreviewInfo.Get(key) as HudPainterPreviewInfo;
-      colorName = StringToName(evt.color.name);
       for path in info.paths {
         widget = root.GetWidgetByPathName(path);
         if IsDefined(widget) {
@@ -83,4 +117,22 @@ protected cb func OnHudPainterColorPreviewAvailable(evt: ref<HudPainterColorPrev
       };
     };
   };
+}
+
+@addMethod(buffListGameController)
+public final func ShowDummyBuff() -> Void {
+  let buff: BuffInfo;
+  let buffs: array<BuffInfo>;
+  buff.buffID = t"BaseStatusEffect.CarryCapacityBooster";
+  buff.timeRemaining = 950.0;
+  buff.timeTotal = 1800.0;
+  buff.stackCount = Cast<Uint32>(1);
+  ArrayPush(buffs, buff);
+  let buffsVariant: Variant = ToVariant(buffs);
+  this.OnBuffDataChanged(buffsVariant);
+}
+
+@addMethod(buffListGameController)
+protected cb func OnHudPainterPreviewModeEnabled(evt: ref<HudPainterPreviewModeEnabled>) -> Bool {
+  this.ShowDummyBuff();
 }
