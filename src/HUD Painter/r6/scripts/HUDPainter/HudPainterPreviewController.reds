@@ -63,6 +63,15 @@ public class HudPainterPreviewController extends inkGameController {
     heathbar.previewAnchorPoint = new Vector2(0.5, 0.0);
     heathbar.affectedColors = "Red, Blue, PanelBlue, ActiveBlue, DarkBlue, Overshield, Grey";
     ArrayPush(this.m_items, heathbar);
+    // Quest tracker
+    let questTracker: ref<HudPainterPreviewTab> = new HudPainterPreviewTab();
+    questTracker.tabName = GetLocalizedTextByKey(n"UI-Settings-Interface-HUD-quest_tracker");
+    questTracker.tabType = PreviewTabType.QuestTracker;
+    questTracker.previewResourcePath = r"base\\gameplay\\gui\\widgets\\quests\\quest_tracker.inkwidget";
+    questTracker.previewLibraryID = n"Root";
+    questTracker.previewAnchorPoint = new Vector2(0.5, 0.5);
+    questTracker.affectedColors = "ActiveYellow, ActiveGreen, CombatRed, StreetCred";
+    ArrayPush(this.m_items, questTracker);
   }
 
   private final func PopulateCategories() -> Void {
@@ -97,6 +106,7 @@ public class HudPainterPreviewController extends inkGameController {
         currentItem.previewLibraryID
       );
 
+      spawnedWidget.SetVisible(false);
       spawnedWidget.SetAnchorPoint(currentItem.previewAnchorPoint);
       spawnedWidget.SetName(StringToName(s"\(currentItem.tabType)"));
 

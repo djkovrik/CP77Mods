@@ -57,6 +57,20 @@
          "alpha":1
       },
       {
+         "name":"MainColors.CombatRed",
+         "red":1.5698,
+         "green":0.2437,
+         "blue":0.2049,
+         "alpha":1
+      },
+      {
+         "name":"MainColors.CombatRedNoHDR",
+         "red":1.0,
+         "green":0.2437,
+         "blue":0.2049,
+         "alpha":1
+      },
+      {
          "name":"MainColors.Blue",
          "red":0.36862746,
          "green":0.96470594,
@@ -418,20 +432,6 @@
          "red":0.49803925,
          "green":0.8862746,
          "blue":0.8431373,
-         "alpha":1
-      },
-      {
-         "name":"MainColors.CombatRed",
-         "red":1.5698,
-         "green":0.2437,
-         "blue":0.2049,
-         "alpha":1
-      },
-      {
-         "name":"MainColors.CombatRedNoHDR",
-         "red":1.0,
-         "green":0.2437,
-         "blue":0.2049,
          "alpha":1
       },
       {
