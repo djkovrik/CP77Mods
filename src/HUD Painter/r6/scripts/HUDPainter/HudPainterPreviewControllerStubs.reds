@@ -177,7 +177,7 @@ public final func ShowDummyBuff() -> Void {
 }
 
 
-// --- QUEST TRACKER: ActiveYellow, StreetCred
+// --- QUEST TRACKER: ActiveYellow, ActiveGreen, CombatRed, StreetCred
 
 @addField(QuestTrackerGameController)
 private let dynamicColorPreviewInfo: ref<inkHashMap>;
@@ -296,6 +296,7 @@ protected cb func OnHudPainterInkStyleRefreshed(evt: ref<HudPainterInkStyleRefre
   this.previewPopulated = false;
 }
 
+
 // --- WEAPON ROSTER: Red, ActiveRed, Blue
 
 @addField(WeaponRosterGameController)
@@ -388,4 +389,65 @@ protected cb func OnHudPainterColorPreviewAvailable(evt: ref<HudPainterColorPrev
 @addMethod(WeaponRosterGameController)
 protected cb func OnHudPainterInkStyleRefreshed(evt: ref<HudPainterInkStyleRefreshed>) -> Bool {
   this.previewPopulated = false;
+}
+
+
+// --- SAFE AREA NOTIFICATION: Green
+
+@addField(GenericNotificationController)
+private let dynamicColorPreviewInfo: ref<inkHashMap>;
+
+@wrapMethod(GenericNotificationController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+  this.dynamicColorPreviewInfo = new inkHashMap();
+
+  this.dynamicColorPreviewInfo.Insert(
+    NameToHash(n"MainColors.Green"), 
+    HudPainterPreviewInfo.Create([
+      n"LimitedAccesArea/ICON_ProtocolC/sq1",
+      n"LimitedAccesArea/ICON_ProtocolC/sq2",
+      n"LimitedAccesArea/ICON_ProtocolC/sq3",
+      n"LimitedAccesArea/ICON_ProtocolC/sq4",
+      n"LimitedAccesArea/ICON_ProtocolC/PROTOCOL_circle",
+      n"LimitedAccesArea/ICON_ProtocolC/PROTOCOL_circleGhost",
+      n"LimitedAccesArea/ICON_ProtocolC/ATTENTION_ExclamationIci",
+      n"LimitedAccesArea/fluff3lines/Fluff_3linesTEX",
+      n"LimitedAccesArea/L_R/Bracket/Bracket_MainBG",
+      n"LimitedAccesArea/L_R/T_bar_R/Plate_main",
+      n"LimitedAccesArea/L_R/T_bar_R/BrackedR_sm"
+    ])
+  );
+}
+
+@wrapMethod(GenericNotificationController)
+protected cb func OnUninitialize() -> Bool {
+  wrappedMethod();
+  this.dynamicColorPreviewInfo.Clear();
+  this.dynamicColorPreviewInfo = null;
+}
+
+@addMethod(GenericNotificationController)
+protected cb func OnHudPainterColorPreviewAvailable(evt: ref<HudPainterColorPreviewAvailable>) -> Bool {
+  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+  let key: Uint64;
+  let info: ref<HudPainterPreviewInfo>;
+  let widget: ref<inkWidget>;
+
+  if NotEquals(root.GetName(), StringToName(s"\(PreviewTabType.NotificationSafe)")) {
+    return false;
+  };
+
+  if IsDefined(root) {
+    key = NameToHash(StringToName(evt.color.name));
+    if this.dynamicColorPreviewInfo.KeyExist(key) {
+      info = this.dynamicColorPreviewInfo.Get(key) as HudPainterPreviewInfo;
+      for path in info.paths {
+        widget = root.GetWidgetByPathName(path);
+        if IsDefined(widget) {
+          widget.SetTintColor(evt.color.customColor);
+        };
+      };
+    };
+  };
 }

@@ -88,6 +88,15 @@ public class HudPainterPreviewController extends inkGameController {
     ammoCounter.previewAnchorPoint = new Vector2(0.5, 0.0);
     ammoCounter.affectedColors = "Red, ActiveRed, Blue";
     ArrayPush(this.m_items, ammoCounter);
+    // Safe notification
+    let notificationSafe: ref<HudPainterPreviewTab> = new HudPainterPreviewTab();
+    notificationSafe.tabName = GetLocalizedTextByKey(n"UI-ResourceExports-NotificationTitle");
+    notificationSafe.tabType = PreviewTabType.NotificationSafe;
+    notificationSafe.previewResourcePath = r"base\\gameplay\\gui\\widgets\\notifications\\zonealert_notification.inkwidget";
+    notificationSafe.previewLibraryID = n"Area_Safe";
+    notificationSafe.previewAnchorPoint = new Vector2(0.5, 0.0);
+    notificationSafe.affectedColors = "Green";
+    ArrayPush(this.m_items, notificationSafe);
   }
 
   private final func PopulateCategories() -> Void {

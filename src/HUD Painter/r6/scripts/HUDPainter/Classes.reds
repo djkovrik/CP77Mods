@@ -12,7 +12,8 @@ enum SliderColorType {
 enum PreviewTabType {
   Healthbar = 0,
   QuestTracker = 1,
-  AmmoCounter = 3,
+  AmmoCounter = 2,
+  NotificationSafe = 3,
 }
 
 public class HudPainterStylePropertyDTO {
