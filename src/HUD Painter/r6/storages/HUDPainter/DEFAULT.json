@@ -253,6 +253,13 @@
          "alpha":1
       },
       {
+         "name":"MainColors.StreetCred",
+         "red":0.0,
+         "green":1.0,
+         "blue":0.836385,
+         "alpha":1
+      },
+      {
          "name":"MainColors.Black",
          "red":0.0,
          "green":0.0,
@@ -306,6 +313,13 @@
          "red":1.28,
          "green":0.32,
          "blue":0.0,
+         "alpha":1
+      },
+      {
+         "name":"MainColors.MildOrange",
+         "red":0.937255,
+         "green":0.635294,
+         "blue":0.282353,
          "alpha":1
       },
       {
@@ -547,13 +561,6 @@
          "alpha":1
       },
       {
-         "name":"MainColors.StreetCred",
-         "red":0.0,
-         "green":1.0,
-         "blue":0.836385,
-         "alpha":1
-      },
-      {
          "name":"MainColors.RelicColor",
          "red":0.47058827,
          "green":0.6784314,
@@ -565,13 +572,6 @@
          "red":0.094118,
          "green":0.109804,
          "blue":0.203922,
-         "alpha":1
-      },
-      {
-         "name":"MainColors.MildOrange",
-         "red":0.937255,
-         "green":0.635294,
-         "blue":0.282353,
          "alpha":1
       }
    ],

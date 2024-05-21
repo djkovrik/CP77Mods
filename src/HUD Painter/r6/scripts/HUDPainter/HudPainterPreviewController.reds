@@ -12,6 +12,8 @@ public class HudPainterPreviewController extends inkGameController {
     this.m_selectorCtrl.RegisterToCallback(n"OnItemActivated", this, n"OnMenuChanged");
     this.RegisterToGlobalInputCallback(n"OnPostOnRelease", this, n"OnButtonRelease");
 
+    inkWidgetRef.SetVisible(this.m_previewsContainer, false);
+
     this.PopulateItems();
     this.PopulateCategories();
     this.SpawnPreviews();
@@ -51,6 +53,11 @@ public class HudPainterPreviewController extends inkGameController {
 
   protected cb func OnHudPainterColorSelected(evt: ref<HudPainterColorSelected>) -> Bool {
     this.QueueEvent(HudPainterPreviewModeEnabled.Create());
+    inkWidgetRef.SetVisible(this.m_previewsContainer, true);
+  }
+
+  protected cb func OnHudPainterInkStyleRefreshed(evt: ref<HudPainterInkStyleRefreshed>) -> Bool {
+    inkWidgetRef.SetVisible(this.m_previewsContainer, false);
   }
 
   private final func PopulateItems() -> Void {
@@ -72,6 +79,15 @@ public class HudPainterPreviewController extends inkGameController {
     questTracker.previewAnchorPoint = new Vector2(0.5, 0.5);
     questTracker.affectedColors = "ActiveYellow, ActiveGreen, CombatRed, StreetCred";
     ArrayPush(this.m_items, questTracker);
+    // Ammo counter
+    let ammoCounter: ref<HudPainterPreviewTab> = new HudPainterPreviewTab();
+    ammoCounter.tabName = GetLocalizedTextByKey(n"UI-Settings-Interface-HUD-ammo_counter");
+    ammoCounter.tabType = PreviewTabType.AmmoCounter;
+    ammoCounter.previewResourcePath = r"base\\gameplay\\gui\\widgets\\ammo_counter\\ammo_counter.inkwidget";
+    ammoCounter.previewLibraryID = n"Root";
+    ammoCounter.previewAnchorPoint = new Vector2(0.5, 0.0);
+    ammoCounter.affectedColors = "Red, ActiveRed, Blue";
+    ArrayPush(this.m_items, ammoCounter);
   }
 
   private final func PopulateCategories() -> Void {
@@ -113,8 +129,6 @@ public class HudPainterPreviewController extends inkGameController {
       this.Log(s"Widget \(currentItem.tabType) spawned \(IsDefined(spawnedWidget))");
       i += 1;
     };
-
-    
   }
 
   private final func ShowPreview(index: Int32) -> Void {

@@ -182,6 +182,9 @@ public final func ShowDummyBuff() -> Void {
 @addField(QuestTrackerGameController)
 private let dynamicColorPreviewInfo: ref<inkHashMap>;
 
+@addField(QuestTrackerGameController)
+private let previewPopulated: Bool;
+
 @wrapMethod(QuestTrackerGameController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
@@ -235,7 +238,9 @@ protected cb func OnUninitialize() -> Bool {
 @addMethod(QuestTrackerGameController)
 protected cb func OnHudPainterPreviewModeEnabled(evt: ref<HudPainterPreviewModeEnabled>) -> Bool {
   let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
-  if IsDefined(root) && Equals(root.GetName(), StringToName(s"\(PreviewTabType.QuestTracker)")) {
+  if IsDefined(root) && Equals(root.GetName(), StringToName(s"\(PreviewTabType.QuestTracker)")) && !this.previewPopulated {
+    this.previewPopulated = true;
+
     inkWidgetRef.SetVisible(this.m_questTrackerContainer, true);
     inkTextRef.SetText(this.m_QuestTitle, "Some cool quest name");
     inkWidgetRef.SetState(this.m_QuestTitle, n"Quest");
@@ -284,4 +289,103 @@ protected cb func OnHudPainterColorPreviewAvailable(evt: ref<HudPainterColorPrev
       };
     };
   };
+}
+
+@addMethod(QuestTrackerGameController)
+protected cb func OnHudPainterInkStyleRefreshed(evt: ref<HudPainterInkStyleRefreshed>) -> Bool {
+  this.previewPopulated = false;
+}
+
+// --- WEAPON ROSTER: Red, ActiveRed, Blue
+
+@addField(WeaponRosterGameController)
+private let dynamicColorPreviewInfo: ref<inkHashMap>;
+
+@addField(WeaponRosterGameController)
+private let previewPopulated: Bool;
+
+@wrapMethod(WeaponRosterGameController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+  this.dynamicColorPreviewInfo = new inkHashMap();
+
+  this.dynamicColorPreviewInfo.Insert(
+    NameToHash(n"MainColors.Red"), 
+    HudPainterPreviewInfo.Create([
+      n"weapon_on_foot/ammo_counter/additional_info/weapon_name",
+      n"weapon_on_foot/ammo_counter/weapon_wrapper/ammo_wrapper/AmmoAll"
+    ])
+  );
+  
+  this.dynamicColorPreviewInfo.Insert(
+    NameToHash(n"MainColors.ActiveRed"), 
+    HudPainterPreviewInfo.Create([
+      n"weapon_on_foot/ammo_counter/weapon_wrapper/weapon_holder/weapon_icon"
+    ])
+  );
+
+  this.dynamicColorPreviewInfo.Insert(
+    NameToHash(n"MainColors.Blue"), 
+    HudPainterPreviewInfo.Create([
+      n"weapon_on_foot/ammo_counter/weapon_wrapper/ammo_wrapper/AmmoCurrent"
+    ])
+  );
+}
+
+@wrapMethod(WeaponRosterGameController)
+protected cb func OnUninitialize() -> Bool {
+  wrappedMethod();
+  this.dynamicColorPreviewInfo.Clear();
+  this.dynamicColorPreviewInfo = null;
+}
+
+@addField(WeaponRosterGameController)
+private let m_unfoldAnimTest: ref<inkAnimProxy>;
+
+@addMethod(WeaponRosterGameController)
+protected cb func OnHudPainterPreviewModeEnabled(evt: ref<HudPainterPreviewModeEnabled>) -> Bool {
+  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+  if IsDefined(root) && Equals(root.GetName(), StringToName(s"\(PreviewTabType.AmmoCounter)")) && !this.previewPopulated {
+    this.previewPopulated = true;
+    this.m_weaponRecord = TweakDBInterface.GetWeaponItemRecord(t"Items.Craftable_Legendary_Kyubi");
+    this.LoadWeaponIcon();
+    inkTextRef.SetText(this.m_weaponName, "Kyubi");
+    inkTextRef.SetText(this.m_weaponCurrentAmmo, "12");
+    inkTextRef.SetText(this.m_weaponTotalAmmo, "345");
+    inkWidgetRef.SetVisible(this.m_weaponCurrentAmmo, true);
+    inkWidgetRef.SetVisible(this.m_weaponTotalAmmo, true);
+
+    if IsDefined(this.m_unfoldAnimTest) {
+      this.m_unfoldAnimTest.GotoEndAndStop();
+    };
+    this.m_unfoldAnimTest = this.PlayLibraryAnimation(n"unfold");
+    this.m_unfoldAnimTest.GotoEndAndStop(true);
+    this.GetRootWidget().SetVisible(false);
+  };
+}
+
+@addMethod(WeaponRosterGameController)
+protected cb func OnHudPainterColorPreviewAvailable(evt: ref<HudPainterColorPreviewAvailable>) -> Bool {
+  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+  let key: Uint64;
+  let info: ref<HudPainterPreviewInfo>;
+  let widget: ref<inkWidget>;
+
+  if IsDefined(root) {
+    key = NameToHash(StringToName(evt.color.name));
+    if this.dynamicColorPreviewInfo.KeyExist(key) {
+      info = this.dynamicColorPreviewInfo.Get(key) as HudPainterPreviewInfo;
+      for path in info.paths {
+        widget = root.GetWidgetByPathName(path);
+        if IsDefined(widget) {
+          widget.SetTintColor(evt.color.customColor);
+        };
+      };
+    };
+  };
+}
+
+@addMethod(WeaponRosterGameController)
+protected cb func OnHudPainterInkStyleRefreshed(evt: ref<HudPainterInkStyleRefreshed>) -> Bool {
+  this.previewPopulated = false;
 }
