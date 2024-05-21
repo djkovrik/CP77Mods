@@ -14,6 +14,7 @@ enum PreviewTabType {
   QuestTracker = 1,
   AmmoCounter = 2,
   NotificationSafe = 3,
+  UpdateMessage = 4,
 }
 
 public class HudPainterStylePropertyDTO {

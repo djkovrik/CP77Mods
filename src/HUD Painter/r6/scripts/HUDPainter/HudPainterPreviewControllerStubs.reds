@@ -451,3 +451,78 @@ protected cb func OnHudPainterColorPreviewAvailable(evt: ref<HudPainterColorPrev
     };
   };
 }
+
+
+// --- JOURNAL NOTIFICATION: Yellow, White
+
+@addField(JournalNotification)
+private let previewPopulated: Bool;
+
+@wrapMethod(JournalNotification)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+
+  this.dynamicColorPreviewInfo.Insert(
+    NameToHash(n"MainColors.Yellow"), 
+    HudPainterPreviewInfo.Create([
+      n"New_QuestCompleted_canvas/quest_default/Side_edges",
+      n"New_QuestCompleted_canvas/quest_default/Front/Front_Outline",
+      n"New_QuestCompleted_canvas/quest_default/Front/Front",
+      n"New_QuestCompleted_canvas/quest_default/Middle_Bottom_small/Middle_Bottom_small_top",
+      n"New_QuestCompleted_canvas/quest_default/Middle_Bottom_small/Middle_Bottom_small_edge",
+      n"New_QuestCompleted_canvas/quest_default/Middle_Bottom_Big/Middle_Bottom_big_detail",
+      n"New_QuestCompleted_canvas/quest_default/Middle_Bottom_Big/Middle_Bottom_big_outline",
+      n"New_QuestCompleted_canvas/quest_default/Middle_Bottom_Big/Middle_Bottom_big",
+      n"New_QuestCompleted_canvas/quest_default/Middle_Top/Middle_Top_Outline",
+      n"New_QuestCompleted_canvas/quest_default/Middle_Top/Middle_Top",
+      n"New_QuestCompleted_canvas/quest_default/back/Back_Outline",
+      n"New_QuestCompleted_canvas/SQ_quest_canvas/SQ_quest_outline",
+      n"New_QuestCompleted_canvas/SQ_quest_canvas/Cross_canvas/arrow_quest_inside",
+      n"New_QuestCompleted_canvas/SQ_quest_canvas/Cross_canvas_ghost/SQ_quest_inside",
+      n"New_QuestCompleted_canvas/Quest_Completed/QuestUpdated_txt"
+    ])
+  );
+
+  this.dynamicColorPreviewInfo.Insert(
+    NameToHash(n"MainColors.White"), 
+    HudPainterPreviewInfo.Create([
+      n"New_QuestCompleted_canvas/inkVerticalPanelWidget11/QuestTxt"
+    ])
+  );
+}
+
+@addMethod(JournalNotification)
+protected cb func OnHudPainterPreviewModeEnabled(evt: ref<HudPainterPreviewModeEnabled>) -> Bool {
+  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+  if IsDefined(root) && Equals(root.GetName(), StringToName(s"\(PreviewTabType.UpdateMessage)")) && !this.previewPopulated {
+    this.previewPopulated = true;
+    inkTextRef.SetText(this.m_titleRef, "Message title");
+    inkTextRef.SetText(this.m_textRef, "Manually enhanced message text");
+  };
+}
+
+@addMethod(JournalNotification)
+protected cb func OnHudPainterInkStyleRefreshed(evt: ref<HudPainterInkStyleRefreshed>) -> Bool {
+  this.previewPopulated = false;
+}
+
+@addMethod(JournalNotification)
+protected cb func OnHudPainterColorPreviewAvailable(evt: ref<HudPainterColorPreviewAvailable>) -> Bool {
+  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+  let key: Uint64;
+  let info: ref<HudPainterPreviewInfo>;
+  let widget: ref<inkWidget>;
+
+  if IsDefined(root) {
+    key = NameToHash(StringToName(evt.color.name));
+    if this.dynamicColorPreviewInfo.KeyExist(key) {
+      info = this.dynamicColorPreviewInfo.Get(key) as HudPainterPreviewInfo;
+      for path in info.paths {
+        widget = root.GetWidgetByPathName(path);
+        if IsDefined(widget) {
+          widget.SetTintColor(evt.color.customColor);
+        };
+      };
+    };
+  };
+}

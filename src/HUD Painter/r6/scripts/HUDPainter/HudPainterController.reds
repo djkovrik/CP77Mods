@@ -93,6 +93,9 @@ class HudPainterController extends gameuiSettingsMenuGameController {
     if !inkWidgetRef.IsVisible(this.m_colorPickerSlot) {
       inkWidgetRef.SetVisible(this.m_colorPickerSlot, true);
     };
+    if !inkWidgetRef.IsVisible(this.m_widgetsPreviewSlot) {
+      inkWidgetRef.SetVisible(this.m_widgetsPreviewSlot, true);
+    };
   }
 
   protected cb func OnHudPainterPresetSelected(evt: ref<HudPainterPresetSelected>) -> Bool {
@@ -189,6 +192,7 @@ class HudPainterController extends gameuiSettingsMenuGameController {
   private final func RefreshWidgetsPreview() -> Void {
     let container: ref<inkCompoundWidget> = inkWidgetRef.Get(this.m_widgetsPreviewSlot) as inkCompoundWidget;
     container.RemoveAllChildren();
+    container.SetVisible(false);
     this.SpawnFromLocal(container, n"WidgetsPreview");
   }
 
