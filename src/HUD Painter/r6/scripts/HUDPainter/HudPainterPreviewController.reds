@@ -90,15 +90,15 @@ public class HudPainterPreviewController extends inkGameController {
     notificationSafe.previewAnchorPoint = new Vector2(0.5, 0.0);
     notificationSafe.affectedColors = "Green";
     ArrayPush(this.m_items, notificationSafe);
-    // Message
-    let phoneMessage: ref<HudPainterPreviewTab> = new HudPainterPreviewTab();
-    phoneMessage.tabName = GetLocalizedTextByKey(n"UI-ResourceExports-Message");
-    phoneMessage.tabType = PreviewTabType.UpdateMessage;
-    phoneMessage.previewResourcePath = r"base\\gameplay\\gui\\widgets\\notifications\\quest_update.inkwidget";
-    phoneMessage.previewLibraryID = n"notification_quest_updated";
-    phoneMessage.previewAnchorPoint = new Vector2(1.0, 0.0);
-    phoneMessage.affectedColors = "Yellow, White";
-    ArrayPush(this.m_items, phoneMessage);
+    // Update Message
+    let updateMessage: ref<HudPainterPreviewTab> = new HudPainterPreviewTab();
+    updateMessage.tabName = GetLocalizedTextByKey(n"UI-ResourceExports-Message");
+    updateMessage.tabType = PreviewTabType.UpdateMessage;
+    updateMessage.previewResourcePath = r"base\\gameplay\\gui\\widgets\\notifications\\quest_update.inkwidget";
+    updateMessage.previewLibraryID = n"notification_quest_updated";
+    updateMessage.previewAnchorPoint = new Vector2(0.5, 0.0);
+    updateMessage.affectedColors = "Yellow, White";
+    ArrayPush(this.m_items, updateMessage);
   }
 
   private final func PopulateCategories() -> Void {

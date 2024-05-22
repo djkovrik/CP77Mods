@@ -183,6 +183,7 @@ public class CustomColorPickerController extends inkGameController {
       );
     };
     this.QueueEvent(HudPainterSoundEmitted.Create(n"ui_menu_onpress"));
+    this.QueueEvent(HudPainterColorPreviewAvailable.Create(this.data));
   }
 
   protected cb func OnHexInputPopupClosed(data: ref<inkGameNotificationData>) {

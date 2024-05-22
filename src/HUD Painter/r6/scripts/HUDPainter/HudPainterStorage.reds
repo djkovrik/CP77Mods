@@ -12,9 +12,6 @@ public class HudPainterStorage extends ScriptableService {
   private let defaultStyles: array<inkStyle>;
   private let johnnyStyles: array<inkStyle>;
 
-  private let presetDelayID: DelayID;
-  private let inkStyleDelayID: DelayID;
-
   private cb func OnLoad() {
     this.storage = FileSystem.GetStorage("HUDPainter");
     if Equals(this.activePreset, n"") {

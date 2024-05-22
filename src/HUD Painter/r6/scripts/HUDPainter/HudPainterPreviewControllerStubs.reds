@@ -26,8 +26,6 @@ protected cb func OnInitialize() -> Bool {
   this.dynamicColorPreviewInfo.Insert(
     NameToHash(n"MainColors.Blue"), 
     HudPainterPreviewInfo.Create([
-      n"buffsHolder/icon_holder/level_numer_increase",
-      n"buffsHolder/icon_holder/frame",
       n"buffsHolder/inkVerticalPanelWidget2/buffs/Buff/timer",
       n"buffsHolder/inkVerticalPanelWidget2/buffs/Buff/buffCanvas/fg/glow",
       n"buffsHolder/inkVerticalPanelWidget2/buffs/Buff/buffCanvas/fg/icon",
@@ -496,6 +494,7 @@ protected cb func OnHudPainterPreviewModeEnabled(evt: ref<HudPainterPreviewModeE
   let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
   if IsDefined(root) && Equals(root.GetName(), StringToName(s"\(PreviewTabType.UpdateMessage)")) && !this.previewPopulated {
     this.previewPopulated = true;
+    this.GetRootWidget().SetScale(new Vector2(0.666, 0.666));
     inkTextRef.SetText(this.m_titleRef, "Message title");
     inkTextRef.SetText(this.m_textRef, "Manually enhanced message text");
   };
