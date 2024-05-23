@@ -105,6 +105,7 @@ protected cb func OnHudPainterPreviewModeEnabled(evt: ref<HudPainterPreviewModeE
     this.SpawnPreviewQuickBar(container, 6, 0.0);
     // Buffs
     this.m_buffWidget.SetVisible(true);
+    this.GetRootWidget().SetVisible(true);
   };
 }
 
@@ -265,6 +266,8 @@ protected cb func OnHudPainterPreviewModeEnabled(evt: ref<HudPainterPreviewModeE
     entryWidget2.SetName(n"entry2");
     let controller2: ref<QuestTrackerObjectiveLogicController> = entryWidget2.GetController() as QuestTrackerObjectiveLogicController;
     controller2.SetData("Meet Hanako maybe?", true, false, 0, 0, null, true);
+
+    this.GetRootWidget().SetOpacity(1.0);
   };
 }
 
@@ -495,6 +498,7 @@ protected cb func OnHudPainterPreviewModeEnabled(evt: ref<HudPainterPreviewModeE
   if IsDefined(root) && Equals(root.GetName(), StringToName(s"\(PreviewTabType.UpdateMessage)")) && !this.previewPopulated {
     this.previewPopulated = true;
     this.GetRootWidget().SetScale(new Vector2(0.666, 0.666));
+    this.GetRootWidget().SetOpacity(1.0);
     inkTextRef.SetText(this.m_titleRef, "Message title");
     inkTextRef.SetText(this.m_textRef, "Manually enhanced message text");
   };
