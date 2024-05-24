@@ -66,7 +66,6 @@ public class HudPainterStorage extends ScriptableService {
     let status: Bool = destination.WriteJson(json);
     if status {
       this.Log(s"Preset \(presetName) saved");
-      this.SaveActivePresetName(name);
       uiSystem.QueueEvent(HudPainterPresetSaved.Create());
     } else {
       this.Log(s"Preset \(presetName) not saved!");

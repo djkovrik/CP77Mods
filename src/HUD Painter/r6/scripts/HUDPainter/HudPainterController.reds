@@ -29,13 +29,37 @@ class HudPainterController extends gameuiSettingsMenuGameController {
   private let m_colorItems: array<ref<HudPainterColorItem>>;
   private let m_presetItems: array<ref<HudPainterPresetItem>>;
 
+  private let dynamicColorPreviewInfo: ref<inkHashMap>;
+
   protected cb func OnInitialize() {
     this.m_storage = HudPainterStorage.Get();
     this.m_player = this.GetPlayerControlledObject();
+    this.dynamicColorPreviewInfo = new inkHashMap();
 
     this.SetupScreenContent();
     this.RegisterCallbacks();
     this.CheckForExistingArchive();
+
+    this.dynamicColorPreviewInfo.Insert(
+      NameToHash(n"MainColors.Fullscreen_PrimaryBackgroundDark"), 
+      HudPainterPreviewInfo.Create([
+        n"BG/bg1"
+      ])
+    );
+
+    this.dynamicColorPreviewInfo.Insert(
+      NameToHash(n"MainColors.Fullscreen_PrimaryBackgroundDarkest"), 
+      HudPainterPreviewInfo.Create([
+        n"BG/bg2"
+      ])
+    );
+
+    this.dynamicColorPreviewInfo.Insert(
+      NameToHash(n"MainColors.DarkRed"), 
+      HudPainterPreviewInfo.Create([
+        n"BG/bg3"
+      ])
+    );
   }
 
 
@@ -54,6 +78,8 @@ class HudPainterController extends gameuiSettingsMenuGameController {
   protected cb func OnUninitialize() -> Bool {
     this.m_menuEventDispatcher.UnregisterFromEvent(n"OnBack", this, n"OnBack");
     this.UnregisterCallbacks();
+    this.dynamicColorPreviewInfo.Clear();
+    this.dynamicColorPreviewInfo = null;
   }
 
   private final func RegisterCallbacks() -> Void {
@@ -74,7 +100,7 @@ class HudPainterController extends gameuiSettingsMenuGameController {
   }
 
 	protected cb func OnPresetActivateClick(widget: wref<inkWidget>) -> Bool {
-    this.Log(s"Activate preset clicked");
+    this.Log(s"Activate preset clicked \(this.m_currentSelectedPreset.name)");
     this.QueueEvent(HudPainterSoundEmitted.Create(n"ui_menu_onpress"));
     this.m_storage.SaveActivePresetName(this.m_currentSelectedPreset.name);
     this.m_buttonActivate.SetDisabled(true);
@@ -105,7 +131,9 @@ class HudPainterController extends gameuiSettingsMenuGameController {
   }
 
   protected cb func OnHudPainterPresetSaved(evt: ref<HudPainterPresetSaved>) -> Bool {
-    this.RefreshInkStyle();
+    this.UnregisterCallbacks();
+    this.SetupScreenContent();
+    this.RegisterCallbacks();
   }
 
   protected cb func OnHudPainterInkStyleRefreshed(evt: ref<HudPainterInkStyleRefreshed>) -> Bool {
@@ -115,6 +143,25 @@ class HudPainterController extends gameuiSettingsMenuGameController {
     this.RegisterCallbacks();
   }
 
+  protected cb func OnHudPainterColorPreviewAvailable(evt: ref<HudPainterColorPreviewAvailable>) -> Bool {
+    let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+    let key: Uint64;
+    let info: ref<HudPainterPreviewInfo>;
+    let widget: ref<inkWidget>;
+
+    if IsDefined(root) {
+      key = NameToHash(StringToName(evt.color.name));
+      if this.dynamicColorPreviewInfo.KeyExist(key) {
+        info = this.dynamicColorPreviewInfo.Get(key) as HudPainterPreviewInfo;
+        for path in info.paths {
+          widget = root.GetWidgetByPathName(path);
+          if IsDefined(widget) {
+            widget.SetTintColor(evt.color.customColor);
+          };
+        };
+      };
+    };
+  }
 
   // -- SCREEN CONTENT
 

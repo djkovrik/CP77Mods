@@ -67,4 +67,4 @@ public abstract class ColorUtils {
   }
 }
 
-public final static func EnableHudPainterLogs() -> Bool = true
+public final static func EnableHudPainterLogs() -> Bool = false

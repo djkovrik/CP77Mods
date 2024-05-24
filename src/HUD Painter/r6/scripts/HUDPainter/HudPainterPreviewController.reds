@@ -136,8 +136,6 @@ public class HudPainterPreviewController extends inkGameController {
       spawnedWidget.SetVisible(false);
       spawnedWidget.SetAnchorPoint(currentItem.previewAnchorPoint);
       spawnedWidget.SetName(StringToName(s"\(currentItem.tabType)"));
-
-      this.Log(s"Widget \(currentItem.tabType) spawned \(IsDefined(spawnedWidget))");
       i += 1;
     };
   }
