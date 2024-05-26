@@ -529,3 +529,91 @@ protected cb func OnHudPainterColorPreviewAvailable(evt: ref<HudPainterColorPrev
     };
   };
 }
+
+
+// --- SUBTITLES
+
+@addField(SubtitleLineLogicController)
+private let dynamicColorPreviewInfo: ref<inkHashMap>;
+
+@addField(SubtitleLineLogicController)
+private let previewPopulated: Bool;
+
+@wrapMethod(SubtitleLineLogicController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+  this.dynamicColorPreviewInfo = new inkHashMap();
+
+  this.dynamicColorPreviewInfo.Insert(
+    NameToHash(n"MainColors.ActiveRed"), 
+    HudPainterPreviewInfo.Create([
+      n"Line/speakerFlex/speakerName"
+    ])
+  );
+
+  this.dynamicColorPreviewInfo.Insert(
+    NameToHash(n"MainColors.Blue"), 
+    HudPainterPreviewInfo.Create([
+      n"Line/subtitleFlex/subtitle"
+    ])
+  );
+
+  this.dynamicColorPreviewInfo.Insert(
+    NameToHash(n"MainColors.MildBlue"), 
+    HudPainterPreviewInfo.Create([
+      n"Line/speakerFlex/radioName",
+      n"Line/subtitleFlex/radioSubtitle"
+    ])
+  );
+}
+
+@addMethod(SubtitleLineLogicController)
+protected cb func OnUninitialize() -> Bool {
+  this.dynamicColorPreviewInfo.Clear();
+  this.dynamicColorPreviewInfo = null;
+}
+
+@addMethod(SubtitleLineLogicController)
+protected cb func OnHudPainterPreviewModeEnabled(evt: ref<HudPainterPreviewModeEnabled>) -> Bool {
+  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+  if IsDefined(root) && Equals(root.GetName(), StringToName(s"\(PreviewTabType.Subtitles)")) && !this.previewPopulated {
+    this.previewPopulated = true;
+    inkTextRef.SetText(this.m_speakerNameWidget, "Speaker:");
+    inkTextRef.SetText(this.m_subtitleWidget, "Good morning, Night City!");
+    inkWidgetRef.SetVisible(this.m_speakerNameWidget, true);
+    inkWidgetRef.SetVisible(this.m_subtitleWidget, true);
+
+    inkTextRef.SetText(this.m_radioSpeaker, "Radio:");
+    inkTextRef.SetText(this.m_radioSubtitle, "Some text from radio here.");
+    inkWidgetRef.SetVisible(this.m_radioSpeaker, true);
+    inkWidgetRef.SetVisible(this.m_radioSubtitle, true);
+    inkWidgetRef.SetMargin(this.m_radioSpeaker, new inkMargin(0.0, 68.0, 20.0, 0.0));
+    inkWidgetRef.SetMargin(this.m_radioSubtitle, new inkMargin(0.0, 68.0, 0.0, 0.0));
+  };
+}
+
+@addMethod(SubtitleLineLogicController)
+protected cb func OnHudPainterColorPreviewAvailable(evt: ref<HudPainterColorPreviewAvailable>) -> Bool {
+  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+  let key: Uint64;
+  let info: ref<HudPainterPreviewInfo>;
+  let widget: ref<inkWidget>;
+
+  if IsDefined(root) {
+    key = NameToHash(StringToName(evt.color.name));
+    if this.dynamicColorPreviewInfo.KeyExist(key) {
+      info = this.dynamicColorPreviewInfo.Get(key) as HudPainterPreviewInfo;
+      for path in info.paths {
+        widget = root.GetWidgetByPathName(path);
+        if IsDefined(widget) {
+          widget.SetTintColor(evt.color.customColor);
+        };
+      };
+    };
+  };
+}
+
+@addMethod(SubtitleLineLogicController)
+protected cb func OnHudPainterInkStyleRefreshed(evt: ref<HudPainterInkStyleRefreshed>) -> Bool {
+  this.previewPopulated = false;
+}

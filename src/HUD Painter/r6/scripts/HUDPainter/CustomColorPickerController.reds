@@ -194,6 +194,7 @@ public class CustomColorPickerController extends inkGameController {
       this.PlaySound(n"Item", n"OnBuy");
       let decodedColor: ref<HudPainterCustomColor> = ColorUtils.DecodeHex(resultData.input);
       this.RefreshSliders(decodedColor.colorR, decodedColor.colorG, decodedColor.colorB);
+      this.QueueEvent(HudPainterColorPreviewAvailable.Create(this.data));
     };
 
     this.popupToken = null;

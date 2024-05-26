@@ -99,6 +99,15 @@ public class HudPainterPreviewController extends inkGameController {
     updateMessage.previewAnchorPoint = new Vector2(0.5, 0.0);
     updateMessage.affectedColors = "Yellow, White";
     ArrayPush(this.m_items, updateMessage);
+    // Subtitles
+    let subtitles: ref<HudPainterPreviewTab> = new HudPainterPreviewTab();
+    subtitles.tabName = GetLocalizedTextByKey(n"UI-Settings-Subtitles");
+    subtitles.tabType = PreviewTabType.Subtitles;
+    subtitles.previewResourcePath = r"base\\gameplay\\gui\\widgets\\subtitles\\subtitles.inkwidget";
+    subtitles.previewLibraryID = n"Line";
+    subtitles.previewAnchorPoint = new Vector2(0.5, 0.0);
+    subtitles.affectedColors = "ActiveRed, Blue, MildBlue";
+    ArrayPush(this.m_items, subtitles);
   }
 
   private final func PopulateCategories() -> Void {
