@@ -477,17 +477,17 @@
          "alpha":1
       },
       {
-         "name":"MainColors.Fullscreen_PrimaryBackgroundDarkest",
-         "red":0.054901965,
-         "green":0.054901965,
-         "blue":0.09019608,
-         "alpha":1
-      },
-      {
          "name":"MainColors.Fullscreen_PrimaryBackgroundDark",
          "red":0.07058824,
          "green":0.07058824,
          "blue":0.12941177,
+         "alpha":1
+      },
+      {
+         "name":"MainColors.Fullscreen_PrimaryBackgroundDarkest",
+         "red":0.054901965,
+         "green":0.054901965,
+         "blue":0.09019608,
          "alpha":1
       },
       {
