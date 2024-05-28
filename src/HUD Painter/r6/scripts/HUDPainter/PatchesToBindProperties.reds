@@ -1,5 +1,6 @@
 module HudPainter
 
+// Bind minimap colors
 public class PatchMinimapStyle extends ScriptableService {
 
   private cb func OnLoad() {
@@ -7,7 +8,6 @@ public class PatchMinimapStyle extends ScriptableService {
       .RegisterCallback(n"Resource/Loaded", this, n"OnMainColorsLoaded")
       .AddTarget(ResourceTarget.Path(r"base\\gameplay\\gui\\common\\main_colors.inkstyle"));
   }
-
 
   private cb func OnMainColorsLoaded(event: ref<ResourceEvent>) -> Void {
     this.Log("Patching minimap theme colors...");
@@ -64,4 +64,28 @@ public class PatchMinimapStyle extends ScriptableService {
       ModLog(n"Patcher", str);
     };
   }
+}
+
+// Bind xp bars
+@wrapMethod(healthbarWidgetGameController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+  let expWidgets: array<ref<inkWidget>>;
+
+  let bar1: ref<inkWidget> = root.GetWidgetByPathName(n"buffsHolder/barsLayout/xpBar/exp_bar_cotianer/exp_bar_full");
+  let bar2: ref<inkWidget> = root.GetWidgetByPathName(n"buffsHolder/barsLayout/xpBar/flugg_stripes_exp/bar");
+  let exp1: ref<inkWidget> = root.GetWidgetByPathName(n"buffsHolder/barsLayout/xpBar/exp_bar_cotianer/textpos/xp_text/exp_value_plus");
+  let exp2: ref<inkWidget> = root.GetWidgetByPathName(n"buffsHolder/barsLayout/xpBar/exp_bar_cotianer/textpos/xp_text/exp_value");
+  let exp3: ref<inkWidget> = root.GetWidgetByPathName(n"buffsHolder/barsLayout/xpBar/exp_bar_cotianer/textpos/xp_text/exp_value_label");
+  ArrayPush(expWidgets, bar1);
+  ArrayPush(expWidgets, bar2);
+  ArrayPush(expWidgets, exp1);
+  ArrayPush(expWidgets, exp2);
+  ArrayPush(expWidgets, exp3);
+
+  for widget in expWidgets {
+    widget.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    widget.BindProperty(n"tintColor", n"MainColors.NPC_Chatter");
+  };
 }

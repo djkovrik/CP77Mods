@@ -72,6 +72,14 @@ protected cb func OnInitialize() -> Bool {
       n"buffsHolder/inkVerticalPanelWidget2/buffs/Buff/buffCanvas/bg/icon"
     ])
   );
+
+  this.dynamicColorPreviewInfo.Insert(
+    NameToHash(n"MainColors.NPC_Chatter"), 
+    HudPainterPreviewInfo.Create([
+      n"buffsHolder/barsLayout/xpBar/exp_bar_cotianer/exp_bar_full",
+      n"buffsHolder/barsLayout/xpBar/flugg_stripes_exp/bar"
+    ])
+  );
 }
 
 @wrapMethod(healthbarWidgetGameController)
@@ -88,7 +96,12 @@ protected cb func OnHudPainterPreviewModeEnabled(evt: ref<HudPainterPreviewModeE
     this.previewPopulated = true;
 
     // Exp
-    this.OnCharacterLevelCurrentXPUpdated(1000);
+    inkTextRef.SetText(this.m_expText, IntToString(200));
+    inkTextRef.SetText(this.m_expTextLabel, "LocKey#23263");
+    inkWidgetRef.SetSizeCoefficient(this.m_expBar, 0.5);
+    inkWidgetRef.SetSizeCoefficient(this.m_expBarSpacer, 0.5);
+    inkWidgetRef.SetVisible(this.m_expBar, true);
+    inkWidgetRef.SetVisible(this.m_expBarSpacer, true);
     // HP + Overshield
     inkWidgetRef.SetWidth(this.m_fullBar, 400.0);
     inkWidgetRef.SetVisible(this.m_overshieldBarRef, true);
