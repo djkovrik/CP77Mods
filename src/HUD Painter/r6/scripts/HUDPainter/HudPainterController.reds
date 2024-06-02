@@ -23,6 +23,7 @@ class HudPainterController extends gameuiSettingsMenuGameController {
   private let m_buttonHintsController: wref<ButtonHints>;
   private let m_buttonActivate: wref<SimpleButton>;
   private let m_buttonSave: wref<SimpleButton>;
+  private let m_buttonDelete: wref<SimpleButton>;
   private let m_popupToken: ref<inkGameNotificationToken>;
   private let m_currentSelectedPreset: ref<HudPainterPresetItem>;
 
@@ -85,11 +86,13 @@ class HudPainterController extends gameuiSettingsMenuGameController {
   private final func RegisterCallbacks() -> Void {
     this.m_buttonActivate.RegisterToCallback(n"OnBtnClick", this, n"OnPresetActivateClick");
     this.m_buttonSave.RegisterToCallback(n"OnBtnClick", this, n"OnPresetSaveClick");
+    this.m_buttonDelete.RegisterToCallback(n"OnBtnClick", this, n"OnPresetDeleteClick");
   }
 
   private final func UnregisterCallbacks() -> Void {
     this.m_buttonActivate.UnregisterFromCallback(n"OnBtnClick", this, n"OnPresetActivateClick");
     this.m_buttonSave.UnregisterFromCallback(n"OnBtnClick", this, n"OnPresetSaveClick");
+    this.m_buttonDelete.UnregisterFromCallback(n"OnBtnClick", this, n"OnPresetDeleteClick");
   }
 
 
@@ -115,6 +118,12 @@ class HudPainterController extends gameuiSettingsMenuGameController {
     this.m_popupToken.RegisterListener(this, n"OnSavePresetPopupClosed");
 	}
 
+	protected cb func OnPresetDeleteClick(widget: wref<inkWidget>) -> Bool {
+    this.QueueEvent(HudPainterSoundEmitted.Create(n"ui_menu_onpress"));
+    this.m_popupToken = HudPainterWarningPopup.Show(this, GetLocalizedTextByKey(n"Mod-HudPainter-Delete-Confirm"), GenericMessageNotificationType.YesNo);
+    this.m_popupToken.RegisterListener(this, n"OnPresetDeletionPopupClosed");
+	}
+
   protected cb func OnHudPainterColorSelected(evt: ref<HudPainterColorSelected>) -> Bool {
     if !inkWidgetRef.IsVisible(this.m_colorPickerSlot) {
       inkWidgetRef.SetVisible(this.m_colorPickerSlot, true);
@@ -128,12 +137,22 @@ class HudPainterController extends gameuiSettingsMenuGameController {
     this.Log(s"Preset selected: \(evt.data.name)");
     this.m_currentSelectedPreset = evt.data;
     this.m_buttonActivate.SetDisabled(this.m_currentSelectedPreset.active);
+    let isDeletionBlocked: Bool = this.m_currentSelectedPreset.active || Equals(this.m_currentSelectedPreset.name, this.m_storage.GetDefaultPresetName());
+    this.m_buttonDelete.SetDisabled(isDeletionBlocked);
   }
 
   protected cb func OnHudPainterPresetSaved(evt: ref<HudPainterPresetSaved>) -> Bool {
     this.UnregisterCallbacks();
     this.SetupScreenContent();
     this.RegisterCallbacks();
+  }
+
+  protected cb func OnHudPainterPresetDeleted(evt: ref<HudPainterPresetDeleted>) -> Bool {
+    if evt.deleted {
+      this.UnregisterCallbacks();
+      this.SetupScreenContent();
+      this.RegisterCallbacks();
+    };
   }
 
   protected cb func OnHudPainterInkStyleRefreshed(evt: ref<HudPainterInkStyleRefreshed>) -> Bool {
@@ -220,6 +239,15 @@ class HudPainterController extends gameuiSettingsMenuGameController {
     buttonSave.ToggleSounds(true);
     buttonSave.Reparent(container);
     this.m_buttonSave = buttonSave;
+
+    let buttonDelete: ref<SimpleButton> = SimpleButton.Create();
+    buttonDelete.SetName(n"buttonDelete");
+    buttonDelete.SetText(GetLocalizedText("LocKey#45020"));
+    buttonDelete.ToggleAnimations(true);
+    buttonDelete.ToggleSounds(true);
+    buttonDelete.SetDisabled(true);
+    buttonDelete.Reparent(container);
+    this.m_buttonDelete = buttonDelete;
   }
 
   private final func RefreshPresetsList() -> Void {
@@ -292,14 +320,14 @@ class HudPainterController extends gameuiSettingsMenuGameController {
     let isInputValid: Bool = NotEquals(resultData.input, "") && NotEquals(resultData.input, this.m_storage.GetDefaultPresetName());
 
     if Equals(resultData.result, GenericMessageNotificationResult.Confirm) && isInputValid {
-      this.PlaySound(n"Item", n"OnBuy");
+      this.QueueEvent(HudPainterSoundEmitted.Create(n"ui_menu_item_bought"));
       this.SaveCurrentColorsAsPreset(resultData.input);
     };
 
     this.m_popupToken = null;
 
     if Equals(resultData.input, this.m_storage.GetDefaultPresetName()) {
-      this.m_popupToken = HudPainterWarningPopup.Show(this, GetLocalizedTextByKey(n"Mod-HudPainter-Default-Overwrite"));
+      this.m_popupToken = HudPainterWarningPopup.Show(this, GetLocalizedTextByKey(n"Mod-HudPainter-Default-Overwrite"), GenericMessageNotificationType.OK);
       this.m_popupToken.RegisterListener(this, n"OnDefaultPresetNamePopupClosed");
     };
   }
@@ -313,7 +341,15 @@ class HudPainterController extends gameuiSettingsMenuGameController {
     this.m_popupToken = null;
   }
 
-
+  protected cb func OnPresetDeletionPopupClosed(data: ref<inkGameNotificationData>) {
+    let resultData: ref<GenericMessageNotificationCloseData> = data as GenericMessageNotificationCloseData;
+    if Equals(resultData.result, GenericMessageNotificationResult.Yes)  {
+      this.QueueEvent(HudPainterSoundEmitted.Create(n"ui_menu_item_bought"));
+      this.m_storage.DeletePreset(this.m_currentSelectedPreset.name);
+      this.m_currentSelectedPreset = null;
+    };
+    this.m_popupToken = null;
+  }
   // -- UTILITY
 
   private final func SaveCurrentColorsAsPreset(presetName: String) -> Void {
@@ -352,7 +388,7 @@ class HudPainterController extends gameuiSettingsMenuGameController {
 
   private final func CheckForExistingArchive() -> Void {
     if this.m_storage.IsDefaultPresetMissing() {
-      this.m_popupToken = HudPainterWarningPopup.Show(this, GetLocalizedTextByKey(n"Mod-HudPainter-Default-Missed"));
+      this.m_popupToken = HudPainterWarningPopup.Show(this, GetLocalizedTextByKey(n"Mod-HudPainter-Default-Missed"), GenericMessageNotificationType.OK);
       this.m_popupToken.RegisterListener(this, n"OnDefaultPresetNotFoundPopupClosed");
     };
   }

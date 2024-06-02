@@ -72,6 +72,14 @@ public class HudPainterStorage extends ScriptableService {
     };
   }
 
+  public final func DeletePreset(name: String) -> Void {
+    let uiSystem: ref<UISystem> = GameInstance.GetUISystem(GetGameInstance());
+    let presetName: String = s"\(name).json";
+    let status: FileSystemStatus = this.storage.DeleteFile(presetName);
+    let deleted: Bool = Equals(status, FileSystemStatus.True);
+    uiSystem.QueueEvent(HudPainterPresetDeleted.Create(deleted));
+  }
+
   public final func IsDefaultPresetMissing() -> Bool {
     return !this.IsPresetExists(this.defaultPreset);
   }

@@ -152,6 +152,17 @@ public class HudPainterPresetSaved extends Event {
   }
 }
 
+public class HudPainterPresetDeleted extends Event {
+  let deleted: Bool;
+
+  public final static func Create(deleted: Bool) -> ref<HudPainterPresetDeleted> {
+    let evt: ref<HudPainterPresetDeleted> = new HudPainterPresetDeleted();
+    evt.deleted = deleted;
+    return evt;
+  }
+}
+
+
 public class HudPainterInkStyleRefreshed extends Event {
   public final static func Create() -> ref<HudPainterInkStyleRefreshed> {
     let evt: ref<HudPainterInkStyleRefreshed> = new HudPainterInkStyleRefreshed();

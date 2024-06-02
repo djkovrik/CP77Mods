@@ -12,12 +12,12 @@ public class HudPainterMissingArchivePopup {
 }
 
 public class HudPainterWarningPopup {
-  public static func Show(controller: ref<worlduiIGameController>, message: String) -> ref<inkGameNotificationToken> {
+  public static func Show(controller: ref<worlduiIGameController>, message: String, type: GenericMessageNotificationType) -> ref<inkGameNotificationToken> {
     return GenericMessageNotification.Show(
       controller, 
       GetLocalizedText("LocKey#11447"), 
       message,
-      GenericMessageNotificationType.OK
+      type
     );
   }
 }
