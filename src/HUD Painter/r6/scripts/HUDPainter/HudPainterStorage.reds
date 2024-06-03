@@ -98,6 +98,7 @@ public class HudPainterStorage extends ScriptableService {
 
     let files: array<ref<File>> = this.storage.GetFiles();
     let item: ref<HudPainterPresetItem>;
+    let fileName: String;
     let shortName: String;
 
     // Default preset always first
@@ -109,13 +110,16 @@ public class HudPainterStorage extends ScriptableService {
 
     // Other
     for file in files {
-      shortName = StrBeforeLast(file.GetFilename(), ".json");
-      if NotEquals(shortName, this.defaultPreset) {
+      fileName = file.GetFilename();
+      shortName = StrBeforeLast(fileName, ".json");
+      if NotEquals(shortName, this.defaultPreset) && StrEndsWith(fileName, ".json") {
         item = new HudPainterPresetItem();
         item.name = shortName;
-        item.fileName = s"\(shortName).json";
+        item.fileName = fileName;
         item.active = Equals(shortName, this.GetActivePresetName());
         ArrayPush(result, item);
+      } else {
+        this.Log(s"\(fileName) skipped!");
       };
     };
 
