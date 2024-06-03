@@ -16,12 +16,14 @@ enum HudPainterConfigColor {
   ActiveYellow = 12,
   MildYellow = 13,
   FaintYellow = 14,
-  Green = 15,
-  MildGreen = 16,
-  ActiveGreen = 17,
-  DarkGreen = 18,
-  Grey = 19,
-  White = 20,
+  Orange = 15,
+  Green = 16,
+  MildGreen = 17,
+  ActiveGreen = 18,
+  DarkGreen = 19,
+  Grey = 20,
+  Black = 21,
+  White = 22,
 }
 
 class HudPainterWorldMapSettings {
@@ -86,13 +88,13 @@ class HudPainterWorldMapSettings {
   @runtimeProperty("ModSettings.dependency", "enableCustomWorldmap")
   let worldMapRoadBorders: HudPainterConfigColor = HudPainterConfigColor.ActiveBlue;
 
-  // @runtimeProperty("ModSettings.mod", "Mod-HudPainter-Name")
-  // @runtimeProperty("ModSettings.category", "Mod-HudPainter-Settings-WorldMap")
-  // @runtimeProperty("ModSettings.category.order", "1")
-  // @runtimeProperty("ModSettings.displayName", "Metro line")
-  // @runtimeProperty("ModSettings.description", "Metro line color for the world map menu.")
-  // @runtimeProperty("ModSettings.dependency", "enableCustomWorldmap")
-  // let worldMapMetroLine: HudPainterConfigColor = HudPainterConfigColor.Blue;
+  @runtimeProperty("ModSettings.mod", "Mod-HudPainter-Name")
+  @runtimeProperty("ModSettings.category", "Mod-HudPainter-Settings-WorldMap")
+  @runtimeProperty("ModSettings.category.order", "1")
+  @runtimeProperty("ModSettings.displayName", "Metro line")
+  @runtimeProperty("ModSettings.description", "Metro line color for the world map menu.")
+  @runtimeProperty("ModSettings.dependency", "enableCustomWorldmap")
+  let worldMapMetroLine: HudPainterConfigColor = HudPainterConfigColor.Blue;
 }
 
 class HudPainterWorldMapPatch extends ScriptableService {
@@ -148,18 +150,7 @@ class HudPainterWorldMapPatch extends ScriptableService {
     if !config.enableCustomWorldmap { return ; };
 
     let resource: ref<CMaterialTemplate> = event.GetResource() as CMaterialTemplate;
-    let targetParameters: array<ref<CMaterialParameter>> = resource.parameters[2];
-    this.Log(s"Patch hud_painter_3d_map_roads \(resource.GetClassName()), parameters size \(ArraySize(targetParameters))");
-
-    for parameter in targetParameters {
-      let colorParameter: ref<CMaterialParameterColor> = parameter as CMaterialParameterColor;
-      if IsDefined(colorParameter) {
-        if Equals(colorParameter.parameterName, n"Color") {
-          colorParameter.color = this.GetColorValue(config.worldMapRoads);
-          break;
-        };
-      };
-    };
+    this.PatchMaterialTemplate(resource, config.worldMapRoads);
   }
 
   // patch for hud_painter_3d_map_road_borders.mt
@@ -168,18 +159,16 @@ class HudPainterWorldMapPatch extends ScriptableService {
     if !config.enableCustomWorldmap { return ; };
 
     let resource: ref<CMaterialTemplate> = event.GetResource() as CMaterialTemplate;
-    let targetParameters: array<ref<CMaterialParameter>> = resource.parameters[2];
-    this.Log(s"Patch hud_painter_3d_map_road_borders \(resource.GetClassName()), parameters size \(ArraySize(targetParameters))");
+    this.PatchMaterialTemplate(resource, config.worldMapRoadBorders);
+  }
 
-    for parameter in targetParameters {
-      let colorParameter: ref<CMaterialParameterColor> = parameter as CMaterialParameterColor;
-      if IsDefined(colorParameter) {
-        if Equals(colorParameter.parameterName, n"Color") {
-          colorParameter.color = this.GetColorValue(config.worldMapRoadBorders);
-          break;
-        };
-      };
-    };
+  // patch for 3d_map_metro.mt
+  private cb func On3dMapMetroMaterialResource(event: ref<ResourceEvent>) {
+    let config: ref<HudPainterWorldMapSettings> = new HudPainterWorldMapSettings();
+    if !config.enableCustomWorldmap { return ; };
+
+    let resource: ref<CMaterialTemplate> = event.GetResource() as CMaterialTemplate;
+    this.PatchMaterialTemplate(resource, config.worldMapMetroLine, true);
   }
 
   private cb func OnLoad() {
@@ -200,6 +189,33 @@ class HudPainterWorldMapPatch extends ScriptableService {
     callbackSystem
       .RegisterCallback(n"Resource/Ready", this, n"OnHudPainter3dMapRoadBordersResource")
       .AddTarget(ResourceTarget.Path(r"base\\materials\\hud_painter_3d_map_road_borders.mt"));
+
+    callbackSystem
+      .RegisterCallback(n"Resource/Loaded", this, n"On3dMapMetroMaterialResource")
+      .AddTarget(ResourceTarget.Path(r"base\\materials\\3d_map_metro.mt"));
+  }
+
+  private func PatchMaterialTemplate(resource: ref<CMaterialTemplate>, color: HudPainterConfigColor, opt isMetro: Bool) -> Void {
+    if NotEquals(ArraySize(resource.parameters), 3) {
+      return ;
+    };
+
+    let targetParameters: array<ref<CMaterialParameter>> = resource.parameters[2];
+    this.Log(s"Patching material template with \(color) color");
+
+    for parameter in targetParameters {
+      let colorParameter: ref<CMaterialParameterColor> = parameter as CMaterialParameterColor;
+      if IsDefined(colorParameter) {
+        if Equals(colorParameter.parameterName, n"Color") {
+          let newColor: Color = this.GetColorValue(color);
+          if isMetro {
+            newColor.Alpha = Cast<Uint8>(60);
+          };
+          colorParameter.color = newColor;
+          break;
+        };
+      };
+    };
   }
 
   private final func GetColorValue(from: HudPainterConfigColor) -> Color {
@@ -225,15 +241,12 @@ class HudPainterWorldMapPatch extends ScriptableService {
     let result: ref<inkHashMap> = new inkHashMap();
     
     let presetData: array<ref<HudPainterColorItem>> = HudPainterStorage.Get().GetActivePresetData();
-    let counter: Int32 = 0;
     for colorItem in presetData {
       if Equals(colorItem.type, HudPainterColorType.Default) {
         result.Insert(this.Key(colorItem.name), colorItem);
-        counter += 1;
       };
     };
 
-    this.Log(s"Colors map ready with \(counter) colors");
     return result;
   }
 
@@ -256,6 +269,8 @@ class HudPainterWorldMapPatch extends ScriptableService {
   }
 
   private final func Log(str: String) -> Void {
-    ModLog(n"WorldMapPatcher", str);
+    if EnableHudPainterLogs() {
+      ModLog(n"WorldMapPatcher", str);
+    };
   }
 }
