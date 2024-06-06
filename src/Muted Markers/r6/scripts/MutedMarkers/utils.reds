@@ -50,7 +50,7 @@ public class MMUtils {
     };
 
     // Door check
-    if world.hideDoors && Equals(role, EGameplayRole.OpenPath) {
+    if world.hideDoors && (Equals(role, EGameplayRole.OpenPath) || Equals(role, EGameplayRole.Push)) {
       return MarkerVisibility.Hidden;
     };
 
@@ -65,7 +65,15 @@ public class MMUtils {
     };
 
     // Networking check
-    if world.hideNetworking && (Equals(role, EGameplayRole.ControlSelf) || Equals(role, EGameplayRole.GrantInformation)) {
+    if world.hideNetworking && (
+      Equals(role, EGameplayRole.ControlSelf) || 
+      Equals(role, EGameplayRole.GrantInformation) || 
+      Equals(role, EGameplayRole.ControlOtherDevice) || 
+      Equals(role, EGameplayRole.CutPower) || 
+      Equals(role, EGameplayRole.DistractVendingMachine) || 
+      Equals(role, EGameplayRole.ClearPath) || 
+      Equals(role, EGameplayRole.ClearPathAd)
+      ) {
       return MarkerVisibility.Hidden;
     };
 
