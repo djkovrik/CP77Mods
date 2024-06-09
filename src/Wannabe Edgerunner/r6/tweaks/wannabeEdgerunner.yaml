@@ -354,29 +354,9 @@ BaseStatusEffect.NewPostPsychosisEffectBase:
      stackable: false
      stats:
      - $type: ConstantStatModifier_Record
-       statType: BaseStats.Accuracy
-       modifierType: Multiplier
-       value: 0.02
-     - $type: ConstantStatModifier_Record
        statType: BaseStats.Armor
        modifierType: Multiplier
-       value: 0.5
-     - $type: ConstantStatModifier_Record
-       statType: BaseStats.Evasion
-       modifierType: Multiplier
-       value: 0.5
-     - $type: ConstantStatModifier_Record
-       statType: BaseStats.ChemicalResistance
-       modifierType: Multiplier
-       value: 0.5
-     - $type: ConstantStatModifier_Record
-       statType: BaseStats.ThermalResistance
-       modifierType: Multiplier
-       value: 0.5
-     - $type: ConstantStatModifier_Record
-       statType: BaseStats.ElectricResistance
-       modifierType: Multiplier
-       value: 0.5
+       value: 0.75
      effectors:
      - $base: BaseStatusEffect.BreathingAnimationEffector
        animFeatureName: "CameraBreathingMedium"
@@ -393,63 +373,15 @@ BaseStatusEffect.NewPostPsychosisEffectBase:
          - $type: ConstantStatModifier_Record
            statType: BaseStats.ReloadTime
            modifierType: Multiplier
-           value: 1.5
+           value: 1.25
          - $type: ConstantStatModifier_Record
            statType: BaseStats.AimInTime
            modifierType: Multiplier
-           value: 1.5
+           value: 1.25
          - $type: ConstantStatModifier_Record
            statType: BaseStats.AimOutTime
            modifierType: Multiplier
-           value: 1.5
-         - $type: ConstantStatModifier_Record
-           statType: BaseStats.RecoilAngle
-           modifierType: Multiplier
            value: 1.25
-         - $type: ConstantStatModifier_Record
-           statType: BaseStats.RecoilDriftRandomRangeMin
-           modifierType: Multiplier
-           value: 1.4
-         - $type: ConstantStatModifier_Record
-           statType: BaseStats.RecoilDriftRandomRangeMax
-           modifierType: Multiplier
-           value: 1.4
-         - $type: ConstantStatModifier_Record
-           statType: BaseStats.RecoilKickMin
-           modifierType: Multiplier
-           value: 1.35
-         - $type: ConstantStatModifier_Record
-           statType: BaseStats.RecoilKickMax
-           modifierType: Multiplier
-           value: 1.35
-         - $type: ConstantStatModifier_Record
-           statType: BaseStats.RecoilRecoveryTime
-           modifierType: Multiplier
-           value: 1.4
-         - $type: ConstantStatModifier_Record
-           statType: BaseStats.SpreadAdsMaxX
-           modifierType: Multiplier
-           value: 1.35
-         - $type: ConstantStatModifier_Record
-           statType: BaseStats.SpreadAdsMaxY
-           modifierType: Multiplier
-           value: 1.35
-         - $type: ConstantStatModifier_Record
-           statType: BaseStats.SpreadMaxX
-           modifierType: Multiplier
-           value: 1.35
-         - $type: ConstantStatModifier_Record
-           statType: BaseStats.SpreadMaxY
-           modifierType: Multiplier
-           value: 1.35
-         - $type: ConstantStatModifier_Record
-           statType: BaseStats.SpreadChangePerShot
-           modifierType: Multiplier
-           value: 1.5
-         - $type: ConstantStatModifier_Record
-           statType: BaseStats.SpreadAdsChangePerShot
-           modifierType: Multiplier
-           value: 1.5 
   statusEffectType: BaseStatusEffectTypes.PassiveDebuff
   uiData: 
     $type: StatusEffectUIData_Record
