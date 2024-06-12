@@ -45,37 +45,53 @@ protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpaw
   };
 }
 
-// Track cyberware activation
-@wrapMethod(PlayerPuppet)
-private final func ActivateIconicCyberware() -> Void {
-  wrappedMethod();
+// Track berserk
+@wrapMethod(UseBerserkAction)
+public func StartAction(gameInstance: GameInstance) -> Void {
+  wrappedMethod(gameInstance);
 
+  let playerPuppet: ref<PlayerPuppet> = this.GetExecutor() as PlayerPuppet;
   let item: ItemID;
-  if GameInstance.GetStatsSystem(this.GetGame()).GetStatBoolValue(Cast<StatsObjectID>(this.GetEntityID()), gamedataStatType.HasBerserk) {
-    if !StatusEffectSystem.ObjectHasStatusEffect(this, t"BaseStatusEffect.BerserkPlayerBuff") {
-      item = this.GetCurrentBerserk();
-      if !ItemID.IsValid(item) {
-        return ;
-      };
-      EdgerunningSystem.GetInstance(this.GetGame()).OnBerserkActivation(item);
-    };
-  } else {
-    if GameInstance.GetStatsSystem(this.GetGame()).GetStatBoolValue(Cast<StatsObjectID>(this.GetEntityID()), gamedataStatType.HasSandevistan) {
-      if !StatusEffectSystem.ObjectHasStatusEffect(this, t"BaseStatusEffect.SandevistanPlayerBuff") {
-        item = this.GetCurrentSandevistan();
-        if !ItemID.IsValid(item) {
-          return ;
-        };
-        EdgerunningSystem.GetInstance(this.GetGame()).OnSandevistanActivation(item);
-      };
-    };
+  if IsDefined(playerPuppet) {
+    item = playerPuppet.GetCurrentBerserk();
+    EdgerunningSystem.GetInstance(gameInstance).OnBerserkActivation(item);
   };
 }
 
+// Track Sandevistan
+@wrapMethod(UseSandevistanAction)
+public func StartAction(gameInstance: GameInstance) -> Void {
+  wrappedMethod(gameInstance);
+  let playerPuppet: ref<PlayerPuppet> = this.GetExecutor() as PlayerPuppet;
+  let item: ItemID;
+  if IsDefined(playerPuppet) {
+    item = playerPuppet.GetCurrentSandevistan();
+    EdgerunningSystem.GetInstance(gameInstance).OnSandevistanActivation(item);
+  };
+}
+
+// Track Kerenzikov
 @wrapMethod(KerenzikovEvents)
 protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
   wrappedMethod(stateContext, scriptInterface);
   EdgerunningSystem.GetInstance(scriptInterface.GetGame()).OnKerenzikovActivation();
+}
+
+// Track Camo
+@wrapMethod(UseAction)
+public func StartAction(gameInstance: GameInstance) -> Void {
+  wrappedMethod(gameInstance);
+  let data: ref<gameItemData> = this.GetItemData();
+  if !IsDefined(data) || !this.m_executor.IsPlayer() {
+    return;
+  };
+  
+  let id: TweakDBID = ItemID.GetTDBID(data.GetID());
+
+  // Optical cammo
+  if CyberwareHelper.IsOpticalCamo(id) {
+    EdgerunningSystem.GetInstance(gameInstance).OnOpticalCamoActivation();
+  };
 }
 
 @replaceMethod(InventoryDataManagerV2)
@@ -211,20 +227,4 @@ public final static func AwardExperienceFromDamage(hitEvent: ref<gameHitEvent>, 
 public final func DetachProjectile(scriptInterface: ref<StateGameScriptInterface>, opt angleOffset: Float) -> Void {
   wrappedMethod(scriptInterface, angleOffset);
   EdgerunningSystem.GetInstance(scriptInterface.executionOwner.GetGame()).OnArmsCyberwareActivation(gamedataItemType.Cyb_Launcher);
-}
-
-@wrapMethod(UseAction)
-public func StartAction(gameInstance: GameInstance) -> Void {
-  wrappedMethod(gameInstance);
-  let data: ref<gameItemData> = this.GetItemData();
-  if !IsDefined(data) || !this.m_executor.IsPlayer() {
-    return;
-  };
-  
-  let id: TweakDBID = ItemID.GetTDBID(data.GetID());
-
-  // Optical cammo
-  if CyberwareHelper.IsOpticalCamo(id) {
-    EdgerunningSystem.GetInstance(gameInstance).OnOpticalCamoActivation();
-  };
 }

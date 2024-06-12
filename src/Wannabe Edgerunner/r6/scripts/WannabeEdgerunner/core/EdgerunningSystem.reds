@@ -296,6 +296,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func OnBerserkActivation(item: ItemID) -> Void {
+    E("BERSERK ACTIVATED");
     let itemRecord: ref<Item_Record> = RPGManager.GetItemRecord(item);
     let quality: gamedataQuality = itemRecord.Quality().Type();
     let qualityMult: Float;
@@ -346,6 +347,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func OnSandevistanActivation(item: ItemID) -> Void {
+    E("SANDEVISTAN ACTIVATED");
     let itemRecord: ref<Item_Record> = RPGManager.GetItemRecord(item);
     let quality: gamedataQuality = itemRecord.Quality().Type();
     let qualityMult: Float;
@@ -396,6 +398,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func OnKerenzikovActivation() -> Void {
+    E("KERENZIKOV ACTIVATED");
     let itemRecord: ref<Item_Record> = this.cyberwareHelper.GetCurrentKerenzikov();
     if !IsDefined(itemRecord) {
       return;
@@ -451,6 +454,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func OnOpticalCamoActivation() -> Void {
+    E("OPTICAL CAMO ACTIVATED");
     let itemRecord: ref<Item_Record> = this.cyberwareHelper.GetCurrentOpticalCamo();
     if !IsDefined(itemRecord) {
       return;
@@ -513,6 +517,8 @@ public class EdgerunningSystem extends ScriptableSystem {
     if !IsDefined(itemRecord) {
       return;
     };
+
+    E(s"ARMS CYBERWARE ACTIVATED: \(itemType)");
 
     let quality: gamedataQuality = itemRecord.Quality().Type();
     let qualityMult: Float;
