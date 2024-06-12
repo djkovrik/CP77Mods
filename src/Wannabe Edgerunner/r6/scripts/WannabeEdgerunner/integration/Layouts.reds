@@ -2,6 +2,9 @@ import Edgerunning.System.EdgerunningSystem
 
 // -- CYBERWARE MENU --
 
+@addField(RipperDocGameController)
+private let edgerunnerHumanityBar: wref<inkWidget>;
+
 @wrapMethod(RipperDocGameController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
@@ -18,7 +21,7 @@ protected cb func OnInitialize() -> Bool {
   outerContainer.SetMargin(new inkMargin(0.0, 0.0, 434.0, 160.0));
   outerContainer.Reparent(root, 5);
 
-  this.SpawnFromExternal(
+  this.edgerunnerHumanityBar = this.SpawnFromExternal(
     outerContainer, 
     r"base\\gameplay\\gui\\fullscreen\\wannabe_edgerunner_bars.inkwidget", 
     n"Root:Edgerunning.Controller.NewHumanityBarController"
@@ -127,6 +130,29 @@ public func SetData(tooltipData: ref<ATooltipData>) -> Void {
   wrappedMethod(tooltipData);
 }
 
+@wrapMethod(RipperDocGameController)
+protected cb func OnPreviewCyberwareClick(evt: ref<inkPointerEvent>) -> Bool {
+  wrappedMethod(evt);
+  this.edgerunnerHumanityBar.SetVisible(false);
+}
+
+@wrapMethod(RipperDocGameController)
+protected cb func OnSelectorChange(evt: ref<RipperdocSelectorChangeEvent>) -> Bool {
+  wrappedMethod(evt);
+  this.edgerunnerHumanityBar.SetVisible(false);
+}
+
+@wrapMethod(RipperDocGameController)
+protected cb func OnBack(userData: ref<IScriptable>) -> Bool {
+  wrappedMethod(userData);
+  this.edgerunnerHumanityBar.SetVisible(true);
+}
+
+@wrapMethod(RipperDocGameController)
+private final func DisplayInventory(visible: Bool) -> Void {
+  wrappedMethod(visible);
+  ModLog(n"TEST", s"WRAP \(visible)");
+}
 
 // -- HEALTHBAR --
 
