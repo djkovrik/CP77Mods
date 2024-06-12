@@ -29,7 +29,7 @@ import Edgerunning.Common.E
 
   public func IsWentFullPsycho() -> Bool 
   public func SetWentFullPsycho(value: Bool) -> Void 
-  public func AddHumanityDamage(cost: Int32) -> Void
+  public func AddHumanityDamage(cost: Float) -> Void
   public func RemoveHumanityDamage(cost: Int32) -> Bool
   public func ResetHumanityDamage() -> Void
   public func AddHumanityPenalty(key: String, value: Int32) -> Void
@@ -237,9 +237,9 @@ public class EdgerunningSystem extends ScriptableSystem {
       return ;
     };
 
-    let cost: Int32;
+    let cost: Float;
     if !this.effectsChecker.IsRipperdocBuffActive() && !this.effectsChecker.IsNewPostPsychosisActive() {
-      cost = EnemyCostHelper.GetEnemyCost(affiliation, this.config);
+      cost = Cast<Float>(EnemyCostHelper.GetEnemyCost(affiliation, this.config));
       this.AddHumanityDamage(cost);
       this.InvalidateCurrentState();
       E(s"! Killed \(affiliation), humanity -\(cost)");
@@ -336,7 +336,7 @@ public class EdgerunningSystem extends ScriptableSystem {
         break;
     };
 
-    let cost: Int32 = this.config.berserkUsageCost * Cast<Int32>(qualityMult);
+    let cost: Float = Cast<Float>(this.config.berserkUsageCost) * qualityMult;
     if !this.effectsChecker.IsRipperdocBuffActive() && !this.effectsChecker.IsNewPostPsychosisActive() {
       this.AddHumanityDamage(cost);
       E(s"! Berserk activated: \(quality) - costs \(cost) humanity");
@@ -387,7 +387,7 @@ public class EdgerunningSystem extends ScriptableSystem {
         break;
     };
 
-    let cost: Int32 = this.config.sandevistanUsageCost * Cast<Int32>(qualityMult);
+    let cost: Float = Cast<Float>(this.config.sandevistanUsageCost) * qualityMult;
     if !this.effectsChecker.IsRipperdocBuffActive() && !this.effectsChecker.IsNewPostPsychosisActive() {
       this.AddHumanityDamage(cost);
       E(s"! Sandevistan activated: \(quality) - costs \(cost) humanity");
@@ -442,7 +442,7 @@ public class EdgerunningSystem extends ScriptableSystem {
         break;
     };
 
-    let cost: Int32 = this.config.kerenzikovUsageCost * Cast<Int32>(qualityMult);
+    let cost: Float = Cast<Float>(this.config.kerenzikovUsageCost) * qualityMult;
 
     if !this.effectsChecker.IsRipperdocBuffActive() && !this.effectsChecker.IsNewPostPsychosisActive() {
       this.AddHumanityDamage(cost);
@@ -498,7 +498,7 @@ public class EdgerunningSystem extends ScriptableSystem {
         break;
     };
 
-    let cost: Int32 = this.config.opticalCamoUsageCost * Cast<Int32>(qualityMult);
+    let cost: Float = Cast<Float>(this.config.opticalCamoUsageCost) * qualityMult;
 
     if !this.effectsChecker.IsRipperdocBuffActive() && !this.effectsChecker.IsNewPostPsychosisActive() {
       this.AddHumanityDamage(cost);
@@ -558,16 +558,16 @@ public class EdgerunningSystem extends ScriptableSystem {
         break;
     };
 
-    let cost: Int32;
+    let cost: Float;
     switch itemType {
       case gamedataItemType.Cyb_Launcher:
-        cost = this.config.launcherUsageCost * Cast<Int32>(qualityMult);
+        cost = Cast<Float>(this.config.launcherUsageCost) * qualityMult;
         break;
       case gamedataItemType.Cyb_MantisBlades:
-        cost = this.config.mantisBladesUsageCost * Cast<Int32>(qualityMult);
+        cost = Cast<Float>(this.config.mantisBladesUsageCost) * qualityMult;
         break;
       case gamedataItemType.Cyb_NanoWires:
-        cost = this.config.monowireUsageCost * Cast<Int32>(qualityMult);
+        cost = Cast<Float>(this.config.monowireUsageCost) *qualityMult;
         break;
       default:
         cost = 0;
@@ -594,10 +594,11 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.wentFullPsycho = value;
   }
 
-  public func AddHumanityDamage(cost: Int32) -> Void {
+  public func AddHumanityDamage(cost: Float) -> Void {
     let total: Int32 = this.GetHumanityTotal();
-    this.currentHumanityDamage += cost;
-    E(s"> AddHumanityDamage \(cost)");
+    let damage: Int32 = CeilF(cost);
+    this.currentHumanityDamage += damage;
+    E(s"> AddHumanityDamage \(damage)");
     if this.currentHumanityDamage > total {
       this.currentHumanityDamage = total;
     };
@@ -910,7 +911,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   public static func Debug(gi: GameInstance) -> Void {
     let system: ref<EdgerunningSystem> = EdgerunningSystem.GetInstance(gi);
     // system.RunPsychosisFlow();
-    system.AddHumanityDamage(10);
+    system.AddHumanityDamage(10.0);
     system.InvalidateCurrentState(false);
     // system.effectsHelper.RunNewPrePsychosisEffect();
     // system.effectsHelper.RunNewPsychosisEffect();
