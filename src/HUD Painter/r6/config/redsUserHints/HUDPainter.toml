@@ -1,0 +1,15 @@
+[[UNRESOLVED_METHOD]]
+id = "MISSING_REDFILESYSTEM"
+file = "HUDPainter/HudPainterStorage.reds"
+line_contains = "DeleteFile"
+message = "HUDPainter requires RedFileSystem 0.9.0+ but you don't have it installed."
+
+[[UNRESOLVED_IMPORT]]
+id = "MISSING_REDDATA"
+span_starts_with = "import RedData"
+message = "HUDPainter requires RedData 0.4.2+ but you don't have it installed."
+
+[[UNRESOLVED_MEMBER]]
+id = "OUTDATED_CODEWARE"
+span_starts_with = "resource.parameters"
+message = "HUDPainter requires Codeware 1.11.0+ but you don't have it installed."
