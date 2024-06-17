@@ -89,3 +89,47 @@ protected cb func OnInitialize() -> Bool {
     widget.BindProperty(n"tintColor", n"MainColors.NPC_Chatter");
   };
 }
+
+// Bind xp bar in character menu
+@wrapMethod(MenuHubGameController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+  let expWidgets: array<ref<inkWidget>>;
+
+  let bar1: ref<inkWidget> = root.GetWidgetByPathName(n"topPanels/holder/left_holder/level_holder/text_holder/expBarWrapper/bars");
+  let bar2: ref<inkWidget> = root.GetWidgetByPathName(n"topPanels/holder/left_holder/level_holder/text_holder/expBarWrapper/barWrapper/bar");
+  let bar3: ref<inkWidget> = root.GetWidgetByPathName(n"topPanels/holder/left_holder/level_holder/text_holder/expBarWrapper/barWrapper/thumb");
+  ArrayPush(expWidgets, bar1);
+  ArrayPush(expWidgets, bar2);
+  ArrayPush(expWidgets, bar3);
+
+  for widget in expWidgets {
+    widget.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    widget.BindProperty(n"tintColor", n"MainColors.NPC_Chatter");
+  };
+}
+
+// Bind attribute text value
+@wrapMethod(NewPerksCategoriesGameController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+  let attrValues: array<ref<inkWidget>>;
+
+  let body: ref<inkWidget> = root.GetWidgetByPathName(n"attributes_canvas/body/attribute_button/container/wrapper/itemWrapper/itemContentWrapper/detailsWrapper/levelWrapper/value");
+  let reflexes: ref<inkWidget> = root.GetWidgetByPathName(n"attributes_canvas/reflexes/attribute_button/container/wrapper/itemWrapper/itemContentWrapper/detailsWrapper/levelWrapper/value");
+  let tech: ref<inkWidget> = root.GetWidgetByPathName(n"attributes_canvas/technical_ability/attribute_button/container/wrapper/itemWrapper/itemContentWrapper/detailsWrapper/levelWrapper/value");
+  let intelligence: ref<inkWidget> = root.GetWidgetByPathName(n"attributes_canvas/intelligence/attribute_button/container/wrapper/itemWrapper/itemContentWrapper/detailsWrapper/levelWrapper/value");
+  let cool: ref<inkWidget> = root.GetWidgetByPathName(n"attributes_canvas/cool/attribute_button/container/wrapper/itemWrapper/itemContentWrapper/detailsWrapper/levelWrapper/value");
+  ArrayPush(attrValues, body);
+  ArrayPush(attrValues, reflexes);
+  ArrayPush(attrValues, tech);
+  ArrayPush(attrValues, intelligence);
+  ArrayPush(attrValues, cool);
+
+  for widget in attrValues {
+    widget.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    widget.BindProperty(n"tintColor", n"MainColors.NPC_Chatter");
+  };
+}
