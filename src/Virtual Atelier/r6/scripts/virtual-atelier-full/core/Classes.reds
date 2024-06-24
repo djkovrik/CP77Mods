@@ -10,7 +10,6 @@ public class VirtualShopRegistration extends Event {
   }
 
   public func AddStore(storeID: CName, storeName: String, items: array<String>, prices: array<Int32>, atlasResource: ResRef, texturePart: CName, opt qualities: array<String>, opt quantities: array<Int32>) -> Void {
-    let config: ref<VirtualAtelierConfig> = VirtualAtelierConfig.Get();
     let stores: array<ref<VirtualShop>> = this.system.GetStores();
     let store: ref<VirtualShop> = new VirtualShop();
     store.storeID = storeID;
@@ -25,7 +24,7 @@ public class VirtualShopRegistration extends Event {
     ArrayPush(stores, store);
 
     this.system.SetStores(stores);
-    AtelierDebug(s"Store initialized: \(storeName)", config);
+    AtelierDebug(s"Store initialized: \(storeName)");
   }
 }
 

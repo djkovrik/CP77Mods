@@ -5,6 +5,19 @@ import VirtualAtelier.Logs.AtelierDebug
 public abstract class AtelierItemsHelper {
 
   public static func ScaleItem(player: ref<PlayerPuppet>, itemData: ref<gameItemData>, quality: CName) -> Void {
+    let itemType: gamedataItemType = itemData.GetItemType();
+
+    // Skip scaling for a certain types of items
+    if itemData.HasTag(n"Cyberware") || 
+      Equals(itemType, gamedataItemType.Gen_CraftingMaterial) || 
+      Equals(itemType, gamedataItemType.Con_Edible) || 
+      Equals(itemType, gamedataItemType.Con_LongLasting) || 
+      Equals(itemType, gamedataItemType.Con_Inhaler) || 
+      Equals(itemType, gamedataItemType.Con_Injector) {
+        AtelierDebug(s"Item scaling skipped: \(itemType)");
+        return ;
+    };
+
     let statsSystem: ref<StatsSystem> = GameInstance.GetStatsSystem(player.GetGame());
     let powerLevelPlayer: Float = statsSystem.GetStatValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatType.PowerLevel);
     let powerLevelMod: ref<gameStatModifierData> = RPGManager.CreateStatModifier(gamedataStatType.PowerLevel, gameStatModifierType.Additive, powerLevelPlayer);
@@ -14,6 +27,8 @@ public abstract class AtelierItemsHelper {
     statsSystem.RemoveAllModifiers(itemData.GetStatsObjectID(), gamedataStatType.Quality);
     statsSystem.AddSavedModifier(itemData.GetStatsObjectID(), qualityMod);
 
+    AtelierDebug(s"ScaleItem: \(itemType)");
+
     if itemData.HasTag(n"IconicWeapon") {
       player.RescaleOwnedIconicsToPlayerLevel(itemData);
     };
@@ -22,7 +37,6 @@ public abstract class AtelierItemsHelper {
   }
 
   public static func ScaleItemPrice(player: wref<PlayerPuppet>, vendor: wref<GameObject>, itemId: ItemID, itemQuality: CName) -> Int32 {
-    let config: ref<VirtualAtelierConfig> = VirtualAtelierConfig.Get();
     let itemModParams: ItemModParams;
     itemModParams.itemID = itemId;
     itemModParams.quantity = 1;
@@ -31,7 +45,7 @@ public abstract class AtelierItemsHelper {
     let statsSystem: ref<StatsSystem> = GameInstance.GetStatsSystem(player.GetGame());
     let powerLevelPlayer: Float = statsSystem.GetStatValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatType.PowerLevel);
 
-    AtelierDebug(s"   powerLevelPlayer \(ToString(powerLevelPlayer))", config);
+    AtelierDebug(s"   powerLevelPlayer \(ToString(powerLevelPlayer))");
 
     if (Cast<Int32>(powerLevelPlayer) < 1) {
       powerLevelPlayer = 1.0;
@@ -39,8 +53,8 @@ public abstract class AtelierItemsHelper {
 
     let qualMulti: Float = 1.0;
 
-    AtelierDebug(s"   is iconic: \(ToString(RPGManager.IsItemIconic(itemData)))", config);
-    AtelierDebug(s"   quality: \(ToString(itemQuality)))", config);
+    AtelierDebug(s"   is iconic: \(ToString(RPGManager.IsItemIconic(itemData)))");
+    AtelierDebug(s"   quality: \(ToString(itemQuality)))");
 
     if Equals(itemData.GetItemType(), gamedataItemType.Gen_Misc) {
       powerLevelPlayer = 1.0;
@@ -200,9 +214,9 @@ public abstract class AtelierItemsHelper {
     };
 
     let price: Int32 = RPGManager.CalculateBuyPrice(player.GetGame(), vendor, itemData.GetID(), 1.0);
-    AtelierDebug(s"   BasePrice: \(ToString(price))", config);
-    AtelierDebug(s"   qualMulti: \(ToString(qualMulti))", config);
-    AtelierDebug(s"   powerLevelPlayer \(ToString(powerLevelPlayer))", config);
+    AtelierDebug(s"   BasePrice: \(ToString(price))");
+    AtelierDebug(s"   qualMulti: \(ToString(qualMulti))");
+    AtelierDebug(s"   powerLevelPlayer \(ToString(powerLevelPlayer))");
     return RoundF((powerLevelPlayer * qualMulti) * Cast<Float>(price));
   }
 }

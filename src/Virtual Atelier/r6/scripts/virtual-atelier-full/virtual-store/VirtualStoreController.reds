@@ -592,7 +592,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
       let itemTDBID: TweakDBID = TDBID.Create(storeItems[virtualItemIndex]);
       let itemId: ItemID = ItemID.FromTDBID(itemTDBID);
       let itemData: ref<gameItemData> = inventoryManager.CreateBasicItemData(itemId, this.player);
-      AtelierDebug(s"Store item: \(ToString(storeItems[virtualItemIndex]))", this.config);
+      AtelierDebug(s"Store item: \(ToString(storeItems[virtualItemIndex]))");
       itemData.isVirtualItem = true;
       stockItem = new VirtualStockItem();
       stockItem.itemID = itemId;
@@ -600,12 +600,12 @@ public class VirtualStoreController extends gameuiMenuGameController {
       stockItem.price = Cast<Float>(itemsPrices[virtualItemIndex]);
       stockItem.quality = itemsQualities[virtualItemIndex];
       stockItem.quantity = itemsQuantities[virtualItemIndex];
-      AtelierDebug(s"   Dynamic tags: \(ToString(itemData.GetDynamicTags()))", this.config);
-      AtelierDebug(s"   VirtPrice: \(ToString(stockItem.price))", this.config);
+      AtelierDebug(s"   Dynamic tags: \(ToString(itemData.GetDynamicTags()))");
+      AtelierDebug(s"   VirtPrice: \(ToString(stockItem.price))");
       if (RoundF(stockItem.price) == 0) {
         stockItem.price = Cast<Float>(AtelierItemsHelper.ScaleItemPrice(this.player, vendorObject, itemId, stockItem.quality) * stockItem.quantity);
       };
-      AtelierDebug(s"   CalcPrice: \(ToString(stockItem.price))", this.config);
+      AtelierDebug(s"   CalcPrice: \(ToString(stockItem.price))");
       stockItem.itemData = itemData;
       ArrayPush(this.virtualStock, stockItem);
       virtualItemIndex += 1;
@@ -617,12 +617,11 @@ public class VirtualStoreController extends gameuiMenuGameController {
   }
 
   private final func ScaleStockItems() -> Void {
-    let itemData: wref<gameItemData>;
     let itemRecord: wref<Item_Record>;
     let i: Int32 = 0;
     while i < ArraySize(this.virtualStock) {
       itemRecord = TweakDBInterface.GetItemRecord(this.virtualStock[i].itemTDBID);
-      if !itemRecord.IsSingleInstance() && !itemData.HasTag(n"Cyberware") {
+      if !itemRecord.IsSingleInstance() {
         AtelierItemsHelper.ScaleItem(this.player, this.virtualStock[i].itemData, this.virtualStock[i].quality);
       };
       i += 1;
@@ -735,7 +734,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     vendorInventorySize = ArraySize(vendorInventory);
     currentPlayerMoney = this.vendorDataManager.GetLocalPlayerCurrencyAmount();
 
-    AtelierDebug(s"Resulting list size: \(vendorInventorySize)", this.config);
+    AtelierDebug(s"Resulting list size: \(vendorInventorySize)");
 
     wardrobeItemIDs = GameInstance.GetWardrobeSystem(this.player.GetGame()).GetStoredItemIDs();
 

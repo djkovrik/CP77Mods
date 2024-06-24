@@ -168,13 +168,13 @@ public class AtelierStoresListController extends inkGameController {
   private func HandleBookmarkAction() -> Void {
     let store: ref<VirtualShop> = this.latestHovered;
     if IsDefined(store) {
-      AtelierDebug(s"HandleBookmarkAction: \(store.storeID)", this.config);
+      AtelierDebug(s"HandleBookmarkAction: \(store.storeID)");
       if store.isBookmarked {
-        AtelierDebug(s" - remove bookmark \(store.storeID)", this.config);
+        AtelierDebug(s" - remove bookmark \(store.storeID)");
         store.isBookmarked = false;
         this.system.RemoveBookmark(store.storeID);
       } else {
-        AtelierDebug(s"- add bookmark \(store.storeID)", this.config);
+        AtelierDebug(s"- add bookmark \(store.storeID)");
         store.isBookmarked = true;
         this.system.AddBookmark(store.storeID);
       };
