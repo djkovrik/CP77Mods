@@ -5,9 +5,13 @@ import EnhancedCraft.Config.*
 
 @wrapMethod(CraftingLogicController)
 protected func UpdateItemPreview(craftableController: ref<CraftableItemLogicController>) -> Void {
-  let recipe: ref<RecipeData>;
+  let recipe: ref<RecipeData> = FromVariant<ref<IScriptable>>(craftableController.GetData()) as RecipeData;
+  if !IsDefined(recipe) {
+    wrappedMethod(craftableController);
+    return ;
+  };
+
   this.SetItemButtonHintsHoverOut(null);
-  recipe = FromVariant<ref<IScriptable>>(craftableController.GetData()) as RecipeData;
   let multiplier: Int32 = this.ecraftConfig.iconicIngredientsMultiplier;
   this.selectedRecipeVariants = this.m_craftingSystem.GetRecipesData(recipe.id, multiplier, false);
   this.selectedRecipeVariantsNoIconics = this.m_craftingSystem.GetRecipesData(recipe.id, multiplier, true);
