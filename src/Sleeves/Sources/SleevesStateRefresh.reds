@@ -53,9 +53,9 @@ public final func DeleteWardrobeSet(setID: gameWardrobeClothingSetIndex) -> Void
 
 // -- Equipment-EX
 @if(ModuleExists("EquipmentEx"))
-@addMethod(EquipmentSystemPlayerData)
+@addMethod(gameuiInventoryGameController)
 protected cb func OnCustomOutfitUpdated(evt: ref<OutfitUpdated>) -> Bool {
-  this.m_owner.TriggerSleevesButtonRefreshCallback();
+  this.m_player.TriggerSleevesButtonRefreshCallback();
 }
 
 // -- Handle unequip
