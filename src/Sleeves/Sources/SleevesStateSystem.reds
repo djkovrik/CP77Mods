@@ -82,6 +82,19 @@ class SleevesStateSystem extends ScriptableSystem {
     return false;
   }
 
+  public final func OnBraindanceEnter() -> Void {
+    SleevesLog("Braindance enter");
+    for item in this.bundle.items {
+      SleevesLog(s"Reset braindance \(item.GetItemAppearance()) appearance for \(ItemID.GetCombinedHash(item.itemID))");
+      this.transactionSystem.ChangeItemAppearanceByName(this.player, item.itemID, item.GetItemAppearance());
+    };
+  }
+
+  public final func OnBraindanceExit() -> Void {
+    SleevesLog("Braindance exit");
+    this.RefreshSleevesState();
+  }
+
   public final func RefreshSleevesState() -> Void {
     this.bundle = GetSleevesInfo(this.player);
     this.LogCurrentInfo();

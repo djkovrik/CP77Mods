@@ -58,6 +58,17 @@ protected cb func OnCustomOutfitUpdated(evt: ref<OutfitUpdated>) -> Bool {
   this.m_player.TriggerSleevesButtonRefreshCallback();
 }
 
+// -- Braindance
+@wrapMethod(HUDManager)
+protected cb func OnBraindanceToggle(value: Bool) -> Bool {
+  wrappedMethod(value);
+  if this.m_isBraindanceActive {
+    SleevesStateSystem.Get(this.GetGameInstance()).OnBraindanceEnter();
+  } else {
+    SleevesStateSystem.Get(this.GetGameInstance()).OnBraindanceExit();
+  };
+}
+
 // -- Handle unequip
 @wrapMethod(gameuiInventoryGameController)
 protected cb func OnEquipmentClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
