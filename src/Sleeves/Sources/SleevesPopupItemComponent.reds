@@ -244,6 +244,6 @@ public class SleevesPopupItemComponent extends inkComponent {
   }
 
   private final func IsAvailableForSelection() -> Bool {
-    return this.data.HasFppSuffix();
+    return this.data.HasFppSuffix() && !this.data.Excluded();
   }
 }

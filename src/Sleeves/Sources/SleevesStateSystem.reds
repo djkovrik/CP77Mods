@@ -32,7 +32,7 @@ class SleevesStateSystem extends ScriptableSystem {
 
   public final func HasToggleableSleeves() -> Bool {
     for item in this.bundle.items {
-      if item.HasFppSuffix() {
+      if item.HasFppSuffix() && !item.Excluded() {
         return true;
       };
     };

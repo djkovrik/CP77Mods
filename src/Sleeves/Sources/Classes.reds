@@ -120,12 +120,20 @@ public class SleevedSlotInfo {
     return StringToName(newAppearanceString);
   }
 
-  private func HasFppSuffix() -> Bool {
+  public func HasFppSuffix() -> Bool {
     return this.HasSuffix("&FPP");
   }
 
-  private func HasTppSuffix() -> Bool {
+  public func HasTppSuffix() -> Bool {
     return this.HasSuffix("&TPP");
+  }
+
+  private func Excluded() -> Bool {
+    let excluded: array<TweakDBID> = [
+      t"Items.MQ049_martinez_jacket"
+    ];
+
+    return ArrayContains(excluded, this.itemTDBID) || ArrayContains(excluded, this.visualItemTDBID);
   }
 
   private func HasPartSuffix() -> Bool {
