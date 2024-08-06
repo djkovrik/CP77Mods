@@ -125,12 +125,20 @@ public class SleevedSlotInfo {
     return StringToName(newAppearanceString);
   }
 
-  private func HasFppSuffix() -> Bool {
+  public func HasFppSuffix() -> Bool {
     return this.HasSuffix("&FPP");
   }
 
-  private func HasTppSuffix() -> Bool {
+  public func HasTppSuffix() -> Bool {
     return this.HasSuffix("&TPP");
+  }
+
+  private func Excluded() -> Bool {
+    let excluded: array<TweakDBID> = [
+      t"Items.MQ049_martinez_jacket"
+    ];
+
+    return ArrayContains(excluded, this.itemTDBID) || ArrayContains(excluded, this.visualItemTDBID);
   }
 
   private func HasPartSuffix() -> Bool {
@@ -183,6 +191,7 @@ enum SleevesMode {
   Wardrobe = 1,
   EquipmentEx = 2,
 }
+
 
 
 @if(!ModuleExists("EquipmentEx"))
@@ -420,6 +429,7 @@ public static func SleevesLog(str: String) -> Void {
 }
 
 
+
 public class SleevesPopup extends InMenuPopup {
   let data: ref<SleevesInfoBundle>;
 
@@ -453,6 +463,7 @@ public class SleevesPopup extends InMenuPopup {
     popup.Open(requester);
   }
 }
+
 
 
 public class SleevesPopupComponent extends inkComponent {
@@ -528,7 +539,6 @@ public class SleevesPopupComponent extends inkComponent {
     this.data = data;
   }
 }
-
 
 public class SleevesPopupItemComponent extends inkComponent {
   private let system: wref<SleevesStateSystem>;
@@ -776,9 +786,10 @@ public class SleevesPopupItemComponent extends inkComponent {
   }
 
   private final func IsAvailableForSelection() -> Bool {
-    return this.data.HasFppSuffix();
+    return this.data.HasFppSuffix() && !this.data.Excluded();
   }
 }
+
 
 
 // -- Vanilla
@@ -838,6 +849,17 @@ protected cb func OnCustomOutfitUpdated(evt: ref<OutfitUpdated>) -> Bool {
   this.m_player.TriggerSleevesButtonRefreshCallback();
 }
 
+// -- Braindance
+@wrapMethod(HUDManager)
+protected cb func OnBraindanceToggle(value: Bool) -> Bool {
+  wrappedMethod(value);
+  if this.m_isBraindanceActive {
+    SleevesStateSystem.Get(this.GetGameInstance()).OnBraindanceEnter();
+  } else {
+    SleevesStateSystem.Get(this.GetGameInstance()).OnBraindanceExit();
+  };
+}
+
 // -- Handle unequip
 @wrapMethod(gameuiInventoryGameController)
 protected cb func OnEquipmentClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
@@ -876,7 +898,9 @@ public class SlotsButtonRefreshCallback extends DelayCallback {
   }
 
   public func Call() -> Void {
-    SleevesStateSystem.Get(this.owner.GetGame()).RefreshSleevesState();
+    let system: ref<SleevesStateSystem> = SleevesStateSystem.Get(this.owner.GetGame());
+    system.ClearCache();
+    system.RefreshSleevesState();
     RefreshSleevesButtonEvent.Send(this.owner);
   }
 }
@@ -916,7 +940,7 @@ class SleevesStateSystem extends ScriptableSystem {
 
   public final func HasToggleableSleeves() -> Bool {
     for item in this.bundle.items {
-      if item.HasFppSuffix() {
+      if item.HasFppSuffix() && !item.Excluded() {
         return true;
       };
     };
@@ -964,6 +988,23 @@ class SleevesStateSystem extends ScriptableSystem {
     };
 
     return false;
+  }
+
+  public final func ClearCache() -> Void {
+    this.cache.Clear();
+  }
+
+  public final func OnBraindanceEnter() -> Void {
+    SleevesLog("Braindance enter");
+    for item in this.bundle.items {
+      SleevesLog(s"Reset braindance \(item.GetItemAppearance()) appearance for \(ItemID.GetCombinedHash(item.itemID))");
+      this.transactionSystem.ChangeItemAppearanceByName(this.player, item.itemID, item.GetItemAppearance());
+    };
+  }
+
+  public final func OnBraindanceExit() -> Void {
+    SleevesLog("Braindance exit");
+    this.RefreshSleevesState();
   }
 
   public final func RefreshSleevesState() -> Void {
@@ -1163,5 +1204,3 @@ class SleevesStateSystem extends ScriptableSystem {
     };
   }
 }
-
-
