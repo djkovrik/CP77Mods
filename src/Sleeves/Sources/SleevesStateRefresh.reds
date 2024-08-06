@@ -107,7 +107,9 @@ public class SlotsButtonRefreshCallback extends DelayCallback {
   }
 
   public func Call() -> Void {
-    SleevesStateSystem.Get(this.owner.GetGame()).RefreshSleevesState();
+    let system: ref<SleevesStateSystem> = SleevesStateSystem.Get(this.owner.GetGame());
+    system.ClearCache();
+    system.RefreshSleevesState();
     RefreshSleevesButtonEvent.Send(this.owner);
   }
 }

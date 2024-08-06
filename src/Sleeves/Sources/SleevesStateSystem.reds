@@ -82,6 +82,10 @@ class SleevesStateSystem extends ScriptableSystem {
     return false;
   }
 
+  public final func ClearCache() -> Void {
+    this.cache.Clear();
+  }
+
   public final func OnBraindanceEnter() -> Void {
     SleevesLog("Braindance enter");
     for item in this.bundle.items {
