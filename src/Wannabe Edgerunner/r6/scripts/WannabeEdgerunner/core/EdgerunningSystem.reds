@@ -22,6 +22,7 @@ import Edgerunning.Common.E
   public func OnBuffEnded() -> Void
   public func OnRestoreAction(action: HumanityRestoringAction) -> Void
   public func OnBerserkActivation(item: ItemID) -> Void
+  public func OnOverClockActivation(item: ItemID) -> Void
   public func OnSandevistanActivation(item: ItemID) -> Void
   public func OnKerenzikovActivation() -> Void
   public func OnOpticalCamoActivation() -> Void
@@ -77,6 +78,13 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   private persistent let currentHumanityDamage: Int32 = 0;
   private persistent let wentFullPsycho: Bool = false;
+
+  private persistent let humanityRestoringActionTakenLover: Bool = false;
+  private persistent let humanityRestoringActionTakenPet: Bool = false;
+  private persistent let humanityRestoringActionTakenDonation: Bool = false;
+  private persistent let humanityRestoringActionTakenApartment: Bool = false;
+  private persistent let humanityRestoringActionTakenSocial: Bool = false;
+  private persistent let humanityRestoringActionTakenShower: Bool = false;
 
   public static func GetInstance(gameInstance: GameInstance) -> ref<EdgerunningSystem> {
     let system: ref<EdgerunningSystem> = GameInstance.GetScriptableSystemsContainer(gameInstance).Get(n"Edgerunning.System.EdgerunningSystem") as EdgerunningSystem;
@@ -265,28 +273,66 @@ public class EdgerunningSystem extends ScriptableSystem {
     switch (action) {
       case HumanityRestoringAction.Sleep:
         this.StopEverythingNew();
-        this.ResetHumanityDamage();
+        // FIXME: this legacy behavior should be configurable
+        // this.ResetHumanityDamage();
+        let currentHumanitySleepMultiplier: Int32 = 0;
+
+        if this.humanityRestoringActionTakenLover { currentHumanitySleepMultiplier += 1; }
+        if this.humanityRestoringActionTakenPet { currentHumanitySleepMultiplier += 1; }
+        if this.humanityRestoringActionTakenDonation { currentHumanitySleepMultiplier += 1; }
+        if this.humanityRestoringActionTakenApartment { currentHumanitySleepMultiplier += 1; }
+        if this.humanityRestoringActionTakenSocial { currentHumanitySleepMultiplier += 1; }
+        if this.humanityRestoringActionTakenShower { currentHumanitySleepMultiplier += 1; }
+
+        let amount: Int32 = ((15 * currentHumanitySleepMultiplier) + 10);
+        this.RemoveHumanityDamage(amount);
+        currentHumanitySleepMultiplier = 0;
+
+        this.humanityRestoringActionTakenLover = false;
+        this.humanityRestoringActionTakenPet = false;
+        this.humanityRestoringActionTakenDonation = false;
+        this.humanityRestoringActionTakenApartment = false;
+        this.humanityRestoringActionTakenSocial = false;
+        this.humanityRestoringActionTakenShower = false;
+
         E("! Rested, humanity value restored.");
         this.SetWentFullPsycho(false);
-        this.ShowHumanityRestoredMessage();
+        // FIXME: this legacy behavior should be configurable
+        // this.ShowHumanityRestoredMessage();
+        break;
+      case HumanityRestoringAction.Lover:
+        let amount: Int32 = this.config.restoreOnApartment;
+        this.humanityRestoringActionTakenLover = true;
+        this.RemoveHumanityDamage(amount);
+        E("! Lover, humanity restored");
+        break;
+      case HumanityRestoringAction.Social:
+        let amount: Int32 = this.config.restoreOnApartment;
+        this.humanityRestoringActionTakenSocial = true;
+        this.RemoveHumanityDamage(amount);
+        E("! Social, humanity restored");
         break;
       case HumanityRestoringAction.Pet:
         let amount: Int32 = this.config.restoreOnPet;
+        this.humanityRestoringActionTakenPet = true;
         this.RemoveHumanityDamage(amount);
         E("! Pet, humanity restored");
         break;
       case HumanityRestoringAction.Donation:
         let amount: Int32 = this.config.restoreOnDonation;
+        this.humanityRestoringActionTakenDonation = true;
         this.RemoveHumanityDamage(amount);
         E("! Donated some money, humanity restored");
         break;
       case HumanityRestoringAction.Apartment:
         let amount: Int32 = this.config.restoreOnApartment;
+        this.humanityRestoringActionTakenApartment = true;
         this.RemoveHumanityDamage(amount);
         E("! Apartment interaction, humanity restored");
         break;
       case HumanityRestoringAction.Shower:
         let amount: Int32 = this.config.restoreOnShower;
+        this.humanityRestoringActionTakenShower = true;
         this.RemoveHumanityDamage(amount);
           E("! Took a shower, humanity restored");
         break;
@@ -343,6 +389,56 @@ public class EdgerunningSystem extends ScriptableSystem {
       this.InvalidateCurrentState();
     } else {
       E("! Humanity freezed, berserk costs no humanity");
+    };
+  }
+
+  public func OnOverClockActivation(itemRecord: ref<Item_Record>) -> Void {
+    E("OVERCLOCK ACTIVATED");
+    let quality: gamedataQuality = itemRecord.Quality().Type();
+    let qualityMult: Float;
+    switch (quality) {
+      case gamedataQuality.Common:
+        qualityMult = this.config.qualityMultiplierCommon;
+        break;
+      case gamedataQuality.CommonPlus:
+        qualityMult = this.config.qualityMultiplierCommonPlus;
+        break;
+      case gamedataQuality.Uncommon:
+        qualityMult = this.config.qualityMultiplierUncommon;
+        break;
+      case gamedataQuality.UncommonPlus:
+        qualityMult = this.config.qualityMultiplierUncommonPlus;
+        break;
+      case gamedataQuality.Rare:
+        qualityMult = this.config.qualityMultiplierRare;
+        break;
+      case gamedataQuality.RarePlus:
+        qualityMult = this.config.qualityMultiplierRarePlus;
+        break;
+      case gamedataQuality.Epic:
+        qualityMult = this.config.qualityMultiplierEpic;
+        break;
+      case gamedataQuality.EpicPlus:
+        qualityMult = this.config.qualityMultiplierEpicPlus;
+        break;
+      case gamedataQuality.Legendary:
+        qualityMult = this.config.qualityMultiplierLegendary;
+        break;
+      case gamedataQuality.LegendaryPlus:
+        qualityMult = this.config.qualityMultiplierLegendaryPlus;
+        break;
+      case gamedataQuality.LegendaryPlusPlus:
+        qualityMult = this.config.qualityMultiplierLegendaryPlusPlus;
+        break;
+    };
+
+    let cost: Float = Cast<Float>(this.config.overclockUsageCost) * qualityMult;
+    if !this.effectsChecker.IsRipperdocBuffActive() && !this.effectsChecker.IsNewPostPsychosisActive() {
+      this.AddHumanityDamage(cost);
+      E(s"! Overclock activated: \(quality) - costs \(cost) humanity");
+      this.InvalidateCurrentState();
+    } else {
+      E("! Humanity freezed, overclock costs no humanity");
     };
   }
 
@@ -596,7 +692,18 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public func AddHumanityDamage(cost: Float) -> Void {
     let total: Int32 = this.GetHumanityTotal();
-    let damage: Int32 = CeilF(cost);
+    // FIXME: Add ability to configure this
+    // randomly lose 5 times as much humanity; life is cruel
+    let random: Int32 = RandRange(0, 100);
+    let damage: Int32;
+    let threshold: Int32 = 20;
+    let triggered: Bool = random <= threshold;
+    if triggered {
+       damage = CeilF(cost + 5.0);
+       E(s"> AddHumanityDamage \(damage); random cruelty modifier applied.");
+    } else {
+       damage = CeilF(cost);
+    };
     this.currentHumanityDamage += damage;
     E(s"> AddHumanityDamage \(damage)");
     if this.currentHumanityDamage > total {
