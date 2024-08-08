@@ -524,7 +524,7 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
   @runtimeProperty("ModSettings.category.order", "3")
-  @runtimeProperty("ModSettings.displayName", "LocKey#42782")
+  @runtimeProperty("ModSettings.displayName", "Mod-Edg-Murders-Cruelty")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Cruelty-Desc")
   let cruelty: Bool = false;
 
