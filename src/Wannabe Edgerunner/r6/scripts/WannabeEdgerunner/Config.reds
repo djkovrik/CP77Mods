@@ -97,6 +97,33 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Humanity-Restoration")
   @runtimeProperty("ModSettings.category.order", "3")
+  @runtimeProperty("ModSettings.displayName", "Mod-Edg-Humanity-Restoration-Sleep-Choice")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Humanity-Restoration-Sleep-Choice-Desc")
+  let fullHumanityRestoreOnSleep: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Humanity-Restoration")
+  @runtimeProperty("ModSettings.category.order", "3")
+  @runtimeProperty("ModSettings.displayName", "Mod-Edg-Humanity-Restoration-Lover")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Humanity-Restoration-Desc")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "10")
+  let restoreOnLover: Int32 = 1;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Humanity-Restoration")
+  @runtimeProperty("ModSettings.category.order", "3")
+  @runtimeProperty("ModSettings.displayName", "Mod-Edg-Humanity-Restoration-Social")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Humanity-Restoration-Desc")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "0")
+  @runtimeProperty("ModSettings.max", "10")
+  let restoreOnSocial: Int32 = 1;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Humanity-Restoration")
+  @runtimeProperty("ModSettings.category.order", "3")
   @runtimeProperty("ModSettings.displayName", "Mod-Edg-Humanity-Restoration-Pet")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Humanity-Restoration-Desc")
   @runtimeProperty("ModSettings.step", "1")
@@ -493,6 +520,13 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.min", "0")
   @runtimeProperty("ModSettings.max", "50") 
   let killCostOther: Int32 = 1;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Murders")
+  @runtimeProperty("ModSettings.category.order", "3")
+  @runtimeProperty("ModSettings.displayName", "LocKey#42782")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Murders-Cruelty-Desc")
+  let cruelty: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Neuro-Price")

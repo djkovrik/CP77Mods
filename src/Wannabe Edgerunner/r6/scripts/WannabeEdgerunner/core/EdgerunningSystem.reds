@@ -273,41 +273,41 @@ public class EdgerunningSystem extends ScriptableSystem {
     switch (action) {
       case HumanityRestoringAction.Sleep:
         this.StopEverythingNew();
-        // FIXME: this legacy behavior should be configurable
-        // this.ResetHumanityDamage();
-        let currentHumanitySleepMultiplier: Int32 = 0;
-
-        if this.humanityRestoringActionTakenLover { currentHumanitySleepMultiplier += 1; }
-        if this.humanityRestoringActionTakenPet { currentHumanitySleepMultiplier += 1; }
-        if this.humanityRestoringActionTakenDonation { currentHumanitySleepMultiplier += 1; }
-        if this.humanityRestoringActionTakenApartment { currentHumanitySleepMultiplier += 1; }
-        if this.humanityRestoringActionTakenSocial { currentHumanitySleepMultiplier += 1; }
-        if this.humanityRestoringActionTakenShower { currentHumanitySleepMultiplier += 1; }
-
-        let amount: Int32 = ((15 * currentHumanitySleepMultiplier) + 10);
-        this.RemoveHumanityDamage(amount);
-        currentHumanitySleepMultiplier = 0;
-
-        this.humanityRestoringActionTakenLover = false;
-        this.humanityRestoringActionTakenPet = false;
-        this.humanityRestoringActionTakenDonation = false;
-        this.humanityRestoringActionTakenApartment = false;
-        this.humanityRestoringActionTakenSocial = false;
-        this.humanityRestoringActionTakenShower = false;
-
-        E("! Rested, humanity value restored.");
         this.SetWentFullPsycho(false);
-        // FIXME: this legacy behavior should be configurable
-        // this.ShowHumanityRestoredMessage();
+        if !this.config.fullHumanityRestoreOnSleep {
+            let currentHumanitySleepMultiplier: Int32 = 0;
+            // summing multiplier
+            if this.humanityRestoringActionTakenLover { currentHumanitySleepMultiplier += 1; }
+            if this.humanityRestoringActionTakenPet { currentHumanitySleepMultiplier += 1; }
+            if this.humanityRestoringActionTakenDonation { currentHumanitySleepMultiplier += 1; }
+            if this.humanityRestoringActionTakenApartment { currentHumanitySleepMultiplier += 1; }
+            if this.humanityRestoringActionTakenSocial { currentHumanitySleepMultiplier += 1; }
+            if this.humanityRestoringActionTakenShower { currentHumanitySleepMultiplier += 1; }
+            // gain humanity based on our multiplier
+            let amount: Int32 = (15 * currentHumanitySleepMultiplier) + 10;
+            this.RemoveHumanityDamage(amount);
+            // resetting state
+            currentHumanitySleepMultiplier = 0;
+            this.humanityRestoringActionTakenLover = false;
+            this.humanityRestoringActionTakenPet = false;
+            this.humanityRestoringActionTakenDonation = false;
+            this.humanityRestoringActionTakenApartment = false;
+            this.humanityRestoringActionTakenSocial = false;
+            this.humanityRestoringActionTakenShower = false;
+        } else {
+            this.ResetHumanityDamage();
+            this.ShowHumanityRestoredMessage();
+        }
+        E("! Rested, humanity value restored.");
         break;
       case HumanityRestoringAction.Lover:
-        let amount: Int32 = this.config.restoreOnApartment;
+        let amount: Int32 = this.config.restoreOnLover;
         this.humanityRestoringActionTakenLover = true;
         this.RemoveHumanityDamage(amount);
         E("! Lover, humanity restored");
         break;
       case HumanityRestoringAction.Social:
-        let amount: Int32 = this.config.restoreOnApartment;
+        let amount: Int32 = this.config.restoreOnSocial;
         this.humanityRestoringActionTakenSocial = true;
         this.RemoveHumanityDamage(amount);
         E("! Social, humanity restored");
@@ -692,18 +692,19 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public func AddHumanityDamage(cost: Float) -> Void {
     let total: Int32 = this.GetHumanityTotal();
-    // FIXME: Add ability to configure this
-    // randomly lose 5 times as much humanity; life is cruel
-    let random: Int32 = RandRange(0, 100);
-    let damage: Int32;
-    let threshold: Int32 = 20;
-    let triggered: Bool = random <= threshold;
-    if triggered {
-       damage = CeilF(cost + 5.0);
-       E(s"> AddHumanityDamage \(damage); random cruelty modifier applied.");
-    } else {
-       damage = CeilF(cost);
+    let damage: Int32 = CeilF(cost);
+
+    // randomly an additional 5 humanity damage; life is cruel
+    if this.config.cruelty {
+        let random: Int32 = RandRange(0, 100);
+        let crueltyThreshold: Int32 = 20;
+        let triggered: Bool = random <= crueltyThreshold;
+        if triggered {
+           damage = CeilF(cost + 5.0);
+           E(s"> AddHumanityDamage \(damage); random cruelty modifier applied.");
+        };
     };
+
     this.currentHumanityDamage += damage;
     E(s"> AddHumanityDamage \(damage)");
     if this.currentHumanityDamage > total {
