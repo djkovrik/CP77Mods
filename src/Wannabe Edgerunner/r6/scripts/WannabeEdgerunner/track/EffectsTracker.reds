@@ -65,28 +65,7 @@ protected cb func OnUninitialize() -> Bool {
 
 @addMethod(dialogWidgetGameController)
 protected cb func OnLastAttemptedChoiceCustom(value: Variant) -> Bool {
-  let action: HumanityRestoringAction = EdgerunnerInteractionChecker.Check(this.m_lastSelectedHub);
-
-  if Equals(action, HumanityRestoringAction.Lover) {
-      // FIXME: There has to be a better way to handle these. This is far to high up in the stack.
-      // FIXME: Need some of the idle values for non-Judy lovers
-      // sq027_panam_lover -> After Romance chosen in Queen of the Highway
-      // sq028_kerry_lover -> After Romance chosen in Boat Drinks
-      // sq029_river_lover -> After Romance chosen in Following the River
-      // sq030_judy_lover  -> After Romance chosen in Pyramid Song
-      if (Equals("Judy", this.m_lastSelectedHub) || Equals("LocKey#34479", this.m_lastSelectedHub)) && GameInstance.GetQuestsSystem(this.GetPlayerControlledObject().GetGame()).GetFactStr("sq030_judy_lover") == 1 {
-        action = HumanityRestoringAction.Lover;
-      } else if (Equals("River", this.m_lastSelectedHub)) && GameInstance.GetQuestsSystem(this.GetPlayerControlledObject().GetGame()).GetFactStr("sq029_river_lover") == 1 {
-        action = HumanityRestoringAction.Lover;
-      } else if (Equals("Kerry", this.m_lastSelectedHub)) && GameInstance.GetQuestsSystem(this.GetPlayerControlledObject().GetGame()).GetFactStr("sq028_kerry_lover") == 1 {
-        action = HumanityRestoringAction.Lover;
-      } else if (Equals("Panam", this.m_lastSelectedHub)) && GameInstance.GetQuestsSystem(this.GetPlayerControlledObject().GetGame()).GetFactStr("sq027_panam_lover") == 1 {
-        action = HumanityRestoringAction.Lover;
-      } else {
-        action = HumanityRestoringAction.Unknown;
-      };
-    };
-
+  let action: HumanityRestoringAction = EdgerunnerInteractionChecker.Check(this.GetPlayerControlledObject().GetGame(), this.m_lastSelectedHub);
   if NotEquals(action, HumanityRestoringAction.Unknown) {
     EdgerunningSystem.GetInstance(this.GetPlayerControlledObject().GetGame()).OnRestoreAction(action);
   };

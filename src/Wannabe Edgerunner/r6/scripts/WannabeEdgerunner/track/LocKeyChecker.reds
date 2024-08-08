@@ -52,7 +52,7 @@ public class EdgerunnerInteractionChecker extends ScriptableEnv {
     ];
   }
 
-  public static func Check(locKey: String) -> HumanityRestoringAction {
+  public static func Check(gameInstance: GameInstance, locKey: String) -> HumanityRestoringAction {
     // LogChannel(n"DEBUG", s"locKey = \(locKey)");
     let env: ref<EdgerunnerInteractionChecker> = ScriptableEnv.Get(n"EdgerunnerInteractionChecker") as EdgerunnerInteractionChecker;
     if ArrayContains(env.sleep, locKey) { return HumanityRestoringAction.Sleep; };
@@ -60,8 +60,24 @@ public class EdgerunnerInteractionChecker extends ScriptableEnv {
     if Equals(env.donate, locKey) { return HumanityRestoringAction.Donation; };
     if ArrayContains(env.pet, locKey) { return HumanityRestoringAction.Pet; };
     if ArrayContains(env.apartment, locKey) { return HumanityRestoringAction.Apartment; };
-	if ArrayContains(env.lover, locKey) { return HumanityRestoringAction.Lover; };
 	if ArrayContains(env.social, locKey) { return HumanityRestoringAction.Social; };
+
+    // FIXME: Need some of the idle values for non-Judy lovers
+    if ArrayContains(env.lover, locKey) {
+      // sq030_judy_lover  -> After Romance chosen in Pyramid Song
+      if (Equals("Judy", locKey) || Equals("LocKey#34479", locKey)) && GameInstance.GetQuestsSystem(gameInstance).GetFactStr("sq030_judy_lover") == 1 {
+        return HumanityRestoringAction.Lover;
+      // sq029_river_lover -> After Romance chosen in Following the River
+      } else if (Equals("River", locKey)) && GameInstance.GetQuestsSystem(gameInstance).GetFactStr("sq029_river_lover") == 1 {
+        return HumanityRestoringAction.Lover;
+      // sq028_kerry_lover -> After Romance chosen in Boat Drinks
+      } else if (Equals("Kerry", locKey)) && GameInstance.GetQuestsSystem(gameInstance).GetFactStr("sq028_kerry_lover") == 1 {
+        return HumanityRestoringAction.Lover;
+      // sq027_panam_lover -> After Romance chosen in Queen of the Highway
+      } else if (Equals("Panam", locKey)) && GameInstance.GetQuestsSystem(gameInstance).GetFactStr("sq027_panam_lover") == 1 {
+        return HumanityRestoringAction.Lover;
+      };
+    };
 
     return HumanityRestoringAction.Unknown;
   }
