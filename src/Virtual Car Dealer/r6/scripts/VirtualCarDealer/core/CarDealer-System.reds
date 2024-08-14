@@ -154,6 +154,7 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
     let item: ref<AutofixerItemData>;
     let price: Int32;
     let sellPrice: Float;
+    let isVanillaVehicle: Bool;
 
     this.DeactivateSoldVehicles();
     this.m_vehicleSystem.GetPlayerUnlockedVehicles(playerVehicles);
@@ -169,7 +170,10 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
         vehicleId = vehicleRecord.GetID();
         price = TweakDBInterface.GetInt(vehicleId + t".autofixer", 0);
         if Equals(price, 0) { 
+          isVanillaVehicle = false;
           price = this.FindPriceInBundles(vehicleId); 
+        } else {
+          isVanillaVehicle = true;
         };
         sellPrice = Cast<Float>(price) * this.m_sellPriceModifier;
         item = new AutofixerItemData();
@@ -179,7 +183,8 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
         item.textureName = vehicleRecord.Icon().AtlasPartName();
         item.vehicleID = playerVehicle.recordID;
         item.sold = false;
-        CarDealerLog(s"Owned vehicle: \(TDBID.ToStringDEBUG(item.vehicleID)) \(item.title) with price \(price) and sell price \(item.price)");
+        item.vanilla = isVanillaVehicle;
+        CarDealerLog(s"Owned vehicle: \(TDBID.ToStringDEBUG(item.vehicleID)) \(item.title) with price \(price) and sell price \(item.price), vanilla: \(item.vanilla)");
         ArrayPush(result, item);
       };
     };
