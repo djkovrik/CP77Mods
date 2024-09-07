@@ -42,6 +42,7 @@ public class HUDWidgetsManager {
     if config.dialogChoicesEnabled { ArrayPush(this.slots, n"NewDialogChoices"); }
     if config.dialogSubtitlesEnabled { ArrayPush(this.slots, n"NewDialogSubtitles"); }
     if config.compatE3CompassEnabled { ArrayPush(this.slots, n"NewCompass"); }
+    if config.fpsCounterEnabled { ArrayPush(this.slots, n"NewFpsCounter"); }
     this.maxIndex = ArraySize(this.slots) - 1;
   }
 

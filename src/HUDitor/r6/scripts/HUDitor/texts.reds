@@ -63,6 +63,9 @@ public class HUDitorTexts {
       case n"NewCompass":
         nameString = "E3 Compass"; 
         break;
+      case n"NewFpsCounter":
+        nameString = "FPS Counter"; 
+        break;
       default: 
         nameString = "Unknown"; 
         break;

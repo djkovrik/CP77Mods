@@ -123,4 +123,10 @@ public class HUDitorConfig {
   @runtimeProperty("ModSettings.displayName", "E3 Compass")
   @runtimeProperty("ModSettings.description", "Mod-HUDitor-Compatibility-Desc")
   public let compatE3CompassEnabled: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "HUDitor")
+  @runtimeProperty("ModSettings.category", "Mod-HUDitor-Compatibility")
+  @runtimeProperty("ModSettings.displayName", "FPS Counter")
+  @runtimeProperty("ModSettings.description", "Mod-HUDitor-Compatibility-Desc")
+  public let fpsCounterEnabled: Bool = false;
 }

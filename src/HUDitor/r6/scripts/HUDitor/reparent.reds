@@ -23,6 +23,7 @@ import HUDrag.HUDitorConfig
 @addField(inkGameController) let dialogChoicesSlot: wref<HUDitorCustomSlot>;
 @addField(inkGameController) let dialogSubtitlesSlot: wref<HUDitorCustomSlot>;
 @addField(inkGameController) let e3CompassSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) let fpsCounterSlot: wref<HUDitorCustomSlot>;
 
 @addMethod(inkGameController)
 protected cb func OnScannerDetailsAppearedEvent(event: ref<ScannerDetailsAppearedEvent>) -> Bool {
@@ -55,6 +56,7 @@ protected cb func OnGameSessionInitialized(event: ref<GameSessionInitializedEven
     this.dialogChoicesSlot.OnGameSessionInitialized(event);
     this.dialogSubtitlesSlot.OnGameSessionInitialized(event);
     this.e3CompassSlot.OnGameSessionInitialized(event);
+    this.fpsCounterSlot.OnGameSessionInitialized(event);
   };
 }
 
@@ -81,6 +83,7 @@ protected cb func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidgetEve
     this.dialogChoicesSlot.OnEnableHUDEditorWidget(event);
     this.dialogSubtitlesSlot.OnEnableHUDEditorWidget(event);
     this.e3CompassSlot.OnEnableHUDEditorWidget(event);
+    this.fpsCounterSlot.OnEnableHUDEditorWidget(event);
     this.huditorWidgetName.SetVisible(true);
     this.huditorWidgetName.SetText(HUDitorTexts.GetWidgetName(event.activeWidget));
   };
@@ -109,6 +112,7 @@ protected cb func OnDisableHUDEditorWidgets(event: ref<DisableHUDEditor>) -> Boo
     this.dialogChoicesSlot.OnDisableHUDEditorWidgets(event);
     this.dialogSubtitlesSlot.OnDisableHUDEditorWidgets(event);
     this.e3CompassSlot.OnDisableHUDEditorWidgets(event);
+    this.fpsCounterSlot.OnDisableHUDEditorWidgets(event);
     this.huditorWidgetName.SetVisible(false);
   };
 }
@@ -136,6 +140,7 @@ protected cb func OnResetHUDWidgets(event: ref<ResetAllHUDWidgets>) {
     this.dialogChoicesSlot.OnResetHUDWidgets(event);
     this.dialogSubtitlesSlot.OnResetHUDWidgets(event);
     this.e3CompassSlot.OnResetHUDWidgets(event);
+    this.fpsCounterSlot.OnResetHUDWidgets(event);
   };
 }
 
@@ -162,6 +167,7 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
     this.dialogChoicesSlot.OnAction(action, consumer);
     this.dialogSubtitlesSlot.OnAction(action, consumer);
     this.e3CompassSlot.OnAction(action, consumer);
+    this.fpsCounterSlot.OnAction(action, consumer);
   };
 }
 
@@ -486,6 +492,21 @@ private func CreateCustomSlots() -> Void {
     e3CompassSlot.Reparent(root, 19);
     this.e3CompassSlot = e3CompassSlot;
   };
+
+  if config.fpsCounterEnabled {
+    let fpsCounterSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
+    fpsCounterSlot.SetName(n"NewFpsCounter");
+    fpsCounterSlot.SetFitToContent(false);
+    fpsCounterSlot.SetInteractive(false);
+    fpsCounterSlot.SetAffectsLayoutWhenHidden(false);
+    fpsCounterSlot.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+    fpsCounterSlot.SetAnchor(inkEAnchor.Centered);
+    fpsCounterSlot.SetAnchorPoint(new Vector2(0.5, 0.5));
+
+    root.RemoveChildByName(n"NewFpsCounter");
+    fpsCounterSlot.Reparent(root, 20);
+    this.fpsCounterSlot = fpsCounterSlot;
+  };
 }
 
 @addMethod(inkGameController)
@@ -654,4 +675,25 @@ protected cb func OnInitialize() -> Bool {
     targetWidget.Reparent(newParent);
   };
   return wrap;
+}
+
+@wrapMethod(PlayerPuppet)
+protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpawn>) -> Bool {
+  wrappedMethod(evt);
+
+  let cfg: ref<HUDitorConfig> = new HUDitorConfig();
+  if cfg.fpsCounterEnabled {
+    GameInstance.GetUISystem(this.GetGame()).QueueEvent(new ReparentFpsCounterEvent());
+  };
+}
+
+@addMethod(inkHUDGameController)
+protected cb func OnReparentFpsCounterEvent(evt: ref<ReparentFpsCounterEvent>) -> Bool {
+  if this.IsA(n"gameuiFPSCounterGameController") {
+    let system: ref<inkSystem> = GameInstance.GetInkSystem();
+    let hudRoot: ref<inkCompoundWidget> = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
+    let container: ref<inkCompoundWidget> = hudRoot.GetWidgetByPathName(n"NewFpsCounter") as inkCompoundWidget;
+    let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+    root.Reparent(container, 21);
+  };
 }
