@@ -272,7 +272,7 @@ public class CustomHubButton extends CustomButton {
   }
 
   public func SetHoverColor(colorName: CName) -> Void {
-    let root: ref<inkCompoundWidget> = this.m_hover as inkCompoundWidget;
+    let root: ref<inkCompoundWidget> = this.m_hover;
     let numChildren: Int32 = root.GetNumChildren();
     let child: ref<inkImage>;
     let i: Int32 = 0;
