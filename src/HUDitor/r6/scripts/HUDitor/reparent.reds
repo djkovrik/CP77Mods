@@ -697,3 +697,18 @@ protected cb func OnReparentFpsCounterEvent(evt: ref<ReparentFpsCounterEvent>) -
     root.Reparent(container, 21);
   };
 }
+
+@addMethod(inkHUDGameController)
+protected cb func OnHuditorFpsCounterTrack(evt: ref<FPSCounterChangeStateEvent>) -> Bool {
+  if this.IsA(n"gameuiFPSCounterGameController") {
+    let system: ref<inkSystem> = GameInstance.GetInkSystem();
+    let hudRoot: ref<inkCompoundWidget>;
+    let container: ref<inkCompoundWidget>;
+    let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+    if Equals(root.parentWidget.GetName(), n"HUDMiddleWidget") {
+      hudRoot = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
+      container = hudRoot.GetWidgetByPathName(n"NewFpsCounter") as inkCompoundWidget;
+      root.Reparent(container, 21);
+    };
+  };
+}
