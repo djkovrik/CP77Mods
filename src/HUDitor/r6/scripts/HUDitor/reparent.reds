@@ -1,5 +1,8 @@
 import HUDrag.HUDitorConfig
 
+@if(ModuleExists("FpsCounter"))
+import FpsCounter.FPSCounterChangeStateEvent
+
 @addField(inkGameController) let huditorWidgetName: wref<inkText>;
 @addField(inkGameController) let carHudSlotPreview: wref<inkRectangle>;
 
@@ -698,6 +701,7 @@ protected cb func OnReparentFpsCounterEvent(evt: ref<ReparentFpsCounterEvent>) -
   };
 }
 
+@if(ModuleExists("FpsCounter"))
 @addMethod(inkHUDGameController)
 protected cb func OnHuditorFpsCounterTrack(evt: ref<FPSCounterChangeStateEvent>) -> Bool {
   if this.IsA(n"gameuiFPSCounterGameController") {
