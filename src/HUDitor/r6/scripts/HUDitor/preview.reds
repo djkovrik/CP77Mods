@@ -1,4 +1,5 @@
 import HUDrag.HUDitorConfig
+import HUDrag.HUDWidgetsManager.*
 
 @addField(inkGameController)
 public let originalOpacity: Float;
@@ -366,9 +367,21 @@ private func ShowIncomingPhoneCall(name: CName, show: Bool) -> Void {
     controller.m_CurrentPhoneCallContact = controller.GetIncomingContact();
     if show {
       controller.SetPhoneFunction(EHudPhoneFunction.IncomingCall);
+      controller.incomingCallElement.request = this.AsyncSpawnFromLocal(inkWidgetRef.Get(controller.incomingCallElement.slot), controller.incomingCallElement.libraryID, this, n"OnIncommingCallSpawned");
     } else {
       controller.SetPhoneFunction(EHudPhoneFunction.Inactive);  
     };
     controller.HandleCall();
+  };
+}
+
+@wrapMethod(IncomingCallLogicController)
+protected cb func OnRingAnimFinished(proxy: ref<inkAnimProxy>) -> Bool {
+  let previewActive: Bool = HUDWidgetsManager.GetInstance().IsActive();
+  if previewActive {
+    this.m_animProxy = this.PlayLibraryAnimation(n"ring");
+    this.m_animProxy.RegisterToCallback(inkanimEventType.OnFinish, this, n"OnRingAnimFinished");
+  } else {
+    wrappedMethod(proxy);
   };
 }

@@ -392,20 +392,20 @@ private func CreateCustomSlots() -> Void {
     this.phoneCallAvatarSlot = phoneCallAvatarSlot;
   };
 
-  // if config.incomingCallButtonEnabled {
-  //   let phoneControlSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-  //   phoneControlSlot.SetName(n"NewPhoneControl");
-  //   phoneControlSlot.SetFitToContent(true);
-  //   phoneControlSlot.SetInteractive(false);
-  //   phoneControlSlot.SetAffectsLayoutWhenHidden(false);
-  //   phoneControlSlot.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
-  //   phoneControlSlot.SetAnchor(inkEAnchor.TopCenter);
-  //   phoneControlSlot.SetAnchorPoint(new Vector2(0.5, 0.0));
+  if config.incomingCallButtonEnabled {
+    let phoneControlSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
+    phoneControlSlot.SetName(n"NewPhoneControl");
+    phoneControlSlot.SetFitToContent(true);
+    phoneControlSlot.SetInteractive(false);
+    phoneControlSlot.SetAffectsLayoutWhenHidden(false);
+    phoneControlSlot.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+    phoneControlSlot.SetAnchor(inkEAnchor.Centered);
+    phoneControlSlot.SetAnchorPoint(new Vector2(0.5, 0.5));
 
-  //   root.RemoveChildByName(n"NewPhoneControl");
-  //   phoneControlSlot.Reparent(root, 13);
-  //   this.phoneControlSlot = phoneControlSlot;
-  // };
+    root.RemoveChildByName(n"NewPhoneControl");
+    phoneControlSlot.Reparent(root, 13);
+    this.phoneControlSlot = phoneControlSlot;
+  };
 
   if config.inputHintsEnabled {
     let inputHintSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
@@ -692,6 +692,22 @@ protected cb func OnInitialize() -> Bool {
     targetWidget= this.GetRootCompoundWidget();
     targetWidget.SetAnchorPoint(new Vector2(0.5, 0.5));
     targetWidget.Reparent(newParent, 22);
+  };
+  return wrap;
+}
+
+@wrapMethod(IncomingCallLogicController)
+protected cb func OnInitialize() -> Bool {
+  let wrap: Bool = wrappedMethod();
+  let system: ref<inkSystem> = GameInstance.GetInkSystem();
+  let config: ref<HUDitorConfig> = new HUDitorConfig();
+  let root: ref<inkCompoundWidget> = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
+  let newParent: ref<inkCompoundWidget> = root.GetWidgetByPathName(n"NewPhoneControl") as inkCompoundWidget;
+  let targetWidget: ref<inkCompoundWidget>;
+  if config.incomingCallAvatarEnabled { 
+    targetWidget= this.GetRootCompoundWidget();
+    targetWidget.SetAnchorPoint(new Vector2(0.5, 0.5));
+    targetWidget.Reparent(newParent, 23);
   };
   return wrap;
 }
