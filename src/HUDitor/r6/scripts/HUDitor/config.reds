@@ -112,6 +112,12 @@ public class HUDitorConfig {
 
   @runtimeProperty("ModSettings.mod", "HUDitor")
   @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")
+  @runtimeProperty("ModSettings.displayName", "Mod-HUDitor-Widget-Progress")
+  @runtimeProperty("ModSettings.description", "Mod-HUDitor-Toggles-Desc")
+  public let progressWidgetEnabled: Bool = true;
+
+  @runtimeProperty("ModSettings.mod", "HUDitor")
+  @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")
   @runtimeProperty("ModSettings.displayName", "Mod-HUDitor-Widget-Dialog-Subs")
   @runtimeProperty("ModSettings.description", "Mod-HUDitor-Toggles-Desc")
   public let dialogSubtitlesEnabled: Bool = false;

@@ -26,6 +26,7 @@ protected cb func OnDisplayPreviewEvent(event: ref<DisplayPreviewEvent>) -> Bool
   if config.bossHealthbarEnabled { this.ShowBossHealthbar(true); }
   if config.dialogChoicesEnabled { this.ShowDialogPreview(true); }
   if config.dialogSubtitlesEnabled { this.ShowSubtitlesPreview(true); }
+  if config.progressWidgetEnabled { this.ShowHudProgressBarController(true); }
 }
 
 // Can't show both notification previews at the same time so moved here to show preview when widget selected
@@ -60,6 +61,7 @@ protected cb func OnHidePreviewEvent(event: ref<HidePreviewEvent>) -> Bool {
   this.ShowBossHealthbar(false);
   this.ShowDialogPreview(false);
   this.ShowSubtitlesPreview(false);
+  this.ShowHudProgressBarController(false);
 }
 
 // Preview helpers
@@ -383,5 +385,17 @@ protected cb func OnRingAnimFinished(proxy: ref<inkAnimProxy>) -> Bool {
     this.m_animProxy.RegisterToCallback(inkanimEventType.OnFinish, this, n"OnRingAnimFinished");
   } else {
     wrappedMethod(proxy);
+  };
+}
+
+@addMethod(inkGameController)
+private func ShowHudProgressBarController(show: Bool) -> Void {
+  if this.IsA(n"HUDProgressBarController") {
+    let controller = this as HUDProgressBarController;
+    controller.m_type = SimpleMessageType.Reveal;
+    controller.UpdateRevealType();
+    controller.OnProgressChanged(0.5);
+    controller.UpdateTimerHeader("Tracing your position");
+    controller.m_rootWidget.SetVisible(show);
   };
 }

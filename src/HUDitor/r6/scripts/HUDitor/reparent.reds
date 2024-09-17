@@ -25,6 +25,7 @@ import FpsCounter.FPSCounterChangeStateEvent
 @addField(inkGameController) let bossHealthbarSlot: wref<HUDitorCustomSlot>;
 @addField(inkGameController) let dialogChoicesSlot: wref<HUDitorCustomSlot>;
 @addField(inkGameController) let dialogSubtitlesSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) let progressBarSlot: wref<HUDitorCustomSlot>;
 @addField(inkGameController) let e3CompassSlot: wref<HUDitorCustomSlot>;
 @addField(inkGameController) let fpsCounterSlot: wref<HUDitorCustomSlot>;
 
@@ -58,6 +59,7 @@ protected cb func OnGameSessionInitialized(event: ref<GameSessionInitializedEven
     this.bossHealthbarSlot.OnGameSessionInitialized(event);
     this.dialogChoicesSlot.OnGameSessionInitialized(event);
     this.dialogSubtitlesSlot.OnGameSessionInitialized(event);
+    this.progressBarSlot.OnGameSessionInitialized(event);
     this.e3CompassSlot.OnGameSessionInitialized(event);
     this.fpsCounterSlot.OnGameSessionInitialized(event);
   };
@@ -85,6 +87,7 @@ protected cb func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidgetEve
     this.bossHealthbarSlot.OnEnableHUDEditorWidget(event);
     this.dialogChoicesSlot.OnEnableHUDEditorWidget(event);
     this.dialogSubtitlesSlot.OnEnableHUDEditorWidget(event);
+    this.progressBarSlot.OnEnableHUDEditorWidget(event);
     this.e3CompassSlot.OnEnableHUDEditorWidget(event);
     this.fpsCounterSlot.OnEnableHUDEditorWidget(event);
     this.huditorWidgetName.SetVisible(true);
@@ -114,6 +117,7 @@ protected cb func OnDisableHUDEditorWidgets(event: ref<DisableHUDEditor>) -> Boo
     this.bossHealthbarSlot.OnDisableHUDEditorWidgets(event);
     this.dialogChoicesSlot.OnDisableHUDEditorWidgets(event);
     this.dialogSubtitlesSlot.OnDisableHUDEditorWidgets(event);
+    this.progressBarSlot.OnDisableHUDEditorWidgets(event);
     this.e3CompassSlot.OnDisableHUDEditorWidgets(event);
     this.fpsCounterSlot.OnDisableHUDEditorWidgets(event);
     this.huditorWidgetName.SetVisible(false);
@@ -142,6 +146,7 @@ protected cb func OnResetHUDWidgets(event: ref<ResetAllHUDWidgets>) {
     this.bossHealthbarSlot.OnResetHUDWidgets(event);
     this.dialogChoicesSlot.OnResetHUDWidgets(event);
     this.dialogSubtitlesSlot.OnResetHUDWidgets(event);
+    this.progressBarSlot.OnResetHUDWidgets(event);
     this.e3CompassSlot.OnResetHUDWidgets(event);
     this.fpsCounterSlot.OnResetHUDWidgets(event);
   };
@@ -169,6 +174,7 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
     this.bossHealthbarSlot.OnAction(action, consumer);
     this.dialogChoicesSlot.OnAction(action, consumer);
     this.dialogSubtitlesSlot.OnAction(action, consumer);
+    this.progressBarSlot.OnAction(action, consumer);
     this.e3CompassSlot.OnAction(action, consumer);
     this.fpsCounterSlot.OnAction(action, consumer);
   };
@@ -481,6 +487,19 @@ private func CreateCustomSlots() -> Void {
     this.dialogSubtitlesSlot = dialogSubtitlesSlot;
   };
 
+  if config.progressWidgetEnabled {
+    let progressBarSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
+    progressBarSlot.SetName(n"NewProgressBar");
+    progressBarSlot.SetFitToContent(false);
+    progressBarSlot.SetInteractive(false);
+    progressBarSlot.SetAffectsLayoutWhenHidden(false);
+    progressBarSlot.SetAnchor(inkEAnchor.BottomCenter);
+    progressBarSlot.SetAnchorPoint(new Vector2(0.5, 1.0));
+    root.RemoveChildByName(n"NewProgressBar");
+    progressBarSlot.Reparent(root, 19);
+    this.progressBarSlot = progressBarSlot;
+  };
+
   if config.compatE3CompassEnabled {
     let e3CompassSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
     e3CompassSlot.SetName(n"NewCompass");
@@ -492,7 +511,7 @@ private func CreateCustomSlots() -> Void {
     e3CompassSlot.SetAnchorPoint(new Vector2(0.5, 0.5));
 
     root.RemoveChildByName(n"NewCompass");
-    e3CompassSlot.Reparent(root, 19);
+    e3CompassSlot.Reparent(root, 20);
     this.e3CompassSlot = e3CompassSlot;
   };
 
@@ -507,7 +526,7 @@ private func CreateCustomSlots() -> Void {
     fpsCounterSlot.SetAnchorPoint(new Vector2(0.5, 0.5));
 
     root.RemoveChildByName(n"NewFpsCounter");
-    fpsCounterSlot.Reparent(root, 20);
+    fpsCounterSlot.Reparent(root, 21);
     this.fpsCounterSlot = fpsCounterSlot;
   };
 }
@@ -613,6 +632,12 @@ private func InitBaseWidgets() -> Void {
         targetWidget.SetAnchorPoint(new Vector2(0.5, 1.0));
         targetWidget.Reparent(this.dialogSubtitlesSlot);
         break;
+      case n"HUDProgressBarController":
+        if !config.progressWidgetEnabled { break; }
+        targetWidget = controller.GetRootCompoundWidget();
+        targetWidget.SetAnchorPoint(new Vector2(0.5, 1.0));
+        targetWidget.Reparent(this.progressBarSlot);
+        break;
       case n"IronsightGameController":
         if !config.compatE3CompassEnabled { break; }
         targetWidget = controller.GetRootCompoundWidget();
@@ -657,7 +682,7 @@ protected func Initialize() -> Bool {
   if config.phoneHotkeyEnabled { 
     targetWidget= this.GetRootCompoundWidget();
     targetWidget.SetAnchorPoint(new Vector2(0.0, 1.0));
-    targetWidget.Reparent(newParent);
+    targetWidget.Reparent(newParent, 22);
   };
   return wrap;
 }
@@ -691,7 +716,7 @@ protected cb func OnInitialize() -> Bool {
   if config.incomingCallAvatarEnabled { 
     targetWidget= this.GetRootCompoundWidget();
     targetWidget.SetAnchorPoint(new Vector2(0.5, 0.5));
-    targetWidget.Reparent(newParent, 22);
+    targetWidget.Reparent(newParent, 24);
   };
   return wrap;
 }
@@ -707,7 +732,7 @@ protected cb func OnInitialize() -> Bool {
   if config.incomingCallAvatarEnabled { 
     targetWidget= this.GetRootCompoundWidget();
     targetWidget.SetAnchorPoint(new Vector2(0.5, 0.5));
-    targetWidget.Reparent(newParent, 23);
+    targetWidget.Reparent(newParent, 25);
   };
   return wrap;
 }
@@ -730,7 +755,7 @@ protected cb func OnReparentFpsCounterEvent(evt: ref<ReparentFpsCounterEvent>) -
     let hudRoot: ref<inkCompoundWidget> = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
     let container: ref<inkCompoundWidget> = hudRoot.GetWidgetByPathName(n"NewFpsCounter") as inkCompoundWidget;
     let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
-    root.Reparent(container, 21);
+    root.Reparent(container, 26);
   };
 }
 
@@ -745,7 +770,7 @@ protected cb func OnHuditorFpsCounterTrack(evt: ref<FPSCounterChangeStateEvent>)
     if Equals(root.parentWidget.GetName(), n"HUDMiddleWidget") {
       hudRoot = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
       container = hudRoot.GetWidgetByPathName(n"NewFpsCounter") as inkCompoundWidget;
-      root.Reparent(container, 21);
+      root.Reparent(container, 27);
     };
   };
 }
