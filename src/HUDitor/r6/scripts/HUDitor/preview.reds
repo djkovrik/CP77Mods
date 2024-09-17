@@ -19,6 +19,7 @@ protected cb func OnDisplayPreviewEvent(event: ref<DisplayPreviewEvent>) -> Bool
   if config.phoneHotkeyEnabled { this.ShowPhoneHotkey(true); }
   if config.playerHealthbarEnabled { this.ShowHealthbar(true); }
   if config.playerStaminabarEnabled { this.ShowStaminaBar(true); }
+  if config.incomingCallAvatarEnabled { this.ShowIncomingPhoneCall(n"jackie", true); }
   if config.inputHintsEnabled { this.ShowInputHints(true); }
   if config.speedometerEnabled { this.ShowCarHUD(true); }
   if config.bossHealthbarEnabled { this.ShowBossHealthbar(true); }
@@ -52,13 +53,13 @@ protected cb func OnHidePreviewEvent(event: ref<HidePreviewEvent>) -> Bool {
   this.ShowPhoneHotkey(false);
   this.ShowHealthbar(false);
   this.ShowStaminaBar(false);
+  this.ShowIncomingPhoneCall(n"jackie", false);
   this.ShowInputHints(false);
   this.ShowCarHUD(false);
   this.ShowBossHealthbar(false);
   this.ShowDialogPreview(false);
   this.ShowSubtitlesPreview(false);
 }
-
 
 // Preview helpers
 @addMethod(inkGameController)
@@ -343,5 +344,31 @@ private func ShowSubtitlesPreview(show: Bool) -> Void {
     } else {
       controller.m_subtitlesPanel.RemoveAllChildren();
     };
+  };
+}
+
+@addMethod(inkGameController)
+private func ShowIncomingPhoneCall(name: CName, show: Bool) -> Void {
+  if this.IsA(n"NewHudPhoneGameController") {
+    let controller = this as NewHudPhoneGameController;
+    let phoneCallInfo: PhoneCallInformation;
+    phoneCallInfo.callMode = questPhoneCallMode.Video;
+    phoneCallInfo.isAudioCall = false;
+    phoneCallInfo.contactName = name;
+    phoneCallInfo.isPlayerCalling = true;
+    phoneCallInfo.isPlayerTriggered = true;
+    if show {
+      phoneCallInfo.callPhase = questPhoneCallPhase.IncomingCall;
+    } else {
+      phoneCallInfo.callPhase = questPhoneCallPhase.EndCall;
+    };
+    controller.m_CurrentCallInformation = phoneCallInfo;
+    controller.m_CurrentPhoneCallContact = controller.GetIncomingContact();
+    if show {
+      controller.SetPhoneFunction(EHudPhoneFunction.IncomingCall);
+    } else {
+      controller.SetPhoneFunction(EHudPhoneFunction.Inactive);  
+    };
+    controller.HandleCall();
   };
 }

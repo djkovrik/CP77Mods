@@ -74,13 +74,12 @@ public class HUDitorConfig {
   @runtimeProperty("ModSettings.description", "Mod-HUDitor-Toggles-Desc")
   public let playerStaminabarEnabled: Bool = true;
 
-/*
   @runtimeProperty("ModSettings.mod", "HUDitor")
   @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")
   @runtimeProperty("ModSettings.displayName", "Mod-HUDitor-Widget-Call-Avatar")
   @runtimeProperty("ModSettings.description", "Mod-HUDitor-Toggles-Desc")
   public let incomingCallAvatarEnabled: Bool = true;
-
+/*
   @runtimeProperty("ModSettings.mod", "HUDitor")
   @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")
   @runtimeProperty("ModSettings.displayName", "Mod-HUDitor-Widget-Call-Button")

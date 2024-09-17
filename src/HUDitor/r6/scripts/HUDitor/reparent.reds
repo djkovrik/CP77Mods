@@ -378,19 +378,19 @@ private func CreateCustomSlots() -> Void {
     this.staminaBarSlot = staminaBarSlot;
   };
 
-  // if config.incomingCallAvatarEnabled {
-  //   let phoneCallAvatarSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-  //   phoneCallAvatarSlot.SetName(n"NewPhoneAvatar");
-  //   phoneCallAvatarSlot.SetFitToContent(true);
-  //   phoneCallAvatarSlot.SetInteractive(false);
-  //   phoneCallAvatarSlot.SetAffectsLayoutWhenHidden(false);
-  //   phoneCallAvatarSlot.SetAnchor(inkEAnchor.Centered);
-  //   phoneCallAvatarSlot.SetAnchorPoint(new Vector2(1.0, 1.0));
+  if config.incomingCallAvatarEnabled {
+    let phoneCallAvatarSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
+    phoneCallAvatarSlot.SetName(n"NewPhoneAvatar");
+    phoneCallAvatarSlot.SetFitToContent(true);
+    phoneCallAvatarSlot.SetInteractive(false);
+    phoneCallAvatarSlot.SetAffectsLayoutWhenHidden(false);
+    phoneCallAvatarSlot.SetAnchor(inkEAnchor.Centered);
+    phoneCallAvatarSlot.SetAnchorPoint(new Vector2(1.0, 1.0));
 
-  //   root.RemoveChildByName(n"NewPhoneAvatar");
-  //   phoneCallAvatarSlot.Reparent(root, 12);
-  //   this.phoneCallAvatarSlot = phoneCallAvatarSlot;
-  // };
+    root.RemoveChildByName(n"NewPhoneAvatar");
+    phoneCallAvatarSlot.Reparent(root, 12);
+    this.phoneCallAvatarSlot = phoneCallAvatarSlot;
+  };
 
   // if config.incomingCallButtonEnabled {
   //   let phoneControlSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
@@ -680,6 +680,23 @@ protected cb func OnInitialize() -> Bool {
   return wrap;
 }
 
+@wrapMethod(HoloAudioCallLogicController)
+protected cb func OnInitialize() -> Bool {
+  let wrap: Bool = wrappedMethod();
+  let system: ref<inkSystem> = GameInstance.GetInkSystem();
+  let config: ref<HUDitorConfig> = new HUDitorConfig();
+  let root: ref<inkCompoundWidget> = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
+  let newParent: ref<inkCompoundWidget> = root.GetWidgetByPathName(n"NewPhoneAvatar") as inkCompoundWidget;
+  let targetWidget: ref<inkCompoundWidget>;
+  if config.incomingCallAvatarEnabled { 
+    targetWidget= this.GetRootCompoundWidget();
+    targetWidget.SetAnchorPoint(new Vector2(0.5, 0.5));
+    targetWidget.Reparent(newParent, 22);
+  };
+  return wrap;
+}
+
+// -- FPS Counter hacks
 @wrapMethod(PlayerPuppet)
 protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpawn>) -> Bool {
   wrappedMethod(evt);

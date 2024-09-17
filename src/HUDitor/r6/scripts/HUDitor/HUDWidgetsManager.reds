@@ -34,7 +34,7 @@ public class HUDWidgetsManager {
     if config.phoneHotkeyEnabled { ArrayPush(this.slots, n"NewPhoneHotkey"); }
     if config.playerHealthbarEnabled { ArrayPush(this.slots, n"NewHealthBar"); }
     if config.playerStaminabarEnabled { ArrayPush(this.slots, n"NewStaminaBar"); }
-    // if config.incomingCallAvatarEnabled { ArrayPush(this.slots, n"NewPhoneAvatar"); }
+    if config.incomingCallAvatarEnabled { ArrayPush(this.slots, n"NewPhoneAvatar"); }
     // if config.incomingCallButtonEnabled { ArrayPush(this.slots, n"NewPhoneControl"); }
     if config.inputHintsEnabled { ArrayPush(this.slots, n"NewInputHint"); }
     if config.speedometerEnabled { ArrayPush(this.slots, n"NewCarHud"); }
