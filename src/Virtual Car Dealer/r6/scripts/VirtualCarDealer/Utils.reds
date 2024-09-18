@@ -1,7 +1,7 @@
 module CarDealer.Utils
 
 public static func CarDealerLog(str: String) -> Void {
-  // LogChannel(n"DEBUG", s"Vehicles: \(str)");
+  // ModLog(n"Dealer", s"Vehicles: \(str)");
 }
 
 public class DealerTexts {

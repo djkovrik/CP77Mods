@@ -74,7 +74,6 @@ public class HUDitorConfig {
   @runtimeProperty("ModSettings.description", "Mod-HUDitor-Toggles-Desc")
   public let playerStaminabarEnabled: Bool = true;
 
-/*
   @runtimeProperty("ModSettings.mod", "HUDitor")
   @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")
   @runtimeProperty("ModSettings.displayName", "Mod-HUDitor-Widget-Call-Avatar")
@@ -86,7 +85,6 @@ public class HUDitorConfig {
   @runtimeProperty("ModSettings.displayName", "Mod-HUDitor-Widget-Call-Button")
   @runtimeProperty("ModSettings.description", "Mod-HUDitor-Toggles-Desc")
   public let incomingCallButtonEnabled: Bool = true;
-*/
 
   @runtimeProperty("ModSettings.mod", "HUDitor")
   @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")
@@ -114,6 +112,12 @@ public class HUDitorConfig {
 
   @runtimeProperty("ModSettings.mod", "HUDitor")
   @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")
+  @runtimeProperty("ModSettings.displayName", "Mod-HUDitor-Widget-Progress")
+  @runtimeProperty("ModSettings.description", "Mod-HUDitor-Toggles-Desc")
+  public let progressWidgetEnabled: Bool = true;
+
+  @runtimeProperty("ModSettings.mod", "HUDitor")
+  @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")
   @runtimeProperty("ModSettings.displayName", "Mod-HUDitor-Widget-Dialog-Subs")
   @runtimeProperty("ModSettings.description", "Mod-HUDitor-Toggles-Desc")
   public let dialogSubtitlesEnabled: Bool = false;
@@ -123,4 +127,10 @@ public class HUDitorConfig {
   @runtimeProperty("ModSettings.displayName", "E3 Compass")
   @runtimeProperty("ModSettings.description", "Mod-HUDitor-Compatibility-Desc")
   public let compatE3CompassEnabled: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "HUDitor")
+  @runtimeProperty("ModSettings.category", "Mod-HUDitor-Compatibility")
+  @runtimeProperty("ModSettings.displayName", "FPS Counter")
+  @runtimeProperty("ModSettings.description", "Mod-HUDitor-Compatibility-Desc")
+  public let fpsCounterEnabled: Bool = false;
 }

@@ -1,6 +1,9 @@
 module CarDealer
 import CarDealer.Classes.AutofixerSellEvent
+import CarDealer.Classes.AutofixerSellConfirmationEvent
+import CarDealer.Classes.AutofixerSellConfirmedEvent
 import CarDealer.Classes.AutofixerItemData
+import CarDealer.Utils.CarDealerLog
 import Codeware.UI.*
 
 class AutofixerItemVirtualController extends inkVirtualCompoundItemController {
@@ -18,13 +21,15 @@ class AutofixerItemVirtualController extends inkVirtualCompoundItemController {
   }
 
   protected cb func OnButtonClick(evt: ref<inkPointerEvent>) -> Bool {
-    let sellEvent: ref<AutofixerSellEvent>;
     if evt.IsAction(n"click") && Equals(evt.GetTarget().GetName(), n"ButtonSell") && !this.m_data.sold {
-      this.m_data.sold = true;
-      this.RefreshView();
-      sellEvent = new AutofixerSellEvent();
-      sellEvent.data = this.m_data;
-      this.QueueEvent(sellEvent);
+      CarDealerLog("Vehicle sell clicked...");
+      if this.m_data.vanilla {
+        CarDealerLog("Request confirmation");
+        this.TriggerVehicleConfirmationPopup(this.m_data);
+      } else {
+        CarDealerLog("Trigger selling");
+        this.TriggerVehicleSell();
+      };
     };
   }
 
@@ -34,6 +39,29 @@ class AutofixerItemVirtualController extends inkVirtualCompoundItemController {
     if IsDefined(this.m_data) {
       this.RefreshView();
     };
+  }
+
+  protected cb func OnAutofixerSellConfirmedEvent(evt: ref<AutofixerSellConfirmedEvent>) -> Bool {
+    if NotEquals(evt.data, this.m_data) {
+      return false;
+    };
+
+    this.TriggerVehicleSell();
+  }
+
+  private final func TriggerVehicleConfirmationPopup(data: ref<AutofixerItemData>) -> Void {
+    let requestEvent: ref<AutofixerSellConfirmationEvent> = new AutofixerSellConfirmationEvent();
+    requestEvent.data = data;
+    this.QueueEvent(requestEvent);
+  }
+
+  private final func TriggerVehicleSell() -> Void {
+    this.m_data.sold = true;
+    this.RefreshView();
+
+    let sellEvent: ref<AutofixerSellEvent> = new AutofixerSellEvent();
+    sellEvent.data = this.m_data;
+    this.QueueEvent(sellEvent);
   }
 
   private func RefreshView() -> Void {

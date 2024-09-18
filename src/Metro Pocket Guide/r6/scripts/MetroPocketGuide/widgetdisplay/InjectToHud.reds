@@ -25,16 +25,12 @@ private final func InjectMetroPocketGuideSlot() -> Void {
     slot = new inkCanvas();
     slot.SetName(this.pocketGuideSlotName);
     slot.SetFitToContent(true);
-    slot.SetLayout(
-      new inkWidgetLayout(
-        new inkMargin(0.0, 0.0, 0.0, 0.0),
-        new inkMargin(0.0, 0.0, 0.0, 0.0),
-        inkEHorizontalAlign.Left,
-        inkEVerticalAlign.Top,
-        inkEAnchor.TopLeft,
-        new Vector2(0.0, 0.0)
-      )
-    );
+    let layout: inkWidgetLayout;
+    layout.HAlign = inkEHorizontalAlign.Left;
+    layout.VAlign = inkEVerticalAlign.Top;
+    layout.anchor = inkEAnchor.TopLeft;
+    layout.anchorPoint = new Vector2(0.0, 0.0); 
+    slot.SetLayout(layout);
     slot.Reparent(root);
   };
 

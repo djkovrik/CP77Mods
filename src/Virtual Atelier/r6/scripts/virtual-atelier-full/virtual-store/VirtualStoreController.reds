@@ -97,7 +97,8 @@ public class VirtualStoreController extends gameuiMenuGameController {
   protected cb func OnDropdownItemClickedEvent(evt: ref<DropdownItemClickedEvent>) -> Bool {
     let setVendorSortingRequest: ref<UIScriptableSystemSetVendorPanelVendorSorting>;
     let identifier: ItemSortMode = FromVariant<ItemSortMode>(evt.identifier);
-    let data: ref<DropdownItemData> = SortingDropdownData.GetDropdownOption((this.sortingDropdown.GetController() as DropdownListController).GetData(), identifier);
+    let options: array<ref<DropdownItemData>> = (this.sortingDropdown.GetController() as DropdownListController).GetData();
+    let data: ref<DropdownItemData> = SortingDropdownData.GetDropdownOption(options, identifier);
     if IsDefined(data) {
       if evt.triggerButton.GetRootWidget() == this.vendorSortingButton {
         evt.triggerButton.SetData(data);
@@ -546,9 +547,11 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.vendorSortingButton.RegisterToCallback(n"OnRelease", this, n"OnVendorSortingButtonClicked");
     controller = this.sortingDropdown.GetController() as DropdownListController;
     vendorSortingButtonController = this.vendorSortingButton.GetController() as DropdownButtonController;
-    controller.Setup(this, SortingDropdownData.GetDefaultDropdownOptions());
+    let options: array<ref<DropdownItemData>> = SortingDropdownData.GetDefaultDropdownOptions();
+    controller.Setup(this, options);
     sorting = this.uiScriptableSystem.GetVendorPanelVendorActiveSorting(EnumInt(ItemSortMode.Default));
-    data = SortingDropdownData.GetDropdownOption(controller.GetData(), IntEnum<ItemSortMode>(sorting));
+    let options: array<ref<DropdownItemData>> = controller.GetData();
+    data = SortingDropdownData.GetDropdownOption(options, IntEnum<ItemSortMode>(sorting));
     vendorSortingButtonController.SetData(data);
     this.storeDataView.SetSortMode(FromVariant<ItemSortMode>(data.identifier));
   }
@@ -752,8 +755,10 @@ public class VirtualStoreController extends gameuiMenuGameController {
       vendorInventoryData.ItemData = vendorInventory[i];
 
       // Darkcopse requirements displaying fix
+      let requirements: array<SItemStackRequirementData>;
       if InventoryItemData.GetGameItemData(vendorInventoryData.ItemData).HasTag(n"Cyberware") {
-        InventoryItemData.SetEquipRequirements(vendorInventoryData.ItemData, RPGManager.GetEquipRequirements(this.player, InventoryItemData.GetGameItemData(vendorInventoryData.ItemData)));
+        requirements = RPGManager.GetEquipRequirements(this.player, InventoryItemData.GetGameItemData(vendorInventoryData.ItemData));
+        InventoryItemData.SetEquipRequirements(vendorInventoryData.ItemData, requirements);
       };
       InventoryItemData.SetIsEquippable(vendorInventoryData.ItemData, EquipmentSystem.GetInstance(this.player).GetPlayerData(this.player).IsEquippable(InventoryItemData.GetGameItemData(vendorInventoryData.ItemData)));
 

@@ -29,11 +29,9 @@ private func IsRipperdocMedBuff(id: TweakDBID) -> Bool {
     || Equals(t"BaseStatusEffect.RipperDocMedBuffCommon", id);
 }
 
-// -- TRACK FOR HUB INTERACTION TITLES
+// -- Track for interactions
 
-public class ResetSavedHub extends Event {}
-
-@addField(InteractionUIBase)
+@addField(dialogWidgetGameController)
 private let m_lastSelectedHub: String = "";
 
 @addField(dialogWidgetGameController)
@@ -47,14 +45,6 @@ protected cb func OnInitialize() -> Bool {
   wrappedMethod();
   this.m_lastChoiceBB = this.GetBlackboardSystem().Get(GetAllBlackboardDefs().UIInteractions);
   this.m_lastChoiceCallbackId = this.m_lastChoiceBB.RegisterListenerVariant(GetAllBlackboardDefs().UIInteractions.LastAttemptedChoice, this, n"OnLastAttemptedChoiceCustom");
-}
-
-@wrapMethod(dialogWidgetGameController)
-protected cb func OnDialogsSelectIndex(index: Int32) -> Bool {
-  wrappedMethod(index);
-  if ArraySize(this.m_data.choiceHubs) > 0 {
-    this.m_lastSelectedHub = this.m_data.choiceHubs[0].title;
-  };
 }
 
 @wrapMethod(dialogWidgetGameController)
@@ -72,19 +62,33 @@ protected cb func OnLastAttemptedChoiceCustom(value: Variant) -> Bool {
   this.m_lastSelectedHub = "";
 }
 
-@wrapMethod(InteractionUIBase)
-protected cb func OnLootingData(value: Variant) -> Bool {
-  this.m_lastSelectedHub = "";
-  wrappedMethod(value);
+// -- Track for hub title
+
+public class HubTitleUpdatedEvent extends Event {
+  let title: String;
+
+  public static func Create(title: String) -> ref<HubTitleUpdatedEvent> {
+    let instance: ref<HubTitleUpdatedEvent> = new HubTitleUpdatedEvent();
+    instance.title = title;
+    return instance;
+  }
 }
 
-@addMethod(InteractionUIBase)
-protected cb func OnResetSavedHub(evt: ref<ResetSavedHub>) -> Bool {
-  this.m_lastSelectedHub = "";
+@addMethod(dialogWidgetGameController)
+protected cb func OnHubTitleUpdatedEvent(evt: ref<HubTitleUpdatedEvent>) -> Bool {
+  this.m_lastSelectedHub = evt.title;
 }
 
-@wrapMethod(interactionWidgetGameController)
-protected cb func OnUpdateInteraction(argValue: Variant) -> Bool {
-  GameInstance.GetUISystem(this.GetOwner().GetGame()).QueueEvent(new ResetSavedHub());
-  return wrappedMethod(argValue);
+@wrapMethod(DialogHubLogicController)
+private final func SetupTitle(const title: script_ref<String>, isActive: Bool, isPossessed: Bool) -> Void {
+  let titleStr: String = Deref(title);
+  if NotEquals(titleStr, "") && isActive {
+    this.QueueEvent(HubTitleUpdatedEvent.Create(titleStr));
+  }
+  wrappedMethod(title, isActive, isPossessed);
+}
+
+@addMethod(DialogHubLogicController)
+protected cb func OnUninitialize() -> Bool {
+  this.QueueEvent(HubTitleUpdatedEvent.Create(""));
 }
