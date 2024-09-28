@@ -133,3 +133,35 @@ protected cb func OnInitialize() -> Bool {
     widget.BindProperty(n"tintColor", n"MainColors.NPC_Chatter");
   };
 }
+
+// Bind perks screen colors
+
+@addField(NewPerksPerkItemLogicController) public let cellOuterBg: ref<inkWidget>;
+@addField(NewPerksPerkItemLogicController) public let cellInnerFg: ref<inkWidget>;
+@addField(NewPerksPerkItemLogicController) public let cellInnerBg: ref<inkWidget>;
+@addField(NewPerksPerkItemLogicController) public let icoMaster: ref<inkWidget>;
+
+@wrapMethod(NewPerksPerkItemLogicController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+  this.cellOuterBg = root.GetWidgetByPathName(n"container/cell_outer_bg");
+  this.cellInnerFg = root.GetWidgetByPathName(n"container/cell_inner_fg");
+  this.cellInnerBg = root.GetWidgetByPathName(n"container/cell_inner_bg");
+  this.icoMaster = root.GetWidgetByPathName(n"container/ico_container/ico_master");
+}
+
+@wrapMethod(NewPerksPerkItemLogicController)
+public final func UpdateState() -> Void {
+  wrappedMethod();
+
+  // Fully invested bindings
+  if this.m_initData.isAttributeRequirementMet 
+    && this.m_isUnlocked && this.m_currentLevel > 0 
+    && this.m_currentLevel >= this.m_initData.maxPerkLevel {
+      this.cellOuterBg.BindProperty(n"tintColor", n"MainColors.Gold");
+      this.cellInnerFg.BindProperty(n"tintColor", n"MainColors.Yellow");
+      // this.cellInnerBg.BindProperty(n"tintColor", n"MainColors.Orange");
+      this.icoMaster.BindProperty(n"tintColor", n"MainColors.Yellow");
+    }
+}
