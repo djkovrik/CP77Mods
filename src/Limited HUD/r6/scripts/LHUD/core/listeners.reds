@@ -50,6 +50,7 @@ public class LHUDBlackboardsListener {
   private let scannerCallback: ref<CallbackHandle>;       // Ref for registered scanner callback
   private let psmCallback: ref<CallbackHandle>;           // Ref for registered player state callback
   private let vehicleCallback: ref<CallbackHandle>;       // Ref for registered vehicle mount callback
+  private let vehicleStateCallback: ref<CallbackHandle>;       // Ref for registered vehicle mount callback
   private let weaponCallback: ref<CallbackHandle>;        // Ref for registered weapon state callback
   private let zoomCallback: ref<CallbackHandle>;          // Ref for registered zoom value callback
   private let stealthCallback: ref<CallbackHandle>;       // Ref for registered locomotion value callback
@@ -63,12 +64,12 @@ public class LHUDBlackboardsListener {
     LHUDLogDebug("-- LHUDBlackboardsListener::InitializeData");
     this.playerInstance = player;
     this.bbDefs = GetAllBlackboardDefs();
-    this.braindanceBlackboard =  GameInstance.GetBlackboardSystem(player.GetGame()).Get(this.bbDefs.Braindance);
-    this.scannerBlackboard =  GameInstance.GetBlackboardSystem(player.GetGame()).Get(this.bbDefs.UI_Scanner);
+    this.braindanceBlackboard = GameInstance.GetBlackboardSystem(player.GetGame()).Get(this.bbDefs.Braindance);
+    this.scannerBlackboard = GameInstance.GetBlackboardSystem(player.GetGame()).Get(this.bbDefs.UI_Scanner);
     this.stateMachineBlackboard = GameInstance.GetBlackboardSystem(player.GetGame()).GetLocalInstanced(player.GetEntityID(), this.bbDefs.PlayerStateMachine);
-    this.vehicleBlackboard =  GameInstance.GetBlackboardSystem(player.GetGame()).Get(this.bbDefs.UI_ActiveVehicleData);
-    this.uiSystemBlackboard =  GameInstance.GetBlackboardSystem(player.GetGame()).Get(this.bbDefs.UI_System);
-    this.weaponBlackboard =  GameInstance.GetBlackboardSystem(player.GetGame()).Get(this.bbDefs.UI_EquipmentData);
+    this.vehicleBlackboard = GameInstance.GetBlackboardSystem(player.GetGame()).Get(this.bbDefs.UI_ActiveVehicleData);
+    this.uiSystemBlackboard = GameInstance.GetBlackboardSystem(player.GetGame()).Get(this.bbDefs.UI_System);
+    this.weaponBlackboard = GameInstance.GetBlackboardSystem(player.GetGame()).Get(this.bbDefs.UI_EquipmentData);
 
     this.delaySystem = GameInstance.GetDelaySystem(player.GetGame());
   }
@@ -82,6 +83,7 @@ public class LHUDBlackboardsListener {
     this.scannerCallback = this.scannerBlackboard.RegisterListenerBool(this.bbDefs.UI_Scanner.UIVisible, this, n"OnScannerToggle");
     this.psmCallback = this.stateMachineBlackboard.RegisterListenerInt(this.bbDefs.PlayerStateMachine.Combat, this, n"OnCombatStateChanged");
     this.vehicleCallback = this.uiSystemBlackboard.RegisterListenerBool(this.bbDefs.UI_System.IsMounted_LHUD, this, n"OnMountedStateChanged");
+    this.vehicleStateCallback = this.stateMachineBlackboard.RegisterListenerInt(this.bbDefs.PlayerStateMachine.Vehicle, this, n"OnPlayerVehicleStateChange", true);
     this.weaponCallback = this.weaponBlackboard.RegisterListenerBool(this.bbDefs.UI_EquipmentData.HasWeaponEquipped, this, n"OnWeaponStateChanged");
     this.zoomCallback = this.stateMachineBlackboard.RegisterListenerFloat(this.bbDefs.PlayerStateMachine.ZoomLevel, this, n"OnZoomChanged");
     this.stealthCallback = this.stateMachineBlackboard.RegisterListenerInt(this.bbDefs.PlayerStateMachine.Locomotion, this, n"OnCrouchChanged");
@@ -97,6 +99,7 @@ public class LHUDBlackboardsListener {
     this.scannerBlackboard.UnregisterListenerBool(this.bbDefs.UI_Scanner.UIVisible, this.scannerCallback);
     this.stateMachineBlackboard.UnregisterListenerInt(this.bbDefs.PlayerStateMachine.Combat, this.psmCallback);
     this.uiSystemBlackboard.UnregisterListenerBool(this.bbDefs.UI_System.IsMounted_LHUD, this.vehicleCallback);
+    this.stateMachineBlackboard.UnregisterListenerInt(this.bbDefs.PlayerStateMachine.Vehicle, this.vehicleStateCallback);
     this.weaponBlackboard.UnregisterListenerBool(this.bbDefs.UI_EquipmentData.HasWeaponEquipped, this.weaponCallback);
     this.stateMachineBlackboard.UnregisterListenerFloat(this.bbDefs.PlayerStateMachine.ZoomLevel, this.zoomCallback);
     this.stateMachineBlackboard.UnregisterListenerInt(this.bbDefs.PlayerStateMachine.Locomotion, this.stealthCallback);
@@ -162,6 +165,12 @@ public class LHUDBlackboardsListener {
     let isDriver: Bool = VehicleComponent.IsDriver(this.playerInstance.GetGame(), this.playerInstance);
     let show: Bool = isDriver && value;
     this.playerInstance.QueueLHUDEvent(LHUDEventType.InVehicle, show);
+  }
+
+  // Weapon + vehicle  
+  protected cb func OnPlayerVehicleStateChange(value: Int32) -> Bool {
+    let mountedWithWeapon: Bool = Equals(value, 6);
+    this.playerInstance.QueueLHUDEvent(LHUDEventType.Weapon, mountedWithWeapon);
   }
 
   // Weapon state bb callback
