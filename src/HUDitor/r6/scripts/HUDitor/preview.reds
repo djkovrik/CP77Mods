@@ -1,4 +1,5 @@
 import HUDrag.HUDitorConfig
+import HUDrag.HUDWidgetsManager.*
 
 @addField(inkGameController)
 public let originalOpacity: Float;
@@ -19,11 +20,13 @@ protected cb func OnDisplayPreviewEvent(event: ref<DisplayPreviewEvent>) -> Bool
   if config.phoneHotkeyEnabled { this.ShowPhoneHotkey(true); }
   if config.playerHealthbarEnabled { this.ShowHealthbar(true); }
   if config.playerStaminabarEnabled { this.ShowStaminaBar(true); }
+  if config.incomingCallAvatarEnabled { this.ShowIncomingPhoneCall(true); }
   if config.inputHintsEnabled { this.ShowInputHints(true); }
   if config.speedometerEnabled { this.ShowCarHUD(true); }
   if config.bossHealthbarEnabled { this.ShowBossHealthbar(true); }
   if config.dialogChoicesEnabled { this.ShowDialogPreview(true); }
   if config.dialogSubtitlesEnabled { this.ShowSubtitlesPreview(true); }
+  if config.progressWidgetEnabled { this.ShowHudProgressBarController(true); }
 }
 
 // Can't show both notification previews at the same time so moved here to show preview when widget selected
@@ -52,13 +55,14 @@ protected cb func OnHidePreviewEvent(event: ref<HidePreviewEvent>) -> Bool {
   this.ShowPhoneHotkey(false);
   this.ShowHealthbar(false);
   this.ShowStaminaBar(false);
+  this.ShowIncomingPhoneCall(false);
   this.ShowInputHints(false);
   this.ShowCarHUD(false);
   this.ShowBossHealthbar(false);
   this.ShowDialogPreview(false);
   this.ShowSubtitlesPreview(false);
+  this.ShowHudProgressBarController(false);
 }
-
 
 // Preview helpers
 @addMethod(inkGameController)
@@ -343,5 +347,62 @@ private func ShowSubtitlesPreview(show: Bool) -> Void {
     } else {
       controller.m_subtitlesPanel.RemoveAllChildren();
     };
+  };
+}
+
+@addMethod(inkGameController)
+private func ShowIncomingPhoneCall(show: Bool) -> Void {
+  if this.IsA(n"NewHudPhoneGameController") {
+    let controller = this as NewHudPhoneGameController;
+    let phoneCallInfo: PhoneCallInformation;
+    phoneCallInfo.callMode = questPhoneCallMode.Video;
+    phoneCallInfo.isAudioCall = false;
+    phoneCallInfo.contactName = n"jackie";
+    phoneCallInfo.isPlayerCalling = true;
+    phoneCallInfo.isPlayerTriggered = true;
+    if show {
+      phoneCallInfo.callPhase = questPhoneCallPhase.IncomingCall;
+    } else {
+      phoneCallInfo.callPhase = questPhoneCallPhase.EndCall;
+    };
+    controller.m_CurrentCallInformation = phoneCallInfo;
+    controller.m_CurrentPhoneCallContact = controller.GetIncomingContact();
+    if show {
+      controller.SetPhoneFunction(EHudPhoneFunction.IncomingCall);
+      controller.incomingCallElement.request = this.AsyncSpawnFromLocal(inkWidgetRef.Get(controller.incomingCallElement.slot), controller.incomingCallElement.libraryID, this, n"OnIncommingCallSpawned");
+      controller.HandleCall();
+    } else {
+      controller.CancelPendingSpawnRequests();
+      controller.SetTalkingTrigger(controller.m_CurrentCallInformation.isPlayerCalling, questPhoneTalkingState.Ended);
+      controller.SetPhoneFunction(EHudPhoneFunction.Inactive);
+      
+      let system: ref<inkSystem> = GameInstance.GetInkSystem();
+      let hudRoot: ref<inkCompoundWidget> = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
+      let phoneAvatar: ref<inkCompoundWidget> = hudRoot.GetWidgetByPathName(n"NewPhoneAvatar") as inkCompoundWidget;
+      phoneAvatar.RemoveAllChildren();
+    };
+  };
+}
+
+@wrapMethod(IncomingCallLogicController)
+protected cb func OnRingAnimFinished(proxy: ref<inkAnimProxy>) -> Bool {
+  let previewActive: Bool = HUDWidgetsManager.GetInstance().IsActive();
+  if previewActive {
+    this.m_animProxy = this.PlayLibraryAnimation(n"ring");
+    this.m_animProxy.RegisterToCallback(inkanimEventType.OnFinish, this, n"OnRingAnimFinished");
+  } else {
+    wrappedMethod(proxy);
+  };
+}
+
+@addMethod(inkGameController)
+private func ShowHudProgressBarController(show: Bool) -> Void {
+  if this.IsA(n"HUDProgressBarController") {
+    let controller = this as HUDProgressBarController;
+    controller.m_type = SimpleMessageType.Reveal;
+    controller.UpdateRevealType();
+    controller.OnProgressChanged(0.5);
+    controller.UpdateTimerHeader("Tracing your position");
+    controller.m_rootWidget.SetVisible(show);
   };
 }

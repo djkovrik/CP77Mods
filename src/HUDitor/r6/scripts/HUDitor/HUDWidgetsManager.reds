@@ -25,6 +25,8 @@ public class HUDWidgetsManager {
     if config.questTrackerEnabled { ArrayPush(this.slots, n"NewTracker"); }
     if config.minimapEnabled && !config.compatE3CompassEnabled { ArrayPush(this.slots, n"NewMinimap"); }
     if config.wantedBarEnabled { ArrayPush(this.slots, n"NewWanted"); }
+    if config.incomingCallAvatarEnabled { ArrayPush(this.slots, n"NewPhoneAvatar"); }
+    if config.incomingCallButtonEnabled { ArrayPush(this.slots, n"NewPhoneControl"); }
     if config.questNotificationsEnabled { ArrayPush(this.slots, n"NewQuestNotifications"); }
     if config.itemNotificationsEnabled { ArrayPush(this.slots, n"NewItemNotifications"); }
     if config.vehicleSummonEnabled { ArrayPush(this.slots, n"NewVehicleSummon"); }
@@ -34,14 +36,14 @@ public class HUDWidgetsManager {
     if config.phoneHotkeyEnabled { ArrayPush(this.slots, n"NewPhoneHotkey"); }
     if config.playerHealthbarEnabled { ArrayPush(this.slots, n"NewHealthBar"); }
     if config.playerStaminabarEnabled { ArrayPush(this.slots, n"NewStaminaBar"); }
-    // if config.incomingCallAvatarEnabled { ArrayPush(this.slots, n"NewPhoneAvatar"); }
-    // if config.incomingCallButtonEnabled { ArrayPush(this.slots, n"NewPhoneControl"); }
     if config.inputHintsEnabled { ArrayPush(this.slots, n"NewInputHint"); }
     if config.speedometerEnabled { ArrayPush(this.slots, n"NewCarHud"); }
     if config.bossHealthbarEnabled { ArrayPush(this.slots, n"NewBossHealthbar"); }
     if config.dialogChoicesEnabled { ArrayPush(this.slots, n"NewDialogChoices"); }
     if config.dialogSubtitlesEnabled { ArrayPush(this.slots, n"NewDialogSubtitles"); }
+    if config.progressWidgetEnabled { ArrayPush(this.slots, n"NewProgressBar"); }
     if config.compatE3CompassEnabled { ArrayPush(this.slots, n"NewCompass"); }
+    if config.fpsCounterEnabled { ArrayPush(this.slots, n"NewFpsCounter"); }
     this.maxIndex = ArraySize(this.slots) - 1;
   }
 
@@ -62,6 +64,10 @@ public class HUDWidgetsManager {
 
   public func GetPlayerPuppet() -> wref<PlayerPuppet> {
     return GameInstance.FindEntityByID(this.gameInstance, this.puppetId) as PlayerPuppet;
+  }
+
+  public func IsActive() -> Bool {
+    return this.isActive;
   }
 
   public func SwitchToNextWidget() -> Void {

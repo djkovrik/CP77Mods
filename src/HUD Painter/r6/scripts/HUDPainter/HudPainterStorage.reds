@@ -133,6 +133,16 @@ public class HudPainterStorage extends ScriptableService {
     return result;
   }
 
+  public final func GetActivePresetName() -> String {
+    if !this.IsPresetExists(NameToString(this.activePreset)) {
+      this.Log("Active preset was deleted, restore to default");
+      this.SaveActivePresetName(this.defaultPreset);
+    };
+
+    this.Log(s"? GetActivePresetName returns \(this.activePreset)");
+    return NameToString(this.activePreset);
+  }
+
   private final func GetPresetData(preset: String) -> array<ref<HudPainterColorItem>> {
     let result: array<ref<HudPainterColorItem>>;
     let defaultPreset: ref<HudPainterStyleDTO> = this.GetPresetByName(this.defaultPreset);
@@ -211,16 +221,6 @@ public class HudPainterStorage extends ScriptableService {
     let parsed: ref<HudPainterStyleDTO> = FromJson(json, n"HudPainterStyleDTO") as HudPainterStyleDTO;
     this.Log(s"File \(fileName) parsed: \(IsDefined(parsed)) | Default entries: \(ArraySize(parsed.propertiesDefault)), Johnny entries: \(ArraySize(parsed.propertiesJohnny))");
     return parsed;
-  }
-
-  private final func GetActivePresetName() -> String {
-    if !this.IsPresetExists(NameToString(this.activePreset)) {
-      this.Log("Active preset was deleted, restore to default");
-      this.SaveActivePresetName(this.defaultPreset);
-    };
-
-    this.Log(s"? GetActivePresetName returns \(this.activePreset)");
-    return NameToString(this.activePreset);
   }
 
   private final func SaveActivePresetName(name: String) -> Void {

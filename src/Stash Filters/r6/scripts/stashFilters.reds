@@ -54,7 +54,8 @@ private final func PopulateVendorInventory() -> Void {
 
   this.m_vendorFilterManager.SortFiltersList();
   this.m_vendorFilterManager.InsertFilter(0, ItemFilterCategory.AllItems);
-  this.SetFilters(this.m_vendorFiltersContainer, this.m_vendorFilterManager.GetIntFiltersList(), n"OnVendorFilterChange");
+  let filtersList: array<Int32> = this.m_vendorFilterManager.GetIntFiltersList();
+  this.SetFilters(this.m_vendorFiltersContainer, filtersList, n"OnVendorFilterChange");
   this.m_vendorItemsDataView.EnableSorting();
   this.m_vendorItemsDataView.SetFilterType(targetFilter);
   this.m_vendorItemsDataView.SetSortMode(this.m_vendorItemsDataView.GetSortMode());

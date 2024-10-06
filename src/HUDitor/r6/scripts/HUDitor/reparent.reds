@@ -1,5 +1,8 @@
 import HUDrag.HUDitorConfig
 
+@if(ModuleExists("FpsCounter"))
+import FpsCounter.FPSCounterChangeStateEvent
+
 @addField(inkGameController) let huditorWidgetName: wref<inkText>;
 @addField(inkGameController) let carHudSlotPreview: wref<inkRectangle>;
 
@@ -22,7 +25,9 @@ import HUDrag.HUDitorConfig
 @addField(inkGameController) let bossHealthbarSlot: wref<HUDitorCustomSlot>;
 @addField(inkGameController) let dialogChoicesSlot: wref<HUDitorCustomSlot>;
 @addField(inkGameController) let dialogSubtitlesSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) let progressBarSlot: wref<HUDitorCustomSlot>;
 @addField(inkGameController) let e3CompassSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) let fpsCounterSlot: wref<HUDitorCustomSlot>;
 
 @addMethod(inkGameController)
 protected cb func OnScannerDetailsAppearedEvent(event: ref<ScannerDetailsAppearedEvent>) -> Bool {
@@ -54,7 +59,9 @@ protected cb func OnGameSessionInitialized(event: ref<GameSessionInitializedEven
     this.bossHealthbarSlot.OnGameSessionInitialized(event);
     this.dialogChoicesSlot.OnGameSessionInitialized(event);
     this.dialogSubtitlesSlot.OnGameSessionInitialized(event);
+    this.progressBarSlot.OnGameSessionInitialized(event);
     this.e3CompassSlot.OnGameSessionInitialized(event);
+    this.fpsCounterSlot.OnGameSessionInitialized(event);
   };
 }
 
@@ -80,7 +87,9 @@ protected cb func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidgetEve
     this.bossHealthbarSlot.OnEnableHUDEditorWidget(event);
     this.dialogChoicesSlot.OnEnableHUDEditorWidget(event);
     this.dialogSubtitlesSlot.OnEnableHUDEditorWidget(event);
+    this.progressBarSlot.OnEnableHUDEditorWidget(event);
     this.e3CompassSlot.OnEnableHUDEditorWidget(event);
+    this.fpsCounterSlot.OnEnableHUDEditorWidget(event);
     this.huditorWidgetName.SetVisible(true);
     this.huditorWidgetName.SetText(HUDitorTexts.GetWidgetName(event.activeWidget));
   };
@@ -108,7 +117,9 @@ protected cb func OnDisableHUDEditorWidgets(event: ref<DisableHUDEditor>) -> Boo
     this.bossHealthbarSlot.OnDisableHUDEditorWidgets(event);
     this.dialogChoicesSlot.OnDisableHUDEditorWidgets(event);
     this.dialogSubtitlesSlot.OnDisableHUDEditorWidgets(event);
+    this.progressBarSlot.OnDisableHUDEditorWidgets(event);
     this.e3CompassSlot.OnDisableHUDEditorWidgets(event);
+    this.fpsCounterSlot.OnDisableHUDEditorWidgets(event);
     this.huditorWidgetName.SetVisible(false);
   };
 }
@@ -135,7 +146,9 @@ protected cb func OnResetHUDWidgets(event: ref<ResetAllHUDWidgets>) {
     this.bossHealthbarSlot.OnResetHUDWidgets(event);
     this.dialogChoicesSlot.OnResetHUDWidgets(event);
     this.dialogSubtitlesSlot.OnResetHUDWidgets(event);
+    this.progressBarSlot.OnResetHUDWidgets(event);
     this.e3CompassSlot.OnResetHUDWidgets(event);
+    this.fpsCounterSlot.OnResetHUDWidgets(event);
   };
 }
 
@@ -161,7 +174,9 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
     this.bossHealthbarSlot.OnAction(action, consumer);
     this.dialogChoicesSlot.OnAction(action, consumer);
     this.dialogSubtitlesSlot.OnAction(action, consumer);
+    this.progressBarSlot.OnAction(action, consumer);
     this.e3CompassSlot.OnAction(action, consumer);
+    this.fpsCounterSlot.OnAction(action, consumer);
   };
 }
 
@@ -369,34 +384,34 @@ private func CreateCustomSlots() -> Void {
     this.staminaBarSlot = staminaBarSlot;
   };
 
-  // if config.incomingCallAvatarEnabled {
-  //   let phoneCallAvatarSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-  //   phoneCallAvatarSlot.SetName(n"NewPhoneAvatar");
-  //   phoneCallAvatarSlot.SetFitToContent(true);
-  //   phoneCallAvatarSlot.SetInteractive(false);
-  //   phoneCallAvatarSlot.SetAffectsLayoutWhenHidden(false);
-  //   phoneCallAvatarSlot.SetAnchor(inkEAnchor.Centered);
-  //   phoneCallAvatarSlot.SetAnchorPoint(new Vector2(1.0, 1.0));
+  if config.incomingCallAvatarEnabled {
+    let phoneCallAvatarSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
+    phoneCallAvatarSlot.SetName(n"NewPhoneAvatar");
+    phoneCallAvatarSlot.SetFitToContent(true);
+    phoneCallAvatarSlot.SetInteractive(false);
+    phoneCallAvatarSlot.SetAffectsLayoutWhenHidden(false);
+    phoneCallAvatarSlot.SetAnchor(inkEAnchor.Centered);
+    phoneCallAvatarSlot.SetAnchorPoint(new Vector2(1.0, 1.0));
 
-  //   root.RemoveChildByName(n"NewPhoneAvatar");
-  //   phoneCallAvatarSlot.Reparent(root, 12);
-  //   this.phoneCallAvatarSlot = phoneCallAvatarSlot;
-  // };
+    root.RemoveChildByName(n"NewPhoneAvatar");
+    phoneCallAvatarSlot.Reparent(root, 12);
+    this.phoneCallAvatarSlot = phoneCallAvatarSlot;
+  };
 
-  // if config.incomingCallButtonEnabled {
-  //   let phoneControlSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-  //   phoneControlSlot.SetName(n"NewPhoneControl");
-  //   phoneControlSlot.SetFitToContent(true);
-  //   phoneControlSlot.SetInteractive(false);
-  //   phoneControlSlot.SetAffectsLayoutWhenHidden(false);
-  //   phoneControlSlot.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
-  //   phoneControlSlot.SetAnchor(inkEAnchor.TopCenter);
-  //   phoneControlSlot.SetAnchorPoint(new Vector2(0.5, 0.0));
+  if config.incomingCallButtonEnabled {
+    let phoneControlSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
+    phoneControlSlot.SetName(n"NewPhoneControl");
+    phoneControlSlot.SetFitToContent(true);
+    phoneControlSlot.SetInteractive(false);
+    phoneControlSlot.SetAffectsLayoutWhenHidden(false);
+    phoneControlSlot.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+    phoneControlSlot.SetAnchor(inkEAnchor.Centered);
+    phoneControlSlot.SetAnchorPoint(new Vector2(0.5, 0.5));
 
-  //   root.RemoveChildByName(n"NewPhoneControl");
-  //   phoneControlSlot.Reparent(root, 13);
-  //   this.phoneControlSlot = phoneControlSlot;
-  // };
+    root.RemoveChildByName(n"NewPhoneControl");
+    phoneControlSlot.Reparent(root, 13);
+    this.phoneControlSlot = phoneControlSlot;
+  };
 
   if config.inputHintsEnabled {
     let inputHintSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
@@ -472,6 +487,19 @@ private func CreateCustomSlots() -> Void {
     this.dialogSubtitlesSlot = dialogSubtitlesSlot;
   };
 
+  if config.progressWidgetEnabled {
+    let progressBarSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
+    progressBarSlot.SetName(n"NewProgressBar");
+    progressBarSlot.SetFitToContent(false);
+    progressBarSlot.SetInteractive(false);
+    progressBarSlot.SetAffectsLayoutWhenHidden(false);
+    progressBarSlot.SetAnchor(inkEAnchor.BottomCenter);
+    progressBarSlot.SetAnchorPoint(new Vector2(0.5, 1.0));
+    root.RemoveChildByName(n"NewProgressBar");
+    progressBarSlot.Reparent(root, 19);
+    this.progressBarSlot = progressBarSlot;
+  };
+
   if config.compatE3CompassEnabled {
     let e3CompassSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
     e3CompassSlot.SetName(n"NewCompass");
@@ -483,8 +511,23 @@ private func CreateCustomSlots() -> Void {
     e3CompassSlot.SetAnchorPoint(new Vector2(0.5, 0.5));
 
     root.RemoveChildByName(n"NewCompass");
-    e3CompassSlot.Reparent(root, 19);
+    e3CompassSlot.Reparent(root, 20);
     this.e3CompassSlot = e3CompassSlot;
+  };
+
+  if config.fpsCounterEnabled {
+    let fpsCounterSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
+    fpsCounterSlot.SetName(n"NewFpsCounter");
+    fpsCounterSlot.SetFitToContent(false);
+    fpsCounterSlot.SetInteractive(false);
+    fpsCounterSlot.SetAffectsLayoutWhenHidden(false);
+    fpsCounterSlot.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+    fpsCounterSlot.SetAnchor(inkEAnchor.Centered);
+    fpsCounterSlot.SetAnchorPoint(new Vector2(0.5, 0.5));
+
+    root.RemoveChildByName(n"NewFpsCounter");
+    fpsCounterSlot.Reparent(root, 21);
+    this.fpsCounterSlot = fpsCounterSlot;
   };
 }
 
@@ -589,6 +632,12 @@ private func InitBaseWidgets() -> Void {
         targetWidget.SetAnchorPoint(new Vector2(0.5, 1.0));
         targetWidget.Reparent(this.dialogSubtitlesSlot);
         break;
+      case n"HUDProgressBarController":
+        if !config.progressWidgetEnabled { break; }
+        targetWidget = controller.GetRootCompoundWidget();
+        targetWidget.SetAnchorPoint(new Vector2(0.5, 1.0));
+        targetWidget.Reparent(this.progressBarSlot);
+        break;
       case n"IronsightGameController":
         if !config.compatE3CompassEnabled { break; }
         targetWidget = controller.GetRootCompoundWidget();
@@ -633,7 +682,7 @@ protected func Initialize() -> Bool {
   if config.phoneHotkeyEnabled { 
     targetWidget= this.GetRootCompoundWidget();
     targetWidget.SetAnchorPoint(new Vector2(0.0, 1.0));
-    targetWidget.Reparent(newParent);
+    targetWidget.Reparent(newParent, 22);
   };
   return wrap;
 }
@@ -654,4 +703,74 @@ protected cb func OnInitialize() -> Bool {
     targetWidget.Reparent(newParent);
   };
   return wrap;
+}
+
+@wrapMethod(HoloAudioCallLogicController)
+protected cb func OnInitialize() -> Bool {
+  let wrap: Bool = wrappedMethod();
+  let system: ref<inkSystem> = GameInstance.GetInkSystem();
+  let config: ref<HUDitorConfig> = new HUDitorConfig();
+  let root: ref<inkCompoundWidget> = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
+  let newParent: ref<inkCompoundWidget> = root.GetWidgetByPathName(n"NewPhoneAvatar") as inkCompoundWidget;
+  let targetWidget: ref<inkCompoundWidget>;
+  if config.incomingCallAvatarEnabled { 
+    targetWidget= this.GetRootCompoundWidget();
+    targetWidget.SetAnchorPoint(new Vector2(0.5, 0.5));
+    targetWidget.Reparent(newParent, 24);
+  };
+  return wrap;
+}
+
+@wrapMethod(IncomingCallLogicController)
+protected cb func OnInitialize() -> Bool {
+  let wrap: Bool = wrappedMethod();
+  let system: ref<inkSystem> = GameInstance.GetInkSystem();
+  let config: ref<HUDitorConfig> = new HUDitorConfig();
+  let root: ref<inkCompoundWidget> = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
+  let newParent: ref<inkCompoundWidget> = root.GetWidgetByPathName(n"NewPhoneControl") as inkCompoundWidget;
+  let targetWidget: ref<inkCompoundWidget>;
+  if config.incomingCallAvatarEnabled { 
+    targetWidget= this.GetRootCompoundWidget();
+    targetWidget.SetAnchorPoint(new Vector2(0.5, 0.5));
+    targetWidget.Reparent(newParent, 25);
+  };
+  return wrap;
+}
+
+// -- FPS Counter hacks
+@wrapMethod(PlayerPuppet)
+protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpawn>) -> Bool {
+  wrappedMethod(evt);
+
+  let cfg: ref<HUDitorConfig> = new HUDitorConfig();
+  if cfg.fpsCounterEnabled {
+    GameInstance.GetUISystem(this.GetGame()).QueueEvent(new ReparentFpsCounterEvent());
+  };
+}
+
+@addMethod(inkHUDGameController)
+protected cb func OnReparentFpsCounterEvent(evt: ref<ReparentFpsCounterEvent>) -> Bool {
+  if this.IsA(n"gameuiFPSCounterGameController") {
+    let system: ref<inkSystem> = GameInstance.GetInkSystem();
+    let hudRoot: ref<inkCompoundWidget> = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
+    let container: ref<inkCompoundWidget> = hudRoot.GetWidgetByPathName(n"NewFpsCounter") as inkCompoundWidget;
+    let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+    root.Reparent(container, 26);
+  };
+}
+
+@if(ModuleExists("FpsCounter"))
+@addMethod(inkHUDGameController)
+protected cb func OnHuditorFpsCounterTrack(evt: ref<FPSCounterChangeStateEvent>) -> Bool {
+  if this.IsA(n"gameuiFPSCounterGameController") {
+    let system: ref<inkSystem> = GameInstance.GetInkSystem();
+    let hudRoot: ref<inkCompoundWidget>;
+    let container: ref<inkCompoundWidget>;
+    let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+    if Equals(root.parentWidget.GetName(), n"HUDMiddleWidget") {
+      hudRoot = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
+      container = hudRoot.GetWidgetByPathName(n"NewFpsCounter") as inkCompoundWidget;
+      root.Reparent(container, 27);
+    };
+  };
 }

@@ -19,6 +19,15 @@ public class AutofixerItemData {
   public let textureName: CName;
   public let vehicleID: TweakDBID;
   public let sold: Bool;
+  public let vanilla: Bool;
+}
+
+public class AutofixerSellConfirmationEvent extends Event {
+  public let data: ref<AutofixerItemData>;
+}
+
+public class AutofixerSellConfirmedEvent extends Event {
+  public let data: ref<AutofixerItemData>;
 }
 
 public class AutofixerSellEvent extends Event {

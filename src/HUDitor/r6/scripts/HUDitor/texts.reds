@@ -60,8 +60,14 @@ public class HUDitorTexts {
       case n"NewDialogSubtitles":
         nameString = GetLocalizedTextByKey(n"Mod-HUDitor-Widget-Dialog-Subs"); 
         break;
+      case n"NewProgressBar":
+        nameString = GetLocalizedTextByKey(n"Mod-HUDitor-Widget-Progress"); 
+        break;
       case n"NewCompass":
         nameString = "E3 Compass"; 
+        break;
+      case n"NewFpsCounter":
+        nameString = "FPS Counter"; 
         break;
       default: 
         nameString = "Unknown"; 

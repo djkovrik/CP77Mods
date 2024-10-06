@@ -1028,7 +1028,6 @@ public class EdgerunningSystem extends ScriptableSystem {
     // system.preventionHelper.ScheduleRandomWeaponActions(4.5)
     // system.effectsHelper.ScheduleCycledSfx(7.0);
     // system.player.GetPreventionSystem().SpawnPoliceForPsychosis(system.config);
-    // GameInstance.GetGodModeSystem(system.player.GetGame()).AddGodMode(system.player.GetEntityID(), gameGodModeType.Invulnerable, n"TimeSkip");
   }
 }
 

@@ -148,11 +148,6 @@ protected cb func OnBack(userData: ref<IScriptable>) -> Bool {
   this.edgerunnerHumanityBar.SetVisible(true);
 }
 
-@wrapMethod(RipperDocGameController)
-private final func DisplayInventory(visible: Bool) -> Void {
-  wrappedMethod(visible);
-  ModLog(n"TEST", s"WRAP \(visible)");
-}
 
 // -- HEALTHBAR --
 
