@@ -436,6 +436,39 @@ BaseStatusEffect.RipperDocMedBuffCommon:
   $base: BaseStatusEffect.RipperDocMedBuff
   duration: Items.RipperdocMedDurationCommon
 
+BaseStatusEffect.LifeAffirmedBuff:
+    $base: BaseStatusEffect.BuffStatusEffect
+    duration: BaseStats.InfiniteDuration
+    gameplayTags: [ Buff ]
+    savable: true
+    uiData:
+        displayName: Life Affirmed
+        iconPath: immunity_icon
+    packages:
+    - BaseStatusEffect.MemoryBooster_inline0
+    - $type: GameplayLogicPackage
+      stackable:  true
+      stats:
+      - $type: ConstantStatModifier
+        statType: BaseStats.Armor
+        modifierType: Additive
+        value: 34.0
+      - $type: ConstantStatModifier
+        statType: BaseStats.ReloadTimeBonus
+        modifierType: Additive
+        value: -0.05
+      - $type: ConstantStatModifier
+        statType: BaseStats.EmptyReloadTime
+        modifierType: Additive
+        value: -0.05
+    maxStacks:
+      $type: StatModifierGroup
+      statModsLimit: -1
+      statModifiers:
+        - $type: ConstantStatModifier
+          modifierType: Additive
+          statType: BaseStats.MaxStacks
+          value: 6
 
 # === Meds ===
 

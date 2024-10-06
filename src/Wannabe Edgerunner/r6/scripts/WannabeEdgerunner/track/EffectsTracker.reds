@@ -55,7 +55,7 @@ protected cb func OnUninitialize() -> Bool {
 
 @addMethod(dialogWidgetGameController)
 protected cb func OnLastAttemptedChoiceCustom(value: Variant) -> Bool {
-  let action: HumanityRestoringAction = EdgerunnerInteractionChecker.Check(this.m_lastSelectedHub);
+  let action: HumanityRestoringAction = EdgerunnerInteractionChecker.Check(this.GetPlayerControlledObject().GetGame(), this.m_lastSelectedHub);
   if NotEquals(action, HumanityRestoringAction.Unknown) {
     EdgerunningSystem.GetInstance(this.GetPlayerControlledObject().GetGame()).OnRestoreAction(action);
   };
