@@ -298,43 +298,50 @@ public class EdgerunningSystem extends ScriptableSystem {
             this.ResetHumanityDamage();
             this.ShowHumanityRestoredMessage();
         }
+        StatusEffectHelper.RemoveStatusEffect(this.player, t"BaseStatusEffect.LifeAffirmedBuff");
         E("! Rested, humanity value restored.");
         break;
       case HumanityRestoringAction.Lover:
+        if !this.humanityRestoringActionTakenLover { StatusEffectHelper.ApplyStatusEffect(this.player, t"BaseStatusEffect.LifeAffirmedBuff", this.player.GetEntityID());
         let amount: Int32 = this.config.restoreOnLover;
         this.humanityRestoringActionTakenLover = true;
         this.RemoveHumanityDamage(amount);
         E("! Lover, humanity restored");
         break;
       case HumanityRestoringAction.Social:
+        if !this.humanityRestoringActionTakenSocial { StatusEffectHelper.ApplyStatusEffect(this.player, t"BaseStatusEffect.LifeAffirmedBuff", this.player.GetEntityID());
         let amount: Int32 = this.config.restoreOnSocial;
         this.humanityRestoringActionTakenSocial = true;
         this.RemoveHumanityDamage(amount);
         E("! Social, humanity restored");
         break;
       case HumanityRestoringAction.Pet:
+        if !this.humanityRestoringActionTakenPet { StatusEffectHelper.ApplyStatusEffect(this.player, t"BaseStatusEffect.LifeAffirmedBuff", this.player.GetEntityID());
         let amount: Int32 = this.config.restoreOnPet;
         this.humanityRestoringActionTakenPet = true;
         this.RemoveHumanityDamage(amount);
         E("! Pet, humanity restored");
         break;
       case HumanityRestoringAction.Donation:
+        if !this.humanityRestoringActionTakenDonation { StatusEffectHelper.ApplyStatusEffect(this.player, t"BaseStatusEffect.LifeAffirmedBuff", this.player.GetEntityID());
         let amount: Int32 = this.config.restoreOnDonation;
         this.humanityRestoringActionTakenDonation = true;
         this.RemoveHumanityDamage(amount);
         E("! Donated some money, humanity restored");
         break;
       case HumanityRestoringAction.Apartment:
+        if !this.humanityRestoringActionTakenApartment { StatusEffectHelper.ApplyStatusEffect(this.player, t"BaseStatusEffect.LifeAffirmedBuff", this.player.GetEntityID());
         let amount: Int32 = this.config.restoreOnApartment;
         this.humanityRestoringActionTakenApartment = true;
         this.RemoveHumanityDamage(amount);
         E("! Apartment interaction, humanity restored");
         break;
       case HumanityRestoringAction.Shower:
+        if !this.humanityRestoringActionTakenShower { StatusEffectHelper.ApplyStatusEffect(this.player, t"BaseStatusEffect.LifeAffirmedBuff", this.player.GetEntityID());
         let amount: Int32 = this.config.restoreOnShower;
         this.humanityRestoringActionTakenShower = true;
         this.RemoveHumanityDamage(amount);
-          E("! Took a shower, humanity restored");
+        E("! Took a shower, humanity restored");
         break;
     };
 
