@@ -45,6 +45,21 @@ protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpaw
   };
 }
 
+// Track overclock
+@wrapMethod(PlayerPuppet)
+  protected cb func OnStatusEffectApplied(evt: ref<ApplyStatusEffectEvent>) -> Bool {
+    let gameplayTags: array<CName> = evt.staticData.GameplayTags();
+    if ArrayContains(gameplayTags, n"Overclock") {
+	  let itemRecord: ref<Item_Record>;
+      if IsDefined(this) && EquipmentSystem.IsCyberdeckEquipped(this) {
+	    let systemReplacementID: ItemID = EquipmentSystem.GetData(this).GetActiveItem(gamedataEquipmentArea.SystemReplacementCW);
+        itemRecord = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(systemReplacementID));
+		EdgerunningSystem.GetInstance(this.GetGame()).OnOverClockActivation(itemRecord);
+      };
+	};
+	wrappedMethod(evt);
+}
+
 // Track berserk
 @wrapMethod(UseBerserkAction)
 public func StartAction(gameInstance: GameInstance) -> Void {

@@ -57,5 +57,7 @@ enum HumanityRestoringAction {
   Pet = 2,
   Donation = 3,
   Apartment = 4,
-  Unknown = 5,
+  Lover = 5,
+  Social = 6,
+  Unknown = 10,
 }
