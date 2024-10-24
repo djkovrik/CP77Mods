@@ -135,7 +135,6 @@ protected cb func OnInitialize() -> Bool {
 }
 
 // Bind perks screen colors
-
 @addField(NewPerksPerkItemLogicController) public let cellOuterBg: ref<inkWidget>;
 @addField(NewPerksPerkItemLogicController) public let cellInnerFg: ref<inkWidget>;
 @addField(NewPerksPerkItemLogicController) public let cellInnerBg: ref<inkWidget>;
@@ -164,4 +163,50 @@ public final func UpdateState() -> Void {
       // this.cellInnerBg.BindProperty(n"tintColor", n"MainColors.Orange");
       this.icoMaster.BindProperty(n"tintColor", n"MainColors.Yellow");
     }
+}
+
+// Vehicle weapon roster divider
+// Colored with colors interpolator so bind props after animation end
+@addField(WeaponRosterGameController)
+private let vehicleWeaponDivider: wref<inkWidget>;
+
+@wrapMethod(WeaponRosterGameController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+  this.vehicleWeaponDivider = this.GetRootCompoundWidget().GetWidgetByPathName(n"/vehicle_container/weapon_container/divider_line");
+  this.vehicleWeaponDivider.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+}
+
+@wrapMethod(WeaponRosterGameController)
+private final func Fold() -> Void {
+  wrappedMethod();
+  if IsDefined(this.m_transitionAnimProxy) {
+    this.m_transitionAnimProxy.RegisterToCallback(inkanimEventType.OnFinish, this, n"OnFoldEndCustom");
+  };
+}
+
+@addMethod(WeaponRosterGameController)
+protected cb func OnFoldEndCustom(proxy: ref<inkAnimProxy>) -> Bool {
+  this.vehicleWeaponDivider.UnbindProperty(n"tintColor");
+  this.vehicleWeaponDivider.BindProperty(n"tintColor", n"MainColors.ActiveBlue");
+  if IsDefined(this.m_transitionAnimProxy) {
+    this.m_transitionAnimProxy.UnregisterFromCallback(inkanimEventType.OnFinish, this, n"OnFoldEndCustom");
+  };
+}
+
+@wrapMethod(WeaponRosterGameController)
+private final func Unfold() -> Void {
+  wrappedMethod();
+  if IsDefined(this.m_transitionAnimProxy) {
+    this.m_transitionAnimProxy.RegisterToCallback(inkanimEventType.OnFinish, this, n"OnUnfoldEndCustom");
+  };
+}
+
+@addMethod(WeaponRosterGameController)
+protected cb func OnUnfoldEndCustom(proxy: ref<inkAnimProxy>) -> Bool {
+  this.vehicleWeaponDivider.UnbindProperty(n"tintColor");
+  this.vehicleWeaponDivider.BindProperty(n"tintColor", n"MainColors.ActiveRed");
+  if IsDefined(this.m_transitionAnimProxy) {
+    this.m_transitionAnimProxy.UnregisterFromCallback(inkanimEventType.OnFinish, this, n"OnUnfoldEndCustom");
+  };
 }
