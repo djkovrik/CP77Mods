@@ -210,3 +210,24 @@ protected cb func OnUnfoldEndCustom(proxy: ref<inkAnimProxy>) -> Bool {
     this.m_transitionAnimProxy.UnregisterFromCallback(inkanimEventType.OnFinish, this, n"OnUnfoldEndCustom");
   };
 }
+
+// Vehicle control camera - TODO check why inkstyle does not work
+@wrapMethod(RemoteControlDrivingHUDGameController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+
+  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+  let overlay: ref<inkCompoundWidget> = root.GetWidgetByPathName(n"Overlay") as inkCompoundWidget;
+  let indexes: array<Int32> = [ 3, 9, 15, 22, 23, 24, 25, 26, 27 ];
+  for index in indexes {
+    overlay.GetWidgetByIndex(index).BindProperty(n"tintColor", n"MainColors.CombatRed");
+  };
+
+  let fncs: ref<inkCompoundWidget> = root.GetWidgetByPathName(n"Overlay/fncs") as inkCompoundWidget;
+  let i: Int32 = 0;
+  let count: Int32 = fncs.GetNumChildren();
+  while i < count {
+    fncs.GetWidgetByIndex(i).BindProperty(n"tintColor", n"MainColors.CombatRed");
+    i += 1;
+  };
+}

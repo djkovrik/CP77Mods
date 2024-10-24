@@ -242,7 +242,7 @@ class HudPainterController extends gameuiSettingsMenuGameController {
 
     let buttonDelete: ref<SimpleButton> = SimpleButton.Create();
     buttonDelete.SetName(n"buttonDelete");
-    buttonDelete.SetText(GetLocalizedText("LocKey#45020"));
+    buttonDelete.SetText(GetLocalizedTextByKey(n"Mod-HudPainter-Delete"));
     buttonDelete.ToggleAnimations(true);
     buttonDelete.ToggleSounds(true);
     buttonDelete.SetDisabled(true);
