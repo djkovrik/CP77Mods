@@ -25,3 +25,13 @@ public final func IsJunk() -> Bool {
   let data: ref<gameItemData> = this.GetItemData();
   return wrappedMethod() || data.modMarkedForSale;
 }
+
+@wrapMethod(CraftingSystem)
+public final const func CanItemBeDisassembled(itemData: wref<gameItemData>) -> Bool {
+  let wrapped: Bool = wrappedMethod(itemData);
+  let modded: Bool = false;
+  if IsDefined(itemData) {
+    modded = itemData.modMarkedForSale;
+  };
+  return wrapped || modded;
+}

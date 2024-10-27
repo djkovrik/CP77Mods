@@ -67,7 +67,7 @@ public class MarkToSellSystem extends ScriptableSystem {
       isEquipped = this.equipmentSystem.IsEquipped(this.player, itemData.GetID());
       isIconic = RPGManager.IsItemDataIconic(itemData);
       isFavorite = this.uiScriptableSystem.IsItemPlayerFavourite(itemData.GetID());
-      if !itemData.HasTag(n"Quest") && Equals(itemData.GetItemType(), type) && Equals(RPGManager.GetItemDataQuality(itemData), quality) && !isEquipped && !isIconic && !isFavorite {
+      if !itemData.HasTag(n"Quest") && !itemData.HasTag(n"UnequipBlocked") && Equals(itemData.GetItemType(), type) && Equals(RPGManager.GetItemDataQuality(itemData), quality) && !isEquipped && !isIconic && !isFavorite {
         if currentlyMarked {
           itemData.modMarkedForSale = false;
           this.Remove(itemData.GetID());

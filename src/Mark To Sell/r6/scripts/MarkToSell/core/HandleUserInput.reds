@@ -57,7 +57,7 @@ private func ToggleMarkForSale() -> Void {
   let itemId: ItemID = data.GetID();
   let newMark: Bool;
 
-  if data.HasTag(n"Quest") {
+  if data.HasTag(n"Quest") || data.HasTag(n"UnequipBlocked") {
     return ;
   };
 
@@ -169,7 +169,7 @@ private func ToggleMarkForSale(evt: ref<ItemDisplayClickEvent>) -> Void {
     itemId = data.GetID();
     let newMark: Bool;
 
-    if data.HasTag(n"Quest") {
+    if data.HasTag(n"Quest") || data.HasTag(n"UnequipBlocked") {
       return ;
     };
     
