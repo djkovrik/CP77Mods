@@ -1,3 +1,0 @@
-module RevisedBackpack
-
-public class RevisedBackpackTemplateClassifier extends inkVirtualItemTemplateClassifier {}

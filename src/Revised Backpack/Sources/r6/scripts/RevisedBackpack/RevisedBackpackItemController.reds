@@ -15,6 +15,7 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
   private let m_itemPrice: wref<inkText>;
   private let m_itemWeight: wref<inkText>;
   private let m_itemDps: wref<inkText>;
+  private let m_itemRange: wref<inkText>;
   private let m_itemQuest: wref<inkWidget>;
   private let m_questContainer: wref<inkWidget>; 
 
@@ -32,6 +33,7 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     this.m_itemPrice = root.GetWidgetByPathName(n"item/price") as inkText;
     this.m_itemWeight = root.GetWidgetByPathName(n"item/weight") as inkText;
     this.m_itemDps = root.GetWidgetByPathName(n"item/dps") as inkText;
+    this.m_itemRange = root.GetWidgetByPathName(n"item/range") as inkText;
     this.m_itemQuest = root.GetWidgetByPathName(n"item/quest/checkbox");
     this.m_questContainer = root.GetWidgetByPathName(n"item/quest");
 
@@ -136,7 +138,7 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
   }
 
   public final func SetIsPlayerFavourite(flag: Bool) -> Void {
-    this.Log(s"Switch quest tag for \(this.m_item.GetNameLabel()) to \(flag)");
+    this.Log(s"Switch quest tag for \(this.m_item.nameLabel) to \(flag)");
     this.m_item.SetFavoriteFlag(flag);
     this.m_itemFavorite.SetVisible(this.GetIsPlayerFavourite());
   }
@@ -156,7 +158,7 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
   }
 
   private final func RefreshView() -> Void {
-    let label: String = this.m_item.GetNameLabel();
+    let label: String = this.m_item.nameLabel;
     let quantity: Int32 = this.m_item.inventoryItem.GetQuantity();
     if quantity > 1 { label += s" (\(quantity))"; }
     this.m_itemName.SetText(label);
@@ -166,11 +168,12 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     this.m_itemEquipped.SetVisible(this.m_item.GetEquippedFlag());
     this.m_itemNew.SetVisible(this.m_item.GetNewFlag());
     this.m_itemFavorite.SetVisible(this.m_item.GetFavoriteFlag());
-    this.m_itemType.SetText(this.m_item.GetTypeLabel());
-    this.m_itemTier.SetText(this.m_item.GetTierLabel());
-    this.m_itemPrice.SetText(this.m_item.GetPriceLabel());
-    this.m_itemWeight.SetText(this.m_item.GetWeightLabel());
-    this.m_itemDps.SetText(this.m_item.GetDpsLabel());
+    this.m_itemType.SetText(this.m_item.typeLabel);
+    this.m_itemTier.SetText(this.m_item.tierLabel);
+    this.m_itemPrice.SetText(this.m_item.priceLabel);
+    this.m_itemWeight.SetText(this.m_item.weightLabel);
+    this.m_itemDps.SetText(this.m_item.dpsLabel);
+    this.m_itemRange.SetText(this.m_item.rangeLabel);
     this.m_itemQuest.SetVisible(this.m_item.GetQuestFlag());
     this.m_selection.SetVisible(this.m_item.GetSelectedFlag());
 

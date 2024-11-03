@@ -8,7 +8,8 @@ enum revisedSorting {
   Price = 4,
   Weight = 5,
   Dps = 6,
-  Quest = 7,
+  Range = 7,
+  Quest = 8,
 }
 
 enum revisedSortingMode {
@@ -17,71 +18,33 @@ enum revisedSortingMode {
   Desc = 2,
 }
 
-public class RevisedItemSortData {
-  public let name: String;
-  public let type: Int32;
-  public let tier: Int32;
-  public let price: Float;
-  public let weight: Float;
-  public let dps: Float;
-  public let isQuest: Bool;
-  public let isNew: Bool;
-  public let isFavourite: Bool;
-  public let isDlcAddedItem: Bool;
-  public let isWeapon: Bool;
-}
-
 public class RevisedItemWrapper {
   public let id: TweakDBID;
   public let data: wref<gameItemData>;
   public let inventoryItem: wref<UIInventoryItem>;
-  public let displayContextData: wref<ItemDisplayContextData>;
   public let equipArea: gamedataEquipmentArea;
   public let type: gamedataItemType;
+  public let typeLabel: String;
+  public let typeValue: Int32;
+  public let tierLabel: String;
+  public let tierValue: Int32;
   public let evolution: gamedataWeaponEvolution;
-  public let displayNameKey: CName;
+  public let nameLabel: String;
+  public let price: Float;
+  public let priceLabel: String;
+  public let weight: Float;
+  public let weightLabel: String;
   public let dps: Float;
+  public let dpsLabel: String;
+  public let range: Int32;
+  public let rangeLabel: String;
+  public let isQuest: Bool;
   public let isNew: Bool;
   public let isFavorite: Bool;
-  public let isQuest: Bool;
+  public let isDlcAddedItem: Bool;
+  public let isWeapon: Bool;
   public let selected: Bool;
   public let questTagToggleable: Bool;
-
-  public final func GetNameLabel() -> String {
-    return GetLocalizedTextByKey(this.displayNameKey);
-  }
-
-  public final func GetTypeLabel() -> String {
-    return UIItemsHelper.GetItemTypeKey(this.data, this.equipArea, this.id, this.type, this.evolution);
-  }
-
-  public final func GetTierLabel() -> String {
-    let qualityText: String = GetLocalizedText(UIItemsHelper.QualityToTierString(this.inventoryItem.GetQuality()));
-    let plus: Int32 = Cast<Int32>(this.inventoryItem.GetItemPlus());
-    if !this.inventoryItem.IsProgram() {
-      if plus >= 2 {
-        qualityText += "++";
-      } else {
-        if plus >= 1 {
-          qualityText += "+";
-        };
-      };
-    };
-
-    return qualityText;
-  }
-
-  public final func GetPriceLabel() -> String {
-    return IntToString(RoundF(this.inventoryItem.GetSellPrice()));
-  }
-
-  public final func GetWeightLabel() -> String {
-    return FloatToStringPrec(this.inventoryItem.GetWeight(), 1);
-  }
-
-  public final func GetDpsLabel() -> String {
-    return FloatToStringPrec(this.dps, 1);
-  }
 
   public final func GetEquippedFlag() -> Bool {
     return this.inventoryItem.IsEquipped();
@@ -199,8 +162,6 @@ public class RevisedCategorySelectedEvent extends Event {
     return evt;
   }
 }
-
-public class RevisedBackpackPopulatedEvent extends Event {}
 
 public class RevisedBackpackSortingChanged extends Event {
   public let sorting: revisedSorting;
@@ -354,3 +315,14 @@ public class RevisedBackpackOutfitCooldownResetCallback extends DelayCallback {
     this.m_controller.SetOutfitCooldown(false);
   }
 }
+
+public class RevisedBackpackFilterDebounceCallback extends DelayCallback {
+
+  public let m_controller: wref<RevisedBackpackFiltersController>;
+
+  public func Call() -> Void {
+    this.m_controller.ApplyFilters();
+  }
+}
+
+public class RevisedBackpackTemplateClassifier extends inkVirtualItemTemplateClassifier {}

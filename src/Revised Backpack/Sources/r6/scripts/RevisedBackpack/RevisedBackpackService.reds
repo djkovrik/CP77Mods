@@ -3,7 +3,7 @@ module RevisedBackpack
 public class RevisedBackpackService extends ScriptableService {
 
   private let categories: array<ref<RevisedBackpackCategory>>;
-
+  
   public static func GetInstance() -> ref<RevisedBackpackService> {
     return GameInstance.GetScriptableServiceContainer().GetService(n"RevisedBackpack.RevisedBackpackService") as RevisedBackpackService;
   }

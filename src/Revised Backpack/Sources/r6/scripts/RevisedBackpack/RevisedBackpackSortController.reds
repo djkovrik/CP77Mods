@@ -2,12 +2,15 @@ module RevisedBackpack
 
 public class RevisedBackpackSortController extends inkLogicController {
 
+  private let m_player: wref<PlayerPuppet>;
+
   private let m_borderName: inkWidgetRef;
   private let m_borderType: inkWidgetRef;
   private let m_borderTier: inkWidgetRef;
   private let m_borderPrice: inkWidgetRef;
   private let m_borderWeight: inkWidgetRef;
   private let m_borderDps: inkWidgetRef;
+  private let m_borderRange: inkWidgetRef;
   private let m_borderQuest: inkWidgetRef;
 
   private let m_arrowName: inkWidgetRef;
@@ -16,6 +19,7 @@ public class RevisedBackpackSortController extends inkLogicController {
   private let m_arrowPrice: inkWidgetRef;
   private let m_arrowWeight: inkWidgetRef;
   private let m_arrowDps: inkWidgetRef;
+  private let m_arrowRange: inkWidgetRef;
   private let m_arrowQuest: inkWidgetRef;
 
   private let previousSelectedWidget: ref<inkWidget>;
@@ -26,7 +30,6 @@ public class RevisedBackpackSortController extends inkLogicController {
 
   private let rotationAnimationProxy: ref<inkAnimProxy>;
   private let rotationAnimation: ref<inkAnimDef>;
-  private let initializationCompleted: Bool;
 
   protected cb func OnInitialize() -> Bool {
     this.currentSorting = revisedSorting.None;
@@ -35,6 +38,8 @@ public class RevisedBackpackSortController extends inkLogicController {
     this.RegisterToCallback(n"OnHoverOver", this, n"OnHoverOver");
     this.RegisterToCallback(n"OnHoverOut", this, n"OnHoverOut");
     this.RegisterToCallback(n"OnRelease", this, n"OnRelease");
+
+    this.m_player = GetPlayer(GetGameInstance());
   }
 
   protected cb func OnUninitialize() -> Bool {
@@ -72,14 +77,6 @@ public class RevisedBackpackSortController extends inkLogicController {
         this.currentSelectedWidget = target;
         this.OnSortingHeaderClick(this.SortingFromUserData(userData.m_text));
       };
-    };
-  }
-
-  protected cb func OnRevisedBackpackPopulatedEvent(evt: ref<RevisedBackpackPopulatedEvent>) -> Bool {
-    if !this.initializationCompleted {
-      this.currentSelectedWidget = inkWidgetRef.Get(this.m_borderName);
-      this.OnSortingHeaderClick(revisedSorting.Name);
-      this.initializationCompleted = true;
     };
   }
 
@@ -154,6 +151,9 @@ public class RevisedBackpackSortController extends inkLogicController {
       case revisedSorting.Dps:
         this.UpdateArrow(this.m_arrowDps, Equals(this.currentSortingMode, revisedSortingMode.Asc));
         break;
+      case revisedSorting.Range:
+        this.UpdateArrow(this.m_arrowRange, Equals(this.currentSortingMode, revisedSortingMode.Asc));
+        break;
       case revisedSorting.Quest:
         this.UpdateArrow(this.m_arrowQuest, Equals(this.currentSortingMode, revisedSortingMode.Asc));
         break;
@@ -167,6 +167,7 @@ public class RevisedBackpackSortController extends inkLogicController {
     inkWidgetRef.SetVisible(this.m_arrowPrice, false);
     inkWidgetRef.SetVisible(this.m_arrowWeight, false);
     inkWidgetRef.SetVisible(this.m_arrowDps, false);
+    inkWidgetRef.SetVisible(this.m_arrowRange, false);
     inkWidgetRef.SetVisible(this.m_arrowQuest, false);
   }
 
@@ -206,6 +207,7 @@ public class RevisedBackpackSortController extends inkLogicController {
       case "Price": return revisedSorting.Price;
       case "Weight": return revisedSorting.Weight;
       case "Dps": return revisedSorting.Dps;
+      case "Range": return revisedSorting.Range;
       case "Quest": return revisedSorting.Quest;
     };
 
@@ -213,7 +215,7 @@ public class RevisedBackpackSortController extends inkLogicController {
   }
 
   private final func PlaySound(evt: CName) -> Void {
-    GameObject.PlaySoundEvent(GetPlayer(GetGameInstance()), evt);
+    GameObject.PlaySoundEvent(this.m_player, evt);
   }
 
   private final func Log(str: String) -> Void {

@@ -42,10 +42,8 @@ public class RevisedBackpackDataView extends ScriptableDataView {
   }
 
   public func SortItem(left: ref<IScriptable>, right: ref<IScriptable>) -> Bool {
-    let leftEntry: ref<RevisedItemWrapper> = left as RevisedItemWrapper;
-    let rightEntry: ref<RevisedItemWrapper> = right as RevisedItemWrapper;
-    let leftItem: ref<RevisedItemSortData> = RevisedCompareBuilder.BuildRevisedItemSortData(leftEntry, this.m_uiScriptableSystem);
-    let rightItem: ref<RevisedItemSortData> = RevisedCompareBuilder.BuildRevisedItemSortData(rightEntry, this.m_uiScriptableSystem);
+    let leftItem: ref<RevisedItemWrapper> = left as RevisedItemWrapper;
+    let rightItem: ref<RevisedItemWrapper> = right as RevisedItemWrapper;
 
     switch this.m_sorting {
       case revisedSorting.Name:
@@ -192,6 +190,30 @@ public class RevisedBackpackDataView extends ScriptableDataView {
         };
         break;
 
+      case revisedSorting.Range:
+        if Equals(this.m_sortingMode, revisedSortingMode.Asc) {           // Asc
+          if this.m_newItemsOnTop && !this.m_favoriteItemsOnTop {         // New on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).NewItem().RangeAsc().NameAsc().QualityDesc().GetBool();
+          } else if !this.m_newItemsOnTop && this.m_favoriteItemsOnTop {  // Favorite on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).FavouriteItem().RangeAsc().NameAsc().QualityDesc().GetBool();
+          } else if this.m_newItemsOnTop && this.m_favoriteItemsOnTop {   // New and favorite on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).FavouriteItem().NewItem().RangeAsc().NameAsc().QualityDesc().GetBool();
+          } else if !this.m_newItemsOnTop && !this.m_favoriteItemsOnTop { // Nothing on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).RangeAsc().NameAsc().QualityDesc().GetBool();
+          };
+        } else if Equals(this.m_sortingMode, revisedSortingMode.Desc) {   // Desc
+          if this.m_newItemsOnTop && !this.m_favoriteItemsOnTop {         // New on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).NewItem().RangeDesc().NameAsc().QualityDesc().GetBool();
+          } else if !this.m_newItemsOnTop && this.m_favoriteItemsOnTop {  // Favorite on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).FavouriteItem().RangeDesc().NameAsc().QualityDesc().GetBool();
+          } else if this.m_newItemsOnTop && this.m_favoriteItemsOnTop {   // New and favorite on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).FavouriteItem().NewItem().RangeDesc().NameAsc().QualityDesc().GetBool();
+          } else if !this.m_newItemsOnTop && !this.m_favoriteItemsOnTop { // Nothing on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).RangeDesc().NameAsc().QualityDesc().GetBool();
+          };
+        };
+        break;
+
       case revisedSorting.Quest:
         if Equals(this.m_sortingMode, revisedSortingMode.Asc) {           // Asc
           if this.m_newItemsOnTop && !this.m_favoriteItemsOnTop {         // New on top
@@ -215,7 +237,6 @@ public class RevisedBackpackDataView extends ScriptableDataView {
           };
         };
         break;
-
     };
 
     return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).FavouriteItem().QualityDesc().TypeAsc().NameAsc().GetBool();
@@ -235,7 +256,7 @@ public class RevisedBackpackDataView extends ScriptableDataView {
 
   public func FilterItem(data: ref<IScriptable>) -> Bool {
     let itemWrapper: ref<RevisedItemWrapper> = data as RevisedItemWrapper;
-    let name: String = itemWrapper.GetNameLabel();
+    let name: String = itemWrapper.nameLabel;
     let nameNotEmpty: Bool = NotEquals(name, "");
     let predicate: Bool = this.m_selectedCategory.predicate.Check(itemWrapper);
     let searchMatched: Bool = this.ItemTextsContainQuery(itemWrapper);

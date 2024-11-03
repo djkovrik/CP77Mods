@@ -200,9 +200,13 @@ public abstract class RevisedBackpackUtils {
  + disassemble, drop, equip, favorite + other vanilla backpack functionality
  + display quantity
  + toggle quest
- - filters: search
- - filters: tier controls
- - filters: new / favorite on top
- - filters: mass actions
+ + new column: effective range
+ ? new column: toggle junk
+ ! filters: search [WIP]
+ ! filters: tier controls [WIP]
+ ? filters: ammo type
+ ? filters: new / favorite on top
+ - mass actions (disassemble and junk)
  - check HideInBackpackUI and SoftwareShard tags
+ - animate screen open
 **/

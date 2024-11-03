@@ -127,7 +127,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     
     this.SetupVirtualList();
     this.PopulateCategories();
-    this.RefreshDataSource();
+    this.PopulateInventory();
 
     this.Log(s"OnPlayerAttach: service \(IsDefined(this.m_service)), categories: \(ArraySize(this.m_availableCategories))");
   }
@@ -145,6 +145,12 @@ public class RevisedBackpackController extends gameuiMenuGameController {
       setComparisionDisabledRequest.value = this.m_isComparisonDisabled;
       this.m_uiScriptableSystem.QueueRequest(setComparisionDisabledRequest);
       this.InvalidateItemTooltipEvent();
+    };
+
+    if evt.IsAction(n"mouse_left") {
+      if !IsDefined(evt.GetTarget()) || !evt.GetTarget().CanSupportFocus() {
+        this.RequestSetFocus(null);
+      };
     };
   }
 
@@ -266,7 +272,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
   }
 
   private final func RefreshUI() -> Void {
-    this.RefreshDataSource();
+    this.PopulateInventory();
   }
 
   private final func RefreshUINextFrame() -> Void {
@@ -316,7 +322,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     return dummy;
   }
 
-  private final func RefreshDataSource() -> Void {
+  private final func PopulateInventory() -> Void {
     let i: Int32;
     let limit: Int32;
     let quantity: Int32;
@@ -375,9 +381,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
 
     this.itemsListDataSource.Reset(wrappedItems);
     this.itemsListDataView.UpdateView();
-    this.Log(s"RefreshDataSource \(ArraySize(wrappedItems))");
-
-    this.QueueEvent(new RevisedBackpackPopulatedEvent());
+    this.Log(s"PopulateInventory \(ArraySize(wrappedItems))");
   }
 
   private final func RequestItemInspected(itemID: ItemID) -> Void {
@@ -455,6 +459,9 @@ public class RevisedBackpackController extends gameuiMenuGameController {
         break;
       case revisedSorting.Dps:
         label = GetLocalizedTextByKey(n"Mod-Revised-Column-Dps");
+        break;
+      case revisedSorting.Range:
+        label = GetLocalizedTextByKey(n"Mod-Revised-Column-Range");
         break;
       case revisedSorting.Quest:
         label = GetLocalizedTextByKey(n"Mod-Revised-Column-Quest");
@@ -806,7 +813,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
 
   private final func OnInventoryRequestTooltip(itemData: wref<UIInventoryItem>, widget: wref<inkWidget>) -> Void {
     let placement: gameuiETooltipPlacement = gameuiETooltipPlacement.RightTop;
-    let margin: inkMargin = new inkMargin(-500.0, 600.0, 0.0, 0.0);
+    let margin: inkMargin = new inkMargin(-680.0, 680.0, 0.0, 0.0);
     let itemToCompare: wref<UIInventoryItem>;
     let itemTooltipData: ref<UIInventoryItemTooltipWrapper>;
     let itemTooltips: [CName; 2];
@@ -975,6 +982,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
   }
 
   private final func BuildWrappedItem(uiInventoryItem: ref<UIInventoryItem>) -> ref<RevisedItemWrapper> {
+    let statsManager: ref<UIInventoryItemStatsManager> = uiInventoryItem.GetStatsManager();
     let data: ref<gameItemData> = uiInventoryItem.GetRealItemData();
     let equipArea: gamedataEquipmentArea = uiInventoryItem.GetEquipmentArea();
     let itemRecord: ref<Item_Record> = uiInventoryItem.GetItemRecord();
@@ -983,28 +991,70 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     if uiInventoryItem.IsWeapon() {
       itemEvolution = uiInventoryItem.GetWeaponEvolution();
     };
+
+    
     let dps: Float = 0.0;
     let stat: wref<UIInventoryItemStat> = uiInventoryItem.GetPrimaryStat();
     if uiInventoryItem.IsWeapon() && Equals(stat.Type, gamedataStatType.EffectiveDPS) {
       dps = stat.Value;
     };
 
+    let effectiveRangeStat: ref<UIInventoryItemStat>;
+    let effectiveRange: Int32 = 0;
+    if uiInventoryItem.IsWeapon() {
+      effectiveRangeStat = statsManager.GetAdditionalStatByType(gamedataStatType.EffectiveRange);
+      effectiveRange = Cast<Int32>(effectiveRangeStat.Value);
+    };
+
+    let tweakDbId: TweakDBID = itemRecord.GetID();
+    let price: Float = uiInventoryItem.GetSellPrice();
+    let weight: Float = uiInventoryItem.GetWeight();
+
     let wrappedItem: ref<RevisedItemWrapper> = new RevisedItemWrapper();
-    wrappedItem.id = itemRecord.GetID();
+    wrappedItem.id = tweakDbId;
     wrappedItem.data = data;
     wrappedItem.inventoryItem = uiInventoryItem;
-    wrappedItem.displayContextData = this.m_itemDisplayContext;
     wrappedItem.equipArea = equipArea;
     wrappedItem.type = itemType;
+    wrappedItem.typeLabel = UIItemsHelper.GetItemTypeKey(data, equipArea, tweakDbId, itemType, itemEvolution);
+    wrappedItem.typeValue = ItemCompareBuilder.GetItemTypeOrder(data, equipArea, itemType);
+    wrappedItem.tierLabel = this.BuildTierLabel(uiInventoryItem);
+    wrappedItem.tierValue = UIInventoryItemsManager.QualityToInt(uiInventoryItem.GetQuality());
     wrappedItem.evolution = itemEvolution;
-    wrappedItem.displayNameKey = itemRecord.DisplayName();
+    wrappedItem.nameLabel = GetLocalizedTextByKey(itemRecord.DisplayName());
+    wrappedItem.price = price;
+    wrappedItem.priceLabel = IntToString(RoundF(price));
+    wrappedItem.weight = weight;
+    wrappedItem.weightLabel = FloatToStringPrec(weight, 1);
     wrappedItem.dps = dps;
+    wrappedItem.dpsLabel = FloatToStringPrec(dps, 1);
+    wrappedItem.range = effectiveRange;
+    wrappedItem.rangeLabel = IntToString(effectiveRange);
+    wrappedItem.isQuest = uiInventoryItem.IsQuestItem() || data.HasTag(n"Quest");
     wrappedItem.isNew = uiInventoryItem.IsNew();
     wrappedItem.isFavorite = uiInventoryItem.IsPlayerFavourite();
-    wrappedItem.isQuest = uiInventoryItem.IsQuestItem();
+    wrappedItem.isDlcAddedItem = data.HasTag(n"DLCAdded") && this.m_uiScriptableSystem.IsDLCAddedActiveItem(tweakDbId);
+    wrappedItem.isWeapon = uiInventoryItem.IsWeapon();
     wrappedItem.selected = false;
     wrappedItem.questTagToggleable = RevisedBackpackUtils.CanToggleQuestTag(data);
+    
     return wrappedItem;
+  }
+
+  private final func BuildTierLabel(inventoryItem: ref<UIInventoryItem>) -> String {
+    let qualityText: String = GetLocalizedText(UIItemsHelper.QualityToTierString(inventoryItem.GetQuality()));
+    let plus: Int32 = Cast<Int32>(inventoryItem.GetItemPlus());
+    if !inventoryItem.IsProgram() {
+      if plus >= 2 {
+        qualityText += "++";
+      } else {
+        if plus >= 1 {
+          qualityText += "+";
+        };
+      };
+    };
+
+    return qualityText;
   }
 
   private final func AnimateIndicatorTranslation(index: Int32) -> Void {
