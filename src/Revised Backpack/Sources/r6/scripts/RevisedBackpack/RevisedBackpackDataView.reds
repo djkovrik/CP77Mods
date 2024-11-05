@@ -5,9 +5,17 @@ public class RevisedBackpackDataView extends ScriptableDataView {
   private let m_selectedCategory: ref<RevisedBackpackCategory>;
   private let m_sorting: revisedSorting;
   private let m_sortingMode: revisedSortingMode;
-  private let m_searchQuery: String;
+  private let m_filtering: ref<RevisedFilteringEvent>;
   private let m_newItemsOnTop: Bool;
   private let m_favoriteItemsOnTop: Bool;
+  private let m_skipCustomFilters: Bool;
+
+  public final func Init() -> Void {
+    let settings: ref<RevisedBackpackSettings> = new RevisedBackpackSettings();
+    this.m_newItemsOnTop = settings.newOnTop;
+    this.m_favoriteItemsOnTop = settings.favoriteOnTop;
+    this.m_skipCustomFilters = true;
+  }
 
   public final func BindUIScriptableSystem(uiScriptableSystem: wref<UIScriptableSystem>) -> Void {
     this.m_uiScriptableSystem = uiScriptableSystem;
@@ -26,16 +34,6 @@ public class RevisedBackpackDataView extends ScriptableDataView {
     this.m_sortingMode = mode;
     this.RefreshList();
   }
-
-  public final func SetNewOnTop(active: Bool) -> Void {
-    this.m_newItemsOnTop = active;
-    this.RefreshList();
-  };
-
-  public final func SetFavoriteOnTop(active: Bool) -> Void {
-    this.m_favoriteItemsOnTop = active;
-    this.RefreshList();
-  };
 
   protected func PreSortingInjection(builder: ref<RevisedCompareBuilder>) -> ref<RevisedCompareBuilder> {
     return builder;
@@ -237,9 +235,43 @@ public class RevisedBackpackDataView extends ScriptableDataView {
           };
         };
         break;
+
+      case revisedSorting.CustomJunk:
+        if Equals(this.m_sortingMode, revisedSortingMode.Asc) {           // Asc
+          if this.m_newItemsOnTop && !this.m_favoriteItemsOnTop {         // New on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).NewItem().CustomJunkAsc().NameAsc().QualityDesc().GetBool();
+          } else if !this.m_newItemsOnTop && this.m_favoriteItemsOnTop {  // Favorite on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).FavouriteItem().CustomJunkAsc().NameAsc().QualityDesc().GetBool();
+          } else if this.m_newItemsOnTop && this.m_favoriteItemsOnTop {   // New and favorite on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).FavouriteItem().NewItem().CustomJunkAsc().NameAsc().QualityDesc().GetBool();
+          } else if !this.m_newItemsOnTop && !this.m_favoriteItemsOnTop { // Nothing on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).CustomJunkAsc().NameAsc().QualityDesc().GetBool();
+          };
+        } else if Equals(this.m_sortingMode, revisedSortingMode.Desc) {   // Desc
+          if this.m_newItemsOnTop && !this.m_favoriteItemsOnTop {         // New on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).NewItem().CustomJunkDesc().NameAsc().QualityDesc().GetBool();
+          } else if !this.m_newItemsOnTop && this.m_favoriteItemsOnTop {  // Favorite on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).FavouriteItem().CustomJunkDesc().NameAsc().QualityDesc().GetBool();
+          } else if this.m_newItemsOnTop && this.m_favoriteItemsOnTop {   // New and favorite on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).FavouriteItem().NewItem().CustomJunkDesc().NameAsc().QualityDesc().GetBool();
+          } else if !this.m_newItemsOnTop && !this.m_favoriteItemsOnTop { // Nothing on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).CustomJunkDesc().NameAsc().QualityDesc().GetBool();
+          };
+        };
+        break;
     };
 
-    return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).FavouriteItem().QualityDesc().TypeAsc().NameAsc().GetBool();
+    // By default
+    if this.m_newItemsOnTop && !this.m_favoriteItemsOnTop {         // New on top
+      return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).NewItem().QualityDesc().TypeAsc().NameAsc().GetBool();
+    } else if !this.m_newItemsOnTop && this.m_favoriteItemsOnTop {  // Favorite on top
+      return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).FavouriteItem().QualityDesc().TypeAsc().NameAsc().GetBool();
+    } else if this.m_newItemsOnTop && this.m_favoriteItemsOnTop {   // New and favorite on top
+      return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).FavouriteItem().NewItem().QualityDesc().TypeAsc().NameAsc().GetBool();
+    };
+
+    // Nothing on top
+    return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).QualityDesc().TypeAsc().NameAsc().GetBool();
   }
 
   public final func SetCategory(category: ref<RevisedBackpackCategory>) -> Void {
@@ -249,8 +281,10 @@ public class RevisedBackpackDataView extends ScriptableDataView {
     };
   }
   
-  public final func SetSearchQuery(query: String) -> Void {
-    this.m_searchQuery = query;
+  public final func SetFilters(event: ref<RevisedFilteringEvent>) -> Void {
+    this.m_skipCustomFilters = event.filtersReset;
+    this.m_filtering = event;
+    this.Log(s"SetFilters with [\(event.nameQuery)] and [\(event.typeQuery)]");
     this.Filter();
   }
 
@@ -259,25 +293,35 @@ public class RevisedBackpackDataView extends ScriptableDataView {
     let name: String = itemWrapper.nameLabel;
     let nameNotEmpty: Bool = NotEquals(name, "");
     let predicate: Bool = this.m_selectedCategory.predicate.Check(itemWrapper);
-    let searchMatched: Bool = this.ItemTextsContainQuery(itemWrapper);
-    return nameNotEmpty && predicate && searchMatched;
+    if this.m_skipCustomFilters {
+      return nameNotEmpty && predicate;
+    };
+
+    let nameSearchMatched: Bool = true;
+    if NotEquals(this.m_filtering.nameQuery, "") {
+      nameSearchMatched = this.ItemTextsContainQuery(itemWrapper, this.m_filtering.nameQuery);
+    };
+
+    let typeSearchMatched: Bool = true;
+    if NotEquals(this.m_filtering.typeQuery, "") {
+      typeSearchMatched = this.ItemTypeContainsQuery(itemWrapper, this.m_filtering.typeQuery);
+    };
+
+    let tierMatched: Bool = ArrayContains(this.m_filtering.tiers, itemWrapper.tier);
+
+    return nameNotEmpty && predicate && nameSearchMatched && typeSearchMatched && tierMatched;
   }
 
   private final func RefreshList() -> Void {
     let wasSortingEnabled: Bool = this.IsSortingEnabled();
     if !wasSortingEnabled {
       this.UpdateView();
-      this.Sort();
     } else {
       this.Sort();
     };
   }
 
-  private final func ItemTextsContainQuery(item: ref<RevisedItemWrapper>) -> Bool {
-    if Equals(this.m_searchQuery, "") {
-      return true;
-    };
-
+  private final func ItemTextsContainQuery(item: ref<RevisedItemWrapper>, query: String) -> Bool {
     let combined: String = "";
     let itemRecord: ref<Item_Record> = TweakDBInterface.GetItemRecord(item.id);
     let weaponRecord: ref<WeaponItem_Record>;
@@ -285,10 +329,6 @@ public class RevisedBackpackDataView extends ScriptableDataView {
     // Name
     let itemName: String = UTF8StrLower(GetLocalizedTextByKey(itemRecord.DisplayName()));
     combined += itemName;
-
-    // Type
-    let itemTypeString: String = UTF8StrLower(GetLocalizedText(UIItemsHelper.GetItemTypeKey(itemRecord.ItemType().Type())));
-    combined += itemTypeString;
 
     // Weapon evolution
     let evolution: String;
@@ -304,7 +344,13 @@ public class RevisedBackpackDataView extends ScriptableDataView {
     let description: String = UTF8StrLower(GetLocalizedTextByKey(itemRecord.LocalizedDescription()));
     combined += description;
 
-    return StrContains(combined, this.m_searchQuery);
+    return StrContains(combined, UTF8StrLower(query));
+  }
+
+  private final func ItemTypeContainsQuery(item: ref<RevisedItemWrapper>, query: String) -> Bool {
+    let itemRecord: ref<Item_Record> = TweakDBInterface.GetItemRecord(item.id);
+    let itemTypeString: String = UTF8StrLower(GetLocalizedText(UIItemsHelper.GetItemTypeKey(itemRecord.ItemType().Type())));
+    return StrContains(itemTypeString, UTF8StrLower(query));
   }
 
   private final func Log(str: String) -> Void {

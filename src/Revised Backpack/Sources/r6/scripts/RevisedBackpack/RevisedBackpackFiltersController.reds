@@ -16,26 +16,28 @@ public class RevisedBackpackFiltersController extends inkLogicController {
   private let checkboxTier3Frame: wref<inkWidget>;
   private let checkboxTier4Frame: wref<inkWidget>;
   private let checkboxTier5Frame: wref<inkWidget>;
-  private let checkboxMassActionFrame: wref<inkWidget>;
 
   private let checkboxTier1Thumb: wref<inkWidget>;
   private let checkboxTier2Thumb: wref<inkWidget>;
   private let checkboxTier3Thumb: wref<inkWidget>;
   private let checkboxTier4Thumb: wref<inkWidget>;
   private let checkboxTier5Thumb: wref<inkWidget>;
-  private let checkboxMassActionThumb: wref<inkWidget>;
 
+  private let buttonSelect: wref<RevisedFiltersButton>;
   private let buttonJunk: wref<RevisedFiltersButton>;
   private let buttonDisassemble: wref<RevisedFiltersButton>;
   private let buttonReset: wref<RevisedFiltersButton>;
 
+  private let nameInput: String = "";
+  private let typeInput: String = "";
   private let tier1Enabled: Bool = true;
   private let tier2Enabled: Bool = true;
   private let tier3Enabled: Bool = true;
   private let tier4Enabled: Bool = true;
   private let tier5Enabled: Bool = true;
   private let resetAvailable: Bool = false;
-  private let massActionsEnabled: Bool = false;
+  private let selectionAvailable: Bool = false;
+  private let massActionsAvailable: Bool = false;
 
   protected cb func OnInitialize() -> Bool {
     this.BuildWidgetsLayout();
@@ -84,8 +86,8 @@ public class RevisedBackpackFiltersController extends inkLogicController {
   }
 
   protected cb func OnNameFilterInput(widget: wref<inkWidget>) {
-    let currentText: String = this.nameFilterInput.GetText();
-    if StrLen(currentText) > 0 {
+    this.nameInput = this.nameFilterInput.GetText();
+    if StrLen(this.nameInput) > 0 {
       this.ApplyFiltersDelayed();
     } else {
       this.ApplyFilters();
@@ -93,19 +95,24 @@ public class RevisedBackpackFiltersController extends inkLogicController {
   }
 
   protected cb func OnTypeFilterInput(widget: wref<inkWidget>) {
-    let currentText: String = this.typeFilterInput.GetText();
-    if StrLen(currentText) > 0 {
+    this.typeInput = this.typeFilterInput.GetText();
+    if StrLen(this.typeInput) > 0 {
       this.ApplyFiltersDelayed();
     } else {
       this.ApplyFilters();
     };
   }
 
+  protected cb func OnRevisedCategorySelectedEvent(evt: ref<RevisedCategorySelectedEvent>) -> Bool {
+    this.selectionAvailable = NotEquals(evt.category.id, 10);
+    this.InvalidateMassActionsButtons();
+  }
+
   public final func ApplyFiltersDelayed() -> Void {
     let callback: ref<RevisedBackpackFilterDebounceCallback> = new RevisedBackpackFilterDebounceCallback();
     callback.m_controller = this;
     this.m_delaySystem.CancelCallback(this.m_debounceCalbackId);
-    this.m_debounceCalbackId = this.m_delaySystem.DelayCallback(callback, 1.0, false);
+    this.m_debounceCalbackId = this.m_delaySystem.DelayCallback(callback, 0.2, false);
   }
 
   public final func ApplyFilters() -> Void {
@@ -117,25 +124,32 @@ public class RevisedBackpackFiltersController extends inkLogicController {
   private final func ResetFilters() -> Void {
     this.Log("ResetFilters");
     this.PlaySound(n"ui_menu_onpress");
-    this.nameFilterInput.SetText("");
-    this.typeFilterInput.SetText("");
+    this.nameInput = "";
+    this.typeInput = "";
     this.tier1Enabled = true;
     this.tier2Enabled = true;
     this.tier3Enabled = true;
     this.tier4Enabled = true;
     this.tier5Enabled = true;
+    this.nameFilterInput.SetText(this.nameInput);
+    this.typeFilterInput.SetText(this.typeInput);
     this.InvalidateCheckboxes();
     this.InvalidateResetButtonState();
     this.BroadcastFiltersState();
   }
 
+  private final func RunSelectAction() -> Void {
+    this.Log("RunSelectAction");
+    this.PlaySound(n"ui_menu_onpress");
+  }
+
   private final func RunJunkAction() -> Void {
-    this.Log(s"RunJunkAction: mass \(this.massActionsEnabled)");
+    this.Log("RunJunkAction");
     this.PlaySound(n"ui_menu_onpress");
   }
 
   private final func RunDisassembleAction() -> Void {
-    this.Log(s"RunDisassembleAction: mass \(this.massActionsEnabled)");
+    this.Log("RunDisassembleAction");
     this.PlaySound(n"ui_menu_onpress");
   }
 
@@ -171,24 +185,23 @@ public class RevisedBackpackFiltersController extends inkLogicController {
         this.InvalidateCheckboxes();
         this.ApplyFilters();
         break;
-      case n"actions":
-        this.PlaySound(n"ui_menu_onpress");
-        this.massActionsEnabled = !this.massActionsEnabled;
-        this.InvalidateCheckboxes();
-        this.InvalidateMassActions();
-        break;
       case n"buttonReset":
         if this.resetAvailable {
           this.ResetFilters();
         };
         break;
+      case n"buttonSelect":
+        if this.selectionAvailable {
+          this.RunSelectAction();
+        };
+        break;
       case n"buttonJunk":
-        if this.massActionsEnabled {
+        if this.massActionsAvailable {
           this.RunJunkAction();
         };
         break;
       case n"buttonDisassemble":
-        if this.massActionsEnabled {
+        if this.massActionsAvailable {
           this.RunDisassembleAction();
         };
         break;
@@ -212,9 +225,6 @@ public class RevisedBackpackFiltersController extends inkLogicController {
       case n"tier5":
         this.checkboxTier5Frame.BindProperty(n"tintColor", n"MainColors.Red");
         break;
-      case n"actions":
-        this.checkboxMassActionFrame.BindProperty(n"tintColor", n"MainColors.Red");
-        break;
     };
   }
 
@@ -235,28 +245,20 @@ public class RevisedBackpackFiltersController extends inkLogicController {
       case n"tier5":
         this.checkboxTier5Frame.BindProperty(n"tintColor", n"MainColors.MildRed");
         break;
-      case n"actions":
-        this.checkboxMassActionFrame.BindProperty(n"tintColor", n"MainColors.MildRed");
-        break;
     };
   }
 
   private final func InvalidateResetButtonState() -> Void {
-    let hasUncheckedCheckboxes: Bool = false;
-    for widget in [this.checkboxTier1Thumb, this.checkboxTier2Thumb, this.checkboxTier3Thumb, this.checkboxTier4Thumb, this.checkboxTier5Thumb] {
-      if !widget.IsVisible() {
-        hasUncheckedCheckboxes = true;
-      };
-    };
-
-    let inputHasText: Bool = StrLen(this.nameFilterInput.GetText()) > 0 || StrLen(this.typeFilterInput.GetText()) > 0;
+    let hasUncheckedCheckboxes: Bool = !this.tier1Enabled || !this.tier2Enabled || !this.tier3Enabled || !this.tier4Enabled || !this.tier5Enabled;
+    let inputHasText: Bool = StrLen(this.nameInput) > 0 || StrLen(this.typeInput) > 0;
     this.resetAvailable = hasUncheckedCheckboxes || inputHasText;
     this.buttonReset.SetDisabled(!this.resetAvailable);
   }
 
-  private final func InvalidateMassActions() -> Void {
-    this.buttonJunk.SetDisabled(!this.massActionsEnabled);
-    this.buttonDisassemble.SetDisabled(!this.massActionsEnabled);
+  private final func InvalidateMassActionsButtons() -> Void {
+    this.buttonSelect.SetDisabled(!this.selectionAvailable);
+    this.buttonJunk.SetDisabled(!this.massActionsAvailable);
+    this.buttonDisassemble.SetDisabled(!this.massActionsAvailable);
   }
 
   private final func InvalidateCheckboxes() -> Void {
@@ -275,16 +277,36 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     if NotEquals(this.checkboxTier5Thumb.IsVisible(), this.tier5Enabled) {
       this.checkboxTier5Thumb.SetVisible(this.tier5Enabled);
     };
-    if NotEquals(this.checkboxMassActionThumb.IsVisible(), this.massActionsEnabled) {
-      this.checkboxMassActionThumb.SetVisible(this.massActionsEnabled);
-    };
   }
 
   private final func BroadcastFiltersState() -> Void {
-    let nameQuery: String = this.nameFilterInput.GetText();
-    let typeQuery: String = this.typeFilterInput.GetText();
-    let noFiltersApplied: Bool = this.buttonReset.IsDisabled();
-    this.Log(s"Broadcast filters state \(this.tier1Enabled) \(this.tier2Enabled) \(this.tier3Enabled) \(this.tier4Enabled) \(this.tier5Enabled) + [\(nameQuery)] and [\(typeQuery)], no filters: \(noFiltersApplied)");
+    let filtersReset: Bool = this.buttonReset.IsDisabled();
+    let tiers: array<gamedataQuality>;
+    if this.tier5Enabled {
+      ArrayPush(tiers, gamedataQuality.LegendaryPlusPlus);
+      ArrayPush(tiers, gamedataQuality.LegendaryPlus);
+      ArrayPush(tiers, gamedataQuality.Legendary);
+    };
+    if this.tier4Enabled {
+      ArrayPush(tiers, gamedataQuality.EpicPlus);
+      ArrayPush(tiers, gamedataQuality.Epic);
+    };
+    if this.tier3Enabled {
+      ArrayPush(tiers, gamedataQuality.RarePlus);
+      ArrayPush(tiers, gamedataQuality.Rare);
+    };
+    if this.tier2Enabled {
+      ArrayPush(tiers, gamedataQuality.UncommonPlus);
+      ArrayPush(tiers, gamedataQuality.Uncommon);
+    };
+    if this.tier1Enabled {
+      ArrayPush(tiers, gamedataQuality.CommonPlus);
+      ArrayPush(tiers, gamedataQuality.Common);
+    };
+    
+    let event: ref<RevisedFilteringEvent> = RevisedFilteringEvent.Create(this.nameInput, this.typeInput, tiers, filtersReset);
+    this.Log(s"BroadcastFiltersState with [\(this.nameInput)] and [\(this.typeInput)]");
+    this.QueueEvent(event);
   }
 
   private final func BuildWidgetsLayout() -> Void {
@@ -296,7 +318,7 @@ public class RevisedBackpackFiltersController extends inkLogicController {
 
     let leftColumn: ref<inkVerticalPanel> = new inkVerticalPanel();
     leftColumn.SetName(n"leftColumn");
-    leftColumn.SetMargin(new inkMargin(0.0, 0.0, 64.0, 0.0));
+    leftColumn.SetMargin(new inkMargin(0.0, 0.0, 96.0, 0.0));
     leftColumn.Reparent(outerContainer);
 
     let inputRow: ref<inkHorizontalPanel> = new inkHorizontalPanel();
@@ -326,7 +348,7 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     let checkboxesRow: ref<inkHorizontalPanel> = new inkHorizontalPanel();
     checkboxesRow.SetName(n"checkboxesRow");
     checkboxesRow.SetMargin(new inkMargin(0.0, 0.0, 0.0, 32.0));
-    checkboxesRow.SetChildMargin(new inkMargin(0.0, 0.0, 32.0, 0.0));
+    checkboxesRow.SetChildMargin(new inkMargin(0.0, 0.0, 24.0, 0.0));
     checkboxesRow.Reparent(leftColumn);
 
     let tier1: ref<inkCompoundWidget> = this.BuildCheckbox(n"tier1", n"Gameplay-RPG-Stats-Tiers-Tier1", this.tier1Enabled);
@@ -361,8 +383,15 @@ public class RevisedBackpackFiltersController extends inkLogicController {
 
     let rightColumn: ref<inkVerticalPanel> = new inkVerticalPanel();
     rightColumn.SetName(n"rightColumn");
-    rightColumn.SetChildMargin(new inkMargin(0.0, 0.0, 0.0, 32.0));
+    rightColumn.SetChildMargin(new inkMargin(0.0, 0.0, 0.0, 24.0));
     rightColumn.Reparent(outerContainer);
+
+    let buttonSelect: ref<RevisedFiltersButton> = RevisedFiltersButton.Create();
+    buttonSelect.SetName(n"buttonSelect");
+    buttonSelect.SetText(GetLocalizedTextByKey(n"Mod-Revised-Filter-Select"));
+    buttonSelect.SetDisabled(true);
+    buttonSelect.Reparent(rightColumn);
+    this.buttonSelect = buttonSelect;
 
     let buttonJunk: ref<RevisedFiltersButton> = RevisedFiltersButton.Create();
     buttonJunk.SetName(n"buttonJunk");
@@ -375,13 +404,9 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     buttonDisassemble.SetName(n"buttonDisassemble");
     buttonDisassemble.SetText(GetLocalizedTextByKey(n"Mod-Revised-Filter-Disassemble"));
     buttonDisassemble.SetDisabled(true);
+    buttonDisassemble.SetAsDangerous();
     buttonDisassemble.Reparent(rightColumn);
     this.buttonDisassemble = buttonDisassemble;
-
-    let massActions: ref<inkCompoundWidget> = this.BuildCheckbox(n"actions", n"Mod-Revised-Filter-Mass-Action", this.massActionsEnabled);
-    this.checkboxMassActionFrame = massActions.GetWidgetByPathName(n"actions/frame");
-    this.checkboxMassActionThumb = massActions.GetWidgetByPathName(n"actions/thumb");
-    massActions.Reparent(rightColumn);
   }
 
   private final func BuildCheckbox(name: CName, displayNameKey: CName, initial: Bool) -> ref<inkCompoundWidget> {

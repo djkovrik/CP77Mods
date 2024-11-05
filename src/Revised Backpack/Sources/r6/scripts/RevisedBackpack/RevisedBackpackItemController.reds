@@ -18,6 +18,8 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
   private let m_itemRange: wref<inkText>;
   private let m_itemQuest: wref<inkWidget>;
   private let m_questContainer: wref<inkWidget>; 
+  private let m_itemCustomJunk: wref<inkWidget>;
+  private let m_customJunkContainer: wref<inkWidget>; 
 
   protected cb func OnInitialize() -> Bool {
     let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
@@ -36,6 +38,8 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     this.m_itemRange = root.GetWidgetByPathName(n"item/range") as inkText;
     this.m_itemQuest = root.GetWidgetByPathName(n"item/quest/checkbox");
     this.m_questContainer = root.GetWidgetByPathName(n"item/quest");
+    this.m_itemCustomJunk = root.GetWidgetByPathName(n"item/customJunk/checkbox");
+    this.m_customJunkContainer = root.GetWidgetByPathName(n"item/customJunk");
 
     this.RegisterToCallback(n"OnEnter", this, n"OnHoverOver");
     this.RegisterToCallback(n"OnLeave", this, n"OnHoverOut");    
@@ -51,8 +55,10 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
 
   protected cb func OnHoverOver(evt: ref<inkPointerEvent>) -> Bool {
     this.m_shadow.SetVisible(true);
+    let target: ref<inkWidget> = evt.GetTarget();
+    let isName: Bool = Equals(target.GetName(), n"nameContainer");
     if IsDefined(this.m_item) {
-      this.QueueEvent(RevisedBackpackItemHoverOverEvent.Create(this.m_item, this.m_selection));
+      this.QueueEvent(RevisedBackpackItemHoverOverEvent.Create(this.m_item, isName, target));
       this.SetIsNew(false);
     };
   }
@@ -67,13 +73,19 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
   protected cb func OnRelease(evt: ref<inkPointerEvent>) -> Bool {
     let displayClickEvent: ref<RevisedItemDisplayClickEvent>;
     let toggleQuestTagEvent: ref<RevisedToggleQuestTagEvent>;
+    let toggleCustomJunkEvent: ref<RevisedToggleCustomJunkEvent>;
     let targetName: CName = evt.GetTarget().GetName();
     if evt.IsAction(n"click") && Equals(targetName, n"quest") && this.CanToggleQuestTag() {
       toggleQuestTagEvent = new RevisedToggleQuestTagEvent();
       toggleQuestTagEvent.itemData = this.m_item.data;
       toggleQuestTagEvent.display = this;
       this.QueueEvent(toggleQuestTagEvent);
-    } else if evt.IsAction(n"select") && NotEquals(targetName, n"quest") {
+    } else if evt.IsAction(n"click") && Equals(targetName, n"customJunk") && this.CanToggleCustomJunk() {
+      toggleCustomJunkEvent = new RevisedToggleCustomJunkEvent();
+      toggleCustomJunkEvent.itemData = this.m_item.data;
+      toggleCustomJunkEvent.display = this;
+      this.QueueEvent(toggleCustomJunkEvent);
+    } else if evt.IsAction(n"select") && NotEquals(targetName, n"quest") && NotEquals(targetName, n"customJunk") {
       this.QueueEvent(RevisedBackpackItemSelectEvent.Create(this.m_item));
     } else {
       displayClickEvent = new RevisedItemDisplayClickEvent();
@@ -154,7 +166,20 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
   }
 
   public final func CanToggleQuestTag() -> Bool {
-    return this.m_item.IsQuestTagToggleable();
+    return this.m_item.questTagToggleable;
+  }
+
+  public final func GetIsCustomJunkItem() -> Bool {
+    return this.m_item.GetCustomJunkFlag();
+  }
+
+  public final func SetIsCustomJunkItem(flag: Bool) -> Void {
+    this.m_item.SetCustomJunkFlag(flag);
+    this.m_itemCustomJunk.SetVisible(this.GetIsCustomJunkItem());
+  }
+
+  public final func CanToggleCustomJunk() -> Bool {
+    return this.m_item.customJunkToggleable;
   }
 
   private final func RefreshView() -> Void {
@@ -175,12 +200,19 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     this.m_itemDps.SetText(this.m_item.dpsLabel);
     this.m_itemRange.SetText(this.m_item.rangeLabel);
     this.m_itemQuest.SetVisible(this.m_item.GetQuestFlag());
+    this.m_itemCustomJunk.SetVisible(this.m_item.GetCustomJunkFlag());
     this.m_selection.SetVisible(this.m_item.GetSelectedFlag());
 
     if this.CanToggleQuestTag() {
       this.m_questContainer.SetOpacity(1.0);
     } else {
       this.m_questContainer.SetOpacity(0.1);
+    };
+
+    if this.CanToggleCustomJunk() {
+      this.m_customJunkContainer.SetOpacity(1.0);
+    } else {
+      this.m_customJunkContainer.SetOpacity(0.1);
     };
   }
 

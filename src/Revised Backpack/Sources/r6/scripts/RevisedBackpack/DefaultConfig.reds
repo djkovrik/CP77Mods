@@ -148,6 +148,17 @@ public abstract class RevisedBackpackDefaultConfig {
       )
     );
 
+    ArrayPush(
+      newCategories,
+      RevisedBackpackCategory.Create(
+        140,
+        n"Mod-Revised-Column-Junk",
+        n"tech",
+        r"base\\gameplay\\gui\\common\\icons\\mappin_icons.inkatlas",
+        new RevisedCategoryPredicateCustomJunk()
+      )
+    );
+
     return newCategories;
   }
 }
@@ -250,5 +261,12 @@ private class RevisedCategoryPredicateNew extends RevisedCategoryPredicate {
 private class RevisedCategoryPredicateFavorite extends RevisedCategoryPredicate {
   public func Check(item: ref<RevisedItemWrapper>) -> Bool {
     return item.inventoryItem.IsPlayerFavourite();
+  }
+}
+
+// Custom junk
+private class RevisedCategoryPredicateCustomJunk extends RevisedCategoryPredicate {
+  public func Check(item: ref<RevisedItemWrapper>) -> Bool {
+    return item.customJunk;
   }
 }

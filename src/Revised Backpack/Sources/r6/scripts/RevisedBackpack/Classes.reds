@@ -10,6 +10,7 @@ enum revisedSorting {
   Dps = 6,
   Range = 7,
   Quest = 8,
+  CustomJunk = 9,
 }
 
 enum revisedSortingMode {
@@ -26,6 +27,7 @@ public class RevisedItemWrapper {
   public let type: gamedataItemType;
   public let typeLabel: String;
   public let typeValue: Int32;
+  public let tier: gamedataQuality;
   public let tierLabel: String;
   public let tierValue: Int32;
   public let evolution: gamedataWeaponEvolution;
@@ -44,7 +46,9 @@ public class RevisedItemWrapper {
   public let isDlcAddedItem: Bool;
   public let isWeapon: Bool;
   public let selected: Bool;
+  public let customJunk: Bool;
   public let questTagToggleable: Bool;
+  public let customJunkToggleable: Bool;
 
   public final func GetEquippedFlag() -> Bool {
     return this.inventoryItem.IsEquipped();
@@ -82,8 +86,12 @@ public class RevisedItemWrapper {
     this.selected = selected;
   }
 
-  public final func IsQuestTagToggleable() -> Bool {
-    return this.questTagToggleable;
+  public final func GetCustomJunkFlag() -> Bool {
+    return this.customJunk;
+  }
+
+  public final func SetCustomJunkFlag(customJunk: Bool) -> Void {
+    this.customJunk = customJunk;
   }
 }
 
@@ -197,11 +205,13 @@ public class RevisedBackpackColumnHoverOutEvent extends Event {
 
 public class RevisedBackpackItemHoverOverEvent extends Event {
   public let item: wref<RevisedItemWrapper>;
+  public let isOverName: Bool;
   public let widget: wref<inkWidget>;
 
-  public final static func Create(item: ref<RevisedItemWrapper>, widget: wref<inkWidget>) -> ref<RevisedBackpackItemHoverOverEvent> {
+  public final static func Create(item: ref<RevisedItemWrapper>, isName: Bool, widget: wref<inkWidget>) -> ref<RevisedBackpackItemHoverOverEvent> {
     let evt: ref<RevisedBackpackItemHoverOverEvent> = new RevisedBackpackItemHoverOverEvent();
     evt.item = item;
+    evt.isOverName = isName;
     evt.widget = widget;
     return evt;
   }
@@ -261,6 +271,22 @@ public class RevisedItemPreviewEvent extends Event {
   }
 }
 
+public class RevisedFilteringEvent extends Event {
+  public let nameQuery: String;
+  public let typeQuery: String;
+  public let tiers: array<gamedataQuality>;
+  public let filtersReset: Bool;
+
+  public final static func Create(name: String, type: String, tiers: array<gamedataQuality>, reset: Bool) -> ref<RevisedFilteringEvent> {
+    let evt: ref<RevisedFilteringEvent> = new RevisedFilteringEvent();
+    evt.nameQuery = name;
+    evt.typeQuery = type;
+    evt.tiers = tiers;
+    evt.filtersReset = reset;
+    return evt;
+  }
+}
+
 public class RevisedItemDisplayClickEvent extends Event {
   public let itemData: ref<gameItemData>;
   public let display: wref<RevisedBackpackItemController>;
@@ -278,6 +304,11 @@ public class RevisedItemDisplayHoldEvent extends Event {
 public class RevisedItemDisplayPressEvent extends Event {
   public let display: wref<RevisedBackpackItemController>;
   public let actionName: ref<inkActionName>;
+}
+
+public class RevisedToggleCustomJunkEvent extends Event {
+  public let itemData: ref<gameItemData>;
+  public let display: wref<RevisedBackpackItemController>;
 }
 
 public class RevisedToggleQuestTagEvent extends Event {

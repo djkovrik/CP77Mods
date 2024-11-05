@@ -3,7 +3,7 @@ module RevisedBackpack
 public class RevisedBackpackController extends gameuiMenuGameController {
 
   private let m_player: wref<PlayerPuppet>;
-  private let m_service: wref<RevisedBackpackService>;
+  private let m_system: wref<RevisedBackpackSystem>;
   private let m_menuEventDispatcher: wref<inkMenuEventDispatcher>;
   private let m_itemDisplayContext: ref<ItemDisplayContextData>;
   private let m_junkItems: array<ref<UIInventoryItem>>;
@@ -112,8 +112,8 @@ public class RevisedBackpackController extends gameuiMenuGameController {
       GameInstance.GetTransactionSystem(this.m_player.GetGame()).UnregisterInventoryListener(this.m_player, this.m_backpackInventoryListener);
     };
     this.m_player = playerPuppet as PlayerPuppet;
-    this.m_service = RevisedBackpackService.GetInstance();
-    this.m_availableCategories = this.m_service.GetCategories();
+    this.m_system = RevisedBackpackSystem.GetInstance(this.m_player.GetGame());
+    this.m_availableCategories = this.m_system.GetCategories();
     this.m_uiScriptableSystem = UIScriptableSystem.GetInstance(this.m_player.GetGame());
     this.m_uiInventorySystem = UIInventoryScriptableSystem.GetInstance(this.m_player.GetGame());
     this.m_itemDisplayContext = ItemDisplayContextData.Make(this.m_player, ItemDisplayContext.Backpack, true);
@@ -129,7 +129,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     this.PopulateCategories();
     this.PopulateInventory();
 
-    this.Log(s"OnPlayerAttach: service \(IsDefined(this.m_service)), categories: \(ArraySize(this.m_availableCategories))");
+    this.Log(s"OnPlayerAttach: service \(IsDefined(this.m_system)), categories: \(ArraySize(this.m_availableCategories))");
   }
 
   protected cb func OnPlayerDetach(playerPuppet: ref<GameObject>) -> Bool {
@@ -211,6 +211,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
   private final func SetupVirtualList() -> Void {
     this.itemsListDataSource = new ScriptableDataSource();
     this.itemsListDataView = new RevisedBackpackDataView();
+    this.itemsListDataView.Init();
     this.itemsListDataView.BindUIScriptableSystem(this.m_uiScriptableSystem);
     this.itemsListDataView.SetSource(this.itemsListDataSource);
     this.itemsListDataView.EnableSorting();
@@ -403,6 +404,10 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     return result;
   }
 
+  protected cb func OnRevisedFilteringEvent(evt: ref<RevisedFilteringEvent>) -> Bool {
+    this.itemsListDataView.SetFilters(evt);
+  }
+
   protected cb func OnRevisedCategorySelectedEvent(evt: ref<RevisedCategorySelectedEvent>) -> Bool {
     let selectedIndex: Int32 = -1;
     let i: Int32 = 0;
@@ -466,6 +471,9 @@ public class RevisedBackpackController extends gameuiMenuGameController {
       case revisedSorting.Quest:
         label = GetLocalizedTextByKey(n"Mod-Revised-Column-Quest");
         break;
+      case revisedSorting.CustomJunk:
+        label = GetLocalizedTextByKey(n"Mod-Revised-Column-Junk");
+        break;
     };
 
     if NotEquals(label, "") {
@@ -486,8 +494,10 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     this.ShowButtonHints(evt.item);
     this.m_lastItemHoverOverEvent = evt;
     this.m_pressedItemDisplay = null;
-    this.OnInventoryRequestTooltip(evt.item.inventoryItem, evt.widget);
     this.PlaySound(n"ui_menu_hover");
+    if evt.isOverName {
+      this.OnInventoryRequestTooltip(evt.item.inventoryItem, evt.widget);
+    };
   }
 
   protected cb func OnRevisedBackpackItemHoverOutEvent(evt: ref<RevisedBackpackItemHoverOutEvent>) -> Bool {
@@ -604,6 +614,24 @@ public class RevisedBackpackController extends gameuiMenuGameController {
         this.PlaySound(n"ui_menu_map_pin_on");
         this.PlayRumble(RumbleStrength.Heavy, RumbleType.Pulse, RumblePosition.Right);
       };
+    };
+  }
+
+  protected cb func OnRevisedToggleCustomJunkEvent(evt: ref<RevisedToggleCustomJunkEvent>) -> Bool {
+    this.Log("RevisedToggleCustomJunkEvent");
+    let data: ref<gameItemData> = evt.itemData;
+    let itemId: ItemID = data.GetID();
+    let newFlag: Bool = !evt.display.GetIsCustomJunkItem();
+    let success: Bool;
+    if this.m_system.IsAddedToJunk(itemId) {
+      success = this.m_system.RemoveFromJunk(itemId);
+    } else {
+      success = this.m_system.AddToJunk(itemId);
+    };
+
+    if success {
+      evt.display.SetIsCustomJunkItem(newFlag);
+      this.PlaySound(n"ui_menu_onpress");
     };
   }
 
@@ -813,7 +841,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
 
   private final func OnInventoryRequestTooltip(itemData: wref<UIInventoryItem>, widget: wref<inkWidget>) -> Void {
     let placement: gameuiETooltipPlacement = gameuiETooltipPlacement.RightTop;
-    let margin: inkMargin = new inkMargin(-680.0, 680.0, 0.0, 0.0);
+    let margin: inkMargin = new inkMargin(0.0, 0.0, 0.0, 0.0);
     let itemToCompare: wref<UIInventoryItem>;
     let itemTooltipData: ref<UIInventoryItemTooltipWrapper>;
     let itemTooltips: [CName; 2];
@@ -953,13 +981,13 @@ public class RevisedBackpackController extends gameuiMenuGameController {
   private final func SpawnPreviews() -> Void {
     this.SpawnFromExternal(
       inkWidgetRef.Get(this.m_previewGarmentContainer), 
-      r"base\\gameplay\\gui\\fullscreen\\inventory\\revised_garment_item_preview.inkwidget", 
+      r"base\\gameplay\\gui\\fullscreen\\previews\\revised_garment_item_preview.inkwidget", 
       n"Root:RevisedBackpack.RevisedPreviewGarmentController"
     );
 
     this.SpawnFromExternal(
       inkWidgetRef.Get(this.m_previewItemContainer), 
-      r"base\\gameplay\\gui\\fullscreen\\inventory\\revised_item_preview.inkwidget", 
+      r"base\\gameplay\\gui\\fullscreen\\previews\\revised_item_preview.inkwidget", 
       n"Root:RevisedBackpack.RevisedPreviewItemController"
     );
     
@@ -1006,20 +1034,23 @@ public class RevisedBackpackController extends gameuiMenuGameController {
       effectiveRange = Cast<Int32>(effectiveRangeStat.Value);
     };
 
-    let tweakDbId: TweakDBID = itemRecord.GetID();
+    let itemId: ItemID = data.GetID();
+    let itemTdbid: TweakDBID = itemRecord.GetID();
+    let tier: gamedataQuality = uiInventoryItem.GetQuality();
     let price: Float = uiInventoryItem.GetSellPrice();
     let weight: Float = uiInventoryItem.GetWeight();
 
     let wrappedItem: ref<RevisedItemWrapper> = new RevisedItemWrapper();
-    wrappedItem.id = tweakDbId;
+    wrappedItem.id = itemTdbid;
     wrappedItem.data = data;
     wrappedItem.inventoryItem = uiInventoryItem;
     wrappedItem.equipArea = equipArea;
     wrappedItem.type = itemType;
-    wrappedItem.typeLabel = UIItemsHelper.GetItemTypeKey(data, equipArea, tweakDbId, itemType, itemEvolution);
+    wrappedItem.typeLabel = UIItemsHelper.GetItemTypeKey(data, equipArea, itemTdbid, itemType, itemEvolution);
     wrappedItem.typeValue = ItemCompareBuilder.GetItemTypeOrder(data, equipArea, itemType);
+    wrappedItem.tier = tier;
     wrappedItem.tierLabel = this.BuildTierLabel(uiInventoryItem);
-    wrappedItem.tierValue = UIInventoryItemsManager.QualityToInt(uiInventoryItem.GetQuality());
+    wrappedItem.tierValue = UIInventoryItemsManager.QualityToInt(tier);
     wrappedItem.evolution = itemEvolution;
     wrappedItem.nameLabel = GetLocalizedTextByKey(itemRecord.DisplayName());
     wrappedItem.price = price;
@@ -1033,10 +1064,12 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     wrappedItem.isQuest = uiInventoryItem.IsQuestItem() || data.HasTag(n"Quest");
     wrappedItem.isNew = uiInventoryItem.IsNew();
     wrappedItem.isFavorite = uiInventoryItem.IsPlayerFavourite();
-    wrappedItem.isDlcAddedItem = data.HasTag(n"DLCAdded") && this.m_uiScriptableSystem.IsDLCAddedActiveItem(tweakDbId);
+    wrappedItem.isDlcAddedItem = data.HasTag(n"DLCAdded") && this.m_uiScriptableSystem.IsDLCAddedActiveItem(itemTdbid);
     wrappedItem.isWeapon = uiInventoryItem.IsWeapon();
     wrappedItem.selected = false;
+    wrappedItem.customJunk = this.m_system.IsAddedToJunk(itemId);
     wrappedItem.questTagToggleable = RevisedBackpackUtils.CanToggleQuestTag(data);
+    wrappedItem.customJunkToggleable = RevisedBackpackUtils.CanToggleCustomJunk(uiInventoryItem);
     
     return wrappedItem;
   }

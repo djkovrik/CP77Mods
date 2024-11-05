@@ -12,6 +12,7 @@ public class RevisedBackpackSortController extends inkLogicController {
   private let m_borderDps: inkWidgetRef;
   private let m_borderRange: inkWidgetRef;
   private let m_borderQuest: inkWidgetRef;
+  private let m_borderCustomJunk: inkWidgetRef;
 
   private let m_arrowName: inkWidgetRef;
   private let m_arrowType: inkWidgetRef;
@@ -21,6 +22,7 @@ public class RevisedBackpackSortController extends inkLogicController {
   private let m_arrowDps: inkWidgetRef;
   private let m_arrowRange: inkWidgetRef;
   private let m_arrowQuest: inkWidgetRef;
+  private let m_arrowCustomJunk: inkWidgetRef;
 
   private let previousSelectedWidget: ref<inkWidget>;
   private let currentSelectedWidget: ref<inkWidget>;
@@ -157,6 +159,9 @@ public class RevisedBackpackSortController extends inkLogicController {
       case revisedSorting.Quest:
         this.UpdateArrow(this.m_arrowQuest, Equals(this.currentSortingMode, revisedSortingMode.Asc));
         break;
+      case revisedSorting.CustomJunk:
+        this.UpdateArrow(this.m_arrowCustomJunk, Equals(this.currentSortingMode, revisedSortingMode.Asc));
+        break;
     };
   }
 
@@ -169,6 +174,7 @@ public class RevisedBackpackSortController extends inkLogicController {
     inkWidgetRef.SetVisible(this.m_arrowDps, false);
     inkWidgetRef.SetVisible(this.m_arrowRange, false);
     inkWidgetRef.SetVisible(this.m_arrowQuest, false);
+    inkWidgetRef.SetVisible(this.m_arrowCustomJunk, false);
   }
 
   private final func UpdateArrow(target: inkWidgetRef, asc: Bool) -> Void {
@@ -209,6 +215,7 @@ public class RevisedBackpackSortController extends inkLogicController {
       case "Dps": return revisedSorting.Dps;
       case "Range": return revisedSorting.Range;
       case "Quest": return revisedSorting.Quest;
+      case "CustomJunk": return revisedSorting.CustomJunk;
     };
 
     return revisedSorting.Name;

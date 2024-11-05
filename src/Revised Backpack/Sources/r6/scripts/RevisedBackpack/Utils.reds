@@ -161,6 +161,14 @@ public abstract class RevisedBackpackUtils {
     true;
   }
 
+  public final static func CanToggleCustomJunk(uiInventoryItem: ref<UIInventoryItem>) -> Bool {
+    let data: ref<gameItemData> = uiInventoryItem.GetRealItemData();
+    return RevisedBackpackUtils.CanToggleQuestTag(data) 
+      && !data.HasTag(n"Junk") 
+      && !uiInventoryItem.IsPlayerFavourite() 
+      && !uiInventoryItem.IsIconic();
+  }
+
   private final static func IsWeapon(type: gamedataEquipmentArea) -> Bool {
     return 
          Equals(type, gamedataEquipmentArea.Weapon) 
@@ -201,11 +209,11 @@ public abstract class RevisedBackpackUtils {
  + display quantity
  + toggle quest
  + new column: effective range
- ? new column: toggle junk
+ + new column: toggle junk
  ! filters: search [WIP]
  ! filters: tier controls [WIP]
  ? filters: ammo type
- ? filters: new / favorite on top
+ - mass select
  - mass actions (disassemble and junk)
  - check HideInBackpackUI and SoftwareShard tags
  - animate screen open

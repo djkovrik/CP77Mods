@@ -133,6 +133,16 @@ public class RevisedCompareBuilder extends IScriptable {
     return this;
   }
 
+  public final func CustomJunkAsc() -> ref<RevisedCompareBuilder> {
+    this.m_compareBuilder.BoolTrue(this.m_sortData1.customJunk, this.m_sortData2.customJunk);
+    return this;
+  }
+
+  public final func CustomJunkDesc() -> ref<RevisedCompareBuilder> {
+    this.m_compareBuilder.BoolFalse(this.m_sortData1.customJunk, this.m_sortData2.customJunk);
+    return this;
+  }
+
   public final func NewItem() -> ref<RevisedCompareBuilder> {
     this.m_compareBuilder.BoolTrue(this.m_sortData1.isNew, this.m_sortData2.isNew);
     return this;
