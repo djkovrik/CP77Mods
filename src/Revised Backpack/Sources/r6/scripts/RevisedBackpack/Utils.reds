@@ -166,6 +166,15 @@ public abstract class RevisedBackpackUtils {
     return RevisedBackpackUtils.CanToggleQuestTag(data) 
       && !data.HasTag(n"Junk") 
       && !uiInventoryItem.IsPlayerFavourite() 
+      && !uiInventoryItem.IsEquipped() 
+      && !uiInventoryItem.IsIconic();
+  }
+
+  public final static func CanDisassemble(gi: GameInstance, uiInventoryItem: ref<UIInventoryItem>) -> Bool {
+    let canItemBeDisassembled: Bool = RPGManager.CanItemBeDisassembled(gi, uiInventoryItem.GetRealItemData());
+    return canItemBeDisassembled
+      && !uiInventoryItem.IsPlayerFavourite() 
+      && !uiInventoryItem.IsEquipped() 
       && !uiInventoryItem.IsIconic();
   }
 
@@ -190,30 +199,3 @@ public abstract class RevisedBackpackUtils {
     || Equals(type, gamedataEquipmentArea.UnderwearBottom);
   }
 }
-
-/**
- TODO
- + sorting
- + button hints
- + tooltip manager
- + tweak columns width
- + move arrow to right
- + interactive list items: hover
- + reset new on hower
- + tooltip on column header hover
- + hints on item hover
- + interactive list items: select
- + tooltip on item hover
- + preview on item select
- + disassemble, drop, equip, favorite + other vanilla backpack functionality
- + display quantity
- + toggle quest
- + new column: effective range
- + new column: toggle junk
- + filters: search [WIP]
- + filters: tier controls [WIP]
- - mass select
- - mass actions (disassemble and junk)
- - check HideInBackpackUI and SoftwareShard tags
- - animate screen open
-**/

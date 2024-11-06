@@ -7,6 +7,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
   private let m_menuEventDispatcher: wref<inkMenuEventDispatcher>;
   private let m_itemDisplayContext: ref<ItemDisplayContextData>;
   private let m_junkItems: array<ref<UIInventoryItem>>;
+  private let m_customJunkItems: array<ref<RevisedItemWrapper>>;
   private let m_selectedItems: array<ref<RevisedItemWrapper>>;
   private let m_itemDropQueueItems: array<ItemID>;
   private let m_itemDropQueue: array<ItemModParams>;
@@ -346,6 +347,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     playerItems = this.m_uiInventorySystem.GetPlayerItemsMap();
     playerItems.GetValues(values);
     ArrayClear(this.m_junkItems);
+    ArrayClear(this.m_customJunkItems);
     i = 0;
     limit = ArraySize(values);
     while i < limit {
@@ -373,6 +375,10 @@ public class RevisedBackpackController extends gameuiMenuGameController {
       if !shouldSkipItem {
         wrappedItem = this.BuildWrappedItem(uiInventoryItem);
         ArrayPush(wrappedItems, wrappedItem);
+      };
+
+      if wrappedItem.GetCustomJunkFlag() {
+        ArrayPush(this.m_customJunkItems, wrappedItem);
       };
 
       i += 1;
@@ -417,7 +423,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
       case revisedFiltersAction.Junk:
         this.JunkCurrentSelection();
         break;
-      case revisedFiltersAction.Junk:
+      case revisedFiltersAction.Disassemble:
         this.DisassembleCurrentSelection();
         break;
     }
@@ -481,7 +487,38 @@ public class RevisedBackpackController extends gameuiMenuGameController {
   }
 
   private final func DisassembleCurrentSelection() -> Void {
+    if Equals(ArraySize(this.m_selectedItems), 0) {
+      return;
+    };
+
+    this.m_massActionPopupToken = RevisedBackpackConfirmationPopup.Show(this, GetLocalizedTextByKey(n"Mod-Revised-Filter-Disassemble-Confirm"), GenericMessageNotificationType.YesNo);
+    this.m_massActionPopupToken.RegisterListener(this, n"OnDisassembleConfirmationClosed");
+  }
+
+  protected cb func OnDisassembleConfirmationClosed(data: ref<inkGameNotificationData>) {
+    let resultData: ref<GenericMessageNotificationCloseData> = data as GenericMessageNotificationCloseData;
+    if Equals(resultData.result, GenericMessageNotificationResult.Yes)  {
+      this.ConfirmSelectionDisassemble();
+    };
+    this.m_massActionPopupToken = null;
+  }
+
+  private final func ConfirmSelectionDisassemble() -> Void {
+    let item: ref<UIInventoryItem>;
+    for selectedItem in this.m_selectedItems {
+      item = selectedItem.inventoryItem;
+      if RevisedBackpackUtils.CanDisassemble(this.m_player.GetGame(), item) {
+        ItemActionsHelper.DisassembleItem(this.m_player, item.GetID(), item.GetQuantity());
+      };
+    };
+
+    this.PlaySound(n"ui_menu_item_disassemble");
     
+    this.DeselectLastHighlightedItem();
+    this.UpdateSelectionForAllWrappers(false);
+    this.UpdateSelectionForVirtualListControllers(false);
+    this.ClearStoredSelection();
+    this.RefreshUINextFrame();
   }
 
   protected cb func OnRevisedFilteringEvent(evt: ref<RevisedFilteringEvent>) -> Bool {
