@@ -55,6 +55,10 @@ public class RevisedBackpackSystem extends ScriptableSystem {
     return true;
   }
 
+  public final func HasCustomJunk() -> Bool {
+    return ArraySize(this.customJunk) > 0;
+  }
+
   public final func InvalidateCustomJunk(inventory: array<ref<IScriptable>>) -> Void {
     let updated: array<ItemID>;
     let itemId: ItemID;
