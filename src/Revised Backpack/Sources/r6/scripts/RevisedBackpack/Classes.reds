@@ -19,6 +19,13 @@ enum revisedSortingMode {
   Desc = 2,
 }
 
+enum revisedFiltersAction { 
+  None = 0,
+  Select = 1,
+  Junk = 2,
+  Disassemble = 3,
+}
+
 public class RevisedItemWrapper {
   public let id: TweakDBID;
   public let data: wref<gameItemData>;
@@ -136,8 +143,6 @@ public class RevisedBackpackCategory {
       if !swapped { return; }
       i += 1;
     };
-
-    ModLog(n"Sorting", s"Sorted array size: \(ArraySize(source))");
   }
 
   private static func Swap(out source: array<ref<RevisedBackpackCategory>>, left: Int32, right: Int32) -> Void {
@@ -283,6 +288,16 @@ public class RevisedFilteringEvent extends Event {
     evt.typeQuery = type;
     evt.tiers = tiers;
     evt.filtersReset = reset;
+    return evt;
+  }
+}
+
+public class RevisedFiltersActionEvent extends Event {
+  public let type: revisedFiltersAction;
+
+  public final static func Create(type: revisedFiltersAction) -> ref<RevisedFiltersActionEvent> {
+    let evt: ref<RevisedFiltersActionEvent> = new RevisedFiltersActionEvent();
+    evt.type = type;
     return evt;
   }
 }

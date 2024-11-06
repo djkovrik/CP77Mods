@@ -210,9 +210,8 @@ public abstract class RevisedBackpackUtils {
  + toggle quest
  + new column: effective range
  + new column: toggle junk
- ! filters: search [WIP]
- ! filters: tier controls [WIP]
- ? filters: ammo type
+ + filters: search [WIP]
+ + filters: tier controls [WIP]
  - mass select
  - mass actions (disassemble and junk)
  - check HideInBackpackUI and SoftwareShard tags

@@ -348,8 +348,7 @@ public class RevisedBackpackDataView extends ScriptableDataView {
   }
 
   private final func ItemTypeContainsQuery(item: ref<RevisedItemWrapper>, query: String) -> Bool {
-    let itemRecord: ref<Item_Record> = TweakDBInterface.GetItemRecord(item.id);
-    let itemTypeString: String = UTF8StrLower(GetLocalizedText(UIItemsHelper.GetItemTypeKey(itemRecord.ItemType().Type())));
+    let itemTypeString: String = UTF8StrLower(item.typeLabel);
     return StrContains(itemTypeString, UTF8StrLower(query));
   }
 

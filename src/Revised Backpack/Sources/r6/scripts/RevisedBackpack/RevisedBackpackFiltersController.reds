@@ -139,18 +139,18 @@ public class RevisedBackpackFiltersController extends inkLogicController {
   }
 
   private final func RunSelectAction() -> Void {
-    this.Log("RunSelectAction");
     this.PlaySound(n"ui_menu_onpress");
+    this.QueueEvent(RevisedFiltersActionEvent.Create(revisedFiltersAction.Select));
   }
 
   private final func RunJunkAction() -> Void {
-    this.Log("RunJunkAction");
     this.PlaySound(n"ui_menu_onpress");
+    this.QueueEvent(RevisedFiltersActionEvent.Create(revisedFiltersAction.Junk));
   }
 
   private final func RunDisassembleAction() -> Void {
-    this.Log("RunDisassembleAction");
     this.PlaySound(n"ui_menu_onpress");
+    this.QueueEvent(RevisedFiltersActionEvent.Create(revisedFiltersAction.Disassemble));
   }
 
   private final func HandleWidgetClick(name: CName) -> Void {

@@ -131,8 +131,8 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     };
   }
 
-  public final func Deselect() -> Void {
-    this.m_item.SetSelectedFlag(false);
+  public final func SetSelection(selected: Bool) -> Void {
+    this.m_item.SetSelectedFlag(selected);
     this.m_selection.SetVisible(this.m_item.GetSelectedFlag());
   }
 
@@ -214,6 +214,8 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     } else {
       this.m_customJunkContainer.SetOpacity(0.1);
     };
+
+    this.Log(s"RefreshView for \(this.m_item.nameLabel), selected \(this.m_item.GetSelectedFlag())");
   }
 
   private final func Log(str: String) -> Void {
