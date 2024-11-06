@@ -50,6 +50,16 @@ public class RevisedBackpackController extends gameuiMenuGameController {
   private let m_previewGarmentContainer: inkWidgetRef;
   private let m_previewItemContainer: inkWidgetRef;
 
+  private let m_animTargetCategories: inkWidgetRef;
+  private let m_animTargetFilters: inkWidgetRef;
+  private let m_animTargetHeader: inkWidgetRef;
+  private let m_animTargetList: inkWidgetRef;
+
+  private let m_animProxyCategories: ref<inkAnimProxy>;
+  private let m_animProxyFilters: ref<inkAnimProxy>;
+  private let m_animProxyHeader: ref<inkAnimProxy>;
+  private let m_animProxyList: ref<inkAnimProxy>;
+
   private let m_uiInventorySystem: wref<UIInventoryScriptableSystem>;
   private let m_inventoryManager: ref<InventoryDataManagerV2>;
   private let m_uiScriptableSystem: wref<UIScriptableSystem>;
@@ -132,12 +142,14 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     this.SetupVirtualList();
     this.PopulateCategories();
     this.PopulateInventory();
+    this.PlayIntroAnimation();
 
     this.Log(s"OnPlayerAttach: service \(IsDefined(this.m_system)), categories: \(ArraySize(this.m_availableCategories))");
   }
 
   protected cb func OnPlayerDetach(playerPuppet: ref<GameObject>) -> Bool {
     this.ResetVirtualList();
+    this.StopAnimations();
   }
 
   protected cb func OnPostOnRelease(evt: ref<inkPointerEvent>) -> Bool {
@@ -232,6 +244,49 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     this.itemsListDataView = null;
     this.itemsListDataSource = null;
     this.itemsListTemplateClassifier = null;
+  }
+
+  private final func PlayIntroAnimation() -> Void {
+    let duration: Float = 0.2;
+    let categories: ref<inkAnimDef> = this.AnimateTranslationAndOpacity(new Vector2(0.0, -200.0), new Vector2(0.0, 0.0), duration, 0.0);
+    let header: ref<inkAnimDef> = this.AnimateTranslationAndOpacity(new Vector2(0.0, -100.0), new Vector2(0.0, 0.0), duration, 0.0);
+    let filters: ref<inkAnimDef> = this.AnimateTranslationAndOpacity(new Vector2(0.0, 100.0), new Vector2(0.0, 0.0), duration, 0.0);
+    let list: ref<inkAnimDef> = this.AnimateOpacity(duration, duration);
+
+    this.m_animProxyCategories = inkWidgetRef.PlayAnimation(this.m_animTargetCategories, categories);
+    this.m_animProxyHeader = inkWidgetRef.PlayAnimation(this.m_animTargetHeader, header);
+    this.m_animProxyFilters = inkWidgetRef.PlayAnimation(this.m_animTargetFilters, filters);
+    this.m_animProxyList = inkWidgetRef.PlayAnimation(this.m_animTargetList, list);
+  }
+
+  private final func StopAnimations() -> Void {
+    if IsDefined(this.m_animProxyCategories) {
+      if this.m_animProxyCategories.IsPlaying() {
+        this.m_animProxyCategories.Stop();
+        this.m_animProxyCategories = null;
+      };
+    }
+
+    if IsDefined(this.m_animProxyFilters) {
+      if this.m_animProxyFilters.IsPlaying() {
+        this.m_animProxyFilters.Stop();
+        this.m_animProxyFilters = null;
+      };
+    }
+
+    if IsDefined(this.m_animProxyHeader) {
+      if this.m_animProxyHeader.IsPlaying() {
+        this.m_animProxyHeader.Stop();
+        this.m_animProxyHeader = null;
+      };
+    }
+
+    if IsDefined(this.m_animProxyList) {
+      if this.m_animProxyList.IsPlaying() {
+        this.m_animProxyList.Stop();
+        this.m_animProxyList = null;
+      };
+    }
   }
 
   public final func OnBakcpackItemDisplayNotification(message: ItemDisplayNotificationMessage, id: Uint64, opt data: wref<IScriptable>) -> Void {
@@ -1303,6 +1358,50 @@ public class RevisedBackpackController extends gameuiMenuGameController {
   private final func ClearStoredSelection() -> Void {
     ArrayClear(this.m_selectedItems);
     this.QueueEvent(RevisedBackpackSelectedItemsCountChangedEvent.Create(ArraySize(this.m_selectedItems)));
+  }
+
+  private final func AnimateTranslationAndOpacity(start: Vector2, end: Vector2, duration: Float, delay: Float) -> ref<inkAnimDef> {
+    let moveElementsAnimDef: ref<inkAnimDef> = new inkAnimDef();
+
+    let transparencyInterpolator: ref<inkAnimTransparency> = new inkAnimTransparency();
+    transparencyInterpolator.SetDuration(duration);
+    transparencyInterpolator.SetStartDelay(delay);
+    transparencyInterpolator.SetType(inkanimInterpolationType.Quintic);
+    transparencyInterpolator.SetMode(inkanimInterpolationMode.EasyInOut);
+    transparencyInterpolator.SetDirection(inkanimInterpolationDirection.To);
+    transparencyInterpolator.SetStartTransparency(0.0);
+    transparencyInterpolator.SetEndTransparency(1.0);
+
+    let translationInterpolator: ref<inkAnimTranslation> = new inkAnimTranslation();
+    translationInterpolator.SetDuration(duration);
+    translationInterpolator.SetStartDelay(delay);
+    translationInterpolator.SetType(inkanimInterpolationType.Linear);
+    translationInterpolator.SetMode(inkanimInterpolationMode.EasyInOut);
+    translationInterpolator.SetDirection(inkanimInterpolationDirection.FromTo);
+    translationInterpolator.SetStartTranslation(start);
+    translationInterpolator.SetEndTranslation(end);
+
+    moveElementsAnimDef.AddInterpolator(transparencyInterpolator);
+    moveElementsAnimDef.AddInterpolator(translationInterpolator);
+    
+    return moveElementsAnimDef;
+  }
+
+  private final func AnimateOpacity(duration: Float, delay: Float) -> ref<inkAnimDef> {
+    let moveElementsAnimDef: ref<inkAnimDef> = new inkAnimDef();
+
+    let transparencyInterpolator: ref<inkAnimTransparency> = new inkAnimTransparency();
+    transparencyInterpolator.SetDuration(duration);
+    transparencyInterpolator.SetStartDelay(delay);
+    transparencyInterpolator.SetType(inkanimInterpolationType.Linear);
+    transparencyInterpolator.SetMode(inkanimInterpolationMode.EasyIn);
+    transparencyInterpolator.SetDirection(inkanimInterpolationDirection.To);
+    transparencyInterpolator.SetStartTransparency(0.0);
+    transparencyInterpolator.SetEndTransparency(1.0);
+
+    moveElementsAnimDef.AddInterpolator(transparencyInterpolator);
+    
+    return moveElementsAnimDef;
   }
 
   private final func Log(str: String) -> Void {
