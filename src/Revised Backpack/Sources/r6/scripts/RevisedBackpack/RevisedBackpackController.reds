@@ -30,6 +30,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
   private let m_quantityPickerPopupToken: ref<inkGameNotificationToken>;
   private let m_disassembleJunkPopupToken: ref<inkGameNotificationToken>;
   private let m_confirmationPopupToken: ref<inkGameNotificationToken>;
+  private let m_massActionPopupToken: ref<inkGameNotificationToken>;
   private let m_equipRequested: Bool;
   private let m_psmBlackboard: wref<IBlackboard>;
   private let playerState: gamePSMVehicle;
@@ -63,6 +64,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
   private let m_pressedItemDisplay: wref<RevisedBackpackItemController>;
   private let m_availableCategories: array<ref<RevisedBackpackCategory>>;
   private let m_cursorData: ref<MenuCursorUserData>;
+  private let m_customJunkInvalidated: Bool;
 
   private let m_delayedOutfitCooldownResetCallbackId: DelayID;
   private let m_outfitInCooldown: Bool;
@@ -87,6 +89,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     this.m_psmBlackboard = this.GetPSMBlackboard(playerPuppet);
     this.playerState = IntEnum<gamePSMVehicle>(this.m_psmBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Vehicle));
     this.m_outfitCooldownPeroid = 0.4;
+    this.m_customJunkInvalidated = false;
 
     this.itemsListController = inkWidgetRef.GetController(this.m_virtualList) as inkVirtualListController;
     this.itemsListScrollController = inkWidgetRef.GetControllerByType(this.m_scrollAreaContainer, n"inkScrollController") as inkScrollController;
@@ -378,6 +381,11 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     this.itemsListDataSource.Reset(wrappedItems);
     this.itemsListDataView.UpdateView();
     this.Log(s"PopulateInventory \(ArraySize(wrappedItems))");
+
+    if !this.m_customJunkInvalidated {
+      this.m_customJunkInvalidated = true;
+      this.m_system.InvalidateCustomJunk(wrappedItems);
+    };
   }
 
   private final func RequestItemInspected(itemID: ItemID) -> Void {
@@ -439,7 +447,37 @@ public class RevisedBackpackController extends gameuiMenuGameController {
   }
 
   private final func JunkCurrentSelection() -> Void {
-    
+    if Equals(ArraySize(this.m_selectedItems), 0) {
+      return;
+    };
+
+    this.m_massActionPopupToken = RevisedBackpackConfirmationPopup.Show(this, GetLocalizedTextByKey(n"Mod-Revised-Filter-Junk-Confirm"), GenericMessageNotificationType.YesNo);
+    this.m_massActionPopupToken.RegisterListener(this, n"OnJunkConfirmationClosed");
+  }
+
+  protected cb func OnJunkConfirmationClosed(data: ref<inkGameNotificationData>) {
+    let resultData: ref<GenericMessageNotificationCloseData> = data as GenericMessageNotificationCloseData;
+    if Equals(resultData.result, GenericMessageNotificationResult.Yes)  {
+      this.ConfirmSelectionCustomJunk();
+    };
+    this.m_massActionPopupToken = null;
+  }
+
+  private final func ConfirmSelectionCustomJunk() -> Void {
+    let wasAddedToJunk: Bool;
+    for selectedItem in this.m_selectedItems {
+      if selectedItem.customJunkToggleable {
+        wasAddedToJunk = this.m_system.AddToJunk(selectedItem.data.GetID());
+        selectedItem.SetCustomJunkFlag(wasAddedToJunk);
+      };
+    };
+
+    this.PlaySound(n"ui_menu_item_disassemble");
+
+    let customJunkCategoryIndex: Int32 = ArraySize(this.m_availableCategories) - 1;
+    let customJunkCategory: ref<RevisedBackpackCategory> = this.m_availableCategories[customJunkCategoryIndex];
+    this.OnRevisedCategorySelectedEvent(RevisedCategorySelectedEvent.Create(customJunkCategory));
+    this.RefreshUINextFrame();
   }
 
   private final func DisassembleCurrentSelection() -> Void {

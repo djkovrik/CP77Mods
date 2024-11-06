@@ -215,7 +215,7 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
       this.m_customJunkContainer.SetOpacity(0.1);
     };
 
-    this.Log(s"RefreshView for \(this.m_item.nameLabel), selected \(this.m_item.GetSelectedFlag())");
+    this.Log(s"RefreshView for \(this.m_item.nameLabel), selected \(this.m_item.GetSelectedFlag()), custom junk \(this.m_item.GetCustomJunkFlag())))");
   }
 
   private final func Log(str: String) -> Void {

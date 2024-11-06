@@ -55,14 +55,18 @@ public class RevisedBackpackSystem extends ScriptableSystem {
     return true;
   }
 
-  public final func InvalidateCustomJunk(inventory: array<ref<RevisedItemWrapper>>) -> Void {
+  public final func InvalidateCustomJunk(inventory: array<ref<IScriptable>>) -> Void {
     let updated: array<ItemID>;
     let itemId: ItemID;
+    let wrapper: ref<RevisedItemWrapper>;
     for item in inventory {
-      itemId = item.data.GetID();
-      if this.IsAddedToJunk(itemId) {
-        ArrayPush(updated, itemId);
-      };
+      wrapper = item as RevisedItemWrapper;
+      if IsDefined(wrapper) {
+        itemId = wrapper.data.GetID();
+        if this.IsAddedToJunk(itemId) {
+          ArrayPush(updated, itemId);
+        };
+      }
     };
 
     this.customJunk = updated;

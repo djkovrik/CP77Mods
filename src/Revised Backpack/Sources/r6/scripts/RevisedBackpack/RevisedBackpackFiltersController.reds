@@ -112,6 +112,8 @@ public class RevisedBackpackFiltersController extends inkLogicController {
 
   protected cb func OnRevisedBackpackSelectedItemsCountChangedEvent(evt: ref<RevisedBackpackSelectedItemsCountChangedEvent>) -> Bool {
     this.UpdateSelectedItemsCounter(evt.count);
+    this.massActionsAvailable = this.selectionAvailable && evt.count > 0;
+    this.InvalidateMassActionsButtons();
   }
 
   public final func ApplyFiltersDelayed() -> Void {
