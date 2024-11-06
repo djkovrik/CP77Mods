@@ -264,6 +264,16 @@ public class RevisedBackpackItemWasHighlightedEvent extends Event {
   }
 }
 
+public class RevisedBackpackSelectedItemsCountChangedEvent extends Event {
+  public let count: Int32;
+
+  public final static func Create(count: Int32) -> ref<RevisedBackpackSelectedItemsCountChangedEvent> {
+    let evt: ref<RevisedBackpackSelectedItemsCountChangedEvent> = new RevisedBackpackSelectedItemsCountChangedEvent();
+    evt.count = count;
+    return evt;
+  }
+}
+
 public class RevisedItemPreviewEvent extends Event {
   public let itemId: ItemID;
   public let isGarment: Bool;
