@@ -1,4 +1,4 @@
-// RevisedBackpack v0.9.0-beta1
+// RevisedBackpack v0.9.0
 module RevisedBackpack
 
 import Codeware.UI.HubTextInput
@@ -647,6 +647,10 @@ private final func GetSellableJunk() -> array<wref<gameItemData>> {
   };
   return result;
 }
+@addMethod(InventoryDataManagerV2)
+public final func GetItemSlotIndexRev(owner: ref<GameObject>, itemId: ItemID) -> Int32 {
+  return this.m_EquipmentSystem.GetItemSlotIndex(owner, itemId);
+}
 class InsertBetterBackpackMenuItem extends ScriptableService {
   private cb func OnLoad() {
     GameInstance.GetCallbackSystem()
@@ -776,7 +780,6 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     this.m_backpackInventoryListenerCallback.Setup(this);
     this.m_buttonHintsController = this.SpawnFromExternal(inkWidgetRef.Get(this.m_buttonHintsManagerRef), r"base\\gameplay\\gui\\common\\buttonhints.inkwidget", n"Root").GetController() as ButtonHints;
     this.m_buttonHintsController.AddButtonHint(n"back", "Common-Access-Close");
-    this.m_buttonHintsController.AddButtonHint(n"toggle_comparison_tooltip", GetLocalizedText("UI-UserActions-DisableComparison"));
     this.m_TooltipsManager = inkWidgetRef.GetControllerByType(this.m_TooltipsManagerRef, n"gameuiTooltipsManager") as gameuiTooltipsManager;
     this.m_TooltipsManager.Setup(ETooltipsStyle.Menus);
     this.RegisterToBB();
@@ -820,7 +823,9 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     this.m_comparisonResolver = InventoryItemPreferredComparisonResolver.Make(this.m_uiInventorySystem);
     this.m_backpackInventoryListener = GameInstance.GetTransactionSystem(this.m_player.GetGame()).RegisterInventoryListener(this.m_player, this.m_backpackInventoryListenerCallback);
     this.m_isComparisonDisabled = this.m_uiScriptableSystem.IsComparisionTooltipDisabled();
-    this.m_buttonHintsController.AddButtonHint(n"toggle_comparison_tooltip", GetLocalizedText(this.m_isComparisonDisabled ? "UI-UserActions-EnableComparison" : "UI-UserActions-DisableComparison"));
+    if this.m_player.PlayerLastUsedKBM() {
+      this.m_buttonHintsController.AddButtonHint(n"toggle_comparison_tooltip", GetLocalizedText(this.m_isComparisonDisabled ? "UI-UserActions-EnableComparison" : "UI-UserActions-DisableComparison"));
+    };
     this.UpdateSelectedItemsCounter();
     this.SetupVirtualList();
     this.PopulateCategories();
@@ -834,7 +839,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
   }
   protected cb func OnPostOnRelease(evt: ref<inkPointerEvent>) -> Bool {
     let setComparisionDisabledRequest: ref<UIScriptableSystemSetComparisionTooltipDisabled>;
-    if evt.IsAction(n"toggle_comparison_tooltip") {
+    if evt.IsAction(n"toggle_comparison_tooltip") && this.m_player.PlayerLastUsedKBM() {
       this.m_isComparisonDisabled = !this.m_isComparisonDisabled;
       this.m_buttonHintsController.AddButtonHint(n"toggle_comparison_tooltip", GetLocalizedText(this.m_isComparisonDisabled ? "UI-UserActions-EnableComparison" : "UI-UserActions-DisableComparison"));
       setComparisionDisabledRequest = new UIScriptableSystemSetComparisionTooltipDisabled();
@@ -847,15 +852,13 @@ public class RevisedBackpackController extends gameuiMenuGameController {
         this.RequestSetFocus(null);
       };
     };
-    // down_button called first, UI_MoveDown called second
-    // UI_MoveUp called first, up_button called second
-    if evt.IsAction(n"down_button") {
-      evt.Consume();
-      this.TryToSelectNextItem();
-    };
-    if evt.IsAction(n"UI_MoveUp") {
-      evt.Consume();
+    // down_button called first, UI_MoveDown called second, then revised_nav_down
+    // UI_MoveUp called first, up_button called second, then revised_nav_up
+    if evt.IsAction(n"revised_nav_up") { 
       this.TryToSelectPreviousItem();
+    };
+    if evt.IsAction(n"revised_nav_down") { 
+      this.TryToSelectNextItem();
     };
   }
   protected cb func OnSetMenuEventDispatcher(menuEventDispatcher: wref<inkMenuEventDispatcher>) -> Bool {
@@ -1374,6 +1377,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
   }
   protected cb func OnRevisedItemDisplayClickEvent(evt: ref<RevisedItemDisplayClickEvent>) -> Bool {
     let isUsable: Bool;
+    let isHealing: Bool;
     let item: ItemModParams;
     if evt.actionName.IsAction(n"drop_item") {
       if Equals(this.playerState, gamePSMVehicle.Default) && RPGManager.CanItemBeDropped(this.m_player, evt.uiInventoryItem.GetItemData()) && InventoryGPRestrictionHelper.CanDrop(evt.uiInventoryItem, this.m_player) {
@@ -1397,7 +1401,8 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     } else {
       if evt.actionName.IsAction(n"revised_use_equip") {
         isUsable = IsDefined(ItemActionsHelper.GetConsumeAction(evt.uiInventoryItem.GetID())) || IsDefined(ItemActionsHelper.GetEatAction(evt.uiInventoryItem.GetID())) || IsDefined(ItemActionsHelper.GetDrinkAction(evt.uiInventoryItem.GetID())) || IsDefined(ItemActionsHelper.GetLearnAction(evt.uiInventoryItem.GetID())) || IsDefined(ItemActionsHelper.GetDownloadFunds(evt.uiInventoryItem.GetID()));
-        if isUsable {
+        isHealing = Equals(evt.uiInventoryItem.GetItemType(), gamedataItemType.Con_Inhaler) || Equals(evt.uiInventoryItem.GetItemType(), gamedataItemType.Con_Injector);
+        if isUsable && !isHealing {
           if !InventoryGPRestrictionHelper.CanUse(evt.uiInventoryItem, this.m_player) {
             this.ShowNotification(this.m_player.GetGame(), this.DetermineUIMenuNotificationType());
             return false;
@@ -1421,10 +1426,11 @@ public class RevisedBackpackController extends gameuiMenuGameController {
             this.SetOutfitCooldown(true);
           };
         };
-        if Equals(evt.uiInventoryItem.GetItemType(), gamedataItemType.Con_Inhaler) || Equals(evt.uiInventoryItem.GetItemType(), gamedataItemType.Con_Injector) {
-          return false;
+        if evt.uiInventoryItem.IsEquipped() {
+          this.UnequipItem(evt.uiInventoryItem);
+        } else {
+          this.EquipItem(evt.uiInventoryItem);
         };
-        this.EquipItem(evt.uiInventoryItem);
       };
     };
   }
@@ -1630,6 +1636,18 @@ public class RevisedBackpackController extends gameuiMenuGameController {
       this.m_equipRequested = true;
       this.m_inventoryManager.EquipItem(itemData.ID, 0);
     };
+    this.RefreshUINextFrame();
+  }
+  public final func UnequipItem(itemData: wref<UIInventoryItem>) -> Void {
+    let data: ref<gameItemData> = itemData.GetItemData();
+    let unequipBlocked: Bool = data.HasTag(n"UnequipBlocked");
+    if unequipBlocked || data.HasTag(n"Cyberware") {
+      return ;
+    };
+    let area: gamedataEquipmentArea = itemData.GetEquipmentArea();
+    let slotIndex: Int32 = this.m_inventoryManager.GetItemSlotIndexRev(this.m_player, data.GetID());
+    this.m_inventoryManager.UnequipItem(area, slotIndex);
+    this.RefreshUINextFrame();
   }
   private final func ShowNotification(gameInstance: GameInstance, type: UIMenuNotificationType) -> Void {
     let inventoryNotification: ref<UIMenuNotificationEvent> = new UIMenuNotificationEvent();
@@ -1710,9 +1728,12 @@ public class RevisedBackpackController extends gameuiMenuGameController {
   }
   private final func ShowButtonHints(item: ref<RevisedItemWrapper>) -> Void {
     let data: ref<gameItemData> = item.data;
+    let unequipBlocked: Bool = data.HasTag(n"UnequipBlocked");
     let itemID: ItemID = data.GetID();
     let isLearnble: Bool = IsDefined(ItemActionsHelper.GetLearnAction(itemID));
     let isUsable: Bool = IsDefined(ItemActionsHelper.GetConsumeAction(itemID)) || IsDefined(ItemActionsHelper.GetEatAction(itemID)) || IsDefined(ItemActionsHelper.GetDrinkAction(itemID));
+    let isGrenade: Bool = Equals(item.type, gamedataItemType.Gad_Grenade);
+    let isHealing: Bool = Equals(item.type, gamedataItemType.Con_Inhaler) || Equals(item.type, gamedataItemType.Con_Injector);
     let isEquipable: Bool = RevisedBackpackUtils.IsEquippable(item, this.m_player);
     this.m_cursorData = new MenuCursorUserData();
     this.m_cursorData.SetAnimationOverride(n"hoverOnHoldToComplete");
@@ -1728,9 +1749,11 @@ public class RevisedBackpackController extends gameuiMenuGameController {
         if RPGManager.HasDownloadFundsAction(itemID) && RPGManager.CanDownloadFunds(this.m_player.GetGame(), itemID) {
           this.m_buttonHintsController.AddButtonHint(n"revised_use_equip", GetLocalizedText("LocKey#23401"));
         } else {
-          if isEquipable {
+          if isEquipable || isGrenade {
             if item.inventoryItem.IsEquipped() && !item.inventoryItem.IsQuestItem() {
-              this.m_buttonHintsController.AddButtonHint(n"revised_use_equip", GetLocalizedText("UI-UserActions-Unequip"));
+              if !unequipBlocked && !isGrenade && !isHealing {
+                this.m_buttonHintsController.AddButtonHint(n"revised_use_equip", GetLocalizedText("UI-UserActions-Unequip"));
+              };
             } else {
               this.m_buttonHintsController.AddButtonHint(n"revised_use_equip", GetLocalizedText("UI-UserActions-Equip"));
             };
@@ -1741,7 +1764,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
       };
     };
     if Equals(item.type, gamedataItemType.Con_Inhaler) || Equals(item.type, gamedataItemType.Con_Injector) {
-      this.m_buttonHintsController.RemoveButtonHint(n"revised_use_equip");
+      this.m_buttonHintsController.AddButtonHint(n"revised_use_equip", GetLocalizedText("UI-UserActions-Equip"));
     };
     // Disassemble
     if RPGManager.CanItemBeDisassembled(this.m_player.GetGame(), data.GetID()) && !item.inventoryItem.IsEquipped() && !data.HasTag(n"UnequipBlocked") {
@@ -2429,10 +2452,12 @@ public class RevisedBackpackFiltersController extends inkLogicController {
   private let checkboxTier3Thumb: wref<inkWidget>;
   private let checkboxTier4Thumb: wref<inkWidget>;
   private let checkboxTier5Thumb: wref<inkWidget>;
+  private let buttonsContainer: wref<inkWidget>;
   private let buttonSelect: wref<RevisedFiltersButton>;
   private let buttonJunk: wref<RevisedFiltersButton>;
   private let buttonDisassemble: wref<RevisedFiltersButton>;
   private let buttonReset: wref<RevisedFiltersButton>;
+  private let m_animProxy: ref<inkAnimProxy>;
   private let nameInput: String = "";
   private let typeInput: String = "";
   private let tier1Enabled: Bool = true;
@@ -2452,6 +2477,12 @@ public class RevisedBackpackFiltersController extends inkLogicController {
   protected cb func OnUninitialize() -> Bool {
     this.UnregisterListeners();
     this.m_delaySystem.CancelCallback(this.m_debounceCalbackId);
+    if IsDefined(this.m_animProxy) {
+      if this.m_animProxy.IsPlaying() {
+        this.m_animProxy.Stop();
+        this.m_animProxy = null;
+      };
+    }
   }
   private final func RegisterListeners() -> Void {
     this.RegisterToCallback(n"OnHoverOver", this, n"OnHoverOver");
@@ -2644,9 +2675,26 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     this.buttonReset.SetDisabled(!this.resetAvailable);
   }
   private final func InvalidateMassActionsButtons() -> Void {
-    this.buttonSelect.SetDisabled(!this.selectionAvailable);
+    this.UpdateButtonsContainerVisibility();
     this.buttonJunk.SetDisabled(!this.massActionsAvailable);
     this.buttonDisassemble.SetDisabled(!this.massActionsAvailable);
+  }
+  private final func UpdateButtonsContainerVisibility() -> Void {
+    if Equals(this.selectionAvailable, this.buttonsContainer.IsVisible()) {
+      return;
+    };
+    let start: Float;
+    let end: Float;
+    if this.selectionAvailable {
+      start = 0.0;
+      end = 1.0;
+    } else {
+      start = 1.0;
+      end = 0.0;
+    };
+    this.buttonsContainer.SetOpacity(start);
+    let container: ref<inkAnimDef> = this.AnimateOpacity(0.2, start, end);
+    this.m_animProxy = this.buttonsContainer.PlayAnimation(container);
   }
   private final func InvalidateCheckboxes() -> Void {
     if NotEquals(this.checkboxTier1Thumb.IsVisible(), this.tier1Enabled) {
@@ -2756,12 +2804,14 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     this.buttonReset = buttonReset;
     let rightColumn: ref<inkVerticalPanel> = new inkVerticalPanel();
     rightColumn.SetName(n"rightColumn");
+    rightColumn.SetOpacity(0.0);
+    rightColumn.SetAffectsLayoutWhenHidden(true);
     rightColumn.SetChildMargin(new inkMargin(0.0, 0.0, 0.0, 24.0));
     rightColumn.Reparent(outerContainer);
+    this.buttonsContainer = rightColumn;
     let buttonSelect: ref<RevisedFiltersButton> = RevisedFiltersButton.Create();
     buttonSelect.SetName(n"buttonSelect");
     buttonSelect.SetText(GetLocalizedTextByKey(n"Mod-Revised-Filter-Select"));
-    buttonSelect.SetDisabled(true);
     buttonSelect.Reparent(rightColumn);
     this.buttonSelect = buttonSelect;
     let buttonJunk: ref<RevisedFiltersButton> = RevisedFiltersButton.Create();
@@ -2848,6 +2898,19 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     label.BindProperty(n"tintColor", n"MainColors.Red");
     label.Reparent(checkboxContainer);
     return checkboxContainer;
+  }
+  private final func AnimateOpacity(duration: Float, start: Float, end: Float) -> ref<inkAnimDef> {
+    let moveElementsAnimDef: ref<inkAnimDef> = new inkAnimDef();
+    let transparencyInterpolator: ref<inkAnimTransparency> = new inkAnimTransparency();
+    transparencyInterpolator.SetDuration(duration);
+    transparencyInterpolator.SetStartDelay(0.0);
+    transparencyInterpolator.SetType(inkanimInterpolationType.Linear);
+    transparencyInterpolator.SetMode(inkanimInterpolationMode.EasyIn);
+    transparencyInterpolator.SetDirection(inkanimInterpolationDirection.To);
+    transparencyInterpolator.SetStartTransparency(start);
+    transparencyInterpolator.SetEndTransparency(end);
+    moveElementsAnimDef.AddInterpolator(transparencyInterpolator);
+    return moveElementsAnimDef;
   }
   private final func PlaySound(evt: CName) -> Void {
     GameObject.PlaySoundEvent(this.m_player, evt);

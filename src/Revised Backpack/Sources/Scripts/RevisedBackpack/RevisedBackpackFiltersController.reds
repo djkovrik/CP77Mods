@@ -23,10 +23,13 @@ public class RevisedBackpackFiltersController extends inkLogicController {
   private let checkboxTier4Thumb: wref<inkWidget>;
   private let checkboxTier5Thumb: wref<inkWidget>;
 
+  private let buttonsContainer: wref<inkWidget>;
   private let buttonSelect: wref<RevisedFiltersButton>;
   private let buttonJunk: wref<RevisedFiltersButton>;
   private let buttonDisassemble: wref<RevisedFiltersButton>;
   private let buttonReset: wref<RevisedFiltersButton>;
+
+  private let m_animProxy: ref<inkAnimProxy>;
 
   private let nameInput: String = "";
   private let typeInput: String = "";
@@ -49,6 +52,13 @@ public class RevisedBackpackFiltersController extends inkLogicController {
   protected cb func OnUninitialize() -> Bool {
     this.UnregisterListeners();
     this.m_delaySystem.CancelCallback(this.m_debounceCalbackId);
+
+    if IsDefined(this.m_animProxy) {
+      if this.m_animProxy.IsPlaying() {
+        this.m_animProxy.Stop();
+        this.m_animProxy = null;
+      };
+    }
   }
 
   private final func RegisterListeners() -> Void {
@@ -261,9 +271,29 @@ public class RevisedBackpackFiltersController extends inkLogicController {
   }
 
   private final func InvalidateMassActionsButtons() -> Void {
-    this.buttonSelect.SetDisabled(!this.selectionAvailable);
+    this.UpdateButtonsContainerVisibility();
     this.buttonJunk.SetDisabled(!this.massActionsAvailable);
     this.buttonDisassemble.SetDisabled(!this.massActionsAvailable);
+  }
+
+  private final func UpdateButtonsContainerVisibility() -> Void {
+    if Equals(this.selectionAvailable, this.buttonsContainer.IsVisible()) {
+      return;
+    };
+
+    let start: Float;
+    let end: Float;
+    if this.selectionAvailable {
+      start = 0.0;
+      end = 1.0;
+    } else {
+      start = 1.0;
+      end = 0.0;
+    };
+
+    this.buttonsContainer.SetOpacity(start);
+    let container: ref<inkAnimDef> = this.AnimateOpacity(0.2, start, end);
+    this.m_animProxy = this.buttonsContainer.PlayAnimation(container);
   }
 
   private final func InvalidateCheckboxes() -> Void {
@@ -388,13 +418,15 @@ public class RevisedBackpackFiltersController extends inkLogicController {
 
     let rightColumn: ref<inkVerticalPanel> = new inkVerticalPanel();
     rightColumn.SetName(n"rightColumn");
+    rightColumn.SetOpacity(0.0);
+    rightColumn.SetAffectsLayoutWhenHidden(true);
     rightColumn.SetChildMargin(new inkMargin(0.0, 0.0, 0.0, 24.0));
     rightColumn.Reparent(outerContainer);
+    this.buttonsContainer = rightColumn;
 
     let buttonSelect: ref<RevisedFiltersButton> = RevisedFiltersButton.Create();
     buttonSelect.SetName(n"buttonSelect");
     buttonSelect.SetText(GetLocalizedTextByKey(n"Mod-Revised-Filter-Select"));
-    buttonSelect.SetDisabled(true);
     buttonSelect.Reparent(rightColumn);
     this.buttonSelect = buttonSelect;
 
@@ -490,6 +522,23 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     label.Reparent(checkboxContainer);
 
     return checkboxContainer;
+  }
+
+  private final func AnimateOpacity(duration: Float, start: Float, end: Float) -> ref<inkAnimDef> {
+    let moveElementsAnimDef: ref<inkAnimDef> = new inkAnimDef();
+
+    let transparencyInterpolator: ref<inkAnimTransparency> = new inkAnimTransparency();
+    transparencyInterpolator.SetDuration(duration);
+    transparencyInterpolator.SetStartDelay(0.0);
+    transparencyInterpolator.SetType(inkanimInterpolationType.Linear);
+    transparencyInterpolator.SetMode(inkanimInterpolationMode.EasyIn);
+    transparencyInterpolator.SetDirection(inkanimInterpolationDirection.To);
+    transparencyInterpolator.SetStartTransparency(start);
+    transparencyInterpolator.SetEndTransparency(end);
+
+    moveElementsAnimDef.AddInterpolator(transparencyInterpolator);
+    
+    return moveElementsAnimDef;
   }
 
   private final func PlaySound(evt: CName) -> Void {

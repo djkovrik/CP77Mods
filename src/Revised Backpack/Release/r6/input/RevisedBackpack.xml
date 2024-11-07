@@ -2,6 +2,8 @@
 <bindings>
     <context name="RevisedBackpack" >
 		<action name="revised_use_equip" map="revised_use_equip" />
+		<action name="revised_nav_up" map="revised_nav_up" />
+		<action name="revised_nav_down" map="revised_nav_down" />
     </context>
 
     <context name="UIMenu" append="true">
@@ -13,6 +15,16 @@
 		<!-- Available keycodes: https://pastebin.com/nsQ1cqi8 -->
 		<button id="IK_F" />
 		<button id="IK_Pad_LeftThumb" />
+	</mapping>
+    
+	<mapping name="revised_nav_up" type="Button" >
+		<button id="IK_Up" />
+		<button id="IK_Pad_DigitUp" />
+	</mapping>
+    
+	<mapping name="revised_nav_down" type="Button" >
+		<button id="IK_Down" />
+		<button id="IK_Pad_DigitDown" />
 	</mapping>
 	
 </bindings>

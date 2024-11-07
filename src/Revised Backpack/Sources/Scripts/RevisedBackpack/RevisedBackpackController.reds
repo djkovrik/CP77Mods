@@ -91,7 +91,6 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     this.m_backpackInventoryListenerCallback.Setup(this);
     this.m_buttonHintsController = this.SpawnFromExternal(inkWidgetRef.Get(this.m_buttonHintsManagerRef), r"base\\gameplay\\gui\\common\\buttonhints.inkwidget", n"Root").GetController() as ButtonHints;
     this.m_buttonHintsController.AddButtonHint(n"back", "Common-Access-Close");
-    this.m_buttonHintsController.AddButtonHint(n"toggle_comparison_tooltip", GetLocalizedText("UI-UserActions-DisableComparison"));
     this.m_TooltipsManager = inkWidgetRef.GetControllerByType(this.m_TooltipsManagerRef, n"gameuiTooltipsManager") as gameuiTooltipsManager;
     this.m_TooltipsManager.Setup(ETooltipsStyle.Menus);
     this.RegisterToBB();
@@ -138,7 +137,10 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     this.m_comparisonResolver = InventoryItemPreferredComparisonResolver.Make(this.m_uiInventorySystem);
     this.m_backpackInventoryListener = GameInstance.GetTransactionSystem(this.m_player.GetGame()).RegisterInventoryListener(this.m_player, this.m_backpackInventoryListenerCallback);
     this.m_isComparisonDisabled = this.m_uiScriptableSystem.IsComparisionTooltipDisabled();
-    this.m_buttonHintsController.AddButtonHint(n"toggle_comparison_tooltip", GetLocalizedText(this.m_isComparisonDisabled ? "UI-UserActions-EnableComparison" : "UI-UserActions-DisableComparison"));
+
+    if this.m_player.PlayerLastUsedKBM() {
+      this.m_buttonHintsController.AddButtonHint(n"toggle_comparison_tooltip", GetLocalizedText(this.m_isComparisonDisabled ? "UI-UserActions-EnableComparison" : "UI-UserActions-DisableComparison"));
+    };
     
     this.UpdateSelectedItemsCounter();
     this.SetupVirtualList();
@@ -156,7 +158,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
 
   protected cb func OnPostOnRelease(evt: ref<inkPointerEvent>) -> Bool {
     let setComparisionDisabledRequest: ref<UIScriptableSystemSetComparisionTooltipDisabled>;
-    if evt.IsAction(n"toggle_comparison_tooltip") {
+    if evt.IsAction(n"toggle_comparison_tooltip") && this.m_player.PlayerLastUsedKBM() {
       this.m_isComparisonDisabled = !this.m_isComparisonDisabled;
       this.m_buttonHintsController.AddButtonHint(n"toggle_comparison_tooltip", GetLocalizedText(this.m_isComparisonDisabled ? "UI-UserActions-EnableComparison" : "UI-UserActions-DisableComparison"));
       setComparisionDisabledRequest = new UIScriptableSystemSetComparisionTooltipDisabled();
@@ -171,16 +173,14 @@ public class RevisedBackpackController extends gameuiMenuGameController {
       };
     };
 
-    // down_button called first, UI_MoveDown called second
-    // UI_MoveUp called first, up_button called second
-    if evt.IsAction(n"down_button") {
-      evt.Consume();
-      this.TryToSelectNextItem();
-    };
-    
-    if evt.IsAction(n"UI_MoveUp") {
-      evt.Consume();
+    // down_button called first, UI_MoveDown called second, then revised_nav_down
+    // UI_MoveUp called first, up_button called second, then revised_nav_up
+    if evt.IsAction(n"revised_nav_up") { 
       this.TryToSelectPreviousItem();
+    };
+
+    if evt.IsAction(n"revised_nav_down") { 
+      this.TryToSelectNextItem();
     };
   }
 
@@ -776,6 +776,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
 
   protected cb func OnRevisedItemDisplayClickEvent(evt: ref<RevisedItemDisplayClickEvent>) -> Bool {
     let isUsable: Bool;
+    let isHealing: Bool;
     let item: ItemModParams;
     if evt.actionName.IsAction(n"drop_item") {
       if Equals(this.playerState, gamePSMVehicle.Default) && RPGManager.CanItemBeDropped(this.m_player, evt.uiInventoryItem.GetItemData()) && InventoryGPRestrictionHelper.CanDrop(evt.uiInventoryItem, this.m_player) {
@@ -799,7 +800,8 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     } else {
       if evt.actionName.IsAction(n"revised_use_equip") {
         isUsable = IsDefined(ItemActionsHelper.GetConsumeAction(evt.uiInventoryItem.GetID())) || IsDefined(ItemActionsHelper.GetEatAction(evt.uiInventoryItem.GetID())) || IsDefined(ItemActionsHelper.GetDrinkAction(evt.uiInventoryItem.GetID())) || IsDefined(ItemActionsHelper.GetLearnAction(evt.uiInventoryItem.GetID())) || IsDefined(ItemActionsHelper.GetDownloadFunds(evt.uiInventoryItem.GetID()));
-        if isUsable {
+        isHealing = Equals(evt.uiInventoryItem.GetItemType(), gamedataItemType.Con_Inhaler) || Equals(evt.uiInventoryItem.GetItemType(), gamedataItemType.Con_Injector);
+        if isUsable && !isHealing {
           if !InventoryGPRestrictionHelper.CanUse(evt.uiInventoryItem, this.m_player) {
             this.ShowNotification(this.m_player.GetGame(), this.DetermineUIMenuNotificationType());
             return false;
@@ -824,11 +826,11 @@ public class RevisedBackpackController extends gameuiMenuGameController {
           };
         };
 
-        if Equals(evt.uiInventoryItem.GetItemType(), gamedataItemType.Con_Inhaler) || Equals(evt.uiInventoryItem.GetItemType(), gamedataItemType.Con_Injector) {
-          return false;
+        if evt.uiInventoryItem.IsEquipped() {
+          this.UnequipItem(evt.uiInventoryItem);
+        } else {
+          this.EquipItem(evt.uiInventoryItem);
         };
-
-        this.EquipItem(evt.uiInventoryItem);
       };
     };
   }
@@ -1055,6 +1057,21 @@ public class RevisedBackpackController extends gameuiMenuGameController {
       this.m_equipRequested = true;
       this.m_inventoryManager.EquipItem(itemData.ID, 0);
     };
+    this.RefreshUINextFrame();
+  }
+
+
+  public final func UnequipItem(itemData: wref<UIInventoryItem>) -> Void {
+    let data: ref<gameItemData> = itemData.GetItemData();
+    let unequipBlocked: Bool = data.HasTag(n"UnequipBlocked");
+    if unequipBlocked || data.HasTag(n"Cyberware") {
+      return ;
+    };
+
+    let area: gamedataEquipmentArea = itemData.GetEquipmentArea();
+    let slotIndex: Int32 = this.m_inventoryManager.GetItemSlotIndexRev(this.m_player, data.GetID());
+    this.m_inventoryManager.UnequipItem(area, slotIndex);
+    this.RefreshUINextFrame();
   }
 
   private final func ShowNotification(gameInstance: GameInstance, type: UIMenuNotificationType) -> Void {
@@ -1141,9 +1158,12 @@ public class RevisedBackpackController extends gameuiMenuGameController {
 
   private final func ShowButtonHints(item: ref<RevisedItemWrapper>) -> Void {
     let data: ref<gameItemData> = item.data;
+    let unequipBlocked: Bool = data.HasTag(n"UnequipBlocked");
     let itemID: ItemID = data.GetID();
     let isLearnble: Bool = IsDefined(ItemActionsHelper.GetLearnAction(itemID));
     let isUsable: Bool = IsDefined(ItemActionsHelper.GetConsumeAction(itemID)) || IsDefined(ItemActionsHelper.GetEatAction(itemID)) || IsDefined(ItemActionsHelper.GetDrinkAction(itemID));
+    let isGrenade: Bool = Equals(item.type, gamedataItemType.Gad_Grenade);
+    let isHealing: Bool = Equals(item.type, gamedataItemType.Con_Inhaler) || Equals(item.type, gamedataItemType.Con_Injector);
     let isEquipable: Bool = RevisedBackpackUtils.IsEquippable(item, this.m_player);
     this.m_cursorData = new MenuCursorUserData();
     this.m_cursorData.SetAnimationOverride(n"hoverOnHoldToComplete");
@@ -1161,9 +1181,11 @@ public class RevisedBackpackController extends gameuiMenuGameController {
         if RPGManager.HasDownloadFundsAction(itemID) && RPGManager.CanDownloadFunds(this.m_player.GetGame(), itemID) {
           this.m_buttonHintsController.AddButtonHint(n"revised_use_equip", GetLocalizedText("LocKey#23401"));
         } else {
-          if isEquipable {
+          if isEquipable || isGrenade {
             if item.inventoryItem.IsEquipped() && !item.inventoryItem.IsQuestItem() {
-              this.m_buttonHintsController.AddButtonHint(n"revised_use_equip", GetLocalizedText("UI-UserActions-Unequip"));
+              if !unequipBlocked && !isGrenade && !isHealing {
+                this.m_buttonHintsController.AddButtonHint(n"revised_use_equip", GetLocalizedText("UI-UserActions-Unequip"));
+              };
             } else {
               this.m_buttonHintsController.AddButtonHint(n"revised_use_equip", GetLocalizedText("UI-UserActions-Equip"));
             };
@@ -1174,7 +1196,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
       };
     };
     if Equals(item.type, gamedataItemType.Con_Inhaler) || Equals(item.type, gamedataItemType.Con_Injector) {
-      this.m_buttonHintsController.RemoveButtonHint(n"revised_use_equip");
+      this.m_buttonHintsController.AddButtonHint(n"revised_use_equip", GetLocalizedText("UI-UserActions-Equip"));
     };
 
     // Disassemble
