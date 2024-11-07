@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<InstalLog Project="RevisedBackpack" Build_date="07.11.2024 11:57:01">
+  <Files>
+    <Directory Path="C:\Games\steamapps\common\Cyberpunk 2077\archive">
+      <Directory Path="C:\Games\steamapps\common\Cyberpunk 2077\archive\pc">
+        <Directory Path="C:\Games\steamapps\common\Cyberpunk 2077\archive\pc\mod">
+          <file>C:\Games\steamapps\common\Cyberpunk 2077\archive\pc\mod\RevisedBackpack.archive</file>
+        </Directory>
+      </Directory>
+    </Directory>
+  </Files>
+</InstalLog>

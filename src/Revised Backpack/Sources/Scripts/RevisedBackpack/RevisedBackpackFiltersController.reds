@@ -23,8 +23,6 @@ public class RevisedBackpackFiltersController extends inkLogicController {
   private let checkboxTier4Thumb: wref<inkWidget>;
   private let checkboxTier5Thumb: wref<inkWidget>;
 
-  private let selectedItemsCount: wref<inkText>;
-
   private let buttonSelect: wref<RevisedFiltersButton>;
   private let buttonJunk: wref<RevisedFiltersButton>;
   private let buttonDisassemble: wref<RevisedFiltersButton>;
@@ -111,7 +109,6 @@ public class RevisedBackpackFiltersController extends inkLogicController {
   }
 
   protected cb func OnRevisedBackpackSelectedItemsCountChangedEvent(evt: ref<RevisedBackpackSelectedItemsCountChangedEvent>) -> Bool {
-    this.UpdateSelectedItemsCounter(evt.count);
     this.massActionsAvailable = this.selectionAvailable && evt.count > 0;
     this.InvalidateMassActionsButtons();
   }
@@ -317,10 +314,6 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     this.QueueEvent(event);
   }
 
-  private final func UpdateSelectedItemsCounter(count: Int32) -> Void {
-    this.selectedItemsCount.SetText(s"\(GetLocalizedTextByKey(n"Mod-Revised-Select-Label")) \(count)");
-  }
-
   private final func BuildWidgetsLayout() -> Void {
     let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
 
@@ -419,26 +412,6 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     buttonDisassemble.SetAsDangerous();
     buttonDisassemble.Reparent(rightColumn);
     this.buttonDisassemble = buttonDisassemble;
-
-    let selectedItemsCount: ref<inkText> = new inkText();
-    selectedItemsCount.SetName(n"selectedItemsCount");
-    selectedItemsCount.SetText("");
-    selectedItemsCount.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
-    selectedItemsCount.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-    selectedItemsCount.SetFontSize(42);
-    selectedItemsCount.SetFitToContent(true);
-    selectedItemsCount.SetVAlign(inkEVerticalAlign.Center);
-    selectedItemsCount.SetLetterCase(textLetterCase.OriginalCase);
-    selectedItemsCount.SetAnchor(inkEAnchor.TopRight);
-    selectedItemsCount.SetAnchorPoint(new Vector2(1.0, 0.0));
-    selectedItemsCount.SetHAlign(inkEHorizontalAlign.Right);
-    selectedItemsCount.SetVAlign(inkEVerticalAlign.Top);
-    selectedItemsCount.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-    selectedItemsCount.BindProperty(n"tintColor", n"MainColors.Blue");
-    selectedItemsCount.Reparent(root);
-    this.selectedItemsCount = selectedItemsCount;
-
-    this.UpdateSelectedItemsCounter(0);
   }
 
   private final func BuildCheckbox(name: CName, displayNameKey: CName, initial: Bool) -> ref<inkCompoundWidget> {

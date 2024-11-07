@@ -1,0 +1,212 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.6.0-nightly.2022-03-24",
+    "WKitJsonVersion": "0.0.1",
+    "GameVersion": 1500,
+    "ExportedDateTime": "2022-03-27T09:06:47.1077346Z",
+    "DataType": "CR2W"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "Type": "JsonResource",
+      "Properties": {
+        "cookingPlatform": "PLATFORM_PC",
+        "root": {
+          "HandleId": "0",
+          "Data": {
+            "Type": "localizationPersistenceOnScreenEntries",
+            "Properties": {
+              "entries": [
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Mod-Name",
+                    "femaleVariant": "Обновленный рюкзак"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Quest-Items",
+                    "femaleVariant": "Квестовые предметы"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-New-Items",
+                    "femaleVariant": "Новые предметы"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Column-Name",
+                    "femaleVariant": "Имя предмета"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Column-Type",
+                    "femaleVariant": "Тип предмета"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Column-Tier",
+                    "femaleVariant": "Уровень предмета"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Column-Price",
+                    "femaleVariant": "Цена предмета"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Column-Weight",
+                    "femaleVariant": "Вес предмета"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Column-Dps",
+                    "femaleVariant": "Эффективный урон в секунду"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Column-Range",
+                    "femaleVariant": "Эффективная дальность"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Column-Quest",
+                    "femaleVariant": "Квестовый флаг"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Column-Junk",
+                    "femaleVariant": "Помечено как мусор"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Additional-Options",
+                    "femaleVariant": "Дополнительные опции сортировки"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Settings-New",
+                    "femaleVariant": "Новые предметы в начале"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Settings-New-Desc",
+                    "femaleVariant": "Если опция включена, новые предметы всегда будут отображаться в начале списка."
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Settings-Favorite",
+                    "femaleVariant": "Избранные предметы в начале"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Settings-Favorite-Desc",
+                    "femaleVariant": "Если опция включена, избранные предметы всегда будут отображаться в начале списка."
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Filter-Input-Name",
+                    "femaleVariant": "Фильтр по названию"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Filter-Input-Type",
+                    "femaleVariant": "Фильтр по типу"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Filter-Select",
+                    "femaleVariant": "Выбрать"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Select-Label",
+                    "femaleVariant": "Выбрано предметов:"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Filter-Junk",
+                    "femaleVariant": "Мусор"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Filter-Junk-Confirm",
+                    "femaleVariant": "Пометить все выбранные предметы как мусор?"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Filter-Disassemble",
+                    "femaleVariant": "Разобрать"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Filter-Disassemble-Confirm",
+                    "femaleVariant": "Вы уверены, что хотите разобрать все выбранные предметы?"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Filter-Reset",
+                    "femaleVariant": "Сбросить фильтры"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "EmbeddedFiles": []
+  }
+}

@@ -349,7 +349,9 @@ public class RevisedBackpackDataView extends ScriptableDataView {
 
   private final func ItemTypeContainsQuery(item: ref<RevisedItemWrapper>, query: String) -> Bool {
     let itemTypeString: String = UTF8StrLower(item.typeLabel);
-    return StrContains(itemTypeString, UTF8StrLower(query));
+    let substring: String = UTF8StrLower(query);
+    this.Log(s"ItemTypeContainsQuery search \(substring) inside \(itemTypeString)");
+    return StrContains(itemTypeString, substring);
   }
 
   private final func Log(str: String) -> Void {

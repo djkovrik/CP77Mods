@@ -49,6 +49,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
   private let m_categoryIndicator: inkWidgetRef;
   private let m_previewGarmentContainer: inkWidgetRef;
   private let m_previewItemContainer: inkWidgetRef;
+  private let m_selectedItemsCount: inkTextRef;
 
   private let m_animTargetCategories: inkWidgetRef;
   private let m_animTargetFilters: inkWidgetRef;
@@ -139,6 +140,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     this.m_isComparisonDisabled = this.m_uiScriptableSystem.IsComparisionTooltipDisabled();
     this.m_buttonHintsController.AddButtonHint(n"toggle_comparison_tooltip", GetLocalizedText(this.m_isComparisonDisabled ? "UI-UserActions-EnableComparison" : "UI-UserActions-DisableComparison"));
     
+    this.UpdateSelectedItemsCounter();
     this.SetupVirtualList();
     this.PopulateCategories();
     this.PopulateInventory();
@@ -964,7 +966,8 @@ public class RevisedBackpackController extends gameuiMenuGameController {
   }
 
   public final func EquipItem(itemData: wref<UIInventoryItem>) -> Void {
-    if this.IsEquippable(itemData.GetItemData()) {
+    let data: ref<gameItemData> = itemData.GetItemData();
+    if this.IsEquippable(data) && !data.HasTag(n"Cyberware") {
       if !InventoryGPRestrictionHelper.CanUse(itemData, this.m_player) {
         this.ShowNotification(this.m_player.GetGame(), UIMenuNotificationType.InventoryActionBlocked);
         return;
@@ -1142,12 +1145,6 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     };
   }
 
-  // +select             IK_LeftMouse    IK_Pad_A_CROSS      new logic for item select aka preview
-  // -revised_use_equip  IK_F            IK_Pad_LeftThumb    logic for equip_item
-  // +drop_item          IK_X            IK_Pad_RightThumb   logic for drop_item
-  // +disassemble_item   IK_Z            IK_Pad_Y_TRIANGLE   logic for disassemble_item
-  // +favourite_item     IK_V            IK_Pad_X_SQUARE     logic for favourite_item
-
   private final func HiteButtonHints() -> Void {
     this.m_buttonHintsController.RemoveButtonHint(n"select");
     this.m_buttonHintsController.RemoveButtonHint(n"revised_use_equip");
@@ -1225,11 +1222,11 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     wrappedItem.inventoryItem = uiInventoryItem;
     wrappedItem.equipArea = equipArea;
     wrappedItem.type = itemType;
-    wrappedItem.typeLabel = UIItemsHelper.GetItemTypeKey(data, equipArea, itemTdbid, itemType, itemEvolution);
+    wrappedItem.typeLabel = this.BuildTypeLabel(data, equipArea, itemTdbid, itemType, itemEvolution);
     wrappedItem.typeValue = ItemCompareBuilder.GetItemTypeOrder(data, equipArea, itemType);
     wrappedItem.tier = tier;
     wrappedItem.tierLabel = this.BuildTierLabel(uiInventoryItem);
-    wrappedItem.tierValue = UIInventoryItemsManager.QualityToInt(tier);
+    wrappedItem.tierValue = this.BuildTierValue(uiInventoryItem);
     wrappedItem.evolution = itemEvolution;
     wrappedItem.nameLabel = GetLocalizedTextByKey(itemRecord.DisplayName());
     wrappedItem.price = price;
@@ -1253,8 +1250,48 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     return wrappedItem;
   }
 
+  private final func BuildTypeLabel(data: ref<gameItemData>, equipArea: gamedataEquipmentArea, id: TweakDBID, type: gamedataItemType, evolution: gamedataWeaponEvolution) -> String {
+    let typeLabel: String = GetLocalizedText(UIItemsHelper.GetItemTypeKey(data, equipArea, id, type, evolution));
+    let currentLength: Int32 = StrLen(typeLabel);
+    let maxLength: Int32 = 22;
+
+    if currentLength <= maxLength {
+      return typeLabel;
+    }
+
+    let shortened: String = UTF8StrLeft(typeLabel, maxLength);
+    let suffix: String = "(...)";
+    return s"\(shortened)\(suffix)";
+  }
+
   private final func BuildTierLabel(inventoryItem: ref<UIInventoryItem>) -> String {
-    let qualityText: String = GetLocalizedText(UIItemsHelper.QualityToTierString(inventoryItem.GetQuality()));
+    let quality: gamedataQuality = inventoryItem.GetQuality();
+    let qualityText: String;
+
+    switch quality {
+      case gamedataQuality.Common:
+      case gamedataQuality.CommonPlus:
+        qualityText = "1";
+        break;
+      case gamedataQuality.Uncommon:
+      case gamedataQuality.UncommonPlus:
+        qualityText = "2";
+        break;
+      case gamedataQuality.Rare:
+      case gamedataQuality.RarePlus:
+        qualityText = "3";
+        break;
+      case gamedataQuality.Epic:
+      case gamedataQuality.EpicPlus:
+        qualityText = "4";
+        break;
+      case gamedataQuality.Legendary:
+      case gamedataQuality.LegendaryPlus:
+      case gamedataQuality.LegendaryPlusPlus:
+        qualityText = "5";
+        break;
+    };
+
     let plus: Int32 = Cast<Int32>(inventoryItem.GetItemPlus());
     if !inventoryItem.IsProgram() {
       if plus >= 2 {
@@ -1267,6 +1304,48 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     };
 
     return qualityText;
+  }
+
+  private final func BuildTierValue(inventoryItem: ref<UIInventoryItem>) -> Int32 {
+    let quality: gamedataQuality = inventoryItem.GetQuality();
+    let qualityValue: Int32;
+
+    switch quality {
+      case gamedataQuality.Common:
+      case gamedataQuality.CommonPlus:
+        qualityValue = 10;
+        break;
+      case gamedataQuality.Uncommon:
+      case gamedataQuality.UncommonPlus:
+        qualityValue = 20;
+        break;
+      case gamedataQuality.Rare:
+      case gamedataQuality.RarePlus:
+        qualityValue = 30;
+        break;
+      case gamedataQuality.Epic:
+      case gamedataQuality.EpicPlus:
+        qualityValue = 40;
+        break;
+      case gamedataQuality.Legendary:
+      case gamedataQuality.LegendaryPlus:
+      case gamedataQuality.LegendaryPlusPlus:
+        qualityValue = 50;
+        break;
+    };
+
+    let plus: Int32 = Cast<Int32>(inventoryItem.GetItemPlus());
+    if !inventoryItem.IsProgram() {
+      if plus >= 2 {
+        qualityValue += 2;
+      } else {
+        if plus >= 1 {
+          qualityValue += 1;
+        };
+      };
+    };
+
+    return qualityValue;
   }
 
   private final func AnimateIndicatorTranslation(index: Int32) -> Void {
@@ -1346,18 +1425,24 @@ public class RevisedBackpackController extends gameuiMenuGameController {
   private final func StoreSelection(item: ref<RevisedItemWrapper>) -> Void {
     ArrayClear(this.m_selectedItems);
     ArrayPush(this.m_selectedItems, item);
-    this.QueueEvent(RevisedBackpackSelectedItemsCountChangedEvent.Create(ArraySize(this.m_selectedItems)));
+    this.UpdateSelectedItemsCounter();
   }
 
   private final func StoreSelection(items: array<ref<RevisedItemWrapper>>) -> Void {
     ArrayClear(this.m_selectedItems);
     this.m_selectedItems = items;
-    this.QueueEvent(RevisedBackpackSelectedItemsCountChangedEvent.Create(ArraySize(this.m_selectedItems)));
+    this.UpdateSelectedItemsCounter();
   }
 
   private final func ClearStoredSelection() -> Void {
     ArrayClear(this.m_selectedItems);
-    this.QueueEvent(RevisedBackpackSelectedItemsCountChangedEvent.Create(ArraySize(this.m_selectedItems)));
+    this.UpdateSelectedItemsCounter();
+  }
+
+  private final func UpdateSelectedItemsCounter() -> Void {
+    let count: Int32 = ArraySize(this.m_selectedItems);
+    inkTextRef.SetText(this.m_selectedItemsCount, s"\(GetLocalizedTextByKey(n"Mod-Revised-Select-Label")) \(count)");
+    this.QueueEvent(RevisedBackpackSelectedItemsCountChangedEvent.Create(count));
   }
 
   private final func AnimateTranslationAndOpacity(start: Vector2, end: Vector2, duration: Float, delay: Float) -> ref<inkAnimDef> {

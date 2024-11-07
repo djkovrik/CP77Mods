@@ -41,7 +41,7 @@ private final func AddRevisedBackpackMenuItem() -> Void {
   data.fullscreenName = n"revised_backpack";
   data.identifier = 42;
   data.parentIdentifier = 3;
-  data.label = "REVISED BACKPACK";
+  data.label = GetLocalizedTextByKey(n"Mod-Revised-Mod-Name");
   data.icon = n"ico_backpack";
 
   let controller: ref<MenuItemController> = improvedBackpackItem.GetController() as MenuItemController;

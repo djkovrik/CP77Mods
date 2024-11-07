@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<bindings>
+    <context name="RevisedBackpack" >
+		<action name="revised_use_equip" map="revised_use_equip" />
+    </context>
+
+    <context name="UIMenu" append="true">
+        <include name="RevisedBackpack" />
+    </context>
+
+	<mapping name="revised_use_equip" type="Button" >
+		<!-- You can change the hotkeys here -->
+		<!-- Available keycodes: https://pastebin.com/nsQ1cqi8 -->
+		<button id="IK_F" />
+		<button id="IK_Pad_LeftThumb" />
+	</mapping>
+	
+</bindings>

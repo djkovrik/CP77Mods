@@ -1,0 +1,212 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.6.0-nightly.2022-03-24",
+    "WKitJsonVersion": "0.0.1",
+    "GameVersion": 1500,
+    "ExportedDateTime": "2022-03-27T09:06:47.1077346Z",
+    "DataType": "CR2W"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "Type": "JsonResource",
+      "Properties": {
+        "cookingPlatform": "PLATFORM_PC",
+        "root": {
+          "HandleId": "0",
+          "Data": {
+            "Type": "localizationPersistenceOnScreenEntries",
+            "Properties": {
+              "entries": [
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Mod-Name",
+                    "femaleVariant": "Revised Backpack"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Quest-Items",
+                    "femaleVariant": "Quest items"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-New-Items",
+                    "femaleVariant": "New items"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Column-Name",
+                    "femaleVariant": "Item name"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Column-Type",
+                    "femaleVariant": "Item type"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Column-Tier",
+                    "femaleVariant": "Item tier"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Column-Price",
+                    "femaleVariant": "Item price"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Column-Weight",
+                    "femaleVariant": "Item weight"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Column-Dps",
+                    "femaleVariant": "Effective damage per second"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Column-Range",
+                    "femaleVariant": "Effective range"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Column-Quest",
+                    "femaleVariant": "Quest flag"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Column-Junk",
+                    "femaleVariant": "Marked as junk"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Additional-Options",
+                    "femaleVariant": "Additional sorting options"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Settings-New",
+                    "femaleVariant": "New items on top"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Settings-New-Desc",
+                    "femaleVariant": "If enabled then new items will be always displayed on top of the list."
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Settings-Favorite",
+                    "femaleVariant": "Favorite items on top"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Settings-Favorite-Desc",
+                    "femaleVariant": "If enabled then player favorited items will be always displayed on top of the list."
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Filter-Input-Name",
+                    "femaleVariant": "Filter by name"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Filter-Input-Type",
+                    "femaleVariant": "Filter by type"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Filter-Select",
+                    "femaleVariant": "Select"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Select-Label",
+                    "femaleVariant": "Selected items:"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Filter-Junk",
+                    "femaleVariant": "Junk"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Filter-Junk-Confirm",
+                    "femaleVariant": "Mark all selected items as Junk?"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Filter-Disassemble",
+                    "femaleVariant": "Disassemble"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Filter-Disassemble-Confirm",
+                    "femaleVariant": "Are you sure you want to disassemble all selected items?"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Filter-Reset",
+                    "femaleVariant": "Reset filters"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "EmbeddedFiles": []
+  }
+}
