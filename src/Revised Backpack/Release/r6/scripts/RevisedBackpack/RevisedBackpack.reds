@@ -847,6 +847,16 @@ public class RevisedBackpackController extends gameuiMenuGameController {
         this.RequestSetFocus(null);
       };
     };
+    // down_button called first, UI_MoveDown called second
+    // UI_MoveUp called first, up_button called second
+    if evt.IsAction(n"down_button") {
+      evt.Consume();
+      this.TryToSelectNextItem();
+    };
+    if evt.IsAction(n"UI_MoveUp") {
+      evt.Consume();
+      this.TryToSelectPreviousItem();
+    };
   }
   protected cb func OnSetMenuEventDispatcher(menuEventDispatcher: wref<inkMenuEventDispatcher>) -> Bool {
     this.Log("OnSetMenuEventDispatcher");
@@ -989,6 +999,61 @@ public class RevisedBackpackController extends gameuiMenuGameController {
         this.RefreshUINextFrame();
       };
     };
+  }
+  private final func TryToSelectNextItem() -> Void {
+    this.Log("TryToSelectNextItem");
+    let selectedItems: Int32 = ArraySize(this.m_selectedItems);
+    if selectedItems > 1 {
+      return ;
+    };
+    let dataViewItemCount: Int32 = Cast<Int32>(this.itemsListDataView.Size());
+    let selectedItemIndex: Int32 = this.TryToFindSelectedItemIndex();
+    let targetItemIndex: Int32;
+    if selectedItemIndex <= -1 || selectedItemIndex >= dataViewItemCount - 1 {
+      targetItemIndex = 0;
+    } else {
+      targetItemIndex = selectedItemIndex + 1;
+    };
+    this.Log(s"Selected index \(selectedItemIndex), next index \(targetItemIndex)");
+    let nextItem: ref<RevisedItemWrapper> = this.itemsListDataView.GetItem(Cast<Uint32>(targetItemIndex)) as RevisedItemWrapper;
+    if IsDefined(nextItem) {
+      this.QueueEvent(RevisedBackpackItemSelectEvent.Create(nextItem));
+    };
+  }
+  private final func TryToSelectPreviousItem() -> Void {
+    this.Log("TryToSelectPreviousItem");
+    let selectedItems: Int32 = ArraySize(this.m_selectedItems);
+    if selectedItems > 1 {
+      return ;
+    };
+    let dataViewItemCount: Int32 = Cast<Int32>(this.itemsListDataView.Size());
+    let selectedItemIndex: Int32 = this.TryToFindSelectedItemIndex();
+    let targetItemIndex: Int32;
+    if Equals(selectedItemIndex, -1) || Equals(selectedItemIndex, 0) {
+      targetItemIndex = dataViewItemCount - 1;
+    } else {
+      targetItemIndex = selectedItemIndex - 1;
+    };
+    this.Log(s"Selected index \(selectedItemIndex), next index \(targetItemIndex)");
+    let nextItem: ref<RevisedItemWrapper> = this.itemsListDataView.GetItem(Cast<Uint32>(targetItemIndex)) as RevisedItemWrapper;
+    if IsDefined(nextItem) {
+      this.QueueEvent(RevisedBackpackItemSelectEvent.Create(nextItem));
+    };
+  }
+  private final func TryToFindSelectedItemIndex() -> Int32 {
+    let count: Uint32 = this.itemsListDataView.Size();
+    let index: Uint32 = 0u;
+    let wrapper: ref<RevisedItemWrapper>;
+    while index < count {
+      wrapper = this.itemsListDataView.GetItem(index) as RevisedItemWrapper;
+      if IsDefined(wrapper) {
+        if wrapper.GetSelectedFlag() {
+          return Cast<Int32>(index);
+        };
+      };
+      index += 1u;
+    };
+    return -1;
   }
   private final func RefreshUI() -> Void {
     this.PopulateInventory();
@@ -3590,7 +3655,7 @@ public class RevisedPreviewItemController extends ItemPreviewGameController {
   }
 }
 public abstract class RevisedBackpackUtils {
-  public final static func ShowRevisedBackpackLogs() -> Bool = true
+  public final static func ShowRevisedBackpackLogs() -> Bool = false
   public final static func GetItemIcon(data: ref<gameItemData>) -> CName {
     let type: gamedataItemType = data.GetItemType();
     switch type {

@@ -1,7 +1,7 @@
 module RevisedBackpack
 
 public abstract class RevisedBackpackUtils {
-  public final static func ShowRevisedBackpackLogs() -> Bool = true
+  public final static func ShowRevisedBackpackLogs() -> Bool = false
 
   public final static func GetItemIcon(data: ref<gameItemData>) -> CName {
     let type: gamedataItemType = data.GetItemType();
