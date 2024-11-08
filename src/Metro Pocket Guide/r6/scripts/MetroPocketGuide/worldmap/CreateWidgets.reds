@@ -60,7 +60,7 @@ private final func AddMetroPocketGuideControls() -> Void {
   buttonsContainer.SetFitToContent(true);
   buttonsContainer.SetInteractive(false);
   buttonsContainer.SetAnchorPoint(0.5, 1.0);
-  buttonsContainer.SetMargin(0.0, 0.0, 0.0, 120.0);
+  buttonsContainer.SetMargin(0.0, 0.0, 0.0, 220.0);
   buttonsContainer.Reparent(parent);
   this.metroButtonsContainer = buttonsContainer;
 
