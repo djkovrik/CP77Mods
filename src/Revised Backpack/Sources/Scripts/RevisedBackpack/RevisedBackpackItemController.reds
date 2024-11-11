@@ -161,7 +161,7 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
 
   public final func SetIsQuestItem(flag: Bool) -> Void {
     this.m_item.SetQuestFlag(flag);
-    this.m_itemName.BindProperty(n"tintColor", RevisedBackpackUtils.GetItemLabelColor(this.GetIsQuestItem()));
+    this.m_itemName.BindProperty(n"tintColor", RevisedBackpackUtils.GetItemLabelColor(this.GetIsQuestItem(), this.m_item.inventoryItem.IsIconic()));
     this.m_itemQuest.SetVisible(this.GetIsQuestItem());
   }
 
@@ -187,7 +187,7 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     let quantity: Int32 = this.m_item.inventoryItem.GetQuantity();
     if quantity > 1 { label += s" (\(quantity))"; }
     this.m_itemName.SetText(label);
-    this.m_itemName.BindProperty(n"tintColor", RevisedBackpackUtils.GetItemLabelColor(this.GetIsQuestItem()));
+    this.m_itemName.BindProperty(n"tintColor", RevisedBackpackUtils.GetItemLabelColor(this.GetIsQuestItem(), this.m_item.inventoryItem.IsIconic()));
     this.m_itemIcon.SetTexturePart(RevisedBackpackUtils.GetItemIcon(this.m_item.data));
     this.m_itemIcon.BindProperty(n"tintColor", RevisedBackpackUtils.GetItemIconColor(this.m_item.data));
     this.m_itemEquipped.SetVisible(this.m_item.GetEquippedFlag());

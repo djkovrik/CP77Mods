@@ -615,7 +615,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
 
     let customJunkCategoryIndex: Int32 = ArraySize(this.m_availableCategories) - 1;
     let customJunkCategory: ref<RevisedBackpackCategory> = this.m_availableCategories[customJunkCategoryIndex];
-    this.OnRevisedCategorySelectedEvent(RevisedCategorySelectedEvent.Create(customJunkCategory));
+    this.QueueEvent(RevisedCategorySelectedEvent.Create(customJunkCategory));
     this.RefreshUINextFrame();
   }
 

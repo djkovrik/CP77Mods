@@ -121,8 +121,10 @@ public abstract class RevisedBackpackUtils {
     return n"MainColors.White";
   }
 
-  public final static func GetItemLabelColor(isQuestItem: Bool) -> CName {
-    if isQuestItem { 
+  public final static func GetItemLabelColor(isQuestItem: Bool, isIconic: Bool) -> CName {
+    if isIconic { 
+      return n"MainColors.Orange"; 
+    } else if isQuestItem { 
       return n"MainColors.Yellow"; 
     };
 

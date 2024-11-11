@@ -1,4 +1,4 @@
-// RevisedBackpack v0.9.0
+// RevisedBackpack v0.9.1
 module RevisedBackpack
 
 import Codeware.UI.HubTextInput
@@ -1237,7 +1237,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     this.PlaySound(n"ui_menu_item_disassemble");
     let customJunkCategoryIndex: Int32 = ArraySize(this.m_availableCategories) - 1;
     let customJunkCategory: ref<RevisedBackpackCategory> = this.m_availableCategories[customJunkCategoryIndex];
-    this.OnRevisedCategorySelectedEvent(RevisedCategorySelectedEvent.Create(customJunkCategory));
+    this.QueueEvent(RevisedCategorySelectedEvent.Create(customJunkCategory));
     this.RefreshUINextFrame();
   }
   private final func DisassembleCurrentSelection() -> Void {
@@ -3064,7 +3064,7 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
   }
   public final func SetIsQuestItem(flag: Bool) -> Void {
     this.m_item.SetQuestFlag(flag);
-    this.m_itemName.BindProperty(n"tintColor", RevisedBackpackUtils.GetItemLabelColor(this.GetIsQuestItem()));
+    this.m_itemName.BindProperty(n"tintColor", RevisedBackpackUtils.GetItemLabelColor(this.GetIsQuestItem(), this.m_item.inventoryItem.IsIconic()));
     this.m_itemQuest.SetVisible(this.GetIsQuestItem());
   }
   public final func CanToggleQuestTag() -> Bool {
@@ -3085,7 +3085,7 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     let quantity: Int32 = this.m_item.inventoryItem.GetQuantity();
     if quantity > 1 { label += s" (\(quantity))"; }
     this.m_itemName.SetText(label);
-    this.m_itemName.BindProperty(n"tintColor", RevisedBackpackUtils.GetItemLabelColor(this.GetIsQuestItem()));
+    this.m_itemName.BindProperty(n"tintColor", RevisedBackpackUtils.GetItemLabelColor(this.GetIsQuestItem(), this.m_item.inventoryItem.IsIconic()));
     this.m_itemIcon.SetTexturePart(RevisedBackpackUtils.GetItemIcon(this.m_item.data));
     this.m_itemIcon.BindProperty(n"tintColor", RevisedBackpackUtils.GetItemIconColor(this.m_item.data));
     this.m_itemEquipped.SetVisible(this.m_item.GetEquippedFlag());
@@ -3832,8 +3832,10 @@ public abstract class RevisedBackpackUtils {
     if data.HasTag(n"Junk") { return n"MainColors.Grey"; }
     return n"MainColors.White";
   }
-  public final static func GetItemLabelColor(isQuestItem: Bool) -> CName {
-    if isQuestItem { 
+  public final static func GetItemLabelColor(isQuestItem: Bool, isIconic: Bool) -> CName {
+    if isIconic { 
+      return n"MainColors.Orange"; 
+    } else if isQuestItem { 
       return n"MainColors.Yellow"; 
     };
     return n"MainColors.Red";
