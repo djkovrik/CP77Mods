@@ -470,7 +470,7 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     checkbox.SetAnchorPoint(0.5, 0.5);
     checkbox.SetMargin(1.0, 1.0, 0.0, 0.0);
     checkbox.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-    checkbox.BindProperty(n"tintColor", n"MainColors.Red");
+    checkbox.BindProperty(n"tintColor", n"MainColors.Blue");
     checkbox.SetSize(38.0, 38.0);
     checkbox.SetOpacity(0.5);
     checkbox.SetAtlasResource(r"base\\gameplay\\gui\\common\\shapes\\atlas_shapes_sync.inkatlas");
@@ -485,7 +485,7 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     frame.SetAnchor(inkEAnchor.Fill);
     frame.SetAnchorPoint(0.5, 0.5);
     frame.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-    frame.BindProperty(n"tintColor", n"MainColors.MildRed");
+    frame.BindProperty(n"tintColor", n"MainColors.MildBlue");
     frame.SetSize(64.0, 64.0);
     frame.SetAtlasResource(r"base\\gameplay\\gui\\common\\shapes\\atlas_shapes_sync.inkatlas");
     frame.SetTexturePart(n"color_fg");
@@ -498,7 +498,7 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     bg.SetAnchor(inkEAnchor.Fill);
     bg.SetAnchorPoint(0.5, 0.5);
     bg.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-    bg.BindProperty(n"tintColor", n"MainColors.FaintRed");
+    bg.BindProperty(n"tintColor", n"MainColors.FaintBlue");
     bg.SetSize(64.0, 64.0);
     bg.SetAtlasResource(r"base\\gameplay\\gui\\common\\shapes\\atlas_shapes_sync.inkatlas");
     bg.SetTexturePart(n"color_bg");
