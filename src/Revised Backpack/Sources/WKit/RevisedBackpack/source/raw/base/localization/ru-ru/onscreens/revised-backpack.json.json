@@ -200,6 +200,27 @@
                     "secondaryKey": "Mod-Revised-Filter-Reset",
                     "femaleVariant": "Сбросить фильтры"
                   }
+                },
+{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Replace-Button",
+                    "femaleVariant": "Привязать к кнопке меню инвентаря"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Replace-Button-Desc",
+                    "femaleVariant": "Если опция включена, кнопка вызова рюкзака в меню инвентаря будет открывать новый экран."
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Column-Per-Shot-Damage",
+                    "femaleVariant": "Урон за выстрел"
+                  }
                 }
               ]
             }

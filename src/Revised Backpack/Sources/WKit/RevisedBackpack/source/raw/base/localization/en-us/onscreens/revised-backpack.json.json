@@ -200,6 +200,27 @@
                     "secondaryKey": "Mod-Revised-Filter-Reset",
                     "femaleVariant": "Reset filters"
                   }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Replace-Button",
+                    "femaleVariant": "Bind to the inventory menu button"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Replace-Button-Desc",
+                    "femaleVariant": "If enabled then backpack button from the inventory screen will open a new screen."
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Column-Per-Shot-Damage",
+                    "femaleVariant": "Damage per shot"
+                  }
                 }
               ]
             }

@@ -226,19 +226,19 @@ public class RevisedBackpackFiltersController extends inkLogicController {
   private final func HandleWidgetHoverOver(name: CName) -> Void {
     switch name {
       case n"tier1":
-        this.checkboxTier1Frame.BindProperty(n"tintColor", n"MainColors.Red");
+        this.checkboxTier1Frame.BindProperty(n"tintColor", n"MainColors.Blue");
         break;
       case n"tier2":
-        this.checkboxTier2Frame.BindProperty(n"tintColor", n"MainColors.Red");
+        this.checkboxTier2Frame.BindProperty(n"tintColor", n"MainColors.Blue");
         break;
       case n"tier3":
-        this.checkboxTier3Frame.BindProperty(n"tintColor", n"MainColors.Red");
+        this.checkboxTier3Frame.BindProperty(n"tintColor", n"MainColors.Blue");
         break;
       case n"tier4":
-        this.checkboxTier4Frame.BindProperty(n"tintColor", n"MainColors.Red");
+        this.checkboxTier4Frame.BindProperty(n"tintColor", n"MainColors.Blue");
         break;
       case n"tier5":
-        this.checkboxTier5Frame.BindProperty(n"tintColor", n"MainColors.Red");
+        this.checkboxTier5Frame.BindProperty(n"tintColor", n"MainColors.Blue");
         break;
     };
   }
@@ -246,19 +246,19 @@ public class RevisedBackpackFiltersController extends inkLogicController {
   private final func HandleWidgetHoverOut(name: CName) -> Void {
     switch name {
       case n"tier1":
-        this.checkboxTier1Frame.BindProperty(n"tintColor", n"MainColors.MildRed");
+        this.checkboxTier1Frame.BindProperty(n"tintColor", n"MainColors.MildBlue");
         break;
       case n"tier2":
-        this.checkboxTier2Frame.BindProperty(n"tintColor", n"MainColors.MildRed");
+        this.checkboxTier2Frame.BindProperty(n"tintColor", n"MainColors.MildBlue");
         break;
       case n"tier3":
-        this.checkboxTier3Frame.BindProperty(n"tintColor", n"MainColors.MildRed");
+        this.checkboxTier3Frame.BindProperty(n"tintColor", n"MainColors.MildBlue");
         break;
       case n"tier4":
-        this.checkboxTier4Frame.BindProperty(n"tintColor", n"MainColors.MildRed");
+        this.checkboxTier4Frame.BindProperty(n"tintColor", n"MainColors.MildBlue");
         break;
       case n"tier5":
-        this.checkboxTier5Frame.BindProperty(n"tintColor", n"MainColors.MildRed");
+        this.checkboxTier5Frame.BindProperty(n"tintColor", n"MainColors.MildBlue");
         break;
     };
   }
