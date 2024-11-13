@@ -8,9 +8,10 @@ enum revisedSorting {
   Price = 4,
   Weight = 5,
   Dps = 6,
-  Range = 7,
-  Quest = 8,
-  CustomJunk = 9,
+  DamagePerShot = 7,
+  Range = 8,
+  Quest = 9,
+  CustomJunk = 10,
 }
 
 enum revisedSortingMode {
@@ -45,6 +46,8 @@ public class RevisedItemWrapper {
   public let weightLabel: String;
   public let dps: Float;
   public let dpsLabel: String;
+  public let damagePerShot: Float;
+  public let damagePerShotLabel: String;
   public let range: Int32;
   public let rangeLabel: String;
   public let isQuest: Bool;

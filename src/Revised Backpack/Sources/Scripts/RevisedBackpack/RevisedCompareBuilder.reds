@@ -97,6 +97,32 @@ public class RevisedCompareBuilder extends IScriptable {
     return this;
   }
 
+  public final func DamagePerShotAsc() -> ref<RevisedCompareBuilder> {
+    let leftValue: Float;
+    let rightValue: Float;
+    if this.m_sortData1.isWeapon {
+      leftValue = this.m_sortData1.damagePerShot;
+    };
+    if this.m_sortData2.isWeapon {
+      rightValue = this.m_sortData2.damagePerShot;
+    };
+    this.m_compareBuilder.FloatAsc(leftValue, rightValue);
+    return this;
+  }
+
+  public final func DamagePerShotDesc() -> ref<RevisedCompareBuilder> {
+    let leftValue: Float;
+    let rightValue: Float;
+    if this.m_sortData1.isWeapon {
+      leftValue = this.m_sortData1.damagePerShot;
+    };
+    if this.m_sortData2.isWeapon {
+      rightValue = this.m_sortData2.damagePerShot;
+    };
+    this.m_compareBuilder.FloatDesc(leftValue, rightValue);
+    return this;
+  }
+
   public final func RangeAsc() -> ref<RevisedCompareBuilder> {
     let leftValue: Int32;
     let rightValue: Int32;

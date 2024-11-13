@@ -718,6 +718,9 @@ public class RevisedBackpackController extends gameuiMenuGameController {
       case revisedSorting.Dps:
         label = GetLocalizedTextByKey(n"Mod-Revised-Column-Dps");
         break;
+      case revisedSorting.DamagePerShot:
+        label = GetLocalizedTextByKey(n"Mod-Revised-Column-Per-Shot-Damage");
+        break;
       case revisedSorting.Range:
         label = GetLocalizedTextByKey(n"Mod-Revised-Column-Range");
         break;
@@ -1296,9 +1299,16 @@ public class RevisedBackpackController extends gameuiMenuGameController {
 
     
     let dps: Float = 0.0;
-    let stat: wref<UIInventoryItemStat> = uiInventoryItem.GetPrimaryStat();
-    if uiInventoryItem.IsWeapon() && Equals(stat.Type, gamedataStatType.EffectiveDPS) {
-      dps = stat.Value;
+    let dpsStat: wref<UIInventoryItemStat> = uiInventoryItem.GetPrimaryStat();
+    if uiInventoryItem.IsWeapon() && Equals(dpsStat.Type, gamedataStatType.EffectiveDPS) {
+      dps = dpsStat.Value;
+    };
+
+    let damagePerShotStat: ref<UIInventoryItemStat>;
+    let damagePerShot: Float = 0.0;
+    if uiInventoryItem.IsWeapon() {
+      damagePerShotStat = statsManager.GetAdditionalStatByType(gamedataStatType.EffectiveDamagePerHit);
+      damagePerShot = damagePerShotStat.Value;
     };
 
     let effectiveRangeStat: ref<UIInventoryItemStat>;
@@ -1333,6 +1343,8 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     wrappedItem.weightLabel = FloatToStringPrec(weight, 1);
     wrappedItem.dps = dps;
     wrappedItem.dpsLabel = FloatToStringPrec(dps, 1);
+    wrappedItem.damagePerShot = damagePerShot;
+    wrappedItem.damagePerShotLabel = FloatToStringPrec(damagePerShot, 1);
     wrappedItem.range = effectiveRange;
     wrappedItem.rangeLabel = IntToString(effectiveRange);
     wrappedItem.isQuest = uiInventoryItem.IsQuestItem() || data.HasTag(n"Quest");

@@ -15,6 +15,7 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
   private let m_itemPrice: wref<inkText>;
   private let m_itemWeight: wref<inkText>;
   private let m_itemDps: wref<inkText>;
+  private let m_itemDamagePerShot: wref<inkText>;
   private let m_itemRange: wref<inkText>;
   private let m_itemQuest: wref<inkWidget>;
   private let m_questContainer: wref<inkWidget>; 
@@ -35,6 +36,7 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     this.m_itemPrice = root.GetWidgetByPathName(n"item/price") as inkText;
     this.m_itemWeight = root.GetWidgetByPathName(n"item/weight") as inkText;
     this.m_itemDps = root.GetWidgetByPathName(n"item/dps") as inkText;
+    this.m_itemDamagePerShot = root.GetWidgetByPathName(n"item/damagePerShot") as inkText;
     this.m_itemRange = root.GetWidgetByPathName(n"item/range") as inkText;
     this.m_itemQuest = root.GetWidgetByPathName(n"item/quest/checkbox");
     this.m_questContainer = root.GetWidgetByPathName(n"item/quest");
@@ -198,6 +200,7 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     this.m_itemPrice.SetText(this.m_item.priceLabel);
     this.m_itemWeight.SetText(this.m_item.weightLabel);
     this.m_itemDps.SetText(this.m_item.dpsLabel);
+    this.m_itemDamagePerShot.SetText(this.m_item.damagePerShotLabel);
     this.m_itemRange.SetText(this.m_item.rangeLabel);
     this.m_itemQuest.SetVisible(this.m_item.GetQuestFlag());
     this.m_itemCustomJunk.SetVisible(this.m_item.GetCustomJunkFlag());

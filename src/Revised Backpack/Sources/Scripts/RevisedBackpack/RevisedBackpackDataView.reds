@@ -188,6 +188,30 @@ public class RevisedBackpackDataView extends ScriptableDataView {
         };
         break;
 
+      case revisedSorting.DamagePerShot:
+        if Equals(this.m_sortingMode, revisedSortingMode.Asc) {           // Asc
+          if this.m_newItemsOnTop && !this.m_favoriteItemsOnTop {         // New on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).NewItem().DamagePerShotAsc().NameAsc().QualityDesc().GetBool();
+          } else if !this.m_newItemsOnTop && this.m_favoriteItemsOnTop {  // Favorite on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).FavouriteItem().DamagePerShotAsc().NameAsc().QualityDesc().GetBool();
+          } else if this.m_newItemsOnTop && this.m_favoriteItemsOnTop {   // New and favorite on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).FavouriteItem().NewItem().DamagePerShotAsc().NameAsc().QualityDesc().GetBool();
+          } else if !this.m_newItemsOnTop && !this.m_favoriteItemsOnTop { // Nothing on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).DamagePerShotAsc().NameAsc().QualityDesc().GetBool();
+          };
+        } else if Equals(this.m_sortingMode, revisedSortingMode.Desc) {   // Desc
+          if this.m_newItemsOnTop && !this.m_favoriteItemsOnTop {         // New on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).NewItem().DamagePerShotDesc().NameAsc().QualityDesc().GetBool();
+          } else if !this.m_newItemsOnTop && this.m_favoriteItemsOnTop {  // Favorite on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).FavouriteItem().DamagePerShotDesc().NameAsc().QualityDesc().GetBool();
+          } else if this.m_newItemsOnTop && this.m_favoriteItemsOnTop {   // New and favorite on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).FavouriteItem().NewItem().DamagePerShotDesc().NameAsc().QualityDesc().GetBool();
+          } else if !this.m_newItemsOnTop && !this.m_favoriteItemsOnTop { // Nothing on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).DamagePerShotDesc().NameAsc().QualityDesc().GetBool();
+          };
+        };
+        break;
+
       case revisedSorting.Range:
         if Equals(this.m_sortingMode, revisedSortingMode.Asc) {           // Asc
           if this.m_newItemsOnTop && !this.m_favoriteItemsOnTop {         // New on top

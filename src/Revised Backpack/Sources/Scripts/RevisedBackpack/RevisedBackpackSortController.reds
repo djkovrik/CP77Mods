@@ -10,6 +10,7 @@ public class RevisedBackpackSortController extends inkLogicController {
   private let m_borderPrice: inkWidgetRef;
   private let m_borderWeight: inkWidgetRef;
   private let m_borderDps: inkWidgetRef;
+  private let m_borderDamagePerShot: inkWidgetRef;
   private let m_borderRange: inkWidgetRef;
   private let m_borderQuest: inkWidgetRef;
   private let m_borderCustomJunk: inkWidgetRef;
@@ -20,6 +21,7 @@ public class RevisedBackpackSortController extends inkLogicController {
   private let m_arrowPrice: inkWidgetRef;
   private let m_arrowWeight: inkWidgetRef;
   private let m_arrowDps: inkWidgetRef;
+  private let m_arrowDamagePerShot: inkWidgetRef;
   private let m_arrowRange: inkWidgetRef;
   private let m_arrowQuest: inkWidgetRef;
   private let m_arrowCustomJunk: inkWidgetRef;
@@ -153,6 +155,9 @@ public class RevisedBackpackSortController extends inkLogicController {
       case revisedSorting.Dps:
         this.UpdateArrow(this.m_arrowDps, Equals(this.currentSortingMode, revisedSortingMode.Asc));
         break;
+      case revisedSorting.DamagePerShot:
+        this.UpdateArrow(this.m_arrowDamagePerShot, Equals(this.currentSortingMode, revisedSortingMode.Asc));
+        break;
       case revisedSorting.Range:
         this.UpdateArrow(this.m_arrowRange, Equals(this.currentSortingMode, revisedSortingMode.Asc));
         break;
@@ -172,6 +177,7 @@ public class RevisedBackpackSortController extends inkLogicController {
     inkWidgetRef.SetVisible(this.m_arrowPrice, false);
     inkWidgetRef.SetVisible(this.m_arrowWeight, false);
     inkWidgetRef.SetVisible(this.m_arrowDps, false);
+    inkWidgetRef.SetVisible(this.m_arrowDamagePerShot, false);
     inkWidgetRef.SetVisible(this.m_arrowRange, false);
     inkWidgetRef.SetVisible(this.m_arrowQuest, false);
     inkWidgetRef.SetVisible(this.m_arrowCustomJunk, false);
@@ -213,6 +219,7 @@ public class RevisedBackpackSortController extends inkLogicController {
       case "Price": return revisedSorting.Price;
       case "Weight": return revisedSorting.Weight;
       case "Dps": return revisedSorting.Dps;
+      case "DamagePerShot": return revisedSorting.DamagePerShot;
       case "Range": return revisedSorting.Range;
       case "Quest": return revisedSorting.Quest;
       case "CustomJunk": return revisedSorting.CustomJunk;
