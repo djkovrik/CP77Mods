@@ -219,7 +219,7 @@
                   "Type": "localizationPersistenceOnScreenEntry",
                   "Properties": {
                     "secondaryKey": "Mod-Revised-Column-Per-Shot-Damage",
-                    "femaleVariant": "Урон за выстрел"
+                    "femaleVariant": "Урон за атаку"
                   }
                 }
               ]
