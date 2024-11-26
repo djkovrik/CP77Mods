@@ -612,10 +612,6 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     };
 
     this.PlaySound(n"ui_menu_item_disassemble");
-
-    let customJunkCategoryIndex: Int32 = ArraySize(this.m_availableCategories) - 1;
-    let customJunkCategory: ref<RevisedBackpackCategory> = this.m_availableCategories[customJunkCategoryIndex];
-    this.QueueEvent(RevisedCategorySelectedEvent.Create(customJunkCategory));
     this.RefreshUINextFrame();
   }
 
