@@ -82,7 +82,9 @@ public class RevisedBackpackSystem extends ScriptableSystem {
 
   private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
     this.Log("OnInitialize, can access game systems");
-    this.FillDefaultCategories();
+    if Equals(ArraySize(this.categories), 0) {
+      this.FillDefaultCategories();
+    };
   }
 
   private final func FillDefaultCategories() -> Void {
