@@ -1,4 +1,4 @@
-// RevisedBackpack v0.9.2
+// RevisedBackpack v0.9.3
 module RevisedBackpack
 
 import Codeware.UI.HubTextInput
@@ -1246,9 +1246,6 @@ public class RevisedBackpackController extends gameuiMenuGameController {
       };
     };
     this.PlaySound(n"ui_menu_item_disassemble");
-    let customJunkCategoryIndex: Int32 = ArraySize(this.m_availableCategories) - 1;
-    let customJunkCategory: ref<RevisedBackpackCategory> = this.m_availableCategories[customJunkCategoryIndex];
-    this.QueueEvent(RevisedCategorySelectedEvent.Create(customJunkCategory));
     this.RefreshUINextFrame();
   }
   private final func DisassembleCurrentSelection() -> Void {
@@ -3459,7 +3456,9 @@ public class RevisedBackpackSystem extends ScriptableSystem {
   }
   private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
     this.Log("OnInitialize, can access game systems");
-    this.FillDefaultCategories();
+    if Equals(ArraySize(this.categories), 0) {
+      this.FillDefaultCategories();
+    };
   }
   private final func FillDefaultCategories() -> Void {
     let newCategories: array<ref<RevisedBackpackCategory>> = RevisedBackpackDefaultConfig.Categories();
