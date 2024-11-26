@@ -1,4 +1,4 @@
-// RevisedBackpack v0.9.1
+// RevisedBackpack v0.9.2
 module RevisedBackpack
 
 import Codeware.UI.HubTextInput
@@ -13,9 +13,10 @@ enum revisedSorting {
   Price = 4,
   Weight = 5,
   Dps = 6,
-  Range = 7,
-  Quest = 8,
-  CustomJunk = 9,
+  DamagePerShot = 7,
+  Range = 8,
+  Quest = 9,
+  CustomJunk = 10,
 }
 enum revisedSortingMode {
   None = 0,
@@ -47,6 +48,8 @@ public class RevisedItemWrapper {
   public let weightLabel: String;
   public let dps: Float;
   public let dpsLabel: String;
+  public let damagePerShot: Float;
+  public let damagePerShotLabel: String;
   public let range: Int32;
   public let rangeLabel: String;
   public let isQuest: Bool;
@@ -690,6 +693,14 @@ private final func AddRevisedBackpackMenuItem() -> Void {
   let controller: ref<MenuItemController> = improvedBackpackItem.GetController() as MenuItemController;
   controller.Init(data);
 }
+@wrapMethod(gameuiInventoryGameController)
+protected cb func OnSetUserData(userData: ref<IScriptable>) -> Bool {
+  wrappedMethod(userData);
+  let settings: ref<RevisedBackpackSettings> = new RevisedBackpackSettings();
+  if settings.replaceInventoryButton {
+    HubMenuUtils.SetMenuHyperlinkData(this.m_btnBackpack, HubMenuItems.Backpack, HubMenuItems.Inventory, n"revised_backpack", n"ico_backpack", n"UI-PanelNames-BACKPACK");
+  };
+}
 public class RevisedBackpackConfirmationPopup {
   public static func Show(controller: ref<worlduiIGameController>, message: String, type: GenericMessageNotificationType) -> ref<inkGameNotificationToken> {
     return GenericMessageNotification.Show(
@@ -1328,6 +1339,9 @@ public class RevisedBackpackController extends gameuiMenuGameController {
       case revisedSorting.Dps:
         label = GetLocalizedTextByKey(n"Mod-Revised-Column-Dps");
         break;
+      case revisedSorting.DamagePerShot:
+        label = GetLocalizedTextByKey(n"Mod-Revised-Column-Per-Shot-Damage");
+        break;
       case revisedSorting.Range:
         label = GetLocalizedTextByKey(n"Mod-Revised-Column-Range");
         break;
@@ -1849,9 +1863,15 @@ public class RevisedBackpackController extends gameuiMenuGameController {
       itemEvolution = uiInventoryItem.GetWeaponEvolution();
     };
     let dps: Float = 0.0;
-    let stat: wref<UIInventoryItemStat> = uiInventoryItem.GetPrimaryStat();
-    if uiInventoryItem.IsWeapon() && Equals(stat.Type, gamedataStatType.EffectiveDPS) {
-      dps = stat.Value;
+    let dpsStat: wref<UIInventoryItemStat> = uiInventoryItem.GetPrimaryStat();
+    if uiInventoryItem.IsWeapon() && Equals(dpsStat.Type, gamedataStatType.EffectiveDPS) {
+      dps = dpsStat.Value;
+    };
+    let damagePerShotStat: ref<UIInventoryItemStat>;
+    let damagePerShot: Float = 0.0;
+    if uiInventoryItem.IsWeapon() {
+      damagePerShotStat = statsManager.GetAdditionalStatByType(gamedataStatType.EffectiveDamagePerHit);
+      damagePerShot = damagePerShotStat.Value;
     };
     let effectiveRangeStat: ref<UIInventoryItemStat>;
     let effectiveRange: Int32 = 0;
@@ -1883,6 +1903,8 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     wrappedItem.weightLabel = FloatToStringPrec(weight, 1);
     wrappedItem.dps = dps;
     wrappedItem.dpsLabel = FloatToStringPrec(dps, 1);
+    wrappedItem.damagePerShot = damagePerShot;
+    wrappedItem.damagePerShotLabel = FloatToStringPrec(damagePerShot, 1);
     wrappedItem.range = effectiveRange;
     wrappedItem.rangeLabel = IntToString(effectiveRange);
     wrappedItem.isQuest = uiInventoryItem.IsQuestItem() || data.HasTag(n"Quest");
@@ -2283,6 +2305,29 @@ public class RevisedBackpackDataView extends ScriptableDataView {
           };
         };
         break;
+      case revisedSorting.DamagePerShot:
+        if Equals(this.m_sortingMode, revisedSortingMode.Asc) {           // Asc
+          if this.m_newItemsOnTop && !this.m_favoriteItemsOnTop {         // New on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).NewItem().DamagePerShotAsc().NameAsc().QualityDesc().GetBool();
+          } else if !this.m_newItemsOnTop && this.m_favoriteItemsOnTop {  // Favorite on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).FavouriteItem().DamagePerShotAsc().NameAsc().QualityDesc().GetBool();
+          } else if this.m_newItemsOnTop && this.m_favoriteItemsOnTop {   // New and favorite on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).FavouriteItem().NewItem().DamagePerShotAsc().NameAsc().QualityDesc().GetBool();
+          } else if !this.m_newItemsOnTop && !this.m_favoriteItemsOnTop { // Nothing on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).DamagePerShotAsc().NameAsc().QualityDesc().GetBool();
+          };
+        } else if Equals(this.m_sortingMode, revisedSortingMode.Desc) {   // Desc
+          if this.m_newItemsOnTop && !this.m_favoriteItemsOnTop {         // New on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).NewItem().DamagePerShotDesc().NameAsc().QualityDesc().GetBool();
+          } else if !this.m_newItemsOnTop && this.m_favoriteItemsOnTop {  // Favorite on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).FavouriteItem().DamagePerShotDesc().NameAsc().QualityDesc().GetBool();
+          } else if this.m_newItemsOnTop && this.m_favoriteItemsOnTop {   // New and favorite on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).FavouriteItem().NewItem().DamagePerShotDesc().NameAsc().QualityDesc().GetBool();
+          } else if !this.m_newItemsOnTop && !this.m_favoriteItemsOnTop { // Nothing on top
+            return this.PreSortingInjection(RevisedCompareBuilder.Make(leftItem, rightItem)).DamagePerShotDesc().NameAsc().QualityDesc().GetBool();
+          };
+        };
+        break;
       case revisedSorting.Range:
         if Equals(this.m_sortingMode, revisedSortingMode.Asc) {           // Asc
           if this.m_newItemsOnTop && !this.m_favoriteItemsOnTop {         // New on top
@@ -2633,38 +2678,38 @@ public class RevisedBackpackFiltersController extends inkLogicController {
   private final func HandleWidgetHoverOver(name: CName) -> Void {
     switch name {
       case n"tier1":
-        this.checkboxTier1Frame.BindProperty(n"tintColor", n"MainColors.Red");
+        this.checkboxTier1Frame.BindProperty(n"tintColor", n"MainColors.Blue");
         break;
       case n"tier2":
-        this.checkboxTier2Frame.BindProperty(n"tintColor", n"MainColors.Red");
+        this.checkboxTier2Frame.BindProperty(n"tintColor", n"MainColors.Blue");
         break;
       case n"tier3":
-        this.checkboxTier3Frame.BindProperty(n"tintColor", n"MainColors.Red");
+        this.checkboxTier3Frame.BindProperty(n"tintColor", n"MainColors.Blue");
         break;
       case n"tier4":
-        this.checkboxTier4Frame.BindProperty(n"tintColor", n"MainColors.Red");
+        this.checkboxTier4Frame.BindProperty(n"tintColor", n"MainColors.Blue");
         break;
       case n"tier5":
-        this.checkboxTier5Frame.BindProperty(n"tintColor", n"MainColors.Red");
+        this.checkboxTier5Frame.BindProperty(n"tintColor", n"MainColors.Blue");
         break;
     };
   }
   private final func HandleWidgetHoverOut(name: CName) -> Void {
     switch name {
       case n"tier1":
-        this.checkboxTier1Frame.BindProperty(n"tintColor", n"MainColors.MildRed");
+        this.checkboxTier1Frame.BindProperty(n"tintColor", n"MainColors.MildBlue");
         break;
       case n"tier2":
-        this.checkboxTier2Frame.BindProperty(n"tintColor", n"MainColors.MildRed");
+        this.checkboxTier2Frame.BindProperty(n"tintColor", n"MainColors.MildBlue");
         break;
       case n"tier3":
-        this.checkboxTier3Frame.BindProperty(n"tintColor", n"MainColors.MildRed");
+        this.checkboxTier3Frame.BindProperty(n"tintColor", n"MainColors.MildBlue");
         break;
       case n"tier4":
-        this.checkboxTier4Frame.BindProperty(n"tintColor", n"MainColors.MildRed");
+        this.checkboxTier4Frame.BindProperty(n"tintColor", n"MainColors.MildBlue");
         break;
       case n"tier5":
-        this.checkboxTier5Frame.BindProperty(n"tintColor", n"MainColors.MildRed");
+        this.checkboxTier5Frame.BindProperty(n"tintColor", n"MainColors.MildBlue");
         break;
     };
   }
@@ -2850,7 +2895,7 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     checkbox.SetAnchorPoint(0.5, 0.5);
     checkbox.SetMargin(1.0, 1.0, 0.0, 0.0);
     checkbox.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-    checkbox.BindProperty(n"tintColor", n"MainColors.Red");
+    checkbox.BindProperty(n"tintColor", n"MainColors.Blue");
     checkbox.SetSize(38.0, 38.0);
     checkbox.SetOpacity(0.5);
     checkbox.SetAtlasResource(r"base\\gameplay\\gui\\common\\shapes\\atlas_shapes_sync.inkatlas");
@@ -2864,7 +2909,7 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     frame.SetAnchor(inkEAnchor.Fill);
     frame.SetAnchorPoint(0.5, 0.5);
     frame.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-    frame.BindProperty(n"tintColor", n"MainColors.MildRed");
+    frame.BindProperty(n"tintColor", n"MainColors.MildBlue");
     frame.SetSize(64.0, 64.0);
     frame.SetAtlasResource(r"base\\gameplay\\gui\\common\\shapes\\atlas_shapes_sync.inkatlas");
     frame.SetTexturePart(n"color_fg");
@@ -2876,7 +2921,7 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     bg.SetAnchor(inkEAnchor.Fill);
     bg.SetAnchorPoint(0.5, 0.5);
     bg.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-    bg.BindProperty(n"tintColor", n"MainColors.FaintRed");
+    bg.BindProperty(n"tintColor", n"MainColors.FaintBlue");
     bg.SetSize(64.0, 64.0);
     bg.SetAtlasResource(r"base\\gameplay\\gui\\common\\shapes\\atlas_shapes_sync.inkatlas");
     bg.SetTexturePart(n"color_bg");
@@ -2935,6 +2980,7 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
   private let m_itemPrice: wref<inkText>;
   private let m_itemWeight: wref<inkText>;
   private let m_itemDps: wref<inkText>;
+  private let m_itemDamagePerShot: wref<inkText>;
   private let m_itemRange: wref<inkText>;
   private let m_itemQuest: wref<inkWidget>;
   private let m_questContainer: wref<inkWidget>; 
@@ -2954,6 +3000,7 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     this.m_itemPrice = root.GetWidgetByPathName(n"item/price") as inkText;
     this.m_itemWeight = root.GetWidgetByPathName(n"item/weight") as inkText;
     this.m_itemDps = root.GetWidgetByPathName(n"item/dps") as inkText;
+    this.m_itemDamagePerShot = root.GetWidgetByPathName(n"item/damagePerShot") as inkText;
     this.m_itemRange = root.GetWidgetByPathName(n"item/range") as inkText;
     this.m_itemQuest = root.GetWidgetByPathName(n"item/quest/checkbox");
     this.m_questContainer = root.GetWidgetByPathName(n"item/quest");
@@ -3096,6 +3143,7 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     this.m_itemPrice.SetText(this.m_item.priceLabel);
     this.m_itemWeight.SetText(this.m_item.weightLabel);
     this.m_itemDps.SetText(this.m_item.dpsLabel);
+    this.m_itemDamagePerShot.SetText(this.m_item.damagePerShotLabel);
     this.m_itemRange.SetText(this.m_item.rangeLabel);
     this.m_itemQuest.SetVisible(this.m_item.GetQuestFlag());
     this.m_itemCustomJunk.SetVisible(this.m_item.GetCustomJunkFlag());
@@ -3131,6 +3179,12 @@ public class RevisedBackpackSettings {
   @runtimeProperty("ModSettings.displayName", "Mod-Revised-Settings-New")
   @runtimeProperty("ModSettings.description", "Mod-Revised-Settings-New-Desc")
   let newOnTop: Bool = false;
+  @runtimeProperty("ModSettings.mod", "Revised Backpack")
+  @runtimeProperty("ModSettings.category", "UI-Settings-Audio-Misc-MiscSectionTitle")
+  @runtimeProperty("ModSettings.category.order", "2")
+  @runtimeProperty("ModSettings.displayName", "Mod-Revised-Replace-Button")
+  @runtimeProperty("ModSettings.description", "Mod-Revised-Replace-Button-Desc")
+  let replaceInventoryButton: Bool = false;
 }
 public class RevisedBackpackSortController extends inkLogicController {
   private let m_player: wref<PlayerPuppet>;
@@ -3140,6 +3194,7 @@ public class RevisedBackpackSortController extends inkLogicController {
   private let m_borderPrice: inkWidgetRef;
   private let m_borderWeight: inkWidgetRef;
   private let m_borderDps: inkWidgetRef;
+  private let m_borderDamagePerShot: inkWidgetRef;
   private let m_borderRange: inkWidgetRef;
   private let m_borderQuest: inkWidgetRef;
   private let m_borderCustomJunk: inkWidgetRef;
@@ -3149,6 +3204,7 @@ public class RevisedBackpackSortController extends inkLogicController {
   private let m_arrowPrice: inkWidgetRef;
   private let m_arrowWeight: inkWidgetRef;
   private let m_arrowDps: inkWidgetRef;
+  private let m_arrowDamagePerShot: inkWidgetRef;
   private let m_arrowRange: inkWidgetRef;
   private let m_arrowQuest: inkWidgetRef;
   private let m_arrowCustomJunk: inkWidgetRef;
@@ -3262,6 +3318,9 @@ public class RevisedBackpackSortController extends inkLogicController {
       case revisedSorting.Dps:
         this.UpdateArrow(this.m_arrowDps, Equals(this.currentSortingMode, revisedSortingMode.Asc));
         break;
+      case revisedSorting.DamagePerShot:
+        this.UpdateArrow(this.m_arrowDamagePerShot, Equals(this.currentSortingMode, revisedSortingMode.Asc));
+        break;
       case revisedSorting.Range:
         this.UpdateArrow(this.m_arrowRange, Equals(this.currentSortingMode, revisedSortingMode.Asc));
         break;
@@ -3280,6 +3339,7 @@ public class RevisedBackpackSortController extends inkLogicController {
     inkWidgetRef.SetVisible(this.m_arrowPrice, false);
     inkWidgetRef.SetVisible(this.m_arrowWeight, false);
     inkWidgetRef.SetVisible(this.m_arrowDps, false);
+    inkWidgetRef.SetVisible(this.m_arrowDamagePerShot, false);
     inkWidgetRef.SetVisible(this.m_arrowRange, false);
     inkWidgetRef.SetVisible(this.m_arrowQuest, false);
     inkWidgetRef.SetVisible(this.m_arrowCustomJunk, false);
@@ -3317,6 +3377,7 @@ public class RevisedBackpackSortController extends inkLogicController {
       case "Price": return revisedSorting.Price;
       case "Weight": return revisedSorting.Weight;
       case "Dps": return revisedSorting.Dps;
+      case "DamagePerShot": return revisedSorting.DamagePerShot;
       case "Range": return revisedSorting.Range;
       case "Quest": return revisedSorting.Quest;
       case "CustomJunk": return revisedSorting.CustomJunk;
@@ -3597,6 +3658,30 @@ public class RevisedCompareBuilder extends IScriptable {
     };
     if this.m_sortData2.isWeapon {
       rightValue = this.m_sortData2.dps;
+    };
+    this.m_compareBuilder.FloatDesc(leftValue, rightValue);
+    return this;
+  }
+  public final func DamagePerShotAsc() -> ref<RevisedCompareBuilder> {
+    let leftValue: Float;
+    let rightValue: Float;
+    if this.m_sortData1.isWeapon {
+      leftValue = this.m_sortData1.damagePerShot;
+    };
+    if this.m_sortData2.isWeapon {
+      rightValue = this.m_sortData2.damagePerShot;
+    };
+    this.m_compareBuilder.FloatAsc(leftValue, rightValue);
+    return this;
+  }
+  public final func DamagePerShotDesc() -> ref<RevisedCompareBuilder> {
+    let leftValue: Float;
+    let rightValue: Float;
+    if this.m_sortData1.isWeapon {
+      leftValue = this.m_sortData1.damagePerShot;
+    };
+    if this.m_sortData2.isWeapon {
+      rightValue = this.m_sortData2.damagePerShot;
     };
     this.m_compareBuilder.FloatDesc(leftValue, rightValue);
     return this;
