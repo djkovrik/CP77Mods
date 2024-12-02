@@ -1,4 +1,4 @@
-// RevisedBackpack v0.9.3
+// RevisedBackpack v0.9.4
 module RevisedBackpack
 
 import Codeware.UI.HubTextInput
@@ -206,10 +206,16 @@ public class RevisedBackpackItemHoverOutEvent extends Event {
   }
 }
 public class RevisedBackpackItemSelectEvent extends Event {
+  public let display: wref<RevisedBackpackItemController>;
   public let item: wref<RevisedItemWrapper>;
-  public final static func Create(item: ref<RevisedItemWrapper>) -> ref<RevisedBackpackItemSelectEvent> {
+  public let ctrlPressed: Bool;
+  public let shiftPressed: Bool;
+  public final static func Create(display: ref<RevisedBackpackItemController>, item: ref<RevisedItemWrapper>, ctrlPressed: Bool, shiftPressed: Bool) -> ref<RevisedBackpackItemSelectEvent> {
     let evt: ref<RevisedBackpackItemSelectEvent> = new RevisedBackpackItemSelectEvent();
+    evt.display = display;
     evt.item = item;
+    evt.ctrlPressed = ctrlPressed;
+    evt.shiftPressed = shiftPressed;
     return evt;
   }
 }
@@ -220,14 +226,6 @@ public class RevisedBackpackItemHighlightEvent extends Event {
     let evt: ref<RevisedBackpackItemHighlightEvent> = new RevisedBackpackItemHighlightEvent();
     evt.itemId = itemId;
     evt.highlight = highlight;
-    return evt;
-  }
-}
-public class RevisedBackpackItemWasHighlightedEvent extends Event {
-  public let display: wref<RevisedBackpackItemController>;
-  public final static func Create(display: wref<RevisedBackpackItemController>) -> ref<RevisedBackpackItemWasHighlightedEvent> {
-    let evt: ref<RevisedBackpackItemWasHighlightedEvent> = new RevisedBackpackItemWasHighlightedEvent();
-    evt.display = display;
     return evt;
   }
 }
@@ -271,7 +269,7 @@ public class RevisedFiltersActionEvent extends Event {
     return evt;
   }
 }
-public class RevisedItemDisplayClickEvent extends Event {
+public class RevisedItemDisplayReleaseEvent extends Event {
   public let itemData: ref<gameItemData>;
   public let display: wref<RevisedBackpackItemController>;
   public let uiInventoryItem: ref<UIInventoryItem>;
@@ -719,6 +717,9 @@ public class RevisedBackpackController extends gameuiMenuGameController {
   private let m_junkItems: array<ref<UIInventoryItem>>;
   private let m_customJunkItems: array<ref<RevisedItemWrapper>>;
   private let m_selectedItems: array<ref<RevisedItemWrapper>>;
+  private let m_prevSelectedController: wref<RevisedBackpackItemController>;
+  private let m_currSelectedController: wref<RevisedBackpackItemController>;
+  private let m_fromToStartingController: wref<RevisedBackpackItemController>;
   private let m_itemDropQueueItems: array<ItemID>;
   private let m_itemDropQueue: array<ItemModParams>;
   private let m_isRefreshUIScheduled: Bool;
@@ -784,7 +785,6 @@ public class RevisedBackpackController extends gameuiMenuGameController {
   private let m_outfitCooldownPeroid: Float;
   private let m_virtualWidgets: ref<inkWeakHashMap>;
   private let m_allWidgets: ref<inkWeakHashMap>;
-  private let m_lastHighlightedItem: wref<RevisedBackpackItemController>;
   protected cb func OnInitialize() -> Bool {
     let playerPuppet: wref<GameObject>;
     this.m_backpackInventoryListenerCallback = new RevisedBackpackInventoryListenerCallback();
@@ -1029,9 +1029,12 @@ public class RevisedBackpackController extends gameuiMenuGameController {
       targetItemIndex = selectedItemIndex + 1;
     };
     this.Log(s"Selected index \(selectedItemIndex), next index \(targetItemIndex)");
+    let controllers: array<ref<RevisedBackpackItemController>> = this.GetListControllers();
     let nextItem: ref<RevisedItemWrapper> = this.itemsListDataView.GetItem(Cast<Uint32>(targetItemIndex)) as RevisedItemWrapper;
+    if targetItemIndex > ArraySize(controllers) - 1 {  return ; };
+    let nextItemController: ref<RevisedBackpackItemController> = controllers[targetItemIndex];
     if IsDefined(nextItem) {
-      this.QueueEvent(RevisedBackpackItemSelectEvent.Create(nextItem));
+      this.QueueEvent(RevisedBackpackItemSelectEvent.Create(nextItemController, nextItem, false, false));
     };
   }
   private final func TryToSelectPreviousItem() -> Void {
@@ -1049,23 +1052,44 @@ public class RevisedBackpackController extends gameuiMenuGameController {
       targetItemIndex = selectedItemIndex - 1;
     };
     this.Log(s"Selected index \(selectedItemIndex), next index \(targetItemIndex)");
+    let controllers: array<ref<RevisedBackpackItemController>> = this.GetListControllers();
     let nextItem: ref<RevisedItemWrapper> = this.itemsListDataView.GetItem(Cast<Uint32>(targetItemIndex)) as RevisedItemWrapper;
+    if targetItemIndex > ArraySize(controllers) - 1 {  return ; };
+    let nextItemController: ref<RevisedBackpackItemController> = controllers[targetItemIndex];
     if IsDefined(nextItem) {
-      this.QueueEvent(RevisedBackpackItemSelectEvent.Create(nextItem));
+      this.QueueEvent(RevisedBackpackItemSelectEvent.Create(nextItemController, nextItem, false, false));
     };
   }
-  private final func TryToFindSelectedItemIndex() -> Int32 {
-    let count: Uint32 = this.itemsListDataView.Size();
-    let index: Uint32 = 0u;
+  private final func TryToFindItemIndex(item: ref<RevisedItemWrapper>) -> Int32 {
+    if !IsDefined(item) { return -1; };
+    let items: array<ref<RevisedItemWrapper>> = this.GetDataViewItems();
+    let count: Int32 = ArraySize(items);
+    let index: Int32 = 0;
     let wrapper: ref<RevisedItemWrapper>;
     while index < count {
-      wrapper = this.itemsListDataView.GetItem(index) as RevisedItemWrapper;
+      wrapper = items[index] as RevisedItemWrapper;
       if IsDefined(wrapper) {
-        if wrapper.GetSelectedFlag() {
-          return Cast<Int32>(index);
+        if Equals(item, wrapper) {
+          return index;
         };
       };
-      index += 1u;
+      index += 1;
+    };
+    return -1;
+  }
+  private final func TryToFindSelectedItemIndex() -> Int32 {
+    let items: array<ref<RevisedItemWrapper>> = this.GetDataViewItems();
+    let count: Int32 = ArraySize(items);
+    let index: Int32 = 0;
+    let wrapper: ref<RevisedItemWrapper>;
+    while index < count {
+      wrapper = items[index] as RevisedItemWrapper;
+      if IsDefined(wrapper) {
+        if wrapper.GetSelectedFlag() {
+          return index;
+        };
+      };
+      index += 1;
     };
     return -1;
   }
@@ -1204,24 +1228,14 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     }
   }
   private final func SelectFilteredItems() -> Void {
-    this.DeselectLastHighlightedItem();
-    this.UpdateSelectionForDataViewWrappers(true);
-    this.UpdateSelectionForVirtualListControllers(true);
-    let selectedItems: array<ref<RevisedItemWrapper>>;
-    let dataViewItemCount: Uint32 = this.itemsListDataView.Size();
-    let index: Uint32 = 0u;
-    let wrapper: ref<RevisedItemWrapper>;
-    while index < dataViewItemCount {
-      wrapper = this.itemsListDataView.GetItem(index) as RevisedItemWrapper;
-      if IsDefined(wrapper) {
-        if wrapper.GetSelectedFlag() {
-          ArrayPush(selectedItems, wrapper);
-        };
-      };
-      index += 1u;
+    ArrayClear(this.m_selectedItems);
+    for item in this.GetDataViewItems() {
+      item.SetSelectedFlag(true);
+      ArrayPush(this.m_selectedItems, item);
     };
-    this.Log(s"SelectFilteredItems selects \(dataViewItemCount)");
-    this.StoreSelection(selectedItems);
+    this.HideItemPreview();
+    this.RefreshVisibleDataViewItems();
+    this.UpdateSelectedItemsCounter();
   }
   private final func JunkCurrentSelection() -> Void {
     if Equals(ArraySize(this.m_selectedItems), 0) {
@@ -1246,6 +1260,9 @@ public class RevisedBackpackController extends gameuiMenuGameController {
       };
     };
     this.PlaySound(n"ui_menu_item_disassemble");
+    this.DeselectEverything();
+    this.RefreshVisibleDataViewItems();
+    this.UpdateSelectedItemsCounter();
     this.RefreshUINextFrame();
   }
   private final func DisassembleCurrentSelection() -> Void {
@@ -1271,10 +1288,9 @@ public class RevisedBackpackController extends gameuiMenuGameController {
       };
     };
     this.PlaySound(n"ui_menu_item_disassemble");
-    this.DeselectLastHighlightedItem();
-    this.UpdateSelectionForAllWrappers(false);
-    this.UpdateSelectionForVirtualListControllers(false);
-    this.ClearStoredSelection();
+    this.DeselectEverything();
+    this.RefreshVisibleDataViewItems();
+    this.UpdateSelectedItemsCounter();
     this.RefreshUINextFrame();
   }
   protected cb func OnRevisedFilteringEvent(evt: ref<RevisedFilteringEvent>) -> Bool {
@@ -1294,10 +1310,9 @@ public class RevisedBackpackController extends gameuiMenuGameController {
       };
       i += 1;
     };
-    this.DeselectLastHighlightedItem();
-    this.UpdateSelectionForAllWrappers(false);
-    this.UpdateSelectionForVirtualListControllers(false);
-    this.ClearStoredSelection();
+    this.DeselectEverything();
+    this.RefreshVisibleDataViewItems();
+    this.UpdateSelectedItemsCounter();
     let category: ref<RevisedBackpackCategory>;
     if NotEquals(selectedIndex, -1) {
       this.AnimateIndicatorTranslation(selectedIndex);
@@ -1376,17 +1391,120 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     this.m_TooltipsManager.HideTooltips();
   }
   protected cb func OnRevisedBackpackItemSelectEvent(evt: ref<RevisedBackpackItemSelectEvent>) -> Bool {
-    this.Log(s"Selected \(TDBID.ToStringDEBUG(evt.item.id))");
+    this.Log(s"Selected \(TDBID.ToStringDEBUG(evt.item.id)), ctrl: \(evt.ctrlPressed), shift: \(evt.shiftPressed)");
+    this.m_prevSelectedController = this.m_currSelectedController;
+    this.m_currSelectedController = evt.display;
     this.PlaySound(n"ui_menu_onpress");
     this.m_TooltipsManager.HideTooltips();
-    this.DeselectLastHighlightedItem();
-    this.UpdateSelectionForDataViewWrappers(false);
-    this.UpdateSelectionForVirtualListControllers(false);
-    this.HighlightSelectedItem(evt.item);
-    this.ShowItemPreview(evt.item);
-    this.StoreSelection(evt.item);
+    if !evt.ctrlPressed && !evt.shiftPressed {
+      // single click
+        // has more than one item selected already
+        if ArraySize(this.m_selectedItems) > 1 {
+          this.DeselectEverything();
+          this.RefreshVisibleDataViewItems();
+        };
+        if !evt.item.GetSelectedFlag() {
+          // clicked item is not selected yet
+          this.Log(s"[] was not selected - \(this.m_prevSelectedController.GetNameLabel()) deselected, \(this.m_currSelectedController.GetNameLabel()) selected");
+          this.SelectSingleItem(evt.item);
+        } else if evt.item.GetSelectedFlag() {
+          // clicked item already selected
+          this.Log(s"[] was selected - \(this.m_currSelectedController.GetNameLabel()) deselected");
+          this.DeselectSingleItem(evt.item);
+        };
+    } else if evt.ctrlPressed && !evt.shiftPressed {
+      // ctrl + click
+        if !evt.item.GetSelectedFlag() {
+          // clicked item is not selected yet
+          this.Log(s"[ctrl] was not selected - \(this.m_prevSelectedController.GetNameLabel()) deselected, \(this.m_currSelectedController.GetNameLabel()) selected");
+          this.SelectSingleItemCtrl(evt.item);
+        } else if evt.item.GetSelectedFlag() {
+          // clicked item already selected
+          this.Log(s"[ctrl] was selected - \(this.m_currSelectedController.GetNameLabel()) deselected");
+          this.DeselectSingleItemCtrl(evt.item);
+        };
+    } else if !evt.ctrlPressed && evt.shiftPressed {
+      // shift + click
+      this.Log(s"[shift] select from \(this.m_prevSelectedController.GetNameLabel()) to \(this.m_currSelectedController.GetNameLabel())");
+      this.SelectItemsFromTo(evt.item);
+    };
+    this.UpdateSelectedItemsCounter();
   }
-  protected cb func OnRevisedItemDisplayClickEvent(evt: ref<RevisedItemDisplayClickEvent>) -> Bool {
+  private final func DeselectEverything() -> Void {
+    for item in this.GetDataSourceItems() {
+      item.SetSelectedFlag(false);
+    };
+    ArrayClear(this.m_selectedItems);
+  }
+  private final func RefreshVisibleDataViewItems() -> Void {
+    for controller in this.GetListControllers() {
+      controller.RefreshView();
+    };
+  }
+  private final func SelectSingleItem(item: ref<RevisedItemWrapper>) -> Void {
+    if IsDefined(this.m_prevSelectedController) { ArrayRemove(this.m_selectedItems, this.m_prevSelectedController.GetItem()); }
+    if IsDefined(this.m_prevSelectedController) { this.m_prevSelectedController.SetSelected(false); };
+    if IsDefined(this.m_currSelectedController) { this.m_currSelectedController.SetSelected(true); };
+    this.m_fromToStartingController = this.m_currSelectedController;
+    this.ShowItemPreview(item); 
+    ArrayPush(this.m_selectedItems, item);
+  }
+  private final func SelectSingleItemCtrl(item: ref<RevisedItemWrapper>) -> Void {
+    if IsDefined(this.m_currSelectedController) { this.m_currSelectedController.SetSelected(true); };
+    this.m_fromToStartingController = this.m_currSelectedController;
+    this.HideItemPreview();
+    ArrayPush(this.m_selectedItems, item);
+  }
+  private final func DeselectSingleItem(item: ref<RevisedItemWrapper>) -> Void {
+    if IsDefined(this.m_prevSelectedController) { this.m_prevSelectedController.SetSelected(false); };
+    if IsDefined(this.m_currSelectedController) { this.m_currSelectedController.SetSelected(false); };
+    this.m_fromToStartingController = this.m_prevSelectedController;
+    this.m_prevSelectedController = null;
+    this.m_currSelectedController = null;
+    this.HideItemPreview();
+    ArrayRemove(this.m_selectedItems, item);
+  }
+  private final func DeselectSingleItemCtrl(item: ref<RevisedItemWrapper>) -> Void {
+    if IsDefined(this.m_currSelectedController) { this.m_currSelectedController.SetSelected(false); };
+    this.m_fromToStartingController = this.m_prevSelectedController;
+    this.m_currSelectedController = null;
+    this.HideItemPreview();
+    ArrayRemove(this.m_selectedItems, item);
+  }
+  private final func SelectItemsFromTo(item: ref<RevisedItemWrapper>) -> Void {
+    if !IsDefined(this.m_fromToStartingController) || !IsDefined(this.m_currSelectedController) {
+      return ;
+    };
+    this.HideItemPreview();
+    let start: Int32 = this.TryToFindItemIndex(this.m_fromToStartingController.GetItem());
+    let end: Int32 = this.TryToFindItemIndex(this.m_currSelectedController.GetItem());
+    let items: array<ref<RevisedItemWrapper>> = this.GetDataViewItems();
+    this.Log(s"Select items from to: \(start) -> \(end)");
+    if start < 0 { start = 0; };
+    if end < 0 || start > ArraySize(items) - 1 || end > ArraySize(items) - 1 {
+      return ;
+    };
+    let startIndex: Int32;
+    let endIndex: Int32;
+    if start <= end {
+      startIndex = start;
+      endIndex = end;
+    } else {
+      startIndex = end;
+      endIndex = start;
+    };
+    let wrapper: ref<RevisedItemWrapper>;
+    while startIndex <= endIndex {
+      wrapper = items[startIndex];
+      wrapper.SetSelectedFlag(true);
+      if !ArrayContains(this.m_selectedItems, wrapper) {
+        ArrayPush(this.m_selectedItems, wrapper);
+      };
+      startIndex += 1;
+    };
+    this.RefreshVisibleDataViewItems();
+  }
+  protected cb func OnRevisedItemDisplayReleaseEvent(evt: ref<RevisedItemDisplayReleaseEvent>) -> Bool {
     let isUsable: Bool;
     let isHealing: Bool;
     let item: ItemModParams;
@@ -1514,14 +1632,15 @@ public class RevisedBackpackController extends gameuiMenuGameController {
       this.PlaySound(n"ui_menu_onpress");
     };
   }
-  protected cb func OnRevisedBackpackItemWasHighlightedEvent(evt: ref<RevisedBackpackItemWasHighlightedEvent>) -> Bool {
-    this.m_lastHighlightedItem = evt.display;
-  }
   private final func ShowItemPreview(item: ref<RevisedItemWrapper>) -> Void {
     let isGarment: Bool = item.inventoryItem.IsClothing();
     inkWidgetRef.SetVisible(this.m_previewGarmentContainer, isGarment);
     inkWidgetRef.SetVisible(this.m_previewItemContainer, !isGarment);
     this.QueueEvent(RevisedItemPreviewEvent.Create(item.data.GetID(), isGarment));
+  }
+  private final func HideItemPreview() -> Void {
+    inkWidgetRef.SetVisible(this.m_previewGarmentContainer, false);
+    inkWidgetRef.SetVisible(this.m_previewItemContainer, false);
   }
   private final func InvalidateItemTooltipEvent() -> Void {
     if this.m_lastItemHoverOverEvent != null {
@@ -2024,65 +2143,11 @@ public class RevisedBackpackController extends gameuiMenuGameController {
   private final func PlaySound(evt: CName) -> Void {
     GameObject.PlaySoundEvent(this.m_player, evt);
   }
-  private final func UpdateSelectionForAllWrappers(selected: Bool) -> Void {
-    let allItems: array<ref<IScriptable>> = this.itemsListDataSource.GetArray();
-    let wrapper: ref<RevisedItemWrapper>;
-    for item in allItems {
-      wrapper = item as RevisedItemWrapper;
-      wrapper.SetSelectedFlag(selected);
-    };
-  }
-  private final func UpdateSelectionForDataViewWrappers(selected: Bool) -> Void {
-    let dataViewItemsCount: Uint32 = this.itemsListDataView.Size();
-    let index: Uint32 = 0u;
-    let wrapper: ref<RevisedItemWrapper>; 
-    while index < dataViewItemsCount {
-      wrapper = this.itemsListDataView.GetItem(index) as RevisedItemWrapper;
-      wrapper.SetSelectedFlag(selected);
-      index += 1u;
-    };
-    this.Log(s"UpdateSelectionForDataViewWrappers for \(dataViewItemsCount) items: \(selected)");
-  }
-  private final func UpdateSelectionForVirtualListControllers(selected: Bool) -> Void {
-    let listRoot: ref<inkCompoundWidget> = this.itemsListController.GetRootCompoundWidget();
-    let itemsCount: Int32 = listRoot.GetNumChildren();
-    let controller: ref<RevisedBackpackItemController>;
-    let childIndex: Int32 = 0;
-    while childIndex < itemsCount {
-      controller = listRoot.GetWidgetByIndex(childIndex).GetController() as RevisedBackpackItemController;
-      if IsDefined(controller) {
-        controller.SetSelection(selected);
-      };
-      childIndex += 1;
-    };
-    this.Log(s"UpdateSelectionForVirtualListControllers for \(itemsCount) controllers: \(selected)");
-  }
-  private final func DeselectLastHighlightedItem() -> Void {
-    if IsDefined(this.m_lastHighlightedItem) {
-      this.m_lastHighlightedItem.SetSelection(false);
-      this.m_lastHighlightedItem = null;
-    };
-  }
-  private final func HighlightSelectedItem(item: ref<RevisedItemWrapper>) -> Void {
-    let itemId: ItemID = item.data.GetID();
-    this.QueueEvent(RevisedBackpackItemHighlightEvent.Create(itemId, true));
-  }
-  private final func StoreSelection(item: ref<RevisedItemWrapper>) -> Void {
-    ArrayClear(this.m_selectedItems);
-    ArrayPush(this.m_selectedItems, item);
-    this.UpdateSelectedItemsCounter();
-  }
-  private final func StoreSelection(items: array<ref<RevisedItemWrapper>>) -> Void {
-    ArrayClear(this.m_selectedItems);
-    this.m_selectedItems = items;
-    this.UpdateSelectedItemsCounter();
-  }
-  private final func ClearStoredSelection() -> Void {
-    ArrayClear(this.m_selectedItems);
-    this.UpdateSelectedItemsCounter();
-  }
   private final func UpdateSelectedItemsCounter() -> Void {
     let count: Int32 = ArraySize(this.m_selectedItems);
+    for item in this.m_selectedItems {
+      this.Log(s" -> selected: \(item.nameLabel)");
+    }
     inkTextRef.SetText(this.m_selectedItemsCount, s"\(GetLocalizedTextByKey(n"Mod-Revised-Select-Label")) \(count)");
     this.QueueEvent(RevisedBackpackSelectedItemsCountChangedEvent.Create(count));
   }
@@ -2120,6 +2185,47 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     transparencyInterpolator.SetEndTransparency(1.0);
     moveElementsAnimDef.AddInterpolator(transparencyInterpolator);
     return moveElementsAnimDef;
+  }
+  private final func GetDataSourceItems() -> array<ref<RevisedItemWrapper>> {
+    let allItems: array<ref<IScriptable>> = this.itemsListDataSource.GetArray();
+    let result: array<ref<RevisedItemWrapper>>;
+    let wrapper: ref<RevisedItemWrapper>;
+    for item in allItems {
+      wrapper = item as RevisedItemWrapper;
+      if IsDefined(wrapper) {
+        ArrayPush(result, wrapper);
+      };
+    };
+    return result;
+  }
+  private final func GetDataViewItems() -> array<ref<RevisedItemWrapper>> {
+    let dataViewItemsCount: Uint32 = this.itemsListDataView.Size();
+    let index: Uint32 = 0u;
+    let result: array<ref<RevisedItemWrapper>>;
+    let wrapper: ref<RevisedItemWrapper>;
+    while index < dataViewItemsCount {
+      wrapper = this.itemsListDataView.GetItem(index) as RevisedItemWrapper;
+      if IsDefined(wrapper) {
+        ArrayPush(result, wrapper);
+      };
+      index += 1u;
+    };
+    return result;
+  }
+  private final func GetListControllers() -> array<ref<RevisedBackpackItemController>> {
+    let result: array<ref<RevisedBackpackItemController>>;
+    let listRoot: ref<inkCompoundWidget> = this.itemsListController.GetRootCompoundWidget();
+    let itemsCount: Int32 = listRoot.GetNumChildren();
+    let controller: ref<RevisedBackpackItemController>;
+    let childIndex: Int32 = 0;
+    while childIndex < itemsCount {
+      controller = listRoot.GetWidgetByIndex(childIndex).GetController() as RevisedBackpackItemController;
+      if IsDefined(controller) {
+        ArrayPush(result, controller);
+      };
+      childIndex += 1;
+    };
+    return result;
   }
   private final func Log(str: String) -> Void {
     if RevisedBackpackUtils.ShowRevisedBackpackLogs() {
@@ -3029,7 +3135,7 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     };
   }
   protected cb func OnRelease(evt: ref<inkPointerEvent>) -> Bool {
-    let displayClickEvent: ref<RevisedItemDisplayClickEvent>;
+    let displayReleaseEvent: ref<RevisedItemDisplayReleaseEvent>;
     let toggleQuestTagEvent: ref<RevisedToggleQuestTagEvent>;
     let toggleCustomJunkEvent: ref<RevisedToggleCustomJunkEvent>;
     let targetName: CName = evt.GetTarget().GetName();
@@ -3044,14 +3150,14 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
       toggleCustomJunkEvent.display = this;
       this.QueueEvent(toggleCustomJunkEvent);
     } else if evt.IsAction(n"select") && NotEquals(targetName, n"quest") && NotEquals(targetName, n"customJunk") {
-      this.QueueEvent(RevisedBackpackItemSelectEvent.Create(this.m_item));
+      this.QueueEvent(RevisedBackpackItemSelectEvent.Create(this, this.m_item, evt.IsControlDown(), evt.IsShiftDown()));
     } else {
-      displayClickEvent = new RevisedItemDisplayClickEvent();
-      displayClickEvent.itemData = this.m_item.data;
-      displayClickEvent.display = this;
-      displayClickEvent.uiInventoryItem = this.m_item.inventoryItem;
-      displayClickEvent.actionName = evt.GetActionName();
-      this.QueueEvent(displayClickEvent);
+      displayReleaseEvent = new RevisedItemDisplayReleaseEvent();
+      displayReleaseEvent.itemData = this.m_item.data;
+      displayReleaseEvent.display = this;
+      displayReleaseEvent.uiInventoryItem = this.m_item.inventoryItem;
+      displayReleaseEvent.actionName = evt.GetActionName();
+      this.QueueEvent(displayReleaseEvent);
     };
   }
   protected cb func OnHold(evt: ref<inkPointerEvent>) -> Bool {
@@ -3077,14 +3183,8 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
       this.RefreshView();
     };
   }
-  protected cb func OnRevisedBackpackItemHighlightEvent(evt: ref<RevisedBackpackItemHighlightEvent>) -> Bool {
-    if Equals(evt.itemId, this.m_item.data.GetID()) && NotEquals(this.m_item.GetSelectedFlag(), evt.highlight) {
-      this.m_item.SetSelectedFlag(evt.highlight);
-      this.m_selection.SetVisible(this.m_item.GetSelectedFlag());
-      this.QueueEvent(RevisedBackpackItemWasHighlightedEvent.Create(this));
-    };
-  }
-  public final func SetSelection(selected: Bool) -> Void {
+  public final func SetSelected(selected: Bool) -> Void {
+    this.Log(s"SetSelected \(this.GetNameLabel()): \(selected)");
     this.m_item.SetSelectedFlag(selected);
     this.m_selection.SetVisible(this.m_item.GetSelectedFlag());
   }
@@ -3123,6 +3223,12 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
   }
   public final func CanToggleCustomJunk() -> Bool {
     return this.m_item.customJunkToggleable;
+  }
+  public final func GetNameLabel() -> String {
+    return this.m_item.nameLabel;
+  }
+  public final func GetItem() -> ref<RevisedItemWrapper> {
+    return this.m_item;
   }
   private final func RefreshView() -> Void {
     let label: String = this.m_item.nameLabel;
