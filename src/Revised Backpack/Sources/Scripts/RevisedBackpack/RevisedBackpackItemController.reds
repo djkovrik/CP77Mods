@@ -73,7 +73,7 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
   }
 
   protected cb func OnRelease(evt: ref<inkPointerEvent>) -> Bool {
-    let displayClickEvent: ref<RevisedItemDisplayClickEvent>;
+    let displayReleaseEvent: ref<RevisedItemDisplayReleaseEvent>;
     let toggleQuestTagEvent: ref<RevisedToggleQuestTagEvent>;
     let toggleCustomJunkEvent: ref<RevisedToggleCustomJunkEvent>;
     let targetName: CName = evt.GetTarget().GetName();
@@ -88,14 +88,14 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
       toggleCustomJunkEvent.display = this;
       this.QueueEvent(toggleCustomJunkEvent);
     } else if evt.IsAction(n"select") && NotEquals(targetName, n"quest") && NotEquals(targetName, n"customJunk") {
-      this.QueueEvent(RevisedBackpackItemSelectEvent.Create(this.m_item));
+      this.QueueEvent(RevisedBackpackItemSelectEvent.Create(this, this.m_item, evt.IsControlDown(), evt.IsShiftDown()));
     } else {
-      displayClickEvent = new RevisedItemDisplayClickEvent();
-      displayClickEvent.itemData = this.m_item.data;
-      displayClickEvent.display = this;
-      displayClickEvent.uiInventoryItem = this.m_item.inventoryItem;
-      displayClickEvent.actionName = evt.GetActionName();
-      this.QueueEvent(displayClickEvent);
+      displayReleaseEvent = new RevisedItemDisplayReleaseEvent();
+      displayReleaseEvent.itemData = this.m_item.data;
+      displayReleaseEvent.display = this;
+      displayReleaseEvent.uiInventoryItem = this.m_item.inventoryItem;
+      displayReleaseEvent.actionName = evt.GetActionName();
+      this.QueueEvent(displayReleaseEvent);
     };
   }
 
@@ -125,15 +125,8 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     };
   }
 
-  protected cb func OnRevisedBackpackItemHighlightEvent(evt: ref<RevisedBackpackItemHighlightEvent>) -> Bool {
-    if Equals(evt.itemId, this.m_item.data.GetID()) && NotEquals(this.m_item.GetSelectedFlag(), evt.highlight) {
-      this.m_item.SetSelectedFlag(evt.highlight);
-      this.m_selection.SetVisible(this.m_item.GetSelectedFlag());
-      this.QueueEvent(RevisedBackpackItemWasHighlightedEvent.Create(this));
-    };
-  }
-
-  public final func SetSelection(selected: Bool) -> Void {
+  public final func SetSelected(selected: Bool) -> Void {
+    this.Log(s"SetSelected \(this.GetNameLabel()): \(selected)");
     this.m_item.SetSelectedFlag(selected);
     this.m_selection.SetVisible(this.m_item.GetSelectedFlag());
   }
@@ -182,6 +175,14 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
 
   public final func CanToggleCustomJunk() -> Bool {
     return this.m_item.customJunkToggleable;
+  }
+
+  public final func GetNameLabel() -> String {
+    return this.m_item.nameLabel;
+  }
+
+  public final func GetItem() -> ref<RevisedItemWrapper> {
+    return this.m_item;
   }
 
   private final func RefreshView() -> Void {

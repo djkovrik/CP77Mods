@@ -236,11 +236,17 @@ public class RevisedBackpackItemHoverOutEvent extends Event {
 }
 
 public class RevisedBackpackItemSelectEvent extends Event {
+  public let display: wref<RevisedBackpackItemController>;
   public let item: wref<RevisedItemWrapper>;
+  public let ctrlPressed: Bool;
+  public let shiftPressed: Bool;
 
-  public final static func Create(item: ref<RevisedItemWrapper>) -> ref<RevisedBackpackItemSelectEvent> {
+  public final static func Create(display: ref<RevisedBackpackItemController>, item: ref<RevisedItemWrapper>, ctrlPressed: Bool, shiftPressed: Bool) -> ref<RevisedBackpackItemSelectEvent> {
     let evt: ref<RevisedBackpackItemSelectEvent> = new RevisedBackpackItemSelectEvent();
+    evt.display = display;
     evt.item = item;
+    evt.ctrlPressed = ctrlPressed;
+    evt.shiftPressed = shiftPressed;
     return evt;
   }
 }
@@ -253,16 +259,6 @@ public class RevisedBackpackItemHighlightEvent extends Event {
     let evt: ref<RevisedBackpackItemHighlightEvent> = new RevisedBackpackItemHighlightEvent();
     evt.itemId = itemId;
     evt.highlight = highlight;
-    return evt;
-  }
-}
-
-public class RevisedBackpackItemWasHighlightedEvent extends Event {
-  public let display: wref<RevisedBackpackItemController>;
-
-  public final static func Create(display: wref<RevisedBackpackItemController>) -> ref<RevisedBackpackItemWasHighlightedEvent> {
-    let evt: ref<RevisedBackpackItemWasHighlightedEvent> = new RevisedBackpackItemWasHighlightedEvent();
-    evt.display = display;
     return evt;
   }
 }
@@ -315,7 +311,7 @@ public class RevisedFiltersActionEvent extends Event {
   }
 }
 
-public class RevisedItemDisplayClickEvent extends Event {
+public class RevisedItemDisplayReleaseEvent extends Event {
   public let itemData: ref<gameItemData>;
   public let display: wref<RevisedBackpackItemController>;
   public let uiInventoryItem: ref<UIInventoryItem>;
