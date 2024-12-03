@@ -23,17 +23,15 @@ public func DetermineCurrentVisibility() -> Void {
 
   let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForWeapon || showForZoom;
   if this.lhud_isBraindanceActive { isVisible = false; };
-  if NotEquals(this.lhud_isVisibleNow, isVisible) {
-    this.lhud_isVisibleNow = isVisible;
-    if isVisible {
-      this.Unfold();
-      this.AnimateAlphaLHUD(this.m_smartLinkFirmwareOffline, 1.0, 0.3);
-      this.AnimateAlphaLHUD(this.m_smartLinkFirmwareOnline, 1.0, 0.3);
-    } else {
-      this.Fold();
-      this.AnimateAlphaLHUD(this.m_smartLinkFirmwareOffline, 0.0, 0.3);
-      this.AnimateAlphaLHUD(this.m_smartLinkFirmwareOnline, 0.0, 0.3);
-    };
+  this.lhud_isVisibleNow = isVisible;
+  if isVisible {
+    this.Unfold();
+    this.AnimateAlphaLHUD(this.m_smartLinkFirmwareOffline, 1.0, 0.3);
+    this.AnimateAlphaLHUD(this.m_smartLinkFirmwareOnline, 1.0, 0.3);
+  } else {
+    this.Fold();
+    this.AnimateAlphaLHUD(this.m_smartLinkFirmwareOffline, 0.0, 0.3);
+    this.AnimateAlphaLHUD(this.m_smartLinkFirmwareOnline, 0.0, 0.3);
   };
 }
 

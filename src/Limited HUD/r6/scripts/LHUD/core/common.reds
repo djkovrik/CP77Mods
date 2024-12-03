@@ -367,9 +367,9 @@ protected cb func OnUninitialize() -> Bool {
 }
 
 public static func LHUDLogMarker(str: String) -> Void {
-  // LogChannel(n"DEBUG", "LHUD: " + str);
+  // ModLog(n"LHUD_Marker", "LHUD: " + str);
 }
 
 public static func LHUDLogDebug(str: String) -> Void {
-  // LogChannel(n"DEBUG", "LHUD: " + str);
+  // ModLog(n"LHUD", "LHUD: " + str);
 }
