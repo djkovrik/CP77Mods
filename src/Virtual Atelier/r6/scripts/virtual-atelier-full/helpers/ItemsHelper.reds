@@ -19,20 +19,34 @@ public abstract class AtelierItemsHelper {
     };
 
     let statsSystem: ref<StatsSystem> = GameInstance.GetStatsSystem(player.GetGame());
-    let powerLevelPlayer: Float = statsSystem.GetStatValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatType.PowerLevel);
-    let powerLevelMod: ref<gameStatModifierData> = RPGManager.CreateStatModifier(gamedataStatType.PowerLevel, gameStatModifierType.Additive, powerLevelPlayer);
-    let qualityMod: ref<gameStatModifierData> = RPGManager.CreateStatModifier(gamedataStatType.Quality, gameStatModifierType.Additive, RPGManager.ItemQualityNameToValue(quality));
-    statsSystem.RemoveAllModifiers(itemData.GetStatsObjectID(), gamedataStatType.PowerLevel, true);
-    statsSystem.AddSavedModifier(itemData.GetStatsObjectID(), powerLevelMod);
-    statsSystem.RemoveAllModifiers(itemData.GetStatsObjectID(), gamedataStatType.Quality);
-    statsSystem.AddSavedModifier(itemData.GetStatsObjectID(), qualityMod);
+    let currentMaxTier: Float;
+    let playerPowerLevel: Float;
+    let itemLevel: Float;
+    let maxTierMod: ref<gameStatModifierData>;
+    let noPlusModBelowMax: ref<gameStatModifierData>;
+    let noPlusModMax: ref<gameStatModifierData>;
+    let powerLevelMod: ref<gameStatModifierData>;
+    let purchasedMod: ref<gameStatModifierData>;
 
-    AtelierDebug(s"ScaleItem: \(itemType)");
-
+    playerPowerLevel = statsSystem.GetStatValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatType.PowerLevel);
     if itemData.HasTag(n"IconicWeapon") {
-      player.RescaleOwnedIconicsToPlayerLevel(itemData);
+      itemLevel = GameInstance.GetStatsDataSystem(player.GetGame()).GetValueFromCurve(n"quality_curves", playerPowerLevel, n"iconic_level_at_vendor_to_player_level");
+    } else {
+      itemLevel = playerPowerLevel;
     };
 
+    statsSystem.RemoveAllModifiers(itemData.GetStatsObjectID(), gamedataStatType.PowerLevel, true);
+    powerLevelMod = RPGManager.CreateStatModifier(gamedataStatType.PowerLevel, gameStatModifierType.Additive, itemLevel);
+    statsSystem.AddSavedModifier(itemData.GetStatsObjectID(), powerLevelMod);
+    currentMaxTier = statsSystem.GetStatValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatType.MaxQuality);
+    maxTierMod = RPGManager.CreateStatModifier(gamedataStatType.MaxQualityWhenLooted, gameStatModifierType.Additive, currentMaxTier);
+    statsSystem.AddSavedModifier(itemData.GetStatsObjectID(), maxTierMod);
+    noPlusModMax = RPGManager.CreateStatModifier(gamedataStatType.RollForPlusOnMaxQuality, gameStatModifierType.Multiplier, 0.00);
+    statsSystem.AddSavedModifier(itemData.GetStatsObjectID(), noPlusModMax);
+    noPlusModBelowMax = RPGManager.CreateStatModifier(gamedataStatType.RollForPlusBelowMaxQuality, gameStatModifierType.Multiplier, 0.00);
+    statsSystem.AddSavedModifier(itemData.GetStatsObjectID(), noPlusModBelowMax);
+    purchasedMod = RPGManager.CreateStatModifier(gamedataStatType.ItemPurchasedAtVendor, gameStatModifierType.Additive, 1.00);
+    statsSystem.AddSavedModifier(itemData.GetStatsObjectID(), purchasedMod);
     RPGManager.ForceItemTier(player, itemData, quality);
   }
 
