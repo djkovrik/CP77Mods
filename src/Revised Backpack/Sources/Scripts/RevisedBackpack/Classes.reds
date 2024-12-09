@@ -381,3 +381,40 @@ public class RevisedBackpackFilterDebounceCallback extends DelayCallback {
 }
 
 public class RevisedBackpackTemplateClassifier extends inkVirtualItemTemplateClassifier {}
+
+public class RevisedCustomEventBackpackOpened extends CallbackSystemEvent {
+  let opened: Bool;
+
+  public final static func Create(opened: Bool) -> ref<RevisedCustomEventBackpackOpened> {
+    let evt: ref<RevisedCustomEventBackpackOpened> = new RevisedCustomEventBackpackOpened();
+    evt.opened = opened;
+    return evt;
+  }
+}
+
+public class RevisedCustomEventItemHoverOver extends CallbackSystemEvent {
+  let data: ref<gameItemData>;
+
+  public final static func Create(data: ref<gameItemData>) -> ref<RevisedCustomEventItemHoverOver> {
+    let evt: ref<RevisedCustomEventItemHoverOver> = new RevisedCustomEventItemHoverOver();
+    evt.data = data;
+    return evt;
+  }
+}
+
+public class RevisedCustomEventItemHoverOut extends CallbackSystemEvent {
+  public final static func Create() -> ref<RevisedCustomEventItemHoverOut> {
+    let evt: ref<RevisedCustomEventItemHoverOut> = new RevisedCustomEventItemHoverOut();
+    return evt;
+  }
+}
+
+public class RevisedCustomEventCategorySelected extends CallbackSystemEvent {
+  let categoryId: Int32;
+
+  public final static func Create(categoryId: Int32) -> ref<RevisedCustomEventCategorySelected> {
+    let evt: ref<RevisedCustomEventCategorySelected> = new RevisedCustomEventCategorySelected();
+    evt.categoryId = categoryId;
+    return evt;
+  }
+}

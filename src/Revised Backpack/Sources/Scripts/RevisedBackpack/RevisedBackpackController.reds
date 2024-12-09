@@ -4,6 +4,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
 
   private let m_player: wref<PlayerPuppet>;
   private let m_system: wref<RevisedBackpackSystem>;
+  private let m_callbackSystem: wref<CallbackSystem>;
   private let m_menuEventDispatcher: wref<inkMenuEventDispatcher>;
   private let m_itemDisplayContext: ref<ItemDisplayContextData>;
   private let m_junkItems: array<ref<UIInventoryItem>>;
@@ -129,6 +130,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     };
     this.m_player = playerPuppet as PlayerPuppet;
     this.m_system = RevisedBackpackSystem.GetInstance(this.m_player.GetGame());
+    this.m_callbackSystem = GameInstance.GetCallbackSystem();
     this.m_availableCategories = this.m_system.GetCategories();
     this.m_uiScriptableSystem = UIScriptableSystem.GetInstance(this.m_player.GetGame());
     this.m_uiInventorySystem = UIInventoryScriptableSystem.GetInstance(this.m_player.GetGame());
@@ -150,10 +152,12 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     this.PopulateInventory();
     this.PlayIntroAnimation();
 
+    this.m_callbackSystem.DispatchEvent(RevisedCustomEventBackpackOpened.Create(true));
     this.Log(s"OnPlayerAttach: service \(IsDefined(this.m_system)), categories: \(ArraySize(this.m_availableCategories))");
   }
 
   protected cb func OnPlayerDetach(playerPuppet: ref<GameObject>) -> Bool {
+    this.m_callbackSystem.DispatchEvent(RevisedCustomEventBackpackOpened.Create(false));
     this.ResetVirtualList();
     this.StopAnimations();
   }
@@ -701,6 +705,8 @@ public class RevisedBackpackController extends gameuiMenuGameController {
       this.m_TooltipsManager.HideTooltips();
       inkWidgetRef.SetVisible(this.m_previewGarmentContainer, false);
       inkWidgetRef.SetVisible(this.m_previewItemContainer, false);
+
+      this.m_callbackSystem.DispatchEvent(RevisedCustomEventCategorySelected.Create(category.id));
     };
   }
 
@@ -766,6 +772,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     this.PlaySound(n"ui_menu_hover");
     if evt.isOverName {
       this.OnInventoryRequestTooltip(evt.item.inventoryItem, evt.widget);
+      this.m_callbackSystem.DispatchEvent(RevisedCustomEventItemHoverOver.Create(evt.item.data));
     };
   }
 
@@ -774,6 +781,8 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     this.m_pressedItemDisplay = null;
     this.HiteButtonHints();
     this.m_TooltipsManager.HideTooltips();
+
+    this.m_callbackSystem.DispatchEvent(RevisedCustomEventItemHoverOut.Create());
   }
 
   protected cb func OnRevisedBackpackItemSelectEvent(evt: ref<RevisedBackpackItemSelectEvent>) -> Bool {
