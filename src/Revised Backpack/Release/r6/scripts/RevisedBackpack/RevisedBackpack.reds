@@ -1,4 +1,4 @@
-// RevisedBackpack v0.9.4
+// RevisedBackpack v0.9.5
 module RevisedBackpack
 
 import Codeware.UI.HubTextInput
@@ -321,6 +321,36 @@ public class RevisedBackpackFilterDebounceCallback extends DelayCallback {
   }
 }
 public class RevisedBackpackTemplateClassifier extends inkVirtualItemTemplateClassifier {}
+public class RevisedCustomEventBackpackOpened extends CallbackSystemEvent {
+  let opened: Bool;
+  public final static func Create(opened: Bool) -> ref<RevisedCustomEventBackpackOpened> {
+    let evt: ref<RevisedCustomEventBackpackOpened> = new RevisedCustomEventBackpackOpened();
+    evt.opened = opened;
+    return evt;
+  }
+}
+public class RevisedCustomEventItemHoverOver extends CallbackSystemEvent {
+  let data: ref<gameItemData>;
+  public final static func Create(data: ref<gameItemData>) -> ref<RevisedCustomEventItemHoverOver> {
+    let evt: ref<RevisedCustomEventItemHoverOver> = new RevisedCustomEventItemHoverOver();
+    evt.data = data;
+    return evt;
+  }
+}
+public class RevisedCustomEventItemHoverOut extends CallbackSystemEvent {
+  public final static func Create() -> ref<RevisedCustomEventItemHoverOut> {
+    let evt: ref<RevisedCustomEventItemHoverOut> = new RevisedCustomEventItemHoverOut();
+    return evt;
+  }
+}
+public class RevisedCustomEventCategorySelected extends CallbackSystemEvent {
+  let categoryId: Int32;
+  public final static func Create(categoryId: Int32) -> ref<RevisedCustomEventCategorySelected> {
+    let evt: ref<RevisedCustomEventCategorySelected> = new RevisedCustomEventCategorySelected();
+    evt.categoryId = categoryId;
+    return evt;
+  }
+}
 public class RevisedBackpackCustomFontSize extends ScriptableService {
   private let backpackFontSize: Int32 = 36;
   private cb func OnLoad() {
@@ -712,6 +742,7 @@ public class RevisedBackpackConfirmationPopup {
 public class RevisedBackpackController extends gameuiMenuGameController {
   private let m_player: wref<PlayerPuppet>;
   private let m_system: wref<RevisedBackpackSystem>;
+  private let m_callbackSystem: wref<CallbackSystem>;
   private let m_menuEventDispatcher: wref<inkMenuEventDispatcher>;
   private let m_itemDisplayContext: ref<ItemDisplayContextData>;
   private let m_junkItems: array<ref<UIInventoryItem>>;
@@ -824,6 +855,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     };
     this.m_player = playerPuppet as PlayerPuppet;
     this.m_system = RevisedBackpackSystem.GetInstance(this.m_player.GetGame());
+    this.m_callbackSystem = GameInstance.GetCallbackSystem();
     this.m_availableCategories = this.m_system.GetCategories();
     this.m_uiScriptableSystem = UIScriptableSystem.GetInstance(this.m_player.GetGame());
     this.m_uiInventorySystem = UIInventoryScriptableSystem.GetInstance(this.m_player.GetGame());
@@ -842,9 +874,11 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     this.PopulateCategories();
     this.PopulateInventory();
     this.PlayIntroAnimation();
+    this.m_callbackSystem.DispatchEvent(RevisedCustomEventBackpackOpened.Create(true));
     this.Log(s"OnPlayerAttach: service \(IsDefined(this.m_system)), categories: \(ArraySize(this.m_availableCategories))");
   }
   protected cb func OnPlayerDetach(playerPuppet: ref<GameObject>) -> Bool {
+    this.m_callbackSystem.DispatchEvent(RevisedCustomEventBackpackOpened.Create(false));
     this.ResetVirtualList();
     this.StopAnimations();
   }
@@ -1323,6 +1357,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
       this.m_TooltipsManager.HideTooltips();
       inkWidgetRef.SetVisible(this.m_previewGarmentContainer, false);
       inkWidgetRef.SetVisible(this.m_previewItemContainer, false);
+      this.m_callbackSystem.DispatchEvent(RevisedCustomEventCategorySelected.Create(category.id));
     };
   }
   protected cb func OnRevisedBackpackSortingChanged(evt: ref<RevisedBackpackSortingChanged>) -> Bool {
@@ -1382,6 +1417,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     this.PlaySound(n"ui_menu_hover");
     if evt.isOverName {
       this.OnInventoryRequestTooltip(evt.item.inventoryItem, evt.widget);
+      this.m_callbackSystem.DispatchEvent(RevisedCustomEventItemHoverOver.Create(evt.item.data));
     };
   }
   protected cb func OnRevisedBackpackItemHoverOutEvent(evt: ref<RevisedBackpackItemHoverOutEvent>) -> Bool {
@@ -1389,6 +1425,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     this.m_pressedItemDisplay = null;
     this.HiteButtonHints();
     this.m_TooltipsManager.HideTooltips();
+    this.m_callbackSystem.DispatchEvent(RevisedCustomEventItemHoverOut.Create());
   }
   protected cb func OnRevisedBackpackItemSelectEvent(evt: ref<RevisedBackpackItemSelectEvent>) -> Bool {
     this.Log(s"Selected \(TDBID.ToStringDEBUG(evt.item.id)), ctrl: \(evt.ctrlPressed), shift: \(evt.shiftPressed)");
