@@ -12,3 +12,4 @@ localization:
     cz-cz: base\localization\cz-cz\onscreens\first-equip.json
     pt-br: base\localization\pt-br\onscreens\first-equip.json
     th-th: base\localization\th-th\onscreens\first-equip.json
+    tr-tr: base\localization\tr-tr\onscreens\first-equip.json
