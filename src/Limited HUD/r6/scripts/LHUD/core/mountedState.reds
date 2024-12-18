@@ -29,5 +29,5 @@ protected func OnExit(stateContext: ref<StateContext>, scriptInterface: ref<Stat
   wrappedMethod(stateContext, scriptInterface);
 
   let gi: GameInstance = scriptInterface.owner.GetGame();
-  GameInstance.GetDelaySystem(gi).DelayCallback(DelayedCoolExitCallback.Create(gi), 2.0, false);
+  GameInstance.GetDelaySystem(gi).DelayCallback(DelayedCoolExitCallback.Create(gi), 1.5, false);
 }
