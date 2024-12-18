@@ -216,6 +216,29 @@ public class LHUDLaunchCallback extends DelayCallback {
   }
 }
 
+public class DelayedCoolExitCallback extends DelayCallback {
+    private let gameInstance: GameInstance;
+
+    public func Call() -> Void {
+      let player: ref<PlayerPuppet> = GetPlayer(this.gameInstance);
+      let equipmentDataDef: ref<UI_EquipmentDataDef> = GetAllBlackboardDefs().UI_EquipmentData;
+      let uiSystemDef: ref<UI_SystemDef> = GetAllBlackboardDefs().UI_System;
+      let hasAnyWeapon: Bool = false;
+      if IsDefined(player) {
+        hasAnyWeapon = player.HasAnyWeaponEquipped_LHUD();
+        GameInstance.GetBlackboardSystem(this.gameInstance).Get(equipmentDataDef).SetBool(equipmentDataDef.HasWeaponEquipped, hasAnyWeapon, true);
+        GameInstance.GetBlackboardSystem(this.gameInstance).Get(uiSystemDef).SetBool(uiSystemDef.IsMounted_LHUD, false, true);
+      };
+    }
+
+    public static func Create(gameInstance: GameInstance) -> ref<DelayedCoolExitCallback> {
+      let instance: ref<DelayedCoolExitCallback> = new DelayedCoolExitCallback();
+      instance.gameInstance = gameInstance;
+      return instance;
+    }
+}
+
+
 // -- INITIALIZE LHUD LISTENERS
 
 @addField(HUDManager) 
