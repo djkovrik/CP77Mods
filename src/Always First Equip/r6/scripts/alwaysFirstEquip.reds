@@ -455,6 +455,16 @@ public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateG
   };
 }
 
+// Cool exit
+@wrapMethod(CoolExitingEvents)
+protected func OnExit(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  wrappedMethod(stateContext, scriptInterface);
+  let playerPuppet: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
+  if IsDefined(playerPuppet) {
+    playerPuppet.SetSkipFirstEquipEQ(true);
+  };
+}
+
 // Ladder
 @wrapMethod(LadderEvents)
 public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
