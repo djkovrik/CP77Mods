@@ -24,8 +24,6 @@ protected cb func OnDisplayPreviewEvent(event: ref<DisplayPreviewEvent>) -> Bool
   if config.inputHintsEnabled { this.ShowInputHints(true); }
   if config.speedometerEnabled { this.ShowCarHUD(true); }
   if config.bossHealthbarEnabled { this.ShowBossHealthbar(true); }
-  if config.dialogChoicesEnabled { this.ShowDialogPreview(true); }
-  if config.dialogSubtitlesEnabled { this.ShowSubtitlesPreview(true); }
   if config.progressWidgetEnabled { this.ShowHudProgressBarController(true); }
 }
 
@@ -59,8 +57,6 @@ protected cb func OnHidePreviewEvent(event: ref<HidePreviewEvent>) -> Bool {
   this.ShowInputHints(false);
   this.ShowCarHUD(false);
   this.ShowBossHealthbar(false);
-  this.ShowDialogPreview(false);
-  this.ShowSubtitlesPreview(false);
   this.ShowHudProgressBarController(false);
 }
 
@@ -298,54 +294,6 @@ private func ShowBossHealthbar(show: Bool) -> Void {
         controller.m_foldAnimation.Stop();
       };
       controller.m_foldAnimation = this.PlayLibraryAnimation(n"fold");
-    };
-  };
-}
-
-@addMethod(inkGameController)
-private func ShowDialogPreview(show: Bool) -> Void {
-  let controller: ref<dialogWidgetGameController>;
-  let root: ref<inkCompoundWidget>;
-  let preview: ref<inkWidget>;
-  if this.IsA(n"dialogWidgetGameController") {
-    controller = this as dialogWidgetGameController;
-    root = this.GetRootCompoundWidget();
-    if show {
-      preview = new inkRectangle();
-      preview.SetName(n"previewFill");
-      preview.SetHAlign(inkEHorizontalAlign.Fill);
-      preview.SetVAlign(inkEVerticalAlign.Fill);
-      preview.SetAnchor(inkEAnchor.Fill);
-      preview.SetTintColor(new HDRColor(1.0, 0.0, 0.0, 1.0));
-      preview.SetSize(new Vector2(500.0, 200.0));
-      if Equals(ArraySize(controller.m_data.choiceHubs), 0) {
-        preview.Reparent(root);
-      };
-    } else {
-      root.RemoveChildByName(n"previewFill");
-    };
-  };
-}
-
-@addMethod(inkGameController)
-private func ShowSubtitlesPreview(show: Bool) -> Void {
-  let controller: ref<SubtitlesGameController>;
-  let data: ref<LineSpawnData>;
-  let dataStruct: scnDialogLineData;
-  if this.IsA(n"SubtitlesGameController") {
-    controller = this as SubtitlesGameController;
-    if show {
-      data = new LineSpawnData();
-      dataStruct.text = "Good morning, Night City! Yesterday's body-count lottery rounded out to a solid 'n' sturdy thirty! Ten outta Heywood thanks to unabated gang wars!";
-      dataStruct.speaker = this.GetPlayerControlledObject();
-      dataStruct.speakerName = "Speaker";
-      dataStruct.isPersistent = false;
-      dataStruct.type = scnDialogLineType.Regular;
-      dataStruct.duration = 20.0;
-      data.m_lineData = dataStruct;
-      controller.CreateLine(data);
-    } else {
-      controller.m_subtitlesPanel.RemoveAllChildren();
     };
   };
 }
