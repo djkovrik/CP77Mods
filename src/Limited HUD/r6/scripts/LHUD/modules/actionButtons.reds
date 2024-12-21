@@ -88,13 +88,11 @@ public func DetermineCurrentVisibility() -> Void {
   let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForWeapon || showForZoom || isPhoneInUse;
   
   if this.lhud_isBraindanceActive { isVisible = false; };
-  if NotEquals(this.lhud_isVisibleNow, isVisible) {
-    this.lhud_isVisibleNow = isVisible;
-    if isVisible {
-      this.AnimateAlphaLHUD(this.GetRootWidget(), 1.0, 0.3);
-    } else {
-      this.AnimateAlphaLHUD(this.GetRootWidget(), 0.0, 0.3);
-    };
+  this.lhud_isVisibleNow = isVisible;
+  if isVisible {
+    this.AnimateAlphaLHUD(this.GetRootWidget(), 1.0, 0.1);
+  } else {
+    this.AnimateAlphaLHUD(this.GetRootWidget(), 0.0, 0.1);
   };
 }
 
