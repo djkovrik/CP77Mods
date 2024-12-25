@@ -146,7 +146,7 @@ public class CustomColorPickerController extends inkGameController {
   }
 
 	protected cb func OnResetClick(widget: wref<inkWidget>) -> Bool {
-    this.data.customColor = this.data.presetColor;
+    this.data.customColor = this.data.defaultColor;
     this.RefreshColorPreviews();
     this.RefreshSliders();
     this.QueueEvent(HudPainterSoundEmitted.Create(n"ui_menu_onpress"));
