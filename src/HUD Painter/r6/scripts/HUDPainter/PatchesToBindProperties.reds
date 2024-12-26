@@ -180,7 +180,7 @@ protected cb func OnUnfoldEndCustom(proxy: ref<inkAnimProxy>) -> Bool {
   };
 }
 
-// Vehicle control camera - TODO check why inkstyle does not work
+// Vehicle quickhack camera - TODO check why inkstyle does not work
 @wrapMethod(RemoteControlDrivingHUDGameController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
@@ -199,4 +199,20 @@ protected cb func OnInitialize() -> Bool {
     fncs.GetWidgetByIndex(i).BindProperty(n"tintColor", n"MainColors.CombatRed");
     i += 1;
   };
+}
+
+// Vehicle color selector top bars background
+public class BindTwintoneHeadersColorEvent extends Event {}
+
+@wrapMethod(vehicleColorSelectorGameController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+  GameInstance.GetDelaySystem(this.m_gameInstance).DelayEvent(this, new BindTwintoneHeadersColorEvent(), 0.3);
+}
+
+@addMethod(vehicleColorSelectorGameController)
+protected cb func OnBindTwintoneHeadersColorEvent(evt: ref<BindTwintoneHeadersColorEvent>) -> Bool {
+  let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+  root.GetWidgetByPathName(n"container/top_holder/barHolder/bg_topBar").BindProperty(n"tintColor", n"MainColors.MildRed");
+  root.GetWidgetByPathName(n"twintoneContainer/content/top_holder/barHolder/bg_topBar").BindProperty(n"tintColor", n"MainColors.MildRed");
 }
