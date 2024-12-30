@@ -7,6 +7,7 @@ protected cb func OnInitialize() -> Bool {
   wrappedMethod();
   this.CreateCartIndicator();
   this.CreateQuantityIndicator();
+  this.CreateOwnedIndicator();
 }
 
 @wrapMethod(InventoryItemDisplayController)
@@ -18,6 +19,7 @@ protected func RefreshUI() -> Void {
     this.RefreshAtelierCartIndicator();
     this.RefreshAtelierQuantityIndicator();
     this.RefreshAtelierEnoughMoneyIndicator();
+    this.RefreshAtelierItemOwnedIndicator();
   };
 }
 
@@ -29,6 +31,7 @@ protected cb func OnVirtualItemStateRefreshEvent(evt: ref<VirtualItemStateRefres
     this.RefreshAtelierCartIndicator();
     this.RefreshAtelierQuantityIndicator();
     this.RefreshAtelierEnoughMoneyIndicator();
+    this.RefreshAtelierItemOwnedIndicator();
   };
 }
 
@@ -68,6 +71,21 @@ private final func RefreshAtelierQuantityIndicator() -> Void {
   let purchaseAmount: Int32 = this.cartManager.GetAddedQuantity(itemID, quantity);
   this.quantityIndicator.SetVisible(purchaseAmount > 1);
   this.quantityIndicator.SetText(s"x\(purchaseAmount)");
+}
+
+@addMethod(InventoryItemDisplayController)
+private final func RefreshAtelierItemOwnedIndicator() -> Void {
+  let data: ref<gameItemData> = InventoryItemData.GetGameItemData(this.m_itemData);
+  let itemID: ItemID = data.GetID();
+  let isWeapon: Bool = RPGManager.IsItemWeapon(itemID);
+  let isMelee: Bool = WeaponObject.IsMelee(itemID);
+  let isOwned: Bool = this.cartManager.IsItemOwned(ItemID.GetTDBID(itemID)) || data.hasOwned;
+
+  if isWeapon && !isMelee {
+    this.ownedIndicator.SetMargin(new inkMargin(16.0, 0.0, 0.0, 58.0));
+  };
+
+  this.ownedIndicator.SetVisible(data.isVirtualItem && isOwned);
 }
 
 @addMethod(InventoryItemDisplayController)
@@ -115,4 +133,27 @@ private final func CreateQuantityIndicator() -> Void {
   quantity.SetFitToContent(true);
   quantity.Reparent(container, 10);
   this.quantityIndicator = quantity;
+}
+
+@addMethod(InventoryItemDisplayController)
+private final func CreateOwnedIndicator() -> Void {
+  let source: ref<inkImage> = inkWidgetRef.Get(this.m_iconicTint) as inkImage;
+  let container: ref<inkCompoundWidget> = source.GetParentWidget() as inkCompoundWidget;
+  let indicator: ref<inkImage> = new inkImage();
+  container.RemoveChildByName(n"tick");
+  indicator.SetName(n"tick");
+  indicator.SetAnchor(inkEAnchor.TopLeft);
+  indicator.SetAnchorPoint(new Vector2(1.0, 0.0));
+  indicator.SetHAlign(inkEHorizontalAlign.Left);
+  indicator.SetVAlign(inkEVerticalAlign.Bottom);
+  indicator.SetAtlasResource(r"base\\gameplay\\gui\\virtual_atelier_owned.inkatlas");
+  indicator.SetTexturePart(n"tick");
+  indicator.SetOpacity(0.2);
+  indicator.SetVisible(false);
+  indicator.SetSize(new Vector2(32.0, 32.0));
+  indicator.SetMargin(new inkMargin(16.0, 0.0, 0.0, 16.0));
+  indicator.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+  indicator.BindProperty(n"tintColor", VirtualAtelierControlStyle.OwnedLabelColor());
+  indicator.Reparent(container, 21);
+  this.ownedIndicator = indicator;
 }

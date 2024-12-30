@@ -13,6 +13,9 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
   private let currentPlayerMoney: Int32;
   private let currentGoodsPrice: Int32;
 
+  private let ownedItems: array<TweakDBID>;
+  private let ownedTagsToShow: array<CName>;
+
   public static func GetInstance(gi: GameInstance) -> ref<VirtualAtelierCartManager> {
     let system: ref<VirtualAtelierCartManager> = GameInstance.GetScriptableSystemsContainer(gi).Get(n"VirtualAtelier.Systems.VirtualAtelierCartManager") as VirtualAtelierCartManager;
     return system;
@@ -27,6 +30,7 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
     this.cart = new VirtualAtelierCart();
     this.cart.Init();
     this.RefreshCurrentBalances();
+    this.FillExcludeTags();
   }
 
   public final func StoreVirtualStock(stock: array<ref<VirtualStockItem>>) -> Void {
@@ -108,6 +112,7 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
         itemData.isVirtualItem = true;
         AtelierItemsHelper.ScaleItem(this.player, itemData, stockItem.quality);
         this.transactionSystem.GiveItem(this.player, itemID, stockItem.quantity);
+        this.SaveOwnedItem(stockItem);
         i += 1;
       };
     };
@@ -125,6 +130,35 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
     return this.currentGoodsPrice;
   }
 
+  public final func SaveOwnedItems(items: array<wref<gameItemData>>) -> Void {
+    ArrayClear(this.ownedItems);
+
+    let id: TweakDBID;
+    for item in items {
+      if this.ShouldControlOwnership(item) {
+        id = ItemID.GetTDBID(item.GetID());
+        ArrayPush(this.ownedItems, id);
+      };
+    };
+  }
+
+  public final func SaveOwnedItem(item: ref<VirtualStockItem>) -> Bool {
+    let id: TweakDBID = item.itemTDBID;
+    let data: ref<gameItemData> = item.itemData;
+    if !this.IsItemOwned(id) && this.ShouldControlOwnership(data) {
+      ArrayPush(this.ownedItems, id);
+    };
+    return false;
+  }
+
+  public final func IsItemOwned(id: TweakDBID) -> Bool {
+    return ArrayContains(this.ownedItems, id);
+  }
+
+  public final func ShouldControlOwnership(data: wref<gameItemData>) -> Bool {
+    return this.HasSupportedTag(data);
+  }
+
   private final func RefreshCurrentBalances() -> Void {
     let values: array<ref<VirtualCartItem>> = this.cart.GetCart();
     let current: ref<VirtualCartItem>;
@@ -139,5 +173,22 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
 
     this.currentGoodsPrice = Cast<Int32>(total);
     this.currentPlayerMoney = this.transactionSystem.GetItemQuantity(this.player, MarketSystem.Money());
+  }
+
+  private final func FillExcludeTags() -> Void {
+    ArrayClear(this.ownedTagsToShow);
+    ArrayPush(this.ownedTagsToShow, n"Clothing");
+    ArrayPush(this.ownedTagsToShow, n"Cyberware");
+    ArrayPush(this.ownedTagsToShow, n"Weapon");
+  }
+
+  private final func HasSupportedTag(data: ref<gameItemData>) -> Bool {
+    for tagToCheck in this.ownedTagsToShow {
+      if data.HasTag(tagToCheck) { 
+        return true; 
+      };
+    };
+
+    return false;
   }
 }

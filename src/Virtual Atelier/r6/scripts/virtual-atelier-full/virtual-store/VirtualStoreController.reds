@@ -15,6 +15,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
   private let questsSystem: wref<QuestsSystem>;
   private let uiSystem: wref<UISystem>;
   private let uiScriptableSystem: wref<UIScriptableSystem>;
+  private let uiInventorySystem: wref<UIInventoryScriptableSystem>;
   private let vendorDataManager: ref<VendorDataManager>;
   private let inventoryManager: ref<InventoryDataManagerV2>;
   private let config: ref<VirtualAtelierConfig>;
@@ -68,6 +69,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
   }
 
   protected cb func OnUninitialize() -> Bool {
+    this.uiInventorySystem.FlushFullscreenCache();
     this.cartManager.ClearCart();
     this.previewManager.SetPreviewState(false);
     this.questsSystem.SetFact(n"disable_tutorials", this.currentTutorialsFact);
@@ -307,6 +309,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.questsSystem = GameInstance.GetQuestsSystem(this.player.GetGame());
     this.uiSystem = GameInstance.GetUISystem(this.player.GetGame());
     this.uiScriptableSystem = UIScriptableSystem.GetInstance(this.player.GetGame());
+    this.uiInventorySystem = UIInventoryScriptableSystem.GetInstance(this.player.GetGame());
     this.vendorDataManager = new VendorDataManager();
     this.vendorDataManager.Initialize(this.player, this.player.GetEntityID());
     this.inventoryManager = new InventoryDataManagerV2();
@@ -580,6 +583,26 @@ public class VirtualStoreController extends gameuiMenuGameController {
   }
 
   private final func FillVirtualStock() -> Void {
+    // Get player items
+    let playerItems: ref<inkHashMap>;
+    let values: array<wref<IScriptable>>;
+    let itemsData: array<wref<gameItemData>>;
+    let uiInventoryItem: ref<UIInventoryItem>;
+    let data: ref<gameItemData>;
+    this.uiInventorySystem.FlushTempData();
+    playerItems = this.uiInventorySystem.GetPlayerItemsMap();
+    playerItems.GetValues(values);
+    for value in values {
+      uiInventoryItem = value as UIInventoryItem;
+      if IsDefined(uiInventoryItem) {
+        data = uiInventoryItem.GetRealItemData();
+        ArrayPush(itemsData, data);
+      };
+    }
+
+    this.cartManager.SaveOwnedItems(itemsData);
+
+    // Populate virtual stock
     let inventoryManager: ref<InventoryManager> = GameInstance.GetInventoryManager(this.player.GetGame());
     let storeItems: array<String> = this.GetVirtualStoreItems();
     let itemsPrices: array<Int32> = this.GetVirtualStorePrices();
@@ -597,6 +620,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
       let itemData: ref<gameItemData> = inventoryManager.CreateBasicItemData(itemId, this.player);
       AtelierDebug(s"Store item: \(ToString(storeItems[virtualItemIndex]))");
       itemData.isVirtualItem = true;
+      itemData.hasOwned = this.cartManager.IsItemOwned(itemTDBID);
       stockItem = new VirtualStockItem();
       stockItem.itemID = itemId;
       stockItem.itemTDBID = itemTDBID;

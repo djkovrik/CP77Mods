@@ -19,6 +19,7 @@ import Codeware.UI.*
 
 @addField(InventoryItemDisplayController) public let cartIndicator: wref<inkWidget>;
 @addField(InventoryItemDisplayController) public let quantityIndicator: wref<inkText>;
+@addField(InventoryItemDisplayController) public let ownedIndicator: wref<inkImage>;
 @addField(InventoryItemDisplayController) public let cartManager: wref<VirtualAtelierCartManager>;
 @addField(InventoryItemDisplayController) public let previewManager: wref<VirtualAtelierPreviewManager>;
 
@@ -26,4 +27,5 @@ import Codeware.UI.*
 @addField(VendorPanelData) public let virtualStore: ref<VirtualShop>;
 @addField(MinimalItemTooltipData) public let isVirtualItem: Bool;
 @addField(gameItemData) public let isVirtualItem: Bool;
+@addField(gameItemData) public let hasOwned: Bool;
 @addField(VendorInventoryItemData) public let NotInWardrobe: Bool;
