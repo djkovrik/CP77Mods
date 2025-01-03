@@ -602,6 +602,10 @@ public class VirtualStoreController extends gameuiMenuGameController {
 
     this.cartManager.SaveOwnedItems(itemsData);
 
+    // Get wardrobe items
+    let wardrobeItemIDs: array<ItemID> = GameInstance.GetWardrobeSystem(this.player.GetGame()).GetStoredItemIDs();
+    this.cartManager.AppendWardrobeItems(wardrobeItemIDs);
+
     // Populate virtual stock
     let inventoryManager: ref<InventoryManager> = GameInstance.GetInventoryManager(this.player.GetGame());
     let storeItems: array<String> = this.GetVirtualStoreItems();

@@ -142,6 +142,12 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
     };
   }
 
+  public final func AppendWardrobeItems(itemIds: array<ItemID>) -> Void {
+    for id in itemIds {
+      ArrayPush(this.ownedItems, ItemID.GetTDBID(id));
+    };
+  }
+
   public final func SaveOwnedItem(item: ref<VirtualStockItem>) -> Bool {
     let id: TweakDBID = item.itemTDBID;
     let data: ref<gameItemData> = item.itemData;
