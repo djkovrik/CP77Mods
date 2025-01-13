@@ -1,0 +1,12 @@
+{
+  "name": "Sleeves",
+  "version": "3.2.0",
+  "game": "c:\\Games\\steamapps\\common\\Cyberpunk 2077",
+  "stage": "Release\\",
+  "scripts": {
+    "redscript": {
+      "debounceTime": 3000,
+      "src": "Sources\\Scripts\\Sleeves"
+    }
+  }
+}
