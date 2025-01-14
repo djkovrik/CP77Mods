@@ -5,57 +5,57 @@ import EquipmentEx.*
 @wrapMethod(EquipmentSystemPlayerData)
 private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt blockActiveSlotsUpdate: Bool, opt forceEquipWeapon: Bool) -> Void {
   wrappedMethod(itemID, slotIndex, blockActiveSlotsUpdate, forceEquipWeapon);
-  this.m_owner.TriggerSleevesButtonRefreshCallback();
+  this.m_owner.TriggerSleevesRefreshCallback();
 }
 
 @wrapMethod(EquipmentSystemPlayerData)
 private final func UnequipItem(equipAreaIndex: Int32, slotIndex: Int32, opt forceRemove: Bool) -> Void {
   wrappedMethod(equipAreaIndex, slotIndex, forceRemove);
-  this.m_owner.TriggerSleevesButtonRefreshCallback();
+  this.m_owner.TriggerSleevesRefreshCallback();
 }
 
 // -- Wardrobe
 @wrapMethod(EquipmentSystemPlayerData)
 public final func OnQuestDisableWardrobeSetRequest(request: ref<QuestDisableWardrobeSetRequest>) -> Void {
   wrappedMethod(request);
-  this.m_owner.TriggerSleevesButtonRefreshCallback();
+  this.m_owner.TriggerSleevesRefreshCallback();
 }
 
 @wrapMethod(EquipmentSystemPlayerData)
 public final func OnQuestRestoreWardrobeSetRequest(request: ref<QuestRestoreWardrobeSetRequest>) -> Void {
   wrappedMethod(request);
-  this.m_owner.TriggerSleevesButtonRefreshCallback();
+  this.m_owner.TriggerSleevesRefreshCallback();
 }
 
 @wrapMethod(EquipmentSystemPlayerData)
 public final func OnQuestEnableWardrobeSetRequest(request: ref<QuestEnableWardrobeSetRequest>) -> Void {
   wrappedMethod(request);
-  this.m_owner.TriggerSleevesButtonRefreshCallback();
+  this.m_owner.TriggerSleevesRefreshCallback();
 }
 
 @wrapMethod(EquipmentSystemPlayerData)
 public final func EquipWardrobeSet(setID: gameWardrobeClothingSetIndex) -> Void {
   wrappedMethod(setID);
-  this.m_owner.TriggerSleevesButtonRefreshCallback();
+  this.m_owner.TriggerSleevesRefreshCallback();
 }
 
 @wrapMethod(EquipmentSystemPlayerData)
 public final func UnequipWardrobeSet() -> Void {
   wrappedMethod();
-  this.m_owner.TriggerSleevesButtonRefreshCallback();
+  this.m_owner.TriggerSleevesRefreshCallback();
 }
 
 @wrapMethod(EquipmentSystemPlayerData)
 public final func DeleteWardrobeSet(setID: gameWardrobeClothingSetIndex) -> Void {
   wrappedMethod(setID);
-  this.m_owner.TriggerSleevesButtonRefreshCallback();
+  this.m_owner.TriggerSleevesRefreshCallback();
 }
 
 // -- Equipment-EX
 @if(ModuleExists("EquipmentEx"))
 @addMethod(gameuiInventoryGameController)
 protected cb func OnCustomOutfitUpdated(evt: ref<OutfitUpdated>) -> Bool {
-  this.m_player.TriggerSleevesButtonRefreshCallback();
+  this.m_player.TriggerSleevesRefreshCallback();
 }
 
 // -- Braindance
@@ -63,9 +63,9 @@ protected cb func OnCustomOutfitUpdated(evt: ref<OutfitUpdated>) -> Bool {
 protected cb func OnBraindanceToggle(value: Bool) -> Bool {
   wrappedMethod(value);
   if this.m_isBraindanceActive {
-    SleevesStateSystem.Get(this.GetGameInstance()).OnBraindanceEnter();
+    SleevesStateSystem.Get(this.GetGameInstance()).OnBraindanceEnter(true);
   } else {
-    SleevesStateSystem.Get(this.GetGameInstance()).OnBraindanceExit();
+    SleevesStateSystem.Get(this.GetGameInstance()).OnBraindanceEnter(false);
   };
 }
 
@@ -75,14 +75,14 @@ protected cb func OnEquipmentClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
   wrappedMethod(evt);
 
   if evt.actionName.IsAction(n"unequip_item") {
-    this.m_player.TriggerSleevesButtonRefreshCallback();
+    this.m_player.TriggerSleevesRefreshCallback();
   };
 }
 
 @wrapMethod(VehicleComponent)
 protected final func OnVehicleCameraChange(state: Bool) -> Void {
   wrappedMethod(state);
-  GetPlayer(GetGameInstance()).TriggerSleevesButtonRefreshCallback();
+  GetPlayer(GetGameInstance()).TriggerSleevesRefreshCallback();
 }
 
 // -- Delayed refresh
@@ -90,7 +90,7 @@ protected final func OnVehicleCameraChange(state: Bool) -> Void {
 private let sleevesDelayCallback: DelayID;
 
 @addMethod(GameObject)
-public final func TriggerSleevesButtonRefreshCallback() -> Void {
+public final func TriggerSleevesRefreshCallback() -> Void {
   let triggerDelaySeconds: Float = 3.0;
   let delaySystem: ref<DelaySystem> = GameInstance.GetDelaySystem(this.GetGame());
   delaySystem.CancelCallback(this.sleevesDelayCallback);
@@ -108,7 +108,6 @@ public class SlotsButtonRefreshCallback extends DelayCallback {
 
   public func Call() -> Void {
     let system: ref<SleevesStateSystem> = SleevesStateSystem.Get(this.owner.GetGame());
-    system.ClearCache();
     system.RefreshSleevesState();
     RefreshSleevesButtonEvent.Send(this.owner);
   }

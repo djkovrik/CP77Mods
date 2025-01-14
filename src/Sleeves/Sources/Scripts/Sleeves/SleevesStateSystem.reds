@@ -1,9 +1,9 @@
 class SleevesStateSystem extends ScriptableSystem {
-  private let player: wref<PlayerPuppet>;
   private let equipmentSystem: wref<EquipmentSystem>;
   private let transactionSystem: wref<TransactionSystem>;
   private let bundle: ref<SleevesInfoBundle>;
   private let cache: ref<inkHashMap>;
+  private let isBraindanceActive: Bool;
 
   private persistent let toggledItems: array<TweakDBID>;
 
@@ -13,22 +13,24 @@ class SleevesStateSystem extends ScriptableSystem {
   }
 
   private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
-    this.player = GameInstance.GetPlayerSystem(request.owner.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
     this.equipmentSystem = GameInstance.GetScriptableSystemsContainer(request.owner.GetGame()).Get(n"EquipmentSystem") as EquipmentSystem;
     this.transactionSystem = GameInstance.GetTransactionSystem(request.owner.GetGame());
-    this.cache = new inkHashMap();
+
+    if !IsDefined(this.cache) {
+      this.cache = new inkHashMap();
+    };
 
     if !GameInstance.GetSystemRequestsHandler().IsPreGame() {
-      this.RefreshSleevesState();
+      this.GetPlayer().TriggerSleevesRefreshCallback();
     };
   }
 
-  private final func OnPlayerDetach(request: ref<PlayerDetachRequest>) -> Void {
-    this.player = null;
-    this.equipmentSystem = null;
-    this.transactionSystem = null;
-    this.cache = null;
-  }
+  // private final func OnPlayerDetach(request: ref<PlayerDetachRequest>) -> Void {
+  //   SleevesLog(">>> OnPlayerDetach");
+  //   this.player = null;
+  //   this.equipmentSystem = null;
+  //   this.transactionSystem = null;
+  // }
 
   public final func HasToggleableSleeves() -> Bool {
     for item in this.bundle.items {
@@ -82,34 +84,33 @@ class SleevesStateSystem extends ScriptableSystem {
     return false;
   }
 
-  public final func ClearCache() -> Void {
-    this.cache.Clear();
-  }
-
-  public final func OnBraindanceEnter() -> Void {
-    SleevesLog("Braindance enter");
-    for item in this.bundle.items {
-      SleevesLog(s"Reset braindance \(item.GetItemAppearance()) appearance for \(ItemID.GetCombinedHash(item.itemID))");
-      this.transactionSystem.ChangeItemAppearanceByName(this.player, item.itemID, item.GetItemAppearance());
-    };
-  }
-
-  public final func OnBraindanceExit() -> Void {
-    SleevesLog("Braindance exit");
-    this.RefreshSleevesState();
+  public final func OnBraindanceEnter(entered: Bool) -> Void {
+    SleevesLog(s"Braindance entered: \(entered)");
+    this.isBraindanceActive = entered;
+    this.GetPlayer().TriggerSleevesRefreshCallback();
   }
 
   public final func RefreshSleevesState() -> Void {
-    this.bundle = GetSleevesInfo(this.player);
+    SleevesLog(s"RefreshSleevesState called, bd active \(this.isBraindanceActive)");
+
+    let player: wref<PlayerPuppet> = this.GetPlayer();
+    this.bundle = GetSleevesInfo(player);
     this.LogCurrentInfo();
 
     for item in this.bundle.items {
-      if item.IsToggled() {
-        SleevesLog(s"Set \(item.GetItemTppAppearance()) appearance for \(ItemID.GetCombinedHash(item.itemID))");
-        this.transactionSystem.ChangeItemAppearanceByName(this.player, item.itemID, item.GetItemTppAppearance());
-      } else {
-        SleevesLog(s"Reset \(item.GetItemAppearance()) appearance for \(ItemID.GetCombinedHash(item.itemID))");
-        this.transactionSystem.ChangeItemAppearanceByName(this.player, item.itemID, item.GetItemAppearance());
+      if item.HasFppSuffix() {
+        if !this.isBraindanceActive {
+          if item.IsToggled() {
+            SleevesLog(s"Set \(item.GetItemTppAppearance()) appearance for \(ItemID.GetCombinedHash(item.itemID)) [\(item.itemName)]");
+            this.transactionSystem.ChangeItemAppearanceByName(player, item.itemID, item.GetItemTppAppearance());
+          } else {
+            SleevesLog(s"Reset \(item.GetItemAppearance()) appearance for \(ItemID.GetCombinedHash(item.itemID)) [\(item.itemName)]");
+            this.transactionSystem.ChangeItemAppearanceByName(player, item.itemID, item.GetItemAppearance());
+          };
+        } else {
+          SleevesLog(s"Reset BD \(item.GetItemAppearance()) appearance for \(ItemID.GetCombinedHash(item.itemID)) [\(item.itemName)]");
+          this.transactionSystem.ChangeItemAppearanceByName(player, item.itemID, item.GetItemAppearance());
+        };
       };
     };
   }
@@ -127,6 +128,7 @@ class SleevesStateSystem extends ScriptableSystem {
     let itemAppearance: CName;
     let visualItemID: ItemID;
     let visualItemName: String;
+    let isSlotEquipped: Bool;
 
     let targetSlots: array<TweakDBID> = [
       t"AttachmentSlots.Outfit",
@@ -148,7 +150,8 @@ class SleevesStateSystem extends ScriptableSystem {
       itemObject = this.transactionSystem.GetItemInSlot(player, slotID);
       itemID = itemObject.GetItemID();
       itemTDBID = ItemID.GetTDBID(itemID);
-      if ItemID.IsValid(itemID) {
+      isSlotEquipped = this.equipmentSystem.IsEquipped(player, itemID, this.SlotToArea(slotID));
+      if ItemID.IsValid(itemID) && isSlotEquipped {
         if !this.HasCached(slotID, itemTDBID, mode) {
           slotName = this.GetLocalizedSlotName(slotID, mode);
           itemName = GetLocalizedTextByKey(RPGManager.GetItemRecord(itemID).DisplayName());
@@ -157,10 +160,12 @@ class SleevesStateSystem extends ScriptableSystem {
           visualItemName = GetLocalizedTextByKey(RPGManager.GetItemRecord(visualItemID).DisplayName());
           info = SleevedSlotInfo.Create(slotID, slotName, itemID, itemName, itemAppearance, visualItemID, visualItemName, mode);
           this.Cache(info);
-          SleevesLog(s"-> \(info.itemName) added to cache");
+          SleevesLog(s"! Created: \(info.itemName) with base \(info.GetItemAppearance()) and tpp \(info.GetItemTppAppearance())");
+          SleevesLog(s"-> \(info.itemName) \(mode) added to cache");
         } else {
           info = this.GetCached(slotID, itemTDBID, mode);
-          SleevesLog(s"<- \(info.itemName) restored from cache");
+          SleevesLog(s"! Restored: \(info.itemName) with base \(info.GetItemAppearance()) and tpp \(info.GetItemTppAppearance())");
+          SleevesLog(s"<- \(info.itemName) \(mode)` restored from cache");
         };
         ArrayPush(infoItems, info);
       };
@@ -172,6 +177,7 @@ class SleevesStateSystem extends ScriptableSystem {
       item.SetToggled(toggled);
     };
 
+    SleevesLog(s"Items bundle size: \(ArraySize(infoItems))");
     return SleevesInfoBundle.Create(mode, infoItems);
   }
 
@@ -186,7 +192,7 @@ class SleevesStateSystem extends ScriptableSystem {
     let itemAppearance: CName;
     let visualItemID: ItemID;
     let visualItemName: String;
-    let isOccupied: Bool;
+    let isSlotEquipped: Bool;
 
     let targetSlots: array<TweakDBID> = [
       t"OutfitSlots.TorsoOuter",
@@ -206,8 +212,8 @@ class SleevesStateSystem extends ScriptableSystem {
       itemObject = this.transactionSystem.GetItemInSlot(player, slotID);
       itemID = itemObject.GetItemID();
       itemTDBID = ItemID.GetTDBID(itemID);
-      isOccupied = IsSlotOccupiedCustom(player.GetGame(), slotID);
-      if ItemID.IsValid(itemID) && isOccupied {
+      isSlotEquipped = IsSlotOccupiedCustom(player.GetGame(), slotID);
+      if ItemID.IsValid(itemID) && isSlotEquipped {
         if !this.HasCached(slotID, itemTDBID, mode) {
           slotName = this.GetLocalizedSlotName(slotID, mode);
           itemName = GetLocalizedTextByKey(RPGManager.GetItemRecord(itemID).DisplayName());
@@ -216,9 +222,11 @@ class SleevesStateSystem extends ScriptableSystem {
           visualItemName = GetLocalizedTextByKey(RPGManager.GetItemRecord(visualItemID).DisplayName());
           info = SleevedSlotInfo.Create(slotID, slotName, itemID, itemName, itemAppearance, visualItemID, visualItemName, mode);
           this.Cache(info);
+          SleevesLog(s"! Created: \(info.itemName) with base \(info.GetItemAppearance()) and tpp \(info.GetItemTppAppearance())");
           SleevesLog(s"-> \(info.itemName) added to cache");
         } else {
           info = this.GetCached(slotID, itemTDBID, mode);
+          SleevesLog(s"! Restored: \(info.itemName) with base \(info.GetItemAppearance()) and tpp \(info.GetItemTppAppearance())");
           SleevesLog(s"<- \(info.itemName) restored from cache");
         };
         ArrayPush(infoItems, info);
@@ -271,11 +279,13 @@ class SleevesStateSystem extends ScriptableSystem {
 
   private final func Cache(info: ref<SleevedSlotInfo>) -> Void {
     let key: Uint64 = this.Key(info.slotID, info.itemTDBID, info.mode);
+    SleevesLog(s"Cache \(info.itemName) to key \(key)");
     this.cache.Insert(key, info);
   }
 
   private final func HasCached(slotID: TweakDBID, itemTDBID: TweakDBID, mode: SleevesMode) -> Bool {
     let key: Uint64 = this.Key(slotID, itemTDBID, mode);
+    SleevesLog(s"HasCached key ? \(key): \(this.cache.KeyExist(key))");
     return this.cache.KeyExist(key);
   }
 
@@ -284,15 +294,19 @@ class SleevesStateSystem extends ScriptableSystem {
     return this.cache.Get(key) as SleevedSlotInfo;
   }
 
+  private final func GetPlayer() -> ref<PlayerPuppet> {
+    return GetPlayer(GetGameInstance());
+  }
+
   private final func LogCurrentInfo() -> Void {
-    SleevesLog(s"Sleeves state: mode \(this.bundle.mode)");
+    SleevesLog(s"LogCurrentInfo - mode \(this.bundle.mode), items:");
     for item in this.bundle.items {
-      SleevesLog(s"- Item data: toggled \(item.IsToggled())");
-      SleevesLog(s"--- Name: \(item.GetItemName()), visual \(item.GetVisualItemName())");
+      SleevesLog(s"--- Name \(item.GetItemName()), visual \(item.GetVisualItemName())");
+      SleevesLog(s"--- Toggled: \(item.IsToggled())");
       SleevesLog(s"--- ID \(ItemID.GetCombinedHash(item.itemID)), visual \(ItemID.GetCombinedHash(item.visualItemID))");
       SleevesLog(s"--- TDBID \(TDBID.ToStringDEBUG(item.itemTDBID)), visual \(TDBID.ToStringDEBUG(item.visualItemTDBID))");
-      SleevesLog(s"--- Appearance: \(item.GetItemAppearance()), TPP \(item.GetItemTppAppearance())");
-      SleevesLog("---");
+      SleevesLog(s"--- Appearances: base \(item.GetItemAppearance()), TPP \(item.GetItemTppAppearance())");
+      SleevesLog(s"---");
     };
   }
 }
