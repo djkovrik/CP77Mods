@@ -1,4 +1,5 @@
 import HUDrag.HUDitorConfig
+import HUDrag.HUDitorWatcher
 
 @if(ModuleExists("FpsCounter"))
 import FpsCounter.FPSCounterChangeStateEvent
@@ -189,7 +190,7 @@ private func InitWidgetNameLabel() -> Void {
   let label: ref<inkText> = new inkText();
   label.SetName(n"huditorLabel");
   label.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-  label.SetFontSize(24);
+  label.SetFontSize(38);
   label.SetLetterCase(textLetterCase.OriginalCase);
   label.SetMargin(new inkMargin(0.0, 0.0, 0.0, 20.0));
   label.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
@@ -213,7 +214,7 @@ private func CreateCustomSlots() -> Void {
     questTrackerSlot.SetInteractive(false);
     questTrackerSlot.SetAffectsLayoutWhenHidden(false);
     questTrackerSlot.SetAnchor(inkEAnchor.Centered);
-    questTrackerSlot.SetAnchorPoint(new Vector2(1.0, 1.0));
+    questTrackerSlot.SetAnchorPoint(new Vector2(0.5, 0.5));
 
     root.RemoveChildByName(n"NewTracker");
     questTrackerSlot.Reparent(root, 0);
@@ -227,7 +228,7 @@ private func CreateCustomSlots() -> Void {
     minimapSlot.SetInteractive(false);
     minimapSlot.SetAffectsLayoutWhenHidden(false);
     minimapSlot.SetAnchor(inkEAnchor.Centered);
-    minimapSlot.SetAnchorPoint(new Vector2(1.0, 0.0));
+    minimapSlot.SetAnchorPoint(new Vector2(0.5, 0.5));
 
     root.RemoveChildByName(n"NewMinimap");
     minimapSlot.Reparent(root, 1);
@@ -648,10 +649,40 @@ private func InitBaseWidgets() -> Void {
 }
 
 @addMethod(inkGameController)
+private func InitResolutionWatcher() -> Void {
+  let system: ref<HUDitorWatcher> = HUDitorWatcher.Get(GetGameInstance());
+  system.AddTarget(this.huditorWidgetName);
+  
+  if IsDefined(this.minimapSlot) { system.AddTarget(this.minimapSlot); }
+  if IsDefined(this.questTrackerSlot) { system.AddTarget(this.questTrackerSlot); }
+  if IsDefined(this.wantedSlot) { system.AddTarget(this.wantedSlot); }
+  if IsDefined(this.questNotificationsSlot) { system.AddTarget(this.questNotificationsSlot); }
+  if IsDefined(this.itemNotificationsSlot) { system.AddTarget(this.itemNotificationsSlot); }
+  if IsDefined(this.vehicleSummonSlot) { system.AddTarget(this.vehicleSummonSlot); }
+  if IsDefined(this.weaponRosterSlot) { system.AddTarget(this.weaponRosterSlot); }
+  if IsDefined(this.crouchIndicatorSlot) { system.AddTarget(this.crouchIndicatorSlot); }
+  if IsDefined(this.dpadSlot) { system.AddTarget(this.dpadSlot); }
+  if IsDefined(this.phoneHotkeySlot) { system.AddTarget(this.phoneHotkeySlot); }
+  if IsDefined(this.healthbarSlot) { system.AddTarget(this.healthbarSlot); }
+  if IsDefined(this.staminaBarSlot) { system.AddTarget(this.staminaBarSlot); }
+  if IsDefined(this.phoneCallAvatarSlot) { system.AddTarget(this.phoneCallAvatarSlot); }
+  if IsDefined(this.phoneControlSlot) { system.AddTarget(this.phoneControlSlot); }
+  if IsDefined(this.inputHintSlot) { system.AddTarget(this.inputHintSlot); }
+  if IsDefined(this.carHudSlot) { system.AddTarget(this.carHudSlot); }
+  if IsDefined(this.bossHealthbarSlot) { system.AddTarget(this.bossHealthbarSlot); }
+  if IsDefined(this.dialogChoicesSlot) { system.AddTarget(this.dialogChoicesSlot); }
+  if IsDefined(this.dialogSubtitlesSlot) { system.AddTarget(this.dialogSubtitlesSlot); }
+  if IsDefined(this.progressBarSlot) { system.AddTarget(this.progressBarSlot); }
+  if IsDefined(this.e3CompassSlot) { system.AddTarget(this.e3CompassSlot); }
+  if IsDefined(this.fpsCounterSlot) { system.AddTarget(this.fpsCounterSlot); }
+}
+
+@addMethod(inkGameController)
 protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
   if this.IsA(n"gameuiRootHudGameController") {
     this.InitWidgetNameLabel();
     this.CreateCustomSlots();
+    this.InitResolutionWatcher();
     this.InitBaseWidgets();
   };
 }
