@@ -8,6 +8,7 @@ protected func AnimateAlphaLHUD(targetWidget: wref<inkWidget>, endAlpha: Float, 
   transparencyInterpolator.SetType(inkanimInterpolationType.Linear);
   transparencyInterpolator.SetMode(inkanimInterpolationMode.EasyIn);
   transparencyInterpolator.SetDirection(inkanimInterpolationDirection.To);
+  transparencyInterpolator.SetStartTransparency(targetWidget.GetOpacity());
   transparencyInterpolator.SetEndTransparency(endAlpha);
   transparencyInterpolator.SetDuration(duration);
   moveElementsAnimDef.AddInterpolator(transparencyInterpolator);
@@ -23,6 +24,7 @@ protected func AnimateAlphaLHUD(targetWidget: inkWidgetRef, endAlpha: Float, dur
   transparencyInterpolator.SetType(inkanimInterpolationType.Linear);
   transparencyInterpolator.SetMode(inkanimInterpolationMode.EasyIn);
   transparencyInterpolator.SetDirection(inkanimInterpolationDirection.To);
+  transparencyInterpolator.SetStartTransparency(inkWidgetRef.GetOpacity(targetWidget));
   transparencyInterpolator.SetEndTransparency(endAlpha);
   transparencyInterpolator.SetDuration(duration);
   moveElementsAnimDef.AddInterpolator(transparencyInterpolator);
