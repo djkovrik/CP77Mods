@@ -91,8 +91,8 @@ class HudPainterWorldMapSettings {
   @runtimeProperty("ModSettings.mod", "Mod-HudPainter-Name")
   @runtimeProperty("ModSettings.category", "Mod-HudPainter-Settings-WorldMap")
   @runtimeProperty("ModSettings.category.order", "1")
-  @runtimeProperty("ModSettings.displayName", "Metro line")
-  @runtimeProperty("ModSettings.description", "Metro line color for the world map menu.")
+  @runtimeProperty("ModSettings.displayName", "Mod-HudPainter-Settings-Metro")
+  @runtimeProperty("ModSettings.description", "Mod-HudPainter-Settings-Metro-Desc")
   @runtimeProperty("ModSettings.dependency", "enableCustomWorldmap")
   let worldMapMetroLine: HudPainterConfigColor = HudPainterConfigColor.Blue;
 }
