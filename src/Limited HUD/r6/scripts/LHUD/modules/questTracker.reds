@@ -39,11 +39,11 @@ public func DetermineCurrentVisibility() -> Void {
   let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && this.lhudConfig.BindToGlobalHotkey;
   let showForCombat: Bool = this.lhud_isCombatActive && this.lhudConfig.ShowInCombat;
   let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && this.lhudConfig.ShowOutOfCombat;
-  let showForStealth: Bool =  this.lhud_isStealthActive && this.lhudConfig.ShowInStealth;
-  let showForVehicle: Bool =  this.lhud_isInVehicle && this.lhudConfig.ShowInVehicle;
-  let showForScanner: Bool =  this.lhud_isScannerActive && this.lhudConfig.ShowWithScanner;
+  let showForStealth: Bool = this.lhud_isStealthActive && this.lhudConfig.ShowInStealth;
+  let showForVehicle: Bool = this.lhud_isInVehicle && this.lhudConfig.ShowInVehicle;
+  let showForScanner: Bool = this.lhud_isScannerActive && this.lhudConfig.ShowWithScanner;
   let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfig.ShowWithWeapon;
-  let showForZoom: Bool =  this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
+  let showForZoom: Bool = this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
   let trackerForced: Bool = this.lhud_isTrackerForced;
   let scannerDetailsVisible: Bool = this.lhud_isScannerDetailsActive;
 

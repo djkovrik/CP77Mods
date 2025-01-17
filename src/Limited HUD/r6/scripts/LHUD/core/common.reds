@@ -19,6 +19,7 @@ enum LHUDEventType {
   Metro = 13,
   Hints = 14,
   ScannerDetails = 15,
+  Wanted = 16,
 }
 
 enum LHUDFillColors {
@@ -101,6 +102,7 @@ public class LHUDStealthRunnerRefreshed extends Event {}
 @addField(inkGameController) public let lhud_isInMetro: Bool;
 @addField(inkGameController) public let lhud_isVisibleNow: Bool;
 @addField(inkGameController) public let lhud_isHintsForced: Bool;
+@addField(inkGameController) public let lhud_isWanted: Bool;
 
 // Visibility condition flags for inkLogicController instances
 @addField(inkLogicController) public let lhud_isGlobalFlagToggled: Bool;
@@ -178,6 +180,9 @@ protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
       break;
     case LHUDEventType.ScannerDetails:
       this.lhud_isScannerDetailsActive = evt.isActive;
+      break;
+    case LHUDEventType.Wanted:
+      this.lhud_isWanted = evt.isActive;
       break;
     default:
       break;

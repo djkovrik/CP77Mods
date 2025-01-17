@@ -43,6 +43,7 @@ public class LHUDBlackboardsListener {
   private let vehicleBlackboard: ref<IBlackboard>;        // Vehicle blackboard reference
   private let uiSystemBlackboard: ref<IBlackboard>;       // UI system blackboard reference
   private let weaponBlackboard: ref<IBlackboard>;         // Active weapon blackboard reference
+  private let wantedBlackboard: ref<IBlackboard>;         // Wanted status blackboard reference
 
   private let globalHotkeyCallback: ref<CallbackHandle>;  // Ref for registered global hotkey callback
   private let minimapHotkeyCallback: ref<CallbackHandle>; // Ref for registered minimap hotkey callback
@@ -55,6 +56,7 @@ public class LHUDBlackboardsListener {
   private let zoomCallback: ref<CallbackHandle>;          // Ref for registered zoom value callback
   private let stealthCallback: ref<CallbackHandle>;       // Ref for registered locomotion value callback
   private let metroCallback: ref<CallbackHandle>;         // Ref for registered metro ride value callback
+  private let wantedCallback: ref<CallbackHandle>;        // Ref for registered wanted value callback
 
   private let delaySystem: ref<DelaySystem>;
   private let delayId: DelayID;
@@ -70,6 +72,7 @@ public class LHUDBlackboardsListener {
     this.vehicleBlackboard = GameInstance.GetBlackboardSystem(player.GetGame()).Get(this.bbDefs.UI_ActiveVehicleData);
     this.uiSystemBlackboard = GameInstance.GetBlackboardSystem(player.GetGame()).Get(this.bbDefs.UI_System);
     this.weaponBlackboard = GameInstance.GetBlackboardSystem(player.GetGame()).Get(this.bbDefs.UI_EquipmentData);
+    this.wantedBlackboard = GameInstance.GetBlackboardSystem(player.GetGame()).Get(this.bbDefs.UI_WantedBar);
 
     this.delaySystem = GameInstance.GetDelaySystem(player.GetGame());
   }
@@ -88,6 +91,7 @@ public class LHUDBlackboardsListener {
     this.zoomCallback = this.stateMachineBlackboard.RegisterListenerFloat(this.bbDefs.PlayerStateMachine.ZoomLevel, this, n"OnZoomChanged");
     this.stealthCallback = this.stateMachineBlackboard.RegisterListenerInt(this.bbDefs.PlayerStateMachine.Locomotion, this, n"OnCrouchChanged");
     this.metroCallback = this.uiSystemBlackboard.RegisterListenerBool(this.bbDefs.UI_System.IsInMetro_LHUD, this, n"OnMetroStateChanged");
+    this.wantedCallback = this.wantedBlackboard.RegisterListenerInt(this.bbDefs.UI_WantedBar.CurrentWantedLevel, this, n"OnWantedDataChanged", true);
   }
 
   // Unregister listeners
@@ -104,6 +108,7 @@ public class LHUDBlackboardsListener {
     this.stateMachineBlackboard.UnregisterListenerFloat(this.bbDefs.PlayerStateMachine.ZoomLevel, this.zoomCallback);
     this.stateMachineBlackboard.UnregisterListenerInt(this.bbDefs.PlayerStateMachine.Locomotion, this.stealthCallback);
     this.uiSystemBlackboard.UnregisterListenerBool(this.bbDefs.UI_System.IsInMetro_LHUD, this.metroCallback);
+    this.wantedBlackboard.UnregisterListenerInt(this.bbDefs.UI_WantedBar.CurrentWantedLevel, this.wantedCallback);
 
     this.delaySystem.CancelCallback(this.delayId);
   }
@@ -197,6 +202,11 @@ public class LHUDBlackboardsListener {
   // Metro value bb callback
   protected cb func OnMetroStateChanged(value: Bool) -> Bool {
     this.playerInstance.QueueLHUDEvent(LHUDEventType.Metro, value);
+  }
+
+  // Wanted bb callback
+  protected cb func OnWantedDataChanged(value: Int32) -> Bool {
+    this.playerInstance.QueueLHUDEvent(LHUDEventType.Wanted, NotEquals(value, 0));
   }
 }
 

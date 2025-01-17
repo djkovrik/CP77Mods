@@ -18,14 +18,15 @@ public func DetermineCurrentVisibility() -> Void {
   let showForMinimapHotkey: Bool = this.lhud_isMinimapFlagToggled;
   let showForCombat: Bool = this.lhud_isCombatActive && this.lhudConfig.ShowInCombat;
   let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && this.lhudConfig.ShowOutOfCombat;
-  let showForStealth: Bool =  this.lhud_isStealthActive && this.lhudConfig.ShowInStealth;
-  let showForVehicle: Bool =  this.lhud_isInVehicle && this.lhudConfig.ShowInVehicle;
-  let showForScanner: Bool =  this.lhud_isScannerActive && this.lhudConfig.ShowWithScanner;
+  let showForStealth: Bool = this.lhud_isStealthActive && this.lhudConfig.ShowInStealth;
+  let showForVehicle: Bool = this.lhud_isInVehicle && this.lhudConfig.ShowInVehicle;
+  let showForScanner: Bool = this.lhud_isScannerActive && this.lhudConfig.ShowWithScanner;
   let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfig.ShowWithWeapon;
-  let showForZoom: Bool =  this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
+  let showForZoom: Bool = this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
+  let showForWanted: Bool = this.lhud_isWanted && this.lhudConfig.ShowWhenWanted;
   let scannerDetailsVisible: Bool = this.lhud_isScannerDetailsActive;
 
-  let isVisible: Bool = showForGlobalHotkey || showForMinimapHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;
+  let isVisible: Bool = showForGlobalHotkey || showForMinimapHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom || showForWanted;
   if this.lhud_isBraindanceActive || scannerDetailsVisible { isVisible = false; };
   if NotEquals(this.lhud_isVisibleNow, isVisible) {
     this.lhud_isVisibleNow = isVisible;

@@ -58,9 +58,9 @@ protected cb func OnUpdateHealthBarVisibility() -> Bool {
 
   // Additional flags
   let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && this.lhudConfig.BindToGlobalHotkey;
-  let showForStealth: Bool =  this.lhud_isStealthActive && this.lhudConfig.ShowInStealth;
+  let showForStealth: Bool = this.lhud_isStealthActive && this.lhudConfig.ShowInStealth;
   let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfig.ShowWithWeapon;
-  let showForZoom: Bool =  this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
+  let showForZoom: Bool = this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
   let showForHealthNotFull: Bool = !isMaxHP && this.lhudConfig.ShowWhenHealthNotFull;
   let showForMemoryNotFull: Bool = this.m_quickhacksMemoryPercent > 0.0 && this.m_quickhacksMemoryPercent <= 98.0 && this.lhudConfig.ShowWhenMemoryNotFull;
   let showForActiveBuffs: Bool = this.m_buffsVisible && hasNonHousingBuff && this.lhudConfig.ShowWhenBuffsActive;

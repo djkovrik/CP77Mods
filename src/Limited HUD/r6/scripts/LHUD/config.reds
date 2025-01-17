@@ -292,6 +292,13 @@ public class MinimapModuleConfig {
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Minimap")
   @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Wanted")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Wanted-Desc")
+  let ShowWhenWanted: Bool = true;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Minimap")
+  @runtimeProperty("ModSettings.category.order", "5")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Minimap-Opacity")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Minimap-Opacity-Desc")
   @runtimeProperty("ModSettings.step", "0.1")

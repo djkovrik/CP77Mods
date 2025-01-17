@@ -27,11 +27,11 @@ private func DetermineCurrentVisibility() -> Void {
     let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && this.lhudConfigQuest.BindToGlobalHotkey;
     let showForCombat: Bool = this.lhud_isCombatActive && this.lhudConfigQuest.ShowInCombat;
     let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && this.lhudConfigQuest.ShowOutOfCombat;
-    let showForStealth: Bool =  this.lhud_isStealthActive && this.lhudConfigQuest.ShowInStealth;
-    let showForVehicle: Bool =  this.lhud_isInVehicle && this.lhudConfigQuest.ShowInVehicle;
-    let showForScanner: Bool =  this.lhud_isScannerActive && this.lhudConfigQuest.ShowWithScanner;
+    let showForStealth: Bool = this.lhud_isStealthActive && this.lhudConfigQuest.ShowInStealth;
+    let showForVehicle: Bool = this.lhud_isInVehicle && this.lhudConfigQuest.ShowInVehicle;
+    let showForScanner: Bool = this.lhud_isScannerActive && this.lhudConfigQuest.ShowWithScanner;
     let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfigQuest.ShowWithWeapon;
-    let showForZoom: Bool =  this.lhud_isZoomActive && this.lhudConfigQuest.ShowWithZoom;
+    let showForZoom: Bool = this.lhud_isZoomActive && this.lhudConfigQuest.ShowWithZoom;
     let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;
     this.lhud_isVisibleNow = shouldBeVisible && isVisible;
     this.SetRootVisible(this.lhud_isVisibleNow);
@@ -42,11 +42,11 @@ private func DetermineCurrentVisibility() -> Void {
     let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && this.lhudConfigLoot.BindToGlobalHotkey;
     let showForCombat: Bool = this.lhud_isCombatActive && this.lhudConfigLoot.ShowInCombat;
     let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && this.lhudConfigLoot.ShowOutOfCombat;
-    let showForStealth: Bool =  this.lhud_isStealthActive && this.lhudConfigLoot.ShowInStealth;
-    let showForVehicle: Bool =  this.lhud_isInVehicle && this.lhudConfigLoot.ShowInVehicle;
-    let showForScanner: Bool =  this.lhud_isScannerActive && this.lhudConfigLoot.ShowWithScanner;
+    let showForStealth: Bool = this.lhud_isStealthActive && this.lhudConfigLoot.ShowInStealth;
+    let showForVehicle: Bool = this.lhud_isInVehicle && this.lhudConfigLoot.ShowInVehicle;
+    let showForScanner: Bool = this.lhud_isScannerActive && this.lhudConfigLoot.ShowWithScanner;
     let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfigLoot.ShowWithWeapon;
-    let showForZoom: Bool =  this.lhud_isZoomActive && this.lhudConfigLoot.ShowWithZoom;
+    let showForZoom: Bool = this.lhud_isZoomActive && this.lhudConfigLoot.ShowWithZoom;
     let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;
     this.lhud_isVisibleNow = shouldBeVisible && isVisible;
     this.SetRootVisible(this.lhud_isVisibleNow);
@@ -55,9 +55,9 @@ private func DetermineCurrentVisibility() -> Void {
   // ---- Vehicles
   if this.lhudConfigVehicles.IsEnabled && MappinChecker.IsVehicleIcon(this.m_mappin) {
     let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && this.lhudConfigVehicles.BindToGlobalHotkey;
-    let showForVehicle: Bool =  this.lhud_isInVehicle && this.lhudConfigVehicles.ShowInVehicle;
-    let showForScanner: Bool =  this.lhud_isScannerActive && this.lhudConfigVehicles.ShowWithScanner;
-    let showForZoom: Bool =  this.lhud_isZoomActive && this.lhudConfigVehicles.ShowWithZoom;
+    let showForVehicle: Bool = this.lhud_isInVehicle && this.lhudConfigVehicles.ShowInVehicle;
+    let showForScanner: Bool = this.lhud_isScannerActive && this.lhudConfigVehicles.ShowWithScanner;
+    let showForZoom: Bool = this.lhud_isZoomActive && this.lhudConfigVehicles.ShowWithZoom;
     let isVisible: Bool = showForGlobalHotkey || showForVehicle || showForScanner || showForZoom;
     this.lhud_isVisibleNow = shouldBeVisible && isVisible && !this.lhud_isBraindanceActive;
     this.SetRootVisible(this.lhud_isVisibleNow);
@@ -68,11 +68,11 @@ private func DetermineCurrentVisibility() -> Void {
     let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && this.lhudConfigPOI.BindToGlobalHotkey;
     let showForCombat: Bool = this.lhud_isCombatActive && this.lhudConfigPOI.ShowInCombat;
     let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && this.lhudConfigPOI.ShowOutOfCombat;
-    let showForStealth: Bool =  this.lhud_isStealthActive && this.lhudConfigPOI.ShowInStealth;
-    let showForVehicle: Bool =  this.lhud_isInVehicle && this.lhudConfigPOI.ShowInVehicle;
-    let showForScanner: Bool =  this.lhud_isScannerActive && this.lhudConfigPOI.ShowWithScanner;
+    let showForStealth: Bool = this.lhud_isStealthActive && this.lhudConfigPOI.ShowInStealth;
+    let showForVehicle: Bool = this.lhud_isInVehicle && this.lhudConfigPOI.ShowInVehicle;
+    let showForScanner: Bool = this.lhud_isScannerActive && this.lhudConfigPOI.ShowWithScanner;
     let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfigPOI.ShowWithWeapon;
-    let showForZoom: Bool =  this.lhud_isZoomActive && this.lhudConfigPOI.ShowWithZoom;
+    let showForZoom: Bool = this.lhud_isZoomActive && this.lhudConfigPOI.ShowWithZoom;
     let showIfTracked: Bool = this.lhudConfigPOI.AlwaysShowTrackedMarker && MappinChecker.IsTracked(this.m_mappin);
     let isVisible: Bool = showIfTracked || showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;
     this.lhud_isVisibleNow = shouldBeVisible && isVisible && !this.lhud_isBraindanceActive;
@@ -84,11 +84,11 @@ private func DetermineCurrentVisibility() -> Void {
     let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && this.lhudConfigCombat.BindToGlobalHotkey;
     let showForCombat: Bool = this.lhud_isCombatActive && this.lhudConfigCombat.ShowInCombat;
     let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && this.lhudConfigCombat.ShowOutOfCombat;
-    let showForStealth: Bool =  this.lhud_isStealthActive && this.lhudConfigCombat.ShowInStealth;
-    let showForVehicle: Bool =  this.lhud_isInVehicle && this.lhudConfigCombat.ShowInVehicle;
-    let showForScanner: Bool =  this.lhud_isScannerActive && this.lhudConfigCombat.ShowWithScanner;
+    let showForStealth: Bool = this.lhud_isStealthActive && this.lhudConfigCombat.ShowInStealth;
+    let showForVehicle: Bool = this.lhud_isInVehicle && this.lhudConfigCombat.ShowInVehicle;
+    let showForScanner: Bool = this.lhud_isScannerActive && this.lhudConfigCombat.ShowWithScanner;
     let showForWeapon: Bool = this.lhud_isWeaponUnsheathed  && this.lhudConfigCombat.ShowWithWeapon;
-    let showForZoom: Bool =  this.lhud_isZoomActive && this.lhudConfigCombat.ShowWithZoom;
+    let showForZoom: Bool = this.lhud_isZoomActive && this.lhudConfigCombat.ShowWithZoom;
     let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom;
     this.lhud_isVisibleNow = shouldBeVisible && isVisible;
     this.SetRootVisible(this.lhud_isVisibleNow);
@@ -96,7 +96,7 @@ private func DetermineCurrentVisibility() -> Void {
   };
   // ---- Devices and interactions
   if this.lhudConfigDevices.IsEnabled && MappinChecker.IsDeviceInteraction(this.m_mappin) {
-    let showForScanner: Bool =  this.lhud_isScannerActive && this.lhudConfigDevices.ShowWithScanner;
+    let showForScanner: Bool = this.lhud_isScannerActive && this.lhudConfigDevices.ShowWithScanner;
     let isVisible: Bool = showForScanner && shouldBeVisible;
     this.lhud_isVisibleNow = isVisible;
     this.SetRootVisible(this.lhud_isVisibleNow);
