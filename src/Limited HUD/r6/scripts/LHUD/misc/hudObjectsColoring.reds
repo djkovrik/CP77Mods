@@ -64,3 +64,60 @@ private final func GetOutlineColorIndex() -> Int32 {
     default: return 0; // do not change this
   };
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////
+
+// Switch explosives back to AOE
+
+@replaceMethod(ExplosiveDevice)
+public const func GetCurrentOutline() -> EFocusOutlineType {
+  let outlineType: EFocusOutlineType;
+  if this.IsQuest() {
+    outlineType = EFocusOutlineType.QUEST;
+  } else {
+    if !this.GetDevicePS().IsExploded() {
+      outlineType = EFocusOutlineType.AOE;
+    } else {
+      outlineType = EFocusOutlineType.INVALID;
+    };
+  };
+  return outlineType;
+}
+
+@replaceMethod(ExplosiveDevice)
+public const func GetDefaultHighlight() -> ref<FocusForcedHighlightData> {
+  let highlight: ref<FocusForcedHighlightData>;
+  let outline: EFocusOutlineType;
+  if this.GetDevicePS().IsDisabled() {
+    return null;
+  };
+  if Equals(this.GetCurrentGameplayRole(), EGameplayRole.None) || Equals(this.GetCurrentGameplayRole(), EGameplayRole.Clue) {
+    return null;
+  };
+  if this.m_scanningComponent.IsBraindanceBlocked() || this.m_scanningComponent.IsPhotoModeBlocked() {
+    return null;
+  };
+  outline = this.GetCurrentOutline();
+  highlight = new FocusForcedHighlightData();
+  highlight.sourceID = this.GetEntityID();
+  highlight.sourceName = this.GetClassName();
+  highlight.priority = EPriority.Low;
+  highlight.outlineType = outline;
+  if Equals(outline, EFocusOutlineType.QUEST) {
+    highlight.highlightType = EFocusForcedHighlightType.QUEST;
+  } else {
+    if Equals(outline, EFocusOutlineType.AOE) {
+      highlight.highlightType = EFocusForcedHighlightType.AOE;
+    } else {
+      highlight = null;
+    };
+  };
+  if highlight != null {
+    if this.IsNetrunner() && NotEquals(highlight.outlineType, EFocusOutlineType.NEUTRAL) {
+      highlight.patternType = VisionModePatternType.Netrunner;
+    } else {
+      highlight.patternType = VisionModePatternType.Default;
+    };
+  };
+  return highlight;
+}
