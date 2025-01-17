@@ -56,6 +56,13 @@ public class ActionButtonsModuleConfig {
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Zoom-Desc")
   let ShowWithZoom: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Action-Buttons")
+  @runtimeProperty("ModSettings.category.order", "1")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Cooldown")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Cooldown-Desc")
+  let ShowAtCooldown: Bool = false;
 }
 
 public class CrouchIndicatorModuleConfig {

@@ -1,5 +1,6 @@
 import LimitedHudConfig.ActionButtonsModuleConfig
 import LimitedHudCommon.LHUDConfigUpdatedEvent
+import LimitedHudCommon.LhudCooldownTracker
 import LimitedHudCommon.LHUDEvent
 
 // ACTION BUTTONS
@@ -22,8 +23,9 @@ public func DetermineCurrentVisibility() -> Void {
   let showForStealth: Bool = this.lhud_isStealthActive && this.lhudConfig.ShowInStealth;
   let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfig.ShowWithWeapon;
   let showForZoom: Bool = this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
+  let showForCooldown: Bool = this.lhud_hasCooldown && this.lhudConfig.ShowAtCooldown;
 
-  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForWeapon || showForZoom;
+  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForWeapon || showForZoom || showForCooldown;
   if this.lhud_isBraindanceActive { isVisible = false; };
   if NotEquals(this.lhud_isVisibleNow, isVisible) {
     this.lhud_isVisibleNow = isVisible;
@@ -83,9 +85,10 @@ public func DetermineCurrentVisibility() -> Void {
   let showForVehicle: Bool = this.lhud_isInVehicle && this.lhudConfig.ShowInVehicle;
   let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfig.ShowWithWeapon;
   let showForZoom: Bool = this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
+  let showForCooldown: Bool = this.lhud_hasCooldown && this.lhudConfig.ShowAtCooldown;
   let isPhoneInUse: Bool = this.ShouldDisplayPhoneForLHUD();
 
-  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForWeapon || showForZoom || isPhoneInUse;
+  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForWeapon || showForZoom || isPhoneInUse || showForCooldown;
   
   if this.lhud_isBraindanceActive { isVisible = false; };
   this.lhud_isVisibleNow = isVisible;
@@ -204,8 +207,9 @@ public func DetermineCurrentVisibility() -> Void {
   let showForVehicle: Bool = this.lhud_isInVehicle && this.lhudConfig.ShowInVehicle;
   let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfig.ShowWithWeapon;
   let showForZoom: Bool = this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
+  let showForCooldown: Bool = this.lhud_hasCooldown && this.lhudConfig.ShowAtCooldown;
 
-  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForWeapon || showForZoom;
+  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForWeapon || showForZoom || showForCooldown;
   if this.lhud_isBraindanceActive { isVisible = false; };
   this.lhud_isVisibleNow = isVisible;
   if isVisible {
@@ -256,8 +260,9 @@ public func DetermineCurrentVisibility() -> Void {
   let showForVehicle: Bool = this.lhud_isInVehicle && this.lhudConfig.ShowInVehicle;
   let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfig.ShowWithWeapon;
   let showForZoom: Bool = this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
+  let showForCooldown: Bool = this.lhud_hasCooldown && this.lhudConfig.ShowAtCooldown;
 
-  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForWeapon || showForZoom;
+  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForWeapon || showForZoom || showForCooldown;
   if this.lhud_isBraindanceActive { isVisible = false; };
   this.lhud_isVisibleNow = isVisible;
   if isVisible {
@@ -284,4 +289,58 @@ protected cb func OnInitialize() -> Bool {
 @addMethod(HotkeyCustomRadioWidgetController)
 protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> Void {
   this.lhudConfig = new ActionButtonsModuleConfig();
+}
+
+// ITEM COOLDOWNS
+
+@addField(ChargedHotkeyItemBaseController)
+private let cooldownIsActive: Bool;
+
+@wrapMethod(ChargedHotkeyItemBaseController)
+public final func UpdateChargeValue(newValue: Float, percToPoints: Float, valueChanged: Bool) -> Void {
+  wrappedMethod(newValue, percToPoints, valueChanged);
+
+  let itemId: ItemID;
+  let cooldownTracker: ref<LhudCooldownTracker>;
+  if newValue >= 0.1 && newValue < 99.9 && !this.cooldownIsActive {
+    this.cooldownIsActive = true;
+    cooldownTracker = LhudCooldownTracker.Get(this.GetPlayer().GetGame());
+    itemId = InventoryItemData.GetID(this.m_currentItem);
+    if cooldownTracker.Add(itemId) {
+      cooldownTracker.Notify();
+    };
+  };
+
+  if newValue >= 99.9 && this.cooldownIsActive {
+    this.cooldownIsActive = false;
+    cooldownTracker = LhudCooldownTracker.Get(this.GetPlayer().GetGame());
+    itemId = InventoryItemData.GetID(this.m_currentItem);
+    if cooldownTracker.Remove(itemId) {
+      cooldownTracker.Notify();
+    };
+  };
+}
+
+@wrapMethod(ChargedHotkeyItemConsumableController)
+protected func UpdateCurrentItem() -> Void {
+  let itemOld: InventoryItemData = this.m_currentItem;
+  let itemNew: InventoryItemData = this.m_inventoryManager.GetHotkeyItemData(this.m_hotkey);
+  LhudCooldownTracker.Get(this.GetPlayer().GetGame()).SwapIds(itemOld.ID, itemNew.ID);
+  wrappedMethod();
+}
+
+@wrapMethod(ChargedHotkeyItemGadgetController)
+protected func UpdateCurrentItem() -> Void {
+  let itemOld: InventoryItemData = this.m_currentItem;
+  let itemNew: InventoryItemData = this.m_inventoryManager.GetHotkeyItemData(this.m_hotkey);
+  LhudCooldownTracker.Get(this.GetPlayer().GetGame()).SwapIds(itemOld.ID, itemNew.ID);
+  wrappedMethod();
+}
+
+@wrapMethod(ChargedHotkeyItemCyberwareController)
+protected func UpdateCurrentItem() -> Void {
+  let itemOld: InventoryItemData = this.m_currentItem;
+  let itemNew: InventoryItemData = this.m_inventoryManager.GetHotkeyItemData(this.m_hotkey);
+  LhudCooldownTracker.Get(this.GetPlayer().GetGame()).SwapIds(itemOld.ID, itemNew.ID);
+  wrappedMethod();
 }
