@@ -856,46 +856,7 @@ public class WorldMarkersModuleConfigDevices{
 }
 
 public class LHUDAddonsConfig {
-  @runtimeProperty("ModSettings.mod", "LHUD Addons")
-  @runtimeProperty("ModSettings.category", "Addons-LHUD-Journal-Widget")
-  @runtimeProperty("ModSettings.category.order", "1")
-  @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Opacity")
-  @runtimeProperty("ModSettings.description", "Addons-LHUD-Opacity-Desc")
-  @runtimeProperty("ModSettings.step", "0.1")
-  @runtimeProperty("ModSettings.min", "0.0")
-  @runtimeProperty("ModSettings.max", "1.0")
-  let JournalNotificationOpacity: Float = 1.0;
-
-  @runtimeProperty("ModSettings.mod", "LHUD Addons")
-  @runtimeProperty("ModSettings.category", "Addons-LHUD-Journal-Widget")
-  @runtimeProperty("ModSettings.category.order", "1")
-  @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Scale")
-  @runtimeProperty("ModSettings.description", "Addons-LHUD-Scale-Desc")
-  @runtimeProperty("ModSettings.step", "0.1")
-  @runtimeProperty("ModSettings.min", "0.1")
-  @runtimeProperty("ModSettings.max", "2.0")
-  let JournalNotificationScale: Float = 0.7;
-
-  @runtimeProperty("ModSettings.mod", "LHUD Addons")
-  @runtimeProperty("ModSettings.category", "Addons-LHUD-Items-Widget")
-  @runtimeProperty("ModSettings.category.order", "2")
-  @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Opacity")
-  @runtimeProperty("ModSettings.description", "Addons-LHUD-Opacity-Desc")
-  @runtimeProperty("ModSettings.step", "0.1")
-  @runtimeProperty("ModSettings.min", "0.0")
-  @runtimeProperty("ModSettings.max", "1.0")
-  let ItemNotificationOpacity: Float = 1.0;
-
-  @runtimeProperty("ModSettings.mod", "LHUD Addons")
-  @runtimeProperty("ModSettings.category", "Addons-LHUD-Items-Widget")
-  @runtimeProperty("ModSettings.category.order", "2")
-  @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Scale")
-  @runtimeProperty("ModSettings.description", "Addons-LHUD-Scale-Desc")
-  @runtimeProperty("ModSettings.step", "0.1")
-  @runtimeProperty("ModSettings.min", "0.1")
-  @runtimeProperty("ModSettings.max", "2.0")
-  let ItemNotificationScale: Float = 0.7;
-
+  
   @runtimeProperty("ModSettings.mod", "LHUD Addons")
   @runtimeProperty("ModSettings.category", "Addons-LHUD-Notification-Sounds")
   @runtimeProperty("ModSettings.category.order", "3")
