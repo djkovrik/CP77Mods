@@ -37,8 +37,8 @@ public func DetermineCurrentVisibility() -> Void {
 private let lhudConfig: ref<CrouchIndicatorModuleConfig>;
 
 @wrapMethod(CrouchIndicatorGameController)
-protected cb func OnInitialize() -> Bool {
-  wrappedMethod();
+protected cb func OnPlayerAttach(player: ref<GameObject>) -> Bool {
+  wrappedMethod(player);
   this.lhudConfig = new CrouchIndicatorModuleConfig();
   if this.lhudConfig.IsEnabled {
     this.lhud_isVisibleNow = false;
