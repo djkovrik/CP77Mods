@@ -107,6 +107,17 @@ public abstract class RevisedBackpackDefaultConfig {
     ArrayPush(
       newCategories,
       RevisedBackpackCategory.Create(
+        95,
+        n"Gameplay-Items-Item Type-Gen_CraftingMaterial",
+        n"loot_material",
+        r"base\\gameplay\\gui\\common\\icons\\mappin_icons.inkatlas",
+        new RevisedCategoryPredicateCraftingParts()
+      )
+    );
+
+    ArrayPush(
+      newCategories,
+      RevisedBackpackCategory.Create(
         100,
         n"Mod-Revised-Quest-Items",
         n"minor_quest",
@@ -233,6 +244,15 @@ private class RevisedCategoryPredicateCyberware extends RevisedCategoryPredicate
     return data.HasTag(n"Cyberware") || data.HasTag(n"Fragment");
   }
 }
+
+// Crafting materials
+private class RevisedCategoryPredicateCraftingParts extends RevisedCategoryPredicate {
+  public func Check(item: ref<RevisedItemWrapper>) -> Bool {
+    let data: ref<gameItemData> = item.data;
+    return data.HasTag(n"CraftingPart");
+  }
+}
+
 
 // Quest
 private class RevisedCategoryPredicateQuest extends RevisedCategoryPredicate {

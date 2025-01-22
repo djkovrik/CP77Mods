@@ -505,8 +505,8 @@ public class RevisedBackpackController extends gameuiMenuGameController {
 
     // ArrayPush(tagsToFilterOut, n"HideInBackpackUI");
     // ArrayPush(tagsToFilterOut, n"SoftwareShard");
+    // ArrayPush(tagsToFilterOut, n"CraftingPart");
     ArrayPush(tagsToFilterOut, n"Recipe");
-    ArrayPush(tagsToFilterOut, n"CraftingPart");
     this.m_uiInventorySystem.FlushTempData();
     playerItems = this.m_uiInventorySystem.GetPlayerItemsMap();
     playerItems.GetValues(values);
