@@ -42,32 +42,32 @@ public class RevisedCompareBuilder extends IScriptable {
   }
 
   public final func QualityAsc() -> ref<RevisedCompareBuilder> {
-    this.m_compareBuilder.IntAsc(this.m_sortData1.tierValue, this.m_sortData2.tierValue);
+    this.m_compareBuilder.IntAsc(this.m_sortData2.tierValue, this.m_sortData1.tierValue);
     return this;
   }
 
   public final func QualityDesc() -> ref<RevisedCompareBuilder> {
-    this.m_compareBuilder.IntDesc(this.m_sortData1.tierValue, this.m_sortData2.tierValue);
+    this.m_compareBuilder.IntDesc(this.m_sortData2.tierValue, this.m_sortData1.tierValue);
     return this;
   }
 
   public final func PriceAsc() -> ref<RevisedCompareBuilder> {
-    this.m_compareBuilder.FloatAsc(this.m_sortData1.price, this.m_sortData2.price);
+    this.m_compareBuilder.FloatAsc(this.m_sortData2.price, this.m_sortData1.price);
     return this;
   }
 
   public final func PriceDesc() -> ref<RevisedCompareBuilder> {
-    this.m_compareBuilder.FloatDesc(this.m_sortData1.price, this.m_sortData2.price);
+    this.m_compareBuilder.FloatDesc(this.m_sortData2.price, this.m_sortData1.price);
     return this;
   }
 
   public final func WeightAsc() -> ref<RevisedCompareBuilder> {
-    this.m_compareBuilder.FloatAsc(this.m_sortData1.weight, this.m_sortData2.weight);
+    this.m_compareBuilder.FloatAsc(this.m_sortData2.weight, this.m_sortData1.weight);
     return this;
   }
 
   public final func WeightDesc() -> ref<RevisedCompareBuilder> {
-    this.m_compareBuilder.FloatDesc(this.m_sortData1.weight, this.m_sortData2.weight);
+    this.m_compareBuilder.FloatDesc(this.m_sortData2.weight, this.m_sortData1.weight);
     return this;
   }
 
@@ -80,7 +80,7 @@ public class RevisedCompareBuilder extends IScriptable {
     if this.m_sortData2.isWeapon {
       rightValue = this.m_sortData2.dps;
     };
-    this.m_compareBuilder.FloatAsc(leftValue, rightValue);
+    this.m_compareBuilder.FloatAsc(rightValue, leftValue);
     return this;
   }
 
@@ -93,7 +93,7 @@ public class RevisedCompareBuilder extends IScriptable {
     if this.m_sortData2.isWeapon {
       rightValue = this.m_sortData2.dps;
     };
-    this.m_compareBuilder.FloatDesc(leftValue, rightValue);
+    this.m_compareBuilder.FloatDesc(rightValue, leftValue);
     return this;
   }
 
@@ -106,7 +106,7 @@ public class RevisedCompareBuilder extends IScriptable {
     if this.m_sortData2.isWeapon {
       rightValue = this.m_sortData2.damagePerShot;
     };
-    this.m_compareBuilder.FloatAsc(leftValue, rightValue);
+    this.m_compareBuilder.FloatAsc(rightValue, leftValue);
     return this;
   }
 
@@ -119,7 +119,7 @@ public class RevisedCompareBuilder extends IScriptable {
     if this.m_sortData2.isWeapon {
       rightValue = this.m_sortData2.damagePerShot;
     };
-    this.m_compareBuilder.FloatDesc(leftValue, rightValue);
+    this.m_compareBuilder.FloatDesc(rightValue, leftValue);
     return this;
   }
 
@@ -132,7 +132,7 @@ public class RevisedCompareBuilder extends IScriptable {
     if this.m_sortData2.isWeapon {
       rightValue = this.m_sortData2.range;
     };
-    this.m_compareBuilder.IntAsc(leftValue, rightValue);
+    this.m_compareBuilder.IntAsc(rightValue, leftValue);
     return this;
   }
 
@@ -145,7 +145,7 @@ public class RevisedCompareBuilder extends IScriptable {
     if this.m_sortData2.isWeapon {
       rightValue = this.m_sortData2.range;
     };
-    this.m_compareBuilder.IntDesc(leftValue, rightValue);
+    this.m_compareBuilder.IntDesc(rightValue, leftValue);
     return this;
   }
 
