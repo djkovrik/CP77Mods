@@ -25,13 +25,6 @@ class SleevesStateSystem extends ScriptableSystem {
     };
   }
 
-  // private final func OnPlayerDetach(request: ref<PlayerDetachRequest>) -> Void {
-  //   SleevesLog(">>> OnPlayerDetach");
-  //   this.player = null;
-  //   this.equipmentSystem = null;
-  //   this.transactionSystem = null;
-  // }
-
   public final func HasToggleableSleeves() -> Bool {
     for item in this.bundle.items {
       if item.HasFppSuffix() && !item.Excluded() {
@@ -88,6 +81,10 @@ class SleevesStateSystem extends ScriptableSystem {
     SleevesLog(s"Braindance entered: \(entered)");
     this.isBraindanceActive = entered;
     this.GetPlayer().TriggerSleevesRefreshCallback();
+  }
+
+  public final func ClearCache() -> Void {
+    this.cache.Clear();
   }
 
   public final func RefreshSleevesState() -> Void {
