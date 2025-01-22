@@ -3,3 +3,4 @@ localization:
     en-us: base\localization\en-us\onscreens\huditor.json
     ru-ru: base\localization\ru-ru\onscreens\huditor.json
     fr-fr: base\localization\fr-fr\onscreens\huditor.json
+    zh-cn: base\localization\zh-cn\onscreens\huditor.json
