@@ -6,6 +6,7 @@ public class RevisedBackpackFiltersController extends inkLogicController {
 
   private let m_player: wref<PlayerPuppet>;
   private let m_delaySystem: wref<DelaySystem>;
+  private let m_transactionSystem: wref<TransactionSystem>;
   private let m_debounceCalbackId: DelayID;
 
   private let nameFilterInput: wref<HubTextInput>;
@@ -28,11 +29,18 @@ public class RevisedBackpackFiltersController extends inkLogicController {
   private let buttonJunk: wref<RevisedFiltersButton>;
   private let buttonDisassemble: wref<RevisedFiltersButton>;
   private let buttonReset: wref<RevisedFiltersButton>;
+  
+  private let ammoContainer: wref<inkWidget>;
+  private let ammoButtonHandgun: wref<RevisedBackpackFilterAmmoButton>;
+  private let ammoButtonShotgun: wref<RevisedBackpackFilterAmmoButton>;
+  private let ammoButtonRifle: wref<RevisedBackpackFilterAmmoButton>;
+  private let ammoButtonSniperRifle: wref<RevisedBackpackFilterAmmoButton>;
 
   private let m_animProxy: ref<inkAnimProxy>;
 
   private let nameInput: String = "";
   private let typeInput: String = "";
+  private let ammo: TweakDBID = t"";
   private let tier1Enabled: Bool = true;
   private let tier2Enabled: Bool = true;
   private let tier3Enabled: Bool = true;
@@ -41,12 +49,14 @@ public class RevisedBackpackFiltersController extends inkLogicController {
   private let resetAvailable: Bool = false;
   private let selectionAvailable: Bool = false;
   private let massActionsAvailable: Bool = false;
+  private let ammoFiltersAvailable: Bool = false;
 
   protected cb func OnInitialize() -> Bool {
-    this.BuildWidgetsLayout();
-    this.RegisterListeners();
     this.m_player = GetPlayer(GetGameInstance());
     this.m_delaySystem = GameInstance.GetDelaySystem(this.m_player.GetGame());
+    this.m_transactionSystem = GameInstance.GetTransactionSystem(this.m_player.GetGame());
+    this.BuildWidgetsLayout();
+    this.RegisterListeners();
   }
 
   protected cb func OnUninitialize() -> Bool {
@@ -115,7 +125,9 @@ public class RevisedBackpackFiltersController extends inkLogicController {
 
   protected cb func OnRevisedCategorySelectedEvent(evt: ref<RevisedCategorySelectedEvent>) -> Bool {
     this.selectionAvailable = NotEquals(evt.category.id, 10);
+    this.ammoFiltersAvailable = Equals(evt.category.id, 20);
     this.InvalidateMassActionsButtons();
+    this.UpdateAmmoFiltersVisibility();
   }
 
   protected cb func OnRevisedBackpackSelectedItemsCountChangedEvent(evt: ref<RevisedBackpackSelectedItemsCountChangedEvent>) -> Bool {
@@ -130,6 +142,11 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     this.m_debounceCalbackId = this.m_delaySystem.DelayCallback(callback, 0.2, false);
   }
 
+  protected cb func OnRevisedAmmoFilterSelectedEvent(evt: ref<RevisedAmmoFilterSelectedEvent>) -> Bool {
+    this.ammo = evt.ammoId;
+    this.ApplyFilters();
+  }
+
   public final func ApplyFilters() -> Void {
     this.Log("ApplyFilters");
     this.InvalidateResetButtonState();
@@ -141,6 +158,7 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     this.PlaySound(n"ui_menu_onpress");
     this.nameInput = "";
     this.typeInput = "";
+    this.ammo = t"";
     this.tier1Enabled = true;
     this.tier2Enabled = true;
     this.tier3Enabled = true;
@@ -148,6 +166,7 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     this.tier5Enabled = true;
     this.nameFilterInput.SetText(this.nameInput);
     this.typeFilterInput.SetText(this.typeInput);
+    this.QueueEvent(RevisedAmmoFilterResetEvent.Create());
     this.InvalidateCheckboxes();
     this.InvalidateResetButtonState();
     this.BroadcastFiltersState();
@@ -266,7 +285,8 @@ public class RevisedBackpackFiltersController extends inkLogicController {
   private final func InvalidateResetButtonState() -> Void {
     let hasUncheckedCheckboxes: Bool = !this.tier1Enabled || !this.tier2Enabled || !this.tier3Enabled || !this.tier4Enabled || !this.tier5Enabled;
     let inputHasText: Bool = StrLen(this.nameInput) > 0 || StrLen(this.typeInput) > 0;
-    this.resetAvailable = hasUncheckedCheckboxes || inputHasText;
+    let hasAmmoToggled: Bool = NotEquals(this.ammo, t"");
+    this.resetAvailable = hasUncheckedCheckboxes || inputHasText || hasAmmoToggled;
     this.buttonReset.SetDisabled(!this.resetAvailable);
   }
 
@@ -294,6 +314,26 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     this.buttonsContainer.SetOpacity(start);
     let container: ref<inkAnimDef> = this.AnimateOpacity(0.2, start, end);
     this.m_animProxy = this.buttonsContainer.PlayAnimation(container);
+  }
+
+  private final func UpdateAmmoFiltersVisibility() -> Void {
+    if Equals(this.ammoFiltersAvailable, this.ammoContainer.IsVisible()) {
+      return;
+    };
+
+    let start: Float;
+    let end: Float;
+    if this.ammoFiltersAvailable {
+      start = 0.0;
+      end = 1.0;
+    } else {
+      start = 1.0;
+      end = 0.0;
+    };
+
+    this.ammoContainer.SetOpacity(start);
+    let container: ref<inkAnimDef> = this.AnimateOpacity(0.2, start, end);
+    this.m_animProxy = this.ammoContainer.PlayAnimation(container);
   }
 
   private final func InvalidateCheckboxes() -> Void {
@@ -339,8 +379,8 @@ public class RevisedBackpackFiltersController extends inkLogicController {
       ArrayPush(tiers, gamedataQuality.Common);
     };
     
-    let event: ref<RevisedFilteringEvent> = RevisedFilteringEvent.Create(this.nameInput, this.typeInput, tiers, filtersReset);
-    this.Log(s"BroadcastFiltersState with [\(this.nameInput)] and [\(this.typeInput)]");
+    let event: ref<RevisedFilteringEvent> = RevisedFilteringEvent.Create(this.nameInput, this.typeInput, tiers, this.ammo, filtersReset);
+    this.Log(s"BroadcastFiltersState with [\(this.nameInput)] and [\(this.typeInput)], and tiers \(ArraySize(tiers)), and ammo \(TDBID.ToStringDEBUG(this.ammo))");
     this.QueueEvent(event);
   }
 
@@ -444,6 +484,60 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     buttonDisassemble.SetAsDangerous();
     buttonDisassemble.Reparent(rightColumn);
     this.buttonDisassemble = buttonDisassemble;
+
+    let ammoColumn: ref<inkVerticalPanel> = new inkVerticalPanel();
+    ammoColumn.SetName(n"ammoColumn");
+    ammoColumn.SetOpacity(0.0);
+    ammoColumn.SetAffectsLayoutWhenHidden(true);
+    ammoColumn.SetMargin(new inkMargin(64.0, 0.0, 0.0, 0.0));
+    ammoColumn.Reparent(outerContainer);
+    this.ammoContainer = ammoColumn;
+
+    let ammoRow1: ref<inkHorizontalPanel> = new inkHorizontalPanel();
+    ammoRow1.SetName(n"ammoRow1");
+    ammoRow1.SetChildMargin(new inkMargin(48.0, 0.0, 0.0, 48.0));
+    ammoRow1.Reparent(ammoColumn);
+
+    let handgunAmmoQuery: ItemID = ItemID.CreateQuery(t"Ammo.HandgunAmmo");
+    let handgunCount: Int32 = this.m_transactionSystem.GetItemQuantity(this.m_player, handgunAmmoQuery);
+    let ammoHandgun: ref<RevisedBackpackFilterAmmoButton> = new RevisedBackpackFilterAmmoButton();
+    ammoHandgun.SetName(n"ammoHandgun");
+    ammoHandgun.SetAmmoId(t"Ammo.HandgunAmmo");
+    ammoHandgun.SetCount(handgunCount);
+    ammoHandgun.Reparent(ammoRow1);
+    this.ammoButtonHandgun = ammoHandgun;
+
+    let shotgunAmmoQuery: ItemID = ItemID.CreateQuery(t"Ammo.ShotgunAmmo");
+    let shotgunCount: Int32 = this.m_transactionSystem.GetItemQuantity(this.m_player, shotgunAmmoQuery);
+    let ammoShotgun: ref<RevisedBackpackFilterAmmoButton> = new RevisedBackpackFilterAmmoButton();
+    ammoShotgun.SetName(n"ammoShotgun");
+    ammoShotgun.SetAmmoId(t"Ammo.ShotgunAmmo");
+    ammoShotgun.SetCount(shotgunCount);
+    ammoShotgun.Reparent(ammoRow1);
+    this.ammoButtonShotgun = ammoShotgun;
+
+    let ammoRow2: ref<inkHorizontalPanel> = new inkHorizontalPanel();
+    ammoRow2.SetName(n"ammoRow2");
+    ammoRow2.SetChildMargin(new inkMargin(48.0, 0.0, 0.0, 48.0));
+    ammoRow2.Reparent(ammoColumn);
+
+    let rifleAmmoQuery: ItemID = ItemID.CreateQuery(t"Ammo.RifleAmmo");
+    let rifleCount: Int32 = this.m_transactionSystem.GetItemQuantity(this.m_player, rifleAmmoQuery);
+    let ammoRifle: ref<RevisedBackpackFilterAmmoButton> = new RevisedBackpackFilterAmmoButton();
+    ammoRifle.SetName(n"ammoRifle");
+    ammoRifle.SetAmmoId(t"Ammo.RifleAmmo");
+    ammoRifle.SetCount(rifleCount);
+    ammoRifle.Reparent(ammoRow2);
+    this.ammoButtonRifle = ammoRifle;
+
+    let sniperRifleAmmoQuery: ItemID = ItemID.CreateQuery(t"Ammo.SniperRifleAmmo");
+    let sniperRifleCount: Int32 = this.m_transactionSystem.GetItemQuantity(this.m_player, sniperRifleAmmoQuery);
+    let ammoSniperRifle: ref<RevisedBackpackFilterAmmoButton> = new RevisedBackpackFilterAmmoButton();
+    ammoSniperRifle.SetName(n"ammoSniperRifle");
+    ammoSniperRifle.SetAmmoId(t"Ammo.SniperRifleAmmo");
+    ammoSniperRifle.SetCount(sniperRifleCount);
+    ammoSniperRifle.Reparent(ammoRow2);
+    this.ammoButtonSniperRifle = ammoSniperRifle;
   }
 
   private final func BuildCheckbox(name: CName, displayNameKey: CName, initial: Bool) -> ref<inkCompoundWidget> {

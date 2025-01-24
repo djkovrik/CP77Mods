@@ -103,6 +103,15 @@ public class RevisedItemWrapper {
   public final func SetCustomJunkFlag(customJunk: Bool) -> Void {
     this.customJunk = customJunk;
   }
+
+  public final func GetAmmo() -> TweakDBID {
+    let weaponRecord: ref<WeaponItem_Record> = TweakDBInterface.GetItemRecord(this.id) as WeaponItem_Record;
+    if IsDefined(weaponRecord) {
+      return weaponRecord.Ammo().GetID();
+    };
+
+    return t"";
+  }
 }
 
 public abstract class RevisedCategoryPredicate {
@@ -289,13 +298,15 @@ public class RevisedFilteringEvent extends Event {
   public let nameQuery: String;
   public let typeQuery: String;
   public let tiers: array<gamedataQuality>;
+  public let ammo: TweakDBID;
   public let filtersReset: Bool;
 
-  public final static func Create(name: String, type: String, tiers: array<gamedataQuality>, reset: Bool) -> ref<RevisedFilteringEvent> {
+  public final static func Create(name: String, type: String, tiers: array<gamedataQuality>, ammo: TweakDBID, reset: Bool) -> ref<RevisedFilteringEvent> {
     let evt: ref<RevisedFilteringEvent> = new RevisedFilteringEvent();
     evt.nameQuery = name;
     evt.typeQuery = type;
     evt.tiers = tiers;
+    evt.ammo = ammo;
     evt.filtersReset = reset;
     return evt;
   }
@@ -415,6 +426,42 @@ public class RevisedCustomEventCategorySelected extends CallbackSystemEvent {
   public final static func Create(categoryId: Int32) -> ref<RevisedCustomEventCategorySelected> {
     let evt: ref<RevisedCustomEventCategorySelected> = new RevisedCustomEventCategorySelected();
     evt.categoryId = categoryId;
+    return evt;
+  }
+}
+
+public class RevisedAmmoFilterSelectedEvent extends Event {
+  let ammoId: TweakDBID;
+
+  public final static func Create(ammoId: TweakDBID) -> ref<RevisedAmmoFilterSelectedEvent> {
+    let evt: ref<RevisedAmmoFilterSelectedEvent> = new RevisedAmmoFilterSelectedEvent();
+    evt.ammoId = ammoId;
+    return evt;
+  }
+}
+
+public class RevisedAmmoFilterResetEvent extends Event {
+  public final static func Create() -> ref<RevisedAmmoFilterResetEvent> {
+    let evt: ref<RevisedAmmoFilterResetEvent> = new RevisedAmmoFilterResetEvent();
+    return evt;
+  }
+}
+
+public class RevisedBackpackAmmoButtonHoverOverEvent extends Event {
+  public let target: wref<inkWidget>;
+  public let title: String;
+
+  public final static func Create(target: wref<inkWidget>, title: String) -> ref<RevisedBackpackAmmoButtonHoverOverEvent> {
+    let evt: ref<RevisedBackpackAmmoButtonHoverOverEvent> = new RevisedBackpackAmmoButtonHoverOverEvent();
+    evt.target = target;
+    evt.title = title;
+    return evt;
+  }
+}
+
+public class RevisedBackpackAmmoHoverOutEvent extends Event {
+  public final static func Create() -> ref<RevisedBackpackAmmoHoverOutEvent> {
+    let evt: ref<RevisedBackpackAmmoHoverOutEvent> = new RevisedBackpackAmmoHoverOutEvent();
     return evt;
   }
 }

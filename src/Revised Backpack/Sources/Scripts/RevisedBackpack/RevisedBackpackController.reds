@@ -66,7 +66,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
   private let m_animProxyList: ref<inkAnimProxy>;
 
   private let m_uiInventorySystem: wref<UIInventoryScriptableSystem>;
-  private let m_inventoryManager: ref<InventoryDataManagerV2>;
+  private let m_inventoryManager: wref<InventoryDataManagerV2>;
   private let m_uiScriptableSystem: wref<UIScriptableSystem>;
 
   private let m_buttonHintsManagerRef: inkWidgetRef;
@@ -757,6 +757,14 @@ public class RevisedBackpackController extends gameuiMenuGameController {
   }
 
   protected cb func OnRevisedBackpackColumnHoverOutEvent(evt: ref<RevisedBackpackColumnHoverOutEvent>) -> Bool {
+    this.m_TooltipsManager.HideTooltips();
+  }
+
+  protected cb func OnRevisedBackpackAmmoButtonHoverOverEvent(evt: ref<RevisedBackpackAmmoButtonHoverOverEvent>) -> Bool {
+    this.ShowColumnNameTooltip(evt.target, evt.title);
+  }
+
+  protected cb func OnRevisedBackpackAmmoHoverOutEvent(evt: ref<RevisedBackpackAmmoHoverOutEvent>) -> Bool {
     this.m_TooltipsManager.HideTooltips();
   }
 

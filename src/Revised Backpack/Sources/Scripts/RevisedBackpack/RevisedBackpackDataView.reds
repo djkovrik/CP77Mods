@@ -9,6 +9,7 @@ public class RevisedBackpackDataView extends ScriptableDataView {
   private let m_newItemsOnTop: Bool;
   private let m_favoriteItemsOnTop: Bool;
   private let m_skipCustomFilters: Bool;
+  private let m_skipAmmoFilter: Bool;
 
   public final func Init() -> Void {
     let settings: ref<RevisedBackpackSettings> = new RevisedBackpackSettings();
@@ -301,6 +302,7 @@ public class RevisedBackpackDataView extends ScriptableDataView {
   public final func SetCategory(category: ref<RevisedBackpackCategory>) -> Void {
     if NotEquals(this.m_selectedCategory, category) {
       this.m_selectedCategory = category;
+      this.m_skipAmmoFilter = NotEquals(category.id, 20);
       this.Filter();
     };
   }
@@ -308,7 +310,7 @@ public class RevisedBackpackDataView extends ScriptableDataView {
   public final func SetFilters(event: ref<RevisedFilteringEvent>) -> Void {
     this.m_skipCustomFilters = event.filtersReset;
     this.m_filtering = event;
-    this.Log(s"SetFilters with [\(event.nameQuery)] and [\(event.typeQuery)]");
+    this.Log(s"SetFilters with [\(event.nameQuery)] and [\(event.typeQuery)] and ammo \(TDBID.ToStringDEBUG(event.ammo)) and tiers \(ArraySize(event.tiers))");
     this.Filter();
   }
 
@@ -333,7 +335,12 @@ public class RevisedBackpackDataView extends ScriptableDataView {
 
     let tierMatched: Bool = ArrayContains(this.m_filtering.tiers, itemWrapper.tier);
 
-    return nameNotEmpty && predicate && nameSearchMatched && typeSearchMatched && tierMatched;
+    let ammoMatched: Bool = true;
+    if NotEquals(this.m_filtering.ammo, t"") && !this.m_skipAmmoFilter {
+      ammoMatched = Equals(this.m_filtering.ammo, itemWrapper.GetAmmo());
+    };
+
+    return nameNotEmpty && predicate && nameSearchMatched && typeSearchMatched && tierMatched && ammoMatched;
   }
 
   private final func RefreshList() -> Void {
