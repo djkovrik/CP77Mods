@@ -66,7 +66,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
   private let m_animProxyList: ref<inkAnimProxy>;
 
   private let m_uiInventorySystem: wref<UIInventoryScriptableSystem>;
-  private let m_inventoryManager: wref<InventoryDataManagerV2>;
+  private let m_inventoryManager: ref<InventoryDataManagerV2>;
   private let m_uiScriptableSystem: wref<UIScriptableSystem>;
 
   private let m_buttonHintsManagerRef: inkWidgetRef;

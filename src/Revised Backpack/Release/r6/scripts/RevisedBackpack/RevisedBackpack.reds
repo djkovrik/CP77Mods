@@ -1,4 +1,4 @@
-// RevisedBackpack v0.9.5
+// RevisedBackpack v0.9.6
 module RevisedBackpack
 
 import Codeware.UI.HubTextInput
@@ -93,6 +93,13 @@ public class RevisedItemWrapper {
   }
   public final func SetCustomJunkFlag(customJunk: Bool) -> Void {
     this.customJunk = customJunk;
+  }
+  public final func GetAmmo() -> TweakDBID {
+    let weaponRecord: ref<WeaponItem_Record> = TweakDBInterface.GetItemRecord(this.id) as WeaponItem_Record;
+    if IsDefined(weaponRecord) {
+      return weaponRecord.Ammo().GetID();
+    };
+    return t"";
   }
 }
 public abstract class RevisedCategoryPredicate {
@@ -251,12 +258,14 @@ public class RevisedFilteringEvent extends Event {
   public let nameQuery: String;
   public let typeQuery: String;
   public let tiers: array<gamedataQuality>;
+  public let ammo: TweakDBID;
   public let filtersReset: Bool;
-  public final static func Create(name: String, type: String, tiers: array<gamedataQuality>, reset: Bool) -> ref<RevisedFilteringEvent> {
+  public final static func Create(name: String, type: String, tiers: array<gamedataQuality>, ammo: TweakDBID, reset: Bool) -> ref<RevisedFilteringEvent> {
     let evt: ref<RevisedFilteringEvent> = new RevisedFilteringEvent();
     evt.nameQuery = name;
     evt.typeQuery = type;
     evt.tiers = tiers;
+    evt.ammo = ammo;
     evt.filtersReset = reset;
     return evt;
   }
@@ -348,6 +357,36 @@ public class RevisedCustomEventCategorySelected extends CallbackSystemEvent {
   public final static func Create(categoryId: Int32) -> ref<RevisedCustomEventCategorySelected> {
     let evt: ref<RevisedCustomEventCategorySelected> = new RevisedCustomEventCategorySelected();
     evt.categoryId = categoryId;
+    return evt;
+  }
+}
+public class RevisedAmmoFilterSelectedEvent extends Event {
+  let ammoId: TweakDBID;
+  public final static func Create(ammoId: TweakDBID) -> ref<RevisedAmmoFilterSelectedEvent> {
+    let evt: ref<RevisedAmmoFilterSelectedEvent> = new RevisedAmmoFilterSelectedEvent();
+    evt.ammoId = ammoId;
+    return evt;
+  }
+}
+public class RevisedAmmoFilterResetEvent extends Event {
+  public final static func Create() -> ref<RevisedAmmoFilterResetEvent> {
+    let evt: ref<RevisedAmmoFilterResetEvent> = new RevisedAmmoFilterResetEvent();
+    return evt;
+  }
+}
+public class RevisedBackpackAmmoButtonHoverOverEvent extends Event {
+  public let target: wref<inkWidget>;
+  public let title: String;
+  public final static func Create(target: wref<inkWidget>, title: String) -> ref<RevisedBackpackAmmoButtonHoverOverEvent> {
+    let evt: ref<RevisedBackpackAmmoButtonHoverOverEvent> = new RevisedBackpackAmmoButtonHoverOverEvent();
+    evt.target = target;
+    evt.title = title;
+    return evt;
+  }
+}
+public class RevisedBackpackAmmoHoverOutEvent extends Event {
+  public final static func Create() -> ref<RevisedBackpackAmmoHoverOutEvent> {
+    let evt: ref<RevisedBackpackAmmoHoverOutEvent> = new RevisedBackpackAmmoHoverOutEvent();
     return evt;
   }
 }
@@ -466,6 +505,16 @@ public abstract class RevisedBackpackDefaultConfig {
     ArrayPush(
       newCategories,
       RevisedBackpackCategory.Create(
+        95,
+        n"Gameplay-Items-Item Type-Gen_CraftingMaterial",
+        n"loot_material",
+        r"base\\gameplay\\gui\\common\\icons\\mappin_icons.inkatlas",
+        new RevisedCategoryPredicateCraftingParts()
+      )
+    );
+    ArrayPush(
+      newCategories,
+      RevisedBackpackCategory.Create(
         100,
         n"Mod-Revised-Quest-Items",
         n"minor_quest",
@@ -576,6 +625,13 @@ private class RevisedCategoryPredicateCyberware extends RevisedCategoryPredicate
   public func Check(item: ref<RevisedItemWrapper>) -> Bool {
     let data: ref<gameItemData> = item.data;
     return data.HasTag(n"Cyberware") || data.HasTag(n"Fragment");
+  }
+}
+// Crafting materials
+private class RevisedCategoryPredicateCraftingParts extends RevisedCategoryPredicate {
+  public func Check(item: ref<RevisedItemWrapper>) -> Bool {
+    let data: ref<gameItemData> = item.data;
+    return data.HasTag(n"CraftingPart");
   }
 }
 // Quest
@@ -1186,8 +1242,8 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     let dropItem: ItemModParams;
     // ArrayPush(tagsToFilterOut, n"HideInBackpackUI");
     // ArrayPush(tagsToFilterOut, n"SoftwareShard");
+    // ArrayPush(tagsToFilterOut, n"CraftingPart");
     ArrayPush(tagsToFilterOut, n"Recipe");
-    ArrayPush(tagsToFilterOut, n"CraftingPart");
     this.m_uiInventorySystem.FlushTempData();
     playerItems = this.m_uiInventorySystem.GetPlayerItemsMap();
     playerItems.GetValues(values);
@@ -1404,6 +1460,12 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     }
   }
   protected cb func OnRevisedBackpackColumnHoverOutEvent(evt: ref<RevisedBackpackColumnHoverOutEvent>) -> Bool {
+    this.m_TooltipsManager.HideTooltips();
+  }
+  protected cb func OnRevisedBackpackAmmoButtonHoverOverEvent(evt: ref<RevisedBackpackAmmoButtonHoverOverEvent>) -> Bool {
+    this.ShowColumnNameTooltip(evt.target, evt.title);
+  }
+  protected cb func OnRevisedBackpackAmmoHoverOutEvent(evt: ref<RevisedBackpackAmmoHoverOutEvent>) -> Bool {
     this.m_TooltipsManager.HideTooltips();
   }
   protected cb func OnRevisedBackpackItemHoverOverEvent(evt: ref<RevisedBackpackItemHoverOverEvent>) -> Bool {
@@ -2279,6 +2341,7 @@ public class RevisedBackpackDataView extends ScriptableDataView {
   private let m_newItemsOnTop: Bool;
   private let m_favoriteItemsOnTop: Bool;
   private let m_skipCustomFilters: Bool;
+  private let m_skipAmmoFilter: Bool;
   public final func Init() -> Void {
     let settings: ref<RevisedBackpackSettings> = new RevisedBackpackSettings();
     this.m_newItemsOnTop = settings.newOnTop;
@@ -2552,13 +2615,14 @@ public class RevisedBackpackDataView extends ScriptableDataView {
   public final func SetCategory(category: ref<RevisedBackpackCategory>) -> Void {
     if NotEquals(this.m_selectedCategory, category) {
       this.m_selectedCategory = category;
+      this.m_skipAmmoFilter = NotEquals(category.id, 20);
       this.Filter();
     };
   }
   public final func SetFilters(event: ref<RevisedFilteringEvent>) -> Void {
     this.m_skipCustomFilters = event.filtersReset;
     this.m_filtering = event;
-    this.Log(s"SetFilters with [\(event.nameQuery)] and [\(event.typeQuery)]");
+    this.Log(s"SetFilters with [\(event.nameQuery)] and [\(event.typeQuery)] and ammo \(TDBID.ToStringDEBUG(event.ammo)) and tiers \(ArraySize(event.tiers))");
     this.Filter();
   }
   public func FilterItem(data: ref<IScriptable>) -> Bool {
@@ -2578,7 +2642,11 @@ public class RevisedBackpackDataView extends ScriptableDataView {
       typeSearchMatched = this.ItemTypeContainsQuery(itemWrapper, this.m_filtering.typeQuery);
     };
     let tierMatched: Bool = ArrayContains(this.m_filtering.tiers, itemWrapper.tier);
-    return nameNotEmpty && predicate && nameSearchMatched && typeSearchMatched && tierMatched;
+    let ammoMatched: Bool = true;
+    if NotEquals(this.m_filtering.ammo, t"") && !this.m_skipAmmoFilter {
+      ammoMatched = Equals(this.m_filtering.ammo, itemWrapper.GetAmmo());
+    };
+    return nameNotEmpty && predicate && nameSearchMatched && typeSearchMatched && tierMatched && ammoMatched;
   }
   private final func RefreshList() -> Void {
     let wasSortingEnabled: Bool = this.IsSortingEnabled();
@@ -2621,9 +2689,220 @@ public class RevisedBackpackDataView extends ScriptableDataView {
     };
   }
 }
+public class RevisedBackpackFilterAmmoButton extends inkComponent {
+  private let count: Int32;
+  private let ammoId: TweakDBID;
+  private let hovered: Bool;
+  private let selected: Bool;
+  private let buttonFrame: wref<inkWidget>;
+  private let buttonIcon: wref<inkWidget>;
+  private let counterBg: wref<inkWidget>;
+  protected cb func OnCreate() -> ref<inkWidget> {
+    let root: ref<inkCanvas> = new inkCanvas();
+    root.SetName(n"Root");
+    root.SetInteractive(true);
+    root.SetSize(112.0, 112.0);
+    let frame: ref<inkImage> = new inkImage();
+    frame.SetName(n"frame");
+    frame.SetAnchor(inkEAnchor.Fill);
+    frame.SetAnchorPoint(0.5, 0.5);
+    frame.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    frame.BindProperty(n"tintColor", n"MainColors.MildRed");
+    frame.SetSize(112.0, 112.0);
+    frame.SetOpacity(0.25);
+    frame.SetAtlasResource(r"base\\gameplay\\gui\\common\\shapes\\atlas_shapes_sync.inkatlas");
+    frame.SetTexturePart(n"color_fg");
+    frame.SetNineSliceScale(true);
+    frame.Reparent(root);
+    let icon: ref<inkImage> = new inkImage();
+    icon.SetName(n"icon");
+    icon.SetFitToContent(false);
+    icon.SetAnchor(inkEAnchor.Centered);
+    icon.SetAnchorPoint(0.5, 0.5);
+    icon.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    icon.BindProperty(n"tintColor", n"MainColors.MildRed");
+    icon.SetSize(54.0, 54.0);
+    icon.SetHAlign(inkEHorizontalAlign.Fill);
+    icon.SetVAlign(inkEVerticalAlign.Fill);
+    icon.SetContentHAlign(inkEHorizontalAlign.Fill);
+    icon.SetContentVAlign(inkEVerticalAlign.Fill);
+    icon.SetAtlasResource(r"base\\gameplay\\gui\\common\\icons\\mappin_icons.inkatlas");
+    icon.SetTexturePart(n"ammo_handgun");
+    icon.Reparent(root);
+    let counterContainer: ref<inkCanvas> = new inkCanvas();
+    counterContainer.SetName(n"counterContainer");
+    counterContainer.SetSize(44.0, 44.0);
+    counterContainer.SetAnchor(inkEAnchor.BottomRight);
+    counterContainer.SetAnchorPoint(0.5, 0.5);
+    counterContainer.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+    counterContainer.Reparent(root);
+    let counterFrame: ref<inkImage> = new inkImage();
+    counterFrame.SetName(n"counterFrame");
+    counterFrame.SetAnchor(inkEAnchor.Fill);
+    counterFrame.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    counterFrame.BindProperty(n"tintColor", n"MainColors.FaintRed");
+    counterFrame.SetAtlasResource(r"base\\gameplay\\gui\\common\\shapes\\atlas_shapes_sync.inkatlas");
+    counterFrame.SetTexturePart(n"label_frame");
+    counterFrame.SetNineSliceScale(true);
+    counterFrame.Reparent(counterContainer);
+    let counterText: ref<inkText> = new inkText();
+    counterText.SetName(n"counterText");
+    counterText.SetText("0");
+    counterText.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+    counterText.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+    counterText.SetFontSize(34);
+    counterText.SetOpacity(0.5);
+    counterText.SetFitToContent(true);
+    counterText.SetLetterCase(textLetterCase.OriginalCase);
+    counterText.SetAnchor(inkEAnchor.Centered);
+    counterText.SetAnchorPoint(0.5, 0.5);
+    counterText.SetHAlign(inkEHorizontalAlign.Center);
+    counterText.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    counterText.BindProperty(n"tintColor", n"MainColors.White");
+    counterText.Reparent(counterContainer);
+    return root;
+  }
+  protected cb func OnInitialize() -> Void {
+    let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
+    this.buttonFrame = root.GetWidgetByPathName(n"frame");
+    this.buttonIcon = root.GetWidgetByPathName(n"icon");
+    this.counterBg = root.GetWidgetByPathName(n"counterContainer");
+    this.RegisterInputListeners();
+  }
+  protected cb func OnUninitialize() -> Void {
+    this.UnregisterInputListeners();
+  }
+  protected cb func OnHoverOver(evt: ref<inkPointerEvent>) -> Bool {
+    this.PlaySound(n"Button", n"OnHover");
+    this.hovered = true;
+    this.RefreshItemState();
+    let target: ref<inkWidget> = evt.GetTarget();
+    let tooltip: String = GetLocalizedTextByKey(this.GetTooltipLocKey());
+    this.QueueEvent(RevisedBackpackAmmoButtonHoverOverEvent.Create(target, tooltip));
+  }
+  protected cb func OnHoverOut(evt: ref<inkPointerEvent>) -> Bool {
+    this.hovered = false;
+    this.RefreshItemState();
+    this.QueueEvent(RevisedBackpackAmmoHoverOutEvent.Create());
+  }
+  protected cb func OnClick(evt: ref<inkPointerEvent>) -> Bool {
+    if evt.IsAction(n"click") {
+      this.PlaySound(n"Button", n"OnPress");
+      this.QueueEvent(RevisedAmmoFilterSelectedEvent.Create(this.ammoId));
+    };
+  }
+  protected cb func OnRevisedAmmoFilterSelectedEvent(evt: ref<RevisedAmmoFilterSelectedEvent>) -> Bool {
+    this.selected = Equals(evt.ammoId, this.ammoId);
+    this.RefreshItemState();
+  }
+  protected cb func OnRevisedAmmoFilterResetEvent(evt: ref<RevisedAmmoFilterResetEvent>) -> Bool {
+      this.selected = false;
+      this.Log(s"Reset \(TDBID.ToStringDEBUG(this.ammoId)), selected: \(this.IsSelected())");
+      this.RefreshItemState();
+  }
+  public final func SetName(name: CName) -> Void {
+    this.GetRootCompoundWidget().SetName(name);
+  }
+  public final func SetCount(count: Int32) -> Void {
+    this.count = count;
+    this.RefreshCounter();
+  }
+  public final func SetAmmoId(ammoId: TweakDBID) -> Void {
+    this.ammoId = ammoId;
+    this.RefreshIcon();
+  }
+  public final func SetSelected(selected: Bool) -> Void {
+    this.selected = selected;
+  }
+  public final func IsSelected() -> Bool {
+    return this.selected;
+  }
+  private final func RefreshItemState() -> Void {
+    this.Log(s"RefreshItemState for \(TDBID.ToStringDEBUG(this.ammoId)), selected: \(this.IsSelected())");
+    let frameColor: CName;
+    if this.hovered || this.selected {
+      frameColor = n"MainColors.ActiveBlue";
+    } else {
+      frameColor = n"MainColors.MildRed";
+    };
+    let iconColor: CName;
+    if this.hovered || this.selected {
+      iconColor = n"MainColors.Blue";
+    } else {
+      iconColor = n"MainColors.MildRed";
+    };
+    let counterBgColor: CName;
+    if this.hovered || this.selected {
+      counterBgColor = n"MainColors.FaintBlue";
+    } else {
+      counterBgColor = n"MainColors.FaintRed";
+    };
+    this.buttonFrame.BindProperty(n"tintColor", frameColor);
+    this.buttonIcon.BindProperty(n"tintColor", iconColor);
+    this.counterBg.BindProperty(n"tintColor", counterBgColor);
+  }
+  private final func RefreshCounter() -> Void {
+    let container: ref<inkCanvas> = this.GetRootCompoundWidget().GetWidgetByPathName(n"counterContainer") as inkCanvas;
+    let counter: ref<inkText> = this.GetRootCompoundWidget().GetWidgetByPathName(n"counterContainer/counterText") as inkText;
+    let width: Float;
+    if this.count < 10 {
+      width = 44.0;
+    } else if this.count >= 10 && this.count < 99 {
+      width = 55.0;
+    } else if this.count >= 99 && this.count < 999 {
+      width = 66.0;
+    } else {
+      width = 88.0;
+    };
+    container.SetWidth(width);
+    if this.count <= 999 {
+      counter.SetText(s"\(this.count)");
+    } else {
+      counter.SetText("999+");
+    };
+  }
+  private final func RegisterInputListeners() -> Void {
+    this.RegisterToCallback(n"OnEnter", this, n"OnHoverOver");
+    this.RegisterToCallback(n"OnLeave", this, n"OnHoverOut");
+    this.RegisterToCallback(n"OnRelease", this, n"OnClick");
+  }
+  private final func UnregisterInputListeners() -> Void {
+    this.UnregisterFromCallback(n"OnEnter", this, n"OnRelease");
+    this.UnregisterFromCallback(n"OnLeave", this, n"OnHoverOut");
+    this.UnregisterFromCallback(n"OnRelease", this, n"OnClick");
+  }
+  private final func RefreshIcon() -> Void {
+    let icon: ref<inkImage> = this.GetRootCompoundWidget().GetWidgetByPathName(n"icon") as inkImage;
+    icon.SetTexturePart(this.GetIconPartName());
+  }
+  private final func GetIconPartName() -> CName {
+    switch this.ammoId {
+      case t"Ammo.HandgunAmmo": return n"ammo_handgun";
+      case t"Ammo.ShotgunAmmo": return n"ammo_shotgun";
+      case t"Ammo.RifleAmmo": return n"ammo_rifle";
+      case t"Ammo.SniperRifleAmmo": return n"ammo_sniper";
+    };
+    return n"ammo_handgun";
+  }
+  private final func GetTooltipLocKey() -> CName {
+    switch this.ammoId {
+      case t"Ammo.HandgunAmmo": return n"Story-base-gameplay-static_data-database-items-ammo-ammo-HandgunAmmo_displayName";
+      case t"Ammo.ShotgunAmmo": return n"Story-base-gameplay-static_data-database-items-ammo-ammo-ShotgunAmmo_displayName";
+      case t"Ammo.RifleAmmo": return n"Story-base-gameplay-static_data-database-items-ammo-ammo-RifleAmmo_displayName";
+      case t"Ammo.SniperRifleAmmo": return n"Story-base-gameplay-static_data-database-items-ammo-ammo-SniperRifleAmmo_displayName";
+    };
+    return n"Story-base-gameplay-static_data-database-items-ammo-ammo-HandgunAmmo_displayName";
+  }
+  private final func Log(str: String) -> Void {
+    if RevisedBackpackUtils.ShowRevisedBackpackLogs() {
+      ModLog(n"RevisedAmmoButton", str);
+    };
+  }
+}
 public class RevisedBackpackFiltersController extends inkLogicController {
   private let m_player: wref<PlayerPuppet>;
   private let m_delaySystem: wref<DelaySystem>;
+  private let m_transactionSystem: wref<TransactionSystem>;
   private let m_debounceCalbackId: DelayID;
   private let nameFilterInput: wref<HubTextInput>;
   private let typeFilterInput: wref<HubTextInput>;
@@ -2642,9 +2921,15 @@ public class RevisedBackpackFiltersController extends inkLogicController {
   private let buttonJunk: wref<RevisedFiltersButton>;
   private let buttonDisassemble: wref<RevisedFiltersButton>;
   private let buttonReset: wref<RevisedFiltersButton>;
+  private let ammoContainer: wref<inkWidget>;
+  private let ammoButtonHandgun: wref<RevisedBackpackFilterAmmoButton>;
+  private let ammoButtonShotgun: wref<RevisedBackpackFilterAmmoButton>;
+  private let ammoButtonRifle: wref<RevisedBackpackFilterAmmoButton>;
+  private let ammoButtonSniperRifle: wref<RevisedBackpackFilterAmmoButton>;
   private let m_animProxy: ref<inkAnimProxy>;
   private let nameInput: String = "";
   private let typeInput: String = "";
+  private let ammo: TweakDBID = t"";
   private let tier1Enabled: Bool = true;
   private let tier2Enabled: Bool = true;
   private let tier3Enabled: Bool = true;
@@ -2653,11 +2938,13 @@ public class RevisedBackpackFiltersController extends inkLogicController {
   private let resetAvailable: Bool = false;
   private let selectionAvailable: Bool = false;
   private let massActionsAvailable: Bool = false;
+  private let ammoFiltersAvailable: Bool = false;
   protected cb func OnInitialize() -> Bool {
-    this.BuildWidgetsLayout();
-    this.RegisterListeners();
     this.m_player = GetPlayer(GetGameInstance());
     this.m_delaySystem = GameInstance.GetDelaySystem(this.m_player.GetGame());
+    this.m_transactionSystem = GameInstance.GetTransactionSystem(this.m_player.GetGame());
+    this.BuildWidgetsLayout();
+    this.RegisterListeners();
   }
   protected cb func OnUninitialize() -> Bool {
     this.UnregisterListeners();
@@ -2716,7 +3003,9 @@ public class RevisedBackpackFiltersController extends inkLogicController {
   }
   protected cb func OnRevisedCategorySelectedEvent(evt: ref<RevisedCategorySelectedEvent>) -> Bool {
     this.selectionAvailable = NotEquals(evt.category.id, 10);
+    this.ammoFiltersAvailable = Equals(evt.category.id, 20);
     this.InvalidateMassActionsButtons();
+    this.UpdateAmmoFiltersVisibility();
   }
   protected cb func OnRevisedBackpackSelectedItemsCountChangedEvent(evt: ref<RevisedBackpackSelectedItemsCountChangedEvent>) -> Bool {
     this.massActionsAvailable = this.selectionAvailable && evt.count > 0;
@@ -2728,6 +3017,10 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     this.m_delaySystem.CancelCallback(this.m_debounceCalbackId);
     this.m_debounceCalbackId = this.m_delaySystem.DelayCallback(callback, 0.2, false);
   }
+  protected cb func OnRevisedAmmoFilterSelectedEvent(evt: ref<RevisedAmmoFilterSelectedEvent>) -> Bool {
+    this.ammo = evt.ammoId;
+    this.ApplyFilters();
+  }
   public final func ApplyFilters() -> Void {
     this.Log("ApplyFilters");
     this.InvalidateResetButtonState();
@@ -2738,6 +3031,7 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     this.PlaySound(n"ui_menu_onpress");
     this.nameInput = "";
     this.typeInput = "";
+    this.ammo = t"";
     this.tier1Enabled = true;
     this.tier2Enabled = true;
     this.tier3Enabled = true;
@@ -2745,6 +3039,7 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     this.tier5Enabled = true;
     this.nameFilterInput.SetText(this.nameInput);
     this.typeFilterInput.SetText(this.typeInput);
+    this.QueueEvent(RevisedAmmoFilterResetEvent.Create());
     this.InvalidateCheckboxes();
     this.InvalidateResetButtonState();
     this.BroadcastFiltersState();
@@ -2856,7 +3151,8 @@ public class RevisedBackpackFiltersController extends inkLogicController {
   private final func InvalidateResetButtonState() -> Void {
     let hasUncheckedCheckboxes: Bool = !this.tier1Enabled || !this.tier2Enabled || !this.tier3Enabled || !this.tier4Enabled || !this.tier5Enabled;
     let inputHasText: Bool = StrLen(this.nameInput) > 0 || StrLen(this.typeInput) > 0;
-    this.resetAvailable = hasUncheckedCheckboxes || inputHasText;
+    let hasAmmoToggled: Bool = NotEquals(this.ammo, t"");
+    this.resetAvailable = hasUncheckedCheckboxes || inputHasText || hasAmmoToggled;
     this.buttonReset.SetDisabled(!this.resetAvailable);
   }
   private final func InvalidateMassActionsButtons() -> Void {
@@ -2880,6 +3176,23 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     this.buttonsContainer.SetOpacity(start);
     let container: ref<inkAnimDef> = this.AnimateOpacity(0.2, start, end);
     this.m_animProxy = this.buttonsContainer.PlayAnimation(container);
+  }
+  private final func UpdateAmmoFiltersVisibility() -> Void {
+    if Equals(this.ammoFiltersAvailable, this.ammoContainer.IsVisible()) {
+      return;
+    };
+    let start: Float;
+    let end: Float;
+    if this.ammoFiltersAvailable {
+      start = 0.0;
+      end = 1.0;
+    } else {
+      start = 1.0;
+      end = 0.0;
+    };
+    this.ammoContainer.SetOpacity(start);
+    let container: ref<inkAnimDef> = this.AnimateOpacity(0.2, start, end);
+    this.m_animProxy = this.ammoContainer.PlayAnimation(container);
   }
   private final func InvalidateCheckboxes() -> Void {
     if NotEquals(this.checkboxTier1Thumb.IsVisible(), this.tier1Enabled) {
@@ -2922,8 +3235,8 @@ public class RevisedBackpackFiltersController extends inkLogicController {
       ArrayPush(tiers, gamedataQuality.CommonPlus);
       ArrayPush(tiers, gamedataQuality.Common);
     };
-    let event: ref<RevisedFilteringEvent> = RevisedFilteringEvent.Create(this.nameInput, this.typeInput, tiers, filtersReset);
-    this.Log(s"BroadcastFiltersState with [\(this.nameInput)] and [\(this.typeInput)]");
+    let event: ref<RevisedFilteringEvent> = RevisedFilteringEvent.Create(this.nameInput, this.typeInput, tiers, this.ammo, filtersReset);
+    this.Log(s"BroadcastFiltersState with [\(this.nameInput)] and [\(this.typeInput)], and tiers \(ArraySize(tiers)), and ammo \(TDBID.ToStringDEBUG(this.ammo))");
     this.QueueEvent(event);
   }
   private final func BuildWidgetsLayout() -> Void {
@@ -3012,6 +3325,53 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     buttonDisassemble.SetAsDangerous();
     buttonDisassemble.Reparent(rightColumn);
     this.buttonDisassemble = buttonDisassemble;
+    let ammoColumn: ref<inkVerticalPanel> = new inkVerticalPanel();
+    ammoColumn.SetName(n"ammoColumn");
+    ammoColumn.SetOpacity(0.0);
+    ammoColumn.SetAffectsLayoutWhenHidden(true);
+    ammoColumn.SetMargin(new inkMargin(64.0, 0.0, 0.0, 0.0));
+    ammoColumn.Reparent(outerContainer);
+    this.ammoContainer = ammoColumn;
+    let ammoRow1: ref<inkHorizontalPanel> = new inkHorizontalPanel();
+    ammoRow1.SetName(n"ammoRow1");
+    ammoRow1.SetChildMargin(new inkMargin(48.0, 0.0, 0.0, 48.0));
+    ammoRow1.Reparent(ammoColumn);
+    let handgunAmmoQuery: ItemID = ItemID.CreateQuery(t"Ammo.HandgunAmmo");
+    let handgunCount: Int32 = this.m_transactionSystem.GetItemQuantity(this.m_player, handgunAmmoQuery);
+    let ammoHandgun: ref<RevisedBackpackFilterAmmoButton> = new RevisedBackpackFilterAmmoButton();
+    ammoHandgun.SetName(n"ammoHandgun");
+    ammoHandgun.SetAmmoId(t"Ammo.HandgunAmmo");
+    ammoHandgun.SetCount(handgunCount);
+    ammoHandgun.Reparent(ammoRow1);
+    this.ammoButtonHandgun = ammoHandgun;
+    let shotgunAmmoQuery: ItemID = ItemID.CreateQuery(t"Ammo.ShotgunAmmo");
+    let shotgunCount: Int32 = this.m_transactionSystem.GetItemQuantity(this.m_player, shotgunAmmoQuery);
+    let ammoShotgun: ref<RevisedBackpackFilterAmmoButton> = new RevisedBackpackFilterAmmoButton();
+    ammoShotgun.SetName(n"ammoShotgun");
+    ammoShotgun.SetAmmoId(t"Ammo.ShotgunAmmo");
+    ammoShotgun.SetCount(shotgunCount);
+    ammoShotgun.Reparent(ammoRow1);
+    this.ammoButtonShotgun = ammoShotgun;
+    let ammoRow2: ref<inkHorizontalPanel> = new inkHorizontalPanel();
+    ammoRow2.SetName(n"ammoRow2");
+    ammoRow2.SetChildMargin(new inkMargin(48.0, 0.0, 0.0, 48.0));
+    ammoRow2.Reparent(ammoColumn);
+    let rifleAmmoQuery: ItemID = ItemID.CreateQuery(t"Ammo.RifleAmmo");
+    let rifleCount: Int32 = this.m_transactionSystem.GetItemQuantity(this.m_player, rifleAmmoQuery);
+    let ammoRifle: ref<RevisedBackpackFilterAmmoButton> = new RevisedBackpackFilterAmmoButton();
+    ammoRifle.SetName(n"ammoRifle");
+    ammoRifle.SetAmmoId(t"Ammo.RifleAmmo");
+    ammoRifle.SetCount(rifleCount);
+    ammoRifle.Reparent(ammoRow2);
+    this.ammoButtonRifle = ammoRifle;
+    let sniperRifleAmmoQuery: ItemID = ItemID.CreateQuery(t"Ammo.SniperRifleAmmo");
+    let sniperRifleCount: Int32 = this.m_transactionSystem.GetItemQuantity(this.m_player, sniperRifleAmmoQuery);
+    let ammoSniperRifle: ref<RevisedBackpackFilterAmmoButton> = new RevisedBackpackFilterAmmoButton();
+    ammoSniperRifle.SetName(n"ammoSniperRifle");
+    ammoSniperRifle.SetAmmoId(t"Ammo.SniperRifleAmmo");
+    ammoSniperRifle.SetCount(sniperRifleCount);
+    ammoSniperRifle.Reparent(ammoRow2);
+    this.ammoButtonSniperRifle = ammoSniperRifle;
   }
   private final func BuildCheckbox(name: CName, displayNameKey: CName, initial: Bool) -> ref<inkCompoundWidget> {
     // Common container
@@ -3298,7 +3658,7 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     } else {
       this.m_customJunkContainer.SetOpacity(0.1);
     };
-    this.Log(s"RefreshView for \(this.m_item.nameLabel), selected \(this.m_item.GetSelectedFlag()), custom junk \(this.m_item.GetCustomJunkFlag())))");
+    // this.Log(s"RefreshView for \(this.m_item.nameLabel), selected \(this.m_item.GetSelectedFlag()), custom junk \(this.m_item.GetCustomJunkFlag())))");
   }
   private final func Log(str: String) -> Void {
     if RevisedBackpackUtils.ShowRevisedBackpackLogs() {
@@ -3757,27 +4117,27 @@ public class RevisedCompareBuilder extends IScriptable {
     return this;
   }
   public final func QualityAsc() -> ref<RevisedCompareBuilder> {
-    this.m_compareBuilder.IntAsc(this.m_sortData1.tierValue, this.m_sortData2.tierValue);
+    this.m_compareBuilder.IntAsc(this.m_sortData2.tierValue, this.m_sortData1.tierValue);
     return this;
   }
   public final func QualityDesc() -> ref<RevisedCompareBuilder> {
-    this.m_compareBuilder.IntDesc(this.m_sortData1.tierValue, this.m_sortData2.tierValue);
+    this.m_compareBuilder.IntDesc(this.m_sortData2.tierValue, this.m_sortData1.tierValue);
     return this;
   }
   public final func PriceAsc() -> ref<RevisedCompareBuilder> {
-    this.m_compareBuilder.FloatAsc(this.m_sortData1.price, this.m_sortData2.price);
+    this.m_compareBuilder.FloatAsc(this.m_sortData2.price, this.m_sortData1.price);
     return this;
   }
   public final func PriceDesc() -> ref<RevisedCompareBuilder> {
-    this.m_compareBuilder.FloatDesc(this.m_sortData1.price, this.m_sortData2.price);
+    this.m_compareBuilder.FloatDesc(this.m_sortData2.price, this.m_sortData1.price);
     return this;
   }
   public final func WeightAsc() -> ref<RevisedCompareBuilder> {
-    this.m_compareBuilder.FloatAsc(this.m_sortData1.weight, this.m_sortData2.weight);
+    this.m_compareBuilder.FloatAsc(this.m_sortData2.weight, this.m_sortData1.weight);
     return this;
   }
   public final func WeightDesc() -> ref<RevisedCompareBuilder> {
-    this.m_compareBuilder.FloatDesc(this.m_sortData1.weight, this.m_sortData2.weight);
+    this.m_compareBuilder.FloatDesc(this.m_sortData2.weight, this.m_sortData1.weight);
     return this;
   }
   public final func DpsAsc() -> ref<RevisedCompareBuilder> {
@@ -3789,7 +4149,7 @@ public class RevisedCompareBuilder extends IScriptable {
     if this.m_sortData2.isWeapon {
       rightValue = this.m_sortData2.dps;
     };
-    this.m_compareBuilder.FloatAsc(leftValue, rightValue);
+    this.m_compareBuilder.FloatAsc(rightValue, leftValue);
     return this;
   }
   public final func DpsDesc() -> ref<RevisedCompareBuilder> {
@@ -3801,7 +4161,7 @@ public class RevisedCompareBuilder extends IScriptable {
     if this.m_sortData2.isWeapon {
       rightValue = this.m_sortData2.dps;
     };
-    this.m_compareBuilder.FloatDesc(leftValue, rightValue);
+    this.m_compareBuilder.FloatDesc(rightValue, leftValue);
     return this;
   }
   public final func DamagePerShotAsc() -> ref<RevisedCompareBuilder> {
@@ -3813,7 +4173,7 @@ public class RevisedCompareBuilder extends IScriptable {
     if this.m_sortData2.isWeapon {
       rightValue = this.m_sortData2.damagePerShot;
     };
-    this.m_compareBuilder.FloatAsc(leftValue, rightValue);
+    this.m_compareBuilder.FloatAsc(rightValue, leftValue);
     return this;
   }
   public final func DamagePerShotDesc() -> ref<RevisedCompareBuilder> {
@@ -3825,7 +4185,7 @@ public class RevisedCompareBuilder extends IScriptable {
     if this.m_sortData2.isWeapon {
       rightValue = this.m_sortData2.damagePerShot;
     };
-    this.m_compareBuilder.FloatDesc(leftValue, rightValue);
+    this.m_compareBuilder.FloatDesc(rightValue, leftValue);
     return this;
   }
   public final func RangeAsc() -> ref<RevisedCompareBuilder> {
@@ -3837,7 +4197,7 @@ public class RevisedCompareBuilder extends IScriptable {
     if this.m_sortData2.isWeapon {
       rightValue = this.m_sortData2.range;
     };
-    this.m_compareBuilder.IntAsc(leftValue, rightValue);
+    this.m_compareBuilder.IntAsc(rightValue, leftValue);
     return this;
   }
   public final func RangeDesc() -> ref<RevisedCompareBuilder> {
@@ -3849,7 +4209,7 @@ public class RevisedCompareBuilder extends IScriptable {
     if this.m_sortData2.isWeapon {
       rightValue = this.m_sortData2.range;
     };
-    this.m_compareBuilder.IntDesc(leftValue, rightValue);
+    this.m_compareBuilder.IntDesc(rightValue, leftValue);
     return this;
   }
   public final func QuestAsc() -> ref<RevisedCompareBuilder> {
