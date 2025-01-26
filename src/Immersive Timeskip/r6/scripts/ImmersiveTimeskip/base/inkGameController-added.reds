@@ -27,12 +27,16 @@ public func ShowTimeSkipNotAvailableNotification() -> Void {
 @addMethod(inkGameController)
 protected cb func OnOpenTimeSkipMenuEvent(evt: ref<OpenTimeSkipMenuEvent>) -> Bool {
   let player: ref<PlayerPuppet>;
+  let preGame: Bool;
   if this.IsA(n"gameuiRootHudGameController") {
-    player = this.GetPlayerControlledObject() as PlayerPuppet;
-    if ITSUtils.IsTimeskipAvailable(player) {
-      this.ShowTimeSkipPopup();
-    } else {
-      this.ShowTimeSkipNotAvailableNotification();
+    preGame = this.GetSystemRequestsHandler().IsPreGame();
+    if !preGame {
+      player = this.GetPlayerControlledObject() as PlayerPuppet;
+      if ITSUtils.IsTimeskipAvailable(player) {
+        this.ShowTimeSkipPopup();
+      } else {
+        this.ShowTimeSkipNotAvailableNotification();
+      };
     };
   };
 }
