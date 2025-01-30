@@ -1,4 +1,4 @@
-// RevisedBackpack v0.9.6
+// RevisedBackpack v0.9.8
 module RevisedBackpack
 
 import Codeware.UI.HubTextInput
@@ -953,8 +953,6 @@ public class RevisedBackpackController extends gameuiMenuGameController {
         this.RequestSetFocus(null);
       };
     };
-    // down_button called first, UI_MoveDown called second, then revised_nav_down
-    // UI_MoveUp called first, up_button called second, then revised_nav_up
     if evt.IsAction(n"revised_nav_up") { 
       this.TryToSelectPreviousItem();
     };

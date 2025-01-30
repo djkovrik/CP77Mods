@@ -179,8 +179,6 @@ public class RevisedBackpackController extends gameuiMenuGameController {
       };
     };
 
-    // down_button called first, UI_MoveDown called second, then revised_nav_down
-    // UI_MoveUp called first, up_button called second, then revised_nav_up
     if evt.IsAction(n"revised_nav_up") { 
       this.TryToSelectPreviousItem();
     };
