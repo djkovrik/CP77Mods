@@ -277,23 +277,23 @@ public class CarDealerContentController extends inkGameController {
 
   // Register buttons listeners
   protected func RegisterDealerListeners() -> Void {
-    this.buttonPrev.RegisterToCallback(n"OnClick", this, n"OnDealerButtonClick");
+    this.buttonPrev.RegisterToCallback(n"OnPress", this, n"OnDealerButtonClick");
     this.buttonPrev.RegisterToCallback(n"OnEnter", this, n"OnDealerButtonEnter");
     this.buttonPrev.RegisterToCallback(n"OnLeave", this, n"OnDealerButtonLeave");
 
-    this.buttonNext.RegisterToCallback(n"OnClick", this, n"OnDealerButtonClick");
+    this.buttonNext.RegisterToCallback(n"OnPress", this, n"OnDealerButtonClick");
     this.buttonNext.RegisterToCallback(n"OnEnter", this, n"OnDealerButtonEnter");
     this.buttonNext.RegisterToCallback(n"OnLeave", this, n"OnDealerButtonLeave");
 
-    this.buttonBuy.RegisterToCallback(n"OnClick", this, n"OnDealerButtonClick");
+    this.buttonBuy.RegisterToCallback(n"OnPress", this, n"OnDealerButtonClick");
     this.buttonBuy.RegisterToCallback(n"OnEnter", this, n"OnDealerButtonEnter");
     this.buttonBuy.RegisterToCallback(n"OnLeave", this, n"OnDealerButtonLeave");
 
-    this.buttonColor.RegisterToCallback(n"OnClick", this, n"OnDealerButtonClick");
+    this.buttonColor.RegisterToCallback(n"OnPress", this, n"OnDealerButtonClick");
     this.buttonColor.RegisterToCallback(n"OnEnter", this, n"OnDealerButtonEnter");
     this.buttonColor.RegisterToCallback(n"OnLeave", this, n"OnDealerButtonLeave");
 
-    this.buttonFixer.RegisterToCallback(n"OnClick", this, n"OnDealerButtonClick");
+    this.buttonFixer.RegisterToCallback(n"OnPress", this, n"OnDealerButtonClick");
     this.buttonFixer.RegisterToCallback(n"OnEnter", this, n"OnDealerButtonEnter");
     this.buttonFixer.RegisterToCallback(n"OnLeave", this, n"OnDealerButtonLeave");
   }
@@ -301,20 +301,20 @@ public class CarDealerContentController extends inkGameController {
   // Handle click
   protected cb func OnDealerButtonClick(evt: ref<inkPointerEvent>) -> Bool {
     let targetName: CName = evt.GetTarget().GetName();
+
     if evt.IsAction(n"click") {
+      this.PlayCustomSoundDealer(n"ui_menu_onpress");
+
       switch targetName {
         case n"ButtonPrev":
           this.PreviousDealerLot();
-          this.PlayCustomSoundDealer(n"ui_menu_onpress");
           break;
         case n"ButtonNext":
           this.NextDealerLot();
-          this.PlayCustomSoundDealer(n"ui_menu_onpress");
           break;
         case n"ButtonColor":
           if NotEquals(this.vehicleVariantLastIndex, 0) {
             this.NextDealerColor();
-            this.PlayCustomSoundDealer(n"ui_menu_onpress");
           };
           break;
         case n"ButtonBuy":
@@ -329,27 +329,24 @@ public class CarDealerContentController extends inkGameController {
 
   // Handle hover in
   protected cb func OnDealerButtonEnter(evt: ref<inkPointerEvent>) -> Bool {
+    this.PlayCustomSoundDealer(n"ui_menu_hover");
+
     let targetName: CName = evt.GetTarget().GetName();
     switch targetName {
       case n"ButtonPrev":
         this.buttonPrev.SetHoveredState(true);
-        this.PlayCustomSoundDealer(n"ui_menu_hover");
         break;
       case n"ButtonNext":
         this.buttonNext.SetHoveredState(true);
-        this.PlayCustomSoundDealer(n"ui_menu_hover");
         break;
       case n"ButtonBuy":
         this.buttonBuy.SetHoveredState(true);
-        this.PlayCustomSoundDealer(n"ui_menu_hover");
         break;
       case n"ButtonColor":
         this.buttonColor.SetHoveredState(true);
-        this.PlayCustomSoundDealer(n"ui_menu_hover");
         break;
       case n"ButtonFixer":
         this.buttonFixer.SetHoveredState(true);
-        this.PlayCustomSoundDealer(n"ui_menu_hover");
         break;
     };
   }
