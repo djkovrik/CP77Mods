@@ -146,18 +146,12 @@ protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
       break;
     case LHUDEventType.Combat: 
       this.lhud_isCombatActive = evt.isActive;
-      // this.lhud_isOutOfCombatActive = false;
-      // this.lhud_isStealthActive = false;
       break;
     case LHUDEventType.OutOfCombat: 
       this.lhud_isOutOfCombatActive = evt.isActive;
-      // this.lhud_isCombatActive = false;
-      // this.lhud_isStealthActive = false;
       break;
     case LHUDEventType.Stealth: 
       this.lhud_isStealthActive = evt.isActive;
-      // this.lhud_isCombatActive = false;
-      // this.lhud_isOutOfCombatActive = false;
       break; 
     case LHUDEventType.Scanner: 
       this.lhud_isScannerActive = evt.isActive;
@@ -207,18 +201,12 @@ protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
       break;
     case LHUDEventType.Combat: 
       this.lhud_isCombatActive = evt.isActive;
-      // this.lhud_isOutOfCombatActive = false;
-      // this.lhud_isStealthActive = false;
       break;
     case LHUDEventType.OutOfCombat: 
       this.lhud_isOutOfCombatActive = evt.isActive;
-      // this.lhud_isCombatActive = false;
-      // this.lhud_isStealthActive = false;
       break;
     case LHUDEventType.Stealth:
       this.lhud_isStealthActive = evt.isActive;
-      // this.lhud_isCombatActive = false;
-      // this.lhud_isOutOfCombatActive = false;
       break; 
     case LHUDEventType.Scanner: 
       this.lhud_isScannerActive = evt.isActive;
@@ -252,18 +240,12 @@ protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
       break;
     case LHUDEventType.Combat: 
       this.lhud_isCombatActive = evt.isActive;
-      // this.lhud_isOutOfCombatActive = false;
-      // this.lhud_isStealthActive = false;
       break;
     case LHUDEventType.OutOfCombat: 
       this.lhud_isOutOfCombatActive = evt.isActive;
-      // this.lhud_isCombatActive = false;
-      // this.lhud_isStealthActive = false;
       break;
     case LHUDEventType.Stealth: 
       this.lhud_isStealthActive = evt.isActive;
-      // this.lhud_isCombatActive = false;
-      // this.lhud_isOutOfCombatActive = false;
       break; 
     case LHUDEventType.Scanner: 
       this.lhud_isScannerActive = evt.isActive;
@@ -325,7 +307,7 @@ private final const func EnablePlayerTPPRepresenation(enable: Bool) -> Void {
   wrappedMethod(enable);
   let playerPuppet: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(this.GetGameInstance()).GetLocalPlayerControlledGameObject() as PlayerPuppet;
   if !enable && IsDefined(playerPuppet) {
-    GameInstance.GetDelaySystem(playerPuppet.GetGame()).DelayEvent(playerPuppet, new LHUDInitLaunchEvent(), 2.0);
+    playerPuppet.InitializeLHUD(1.0);
   };
 }
 
@@ -340,7 +322,6 @@ public func QueueLHUDEvent(type: LHUDEventType, active: Bool) -> Void {
   };
 }
 
-
 @addMethod(PlayerPuppet)
 public func QueueLHUDEvent(type: LHUDEventType, active: Bool) -> Void {
   let evt: ref<LHUDEvent> = new LHUDEvent();
@@ -348,6 +329,7 @@ public func QueueLHUDEvent(type: LHUDEventType, active: Bool) -> Void {
   evt.isActive = active;
   GameInstance.GetUISystem(this.GetGame()).QueueEvent(evt);
   LHUDLogDebug(" -> Queue event: " + ToString(type) + " " + ToString(active));
+  LHUDLogStartup(" -> Queue event: " + ToString(type) + " " + ToString(active));
 }
 
 // Check if player has any weapon equipped
@@ -381,5 +363,9 @@ public static func LHUDLogMarker(str: String) -> Void {
 }
 
 public static func LHUDLogDebug(str: String) -> Void {
+  // ModLog(n"LHUD", "LHUD: " + str);
+}
+
+public static func LHUDLogStartup(str: String) -> Void {
   // ModLog(n"LHUD", "LHUD: " + str);
 }

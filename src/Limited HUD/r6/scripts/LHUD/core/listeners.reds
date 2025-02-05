@@ -8,7 +8,7 @@ public class LHUDInputListener {
 
   // Store player instance
   public func SetPlayerInstance(player: ref<PlayerPuppet>) -> Void {
-    LHUDLogDebug("-- LHUDInputListener initialized");
+    LHUDLogStartup("-- LHUDInputListener initialized");
     this.playerInstance = player;
   }
 
@@ -63,7 +63,7 @@ public class LHUDBlackboardsListener {
 
   // Initialise blackboards
   public func InitializeData(player: ref<PlayerPuppet>) -> Void {
-    LHUDLogDebug("-- LHUDBlackboardsListener::InitializeData");
+    LHUDLogStartup("-- LHUDBlackboardsListener::InitializeData");
     this.playerInstance = player;
     this.bbDefs = GetAllBlackboardDefs();
     this.braindanceBlackboard = GameInstance.GetBlackboardSystem(player.GetGame()).Get(this.bbDefs.Braindance);
@@ -77,9 +77,14 @@ public class LHUDBlackboardsListener {
     this.delaySystem = GameInstance.GetDelaySystem(player.GetGame());
   }
 
+  public func UninitializeData() -> Void {
+    this.delaySystem.CancelCallback(this.delayId);
+    this.playerInstance = null;
+  }
+
   // Register listeners
   public func RegisterListeners() -> Void {
-    LHUDLogDebug("-- LHUDBlackboardsListener::RegisterListeners");
+    LHUDLogStartup("-- LHUDBlackboardsListener::RegisterListeners");
     this.globalHotkeyCallback = this.uiSystemBlackboard.RegisterListenerBool(this.bbDefs.UI_System.IsGlobalFlagToggled_LHUD, this, n"OnGlobalToggle");
     this.minimapHotkeyCallback = this.uiSystemBlackboard.RegisterListenerBool(this.bbDefs.UI_System.IsMinimapToggled_LHUD, this, n"OnMinimapToggle");
     this.braindanceCallback = this.braindanceBlackboard.RegisterListenerBool(this.bbDefs.Braindance.IsActive, this, n"OnBraindanceToggle");
@@ -96,7 +101,7 @@ public class LHUDBlackboardsListener {
 
   // Unregister listeners
   public func UnregisterListeners() -> Void {
-    LHUDLogDebug("-- LHUDBlackboardsListener::UnregisterListeners");
+    LHUDLogStartup("-- LHUDBlackboardsListener::UnregisterListeners");
     this.uiSystemBlackboard.UnregisterListenerBool(this.bbDefs.UI_System.IsGlobalFlagToggled_LHUD, this.globalHotkeyCallback);
     this.uiSystemBlackboard.UnregisterListenerBool(this.bbDefs.UI_System.IsMinimapToggled_LHUD, this.minimapHotkeyCallback);
     this.braindanceBlackboard.UnregisterListenerBool(this.bbDefs.Braindance.IsActive, this.braindanceCallback);
@@ -115,11 +120,11 @@ public class LHUDBlackboardsListener {
 
   // Trigger events which required to get some initial state
   public func LaunchInitialStateEvents() -> Void {
-    LHUDLogDebug("-- InitialStateEvent - schedule callback");
+    LHUDLogStartup("-- InitialStateEvent - schedule callback");
     let callback: ref<LHUDLaunchCallback> = new LHUDLaunchCallback();
     callback.bbListener = this;
     this.delaySystem.CancelCallback(this.delayId);
-    this.delayId = this.delaySystem.DelayCallback(callback, 0.5);
+    this.delayId = this.delaySystem.DelayCallback(callback, 1.0);
   }
 
   // Global hotkey bb callback
@@ -214,13 +219,16 @@ public class LHUDLaunchCallback extends DelayCallback {
   public let bbListener: wref<LHUDBlackboardsListener>;
 
   public func Call() -> Void {
-    LHUDLogDebug("-- InitialStateEvent - execute callback");
+    LHUDLogStartup("-- InitialStateEvent - execute callback");
     let listener: ref<LHUDBlackboardsListener> = this.bbListener;
     let globalToggled: Bool = listener.uiSystemBlackboard.GetBool(listener.bbDefs.UI_System.IsGlobalFlagToggled_LHUD);
     let minimapToggled: Bool = listener.uiSystemBlackboard.GetBool(listener.bbDefs.UI_System.IsMinimapToggled_LHUD);
     listener.OnCombatStateChanged(listener.stateMachineBlackboard.GetInt(listener.bbDefs.PlayerStateMachine.Combat));
-    listener.OnWeaponStateChanged(listener.playerInstance.HasAnyWeaponEquipped_LHUD());
     listener.OnMountedStateChanged(VehicleComponent.IsMountedToVehicle(listener.playerInstance.GetGame(), listener.playerInstance));
+    listener.OnPlayerVehicleStateChange(listener.stateMachineBlackboard.GetInt(listener.bbDefs.PlayerStateMachine.Vehicle));
+    listener.OnWeaponStateChanged(listener.playerInstance.HasAnyWeaponEquipped_LHUD());
+    listener.OnCrouchChanged(listener.stateMachineBlackboard.GetInt(listener.bbDefs.PlayerStateMachine.Locomotion));
+    listener.OnMetroStateChanged(listener.uiSystemBlackboard.GetBool(listener.bbDefs.UI_System.IsInMetro_LHUD));
     listener.OnGlobalToggle(globalToggled);
     listener.OnMinimapToggle(minimapToggled);
   }
@@ -259,16 +267,17 @@ public let blabockardsListenerLHUD: ref<LHUDBlackboardsListener>;
 
 @wrapMethod(HUDManager)
 private final func PlayerAttachedCallback(playerPuppet: ref<GameObject>) -> Void {
-    wrappedMethod(playerPuppet);
-    let player: ref<PlayerPuppet> = playerPuppet as PlayerPuppet;
-    // Hotkeys listener
-    this.inputListenerLHUD = new LHUDInputListener();
-    this.inputListenerLHUD.SetPlayerInstance(player);
-    player.RegisterInputListener(this.inputListenerLHUD);
-    // Blackborards listener
-    this.blabockardsListenerLHUD = new LHUDBlackboardsListener();
-    this.blabockardsListenerLHUD.InitializeData(player);
-    this.blabockardsListenerLHUD.RegisterListeners();
+  wrappedMethod(playerPuppet);
+
+  let player: ref<PlayerPuppet> = playerPuppet as PlayerPuppet;
+  // Hotkeys listener
+  this.inputListenerLHUD = new LHUDInputListener();
+  this.inputListenerLHUD.SetPlayerInstance(player);
+  player.RegisterInputListener(this.inputListenerLHUD);
+  // Blackborards listener
+  this.blabockardsListenerLHUD = new LHUDBlackboardsListener();
+  this.blabockardsListenerLHUD.InitializeData(player);
+  this.blabockardsListenerLHUD.RegisterListeners();
 }
 
 @wrapMethod(HUDManager)
@@ -277,6 +286,7 @@ private final func PlayerDetachedCallback(playerPuppet: ref<GameObject>) -> Void
   player.UnregisterInputListener(this.inputListenerLHUD);
   this.inputListenerLHUD = null;
   this.blabockardsListenerLHUD.UnregisterListeners();
+  this.blabockardsListenerLHUD.UninitializeData();
   this.blabockardsListenerLHUD = null;
   wrappedMethod(playerPuppet);
 }
@@ -285,6 +295,7 @@ private final func PlayerDetachedCallback(playerPuppet: ref<GameObject>) -> Void
 
 @addMethod(inkGameController)
 protected cb func OnInitializeFinished() -> Void {
+  LHUDLogStartup("LaunchInitialStateEvents - inkGameController -> OnInitializeFinished");
   let manager: ref<HUDManager> = GameInstance.GetScriptableSystemsContainer(this.GetPlayerControlledObject().GetGame()).Get(n"HUDManager") as HUDManager;
   manager.blabockardsListenerLHUD.LaunchInitialStateEvents();
 }
@@ -292,20 +303,29 @@ protected cb func OnInitializeFinished() -> Void {
 @addField(PlayerPuppet)
 private let lhud_initEvent: DelayID;
 
+@addMethod(PlayerPuppet)
+public final func InitializeLHUD(delay: Float) -> Void {
+  let delaySystem: ref<DelaySystem> = GameInstance.GetDelaySystem(this.GetGame());
+  delaySystem.CancelDelay(this.lhud_initEvent);
+  this.lhud_initEvent = delaySystem.DelayEvent(this, new LHUDInitLaunchEvent(), delay);
+}
+
 @wrapMethod(PlayerPuppet)
 protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpawn>) -> Bool {
   wrappedMethod(evt);
-  this.lhud_initEvent = GameInstance.GetDelaySystem(this.GetGame()).DelayEvent(this, new LHUDInitLaunchEvent(), 1.0);
+  this.InitializeLHUD(1.0);
 }
 
 @addMethod(PlayerPuppet)
 protected cb func OnLHUDInitLaunchEvent(evt: ref<LHUDInitLaunchEvent>) -> Bool {
+  LHUDLogStartup("LaunchInitialStateEvents - PlayerPuppet -> OnLHUDInitLaunchEvent");
   let manager: ref<HUDManager> = GameInstance.GetScriptableSystemsContainer(this.GetGame()).Get(n"HUDManager") as HUDManager;
   manager.blabockardsListenerLHUD.LaunchInitialStateEvents();
 }
 
 @wrapMethod(PauseMenuGameController)
 protected cb func OnUninitialize() -> Bool {
+  LHUDLogStartup("LaunchInitialStateEvents - PauseMenuGameController -> OnUninitialize");
   let manager: ref<HUDManager> = GameInstance.GetScriptableSystemsContainer(this.GetPlayerControlledObject().GetGame()).Get(n"HUDManager") as HUDManager;
   manager.blabockardsListenerLHUD.LaunchInitialStateEvents();
   wrappedMethod();
