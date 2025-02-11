@@ -79,6 +79,7 @@ protected cb func OnUpdateHealthBarVisibility() -> Bool {
 
   if isVisible {
     this.ShowRequest();
+    this.GetRootCompoundWidget().SetOpacity(this.lhudConfig.Opacity);
   } else {
     this.HideRequest();
   };

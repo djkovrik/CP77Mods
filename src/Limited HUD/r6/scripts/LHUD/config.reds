@@ -70,6 +70,16 @@ public class ActionButtonsModuleConfig {
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Cooldown")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Cooldown-Desc")
   let ShowAtCooldown: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Action-Buttons")
+  @runtimeProperty("ModSettings.category.order", "1")
+  @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Opacity")
+  @runtimeProperty("ModSettings.description", "Addons-LHUD-Opacity-Desc")
+  @runtimeProperty("ModSettings.step", "0.1")
+  @runtimeProperty("ModSettings.min", "0.0")
+  @runtimeProperty("ModSettings.max", "1.0")
+  let Opacity: Float = 1.0;
 }
 
 public class CrouchIndicatorModuleConfig {
@@ -128,6 +138,16 @@ public class CrouchIndicatorModuleConfig {
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Area")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Area-Desc")
   let ShowInDangerArea: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Crouch-Indicator")
+  @runtimeProperty("ModSettings.category.order", "2")
+  @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Opacity")
+  @runtimeProperty("ModSettings.description", "Addons-LHUD-Opacity-Desc")
+  @runtimeProperty("ModSettings.step", "0.1")
+  @runtimeProperty("ModSettings.min", "0.0")
+  @runtimeProperty("ModSettings.max", "1.0")
+  let Opacity: Float = 1.0;
 }
 
 public class WeaponRosterModuleConfig {
@@ -186,6 +206,16 @@ public class WeaponRosterModuleConfig {
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Area")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Area-Desc")
   let ShowInDangerArea: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Weapon-Roster")
+  @runtimeProperty("ModSettings.category.order", "3")
+  @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Opacity")
+  @runtimeProperty("ModSettings.description", "Addons-LHUD-Opacity-Desc")
+  @runtimeProperty("ModSettings.step", "0.1")
+  @runtimeProperty("ModSettings.min", "0.0")
+  @runtimeProperty("ModSettings.max", "1.0")
+  let Opacity: Float = 1.0;
 }
 
 public class HintsModuleConfig {
@@ -258,6 +288,16 @@ public class HintsModuleConfig {
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Metro")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Metro-Desc")
   let ShowInMetro: Bool = true;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Hotkey-Hints")
+  @runtimeProperty("ModSettings.category.order", "4")
+  @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Opacity")
+  @runtimeProperty("ModSettings.description", "Addons-LHUD-Opacity-Desc")
+  @runtimeProperty("ModSettings.step", "0.1")
+  @runtimeProperty("ModSettings.min", "0.0")
+  @runtimeProperty("ModSettings.max", "1.0")
+  let Opacity: Float = 1.0;
 }
 
 public class MinimapModuleConfig {
@@ -341,8 +381,8 @@ public class MinimapModuleConfig {
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Minimap")
   @runtimeProperty("ModSettings.category.order", "5")
-  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Minimap-Opacity")
-  @runtimeProperty("ModSettings.description", "Mod-LHUD-Minimap-Opacity-Desc")
+  @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Opacity")
+  @runtimeProperty("ModSettings.description", "Addons-LHUD-Opacity-Desc")
   @runtimeProperty("ModSettings.step", "0.1")
   @runtimeProperty("ModSettings.min", "0.0")
   @runtimeProperty("ModSettings.max", "1.0")
@@ -443,6 +483,16 @@ public class QuestTrackerModuleConfig {
   @runtimeProperty("ModSettings.min", "1.0")
   @runtimeProperty("ModSettings.max", "10.0")
   let QuestUpdateDisplayingTime: Float = 5.0;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Quest-Tracker")
+  @runtimeProperty("ModSettings.category.order", "6")
+  @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Opacity")
+  @runtimeProperty("ModSettings.description", "Addons-LHUD-Opacity-Desc")
+  @runtimeProperty("ModSettings.step", "0.1")
+  @runtimeProperty("ModSettings.min", "0.0")
+  @runtimeProperty("ModSettings.max", "1.0")
+  let Opacity: Float = 1.0;
 }
 
 public class PlayerHealthbarModuleConfig {
@@ -529,6 +579,16 @@ public class PlayerHealthbarModuleConfig {
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Area")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Area-Desc")
   let ShowInDangerArea: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Healthbar")
+  @runtimeProperty("ModSettings.category.order", "7")
+  @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Opacity")
+  @runtimeProperty("ModSettings.description", "Addons-LHUD-Opacity-Desc")
+  @runtimeProperty("ModSettings.step", "0.1")
+  @runtimeProperty("ModSettings.min", "0.0")
+  @runtimeProperty("ModSettings.max", "1.0")
+  let Opacity: Float = 1.0;
 }
 
 public class PlayerStaminabarModuleConfig {
@@ -603,7 +663,7 @@ public class PlayerStaminabarModuleConfig {
   @runtimeProperty("ModSettings.step", "0.1")
   @runtimeProperty("ModSettings.min", "0.0")
   @runtimeProperty("ModSettings.max", "1.0")
-  let StaminaWidgetOpacity: Float = 0.7;
+  let Opacity: Float = 0.7;
 }
 
 public class WorldMarkersModuleConfigQuest {
