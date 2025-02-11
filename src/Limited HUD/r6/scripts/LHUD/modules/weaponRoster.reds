@@ -26,6 +26,7 @@ public func DetermineCurrentVisibility() -> Void {
   if this.lhud_isBraindanceActive { isVisible = false; };
   this.lhud_isVisibleNow = isVisible;
   if isVisible {
+    this.GetRootCompoundWidget().SetOpacity(this.lhudConfig.Opacity);
     this.Unfold();
     this.AnimateAlphaLHUD(this.m_smartLinkFirmwareOffline, this.lhudConfig.Opacity, 0.3);
     this.AnimateAlphaLHUD(this.m_smartLinkFirmwareOnline, this.lhudConfig.Opacity, 0.3);
@@ -56,6 +57,7 @@ protected cb func OnPSMVisionStateChanged(value: Int32) -> Bool {
   switch newState {
     case gamePSMVision.Default:
       if ItemID.IsValid(this.m_activeWeapon.weaponID) && this.lhud_isVisibleNow {
+        this.GetRootCompoundWidget().SetOpacity(this.lhudConfig.Opacity);
         this.Unfold();
       };
       break;
