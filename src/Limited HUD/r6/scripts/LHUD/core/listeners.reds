@@ -57,6 +57,7 @@ public class LHUDBlackboardsListener {
   private let stealthCallback: ref<CallbackHandle>;       // Ref for registered locomotion value callback
   private let metroCallback: ref<CallbackHandle>;         // Ref for registered metro ride value callback
   private let wantedCallback: ref<CallbackHandle>;        // Ref for registered wanted value callback
+  private let zoneCallback: ref<CallbackHandle>;          // Ref for registered zone value callback
 
   private let delaySystem: ref<DelaySystem>;
   private let delayId: DelayID;
@@ -97,6 +98,7 @@ public class LHUDBlackboardsListener {
     this.stealthCallback = this.stateMachineBlackboard.RegisterListenerInt(this.bbDefs.PlayerStateMachine.Locomotion, this, n"OnCrouchChanged");
     this.metroCallback = this.uiSystemBlackboard.RegisterListenerBool(this.bbDefs.UI_System.IsInMetro_LHUD, this, n"OnMetroStateChanged");
     this.wantedCallback = this.wantedBlackboard.RegisterListenerInt(this.bbDefs.UI_WantedBar.CurrentWantedLevel, this, n"OnWantedDataChanged", true);
+    this.zoneCallback = this.stateMachineBlackboard.RegisterListenerVariant(this.bbDefs.PlayerStateMachine.SecurityZoneData, this, n"OnPlayerZoneChanged", true);
   }
 
   // Unregister listeners
@@ -114,6 +116,7 @@ public class LHUDBlackboardsListener {
     this.stateMachineBlackboard.UnregisterListenerInt(this.bbDefs.PlayerStateMachine.Locomotion, this.stealthCallback);
     this.uiSystemBlackboard.UnregisterListenerBool(this.bbDefs.UI_System.IsInMetro_LHUD, this.metroCallback);
     this.wantedBlackboard.UnregisterListenerInt(this.bbDefs.UI_WantedBar.CurrentWantedLevel, this.wantedCallback);
+    this.stateMachineBlackboard.UnregisterListenerVariant(this.bbDefs.PlayerStateMachine.SecurityZoneData, this.zoneCallback);
 
     this.delaySystem.CancelCallback(this.delayId);
   }
@@ -213,6 +216,13 @@ public class LHUDBlackboardsListener {
   protected cb func OnWantedDataChanged(value: Int32) -> Bool {
     this.playerInstance.QueueLHUDEvent(LHUDEventType.Wanted, NotEquals(value, 0));
   }
+
+  // player zone bb callback
+  protected cb func OnPlayerZoneChanged(value: Variant) -> Bool {
+    let securityZoneData: SecurityAreaData = FromVariant<SecurityAreaData>(value);
+    let dangerousArea: Bool = Equals(securityZoneData.securityAreaType, ESecurityAreaType.RESTRICTED) || Equals(securityZoneData.securityAreaType, ESecurityAreaType.DANGEROUS);
+    this.playerInstance.QueueLHUDEvent(LHUDEventType.DangerousZone, dangerousArea);
+  }
 }
 
 public class LHUDLaunchCallback extends DelayCallback {
@@ -229,6 +239,7 @@ public class LHUDLaunchCallback extends DelayCallback {
     listener.OnWeaponStateChanged(listener.playerInstance.HasAnyWeaponEquipped_LHUD());
     listener.OnCrouchChanged(listener.stateMachineBlackboard.GetInt(listener.bbDefs.PlayerStateMachine.Locomotion));
     listener.OnMetroStateChanged(listener.uiSystemBlackboard.GetBool(listener.bbDefs.UI_System.IsInMetro_LHUD));
+    listener.OnPlayerZoneChanged(listener.stateMachineBlackboard.GetVariant(listener.bbDefs.PlayerStateMachine.SecurityZoneData));
     listener.OnGlobalToggle(globalToggled);
     listener.OnMinimapToggle(minimapToggled);
   }

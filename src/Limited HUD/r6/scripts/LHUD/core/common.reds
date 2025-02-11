@@ -21,6 +21,7 @@ enum LHUDEventType {
   ScannerDetails = 15,
   Wanted = 16,
   Cooldown = 17,
+  DangerousZone = 18,
 }
 
 enum LHUDFillColors {
@@ -105,6 +106,7 @@ public class LHUDStealthRunnerRefreshed extends Event {}
 @addField(inkGameController) public let lhud_isHintsForced: Bool;
 @addField(inkGameController) public let lhud_isWanted: Bool;
 @addField(inkGameController) public let lhud_hasCooldown: Bool;
+@addField(inkGameController) public let lhud_isInDangerZone: Bool;
 
 // Visibility condition flags for inkLogicController instances
 @addField(inkLogicController) public let lhud_isGlobalFlagToggled: Bool;
@@ -117,6 +119,7 @@ public class LHUDStealthRunnerRefreshed extends Event {}
 @addField(inkLogicController) public let lhud_isWeaponUnsheathed: Bool;
 @addField(inkLogicController) public let lhud_isZoomActive: Bool;
 @addField(inkLogicController) public let lhud_isVisibleNow: Bool;
+@addField(inkLogicController) public let lhud_isInDangerZone: Bool;
 
 // Store actual flags in AllBlackboardDefinitions
 @addField(AllBlackboardDefinitions) public let lhud_isGlobalFlagToggled: Bool;
@@ -129,6 +132,7 @@ public class LHUDStealthRunnerRefreshed extends Event {}
 @addField(AllBlackboardDefinitions) public let lhud_isWeaponUnsheathed: Bool;
 @addField(AllBlackboardDefinitions) public let lhud_isZoomActive: Bool;
 @addField(AllBlackboardDefinitions) public let lhud_isVisibleNow: Bool;
+@addField(AllBlackboardDefinitions) public let lhud_isInDangerZone: Bool;
 
 // Catch LHUDEvent inside inkGameController instances
 @addMethod(inkGameController)
@@ -183,6 +187,9 @@ protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
     case LHUDEventType.Cooldown:
       this.lhud_hasCooldown = evt.isActive;
       break;
+    case LHUDEventType.DangerousZone:
+      this.lhud_isInDangerZone = evt.isActive;
+      break;
     default:
       break;
   };
@@ -219,6 +226,9 @@ protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
       break;
     case LHUDEventType.Zoom: 
       this.lhud_isZoomActive = evt.isActive;
+      break;
+    case LHUDEventType.DangerousZone:
+      this.lhud_isInDangerZone = evt.isActive;
       break;
     default:
       break;
@@ -259,6 +269,9 @@ protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
     case LHUDEventType.Zoom: 
       this.lhud_isZoomActive = evt.isActive;
       break;
+    case LHUDEventType.DangerousZone:
+      this.lhud_isInDangerZone = evt.isActive;
+      break;
     default:
       break;
   };
@@ -276,6 +289,7 @@ public func FetchInitialStateFlags() -> Void {
   this.lhud_isWeaponUnsheathed = GetAllBlackboardDefs().lhud_isWeaponUnsheathed;
   this.lhud_isZoomActive = GetAllBlackboardDefs().lhud_isZoomActive;
   this.lhud_isVisibleNow = GetAllBlackboardDefs().lhud_isVisibleNow;
+  this.lhud_isInDangerZone = GetAllBlackboardDefs().lhud_isInDangerZone;
 }
 
 // Swap top right slot child order for braindance mode

@@ -20,8 +20,9 @@ public func DetermineCurrentVisibility() -> Void {
   let showForStealth: Bool = this.lhud_isStealthActive && this.lhudConfig.ShowInStealth;
   let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfig.ShowWithWeapon;
   let showForZoom: Bool = this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
+  let showForArea: Bool = this.lhud_isInDangerZone && this.lhudConfig.ShowInDangerArea;
 
-  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForWeapon || showForZoom;
+  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForWeapon || showForZoom || showForArea;
   if this.lhud_isBraindanceActive { isVisible = false; };
   this.lhud_isVisibleNow = isVisible;
   if isVisible {

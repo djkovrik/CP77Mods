@@ -1,8 +1,12 @@
 module CarDealer.Site
+@if(ModuleExists("BrowserExtension.System"))
 import BrowserExtension.DataStructures.*
+@if(ModuleExists("BrowserExtension.System"))
 import BrowserExtension.Classes.*
+@if(ModuleExists("BrowserExtension.System"))
 import BrowserExtension.System.*
 
+@if(ModuleExists("BrowserExtension.System"))
 public class CarDealerSiteListener extends BrowserEventsListener {
 
   public func Init(logic: ref<BrowserGameController>) {
@@ -24,6 +28,13 @@ public class CarDealerSiteListener extends BrowserEventsListener {
   }
 }
 
+@if(!ModuleExists("BrowserExtension.System"))
+public class CarDealerSiteListener {
+  public func Init(logic: ref<BrowserGameController>) {}
+  public func Uninit() {}
+  public func GetWebPage(address: String) -> ref<inkCompoundWidget> { return null; }
+}
+
 @addField(BrowserGameController)
 private let CarDealerSiteListener: ref<CarDealerSiteListener>;
 
@@ -41,4 +52,44 @@ protected cb func OnUninitialize() -> Bool {
 
 	this.CarDealerSiteListener.Uninit();
   this.CarDealerSiteListener = null;
+}
+
+
+// Notify
+
+@addField(SingleplayerMenuGameController)
+protected let dealerExtensionPopup: ref<inkGameNotificationToken>;
+
+@wrapMethod(SingleplayerMenuGameController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+
+  if this.BrowserExtensionNotInstalledDealer() {
+    this.dealerExtensionPopup = GenericMessageNotification.Show(
+      this, 
+      GetLocalizedText("LocKey#11447"), 
+      "You installed Virtual Car Dealer - Browser Extension addon but not the main Browser Extension mod itself, " +
+      "so please download it here:\nhttps://www.nexusmods.com/cyberpunk2077/mods/10038",
+      GenericMessageNotificationType.OK
+    );
+
+    this.dealerExtensionPopup.RegisterListener(this, n"OnDealerExtensionPopupClosed");
+  };
+}
+
+@addMethod(SingleplayerMenuGameController)
+protected cb func OnDealerExtensionPopupClosed(data: ref<inkGameNotificationData>) {
+  this.dealerExtensionPopup = null;
+}
+
+@if(ModuleExists("BrowserExtension.System"))
+@addMethod(SingleplayerMenuGameController)
+public final func BrowserExtensionNotInstalledDealer() -> Bool {
+  return false;
+}
+
+@if(!ModuleExists("BrowserExtension.System"))
+@addMethod(SingleplayerMenuGameController)
+public final func BrowserExtensionNotInstalledDealer() -> Bool {
+  return true;
 }

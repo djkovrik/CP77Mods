@@ -1,8 +1,13 @@
 module VirtualAtelier.Site
+
+@if(ModuleExists("BrowserExtension.System"))
 import BrowserExtension.DataStructures.*
+@if(ModuleExists("BrowserExtension.System"))
 import BrowserExtension.Classes.*
+@if(ModuleExists("BrowserExtension.System"))
 import BrowserExtension.System.*
 
+@if(ModuleExists("BrowserExtension.System"))
 public class VirtualAtelierSiteListener extends BrowserEventsListener {
 
   public func Init(logic: ref<BrowserGameController>) {
@@ -24,6 +29,13 @@ public class VirtualAtelierSiteListener extends BrowserEventsListener {
   }
 }
 
+@if(!ModuleExists("BrowserExtension.System"))
+public class VirtualAtelierSiteListener {
+  public func Init(logic: ref<BrowserGameController>) {}
+  public func Uninit() {}
+  public func GetWebPage(address: String) -> ref<inkCompoundWidget> { return null; }
+}
+
 @addField(BrowserGameController)
 private let virtualAtelierSiteListener: ref<VirtualAtelierSiteListener>;
 
@@ -41,4 +53,43 @@ protected cb func OnUninitialize() -> Bool {
 
 	this.virtualAtelierSiteListener.Uninit();
   this.virtualAtelierSiteListener = null;
+}
+
+// Notify
+
+@addField(SingleplayerMenuGameController)
+protected let atelierExtensionPopup: ref<inkGameNotificationToken>;
+
+@wrapMethod(SingleplayerMenuGameController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+
+  if this.BrowserExtensionNotInstalledAtelier() {
+    this.atelierExtensionPopup = GenericMessageNotification.Show(
+      this, 
+      GetLocalizedText("LocKey#11447"), 
+      "You installed Virtual Atelier - Browser Extension addon but not the main Browser Extension mod itself, " +
+      "so please download it here:\nhttps://www.nexusmods.com/cyberpunk2077/mods/10038",
+      GenericMessageNotificationType.OK
+    );
+
+    this.atelierExtensionPopup.RegisterListener(this, n"OnAtelierExtensionPopupClosed");
+  };
+}
+
+@addMethod(SingleplayerMenuGameController)
+protected cb func OnAtelierExtensionPopupClosed(data: ref<inkGameNotificationData>) {
+  this.atelierExtensionPopup = null;
+}
+
+@if(ModuleExists("BrowserExtension.System"))
+@addMethod(SingleplayerMenuGameController)
+public final func BrowserExtensionNotInstalledAtelier() -> Bool {
+  return false;
+}
+
+@if(!ModuleExists("BrowserExtension.System"))
+@addMethod(SingleplayerMenuGameController)
+public final func BrowserExtensionNotInstalledAtelier() -> Bool {
+  return true;
 }

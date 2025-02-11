@@ -60,6 +60,13 @@ public class ActionButtonsModuleConfig {
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Action-Buttons")
   @runtimeProperty("ModSettings.category.order", "1")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Area")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Area-Desc")
+  let ShowInDangerArea: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Action-Buttons")
+  @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Cooldown")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Cooldown-Desc")
   let ShowAtCooldown: Bool = false;
@@ -114,6 +121,13 @@ public class CrouchIndicatorModuleConfig {
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Zoom-Desc")
   let ShowWithZoom: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Crouch-Indicator")
+  @runtimeProperty("ModSettings.category.order", "2")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Area")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Area-Desc")
+  let ShowInDangerArea: Bool = false;
 }
 
 public class WeaponRosterModuleConfig {
@@ -165,6 +179,13 @@ public class WeaponRosterModuleConfig {
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Zoom-Desc")
   let ShowWithZoom: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Weapon-Roster")
+  @runtimeProperty("ModSettings.category.order", "3")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Area")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Area-Desc")
+  let ShowInDangerArea: Bool = false;
 }
 
 public class HintsModuleConfig {
@@ -223,6 +244,13 @@ public class HintsModuleConfig {
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Zoom-Desc")
   let ShowWithZoom: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Hotkey-Hints")
+  @runtimeProperty("ModSettings.category.order", "4")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Area")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Area-Desc")
+  let ShowInDangerArea: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Hotkey-Hints")
@@ -306,6 +334,13 @@ public class MinimapModuleConfig {
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Minimap")
   @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Area")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Area-Desc")
+  let ShowInDangerArea: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Minimap")
+  @runtimeProperty("ModSettings.category.order", "5")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Minimap-Opacity")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Minimap-Opacity-Desc")
   @runtimeProperty("ModSettings.step", "0.1")
@@ -384,6 +419,13 @@ public class QuestTrackerModuleConfig {
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Zoom-Desc")
   let ShowWithZoom: Bool = true;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Quest-Tracker")
+  @runtimeProperty("ModSettings.category.order", "6")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Area")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Area-Desc")
+  let ShowInDangerArea: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Quest-Tracker")
@@ -480,6 +522,13 @@ public class PlayerHealthbarModuleConfig {
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Zoom-Desc")
   let ShowWithZoom: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Healthbar")
+  @runtimeProperty("ModSettings.category.order", "7")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Area")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Area-Desc")
+  let ShowInDangerArea: Bool = false;
 }
 
 public class PlayerStaminabarModuleConfig {
@@ -531,6 +580,13 @@ public class PlayerStaminabarModuleConfig {
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Zoom-Desc")
   let ShowWithZoom: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Gameplay-RPG-Stats-Stamina")
+  @runtimeProperty("ModSettings.category.order", "8")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Area")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Area-Desc")
+  let ShowInDangerArea: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Gameplay-RPG-Stats-Stamina")
@@ -613,6 +669,13 @@ public class WorldMarkersModuleConfigQuest {
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Zoom-Desc")
   let ShowWithZoom: Bool = true;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Quest")
+  @runtimeProperty("ModSettings.category.order", "9")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Area")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Area-Desc")
+  let ShowInDangerArea: Bool = false;
 }
 
 public class WorldMarkersModuleConfigLoot {
@@ -678,6 +741,13 @@ public class WorldMarkersModuleConfigLoot {
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Zoom-Desc")
   let ShowWithZoom: Bool = true;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Loot")
+  @runtimeProperty("ModSettings.category.order", "10")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Area")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Area-Desc")
+  let ShowInDangerArea: Bool = false;
 }
 
 public class WorldMarkersModuleConfigPOI {
@@ -743,6 +813,13 @@ public class WorldMarkersModuleConfigPOI {
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Zoom-Desc")
   let ShowWithZoom: Bool = true;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-POI")
+  @runtimeProperty("ModSettings.category.order", "11")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Area")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Area-Desc")
+  let ShowInDangerArea: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-POI")
@@ -815,6 +892,13 @@ public class WorldMarkersModuleConfigCombat {
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Zoom-Desc")
   let ShowWithZoom: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Combat")
+  @runtimeProperty("ModSettings.category.order", "12")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Area")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Area-Desc")
+  let ShowInDangerArea: Bool = false;
 }
 
 public class WorldMarkersModuleConfigVehicles {
@@ -851,9 +935,16 @@ public class WorldMarkersModuleConfigVehicles {
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Zoom")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Zoom-Desc")
   let ShowWithZoom: Bool = true;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Vehicles")
+  @runtimeProperty("ModSettings.category.order", "13")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Area")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Area-Desc")
+  let ShowInDangerArea: Bool = false;
 }
 
-public class WorldMarkersModuleConfigDevices{
+public class WorldMarkersModuleConfigDevices {
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Devices")
   @runtimeProperty("ModSettings.category.order", "14")

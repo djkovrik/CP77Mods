@@ -67,9 +67,10 @@ protected cb func OnUpdateHealthBarVisibility() -> Bool {
   let showForActiveQuickhacks: Bool = areQuickhacksUsed && this.lhudConfig.ShowWhenQuickhacksActive;
   let showForCombat: Bool = this.lhud_isCombatActive && this.lhudConfig.ShowInCombat;
   let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && this.lhudConfig.ShowOutOfCombat;
+  let showForArea: Bool = this.lhud_isInDangerZone && this.lhudConfig.ShowInDangerArea;
 
   let defaultVisibility: Bool = !isMaxHP || areQuickhacksUsed || Equals(this.m_combatModePSM, gamePSMCombat.InCombat) || this.m_quickhacksMemoryPercent < 100.00 || this.m_buffsVisible || this.m_isInOverclockedState;
-  let moddedVisibility: Bool = showForGlobalHotkey || showForStealth || showForZoom || showForWeapon || showForHealthNotFull || showForMemoryNotFull || showForActiveBuffs || showForActiveQuickhacks || showForCombat || showForOutOfCombat;
+  let moddedVisibility: Bool = showForGlobalHotkey || showForStealth || showForZoom || showForWeapon || showForHealthNotFull || showForMemoryNotFull || showForActiveBuffs || showForActiveQuickhacks || showForCombat || showForOutOfCombat || showForArea;
   let isVisible: Bool = defaultVisibility;
 
   if this.lhudConfig.IsEnabled {
