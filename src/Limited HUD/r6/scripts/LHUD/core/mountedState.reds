@@ -1,5 +1,5 @@
 module LimitedHudMounted
-import LimitedHudListeners.DelayedCoolExitCallback
+import LimitedHudListeners.DelayedVehicleExitCallback
 
 @addField(UI_SystemDef)
 let IsMounted_LHUD: BlackboardID_Bool;
@@ -17,6 +17,7 @@ protected cb func OnMountingEvent(evt: ref<MountingEvent>) -> Bool {
 @wrapMethod(VehicleComponent)
 protected cb func OnUnmountingEvent(evt: ref<UnmountingEvent>) -> Bool {
   wrappedMethod(evt);
+
   let child: ref<GameObject> = GameInstance.FindEntityByID(this.GetVehicle().GetGame(), evt.request.lowLevelMountingInfo.childId) as GameObject;
   if child.IsPlayer() {
     let player: ref<PlayerPuppet> = child as PlayerPuppet;
@@ -24,10 +25,15 @@ protected cb func OnUnmountingEvent(evt: ref<UnmountingEvent>) -> Bool {
   }
 }
 
-@wrapMethod(CoolExitingEvents)
+@addField(ExitingEvents)
+private let exitingDelayId: DelayID;
+
+@wrapMethod(ExitingEvents)
 protected func OnExit(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
   wrappedMethod(stateContext, scriptInterface);
 
   let gi: GameInstance = scriptInterface.owner.GetGame();
-  GameInstance.GetDelaySystem(gi).DelayCallback(DelayedCoolExitCallback.Create(gi), 1.0, false);
+  let delaySystem: ref<DelaySystem> = GameInstance.GetDelaySystem(gi);
+  delaySystem.CancelCallback(this.exitingDelayId);
+  this.exitingDelayId = delaySystem.DelayCallback(DelayedVehicleExitCallback.Create(gi), 1.2, false);
 }

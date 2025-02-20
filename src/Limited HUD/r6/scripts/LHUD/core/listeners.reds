@@ -245,7 +245,7 @@ public class LHUDLaunchCallback extends DelayCallback {
   }
 }
 
-public class DelayedCoolExitCallback extends DelayCallback {
+public class DelayedVehicleExitCallback extends DelayCallback {
     private let gameInstance: GameInstance;
 
     public func Call() -> Void {
@@ -261,8 +261,8 @@ public class DelayedCoolExitCallback extends DelayCallback {
       };
     }
 
-    public static func Create(gameInstance: GameInstance) -> ref<DelayedCoolExitCallback> {
-      let instance: ref<DelayedCoolExitCallback> = new DelayedCoolExitCallback();
+    public static func Create(gameInstance: GameInstance) -> ref<DelayedVehicleExitCallback> {
+      let instance: ref<DelayedVehicleExitCallback> = new DelayedVehicleExitCallback();
       instance.gameInstance = gameInstance;
       return instance;
     }
