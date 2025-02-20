@@ -257,6 +257,7 @@ public class DelayedCoolExitCallback extends DelayCallback {
         hasAnyWeapon = player.HasAnyWeaponEquipped_LHUD();
         GameInstance.GetBlackboardSystem(this.gameInstance).Get(equipmentDataDef).SetBool(equipmentDataDef.HasWeaponEquipped, hasAnyWeapon, true);
         GameInstance.GetBlackboardSystem(this.gameInstance).Get(uiSystemDef).SetBool(uiSystemDef.IsMounted_LHUD, false, true);
+        GameInstance.GetUISystem(this.gameInstance).QueueEvent(new LHUDOnCoolExitEvent());
       };
     }
 

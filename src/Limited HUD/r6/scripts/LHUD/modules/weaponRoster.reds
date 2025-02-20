@@ -1,5 +1,6 @@
 import LimitedHudConfig.WeaponRosterModuleConfig
 import LimitedHudCommon.LHUDConfigUpdatedEvent
+import LimitedHudCommon.LHUDOnCoolExitEvent
 import LimitedHudCommon.LHUDEvent
 
 @addMethod(WeaponRosterGameController)
@@ -100,6 +101,16 @@ protected cb func OnWeaponDataChanged(value: Variant) -> Bool {
 }
 
 @addMethod(WeaponRosterGameController)
-protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> Void {
+protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> Bool {
   this.lhudConfig = new WeaponRosterModuleConfig();
+}
+
+@addMethod(WeaponRosterGameController)
+protected cb func OnLHUDOnCoolExitEvent(evt: ref<LHUDOnCoolExitEvent>) -> Bool {
+  let weaponTotalAmmo: Int32 = RPGManager.GetAmmoCountValue(this.m_player, this.m_activeWeapon.weaponID) - this.m_activeWeapon.ammoCurrent;
+  let isWeaponTotalAmmoVisible: Bool = !this.m_inVehicle && !this.m_player.IsReplacer();
+  if isWeaponTotalAmmoVisible {
+    inkTextRef.SetText(this.m_weaponTotalAmmo, this.GetAmmoText(weaponTotalAmmo, 4));
+  };
+  inkWidgetRef.SetVisible(this.m_weaponTotalAmmo, isWeaponTotalAmmoVisible);
 }

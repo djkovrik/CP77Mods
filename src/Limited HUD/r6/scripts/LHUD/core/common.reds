@@ -83,6 +83,8 @@ public class LHUDConfigUpdatedEvent extends Event {}
 
 public class LHUDStealthRunnerRefreshed extends Event {}
 
+public class LHUDOnCoolExitEvent extends Event {}
+
 // Blackboard flags for global and minimap toggles
 @addField(UI_SystemDef) public let IsGlobalFlagToggled_LHUD: BlackboardID_Bool;
 @addField(UI_SystemDef) public let IsMinimapToggled_LHUD: BlackboardID_Bool;
