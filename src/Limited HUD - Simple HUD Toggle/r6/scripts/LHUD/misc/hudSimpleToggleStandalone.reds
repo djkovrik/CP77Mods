@@ -11,13 +11,12 @@ public class SimpleToggleGlobalInputListener {
     }
 
     protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
-        if ListenerAction.IsAction(action, n"LHUD_Toggle") && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED) {
-          this.m_uiSystem.QueueEvent(new ToggleHudEvent());
-        };
+      if ListenerAction.IsAction(action, n"LHUD_Toggle") && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED) {
+        this.m_uiSystem.QueueEvent(new ToggleHudEvent());
+      };
     }
 }
 
-@if(ModuleExists("HUDrag"))
 @addMethod(inkGameController)
 protected cb func OnToggleHud(evt: ref<ToggleHudEvent>) -> Bool {
   let system: ref<inkSystem>;
@@ -28,16 +27,6 @@ protected cb func OnToggleHud(evt: ref<ToggleHudEvent>) -> Bool {
     root = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
     isVisible = root.IsVisible();
     root.SetVisible(!isVisible);
-  };
-}
-
-@if(!ModuleExists("HUDrag"))
-@addMethod(inkGameController)
-protected cb func OnToggleHud(evt: ref<ToggleHudEvent>) -> Bool {
-  let isVisible: Bool;
-  if this.IsA(n"gameuiRootHudGameController") {
-    isVisible = this.GetRootWidget().IsVisible();
-    this.GetRootWidget().SetVisible(!isVisible);
   };
 }
 
