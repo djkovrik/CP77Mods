@@ -54,7 +54,6 @@ public class VirtualAtelierStoresManager extends ScriptableSystem {
     let event: ref<VirtualShopRegistration> = new VirtualShopRegistration();
     event.SetSystemInstance(this);
     GameInstance.GetUISystem(this.GetGameInstance()).QueueEvent(event);
-    AtelierLog("Initialized");
   }
 
   public func RefreshNewLabels() -> Void {

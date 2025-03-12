@@ -103,7 +103,7 @@ class AtelierStoresListItemController extends inkVirtualCompoundItemController {
     let storeLabel: ref<inkText> = new inkText();
     storeLabel.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
     storeLabel.SetFontStyle(n"Semi-Bold");
-    storeLabel.SetFontSize(35);
+    storeLabel.SetFontSize(36);
     storeLabel.SetLetterCase(textLetterCase.UpperCase);
     storeLabel.SetFitToContent(true);
     storeLabel.SetAnchor(inkEAnchor.Centered);

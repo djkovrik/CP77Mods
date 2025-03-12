@@ -3,11 +3,13 @@ import VirtualAtelier.Helpers.CurrentPlayerZoneHelper
 import VirtualAtelier.Core.AtelierTexts
 import VirtualAtelier.Logs.AtelierLog
 
-// Temp flag to show atelier tab content
-// TODO Need a better way to inject, research why LoadWebPage does not work with custom internet
 @if(!ModuleExists("VirtualAtelier.Site"))
 @addField(BrowserController)
 private let showAtelier: Bool;
+
+@if(!ModuleExists("VirtualAtelier.Site"))
+@addField(BrowserController)
+private let atelierWidget: wref<inkWidget>;
 
 @if(!ModuleExists("VirtualAtelier.Site"))
 @addMethod(BrowserController)
@@ -78,19 +80,6 @@ public final func GetMenuButtonWidgets() -> array<SComputerMenuButtonWidgetPacka
 }
 
 
-// Spawn Atelier stores widget
-@if(!ModuleExists("VirtualAtelier.Site"))
-@addMethod(WebPage)
-private func PopulateAtelierView() {
-  let root: ref<inkCompoundWidget> = this.GetWidget(n"page/linkPanel/panel") as inkCompoundWidget;
-  if (!IsDefined(root)) {
-    root = this.GetWidget(n"Page/linkPanel/panel") as inkCompoundWidget;
-  };
-  root.RemoveAllChildren();
-  this.SpawnFromExternal(root, r"base\\gameplay\\gui\\virtual_atelier_stores.inkwidget", n"AtelierStores:VirtualAtelier.UI.AtelierStoresListController");
-}
-
-
 // Switch Atelier tab icon
 // ^^ kudos to NexusGuy999 for tab widget hack ^^
 @if(!ModuleExists("VirtualAtelier.Site"))
@@ -99,8 +88,8 @@ public func Initialize(gameController: ref<ComputerInkGameController>, widgetDat
   wrappedMethod(gameController, widgetData);
 
   if Equals(widgetData.widgetName, "atelier") {
-    inkImageRef.SetTexturePart(this.m_iconWidget, n"logo_wdb_large");
-    inkImageRef.SetAtlasResource(this.m_iconWidget, r"base\\gameplay\\gui\\fullscreen\\wardrobe\\atlas_wardrobe.inkatlas");
+    inkImageRef.SetTexturePart(this.m_iconWidget, n"tab");
+    inkImageRef.SetAtlasResource(this.m_iconWidget, r"base\\gameplay\\gui\\virtual_atelier.inkatlas");
   };
 }
 
@@ -111,12 +100,26 @@ public func Initialize(gameController: ref<ComputerInkGameController>, widgetDat
 protected cb func OnPageSpawned(widget: ref<inkWidget>, userData: ref<IScriptable>) -> Bool {
   wrappedMethod(widget, userData);
 
-  let currentController: ref<WebPage>;
+  let root: ref<inkCompoundWidget> = inkWidgetRef.Get(this.m_pageContentRoot) as inkCompoundWidget;
   if this.showAtelier {
-    currentController = this.m_currentPage.GetController() as WebPage;
     inkTextRef.SetText(this.m_addressText, "NETdir://atelier.pub");
-    currentController.PopulateAtelierView();
+    root.RemoveAllChildren();
+    this.PopulateAtelierView(root);
+  } else {
+    root.RemoveChild(this.atelierWidget);
   };
+}
+
+
+// Spawn Atelier stores widget
+@if(!ModuleExists("VirtualAtelier.Site"))
+@addMethod(BrowserController)
+private func PopulateAtelierView(root: ref<inkCompoundWidget>) {
+  this.atelierWidget = this.SpawnFromExternal(
+    root, 
+    r"base\\gameplay\\gui\\virtual_atelier_stores.inkwidget",
+    n"AtelierStores:VirtualAtelier.UI.AtelierStoresListController"
+  );
 }
 
 public class ShowAtelierEvent extends Event {

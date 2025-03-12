@@ -96,7 +96,11 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
     this.RefreshCurrentBalances();
   }
 
-  public final func PurchaseGoods() -> Void {
+  public final func GetCurrentGoods() -> array<ref<VirtualCartItem>> {
+    return this.cart.GetCart();
+  }
+
+  public final func PurchaseGoods(cartItems: array<ref<VirtualCartItem>>) -> Void {
     let cartItems: array<ref<VirtualCartItem>> = this.cart.GetCart();
     let itemID: ItemID;
     let itemData: ref<gameItemData>;
@@ -128,6 +132,41 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
 
   public final func GetCurrentGoodsPrice() -> Int32 {
     return this.currentGoodsPrice;
+  }
+
+  public final func GetCurrentGoodsWeight() -> Float {
+    let values: array<ref<VirtualCartItem>> = this.cart.GetCart();
+    let current: ref<VirtualCartItem>;
+    let currentWeight: Float;
+    let singleItemWeight: Float;
+    let total: Float = 0.0;
+
+    for value in values {
+      current = value as VirtualCartItem;
+      singleItemWeight = current.stockItem.weight;
+      if Equals(singleItemWeight, 0.0) {
+        singleItemWeight = 0.1;
+      };
+      currentWeight = singleItemWeight * Cast<Float>(current.stockItem.quantity);
+      total += currentWeight;
+    };
+
+    return total;
+  }
+
+  public final func GetCurrentGoodsQuantity() -> Int32 {
+    let values: array<ref<VirtualCartItem>> = this.cart.GetCart();
+    let current: ref<VirtualCartItem>;
+    let quantityPerItem: Int32;
+    let total: Int32 = 0;
+
+    for value in values {
+      current = value as VirtualCartItem;
+      quantityPerItem = current.purchaseAmount * current.stockItem.quantity;
+      total += quantityPerItem;
+    };
+
+    return total;
   }
 
   public final func SaveOwnedItems(items: array<wref<gameItemData>>) -> Void {

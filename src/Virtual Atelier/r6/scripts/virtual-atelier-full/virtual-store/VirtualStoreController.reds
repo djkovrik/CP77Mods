@@ -7,6 +7,9 @@ import VirtualAtelier.Helpers.*
 import VirtualAtelier.Systems.*
 import Codeware.UI.*
 
+@if(ModuleExists("AtelierDelivery"))
+import AtelierDelivery.*
+
 public class VirtualStoreController extends gameuiMenuGameController {
   private let player: wref<PlayerPuppet>;
   private let previewManager: wref<VirtualAtelierPreviewManager>;
@@ -280,11 +283,98 @@ public class VirtualStoreController extends gameuiMenuGameController {
     };
   }
 
+  @if(ModuleExists("AtelierDelivery"))
+  private final func WrapStockItem(from: ref<VirtualStockItem>) -> ref<WrappedVirtualStockItem> {
+    let wrapped: ref<WrappedVirtualStockItem> = new WrappedVirtualStockItem();
+    wrapped.id = from.itemTDBID;
+    wrapped.price = from.price;
+    wrapped.weight = from.weight;
+    wrapped.quality = from.quality;
+    wrapped.quantity = from.quantity;
+
+    return wrapped;
+  }
+
+  @if(ModuleExists("AtelierDelivery"))
+  protected cb func OnAtelierDeliveryOrderCreatedEvent(evt: ref<AtelierDeliveryOrderCreatedEvent>) -> Bool {
+		let ts: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.player.GetGame());
+    ts.RemoveItemByTDBID(this.player, t"Items.money", evt.price);
+    this.cartManager.ClearCart();
+    this.allItemsAdded = false;
+    this.RefreshCartControls();
+    this.RefreshMoneyLabels();
+    this.RefreshVirtualItemState();
+    this.PlaySound(n"Item", n"OnBuy");
+  }
+
+  @if(ModuleExists("AtelierDelivery"))
+  private final func HandleBuyButtonClick() -> Void {
+    let store: String = this.GetVirtualStoreName();
+    let orderId: Int32 = OrderProcessingSystem.Get(this.player.GetGame()).GetNextOrderId();
+    let currentGoods: array<ref<VirtualCartItem>> = this.cartManager.GetCurrentGoods();
+    
+    let purchasedItems: array<ref<WrappedVirtualCartItem>>;
+    let wrapper: ref<WrappedVirtualCartItem>;
+    for item in currentGoods {
+      wrapper = new WrappedVirtualCartItem();
+      wrapper.stockItem = this.WrapStockItem(item.stockItem);
+      wrapper.purchaseAmount = item.purchaseAmount;
+      ArrayPush(purchasedItems, wrapper);
+    };
+
+    let price: Int32 = this.cartManager.GetCurrentGoodsPrice();
+    let weight: Float = this.cartManager.GetCurrentGoodsWeight();
+    let quantity: Int32 = this.cartManager.GetCurrentGoodsQuantity();
+    let timeSystem: ref<TimeSystem> = GameInstance.GetTimeSystem(this.player.GetGame());
+    let ordersSystem: ref<OrderProcessingSystem> = OrderProcessingSystem.Get(this.player.GetGame());
+    let uiSystem: ref<UISystem> = GameInstance.GetUISystem(this.player.GetGame());
+
+    let currentBalance: Int32 = this.vendorDataManager.GetLocalPlayerCurrencyAmount();
+    let currentConfig: ref<VirtualAtelierDeliveryConfig> = new VirtualAtelierDeliveryConfig();
+    let standardCost: Int32 = currentConfig.standardDeliveryPrice + price;
+    let priorityCost: Int32 = Cast<Int32>(Cast<Float>(currentConfig.priorityDeliveryPrice) * weight) + price;
+    let enoughForStandard: Bool = currentBalance >= standardCost;
+    let enoughForPriority: Bool = currentBalance >= priorityCost;
+
+    let params: ref<AtelierDeliveryPopupParams> = new AtelierDeliveryPopupParams();
+    params.store = store;
+    params.orderId = orderId;
+    params.price = price;
+    params.weight = weight;
+    params.quantity = quantity;
+    params.items = purchasedItems;
+    params.enoughForStandard = enoughForStandard;
+    params.enoughForPriority = enoughForPriority;
+
+    if enoughForStandard {
+      OrderCheckoutPopup.Show(this, params, timeSystem, ordersSystem, uiSystem);
+    } else {
+      this.ShowNotEnoughMoneyNotification();
+    };
+  }
+
+  @if(!ModuleExists("AtelierDelivery"))
+  private final func HandleBuyButtonClick() -> Void {
+    this.ShowPurchaseAllConfirmationPopup();
+  }
+
+  private func ShowOrderCreatedNotification(id: Int32) {
+    let notification: ref<UIMenuNotificationEvent> = new UIMenuNotificationEvent();
+    notification.m_notificationType = UIMenuNotificationType.VNotEnoughMoney;
+    this.QueueEvent(notification);
+  }
+
+  private func ShowNotEnoughMoneyNotification() {
+    let notification: ref<UIMenuNotificationEvent> = new UIMenuNotificationEvent();
+    notification.m_notificationType = UIMenuNotificationType.VNotEnoughMoney;
+    this.QueueEvent(notification);
+  }
+
   protected cb func OnVirtualAtelierControlClickEvent(evt: ref<VirtualAtelierControlClickEvent>) -> Bool {
     let name: CName = evt.name;
     switch name {
       case n"buy":
-        this.ShowPurchaseAllConfirmationPopup();
+        this.HandleBuyButtonClick();
         break;
       case n"addAll":
         this.ShowAddAllConfirmationPopup();
@@ -629,6 +719,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
       stockItem.itemID = itemId;
       stockItem.itemTDBID = itemTDBID;
       stockItem.price = Cast<Float>(itemsPrices[virtualItemIndex]);
+      stockItem.weight = RPGManager.GetItemWeight(itemData);
       stockItem.quality = itemsQualities[virtualItemIndex];
       stockItem.quantity = itemsQuantities[virtualItemIndex];
       AtelierDebug(s"   Dynamic tags: \(ToString(itemData.GetDynamicTags()))");
@@ -978,6 +1069,7 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
       this.RefreshCartControls();
       this.RefreshMoneyLabels();
       this.RefreshVirtualItemState();
+      this.PlaySound(n"Item", n"OnDisassemble");
     };
 
     this.popupToken = null;
@@ -991,6 +1083,7 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
       this.RefreshCartControls();
       this.RefreshMoneyLabels();
       this.RefreshVirtualItemState();
+      this.PlaySound(n"Item", n"OnDisassemble");
     };
 
     this.popupToken = null;
@@ -999,7 +1092,7 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
   protected cb func OnPurchaseConfirmationPopupClosed(data: ref<inkGameNotificationData>) {
     let resultData: ref<GenericMessageNotificationCloseData> = data as GenericMessageNotificationCloseData;
     if Equals(resultData.result, GenericMessageNotificationResult.Confirm) {
-      this.cartManager.PurchaseGoods();
+      this.cartManager.PurchaseGoods(this.cartManager.GetCurrentGoods());
       this.allItemsAdded = false;
       this.RefreshCartControls();
       this.RefreshMoneyLabels();

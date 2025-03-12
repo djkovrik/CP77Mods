@@ -69,6 +69,7 @@ public class VirtualCartImageButton extends VirtualAtelierControl {
     circle.SetAnchor(inkEAnchor.Fill);
     circle.SetSize(new Vector2(sizeCircle, sizeCircle));
     circle.SetAnchorPoint(new Vector2(0.5, 0.5));
+    circle.SetOpacity(0.4);
     circle.Reparent(circleContainer);
 
     let counter: ref<inkText> = new inkText();

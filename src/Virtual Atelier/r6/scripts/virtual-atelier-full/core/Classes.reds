@@ -45,6 +45,7 @@ class VirtualStockItem {
   public let itemID: ItemID;
   public let itemTDBID: TweakDBID;
   public let price: Float;
+  public let weight: Float;
   public let quality: CName;
   public let quantity: Int32;
   public let itemData: ref<gameItemData>;

@@ -15,8 +15,8 @@ public class VirtualAtelierSiteListener extends BrowserEventsListener {
 
 		this.m_siteData.address = s"NETdir://atelier.pub";
 		this.m_siteData.shortName = s"Virtual Atelier";
-		this.m_siteData.iconAtlasPath = r"base\\gameplay\\gui\\virtual_atelier_logo.inkatlas";
-		this.m_siteData.iconTexturePart = n"logo";
+		this.m_siteData.iconAtlasPath = r"base\\gameplay\\gui\\virtual_atelier.inkatlas";
+		this.m_siteData.iconTexturePart = n"site";
   }
 
   public func GetWebPage(address: String) -> ref<inkCompoundWidget> {
