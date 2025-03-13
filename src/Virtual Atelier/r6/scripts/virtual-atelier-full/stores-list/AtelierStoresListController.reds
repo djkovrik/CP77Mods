@@ -260,23 +260,23 @@ public class AtelierStoresListController extends inkGameController {
     let ordersColor: CName;
 
     if !this.storesHovered && !this.storesSelected {
-      storesColor = n"MainColors.Gold";
+      storesColor = n"MainColors.White";
     } else if this.storesHovered && !this.storesSelected {
       storesColor = n"MainColors.Red";
     } else if !this.storesHovered && this.storesSelected {
-      storesColor = n"MainColors.White";
+      storesColor = n"MainColors.Gold";
     } else if this.storesHovered && this.storesSelected  {
-      storesColor = n"MainColors.ActiveWhite";
+      storesColor = n"MainColors.ActiveRed";
     };
 
     if !this.ordersHovered && !this.ordersSelected {
-      ordersColor = n"MainColors.Gold";
+      ordersColor = n"MainColors.White";
     } else if this.ordersHovered && !this.ordersSelected {
       ordersColor = n"MainColors.Red";
     } else if !this.ordersHovered && this.ordersSelected {
-      ordersColor = n"MainColors.White";
+      ordersColor = n"MainColors.Gold";
     } else if this.ordersHovered && this.ordersSelected  {
-      ordersColor = n"MainColors.ActiveWhite";
+      ordersColor = n"MainColors.ActiveRed";
     };
 
     this.buttonStores.BindProperty(n"tintColor", storesColor);
