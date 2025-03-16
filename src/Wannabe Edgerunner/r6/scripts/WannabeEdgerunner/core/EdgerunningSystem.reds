@@ -816,10 +816,11 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func GetHumanityTotal() -> Int32 {
+    let penalty: Int32 = this.GetTotalPenalty();
     let basePool: Int32 = this.config.baseHumanityPool;
     let playerLevel: Float = GameInstance.GetStatsSystem(this.player.GetGame()).GetStatValue(Cast<StatsObjectID>(this.player.GetEntityID()), gamedataStatType.Level);
     let additionalPool: Int32 = Cast<Int32>(this.config.humanityBonusPerLevel * playerLevel);
-    return basePool + additionalPool;
+    return basePool + additionalPool - penalty;
   }
 
   public func GetHumanityColor() -> CName {
@@ -845,7 +846,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     let penalty: Int32 = this.GetTotalPenalty();
     let evt: ref<UpdateHumanityCounterEvent> = new UpdateHumanityCounterEvent();
     let basePool: Int32 = this.GetHumanityTotal();
-    this.currentHumanityPool = basePool - this.currentHumanityDamage - penalty;
+    this.currentHumanityPool = basePool - this.currentHumanityDamage;
     if this.currentHumanityPool < 0 { this.currentHumanityPool = 0; };
     this.psychosisThreshold = this.config.psychosisThreshold;
     // Check if threshold > pool from incorrect mod settings
