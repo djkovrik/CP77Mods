@@ -190,6 +190,20 @@ class SmarterScrapperEdiblesConfig {
 }
 
 @addMethod(PlayerPuppet)
+public func HasExcludedTagsSS(data: ref<gameItemData>) -> Bool {
+  let tags: array<CName> = [ 
+    n"Quest",
+    n"PermanentFood", 
+    n"PermanentStaminaFood", 
+    n"PermanentMemoryFood", 
+    n"PermanentHealthFood", 
+    n"ChipwareExpansion.Chip"
+  ];
+
+  return data.HasAnyOfTags(tags);
+}
+
+@addMethod(PlayerPuppet)
 public func IsExclusionSS(id: TweakDBID) -> Bool {
   return 
     // Stadium Love
@@ -444,7 +458,7 @@ private func ShouldBeScrappedJunkSS(data: wref<gameItemData>) -> Bool {
 private func ShouldBeScrappedEdibleSS(data: wref<gameItemData>, quality: gamedataQuality) -> Bool {
   let type: gamedataItemType = data.GetItemType();
 
-  if !this.IsEdibleSS(type) || data.HasTag(n"PermanentFood") || data.HasTag(n"PermanentStaminaFood") || data.HasTag(n"PermanentMemoryFood") || data.HasTag(n"PermanentHealthFood") {
+  if !this.IsEdibleSS(type) {
     return false;
   }
 
@@ -508,26 +522,23 @@ protected cb func OnItemAddedToInventory(evt: ref<ItemAddedEvent>) -> Bool {
 
   let ts: ref<TransactionSystem>;
   let gameItemData: wref<gameItemData> = evt.itemData;
-  let tweakDbId: TweakDBID = ItemID.GetTDBID(gameItemData.GetID());
+  let tdbid: TweakDBID = ItemID.GetTDBID(gameItemData.GetID());
   let quality: gamedataQuality = RPGManager.GetItemDataQuality(gameItemData);
+
+  if this.HasExcludedTagsSS(gameItemData) || this.IsExclusionSS(tdbid) || this.HasExcludedQuestActive() {
+    return true;
+  };
 
   let gear: Bool = this.HasWeaponInInventorySS() 
     && this.ShouldBeScrappedSS(gameItemData, quality) 
     && !RPGManager.IsItemIconic(gameItemData) 
     && NotEquals(this.boughtItem, gameItemData.GetID()) 
-    && !RPGManager.IsItemCrafted(gameItemData) 
-    && !gameItemData.HasTag(n"Quest") 
-    && !this.IsExclusionSS(tweakDbId) 
-    && !this.HasExcludedQuestActive();
+    && !RPGManager.IsItemCrafted(gameItemData);
 
-  let junk: Bool = this.ShouldBeScrappedJunkSS(gameItemData) 
-    && !this.IsExclusionSS(tweakDbId) 
-    && !this.HasExcludedQuestActive();
+  let junk: Bool = this.ShouldBeScrappedJunkSS(gameItemData);
 
   let edible: Bool = this.ShouldBeScrappedEdibleSS(gameItemData, quality) 
-    && NotEquals(this.boughtItem, gameItemData.GetID()) 
-    && !this.IsExclusionSS(tweakDbId) 
-    && !this.HasExcludedQuestActive();
+    && NotEquals(this.boughtItem, gameItemData.GetID());
 
   if gear || junk {
     ItemActionsHelper.DisassembleItem(this, evt.itemID, GameInstance.GetTransactionSystem(this.GetGame()).GetItemQuantity(this, evt.itemID));
