@@ -768,19 +768,19 @@ protected cb func OnInitialize() -> Bool {
   return wrap;
 }
 
-@wrapMethod(NewHudPhoneGameController)
+@wrapMethod(MessengerNotification)
 protected cb func OnInitialize() -> Bool {
-  let wrap: Bool = wrappedMethod();
+  wrappedMethod();
+
   let system: ref<inkSystem> = GameInstance.GetInkSystem();
   let config: ref<HUDitorConfig> = new HUDitorConfig();
   let root: ref<inkCompoundWidget> = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
   let newParent: ref<inkCompoundWidget> = root.GetWidgetByPathName(n"NewQuestNotifications") as inkCompoundWidget;
   let targetWidget: ref<inkCompoundWidget>;
   if config.questNotificationsEnabled { 
-    targetWidget = this.GetRootCompoundWidget().GetWidgetByPathName(n"phone_notifications_slot") as inkCompoundWidget;
+    targetWidget = this.GetRootCompoundWidget();
     targetWidget.Reparent(newParent, 3);
   };
-  return wrap;
 }
 
 // -- FPS Counter hacks
