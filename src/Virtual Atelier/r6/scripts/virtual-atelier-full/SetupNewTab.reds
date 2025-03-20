@@ -101,6 +101,7 @@ protected cb func OnPageSpawned(widget: ref<inkWidget>, userData: ref<IScriptabl
   wrappedMethod(widget, userData);
 
   let root: ref<inkCompoundWidget> = inkWidgetRef.Get(this.m_pageContentRoot) as inkCompoundWidget;
+  root.SetInteractive(false);
   if this.showAtelier {
     inkTextRef.SetText(this.m_addressText, "NETdir://atelier.pub");
     root.RemoveAllChildren();
