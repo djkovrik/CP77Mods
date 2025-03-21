@@ -2,7 +2,7 @@
 public func Update(data: ref<MinimalItemTooltipData>) -> Void {
   if (data.isVirtualItem) {
     inkTextRef.SetText(this.m_weightText, FloatToStringPrec(data.weight, 1));
-    inkTextRef.SetText(this.m_priceText, IntToString(RoundF(data.price)));
+    inkTextRef.SetText(this.m_priceText, GetFormattedMoneyVA(RoundF(data.price)));
   } else {
     wrappedMethod(data);
   };

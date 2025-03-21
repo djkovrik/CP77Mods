@@ -23,5 +23,5 @@ public class AtelierTexts {
   public static func CartRemove() -> String = GetLocalizedTextByKey(n"VA-Cart-Remove")
   public static func ConfirmationAddAll() -> String = GetLocalizedTextByKey(n"VA-Cart-Confirm-Add")
   public static func ConfirmationRemoveAll() -> String = GetLocalizedTextByKey(n"VA-Cart-Confirm-Remove")
-  public static func ConfirmationPurchase(price: Int32) -> String = s"\(GetLocalizedTextByKey(n"VA-Cart-Confirm-Purchase")) \(price) \(GetLocalizedText("Common-Characters-EuroDollar"))?"
+  public static func ConfirmationPurchase(price: String) -> String = s"\(GetLocalizedTextByKey(n"VA-Cart-Confirm-Purchase")) \(price) \(GetLocalizedText("Common-Characters-EuroDollar"))?"
 }

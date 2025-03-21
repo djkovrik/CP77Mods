@@ -1034,8 +1034,8 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
   private func RefreshMoneyLabels() -> Void {
     let playerAmount: Int32 = this.cartManager.GetCurrentPlayerMoney();
     let cartAmount: Int32 = this.cartManager.GetCurrentGoodsPrice();
-    this.playerMoney.SetText(s"\(playerAmount)");
-    this.cartMoney.SetText(s"\(cartAmount)");
+    this.playerMoney.SetText(GetFormattedMoneyVA(playerAmount));
+    this.cartMoney.SetText(GetFormattedMoneyVA(cartAmount));
   }
 
   private func RefreshMoneyLabelInstantBuy() -> Void {
@@ -1055,7 +1055,8 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
 
   private func ShowPurchaseAllConfirmationPopup() -> Void {
     let price: Int32 = this.cartManager.GetCurrentGoodsPrice();
-    this.popupToken = GenericMessageNotification.Show(this, this.virtualStore.storeName, AtelierTexts.ConfirmationPurchase(price), GenericMessageNotificationType.ConfirmCancel);
+    let priceStr: String = GetFormattedMoneyVA(price);
+    this.popupToken = GenericMessageNotification.Show(this, this.virtualStore.storeName, AtelierTexts.ConfirmationPurchase(priceStr), GenericMessageNotificationType.ConfirmCancel);
     this.popupToken.RegisterListener(this, n"OnPurchaseConfirmationPopupClosed");
   }
 

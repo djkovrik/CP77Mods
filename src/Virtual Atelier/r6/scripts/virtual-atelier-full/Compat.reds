@@ -1,6 +1,9 @@
 @if(ModuleExists("EquipmentEx"))
 import EquipmentEx.OutfitSystem
 
+@if(ModuleExists("NumeralsGetCommas.Functions"))
+import NumeralsGetCommas.Functions.*
+
 @if(!ModuleExists("EquipmentEx"))
 @addMethod(gameuiMenuGameController)
 public func GetAtelierPlacementSlot(itemId: ItemID) -> TweakDBID {
@@ -20,6 +23,16 @@ public func GetAtelierPlacementSlot(itemId: ItemID) -> TweakDBID {
   };
 
   return outfitSystem.GetItemSlot(itemId);
+}
+
+@if(!ModuleExists("NumeralsGetCommas.Functions"))
+public static final func GetFormattedMoneyVA(money: Int32) -> String {
+  return IntToString(money);
+}
+
+@if(ModuleExists("NumeralsGetCommas.Functions"))
+public static final func GetFormattedMoneyVA(money: Int32) -> String {
+  return CommaDelineateInt32(money);
 }
 
 // Darkcopse itemParts fix - TODO check if this still required
