@@ -768,21 +768,6 @@ protected cb func OnInitialize() -> Bool {
   return wrap;
 }
 
-@wrapMethod(MessengerNotification)
-protected cb func OnInitialize() -> Bool {
-  wrappedMethod();
-
-  let system: ref<inkSystem> = GameInstance.GetInkSystem();
-  let config: ref<HUDitorConfig> = new HUDitorConfig();
-  let root: ref<inkCompoundWidget> = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
-  let newParent: ref<inkCompoundWidget> = root.GetWidgetByPathName(n"NewQuestNotifications") as inkCompoundWidget;
-  let targetWidget: ref<inkCompoundWidget>;
-  if config.questNotificationsEnabled { 
-    targetWidget = this.GetRootCompoundWidget();
-    targetWidget.Reparent(newParent, 3);
-  };
-}
-
 // -- FPS Counter hacks
 @wrapMethod(PlayerPuppet)
 protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpawn>) -> Bool {
