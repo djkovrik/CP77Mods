@@ -14,6 +14,7 @@ private final func RegisterInterestingFactsListeners() -> Void {
 @wrapMethod(PlayerPuppet)
 private final func UnregisterInterestingFactsListeners() -> Void {
   GameInstance.GetQuestsSystem(this.GetGame()).UnregisterListener(n"q001_hide_ammo_counter", this.neuroblockersFactListener);
+  wrappedMethod();
 }
 
 @addMethod(PlayerPuppet)
