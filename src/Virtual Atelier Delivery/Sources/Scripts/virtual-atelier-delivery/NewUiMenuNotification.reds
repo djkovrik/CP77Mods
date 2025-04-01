@@ -10,6 +10,7 @@ protected cb func OnAtelierDeliveryOrderCreatedEvent(evt: ref<AtelierDeliveryOrd
   userData.soundEvent = n"QuestSuccessPopup";
   userData.soundAction = n"OnOpen";
   notificationData.time = this.m_duration;
+  notificationData.widgetLibraryResource = r"base\\gameplay\\gui\\fullscreen\\hub_menu\\va_notification.inkwidget";
   notificationData.widgetLibraryItemName = n"popups_side";
   notificationData.notificationData = userData;
   this.AddNewNotificationData(notificationData);

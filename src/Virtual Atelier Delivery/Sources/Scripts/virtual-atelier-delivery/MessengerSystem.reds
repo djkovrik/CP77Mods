@@ -5,10 +5,6 @@ public class DeliveryMessengerSystem extends ScriptableSystem {
   persistent let uniqueIndex: Int32 = 0;
   persistent let hasUnreadMessage: Bool = false;
 
-  private let questsSystem: wref<QuestsSystem>;
-  private let delaySystem: wref<DelaySystem>;
-  private let delayId: DelayID;
-
   private let conversation: wref<JournalPhoneConversation>;
 
   public static func Get(gi: GameInstance) -> ref<DeliveryMessengerSystem> {
@@ -27,9 +23,6 @@ public class DeliveryMessengerSystem extends ScriptableSystem {
     GameInstance.GetCallbackSystem()
       .RegisterCallback(n"Session/Ready", this, n"OnSessionReady")
       .SetLifetime(CallbackLifetime.Session);
-
-    this.questsSystem = GameInstance.GetQuestsSystem(this.GetGameInstance());
-    this.delaySystem = GameInstance.GetDelaySystem(this.GetGameInstance());
   }
 
   private cb func OnJournalLoaded(token: ref<ResourceToken>) {
@@ -42,22 +35,7 @@ public class DeliveryMessengerSystem extends ScriptableSystem {
   }
 
   private cb func OnSessionReady(event: ref<GameSessionEvent>) {
-    this.Log("OnSessionReady");
-    let watsonFact: Int32 = this.questsSystem.GetFact(n"watson_prolog_lock");
-    let watsonUnlocked: Bool = NotEquals(watsonFact, 1);
-    let currentHistory: array<ref<DeliveryHistoryItem>> = this.history;
-    let isNotificationsHistoryEmpty: Bool = Equals(ArraySize(currentHistory), 0);
-    let message: ref<DeliveryHistoryItem>;
-    let callback: ref<MessengerSystemNotifyCallback>;
-    if watsonUnlocked && isNotificationsHistoryEmpty {
-      message = DeliveryHistoryItem.Welcome();
-      callback = MessengerSystemNotifyCallback.Create(this, message);
-      this.delaySystem.CancelCallback(this.delayId);
-      this.delayId = this.delaySystem.DelayCallback(callback, 7.0);
-      this.UnlockNewContact();
-    } else {
-      this.ApplyPersistedTextsToConversation();
-    };
+    this.ApplyPersistedTextsToConversation();
   }
 
   private final func UnlockNewContact() -> Void {
@@ -81,6 +59,16 @@ public class DeliveryMessengerSystem extends ScriptableSystem {
     let currentConversationMessages: array<ref<JournalEntry>> = this.conversation.entries;
     let lastIndex: Int32 = ArraySize(currentHistory) - 1;
     return journalManager.GetEntryHash(currentConversationMessages[lastIndex]);
+  }
+
+  public final func PushWelcomeNotificationItem() -> Void {
+    let item: ref<DeliveryHistoryItem> = DeliveryHistoryItem.Welcome();
+    this.PushNewNotificationItem(item);
+  }
+
+  public final func PushNewDropPointNotificationItem(dropPoint: AtelierDeliveryDropPoint, district: TweakDBID) -> Void {
+    let item: ref<DeliveryHistoryItem> = DeliveryHistoryItem.NewDropPoint(dropPoint, district);
+    this.PushNewNotificationItem(item);
   }
 
   public final func PushShippedNotificationItem(bundle: ref<PurchasedAtelierBundle>) -> Void {

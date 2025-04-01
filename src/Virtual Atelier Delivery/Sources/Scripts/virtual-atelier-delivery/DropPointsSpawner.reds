@@ -2,8 +2,13 @@ module AtelierDelivery
 
 public class AtelierDropPointsSpawner extends ScriptableSystem {
   private let entitySystem: wref<DynamicEntitySystem>;
+  private let delaySystem: wref<DelaySystem>;
   private let handled: Bool;
   private let spawnConfig: ref<AtelierDropPointsSpawnerConfig>;
+  private let initialCallbackId: DelayID;
+  private let dropPointsCallbackId: DelayID;
+  private let nightCityUnlocked: Bool = false;
+  private let dogtownUnlocked: Bool = false;
   private let typeTag: CName = n"VirtualAtelierDropPoint";
 
   private let spawnedMappins: ref<inkHashMap>;
@@ -15,6 +20,7 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
 
   private func OnAttach() -> Void {
     this.entitySystem = GameInstance.GetDynamicEntitySystem();
+    this.delaySystem = GameInstance.GetDelaySystem(this.GetGameInstance());
     this.handled = false;
 
     if GameInstance.GetSystemRequestsHandler().IsPreGame() {
@@ -25,6 +31,8 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
 
     this.spawnConfig = new AtelierDropPointsSpawnerConfig();
     this.spawnConfig.Init();
+    this.spawnConfig.BuildNightCityList();
+    this.spawnConfig.BuildDogtownList();
   }
 
   private func OnRestored(saveVersion: Int32, gameVersion: Int32) -> Void {
@@ -37,6 +45,14 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     if !this.handled {
       this.HandleSpawning();
     };
+  }
+
+  public final func IsNightCityUnlocked() -> Bool {
+    return this.nightCityUnlocked;
+  }
+
+  public final func IsDogtownUnlocked() -> Bool {
+    return this.dogtownUnlocked;
   }
 
   public final func IsCustomDropPoint(id: EntityID) -> Bool {
@@ -104,27 +120,142 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
   }
 
   public final func GetAvailableDropPoints() -> array<ref<AtelierDropPointInstance>> {
-    return this.spawnConfig.GetAllSpawnPoints();
+    let result: array<ref<AtelierDropPointInstance>>;
+    let chunk: array<ref<AtelierDropPointInstance>>;
+
+    if this.IsNightCityUnlocked() {
+      let supportedTags: array<CName> = this.spawnConfig.GetIterationTagsNightCity();
+      for entityTag in supportedTags {
+        chunk = this.spawnConfig.GetSpawnPointsByTag(entityTag);
+        for item in chunk {
+          ArrayPush(result, item);
+        };
+      };
+    };
+
+    if this.IsDogtownUnlocked() {
+      let supportedTags: array<CName> = this.spawnConfig.GetIterationTagsDogtown();
+      for entityTag in supportedTags {
+        chunk = this.spawnConfig.GetSpawnPointsByTag(entityTag);
+        for item in chunk {
+          ArrayPush(result, item);
+        };
+      };
+    };
+
+    return result;
   }
 
-  private final func HandleSpawning() -> Void {
+  private final func CheckForQuestFacts() -> Void {
+    this.Log(s"CheckForQuestFacts");
+    let questsSystem: ref<QuestsSystem> = GameInstance.GetQuestsSystem(this.GetGameInstance());
+    let watsonFact: Int32 = questsSystem.GetFact(n"watson_prolog_lock");
+    let dogtownFact: Int32 = questsSystem.GetFact(n"q302_done");
+    this.nightCityUnlocked = NotEquals(watsonFact, 1);
+    this.dogtownUnlocked = Equals(dogtownFact, 1); 
+  }
+
+  public final func CheckAndHandleSpawning() -> Void {
+    this.Log(s"CheckAndHandleSpawning");
+    if this.HasPendingEntities() {
+      this.HandleSpawning();
+    };
+  }
+
+  public final func HandleSpawning() -> Void {
+    this.Log(s"HandleSpawning");
+    this.CheckForQuestFacts();
+    this.ScheduleInitialNotification();
     this.handled = true;
 
     if GameInstance.GetSystemRequestsHandler().IsPreGame() {
       return;
     };
 
-    let supportedTags: array<CName> = this.spawnConfig.GetIterationTags();
-    this.Log(s"HandleSpawning, supported tags: \(ArraySize(supportedTags))");
+    if this.nightCityUnlocked {
+      let supportedTags: array<CName> = this.spawnConfig.GetIterationTagsNightCity();
+      this.Log(s"! Night City, supported tags: \(ArraySize(supportedTags))");
 
-    for entityTag in supportedTags {
-      this.Log(s"> Check tag \(entityTag):");
-      if !this.entitySystem.IsPopulated(entityTag) {
-        this.Log(s"-> Call for spawn entities");
-        this.SpawnInstancesByTag(entityTag);
-      } else {
-        this.Log(s"-> Entities already spawned");
+      for entityTag in supportedTags {
+        this.Log(s"> Check tag \(entityTag):");
+        if !this.entitySystem.IsPopulated(entityTag) {
+          this.Log(s"-> Call for spawn entities");
+          this.SpawnInstancesByTag(entityTag);
+        } else {
+          this.Log(s"-> Entities already spawned");
+        };
       };
+    } else {
+      this.Log("Night City locked, skip spawning");
+    };
+
+    let playerInDogtown: Bool = GameInstance.GetPreventionSpawnSystem(this.GetGameInstance()).IsPlayerInDogTown();
+
+    if this.dogtownUnlocked && playerInDogtown {
+      let supportedTags: array<CName> = this.spawnConfig.GetIterationTagsDogtown();
+      this.Log(s"! Dogtown, supported tags: \(ArraySize(supportedTags))");
+
+      for entityTag in supportedTags {
+        this.Log(s"> Check tag \(entityTag):");
+        if !this.entitySystem.IsPopulated(entityTag) {
+          this.Log(s"-> Call for spawn entities");
+          this.SpawnInstancesByTag(entityTag);
+        } else {
+          this.Log(s"-> Entities already spawned");
+        };
+      };
+    } else {
+      this.Log("Player not in Dogtown, skip spawning");
+    };
+  }
+
+  public final func ScheduleInitialNotification() -> Void {
+    this.Log(s"ScheduleInitialNotification...");
+    this.delaySystem.CancelCallback(this.initialCallbackId);
+    let callback: ref<DropPointsSpawnerCallbackInitial> = DropPointsSpawnerCallbackInitial.Create(this);
+    this.initialCallbackId = this.delaySystem.DelayCallback(callback, 7.0, true);
+  }
+
+  public final func HandleInitialNotification() -> Void {
+    let questsSystem: ref<QuestsSystem> = GameInstance.GetQuestsSystem(this.GetGameInstance());
+    let messenger: ref<DeliveryMessengerSystem>;
+    let factName: CName = n"vad_welcome_displayed";
+    let welcomeFact: Int32 = questsSystem.GetFact(factName);
+    let welcomeDisplayed: Bool = Equals(welcomeFact, 1);
+    
+    this.Log(s"HandleInitialNotification, welcomeDisplayed = \(welcomeDisplayed)");
+
+    if this.nightCityUnlocked && !welcomeDisplayed && this.IsPhoneAvailable() {
+      messenger = DeliveryMessengerSystem.Get(this.GetGameInstance());
+      messenger.PushWelcomeNotificationItem();
+      questsSystem.SetFact(factName, 1);
+    };
+
+    this.ScheduleNewDropPointsNotification();
+  }
+
+  public final func ScheduleNewDropPointsNotification() -> Void {
+    this.Log(s"ScheduleNewDropPointsNotification...");
+    this.delaySystem.CancelCallback(this.dropPointsCallbackId);
+    let callback: ref<DropPointsSpawnerCallbackNewDropPoint> = DropPointsSpawnerCallbackNewDropPoint.Create(this);
+    this.dropPointsCallbackId = this.delaySystem.DelayCallback(callback, 7.0, true);
+  }
+
+  public final func HandleNewDropPointsNotification() -> Void {
+    this.Log(s"HandleNewDropPointsNotification");
+    let questsSystem: ref<QuestsSystem> = GameInstance.GetQuestsSystem(this.GetGameInstance());
+    let playerInDogtown: Bool = GameInstance.GetPreventionSpawnSystem(this.GetGameInstance()).IsPlayerInDogTown();
+    let messenger: ref<DeliveryMessengerSystem>;
+
+    // LongshoreStacks
+    let longshoreStacksFactName: CName = n"vad_longshore_sacks_displayed";
+    let longshoreStacksFact: Int32 = questsSystem.GetFact(longshoreStacksFactName);
+    let longshoreStacksDisplayed: Bool = Equals(longshoreStacksFact, 1);
+    this.Log(s" - LongshoreStacks displayed: \(longshoreStacksDisplayed)");
+    if playerInDogtown && !longshoreStacksDisplayed && this.IsPhoneAvailable() {
+      messenger = DeliveryMessengerSystem.Get(this.GetGameInstance());
+      messenger.PushNewDropPointNotificationItem(AtelierDeliveryDropPoint.LongshoreStacks, t"Districts.Dogtown");
+      questsSystem.SetFact(longshoreStacksFactName, 1);
     };
   }
 
@@ -138,14 +269,41 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
       deviceSpec.appearanceName = n"default";
       deviceSpec.position = instance.position;
       deviceSpec.orientation = instance.orientation;
-      // TODO
-      // deviceSpec.persistState = true;
-      // deviceSpec.persistSpawn = true;
+      deviceSpec.persistSpawn = true;
       deviceSpec.alwaysSpawned = true;
       deviceSpec.tags = [ instance.uniqueTag, instance.indexTag, instance.iterationTag, this.typeTag ];
       this.Log(s"--> spawning entity with tags [ \(instance.uniqueTag), \(instance.iterationTag), \(this.typeTag) ] at position \(instance.position)");
       this.entitySystem.CreateEntity(deviceSpec);
     };
+  }
+
+  private final func HasPendingEntities() -> Bool {
+    let nightCityUpdateRequired: Bool = false;
+    let dogtownUpdateRequired: Bool = false;
+    let supportedTagsNightCity: array<CName> = this.spawnConfig.GetIterationTagsNightCity();
+    let supportedTagsDogtown: array<CName> = this.spawnConfig.GetIterationTagsDogtown();
+
+    for tag in supportedTagsNightCity {
+      if !this.entitySystem.IsPopulated(tag) {
+        nightCityUpdateRequired = true;
+      };
+    };
+
+    for tag in supportedTagsDogtown {
+      if !this.entitySystem.IsPopulated(tag) {
+        dogtownUpdateRequired = true;
+      };
+    };
+
+    return nightCityUpdateRequired || dogtownUpdateRequired;
+  }
+
+  private final func IsPhoneAvailable() -> Bool {
+    let phoneSystem: wref<PhoneSystem> = GameInstance.GetScriptableSystemsContainer(this.GetGameInstance()).Get(n"PhoneSystem") as PhoneSystem;
+    if IsDefined(phoneSystem) {
+      return phoneSystem.IsPhoneEnabled();
+    };
+    return false;
   }
 
   private final func Log(str: String) -> Void {
