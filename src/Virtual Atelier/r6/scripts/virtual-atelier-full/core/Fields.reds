@@ -29,3 +29,5 @@ import Codeware.UI.*
 @addField(gameItemData) public let isVirtualItem: Bool;
 @addField(gameItemData) public let hasOwned: Bool;
 @addField(VendorInventoryItemData) public let NotInWardrobe: Bool;
+
+@addField(PlayerPuppet) public let skipDeviceExitHandle: Bool;

@@ -75,3 +75,5 @@ public class PreviewInventoryItemPreviewData extends InventoryItemPreviewData {
 public class AtelierStoresTemplateClassifier extends inkVirtualItemTemplateClassifier {}
 
 public class AtelierRefreshStockEvent extends Event {}
+
+public class AtelierCloseVirtualStore extends Event {}

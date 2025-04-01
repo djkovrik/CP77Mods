@@ -114,9 +114,7 @@ private final func HandleVirtualSlotClick(evt: ref<ItemDisplayClickEvent>) -> Vo
 @wrapMethod(FullscreenVendorGameController)
 protected cb func OnHandleGlobalRelease(evt: ref<inkPointerEvent>) -> Bool {
   wrappedMethod(evt);
-
   let atelierActions: ref<AtelierActions> = AtelierActions.Get(this.GetPlayerControlledObject());
-
   switch true {
     case evt.IsAction(atelierActions.togglePreviewVendor):
       if (this.isPreviewMode) {

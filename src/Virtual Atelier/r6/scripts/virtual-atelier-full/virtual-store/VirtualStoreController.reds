@@ -72,6 +72,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
   }
 
   protected cb func OnUninitialize() -> Bool {
+    this.player.SetSkipDeviceExit(false);
     this.uiInventorySystem.FlushFullscreenCache();
     this.cartManager.ClearCart();
     this.previewManager.SetPreviewState(false);
@@ -172,9 +173,14 @@ public class VirtualStoreController extends gameuiMenuGameController {
         this.previewManager.RemovePreviewGarment();
         this.RefreshVirtualItemState();
         break;
-      case evt.IsAction(n"back"):
+      // Esc: UI_Cancel -> cancel -> back
+      // C: UI_Cancel -> cancel -> UI_Exit
+      case evt.IsAction(n"UI_Cancel"):
       case evt.IsAction(n"cancel"):
+      case evt.IsAction(n"back"):
+        evt.Consume();
         this.previewManager.RemovePreviewGarment();
+        this.QueueEvent(new AtelierCloseVirtualStore());
         break;
       case evt.IsAction(n"mouse_left"):
         if !IsDefined(evt.GetTarget()) || !evt.GetTarget().CanSupportFocus() {
@@ -309,6 +315,15 @@ public class VirtualStoreController extends gameuiMenuGameController {
 
   @if(ModuleExists("AtelierDelivery"))
   private final func HandleBuyButtonClick() -> Void {
+    let spawner: ref<AtelierDropPointsSpawner> = AtelierDropPointsSpawner.Get(this.player.GetGame());
+
+    // Use VA flow is delivery is not available yet
+    if !spawner.IsNightCityUnlocked() {
+      this.ShowPurchaseAllConfirmationPopup();
+      return ;
+    };
+
+
     let store: String = this.GetVirtualStoreName();
     let orderId: Int32 = OrderProcessingSystem.Get(this.player.GetGame()).GetNextOrderId();
     let currentGoods: array<ref<VirtualCartItem>> = this.cartManager.GetCurrentGoods();
@@ -390,6 +405,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
 
   private final func InitializeCoreSystems() -> Void {
     this.player = this.GetPlayerControlledObject() as PlayerPuppet;
+    this.player.SetSkipDeviceExit(true);
     this.previewManager = VirtualAtelierPreviewManager.GetInstance(this.player.GetGame());
     this.previewManager.SetPreviewState(true);
     this.cartManager = VirtualAtelierCartManager.GetInstance(this.player.GetGame());
@@ -1161,3 +1177,4 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
     return EquipmentSystem.IsItemOfCategory(item, gamedataItemCategory.Clothing);
   }
 }
+
