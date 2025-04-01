@@ -31,7 +31,6 @@ public final func SetSkipDeviceExit(skip: Bool) -> Void {
 
 @addMethod(FullscreenVendorGameController)
 protected cb func OnAtelierCloseVirtualStore(evt: ref<AtelierCloseVirtualStore>) -> Bool {
-  ModLog(n"DEBUG", "> OnAtelierCloseVirtualStore");
   if !StatusEffectSystem.ObjectHasStatusEffectWithTag(this.GetPlayerControlledObject(), n"LockInHubMenu") {
     this.m_menuEventDispatcher.SpawnEvent(n"OnBack");
   };
