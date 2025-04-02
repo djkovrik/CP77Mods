@@ -75,6 +75,8 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.player.SetSkipDeviceExit(false);
     this.uiInventorySystem.FlushFullscreenCache();
     this.cartManager.ClearCart();
+    this.cartManager.ClearVirtualStock();
+    this.cartManager = null;
     this.previewManager.SetPreviewState(false);
     this.questsSystem.SetFact(n"disable_tutorials", this.currentTutorialsFact);
     this.storeDataView.SetSource(null);

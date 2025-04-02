@@ -7,7 +7,6 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
   private let player: wref<PlayerPuppet>;
   private let transactionSystem: wref<TransactionSystem>;
   private let inventoryManager: wref<InventoryManager>;
-  private let inventoryManagerV2: ref<InventoryDataManagerV2>;
   private let cart: ref<VirtualAtelierCart>;
   private let stock: array<ref<VirtualStockItem>>;
   private let currentPlayerMoney: Int32;
@@ -25,8 +24,6 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
     this.player = GameInstance.GetPlayerSystem(this.GetGameInstance()).GetLocalPlayerMainGameObject() as PlayerPuppet;
     this.transactionSystem = GameInstance.GetTransactionSystem(this.GetGameInstance());
     this.inventoryManager = GameInstance.GetInventoryManager(this.player.GetGame());
-    this.inventoryManagerV2 = new InventoryDataManagerV2();
-    this.inventoryManagerV2.Initialize(this.player);
     this.cart = new VirtualAtelierCart();
     this.cart.Init();
     this.RefreshCurrentBalances();
@@ -35,6 +32,10 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
 
   public final func StoreVirtualStock(stock: array<ref<VirtualStockItem>>) -> Void {
     this.stock = stock;
+  }
+
+  public final func ClearVirtualStock() -> Void {
+    ArrayClear(this.stock);
   }
 
   public final func PlayerHasEnoughMoneyFor(itemID: ItemID) -> Bool {
