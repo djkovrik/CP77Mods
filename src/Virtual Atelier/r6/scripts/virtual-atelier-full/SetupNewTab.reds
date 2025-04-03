@@ -8,10 +8,6 @@ import VirtualAtelier.Logs.AtelierLog
 private let showAtelier: Bool;
 
 @if(!ModuleExists("VirtualAtelier.Site"))
-@addField(BrowserController)
-private let atelierWidget: wref<inkWidget>;
-
-@if(!ModuleExists("VirtualAtelier.Site"))
 @addMethod(BrowserController)
 protected cb func OnShowAtelierEvent(evt: ref<ShowAtelierEvent>) -> Bool {
   this.showAtelier = evt.show;
@@ -28,7 +24,6 @@ private final func ShowMenuByName(elementName: String) -> Void {
     if NotEquals(elementName, "mainMenu") {
       this.GetMainLayoutController().MarkManuButtonAsSelected(elementName);
     };
-
     return ;
   };
 
@@ -46,7 +41,6 @@ private final func HideMenuByName(elementName: String) -> Void {
 
   wrappedMethod(elementName);
 }
-
 
 // Add Atelier tab to PC layout
 @if(!ModuleExists("VirtualAtelier.Site"))
@@ -79,6 +73,17 @@ public final func GetMenuButtonWidgets() -> array<SComputerMenuButtonWidgetPacka
   return packages;
 }
 
+// Spawn Atelier stores widget
+@if(!ModuleExists("VirtualAtelier.Site"))
+@addMethod(WebPage)
+private func PopulateAtelierView() {
+  let root: ref<inkCompoundWidget> = this.GetWidget(n"page/linkPanel/panel") as inkCompoundWidget;
+  if (!IsDefined(root)) {
+    root = this.GetWidget(n"Page/linkPanel/panel") as inkCompoundWidget;
+  };
+  root.RemoveAllChildren();
+  this.SpawnFromExternal(root, r"base\\gameplay\\gui\\virtual_atelier_stores.inkwidget", n"AtelierStores:VirtualAtelier.UI.AtelierStoresListController");
+}
 
 // Switch Atelier tab icon
 // ^^ kudos to NexusGuy999 for tab widget hack ^^
@@ -93,34 +98,18 @@ public func Initialize(gameController: ref<ComputerInkGameController>, widgetDat
   };
 }
 
-
 // Show Atelier if tab was activated
 @if(!ModuleExists("VirtualAtelier.Site"))
 @wrapMethod(BrowserController)
 protected cb func OnPageSpawned(widget: ref<inkWidget>, userData: ref<IScriptable>) -> Bool {
   wrappedMethod(widget, userData);
 
-  let root: ref<inkCompoundWidget> = inkWidgetRef.Get(this.m_pageContentRoot) as inkCompoundWidget;
-  root.SetInteractive(false);
+  let currentController: ref<WebPage>;
   if this.showAtelier {
+    currentController = this.m_currentPage.GetController() as WebPage;
     inkTextRef.SetText(this.m_addressText, "NETdir://atelier.pub");
-    root.RemoveAllChildren();
-    this.PopulateAtelierView(root);
-  } else {
-    root.RemoveChild(this.atelierWidget);
+    currentController.PopulateAtelierView();
   };
-}
-
-
-// Spawn Atelier stores widget
-@if(!ModuleExists("VirtualAtelier.Site"))
-@addMethod(BrowserController)
-private func PopulateAtelierView(root: ref<inkCompoundWidget>) {
-  this.atelierWidget = this.SpawnFromExternal(
-    root, 
-    r"base\\gameplay\\gui\\virtual_atelier_stores.inkwidget",
-    n"AtelierStores:VirtualAtelier.UI.AtelierStoresListController"
-  );
 }
 
 public class ShowAtelierEvent extends Event {
