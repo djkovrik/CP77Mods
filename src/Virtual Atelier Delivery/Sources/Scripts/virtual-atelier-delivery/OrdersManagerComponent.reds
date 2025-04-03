@@ -151,6 +151,7 @@ public class OrdersManagerComponent extends inkComponent {
       return ;
     };
 
+    this.components.RemoveAllChildren();
     let component: ref<OrdersManagerItemComponent>;
     for order in this.orders {
       component = OrdersManagerItemComponent.Create(order);
