@@ -160,7 +160,7 @@ public class OrderCheckoutPopupComponent extends inkComponent {
     let subtotalParams: ref<inkTextParams> = new inkTextParams();
     let subtotalLabel: String = GetLocalizedTextByKey(n"Mod-VAD-Order-Subtotal");
     subtotalParams.AddString("label", subtotalLabel);
-    subtotalParams.AddNumber("price", this.params.price);
+    subtotalParams.AddString("price", GetFormattedMoneyVAD(this.params.price));
     subtotalParams.AddLocalizedString("dollar", "Common-Characters-EuroDollar");
     this.itemsSubtotal.SetText("{label} {price}{dollar}", subtotalParams);
     // Checkbox
@@ -208,7 +208,7 @@ public class OrderCheckoutPopupComponent extends inkComponent {
     let shippingCostParams: ref<inkTextParams> = new inkTextParams();
     let shippingCostLabel: String = GetLocalizedTextByKey(n"Mod-VAD-Shipment-Cost");
     shippingCostParams.AddString("label", shippingCostLabel);
-    shippingCostParams.AddNumber("cost", shippingPrice);
+    shippingCostParams.AddString("cost", GetFormattedMoneyVAD(shippingPrice));
     shippingCostParams.AddLocalizedString("dollar", "Common-Characters-EuroDollar");
     this.shippingCost.SetText("{label} {cost}{dollar}", shippingCostParams);
     // Delivery time
@@ -224,7 +224,7 @@ public class OrderCheckoutPopupComponent extends inkComponent {
     let totalParams: ref<inkTextParams> = new inkTextParams();
     let totalLabel: String = GetLocalizedTextByKey(n"Mod-VAD-Order-Total");
     totalParams.AddString("label", totalLabel);
-    totalParams.AddNumber("price", this.totalOrderPrice);
+    totalParams.AddString("price", GetFormattedMoneyVAD(this.totalOrderPrice));
     totalParams.AddLocalizedString("dollar", "Common-Characters-EuroDollar");
     this.orderTotal.SetText("{label} {price}{dollar}", totalParams);
   }

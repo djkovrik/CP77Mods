@@ -263,7 +263,7 @@ public class OrdersManagerItemComponent extends inkComponent {
     this.currentStatusBg.BindProperty(n"tintColor", AtelierDeliveryUtils.GetDeliveryBadgeColor(this.order.deliveryStatus));
 
     let priceParams: ref<inkTextParams> = new inkTextParams();
-    priceParams.AddNumber("price", this.order.totalPrice);
+    priceParams.AddString("price", GetFormattedMoneyVAD(this.order.totalPrice));
     priceParams.AddLocalizedString("dollar", "Common-Characters-EuroDollar");
     this.price.SetText("{price} {dollar}", priceParams);
 

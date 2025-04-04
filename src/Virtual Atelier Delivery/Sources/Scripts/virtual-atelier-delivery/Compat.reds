@@ -3,6 +3,9 @@ module AtelierDelivery
 @if(ModuleExists("VirtualAtelier.Compat"))
 import VirtualAtelier.Compat.VersionManager
 
+@if(ModuleExists("NumeralsGetCommas.Functions"))
+import NumeralsGetCommas.Functions.*    
+
 public abstract class CompatManager {
   public final static func RequiredAtelierVersionCode() -> Int32 = 1302
   public final static func RequiredAtelierVersionName() -> String = "1.3.2"
@@ -77,4 +80,14 @@ protected cb func OnInitialize() -> Bool {
 @addMethod(SingleplayerMenuGameController)
 protected cb func OnAtelierDetectionPopupClosed(data: ref<inkGameNotificationData>) {
   this.atelierDetectionPopup = null;
+}
+
+@if(!ModuleExists("NumeralsGetCommas.Functions"))
+public static final func GetFormattedMoneyVAD(money: Int32) -> String {
+  return IntToString(money);
+}
+
+@if(ModuleExists("NumeralsGetCommas.Functions"))
+public static final func GetFormattedMoneyVAD(money: Int32) -> String {
+  return CommaDelineateInt32(money);
 }
