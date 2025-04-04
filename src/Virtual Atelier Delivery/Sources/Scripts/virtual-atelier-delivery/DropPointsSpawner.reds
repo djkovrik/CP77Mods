@@ -36,12 +36,14 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
   }
 
   private func OnRestored(saveVersion: Int32, gameVersion: Int32) -> Void {
+    this.Log("OnRestored");
     if !this.handled {
       this.HandleSpawning();
     };
   }
 
   private func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
+    this.Log("OnPlayerAttach");
     if !this.handled {
       this.HandleSpawning();
     };
@@ -164,6 +166,11 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
 
   public final func HandleSpawning() -> Void {
     this.Log(s"HandleSpawning");
+
+    if GameInstance.GetSystemRequestsHandler().IsPreGame() {
+      return;
+    };
+
     this.CheckForQuestFacts();
     this.ScheduleInitialNotification();
     this.handled = true;
