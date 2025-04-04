@@ -4,8 +4,8 @@ module AtelierDelivery
 import VirtualAtelier.Compat.VersionManager
 
 public abstract class CompatManager {
-  public final static func RequiredAtelierVersionCode() -> Int32 = 1300
-  public final static func RequiredAtelierVersionName() -> String = "1.3.0"
+  public final static func RequiredAtelierVersionCode() -> Int32 = 1302
+  public final static func RequiredAtelierVersionName() -> String = "1.3.2"
 }
 
 @if(ModuleExists("VirtualAtelier.Compat"))

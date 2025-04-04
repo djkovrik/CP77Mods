@@ -141,7 +141,7 @@ public class OrderCheckoutPopupComponent extends inkComponent {
     // Name
     let customerNameParams: ref<inkTextParams> = new inkTextParams();
     customerNameParams.AddLocalizedString("name", this.GetLocalizedCharacterName());
-    this.customerName.SetText("{name} ******", customerNameParams);
+    this.customerName.SetText("{name} ***", customerNameParams);
     // Store
     this.storeName.SetText(this.params.store);
     // Quantity

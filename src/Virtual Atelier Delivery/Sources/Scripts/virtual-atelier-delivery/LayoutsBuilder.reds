@@ -136,6 +136,7 @@ public abstract class LayoutsBuilder {
   public static final func BuildCustomerInfo() -> ref<inkCompoundWidget> {
     let customerInfo: ref<inkFlex> = new inkFlex();
     customerInfo.SetName(n"customerInfo");
+    customerInfo.SetHAlign(inkEHorizontalAlign.Left);
     customerInfo.SetChildOrder(inkEChildOrder.Backward);
     customerInfo.SetFitToContent(true);
 
@@ -192,7 +193,7 @@ public abstract class LayoutsBuilder {
     clientName.SetAnchorPoint(new Vector2(0.0, 0.5));
     clientName.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
     clientName.SetLetterCase(textLetterCase.OriginalCase);
-    clientName.SetText("Valerie ******");
+    clientName.SetText("Valerie ***");
     clientName.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     clientName.BindProperty(n"tintColor", n"MainColors.Red");
     clientName.Reparent(firstRow);

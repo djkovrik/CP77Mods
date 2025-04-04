@@ -131,6 +131,12 @@ public class OrderProcessingSystem extends ScriptableSystem {
     return orderWasFound;
   }
 
+  @if(!ModuleExists("VendorPreview.Config"))
+  private final func GiveBundleItemsToPlayer(bundle: ref<PurchasedAtelierBundle>) -> Void {
+    // do nothing
+  }
+
+  @if(ModuleExists("VendorPreview.Config"))
   private final func GiveBundleItemsToPlayer(bundle: ref<PurchasedAtelierBundle>) -> Void {
     let cartItems: array<ref<WrappedVirtualCartItem>> = bundle.purchasedItems;
     let itemID: ItemID;
