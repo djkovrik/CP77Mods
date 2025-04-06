@@ -266,6 +266,19 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     };
   }
 
+  public final func DespawnAll() -> Void {
+    let supportedTagsNightCity: array<CName> = this.spawnConfig.GetIterationTagsNightCity();
+    let supportedTagsDogtown: array<CName> = this.spawnConfig.GetIterationTagsDogtown();
+
+    for tag in supportedTagsNightCity {
+      this.entitySystem.DeleteTagged(tag);
+    };
+
+    for tag in supportedTagsDogtown {
+      this.entitySystem.DeleteTagged(tag);
+    };
+  }
+
   private final func SpawnInstancesByTag(entityTag: CName) -> Void {
     let instances: array<ref<AtelierDropPointInstance>> = this.spawnConfig.GetSpawnPointsByTag(entityTag);
     let deviceSpec: ref<DynamicEntitySpec>;

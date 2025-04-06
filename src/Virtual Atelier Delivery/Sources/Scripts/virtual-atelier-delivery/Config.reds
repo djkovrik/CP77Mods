@@ -2,7 +2,7 @@ module AtelierDelivery
 
 public class VirtualAtelierDeliveryConfig {
   
-  public final static func Debug() -> Bool = true
+  public final static func Debug() -> Bool = false
 
   @runtimeProperty("ModSettings.mod", "Atelier Delivery")
   @runtimeProperty("ModSettings.category", "Mod-VAD-Delivery-Settings")
