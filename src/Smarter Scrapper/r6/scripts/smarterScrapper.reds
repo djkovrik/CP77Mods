@@ -584,13 +584,13 @@ protected cb func OnUninitialize() -> Bool {
   wrappedMethod();
 }
 
-@if(!ModuleExists("VendorPreview.Config"))
+@if(!ModuleExists("AtelierDelivery"))
 @addMethod(PlayerPuppet)
 private func ReceivedFromDropPoint(data: ref<gameItemData>) -> Bool {
   return false;
 }
 
-@if(ModuleExists("VendorPreview.Config"))
+@if(ModuleExists("AtelierDelivery"))
 @addMethod(PlayerPuppet)
 private func ReceivedFromDropPoint(data: ref<gameItemData>) -> Bool {
   return OrderProcessingSystem.Get(this.GetGame()).IsItemPurchased(data.GetID());
