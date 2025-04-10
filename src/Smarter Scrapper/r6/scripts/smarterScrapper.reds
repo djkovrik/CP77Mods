@@ -1,3 +1,6 @@
+@if(ModuleExists("AtelierDelivery"))
+import AtelierDelivery.OrderProcessingSystem
+
 class SmarterScrapperClothesConfig {
   @runtimeProperty("ModSettings.mod", "Scrapper")
   @runtimeProperty("ModSettings.category", "LocKey#53753")
@@ -366,8 +369,12 @@ protected cb func OnDetach() -> Bool {
 }
 
 @addMethod(PlayerPuppet)
-private func ShouldBeScrappedSS(data: wref<gameItemData>, quality: gamedataQuality) -> Bool {
+private func ShouldBeScrappedSS(data: ref<gameItemData>, quality: gamedataQuality) -> Bool {
   let type: gamedataItemType = data.GetItemType();
+
+  if this.ReceivedFromDropPoint(data) {
+    return false;
+  };
 
   if this.IsClothesSS(type) {
     switch quality {
@@ -443,7 +450,11 @@ private func ShouldBeScrappedSS(data: wref<gameItemData>, quality: gamedataQuali
 }
 
 @addMethod(PlayerPuppet)
-private func ShouldBeScrappedJunkSS(data: wref<gameItemData>) -> Bool {
+private func ShouldBeScrappedJunkSS(data: ref<gameItemData>) -> Bool {
+  if this.ReceivedFromDropPoint(data) {
+    return false;
+  };
+
   let type: gamedataItemType = data.GetItemType();
   let price: Int32;
   if Equals(type, gamedataItemType.Gen_Junk) {
@@ -455,7 +466,11 @@ private func ShouldBeScrappedJunkSS(data: wref<gameItemData>) -> Bool {
 }
 
 @addMethod(PlayerPuppet)
-private func ShouldBeScrappedEdibleSS(data: wref<gameItemData>, quality: gamedataQuality) -> Bool {
+private func ShouldBeScrappedEdibleSS(data: ref<gameItemData>, quality: gamedataQuality) -> Bool {
+  if this.ReceivedFromDropPoint(data) {
+    return false;
+  };
+
   let type: gamedataItemType = data.GetItemType();
 
   if !this.IsEdibleSS(type) {
@@ -567,4 +582,16 @@ protected cb func OnRefreshScapperConfigsEvent(evt: ref<RefreshScapperConfigsEve
 protected cb func OnUninitialize() -> Bool {
   this.GetPlayerControlledObject().QueueEvent(new RefreshScapperConfigsEvent());
   wrappedMethod();
+}
+
+@if(!ModuleExists("VendorPreview.Config"))
+@addMethod(PlayerPuppet)
+private func ReceivedFromDropPoint(data: ref<gameItemData>) -> Bool {
+  return false;
+}
+
+@if(ModuleExists("VendorPreview.Config"))
+@addMethod(PlayerPuppet)
+private func ReceivedFromDropPoint(data: ref<gameItemData>) -> Bool {
+  return OrderProcessingSystem.Get(this.GetGame()).IsItemPurchased(data.GetID());
 }

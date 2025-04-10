@@ -10,6 +10,7 @@ public class OrderProcessingSystem extends ScriptableSystem {
   private let questsSystem: wref<QuestsSystem>;
   private let transactionSystem: wref<TransactionSystem>;
   private let inventoryManager: wref<InventoryManager>;
+  private let purchasedItems: array<ItemID>;
 
   private persistent let orders: array<ref<PurchasedAtelierBundle>>;
   private persistent let nextOrderId: Int32;
@@ -144,11 +145,13 @@ public class OrderProcessingSystem extends ScriptableSystem {
     let stockItem: ref<WrappedVirtualStockItem>;
 
     // Add items
+    ArrayClear(this.purchasedItems);
     for cartItem in cartItems {
       let i: Int32 = 0;
       while i < cartItem.purchaseAmount {
         stockItem = cartItem.stockItem;
         itemID = ItemID.FromTDBID(stockItem.id);
+        ArrayPush(this.purchasedItems, itemID);
         itemData = this.inventoryManager.CreateBasicItemData(itemID, this.player);
         itemData.isVirtualItem = true;
         this.transactionSystem.GiveItem(this.player, itemID, stockItem.quantity);
@@ -207,6 +210,10 @@ public class OrderProcessingSystem extends ScriptableSystem {
     this.PrintCurrentOrders();
 
     OrderTrackingTicker.Get(this.player.GetGame()).ScheduleCallbackNormal();
+  }
+
+  public final func IsItemPurchased(itemID: ItemID) -> Bool {
+    return ArrayContains(this.purchasedItems, itemID);
   }
 
   private final func IsJohnny() -> Bool {

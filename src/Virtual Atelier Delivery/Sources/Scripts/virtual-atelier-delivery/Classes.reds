@@ -184,8 +184,8 @@ public class PurchasedAtelierBundle {
       rangeMin = 4.0 * secondsPerHour;
       rangeMax = 8.0 * secondsPerHour;
     } else {
-      rangeMin = 1.0 * secondsPerHour;
-      rangeMax = 3.0 * secondsPerHour;
+      rangeMin = 0.5 * secondsPerHour;
+      rangeMax = 4.0 * secondsPerHour;
     };
 
     return RandRangeF(rangeMin, rangeMax);

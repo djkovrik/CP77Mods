@@ -83,11 +83,11 @@ protected cb func OnAtelierDetectionPopupClosed(data: ref<inkGameNotificationDat
 }
 
 @if(!ModuleExists("NumeralsGetCommas.Functions"))
-public static final func GetFormattedMoneyVAD(money: Int32) -> String {
+public func GetFormattedMoneyVAD(money: Int32) -> String {
   return IntToString(money);
 }
 
 @if(ModuleExists("NumeralsGetCommas.Functions"))
-public static final func GetFormattedMoneyVAD(money: Int32) -> String {
+public func GetFormattedMoneyVAD(money: Int32) -> String {
   return CommaDelineateInt32(money);
 }

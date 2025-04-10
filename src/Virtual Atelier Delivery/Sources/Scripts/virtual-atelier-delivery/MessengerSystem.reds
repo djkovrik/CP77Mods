@@ -72,7 +72,7 @@ public class DeliveryMessengerSystem extends ScriptableSystem {
   }
 
   public final func PushShippedNotificationItem(bundle: ref<PurchasedAtelierBundle>) -> Void {
-    let item: ref<DeliveryHistoryItem> = DeliveryHistoryItem.Shipped(bundle.GetOrderId(), bundle.GetStoreName(), bundle.GetDeliveryPoint(), bundle.GetDeliveryTimestamp());
+    let item: ref<DeliveryHistoryItem> = DeliveryHistoryItem.Shipped(bundle.GetOrderId(), bundle.GetStoreName(), bundle.GetDeliveryPoint(), bundle.GetNextStatusUpdateDiff());
     this.PushNewNotificationItem(item);
   }
 

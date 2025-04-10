@@ -1,2 +1,2 @@
-"%~dp0\..\..\..\cli\red-cli.exe" bundle
+"%~dp0\..\..\..\red-cli.exe" bundle
 pause
