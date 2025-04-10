@@ -166,7 +166,7 @@ public abstract class LayoutsBuilder {
     content.SetAnchorPoint(0.5, 0.5);
     content.Reparent(customerInfo);
 
-    let firstRow: ref<inkHorizontalPanel> = new inkHorizontalPanel();
+    let firstRow: ref<inkVerticalPanel> = new inkVerticalPanel();
     firstRow.SetName(n"firstRow");
     firstRow.Reparent(content);
 
@@ -193,12 +193,12 @@ public abstract class LayoutsBuilder {
     clientName.SetAnchorPoint(new Vector2(0.0, 0.5));
     clientName.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
     clientName.SetLetterCase(textLetterCase.OriginalCase);
-    clientName.SetText("Valerie ***");
+    clientName.SetText("Valerie ******");
     clientName.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     clientName.BindProperty(n"tintColor", n"MainColors.Red");
     clientName.Reparent(firstRow);
 
-    let secondRow: ref<inkHorizontalPanel> = new inkHorizontalPanel();
+    let secondRow: ref<inkVerticalPanel> = new inkVerticalPanel();
     secondRow.SetName(n"secondRow");
     secondRow.Reparent(content);
 
@@ -229,6 +229,18 @@ public abstract class LayoutsBuilder {
     notProvided.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     notProvided.BindProperty(n"tintColor", n"MainColors.Red");
     notProvided.Reparent(secondRow);
+
+    let minWidth: ref<inkCanvas> = new inkCanvas();
+    minWidth.SetName(n"minWidth");
+    minWidth.SetFitToContent(true);
+    minWidth.SetAnchor(inkEAnchor.CenterLeft);
+    minWidth.SetHAlign(inkEHorizontalAlign.Left);
+    minWidth.SetVAlign(inkEVerticalAlign.Center);
+    minWidth.SetAnchorPoint(0.5, 0.5);
+    minWidth.SetSize(460.00, 10.0);
+    minWidth.SetVisible(false);
+    minWidth.SetAffectsLayoutWhenHidden(true);
+    minWidth.Reparent(customerInfo);
 
     return customerInfo;
   }

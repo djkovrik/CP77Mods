@@ -44,7 +44,7 @@ private final func RegisterDropPointMappin(data: ref<DropPointMappinRegistration
   let mappinId: NewMappinID;
   if IsDefined(mappinData) {
     mappinId = mappinData.GetMappinID();
-    if NotEquals(mappinId.value, 0u) && spawner.IsCustomDropPoint(entityId) {
+    if NotEquals(mappinId.value, Cast<Uint64>(0)) && spawner.IsCustomDropPoint(entityId) {
       spawner.SaveSpawnedMappinId(entityId, mappinId);
     };
   };

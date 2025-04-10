@@ -66,6 +66,8 @@ public class OrderCheckoutPopup extends InMenuPopup {
     this.PlaySound(n"Button", n"OnPress");
   }
 
+  protected cb func OnShown() {}
+
   private final func Log(str: String) -> Void {
     if VirtualAtelierDeliveryConfig.Debug() {
       ModLog(n"DeliveryPopup", str);
