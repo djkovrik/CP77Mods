@@ -37,10 +37,11 @@ public final func OnFactChangedDogtown(val: Int32) -> Void {
   };
 }
 
-// Run checks post ft
+// Run check on ft to Dogtown
 @wrapMethod(FastTravelSystem)
 protected cb func OnLoadingScreenFinished(value: Bool) -> Bool {
-  if value {
+  let playerInDogtown: Bool = GameInstance.GetPreventionSpawnSystem(this.GetGameInstance()).IsPlayerInDogTown();
+  if value && playerInDogtown {
     AtelierDropPointsSpawner.Get(this.GetGameInstance()).CheckAndHandleSpawning();
   };
   wrappedMethod(value);

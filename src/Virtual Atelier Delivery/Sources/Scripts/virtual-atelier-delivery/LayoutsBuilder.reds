@@ -11,7 +11,7 @@ public abstract class LayoutsBuilder {
     
     let rootCanvas: ref<inkCanvas> = new inkCanvas();
     rootCanvas.SetName(n"RootCanvas");
-    rootCanvas.SetSize(1400.0, 1040.0);
+    rootCanvas.SetSize(1400.0, 1060.0);
 
     let leftPart: ref<inkVerticalPanel> = new inkVerticalPanel();
     leftPart.SetName(n"leftColumn");
