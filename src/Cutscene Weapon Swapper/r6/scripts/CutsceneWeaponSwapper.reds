@@ -12,6 +12,7 @@ public class CutsceneWeaponSwapper extends ScriptableService {
       .AddTarget(ResourceTarget.Path(r"base\\quest\\main_quests\\part1\\q110\\scenes\\q110_16b_closing_funeral.scene"))
       .AddTarget(ResourceTarget.Path(r"base\\quest\\main_quests\\prologue\\q001\\scenes\\q001_04_ripperdoc.scene"))
       .AddTarget(ResourceTarget.Path(r"base\\quest\\main_quests\\prologue\\q003\\scenes\\q003_03_deal.scene"))
+      .AddTarget(ResourceTarget.Path(r"base\\quest\\main_quests\\prologue\\q005\\scenes\\q005_02_cab_ride.scene"))
       .AddTarget(ResourceTarget.Path(r"ep1\\quest\\main_quests\\q302\\scenes\\q302_02_spider.scene"))
       .AddTarget(ResourceTarget.Path(r"ep1\\quest\\main_quests\\q306\\scenes\\q306_10_finale.scene"));
   }
@@ -33,6 +34,7 @@ public class CutsceneWeaponSwapper extends ScriptableService {
 
     let q001: Bool = Equals(path, r"base\\quest\\main_quests\\prologue\\q001\\scenes\\q001_04_ripperdoc.scene");
     let q003: Bool = Equals(path, r"base\\quest\\main_quests\\prologue\\q003\\scenes\\q003_03_deal.scene");
+    let q005: Bool = Equals(path, r"base\\quest\\main_quests\\prologue\\q005\\scenes\\q005_02_cab_ride.scene");
     let q103: Bool = Equals(path, r"base\\quest\\main_quests\\part1\\q103\\scenes\\q103_14_maelstrom.scene");
     let q104_05: Bool = Equals(path, r"base\\quest\\main_quests\\part1\\q104\\scenes\\q104_05_av_debris.scene");
     let q104_07: Bool = Equals(path, r"base\\quest\\main_quests\\part1\\q104\\scenes\\q104_07b_haru_found.scene");
@@ -60,6 +62,13 @@ public class CutsceneWeaponSwapper extends ScriptableService {
 
       // The Pickup - Royce conversation
       if q003 && Equals(prop.specPropRecordId, t"Items.Preset_V_Unity") {
+        ArrayPush(patchingIndexes, propIndex);
+        let patchedProp: scnPropDef = this.PatchSpawnInEntityProp(prop, weaponToDisplay);
+        ArrayPush(patchedProps, patchedProp);
+      };
+
+      // The Heist - Delamain ride to Konpeki
+      if q005 && Equals(prop.specPropRecordId, t"Items.Preset_V_Unity") {
         ArrayPush(patchingIndexes, propIndex);
         let patchedProp: scnPropDef = this.PatchSpawnInEntityProp(prop, weaponToDisplay);
         ArrayPush(patchedProps, patchedProp);
@@ -123,7 +132,7 @@ public class CutsceneWeaponSwapper extends ScriptableService {
       questNode = node as scnQuestNode;
       if IsDefined(questNode) {
         nodeDefinition = questNode.questNode as questEquipItemNodeDefinition;
-        this.PatchQuestEquipItemNodeDefinition(nodeDefinition, weaponToDisplay, q306);
+        this.PatchQuestEquipItemNodeDefinition(nodeDefinition, weaponToDisplay, q005, q306);
       };
     };
   }
@@ -147,14 +156,16 @@ public class CutsceneWeaponSwapper extends ScriptableService {
     return patchedProp;
   }
 
-  private final func PatchQuestEquipItemNodeDefinition(nodeDefinition: ref<questEquipItemNodeDefinition>, weaponId: TweakDBID, isOverture: Bool) -> Void {
+  private final func PatchQuestEquipItemNodeDefinition(nodeDefinition: ref<questEquipItemNodeDefinition>, weaponId: TweakDBID, isQ005: Bool, isQ306: Bool) -> Void {
     let weaponToCheck: TweakDBID = t"Items.Preset_V_Unity_Cutscene";
-    if isOverture {
+    if isQ005 {
+      weaponToCheck = t"Items.Preset_V_Unity";
+    } else if isQ306 {
       weaponToCheck = t"Items.Preset_Overture_Default";
     };
 
     if IsDefined(nodeDefinition) {
-      if Equals(nodeDefinition.params.itemId, weaponToCheck) {
+      if Equals(nodeDefinition.params.itemId, weaponToCheck) && Equals(nodeDefinition.params.type, questNodeType.Equip) {
         this.Log(s"-> patched questEquipItemNodeDefinition with \(TDBID.ToStringDEBUG(weaponId))");
         nodeDefinition.params.itemId = weaponId;
       };
