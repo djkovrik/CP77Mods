@@ -50,6 +50,7 @@ enum LHUDRicochetColors {
   Transparent = 0,
   Green = 1,
   Red = 2,
+  Yellow = 3,
 }
 
 enum LHUDArrowAndHpAppearance {
@@ -332,14 +333,6 @@ private final const func EnablePlayerTPPRepresenation(enable: Bool) -> Void {
 // Broadcast LHUD event
 @addMethod(GameObject)
 public func QueueLHUDEvent(type: LHUDEventType, active: Bool) -> Void {
-  let player: ref<PlayerPuppet> = this as PlayerPuppet;
-  if IsDefined(player) {
-    player.QueueLHUDEvent(type, active);
-  };
-}
-
-@addMethod(PlayerPuppet)
-public func QueueLHUDEvent(type: LHUDEventType, active: Bool) -> Void {
   let evt: ref<LHUDEvent> = new LHUDEvent();
   evt.type = type;
   evt.isActive = active;
@@ -374,14 +367,14 @@ protected cb func OnUninitialize() -> Bool {
   wrappedMethod();
 }
 
-public static func LHUDLogMarker(str: String) -> Void {
+public func LHUDLogMarker(str: String) -> Void {
   // ModLog(n"LHUD_Marker", "LHUD: " + str);
 }
 
-public static func LHUDLogDebug(str: String) -> Void {
+public func LHUDLogDebug(str: String) -> Void {
   // ModLog(n"LHUD", "LHUD: " + str);
 }
 
-public static func LHUDLogStartup(str: String) -> Void {
+public func LHUDLogStartup(str: String) -> Void {
   // ModLog(n"LHUD", "LHUD: " + str);
 }

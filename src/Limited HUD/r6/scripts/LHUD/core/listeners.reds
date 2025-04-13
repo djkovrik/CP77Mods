@@ -153,17 +153,17 @@ public class LHUDBlackboardsListener {
   // Player state bb callback
   protected cb func OnCombatStateChanged(newState: Int32) -> Bool {
     switch newState {
-      case EnumInt(gamePSMCombat.Default):
+      case 0:
         this.playerInstance.QueueLHUDEvent(LHUDEventType.Combat, false);
         this.playerInstance.QueueLHUDEvent(LHUDEventType.Stealth, false);
         this.playerInstance.QueueLHUDEvent(LHUDEventType.OutOfCombat, true);
         break;
-      case EnumInt(gamePSMCombat.InCombat):
+      case 1:
         this.playerInstance.QueueLHUDEvent(LHUDEventType.Stealth, false);
         this.playerInstance.QueueLHUDEvent(LHUDEventType.OutOfCombat, false);
         this.playerInstance.QueueLHUDEvent(LHUDEventType.Combat, true);
         break;
-      case EnumInt(gamePSMCombat.OutOfCombat):
+      case 2:
         this.playerInstance.QueueLHUDEvent(LHUDEventType.Stealth, false);
         this.playerInstance.QueueLHUDEvent(LHUDEventType.Combat, false);
         this.playerInstance.QueueLHUDEvent(LHUDEventType.OutOfCombat, true);

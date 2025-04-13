@@ -1,29 +1,31 @@
+module LimitedHudRicochet
+
 import LimitedHudConfig.LHUDAddonsColoringConfig
 import LimitedHudCommon.LHUDRicochetColors
 
-// No color (disable): 0    Green: 1    Red: 2
+@if(!ModuleExists("KeepDrawingTheLine"))
 @replaceMethod(gameEffectExecutor_Ricochet)
 public final func OnSnap(ctx: EffectScriptContext, entity: ref<Entity>) -> Void {
   let data: OutlineData;
   let evt: ref<OutlineRequestEvent> = new OutlineRequestEvent();
-  let config: ref<LHUDAddonsColoringConfig> = new LHUDAddonsColoringConfig();
-  switch config.RicochetColor {
-    case 0: 
-      data.outlineType = EOutlineType.NONE;
-      break;
-    case 1: 
-      data.outlineType = EOutlineType.GREEN;
-      break;
-    case 2: 
-      data.outlineType = EOutlineType.RED;
-      break;
-    default: 
-      data.outlineType = EOutlineType.GREEN;
-      break;
-  }
-
+  let outlineType: EOutlineType = this.GetOutlineColor();
+  data.outlineType = outlineType;
   data.outlineOpacity = 1.0;
   let id: CName = n"gameEffectExecutor_Ricochet";
   evt.outlineRequest = OutlineRequest.CreateRequest(id, data);
   entity.QueueEvent(evt);
+}
+
+@addMethod(gameEffectExecutor_Ricochet)
+private final func GetOutlineColor() -> EOutlineType {
+  let config: ref<LHUDAddonsColoringConfig> = new LHUDAddonsColoringConfig();
+  let configInt: Int32 = EnumInt(config.RicochetColor);
+
+  switch configInt {
+    case 1: return EOutlineType.GREEN;
+    case 2: return EOutlineType.RED;
+    case 3: return EOutlineType.YELLOW;
+  };
+
+  return EOutlineType.NONE;
 }
