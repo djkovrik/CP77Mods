@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<InstalLog Project="VirtualAtelierDelivery" Build_date="13.04.2025 9:45:29">
+  <Files>
+    <Directory Path="C:\Games\steamapps\common\Cyberpunk 2077\archive">
+      <Directory Path="C:\Games\steamapps\common\Cyberpunk 2077\archive\pc">
+        <Directory Path="C:\Games\steamapps\common\Cyberpunk 2077\archive\pc\mod">
+          <file>C:\Games\steamapps\common\Cyberpunk 2077\archive\pc\mod\VirtualAtelierDelivery.archive</file>
+          <file>C:\Games\steamapps\common\Cyberpunk 2077\archive\pc\mod\VirtualAtelierDelivery.archive.xl</file>
+        </Directory>
+      </Directory>
+    </Directory>
+    <Directory Path="C:\Games\steamapps\common\Cyberpunk 2077\r6">
+      <Directory Path="C:\Games\steamapps\common\Cyberpunk 2077\r6\tweaks">
+        <Directory Path="C:\Games\steamapps\common\Cyberpunk 2077\r6\tweaks\VirtualAtelierDelivery">
+          <file>C:\Games\steamapps\common\Cyberpunk 2077\r6\tweaks\VirtualAtelierDelivery\DropPointAction.yaml</file>
+        </Directory>
+      </Directory>
+    </Directory>
+  </Files>
+</InstalLog>

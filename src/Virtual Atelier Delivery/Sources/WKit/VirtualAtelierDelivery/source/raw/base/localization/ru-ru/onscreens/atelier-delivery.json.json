@@ -1,0 +1,373 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.6.0-nightly.2022-03-24",
+    "WKitJsonVersion": "0.0.1",
+    "GameVersion": 1500,
+    "ExportedDateTime": "2022-03-27T09:06:47.1077346Z",
+    "DataType": "CR2W"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "Type": "JsonResource",
+      "Properties": {
+        "cookingPlatform": "PLATFORM_PC",
+        "root": {
+          "HandleId": "0",
+          "Data": {
+            "Type": "localizationPersistenceOnScreenEntries",
+            "Properties": {
+              "entries": [
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Delivery-Settings",
+                    "femaleVariant": "Настройки доставки"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Delivery-Standard-Time-Min",
+                    "femaleVariant": "Минимальный срок обычной доставки"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Delivery-Standard-Time-Max",
+                    "femaleVariant": "Максимальный срок обычной доставки"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Delivery-Priority-Time-Min",
+                    "femaleVariant": "Минимальный срок ускоренной доставки"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Delivery-Priority-Time-Max",
+                    "femaleVariant": "Максимальный срок ускоренной доставки"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Delivery-Time-Min-Desc",
+                    "femaleVariant": "Минимальное количество часов, которое займет доставка заказа."
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Delivery-Time-Max-Desc",
+                    "femaleVariant": "Максимальное количество часов, которое займет доставка заказа."
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Delivery-Standard-Price",
+                    "femaleVariant": "Цена обычной доставки"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Delivery-Standard-Price-Desc",
+                    "femaleVariant": "Стоимость обычного метода доставки вашего заказа, фиксированная цена."
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Delivery-Priority-Price",
+                    "femaleVariant": "Цена ускоренной доставки"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Delivery-Priority-Price-Desc",
+                    "femaleVariant": "Стоимость ускоренного метода доставки вашего заказа, цена за единицу веса."
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Contact-Name",
+                    "femaleVariant": "Доставка Виртуального Ателье"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Marker",
+                    "femaleVariant": "Доставка Виртуального Ателье"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Marker-Description",
+                    "femaleVariant": "Почтоматы, используемые для доставки заказов Виртуального Ателье."
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Time-Suffix-Days",
+                    "femaleVariant": "д"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Time-Suffix-Hours",
+                    "femaleVariant": "ч"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Time-Less-Than-Hour",
+                    "femaleVariant": "в течение часа"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Shipment-Suffix-None",
+                    "femaleVariant": "нет"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Error-No-VA",
+                    "femaleVariant": "Для использования Virtual Atelier Delivery необходимо наличие самого мода Virtual Atelier, но сейчас он у вас не установлен."
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Error-VA-Required",
+                    "femaleVariant": "Virtual Atelier Delivery требует наличия Virtual Atelier версии"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Error-VA-Current",
+                    "femaleVariant": "Текущая версия Virtual Atelier"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Order",
+                    "femaleVariant": "Заказ"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Order-Secure-Payment",
+                    "femaleVariant": "Безопасная сделка"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Order-Info",
+                    "femaleVariant": "Информация о заказе:"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Order-Quantity",
+                    "femaleVariant": "Число предметов:"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Order-Weight",
+                    "femaleVariant": "Вес предметов:"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Order-Subtotal",
+                    "femaleVariant": "Подытог:"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Order-Total",
+                    "femaleVariant": "Итог:"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Customer-Info",
+                    "femaleVariant": "Имя покупателя:"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Contact-Info",
+                    "femaleVariant": "Контактные данные:"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Contact-Info-Not-Provided",
+                    "femaleVariant": "не предоставлены"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Shipment-Method",
+                    "femaleVariant": "Выберите тип доставки:"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Shipment-Standard",
+                    "femaleVariant": "Обычная"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Shipment-Priority",
+                    "femaleVariant": "Ускоренная"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Shipment-Cost",
+                    "femaleVariant": "Стоимость доставки:"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Shipment-Time",
+                    "femaleVariant": "Срок доставки:"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Shipment-Destination",
+                    "femaleVariant": "Выберите пункт выдачи:"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Order-Created-Nofitication",
+                    "femaleVariant": "Заказ #{id} создан."
+                  }
+                },
+{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Order-Delivered-Nofitication",
+                    "femaleVariant": "Заказ #{id} доставлен."
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-No-Orders",
+                    "femaleVariant": "Нет активных заказов."
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Status-Created",
+                    "femaleVariant": "Создан"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Status-Shipped",
+                    "femaleVariant": "Отправлен"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Status-Arrived",
+                    "femaleVariant": "Прибыл"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Status-Delivered",
+                    "femaleVariant": "Доставлен"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Order-Status-Update",
+                    "femaleVariant": "Следующее обновление статуса:"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Journal-Welcome",
+                    "femaleVariant": "Спасибо, что выбрали услуги доставки для Виртуального Ателье!\nМы рады видеть вас среди наших клиентов и сделаем всё, чтобы ваш опыт был безупречным и удобным.\nПриятных покупок!"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Journal-Order-Shipped",
+                    "femaleVariant": "Ваш заказ из {store} уже в пути!\nЗаказ #{id} отправлен в пункт выдачи: {drop_point}. Примерное время доставки: {time}.\nМы сообщим вам, как только он прибудет."
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Journal-Order-Delivered",
+                    "femaleVariant": "Ваш заказ из {store} прибыл!\nЗаказ #{id} успешно доставлен в пункт выдачи: {drop_point}. Вы можете забрать его в удобное для вас время.\nСпасибо, что воспользовались услугами нашей доставки!"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Journal-New-Drop-Point",
+                    "femaleVariant": "Отличные новости!\nТеперь вам доступен новый пункт выдачи в: {district}, {drop_point}.\nЭтот вариант поможет сделать получение заказов ещё удобнее для вас.\nДелайте покупки с комфортом!"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "EmbeddedFiles": []
+  }
+}

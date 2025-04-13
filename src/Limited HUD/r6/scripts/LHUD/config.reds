@@ -1562,7 +1562,7 @@ public class LHUDAddonsColoringConfig {
   @runtimeProperty("ModSettings.displayValues.Transparent", "Mod-LHUD-Transparent")
   @runtimeProperty("ModSettings.displayValues.Green", "Mod-LHUD-Green")
   @runtimeProperty("ModSettings.displayValues.Red", "Mod-LHUD-Red")
-  @runtimeProperty("ModSettings.displayValues.Red", "Mod-LHUD-Light-Yellow")
+  @runtimeProperty("ModSettings.displayValues.Yellow", "Mod-LHUD-Light-Yellow")
   let RicochetColor: LHUDRicochetColors = LHUDRicochetColors.Green;
 
   @runtimeProperty("ModSettings.mod", "LHUD Addons")

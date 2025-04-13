@@ -1,0 +1,60 @@
+localization:
+  onscreens:
+    en-us: base\localization\en-us\onscreens\atelier-delivery.json
+    ru-ru: base\localization\ru-ru\onscreens\atelier-delivery.json
+
+journal:
+  - base\atelier\delivery.journal
+
+streaming:
+  sectors:
+    # Wollesen St
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-17_-23_0_0.streamingsector
+      expectedNodes: 1027
+      nodeDeletions:
+        - index: 530
+          type: worldInstancedDestructibleMeshNode
+        - index: 534
+          type: worldInstancedDestructibleMeshNode
+        - index: 535
+          type: worldInstancedDestructibleMeshNode
+        - index: 538
+          type: worldInstancedDestructibleMeshNode
+        - index: 539
+          type: worldInstancedDestructibleMeshNode
+    # Sarasti&Republic
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-24_7_0_0.streamingsector
+      expectedNodes: 523
+      nodeDeletions:
+        - index: 170
+          type: worldInstancedDestructibleMeshNode
+    # West Wind Estate
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-41_-39_0_0.streamingsector
+      expectedNodes: 1358
+      nodeDeletions:
+        - index: 653
+          type: worldInstancedDestructibleMeshNode
+        - index: 659
+          type: worldInstancedDestructibleMeshNode
+        - index: 660
+          type: worldInstancedDestructibleMeshNode
+        - index: 662
+          type: worldInstancedDestructibleMeshNode
+        - index: 663
+          type: worldInstancedDestructibleMeshNode
+        - index: 664
+          type: worldInstancedDestructibleMeshNode
+    # Sunset Motel
+    - path: base\worlds\03_night_city\_compiled\default\exterior_25_-13_0_0.streamingsector
+      expectedNodes: 1229
+      nodeDeletions:
+        - index: 665
+          type: worldInstancedDestructibleMeshNode
+        - index: 666
+          type: worldInstancedDestructibleMeshNode
+        - index: 669
+          type: worldInstancedDestructibleMeshNode
+        - index: 681
+          type: worldInstancedDestructibleMeshNode
+        - index: 683
+          type: worldInstancedDestructibleMeshNode

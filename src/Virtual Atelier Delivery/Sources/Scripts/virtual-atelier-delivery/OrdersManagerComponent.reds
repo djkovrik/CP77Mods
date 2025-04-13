@@ -3,6 +3,8 @@ import Codeware.UI.*
 
 public class OrdersManagerComponent extends inkComponent {
   let player: wref<GameObject>;
+  let system: wref<OrderProcessingSystem>;
+  let ticker: wref<OrderTrackingTicker>;
   let orders: array<ref<PurchasedAtelierBundle>>;
 
   let components: wref<inkCompoundWidget>;
@@ -104,13 +106,15 @@ public class OrdersManagerComponent extends inkComponent {
 
   protected cb func OnInitialize() -> Void {
     this.player = GameInstance.GetPlayerSystem(GetGameInstance()).GetLocalPlayerControlledGameObject();
-    OrderTrackingTicker.Get(this.player.GetGame()).CancelScheduledCallback();
+    this.system = OrderProcessingSystem.Get(this.player.GetGame());
+    this.ticker = OrderTrackingTicker.Get(this.player.GetGame());
+    this.ticker.CancelScheduledCallback();
     this.InitializeWidgets();
     this.RefreshComponentsList();
   }
 
   protected cb func OnUninitialize() -> Void {
-    OrderTrackingTicker.Get(GetGameInstance()).ScheduleCallbackShortened();
+    this.ticker.ScheduleCallbackShortened();
     this.player = null;
   }
 
@@ -142,7 +146,8 @@ public class OrdersManagerComponent extends inkComponent {
   }
 
   private final func RefreshComponentsList() -> Void {
-    this.orders = OrderProcessingSystem.Get(GetGameInstance()).GetOrders();
+    this.system.RefreshOrdersState();
+    this.orders = this.system.GetOrders();
     let isEmpty: Bool = Equals(ArraySize(this.orders), 0);
     this.scrollWrapper.SetVisible(!isEmpty);
     this.emptyPlaceholder.SetVisible(isEmpty);

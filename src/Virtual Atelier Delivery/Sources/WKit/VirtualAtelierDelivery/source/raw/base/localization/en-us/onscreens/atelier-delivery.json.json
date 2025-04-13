@@ -1,0 +1,373 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.6.0-nightly.2022-03-24",
+    "WKitJsonVersion": "0.0.1",
+    "GameVersion": 1500,
+    "ExportedDateTime": "2022-03-27T09:06:47.1077346Z",
+    "DataType": "CR2W"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "Type": "JsonResource",
+      "Properties": {
+        "cookingPlatform": "PLATFORM_PC",
+        "root": {
+          "HandleId": "0",
+          "Data": {
+            "Type": "localizationPersistenceOnScreenEntries",
+            "Properties": {
+              "entries": [
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Delivery-Settings",
+                    "femaleVariant": "Delivery settings"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Delivery-Standard-Time-Min",
+                    "femaleVariant": "Minimum standard delivery time"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Delivery-Standard-Time-Max",
+                    "femaleVariant": "Maximum standard delivery time"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Delivery-Priority-Time-Min",
+                    "femaleVariant": "Minimum priority delivery time"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Delivery-Priority-Time-Max",
+                    "femaleVariant": "Maximum priority delivery time"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Delivery-Time-Min-Desc",
+                    "femaleVariant": "The minimum number of hours it will take to deliver the order."
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Delivery-Time-Max-Desc",
+                    "femaleVariant": "The maximum number of hours it will take to deliver the order."
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Delivery-Standard-Price",
+                    "femaleVariant": "Standard delivery price"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Delivery-Standard-Price-Desc",
+                    "femaleVariant": "Your order delivery cost for standard shipping, fixed price"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Delivery-Priority-Price",
+                    "femaleVariant": "Priority delivery price"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Delivery-Priority-Price-Desc",
+                    "femaleVariant": "Your order delivery cost for priority shipping, price per weight unit"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Contact-Name",
+                    "femaleVariant": "Virtual Atelier Delivery"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Marker",
+                    "femaleVariant": "Virtual Atelier Delivery"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Marker-Description",
+                    "femaleVariant": "Drop Points used for delivering Virtual Atelier orders."
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Time-Suffix-Days",
+                    "femaleVariant": "d"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Time-Suffix-Hours",
+                    "femaleVariant": "hr"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Time-Less-Than-Hour",
+                    "femaleVariant": "within an hour"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Shipment-Suffix-None",
+                    "femaleVariant": "none"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Error-No-VA",
+                    "femaleVariant": "To use Virtual Atelier Delivery mod you must also install Virtual Atelier itself, but now you do not have it installed."
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Error-VA-Required",
+                    "femaleVariant": "Virtual Atelier Delivery requires Virtual Atelier version"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Error-VA-Current",
+                    "femaleVariant": "Your current Virtual Atelier version"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Order",
+                    "femaleVariant": "Order"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Order-Secure-Payment",
+                    "femaleVariant": "Secure Payment"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Order-Info",
+                    "femaleVariant": "Order info:"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Order-Quantity",
+                    "femaleVariant": "Items quantity:"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Order-Weight",
+                    "femaleVariant": "Items weight:"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Order-Subtotal",
+                    "femaleVariant": "Subtotal:"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Order-Total",
+                    "femaleVariant": "Total:"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Customer-Info",
+                    "femaleVariant": "Customer name:"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Contact-Info",
+                    "femaleVariant": "Contact info:"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Contact-Info-Not-Provided",
+                    "femaleVariant": "not provided"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Shipment-Method",
+                    "femaleVariant": "Select shipment method:"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Shipment-Standard",
+                    "femaleVariant": "Standard"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Shipment-Priority",
+                    "femaleVariant": "Priority"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Shipment-Cost",
+                    "femaleVariant": "Shipping cost:"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Shipment-Time",
+                    "femaleVariant": "Delivery time:"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Shipment-Destination",
+                    "femaleVariant": "Select delivery point:"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Order-Created-Nofitication",
+                    "femaleVariant": "Order #{id} created."
+                  }
+                },
+{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Order-Delivered-Nofitication",
+                    "femaleVariant": "Order #{id} delivered."
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-No-Orders",
+                    "femaleVariant": "No active orders."
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Status-Created",
+                    "femaleVariant": "Created"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Status-Shipped",
+                    "femaleVariant": "Shipped"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Status-Arrived",
+                    "femaleVariant": "Arrived"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Status-Delivered",
+                    "femaleVariant": "Delivered"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Order-Status-Update",
+                    "femaleVariant": "Next status update:"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Journal-Welcome",
+                    "femaleVariant": "Welcome to Virtual Atelier Delivery!\nThank you for choosing our services. We are thrilled to have you on board and are here to make your experience seamless and enjoyable.\nHappy shopping!"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Journal-Order-Shipped",
+                    "femaleVariant": "Your order from {store} is on the way!\nOrder #{id} has been shipped and is heading to the pickup point: {drop_point}. Estimated delivery time: {time}.\nWe will notify you once it arrives."
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Journal-Order-Delivered",
+                    "femaleVariant": "Your order from {store} has arrived!\nOrder #{id} has been successfully delivered to the pickup point: {drop_point}. You can collect it at your convenience.\nThank you for choosing our delivery service!"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Journal-New-Drop-Point",
+                    "femaleVariant": "Great news!\nA new drop point is now available for your convenience: {district}, {drop_point}.\nNext time you order, feel free to select this location for faster and easier collection.\nShop with ease!"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "EmbeddedFiles": []
+  }
+}
