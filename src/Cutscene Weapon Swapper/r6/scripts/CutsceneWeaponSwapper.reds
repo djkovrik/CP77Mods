@@ -10,6 +10,7 @@ public class CutsceneWeaponSwapper extends ScriptableService {
       .AddTarget(ResourceTarget.Path(r"base\\quest\\main_quests\\part1\\q104\\scenes\\q104_07b_haru_found.scene"))
       .AddTarget(ResourceTarget.Path(r"base\\quest\\main_quests\\part1\\q104\\scenes\\q104_08_courier_talks.scene"))
       .AddTarget(ResourceTarget.Path(r"base\\quest\\main_quests\\part1\\q110\\scenes\\q110_16b_closing_funeral.scene"))
+      .AddTarget(ResourceTarget.Path(r"base\\quest\\main_quests\\part1\\q112\\scenes\\q112_11_shotgun.scene"))
       .AddTarget(ResourceTarget.Path(r"base\\quest\\main_quests\\prologue\\q001\\scenes\\q001_04_ripperdoc.scene"))
       .AddTarget(ResourceTarget.Path(r"base\\quest\\main_quests\\prologue\\q003\\scenes\\q003_03_deal.scene"))
       .AddTarget(ResourceTarget.Path(r"base\\quest\\main_quests\\prologue\\q005\\scenes\\q005_02_cab_ride.scene"))
@@ -23,10 +24,9 @@ public class CutsceneWeaponSwapper extends ScriptableService {
       return ;
     };
 
-    let weaponToDisplay: TweakDBID = this.GetWeaponToDisplay(player);
-    if Equals(weaponToDisplay, t"") {
-      return ;
-    };
+    let pistols: array<gamedataItemType> = [ gamedataItemType.Wea_Handgun, gamedataItemType.Wea_Revolver ];
+    let shotgun: array<gamedataItemType> = [ gamedataItemType.Wea_Shotgun ];
+    let weaponToDisplay: TweakDBID = this.GetWeaponToDisplay(player, pistols);
 
     this.HandleCompat(player);
 
@@ -39,10 +39,20 @@ public class CutsceneWeaponSwapper extends ScriptableService {
     let q104_05: Bool = Equals(path, r"base\\quest\\main_quests\\part1\\q104\\scenes\\q104_05_av_debris.scene");
     let q104_07: Bool = Equals(path, r"base\\quest\\main_quests\\part1\\q104\\scenes\\q104_07b_haru_found.scene");
     let q104_08: Bool = Equals(path, r"base\\quest\\main_quests\\part1\\q104\\scenes\\q104_08_courier_talks.scene");
+    let q112: Bool = Equals(path, r"base\\quest\\main_quests\\part1\\q112\\scenes\\q112_11_shotgun.scene");
     let q302: Bool = Equals(path, r"ep1\\quest\\main_quests\\q302\\scenes\\q302_02_spider.scene");
     let q306: Bool = Equals(path, r"ep1\\quest\\main_quests\\q306\\scenes\\q306_10_finale.scene");
 
     this.Log(s"> Patching \(ResRef.ToString(path))...");
+
+    if q112 {
+      weaponToDisplay = this.GetWeaponToDisplay(player, shotgun);
+    };
+
+    if Equals(weaponToDisplay, t"") {
+      this.Log(s"No matching weapon found, skip!");
+      return ;
+    };
 
     let scene: ref<scnSceneResource> = event.GetResource() as scnSceneResource;
 
@@ -102,6 +112,13 @@ public class CutsceneWeaponSwapper extends ScriptableService {
         ArrayPush(patchedProps, patchedProp);
       };
 
+      // Search and Destroy - hotel talk
+      if q112 && Equals(prop.specPropRecordId, t"Items.Preset_Tactician_Default") {
+        ArrayPush(patchingIndexes, propIndex);
+        let patchedProp: scnPropDef = this.PatchSpawnInEntityProp(prop, weaponToDisplay);
+        ArrayPush(patchedProps, patchedProp);
+      };
+
       // Spider and the Fly (Phantom Liberty) - boss fight
       if q302 && Equals(prop.specPropRecordId, t"Items.Preset_V_Unity_Cutscene") {
         ArrayPush(patchingIndexes, propIndex);
@@ -132,7 +149,7 @@ public class CutsceneWeaponSwapper extends ScriptableService {
       questNode = node as scnQuestNode;
       if IsDefined(questNode) {
         nodeDefinition = questNode.questNode as questEquipItemNodeDefinition;
-        this.PatchQuestEquipItemNodeDefinition(nodeDefinition, weaponToDisplay, q005, q306);
+        this.PatchQuestEquipItemNodeDefinition(nodeDefinition, weaponToDisplay, q005, q112, q306);
       };
     };
   }
@@ -156,13 +173,18 @@ public class CutsceneWeaponSwapper extends ScriptableService {
     return patchedProp;
   }
 
-  private final func PatchQuestEquipItemNodeDefinition(nodeDefinition: ref<questEquipItemNodeDefinition>, weaponId: TweakDBID, isQ005: Bool, isQ306: Bool) -> Void {
-    let weaponToCheck: TweakDBID = t"Items.Preset_V_Unity_Cutscene";
+  private final func PatchQuestEquipItemNodeDefinition(nodeDefinition: ref<questEquipItemNodeDefinition>, weaponId: TweakDBID, isQ005: Bool, isQ112: Bool, isQ306: Bool) -> Void {
+    let weaponToCheck: TweakDBID;
+
     if isQ005 {
       weaponToCheck = t"Items.Preset_V_Unity";
+    } else if isQ112 {
+      weaponToCheck = t"Items.Preset_Tactician_Default";
     } else if isQ306 {
       weaponToCheck = t"Items.Preset_Overture_Default";
-    };
+    } else {
+      weaponToCheck = t"Items.Preset_V_Unity_Cutscene";
+    }
 
     if IsDefined(nodeDefinition) {
       if Equals(nodeDefinition.params.itemId, weaponToCheck) && Equals(nodeDefinition.params.type, questNodeType.Equip) {
@@ -172,13 +194,13 @@ public class CutsceneWeaponSwapper extends ScriptableService {
     };
   }
 
-  private final func GetWeaponToDisplay(player: ref<PlayerPuppet>) -> TweakDBID {
+  private final func GetWeaponToDisplay(player: ref<PlayerPuppet>, types: array<gamedataItemType>) -> TweakDBID {
     let manager: ref<InventoryDataManagerV2> = new InventoryDataManagerV2();
     manager.Initialize(player);
     
-    let pistolLastUsed: TweakDBID = this.GetPlayerPistolLastUsed(player);
-    let pistolEquipped: TweakDBID = this.GetPlayerPistolEquipped(player, manager);
-    let pistolFromInventory: TweakDBID = this.GetPlayerPistolFromInventory(player, manager);
+    let pistolLastUsed: TweakDBID = this.GetPlayerWeaponLastUsed(player, types);
+    let pistolEquipped: TweakDBID = this.GetPlayerWeaponEquipped(player, manager, types);
+    let pistolFromInventory: TweakDBID = this.GetPlayerWeaponInventory(player, manager, types);
 
     let weaponToDisplay: TweakDBID = t"";
     this.Log(s"Detected weapons: \(TDBID.ToStringDEBUG(pistolEquipped)), \(TDBID.ToStringDEBUG(pistolLastUsed)), \(TDBID.ToStringDEBUG(pistolFromInventory))");
@@ -195,10 +217,12 @@ public class CutsceneWeaponSwapper extends ScriptableService {
     return weaponToDisplay;
   }
 
-  private final func GetPlayerPistolEquipped(player: ref<PlayerPuppet>, manager: ref<InventoryDataManagerV2>) -> TweakDBID {
+  private final func GetPlayerWeaponEquipped(player: ref<PlayerPuppet>, manager: ref<InventoryDataManagerV2>, types: array<gamedataItemType>) -> TweakDBID {
     let weapons: array<InventoryItemData> = manager.GetEquippedWeapons();
+    let type: gamedataItemType;
     for weapon in weapons {
-      if this.CanBeUsedForCutscene(InventoryItemData.GetItemType(weapon)) {
+      type = InventoryItemData.GetItemType(weapon);
+      if ArrayContains(types, type) {
         return ItemID.GetTDBID(InventoryItemData.GetID(weapon));
       };
     };
@@ -206,30 +230,29 @@ public class CutsceneWeaponSwapper extends ScriptableService {
     return t"";
   }
 
-  private final func GetPlayerPistolLastUsed(player: ref<PlayerPuppet>) -> TweakDBID {
+  private final func GetPlayerWeaponLastUsed(player: ref<PlayerPuppet>, types: array<gamedataItemType>) -> TweakDBID {
     let lastUsedItemID: ItemID = EquipmentSystem.GetData(player).GetLastUsedWeaponItemID();
     let itemData: ref<gameItemData> = RPGManager.GetItemData(player.GetGame(), player, lastUsedItemID);
-    if this.CanBeUsedForCutscene(itemData.GetItemType()) {
+    let type: gamedataItemType = itemData.GetItemType();
+    if ArrayContains(types, type) {
       return ItemID.GetTDBID(lastUsedItemID);
     };
 
     return t"";
   }
 
-  private final func GetPlayerPistolFromInventory(player: ref<PlayerPuppet>, manager: ref<InventoryDataManagerV2>) -> TweakDBID {
+  private final func GetPlayerWeaponInventory(player: ref<PlayerPuppet>, manager: ref<InventoryDataManagerV2>, types: array<gamedataItemType>) -> TweakDBID {
     let weapons: array<InventoryItemData> = manager.GetPlayerEquipmentAreaInventoryData(gamedataEquipmentArea.Weapon);
+    let type: gamedataItemType;
     for weapon in weapons {
       let id: TweakDBID = ItemID.GetTDBID(InventoryItemData.GetID(weapon));
-      if this.CanBeUsedForCutscene(InventoryItemData.GetItemType(weapon)) && NotEquals(t"Items.Preset_V_Unity", id) && NotEquals(t"Items.Preset_V_Unity_Cutscene", id) {
+      type = InventoryItemData.GetItemType(weapon);
+      if ArrayContains(types, type) && NotEquals(t"Items.Preset_V_Unity", id) && NotEquals(t"Items.Preset_V_Unity_Cutscene", id) {
         return id;
       };
     };
     
     return t"";
-  }
-
-  private final func CanBeUsedForCutscene(type: gamedataItemType) -> Bool {
-    return Equals(type, gamedataItemType.Wea_Handgun) || Equals(type, gamedataItemType.Wea_Revolver);
   }
 
   @if(!ModuleExists("AlwaysFirstEquip"))
