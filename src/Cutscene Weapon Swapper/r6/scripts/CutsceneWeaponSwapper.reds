@@ -15,7 +15,8 @@ public class CutsceneWeaponSwapper extends ScriptableService {
       .AddTarget(ResourceTarget.Path(r"base\\quest\\main_quests\\prologue\\q003\\scenes\\q003_03_deal.scene"))
       .AddTarget(ResourceTarget.Path(r"base\\quest\\main_quests\\prologue\\q005\\scenes\\q005_02_cab_ride.scene"))
       .AddTarget(ResourceTarget.Path(r"ep1\\quest\\main_quests\\q302\\scenes\\q302_02_spider.scene"))
-      .AddTarget(ResourceTarget.Path(r"ep1\\quest\\main_quests\\q306\\scenes\\q306_10_finale.scene"));
+      .AddTarget(ResourceTarget.Path(r"ep1\\quest\\main_quests\\q306\\scenes\\q306_10_finale.scene"))
+      .AddTarget(ResourceTarget.Path(r"ep1\\openworld\\street_stories\\sts_ep1_03\\scenes\\sts_ep1_03_wagner_standoff.scene"));
   }
 
   private cb func OnSceneLoaded(event: ref<ResourceEvent>) {
@@ -42,6 +43,7 @@ public class CutsceneWeaponSwapper extends ScriptableService {
     let q112: Bool = Equals(path, r"base\\quest\\main_quests\\part1\\q112\\scenes\\q112_11_shotgun.scene");
     let q302: Bool = Equals(path, r"ep1\\quest\\main_quests\\q302\\scenes\\q302_02_spider.scene");
     let q306: Bool = Equals(path, r"ep1\\quest\\main_quests\\q306\\scenes\\q306_10_finale.scene");
+    let sts03: Bool = Equals(path, r"ep1\\openworld\\street_stories\\sts_ep1_03\\scenes\\sts_ep1_03_wagner_standoff.scene");
 
     this.Log(s"> Patching \(ResRef.ToString(path))...");
 
@@ -126,6 +128,13 @@ public class CutsceneWeaponSwapper extends ScriptableService {
         ArrayPush(patchedProps, patchedProp);
       };
 
+      // Gig: The Man Who Killed Jason Foreman (Phantom Liberty) 
+      if sts03 && Equals(prop.specPropRecordId, t"Items.Preset_V_Unity_Cutscene") {
+        ArrayPush(patchingIndexes, propIndex);
+        let patchedProp: scnPropDef = this.PatchSpawnInEntityProp(prop, weaponToDisplay);
+        ArrayPush(patchedProps, patchedProp);
+      };
+
       propIndex += 1;
     };
 
@@ -184,7 +193,7 @@ public class CutsceneWeaponSwapper extends ScriptableService {
       weaponToCheck = t"Items.Preset_Overture_Default";
     } else {
       weaponToCheck = t"Items.Preset_V_Unity_Cutscene";
-    }
+    };
 
     if IsDefined(nodeDefinition) {
       if Equals(nodeDefinition.params.itemId, weaponToCheck) && Equals(nodeDefinition.params.type, questNodeType.Equip) {
