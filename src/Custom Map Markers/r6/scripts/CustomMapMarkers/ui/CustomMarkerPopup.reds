@@ -6,11 +6,9 @@ import CustomMarkers.Config.*
 import CustomMarkers.Common.*
 import CustomMarkers.UI.*
 
-public class CustomMarkerPopup extends InGamePopup {
+public class CustomMarkerPopup extends InMenuPopup {
 
   private let m_uiSystem: ref<UISystem>;
-
-  private let m_content: ref<InGamePopupContent>;
 
   private let m_input: ref<HubTextInput>;
 
@@ -40,6 +38,10 @@ public class CustomMarkerPopup extends InGamePopup {
     super.OnHide();
     this.m_input.UnregisterFromCallback(n"OnInput", this, n"OnInput");
   }
+
+  protected cb func OnShown() -> Void {}
+  protected cb func OnCancel() -> Void {}
+  protected cb func OnConfirm() -> Void {}
 
   protected cb func OnIconClick(widget: wref<inkWidget>) -> Bool {
     // everything fires onClick since 1.5
@@ -100,9 +102,6 @@ public class CustomMarkerPopup extends InGamePopup {
   }
 
   private func CreateWidgets() -> Void {
-    this.m_content = InGamePopupContent.Create();
-    this.m_content.Reparent(this);
-
     // ROOT
     let root: ref<inkFlex> = this.CreateRootFlex();
 
