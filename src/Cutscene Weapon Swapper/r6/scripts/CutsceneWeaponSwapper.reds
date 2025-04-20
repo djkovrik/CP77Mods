@@ -102,6 +102,8 @@ public class CutsceneWeaponSwapper extends ScriptableService {
 
       // Life During Wartime - Hellman first meet
       if q104_07 && Equals(prop.specPropRecordId, t"Props.q103_player_gun") {
+        let weaponProp: TweakDBID = this.CreateWeaponProp(player, weaponToDisplay);
+        weaponToDisplay = weaponProp;
         ArrayPush(patchingIndexes, propIndex);
         let patchedProp: scnPropDef = this.PatchSpawnDespawnProp(prop, 1281u, weaponToDisplay);
         ArrayPush(patchedProps, patchedProp);
@@ -262,6 +264,24 @@ public class CutsceneWeaponSwapper extends ScriptableService {
     };
     
     return t"";
+  }
+
+  private final func CreateWeaponProp(player: ref<PlayerPuppet>, base: TweakDBID) -> TweakDBID {
+    let newRecordId: TweakDBID = base + t"_Prop";
+    let cloned: Bool = TweakDBManager.CloneRecord(newRecordId, base);
+    let record: ref<Item_Record> = TweakDBInterface.GetItemRecord(newRecordId);
+    let tags: array<CName> = record.Tags();
+    ArrayPush(tags, n"HideInUI");
+    ArrayPush(tags, n"SkipActivityLog");
+    TweakDBManager.SetFlat(newRecordId + t".tags", ToVariant(tags));
+    TweakDBManager.UpdateRecord(newRecordId);
+    let ts: ref<TransactionSystem>;
+    if cloned {
+      ts = GameInstance.GetTransactionSystem(player.GetGame());
+      ts.GiveItemByTDBID(player, newRecordId, 1);
+    };
+    this.Log(s"! Created weapon prop record \(TDBID.ToStringDEBUG(newRecordId)): \(cloned)");
+    return newRecordId;
   }
 
   @if(!ModuleExists("AlwaysFirstEquip"))
