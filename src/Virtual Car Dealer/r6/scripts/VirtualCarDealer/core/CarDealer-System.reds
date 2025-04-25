@@ -137,6 +137,15 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
     };
   }
 
+  public func ClearSoldVehicles() -> Void {
+    let vehicleSystem: ref<VehicleSystem> = GameInstance.GetVehicleSystem(this.GetGameInstance());
+    let soldVehicles: array<TweakDBID> = this.m_soldVehicles;
+    ArrayClear(this.m_soldVehicles);
+    for soldVehicle in soldVehicles {
+      vehicleSystem.EnablePlayerVehicleID(soldVehicle, true); 
+    };
+  }
+
   public func IsInDangerZone(player: ref<PlayerPuppet>) -> Bool {
     let bb: ref<IBlackboard> = player.GetPlayerStateMachineBlackboard();
     let zone: Int32 = bb.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Zones);

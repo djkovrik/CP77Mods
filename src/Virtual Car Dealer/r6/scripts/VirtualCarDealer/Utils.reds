@@ -1,6 +1,6 @@
 module CarDealer.Utils
 
-public static func CarDealerLog(str: String) -> Void {
+public func CarDealerLog(str: String) -> Void {
   // ModLog(n"Dealer", s"Vehicles: \(str)");
 }
 
