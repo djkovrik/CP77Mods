@@ -244,6 +244,13 @@ public class SleevesPopupItemComponent extends inkComponent {
   }
 
   private final func IsAvailableForSelection() -> Bool {
-    return this.data.HasFppSuffix() && !this.data.Excluded();
+    if this.data.Excluded() {
+      return false;
+    };
+
+    let player: wref<PlayerPuppet> = GetPlayer(GetGameInstance());
+    let psmBlackboard: ref<IBlackboard> = player.GetPlayerStateMachineBlackboard();
+    let inVehicle: Bool = psmBlackboard.GetBool(GetAllBlackboardDefs().PlayerStateMachine.MountedToVehicle);
+    return this.data.HasFppSuffix() || inVehicle && this.data.HasTppSuffix();
   }
 }

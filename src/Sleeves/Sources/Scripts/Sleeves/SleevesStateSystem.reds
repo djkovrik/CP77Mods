@@ -27,7 +27,10 @@ class SleevesStateSystem extends ScriptableSystem {
 
   public final func HasToggleableSleeves() -> Bool {
     for item in this.bundle.items {
-      if item.HasFppSuffix() && !item.Excluded() {
+      if item.Excluded() {
+        return false;
+      };
+      if item.HasFppSuffix() || item.HasTppSuffix()  {
         return true;
       };
     };
@@ -91,11 +94,13 @@ class SleevesStateSystem extends ScriptableSystem {
     SleevesLog(s"RefreshSleevesState called, bd active \(this.isBraindanceActive)");
 
     let player: wref<PlayerPuppet> = this.GetPlayer();
+    let psmBlackboard: ref<IBlackboard> = player.GetPlayerStateMachineBlackboard();
+    let inVehicle: Bool = psmBlackboard.GetBool(GetAllBlackboardDefs().PlayerStateMachine.MountedToVehicle);
     this.bundle = GetSleevesInfo(player);
     this.LogCurrentInfo();
 
     for item in this.bundle.items {
-      if item.HasFppSuffix() {
+      if item.HasFppSuffix() || inVehicle && item.HasTppSuffix() {
         if !this.isBraindanceActive {
           if item.IsToggled() {
             SleevesLog(s"Set \(item.GetItemTppAppearance()) appearance for \(ItemID.GetCombinedHash(item.itemID)) [\(item.itemName)]");

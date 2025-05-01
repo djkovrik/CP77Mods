@@ -1,4 +1,4 @@
-// Sleeves v3.2.2
+// Sleeves v3.2.3
 import Codeware.UI.*
 @if(ModuleExists("EquipmentEx"))
 import EquipmentEx.*
@@ -159,12 +159,12 @@ enum SleevesMode {
   EquipmentEx = 2,
 }
 @if(!ModuleExists("EquipmentEx"))
-public static func GetSleevesInfo(player: ref<GameObject>) -> ref<SleevesInfoBundle> {
+public func GetSleevesInfo(player: ref<GameObject>) -> ref<SleevesInfoBundle> {
   let system: ref<SleevesStateSystem> = SleevesStateSystem.Get(player.GetGame());
   return system.GetBasicSlotsItems(player, false);
 }
 @if(ModuleExists("EquipmentEx"))
-public static func GetSleevesInfo(player: ref<GameObject>) -> ref<SleevesInfoBundle> {
+public func GetSleevesInfo(player: ref<GameObject>) -> ref<SleevesInfoBundle> {
   let sleevesSystem: ref<SleevesStateSystem> = SleevesStateSystem.Get(player.GetGame());
   let outfitSystem: ref<OutfitSystem> = OutfitSystem.GetInstance(player.GetGame());
   if outfitSystem.IsActive() {
@@ -173,11 +173,11 @@ public static func GetSleevesInfo(player: ref<GameObject>) -> ref<SleevesInfoBun
   return sleevesSystem.GetBasicSlotsItems(player, true);
 }
 @if(!ModuleExists("EquipmentEx"))
-public static func IsSlotOccupiedCustom(gi: GameInstance, slot: TweakDBID) -> Bool {
+public func IsSlotOccupiedCustom(gi: GameInstance, slot: TweakDBID) -> Bool {
   return false;
 }
 @if(ModuleExists("EquipmentEx"))
-public static func IsSlotOccupiedCustom(gi: GameInstance, slot: TweakDBID) -> Bool {
+public func IsSlotOccupiedCustom(gi: GameInstance, slot: TweakDBID) -> Bool {
   return OutfitSystem.GetInstance(gi).IsOccupied(slot);
 }
 public class SleevesButtonController extends inkGameController {
@@ -347,7 +347,7 @@ protected cb func OnCloseMenu(userData: ref<IScriptable>) -> Bool {
 protected cb func OnDropQueueUpdatedEventCustom(evt: ref<DropQueueUpdatedEvent>) -> Bool {
   this.ShowSleevesButton(false);
 }
-public static func SleevesLog(str: String) -> Void {
+public func SleevesLog(str: String) -> Void {
   // ModLog(n"Sleeves", str);
 }
 public class SleevesPopup extends InMenuPopup {
@@ -656,7 +656,13 @@ public class SleevesPopupItemComponent extends inkComponent {
     this.UnregisterFromCallback(n"OnRelease", this, n"OnClick");
   }
   private final func IsAvailableForSelection() -> Bool {
-    return this.data.HasFppSuffix() && !this.data.Excluded();
+    if this.data.Excluded() {
+      return false;
+    };
+    let player: wref<PlayerPuppet> = GetPlayer(GetGameInstance());
+    let psmBlackboard: ref<IBlackboard> = player.GetPlayerStateMachineBlackboard();
+    let inVehicle: Bool = psmBlackboard.GetBool(GetAllBlackboardDefs().PlayerStateMachine.MountedToVehicle);
+    return this.data.HasFppSuffix() || inVehicle && this.data.HasTppSuffix();
   }
 }
 // -- Vanilla
@@ -779,7 +785,10 @@ class SleevesStateSystem extends ScriptableSystem {
   }
   public final func HasToggleableSleeves() -> Bool {
     for item in this.bundle.items {
-      if item.HasFppSuffix() && !item.Excluded() {
+      if item.Excluded() {
+        return false;
+      };
+      if item.HasFppSuffix() || item.HasTppSuffix()  {
         return true;
       };
     };
@@ -829,10 +838,12 @@ class SleevesStateSystem extends ScriptableSystem {
   public final func RefreshSleevesState() -> Void {
     SleevesLog(s"RefreshSleevesState called, bd active \(this.isBraindanceActive)");
     let player: wref<PlayerPuppet> = this.GetPlayer();
+    let psmBlackboard: ref<IBlackboard> = player.GetPlayerStateMachineBlackboard();
+    let inVehicle: Bool = psmBlackboard.GetBool(GetAllBlackboardDefs().PlayerStateMachine.MountedToVehicle);
     this.bundle = GetSleevesInfo(player);
     this.LogCurrentInfo();
     for item in this.bundle.items {
-      if item.HasFppSuffix() {
+      if item.HasFppSuffix() || inVehicle && item.HasTppSuffix() {
         if !this.isBraindanceActive {
           if item.IsToggled() {
             SleevesLog(s"Set \(item.GetItemTppAppearance()) appearance for \(ItemID.GetCombinedHash(item.itemID)) [\(item.itemName)]");
