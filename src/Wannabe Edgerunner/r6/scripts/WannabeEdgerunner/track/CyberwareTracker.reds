@@ -134,7 +134,7 @@ public final static func IsEquipmentAreaCyberware(areaType: gamedataEquipmentAre
 
 // Get installed cyberware
 @addMethod(EquipmentSystemPlayerData)
-public final const func GetCyberwareFromSlots() -> array<ref<Item_Record>> {
+public final func GetCyberwareFromSlots() -> array<ref<Item_Record>> {
   let result: array<ref<Item_Record>>;
   let record: ref<Item_Record>;
   let equipSlots: array<SEquipSlot>;
