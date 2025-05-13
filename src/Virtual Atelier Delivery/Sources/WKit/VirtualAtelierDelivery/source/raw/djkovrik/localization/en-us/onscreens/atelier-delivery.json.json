@@ -1,0 +1,377 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.16.1",
+    "WKitJsonVersion": "0.0.9",
+    "GameVersion": 2200,
+    "ExportedDateTime": "2025-05-13T06:24:14.9289398Z",
+    "DataType": "CR2W",
+    "ArchiveFileName": "D:\\Games\\Modding\\CP2077\\Repo\\src\\Virtual Atelier Delivery\\Sources\\WKit\\VirtualAtelierDelivery\\source\\archive\\djkovrik\\localization\\en-us\\onscreens\\atelier-delivery.json"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "$type": "JsonResource",
+      "cookingPlatform": "PLATFORM_PC",
+      "root": {
+        "HandleId": "0",
+        "Data": {
+          "$type": "localizationPersistenceOnScreenEntries",
+          "entries": [
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Delivery settings",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Delivery-Settings"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Minimum standard delivery time",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Delivery-Standard-Time-Min"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Maximum standard delivery time",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Delivery-Standard-Time-Max"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Minimum priority delivery time",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Delivery-Priority-Time-Min"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Maximum priority delivery time",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Delivery-Priority-Time-Max"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "The minimum number of hours it will take to deliver the order.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Delivery-Time-Min-Desc"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "The maximum number of hours it will take to deliver the order.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Delivery-Time-Max-Desc"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Standard delivery price",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Delivery-Standard-Price"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Your order delivery cost for standard shipping, fixed price",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Delivery-Standard-Price-Desc"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Priority delivery price",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Delivery-Priority-Price"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Your order delivery cost for priority shipping, price per weight unit",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Delivery-Priority-Price-Desc"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Virtual Atelier Delivery",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Contact-Name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Virtual Atelier Delivery",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Marker"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Drop Points used for delivering Virtual Atelier orders.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Marker-Description"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "d",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Time-Suffix-Days"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "hr",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Time-Suffix-Hours"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "within an hour",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Time-Less-Than-Hour"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "none",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Shipment-Suffix-None"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "To use Virtual Atelier Delivery mod you must also install Virtual Atelier itself, but now you do not have it installed.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Error-No-VA"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Virtual Atelier Delivery requires Virtual Atelier version",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Error-VA-Required"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Your current Virtual Atelier version",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Error-VA-Current"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Order",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Order"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Secure Payment",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Order-Secure-Payment"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Order info:",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Order-Info"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Items quantity:",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Order-Quantity"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Items weight:",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Order-Weight"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Subtotal:",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Order-Subtotal"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Total:",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Order-Total"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Customer name:",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Customer-Info"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Contact info:",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Contact-Info"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "not provided",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Contact-Info-Not-Provided"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Select shipment method:",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Shipment-Method"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Standard",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Shipment-Standard"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Priority",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Shipment-Priority"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Shipping cost:",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Shipment-Cost"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Delivery time:",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Shipment-Time"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Select delivery point:",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Shipment-Destination"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Order #{id} created.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Order-Created-Nofitication"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Order #{id} delivered.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Order-Delivered-Nofitication"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Orders delivered:",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Orders-Delivered-Nofitication"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "No active orders.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-No-Orders"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Created",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Status-Created"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Shipped",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Status-Shipped"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Arrived",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Status-Arrived"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Delivered",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Status-Delivered"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Next status update:",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Order-Status-Update"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Welcome to Virtual Atelier Delivery!\nThank you for choosing our services. We are thrilled to have you on board and are here to make your experience seamless and enjoyable.\nHappy shopping!",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Journal-Welcome"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Your order from {store} is on the way!\nOrder #{id} has been shipped and is heading to the pickup point: {drop_point}. Estimated delivery time: {time}.\nWe will notify you once it arrives.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Journal-Order-Shipped"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Your order from {store} has arrived!\nOrder #{id} has been successfully delivered to the pickup point: {drop_point}. You can collect it at your convenience.\nThank you for choosing our delivery service!",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Journal-Order-Delivered"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Great news!\nA new drop point is now available for your convenience: {district}, {drop_point}.\nNext time you order, feel free to select this location for faster and easier collection.\nShop with ease!",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Journal-New-Drop-Point"
+            }
+          ]
+        }
+      }
+    },
+    "EmbeddedFiles": []
+  }
+}

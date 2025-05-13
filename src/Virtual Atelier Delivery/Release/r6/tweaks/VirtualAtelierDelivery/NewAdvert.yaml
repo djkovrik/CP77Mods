@@ -1,0 +1,184 @@
+Adverts.Atelier1_1x1:
+  $type: gamedataAdvertisementFormatDef_Record
+  format: Format_1x1
+  libraryName: atelier1_1x1
+
+Adverts.Atelier1_4x3:
+  $type: gamedataAdvertisementFormatDef_Record
+  format: Format_4x3
+  libraryName: atelier1_4x3
+
+Adverts.Atelier1_16x9:
+  $type: gamedataAdvertisementFormatDef_Record
+  format: Format_16x9
+  libraryName: atelier1_16x9
+
+Adverts.Atelier1_21x9:
+  $type: gamedataAdvertisementFormatDef_Record
+  format: Format_21x9
+  libraryName: atelier1_21x9
+
+Adverts.Atelier1_33x10:
+  $type: gamedataAdvertisementFormatDef_Record
+  format: Format_3_3x1
+  libraryName: atelier1_3.3x1
+
+Adverts.Atelier1_9x16:
+  $type: gamedataAdvertisementFormatDef_Record
+  format: Format_9x16
+  libraryName: atelier1_9x16
+
+Adverts.Atelier1_3x4:
+  $type: gamedataAdvertisementFormatDef_Record
+  format: Format_3x4
+  libraryName: atelier1_3x4
+
+Adverts.Atelier1_9x21:
+  $type: gamedataAdvertisementFormatDef_Record
+  format: Format_9x21
+  libraryName: atelier1_9x21
+
+Adverts.Atelier1_10x33:
+  $type: gamedataAdvertisementFormatDef_Record
+  format: Format_1x3_3
+  libraryName: atelier1_1x3.3
+
+Adverts.Atelier2_4x3:
+  $type: gamedataAdvertisementFormatDef_Record
+  format: Format_4x3
+  libraryName: atelier2_4x3
+
+Adverts.Atelier2_16x9:
+  $type: gamedataAdvertisementFormatDef_Record
+  format: Format_16x9
+  libraryName: atelier2_16x9
+
+Adverts.Atelier2_21x9:
+  $type: gamedataAdvertisementFormatDef_Record
+  format: Format_21x9
+  libraryName: atelier2_21x9
+
+Adverts.Atelier2_33x10:
+  $type: gamedataAdvertisementFormatDef_Record
+  format: Format_3_3x1
+  libraryName: atelier2_3.3x1
+
+Adverts.Atelier2_9x16:
+  $type: gamedataAdvertisementFormatDef_Record
+  format: Format_9x16
+  libraryName: atelier2_9x16
+
+Adverts.Atelier2_3x4:
+  $type: gamedataAdvertisementFormatDef_Record
+  format: Format_3x4
+  libraryName: atelier2_3x4
+
+Adverts.Atelier:
+  $type: gamedataAdvertisement_Record
+  resource: djkovrik\gameplay\gui\world\adverts\atelier\atelier.inkwidget
+  definitions:
+    - Adverts.Atelier1_1x1
+    - Adverts.Atelier1_4x3
+    - Adverts.Atelier1_16x9
+    - Adverts.Atelier1_21x9
+    - Adverts.Atelier1_33x10
+    - Adverts.Atelier1_9x16
+    - Adverts.Atelier1_3x4
+    - Adverts.Atelier1_9x21
+    - Adverts.Atelier1_10x33
+    - Adverts.Atelier2_4x3
+    - Adverts.Atelier2_16x9
+    - Adverts.Atelier2_21x9
+    - Adverts.Atelier2_33x10
+    - Adverts.Atelier2_9x16
+    - Adverts.Atelier2_3x4
+  localizationKey: LocKey#36326
+
+Adverts.Atelier_Animated:
+  $type: gamedataAdvertisement_Record
+  resource: djkovrik\gameplay\gui\world\adverts\atelier\atelier_animated.inkwidget
+  definitions:
+    - Adverts.Atelier1_1x1
+    - Adverts.Atelier1_4x3
+    - Adverts.Atelier1_16x9
+    - Adverts.Atelier1_21x9
+    - Adverts.Atelier1_33x10
+    - Adverts.Atelier1_9x16
+    - Adverts.Atelier1_3x4
+    - Adverts.Atelier1_9x21
+    - Adverts.Atelier1_10x33
+    - Adverts.Atelier2_4x3
+    - Adverts.Atelier2_16x9
+    - Adverts.Atelier2_21x9
+    - Adverts.Atelier2_33x10
+    - Adverts.Atelier2_9x16
+    - Adverts.Atelier2_3x4
+  localizationKey: LocKey#36326
+
+Adverts.AllAdvertisements.advertisements:
+  - !prepend Adverts.Atelier
+  - !append Adverts.Atelier_Animated
+
+Adverts.ArasakaWF.advertisements:
+  - !prepend Adverts.Atelier
+  - !append Adverts.Atelier_Animated
+
+Adverts.BadLand.advertisements:
+  - !prepend Adverts.Atelier
+  - !append Adverts.Atelier_Animated
+
+Adverts.CharterHill.advertisements:
+  - !prepend Adverts.Atelier
+  - !append Adverts.Atelier_Animated
+
+Adverts.CityCenter.advertisements:
+  - !prepend Adverts.Atelier
+  - !append Adverts.Atelier_Animated
+
+Adverts.Glen.advertisements:
+  - !prepend Adverts.Atelier
+  - !append Adverts.Atelier_Animated
+
+Adverts.JapanTown.advertisements:
+  - !prepend Adverts.Atelier
+  - !append Adverts.Atelier_Animated
+
+Adverts.Kabuki.advertisements:
+  - !prepend Adverts.Atelier
+  - !append Adverts.Atelier_Animated
+
+Adverts.LittleChina.advertisements:
+  - !prepend Adverts.Atelier
+  - !append Adverts.Atelier_Animated
+
+Adverts.NorthIndustrial.advertisements:
+  - !prepend Adverts.Atelier
+  - !append Adverts.Atelier_Animated
+
+Adverts.NorthOak.advertisements:
+  - !prepend Adverts.Atelier
+  - !append Adverts.Atelier_Animated
+
+Adverts.PacificaCV_WWE.advertisements:
+  - !prepend Adverts.Atelier
+  - !append Adverts.Atelier_Animated
+
+Adverts.Rancho.advertisements:
+  - !prepend Adverts.Atelier
+  - !append Adverts.Atelier_Animated
+
+Adverts.SantoDomingo.advertisements:
+  - !prepend Adverts.Atelier
+  - !append Adverts.Atelier_Animated
+
+Adverts.Spaceport.advertisements:
+  - !prepend Adverts.Atelier
+  - !append Adverts.Atelier_Animated
+
+Adverts.VistaDelRay.advertisements:
+  - !prepend Adverts.Atelier
+  - !append Adverts.Atelier_Animated
+
+Adverts.WellSpring.advertisements:
+  - !prepend Adverts.Atelier
+  - !append Adverts.Atelier_Animated

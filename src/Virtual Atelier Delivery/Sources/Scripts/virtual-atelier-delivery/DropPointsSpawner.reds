@@ -285,7 +285,7 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
 
     for instance in instances {
       deviceSpec = new DynamicEntitySpec();
-      deviceSpec.templatePath = r"base\\gameplay\\devices\\drop_points\\drop_point_va.ent";
+      deviceSpec.templatePath = r"djkovrik\\gameplay\\devices\\drop_points\\drop_point_va.ent";
       deviceSpec.appearanceName = n"default";
       deviceSpec.position = instance.position;
       deviceSpec.orientation = instance.orientation;

@@ -1,10 +1,10 @@
 localization:
   onscreens:
-    en-us: base\localization\en-us\onscreens\atelier-delivery.json
-    ru-ru: base\localization\ru-ru\onscreens\atelier-delivery.json
+    en-us: djkovrik\localization\en-us\onscreens\atelier-delivery.json
+    ru-ru: djkovrik\localization\ru-ru\onscreens\atelier-delivery.json
 
 journal:
-  - base\atelier\delivery.journal
+  - djkovrik\atelier\delivery.journal
 
 streaming:
   sectors:

@@ -17,7 +17,7 @@ public class DeliveryMessengerSystem extends ScriptableSystem {
       return;
     };
 
-    let token: ref<ResourceToken> = GameInstance.GetResourceDepot().LoadResource(r"base\\atelier\\delivery.journal");
+    let token: ref<ResourceToken> = GameInstance.GetResourceDepot().LoadResource(r"djkovrik\\atelier\\delivery.journal");
     token.RegisterCallback(this, n"OnJournalLoaded");
 
     GameInstance.GetCallbackSystem()

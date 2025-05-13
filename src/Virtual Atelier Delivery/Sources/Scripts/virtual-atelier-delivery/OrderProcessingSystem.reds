@@ -95,15 +95,21 @@ public class OrderProcessingSystem extends ScriptableSystem {
     this.Log(s"Trying to receive orders from \(dropPoint), detected: \(ArraySize(arrivedOrders))");
 
     let receivedAnything: Bool = false;
+    let deliveredIds: array<Int32>;
     for arrivedOrder in arrivedOrders {
       this.GiveBundleItemsToPlayer(arrivedOrder);
       this.MarkOrderAsReceived(arrivedOrder);
-      this.NotifyAboutOrderDelivery(arrivedOrder.orderId);
+      ArrayPush(deliveredIds, arrivedOrder.orderId);
       receivedAnything = true;
     };
 
     if receivedAnything {
       GameObject.PlaySound(this.player, n"ui_menu_item_bought");
+      if Equals(ArraySize(deliveredIds), 1) {
+        this.NotifyAboutOrderDelivery(deliveredIds[0]);
+      } else {
+        this.NotifyAboutOrdersDelivery(deliveredIds);
+      };
     } else {
       GameObject.PlaySound(this.player, n"ui_menu_attributes_fail");
     };
@@ -251,7 +257,29 @@ public class OrderProcessingSystem extends ScriptableSystem {
     let messageToDisplay: String = StrReplace(message, "{id}", IntToString(id));
     onScreenMessage.message = messageToDisplay;
     onScreenMessage.isShown = true;
-    onScreenMessage.duration = 2.0;
+    onScreenMessage.duration = 3.0;
+    blackboard.SetVariant(blackboardDef.OnscreenMessage, ToVariant(onScreenMessage), true);
+  }
+
+  private final func NotifyAboutOrdersDelivery(ids: array<Int32>) -> Void {
+    let onScreenMessage: SimpleScreenMessage;
+    let blackboardDef = GetAllBlackboardDefs().UI_Notifications;
+    let blackboard: ref<IBlackboard> = GameInstance.GetBlackboardSystem(this.player.GetGame()).Get(blackboardDef);
+    let messageToDisplay: String = s"\(GetLocalizedTextByKey(n"Mod-VAD-Orders-Delivered-Nofitication")) ";
+    let count: Int32 = ArraySize(ids);
+    let lastIndex: Int32 = count - 1;
+    let i: Int32 = 0;
+    while i < count {
+      if NotEquals(i, lastIndex) {
+        messageToDisplay += s"#\(ids[i]), ";
+      } else {
+        messageToDisplay += s"#\(ids[i])";
+      };
+      i += 1;
+    };
+    onScreenMessage.message = messageToDisplay;
+    onScreenMessage.isShown = true;
+    onScreenMessage.duration = 3.0;
     blackboard.SetVariant(blackboardDef.OnscreenMessage, ToVariant(onScreenMessage), true);
   }
 

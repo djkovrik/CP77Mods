@@ -118,7 +118,7 @@ protected final func UpdateIconVA(opt forMinimap: Bool) -> Void {
   };
 
   if this.IsCustomMappinVA() {
-    inkImageRef.SetAtlasResource(this.iconWidget, r"base\\gameplay\\gui\\virtual_atelier_delivery_pins.inkatlas");
+    inkImageRef.SetAtlasResource(this.iconWidget, r"djkovrik\\gameplay\\gui\\virtual_atelier_delivery_pins.inkatlas");
     inkImageRef.SetTexturePart(this.iconWidget, texturePart);
   };
 }

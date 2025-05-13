@@ -37,7 +37,7 @@ public class AtelierDropPointsSpawnerConfig {
         iterationTag1,
         this.CreatePosition(-1443.939209, 1339.663208, 119.082382, 1.0),
         this.CreateOrientation(0.0, 0.0, 0.728089, -0.663599),
-        r"base\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
+        r"djkovrik\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
       )
     );
 
@@ -54,7 +54,7 @@ public class AtelierDropPointsSpawnerConfig {
         iterationTag1,
         this.CreatePosition(-1242.697614, 2021.161367, 11.915947, 1.0),
         this.CreateOrientation(0.0, 0.0, -0.469456, 0.844077),
-        r"base\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
+        r"djkovrik\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
       )
     );
 
@@ -71,7 +71,7 @@ public class AtelierDropPointsSpawnerConfig {
         iterationTag1,
         this.CreatePosition(-1475.607837, 2192.650830, 18.200005, 1.0),
         this.CreateOrientation(0.0, 0.0, -0.490099, 0.892979),
-        r"base\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
+        r"djkovrik\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
       )
     );
 
@@ -88,7 +88,7 @@ public class AtelierDropPointsSpawnerConfig {
         iterationTag1,
         this.CreatePosition(-1767.295410, 1869.108765, 18.257347, 1.0),
         this.CreateOrientation(0.0, 0.0, 0.258819, 0.965926),
-        r"base\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
+        r"djkovrik\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
       )
     );
 
@@ -105,7 +105,7 @@ public class AtelierDropPointsSpawnerConfig {
         iterationTag1,
         this.CreatePosition(-124.690515, 156.954523, 14.669594, 1.0),
         this.CreateOrientation(0.0, 0.0, 0.891798, -0.452434),
-        r"base\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
+        r"djkovrik\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
       )
     );
  
@@ -122,7 +122,7 @@ public class AtelierDropPointsSpawnerConfig {
         iterationTag1,
         this.CreatePosition(-693.016819, 912.408923, 12.0, 1.0),
         this.CreateOrientation(0.0, 0.0, 0.078458, 0.996917),
-        r"base\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
+        r"djkovrik\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
       )
     );
 
@@ -139,7 +139,7 @@ public class AtelierDropPointsSpawnerConfig {
         iterationTag1,
         this.CreatePosition(294.980853, 817.504370, 146.618530, 1.0),
         this.CreateOrientation(0.0, 0.0, -0.998797, 0.049033),
-        r"base\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
+        r"djkovrik\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
       )
     );
 
@@ -156,7 +156,7 @@ public class AtelierDropPointsSpawnerConfig {
         iterationTag1,
         this.CreatePosition(-1487.291138, 449.454785, 7.739998, 1.0),
         this.CreateOrientation(0.0, 0.0, -0.999962, -0.008727),
-        r"base\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
+        r"djkovrik\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
       )
     );
 
@@ -173,7 +173,7 @@ public class AtelierDropPointsSpawnerConfig {
         iterationTag1,
         this.CreatePosition(-2394.930420, -59.059253, 9.682861, 1.0),
         this.CreateOrientation(0.0, 0.0, -0.686005, 0.665941),
-        r"base\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
+        r"djkovrik\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
       )
     );
 
@@ -190,7 +190,7 @@ public class AtelierDropPointsSpawnerConfig {
         iterationTag1,
         this.CreatePosition(-1196.130127, -930.899170, 12.044189, 1.0),
         this.CreateOrientation(0.0, 0.0, 0.078459, 0.996917),
-        r"base\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
+        r"djkovrik\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
       )
     );
 
@@ -207,7 +207,7 @@ public class AtelierDropPointsSpawnerConfig {
         iterationTag1,
         this.CreatePosition(-1074.648804, -399.022583, 8.066277, 1.0),
         this.CreateOrientation(0.0, 0.0, 0.455593, 0.890188),
-        r"base\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
+        r"djkovrik\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
       )
     );
 
@@ -224,7 +224,7 @@ public class AtelierDropPointsSpawnerConfig {
         iterationTag1,
         this.CreatePosition(-2390.791504, -573.703809, 7.000175, 1.0),
         this.CreateOrientation(0.0, 0.0, -0.009234, 0.999957),
-        r"base\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
+        r"djkovrik\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
       )
     );
 
@@ -241,7 +241,7 @@ public class AtelierDropPointsSpawnerConfig {
         iterationTag1,
         this.CreatePosition(-1074.211060, -1424.782959, 30.799721, 1.0),
         this.CreateOrientation(0.0, 0.0, -0.898061, 0.439872),
-        r"base\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
+        r"djkovrik\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
       )
     );
 
@@ -258,7 +258,7 @@ public class AtelierDropPointsSpawnerConfig {
         iterationTag1,
         this.CreatePosition(152.273178, -1177.103882, 31.511642, 1.0),
         this.CreateOrientation(0.0, 0.0, -0.956156, -0.292857),
-        r"base\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
+        r"djkovrik\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
       )
     );
 
@@ -275,7 +275,7 @@ public class AtelierDropPointsSpawnerConfig {
         iterationTag1,
         this.CreatePosition(-1563.313354, -1956.801025, 72.923096, 1.0),
         this.CreateOrientation(0.0, 0.0, 0.549048, 0.835791),
-        r"base\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
+        r"djkovrik\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
       )
     );
 
@@ -292,7 +292,7 @@ public class AtelierDropPointsSpawnerConfig {
         iterationTag1,
         this.CreatePosition(-2605.829834, -2477.411621, 17.262611, 1.0),
         this.CreateOrientation(0.0, 0.0, 0.206258, 0.978498),
-        r"base\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
+        r"djkovrik\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
       )
     );
 
@@ -309,7 +309,7 @@ public class AtelierDropPointsSpawnerConfig {
         iterationTag1,
         this.CreatePosition(1607.783374, -799.309924, 49.814171, 1.0),
         this.CreateOrientation(0.0, 0.0, -0.199249, 0.979949),
-        r"base\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
+        r"djkovrik\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
       )
     );
 
@@ -339,7 +339,7 @@ public class AtelierDropPointsSpawnerConfig {
         iterationTag1,
         this.CreatePosition(-2427.495068, -2709.809326, 23.894119, 1.0),
         this.CreateOrientation(0.0, 0.0, 0.693709, 0.720255),
-        r"base\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
+        r"djkovrik\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
       )
     );
 

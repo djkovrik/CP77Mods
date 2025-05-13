@@ -75,7 +75,7 @@ Adverts.Atelier2_3x4:
 
 Adverts.Atelier:
   $type: gamedataAdvertisement_Record
-  resource: base\gameplay\gui\world\adverts\atelier\atelier.inkwidget
+  resource: djkovrik\gameplay\gui\world\adverts\atelier\atelier.inkwidget
   definitions:
     - Adverts.Atelier1_1x1
     - Adverts.Atelier1_4x3
@@ -96,7 +96,7 @@ Adverts.Atelier:
 
 Adverts.Atelier_Animated:
   $type: gamedataAdvertisement_Record
-  resource: base\gameplay\gui\world\adverts\atelier\atelier_animated.inkwidget
+  resource: djkovrik\gameplay\gui\world\adverts\atelier\atelier_animated.inkwidget
   definitions:
     - Adverts.Atelier1_1x1
     - Adverts.Atelier1_4x3
