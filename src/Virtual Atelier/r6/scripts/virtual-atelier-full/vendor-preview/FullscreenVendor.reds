@@ -115,32 +115,29 @@ private final func HandleVirtualSlotClick(evt: ref<ItemDisplayClickEvent>) -> Vo
 protected cb func OnHandleGlobalRelease(evt: ref<inkPointerEvent>) -> Bool {
   wrappedMethod(evt);
   let atelierActions: ref<AtelierActions> = AtelierActions.Get(this.GetPlayerControlledObject());
-  switch true {
-    case evt.IsAction(atelierActions.togglePreviewVendor):
-      if (this.isPreviewMode) {
-        this.m_lastVendorFilter = ItemFilterCategory.AllItems;
-        this.m_itemPreviewPopupToken.TriggerCallback(null);
-      } else {
-        this.ShowGarmentPreview();
-      };
-      break;
-    case evt.IsAction(atelierActions.resetGarment):
-      this.previewManager.ResetGarment();
-      this.RefreshEquippedState();
-      break;
-    case evt.IsAction(atelierActions.removeAllGarment):
-      this.previewManager.RemoveAllGarment();
-      this.RefreshEquippedState();
-      break;
-    case evt.IsAction(atelierActions.removePreviewGarment):
-      this.previewManager.RemovePreviewGarment();
-      this.RefreshEquippedState();
-      break;
-    case (evt.IsAction(n"back") && this.isPreviewMode):
-    case (evt.IsAction(n"cancel") && this.isPreviewMode):
-      this.previewManager.RemovePreviewGarment();
-      this.m_menuEventDispatcher.SpawnEvent(n"OnVendorClose");
-      break;
+
+  if evt.IsAction(atelierActions.togglePreviewVendor) {
+    if (this.isPreviewMode) {
+      this.m_lastVendorFilter = ItemFilterCategory.AllItems;
+      this.m_itemPreviewPopupToken.TriggerCallback(null);
+    } else {
+      this.ShowGarmentPreview();
+    };
+  } else if evt.IsAction(atelierActions.resetGarment) {
+    this.previewManager.ResetGarment();
+    this.RefreshEquippedState();
+  } else if evt.IsAction(atelierActions.removeAllGarment) {
+    this.previewManager.RemoveAllGarment();
+    this.RefreshEquippedState();
+  } else if evt.IsAction(atelierActions.removePreviewGarment) {
+    this.previewManager.RemovePreviewGarment();
+    this.RefreshEquippedState();
+  } else if (evt.IsAction(n"back") && this.isPreviewMode) {
+    this.previewManager.RemovePreviewGarment();
+    this.m_menuEventDispatcher.SpawnEvent(n"OnVendorClose");
+  } else if (evt.IsAction(n"cancel") && this.isPreviewMode) {
+    this.previewManager.RemovePreviewGarment();
+    this.m_menuEventDispatcher.SpawnEvent(n"OnVendorClose");
   };
 }
 

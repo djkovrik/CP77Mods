@@ -26,12 +26,12 @@ public func GetAtelierPlacementSlot(itemId: ItemID) -> TweakDBID {
 }
 
 @if(!ModuleExists("NumeralsGetCommas.Functions"))
-public static final func GetFormattedMoneyVA(money: Int32) -> String {
+public func GetFormattedMoneyVA(money: Int32) -> String {
   return IntToString(money);
 }
 
 @if(ModuleExists("NumeralsGetCommas.Functions"))
-public static final func GetFormattedMoneyVA(money: Int32) -> String {
+public func GetFormattedMoneyVA(money: Int32) -> String {
   return CommaDelineateInt32(money);
 }
 

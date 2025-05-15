@@ -15,11 +15,11 @@ public class VirtualStoreDataView extends BackpackDataView {
   }
 
   public func DerivedFilterItem(data: ref<IScriptable>) -> DerivedFilterResult {
-    let default: DerivedFilterResult = DerivedFilterResult.Pass;
+    let base: DerivedFilterResult = DerivedFilterResult.Pass;
     let data: ref<VendorInventoryItemData> = data as VendorInventoryItemData;
 
     if !IsDefined(data) {
-      return default;
+      return base;
     };
 
     let query: String = UTF8StrLower(this.searchQuery);
@@ -33,7 +33,7 @@ public class VirtualStoreDataView extends BackpackDataView {
       return data.NotInWardrobe ? DerivedFilterResult.True : DerivedFilterResult.False;
     };
 
-    return default;
+    return base;
   }
 
   protected func PreSortingInjection(builder: ref<ItemCompareBuilder>) -> ref<ItemCompareBuilder> {

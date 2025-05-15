@@ -162,43 +162,33 @@ public class VirtualStoreController extends gameuiMenuGameController {
 
   protected cb func OnHandleGlobalRelease(evt: ref<inkPointerEvent>) -> Bool {
     let atelierActions: ref<AtelierActions> = AtelierActions.Get(this.player);
-    switch true {
-      case evt.IsAction(atelierActions.resetGarment):
-        this.previewManager.ResetGarment();
-        this.RefreshVirtualItemState();
-        break;
-      case evt.IsAction(atelierActions.removeAllGarment):
-        this.previewManager.RemoveAllGarment();
-        this.RefreshVirtualItemState();
-        break;
-      case evt.IsAction(atelierActions.removePreviewGarment):
-        this.previewManager.RemovePreviewGarment();
-        this.RefreshVirtualItemState();
-        break;
-      // Esc: UI_Cancel -> cancel -> back
-      // C: UI_Cancel -> cancel -> UI_Exit
-      case evt.IsAction(n"UI_Cancel"):
-      case evt.IsAction(n"cancel"):
-      case evt.IsAction(n"back"):
-        evt.Consume();
-        this.previewManager.RemovePreviewGarment();
-        this.QueueEvent(new AtelierCloseVirtualStore());
-        break;
-      case evt.IsAction(n"mouse_left"):
-        if !IsDefined(evt.GetTarget()) || !evt.GetTarget().CanSupportFocus() {
-          this.RequestSetFocus(null);
+
+    // Esc: UI_Cancel -> cancel -> back
+    // C: UI_Cancel -> cancel -> UI_Exit
+    if evt.IsAction(atelierActions.resetGarment) {
+      this.previewManager.ResetGarment();
+      this.RefreshVirtualItemState();
+    } else if evt.IsAction(atelierActions.removeAllGarment) {
+      this.previewManager.RemoveAllGarment();
+      this.RefreshVirtualItemState();
+    } else if evt.IsAction(atelierActions.removePreviewGarment) {
+      this.previewManager.RemovePreviewGarment();
+      this.RefreshVirtualItemState();
+    } else if evt.IsAction(n"UI_Cancel") || evt.IsAction(n"cancel") || evt.IsAction(n"back") {
+      this.previewManager.RemovePreviewGarment();
+      this.QueueEvent(new AtelierCloseVirtualStore());
+    } else if evt.IsAction(n"mouse_left") {
+      if !IsDefined(evt.GetTarget()) || !evt.GetTarget().CanSupportFocus() {
+        this.RequestSetFocus(null);
+      };
+    } else if evt.IsAction(atelierActions.addToVirtualCart) {
+      if this.config.instantBuy {
+        if this.lastItemHoverOverEvent != null {
+          this.BuyItemFromVirtualVendor(this.lastItemHoverOverEvent.itemData);
         };
-        break;
-      case evt.IsAction(atelierActions.addToVirtualCart):
-        if this.config.instantBuy {
-          if this.lastItemHoverOverEvent != null {
-            this.BuyItemFromVirtualVendor(this.lastItemHoverOverEvent.itemData);
-          };
-        } else {
-          this.HandleCartAction();
-        };
-        
-        break;
+      } else {
+        this.HandleCartAction();
+      };
     };
   }
 
@@ -1161,7 +1151,7 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
     let playerMoney: Int32 = this.vendorDataManager.GetLocalPlayerCurrencyAmount();
     let vendorNotification: ref<UIMenuNotificationEvent>;
 
-    if playerMoney < Cast(price) {
+    if playerMoney < Cast<Int32>(price) {
       vendorNotification = new UIMenuNotificationEvent();
       vendorNotification.m_notificationType = UIMenuNotificationType.VNotEnoughMoney;
       GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(vendorNotification);

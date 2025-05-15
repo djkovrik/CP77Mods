@@ -99,7 +99,7 @@ private func GetIsVirtual() -> Bool {
 @addMethod(WardrobeSetPreviewGameController)
 protected cb func OnSetCameraSetupEvent(index: Uint32, slotName: CName) -> Bool {
   let animFeature: ref<AnimFeature_Paperdoll> = new AnimFeature_Paperdoll();
-  let zoomArea: InventoryPaperdollZoomArea = IntEnum(index);
+  let zoomArea: InventoryPaperdollZoomArea = IntEnum(Cast<Int32>(index));
 
   if this.previewActive {
     animFeature.inventoryScreen = Equals(zoomArea, InventoryPaperdollZoomArea.Default);
