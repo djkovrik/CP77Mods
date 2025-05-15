@@ -11,6 +11,7 @@ public class AtelierStoresListController extends inkGameController {
   private let player: wref<PlayerPuppet>;
   private let system: wref<VirtualAtelierStoresManager>;
   private let stores: array<ref<VirtualShop>>;
+  private let categories: array<VirtualStoreCategory>;
   private let buttonHints: wref<ButtonHints>;
   private let topMenu: wref<inkCompoundWidget>;
   private let storesList: wref<inkVirtualGridController>;
@@ -23,6 +24,7 @@ public class AtelierStoresListController extends inkGameController {
 
   private let storesContainer: wref<inkCompoundWidget>;
   private let ordersContainer: wref<inkCompoundWidget>;
+  private let categoriesContainer: wref<inkCompoundWidget>;
 
   private let buttonStores: wref<inkText>;
   private let buttonOrders: wref<inkText>;
@@ -44,6 +46,7 @@ public class AtelierStoresListController extends inkGameController {
     this.InitializeWidgets();
     this.RegisterCallbacks();
     this.RefreshStores();
+    this.InitializeTabs();
 
     if Equals(ArraySize(this.stores), 0) {
       this.ShowEmptyAtelierPage();
@@ -57,6 +60,9 @@ public class AtelierStoresListController extends inkGameController {
     if !depot.ArchiveExists("VirtualAtelier.archive") {
       AtelierLog("VirtualAtelier.archive not found, make sure that you have it installed.");
     };
+
+    // First tab selection on load
+    this.QueueEvent(VirtualStoreCategorySelectedEvent.Create(this.categories[0]));
   }
 
   protected cb func OnUninitialize() -> Bool {
@@ -104,6 +110,7 @@ public class AtelierStoresListController extends inkGameController {
       if Equals(name, n"virtualStores") {
         this.storesSelected = true;
         this.storesContainer.SetVisible(true);
+        this.categoriesContainer.SetVisible(true);
         this.AnimateScale(this.buttonStores, 1.1);
         this.ordersSelected = false;
         this.ordersContainer.SetVisible(false);
@@ -113,6 +120,7 @@ public class AtelierStoresListController extends inkGameController {
       if Equals(name, n"activeOrders") {
         this.storesSelected = false;
         this.storesContainer.SetVisible(false);
+        this.categoriesContainer.SetVisible(false);
         this.AnimateScale(this.buttonStores, 1.0);
         this.ordersSelected = true;
         this.ordersContainer.SetVisible(true);
@@ -183,6 +191,12 @@ public class AtelierStoresListController extends inkGameController {
     this.ClearButtonHint();
   }
 
+  protected cb func OnVirtualStoreCategorySelectedEvent(evt: ref<VirtualStoreCategorySelectedEvent>) -> Bool {
+    this.storesDataView.SetActiveCategory(evt.category);
+    this.storesDataView.Filter();
+    this.storesDataView.UpdateView();
+  }
+
   private func RegisterCallbacks() -> Void {
     this.RegisterToCallback(n"OnRelease", this, n"OnRelease");
     this.buttonStores.RegisterToCallback(n"OnPress", this, n"OnPress");
@@ -219,6 +233,7 @@ public class AtelierStoresListController extends inkGameController {
     this.topMenu = root.GetWidgetByPathName(n"topMenu") as inkCompoundWidget;
     this.storesContainer = root.GetWidgetByPathName(n"scrollWrapper") as inkCompoundWidget;
     this.ordersContainer = root.GetWidgetByPathName(n"ordersContainer") as inkCompoundWidget;
+    this.categoriesContainer = root.GetWidgetByPathName(n"categories") as inkCompoundWidget;
     let ordersComponent: ref<inkComponent> = this.GetOrdersComponent();
     ordersComponent.Reparent(this.ordersContainer);
 
@@ -253,6 +268,14 @@ public class AtelierStoresListController extends inkGameController {
 
     this.storesSelected = true;
     this.RefreshControlsColor();
+  }
+
+  private func InitializeTabs() -> Void {
+    let categoryTab: ref<AtelierStoresCategoryTab>;
+    for category in this.categories {
+      categoryTab = AtelierStoresCategoryTab.Create(category);
+      categoryTab.Reparent(this.categoriesContainer);
+    };
   }
 
   private func RefreshControlsColor() -> Void {
@@ -310,8 +333,11 @@ public class AtelierStoresListController extends inkGameController {
   private func RefreshStores() -> Void {
     this.system.RefreshPersistedBookmarks();
     this.system.RefreshNewLabels();
+    this.system.BuildCategories();
     this.stores = this.system.GetStores();
+    this.categories = this.system.GetCategories();
     AtelierDebug(s"Detected stores: \(ArraySize(this.stores))");
+    AtelierDebug(s"Detected categories: \(ArraySize(this.categories))");
   }
 
   private func RefreshDataSource() -> Void {

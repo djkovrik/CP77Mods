@@ -1,6 +1,13 @@
 module VirtualAtelier.UI
+import VirtualAtelier.Logs.*
 
 public class AtelierStoresDataView extends ScriptableDataView {
+
+  private let activeCategory: VirtualStoreCategory;
+
+  public func SetActiveCategory(category: VirtualStoreCategory) -> Void {
+    this.activeCategory = category;
+  }
 
   public func UpdateView() {
     this.EnableSorting();
@@ -21,5 +28,14 @@ public class AtelierStoresDataView extends ScriptableDataView {
     };
     
     return StrCmp(leftEntry.storeName, rightEntry.storeName) < 0;
+  }
+
+  private func FilterItem(data: ref<IScriptable>) -> Bool {
+    let shop: ref<VirtualShop> = data as VirtualShop;
+    if !IsDefined(shop) || Equals(this.activeCategory, VirtualStoreCategory.AllItems) {
+      return true;
+    };
+
+    return ArrayContains(shop.categories, this.activeCategory);
   }
 }

@@ -28,6 +28,15 @@ public class VirtualShopRegistration extends Event {
   }
 }
 
+enum VirtualStoreCategory {
+  AllItems = 0,
+  Clothes = 1,
+  Weapons = 2,
+  Cyberware = 3,
+  Consumables = 4,
+  Other = 5,
+}
+
 public class VirtualShop {
   let storeID: CName;
   let storeName: String;
@@ -39,6 +48,7 @@ public class VirtualShop {
   let texturePart: CName;
   let isBookmarked: Bool;
   let isNew: Bool;
+  let categories: array<VirtualStoreCategory>;
 }
 
 class VirtualStockItem {
@@ -77,3 +87,13 @@ public class AtelierStoresTemplateClassifier extends inkVirtualItemTemplateClass
 public class AtelierRefreshStockEvent extends Event {}
 
 public class AtelierCloseVirtualStore extends Event {}
+
+public class VirtualStoreCategorySelectedEvent extends Event {
+  let category: VirtualStoreCategory;
+
+  public final static func Create(category: VirtualStoreCategory) -> ref<VirtualStoreCategorySelectedEvent> {
+    let evt: ref<VirtualStoreCategorySelectedEvent> = new VirtualStoreCategorySelectedEvent();
+    evt.category = category;
+    return evt;
+  }
+}

@@ -24,4 +24,10 @@ public class AtelierTexts {
   public static func ConfirmationAddAll() -> String = GetLocalizedTextByKey(n"VA-Cart-Confirm-Add")
   public static func ConfirmationRemoveAll() -> String = GetLocalizedTextByKey(n"VA-Cart-Confirm-Remove")
   public static func ConfirmationPurchase(price: String) -> String = s"\(GetLocalizedTextByKey(n"VA-Cart-Confirm-Purchase")) \(price) \(GetLocalizedText("Common-Characters-EuroDollar"))?"
+  public static func CategoryAllItems() -> String = GetLocalizedTextByKey(n"UI-Filters-AllItems")
+  public static func CategoryClothes() -> String = GetLocalizedTextByKey(n"UI-Filters-Clothes")
+  public static func CategoryWeapons() -> String = GetLocalizedTextByKey(n"UI-Filters-Weapons")
+  public static func CategoryCyberware() -> String = GetLocalizedTextByKey(n"UI-Filters-Cyberware")
+  public static func CategoryConsumables() -> String = GetLocalizedTextByKey(n"UI-Filters-Consumables")
+  public static func CategoryOthers() -> String = GetLocalizedTextByKey(n"Story-base-gameplay-static_data-database-vehicles-others")
 }
