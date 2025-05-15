@@ -22,8 +22,13 @@ public class VirtualStoreDataView extends BackpackDataView {
       return base;
     };
 
-    let query: String = UTF8StrLower(this.searchQuery);
-    let itemName: String = UTF8StrLower(GetLocalizedText(InventoryItemData.GetName(data.ItemData)));
+    let query: String = "";
+    let itemName: String = "";
+
+    if NotEquals(this.searchQuery, "") {
+      query = UTF8StrLower(this.searchQuery);
+      itemName = UTF8StrLower(GetLocalizedText(InventoryItemData.GetName(data.ItemData)));
+    };
 
     if !StrContains(itemName, query) && NotEquals(query, "") {
       return DerivedFilterResult.False;
