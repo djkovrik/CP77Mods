@@ -1,4 +1,4 @@
-// VirtualAtelierDelivery v1.0.0
+// VirtualAtelierDelivery v1.0.2
 module AtelierDelivery
 
 import Codeware.UI.*
@@ -3004,8 +3004,8 @@ public class OrdersManagerItemComponent extends inkComponent {
     storeName.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
     storeName.SetFontSize(56);
     storeName.SetFitToContent(false);
-    storeName.SetSize(620.0, 74.0);
-    storeName.SetWrapping(false, 600, textWrappingPolicy.PerCharacter);
+    storeName.SetSize(640.0, 74.0);
+    storeName.SetWrapping(false, 630, textWrappingPolicy.PerCharacter);
     storeName.SetOverflowPolicy(textOverflowPolicy.DotsEnd);
     storeName.SetLetterCase(textLetterCase.OriginalCase);
     storeName.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
@@ -3014,8 +3014,8 @@ public class OrdersManagerItemComponent extends inkComponent {
     let status: ref<inkText> = new inkText();
     status.SetName(n"statusUpdate");
     status.SetFitToContent(false);
-    status.SetSize(620.0, 64.0);
-    status.SetWrapping(false, 600, textWrappingPolicy.PerCharacter);
+    status.SetSize(640.0, 64.0);
+    status.SetWrapping(false, 630, textWrappingPolicy.PerCharacter);
     status.SetOverflowPolicy(textOverflowPolicy.DotsEnd);
     status.SetText("Next status update: 2 days");
     status.SetAnchor(inkEAnchor.CenterLeft);
