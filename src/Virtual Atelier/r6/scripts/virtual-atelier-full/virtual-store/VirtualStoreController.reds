@@ -175,6 +175,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
       this.previewManager.RemovePreviewGarment();
       this.RefreshVirtualItemState();
     } else if evt.IsAction(n"UI_Cancel") || evt.IsAction(n"cancel") || evt.IsAction(n"back") {
+      evt.Consume();
       this.previewManager.RemovePreviewGarment();
       this.QueueEvent(new AtelierCloseVirtualStore());
     } else if evt.IsAction(n"mouse_left") {
