@@ -1,7 +1,7 @@
 Interactions.OpenVaDeliveryUI:
   $base: Interactions.InteractionChoice
   name: "OpenVaDeliveryUI"
-  caption: LocKey#233
+  caption: LocKey#8783
   action: Choice2
 
 ActionRestriction.PhoneCallRestriction.disallowedActionNames:

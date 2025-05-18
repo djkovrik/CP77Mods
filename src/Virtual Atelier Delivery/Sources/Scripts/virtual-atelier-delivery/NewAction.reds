@@ -4,7 +4,7 @@ public class OpenVaDeliveryUI extends ActionBool {
 
   public final func SetProperties() -> Void {
     this.actionName = n"OpenVaDeliveryUI";
-    this.prop = DeviceActionPropertyFunctions.SetUpProperty_Bool(this.actionName, true, n"LocKey#233", n"LocKey#233");
+    this.prop = DeviceActionPropertyFunctions.SetUpProperty_Bool(this.actionName, true, n"LocKey#8783", n"LocKey#8783");
   }
 }
 
