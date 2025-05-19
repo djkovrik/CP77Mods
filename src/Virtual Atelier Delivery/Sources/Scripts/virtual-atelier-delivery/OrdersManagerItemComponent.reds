@@ -167,7 +167,7 @@ public class OrdersManagerItemComponent extends inkComponent {
     locationWrapper.SetSize(680.0, 80.0);
     locationWrapper.SetAnchor(inkEAnchor.CenterLeft);
     locationWrapper.SetAnchorPoint(0.5, 0.5);
-    locationWrapper.SetMargin(new inkMargin(48.0, 0.0, 64.0, 0.0));
+    locationWrapper.SetMargin(new inkMargin(32.0, 0.0, 32.0, 0.0));
     locationWrapper.Reparent(mainRow);
 
     // Location

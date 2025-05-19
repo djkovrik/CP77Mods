@@ -2783,7 +2783,7 @@ public class OrderProcessingSystem extends ScriptableSystem {
      }
   }
   private final func PrintOrderStatus(order: ref<PurchasedAtelierBundle>) -> Void {
-    let info: String = s"- id #\(order.GetOrderId()) from \(order.GetStoreName()): \(order.GetDeliveryStatus())";
+    let info: String = s"- id #\(order.GetOrderId()) from \(order.GetStoreName()): \(order.GetDeliveryStatus()) [\(order.GetDeliveryPoint())]";
     let diff: Float = order.GetNextStatusUpdateDiff();
     if diff > 0.0 {
       info += s" [next status change: \(AtelierDeliveryUtils.PrettifyTimestampValue(diff))]";
@@ -3098,7 +3098,7 @@ public class OrdersManagerItemComponent extends inkComponent {
     locationWrapper.SetSize(680.0, 80.0);
     locationWrapper.SetAnchor(inkEAnchor.CenterLeft);
     locationWrapper.SetAnchorPoint(0.5, 0.5);
-    locationWrapper.SetMargin(new inkMargin(48.0, 0.0, 64.0, 0.0));
+    locationWrapper.SetMargin(new inkMargin(32.0, 0.0, 32.0, 0.0));
     locationWrapper.Reparent(mainRow);
     // Location
     let location: ref<inkText> = new inkText();
@@ -3348,6 +3348,7 @@ public abstract class AtelierDeliveryUtils {
       case n"CongressMlk": return AtelierDeliveryDropPoint.CongressMlk;
       case n"CanneryPlaza": return AtelierDeliveryDropPoint.CanneryPlaza;
       case n"WollesenSt": return AtelierDeliveryDropPoint.WollesenSt;
+      case n"MegabuildingH7": return AtelierDeliveryDropPoint.MegabuildingH7;
       case n"PacificaStadium": return AtelierDeliveryDropPoint.PacificaStadium;
       case n"WestWindEstate": return AtelierDeliveryDropPoint.WestWindEstate;
       case n"SunsetMotel": return AtelierDeliveryDropPoint.SunsetMotel;
