@@ -215,7 +215,7 @@ public class OrderProcessingSystem extends ScriptableSystem {
     this.orders = refreshedOrders;
     this.PrintCurrentOrders();
 
-    OrderTrackingTicker.Get(this.player.GetGame()).ScheduleCallbackNormal();
+    OrderTrackingTicker.Get(this.player.GetGame()).ScheduleCallbackLong();
   }
 
   public final func IsItemPurchased(itemID: ItemID) -> Bool {

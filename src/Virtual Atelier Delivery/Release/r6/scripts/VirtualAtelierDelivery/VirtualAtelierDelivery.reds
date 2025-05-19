@@ -1,4 +1,4 @@
-// VirtualAtelierDelivery v1.0.2
+// VirtualAtelierDelivery v1.0.3
 module AtelierDelivery
 
 import Codeware.UI.*
@@ -1956,7 +1956,7 @@ public class DeliveryMessengerSystem extends ScriptableSystem {
 public class OpenVaDeliveryUI extends ActionBool {
   public final func SetProperties() -> Void {
     this.actionName = n"OpenVaDeliveryUI";
-    this.prop = DeviceActionPropertyFunctions.SetUpProperty_Bool(this.actionName, true, n"LocKey#233", n"LocKey#233");
+    this.prop = DeviceActionPropertyFunctions.SetUpProperty_Bool(this.actionName, true, n"LocKey#8783", n"LocKey#8783");
   }
 }
 @addMethod(DropPointControllerPS)
@@ -2715,7 +2715,7 @@ public class OrderProcessingSystem extends ScriptableSystem {
     };
     this.orders = refreshedOrders;
     this.PrintCurrentOrders();
-    OrderTrackingTicker.Get(this.player.GetGame()).ScheduleCallbackNormal();
+    OrderTrackingTicker.Get(this.player.GetGame()).ScheduleCallbackLong();
   }
   public final func IsItemPurchased(itemID: ItemID) -> Bool {
     return ArrayContains(this.purchasedItems, itemID);
@@ -3191,6 +3191,7 @@ public class OrderTrackingTicker extends ScriptableSystem {
   private let delayId: DelayID;
   private let checkingPeriodShort: Float = 5.0;
   private let checkingPeriodNormal: Float = 20.0;
+  private let checkingPeriodLong: Float = 60.0;
   public static func Get(gi: GameInstance) -> ref<OrderTrackingTicker> {
     let system: ref<OrderTrackingTicker> = GameInstance.GetScriptableSystemsContainer(gi).Get(n"AtelierDelivery.OrderTrackingTicker") as OrderTrackingTicker;
     return system;
@@ -3213,6 +3214,9 @@ public class OrderTrackingTicker extends ScriptableSystem {
   }
   public final func ScheduleCallbackShortened() -> Void {
     this.ScheduleNextTickCallback(this.checkingPeriodShort);
+  }
+  public final func ScheduleCallbackLong() -> Void {
+    this.ScheduleNextTickCallback(this.checkingPeriodLong);
   }
   public final func CancelScheduledCallback() -> Void {
     this.Log("- CancelScheduledCallback");

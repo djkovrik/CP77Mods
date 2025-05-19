@@ -5,6 +5,7 @@ public class OrderTrackingTicker extends ScriptableSystem {
   private let delayId: DelayID;
   private let checkingPeriodShort: Float = 5.0;
   private let checkingPeriodNormal: Float = 20.0;
+  private let checkingPeriodLong: Float = 60.0;
 
   public static func Get(gi: GameInstance) -> ref<OrderTrackingTicker> {
     let system: ref<OrderTrackingTicker> = GameInstance.GetScriptableSystemsContainer(gi).Get(n"AtelierDelivery.OrderTrackingTicker") as OrderTrackingTicker;
@@ -35,6 +36,10 @@ public class OrderTrackingTicker extends ScriptableSystem {
 
   public final func ScheduleCallbackShortened() -> Void {
     this.ScheduleNextTickCallback(this.checkingPeriodShort);
+  }
+
+  public final func ScheduleCallbackLong() -> Void {
+    this.ScheduleNextTickCallback(this.checkingPeriodLong);
   }
 
   public final func CancelScheduledCallback() -> Void {
