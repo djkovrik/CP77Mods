@@ -292,7 +292,7 @@ public class OrderProcessingSystem extends ScriptableSystem {
   }
 
   private final func PrintOrderStatus(order: ref<PurchasedAtelierBundle>) -> Void {
-    let info: String = s"- id #\(order.GetOrderId()) from \(order.GetStoreName()): \(order.GetDeliveryStatus())";
+    let info: String = s"- id #\(order.GetOrderId()) from \(order.GetStoreName()): \(order.GetDeliveryStatus()) [\(order.GetDeliveryPoint())]";
     let diff: Float = order.GetNextStatusUpdateDiff();
     if diff > 0.0 {
       info += s" [next status change: \(AtelierDeliveryUtils.PrettifyTimestampValue(diff))]";

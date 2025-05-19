@@ -103,6 +103,7 @@ public abstract class AtelierDeliveryUtils {
       case n"CongressMlk": return AtelierDeliveryDropPoint.CongressMlk;
       case n"CanneryPlaza": return AtelierDeliveryDropPoint.CanneryPlaza;
       case n"WollesenSt": return AtelierDeliveryDropPoint.WollesenSt;
+      case n"MegabuildingH7": return AtelierDeliveryDropPoint.MegabuildingH7;
       case n"PacificaStadium": return AtelierDeliveryDropPoint.PacificaStadium;
       case n"WestWindEstate": return AtelierDeliveryDropPoint.WestWindEstate;
       case n"SunsetMotel": return AtelierDeliveryDropPoint.SunsetMotel;
