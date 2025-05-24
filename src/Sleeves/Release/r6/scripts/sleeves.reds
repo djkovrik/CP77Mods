@@ -1,4 +1,6 @@
-// Sleeves v3.2.3
+// Sleeves v3.2.4
+@if(ModuleExists("ArchiveXL.DynamicAppearance"))
+import ArchiveXL.DynamicAppearance.*
 import Codeware.UI.*
 @if(ModuleExists("EquipmentEx"))
 import EquipmentEx.*
@@ -94,6 +96,7 @@ public class SleevedSlotInfo {
   public final func GetItemAppearance() -> CName {
     return this.itemAppearance;
   }
+  @if(!ModuleExists("ArchiveXL.DynamicAppearance"))
   public final func GetItemTppAppearance() -> CName {
     let appearanceString: String = NameToString(this.itemAppearance);
     let newAppearanceString: String;
@@ -106,27 +109,38 @@ public class SleevedSlotInfo {
     };
     return StringToName(newAppearanceString);
   }
+  @if(ModuleExists("ArchiveXL.DynamicAppearance"))
+  public final func GetItemTppAppearance() -> CName {
+    let appearanceString: String = NameToString(this.itemAppearance);
+    let newAppearanceString: String = ConvertAppearanceNameToTPP(appearanceString);
+    let appearanceWithPart: String;
+    if this.HasPartSuffix() {
+      appearanceWithPart = ConvertAppearanceNameToFullSleeves(newAppearanceString);
+      return StringToName(appearanceWithPart);
+    };
+    return StringToName(newAppearanceString);
+  }
   public func HasFppSuffix() -> Bool {
-    return this.HasSuffix("&FPP");
+    let app: String = NameToString(this.itemAppearance);
+    return StrContains(app, "&FPP") || StrContains(app, "!") && StrContains(app, "fpp");
   }
   public func HasTppSuffix() -> Bool {
-    return this.HasSuffix("&TPP");
+    let app: String = NameToString(this.itemAppearance);
+    return StrContains(app, "&TPP") || StrContains(app, "!") && StrContains(app, "tpp");
+  }
+  private func HasPartSuffix() -> Bool {
+    let app: String = NameToString(this.itemAppearance);
+    return StrContains(app, "&Part") || StrContains(app, "!") && StrContains(app, "part");
+  }
+  private func HasFullSuffix() -> Bool {
+    let app: String = NameToString(this.itemAppearance);
+    return StrContains(app, "&Full") || StrContains(app, "!") && StrContains(app, "full");
   }
   private func Excluded() -> Bool {
     let excluded: array<TweakDBID> = [
       t"Items.MQ049_martinez_jacket"
     ];
     return ArrayContains(excluded, this.itemTDBID) || ArrayContains(excluded, this.visualItemTDBID);
-  }
-  private func HasPartSuffix() -> Bool {
-    return this.HasSuffix("&Part");
-  }
-  private func HasFullSuffix() -> Bool {
-    return this.HasSuffix("&Full");
-  }
-  private func HasSuffix(suffix: String) -> Bool {
-    let appearanceString: String = NameToString(this.itemAppearance);
-    return StrContains(appearanceString, suffix);
   }
 }
 public class RefreshSleevesButtonEvent extends Event {
@@ -741,7 +755,7 @@ protected final func OnVehicleCameraChange(state: Bool) -> Void {
 private let sleevesDelayCallback: DelayID;
 @addMethod(GameObject)
 public final func TriggerSleevesRefreshCallback(opt clearCache: Bool) -> Void {
-  let triggerDelaySeconds: Float = 3.0;
+  let triggerDelaySeconds: Float = 1.0;
   let delaySystem: ref<DelaySystem> = GameInstance.GetDelaySystem(this.GetGame());
   delaySystem.CancelCallback(this.sleevesDelayCallback);
   this.sleevesDelayCallback = delaySystem.DelayCallback(SlotsButtonRefreshCallback.Create(this), triggerDelaySeconds, false);

@@ -91,7 +91,7 @@ private let sleevesDelayCallback: DelayID;
 
 @addMethod(GameObject)
 public final func TriggerSleevesRefreshCallback(opt clearCache: Bool) -> Void {
-  let triggerDelaySeconds: Float = 3.0;
+  let triggerDelaySeconds: Float = 1.0;
   let delaySystem: ref<DelaySystem> = GameInstance.GetDelaySystem(this.GetGame());
   delaySystem.CancelCallback(this.sleevesDelayCallback);
   this.sleevesDelayCallback = delaySystem.DelayCallback(SlotsButtonRefreshCallback.Create(this), triggerDelaySeconds, false);

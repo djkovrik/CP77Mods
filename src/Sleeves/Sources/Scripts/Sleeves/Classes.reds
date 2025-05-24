@@ -1,3 +1,6 @@
+@if(ModuleExists("ArchiveXL.DynamicAppearance"))
+import ArchiveXL.DynamicAppearance.*
+
 public class SleevesInfoBundle {
   let mode: SleevesMode;
   let items: array<ref<SleevedSlotInfo>>;
@@ -105,6 +108,7 @@ public class SleevedSlotInfo {
     return this.itemAppearance;
   }
 
+  @if(!ModuleExists("ArchiveXL.DynamicAppearance"))
   public final func GetItemTppAppearance() -> CName {
     let appearanceString: String = NameToString(this.itemAppearance);
     let newAppearanceString: String;
@@ -120,12 +124,38 @@ public class SleevedSlotInfo {
     return StringToName(newAppearanceString);
   }
 
+  @if(ModuleExists("ArchiveXL.DynamicAppearance"))
+  public final func GetItemTppAppearance() -> CName {
+    let appearanceString: String = NameToString(this.itemAppearance);
+    let newAppearanceString: String = ConvertAppearanceNameToTPP(appearanceString);
+    let appearanceWithPart: String;
+    
+    if this.HasPartSuffix() {
+      appearanceWithPart = ConvertAppearanceNameToFullSleeves(newAppearanceString);
+      return StringToName(appearanceWithPart);
+    };
+
+    return StringToName(newAppearanceString);
+  }
+
   public func HasFppSuffix() -> Bool {
-    return this.HasSuffix("&FPP");
+    let app: String = NameToString(this.itemAppearance);
+    return StrContains(app, "&FPP") || StrContains(app, "!") && StrContains(app, "fpp");
   }
 
   public func HasTppSuffix() -> Bool {
-    return this.HasSuffix("&TPP");
+    let app: String = NameToString(this.itemAppearance);
+    return StrContains(app, "&TPP") || StrContains(app, "!") && StrContains(app, "tpp");
+  }
+
+  private func HasPartSuffix() -> Bool {
+    let app: String = NameToString(this.itemAppearance);
+    return StrContains(app, "&Part") || StrContains(app, "!") && StrContains(app, "part");
+  }
+
+  private func HasFullSuffix() -> Bool {
+    let app: String = NameToString(this.itemAppearance);
+    return StrContains(app, "&Full") || StrContains(app, "!") && StrContains(app, "full");
   }
 
   private func Excluded() -> Bool {
@@ -134,19 +164,6 @@ public class SleevedSlotInfo {
     ];
 
     return ArrayContains(excluded, this.itemTDBID) || ArrayContains(excluded, this.visualItemTDBID);
-  }
-
-  private func HasPartSuffix() -> Bool {
-    return this.HasSuffix("&Part");
-  }
-
-  private func HasFullSuffix() -> Bool {
-    return this.HasSuffix("&Full");
-  }
-
-  private func HasSuffix(suffix: String) -> Bool {
-    let appearanceString: String = NameToString(this.itemAppearance);
-    return StrContains(appearanceString, suffix);
   }
 }
 
