@@ -1,18 +1,13 @@
-public native struct gameRange {
-	native let minValue : Float;
-	native let maxValue : Float;
-}
-
 public native class gameMinimapSettings {
-	native let globalVisionRadiusBounds : gameRange;
-	native let visionRadiusVehicle : gameRange;
-	native let visionRadiusCombat : gameRange;
-	native let visionRadiusQuestArea : gameRange;
-	native let visionRadiusSecurityArea : gameRange;
-	native let visionRadiusInterior : gameRange;
-	native let visionRadiusExterior : gameRange;
-	native let speedBoundsSprint : gameRange;
-	native let speedBoundsVehicle : gameRange;
+	native let globalVisionRadiusBounds : Range;
+	native let visionRadiusVehicle : Range;
+	native let visionRadiusCombat : Range;
+	native let visionRadiusQuestArea : Range;
+	native let visionRadiusSecurityArea : Range;
+	native let visionRadiusInterior : Range;
+	native let visionRadiusExterior : Range;
+	native let speedBoundsSprint : Range;
+	native let speedBoundsVehicle : Range;
 	native let smoothingStrengthOnZoomIn : Float;
 	native let smoothingStrengthOnZoomOut : Float;
 	native let playerMarkerTransitionSpeedOnVehicleMount : Float;

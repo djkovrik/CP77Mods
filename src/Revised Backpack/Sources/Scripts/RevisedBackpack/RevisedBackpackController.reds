@@ -849,23 +849,23 @@ public class RevisedBackpackController extends gameuiMenuGameController {
 
   private final func SelectSingleItem(item: ref<RevisedItemWrapper>) -> Void {
     if IsDefined(this.m_prevSelectedController) { ArrayRemove(this.m_selectedItems, this.m_prevSelectedController.GetItem()); }
-    if IsDefined(this.m_prevSelectedController) { this.m_prevSelectedController.SetSelected(false); };
-    if IsDefined(this.m_currSelectedController) { this.m_currSelectedController.SetSelected(true); };
+    if IsDefined(this.m_prevSelectedController) { this.m_prevSelectedController.SetItemSelected(false); };
+    if IsDefined(this.m_currSelectedController) { this.m_currSelectedController.SetItemSelected(true); };
     this.m_fromToStartingController = this.m_currSelectedController;
     this.ShowItemPreview(item); 
     ArrayPush(this.m_selectedItems, item);
   }
 
   private final func SelectSingleItemCtrl(item: ref<RevisedItemWrapper>) -> Void {
-    if IsDefined(this.m_currSelectedController) { this.m_currSelectedController.SetSelected(true); };
+    if IsDefined(this.m_currSelectedController) { this.m_currSelectedController.SetItemSelected(true); };
     this.m_fromToStartingController = this.m_currSelectedController;
     this.HideItemPreview();
     ArrayPush(this.m_selectedItems, item);
   }
 
   private final func DeselectSingleItem(item: ref<RevisedItemWrapper>) -> Void {
-    if IsDefined(this.m_prevSelectedController) { this.m_prevSelectedController.SetSelected(false); };
-    if IsDefined(this.m_currSelectedController) { this.m_currSelectedController.SetSelected(false); };
+    if IsDefined(this.m_prevSelectedController) { this.m_prevSelectedController.SetItemSelected(false); };
+    if IsDefined(this.m_currSelectedController) { this.m_currSelectedController.SetItemSelected(false); };
     this.m_fromToStartingController = this.m_prevSelectedController;
     this.m_prevSelectedController = null;
     this.m_currSelectedController = null;
@@ -874,7 +874,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
   }
 
   private final func DeselectSingleItemCtrl(item: ref<RevisedItemWrapper>) -> Void {
-    if IsDefined(this.m_currSelectedController) { this.m_currSelectedController.SetSelected(false); };
+    if IsDefined(this.m_currSelectedController) { this.m_currSelectedController.SetItemSelected(false); };
     this.m_fromToStartingController = this.m_prevSelectedController;
     this.m_currSelectedController = null;
     this.HideItemPreview();

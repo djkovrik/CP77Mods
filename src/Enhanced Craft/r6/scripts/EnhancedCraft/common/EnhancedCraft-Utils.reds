@@ -36,6 +36,6 @@ public class ECraftUtils {
 }
 
 // -- Basic logging function
-public static func L(str: String) -> Void {
+public func L(str: String) -> Void {
   // LogChannel(n"DEBUG", s"Craft: \(str)");
 }

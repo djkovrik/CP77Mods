@@ -19,7 +19,7 @@ private func IsWeaponVariantAvailable(variantId: TweakDBID, quality: CName, isIc
 }
 
 @addMethod(CraftingSystem)
-public final const func GetRecipesData(itemRecord: ref<Item_Record>, iconicsMultiplier: Int32, skipIconics: Bool) -> array<ref<RecipeData>> {
+public final func GetRecipesData(itemRecord: ref<Item_Record>, iconicsMultiplier: Int32, skipIconics: Bool) -> array<ref<RecipeData>> {
   let isWeapon: Bool = ECraftUtils.IsWeapon(itemRecord.ItemType().Type());
   let quality: CName = StringToName(itemRecord.Quality().Name());
   let result: array<ref<RecipeData>>;

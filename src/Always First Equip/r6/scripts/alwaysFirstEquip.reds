@@ -18,8 +18,8 @@ enum SafeStanceHotkeyState {
   TAPPED = 1,
 }
 
-private static func AlwaysFirstEquipAction() -> CName = n"AlwaysFirstEquip"
-private static func SafeWeaponAction() -> CName = n"SafeWeapon"
+private func AlwaysFirstEquipAction() -> CName = n"AlwaysFirstEquip"
+private func SafeWeaponAction() -> CName = n"SafeWeapon"
 
 public class FirstEquipConfig {
 
@@ -403,7 +403,7 @@ public func HasAnyWeaponEquippedEQ() -> Bool {
 }
 
 // Cycle slots forward
-public static func GetNextSlotIndex(current: Int32) -> Int32 {
+public func GetNextSlotIndex(current: Int32) -> Int32 {
   switch current {
     case 0: return 1;
     case 1: return 2;
@@ -413,7 +413,7 @@ public static func GetNextSlotIndex(current: Int32) -> Int32 {
 }
 
 // Cycle slots backwards
-public static func GetPreviousSlotIndex(current: Int32) -> Int32 {
+public func GetPreviousSlotIndex(current: Int32) -> Int32 {
   switch current {
     case 3: return 2;
     case 2: return 1;
@@ -433,7 +433,7 @@ public func ShouldSkipFirstEquipEQ() -> Bool {
   return this.skipFirstEquip;
 }
 
-public static func EQ(str: String) -> Void {
+public func EQ(str: String) -> Void {
   // LogChannel(n"DEBUG", "> " + str);
 }
 
@@ -685,7 +685,7 @@ protected final func OnTick(timeDelta: Float, stateContext: ref<StateContext>, s
   let statsSystem: ref<StatsSystem>;
   let gameInstance: GameInstance = scriptInterface.GetGame();
   let currentTime: Float = EngineTime.ToFloat(GameInstance.GetSimTime(gameInstance));
-  let behindCover: Bool = NotEquals(GameInstance.GetSpatialQueriesSystem(gameInstance).GetPlayerObstacleSystem().GetCoverDirection(scriptInterface.executionOwner), IntEnum(0l));
+  let behindCover: Bool = NotEquals(GameInstance.GetSpatialQueriesSystem(gameInstance).GetPlayerObstacleSystem().GetCoverDirection(scriptInterface.executionOwner), IntEnum(0));
   if behindCover {
     this.m_timeStamp = currentTime;
     stateContext.SetPermanentFloatParameter(n"TurnOffPublicSafeTimeStamp", this.m_timeStamp, true);

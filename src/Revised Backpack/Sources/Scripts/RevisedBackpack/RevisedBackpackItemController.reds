@@ -125,7 +125,7 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     };
   }
 
-  public final func SetSelected(selected: Bool) -> Void {
+  public final func SetItemSelected(selected: Bool) -> Void {
     this.Log(s"SetSelected \(this.GetNameLabel()): \(selected)");
     this.m_item.SetSelectedFlag(selected);
     this.m_selection.SetVisible(this.m_item.GetSelectedFlag());

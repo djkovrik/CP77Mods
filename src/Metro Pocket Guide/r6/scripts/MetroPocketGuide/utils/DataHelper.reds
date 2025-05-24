@@ -51,7 +51,8 @@ public abstract class MetroDataHelper {
   }
 
   public final static func GetStationLinesById(id: Int32) -> array<ModNCartLine> {
-    switch id {
+    let stationId: ENcartStations = IntEnum<ENcartStations>(id);
+    switch stationId {
       case ENcartStations.ARASAKA_WATERFRONT: return [ ModNCartLine.A_RED, ModNCartLine.E_ORANGE ];
       case ENcartStations.LITTLE_CHINA_HOSPITAL: return [ ModNCartLine.A_RED, ModNCartLine.E_ORANGE ];
       case ENcartStations.LITTLE_CHINA_NORTH: return [ ModNCartLine.A_RED ];

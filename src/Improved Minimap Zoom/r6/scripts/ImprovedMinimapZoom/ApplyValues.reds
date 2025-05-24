@@ -11,48 +11,48 @@ protected cb func OnInitialize() -> Bool {
 }
 
 @addMethod(MinimapContainerController)
-private const func ApplyZoomSettings() -> Void {
-  let range1: gameRange;
+private final func ApplyZoomSettings() -> Void {
+  let range1: Range;
   range1.minValue = this.config.visionRadiusVehicleMin;
   range1.maxValue = this.config.visionRadiusVehicleMax;
   this.settings.visionRadiusVehicle = range1;
 
-  let range2: gameRange;
+  let range2: Range;
   range2.minValue = this.config.visionRadiusCombatMin;
   range2.maxValue = this.config.visionRadiusCombatMax;
   this.settings.visionRadiusCombat = range2;
 
-  let range3: gameRange;
+  let range3: Range;
   range3.minValue = this.config.visionRadiusQuestAreaMin;
   range3.maxValue = this.config.visionRadiusQuestAreaMax;
   this.settings.visionRadiusQuestArea = range3;
 
-  let range4: gameRange;
+  let range4: Range;
   range4.minValue = this.config.visionRadiusSecurityAreaMin;
   range4.maxValue = this.config.visionRadiusSecurityAreaMax;
   this.settings.visionRadiusSecurityArea = range4;
 
-  let range5: gameRange;
+  let range5: Range;
   range5.minValue = this.config.visionRadiusSecurityAreaMin;
   range5.maxValue = this.config.visionRadiusSecurityAreaMax;
   this.settings.visionRadiusSecurityArea = range5;
 
-  let range6: gameRange;
+  let range6: Range;
   range6.minValue = this.config.visionRadiusInteriorMin;
   range6.maxValue = this.config.visionRadiusInteriorMax;
   this.settings.visionRadiusInterior = range6;
 
-  let range7: gameRange;
+  let range7: Range;
   range7.minValue = this.config.visionRadiusExteriorMin;
   range7.maxValue = this.config.visionRadiusExteriorMax;
   this.settings.visionRadiusExterior = range7;
 
-  let range8: gameRange;
+  let range8: Range;
   range8.minValue = this.config.speedBoundsSprintMin;
   range8.maxValue = this.config.speedBoundsSprintMax;
   this.settings.speedBoundsSprint = range8;
 
-  let range9: gameRange;
+  let range9: Range;
   range9.minValue = this.config.speedBoundsVehicleMin;
   range9.maxValue = this.config.speedBoundsVehicleMax;
   this.settings.speedBoundsVehicle = range9;

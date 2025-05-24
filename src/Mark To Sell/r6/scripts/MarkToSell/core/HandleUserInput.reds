@@ -126,8 +126,8 @@ private func UpdateMarkForSaleHint(shouldShow: Bool, opt alreadyHasIt: Bool) {
   wrappedMethod(displayingData, display);
 
   let price: Int32 = RPGManager.CalculateSellPrice(this.m_player.GetGame(), this.m_player, Deref(displayingData).ID);
-  let hasQuestTag: Bool = InventoryItemData.GetGameItemData(Deref(displayingData)).HasTag(n"Quest");
-  let alreadyMarked: Bool = InventoryItemData.GetGameItemData(Deref(displayingData)).modMarkedForSale;
+  let hasQuestTag: Bool = InventoryItemData.GetGameItemData(displayingData).HasTag(n"Quest");
+  let alreadyMarked: Bool = InventoryItemData.GetGameItemData(displayingData).modMarkedForSale;
   let isFavorite: Bool = this.m_uiScriptableSystem.IsItemPlayerFavourite(Deref(displayingData).ID);
   if IsDefined(display) && price > 0 && !hasQuestTag && !isFavorite {
     this.UpdateMarkForSaleHint(true, alreadyMarked);

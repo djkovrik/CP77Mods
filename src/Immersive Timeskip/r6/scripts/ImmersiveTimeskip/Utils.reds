@@ -28,6 +28,6 @@ public class ITSUtils {
 }
 
 // Logging shortcut
-public static func ITS(str: String) -> Void {
+public func ITS(str: String) -> Void {
   // LogChannel(n"DEBUG", s"TimeSkip: \(str)");
 }

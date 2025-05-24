@@ -151,10 +151,10 @@ public class MMUtils {
   }
 }
 
-public static func PrintMMDump(title: String, data: SDeviceMappinData, source: ref<GameplayRoleComponent>) -> Void {
+public func PrintMMDump(title: String, data: SDeviceMappinData, source: ref<GameplayRoleComponent>) -> Void {
   MM(title + " " + ToString(data.id) + " / variant: " + ToString(data.mappinVariant) + " / role: " + ToString(data.gameplayRole) + ", enabled: " + ToString(data.enabled)  + ", active: " + ToString(data.active)+ ", range: " + ToString(data.range) + " - visual state data - " + ToString(data.visualStateData.m_mappinVisualState) + ", isQuest: " + ToString(data.visualStateData.m_isQuest) + ", through walls: " + ToString(data.visualStateData.m_visibleThroughWalls) + ", range: " + ToString(data.visualStateData.m_range) + ", duration: " + ToString(data.visualStateData.m_duration) + ", role: " + ToString(data.visualStateData.m_gameplayRole) + ", quality: " + ToString(data.visualStateData.m_quality) + ", is shard: " + ToString(data.visualStateData.isMMShard));
 }
 
-public static func MM(const str: script_ref<String>) -> Void {
+public func MM(const str: script_ref<String>) -> Void {
   // LogChannel(n"DEBUG", s"Markers: \(str)");
 }
