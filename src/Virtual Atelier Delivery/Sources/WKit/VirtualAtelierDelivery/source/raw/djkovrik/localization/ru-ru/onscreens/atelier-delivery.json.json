@@ -368,6 +368,20 @@
                     "secondaryKey": "Mod-VAD-Journal-New-Drop-Point",
                     "femaleVariant": "Отличные новости!\nТеперь вам доступен новый пункт выдачи в: {district}, {drop_point}.\nЭтот вариант поможет сделать получение заказов ещё удобнее для вас.\nДелайте покупки с комфортом!"
                   }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Delivery-Block-Atelier",
+                    "femaleVariant": "Блокировать Ателье до второго акта"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-VAD-Delivery-Block-Atelier-Desc",
+                    "femaleVariant": "Если опция включена, виртуальное ателье не будет доступно пока вы не завершите первый акт, чтобы полностью разблокировать Найт-Сити."
+                  }
                 }
               ]
             }

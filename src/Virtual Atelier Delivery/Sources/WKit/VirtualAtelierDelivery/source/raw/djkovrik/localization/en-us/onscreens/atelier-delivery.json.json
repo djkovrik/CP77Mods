@@ -367,6 +367,20 @@
               "maleVariant": "",
               "primaryKey": "0",
               "secondaryKey": "Mod-VAD-Journal-New-Drop-Point"
+            },
+			{
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Block Atelier till Act 2",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Delivery-Block-Atelier"
+            },
+			{
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "If enabled then Virtual Atelier will not be available until you complete Act 1 and fully unlock Night City.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "Mod-VAD-Delivery-Block-Atelier-Desc"
             }
           ]
         }

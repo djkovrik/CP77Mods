@@ -7,8 +7,8 @@ import VirtualAtelier.Compat.VersionManager
 import NumeralsGetCommas.Functions.*    
 
 public abstract class CompatManager {
-  public final static func RequiredAtelierVersionCode() -> Int32 = 1302
-  public final static func RequiredAtelierVersionName() -> String = "1.3.2"
+  public final static func RequiredAtelierVersionCode() -> Int32 = 1403
+  public final static func RequiredAtelierVersionName() -> String = "1.4.3"
 }
 
 @if(ModuleExists("VirtualAtelier.Compat"))
