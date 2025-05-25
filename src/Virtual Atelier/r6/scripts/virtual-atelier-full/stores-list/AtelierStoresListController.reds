@@ -10,6 +10,7 @@ import AtelierDelivery.*
 public class AtelierStoresListController extends inkGameController {
   private let player: wref<PlayerPuppet>;
   private let system: wref<VirtualAtelierStoresManager>;
+  private let questsSystem: wref<QuestsSystem>;
   private let stores: array<ref<VirtualShop>>;
   private let categories: array<VirtualStoreCategory>;
   private let buttonHints: wref<ButtonHints>;
@@ -24,7 +25,9 @@ public class AtelierStoresListController extends inkGameController {
 
   private let storesContainer: wref<inkCompoundWidget>;
   private let ordersContainer: wref<inkCompoundWidget>;
+  private let placeholderContainer: wref<inkCompoundWidget>;
   private let categoriesContainer: wref<inkCompoundWidget>;
+  private let logo: wref<inkWidget>;
 
   private let buttonStores: wref<inkText>;
   private let buttonOrders: wref<inkText>;
@@ -41,6 +44,7 @@ public class AtelierStoresListController extends inkGameController {
     
     this.player = this.GetPlayerControlledObject() as PlayerPuppet;
     this.system = VirtualAtelierStoresManager.GetInstance(this.player.GetGame());
+    this.questsSystem = GameInstance.GetQuestsSystem(this.player.GetGame());
     this.config = VirtualAtelierConfig.Get();
 
     this.InitializeWidgets();
@@ -107,10 +111,12 @@ public class AtelierStoresListController extends inkGameController {
     let target: ref<inkWidget> = evt.GetTarget();
     let name: CName = target.GetName();
     if evt.IsAction(n"click") {
+      let atelierBlocked: Bool = this.ShouldBlockAtelier();
       if Equals(name, n"virtualStores") {
         this.storesSelected = true;
-        this.storesContainer.SetVisible(true);
-        this.categoriesContainer.SetVisible(true);
+        this.storesContainer.SetVisible(!atelierBlocked);
+        this.categoriesContainer.SetVisible(!atelierBlocked);
+        this.placeholderContainer.SetVisible(atelierBlocked);
         this.AnimateScale(this.buttonStores, 1.1);
         this.ordersSelected = false;
         this.ordersContainer.SetVisible(false);
@@ -120,6 +126,7 @@ public class AtelierStoresListController extends inkGameController {
       if Equals(name, n"activeOrders") {
         this.storesSelected = false;
         this.storesContainer.SetVisible(false);
+        this.placeholderContainer.SetVisible(false);
         this.categoriesContainer.SetVisible(false);
         this.AnimateScale(this.buttonStores, 1.0);
         this.ordersSelected = true;
@@ -229,11 +236,14 @@ public class AtelierStoresListController extends inkGameController {
   }
 
   private func InitializeWidgets() -> Void {
+    let placeholderComponent: ref<inkComponent>;
     let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
     this.topMenu = root.GetWidgetByPathName(n"topMenu") as inkCompoundWidget;
     this.storesContainer = root.GetWidgetByPathName(n"scrollWrapper") as inkCompoundWidget;
     this.ordersContainer = root.GetWidgetByPathName(n"ordersContainer") as inkCompoundWidget;
+    this.placeholderContainer = root.GetWidgetByPathName(n"placeholderContainer") as inkCompoundWidget;
     this.categoriesContainer = root.GetWidgetByPathName(n"categories") as inkCompoundWidget;
+    this.logo = root.GetWidgetByPathName(n"logo");
     let ordersComponent: ref<inkComponent> = this.GetOrdersComponent();
     ordersComponent.Reparent(this.ordersContainer);
 
@@ -268,6 +278,15 @@ public class AtelierStoresListController extends inkGameController {
 
     this.storesSelected = true;
     this.RefreshControlsColor();
+
+    if this.ShouldBlockAtelier() {
+      placeholderComponent = new PlaceholderComponent();
+      placeholderComponent.Reparent(this.placeholderContainer);
+      this.placeholderContainer.SetVisible(true);
+      this.storesContainer.SetVisible(false);
+      this.categoriesContainer.SetVisible(false);
+      this.logo.SetVisible(false);
+    };
   }
 
   private func InitializeTabs() -> Void {
@@ -436,6 +455,17 @@ public class AtelierStoresListController extends inkGameController {
     scaleInterpolator.SetDuration(0.1);
     scaleAnimDef.AddInterpolator(scaleInterpolator);
     target.PlayAnimation(scaleAnimDef);
+  }
+
+  @if(!ModuleExists("AtelierDelivery"))
+  private final func ShouldBlockAtelier() -> Bool {
+    return false;
+  }
+
+  @if(ModuleExists("AtelierDelivery"))
+  private final func ShouldBlockAtelier() -> Bool {
+    let watsonLocked: Int32 = this.questsSystem.GetFact(n"watson_prolog_lock");
+    return Equals(watsonLocked, 1);
   }
 
   @if(!ModuleExists("AtelierDelivery"))

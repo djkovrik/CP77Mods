@@ -316,7 +316,6 @@ public class VirtualStoreController extends gameuiMenuGameController {
       return ;
     };
 
-
     let store: String = this.GetVirtualStoreName();
     let orderId: Int32 = OrderProcessingSystem.Get(this.player.GetGame()).GetNextOrderId();
     let currentGoods: array<ref<VirtualCartItem>> = this.cartManager.GetCurrentGoods();
