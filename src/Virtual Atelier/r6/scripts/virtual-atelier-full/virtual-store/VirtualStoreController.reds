@@ -153,7 +153,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
   }
 
   protected cb func OnHandleGlobalHold(evt: ref<inkPointerEvent>) -> Bool {
-    if evt.IsAction(n"upgrade_perk") && !this.config.instantBuy {
+    if evt.IsAction(n"upgrade_perk") && !this.IsInstantBuyEnabled() {
       if evt.GetHoldProgress() >= 0.9 {
         this.OpenCartQuantityPopup();
       };
@@ -183,7 +183,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
         this.RequestSetFocus(null);
       };
     } else if evt.IsAction(atelierActions.addToVirtualCart) {
-      if this.config.instantBuy {
+      if this.IsInstantBuyEnabled() {
         if this.lastItemHoverOverEvent != null {
           this.BuyItemFromVirtualVendor(this.lastItemHoverOverEvent.itemData);
         };
@@ -216,7 +216,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
       this.buttonHintsController.RemoveButtonHint(n"select");
     };
 
-    if this.config.instantBuy {
+    if this.IsInstantBuyEnabled() {
       hintLabel = AtelierTexts.Purchase();
     } else {
       if isAddedToCart {
@@ -365,6 +365,16 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.ShowPurchaseAllConfirmationPopup();
   }
 
+  @if(ModuleExists("AtelierDelivery"))
+  private final func IsInstantBuyEnabled() -> Bool {
+    return false;
+  }
+
+  @if(!ModuleExists("AtelierDelivery"))
+  private final func IsInstantBuyEnabled() -> Bool {
+    return this.config.instantBuy;
+  }
+
   private func ShowOrderCreatedNotification(id: Int32) {
     let notification: ref<UIMenuNotificationEvent> = new UIMenuNotificationEvent();
     notification.m_notificationType = UIMenuNotificationType.VNotEnoughMoney;
@@ -452,7 +462,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     cartControls.SetChildOrder(inkEChildOrder.Forward);
     cartControls.SetInteractive(true);
 
-    if !this.config.instantBuy {
+    if !this.IsInstantBuyEnabled() {
       cartControls.Reparent(vendorHeader);
     };
 
@@ -599,7 +609,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     cartEddiesAmount.BindProperty(n"fontWeight", n"MainColors.BodyFontWeight");
     this.cartMoney = cartEddiesAmount;
 
-    if !this.config.instantBuy {
+    if !this.IsInstantBuyEnabled() {
       cartMoneyHeader.Reparent(balancesContainer);
       cartMoneyValues.Reparent(balancesContainer);
       cartEddiesAmount.Reparent(cartMoneyValues);
@@ -1019,7 +1029,7 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
   }
 
   private func RefreshCartControls() -> Void {
-    if this.config.instantBuy {
+    if this.IsInstantBuyEnabled() {
       return ;
     };
 
