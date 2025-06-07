@@ -4,6 +4,9 @@ import Codeware.Localization.*
 import CustomMarkers.Common.*
 import CustomMarkers.Config.*
 
+@if(ModuleExists("CustomMarkers.Export"))
+import CustomMarkers.Export.*
+
 public class CustomMappinData {
   public persistent let position: Vector4;
   public persistent let description: CName;
@@ -33,11 +36,6 @@ public class CustomMarkerSystem extends ScriptableSystem {
   }
 
   public func AddCustomMappin(title: String, description: String, texturePart: CName, position: Vector4, persist: Bool) -> Void {
-    if ArraySize(this.m_mappins) >= CustomMarkersConfig.MaximumAvailableMarkers() && persist {
-      this.ShowCustomWarning(this.m_translator.GetText("CustomMarkers-LimitMessage"));
-      return ;
-    };
-
     if this.IsMarkerExists(position) && persist {
       this.ShowCustomWarning(this.m_translator.GetText("CustomMarkers-AlreadyExists"));
       return ;
@@ -77,6 +75,7 @@ public class CustomMarkerSystem extends ScriptableSystem {
     ArrayPush(persistedMappins, newMappin);
     this.m_mappins = persistedMappins;
     CMM(s"Persisted mappin added: \(position), persisted mappins count: \(ArraySize(this.m_mappins))");
+    this.RefreshStorageData();
   }
 
   private func DeletePersistedMappin(position: Vector4) -> Void {
@@ -90,10 +89,12 @@ public class CustomMarkerSystem extends ScriptableSystem {
     };
     this.m_mappins = persistedMappins;
     CMM(s"Persisted mappin deleted: \(position), persisted mappins count: \(ArraySize(this.m_mappins))");
+    this.RefreshStorageData();
   }
 
   public func RestorePersistedMappins() -> Void {
     CMM(s"Trying to restore persisted mappins: \(ArraySize(this.m_mappins))");
+    this.RefreshPersistedMappins();
     let persistedMappins: array<ref<CustomMappinData>> = this.m_mappins;
     let counter: Int32 = 0;
     for mappin in persistedMappins {
@@ -102,6 +103,28 @@ public class CustomMarkerSystem extends ScriptableSystem {
     };
 
     CMM(s"Persisted mappins restored: \(counter)");
+  }
+
+  @if(ModuleExists("CustomMarkers.Export"))
+  public final func RefreshPersistedMappins() -> Void {
+    let exporter: ref<CustomMarkersExporter> = CustomMarkersExporter.Get();
+    let updatedMappins: array<ref<CustomMappinData>> = exporter.RebuildMappinsWithStorageData(this.m_mappins);
+    this.m_mappins = updatedMappins;
+  }
+
+  @if(ModuleExists("CustomMarkers.Export"))
+  public final func RefreshStorageData() -> Void {
+    CustomMarkersExporter.Get().PersistNewRevision(this.m_mappins);
+  }
+
+  @if(!ModuleExists("CustomMarkers.Export"))
+  public final func RefreshPersistedMappins() -> Void {
+    // do nothing
+  }
+
+  @if(!ModuleExists("CustomMarkers.Export"))
+  public final func RefreshStorageData() -> Void {
+    // do nothing
   }
 
   private func CreateMappinData(title: String, description: String, texturePart: CName, position: Vector4) -> MappinData {

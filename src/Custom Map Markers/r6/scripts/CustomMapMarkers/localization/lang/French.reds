@@ -9,7 +9,6 @@ public class French extends ModLocalizationPackage {
     this.Text("CustomMarkers-PickIconLabel", "Choisir icône du marqueur:");
     this.Text("CustomMarkers-ButtonLabelDelete", "Supprimer");
     this.Text("CustomMarkers-AddedMessage", "Nouveau marqueur ajouté");
-    this.Text("CustomMarkers-LimitMessage", "Vous avez atteint le maximum de marqueurs");
     this.Text("CustomMarkers-AlreadyExists", "Un marqueur existe déjà à cet endroit");
   }
 }

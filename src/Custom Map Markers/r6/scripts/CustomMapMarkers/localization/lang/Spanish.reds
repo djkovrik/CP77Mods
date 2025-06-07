@@ -9,7 +9,6 @@ public class Spanish extends ModLocalizationPackage {
     this.Text("CustomMarkers-PickIconLabel", "Icono del marcador:");
     this.Text("CustomMarkers-ButtonLabelDelete", "Quitar");
     this.Text("CustomMarkers-AddedMessage", "Nuevo marcador añadido");
-    this.Text("CustomMarkers-LimitMessage", "Has alcanzado el límite de marcadores");
     this.Text("CustomMarkers-AlreadyExists", "Ya existe un marcador aquí");
   }
 }

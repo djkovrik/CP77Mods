@@ -9,7 +9,6 @@ public class SimplifiedChinese extends ModLocalizationPackage {
     this.Text("CustomMarkers-PickIconLabel", "选择标记图标:");
     this.Text("CustomMarkers-ButtonLabelDelete", "删除");
     this.Text("CustomMarkers-AddedMessage", "添加了新的标记");
-    this.Text("CustomMarkers-LimitMessage", "您已达到标记的限制");
     this.Text("CustomMarkers-AlreadyExists", "此位置的标记已存在");
   }
 }

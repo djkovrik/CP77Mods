@@ -9,7 +9,6 @@ public class German extends ModLocalizationPackage {
     this.Text("CustomMarkers-PickIconLabel", "Markersymbol auswählen:");
     this.Text("CustomMarkers-ButtonLabelDelete", "Löschen");
     this.Text("CustomMarkers-AddedMessage", "Neuer Marker hinzugefügt");
-    this.Text("CustomMarkers-LimitMessage", "Sie haben das Limit für Marker erreicht");
     this.Text("CustomMarkers-AlreadyExists", "Markierung an dieser Stelle existiert bereits");
   }
 }
