@@ -729,27 +729,30 @@ public class VirtualStoreController extends gameuiMenuGameController {
     while virtualItemIndex < ArraySize(storeItems) {
       let itemTDBID: TweakDBID = TDBID.Create(storeItems[virtualItemIndex]);
       let itemId: ItemID = ItemID.FromTDBID(itemTDBID);
-      let itemData: ref<gameItemData> = inventoryManager.CreateBasicItemData(itemId, this.player);
-      AtelierDebug(s"Store item: \(ToString(storeItems[virtualItemIndex]))");
-      itemData.isVirtualItem = true;
-      itemData.hasOwned = this.cartManager.IsItemOwned(itemTDBID);
-      stockItem = new VirtualStockItem();
-      stockItem.itemID = itemId;
-      stockItem.itemTDBID = itemTDBID;
-      stockItem.price = Cast<Float>(itemsPrices[virtualItemIndex]);
-      stockItem.weight = RPGManager.GetItemWeight(itemData);
-      stockItem.quality = itemsQualities[virtualItemIndex];
-      stockItem.quantity = itemsQuantities[virtualItemIndex];
-      AtelierDebug(s"   Dynamic tags: \(ToString(itemData.GetDynamicTags()))");
-      AtelierDebug(s"   VirtPrice: \(ToString(stockItem.price))");
-      if (RoundF(stockItem.price) == 0) {
-        stockItem.price = Cast<Float>(AtelierItemsHelper.ScaleItemPrice(this.player, vendorObject, itemId, stockItem.quality) * stockItem.quantity);
+      let itemData: ref<gameItemData>;
+      if ItemID.IsValid(itemId) {
+        itemData = inventoryManager.CreateBasicItemData(itemId, this.player);
+        AtelierDebug(s"Store item: \(ToString(storeItems[virtualItemIndex]))");
+        itemData.isVirtualItem = true;
+        itemData.hasOwned = this.cartManager.IsItemOwned(itemTDBID);
+        stockItem = new VirtualStockItem();
+        stockItem.itemID = itemId;
+        stockItem.itemTDBID = itemTDBID;
+        stockItem.price = Cast<Float>(itemsPrices[virtualItemIndex]);
+        stockItem.weight = RPGManager.GetItemWeight(itemData);
+        stockItem.quality = itemsQualities[virtualItemIndex];
+        stockItem.quantity = itemsQuantities[virtualItemIndex];
+        AtelierDebug(s"   Dynamic tags: \(ToString(itemData.GetDynamicTags()))");
+        AtelierDebug(s"   VirtPrice: \(ToString(stockItem.price))");
+        if (RoundF(stockItem.price) == 0) {
+          stockItem.price = Cast<Float>(AtelierItemsHelper.ScaleItemPrice(this.player, vendorObject, itemId, stockItem.quality) * stockItem.quantity);
+        };
+        AtelierDebug(s"   CalcPrice: \(ToString(stockItem.price))");
+        stockItem.itemData = itemData;
+        ArrayPush(this.virtualStock, stockItem);
+        totalPrice += stockItem.price;
       };
-      AtelierDebug(s"   CalcPrice: \(ToString(stockItem.price))");
-      stockItem.itemData = itemData;
-      ArrayPush(this.virtualStock, stockItem);
       virtualItemIndex += 1;
-      totalPrice += stockItem.price;
     };
 
     this.totalItemsPrice = Cast<Int32>(totalPrice);
