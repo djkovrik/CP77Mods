@@ -1,4 +1,4 @@
-// VirtualAtelierDelivery v1.0.4
+// VirtualAtelierDelivery v1.0.5
 module AtelierDelivery
 
 import Codeware.UI.*
@@ -1676,7 +1676,7 @@ public abstract class LayoutsBuilder {
     border.SetVAlign(inkEVerticalAlign.Top);
     border.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     border.BindProperty(n"tintColor", n"MainColors.MildRed");
-    border.SetThickness(4);
+    border.SetThickness(4.0);
     border.Reparent(flexbox);
     let checkboxLabel: ref<inkText> = new inkText();
     checkboxLabel.SetName(n"checkboxLabel");
