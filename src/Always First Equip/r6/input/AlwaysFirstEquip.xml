@@ -14,9 +14,9 @@
 
     <!-- inputUserMapping -->
 	<mapping name="AlwaysFirstEquip_Button" type="Button" >
-        <button id="IK_F2" />
+        <button id="IK_F2" overridableUI="afeFirstEquip" />
     </mapping>
 	<mapping name="SafeWeapon_Button" type="Button" >
-        <button id="IK_F3" />
+        <button id="IK_F3" overridableUI="afeIdleBreak" />
     </mapping>
 </bindings>

@@ -28,6 +28,20 @@ public class FirstEquipConfig {
     return self;
   }
 
+  @runtimeProperty("ModSettings.mod", "First Equip")
+  @runtimeProperty("ModSettings.category", "UI-Settings-KeyBindings")
+  @runtimeProperty("ModSettings.category.order", "0")
+  @runtimeProperty("ModSettings.displayName", "firstEquip")
+  @runtimeProperty("ModSettings.description", "UI-Settings-Bind")
+  public let afeFirstEquip: EInputKey = EInputKey.IK_F2;
+  
+  @runtimeProperty("ModSettings.mod", "First Equip")
+  @runtimeProperty("ModSettings.category", "UI-Settings-KeyBindings")
+  @runtimeProperty("ModSettings.category.order", "0")
+  @runtimeProperty("ModSettings.displayName", "idleBreak")
+  @runtimeProperty("ModSettings.description", "UI-Settings-Bind")
+  public let afeIdleBreak: EInputKey = EInputKey.IK_F3;
+
   // Defines firstEquip animation probability in percents, you can use values from 0 to 100 here
   @runtimeProperty("ModSettings.mod", "First Equip")
   @runtimeProperty("ModSettings.category", "Mod-First-Equip-Triggering")
