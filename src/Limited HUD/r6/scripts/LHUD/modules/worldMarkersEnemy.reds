@@ -60,6 +60,9 @@ protected cb func OnUpdate() -> Bool {
   let shouldShow: Bool;
   let showEliteIndicator: Bool;
   let attitude: EAIAttitude = this.m_mappin.GetAttitudeTowardsPlayer();
+  if !this.m_isHostile && Equals(attitude, EAIAttitude.AIA_Hostile) && !this.m_objectMarkerVisible {
+    this.RequestForcedUpdate();
+  };
   this.m_isFriendly = Equals(attitude, EAIAttitude.AIA_Friendly);
   this.m_isFriendlyFromHack = this.m_mappin.IsFriendlyFromHack();
   this.m_isHostile = Equals(attitude, EAIAttitude.AIA_Hostile);
@@ -89,7 +92,7 @@ protected cb func OnUpdate() -> Bool {
   this.m_squadInCombat = this.m_mappin.IsSquadInCombat();
   this.m_numberOfCombatants = Cast<Int32>(this.m_mappin.GetNumberOfCombatants());
   this.m_isInCombatWithPlayer = IsDefined(ownerPuppet) && NPCPuppet.IsInCombatWithTarget(ownerPuppet, playerPuppet);
-  if this.m_mappin.HideUIDetection() || !this.m_canSeePlayer && NotEquals(this.m_currentAnimState, gameEnemyStealthAwarenessState.Combat) && this.m_numberOfCombatants >= 1 {
+  if this.m_mappin.HideUIDetection() || !this.m_mappin.GetNameplateEnabled() || !this.m_canSeePlayer && NotEquals(this.m_currentAnimState, gameEnemyStealthAwarenessState.Combat) && this.m_numberOfCombatants >= 1 {
     this.m_detectionVisible = false;
   } else {
     this.m_detectionVisible = NotEquals(this.m_currentAnimState, gameEnemyStealthAwarenessState.Relaxed) && NotEquals(this.m_currentAnimState, gameEnemyStealthAwarenessState.Combat) || this.m_animationIsPlaying;
@@ -179,6 +182,7 @@ private final func RefreshTaggedArrowColor() -> Void {
   };
 
   let objectImage: ref<inkWidget> = root.GetWidgetByPathName(n"objectMarker/objectImage");
+  let skull: ref<inkWidget> = root.GetWidgetByPathName(n"iconHolder/Level_Icon");
   let arrowLeft: ref<inkWidget> = root.GetWidgetByPathName(n"objectMarker/taggedContainer/taggedArrowLeft");
   let arrowRight: ref<inkWidget> = root.GetWidgetByPathName(n"objectMarker/taggedContainer/taggedArrowRight");
   let arrow: ref<inkWidget> = root.GetWidgetByPathName(n"Arrow/arrowImage");
@@ -189,11 +193,13 @@ private final func RefreshTaggedArrowColor() -> Void {
 
   if !this.m_isNCPD {
     objectImage.BindProperty(n"tintColor", newColor);
+    skull.BindProperty(n"tintColor", newColor);
     arrowLeft.BindProperty(n"tintColor", newColor);
     arrowRight.BindProperty(n"tintColor", newColor);
     arrow.BindProperty(n"tintColor", newColor);
   } else {
     objectImage.UnbindProperty(n"tintColor");
+    skull.UnbindProperty(n"tintColor");
     arrowLeft.UnbindProperty(n"tintColor");
     arrowRight.UnbindProperty(n"tintColor");
     arrow.UnbindProperty(n"tintColor");
@@ -201,6 +207,7 @@ private final func RefreshTaggedArrowColor() -> Void {
 
   if Equals(this.lhudConfigAddons.NameplateHpAndArrowAppearance, LHUDArrowAndHpAppearance.Transparent) {
     objectImage.SetOpacity(0.0);
+    skull.SetOpacity(0.0);
     arrowLeft.SetOpacity(0.0);
     arrowRight.SetOpacity(0.0);
     arrow.SetOpacity(0.0);
