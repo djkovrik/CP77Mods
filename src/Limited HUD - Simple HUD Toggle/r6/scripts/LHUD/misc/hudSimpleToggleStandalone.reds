@@ -1,13 +1,24 @@
-// kudos to psiberx for redscript snippets
+module LimitedHudSimpleToggle
+
+public class LHUDToggleConfig {
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "UI-Settings-KeyBindings")
+  @runtimeProperty("ModSettings.category.order", "0")
+  @runtimeProperty("ModSettings.displayName", "UI-Settings-Interface-HUD-HudElementsDescription")
+  @runtimeProperty("ModSettings.description", "UI-Settings-Bind")
+  public let lhudSimpleToggle: EInputKey = EInputKey.IK_F1;
+}
 
 public class ToggleHudEvent extends Event {}
 
+// kudos to psiberx for redscript snippets
 public class SimpleToggleGlobalInputListener {
-
     private let m_uiSystem: ref<UISystem>;
+    private let m_config: ref<LHUDToggleConfig>;
 
     public func SetUISystem(system: ref<UISystem>) -> Void {
       this.m_uiSystem = system;
+      this.m_config = new LHUDToggleConfig();
     }
 
     protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {

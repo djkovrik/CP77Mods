@@ -1,6 +1,22 @@
 module LimitedHudConfig
 import LimitedHudCommon.*
 
+public class LimitedHudHotkeys {
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "UI-Settings-KeyBindings")
+  @runtimeProperty("ModSettings.category.order", "0")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Global-Hotkey")
+  @runtimeProperty("ModSettings.description", "UI-Settings-Bind")
+  public let lhudGlobalToggle: EInputKey = EInputKey.IK_F8;
+  
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "UI-Settings-KeyBindings")
+  @runtimeProperty("ModSettings.category.order", "0")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Minimap-Hotkey")
+  @runtimeProperty("ModSettings.description", "UI-Settings-Bind")
+  public let lhudMinimapToggle: EInputKey = EInputKey.IK_F6;
+}
+
 public class ActionButtonsModuleConfig {
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Action-Buttons")

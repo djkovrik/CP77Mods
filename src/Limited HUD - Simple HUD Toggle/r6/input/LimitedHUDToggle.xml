@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<bindings>
+    <!-- inputContexts -->
+    <context name="LimitedHUDToggle" >
+		<action name="LHUD_Toggle" map="LHUD_Toggle_Button" />
+    </context>
+
+    <context name="UIToggles" append="true">
+        <include name="LimitedHUDToggle" />
+    </context>
+
+    <!-- inputUserMapping -->
+	<mapping name="LHUD_Toggle_Button" type="Button" >
+        <button id="IK_F1" overridableUI="lhudSimpleToggle" />
+    </mapping>
+</bindings>
