@@ -31,16 +31,16 @@ public class FirstEquipConfig {
   @runtimeProperty("ModSettings.mod", "First Equip")
   @runtimeProperty("ModSettings.category", "UI-Settings-KeyBindings")
   @runtimeProperty("ModSettings.category.order", "0")
-  @runtimeProperty("ModSettings.displayName", "firstEquip")
+  @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Main-Hotkey")
   @runtimeProperty("ModSettings.description", "UI-Settings-Bind")
-  public let afeFirstEquip: EInputKey = EInputKey.IK_F2;
+  public let afeMainHotkey: EInputKey = EInputKey.IK_F2;
   
   @runtimeProperty("ModSettings.mod", "First Equip")
   @runtimeProperty("ModSettings.category", "UI-Settings-KeyBindings")
   @runtimeProperty("ModSettings.category.order", "0")
-  @runtimeProperty("ModSettings.displayName", "idleBreak")
+  @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Additional-Hotkey")
   @runtimeProperty("ModSettings.description", "UI-Settings-Bind")
-  public let afeIdleBreak: EInputKey = EInputKey.IK_F3;
+  public let afeAdditionalHotkey: EInputKey = EInputKey.IK_F3;
 
   // Defines firstEquip animation probability in percents, you can use values from 0 to 100 here
   @runtimeProperty("ModSettings.mod", "First Equip")
