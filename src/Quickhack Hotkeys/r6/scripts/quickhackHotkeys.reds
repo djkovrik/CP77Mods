@@ -1,11 +1,62 @@
 module QHHotkeys
 
+public class QuickhackHotkeysConfig {
+  @runtimeProperty("ModSettings.mod", "Quickhack Hotkeys")
+  @runtimeProperty("ModSettings.category", "UI-Settings-KeyBindings")
+  @runtimeProperty("ModSettings.displayName", "1")
+  @runtimeProperty("ModSettings.description", "UI-Settings-Bind")
+  public let qhHotkey1: EInputKey = EInputKey.IK_1;
+
+  @runtimeProperty("ModSettings.mod", "Quickhack Hotkeys")
+  @runtimeProperty("ModSettings.category", "UI-Settings-KeyBindings")
+  @runtimeProperty("ModSettings.displayName", "2")
+  @runtimeProperty("ModSettings.description", "UI-Settings-Bind")
+  public let qhHotkey2: EInputKey = EInputKey.IK_2;
+
+  @runtimeProperty("ModSettings.mod", "Quickhack Hotkeys")
+  @runtimeProperty("ModSettings.category", "UI-Settings-KeyBindings")
+  @runtimeProperty("ModSettings.displayName", "3")
+  @runtimeProperty("ModSettings.description", "UI-Settings-Bind")
+  public let qhHotkey3: EInputKey = EInputKey.IK_3;
+
+  @runtimeProperty("ModSettings.mod", "Quickhack Hotkeys")
+  @runtimeProperty("ModSettings.category", "UI-Settings-KeyBindings")
+  @runtimeProperty("ModSettings.displayName", "4")
+  @runtimeProperty("ModSettings.description", "UI-Settings-Bind")
+  public let qhHotkey4: EInputKey = EInputKey.IK_4;
+
+  @runtimeProperty("ModSettings.mod", "Quickhack Hotkeys")
+  @runtimeProperty("ModSettings.category", "UI-Settings-KeyBindings")
+  @runtimeProperty("ModSettings.displayName", "5")
+  @runtimeProperty("ModSettings.description", "UI-Settings-Bind")
+  public let qhHotkey5: EInputKey = EInputKey.IK_5;
+
+  @runtimeProperty("ModSettings.mod", "Quickhack Hotkeys")
+  @runtimeProperty("ModSettings.category", "UI-Settings-KeyBindings")
+  @runtimeProperty("ModSettings.displayName", "6")
+  @runtimeProperty("ModSettings.description", "UI-Settings-Bind")
+  public let qhHotkey6: EInputKey = EInputKey.IK_6;
+
+  @runtimeProperty("ModSettings.mod", "Quickhack Hotkeys")
+  @runtimeProperty("ModSettings.category", "UI-Settings-KeyBindings")
+  @runtimeProperty("ModSettings.displayName", "7")
+  @runtimeProperty("ModSettings.description", "UI-Settings-Bind")
+  public let qhHotkey7: EInputKey = EInputKey.IK_7;
+
+  @runtimeProperty("ModSettings.mod", "Quickhack Hotkeys")
+  @runtimeProperty("ModSettings.category", "UI-Settings-KeyBindings")
+  @runtimeProperty("ModSettings.displayName", "8")
+  @runtimeProperty("ModSettings.description", "UI-Settings-Bind")
+  public let qhHotkey8: EInputKey = EInputKey.IK_8;
+}
+
+@addField(QuickhacksListGameController)
+private let qhConfig: ref<QuickhackHotkeysConfig>;
+
 @wrapMethod(QuickhacksListGameController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
-
-  // Hide change target hint
-  this.GetRootCompoundWidget().GetWidget(n"input_container/input_hint/inputChangeTarget").SetVisible(false);
+  this.qhConfig = new QuickhackHotkeysConfig();
 }
 
 @replaceMethod(QuickhacksListGameController)
@@ -28,7 +79,7 @@ private final func SetVisibility(value: Bool) -> Void {
       };
     } else {
       if this.m_selectedData.m_noQuickhackData {
-        if GameInstance.GetStatsSystem(this.m_gameInstance).GetStatValue(Cast<StatsObjectID>(this.m_playerObject.GetEntityID()), gamedataStatType.HasCyberdeck) <= 0.00 {
+        if GameInstance.GetStatsSystem(this.m_gameInstance).GetStatValue(Cast<StatsObjectID>(this.m_playerObject.GetEntityID()), gamedataStatType.HasCyberdeck) <= 0.0 {
           return;
         };
       } else {
@@ -40,14 +91,14 @@ private final func SetVisibility(value: Bool) -> Void {
     if IsDefined(this.inkIntroAnimProxy) && this.inkIntroAnimProxy.IsPlaying() {
       this.inkIntroAnimProxy.Stop();
     };
-    animOptions.customTimeDilation = 2.00;
+    animOptions.customTimeDilation = 2.0;
     animOptions.applyCustomTimeDilation = true;
     this.inkIntroAnimProxy = this.PlayLibraryAnimation(n"intro", animOptions);
     this.PlaySound(n"QuickHackMenu", n"OnOpen");
     if this.m_timeBetweenIntroAndDescritpionCheck {
       GameInstance.GetDelaySystem(this.m_playerObject.GetGame()).CancelDelay(this.m_timeBetweenIntroAndDescritpionDelayID);
     };
-    if this.m_timeBetweenIntroAndIntroDescription != 0.00 {
+    if this.m_timeBetweenIntroAndIntroDescription != 0.0 {
       this.m_introDescriptionAnimProxy = this.PlayLibraryAnimation(n"outro_tooltip");
     };
     delayIntroDescritpio = new DelayedDescriptionIntro();
@@ -66,8 +117,6 @@ private final func SetVisibility(value: Bool) -> Void {
       this.m_playerObject.RegisterInputListener(this, n"SelectHack6");
       this.m_playerObject.RegisterInputListener(this, n"SelectHack7");
       this.m_playerObject.RegisterInputListener(this, n"SelectHack8");
-      this.m_playerObject.RegisterInputListener(this, n"SelectHack9");
-      this.m_playerObject.RegisterInputListener(this, n"SelectHack10");
     };
     this.RequestTimeDilation(this.m_playerObject, n"quickHackScreen", true);
     this.m_memoryBoard.Signal(this.m_memoryBoardDef.MemoryPercent);
@@ -85,12 +134,15 @@ private final func SetVisibility(value: Bool) -> Void {
       };
       this.RequestTimeDilation(this.m_playerObject, n"quickHackScreen", false);
     };
+    if IsDefined(this.inkIntroAnimProxy) && this.inkIntroAnimProxy.IsPlaying() {
+      this.inkIntroAnimProxy.Stop();
+    };
     if IsDefined(uiQuickSlotsDataBB) {
       uiQuickSlotsDataBB.SetBool(GetAllBlackboardDefs().UI_QuickSlotsData.quickhackPanelOpen, false);
     };
     this.m_playerObject = null;
     GameInstance.GetUISystem(this.m_gameInstance).RestorePreviousVisualState(n"inkQuickHackingState");
-    progressBarBB.SetFloat(GetAllBlackboardDefs().UI_HUDProgressBar.ProgressBump, 0.00);
+    progressBarBB.SetFloat(GetAllBlackboardDefs().UI_HUDProgressBar.ProgressBump, 0.0);
     this.ResetQuickhackSelection();
     if IsDefined(this.m_memorySpendAnimation) {
       this.m_memorySpendAnimation.UnregisterFromAllCallbacks(inkanimEventType.OnFinish);
@@ -108,11 +160,14 @@ private final func SetVisibility(value: Bool) -> Void {
 @wrapMethod(QuickhacksListGameController)
 protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
   let released: Bool = Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED) || Equals(ListenerAction.GetType(action), gameinputActionType.AXIS_CHANGE);
+  let hold: Bool = Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_HOLD_COMPLETE);
+  let usedKbm: Bool = this.m_playerObject.PlayerLastUsedKBM();
   let gameActive: Bool = this.GetPlayerControlledObject().GetHudManager().IsHackingMinigameActive();
-  
+  let wasTriggered: Bool = released && usedKbm || hold && !usedKbm;
+
   let name: CName;
   let index: Int32;
-  if released && !gameActive && !this.m_isUILocked {
+  if wasTriggered && !gameActive && !this.m_isUILocked {
     name = ListenerAction.GetName(action);
     switch name {
       case n"SelectHack1":
@@ -139,12 +194,6 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
       case n"SelectHack8":
         index = 7;
         break;
-        case n"SelectHack9":
-        index = 8;
-        break;
-      case n"SelectHack10":
-        index = 9;
-        break;
       default:
         index = -1;
         break;
@@ -169,6 +218,7 @@ private func OnQuckhackByHotkeyActivation(requestedIndex: Int32) -> Void {
   if NotEquals(requestedIndex, currentActiveIndex) {
     this.m_listController.SetSelectedIndex(requestedIndex, true);
   };
+
   this.ApplyQuickHack(true);
 }
 
@@ -188,10 +238,10 @@ private final func PopulateData(data: array<ref<QuickhackData>>) -> Void {
 }
 
 @addField(QuickhacksListItemController)
-private let m_buttonHint: ref<inkWidget>;
+private let m_buttonHint: wref<inkWidget>;
 
 @addField(QuickhacksListItemController)
-private let m_buttonHintController: ref<ButtonHints>;
+private let m_buttonHintController: wref<ButtonHints>;
 
 @wrapMethod(QuickhacksListItemController)
 protected cb func OnInitialize() -> Bool {
@@ -245,12 +295,6 @@ public func SetQuickhackHotkeyAction(index: Int32) -> Void {
   case 7:
     action = n"SelectHack8";
     break;
-  case 8:
-    action = n"SelectHack9";
-    break;
-  case 9:
-    action = n"SelectHack10";
-    break;
   default:
     action = n"";
     break;
@@ -268,27 +312,4 @@ protected final func RegisterToInput() -> Void {
   let puppet: ref<GameObject> = this.GetPlayer();
   puppet.UnregisterInputListener(this, n"QH_MoveLeft");
   puppet.UnregisterInputListener(this, n"QH_MoveRight");
-}
-
-public class QHotkeysScannerToggledEvent extends Event {
-  let usedKBM: Bool;
-
-  public static func Create(enabled: Bool) -> ref<QHotkeysScannerToggledEvent> {
-    let self: ref<QHotkeysScannerToggledEvent> = new QHotkeysScannerToggledEvent();
-    self.usedKBM = enabled;
-    return self;
-  }
-}
-
-@addMethod(QuickhacksListItemController)
-protected cb func OnQHotkeysScannerToggledEvent(evt: ref<QHotkeysScannerToggledEvent>) -> Bool {
-  this.m_buttonHint.SetVisible(evt.usedKBM);
-}
-
-@wrapMethod(scannerGameController)
-private final func ShowScanner(show: Bool) -> Void {
-  wrappedMethod(show);
-
-  let lastUsedKBM: Bool = this.m_playerPuppet.PlayerLastUsedKBM();
-  GameInstance.GetUISystem(this.m_gameInstance).QueueEvent(QHotkeysScannerToggledEvent.Create(lastUsedKBM));
 }

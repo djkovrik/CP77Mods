@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <bindings>
-    <context name="QuickhackHotkeys" >
+	<context name="QuickhackHotkeys" >
 		<action name="SelectHack1" map="SelectHack1_Button" />
 		<action name="SelectHack2" map="SelectHack2_Button" />
 		<action name="SelectHack3" map="SelectHack3_Button" />
@@ -9,43 +9,92 @@
 		<action name="SelectHack6" map="SelectHack6_Button" />
 		<action name="SelectHack7" map="SelectHack7_Button" />
 		<action name="SelectHack8" map="SelectHack8_Button" />
-		<action name="SelectHack9" map="SelectHack9_Button" />
-		<action name="SelectHack10" map="SelectHack10_Button" />
-    </context>
+	</context>
 
-    <context name="VisionActions" append="true">
-        <include name="QuickhackHotkeys" />
-    </context>
+	<context name="VisionActions" append="true">
+		<include name="QuickhackHotkeys" />
+	</context>
+	
+	<hold action="SelectHack1" timeout="0.3" />
+	<hold action="SelectHack2" timeout="0.3" />
+	<hold action="SelectHack3" timeout="0.3" />
+	<hold action="SelectHack4" timeout="0.3" />
+	<hold action="SelectHack5" timeout="0.3" />
+	<hold action="SelectHack6" timeout="0.3" />
+	<hold action="SelectHack7" timeout="0.3" />
+	<hold action="SelectHack8" timeout="0.3" />
+
+	<acceptedEvents action="SelectHack1" >
+		<event name="BUTTON_PRESSED" />
+		<event name="BUTTON_HOLD_COMPLETE" />
+	</acceptedEvents>
+	
+	<acceptedEvents action="SelectHack2" >
+		<event name="BUTTON_PRESSED" />
+		<event name="BUTTON_HOLD_COMPLETE" />
+	</acceptedEvents>
+
+	<acceptedEvents action="SelectHack3" >
+		<event name="BUTTON_PRESSED" />
+		<event name="BUTTON_HOLD_COMPLETE" />
+	</acceptedEvents>
+	
+	<acceptedEvents action="SelectHack4" >
+		<event name="BUTTON_PRESSED" />
+		<event name="BUTTON_HOLD_COMPLETE" />
+	</acceptedEvents>
+
+	<acceptedEvents action="SelectHack5" >
+		<event name="BUTTON_PRESSED" />
+		<event name="BUTTON_HOLD_COMPLETE" />
+	</acceptedEvents>
+	
+	<acceptedEvents action="SelectHack6" >
+		<event name="BUTTON_PRESSED" />
+		<event name="BUTTON_HOLD_COMPLETE" />
+	</acceptedEvents>
+	
+	<acceptedEvents action="SelectHack7" >
+		<event name="BUTTON_PRESSED" />
+		<event name="BUTTON_HOLD_COMPLETE" />
+	</acceptedEvents>
+	
+	<acceptedEvents action="SelectHack8" >
+		<event name="BUTTON_PRESSED" />
+		<event name="BUTTON_HOLD_COMPLETE" />
+	</acceptedEvents>
 
 	<mapping name="SelectHack1_Button" type="Button" >
-		<button id="IK_1" />
+		<button id="IK_Pad_X_SQUARE" />
+		<button id="IK_1" overridableUI="qhHotkey1" />
 	</mapping>
 	<mapping name="SelectHack2_Button" type="Button" >
-		<button id="IK_2" />
+		<button id="IK_Pad_Y_TRIANGLE" />
+		<button id="IK_2" overridableUI="qhHotkey2" />
 	</mapping>
 	<mapping name="SelectHack3_Button" type="Button" >
-		<button id="IK_3" />
+		<button id="IK_Pad_B_CIRCLE" />
+		<button id="IK_3" overridableUI="qhHotkey3" />
 	</mapping>
 	<mapping name="SelectHack4_Button" type="Button" >
-		<button id="IK_4" />
+		<button id="IK_Pad_RightShoulder" />
+		<button id="IK_4" overridableUI="qhHotkey4" />
 	</mapping>
 	<mapping name="SelectHack5_Button" type="Button" >
-		<button id="IK_5" />
+		<button id="IK_Pad_DigitRight" />
+		<button id="IK_5" overridableUI="qhHotkey5" />
 	</mapping>
 	<mapping name="SelectHack6_Button" type="Button" >
-		<button id="IK_6" />
+		<button id="IK_Pad_DigitLeft" />
+		<button id="IK_6" overridableUI="qhHotkey6" />
 	</mapping>
 	<mapping name="SelectHack7_Button" type="Button" >
-		<button id="IK_7" />
+		<button id="IK_Pad_RightTrigger" thresholdPress="0.1" thresholdRelease="0.05" />
+		<button id="IK_7" overridableUI="qhHotkey7" />
 	</mapping>
 	<mapping name="SelectHack8_Button" type="Button" >
-		<button id="IK_8" />
-	</mapping>
-	<mapping name="SelectHack9_Button" type="Button" >
-		<button id="IK_9" />
-	</mapping>
-	<mapping name="SelectHack10_Button" type="Button" >
-		<button id="IK_0" />
+		<button id="IK_Pad_LeftTrigger" thresholdPress="0.1" thresholdRelease="0.05" />
+		<button id="IK_8" overridableUI="qhHotkey8" />
 	</mapping>
 	
 </bindings>
