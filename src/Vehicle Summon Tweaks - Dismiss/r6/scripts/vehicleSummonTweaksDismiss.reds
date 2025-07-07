@@ -1,5 +1,9 @@
-// -- Add vehicle dismiss option
+module VehicleSummonTweaks.Dismiss
 
+@if(ModuleExists("VehiclePersistence.System"))
+import VehiclePersistence.System.*
+
+// -- Add vehicle dismiss option
 private class VehicleSummonDismissConfig {
   public static func Label() -> String = "Dismiss"
   public static func Action() -> CName = n"Choice2_Hold"
@@ -55,6 +59,7 @@ public func IsLookingAtOwnedVehicle() -> Bool {
   return isLookingAtOwnedVehicle;
 }
 
+@if(!ModuleExists("VehiclePersistence.System"))
 @addMethod(PlayerPuppet)
 private func IsThisVehicleOwned(id: TweakDBID) -> Bool {
   let system: ref<VehicleSystem> = GameInstance.GetVehicleSystem(this.GetGame());
@@ -65,6 +70,26 @@ private func IsThisVehicleOwned(id: TweakDBID) -> Bool {
       return true;
     };
   };
+  return false;
+}
+
+@if(ModuleExists("VehiclePersistence.System"))
+@addMethod(PlayerPuppet)
+private func IsThisVehicleOwned(id: TweakDBID) -> Bool {
+  let system: ref<VehicleSystem> = GameInstance.GetVehicleSystem(this.GetGame());
+  let unlockedVehicles: array<PlayerVehicle>;
+  system.GetPlayerUnlockedVehicles(unlockedVehicles);
+  for vehicle in unlockedVehicles {
+    if Equals(vehicle.recordID, id) {
+      return true;
+    };
+  };
+
+  let persisted: Bool = PersistentVehicleSystem.GetInstance(this.GetGame()).IsVehiclePersistent(id);
+  if persisted {
+    return true;
+  };
+
   return false;
 }
 
