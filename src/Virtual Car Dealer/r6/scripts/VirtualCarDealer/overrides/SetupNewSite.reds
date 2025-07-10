@@ -1,4 +1,5 @@
 module CarDealer.Site
+
 @if(ModuleExists("BrowserExtension.System"))
 import BrowserExtension.DataStructures.*
 @if(ModuleExists("BrowserExtension.System"))
@@ -36,60 +37,20 @@ public class CarDealerSiteListener {
 }
 
 @addField(BrowserGameController)
-private let CarDealerSiteListener: ref<CarDealerSiteListener>;
+private let carDealerSiteListener: ref<CarDealerSiteListener>;
 
 @wrapMethod(BrowserGameController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
 
-  this.CarDealerSiteListener = new CarDealerSiteListener();
-	this.CarDealerSiteListener.Init(this);
+  this.carDealerSiteListener = new CarDealerSiteListener();
+	this.carDealerSiteListener.Init(this);
 }
 
 @wrapMethod(BrowserGameController)
 protected cb func OnUninitialize() -> Bool {
   wrappedMethod();
 
-	this.CarDealerSiteListener.Uninit();
-  this.CarDealerSiteListener = null;
-}
-
-
-// Notify
-
-@addField(SingleplayerMenuGameController)
-protected let dealerExtensionPopup: ref<inkGameNotificationToken>;
-
-@wrapMethod(SingleplayerMenuGameController)
-protected cb func OnInitialize() -> Bool {
-  wrappedMethod();
-
-  if this.BrowserExtensionNotInstalledDealer() {
-    this.dealerExtensionPopup = GenericMessageNotification.Show(
-      this, 
-      GetLocalizedText("LocKey#11447"), 
-      "You installed Virtual Car Dealer - Browser Extension addon but not the main Browser Extension mod itself, " +
-      "so please download it here:\nhttps://www.nexusmods.com/cyberpunk2077/mods/10038",
-      GenericMessageNotificationType.OK
-    );
-
-    this.dealerExtensionPopup.RegisterListener(this, n"OnDealerExtensionPopupClosed");
-  };
-}
-
-@addMethod(SingleplayerMenuGameController)
-protected cb func OnDealerExtensionPopupClosed(data: ref<inkGameNotificationData>) {
-  this.dealerExtensionPopup = null;
-}
-
-@if(ModuleExists("BrowserExtension.System"))
-@addMethod(SingleplayerMenuGameController)
-public final func BrowserExtensionNotInstalledDealer() -> Bool {
-  return false;
-}
-
-@if(!ModuleExists("BrowserExtension.System"))
-@addMethod(SingleplayerMenuGameController)
-public final func BrowserExtensionNotInstalledDealer() -> Bool {
-  return true;
+	this.carDealerSiteListener.Uninit();
+  this.carDealerSiteListener = null;
 }
