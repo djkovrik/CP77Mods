@@ -166,7 +166,7 @@ protected func Update() -> Void {
         };
       };
     };
-    if !this.m_wasVisible {
+    if !this.m_wasVisible && !this.m_stealthMappin.GetSkipIntroAnim() {
       if IsDefined(this.m_showAnim) {
         this.m_showAnim.Stop();
       };
