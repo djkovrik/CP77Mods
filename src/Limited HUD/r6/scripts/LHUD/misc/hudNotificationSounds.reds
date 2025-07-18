@@ -265,7 +265,7 @@ private final func OnCharacterLevelUpdated(value: Variant) -> Void {
 }
 
 @replaceMethod(GenericNotificationController)
-public func SetNotificationData(notificationData: ref<GenericNotificationViewData>) -> Void {
+public cb func SetNotificationData(notificationData: ref<GenericNotificationViewData>) -> Void {
   let config: ref<LHUDAddonsConfig> = new LHUDAddonsConfig();
   this.m_data = notificationData;
 
