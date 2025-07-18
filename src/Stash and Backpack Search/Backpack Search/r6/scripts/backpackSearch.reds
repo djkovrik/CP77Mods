@@ -18,7 +18,7 @@ public func DerivedFilterItem(data: ref<IScriptable>) -> DerivedFilterResult {
   let query: String = UTF8StrLower(this.customSearchQuery);
 
   if !IsDefined(wrappedData) || Equals(query, "") {
-    return result;
+    return DerivedFilterResult.Pass;
   };
 
   let combined: String = "";
@@ -94,10 +94,6 @@ private final func InitializeSearchInput() -> Void {
 protected cb func OnSearchInput(widget: wref<inkWidget>) {
   this.m_backpackItemsDataView.UpdateSearchQuery(this.searchInput.GetText());
   this.m_backpackItemsDataView.Filter();
-  this.m_backpackItemsDataView.EnableSorting();
-  this.m_backpackItemsDataView.SetFilterType(this.m_activeFilter.GetFilterType());
-  this.m_backpackItemsDataView.SetSortMode(this.m_backpackItemsDataView.GetSortMode());
-  this.m_backpackItemsDataView.DisableSorting();
 }
 
 // -- Reset input focus on generic click

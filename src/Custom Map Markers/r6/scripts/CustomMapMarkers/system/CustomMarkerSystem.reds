@@ -52,7 +52,7 @@ public class CustomMarkerSystem extends ScriptableSystem {
 
   public func DeleteCustomMappin(position: Vector4) -> Void {
     let mappins: array<MappinEntry>;
-    this.m_mappinSystem.GetMappins(gamemappinsMappinTargetType.World, mappins);
+    this.m_mappinSystem.GetMappinEntries(gamemappinsMappinTargetType.World, mappins);
     for mappin in mappins {
       if Equals(mappin.worldPosition, position) {
         this.m_mappinSystem.UnregisterMappin(mappin.id);
