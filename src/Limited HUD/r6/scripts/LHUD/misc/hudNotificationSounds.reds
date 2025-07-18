@@ -269,7 +269,6 @@ public cb func SetNotificationData(notificationData: ref<GenericNotificationView
   let config: ref<LHUDAddonsConfig> = new LHUDAddonsConfig();
   this.m_data = notificationData;
 
-  // Additional mute
   if config.MuteQuestNotifications {
     if Equals(this.m_data.soundEvent, n"QuestUpdatePopup") || Equals(this.m_data.soundEvent, n"QuestNewPopup") {
       this.m_data.soundEvent = n"None";
