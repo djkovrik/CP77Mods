@@ -54,10 +54,9 @@ protected cb func OnInitialize() -> Bool {
 
 @replaceMethod(WeaponRosterGameController)
 protected cb func OnPSMVisionStateChanged(value: Int32) -> Bool {
-  let newState: gamePSMVision = IntEnum(value);
-  switch newState {
+  switch IntEnum<gamePSMVision>(value) {
     case gamePSMVision.Default:
-      if ItemID.IsValid(this.m_activeWeapon.weaponID) && this.lhud_isVisibleNow {
+      if this.m_isUnholstered && this.lhud_isVisibleNow {
         this.GetRootCompoundWidget().SetOpacity(this.lhudConfig.Opacity);
         this.Unfold();
       };

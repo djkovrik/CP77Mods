@@ -265,14 +265,14 @@ private final func OnCharacterLevelUpdated(value: Variant) -> Void {
 }
 
 @replaceMethod(GenericNotificationController)
-public cb func SetNotificationData(notificationData: ref<GenericNotificationViewData>) -> Void {  
+public func SetNotificationData(notificationData: ref<GenericNotificationViewData>) -> Void {
   let config: ref<LHUDAddonsConfig> = new LHUDAddonsConfig();
   this.m_data = notificationData;
 
   // Additional mute
   if config.MuteQuestNotifications {
     if Equals(this.m_data.soundEvent, n"QuestUpdatePopup") || Equals(this.m_data.soundEvent, n"QuestNewPopup") {
-      this.m_data.soundEvent = n"";
+      this.m_data.soundEvent = n"None";
     };
   };
 
@@ -280,7 +280,7 @@ public cb func SetNotificationData(notificationData: ref<GenericNotificationView
     inkWidgetRef.SetVisible(this.m_actionRef, true);
     inkTextRef.SetText(this.m_actionLabelRef, this.m_data.action.GetLabel());
     this.m_isInteractive = true;
-    this.GetPlayerControlledObject().RegisterInputListener(this, n"NotificationOpen");
+    this.GetPlayerControlledObject().RegisterInputListener(this, this.GetInputActionName());
   } else {
     inkWidgetRef.SetVisible(this.m_actionRef, false);
     this.m_isInteractive = false;
@@ -297,7 +297,7 @@ public cb func SetNotificationData(notificationData: ref<GenericNotificationView
       inkTextRef.SetText(this.m_textRef, this.m_data.text);
     };
   };
-  if NotEquals(this.m_data.soundEvent, n"") && NotEquals(this.m_data.soundAction, n"") {
+  if NotEquals(this.m_data.soundEvent, n"None") && NotEquals(this.m_data.soundAction, n"None") {
     this.PlaySound(this.m_data.soundEvent, this.m_data.soundAction);
   };
 }

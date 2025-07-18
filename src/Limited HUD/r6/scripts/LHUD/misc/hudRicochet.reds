@@ -13,6 +13,7 @@ public final func OnSnap(ctx: EffectScriptContext, entity: ref<Entity>) -> Void 
   data.outlineOpacity = 1.0;
   let id: CName = n"gameEffectExecutor_Ricochet";
   evt.outlineRequest = OutlineRequest.CreateRequest(id, data);
+  evt.outlineDuration = 0.0;
   entity.QueueEvent(evt);
 }
 

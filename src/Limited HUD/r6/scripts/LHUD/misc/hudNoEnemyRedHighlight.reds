@@ -22,7 +22,7 @@ public const func GetCurrentOutline() -> EFocusOutlineType {
     return EFocusOutlineType.ITEM;
   };
   attitude = GameObject.GetAttitudeTowards(this, playerPuppet);
-  if this.IsAggressive() || this.IsBoss() {
+  if this.IsAggressive() || this.IsBoss() || Equals(this.GetNPCRarity(), gamedataNPCRarity.MaxTac) {
     if Equals(attitude, EAIAttitude.AIA_Friendly) {
       outlineType = EFocusOutlineType.FRIENDLY;
     } else {

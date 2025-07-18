@@ -25,6 +25,10 @@ protected cb func OnUpdateHealthBarVisibility() -> Bool {
   let areQuickhacksUsed: Bool = this.m_usedQuickhacks > 0;
   this.UpdateGodModeVisibility();
   inkWidgetRef.SetVisible(this.m_quickhacksContainer, this.IsCyberdeckEquipped());
+  if this.m_isAutodriveEnabled {
+    this.HideRequest();
+    return true;
+  };
   if !this.m_isInOverclockedState {
     inkWidgetRef.Get(this.m_fullBar).SetEffectEnabled(inkEffectType.ScanlineWipe, n"ScanlineWipe_0", false);
     this.GetRootWidget().SetState(n"Default");
@@ -33,7 +37,7 @@ protected cb func OnUpdateHealthBarVisibility() -> Bool {
     this.m_pulseText.Stop();
     this.m_pulse.Stop();
   };
-  if NotEquals(this.m_currentVisionPSM, gamePSMVision.Default) {
+  if NotEquals(this.m_currentVisionPSM, gamePSMVision.Default) || this.m_isControllingDevice {
     if !this.m_isInOverclockedState {
       this.HideRequest();
       return true;
