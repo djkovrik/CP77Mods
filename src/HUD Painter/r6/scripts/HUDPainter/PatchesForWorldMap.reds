@@ -196,10 +196,6 @@ class HudPainterWorldMapPatch extends ScriptableService {
   }
 
   private func PatchMaterialTemplate(resource: ref<CMaterialTemplate>, color: HudPainterConfigColor, opt isMetro: Bool) -> Void {
-    if NotEquals(ArraySize(resource.parameters), 3) {
-      return ;
-    };
-
     let targetParameters: array<ref<CMaterialParameter>> = resource.parameters[2];
     this.Log(s"Patching material template with \(color) color");
 

@@ -253,6 +253,20 @@
          "alpha":1
       },
       {
+         "name":"MainColors.Purple",
+         "red":0.772549093,
+         "green":0.513725519,
+         "blue":1.0,
+         "alpha":1
+      },
+      {
+         "name":"MainColors.LightPurple",
+         "red":0.8235294,
+         "green":0.62745,
+         "blue":1.0,
+         "alpha":1
+      },
+      {
          "name":"MainColors.StreetCred",
          "red":0.0,
          "green":1.0,

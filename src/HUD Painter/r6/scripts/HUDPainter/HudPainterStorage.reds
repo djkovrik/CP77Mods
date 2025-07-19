@@ -161,8 +161,9 @@ public class HudPainterStorage extends ScriptableService {
     let johnnyPropertiesMatch: Bool = Equals(ArraySize(defaultPreset.propertiesJohnny), ArraySize(targetPreset.propertiesJohnny));
 
     if !defaultPropertiesMatch || !johnnyPropertiesMatch {
-      this.Log(s"Preset data broken! Default: \(defaultPropertiesMatch), Johnny \(johnnyPropertiesMatch)");
-      return result;
+      this.Log(s"Pre 2.3 preset found! Default preset valid: \(defaultPropertiesMatch), Johnny preset valid: \(johnnyPropertiesMatch)");
+      targetPreset = this.PatchPresetWithNewColors(defaultPreset, targetPreset);
+      this.Log(s"Preset patched! Default props \(ArraySize(targetPreset.propertiesDefault)), Johnny \(ArraySize(targetPreset.propertiesJohnny))");
     };
 
     // Build items list
@@ -346,6 +347,70 @@ public class HudPainterStorage extends ScriptableService {
     let presetStatus: FileSystemStatus = this.storage.Exists(s"\(name).json");
     this.Log(s"? IsPresetExists checks \(name): \(presetStatus)");
     return Equals(presetStatus, FileSystemStatus.True);
+  }
+
+  private final func PatchPresetWithNewColors(defaultPreset: ref<HudPainterStyleDTO>, oldTargetPreset: ref<HudPainterStyleDTO>) -> ref<HudPainterStyleDTO> {
+    this.Log("Patching preset for 2.3 color changes...");
+    this.Log(s"Default preset: default \(ArraySize(defaultPreset.propertiesDefault)), johnny \(ArraySize(defaultPreset.propertiesJohnny))");
+    this.Log(s"Target preset: default \(ArraySize(oldTargetPreset.propertiesDefault)), johnny \(ArraySize(oldTargetPreset.propertiesJohnny))");
+
+    let patchedDto: ref<HudPainterStyleDTO> = new HudPainterStyleDTO();
+    let patchedPropertiesDefault: array<ref<HudPainterStylePropertyDTO>>;
+    let patchedPropertiesJohnny: array<ref<HudPainterStylePropertyDTO>>;
+
+    this.Log("Checking default props...");
+    let newProperty: ref<HudPainterStylePropertyDTO>;
+    for defaultProperty in defaultPreset.propertiesDefault {
+      if this.IsColorAvailable(defaultProperty.name, oldTargetPreset.propertiesDefault) {
+        this.Log(s"- target preset has \(defaultProperty.name) color, migrate as is");
+        newProperty = this.GetColorFromDTO(defaultProperty.name, oldTargetPreset.propertiesDefault);
+      } else {
+        this.Log(s"- target preset has \(defaultProperty.name) color missing, restore from default preset");
+        newProperty = this.GetColorFromDTO(defaultProperty.name, defaultPreset.propertiesDefault);
+      };
+      if IsDefined(newProperty) {
+        ArrayPush(patchedPropertiesDefault, newProperty);
+      };
+    };
+
+    this.Log("Checking johnny props...");
+    let newProperty: ref<HudPainterStylePropertyDTO>;
+    for johnnyProperty in defaultPreset.propertiesJohnny {
+      if this.IsColorAvailable(johnnyProperty.name, oldTargetPreset.propertiesJohnny) {
+        this.Log(s"- target preset has \(johnnyProperty.name) color, migrate as is");
+        newProperty = this.GetColorFromDTO(johnnyProperty.name, oldTargetPreset.propertiesJohnny);
+      } else {
+        this.Log(s"- target preset has \(johnnyProperty.name) color missing, restore from default preset");
+        newProperty = this.GetColorFromDTO(johnnyProperty.name, defaultPreset.propertiesJohnny);
+      };
+      if IsDefined(newProperty) {
+        ArrayPush(patchedPropertiesJohnny, newProperty);
+      };
+    };
+
+    patchedDto.propertiesDefault = patchedPropertiesDefault;
+    patchedDto.propertiesJohnny = patchedPropertiesJohnny;
+  
+    this.Log(s"Patched target preset: default \(ArraySize(patchedDto.propertiesDefault)), johnny \(ArraySize(patchedDto.propertiesJohnny))");
+    return patchedDto;
+  }
+
+  private final func IsColorAvailable(colorName: String, props: array<ref<HudPainterStylePropertyDTO>>) -> Bool {
+    for prop in props {
+      if Equals(prop.name, colorName) {
+        return true;
+      };
+    };
+    return false;
+  }
+
+  private final func GetColorFromDTO(colorName: String, props: array<ref<HudPainterStylePropertyDTO>>) -> ref<HudPainterStylePropertyDTO> {
+    for prop in props {
+      if Equals(prop.name, colorName) {
+        return prop;
+      };
+    };
+    return null;
   }
 
   private final func Log(str: String) -> Void {
