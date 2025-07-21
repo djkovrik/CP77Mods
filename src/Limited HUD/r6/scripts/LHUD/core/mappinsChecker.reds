@@ -38,6 +38,7 @@ public class MappinChecker {
       || Equals(variant, gamedataMappinVariant.FocusClueVariant)
       || Equals(variant, gamedataMappinVariant.Zzz09_CourierSandboxActivityVariant)
       || Equals(variant, gamedataMappinVariant.Zzz12_WorldEncounterVariant)
+      || Equals(variant, gamedataMappinVariant.Zzz20_DelamainTaxiDestinationVariant)
       || false;
   }
 
@@ -46,6 +47,7 @@ public class MappinChecker {
 
     return 
          Equals(variant, gamedataMappinVariant.VehicleVariant) 
+      || Equals(variant, gamedataMappinVariant.Zzz19_DelamainTaxiVariant)
       || Equals(variant, gamedataMappinVariant.Zzz03_MotorcycleVariant)
       || false;
   }
