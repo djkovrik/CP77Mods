@@ -35,29 +35,32 @@ public let HasWeaponEquipped: BlackboardID_Bool;
 
 // Blackboards listener class
 public class LHUDBlackboardsListener {
-  private let playerInstance: wref<PlayerPuppet>;         // Player instance weak reference
-  private let bbDefs: ref<AllBlackboardDefinitions>;      // All blackboard definitions reference
-  private let braindanceBlackboard: ref<IBlackboard>;     // Braindance blackboard reference
-  private let scannerBlackboard: ref<IBlackboard>;        // Scanner blackboard reference
-  private let stateMachineBlackboard: ref<IBlackboard>;   // Player state machine blackboard reference
-  private let vehicleBlackboard: ref<IBlackboard>;        // Vehicle blackboard reference
-  private let uiSystemBlackboard: ref<IBlackboard>;       // UI system blackboard reference
-  private let weaponBlackboard: ref<IBlackboard>;         // Active weapon blackboard reference
-  private let wantedBlackboard: ref<IBlackboard>;         // Wanted status blackboard reference
+  private let playerInstance: wref<PlayerPuppet>;
+  private let bbDefs: ref<AllBlackboardDefinitions>;
+  private let braindanceBlackboard: ref<IBlackboard>;
+  private let scannerBlackboard: ref<IBlackboard>;
+  private let stateMachineBlackboard: ref<IBlackboard>;
+  private let vehicleBlackboard: ref<IBlackboard>;
+  private let uiSystemBlackboard: ref<IBlackboard>;
+  private let weaponBlackboard: ref<IBlackboard>;
+  private let wantedBlackboard: ref<IBlackboard>;
+  private let autoDriveBlackboard: ref<IBlackboard>; 
 
-  private let globalHotkeyCallback: ref<CallbackHandle>;  // Ref for registered global hotkey callback
-  private let minimapHotkeyCallback: ref<CallbackHandle>; // Ref for registered minimap hotkey callback
-  private let braindanceCallback: ref<CallbackHandle>;    // Ref for registered braindance callback
-  private let scannerCallback: ref<CallbackHandle>;       // Ref for registered scanner callback
-  private let psmCallback: ref<CallbackHandle>;           // Ref for registered player state callback
-  private let vehicleCallback: ref<CallbackHandle>;       // Ref for registered vehicle mount callback
-  private let vehicleStateCallback: ref<CallbackHandle>;       // Ref for registered vehicle mount callback
-  private let weaponCallback: ref<CallbackHandle>;        // Ref for registered weapon state callback
-  private let zoomCallback: ref<CallbackHandle>;          // Ref for registered zoom value callback
-  private let stealthCallback: ref<CallbackHandle>;       // Ref for registered locomotion value callback
-  private let metroCallback: ref<CallbackHandle>;         // Ref for registered metro ride value callback
-  private let wantedCallback: ref<CallbackHandle>;        // Ref for registered wanted value callback
-  private let zoneCallback: ref<CallbackHandle>;          // Ref for registered zone value callback
+  private let globalHotkeyCallback: ref<CallbackHandle>;
+  private let minimapHotkeyCallback: ref<CallbackHandle>;
+  private let braindanceCallback: ref<CallbackHandle>;
+  private let scannerCallback: ref<CallbackHandle>;
+  private let psmCallback: ref<CallbackHandle>;
+  private let vehicleCallback: ref<CallbackHandle>;
+  private let vehicleStateCallback: ref<CallbackHandle>;
+  private let weaponCallback: ref<CallbackHandle>;
+  private let zoomCallback: ref<CallbackHandle>;
+  private let stealthCallback: ref<CallbackHandle>;
+  private let metroCallback: ref<CallbackHandle>;
+  private let wantedCallback: ref<CallbackHandle>;
+  private let zoneCallback: ref<CallbackHandle>;
+  private let autoDriveCallback: ref<CallbackHandle>;
+  private let autoDriveDelamainCallback: ref<CallbackHandle>;
 
   private let delaySystem: ref<DelaySystem>;
   private let delayId: DelayID;
@@ -74,6 +77,7 @@ public class LHUDBlackboardsListener {
     this.uiSystemBlackboard = GameInstance.GetBlackboardSystem(player.GetGame()).Get(this.bbDefs.UI_System);
     this.weaponBlackboard = GameInstance.GetBlackboardSystem(player.GetGame()).Get(this.bbDefs.UI_EquipmentData);
     this.wantedBlackboard = GameInstance.GetBlackboardSystem(player.GetGame()).Get(this.bbDefs.UI_WantedBar);
+    this.autoDriveBlackboard = GameInstance.GetBlackboardSystem(player.GetGame()).Get(this.bbDefs.UI_AutodriveData);
 
     this.delaySystem = GameInstance.GetDelaySystem(player.GetGame());
   }
@@ -99,6 +103,8 @@ public class LHUDBlackboardsListener {
     this.metroCallback = this.uiSystemBlackboard.RegisterListenerBool(this.bbDefs.UI_System.IsInMetro_LHUD, this, n"OnMetroStateChanged");
     this.wantedCallback = this.wantedBlackboard.RegisterListenerInt(this.bbDefs.UI_WantedBar.CurrentWantedLevel, this, n"OnWantedDataChanged", true);
     this.zoneCallback = this.stateMachineBlackboard.RegisterListenerVariant(this.bbDefs.PlayerStateMachine.SecurityZoneData, this, n"OnPlayerZoneChanged", true);
+    this.autoDriveCallback = this.autoDriveBlackboard.RegisterListenerBool(this.bbDefs.UI_AutodriveData.AutoDriveEnabled, this, n"OnAutoDriveEnabled");
+    this.autoDriveDelamainCallback = this.autoDriveBlackboard.RegisterListenerBool(this.bbDefs.UI_AutodriveData.AutoDriveDelamain, this, n"OnDelamainAutoDriveEnabled");
   }
 
   // Unregister listeners
@@ -117,6 +123,8 @@ public class LHUDBlackboardsListener {
     this.uiSystemBlackboard.UnregisterListenerBool(this.bbDefs.UI_System.IsInMetro_LHUD, this.metroCallback);
     this.wantedBlackboard.UnregisterListenerInt(this.bbDefs.UI_WantedBar.CurrentWantedLevel, this.wantedCallback);
     this.stateMachineBlackboard.UnregisterListenerVariant(this.bbDefs.PlayerStateMachine.SecurityZoneData, this.zoneCallback);
+    this.autoDriveBlackboard.UnregisterListenerBool(this.bbDefs.UI_AutodriveData.AutoDriveEnabled, this.autoDriveCallback);
+    this.autoDriveBlackboard.UnregisterListenerBool(this.bbDefs.UI_AutodriveData.AutoDriveDelamain, this.autoDriveDelamainCallback);
 
     this.delaySystem.CancelCallback(this.delayId);
   }
@@ -222,6 +230,16 @@ public class LHUDBlackboardsListener {
     let securityZoneData: SecurityAreaData = FromVariant<SecurityAreaData>(value);
     let dangerousArea: Bool = Equals(securityZoneData.securityAreaType, ESecurityAreaType.RESTRICTED) || Equals(securityZoneData.securityAreaType, ESecurityAreaType.DANGEROUS);
     this.playerInstance.QueueLHUDEvent(LHUDEventType.DangerousZone, dangerousArea);
+  }
+
+  // Auto drive
+  protected cb func OnAutoDriveEnabled(value: Bool) -> Bool {
+    this.playerInstance.QueueLHUDEvent(LHUDEventType.AutoDrive, value);
+  }
+  
+  // Auto drive Delamain
+  protected cb func OnDelamainAutoDriveEnabled(value: Bool) -> Bool {
+    this.playerInstance.QueueLHUDEvent(LHUDEventType.AutoDriveDelamain, value);
   }
 }
 

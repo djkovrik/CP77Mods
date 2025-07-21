@@ -22,6 +22,8 @@ enum LHUDEventType {
   Wanted = 16,
   Cooldown = 17,
   DangerousZone = 18,
+  AutoDrive = 19,
+  AutoDriveDelamain = 20,
 }
 
 enum LHUDFillColors {
@@ -110,6 +112,8 @@ public class LHUDOnCoolExitEvent extends Event {}
 @addField(inkGameController) public let lhud_isWanted: Bool;
 @addField(inkGameController) public let lhud_hasCooldown: Bool;
 @addField(inkGameController) public let lhud_isInDangerZone: Bool;
+@addField(inkGameController) public let lhud_inAutoDrive: Bool;
+@addField(inkGameController) public let lhud_inAutoDriveDelamain: Bool;
 
 // Visibility condition flags for inkLogicController instances
 @addField(inkLogicController) public let lhud_isGlobalFlagToggled: Bool;
@@ -123,6 +127,8 @@ public class LHUDOnCoolExitEvent extends Event {}
 @addField(inkLogicController) public let lhud_isZoomActive: Bool;
 @addField(inkLogicController) public let lhud_isVisibleNow: Bool;
 @addField(inkLogicController) public let lhud_isInDangerZone: Bool;
+@addField(inkLogicController) public let lhud_inAutoDrive: Bool;
+@addField(inkLogicController) public let lhud_inAutoDriveDelamain: Bool;
 
 // Store actual flags in AllBlackboardDefinitions
 @addField(AllBlackboardDefinitions) public let lhud_isGlobalFlagToggled: Bool;
@@ -136,6 +142,8 @@ public class LHUDOnCoolExitEvent extends Event {}
 @addField(AllBlackboardDefinitions) public let lhud_isZoomActive: Bool;
 @addField(AllBlackboardDefinitions) public let lhud_isVisibleNow: Bool;
 @addField(AllBlackboardDefinitions) public let lhud_isInDangerZone: Bool;
+@addField(AllBlackboardDefinitions) public let lhud_inAutoDrive: Bool;
+@addField(AllBlackboardDefinitions) public let lhud_inAutoDriveDelamain: Bool;
 
 // Catch LHUDEvent inside inkGameController instances
 @addMethod(inkGameController)
@@ -193,6 +201,12 @@ protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
     case LHUDEventType.DangerousZone:
       this.lhud_isInDangerZone = evt.isActive;
       break;
+    case LHUDEventType.AutoDrive:
+      this.lhud_inAutoDrive = evt.isActive;
+      break;
+    case LHUDEventType.AutoDriveDelamain:
+      this.lhud_inAutoDriveDelamain = evt.isActive;
+      break;
     default:
       break;
   };
@@ -232,6 +246,12 @@ protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
       break;
     case LHUDEventType.DangerousZone:
       this.lhud_isInDangerZone = evt.isActive;
+      break;
+    case LHUDEventType.AutoDrive:
+      this.lhud_inAutoDrive = evt.isActive;
+      break;
+    case LHUDEventType.AutoDriveDelamain:
+      this.lhud_inAutoDriveDelamain = evt.isActive;
       break;
     default:
       break;
@@ -275,6 +295,12 @@ protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
     case LHUDEventType.DangerousZone:
       this.lhud_isInDangerZone = evt.isActive;
       break;
+    case LHUDEventType.AutoDrive:
+      this.lhud_inAutoDrive = evt.isActive;
+      break;
+    case LHUDEventType.AutoDriveDelamain:
+      this.lhud_inAutoDriveDelamain = evt.isActive;
+      break;
     default:
       break;
   };
@@ -293,6 +319,8 @@ public func FetchInitialStateFlags() -> Void {
   this.lhud_isZoomActive = GetAllBlackboardDefs().lhud_isZoomActive;
   this.lhud_isVisibleNow = GetAllBlackboardDefs().lhud_isVisibleNow;
   this.lhud_isInDangerZone = GetAllBlackboardDefs().lhud_isInDangerZone;
+  this.lhud_inAutoDrive = GetAllBlackboardDefs().lhud_inAutoDrive;
+  this.lhud_inAutoDriveDelamain = GetAllBlackboardDefs().lhud_inAutoDriveDelamain;
 }
 
 // Swap top right slot child order for braindance mode

@@ -84,13 +84,15 @@ public func DetermineCurrentVisibility() -> Void {
   let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && this.lhudConfig.ShowOutOfCombat;
   let showForStealth: Bool = this.lhud_isStealthActive && this.lhudConfig.ShowInStealth;
   let showForVehicle: Bool = this.lhud_isInVehicle && this.lhudConfig.ShowInVehicle;
+  let showForAutoDrive: Bool = this.lhud_inAutoDrive && this.lhudConfig.ShowWithAutoDrive;
+  let showForAutoDriveDel: Bool = this.lhud_inAutoDriveDelamain && this.lhudConfig.ShowWithAutoDriveDelamain;
   let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfig.ShowWithWeapon;
   let showForZoom: Bool = this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
   let showForCooldown: Bool = this.lhud_hasCooldown && this.lhudConfig.ShowAtCooldown;
   let showForArea: Bool = this.lhud_isInDangerZone && this.lhudConfig.ShowInDangerArea;
   let isPhoneInUse: Bool = this.ShouldDisplayPhoneForLHUD();
 
-  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForWeapon || showForZoom || isPhoneInUse || showForCooldown || showForArea;
+  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForAutoDrive || showForAutoDriveDel || showForWeapon || showForZoom || isPhoneInUse || showForCooldown || showForArea;
   
   if this.lhud_isBraindanceActive { isVisible = false; };
   this.lhud_isVisibleNow = isVisible;
@@ -207,12 +209,14 @@ public func DetermineCurrentVisibility() -> Void {
   let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && this.lhudConfig.ShowOutOfCombat;
   let showForStealth: Bool = this.lhud_isStealthActive && this.lhudConfig.ShowInStealth;
   let showForVehicle: Bool = this.lhud_isInVehicle && this.lhudConfig.ShowInVehicle;
+  let showForAutoDrive: Bool = this.lhud_inAutoDrive && this.lhudConfig.ShowWithAutoDrive;
+  let showForAutoDriveDel: Bool = this.lhud_inAutoDriveDelamain && this.lhudConfig.ShowWithAutoDriveDelamain;
   let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfig.ShowWithWeapon;
   let showForZoom: Bool = this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
   let showForCooldown: Bool = this.lhud_hasCooldown && this.lhudConfig.ShowAtCooldown;
   let showForArea: Bool = this.lhud_isInDangerZone && this.lhudConfig.ShowInDangerArea;
 
-  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForWeapon || showForZoom || showForCooldown || showForArea;
+  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForAutoDrive || showForAutoDriveDel || showForWeapon || showForZoom || showForCooldown || showForArea;
   if this.lhud_isBraindanceActive { isVisible = false; };
   this.lhud_isVisibleNow = isVisible;
   if isVisible {
@@ -261,12 +265,14 @@ public func DetermineCurrentVisibility() -> Void {
   let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && this.lhudConfig.ShowOutOfCombat;
   let showForStealth: Bool = this.lhud_isStealthActive && this.lhudConfig.ShowInStealth;
   let showForVehicle: Bool = this.lhud_isInVehicle && this.lhudConfig.ShowInVehicle;
+  let showForAutoDrive: Bool = this.lhud_inAutoDrive && this.lhudConfig.ShowWithAutoDrive;
+  let showForAutoDriveDel: Bool = this.lhud_inAutoDriveDelamain && this.lhudConfig.ShowWithAutoDriveDelamain;
   let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfig.ShowWithWeapon;
   let showForZoom: Bool = this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
   let showForCooldown: Bool = this.lhud_hasCooldown && this.lhudConfig.ShowAtCooldown;
   let showForArea: Bool = this.lhud_isInDangerZone && this.lhudConfig.ShowInDangerArea;
 
-  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForWeapon || showForZoom || showForCooldown || showForArea;
+  let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForAutoDrive || showForAutoDriveDel || showForWeapon || showForZoom || showForCooldown || showForArea;
   if this.lhud_isBraindanceActive { isVisible = false; };
   this.lhud_isVisibleNow = isVisible;
   if isVisible {

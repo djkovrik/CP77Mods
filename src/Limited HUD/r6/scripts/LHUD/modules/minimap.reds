@@ -20,6 +20,7 @@ public func DetermineCurrentVisibility() -> Void {
   let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && this.lhudConfig.ShowOutOfCombat;
   let showForStealth: Bool = this.lhud_isStealthActive && this.lhudConfig.ShowInStealth;
   let showForVehicle: Bool = this.lhud_isInVehicle && this.lhudConfig.ShowInVehicle;
+  let showForAutoDrive: Bool = this.lhud_inAutoDrive && this.lhudConfig.ShowWithAutoDrive;
   let showForScanner: Bool = this.lhud_isScannerActive && this.lhudConfig.ShowWithScanner;
   let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfig.ShowWithWeapon;
   let showForZoom: Bool = this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
@@ -27,7 +28,7 @@ public func DetermineCurrentVisibility() -> Void {
   let showForArea: Bool = this.lhud_isInDangerZone && this.lhudConfig.ShowInDangerArea;
   let scannerDetailsVisible: Bool = this.lhud_isScannerDetailsActive;
 
-  let isVisible: Bool = showForGlobalHotkey || showForMinimapHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom || showForWanted || showForArea;
+  let isVisible: Bool = showForGlobalHotkey || showForMinimapHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForAutoDrive || showForScanner || showForWeapon || showForZoom || showForWanted || showForArea;
   if this.lhud_isBraindanceActive || scannerDetailsVisible { isVisible = false; };
   if NotEquals(this.lhud_isVisibleNow, isVisible) {
     this.lhud_isVisibleNow = isVisible;

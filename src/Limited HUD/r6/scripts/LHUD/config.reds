@@ -27,6 +27,7 @@ public class ActionButtonsModuleConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Action-Buttons")
+  @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Global-Key")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Global-Key-Desc")
   let BindToGlobalHotkey: Bool = false;
@@ -54,10 +55,24 @@ public class ActionButtonsModuleConfig {
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Action-Buttons")
-  @runtimeProperty("ModSettings.category.order", "4")
+  @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Vehicle")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Vehicle-Desc")
   let ShowInVehicle: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Action-Buttons")
+  @runtimeProperty("ModSettings.category.order", "1")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-AutoPilot")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-AutoPilot-Desc")
+  let ShowWithAutoDrive: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Action-Buttons")
+  @runtimeProperty("ModSettings.category.order", "1")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-AutoPilot-Del")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-AutoPilot-Del-Desc")
+  let ShowWithAutoDriveDelamain: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Action-Buttons")
@@ -280,6 +295,20 @@ public class HintsModuleConfig {
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Hotkey-Hints")
   @runtimeProperty("ModSettings.category.order", "4")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-AutoPilot")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-AutoPilot-Desc")
+  let ShowWithAutoDrive: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Hotkey-Hints")
+  @runtimeProperty("ModSettings.category.order", "4")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-AutoPilot-Del")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-AutoPilot-Del-Desc")
+  let ShowWithAutoDriveDelamain: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Hotkey-Hints")
+  @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Weapon")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Weapon-Desc")
   let ShowWithWeapon: Bool = false;
@@ -358,6 +387,13 @@ public class MinimapModuleConfig {
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Vehicle")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Vehicle-Desc")
   let ShowInVehicle: Bool = true;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Minimap")
+  @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-AutoPilot")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-AutoPilot-Desc")
+  let ShowWithAutoDrive: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Minimap")
@@ -454,6 +490,13 @@ public class QuestTrackerModuleConfig {
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Vehicle")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Vehicle-Desc")
   let ShowInVehicle: Bool = true;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Quest-Tracker")
+  @runtimeProperty("ModSettings.category.order", "6")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-AutoPilot")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-AutoPilot-Desc")
+  let ShowWithAutoDrive: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Quest-Tracker")
@@ -728,6 +771,13 @@ public class WorldMarkersModuleConfigQuest {
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Quest")
   @runtimeProperty("ModSettings.category.order", "9")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-AutoPilot")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-AutoPilot-Desc")
+  let ShowWithAutoDrive: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Quest")
+  @runtimeProperty("ModSettings.category.order", "9")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Scanner")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Scanner-Desc")
   let ShowWithScanner: Bool = true;
@@ -800,6 +850,13 @@ public class WorldMarkersModuleConfigLoot {
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Loot")
   @runtimeProperty("ModSettings.category.order", "10")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-AutoPilot")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-AutoPilot-Desc")
+  let ShowWithAutoDrive: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Loot")
+  @runtimeProperty("ModSettings.category.order", "10")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Scanner")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Scanner-Desc")
   let ShowWithScanner: Bool = true;
@@ -868,6 +925,13 @@ public class WorldMarkersModuleConfigPOI {
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Vehicle")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Vehicle-Desc")
   let ShowInVehicle: Bool = true;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-POI")
+  @runtimeProperty("ModSettings.category.order", "11")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-AutoPilot")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-AutoPilot-Desc")
+  let ShowWithAutoDrive: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-POI")
@@ -998,6 +1062,13 @@ public class WorldMarkersModuleConfigVehicles {
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Vehicle")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Vehicle-Desc")
   let ShowInVehicle: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Vehicles")
+  @runtimeProperty("ModSettings.category.order", "13")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-AutoPilot")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-AutoPilot-Desc")
+  let ShowWithAutoDrive: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Vehicles")
