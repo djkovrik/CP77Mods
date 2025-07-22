@@ -63,6 +63,18 @@ public class HUDitorTexts {
       case n"NewProgressBar":
         nameString = GetLocalizedTextByKey(n"Mod-HUDitor-Widget-Progress"); 
         break;
+      case n"NewAutoDrive":
+        nameString = GetLocalizedTextByKey(n"UI-Settings-ButtonMappings-Actions-VehicleAutodrive"); 
+        break;
+      case n"NewCrystalCoat":
+        nameString = GetLocalizedTextByKey(n"Story-base-gameplay-gui-widgets-notifications-vehicle_visual_customization-CrystalCoatName"); 
+        break;
+      case n"NewVehicleRadio":
+        nameString = GetLocalizedTextByKey(n"Gameplay-Devices-DisplayNames-Radio"); 
+        break;
+      case n"NewVehicleHotkey":
+        nameString = GetLocalizedTextByKey(n"UI-Settings-ButtonMappings-Actions-Vehicle"); 
+        break;
       case n"NewCompass":
         nameString = "E3 Compass"; 
         break;

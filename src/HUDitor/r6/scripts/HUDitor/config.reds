@@ -94,27 +94,51 @@ public class HUDitorConfig {
 
   @runtimeProperty("ModSettings.mod", "HUDitor")
   @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")
-  @runtimeProperty("ModSettings.displayName", "Mod-HUDitor-Widget-Speedometer")
-  @runtimeProperty("ModSettings.description", "Mod-HUDitor-Toggles-Desc")
-  public let speedometerEnabled: Bool = false;
-
-  @runtimeProperty("ModSettings.mod", "HUDitor")
-  @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")
   @runtimeProperty("ModSettings.displayName", "Mod-HUDitor-Widget-Boss-Healthbar")
   @runtimeProperty("ModSettings.description", "Mod-HUDitor-Toggles-Desc")
   public let bossHealthbarEnabled: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "HUDitor")
   @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")
-  @runtimeProperty("ModSettings.displayName", "Mod-HUDitor-Widget-Dialog-Choices")
-  @runtimeProperty("ModSettings.description", "Mod-HUDitor-Toggles-Desc")
-  public let dialogChoicesEnabled: Bool = false;
-
-  @runtimeProperty("ModSettings.mod", "HUDitor")
-  @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")
   @runtimeProperty("ModSettings.displayName", "Mod-HUDitor-Widget-Progress")
   @runtimeProperty("ModSettings.description", "Mod-HUDitor-Toggles-Desc")
   public let progressWidgetEnabled: Bool = true;
+
+  @runtimeProperty("ModSettings.mod", "HUDitor")
+  @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")
+  @runtimeProperty("ModSettings.displayName", "Mod-HUDitor-Widget-Speedometer")
+  @runtimeProperty("ModSettings.description", "Mod-HUDitor-Toggles-Desc")
+  public let speedometerEnabled: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "HUDitor")
+  @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")
+  @runtimeProperty("ModSettings.displayName", "UI-Settings-ButtonMappings-Actions-VehicleAutodrive")
+  @runtimeProperty("ModSettings.description", "Mod-HUDitor-Toggles-Desc")
+  public let autoDriveEnabled: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "HUDitor")
+  @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")
+  @runtimeProperty("ModSettings.displayName", "Story-base-gameplay-gui-widgets-notifications-vehicle_visual_customization-CrystalCoatName")
+  @runtimeProperty("ModSettings.description", "Mod-HUDitor-Toggles-Desc")
+  public let crystalCoatEnabled: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "HUDitor")
+  @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")
+  @runtimeProperty("ModSettings.displayName", "Gameplay-Devices-DisplayNames-Radio")
+  @runtimeProperty("ModSettings.description", "Mod-HUDitor-Toggles-Desc")
+  public let vehicleRadioEnabled: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "HUDitor")
+  @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")
+  @runtimeProperty("ModSettings.displayName", "UI-Settings-ButtonMappings-Actions-Vehicle")
+  @runtimeProperty("ModSettings.description", "Mod-HUDitor-Toggles-Desc")
+  public let vehicleHotkeyEnabled: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "HUDitor")
+  @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")
+  @runtimeProperty("ModSettings.displayName", "Mod-HUDitor-Widget-Dialog-Choices")
+  @runtimeProperty("ModSettings.description", "Mod-HUDitor-Toggles-Desc")
+  public let dialogChoicesEnabled: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "HUDitor")
   @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")

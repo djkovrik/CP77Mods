@@ -38,6 +38,10 @@ public class HUDWidgetsManager {
     if config.playerStaminabarEnabled { ArrayPush(this.slots, n"NewStaminaBar"); }
     if config.inputHintsEnabled { ArrayPush(this.slots, n"NewInputHint"); }
     if config.speedometerEnabled { ArrayPush(this.slots, n"NewCarHud"); }
+    if config.autoDriveEnabled { ArrayPush(this.slots, n"NewAutoDrive"); }
+    if config.crystalCoatEnabled { ArrayPush(this.slots, n"NewCrystalCoat"); }
+    if config.vehicleRadioEnabled { ArrayPush(this.slots, n"NewVehicleRadio"); }
+    if config.vehicleHotkeyEnabled { ArrayPush(this.slots, n"NewVehicleHotkey"); }
     if config.bossHealthbarEnabled { ArrayPush(this.slots, n"NewBossHealthbar"); }
     if config.dialogChoicesEnabled { ArrayPush(this.slots, n"NewDialogChoices"); }
     if config.dialogSubtitlesEnabled { ArrayPush(this.slots, n"NewDialogSubtitles"); }

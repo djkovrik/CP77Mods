@@ -218,5 +218,45 @@
          "Y":0.666667,
          "X":0.666667
       }
+   },
+   "NewAutoDrive":{
+      "translation":{
+         "Y":0.0,
+         "X":0.0
+      },
+      "scale":{
+         "Y":0.666667,
+         "X":0.666667
+      }
+   },
+   "NewCrystalCoat":{
+      "translation":{
+         "Y":0.0,
+         "X":0.0
+      },
+      "scale":{
+         "Y":0.666667,
+         "X":0.666667
+      }
+   },
+   "NewVehicleRadio":{
+      "translation":{
+         "Y":0.0,
+         "X":0.0
+      },
+      "scale":{
+         "Y":0.666667,
+         "X":0.666667
+      }
+   },
+   "NewVehicleHotkey":{
+      "translation":{
+         "Y":0.0,
+         "X":0.0
+      },
+      "scale":{
+         "Y":0.666667,
+         "X":0.666667
+      }
    }
 }

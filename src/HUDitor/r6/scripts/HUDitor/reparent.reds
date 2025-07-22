@@ -22,6 +22,10 @@ import FpsCounter.FPSCounterChangeStateEvent
 @addField(inkGameController) let phoneControlSlot: wref<HUDitorCustomSlot>;
 @addField(inkGameController) let inputHintSlot: wref<HUDitorCustomSlot>;
 @addField(inkGameController) let carHudSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) let autoDriveSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) let crystalCoatSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) let vehicleRadioSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) let vehicleHotkeySlot: wref<HUDitorCustomSlot>;
 @addField(inkGameController) let bossHealthbarSlot: wref<HUDitorCustomSlot>;
 @addField(inkGameController) let dialogChoicesSlot: wref<HUDitorCustomSlot>;
 @addField(inkGameController) let dialogSubtitlesSlot: wref<HUDitorCustomSlot>;
@@ -56,6 +60,10 @@ protected cb func OnGameSessionInitialized(event: ref<GameSessionInitializedEven
     this.phoneControlSlot.OnGameSessionInitialized(event);
     this.inputHintSlot.OnGameSessionInitialized(event);
     this.carHudSlot.OnGameSessionInitialized(event);
+    this.autoDriveSlot.OnGameSessionInitialized(event);
+    this.crystalCoatSlot.OnGameSessionInitialized(event);
+    this.vehicleRadioSlot.OnGameSessionInitialized(event);
+    this.vehicleHotkeySlot.OnGameSessionInitialized(event);
     this.bossHealthbarSlot.OnGameSessionInitialized(event);
     this.dialogChoicesSlot.OnGameSessionInitialized(event);
     this.dialogSubtitlesSlot.OnGameSessionInitialized(event);
@@ -84,6 +92,10 @@ protected cb func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidgetEve
     this.phoneControlSlot.OnEnableHUDEditorWidget(event);
     this.inputHintSlot.OnEnableHUDEditorWidget(event);
     this.carHudSlot.OnEnableHUDEditorWidget(event);
+    this.autoDriveSlot.OnEnableHUDEditorWidget(event);
+    this.crystalCoatSlot.OnEnableHUDEditorWidget(event);
+    this.vehicleRadioSlot.OnEnableHUDEditorWidget(event);
+    this.vehicleHotkeySlot.OnEnableHUDEditorWidget(event);
     this.bossHealthbarSlot.OnEnableHUDEditorWidget(event);
     this.dialogChoicesSlot.OnEnableHUDEditorWidget(event);
     this.dialogSubtitlesSlot.OnEnableHUDEditorWidget(event);
@@ -114,6 +126,10 @@ protected cb func OnDisableHUDEditorWidgets(event: ref<DisableHUDEditor>) -> Boo
     this.phoneControlSlot.OnDisableHUDEditorWidgets(event);
     this.inputHintSlot.OnDisableHUDEditorWidgets(event);
     this.carHudSlot.OnDisableHUDEditorWidgets(event);
+    this.autoDriveSlot.OnDisableHUDEditorWidgets(event);
+    this.crystalCoatSlot.OnDisableHUDEditorWidgets(event);
+    this.vehicleRadioSlot.OnDisableHUDEditorWidgets(event);
+    this.vehicleHotkeySlot.OnDisableHUDEditorWidgets(event);
     this.bossHealthbarSlot.OnDisableHUDEditorWidgets(event);
     this.dialogChoicesSlot.OnDisableHUDEditorWidgets(event);
     this.dialogSubtitlesSlot.OnDisableHUDEditorWidgets(event);
@@ -143,6 +159,10 @@ protected cb func OnResetHUDWidgets(event: ref<ResetAllHUDWidgets>) {
     this.phoneControlSlot.OnResetHUDWidgets(event);
     this.inputHintSlot.OnResetHUDWidgets(event);
     this.carHudSlot.OnResetHUDWidgets(event);
+    this.autoDriveSlot.OnResetHUDWidgets(event);
+    this.crystalCoatSlot.OnResetHUDWidgets(event);
+    this.vehicleRadioSlot.OnResetHUDWidgets(event);
+    this.vehicleHotkeySlot.OnResetHUDWidgets(event);
     this.bossHealthbarSlot.OnResetHUDWidgets(event);
     this.dialogChoicesSlot.OnResetHUDWidgets(event);
     this.dialogSubtitlesSlot.OnResetHUDWidgets(event);
@@ -171,6 +191,10 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
     this.phoneControlSlot.OnAction(action, consumer);
     this.inputHintSlot.OnAction(action, consumer);
     this.carHudSlot.OnAction(action, consumer);
+    this.autoDriveSlot.OnAction(action, consumer);
+    this.crystalCoatSlot.OnAction(action, consumer);
+    this.vehicleRadioSlot.OnAction(action, consumer);
+    this.vehicleHotkeySlot.OnAction(action, consumer);
     this.bossHealthbarSlot.OnAction(action, consumer);
     this.dialogChoicesSlot.OnAction(action, consumer);
     this.dialogSubtitlesSlot.OnAction(action, consumer);
@@ -443,6 +467,66 @@ private func CreateCustomSlots() -> Void {
     this.carHudSlot = carHudSlot;
   };
 
+  if config.autoDriveEnabled {
+    let autoDriveSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
+    autoDriveSlot.SetName(n"NewAutoDrive");
+    autoDriveSlot.SetFitToContent(true);
+    autoDriveSlot.SetInteractive(false);
+    autoDriveSlot.SetAffectsLayoutWhenHidden(false);
+    autoDriveSlot.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+    autoDriveSlot.SetAnchor(inkEAnchor.Centered);
+    autoDriveSlot.SetAnchorPoint(new Vector2(1.0, 0.0));
+
+    root.RemoveChildByName(n"NewAutoDrive");
+    autoDriveSlot.Reparent(root, 16);
+    this.autoDriveSlot = autoDriveSlot;
+  };
+
+  if config.crystalCoatEnabled {
+    let crystalCoatSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
+    crystalCoatSlot.SetName(n"NewCrystalCoat");
+    crystalCoatSlot.SetFitToContent(true);
+    crystalCoatSlot.SetInteractive(false);
+    crystalCoatSlot.SetAffectsLayoutWhenHidden(false);
+    crystalCoatSlot.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+    crystalCoatSlot.SetAnchor(inkEAnchor.Centered);
+    crystalCoatSlot.SetAnchorPoint(new Vector2(0.0, 1.0));
+
+    root.RemoveChildByName(n"NewCrystalCoat");
+    crystalCoatSlot.Reparent(root, 17);
+    this.crystalCoatSlot = crystalCoatSlot;
+  };
+
+  if config.vehicleRadioEnabled {
+    let vehicleRadioSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
+    vehicleRadioSlot.SetName(n"NewVehicleRadio");
+    vehicleRadioSlot.SetFitToContent(true);
+    vehicleRadioSlot.SetInteractive(false);
+    vehicleRadioSlot.SetAffectsLayoutWhenHidden(false);
+    vehicleRadioSlot.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+    vehicleRadioSlot.SetAnchor(inkEAnchor.Centered);
+    vehicleRadioSlot.SetAnchorPoint(new Vector2(0.0, 0.0));
+
+    root.RemoveChildByName(n"NewVehicleRadio");
+    vehicleRadioSlot.Reparent(root, 18);
+    this.vehicleRadioSlot = vehicleRadioSlot;
+  };
+
+  if config.vehicleHotkeyEnabled {
+    let vehicleHotkeySlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
+    vehicleHotkeySlot.SetName(n"NewVehicleHotkey");
+    vehicleHotkeySlot.SetFitToContent(true);
+    vehicleHotkeySlot.SetInteractive(false);
+    vehicleHotkeySlot.SetAffectsLayoutWhenHidden(false);
+    vehicleHotkeySlot.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+    vehicleHotkeySlot.SetAnchor(inkEAnchor.Centered);
+    vehicleHotkeySlot.SetAnchorPoint(new Vector2(1.0, 1.0));
+
+    root.RemoveChildByName(n"NewVehicleHotkey");
+    vehicleHotkeySlot.Reparent(root, 19);
+    this.vehicleHotkeySlot = vehicleHotkeySlot;
+  };
+
   if config.bossHealthbarEnabled {
     let bossHealthbarSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
     bossHealthbarSlot.SetName(n"NewBossHealthbar");
@@ -454,7 +538,7 @@ private func CreateCustomSlots() -> Void {
     bossHealthbarSlot.SetAnchorPoint(new Vector2(0.5, 0.0));
 
     root.RemoveChildByName(n"NewBossHealthbar");
-    bossHealthbarSlot.Reparent(root, 16);
+    bossHealthbarSlot.Reparent(root, 20);
     this.bossHealthbarSlot = bossHealthbarSlot;
   };
 
@@ -469,7 +553,7 @@ private func CreateCustomSlots() -> Void {
     dialogChoicesSlot.SetAnchorPoint(new Vector2(0.5, 0.5));
 
     root.RemoveChildByName(n"NewDialogChoices");
-    dialogChoicesSlot.Reparent(root, 17);
+    dialogChoicesSlot.Reparent(root, 21);
     this.dialogChoicesSlot = dialogChoicesSlot;
   };
 
@@ -483,7 +567,7 @@ private func CreateCustomSlots() -> Void {
     dialogSubtitlesSlot.SetAnchor(inkEAnchor.BottomFillHorizontaly);
     dialogSubtitlesSlot.SetAnchorPoint(new Vector2(0.5, 1.0));
     root.RemoveChildByName(n"NewDialogSubtitles");
-    dialogSubtitlesSlot.Reparent(root, 18);
+    dialogSubtitlesSlot.Reparent(root, 22);
     this.dialogSubtitlesSlot = dialogSubtitlesSlot;
   };
 
@@ -496,7 +580,7 @@ private func CreateCustomSlots() -> Void {
     progressBarSlot.SetAnchor(inkEAnchor.BottomCenter);
     progressBarSlot.SetAnchorPoint(new Vector2(0.5, 1.0));
     root.RemoveChildByName(n"NewProgressBar");
-    progressBarSlot.Reparent(root, 19);
+    progressBarSlot.Reparent(root, 23);
     this.progressBarSlot = progressBarSlot;
   };
 
@@ -511,7 +595,7 @@ private func CreateCustomSlots() -> Void {
     e3CompassSlot.SetAnchorPoint(new Vector2(0.5, 0.5));
 
     root.RemoveChildByName(n"NewCompass");
-    e3CompassSlot.Reparent(root, 20);
+    e3CompassSlot.Reparent(root, 24);
     this.e3CompassSlot = e3CompassSlot;
   };
 
@@ -526,7 +610,7 @@ private func CreateCustomSlots() -> Void {
     fpsCounterSlot.SetAnchorPoint(new Vector2(0.5, 0.5));
 
     root.RemoveChildByName(n"NewFpsCounter");
-    fpsCounterSlot.Reparent(root, 21);
+    fpsCounterSlot.Reparent(root, 25);
     this.fpsCounterSlot = fpsCounterSlot;
   };
 }
@@ -625,6 +709,30 @@ private func InitBaseWidgets() -> Void {
         targetWidget = controller.GetRootCompoundWidget();
         targetWidget.SetAnchorPoint(new Vector2(0.0, 1.0));
         targetWidget.Reparent(this.carHudSlot);
+        break;
+      case n"AutoDriveController":
+        if !config.autoDriveEnabled { break; }
+        targetWidget = controller.GetRootCompoundWidget();
+        targetWidget.SetAnchorPoint(new Vector2(0.0, 1.0));
+        targetWidget.Reparent(this.autoDriveSlot);
+        break;
+      case n"vehicleVisualCustomizationHotkeyController":
+        if !config.crystalCoatEnabled { break; }
+        targetWidget = controller.GetRootCompoundWidget();
+        targetWidget.SetAnchorPoint(new Vector2(0.0, 1.0));
+        targetWidget.Reparent(this.crystalCoatSlot);
+        break;
+      case n"RadioHotkeyController":
+        if !config.vehicleRadioEnabled { break; }
+        targetWidget = controller.GetRootCompoundWidget();
+        targetWidget.SetAnchorPoint(new Vector2(0.0, 1.0));
+        targetWidget.Reparent(this.vehicleRadioSlot);
+        break;
+      case n"CarHotkeyController":
+        if !config.vehicleHotkeyEnabled { break; }
+        targetWidget = controller.GetRootCompoundWidget();
+        targetWidget.SetAnchorPoint(new Vector2(0.0, 1.0));
+        targetWidget.Reparent(this.vehicleHotkeySlot);
         break;
       case n"BossHealthBarGameController":
         if !config.bossHealthbarEnabled { break; }
