@@ -22,7 +22,6 @@ protected cb func OnDisplayPreviewEvent(event: ref<DisplayPreviewEvent>) -> Bool
   if config.playerStaminabarEnabled { this.ShowStaminaBar(true); }
   if config.incomingCallAvatarEnabled { this.ShowIncomingPhoneCall(true); }
   if config.inputHintsEnabled { this.ShowInputHints(true); }
-  if config.speedometerEnabled { this.ShowCarHUD(true); }
   if config.bossHealthbarEnabled { this.ShowBossHealthbar(true); }
   if config.progressWidgetEnabled { this.ShowHudProgressBarController(true); }
 }
@@ -55,7 +54,6 @@ protected cb func OnHidePreviewEvent(event: ref<HidePreviewEvent>) -> Bool {
   this.ShowStaminaBar(false);
   this.ShowIncomingPhoneCall(false);
   this.ShowInputHints(false);
-  this.ShowCarHUD(false);
   this.ShowBossHealthbar(false);
   this.ShowHudProgressBarController(false);
 }
@@ -266,13 +264,6 @@ private func ShowInputHints(show: Bool) -> Void {
     } else {
       this.GetRootWidget().SetOpacity(this.originalOpacity);
     };
-  };
-}
-
-@addMethod(inkGameController)
-private func ShowCarHUD(show: Bool) -> Void {
-  if IsDefined(this.carHudSlotPreview) {
-    this.carHudSlotPreview.SetVisible(show);
   };
 }
 
