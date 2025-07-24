@@ -1,4 +1,4 @@
-// VirtualAtelierDelivery v1.0.5
+// VirtualAtelierDelivery v1.0.6
 module AtelierDelivery
 
 import Codeware.UI.*
@@ -723,8 +723,9 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     this.Log(s"CheckForQuestFacts");
     let questsSystem: ref<QuestsSystem> = GameInstance.GetQuestsSystem(this.GetGameInstance());
     let watsonFact: Int32 = questsSystem.GetFact(n"watson_prolog_lock");
+    let unlockFact: Int32 = questsSystem.GetFact(n"unlock_car_hud_dpad");
     let dogtownFact: Int32 = questsSystem.GetFact(n"q302_done");
-    this.nightCityUnlocked = NotEquals(watsonFact, 1);
+    this.nightCityUnlocked = NotEquals(watsonFact, 1) && NotEquals(unlockFact, 0);
     this.dogtownUnlocked = Equals(dogtownFact, 1); 
   }
   public final func CheckAndHandleSpawning() -> Void {
