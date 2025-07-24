@@ -10,10 +10,15 @@ protected cb func OnPlayerAttach(player: ref<GameObject>) -> Bool {
 
   let delaySystem: ref<DelaySystem> = GameInstance.GetDelaySystem(player.GetGame());
   let uiSystem: ref<UISystem> = GameInstance.GetUISystem(player.GetGame());
+  let questSystem: ref<QuestsSystem> = GameInstance.GetQuestsSystem(player.GetGame());
   let delayCallback: ref<HUDitorDelayedInitCallback> = new HUDitorDelayedInitCallback();
-  delayCallback.uiSystem = uiSystem;
-  delaySystem.CancelCallback(this.huditorDelayId);
-  this.huditorDelayId = delaySystem.DelayCallback(delayCallback, 0.1, false);
+  let carHudUnlocked: Bool = questSystem.GetFact(n"unlock_car_hud_dpad") > 0;
+
+  if carHudUnlocked {
+    delayCallback.uiSystem = uiSystem;
+    delaySystem.CancelCallback(this.huditorDelayId);
+    this.huditorDelayId = delaySystem.DelayCallback(delayCallback, 0.1, false);
+  };
 }
 
 public class HUDitorDelayedInitCallback extends DelayCallback {
