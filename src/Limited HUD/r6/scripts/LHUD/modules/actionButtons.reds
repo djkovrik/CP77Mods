@@ -544,16 +544,16 @@ public func DetermineCurrentVisibility() -> Void {
   let showForZoom: Bool = this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
   let showForCooldown: Bool = this.lhud_hasCooldown && this.lhudConfig.ShowAtCooldown;
   let showForArea: Bool = this.lhud_isInDangerZone && this.lhudConfig.ShowInDangerArea;
+  let isMountedToVehicle: Bool = VehicleComponent.IsMountedToVehicle(this.GetPlayer().GetGame(), this.GetPlayer());
 
   let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForWeapon || showForZoom || showForCooldown || showForArea;
-  if this.lhud_isBraindanceActive { isVisible = false; };
-  if NotEquals(this.lhud_isVisibleNow, isVisible) {
-    this.lhud_isVisibleNow = isVisible;
-    if isVisible {
-      this.AnimateAlphaLHUD(this.GetRootWidget(), this.lhudConfig.Opacity, 0.3);
-    } else {
-      this.AnimateAlphaLHUD(this.GetRootWidget(), 0.0, 0.3);
-    };
+  let isVisibleFinal: Bool = isVisible && !isMountedToVehicle;
+  if this.lhud_isBraindanceActive { isVisibleFinal = false; };
+  this.lhud_isVisibleNow = isVisibleFinal;
+  if isVisibleFinal {
+    this.AnimateAlphaLHUD(this.GetRootWidget(), this.lhudConfig.Opacity, 0.3);
+  } else {
+    this.AnimateAlphaLHUD(this.GetRootWidget(), 0.0, 0.3);
   };
 }
 
