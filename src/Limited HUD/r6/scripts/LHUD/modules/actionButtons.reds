@@ -429,9 +429,9 @@ public func DetermineCurrentVisibility() -> Void {
   let showForArea: Bool = this.lhud_isInDangerZone && this.lhudConfig.ShowInDangerArea;
 
   let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForAutoDrive || showForAutoDriveDel || showForWeapon || showForZoom || showForCooldown || showForArea;
-  let isVisibleWithOriginalFlags: Bool = isVisible && !this.m_cinematicCamera && !this.m_delamainTaxi;
+  let isVisibleWithOriginalFlags: Bool;
   if this.lhud_isBraindanceActive { isVisible = false; };
-  isVisibleWithOriginalFlags = isVisible && !this.m_cinematicCamera && !this.m_delamainTaxi;
+  isVisibleWithOriginalFlags = isVisible && this.m_driving && !this.m_cinematicCamera && !this.m_delamainTaxi;
   this.lhud_isVisibleNow = isVisibleWithOriginalFlags;
   this.GetRootWidget().SetVisible(isVisibleWithOriginalFlags);
   if isVisibleWithOriginalFlags {
