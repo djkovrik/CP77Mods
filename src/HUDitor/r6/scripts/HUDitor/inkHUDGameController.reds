@@ -3,16 +3,20 @@ import HUDrag.HUDWidgetsManager.*
 public class HUDitorInputListener {
   let systemRequestsHandler: wref<inkISystemRequestsHandler>;
   let uiSystem: wref<UISystem>;
+  let questSystem: wref<QuestsSystem>;
   let cursor: ref<inkImage>;
   let isShiftDown: Bool;
   let hudWidgetsManager: wref<HUDWidgetsManager>;
+  let blackboard: wref<IBlackboard>;
 
   public func Initialize(parent: ref<inkHUDGameController>) {
     let player: wref<PlayerPuppet> = parent.GetPlayerControlledObject() as PlayerPuppet;
     this.uiSystem = GameInstance.GetUISystem(player.GetGame());
+    this.questSystem = GameInstance.GetQuestsSystem(player.GetGame());
     this.systemRequestsHandler = parent.GetSystemRequestsHandler();
     this.AddCursor(parent.GetRootCompoundWidget());
     this.hudWidgetsManager = HUDWidgetsManager.GetInstance();
+    this.blackboard = GameInstance.GetBlackboardSystem(player.GetGame()).Get(GetAllBlackboardDefs().UI_Notifications);
   }
 
   private func AddCursor(root: ref<inkCompoundWidget>) {
@@ -34,6 +38,7 @@ public class HUDitorInputListener {
     let currentInput: Float;
     let actionName: CName = ListenerAction.GetName(action);
     let isActive: Bool = HUDWidgetsManager.GetInstance().isActive;
+    let huditorAvailable: Bool;
 
     if (isActive) {
       if Equals(actionName, n"CameraMouseX") {
@@ -101,6 +106,12 @@ public class HUDitorInputListener {
       };
 
       if this.isShiftDown || Equals(actionName, n"HUDitor_Editor") {
+        huditorAvailable = this.questSystem.GetFact(n"unlock_car_hud_dpad") > 0;
+        if !huditorAvailable {
+          this.ShowHuditorBlockedCustomMessage();
+          return true;
+        };
+
         if Equals(actionName, n"UI_Unequip") || Equals(actionName, n"HUDitor_Editor")  {
           if !isActive {
             let activeWidget: CName = n"";
@@ -131,6 +142,14 @@ public class HUDitorInputListener {
         };
       };
     };
+  }
+
+  private func ShowHuditorBlockedCustomMessage() -> Void {
+    let onScreenMessage: SimpleScreenMessage;
+    onScreenMessage.isShown = true;
+    onScreenMessage.message = GetLocalizedTextByKey(n"UI-Notifications-CombatRestriction");
+    onScreenMessage.duration = 2.00;
+    this.blackboard.SetVariant(GetAllBlackboardDefs().UI_Notifications.OnscreenMessage, ToVariant(onScreenMessage), true);
   }
 
   // Used in Lua
