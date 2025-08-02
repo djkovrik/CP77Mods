@@ -647,84 +647,42 @@ Items.recipe_ripperdoc_med_common:
     - Price.RipperdocMedModifierRecipeCommon
 
 
-# === Add neuroblockers to reapers ===
-
-# Common - Cassius
-Vendors.wat_nid_ripperdoc_01: &AddInjectorCommon
-  itemStock:
-    - !append
-      item: Items.ripperdoc_med_common
-      quantity: [ Vendors.IsPresent ]
-
-# Common - Instant Implants
-Vendors.wat_kab_ripperdoc_01 : *AddInjectorCommon
-# Common - Bucks' Clinic
-Vendors.wat_kab_ripperdoc_02 : *AddInjectorCommon
-
-# Uncommon - Fingers M.D.
-Vendors.wbr_jpn_ripperdoc_02: &AddInjectorUncommon
-  itemStock:
-    - !append
-      item: Items.ripperdoc_med_uncommon
-      quantity: [ Vendors.IsPresent ]
-
-# Uncommon - Octavio's Clinic
-Vendors.std_rcr_ripperdoc_01 : *AddInjectorUncommon
-
-# Rare - Kraviz's Clinic
-Vendors.wbr_hil_ripdoc_01: &AddInjectorRare
-  itemStock:
-    - !append
-      item: Items.ripperdoc_med
-      quantity: [ Vendors.IsPresent ]
-
-# Rare - Viktor's Clinic
-Vendors.wat_lch_ripperdoc_01 : *AddInjectorRare
-
-
 # === Add recipe and neuroblockers to medstores ===
-
-Vendors.bls_ina_se1_medicstore_01: &AddRecipeRare
+Vendors.bls_ina_se1_medicstore_01: &AddStuff
   itemStock:
-    - !append
-      item: Items.recipe_ripperdoc_med
-      quantity: [ Vendors.IsPresent ]
-    - !append
-      item: Items.ripperdoc_med
-      quantity: [ Vendors.IsPresent ]
+  - !append
+    item: Items.recipe_ripperdoc_med_common
+    quantity: [ Vendors.Always_Present ]
+  - !append
+    item: Items.recipe_ripperdoc_med_uncommon
+    quantity: [ Vendors.Commonly_Present ]
+  - !append
+    item: Items.recipe_ripperdoc_med
+    quantity: [ Vendors.Uncommonly_Present ]
+  - !append
+    item: Items.ripperdoc_med_common
+    quantity: [ Vendors.Always_Present ]
+  - !append
+    item: Items.ripperdoc_med_uncommon
+    quantity: [ Vendors.Commonly_Present ]
+  - !append
+    item: Items.ripperdoc_med
+    quantity: [ Vendors.Uncommonly_Present ]
 
-Vendors.bls_ina_se1_medicstore_01: &AddRecipeUncommon
-  itemStock:
-    - !append
-      item: Items.recipe_ripperdoc_med_uncommon
-      quantity: [ Vendors.IsPresent ]
-    - !append
-      item: Items.ripperdoc_med_uncommon
-      quantity: [ Vendors.IsPresent ]
-
-Vendors.bls_ina_se1_medicstore_01: &AddRecipeCommon
-  itemStock:
-    - !append
-      item: Items.recipe_ripperdoc_med_common
-      quantity: [ Vendors.IsPresent ]
-    - !append
-      item: Items.ripperdoc_med_common
-      quantity: [ Vendors.IsPresent ]
-
-Vendors.wat_kab_medicstore_01: *AddRecipeRare
-Vendors.wat_nid_medicstore_01: *AddRecipeUncommon
-Vendors.wat_nid_medicstore_02: *AddRecipeCommon
-Vendors.wat_lch_medicstore_01: *AddRecipeRare
-Vendors.wbr_jpn_medicstore_01: *AddRecipeUncommon
-Vendors.wbr_jpn_medicstore_02: *AddRecipeCommon
-Vendors.wbr_jpn_medicstore_03: *AddRecipeRare
-Vendors.wbr_nok_medic_01: *AddRecipeUncommon
-Vendors.cct_dtn_medic_01: *AddRecipeCommon
-Vendors.cct_cpz_medic_01: *AddRecipeRare
-Vendors.hey_spr_medicstore_01: *AddRecipeUncommon
-Vendors.std_arr_medicstore_01: *AddRecipeCommon
-Vendors.std_rcr_medicstore_01: *AddRecipeRare
-Vendors.pac_cvi_medicstore_01: *AddRecipeUncommon
+Vendors.wat_kab_medicstore_01: *AddStuff
+Vendors.wat_nid_medicstore_01: *AddStuff
+Vendors.wat_nid_medicstore_02: *AddStuff
+Vendors.wat_lch_medicstore_01: *AddStuff
+Vendors.wbr_jpn_medicstore_01: *AddStuff
+Vendors.wbr_jpn_medicstore_02: *AddStuff
+Vendors.wbr_jpn_medicstore_03: *AddStuff
+Vendors.wbr_nok_medic_01: *AddStuff
+Vendors.cct_dtn_medic_01: *AddStuff
+Vendors.cct_cpz_medic_01: *AddStuff
+Vendors.hey_spr_medicstore_01: *AddStuff
+Vendors.std_arr_medicstore_01: *AddStuff
+Vendors.std_rcr_medicstore_01: *AddStuff
+Vendors.pac_cvi_medicstore_01: *AddStuff
 
 #Game.AddToInventory("Items.ripperdoc_med", 1)
 #Game.AddToInventory("Items.ripperdoc_med_uncommon", 1)
