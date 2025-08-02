@@ -810,12 +810,15 @@ protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
 @wrapMethod(HoloAudioCallLogicController)
 protected cb func OnInitialize() -> Bool {
   let wrap: Bool = wrappedMethod();
+  let questSystem: ref<QuestsSystem> = GameInstance.GetQuestsSystem(GetGameInstance());
+  let carHudUnlocked: Bool = questSystem.GetFact(n"unlock_car_hud_dpad") > 0;
+
   let system: ref<inkSystem> = GameInstance.GetInkSystem();
   let config: ref<HUDitorConfig> = new HUDitorConfig();
   let root: ref<inkCompoundWidget> = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
   let newParent: ref<inkCompoundWidget> = root.GetWidgetByPathName(n"NewPhoneAvatar") as inkCompoundWidget;
   let targetWidget: ref<inkCompoundWidget>;
-  if config.incomingCallAvatarEnabled { 
+  if config.incomingCallAvatarEnabled && carHudUnlocked { 
     targetWidget= this.GetRootCompoundWidget();
     targetWidget.SetAnchorPoint(new Vector2(0.5, 0.5));
     targetWidget.Reparent(newParent, 24);
@@ -826,12 +829,14 @@ protected cb func OnInitialize() -> Bool {
 @wrapMethod(IncomingCallLogicController)
 protected cb func OnInitialize() -> Bool {
   let wrap: Bool = wrappedMethod();
+  let questSystem: ref<QuestsSystem> = GameInstance.GetQuestsSystem(GetGameInstance());
+  let carHudUnlocked: Bool = questSystem.GetFact(n"unlock_car_hud_dpad") > 0;
   let system: ref<inkSystem> = GameInstance.GetInkSystem();
   let config: ref<HUDitorConfig> = new HUDitorConfig();
   let root: ref<inkCompoundWidget> = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
   let newParent: ref<inkCompoundWidget> = root.GetWidgetByPathName(n"NewPhoneControl") as inkCompoundWidget;
   let targetWidget: ref<inkCompoundWidget>;
-  if config.incomingCallAvatarEnabled { 
+  if config.incomingCallAvatarEnabled && carHudUnlocked { 
     targetWidget= this.GetRootCompoundWidget();
     targetWidget.SetAnchorPoint(new Vector2(0.5, 0.5));
     targetWidget.Reparent(newParent, 25);
