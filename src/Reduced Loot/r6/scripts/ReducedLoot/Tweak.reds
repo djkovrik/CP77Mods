@@ -21,10 +21,9 @@ public class ReducedLootTweaks extends ScriptableTweak {
 
     // -- SEPARATE UPDATES
 
-    ReducedLootAmmoTweaker.UpdateQueryRecords(batch);
-    ReducedLootMoneyTweaker.UpdateShards(batch);
-    ReducedLootMoneyTweaker.UpdatePriceModifiers(batch);
-
+    ReducedLootAmmoTweaker.UpdateQueryRecords(batch, ammoCfg);
+    ReducedLootAmmoTweaker.UpdateHandicapRecords(batch, ammoCfg);
+    
 
     // -- LOOT TABLE UPDATES
 
@@ -35,7 +34,7 @@ public class ReducedLootTweaks extends ScriptableTweak {
         ArrayClear(lootItems);
         record.LootItems(lootItems);
         for item in lootItems {
-          ReducedLootAmmoTweaker.UpdateLootRecord(batch, ammoCfg, item);
+          ReducedLootAmmoTweaker.UpdateLootRecords(batch, ammoCfg, item);
           ReducedLootMaterialsTweaker.UpdateLootRecord(batch, matsCfg, item);
         };
       };
@@ -51,14 +50,14 @@ public class ReducedLootTweaks extends ScriptableTweak {
           // LootItems
           lootSet.LootItems(lootItems);
           for item in lootItems {
-            ReducedLootAmmoTweaker.UpdateLootRecord(batch, ammoCfg, item);
+            ReducedLootAmmoTweaker.UpdateLootRecords(batch, ammoCfg, item);
             ReducedLootMaterialsTweaker.UpdateLootRecord(batch, matsCfg, item);
           };
           // ReplacementLootItems
           ArrayClear(lootItems);
           lootSet.ReplacementLootItems(lootItems);
           for item in lootItems {
-            ReducedLootAmmoTweaker.UpdateLootRecord(batch, ammoCfg, item);
+            ReducedLootAmmoTweaker.UpdateLootRecords(batch, ammoCfg, item);
             ReducedLootMaterialsTweaker.UpdateLootRecord(batch, matsCfg, item);
           };
         };
