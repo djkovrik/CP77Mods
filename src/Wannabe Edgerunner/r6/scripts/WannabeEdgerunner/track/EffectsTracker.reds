@@ -65,7 +65,7 @@ protected cb func OnLastAttemptedChoiceCustom(value: Variant) -> Bool {
 // -- Track for hub title
 
 public class HubTitleUpdatedEvent extends Event {
-  let title: String;
+  public let title: String;
 
   public static func Create(title: String) -> ref<HubTitleUpdatedEvent> {
     let instance: ref<HubTitleUpdatedEvent> = new HubTitleUpdatedEvent();

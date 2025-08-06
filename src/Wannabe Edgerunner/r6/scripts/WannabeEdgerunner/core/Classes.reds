@@ -31,7 +31,7 @@ public class HumanityThresholdHoverOverEvent extends Event {
 }
 
 public class HumanityBarUserData extends inkUserData {
-  private let danger: Bool;
+  public let danger: Bool;
 
   public static func Create(danger: Bool) -> ref<HumanityBarUserData> {
     let self: ref<HumanityBarUserData> = new HumanityBarUserData();
@@ -42,7 +42,7 @@ public class HumanityBarUserData extends inkUserData {
 
 public class CustomBarHoverOutEvent extends Event {}
 
-enum WannabeHeatLevel {
+public enum WannabeHeatLevel {
   One = 0,
   Two = 1,
   Three = 2,
@@ -51,7 +51,7 @@ enum WannabeHeatLevel {
   MaxTac = 5,
 }
 
-enum HumanityRestoringAction {
+public enum HumanityRestoringAction {
   Sleep = 0,
   Shower = 1,
   Pet = 2,

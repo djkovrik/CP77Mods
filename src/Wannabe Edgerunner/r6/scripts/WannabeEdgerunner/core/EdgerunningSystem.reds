@@ -60,6 +60,8 @@ public class EdgerunningSystem extends ScriptableSystem {
   private let psmBB: ref<IBlackboard>;
   private let delaySystem: ref<DelaySystem>;
   private let questsSystem: ref<QuestsSystem>;
+  private let statsSystem: ref<StatsSystem>;
+  private let statsPoolSystem: ref<StatPoolsSystem>;
   private let config: ref<EdgerunningConfig>;
   private let teleportHelper: ref<TeleportHelper>;
   private let preventionHelper: ref<TeleportingPreventionHelper>;
@@ -70,11 +72,11 @@ public class EdgerunningSystem extends ScriptableSystem {
   private let additionalPenalties: ref<inkIntHashMap>;
   private let additionalPenaltiesKeys: array<String>;
 
-  private let currentHumanityPool: Int32;
-  private let psychosisThreshold: Int32;
-  private let psychosisCheckDelayId: DelayID;
-  private let postPsychosisDelayId: DelayID;
-  private let humanityRestoreDelayId: DelayID;
+  public let currentHumanityPool: Int32;
+  public let psychosisThreshold: Int32;
+  public let psychosisCheckDelayId: DelayID;
+  public let postPsychosisDelayId: DelayID;
+  public let humanityRestoreDelayId: DelayID;
 
   private persistent let currentHumanityDamage: Int32 = 0;
   private persistent let wentFullPsycho: Bool = false;
@@ -105,6 +107,8 @@ public class EdgerunningSystem extends ScriptableSystem {
       this.psmBB = this.player.GetPlayerStateMachineBlackboard();
       this.delaySystem = GameInstance.GetDelaySystem(this.player.GetGame());
       this.questsSystem = GameInstance.GetQuestsSystem(this.player.GetGame());
+      this.statsSystem = GameInstance.GetStatsSystem(this.player.GetGame());
+      this.statsPoolSystem = GameInstance.GetStatPoolsSystem(this.player.GetGame());
 
       this.config = new EdgerunningConfig();
       this.effectsHelper = new PsychosisEffectsHelper();
@@ -397,6 +401,8 @@ public class EdgerunningSystem extends ScriptableSystem {
     } else {
       E("! Humanity freezed, berserk costs no humanity");
     };
+
+    this.DamageHealthToPercent(this.config.berserkUsageDamage);
   }
 
   public func OnOverClockActivation(itemRecord: ref<Item_Record>) -> Void {
@@ -447,6 +453,8 @@ public class EdgerunningSystem extends ScriptableSystem {
     } else {
       E("! Humanity freezed, overclock costs no humanity");
     };
+
+    this.DamageHealthToPercent(this.config.overclockUsageDamage);
   }
 
   public func OnSandevistanActivation(item: ItemID) -> Void {
@@ -498,6 +506,8 @@ public class EdgerunningSystem extends ScriptableSystem {
     } else {
       E("! Humanity freezed, sandevistan costs no humanity");
     };
+
+    this.DamageHealthToPercent(this.config.sandevistanUsageDamage);
   }
 
   public func OnKerenzikovActivation() -> Void {
@@ -554,6 +564,8 @@ public class EdgerunningSystem extends ScriptableSystem {
     } else {
       E("! Humanity freezed, kerenzikov costs no humanity");
     };
+
+    this.DamageHealthToPercent(this.config.kerenzikovUsageDamage);
   }
 
   public func OnOpticalCamoActivation() -> Void {
@@ -610,6 +622,8 @@ public class EdgerunningSystem extends ScriptableSystem {
     } else {
       E("! Humanity freezed, optical camo costs no humanity");
     };
+
+    this.DamageHealthToPercent(this.config.opticalCamoUsageDamage);
   }
 
   public func OnArmsCyberwareActivation(type: gamedataItemType) -> Void {
@@ -683,6 +697,20 @@ public class EdgerunningSystem extends ScriptableSystem {
       this.InvalidateCurrentState();
     } else {
       E("! Humanity freezed, arms cyberware costs no humanity");
+    };
+
+    switch itemType {
+      case gamedataItemType.Cyb_Launcher:
+        this.DamageHealthToPercent(this.config.launcherUsageDamage);
+        break;
+      case gamedataItemType.Cyb_MantisBlades:
+        this.DamageHealthToPercent(this.config.mantisBladesUsageDamage);
+        break;
+      case gamedataItemType.Cyb_NanoWires:
+        this.DamageHealthToPercent(this.config.monowireUsageDamage);
+        break;
+      default:
+        break;
     };
   }
 
@@ -842,7 +870,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     return this.config.psychoChance;
   }
 
-  private func InvalidateCurrentState(opt firstLoad: Bool) -> Void {
+  public func InvalidateCurrentState(opt firstLoad: Bool) -> Void {
     let penalty: Int32 = this.GetTotalPenalty();
     let evt: ref<UpdateHumanityCounterEvent> = new UpdateHumanityCounterEvent();
     let basePool: Int32 = this.GetHumanityTotal();
@@ -1024,18 +1052,22 @@ public class EdgerunningSystem extends ScriptableSystem {
     blackboard.SetVariant(blackboardDef.OnscreenMessage, ToVariant(onScreenMessage), true);
   }
 
+  private func DamageHealthToPercent(value: Int32) -> Void {
+    // let totalHealth: Float = this.statsSystem.GetStatPoolValue(Cast<StatsObjectID>(this.player.GetEntityID()), gamedataStatPoolType.Health, false);
+    let totalHealth: Float = this.statsSystem.GetStatValue(Cast<StatsObjectID>(GetPlayer(this.player.GetGame()).GetEntityID()), gamedataStatType.Health);
+    let damageValue: Float = totalHealth * Cast<Float>(value) / 100.0;
+    E(s"Damage health: total \(totalHealth), damage to \(damageValue)");
+    this.statsPoolSystem.RequestChangingStatPoolValue(Cast<StatsObjectID>(this.player.GetEntityID()), gamedataStatPoolType.Health, -damageValue, null, false, false);
+  }
+
   public static func Debug(gi: GameInstance) -> Void {
     let system: ref<EdgerunningSystem> = EdgerunningSystem.GetInstance(gi);
     // system.RunPsychosisFlow();
-    system.AddHumanityDamage(10.0);
-    system.InvalidateCurrentState(false);
+    // system.AddHumanityDamage(10.0);
+    // system.InvalidateCurrentState(false);
     // system.effectsHelper.RunNewPrePsychosisEffect();
     // system.effectsHelper.RunNewPsychosisEffect();
-    // system.effectsHelper.RunNewPostPsychosisEffect();
-
-    // system.preventionHelper.ScheduleRandomWeaponActions(4.5)
-    // system.effectsHelper.ScheduleCycledSfx(7.0);
-    // system.player.GetPreventionSystem().SpawnPoliceForPsychosis(system.config);
+    system.effectsHelper.RunNewPostPsychosisEffect();
   }
 }
 

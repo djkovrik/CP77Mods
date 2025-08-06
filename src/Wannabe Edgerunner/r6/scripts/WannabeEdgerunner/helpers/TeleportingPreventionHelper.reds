@@ -40,12 +40,12 @@ public class TeleportingPreventionHelper {
     this.delaySystem.CancelDelay(this.randomShotsDelayId);
   }
 
-  private func OnLaunchPoliceActivityCallback() -> Void {
+  public func OnLaunchPoliceActivityCallback() -> Void {
     E("Prevention - Launch police flow");
     this.player.GetPreventionSystem().SpawnPoliceForPsychosis(this.config);
   }
 
-  private func OnTriggerDrawWeaponCallback() -> Void {
+  public func OnTriggerDrawWeaponCallback() -> Void {
     E("Prevention - Draw weapon");
     let equipmentSystem: wref<EquipmentSystem> = this.player.GetEquipmentSystem();
     let drawItemRequest: ref<DrawItemRequest> = new DrawItemRequest();
@@ -54,7 +54,7 @@ public class TeleportingPreventionHelper {
     equipmentSystem.QueueRequest(drawItemRequest);
   }
 
-  private func OnTriggerRandomShotCallback() -> Void {
+  public func OnTriggerRandomShotCallback() -> Void {
     E("Prevention - Shot");
     let weaponObject: ref<WeaponObject> = GameObject.GetActiveWeapon(this.player);
     let simTime: Float = EngineTime.ToFloat(GameInstance.GetSimTime(this.player.GetGame()));

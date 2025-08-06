@@ -42,7 +42,7 @@ public class TeleportHelper {
     this.victimsHelper.CancelScheduledVictimSpawns();
   }
 
-  private func OnPrepareTeleportCallback() -> Void {
+  public func OnPrepareTeleportCallback() -> Void {
     let currentDistrict: gamedataDistrict = this.player.GetPreventionSystem().GetCurrentDistrictForEdgerunner();
     let isPrologDone: Bool = this.player.IsPrologueFinished();
     let destination: ref<TeleportData>;
@@ -65,7 +65,7 @@ public class TeleportHelper {
     this.teleportDelayId = this.delaySystem.DelayCallback(teleportCallback, 0.9, true);
   }
 
-  private func OnPlayerTeleportCallback(position: Vector4) -> Void {
+  public func OnPlayerTeleportCallback(position: Vector4) -> Void {
     if !this.CanBeTeleported() {
       return ;
     };
@@ -76,7 +76,7 @@ public class TeleportHelper {
     this.postTeleportEffectsDelayId = this.delaySystem.DelayCallback(PostTeleportEffectsCallback.Create(this), 1.5, true);
   }
 
-  private func OnPostTeleportEffectsCallback() -> Void {
+  public func OnPostTeleportEffectsCallback() -> Void {
     E("Teleport - Apply post-effects");
     let timeSystem: ref<TimeSystem> = GameInstance.GetTimeSystem(this.player.GetGame());
     let sps: ref<StatPoolsSystem> = GameInstance.GetStatPoolsSystem(this.player.GetGame());

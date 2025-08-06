@@ -110,7 +110,7 @@ public class PsychosisEffectsHelper {
     this.config = new EdgerunningConfig();
   }
 
-  private func OnLaunchCycledSFXCallback() -> Void {
+  public func OnLaunchCycledSFXCallback() -> Void {
     E("Sfx - OnLaunchCycledSFXCallback");
     let random: Int32 = RandRange(0, ArraySize(this.cyberpsychosisSFX));
     let bundle: ref<SFXBundle> = this.cyberpsychosisSFX[random];

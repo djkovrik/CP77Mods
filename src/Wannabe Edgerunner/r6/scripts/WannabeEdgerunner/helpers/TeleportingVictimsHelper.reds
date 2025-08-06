@@ -39,7 +39,7 @@ public class TeleportVictimsHelper {
     this.delaySystem.CancelDelay(this.victimSpawnDelayId4);
   }
 
-  private func OnVictimSpawnCallback(position: Vector4, characterId: TweakDBID) -> Void {
+  public func OnVictimSpawnCallback(position: Vector4, characterId: TweakDBID) -> Void {
     let randX: Float = RandRangeF(-2.5, 2.5);
     let randY: Float = RandRangeF(-2.5, 2.5);
     let newPosition: Vector4 = new Vector4(position.X + randX, position.Y + randY, position.Z, position.W);
