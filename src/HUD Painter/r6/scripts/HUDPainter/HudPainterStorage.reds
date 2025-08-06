@@ -224,7 +224,7 @@ public class HudPainterStorage extends ScriptableService {
     return parsed;
   }
 
-  private final func SaveActivePresetName(name: String) -> Void {
+  public final func SaveActivePresetName(name: String) -> Void {
     this.Log(s"SaveActivePresetName \(name)");
     this.activePreset = StringToName(name);
     this.Log(s"SaveActivePresetName should be \(this.activePreset)");

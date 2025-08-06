@@ -188,6 +188,10 @@ public class PocketMetroNavigator extends ScriptableSystem {
     return this.route;
   }
 
+  public final func SetRoute(route: array<ref<RoutePoint>>) -> Void {
+    this.route = route;
+  }
+
   public final func GetActiveRouteSegment() -> ref<RouteSegment> {
     let point: ref<RoutePoint>;
     let activeStationPointIndex: Int32 = -1;

@@ -8,7 +8,7 @@ public class ZoomConfig {
   @runtimeProperty("ModSettings.step", "10")
   @runtimeProperty("ModSettings.min", "10")
   @runtimeProperty("ModSettings.max", "800")
-  let visionRadiusVehicleMin: Float = 200.0;
+  public let visionRadiusVehicleMin: Float = 200.0;
 
   @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Minimap config")
@@ -16,7 +16,7 @@ public class ZoomConfig {
   @runtimeProperty("ModSettings.step", "10")
   @runtimeProperty("ModSettings.min", "10")
   @runtimeProperty("ModSettings.max", "800")
-  let visionRadiusVehicleMax: Float = 650.0;
+  public let visionRadiusVehicleMax: Float = 650.0;
 
   @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Minimap config")
@@ -24,7 +24,7 @@ public class ZoomConfig {
   @runtimeProperty("ModSettings.step", "5")
   @runtimeProperty("ModSettings.min", "10")
   @runtimeProperty("ModSettings.max", "200")
-  let visionRadiusCombatMin: Float = 40.0;
+  public let visionRadiusCombatMin: Float = 40.0;
 
   @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Minimap config")
@@ -32,7 +32,7 @@ public class ZoomConfig {
   @runtimeProperty("ModSettings.step", "5")
   @runtimeProperty("ModSettings.min", "10")
   @runtimeProperty("ModSettings.max", "200")
-  let visionRadiusCombatMax: Float = 60.0;
+  public let visionRadiusCombatMax: Float = 60.0;
 
   @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Minimap config")
@@ -40,7 +40,7 @@ public class ZoomConfig {
   @runtimeProperty("ModSettings.step", "5")
   @runtimeProperty("ModSettings.min", "10")
   @runtimeProperty("ModSettings.max", "200")
-  let visionRadiusQuestAreaMin: Float = 40.0;
+  public let visionRadiusQuestAreaMin: Float = 40.0;
 
   @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Minimap config")
@@ -48,7 +48,7 @@ public class ZoomConfig {
   @runtimeProperty("ModSettings.step", "5")
   @runtimeProperty("ModSettings.min", "10")
   @runtimeProperty("ModSettings.max", "200")
-  let visionRadiusQuestAreaMax: Float = 60.0;
+  public let visionRadiusQuestAreaMax: Float = 60.0;
 
   @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Minimap config")
@@ -56,7 +56,7 @@ public class ZoomConfig {
   @runtimeProperty("ModSettings.step", "5")
   @runtimeProperty("ModSettings.min", "10")
   @runtimeProperty("ModSettings.max", "200")
-  let visionRadiusSecurityAreaMin: Float = 40.0;
+  public let visionRadiusSecurityAreaMin: Float = 40.0;
 
   @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Minimap config")
@@ -64,7 +64,7 @@ public class ZoomConfig {
   @runtimeProperty("ModSettings.step", "5")
   @runtimeProperty("ModSettings.min", "10")
   @runtimeProperty("ModSettings.max", "200")
-  let visionRadiusSecurityAreaMax: Float = 60.0;
+  public let visionRadiusSecurityAreaMax: Float = 60.0;
 
   @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Minimap config")
@@ -72,7 +72,7 @@ public class ZoomConfig {
   @runtimeProperty("ModSettings.step", "5")
   @runtimeProperty("ModSettings.min", "10")
   @runtimeProperty("ModSettings.max", "200")
-  let visionRadiusInteriorMin: Float = 40.0;
+  public let visionRadiusInteriorMin: Float = 40.0;
 
   @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Minimap config")
@@ -80,7 +80,7 @@ public class ZoomConfig {
   @runtimeProperty("ModSettings.step", "5")
   @runtimeProperty("ModSettings.min", "10")
   @runtimeProperty("ModSettings.max", "200")
-  let visionRadiusInteriorMax: Float = 60.0;
+  public let visionRadiusInteriorMax: Float = 60.0;
 
   @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Minimap config")
@@ -88,7 +88,7 @@ public class ZoomConfig {
   @runtimeProperty("ModSettings.step", "5")
   @runtimeProperty("ModSettings.min", "10")
   @runtimeProperty("ModSettings.max", "200")
-  let visionRadiusExteriorMin: Float = 100.0;
+  public let visionRadiusExteriorMin: Float = 100.0;
 
   @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Minimap config")
@@ -96,7 +96,7 @@ public class ZoomConfig {
   @runtimeProperty("ModSettings.step", "5")
   @runtimeProperty("ModSettings.min", "10")
   @runtimeProperty("ModSettings.max", "200")
-  let visionRadiusExteriorMax: Float = 110.0;
+  public let visionRadiusExteriorMax: Float = 110.0;
 
   @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Minimap config")
@@ -104,7 +104,7 @@ public class ZoomConfig {
   @runtimeProperty("ModSettings.step", "0.5")
   @runtimeProperty("ModSettings.min", "0.0")
   @runtimeProperty("ModSettings.max", "10.0")
-  let speedBoundsSprintMin: Float = 4.0;
+  public let speedBoundsSprintMin: Float = 4.0;
 
   @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Minimap config")
@@ -112,7 +112,7 @@ public class ZoomConfig {
   @runtimeProperty("ModSettings.step", "0.5")
   @runtimeProperty("ModSettings.min", "0.0")
   @runtimeProperty("ModSettings.max", "10.0")
-  let speedBoundsSprintMax: Float = 4.0;
+  public let speedBoundsSprintMax: Float = 4.0;
 
   @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Minimap config")
@@ -120,7 +120,7 @@ public class ZoomConfig {
   @runtimeProperty("ModSettings.step", "5.0")
   @runtimeProperty("ModSettings.min", "0.0")
   @runtimeProperty("ModSettings.max", "100.0")
-  let speedBoundsVehicleMin: Float = 15.0;
+  public let speedBoundsVehicleMin: Float = 15.0;
 
   @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Minimap config")
@@ -128,7 +128,7 @@ public class ZoomConfig {
   @runtimeProperty("ModSettings.step", "5.0")
   @runtimeProperty("ModSettings.min", "0.0")
   @runtimeProperty("ModSettings.max", "100.0")
-  let speedBoundsVehicleMax: Float = 50.0;
+  public let speedBoundsVehicleMax: Float = 50.0;
 
   @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Minimap config")
@@ -136,7 +136,7 @@ public class ZoomConfig {
   @runtimeProperty("ModSettings.step", "0.025")
   @runtimeProperty("ModSettings.min", "0.0")
   @runtimeProperty("ModSettings.max", "1.0")
-  let smoothingStrengthOnZoomIn: Float = 0.025;
+  public let smoothingStrengthOnZoomIn: Float = 0.025;
 
   @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Minimap config")
@@ -144,7 +144,7 @@ public class ZoomConfig {
   @runtimeProperty("ModSettings.step", "0.025")
   @runtimeProperty("ModSettings.min", "0.0")
   @runtimeProperty("ModSettings.max", "1.0")
-  let smoothingStrengthOnZoomOut: Float = 0.15;
+  public let smoothingStrengthOnZoomOut: Float = 0.15;
 
   @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Minimap config")
@@ -152,7 +152,7 @@ public class ZoomConfig {
   @runtimeProperty("ModSettings.step", "0.5")
   @runtimeProperty("ModSettings.min", "0.0")
   @runtimeProperty("ModSettings.max", "10.0")
-  let playerMarkerTransitionSpeedOnVehicleMount: Float = 2.5;
+  public let playerMarkerTransitionSpeedOnVehicleMount: Float = 2.5;
 
   @runtimeProperty("ModSettings.mod", "IZoom")
   @runtimeProperty("ModSettings.category", "Minimap config")
@@ -160,5 +160,5 @@ public class ZoomConfig {
   @runtimeProperty("ModSettings.step", "0.5")
   @runtimeProperty("ModSettings.min", "0.0")
   @runtimeProperty("ModSettings.max", "10.0")
-  let playerMarkerTransitionSpeedOnVehicleUnmount: Float = 5.0;
+  public let playerMarkerTransitionSpeedOnVehicleUnmount: Float = 5.0;
 }

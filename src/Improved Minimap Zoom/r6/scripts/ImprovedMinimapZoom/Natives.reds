@@ -1,21 +1,22 @@
 public native class gameMinimapSettings {
-	native let globalVisionRadiusBounds : Range;
-	native let visionRadiusVehicle : Range;
-	native let visionRadiusCombat : Range;
-	native let visionRadiusQuestArea : Range;
-	native let visionRadiusSecurityArea : Range;
-	native let visionRadiusInterior : Range;
-	native let visionRadiusExterior : Range;
-	native let speedBoundsSprint : Range;
-	native let speedBoundsVehicle : Range;
-	native let smoothingStrengthOnZoomIn : Float;
-	native let smoothingStrengthOnZoomOut : Float;
-	native let playerMarkerTransitionSpeedOnVehicleMount : Float;
-	native let playerMarkerTransitionSpeedOnVehicleUnmount : Float;
-	native let visionRadiusLocked : Bool;
-	native let dynamicVisionRadiusEnabled : Bool;
-	native let smoothingEnabled : Bool;
+	public native let globalVisionRadiusBounds : Range;
+	public native let visionRadiusVehicle : Range;
+	public native let visionRadiusCombat : Range;
+	public native let visionRadiusQuestArea : Range;
+	public native let visionRadiusSecurityArea : Range;
+	public native let visionRadiusInterior : Range;
+	public native let visionRadiusExterior : Range;
+	public native let speedBoundsSprint : Range;
+	public native let speedBoundsVehicle : Range;
+	public native let smoothingStrengthOnZoomIn : Float;
+	public native let smoothingStrengthOnZoomOut : Float;
+	public native let playerMarkerTransitionSpeedOnVehicleMount : Float;
+	public native let playerMarkerTransitionSpeedOnVehicleUnmount : Float;
+	public native let visionRadiusLocked : Bool;
+	public native let dynamicVisionRadiusEnabled : Bool;
+	public native let smoothingEnabled : Bool;
 }
 
+@if(!ModuleExists("Codeware"))
 @addField(MinimapContainerController)
 public native let settings: ref<gameMinimapSettings>;

@@ -2,7 +2,7 @@ module LimitedHudMounted
 import LimitedHudListeners.DelayedVehicleExitCallback
 
 @addField(UI_SystemDef)
-let IsMounted_LHUD: BlackboardID_Bool;
+public let IsMounted_LHUD: BlackboardID_Bool;
 
 @wrapMethod(VehicleComponent)
 protected cb func OnMountingEvent(evt: ref<MountingEvent>) -> Bool {

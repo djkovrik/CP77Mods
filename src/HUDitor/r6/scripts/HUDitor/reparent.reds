@@ -4,34 +4,34 @@ import HUDrag.HUDitorWatcher
 @if(ModuleExists("FpsCounter"))
 import FpsCounter.FPSCounterChangeStateEvent
 
-@addField(inkGameController) let huditorWidgetName: wref<inkText>;
+@addField(inkGameController) public let huditorWidgetName: wref<inkText>;
 
-@addField(inkGameController) let minimapSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) let questTrackerSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) let wantedSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) let questNotificationsSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) let itemNotificationsSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) let vehicleSummonSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) let weaponRosterSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) let crouchIndicatorSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) let dpadSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) let phoneHotkeySlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) let healthbarSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) let staminaBarSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) let phoneCallAvatarSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) let phoneControlSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) let inputHintSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) let carHudSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) let autoDriveSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) let crystalCoatSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) let vehicleRadioSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) let vehicleHotkeySlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) let bossHealthbarSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) let dialogChoicesSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) let dialogSubtitlesSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) let progressBarSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) let e3CompassSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) let fpsCounterSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) public let minimapSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) public let questTrackerSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) public let wantedSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) public let questNotificationsSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) public let itemNotificationsSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) public let vehicleSummonSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) public let weaponRosterSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) public let crouchIndicatorSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) public let dpadSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) public let phoneHotkeySlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) public let healthbarSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) public let staminaBarSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) public let phoneCallAvatarSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) public let phoneControlSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) public let inputHintSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) public let carHudSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) public let autoDriveSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) public let crystalCoatSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) public let vehicleRadioSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) public let vehicleHotkeySlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) public let bossHealthbarSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) public let dialogChoicesSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) public let dialogSubtitlesSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) public let progressBarSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) public let e3CompassSlot: wref<HUDitorCustomSlot>;
+@addField(inkGameController) public let fpsCounterSlot: wref<HUDitorCustomSlot>;
 
 @addMethod(inkGameController)
 protected cb func OnScannerDetailsAppearedEvent(event: ref<ScannerDetailsAppearedEvent>) -> Bool {

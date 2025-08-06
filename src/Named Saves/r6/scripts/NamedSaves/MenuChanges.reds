@@ -73,18 +73,18 @@ protected cb func OnSavingComplete(success: Bool, locks: array<gameSaveLock>) ->
 // --- LOAD SAVE MENU
 
 @addField(LoadListItem)
-private let m_customNote: wref<inkText>;
+public let m_customNote: wref<inkText>;
 
 @addField(LoadListItem)
-private let m_customNoteText: String;
-
-@if(ModuleExists("FilterSaves"))
-@addField(LoadListItem)
-private let m_lifepathCompat: LifePathFilter;
+public let m_customNoteText: String;
 
 @if(ModuleExists("FilterSaves"))
 @addField(LoadListItem)
-private let m_saveTypeCompat: SaveTypeFilter;
+public let m_lifepathCompat: LifePathFilter;
+
+@if(ModuleExists("FilterSaves"))
+@addField(LoadListItem)
+public let m_saveTypeCompat: SaveTypeFilter;
 
 @wrapMethod(LoadListItem)
 protected cb func OnInitialize() -> Bool {
@@ -177,7 +177,7 @@ private final func RefreshCompatSaveInfo(metadata: ref<SaveMetadataInfo>) {
 
 @if(!ModuleExists("FilterSaves"))
 public class NamedSavesSearchEvent extends Event {
-  let query: String;
+  public let query: String;
 
   public final static func Create(query: String) -> ref<NamedSavesSearchEvent> {
     let instance: ref<NamedSavesSearchEvent> = new NamedSavesSearchEvent();
@@ -188,9 +188,9 @@ public class NamedSavesSearchEvent extends Event {
 
 @if(ModuleExists("FilterSaves"))
 public class NamedSavesSearchEvent extends Event {
-  let query: String;
-  let lifepath: LifePathFilter;
-  let type: SaveTypeFilter;
+  public let query: String;
+  public let lifepath: LifePathFilter;
+  public let type: SaveTypeFilter;
 
   public final static func Create(query: String, lifepath: LifePathFilter, type: SaveTypeFilter) -> ref<NamedSavesSearchEvent> {
     let instance: ref<NamedSavesSearchEvent> = new NamedSavesSearchEvent();

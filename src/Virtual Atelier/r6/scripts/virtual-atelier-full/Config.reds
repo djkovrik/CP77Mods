@@ -14,21 +14,21 @@ public class VirtualAtelierConfig {
   @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "VA-Instant-Buy")
   @runtimeProperty("ModSettings.description", "VA-Instant-Buy-Desc")
-  let instantBuy: Bool = false;
+  public let instantBuy: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Virtual Atelier")
   @runtimeProperty("ModSettings.category", "UI-Settings-GenaralInput")
   @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "VA-Danger-Zone-Checker")
   @runtimeProperty("ModSettings.description", "VA-Danger-Zone-Checker-Desc")
-  let enableDangerZoneChecker: Bool = false;
+  public let enableDangerZoneChecker: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Virtual Atelier")
   @runtimeProperty("ModSettings.category", "UI-Settings-GenaralInput")
   @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "VA-Duplicate-Checker")
   @runtimeProperty("ModSettings.description", "VA-Duplicate-Checker-Desc")
-  let enableDuplicatesChecker: Bool = false;
+  public let enableDuplicatesChecker: Bool = false;
 }
 
 @if(ModuleExists("AtelierDelivery"))
@@ -44,12 +44,12 @@ public class VirtualAtelierConfig {
   @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "VA-Danger-Zone-Checker")
   @runtimeProperty("ModSettings.description", "VA-Danger-Zone-Checker-Desc")
-  let enableDangerZoneChecker: Bool = false;
+  public let enableDangerZoneChecker: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Virtual Atelier")
   @runtimeProperty("ModSettings.category", "UI-Settings-GenaralInput")
   @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "VA-Duplicate-Checker")
   @runtimeProperty("ModSettings.description", "VA-Duplicate-Checker-Desc")
-  let enableDuplicatesChecker: Bool = false;
+  public let enableDuplicatesChecker: Bool = false;
 }

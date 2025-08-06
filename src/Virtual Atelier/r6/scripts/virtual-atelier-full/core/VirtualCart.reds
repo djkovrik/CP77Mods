@@ -101,20 +101,6 @@ public class VirtualAtelierCart {
     };
 
     return cartItem;
-  }  
-
-  private final func Print() -> Void {
-    if Equals(ArraySize(this.keys), 0) {
-      return ;
-    };
-
-    let current: ref<VirtualCartItem>;
-
-    // LogChannel(n"DEBUG", "Cart content:");
-    for key in this.keys {
-      current = this.map.Get(key) as VirtualCartItem;
-      // LogChannel(n"DEBUG", s" - key \(key): item \(ItemID.GetCombinedHash(current.stockItem.itemID)) (\(current.stockItem.quantity))");
-    };
   }
 
   private final func Hash(itemID: ItemID, quantity: Int32) -> Uint64 {

@@ -17,7 +17,7 @@ public class ECraftConfig {
   @runtimeProperty("ModSettings.displayValues.Epic", "Mod-Craft-Settings-Quality-Epic")
   @runtimeProperty("ModSettings.displayValues.Legendary", "Mod-Craft-Settings-Quality-Legendary")
   @runtimeProperty("ModSettings.displayValues.Disable", "Mod-Craft-Settings-Perk-Block")
-  let iconicRecipeCondition: ECraftIconicRecipeCondition = ECraftIconicRecipeCondition.Epic;
+  public let iconicRecipeCondition: ECraftIconicRecipeCondition = ECraftIconicRecipeCondition.Epic;
 
   // Ingredients quantity multiplier for Iconic variants
   @runtimeProperty("ModSettings.mod", "ECraft")
@@ -27,19 +27,19 @@ public class ECraftConfig {
   @runtimeProperty("ModSettings.step", "1")
   @runtimeProperty("ModSettings.min", "1")
   @runtimeProperty("ModSettings.max", "25")
-  let iconicIngredientsMultiplier: Int32 = 5;
+  public let iconicIngredientsMultiplier: Int32 = 5;
 
   // If enabled then random weapon skin will be applied for crafted item
   @runtimeProperty("ModSettings.mod", "ECraft")
   @runtimeProperty("ModSettings.category", "Mod-Craft-Settings-Misc")
   @runtimeProperty("ModSettings.displayName", "Mod-Craft-Settings-Randomizer")
   @runtimeProperty("ModSettings.description", "Mod-Craft-Settings-Randomizer-Desc")
-  let randomizerEnabled: Bool = false;
+  public let randomizerEnabled: Bool = false;
 
   // If enabled then you can rename your crafted weapons
   @runtimeProperty("ModSettings.mod", "ECraft")
   @runtimeProperty("ModSettings.category", "Mod-Craft-Settings-Misc")
   @runtimeProperty("ModSettings.displayName", "Mod-Craft-Settings-Naming")
   @runtimeProperty("ModSettings.description", "Mod-Craft-Settings-Naming-Desc")
-  let customNamesEnabled: Bool = true;
+  public let customNamesEnabled: Bool = true;
 }

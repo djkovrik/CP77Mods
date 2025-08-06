@@ -1,6 +1,6 @@
 module EnhancedCraft.Common
 
-enum ECraftIconicRecipeCondition {
+public enum ECraftIconicRecipeCondition {
   Rare = 0,
   Epic = 1,
   Legendary = 2,

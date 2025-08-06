@@ -11,7 +11,7 @@ class AutofixerItemVirtualController extends inkVirtualCompoundItemController {
   private let m_title: ref<inkText>;
   private let m_icon: ref<inkImage>;
   private let m_price: ref<inkText>;
-  private let m_button: ref<SimpleButton>;
+  private let m_button: ref<SellButton>;
   private let m_data: ref<AutofixerItemData>;
 
   protected cb func OnInitialize() -> Bool {
@@ -206,7 +206,7 @@ class AutofixerItemVirtualController extends inkVirtualCompoundItemController {
     carPrice.Reparent(buttonPricePanel);
     this.m_price = carPrice;
 
-    this.m_button = SimpleButton.Create();
+    this.m_button = SellButton.Create();
     this.m_button.SetName(n"ButtonSell");
     this.m_button.SetText(GetLocalizedText("LocKey#17848"));
     this.m_button.ToggleAnimations(true);

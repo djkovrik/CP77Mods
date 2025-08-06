@@ -1,15 +1,15 @@
-enum HudPainterColorType {
+public enum HudPainterColorType {
   Default = 0,
   Johnny = 1,
 }
 
-enum SliderColorType {
+public enum SliderColorType {
   Red = 0,
   Green = 1,
   Blue = 2,
 }
 
-enum PreviewTabType {
+public enum PreviewTabType {
   Healthbar = 0,
   QuestTracker = 1,
   AmmoCounter = 2,
@@ -19,11 +19,11 @@ enum PreviewTabType {
 }
 
 public class HudPainterStylePropertyDTO {
-  let name: String;
-  let red: Float;
-  let green: Float;
-  let blue: Float;
-  let alpha: Int32;
+  public let name: String;
+  public let red: Float;
+  public let green: Float;
+  public let blue: Float;
+  public let alpha: Int32;
 
   public final func AsHDRColor() -> HDRColor {
     return new HDRColor(this.red, this.green, this.blue, Cast<Float>(this.alpha));
@@ -31,28 +31,28 @@ public class HudPainterStylePropertyDTO {
 }
 
 public class HudPainterStyleDTO {
-  let propertiesDefault: array<ref<HudPainterStylePropertyDTO>>;
-  let propertiesJohnny: array<ref<HudPainterStylePropertyDTO>>;
+  public let propertiesDefault: array<ref<HudPainterStylePropertyDTO>>;
+  public let propertiesJohnny: array<ref<HudPainterStylePropertyDTO>>;
 }
 
 public class HudPainterColorItem {
-  let name: String;
-  let type: HudPainterColorType;
-  let defaultColor: HDRColor;
-  let presetColor: HDRColor;
-  let customColor: HDRColor;
+  public let name: String;
+  public let type: HudPainterColorType;
+  public let defaultColor: HDRColor;
+  public let presetColor: HDRColor;
+  public let customColor: HDRColor;
 }
 
 public class HudPainterPresetItem {
-  let name: String;
-  let fileName: String;
-  let active: Bool;
+  public let name: String;
+  public let fileName: String;
+  public let active: Bool;
 }
 
 public class HudPainterCustomColor {
-  let colorR: Int32;
-  let colorG: Int32;
-  let colorB: Int32;
+  public let colorR: Int32;
+  public let colorG: Int32;
+  public let colorB: Int32;
 
   public final static func Create(colorR: Int32, colorG: Int32, colorB: Int32) -> ref<HudPainterCustomColor> {
     let instance: ref<HudPainterCustomColor> = new HudPainterCustomColor();
@@ -64,16 +64,16 @@ public class HudPainterCustomColor {
 }
 
 public class HudPainterPreviewTab {
-  let tabName: String;
-  let tabType: PreviewTabType;
-  let previewResourcePath: ResRef;
-  let previewLibraryID: CName;
-  let previewAnchorPoint: Vector2;
-  let affectedColors: String;
+  public let tabName: String;
+  public let tabType: PreviewTabType;
+  public let previewResourcePath: ResRef;
+  public let previewLibraryID: CName;
+  public let previewAnchorPoint: Vector2;
+  public let affectedColors: String;
 }
 
 public class HudPainterPreviewInfo {
-  let paths: array<CName>;
+  public let paths: array<CName>;
 
   public static final func Create( paths: array<CName>) -> ref<HudPainterPreviewInfo> {
     let instance: ref<HudPainterPreviewInfo> = new HudPainterPreviewInfo();
@@ -83,7 +83,7 @@ public class HudPainterPreviewInfo {
 }
 
 public class HudPainterSoundEmitted extends Event {
-  let name: CName;
+  public let name: CName;
 
   public final static func Create(name: CName) -> ref<HudPainterSoundEmitted> {
     let evt: ref<HudPainterSoundEmitted> = new HudPainterSoundEmitted();
@@ -93,8 +93,8 @@ public class HudPainterSoundEmitted extends Event {
 }
 
 public class HudPainterSliderUpdated extends Event {
-  let color: SliderColorType;
-  let value: Int32;
+  public let color: SliderColorType;
+  public let value: Int32;
 
   public final static func Create(color: SliderColorType, value: Int32) -> ref<HudPainterSliderUpdated> {
     let evt: ref<HudPainterSliderUpdated> = new HudPainterSliderUpdated();
@@ -112,7 +112,7 @@ public class HudPainterSliderReleased extends Event {
 }
 
 public class HudPainterColorSelected extends Event {
-  let data: ref<HudPainterColorItem>;
+  public let data: ref<HudPainterColorItem>;
 
   public final static func Create(data: ref<HudPainterColorItem>) -> ref<HudPainterColorSelected> {
     let evt: ref<HudPainterColorSelected> = new HudPainterColorSelected();
@@ -122,9 +122,9 @@ public class HudPainterColorSelected extends Event {
 }
 
 public class HudPainterColorChanged extends Event {
-  let name: String;
-  let type: HudPainterColorType;
-  let color: HDRColor;
+  public let name: String;
+  public let type: HudPainterColorType;
+  public let color: HDRColor;
 
   public final static func Create(name: String, type: HudPainterColorType, color: HDRColor) -> ref<HudPainterColorChanged> {
     let evt: ref<HudPainterColorChanged> = new HudPainterColorChanged();
@@ -136,7 +136,7 @@ public class HudPainterColorChanged extends Event {
 }
 
 public class HudPainterPresetSelected extends Event {
-  let data: ref<HudPainterPresetItem>;
+  public let data: ref<HudPainterPresetItem>;
 
   public final static func Create(data: ref<HudPainterPresetItem>) -> ref<HudPainterPresetSelected> {
     let evt: ref<HudPainterPresetSelected> = new HudPainterPresetSelected();
@@ -153,7 +153,7 @@ public class HudPainterPresetSaved extends Event {
 }
 
 public class HudPainterPresetDeleted extends Event {
-  let deleted: Bool;
+  public let deleted: Bool;
 
   public final static func Create(deleted: Bool) -> ref<HudPainterPresetDeleted> {
     let evt: ref<HudPainterPresetDeleted> = new HudPainterPresetDeleted();
@@ -178,7 +178,7 @@ public class HudPainterPreviewModeEnabled extends Event {
 }
 
 public class HudPainterColorPreviewAvailable extends Event {
-  let color: ref<HudPainterColorItem>;
+  public let color: ref<HudPainterColorItem>;
 
   public final static func Create(color: ref<HudPainterColorItem>) -> ref<HudPainterColorPreviewAvailable> {
     let evt: ref<HudPainterColorPreviewAvailable> = new HudPainterColorPreviewAvailable();

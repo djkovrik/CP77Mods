@@ -11,7 +11,7 @@ public class HUDitorCustomSlot extends inkCanvas {
   private func UpdatePersistedState(translation: Vector2, scale: Vector2) {}
 
   // Call for a method that's observed in Lua, which then loads widgets' persisted state
-  protected cb func OnGameSessionInitialized(evt: ref<GameSessionInitializedEvent>) -> Bool {
+  public func OnGameSessionInitialized(evt: ref<GameSessionInitializedEvent>) -> Void {
     if this.IsHUDWidget() {
       this.LoadPersistedState();
     };
@@ -25,7 +25,7 @@ public class HUDitorCustomSlot extends inkCanvas {
     this.SetScale(persistedScale);
   }
 
-  protected cb func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidgetEvent>) -> Bool {
+  public func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidgetEvent>) -> Void {
     let widgetName: CName = this.GetName();
     let hudEditorWidgetName: CName = event.activeWidget;
 
@@ -41,7 +41,7 @@ public class HUDitorCustomSlot extends inkCanvas {
     };
   }
 
-  protected cb func OnScannerDetailsAppearedEvent(event: ref<ScannerDetailsAppearedEvent>) -> Bool {
+  public func OnScannerDetailsAppearedEvent(event: ref<ScannerDetailsAppearedEvent>) -> Void {
     if event.isVisible && !event.isHackable {
       this.SetOpacity(0.0);
     } else {
@@ -60,14 +60,14 @@ public class HUDitorCustomSlot extends inkCanvas {
     };
   }
 
-  protected cb func OnDisableHUDEditorWidgets(event: ref<DisableHUDEditor>) -> Bool {
+  public func OnDisableHUDEditorWidgets(event: ref<DisableHUDEditor>) -> Void {
     if this.IsHUDWidget() {
       this.SetOpacity(1.0);
       HUDWidgetsManager.GetInstance().RemoveHUDWidgetListeners(this);
     };
   }
 
-  protected cb func OnResetHUDWidgets(event: ref<ResetAllHUDWidgets>) {
+  public func OnResetHUDWidgets(event: ref<ResetAllHUDWidgets>) -> Void {
     if this.IsHUDWidget() {
       let scale: Vector2 = new Vector2(0.666667, 0.666667);
       this.SetTranslation(new Vector2(0.0, 0.0));

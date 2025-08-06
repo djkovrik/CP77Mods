@@ -1,5 +1,5 @@
 public class SetActiveHUDEditorWidgetEvent extends Event {
-  let activeWidget: CName;
+  public let activeWidget: CName;
 }
 
 public class GameSessionInitializedEvent extends Event {}
@@ -15,8 +15,8 @@ public class HidePreviewEvent extends Event {}
 public class HijackSlotsEvent extends Event {}
 
 public class ScannerDetailsAppearedEvent extends Event {
-  let isVisible: Bool;
-  let isHackable: Bool;
+  public let isVisible: Bool;
+  public let isHackable: Bool;
 }
 
 public class ReparentFpsCounterEvent extends Event {}

@@ -343,7 +343,7 @@ public class RevisedBackpackDataView extends ScriptableDataView {
     return nameNotEmpty && predicate && nameSearchMatched && typeSearchMatched && tierMatched && ammoMatched;
   }
 
-  private final func RefreshList() -> Void {
+  public final func RefreshList() -> Void {
     let wasSortingEnabled: Bool = this.IsSortingEnabled();
     if !wasSortingEnabled {
       this.UpdateView();

@@ -2,7 +2,7 @@ import VirtualAtelier.Systems.VirtualAtelierCartManager
 import VirtualAtelier.Systems.VirtualAtelierPreviewManager
 
 public class AtelierStoreSoundEvent extends Event {
-  let name: CName;
+  public let name: CName;
 
   public static func Create(name: CName) -> ref<AtelierStoreSoundEvent> {
     let evt: ref<AtelierStoreSoundEvent> = new AtelierStoreSoundEvent();
@@ -12,7 +12,7 @@ public class AtelierStoreSoundEvent extends Event {
 }
 
 public class AtelierStoreClickEvent extends Event {
-  let storeID: CName;
+  public let storeID: CName;
 
   public static func Create(id: CName) -> ref<AtelierStoreClickEvent> {
     let evt: ref<AtelierStoreClickEvent> = new AtelierStoreClickEvent();
@@ -22,7 +22,7 @@ public class AtelierStoreClickEvent extends Event {
 }
 
 public class AtelierStoreHoverOverEvent extends Event {
-  let store: ref<VirtualShop>;
+  public let store: ref<VirtualShop>;
 
   public static func Create(store: ref<VirtualShop>) -> ref<AtelierStoreHoverOverEvent> {
     let evt: ref<AtelierStoreHoverOverEvent> = new AtelierStoreHoverOverEvent();
@@ -39,7 +39,7 @@ public class AtelierStoreHoverOutEvent extends Event {
 }
 
 public class AtelierStoresRefreshEvent extends Event {
-  let store: ref<VirtualShop>;
+  public let store: ref<VirtualShop>;
 
   public static func Create(store: ref<VirtualShop>) -> ref<AtelierStoresRefreshEvent> {
     let evt: ref<AtelierStoresRefreshEvent> = new AtelierStoresRefreshEvent();
@@ -49,7 +49,7 @@ public class AtelierStoresRefreshEvent extends Event {
 }
 
 public class VirtualAtelierControlClickEvent extends Event {
-  let name: CName;
+  public let name: CName;
 
   public static func Create(name: CName) -> ref<VirtualAtelierControlClickEvent> {
     let evt: ref<VirtualAtelierControlClickEvent> = new VirtualAtelierControlClickEvent();
@@ -73,7 +73,7 @@ public class VirtualItemStateRefreshEvent extends Event {
 }
 
 public class VirtualStorePickerActiveEvent extends Event {
-  let isActive: Bool;
+  public let isActive: Bool;
 
   public static func Create(isActive: Bool) -> ref<VirtualStorePickerActiveEvent> {
     let evt: ref<VirtualStorePickerActiveEvent> = new VirtualStorePickerActiveEvent();

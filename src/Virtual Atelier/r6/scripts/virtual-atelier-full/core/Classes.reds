@@ -28,7 +28,7 @@ public class VirtualShopRegistration extends Event {
   }
 }
 
-enum VirtualStoreCategory {
+public enum VirtualStoreCategory {
   AllItems = 0,
   Clothes = 1,
   Weapons = 2,
@@ -38,17 +38,17 @@ enum VirtualStoreCategory {
 }
 
 public class VirtualShop {
-  let storeID: CName;
-  let storeName: String;
-  let items: array<String>;
-  let qualities: array<String>;
-  let quantities: array<Int32>;
-  let prices: array<Int32>;
-  let atlasResource: ResRef;
-  let texturePart: CName;
-  let isBookmarked: Bool;
-  let isNew: Bool;
-  let categories: array<VirtualStoreCategory>;
+  public let storeID: CName;
+  public let storeName: String;
+  public let items: array<String>;
+  public let qualities: array<String>;
+  public let quantities: array<Int32>;
+  public let prices: array<Int32>;
+  public let atlasResource: ResRef;
+  public let texturePart: CName;
+  public let isBookmarked: Bool;
+  public let isNew: Bool;
+  public let categories: array<VirtualStoreCategory>;
 }
 
 class VirtualStockItem {
@@ -67,9 +67,9 @@ class VirtualCartItem {
 }
 
 public class StoreGoods {
-  let key: Uint64;
-  let item: String;
-  let stores: array<String>;
+  public let key: Uint64;
+  public let item: String;
+  public let stores: array<String>;
 
   public func StoreShopIfNotContains(store: String) {
     if !ArrayContains(this.stores, store) {
@@ -79,7 +79,7 @@ public class StoreGoods {
 }
 
 public class PreviewInventoryItemPreviewData extends InventoryItemPreviewData {
-  let displayContext: ItemDisplayContext;
+  public let displayContext: ItemDisplayContext;
 }
 
 public class AtelierStoresTemplateClassifier extends inkVirtualItemTemplateClassifier {}
@@ -89,7 +89,7 @@ public class AtelierRefreshStockEvent extends Event {}
 public class AtelierCloseVirtualStore extends Event {}
 
 public class VirtualStoreCategorySelectedEvent extends Event {
-  let category: VirtualStoreCategory;
+  public let category: VirtualStoreCategory;
 
   public final static func Create(category: VirtualStoreCategory) -> ref<VirtualStoreCategorySelectedEvent> {
     let evt: ref<VirtualStoreCategorySelectedEvent> = new VirtualStoreCategorySelectedEvent();

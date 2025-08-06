@@ -53,7 +53,7 @@ public class TrackedRouteBaseItemController extends inkVirtualCompoundItemContro
     this.GetRootCompoundWidget().SetOpacity(this.hiddenOpacity);
   }
 
-  private final func GetTransparencyInterpolator(startAlpha: Float, endAlpha: Float, duration: Float, delay: Float) -> ref<inkAnimInterpolator> {
+  protected func GetTransparencyInterpolator(startAlpha: Float, endAlpha: Float, duration: Float, delay: Float) -> ref<inkAnimInterpolator> {
     let interpolator: ref<inkAnimTransparency> = new inkAnimTransparency();
     interpolator.SetStartTransparency(startAlpha);
     interpolator.SetEndTransparency(endAlpha);

@@ -1,7 +1,7 @@
 public class MetroNode {
-  let uniqueIndex: Int32;
-  let stationId: Int32;
-  let line: ModNCartLine;
+  public let uniqueIndex: Int32;
+  public let stationId: Int32;
+  public let line: ModNCartLine;
 
   public static func Create(index: Int32, id: Int32, line: ModNCartLine) -> ref<MetroNode> {
     let instance: ref<MetroNode> = new MetroNode();
@@ -33,7 +33,7 @@ public class MetroNode {
 }
 
 public class MetroGraphNode {
-  let neighbours: array<Int32>;
+  public let neighbours: array<Int32>;
 
   public static func Create(neighbours: array<Int32>) -> ref<MetroGraphNode> {
     let instance: ref<MetroGraphNode> = new MetroGraphNode();
@@ -47,7 +47,7 @@ public class MetroGraphNode {
 }
 
 public class MetroNodesQueue {
-  let internal: array<Int32>;
+  public let internal: array<Int32>;
 
   public final func Add(item: Int32) -> Void {
     ArrayPush(this.internal, item);
@@ -73,11 +73,11 @@ public class MetroNodesQueue {
 }
 
 public abstract class RoutePoint {
-  let index: Int32;
-  let type: RoutePointType;
-  let status: RoutePointStatus;
-  let station: ENcartStations;
-  let stationId: Int32;
+  public let index: Int32;
+  public let type: RoutePointType;
+  public let status: RoutePointStatus;
+  public let station: ENcartStations;
+  public let stationId: Int32;
 
   public final func SetIndex(index: Int32) -> Void {
     this.index = index;
@@ -117,12 +117,12 @@ public abstract class RoutePoint {
 }
 
 public class StationPoint extends RoutePoint {
-  let line: ModNCartLine;
-  let startingPoint: Bool;
-  let destinationPoint: Bool;
-  let stationTitle: String;
-  let district: ENcartDistricts;
-  let districtTitle: String;
+  public let line: ModNCartLine;
+  public let startingPoint: Bool;
+  public let destinationPoint: Bool;
+  public let stationTitle: String;
+  public let district: ENcartDistricts;
+  public let districtTitle: String;
 
   public static func Create(stationId: Int32, line: ModNCartLine, start: Bool, destination: Bool) -> ref<StationPoint> {
     let station: ENcartStations = MetroDataHelper.GetStationNameById(stationId);
@@ -150,9 +150,9 @@ public class StationPoint extends RoutePoint {
 }
 
 public class LineSwitch extends RoutePoint {
-  let from: ModNCartLine;
-  let to: ModNCartLine;
-  let stationTitle: String;
+  public let from: ModNCartLine;
+  public let to: ModNCartLine;
+  public let stationTitle: String;
 
   public static func Create(stationId: Int32, from: ModNCartLine, to: ModNCartLine) -> ref<LineSwitch> {
     let station: ENcartStations = MetroDataHelper.GetStationNameById(stationId);
@@ -231,10 +231,10 @@ public class PocketMetroStationVisitedEvent extends Event {
 }
 
 public class LineDirectionData {
-  let path: CName;
-  let line: ModNCartLine;
-  let stations: array<Int32>;
-  let moveForward: Bool;
+  public let path: CName;
+  public let line: ModNCartLine;
+  public let stations: array<Int32>;
+  public let moveForward: Bool;
 
   public static func Create(path: CName, line: ModNCartLine, stations: array<Int32>, forward: Bool) -> ref<LineDirectionData> {
     let instance: ref<LineDirectionData> = new LineDirectionData();
@@ -247,9 +247,9 @@ public class LineDirectionData {
 }
 
 public class RouteSegment {
-  let activeStationId: Int32;
-  let nextStationId: Int32;
-  let line: ModNCartLine;
+  public let activeStationId: Int32;
+  public let nextStationId: Int32;
+  public let line: ModNCartLine;
 
   public static func Create(activeStationId: Int32, nextStationId: Int32, line: ModNCartLine) -> ref<RouteSegment> {
     let instance: ref<RouteSegment> = new RouteSegment();
@@ -272,20 +272,20 @@ public class ClearPocketGuideInputHintsOnExitEvent extends Event {}
 public class InjectPocketGuideToHudEvent extends Event {}
 public class RemovePocketGuideFromHudEvent extends Event {}
 
-enum RoutePointType {
+public enum RoutePointType {
   NONE = 0,
   STATION = 1,
   LINE_SWITCH = 2,
   MISSED_STATION = 3,
 }
 
-enum RoutePointStatus {
+public enum RoutePointStatus {
   NOT_VISITED = 0,
   ACTIVE = 1,
   VISITED = 2,
 }
 
-enum ModNCartLine {
+public enum ModNCartLine {
   NONE = 0,
   A_RED = 1,
   B_YELLOW = 2,
@@ -294,7 +294,7 @@ enum ModNCartLine {
   E_ORANGE = 5,
 }
 
-enum MpgControlMode {
+public enum MpgControlMode {
   NAVIGATE = 0,
   CANCEL = 1,
   CONFIRM = 2,

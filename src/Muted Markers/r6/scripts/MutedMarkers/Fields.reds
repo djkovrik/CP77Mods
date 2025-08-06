@@ -1,17 +1,17 @@
 @addField(UI_ScannerDef)
-let MutedMarkerEnabled: BlackboardID_Bool;
+public let MutedMarkerEnabled: BlackboardID_Bool;
 
 @addField(scannerGameController)
-let hideCallbackId: DelayID;
+public let hideCallbackId: DelayID;
 
 @addField(GameplayRoleComponent)
-let isScannerActive: Bool;
+public let isScannerActive: Bool;
 
 @addField(GameplayRoleComponent)
-let scannerStateBlackboard: ref<IBlackboard>;
+public let scannerStateBlackboard: ref<IBlackboard>;
 
 @addField(GameplayRoleComponent)
-let scannerStateCallback: ref<CallbackHandle>;
+public let scannerStateCallback: ref<CallbackHandle>;
 
 @addField(GameplayRoleMappinData)
-let isMMShard: Bool;
+public let isMMShard: Bool;

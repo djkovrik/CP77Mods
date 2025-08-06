@@ -1,19 +1,19 @@
 module AtelierDelivery
 
 @addField(MapMenuUserData)
-let deliveryPoint: AtelierDeliveryDropPoint;
+public let deliveryPoint: AtelierDeliveryDropPoint;
 
 @addField(WorldMapMenuGameController)
-let spawner: wref<AtelierDropPointsSpawner>;
+public let spawner: wref<AtelierDropPointsSpawner>;
 
 @addField(WorldMapTooltipBaseController)
-let isCustomMappin: Bool;
+public let isCustomMappin: Bool;
 
 @addField(WorldMapTooltipBaseController)
-let previewImageInfo: ref<DropPointImageInfo>;
+public let previewImageInfo: ref<DropPointImageInfo>;
 
 @addField(WorldMapTooltipController)
-let dropPointImageContainer: wref<inkCompoundWidget>;
+public let dropPointImageContainer: wref<inkCompoundWidget>;
 
 @addMethod(WorldMapTooltipContainer)
 public final func SetIsCustomMappin(custom: Bool, imageInfo: ref<DropPointImageInfo>) -> Void {

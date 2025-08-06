@@ -185,7 +185,7 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     return this.m_item;
   }
 
-  private final func RefreshView() -> Void {
+  public final func RefreshView() -> Void {
     let label: String = this.m_item.nameLabel;
     let quantity: Int32 = this.m_item.inventoryItem.GetQuantity();
     if quantity > 1 { label += s" (\(quantity))"; }

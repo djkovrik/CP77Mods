@@ -9,7 +9,7 @@ public class VirtualAtelierDeliveryConfig {
   @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "Mod-VAD-Delivery-Block-Atelier")
   @runtimeProperty("ModSettings.description", "Mod-VAD-Delivery-Block-Atelier-Desc")
-  let atelierWatsonLocked: Bool = false;
+  public let atelierWatsonLocked: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Virtual Atelier")
   @runtimeProperty("ModSettings.category", "Mod-VAD-Delivery-Settings")
@@ -19,7 +19,7 @@ public class VirtualAtelierDeliveryConfig {
   @runtimeProperty("ModSettings.step", "2")
   @runtimeProperty("ModSettings.min", "2")
   @runtimeProperty("ModSettings.max", "120")
-  let standardDeliveryMin: Int32 = 24;
+  public let standardDeliveryMin: Int32 = 24;
 
   @runtimeProperty("ModSettings.mod", "Virtual Atelier")
   @runtimeProperty("ModSettings.category", "Mod-VAD-Delivery-Settings")
@@ -29,7 +29,7 @@ public class VirtualAtelierDeliveryConfig {
   @runtimeProperty("ModSettings.step", "2")
   @runtimeProperty("ModSettings.min", "2")
   @runtimeProperty("ModSettings.max", "120")
-  let standardDeliveryMax: Int32 = 72;
+  public let standardDeliveryMax: Int32 = 72;
 
   @runtimeProperty("ModSettings.mod", "Virtual Atelier")
   @runtimeProperty("ModSettings.category", "Mod-VAD-Delivery-Settings")
@@ -39,7 +39,7 @@ public class VirtualAtelierDeliveryConfig {
   @runtimeProperty("ModSettings.step", "10")
   @runtimeProperty("ModSettings.min", "10")
   @runtimeProperty("ModSettings.max", "200")
-  let standardDeliveryPrice: Int32 = 20;
+  public let standardDeliveryPrice: Int32 = 20;
 
   @runtimeProperty("ModSettings.mod", "Virtual Atelier")
   @runtimeProperty("ModSettings.category", "Mod-VAD-Delivery-Settings")
@@ -49,7 +49,7 @@ public class VirtualAtelierDeliveryConfig {
   @runtimeProperty("ModSettings.step", "2")
   @runtimeProperty("ModSettings.min", "2")
   @runtimeProperty("ModSettings.max", "120")
-  let priorityDeliveryMin: Int32 = 2;
+  public let priorityDeliveryMin: Int32 = 2;
 
   @runtimeProperty("ModSettings.mod", "Virtual Atelier")
   @runtimeProperty("ModSettings.category", "Mod-VAD-Delivery-Settings")
@@ -59,7 +59,7 @@ public class VirtualAtelierDeliveryConfig {
   @runtimeProperty("ModSettings.step", "2")
   @runtimeProperty("ModSettings.min", "2")
   @runtimeProperty("ModSettings.max", "120")
-  let priorityDeliveryMax: Int32 = 24;
+  public let priorityDeliveryMax: Int32 = 24;
 
   @runtimeProperty("ModSettings.mod", "Virtual Atelier")
   @runtimeProperty("ModSettings.category", "Mod-VAD-Delivery-Settings")
@@ -69,5 +69,5 @@ public class VirtualAtelierDeliveryConfig {
   @runtimeProperty("ModSettings.step", "25")
   @runtimeProperty("ModSettings.min", "25")
   @runtimeProperty("ModSettings.max", "1000")
-  let priorityDeliveryPrice: Int32 = 50;
+  public let priorityDeliveryPrice: Int32 = 50;
 }

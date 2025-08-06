@@ -296,6 +296,14 @@ public class CustomHubButton extends CustomButton {
     this.m_leftSideFg.BindProperty(n"tintColor", colorName);
   }
 
+  public func SetHoveredState(isHovered: Bool) {
+    super.SetHoveredState(isHovered);
+  }
+
+  public func SetDisabledState(isDisabled: Bool) {
+    super.SetDisabledState(isDisabled);
+  }
+
 	public static func Create() -> ref<CustomHubButton> {
 		let self: ref<CustomHubButton> = new CustomHubButton();
 		self.CreateInstance();

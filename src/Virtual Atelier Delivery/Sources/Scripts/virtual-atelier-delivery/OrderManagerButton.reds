@@ -72,6 +72,10 @@ public class OrderManagerButton extends CustomButton {
         this.m_root.SetState(this.m_isHovered ? n"Hover" : n"Default");
     }
 
+    public func SetHoveredState(isHovered: Bool) -> Void {
+      super.SetHoveredState(isHovered);
+    }
+
     public static func Create() -> ref<OrderManagerButton> {
         let self: ref<OrderManagerButton> = new OrderManagerButton();
         self.CreateInstance();

@@ -3,7 +3,7 @@ module LimitedHudCommon
 // --- FIELDS AND TYPES
 
 // Visibility condition event types
-enum LHUDEventType {
+public enum LHUDEventType {
   GlobalHotkey = 1,
   MinimapHotkey = 2,
   Braindance = 3,
@@ -26,7 +26,7 @@ enum LHUDEventType {
   AutoDriveDelamain = 20,
 }
 
-enum LHUDFillColors {
+public enum LHUDFillColors {
   Transparent = 0,
   LightYellow = 1,
   LightBlue = 2,
@@ -37,7 +37,7 @@ enum LHUDFillColors {
   Red = 7,
 }
 
-enum LHUDOutlineColors {
+public enum LHUDOutlineColors {
   Transparent = 0,
   LightGreen = 1,
   Red = 2,
@@ -48,14 +48,14 @@ enum LHUDOutlineColors {
   White = 7,
 }
 
-enum LHUDRicochetColors {
+public enum LHUDRicochetColors {
   Transparent = 0,
   Green = 1,
   Red = 2,
   Yellow = 3,
 }
 
-enum LHUDArrowAndHpAppearance {
+public enum LHUDArrowAndHpAppearance {
   Red = 0,
   Orange = 1,
   Green = 2,
@@ -64,7 +64,7 @@ enum LHUDArrowAndHpAppearance {
   Transparent = 5,
 }
 
-enum LHUDDamagePreviewColors {
+public enum LHUDDamagePreviewColors {
   Red = 0,
   Orange = 1,
   Green = 2,

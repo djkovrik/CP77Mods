@@ -1,11 +1,11 @@
-// RevisedBackpack v0.9.9
+// RevisedBackpack v0.9.10
 module RevisedBackpack
 
 import Codeware.UI.HubTextInput
 import Codeware.UI.SimpleButton
 import Codeware.UI.inkCustomController
 
-enum revisedSorting {
+public enum revisedSorting {
   None = 0,
   Name = 1,
   Type = 2,
@@ -18,12 +18,12 @@ enum revisedSorting {
   Quest = 9,
   CustomJunk = 10,
 }
-enum revisedSortingMode {
+public enum revisedSortingMode {
   None = 0,
   Asc = 1,
   Desc = 2,
 }
-enum revisedFiltersAction { 
+public enum revisedFiltersAction { 
   None = 0,
   Select = 1,
   Junk = 2,
@@ -361,7 +361,7 @@ public class RevisedCustomEventCategorySelected extends CallbackSystemEvent {
   }
 }
 public class RevisedAmmoFilterSelectedEvent extends Event {
-  let ammoId: TweakDBID;
+  public let ammoId: TweakDBID;
   public final static func Create(ammoId: TweakDBID) -> ref<RevisedAmmoFilterSelectedEvent> {
     let evt: ref<RevisedAmmoFilterSelectedEvent> = new RevisedAmmoFilterSelectedEvent();
     evt.ammoId = ammoId;
@@ -694,13 +694,11 @@ private final func PopulatePlayerInventory() -> Void {
 public final func GetItemsWithExistingPrice(out items: array<wref<gameItemData>>) -> Void {
   let unfilteredItems: array<wref<gameItemData>> = this.GetPlayerInventoryItems();
   let data: ref<gameItemData>;
-  let itemId: ItemID;
   let limit: Int32 = ArraySize(unfilteredItems);
   let i: Int32 = 0;
   let price: Int32;
   while i < limit {
     data = unfilteredItems[i];
-    itemId = data.GetID();
     price = RPGManager.CalculateSellPrice(this.m_Player.GetGame(), this.m_Player, data.GetID());
     if price > 0 {
       ArrayPush(items, data);
@@ -2646,7 +2644,7 @@ public class RevisedBackpackDataView extends ScriptableDataView {
     };
     return nameNotEmpty && predicate && nameSearchMatched && typeSearchMatched && tierMatched && ammoMatched;
   }
-  private final func RefreshList() -> Void {
+  public final func RefreshList() -> Void {
     let wasSortingEnabled: Bool = this.IsSortingEnabled();
     if !wasSortingEnabled {
       this.UpdateView();
@@ -3625,7 +3623,7 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
   public final func GetItem() -> ref<RevisedItemWrapper> {
     return this.m_item;
   }
-  private final func RefreshView() -> Void {
+  public final func RefreshView() -> Void {
     let label: String = this.m_item.nameLabel;
     let quantity: Int32 = this.m_item.inventoryItem.GetQuantity();
     if quantity > 1 { label += s" (\(quantity))"; }
@@ -3670,19 +3668,19 @@ public class RevisedBackpackSettings {
   @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "Mod-Revised-Settings-Favorite")
   @runtimeProperty("ModSettings.description", "Mod-Revised-Settings-Favorite-Desc")
-  let favoriteOnTop: Bool = true;
+  public let favoriteOnTop: Bool = true;
   @runtimeProperty("ModSettings.mod", "Revised Backpack")
   @runtimeProperty("ModSettings.category", "Mod-Revised-Additional-Options")
   @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "Mod-Revised-Settings-New")
   @runtimeProperty("ModSettings.description", "Mod-Revised-Settings-New-Desc")
-  let newOnTop: Bool = false;
+  public let newOnTop: Bool = false;
   @runtimeProperty("ModSettings.mod", "Revised Backpack")
   @runtimeProperty("ModSettings.category", "UI-Settings-Audio-Misc-MiscSectionTitle")
   @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Mod-Revised-Replace-Button")
   @runtimeProperty("ModSettings.description", "Mod-Revised-Replace-Button-Desc")
-  let replaceInventoryButton: Bool = false;
+  public let replaceInventoryButton: Bool = false;
 }
 public class RevisedBackpackSortController extends inkLogicController {
   private let m_player: wref<PlayerPuppet>;

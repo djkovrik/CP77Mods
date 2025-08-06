@@ -1,6 +1,6 @@
 module RevisedBackpack
 
-enum revisedSorting {
+public enum revisedSorting {
   None = 0,
   Name = 1,
   Type = 2,
@@ -14,13 +14,13 @@ enum revisedSorting {
   CustomJunk = 10,
 }
 
-enum revisedSortingMode {
+public enum revisedSortingMode {
   None = 0,
   Asc = 1,
   Desc = 2,
 }
 
-enum revisedFiltersAction { 
+public enum revisedFiltersAction { 
   None = 0,
   Select = 1,
   Junk = 2,
@@ -431,7 +431,7 @@ public class RevisedCustomEventCategorySelected extends CallbackSystemEvent {
 }
 
 public class RevisedAmmoFilterSelectedEvent extends Event {
-  let ammoId: TweakDBID;
+  public let ammoId: TweakDBID;
 
   public final static func Create(ammoId: TweakDBID) -> ref<RevisedAmmoFilterSelectedEvent> {
     let evt: ref<RevisedAmmoFilterSelectedEvent> = new RevisedAmmoFilterSelectedEvent();

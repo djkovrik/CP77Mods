@@ -1,12 +1,12 @@
 module AtelierDelivery
 
-enum AtelierDeliveryType {
+public enum AtelierDeliveryType {
   None = 0,
   Standard = 1,
   Priority = 2,
 }
 
-enum AtelierDeliveryDropPoint {
+public enum AtelierDeliveryDropPoint {
   None = 0,
   MegabuildingH10 = 1,
   KabukiMarket = 2,
@@ -28,14 +28,14 @@ enum AtelierDeliveryDropPoint {
   LongshoreStacks = 18,
 }
 
-enum AtelierDeliveryStatus {
+public enum AtelierDeliveryStatus {
   Created = 0,
   Shipped = 1,
   Arrived = 2,
   Delivered = 3,
 }
 
-enum HistoryItemType {
+public enum HistoryItemType {
   Welcome = 0,
   Shipped = 1,
   Arrived = 2, 
@@ -43,45 +43,45 @@ enum HistoryItemType {
 }
 
 public class AtelierDeliveryPopupParams {
-  let store: String;
-  let orderId: Int32;
-  let price: Int32;
-  let weight: Float;
-  let quantity: Int32;
-  let items: array<ref<WrappedVirtualCartItem>>;
-  let enoughForStandard: Bool;
-  let enoughForPriority: Bool;
+  public let store: String;
+  public let orderId: Int32;
+  public let price: Int32;
+  public let weight: Float;
+  public let quantity: Int32;
+  public let items: array<ref<WrappedVirtualCartItem>>;
+  public let enoughForStandard: Bool;
+  public let enoughForPriority: Bool;
 }
 
 public class WrappedVirtualStockItem {
-  persistent let id: TweakDBID;
-  persistent let price: Float;
-  persistent let weight: Float;
-  persistent let quality: CName;
-  persistent let quantity: Int32;
+  public persistent let id: TweakDBID;
+  public persistent let price: Float;
+  public persistent let weight: Float;
+  public persistent let quality: CName;
+  public persistent let quantity: Int32;
 }
 
 public class WrappedVirtualCartItem {
-  persistent let stockItem: ref<WrappedVirtualStockItem>;
-  persistent let purchaseAmount: Int32;
+  public persistent let stockItem: ref<WrappedVirtualStockItem>;
+  public persistent let purchaseAmount: Int32;
 }
 
 public class PurchasedAtelierBundle {
-  persistent let storeName: CName;
-  persistent let orderId: Int32;
-  persistent let purchasedItems: array<ref<WrappedVirtualCartItem>>;
-  persistent let purchaseTimestamp: Float;
-  persistent let shipmentTimestamp: Float;
-  persistent let deliveryTimestamp: Float;
-  persistent let receivedTimestamp: Float;
-  persistent let nextStatusUpdateDiff: Float;
-  persistent let totalPrice: Int32;
-  persistent let totalWeight: Float;
-  persistent let deliveryType: AtelierDeliveryType;
-  persistent let deliveryPoint: AtelierDeliveryDropPoint;
-  persistent let deliveryStatus: AtelierDeliveryStatus;
-  persistent let shipmentNotified: Bool;
-  persistent let arrivalNotified: Bool;
+  public persistent let storeName: CName;
+  public persistent let orderId: Int32;
+  public persistent let purchasedItems: array<ref<WrappedVirtualCartItem>>;
+  public persistent let purchaseTimestamp: Float;
+  public persistent let shipmentTimestamp: Float;
+  public persistent let deliveryTimestamp: Float;
+  public persistent let receivedTimestamp: Float;
+  public persistent let nextStatusUpdateDiff: Float;
+  public persistent let totalPrice: Int32;
+  public persistent let totalWeight: Float;
+  public persistent let deliveryType: AtelierDeliveryType;
+  public persistent let deliveryPoint: AtelierDeliveryDropPoint;
+  public persistent let deliveryStatus: AtelierDeliveryStatus;
+  public persistent let shipmentNotified: Bool;
+  public persistent let arrivalNotified: Bool;
 
   public final static func Create(params: ref<AtelierDeliveryPopupParams>, totalPrice: Int32, deliveryType: AtelierDeliveryType, dropPoint: AtelierDeliveryDropPoint) -> ref<PurchasedAtelierBundle> {
     let instance: ref<PurchasedAtelierBundle> = new PurchasedAtelierBundle();
@@ -214,16 +214,16 @@ public class PurchasedAtelierBundle {
 }
 
 public class AtelierDropPointInstance {
-  let locKey: String;
-  let parentDistrict: TweakDBID;
-  let actualDistrict: TweakDBID;
-  let type: AtelierDeliveryDropPoint;
-  let position: Vector4; 
-  let orientation: Quaternion;
-  let iterationTag: CName;
-  let uniqueTag: CName;
-  let indexTag: CName;
-  let inkAtlas: ResRef;
+  public let locKey: String;
+  public let parentDistrict: TweakDBID;
+  public let actualDistrict: TweakDBID;
+  public let type: AtelierDeliveryDropPoint;
+  public let position: Vector4; 
+  public let orientation: Quaternion;
+  public let iterationTag: CName;
+  public let uniqueTag: CName;
+  public let indexTag: CName;
+  public let inkAtlas: ResRef;
 
   public final static func Create(
       locKey: String, 
@@ -256,7 +256,7 @@ public class AtelierDropPointInstance {
 }
 
 public class AtelierDropPointsList {
-  let points: array<ref<AtelierDropPointInstance>>;
+  public let points: array<ref<AtelierDropPointInstance>>;
 
   public final static func Create(points: array<ref<AtelierDropPointInstance>>) -> ref<AtelierDropPointsList> {
     let instance: ref<AtelierDropPointsList> = new AtelierDropPointsList();
@@ -266,8 +266,8 @@ public class AtelierDropPointsList {
 }
 
 public class MappinIdWrapper {
-  let id: NewMappinID;
-  let tag: CName;
+  public let id: NewMappinID;
+  public let tag: CName;
 
   public final static func Create(id: NewMappinID, tag: CName) -> ref<MappinIdWrapper> {
     let instance: ref<MappinIdWrapper> = new MappinIdWrapper();
@@ -280,7 +280,7 @@ public class MappinIdWrapper {
 public class inkBorderCustom extends inkBorder {}
 
 public class AtelierDestinationSelectedEvent extends Event {
-  let data: ref<AtelierDropPointInstance>;
+  public let data: ref<AtelierDropPointInstance>;
 
   public final static func Create(data: ref<AtelierDropPointInstance>) -> ref<AtelierDestinationSelectedEvent> {
     let instance: ref<AtelierDestinationSelectedEvent> = new AtelierDestinationSelectedEvent();
@@ -290,8 +290,8 @@ public class AtelierDestinationSelectedEvent extends Event {
 }
 
 public class AtelierDeliveryOrderCreatedEvent extends Event {
-  let id: Int32;
-  let price: Int32;
+  public let id: Int32;
+  public let price: Int32;
 
   public final static func Create(id: Int32, price: Int32) -> ref<AtelierDeliveryOrderCreatedEvent> {
     let instance: ref<AtelierDeliveryOrderCreatedEvent> = new AtelierDeliveryOrderCreatedEvent();
@@ -302,7 +302,7 @@ public class AtelierDeliveryOrderCreatedEvent extends Event {
 }
 
 public class OrderSoundEvent extends Event {
-  let name: CName;
+  public let name: CName;
 
   public final static func Create(name: CName) -> ref<OrderSoundEvent> {
     let evt: ref<OrderSoundEvent> = new OrderSoundEvent();
@@ -312,7 +312,7 @@ public class OrderSoundEvent extends Event {
 }
 
 public class OrderTrackRequestedEvent extends Event {
-  let order: ref<PurchasedAtelierBundle>;
+  public let order: ref<PurchasedAtelierBundle>;
 
   public final static func Create(order: ref<PurchasedAtelierBundle>) -> ref<OrderTrackRequestedEvent> {
     let evt: ref<OrderTrackRequestedEvent> = new OrderTrackRequestedEvent();
@@ -322,8 +322,8 @@ public class OrderTrackRequestedEvent extends Event {
 }
 
 public class DropPointImageInfo {
-  let atlas: ResRef;
-  let texturePart: CName;
+  public let atlas: ResRef;
+  public let texturePart: CName;
 
   public final static func Create(atlas: ResRef, texturePart: CName) -> ref<DropPointImageInfo> {
     let evt: ref<DropPointImageInfo> = new DropPointImageInfo();
@@ -334,13 +334,13 @@ public class DropPointImageInfo {
 }
 
 public class DeliveryHistoryItem {
-  persistent let uniqueIndex: Int32;
-  persistent let type: HistoryItemType;
-  persistent let orderId: Int32;
-  persistent let store: CName;
-  persistent let dropPoint: AtelierDeliveryDropPoint;
-  persistent let timestamp: Float;
-  persistent let district: TweakDBID;
+  public persistent let uniqueIndex: Int32;
+  public persistent let type: HistoryItemType;
+  public persistent let orderId: Int32;
+  public persistent let store: CName;
+  public persistent let dropPoint: AtelierDeliveryDropPoint;
+  public persistent let timestamp: Float;
+  public persistent let district: TweakDBID;
   
   public final static func Welcome() -> ref<DeliveryHistoryItem> {
     let instance: ref<DeliveryHistoryItem> = DeliveryHistoryItem.Create(HistoryItemType.Welcome, 0, n"", AtelierDeliveryDropPoint.None, 1.1, t"");

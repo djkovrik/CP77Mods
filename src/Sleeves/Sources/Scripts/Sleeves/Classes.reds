@@ -2,8 +2,8 @@
 import ArchiveXL.DynamicAppearance.*
 
 public class SleevesInfoBundle {
-  let mode: SleevesMode;
-  let items: array<ref<SleevedSlotInfo>>;
+  public let mode: SleevesMode;
+  public let items: array<ref<SleevedSlotInfo>>;
 
   public final static func Create(mode: SleevesMode, items: array<ref<SleevedSlotInfo>>) -> ref<SleevesInfoBundle> {
     let instance: ref<SleevesInfoBundle> = new SleevesInfoBundle();
@@ -39,17 +39,17 @@ public class SleevesInfoBundle {
 }
 
 public class SleevedSlotInfo {
-  private let slotID: TweakDBID;
-  private let slotName: String;
-  private let itemID: ItemID;
-  private let itemTDBID: TweakDBID;
-  private let itemName: String;
-  private let itemAppearance: CName;
-  private let visualItemID: ItemID;
-  private let visualItemTDBID: TweakDBID;
-  private let visualItemName: String;
-  private let toggled: Bool;
-  private let mode: SleevesMode;
+  public let slotID: TweakDBID;
+  public let slotName: String;
+  public let itemID: ItemID;
+  public let itemTDBID: TweakDBID;
+  public let itemName: String;
+  public let itemAppearance: CName;
+  public let visualItemID: ItemID;
+  public let visualItemTDBID: TweakDBID;
+  public let visualItemName: String;
+  public let toggled: Bool;
+  public let mode: SleevesMode;
 
   public static func Create(
       slotID: TweakDBID, 
@@ -158,7 +158,7 @@ public class SleevedSlotInfo {
     return StrContains(app, "&Full") || StrContains(app, "!") && StrContains(app, "full");
   }
 
-  private func Excluded() -> Bool {
+  public func Excluded() -> Bool {
     let excluded: array<TweakDBID> = [
       t"Items.MQ049_martinez_jacket"
     ];
@@ -168,8 +168,8 @@ public class SleevedSlotInfo {
 }
 
 public class RefreshSleevesButtonEvent extends Event {
-  let enabled: Bool;
-  let active: Bool;
+  public let enabled: Bool;
+  public let active: Bool;
 
   public static func Send(player: ref<GameObject>) -> Void {
     let uiSystem: ref<UISystem> = GameInstance.GetUISystem(player.GetGame());
@@ -186,7 +186,7 @@ public class RefreshSleevesButtonEvent extends Event {
 }
 
 public class ShowSleevesButtonEvent extends Event {
-  let show: Bool;
+  public let show: Bool;
 
   public static func Send(player: ref<GameObject>, show: Bool) -> Void {
     let uiSystem: ref<UISystem> = GameInstance.GetUISystem(player.GetGame());
@@ -198,7 +198,7 @@ public class ShowSleevesButtonEvent extends Event {
 
 public class ShowSleevesPopupEvent extends Event {}
 
-enum SleevesMode {
+public enum SleevesMode {
   Vanilla = 0,
   Wardrobe = 1,
   EquipmentEx = 2,

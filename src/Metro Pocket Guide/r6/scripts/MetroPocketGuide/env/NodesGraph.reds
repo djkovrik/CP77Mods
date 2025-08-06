@@ -389,7 +389,7 @@ public class MetroNodesGraph extends ScriptableEnv {
     ArrayPush(route, lineSwitch2);
     ArrayPush(route, station6);
     ArrayPush(route, station7);
-    env.route = route;
-    MetroLog(s"Test route created: \(ArraySize(env.route))");
+    env.SetRoute(route);
+    MetroLog(s"Test route created: \(ArraySize(route))");
   }
 }

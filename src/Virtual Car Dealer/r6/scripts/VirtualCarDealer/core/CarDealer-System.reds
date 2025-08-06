@@ -10,15 +10,15 @@ import VehiclePersistence.System.PersistentVehicleSystem
 
 public class PurchasableVehicleSystem extends ScriptableSystem {
 
-  private let m_storeVehicles: array<ref<PurchasableVehicleBundle>>;
+  public let m_storeVehicles: array<ref<PurchasableVehicleBundle>>;
 
-  private let m_vehicleSystem: ref<VehicleSystem>;
+  public let m_vehicleSystem: ref<VehicleSystem>;
 
-  private let m_transactionSystem: ref<TransactionSystem>;
+  public let m_transactionSystem: ref<TransactionSystem>;
 
-  private let m_sellPriceModifier: Float = 0.25;
+  public let m_sellPriceModifier: Float = 0.25;
 
-  private let m_fallbackPrice: Int32 = 40000;
+  public let m_fallbackPrice: Int32 = 40000;
 
   private persistent let m_soldVehicles: array<TweakDBID>;
 
@@ -45,7 +45,7 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
     };
   }
 
-  private func DeactivateSoldVehicles() -> Void {
+  public func DeactivateSoldVehicles() -> Void {
     for id in this.m_soldVehicles {
       RemoveVehicle(this.GetGameInstance(), this.m_vehicleSystem, id);
     };

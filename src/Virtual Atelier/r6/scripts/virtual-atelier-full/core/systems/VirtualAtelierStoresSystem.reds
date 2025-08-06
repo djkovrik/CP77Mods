@@ -106,7 +106,7 @@ public class VirtualAtelierStoresManager extends ScriptableSystem {
     this.prevStores = this.GetStoresIds();
   }
 
-  private func RefreshBookmarks() -> Void {
+  public func RefreshBookmarks() -> Void {
     let newStores: array<ref<VirtualShop>>;
     let newStore: ref<VirtualShop>;
     for store in this.stores {
@@ -119,7 +119,7 @@ public class VirtualAtelierStoresManager extends ScriptableSystem {
   }
 
   // For case when bookmarked stores uninstalled
-  private func RefreshPersistedBookmarks() -> Void {
+  public func RefreshPersistedBookmarks() -> Void {
     let storeIds: array<CName>;
     for store in this.stores {
       ArrayPush(storeIds, store.storeID);

@@ -1,6 +1,6 @@
 module HudPainter
 
-enum HudPainterConfigColor {
+public enum HudPainterConfigColor {
   Red = 0,
   ActiveRed = 1,
   MildRed = 2,
@@ -32,7 +32,7 @@ class HudPainterWorldMapSettings {
   @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "Mod-HudPainter-Settings-Enable-Colors")
   @runtimeProperty("ModSettings.description", "Mod-HudPainter-Settings-Enable-Colors-Desc")
-  let enableCustomWorldmap: Bool = false;
+  public let enableCustomWorldmap: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Mod-HudPainter-Name")
   @runtimeProperty("ModSettings.category", "Mod-HudPainter-Settings-WorldMap")
@@ -43,7 +43,7 @@ class HudPainterWorldMapSettings {
   @runtimeProperty("ModSettings.min", "0.1")
   @runtimeProperty("ModSettings.max", "1.5")
   @runtimeProperty("ModSettings.dependency", "enableCustomWorldmap")
-  let worldMapContrast: Float = 1.1;
+  public let worldMapContrast: Float = 1.1;
 
   @runtimeProperty("ModSettings.mod", "Mod-HudPainter-Name")
   @runtimeProperty("ModSettings.category", "Mod-HudPainter-Settings-WorldMap")
@@ -54,7 +54,7 @@ class HudPainterWorldMapSettings {
   @runtimeProperty("ModSettings.min", "0.1")
   @runtimeProperty("ModSettings.max", "1.5")
   @runtimeProperty("ModSettings.dependency", "enableCustomWorldmap")
-  let worldMapSaturation: Float = 1.1;
+  public let worldMapSaturation: Float = 1.1;
 
   @runtimeProperty("ModSettings.mod", "Mod-HudPainter-Name")
   @runtimeProperty("ModSettings.category", "Mod-HudPainter-Settings-WorldMap")
@@ -62,7 +62,7 @@ class HudPainterWorldMapSettings {
   @runtimeProperty("ModSettings.displayName", "Mod-HudPainter-Settings-Buildings")
   @runtimeProperty("ModSettings.description", "Mod-HudPainter-Settings-Buildings-Desc")
   @runtimeProperty("ModSettings.dependency", "enableCustomWorldmap")
-  let worldMapBuildings: HudPainterConfigColor = HudPainterConfigColor.Red;
+  public let worldMapBuildings: HudPainterConfigColor = HudPainterConfigColor.Red;
 
   @runtimeProperty("ModSettings.mod", "Mod-HudPainter-Name")
   @runtimeProperty("ModSettings.category", "Mod-HudPainter-Settings-WorldMap")
@@ -70,7 +70,7 @@ class HudPainterWorldMapSettings {
   @runtimeProperty("ModSettings.displayName", "Mod-HudPainter-Settings-Buildings-Edge")
   @runtimeProperty("ModSettings.description", "Mod-HudPainter-Settings-Buildings-Edge-Desc")
   @runtimeProperty("ModSettings.dependency", "enableCustomWorldmap")
-  let worldMapBuildingsEdge: HudPainterConfigColor = HudPainterConfigColor.MildRed;
+  public let worldMapBuildingsEdge: HudPainterConfigColor = HudPainterConfigColor.MildRed;
 
   @runtimeProperty("ModSettings.mod", "Mod-HudPainter-Name")
   @runtimeProperty("ModSettings.category", "Mod-HudPainter-Settings-WorldMap")
@@ -78,7 +78,7 @@ class HudPainterWorldMapSettings {
   @runtimeProperty("ModSettings.displayName", "Mod-HudPainter-Settings-Roads")
   @runtimeProperty("ModSettings.description", "Mod-HudPainter-Settings-Roads-Desc")
   @runtimeProperty("ModSettings.dependency", "enableCustomWorldmap")
-  let worldMapRoads: HudPainterConfigColor = HudPainterConfigColor.MildBlue;
+  public let worldMapRoads: HudPainterConfigColor = HudPainterConfigColor.MildBlue;
 
   @runtimeProperty("ModSettings.mod", "Mod-HudPainter-Name")
   @runtimeProperty("ModSettings.category", "Mod-HudPainter-Settings-WorldMap")
@@ -86,7 +86,7 @@ class HudPainterWorldMapSettings {
   @runtimeProperty("ModSettings.displayName", "Mod-HudPainter-Settings-Road-Borders")
   @runtimeProperty("ModSettings.description", "Mod-HudPainter-Settings-Road-Borders-Desc")
   @runtimeProperty("ModSettings.dependency", "enableCustomWorldmap")
-  let worldMapRoadBorders: HudPainterConfigColor = HudPainterConfigColor.ActiveBlue;
+  public let worldMapRoadBorders: HudPainterConfigColor = HudPainterConfigColor.ActiveBlue;
 
   @runtimeProperty("ModSettings.mod", "Mod-HudPainter-Name")
   @runtimeProperty("ModSettings.category", "Mod-HudPainter-Settings-WorldMap")
@@ -94,7 +94,7 @@ class HudPainterWorldMapSettings {
   @runtimeProperty("ModSettings.displayName", "Mod-HudPainter-Settings-Metro")
   @runtimeProperty("ModSettings.description", "Mod-HudPainter-Settings-Metro-Desc")
   @runtimeProperty("ModSettings.dependency", "enableCustomWorldmap")
-  let worldMapMetroLine: HudPainterConfigColor = HudPainterConfigColor.Blue;
+  public let worldMapMetroLine: HudPainterConfigColor = HudPainterConfigColor.Blue;
 }
 
 class HudPainterWorldMapPatch extends ScriptableService {

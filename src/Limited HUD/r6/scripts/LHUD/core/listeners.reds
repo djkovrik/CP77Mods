@@ -4,7 +4,7 @@ import LimitedHudCommon.*
 
 // Input actions listener class
 public class LHUDInputListener {
-  private let playerInstance: wref<PlayerPuppet>;  // Player instance weak reference
+  public let playerInstance: wref<PlayerPuppet>;  // Player instance weak reference
 
   // Store player instance
   public func SetPlayerInstance(player: ref<PlayerPuppet>) -> Void {
@@ -35,35 +35,35 @@ public let HasWeaponEquipped: BlackboardID_Bool;
 
 // Blackboards listener class
 public class LHUDBlackboardsListener {
-  private let playerInstance: wref<PlayerPuppet>;
-  private let bbDefs: ref<AllBlackboardDefinitions>;
-  private let braindanceBlackboard: ref<IBlackboard>;
-  private let scannerBlackboard: ref<IBlackboard>;
-  private let stateMachineBlackboard: ref<IBlackboard>;
-  private let vehicleBlackboard: ref<IBlackboard>;
-  private let uiSystemBlackboard: ref<IBlackboard>;
-  private let weaponBlackboard: ref<IBlackboard>;
-  private let wantedBlackboard: ref<IBlackboard>;
-  private let autoDriveBlackboard: ref<IBlackboard>; 
+  public let playerInstance: wref<PlayerPuppet>;
+  public let bbDefs: ref<AllBlackboardDefinitions>;
+  public let braindanceBlackboard: ref<IBlackboard>;
+  public let scannerBlackboard: ref<IBlackboard>;
+  public let stateMachineBlackboard: ref<IBlackboard>;
+  public let vehicleBlackboard: ref<IBlackboard>;
+  public let uiSystemBlackboard: ref<IBlackboard>;
+  public let weaponBlackboard: ref<IBlackboard>;
+  public let wantedBlackboard: ref<IBlackboard>;
+  public let autoDriveBlackboard: ref<IBlackboard>; 
 
-  private let globalHotkeyCallback: ref<CallbackHandle>;
-  private let minimapHotkeyCallback: ref<CallbackHandle>;
-  private let braindanceCallback: ref<CallbackHandle>;
-  private let scannerCallback: ref<CallbackHandle>;
-  private let psmCallback: ref<CallbackHandle>;
-  private let vehicleCallback: ref<CallbackHandle>;
-  private let vehicleStateCallback: ref<CallbackHandle>;
-  private let weaponCallback: ref<CallbackHandle>;
-  private let zoomCallback: ref<CallbackHandle>;
-  private let stealthCallback: ref<CallbackHandle>;
-  private let metroCallback: ref<CallbackHandle>;
-  private let wantedCallback: ref<CallbackHandle>;
-  private let zoneCallback: ref<CallbackHandle>;
-  private let autoDriveCallback: ref<CallbackHandle>;
-  private let autoDriveDelamainCallback: ref<CallbackHandle>;
+  public let globalHotkeyCallback: ref<CallbackHandle>;
+  public let minimapHotkeyCallback: ref<CallbackHandle>;
+  public let braindanceCallback: ref<CallbackHandle>;
+  public let scannerCallback: ref<CallbackHandle>;
+  public let psmCallback: ref<CallbackHandle>;
+  public let vehicleCallback: ref<CallbackHandle>;
+  public let vehicleStateCallback: ref<CallbackHandle>;
+  public let weaponCallback: ref<CallbackHandle>;
+  public let zoomCallback: ref<CallbackHandle>;
+  public let stealthCallback: ref<CallbackHandle>;
+  public let metroCallback: ref<CallbackHandle>;
+  public let wantedCallback: ref<CallbackHandle>;
+  public let zoneCallback: ref<CallbackHandle>;
+  public let autoDriveCallback: ref<CallbackHandle>;
+  public let autoDriveDelamainCallback: ref<CallbackHandle>;
 
-  private let delaySystem: ref<DelaySystem>;
-  private let delayId: DelayID;
+  public let delaySystem: ref<DelaySystem>;
+  public let delayId: DelayID;
 
   // Initialise blackboards
   public func InitializeData(player: ref<PlayerPuppet>) -> Void {
@@ -241,6 +241,21 @@ public class LHUDBlackboardsListener {
   protected cb func OnDelamainAutoDriveEnabled(value: Bool) -> Bool {
     this.playerInstance.QueueLHUDEvent(LHUDEventType.AutoDriveDelamain, value);
   }
+
+  public final func PostLaunchCall() -> Void {
+    LHUDLogStartup("-- PostLaunchCall");
+    let globalToggled: Bool = this.uiSystemBlackboard.GetBool(this.bbDefs.UI_System.IsGlobalFlagToggled_LHUD);
+    let minimapToggled: Bool = this.uiSystemBlackboard.GetBool(this.bbDefs.UI_System.IsMinimapToggled_LHUD);
+    this.OnCombatStateChanged(this.stateMachineBlackboard.GetInt(this.bbDefs.PlayerStateMachine.Combat));
+    this.OnMountedStateChanged(VehicleComponent.IsMountedToVehicle(this.playerInstance.GetGame(), this.playerInstance));
+    this.OnPlayerVehicleStateChange(this.stateMachineBlackboard.GetInt(this.bbDefs.PlayerStateMachine.Vehicle));
+    this.OnWeaponStateChanged(this.playerInstance.HasAnyWeaponEquipped_LHUD());
+    this.OnCrouchChanged(this.stateMachineBlackboard.GetInt(this.bbDefs.PlayerStateMachine.Locomotion));
+    this.OnMetroStateChanged(this.uiSystemBlackboard.GetBool(this.bbDefs.UI_System.IsInMetro_LHUD));
+    this.OnPlayerZoneChanged(this.stateMachineBlackboard.GetVariant(this.bbDefs.PlayerStateMachine.SecurityZoneData));
+    this.OnGlobalToggle(globalToggled);
+    this.OnMinimapToggle(minimapToggled);
+  }
 }
 
 public class LHUDLaunchCallback extends DelayCallback {
@@ -249,22 +264,12 @@ public class LHUDLaunchCallback extends DelayCallback {
   public func Call() -> Void {
     LHUDLogStartup("-- InitialStateEvent - execute callback");
     let listener: ref<LHUDBlackboardsListener> = this.bbListener;
-    let globalToggled: Bool = listener.uiSystemBlackboard.GetBool(listener.bbDefs.UI_System.IsGlobalFlagToggled_LHUD);
-    let minimapToggled: Bool = listener.uiSystemBlackboard.GetBool(listener.bbDefs.UI_System.IsMinimapToggled_LHUD);
-    listener.OnCombatStateChanged(listener.stateMachineBlackboard.GetInt(listener.bbDefs.PlayerStateMachine.Combat));
-    listener.OnMountedStateChanged(VehicleComponent.IsMountedToVehicle(listener.playerInstance.GetGame(), listener.playerInstance));
-    listener.OnPlayerVehicleStateChange(listener.stateMachineBlackboard.GetInt(listener.bbDefs.PlayerStateMachine.Vehicle));
-    listener.OnWeaponStateChanged(listener.playerInstance.HasAnyWeaponEquipped_LHUD());
-    listener.OnCrouchChanged(listener.stateMachineBlackboard.GetInt(listener.bbDefs.PlayerStateMachine.Locomotion));
-    listener.OnMetroStateChanged(listener.uiSystemBlackboard.GetBool(listener.bbDefs.UI_System.IsInMetro_LHUD));
-    listener.OnPlayerZoneChanged(listener.stateMachineBlackboard.GetVariant(listener.bbDefs.PlayerStateMachine.SecurityZoneData));
-    listener.OnGlobalToggle(globalToggled);
-    listener.OnMinimapToggle(minimapToggled);
+    listener.PostLaunchCall();
   }
 }
 
 public class DelayedVehicleExitCallback extends DelayCallback {
-    private let gameInstance: GameInstance;
+    public let gameInstance: GameInstance;
 
     public func Call() -> Void {
       let player: ref<PlayerPuppet> = GetPlayer(this.gameInstance);
@@ -331,7 +336,7 @@ protected cb func OnInitializeFinished() -> Void {
 }
 
 @addField(PlayerPuppet)
-private let lhud_initEvent: DelayID;
+public let lhud_initEvent: DelayID;
 
 @addMethod(PlayerPuppet)
 public final func InitializeLHUD(delay: Float) -> Void {

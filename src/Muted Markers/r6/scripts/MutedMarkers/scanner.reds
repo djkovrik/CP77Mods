@@ -21,7 +21,7 @@ private final func ShowScanner(show: Bool) -> Void {
 }
 
 public class EvaluateMutedMarkersCallback extends DelayCallback {
-  let blackboard: wref<IBlackboard>;
+  public let blackboard: wref<IBlackboard>;
 
   public func Call() -> Void {
     this.blackboard.SetBool(GetAllBlackboardDefs().UI_Scanner.MutedMarkerEnabled, false, true);

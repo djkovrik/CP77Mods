@@ -141,5 +141,5 @@ public class CustomMappinDataDTO {
 }
 
 public class CustomMappinsDTO {
-  let mappins: array<ref<CustomMappinDataDTO>>;
+  public let mappins: array<ref<CustomMappinDataDTO>>;
 }

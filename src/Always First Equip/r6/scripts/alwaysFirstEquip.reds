@@ -51,7 +51,7 @@ public class FirstEquipConfig {
   @runtimeProperty("ModSettings.step", "5")
   @runtimeProperty("ModSettings.min", "0")
   @runtimeProperty("ModSettings.max", "100")
-  let percentageProbability: Int32 = 50;
+  public let percentageProbability: Int32 = 50;
 
   // Use cooldown instead of probability
   @runtimeProperty("ModSettings.mod", "First Equip")
@@ -59,7 +59,7 @@ public class FirstEquipConfig {
   @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Cooldowns")
   @runtimeProperty("ModSettings.description", "Mod-First-Equip-Cooldowns-Desc")
-  let useCooldownBasedCheck: Bool = false;
+  public let useCooldownBasedCheck: Bool = false;
 
   // Cooldown time
   @runtimeProperty("ModSettings.mod", "First Equip")
@@ -70,7 +70,7 @@ public class FirstEquipConfig {
   @runtimeProperty("ModSettings.step", "1")
   @runtimeProperty("ModSettings.min", "0")
   @runtimeProperty("ModSettings.max", "120")
-  let cooldownTime: Int32 = 20;
+  public let cooldownTime: Int32 = 20;
 
   // Cooldown time units: 1 = seconds, 2 = minutes
   @runtimeProperty("ModSettings.mod", "First Equip")
@@ -80,7 +80,7 @@ public class FirstEquipConfig {
   @runtimeProperty("ModSettings.description", "Mod-First-Equip-Cooldowns-Time-Unit-Desc")
   @runtimeProperty("ModSettings.displayValues.Seconds", "Mod-First-Equip-Seconds")
   @runtimeProperty("ModSettings.displayValues.Minutes", "Mod-First-Equip-Minutes")
-  let cooldownTimeUnit: FirstEquipTimeUnit = FirstEquipTimeUnit.Seconds;
+  public let cooldownTimeUnit: FirstEquipTimeUnit = FirstEquipTimeUnit.Seconds;
 
   // Replace false with true if you want see firstEquip animation while in combat mode
   @runtimeProperty("ModSettings.mod", "First Equip")
@@ -88,7 +88,7 @@ public class FirstEquipConfig {
   @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Restrictions-Combat")
   @runtimeProperty("ModSettings.description", "Mod-First-Equip-Restrictions-Combat-Desc")
-  let playInCombatMode: Bool = false;
+  public let playInCombatMode: Bool = false;
 
   // Replace false with true if you want see firstEquip animation while in stealth mode
   @runtimeProperty("ModSettings.mod", "First Equip")
@@ -96,7 +96,7 @@ public class FirstEquipConfig {
   @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Restrictions-Stealth")
   @runtimeProperty("ModSettings.description", "Mod-First-Equip-Restrictions-Stealth-Desc")
-  let playInStealthMode: Bool = false;
+  public let playInStealthMode: Bool = false;
 
   // Replace false with true if you want see firstEquip animation when weapon magazine is empty
   @runtimeProperty("ModSettings.mod", "First Equip")
@@ -104,7 +104,7 @@ public class FirstEquipConfig {
   @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Restrictions-Magazine")
   @runtimeProperty("ModSettings.description", "Mod-First-Equip-Restrictions-Magazine-Desc")
-  let playWhenMagazineIsEmpty: Bool = false;
+  public let playWhenMagazineIsEmpty: Bool = false;
 
   // Replace false with true if you want see firstEquip animation while sprinting
   @runtimeProperty("ModSettings.mod", "First Equip")
@@ -112,7 +112,7 @@ public class FirstEquipConfig {
   @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Restrictions-Sprinting")
   @runtimeProperty("ModSettings.description", "Mod-First-Equip-Restrictions-Sprinting-Desc")
-  let playWhileSprinting: Bool = false;
+  public let playWhileSprinting: Bool = false;
 
   // Replace false with true if you want to prevent probability based animations for arms cyberware
   @runtimeProperty("ModSettings.mod", "First Equip")
@@ -120,7 +120,7 @@ public class FirstEquipConfig {
   @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Restrictions-ArmsCW")
   @runtimeProperty("ModSettings.description", "Mod-First-Equip-Restrictions-ArmsCW-Desc")
-  let excludeArmsCyberware: Bool = true;
+  public let excludeArmsCyberware: Bool = true;
 
   // -- Hotkey config
 
@@ -132,7 +132,7 @@ public class FirstEquipConfig {
   @runtimeProperty("ModSettings.category.order", "3")
   @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Hotkey-Track")
   @runtimeProperty("ModSettings.description", "Mod-First-Equip-Hotkey-Track-Desc")
-  let trackLastUsedSlot: Bool = true;
+  public let trackLastUsedSlot: Bool = true;
 
   // Default slot number
   @runtimeProperty("ModSettings.mod", "First Equip")
@@ -143,7 +143,7 @@ public class FirstEquipConfig {
   @runtimeProperty("ModSettings.step", "1")
   @runtimeProperty("ModSettings.min", "1")
   @runtimeProperty("ModSettings.max", "4")
-  let defaultSlotNumber: Int32 = 1;
+  public let defaultSlotNumber: Int32 = 1;
 
   // -- Common config
   // Replace true with false if you want to unbind IdleBreak animation trigger from a custom hotkey
@@ -152,7 +152,7 @@ public class FirstEquipConfig {
   @runtimeProperty("ModSettings.category.order", "4")
   @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-IdleBreak-Bind")
   @runtimeProperty("ModSettings.description", "Mod-First-Equip-IdleBreak-Bind-Desc")
-  let bindToHotkeyIdleBreak: Bool = true;
+  public let bindToHotkeyIdleBreak: Bool = true;
 
   // Set IdleBreak animation probability in percents, you can use values from 0 to 100 here
   @runtimeProperty("ModSettings.mod", "First Equip")
@@ -163,7 +163,7 @@ public class FirstEquipConfig {
   @runtimeProperty("ModSettings.step", "5")
   @runtimeProperty("ModSettings.min", "0")
   @runtimeProperty("ModSettings.max", "100")
-  let animationProbabilityIdleBreak: Int32 = 10;
+  public let animationProbabilityIdleBreak: Int32 = 10;
   
   // Animation checks period in seconds, each check decides if animation should be played when V stands still based on 
   // probability value from AnimationProbability option (with default settings it runs each 5 seconds with 10% probability)
@@ -175,7 +175,7 @@ public class FirstEquipConfig {
   @runtimeProperty("ModSettings.step", "5.0")
   @runtimeProperty("ModSettings.min", "0.0")
   @runtimeProperty("ModSettings.max", "100.0")
-  let animationCheckPeriodIdleBreak: Float = 5.0;
+  public let animationCheckPeriodIdleBreak: Float = 5.0;
 }
 
 
@@ -231,27 +231,27 @@ public class FirstEquipGlobalInputListener {
 
 // --- NEW FIELDS
 
-@addField(PlayerPuppet) let firstEquipConfig: ref<FirstEquipConfig>;
-@addField(PlayerPuppet) let skipFirstEquip: Bool;
-@addField(PlayerPuppet) let safeStateForced: Bool;
-@addField(PlayerPuppet) let firstEquipCooldowns: ref<inkIntHashMap>;
-@addField(PlayerPuppet) let firstEquipInputListener: ref<FirstEquipGlobalInputListener>;
+@addField(PlayerPuppet) public let firstEquipConfig: ref<FirstEquipConfig>;
+@addField(PlayerPuppet) public let skipFirstEquip: Bool;
+@addField(PlayerPuppet) public let safeStateForced: Bool;
+@addField(PlayerPuppet) public let firstEquipCooldowns: ref<inkIntHashMap>;
+@addField(PlayerPuppet) public let firstEquipInputListener: ref<FirstEquipGlobalInputListener>;
 
-@addField(ReadyEvents) let firstEqHotkeyState: FirstEquipHotkeyState;
-@addField(ReadyEvents) let safeStanceHotkeyState: SafeStanceHotkeyState;
-@addField(ReadyEvents) let savedIdleTimestamp: Float;
-@addField(ReadyEvents) let safeAnimFeature: ref<AnimFeature_SafeAction>;
-@addField(ReadyEvents) let weaponObjectId: TweakDBID;
-@addField(ReadyEvents) let isHoldActive: Bool;
-@addField(ReadyEvents) let readyStateRequested: Bool;
-@addField(ReadyEvents) let safeStateRequested: Bool;
+@addField(ReadyEvents) public let firstEqHotkeyState: FirstEquipHotkeyState;
+@addField(ReadyEvents) public let safeStanceHotkeyState: SafeStanceHotkeyState;
+@addField(ReadyEvents) public let savedIdleTimestamp: Float;
+@addField(ReadyEvents) public let safeAnimFeature: ref<AnimFeature_SafeAction>;
+@addField(ReadyEvents) public let weaponObjectId: TweakDBID;
+@addField(ReadyEvents) public let isHoldActive: Bool;
+@addField(ReadyEvents) public let readyStateRequested: Bool;
+@addField(ReadyEvents) public let safeStateRequested: Bool;
 
-@addField(UI_SystemDef) let FirstEquipRequested: BlackboardID_Bool;
-@addField(UI_SystemDef) let FirstEqHotkeyPressed: BlackboardID_Bool;
-@addField(UI_SystemDef) let FirstEqHotkeyReleased: BlackboardID_Bool;
-@addField(UI_SystemDef) let FirstEqHotkeyHold: BlackboardID_Bool;
-@addField(UI_SystemDef) let FirstEqLastUsedSlot: BlackboardID_Int;
-@addField(UI_SystemDef) let SafeStateRequested: BlackboardID_Bool;
+@addField(UI_SystemDef) public let FirstEquipRequested: BlackboardID_Bool;
+@addField(UI_SystemDef) public let FirstEqHotkeyPressed: BlackboardID_Bool;
+@addField(UI_SystemDef) public let FirstEqHotkeyReleased: BlackboardID_Bool;
+@addField(UI_SystemDef) public let FirstEqHotkeyHold: BlackboardID_Bool;
+@addField(UI_SystemDef) public let FirstEqLastUsedSlot: BlackboardID_Int;
+@addField(UI_SystemDef) public let SafeStateRequested: BlackboardID_Bool;
 
 
 // --- HOTKEY AND CONFIG
