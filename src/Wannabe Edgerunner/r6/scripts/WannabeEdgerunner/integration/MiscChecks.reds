@@ -1,4 +1,5 @@
 import Edgerunning.System.EdgerunningSystem
+import Edgerunning.Common.E
 
 // Check prologue
 @addMethod(PlayerPuppet)
@@ -23,4 +24,14 @@ public func IsPossessedE() -> Bool {
   let posessed: Bool = GameInstance.GetQuestsSystem(this.GetGame()).GetFactStr(factName) == 1;
   let isReplacer: Bool = puppet.IsJohnnyReplacer();
   return isReplacer || posessed;
+}
+
+// Check for cutscene starting
+@wrapMethod(PlayerPuppet)
+protected cb func OnSceneTierChange(newState: Int32) -> Bool {
+  wrappedMethod(newState);
+  E(s"-> Scene tier \(this.m_sceneTier)");
+  if Equals(this.m_sceneTier, GameplayTier.Tier4_FPPCinematic) || Equals(this.m_sceneTier, GameplayTier.Tier5_Cinematic) {
+    EdgerunningSystem.GetInstance(this.GetGame()).StopEverythingNew();
+  };
 }

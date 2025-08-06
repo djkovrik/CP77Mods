@@ -53,6 +53,7 @@ import Edgerunning.Common.E
   public func OnLaunchPostPsychosisCallback() -> Void
 
   private func ShowHumanityRestoredMessage(amount: Int32) -> Void
+  private func DamageHealthToPercent(value: Int32) -> Void
 */
 public class EdgerunningSystem extends ScriptableSystem {
 
@@ -1053,7 +1054,11 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   private func DamageHealthToPercent(value: Int32) -> Void {
-    // let totalHealth: Float = this.statsSystem.GetStatPoolValue(Cast<StatsObjectID>(this.player.GetEntityID()), gamedataStatPoolType.Health, false);
+    if !this.effectsChecker.IsNewPostPsychosisActive() {
+      E("Post-psychosis is not active, skip");
+      return ;
+    };
+
     let totalHealth: Float = this.statsSystem.GetStatValue(Cast<StatsObjectID>(GetPlayer(this.player.GetGame()).GetEntityID()), gamedataStatType.Health);
     let damageValue: Float = totalHealth * Cast<Float>(value) / 100.0;
     E(s"Damage health: total \(totalHealth), damage to \(damageValue)");
@@ -1065,9 +1070,9 @@ public class EdgerunningSystem extends ScriptableSystem {
     // system.RunPsychosisFlow();
     // system.AddHumanityDamage(10.0);
     // system.InvalidateCurrentState(false);
-    // system.effectsHelper.RunNewPrePsychosisEffect();
+    system.effectsHelper.RunNewPrePsychosisEffect();
     // system.effectsHelper.RunNewPsychosisEffect();
-    system.effectsHelper.RunNewPostPsychosisEffect();
+    // system.effectsHelper.RunNewPostPsychosisEffect();
   }
 }
 
