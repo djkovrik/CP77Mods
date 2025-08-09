@@ -98,18 +98,21 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
   wrappedMethod(action, consumer);
   let isMounted: Bool = VehicleComponent.IsMountedToVehicle(this.GetGame(), this);
   let currentTarget: ref<VehicleObject>;
-  let aiCommandEvent: ref<AICommandEvent>;
-  let aiVehicleJoinTrafficCommand: ref<AIVehicleJoinTrafficCommand>;
+  let aiEvent: ref<AIEvent>;
+  let joinTrafficCommand: ref<AIVehicleJoinTrafficCommand>;
   let callback: ref<VehicleSummonDismissCallback>;
 
   if Equals(ListenerAction.GetName(action), VehicleSummonDismissConfig.Action()) && this.IsLookingAtOwnedVehicle() && this.m_dismissPromptVisible && !isMounted {
     currentTarget = GameInstance.GetTargetingSystem(this.GetGame()).GetLookAtObject(this) as VehicleObject;
-    aiCommandEvent = new AICommandEvent(); 
-    aiVehicleJoinTrafficCommand = new AIVehicleJoinTrafficCommand();
-    aiCommandEvent.command = aiVehicleJoinTrafficCommand;
-    currentTarget.QueueEvent(aiCommandEvent);
-    currentTarget.GetAIComponent().SetInitCmd(aiVehicleJoinTrafficCommand);
-    
+    aiEvent = new AIEvent();
+    aiEvent.name = n"DriverReady";
+    currentTarget.QueueEvent(aiEvent);
+
+    joinTrafficCommand = new AIVehicleJoinTrafficCommand();
+    joinTrafficCommand.needDriver = false;
+    joinTrafficCommand.useKinematic = true;
+    currentTarget.GetAIComponent().SendCommand(joinTrafficCommand);
+  
     callback = new VehicleSummonDismissCallback();
     callback.vehicleSystem = GameInstance.GetVehicleSystem(this.GetGame());
     callback.vehicleId = Cast<GarageVehicleID>(currentTarget.GetRecord().GetID());
@@ -124,4 +127,10 @@ public class VehicleSummonDismissCallback extends DelayCallback {
   public func Call() -> Void {
     this.vehicleSystem.DespawnPlayerVehicle(this.vehicleId);
   }
+}
+
+@wrapMethod(VehicleComponent)
+private final func SendAIEvent(eventName: CName) -> Void {
+  wrappedMethod(eventName);
+  ModLog(n"DEBUG", s"Event name \(eventName)");
 }
