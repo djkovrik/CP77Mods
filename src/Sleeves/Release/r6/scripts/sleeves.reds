@@ -1,4 +1,4 @@
-// Sleeves v3.2.5
+// Sleeves v3.2.6
 @if(ModuleExists("ArchiveXL.DynamicAppearance"))
 import ArchiveXL.DynamicAppearance.*
 import Codeware.UI.*
@@ -775,6 +775,13 @@ public class SlotsButtonRefreshCallback extends DelayCallback {
     system.RefreshSleevesState();
     RefreshSleevesButtonEvent.Send(this.owner);
   }
+}
+@wrapMethod(TakeOverControlSystem)
+private final const func EnablePlayerTPPRepresenation(enable: Bool) -> Void {
+  wrappedMethod(enable);
+  if !enable {
+    GetPlayer(GetGameInstance()).TriggerSleevesRefreshCallback();
+  };
 }
 class SleevesStateSystem extends ScriptableSystem {
   private let equipmentSystem: wref<EquipmentSystem>;

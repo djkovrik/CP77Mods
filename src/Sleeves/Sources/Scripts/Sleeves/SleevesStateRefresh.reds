@@ -116,3 +116,11 @@ public class SlotsButtonRefreshCallback extends DelayCallback {
     RefreshSleevesButtonEvent.Send(this.owner);
   }
 }
+
+@wrapMethod(TakeOverControlSystem)
+private final const func EnablePlayerTPPRepresenation(enable: Bool) -> Void {
+  wrappedMethod(enable);
+  if !enable {
+    GetPlayer(GetGameInstance()).TriggerSleevesRefreshCallback();
+  };
+}
