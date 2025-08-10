@@ -1,0 +1,20 @@
+localization:
+  onscreens:
+    en-us: djkovrik\vehicle-tweaks\localization\en-us\dismiss.json
+    ar-ar: djkovrik\vehicle-tweaks\localization\ar-ar\dismiss.json
+    cz-cz: djkovrik\vehicle-tweaks\localization\cz-cz\dismiss.json
+    de-de: djkovrik\vehicle-tweaks\localization\de-de\dismiss.json
+    es-es: djkovrik\vehicle-tweaks\localization\es-es\dismiss.json
+    es-mx: djkovrik\vehicle-tweaks\localization\es-mx\dismiss.json
+    fr-fr: djkovrik\vehicle-tweaks\localization\fr-fr\dismiss.json
+    hu-hu: djkovrik\vehicle-tweaks\localization\hu-hu\dismiss.json
+    it-it: djkovrik\vehicle-tweaks\localization\it-it\dismiss.json
+    jp-jp: djkovrik\vehicle-tweaks\localization\jp-jp\dismiss.json
+    kr-kr: djkovrik\vehicle-tweaks\localization\kr-kr\dismiss.json
+    pl-pl: djkovrik\vehicle-tweaks\localization\pl-pl\dismiss.json
+    pt-br: djkovrik\vehicle-tweaks\localization\pt-br\dismiss.json
+    ru-ru: djkovrik\vehicle-tweaks\localization\ru-ru\dismiss.json
+    th-th: djkovrik\vehicle-tweaks\localization\th-th\dismiss.json
+    tr-tr: djkovrik\vehicle-tweaks\localization\tr-tr\dismiss.json
+    zh-cn: djkovrik\vehicle-tweaks\localization\zh-cn\dismiss.json
+    zh-tw: djkovrik\vehicle-tweaks\localization\zh-tw\dismiss.json

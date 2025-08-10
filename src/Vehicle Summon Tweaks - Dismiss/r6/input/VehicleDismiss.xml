@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<bindings>
+    <!-- inputContexts -->
+    <context name="VehicleDismiss" >
+        <action name="VehicleDismiss" map="VehicleDismiss_Button" />
+    </context>
+
+    <context name="Items" append="true">
+        <include name="VehicleDismiss" />
+    </context>
+	
+	<hold action="VehicleDismiss" timeout="0.4" />
+	
+	<acceptedEvents action="VehicleDismiss">
+		<event name="BUTTON_PRESSED" /> 
+		<event name="BUTTON_HOLD_COMPLETE" /> 
+	</acceptedEvents>
+
+    <!-- inputUserMapping -->
+	<mapping name="VehicleDismiss_Button" type="Button" >
+        <button id="IK_Pad_RightThumb" />
+        <button id="IK_R" overridableUI="dismissVehicle" />
+    </mapping>
+</bindings>
