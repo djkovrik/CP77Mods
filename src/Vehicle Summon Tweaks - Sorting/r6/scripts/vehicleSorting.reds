@@ -2,6 +2,13 @@
 public func SortItem(lhs: ref<IScriptable>, rhs: ref<IScriptable>) -> Bool {
   let lhsData: ref<VehicleListItemData> = lhs as VehicleListItemData;
   let rhsData: ref<VehicleListItemData> = rhs as VehicleListItemData;
+  if Equals(lhsData.m_data.recordID, t"Vehicle.v_delamain_taxi") {
+    return true;
+  };
+  if Equals(rhsData.m_data.recordID, t"Vehicle.v_delamain_taxi") {
+    return false;
+  };
+
   let lhsName: String = GetLocalizedTextByKey(lhsData.m_displayName);
   let rhsName: String = GetLocalizedTextByKey(rhsData.m_displayName);
   if lhsData.m_data.uiFavoriteIndex == rhsData.m_data.uiFavoriteIndex {
