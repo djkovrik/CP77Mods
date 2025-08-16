@@ -22,7 +22,6 @@
 	<hold action="immersive_time_skip"  timeout="0.6" />
 
 	<mapping name="immersive_time_skip" type="Button" >
-		<button id="IK_Pad_LeftThumb" />
 		<button id="IK_O" overridableUI="itsHotkey" />
 	</mapping>
 	
