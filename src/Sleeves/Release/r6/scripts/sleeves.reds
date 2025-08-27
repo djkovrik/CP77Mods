@@ -1,4 +1,4 @@
-// Sleeves v3.2.6
+// Sleeves v3.2.7
 @if(ModuleExists("ArchiveXL.DynamicAppearance"))
 import ArchiveXL.DynamicAppearance.*
 import Codeware.UI.*
@@ -782,6 +782,16 @@ private final const func EnablePlayerTPPRepresenation(enable: Bool) -> Void {
   if !enable {
     GetPlayer(GetGameInstance()).TriggerSleevesRefreshCallback();
   };
+}
+@wrapMethod(RemoteControlDrivingHUDGameController)
+protected cb func OnPSMRemoteControlledVehicleCameraChangedToTPP(value: Bool) -> Bool {
+  wrappedMethod(value);
+  GetPlayer(GetGameInstance()).TriggerSleevesRefreshCallback();
+}
+@wrapMethod(RemoteControlDrivingHUDGameController)
+protected cb func OnRemoteControlledVehicleChanged(value: Variant) -> Bool {
+  wrappedMethod(value);
+  GetPlayer(GetGameInstance()).TriggerSleevesRefreshCallback();
 }
 class SleevesStateSystem extends ScriptableSystem {
   private let equipmentSystem: wref<EquipmentSystem>;

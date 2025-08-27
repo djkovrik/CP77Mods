@@ -124,3 +124,15 @@ private final const func EnablePlayerTPPRepresenation(enable: Bool) -> Void {
     GetPlayer(GetGameInstance()).TriggerSleevesRefreshCallback();
   };
 }
+
+@wrapMethod(RemoteControlDrivingHUDGameController)
+protected cb func OnPSMRemoteControlledVehicleCameraChangedToTPP(value: Bool) -> Bool {
+  wrappedMethod(value);
+  GetPlayer(GetGameInstance()).TriggerSleevesRefreshCallback();
+}
+
+@wrapMethod(RemoteControlDrivingHUDGameController)
+protected cb func OnRemoteControlledVehicleChanged(value: Variant) -> Bool {
+  wrappedMethod(value);
+  GetPlayer(GetGameInstance()).TriggerSleevesRefreshCallback();
+}
