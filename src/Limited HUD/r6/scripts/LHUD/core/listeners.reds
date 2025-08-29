@@ -234,6 +234,7 @@ public class LHUDBlackboardsListener {
 
   // Auto drive
   protected cb func OnAutoDriveEnabled(value: Bool) -> Bool {
+    this.playerInstance.QueueLHUDEvent(LHUDEventType.InVehicle, !value);
     this.playerInstance.QueueLHUDEvent(LHUDEventType.AutoDrive, value);
   }
   
