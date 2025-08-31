@@ -42,8 +42,21 @@ public func DetermineCurrentVisibility() -> Void {
 @addField(InputHintManagerGameController)
 private let lhudConfig: ref<HintsModuleConfig>;
 
+@if(!ModuleExists("LetThereBeFlight"))
 @addMethod(InputHintManagerGameController)
 protected cb func OnInitialize() -> Bool {
+  this.lhudConfig = new HintsModuleConfig();
+  if this.lhudConfig.IsEnabled {
+    this.lhud_isVisibleNow = false;
+    this.GetRootWidget().SetOpacity(0.0);
+    this.OnInitializeFinished();
+  };
+}
+
+@if(ModuleExists("LetThereBeFlight"))
+@addMethod(InputHintManagerGameController)
+protected cb func OnInitialize() -> Bool {
+  this.LTBF_ResizeHudEntry();
   this.lhudConfig = new HintsModuleConfig();
   if this.lhudConfig.IsEnabled {
     this.lhud_isVisibleNow = false;
