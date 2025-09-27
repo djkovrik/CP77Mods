@@ -80,7 +80,27 @@ public class CyberwareHelper {
       || Equals(id, t"Items.AdvancedOpticalCamoEpicPlus")
       || Equals(id, t"Items.AdvancedOpticalCamoLegendary")
       || Equals(id, t"Items.AdvancedOpticalCamoLegendaryPlus")
-      || Equals(id, t"Items.AdvancedOpticalCamoLegendaryPlusPlus");
+      || Equals(id, t"Items.AdvancedOpticalCamoLegendaryPlusPlus")
+      || Equals(id, t"Items.OpticalCamoLurkerCommon")
+      || Equals(id, t"Items.OpticalCamoLurkerUncommon")
+      || Equals(id, t"Items.OpticalCamoLurkerUncommonPlus")
+      || Equals(id, t"Items.OpticalCamoLurkerRare")
+      || Equals(id, t"Items.OpticalCamoLurkerRarePlus")
+      || Equals(id, t"Items.OpticalCamoLurkerEpic")
+      || Equals(id, t"Items.OpticalCamoLurkerEpicPlus")
+      || Equals(id, t"Items.OpticalCamoLurkerLegendary")
+      || Equals(id, t"Items.OpticalCamoLurkerLegendaryPlus")
+      || Equals(id, t"Items.OpticalCamoLurkerLegendaryPlusPlus")
+      || Equals(id, t"Items.OpticalCamoStaminaCommon")
+      || Equals(id, t"Items.OpticalCamoStaminaUncommon")
+      || Equals(id, t"Items.OpticalCamoStaminaUncommonPlus")
+      || Equals(id, t"Items.OpticalCamoStaminaRare")
+      || Equals(id, t"Items.OpticalCamoStaminaRarePlus")
+      || Equals(id, t"Items.OpticalCamoStaminaEpic")
+      || Equals(id, t"Items.OpticalCamoStaminaEpicPlus")
+      || Equals(id, t"Items.OpticalCamoStaminaLegendary")
+      || Equals(id, t"Items.OpticalCamoStaminaLegendaryPlus")
+      || Equals(id, t"Items.OpticalCamoStaminaLegendaryPlusPlus");
   }
 
   public static func IsBloodPump(id: TweakDBID) -> Bool {
