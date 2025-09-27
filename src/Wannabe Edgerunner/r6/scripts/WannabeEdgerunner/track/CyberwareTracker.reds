@@ -51,14 +51,14 @@ protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpaw
   protected cb func OnStatusEffectApplied(evt: ref<ApplyStatusEffectEvent>) -> Bool {
     let gameplayTags: array<CName> = evt.staticData.GameplayTags();
     if ArrayContains(gameplayTags, n"Overclock") {
-	  let itemRecord: ref<Item_Record>;
+      let itemRecord: ref<Item_Record>;
       if IsDefined(this) && EquipmentSystem.IsCyberdeckEquipped(this) {
-	    let systemReplacementID: ItemID = EquipmentSystem.GetData(this).GetActiveItem(gamedataEquipmentArea.SystemReplacementCW);
+        let systemReplacementID: ItemID = EquipmentSystem.GetData(this).GetActiveItem(gamedataEquipmentArea.SystemReplacementCW);
         itemRecord = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(systemReplacementID));
-		EdgerunningSystem.GetInstance(this.GetGame()).OnOverClockActivation(itemRecord);
+        EdgerunningSystem.GetInstance(this.GetGame()).OnOverClockActivation(itemRecord);
       };
-	};
-	wrappedMethod(evt);
+  };
+  wrappedMethod(evt);
 }
 
 // Track berserk
@@ -107,6 +107,11 @@ public func StartAction(gameInstance: GameInstance) -> Void {
   // Optical cammo
   if CyberwareHelper.IsOpticalCamo(id) {
     EdgerunningSystem.GetInstance(gameInstance).OnOpticalCamoActivation();
+  };
+
+  // Blood Pump
+  if CyberwareHelper.IsBloodPump(id) {
+    EdgerunningSystem.GetInstance(gameInstance).OnBloodPumpActivation();
   };
 }
 

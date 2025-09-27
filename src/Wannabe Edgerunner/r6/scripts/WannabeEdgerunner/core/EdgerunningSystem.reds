@@ -26,6 +26,7 @@ import Edgerunning.Common.E
   public func OnSandevistanActivation(item: ItemID) -> Void
   public func OnKerenzikovActivation() -> Void
   public func OnOpticalCamoActivation() -> Void
+  public func OnBloodPumpActivation() -> Void
   public func OnArmsCyberwareActivation(type: gamedataItemType) -> Void
 
   public func IsWentFullPsycho() -> Bool 
@@ -625,6 +626,63 @@ public class EdgerunningSystem extends ScriptableSystem {
     };
 
     this.DamageHealthToPercent(this.config.opticalCamoUsageDamage);
+  }
+
+
+  public func OnBloodPumpActivation() -> Void {
+    E("BLOOD PUMP ACTIVATED");
+    let itemRecord: ref<Item_Record> = this.cyberwareHelper.GetCurrentBloodPump();
+    if !IsDefined(itemRecord) {
+      return;
+    };
+
+    let quality: gamedataQuality = itemRecord.Quality().Type();
+    let qualityMult: Float;
+    switch (quality) {
+      case gamedataQuality.Common:
+        qualityMult = this.config.qualityMultiplierCommon;
+        break;
+      case gamedataQuality.CommonPlus:
+        qualityMult = this.config.qualityMultiplierCommonPlus;
+        break;
+      case gamedataQuality.Uncommon:
+        qualityMult = this.config.qualityMultiplierUncommon;
+        break;
+      case gamedataQuality.UncommonPlus:
+        qualityMult = this.config.qualityMultiplierUncommonPlus;
+        break;
+      case gamedataQuality.Rare:
+        qualityMult = this.config.qualityMultiplierRare;
+        break;
+      case gamedataQuality.RarePlus:
+        qualityMult = this.config.qualityMultiplierRarePlus;
+        break;
+      case gamedataQuality.Epic:
+        qualityMult = this.config.qualityMultiplierEpic;
+        break;
+      case gamedataQuality.EpicPlus:
+        qualityMult = this.config.qualityMultiplierEpicPlus;
+        break;
+      case gamedataQuality.Legendary:
+        qualityMult = this.config.qualityMultiplierLegendary;
+        break;
+      case gamedataQuality.LegendaryPlus:
+        qualityMult = this.config.qualityMultiplierLegendaryPlus;
+        break;
+      case gamedataQuality.LegendaryPlusPlus:
+        qualityMult = this.config.qualityMultiplierLegendaryPlusPlus;
+        break;
+    };
+
+    let cost: Float = Cast<Float>(this.config.bloodPumpUsageCost) * qualityMult;
+
+    if !this.effectsChecker.IsRipperdocBuffActive() && !this.effectsChecker.IsNewPostPsychosisActive() {
+      this.AddHumanityDamage(cost);
+      E(s"! Blood Pump activated: \(quality) - costs \(cost) humanity");
+      this.InvalidateCurrentState();
+    } else {
+      E("! Humanity freezed, blood pump costs no humanity");
+    };
   }
 
   public func OnArmsCyberwareActivation(type: gamedataItemType) -> Void {

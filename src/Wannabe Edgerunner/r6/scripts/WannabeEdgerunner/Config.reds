@@ -254,6 +254,16 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "Mod-Edg-Implants-Usage-Cost")
   @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.displayName", "Gameplay-Cyberware-DisplayName-BloodPump")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Implants-Usage-Cost-Desc")
+  @runtimeProperty("ModSettings.step", "1")
+  @runtimeProperty("ModSettings.min", "1")
+  @runtimeProperty("ModSettings.max", "20")
+  public let bloodPumpUsageCost: Int32 = 7;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Implants-Usage-Cost")
+  @runtimeProperty("ModSettings.category.order", "5")
   @runtimeProperty("ModSettings.displayName", "Gameplay-StatusEffects-UIData-DisplayName-Berserk")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Implants-Usage-Cost-Desc")
   @runtimeProperty("ModSettings.step", "1")

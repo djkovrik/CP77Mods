@@ -4,6 +4,7 @@ import Edgerunning.Common.E
   public func Init(player: ref<PlayerPuppet>, config: ref<EdgerunningConfig>) -> Void
   public func GetCurrentKerenzikov() -> ref<Item_Record>
   public func GetCurrentOpticalCamo() -> ref<Item_Record>
+  public func GetCurrentBloodPump() -> ref<Item_Record>
 */
 
 public class CyberwareHelper {
@@ -30,6 +31,17 @@ public class CyberwareHelper {
     let cyberware: array<ref<Item_Record>> = EquipmentSystem.GetData(this.player).GetCyberwareFromSlots();
     for record in cyberware {
       if this.IsOpticalCamo(record) {
+        return record;
+      };
+    };
+
+    return null;
+  }
+
+  public func GetCurrentBloodPump() -> ref<Item_Record> {
+    let cyberware: array<ref<Item_Record>> = EquipmentSystem.GetData(this.player).GetCyberwareFromSlots();
+    for record in cyberware {
+      if this.IsBloodPump(record) {
         return record;
       };
     };
@@ -71,6 +83,19 @@ public class CyberwareHelper {
       || Equals(id, t"Items.AdvancedOpticalCamoLegendaryPlusPlus");
   }
 
+  public static func IsBloodPump(id: TweakDBID) -> Bool {
+    return Equals(id, t"Items.AdvancedBloodPumpCommon") 
+      || Equals(id, t"Items.AdvancedBloodPumpUncommon")
+      || Equals(id, t"Items.AdvancedBloodPumpUncommonPlus")
+      || Equals(id, t"Items.AdvancedBloodPumpRare")
+      || Equals(id, t"Items.AdvancedBloodPumpRarePlus")
+      || Equals(id, t"Items.AdvancedBloodPumpEpic")
+      || Equals(id, t"Items.AdvancedBloodPumpEpicPlus")
+      || Equals(id, t"Items.AdvancedBloodPumpLegendary")
+      || Equals(id, t"Items.AdvancedBloodPumpLegendaryPlus")
+      || Equals(id, t"tems.AdvancedBloodPumpLegendaryPlusPlus");
+  }
+
   private func IsKerenzikov(record: ref<Item_Record>) -> Bool {
     let id: TweakDBID = record.GetID();
     return CyberwareHelper.IsKerenzikov(id);
@@ -79,5 +104,10 @@ public class CyberwareHelper {
   private func IsOpticalCamo(record: ref<Item_Record>) -> Bool {
     let id: TweakDBID = record.GetID();
     return CyberwareHelper.IsOpticalCamo(id);
+  }
+
+  private func IsBloodPump(record: ref<Item_Record>) -> Bool {
+    let id: TweakDBID = record.GetID();
+    return CyberwareHelper.IsBloodPump(id);
   }
 }
