@@ -1,4 +1,4 @@
-// RevisedBackpack v0.9.10
+// RevisedBackpack v0.9.11
 module RevisedBackpack
 
 import Codeware.UI.HubTextInput
@@ -331,7 +331,7 @@ public class RevisedBackpackFilterDebounceCallback extends DelayCallback {
 }
 public class RevisedBackpackTemplateClassifier extends inkVirtualItemTemplateClassifier {}
 public class RevisedCustomEventBackpackOpened extends CallbackSystemEvent {
-  let opened: Bool;
+  public let opened: Bool;
   public final static func Create(opened: Bool) -> ref<RevisedCustomEventBackpackOpened> {
     let evt: ref<RevisedCustomEventBackpackOpened> = new RevisedCustomEventBackpackOpened();
     evt.opened = opened;
@@ -339,7 +339,7 @@ public class RevisedCustomEventBackpackOpened extends CallbackSystemEvent {
   }
 }
 public class RevisedCustomEventItemHoverOver extends CallbackSystemEvent {
-  let data: ref<gameItemData>;
+  public let data: ref<gameItemData>;
   public final static func Create(data: ref<gameItemData>) -> ref<RevisedCustomEventItemHoverOver> {
     let evt: ref<RevisedCustomEventItemHoverOver> = new RevisedCustomEventItemHoverOver();
     evt.data = data;
@@ -353,7 +353,7 @@ public class RevisedCustomEventItemHoverOut extends CallbackSystemEvent {
   }
 }
 public class RevisedCustomEventCategorySelected extends CallbackSystemEvent {
-  let categoryId: Int32;
+  public let categoryId: Int32;
   public final static func Create(categoryId: Int32) -> ref<RevisedCustomEventCategorySelected> {
     let evt: ref<RevisedCustomEventCategorySelected> = new RevisedCustomEventCategorySelected();
     evt.categoryId = categoryId;
