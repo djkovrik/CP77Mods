@@ -1,4 +1,4 @@
-// VirtualAtelierDelivery v1.0.7
+// VirtualAtelierDelivery v1.0.8
 module AtelierDelivery
 
 import Codeware.UI.*
@@ -3448,11 +3448,19 @@ private final func UpdateTooltip(tooltipType: WorldMapTooltipType, controller: w
 @wrapMethod(WorldMapTooltipController)
 public func SetData(const data: script_ref<WorldMapTooltipData>, menu: ref<WorldMapMenuGameController>) -> Void {
   wrappedMethod(data, menu);
+  let deliveryPoint: AtelierDeliveryDropPoint;
+  let deliveryPointLocKey: String;
   this.dropPointImageContainer.SetVisible(this.isCustomMappin);
   let image: ref<inkImage> = this.dropPointImageContainer.GetWidgetByPathName(n"image") as inkImage;
   if this.isCustomMappin {
+    deliveryPoint = AtelierDeliveryUtils.GetDropPointByTag(this.previewImageInfo.texturePart);
+    deliveryPointLocKey = AtelierDeliveryUtils.GetDeliveryPointLocKey(deliveryPoint);
     inkTextRef.SetText(this.m_titleText, GetLocalizedTextByKey(n"Mod-VAD-Marker"));
-    inkTextRef.SetText(this.m_descText, GetLocalizedTextByKey(n"Mod-VAD-Marker-Description"));
+    inkTextRef.SetText(this.m_descText, GetLocalizedText(deliveryPointLocKey));
+    inkWidgetRef.Get(this.m_descText).BindProperty(n"tintColor", n"MainColors.Blue");
+    inkTextRef.SetText(this.m_additionalDescText, GetLocalizedTextByKey(n"Mod-VAD-Marker-Description"));
+    inkWidgetRef.SetVisible(this.m_additionalDescText, true);
+    inkWidgetRef.SetOpacity(this.m_additionalDescText, 0.4);
     image.SetAtlasResource(this.previewImageInfo.atlas);
     image.SetTexturePart(this.previewImageInfo.texturePart);
   };
