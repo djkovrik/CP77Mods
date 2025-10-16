@@ -24,26 +24,3 @@ protected cb func OnInitialize() -> Bool {
     controller.longLogosTrainAnimation = n"after_skip_pressed";
   };
 }
-
-// Skip Breaching (instead of -skipStartScreen)
-@wrapMethod(EngagementScreenGameController)
-protected cb func OnInitialize() -> Bool {
-  wrappedMethod();
-
-  let evt: ref<inkMenuLayer_SetCursorVisibility>;
-  let uiSystem: ref<UISystem> = GameInstance.GetUISystem(this.GetPlayerControlledObject().GetGame());
-  uiSystem.PushGameContext(UIGameContext.Default);
-  uiSystem.RequestNewVisualState(n"inkPauseMenuState");
-  evt = new inkMenuLayer_SetCursorVisibility();
-  evt.Init(true);
-  this.QueueEvent(evt);
-
-  this.m_menuEventDispatcher.SpawnEvent(n"OnBreachingSkip");
-}
-
-@addMethod(MenuScenario_PreGameSubMenu)
-protected cb func OnBreachingSkip() -> Bool {
-  let evt: ref<ShowEngagementScreen> = new ShowEngagementScreen();
-  evt.show = false;
-  this.OnHandleEngagementScreen(evt);
-}
