@@ -1,4 +1,4 @@
-// RevisedBackpack v0.9.11
+// RevisedBackpack v0.9.12
 module RevisedBackpack
 
 import Codeware.UI.HubTextInput
@@ -735,6 +735,13 @@ private final func GetSellableJunk() -> array<wref<gameItemData>> {
 @addMethod(InventoryDataManagerV2)
 public final func GetItemSlotIndexRev(owner: ref<GameObject>, itemId: ItemID) -> Int32 {
   return this.m_EquipmentSystem.GetItemSlotIndex(owner, itemId);
+}
+@wrapMethod(CraftingSystem)
+public final const func CanItemBeDisassembled(itemData: wref<gameItemData>) -> Bool {
+  let wrapped: Bool = wrappedMethod(itemData);
+  let settings: ref<RevisedBackpackSettings> = new RevisedBackpackSettings();
+  let modded: Bool = settings.allowIconicsDisassemble;
+  return wrapped || modded;
 }
 class InsertBetterBackpackMenuItem extends ScriptableService {
   private cb func OnLoad() {
@@ -3681,6 +3688,12 @@ public class RevisedBackpackSettings {
   @runtimeProperty("ModSettings.displayName", "Mod-Revised-Replace-Button")
   @runtimeProperty("ModSettings.description", "Mod-Revised-Replace-Button-Desc")
   public let replaceInventoryButton: Bool = false;
+  @runtimeProperty("ModSettings.mod", "Revised Backpack")
+  @runtimeProperty("ModSettings.category", "UI-Settings-Audio-Misc-MiscSectionTitle")
+  @runtimeProperty("ModSettings.category.order", "2")
+  @runtimeProperty("ModSettings.displayName", "Mod-Revised-Allow-Iconics")
+  @runtimeProperty("ModSettings.description", "Mod-Revised-Allow-Iconics-Desc")
+  public let allowIconicsDisassemble: Bool = false;
 }
 public class RevisedBackpackSortController extends inkLogicController {
   private let m_player: wref<PlayerPuppet>;
@@ -4460,11 +4473,16 @@ public abstract class RevisedBackpackUtils {
       && !uiInventoryItem.IsIconic();
   }
   public final static func CanDisassemble(gi: GameInstance, uiInventoryItem: ref<UIInventoryItem>) -> Bool {
+    let settings: ref<RevisedBackpackSettings> = new RevisedBackpackSettings();
     let canItemBeDisassembled: Bool = RPGManager.CanItemBeDisassembled(gi, uiInventoryItem.GetRealItemData());
+    let canDisassembleThisTier: Bool = true;
+    if uiInventoryItem.IsIconic() {
+      canDisassembleThisTier = settings.allowIconicsDisassemble;
+    };
     return canItemBeDisassembled
+      && canDisassembleThisTier
       && !uiInventoryItem.IsPlayerFavourite() 
-      && !uiInventoryItem.IsEquipped() 
-      && !uiInventoryItem.IsIconic();
+      && !uiInventoryItem.IsEquipped();
   }
   private final static func IsWeapon(type: gamedataEquipmentArea) -> Bool {
     return 

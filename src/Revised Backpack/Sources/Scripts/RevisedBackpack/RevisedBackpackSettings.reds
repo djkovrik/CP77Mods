@@ -22,4 +22,11 @@ public class RevisedBackpackSettings {
   @runtimeProperty("ModSettings.displayName", "Mod-Revised-Replace-Button")
   @runtimeProperty("ModSettings.description", "Mod-Revised-Replace-Button-Desc")
   public let replaceInventoryButton: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "Revised Backpack")
+  @runtimeProperty("ModSettings.category", "UI-Settings-Audio-Misc-MiscSectionTitle")
+  @runtimeProperty("ModSettings.category.order", "2")
+  @runtimeProperty("ModSettings.displayName", "Mod-Revised-Allow-Iconics")
+  @runtimeProperty("ModSettings.description", "Mod-Revised-Allow-Iconics-Desc")
+  public let allowIconicsDisassemble: Bool = false;
 }

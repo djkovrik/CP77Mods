@@ -173,11 +173,17 @@ public abstract class RevisedBackpackUtils {
   }
 
   public final static func CanDisassemble(gi: GameInstance, uiInventoryItem: ref<UIInventoryItem>) -> Bool {
+    let settings: ref<RevisedBackpackSettings> = new RevisedBackpackSettings();
     let canItemBeDisassembled: Bool = RPGManager.CanItemBeDisassembled(gi, uiInventoryItem.GetRealItemData());
+    let canDisassembleThisTier: Bool = true;
+    if uiInventoryItem.IsIconic() {
+      canDisassembleThisTier = settings.allowIconicsDisassemble;
+    };
+
     return canItemBeDisassembled
+      && canDisassembleThisTier
       && !uiInventoryItem.IsPlayerFavourite() 
-      && !uiInventoryItem.IsEquipped() 
-      && !uiInventoryItem.IsIconic();
+      && !uiInventoryItem.IsEquipped();
   }
 
   private final static func IsWeapon(type: gamedataEquipmentArea) -> Bool {

@@ -8,6 +8,9 @@ base\gameplay\ai\archetypes\vehicles\base_vehicle.aiarch
 base\gameplay\devices\drop_points\drop_point_va.ent
 base\gameplay\gui\fullscreen\hub_menu\va_notification_animations.inkanim
 base\gameplay\gui\fullscreen\hub_menu\va_notification.inkwidget
+base\gameplay\gui\fullscreen\inventory\revised_backpack.inkwidget
+base\gameplay\gui\fullscreen\previews\revised_garment_item_preview.inkwidget
+base\gameplay\gui\fullscreen\previews\revised_item_preview.inkwidget
 base\gameplay\gui\prototype_hud_mod.inkhud
 base\gameplay\gui\prototype_hud_orig.inkhud
 base\gameplay\gui\virtual_atelier_delivery_droppoints1_1080p.xbm
@@ -17,7 +20,9 @@ base\gameplay\gui\virtual_atelier_delivery_pins_1080p.xbm
 base\gameplay\gui\virtual_atelier_delivery_pins.inkatlas
 base\gameplay\gui\virtual_atelier_delivery_pins.xbm
 base\localization\en-us\onscreens\atelier-delivery.json
+base\localization\en-us\onscreens\revised-backpack.json
 base\localization\ru-ru\onscreens\atelier-delivery.json
+base\localization\ru-ru\onscreens\revised-backpack.json
 base\vehicles\appearances\standard\proxy\villefort_columbus__basic_rcs_van\villefort_columbus__basic_rcs_van_va_d.xbm
 base\vehicles\appearances\standard\proxy\villefort_columbus__basic_rcs_van\villefort_columbus__basic_rcs_van_va.mesh
 base\vehicles\appearances\standard\villefort_columbus__basic_va.app

@@ -221,6 +221,20 @@
                     "secondaryKey": "Mod-Revised-Column-Per-Shot-Damage",
                     "femaleVariant": "Damage per attack"
                   }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Allow-Iconics",
+                    "femaleVariant": "Allow Iconics disassemble"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Allow-Iconics-Desc",
+                    "femaleVariant": "If enabled then disassemble action will not skip Iconic items during the process."
+                  }
                 }
               ]
             }

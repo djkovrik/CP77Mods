@@ -221,6 +221,20 @@
                     "secondaryKey": "Mod-Revised-Column-Per-Shot-Damage",
                     "femaleVariant": "Урон за атаку"
                   }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Allow-Iconics",
+                    "femaleVariant": "Разрешить разборку Культовых предметов"
+                  }
+                },
+				{
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "Mod-Revised-Allow-Iconics-Desc",
+                    "femaleVariant": "Если опция включена, операция разборки предметов не будет пропускать Культовые предметы в процессе работы."
+                  }
                 }
               ]
             }
