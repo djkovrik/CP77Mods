@@ -1,3 +1,12 @@
+class HudPainterModSettings {
+  @runtimeProperty("ModSettings.mod", "Mod-HudPainter-Name")
+  @runtimeProperty("ModSettings.category", "Mod-HudPainter-Settings-Other")
+  @runtimeProperty("ModSettings.category.order", "2")
+  @runtimeProperty("ModSettings.displayName", "Mod-HudPainter-Settings-hideMenuIntegration")
+  @runtimeProperty("ModSettings.description", "Mod-HudPainter-Settings-hideMenuIntegration-Desc")
+  let hideMenuIntegration: Bool = false;
+}
+
 // Based on mod settings scenario, kudos to Jack Humbert ^=^
 public class MenuScenario_HudPainter extends MenuScenario_PreGameSubMenu {
 
@@ -90,7 +99,10 @@ private func PopulateMenuItemList() {
 
   let depot: ref<ResourceDepot> = GameInstance.GetResourceDepot();
   if depot.ArchiveExists("HUDPainter.archive") {
-    this.AddMenuItem(GetLocalizedTextByKey(n"Mod-HudPainter-Name"), n"OnOpenHudPainter");
+    let config: ref<HudPainterModSettings> = new HudPainterModSettings();
+    if !config.hideMenuIntegration{
+      this.AddMenuItem(GetLocalizedTextByKey(n"Mod-HudPainter-Name"), n"OnOpenHudPainter");
+    }
   } else {
     if !IsDefined(this.missingArchivePopup) {
       this.missingArchivePopup = HudPainterMissingArchivePopup.Show(this);
@@ -107,5 +119,9 @@ protected cb func OnMissingArchivePopupClosed(data: ref<inkGameNotificationData>
 @wrapMethod(PauseMenuGameController)
 private func PopulateMenuItemList() {
   wrappedMethod();
-  this.AddMenuItem(GetLocalizedTextByKey(n"Mod-HudPainter-Name"), n"OnOpenHudPainter");
+
+  let config: ref<HudPainterModSettings> = new HudPainterModSettings();
+  if !config.hideMenuIntegration{
+    this.AddMenuItem(GetLocalizedTextByKey(n"Mod-HudPainter-Name"), n"OnOpenHudPainter");
+  }
 }
