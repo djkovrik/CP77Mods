@@ -2,7 +2,10 @@ module AtelierDelivery
 
 public class VirtualAtelierDeliveryConfig {
   
-  public final static func Debug() -> Bool = false
+  public final static func Debug() -> Bool = false;
+
+  // kept for backward compatibility
+  public let atelierWatsonLocked: Bool = false;
 
   @runtimeProperty("ModSettings.mod", "Virtual Atelier")
   @runtimeProperty("ModSettings.category", "Mod-VAD-Delivery-Settings")
