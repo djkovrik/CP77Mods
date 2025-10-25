@@ -457,17 +457,8 @@ public class AtelierStoresListController extends inkGameController {
     target.PlayAnimation(scaleAnimDef);
   }
 
-  @if(!ModuleExists("AtelierDelivery"))
   private final func ShouldBlockAtelier() -> Bool {
     return false;
-  }
-
-  @if(ModuleExists("AtelierDelivery"))
-  private final func ShouldBlockAtelier() -> Bool {
-    let watsonLockedFact: Int32 = this.questsSystem.GetFact(n"watson_prolog_lock");
-    let watsonLocked: Bool = Equals(watsonLockedFact, 1);
-    let deliveryConfig: ref<VirtualAtelierDeliveryConfig> = new VirtualAtelierDeliveryConfig();
-    return watsonLocked && deliveryConfig.atelierWatsonLocked;
   }
 
   @if(!ModuleExists("AtelierDelivery"))

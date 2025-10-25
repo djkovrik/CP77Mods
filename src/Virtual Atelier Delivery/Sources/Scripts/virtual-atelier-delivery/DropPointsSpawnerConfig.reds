@@ -10,11 +10,40 @@ module AtelierDelivery
 **/
 public class AtelierDropPointsSpawnerConfig {
   private let spawnPoints: ref<inkHashMap>;
+  private let iterationTagsPrologue: array<CName>;
   private let iterationTagsNightCity: array<CName>;
   private let iterationTagsDogtown: array<CName>;
 
   public final func Init() -> Void {
     this.spawnPoints = new inkHashMap();
+  }
+
+  public final func BuildPrologueList() -> Void {
+    // PROLOGUE ITERATION: 
+    let iterationTagPrologue: CName = n"NightCity_Prologue1";
+    let iterationSpawnsPrologue: array<ref<AtelierDropPointInstance>>;
+    ArrayPush(this.iterationTagsPrologue, iterationTagPrologue);
+
+    // Watson, Little China
+    ArrayPush(
+      iterationSpawnsPrologue,
+      AtelierDropPointInstance.Create(
+        "LocKey#10963",
+        t"Districts.Watson",
+        t"Districts.LittleChina",
+        AtelierDeliveryDropPoint.LittleChina,
+        n"LittleChina",
+        n"droppoint19",
+        iterationTagPrologue,
+        this.CreatePosition(-1450.845215, 1221.096802, 23.061127, 1.0),
+        this.CreateOrientation(0.0, 0.0, -0.928518, 0.371288),
+        r"djkovrik\\gameplay\\gui\\virtual_atelier_delivery_droppoints2.inkatlas"
+      )
+    );
+
+    let iterationListPrologue: ref<AtelierDropPointsList> = AtelierDropPointsList.Create(iterationSpawnsPrologue);
+    this.spawnPoints.Insert(this.Key(iterationTagPrologue), iterationListPrologue);
+    this.Log(s"Stored \(ArraySize(iterationListPrologue.points)) points for key \(this.Key(iterationTagPrologue))");
   }
 
   // When any new version adds more drop points then new iteration tag must be used
@@ -360,40 +389,16 @@ public class AtelierDropPointsSpawnerConfig {
     return emptyArray;
   }
 
+  public final func GetIterationTagsPrologue() -> array<CName> {
+    return this.iterationTagsPrologue;
+  }
+
   public final func GetIterationTagsNightCity() -> array<CName> {
     return this.iterationTagsNightCity;
   }
 
-  public final func GetSpawnPointsNightCity() -> array<ref<AtelierDropPointInstance>> {
-    let result: array<ref<AtelierDropPointInstance>>;
-    let chunk: array<ref<AtelierDropPointInstance>>;
-    let supportedTags: array<CName> = this.GetIterationTagsNightCity();
-    for entityTag in supportedTags {
-      chunk = this.GetSpawnPointsByTag(entityTag);
-      for item in chunk {
-        ArrayPush(result, item);
-      };
-    };
-
-    return result;
-  }
-
   public final func GetIterationTagsDogtown() -> array<CName> {
     return this.iterationTagsDogtown;
-  }
-
-  public final func GetSpawnPointsDogtown() -> array<ref<AtelierDropPointInstance>> {
-    let result: array<ref<AtelierDropPointInstance>>;
-    let chunk: array<ref<AtelierDropPointInstance>>;
-    let supportedTags: array<CName> = this.GetIterationTagsDogtown();
-    for entityTag in supportedTags {
-      chunk = this.GetSpawnPointsByTag(entityTag);
-      for item in chunk {
-        ArrayPush(result, item);
-      };
-    };
-
-    return result;
   }
 
   private final func CreatePosition(x: Float, y: Float, z: Float, w: Float) -> Vector4 {

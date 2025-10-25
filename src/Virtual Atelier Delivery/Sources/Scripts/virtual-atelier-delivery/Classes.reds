@@ -26,6 +26,7 @@ public enum AtelierDeliveryDropPoint {
   WestWindEstate = 16,
   SunsetMotel = 17,
   LongshoreStacks = 18,
+  LittleChina = 19,
 }
 
 public enum AtelierDeliveryStatus {

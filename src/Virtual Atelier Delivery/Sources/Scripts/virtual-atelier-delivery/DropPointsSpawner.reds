@@ -31,6 +31,7 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
 
     this.spawnConfig = new AtelierDropPointsSpawnerConfig();
     this.spawnConfig.Init();
+    this.spawnConfig.BuildPrologueList();
     this.spawnConfig.BuildNightCityList();
     this.spawnConfig.BuildDogtownList();
   }
@@ -125,6 +126,14 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     let result: array<ref<AtelierDropPointInstance>>;
     let chunk: array<ref<AtelierDropPointInstance>>;
 
+    let supportedTags: array<CName> = this.spawnConfig.GetIterationTagsPrologue();
+    for entityTag in supportedTags {
+      chunk = this.spawnConfig.GetSpawnPointsByTag(entityTag);
+      for item in chunk {
+        ArrayPush(result, item);
+      };
+    };
+
     if this.IsNightCityUnlocked() {
       let supportedTags: array<CName> = this.spawnConfig.GetIterationTagsNightCity();
       for entityTag in supportedTags {
@@ -180,6 +189,19 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
       return;
     };
 
+    let supportedTags: array<CName> = this.spawnConfig.GetIterationTagsPrologue();
+    this.Log(s"! Prologue, supported tags: \(ArraySize(supportedTags))");
+
+    for entityTag in supportedTags {
+      this.Log(s"> Check tag \(entityTag):");
+      if !this.entitySystem.IsPopulated(entityTag) {
+        this.Log(s"-> Call for spawn entities");
+        this.SpawnInstancesByTag(entityTag);
+      } else {
+        this.Log(s"-> Entities already spawned");
+      };
+    };
+
     if this.nightCityUnlocked {
       let supportedTags: array<CName> = this.spawnConfig.GetIterationTagsNightCity();
       this.Log(s"! Night City, supported tags: \(ArraySize(supportedTags))");
@@ -233,7 +255,7 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     
     this.Log(s"HandleInitialNotification, welcomeDisplayed = \(welcomeDisplayed)");
 
-    if this.nightCityUnlocked && !welcomeDisplayed && this.IsPhoneAvailable() {
+    if !welcomeDisplayed && this.IsPhoneAvailable() {
       messenger = DeliveryMessengerSystem.Get(this.GetGameInstance());
       messenger.PushWelcomeNotificationItem();
       questsSystem.SetFact(factName, 1);
@@ -268,8 +290,13 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
   }
 
   public final func DespawnAll() -> Void {
+    let supportedTagsPrologue: array<CName> = this.spawnConfig.GetIterationTagsPrologue();
     let supportedTagsNightCity: array<CName> = this.spawnConfig.GetIterationTagsNightCity();
     let supportedTagsDogtown: array<CName> = this.spawnConfig.GetIterationTagsDogtown();
+
+    for tag in supportedTagsPrologue {
+      this.entitySystem.DeleteTagged(tag);
+    };
 
     for tag in supportedTagsNightCity {
       this.entitySystem.DeleteTagged(tag);
@@ -299,10 +326,18 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
   }
 
   private final func HasPendingEntities() -> Bool {
+    let prologueUpdateRequired: Bool = false;
     let nightCityUpdateRequired: Bool = false;
     let dogtownUpdateRequired: Bool = false;
+    let supportedTagsPrologue: array<CName> = this.spawnConfig.GetIterationTagsPrologue();
     let supportedTagsNightCity: array<CName> = this.spawnConfig.GetIterationTagsNightCity();
     let supportedTagsDogtown: array<CName> = this.spawnConfig.GetIterationTagsDogtown();
+
+    for tag in supportedTagsPrologue {
+      if !this.entitySystem.IsPopulated(tag) {
+        prologueUpdateRequired = true;
+      };
+    };
 
     for tag in supportedTagsNightCity {
       if !this.entitySystem.IsPopulated(tag) {
@@ -316,7 +351,7 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
       };
     };
 
-    return nightCityUpdateRequired || dogtownUpdateRequired;
+    return prologueUpdateRequired || nightCityUpdateRequired || dogtownUpdateRequired;
   }
 
   private final func IsPhoneAvailable() -> Bool {

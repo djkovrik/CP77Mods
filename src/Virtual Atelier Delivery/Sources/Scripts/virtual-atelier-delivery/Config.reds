@@ -5,13 +5,6 @@ public class VirtualAtelierDeliveryConfig {
   public final static func Debug() -> Bool = false
 
   @runtimeProperty("ModSettings.mod", "Virtual Atelier")
-  @runtimeProperty("ModSettings.category", "UI-Settings-GenaralInput")
-  @runtimeProperty("ModSettings.category.order", "1")
-  @runtimeProperty("ModSettings.displayName", "Mod-VAD-Delivery-Block-Atelier")
-  @runtimeProperty("ModSettings.description", "Mod-VAD-Delivery-Block-Atelier-Desc")
-  public let atelierWatsonLocked: Bool = false;
-
-  @runtimeProperty("ModSettings.mod", "Virtual Atelier")
   @runtimeProperty("ModSettings.category", "Mod-VAD-Delivery-Settings")
   @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Mod-VAD-Delivery-Standard-Time-Min")

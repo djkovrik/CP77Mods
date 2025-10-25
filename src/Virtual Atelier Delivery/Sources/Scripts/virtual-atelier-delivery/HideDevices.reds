@@ -19,6 +19,7 @@ protected cb func OnRequestComponents(ri: EntityRequestComponentsInterface) -> B
   || Equals(hash, 3081670176u) // West Wind Estate
   || Equals(hash, 3145583149u) // Sunset Motel
   || Equals(hash, 2444101793u) // Longshore Stacks
+  || Equals(hash, 900254894u)  // Little China
   { 
     EntityGameInterface.Destroy(this.GetEntity());
   };

@@ -14,7 +14,7 @@ public class AtelierDeliveryDebugHotkey {
   protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
     if ListenerAction.IsAction(action, n"restore_default_settings") && ListenerAction.IsButtonJustReleased(action) {
       // this.DumpCurrentPlayerPosition();
-      this.ShowRandomSmsMessage();
+      // this.ShowRandomSmsMessage();
     }
   }
 

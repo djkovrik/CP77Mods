@@ -1,4 +1,4 @@
-// VirtualAtelierDelivery v1.0.8
+// VirtualAtelierDelivery v1.0.9
 module AtelierDelivery
 
 import Codeware.UI.*
@@ -34,6 +34,7 @@ public enum AtelierDeliveryDropPoint {
   WestWindEstate = 16,
   SunsetMotel = 17,
   LongshoreStacks = 18,
+  LittleChina = 19,
 }
 public enum AtelierDeliveryStatus {
   Created = 0,
@@ -365,8 +366,8 @@ public class DeliveryHistoryItem {
   }
 }
 public abstract class CompatManager {
-  public final static func RequiredAtelierVersionCode() -> Int32 = 1403
-  public final static func RequiredAtelierVersionName() -> String = "1.4.3"
+  public final static func RequiredAtelierVersionCode() -> Int32 = 1407
+  public final static func RequiredAtelierVersionName() -> String = "1.4.7"
 }
 @if(ModuleExists("VirtualAtelier.Compat"))
 @addMethod(SingleplayerMenuGameController)
@@ -437,12 +438,6 @@ public func GetFormattedMoneyVAD(money: Int32) -> String {
 public class VirtualAtelierDeliveryConfig {
   public final static func Debug() -> Bool = false
   @runtimeProperty("ModSettings.mod", "Virtual Atelier")
-  @runtimeProperty("ModSettings.category", "UI-Settings-GenaralInput")
-  @runtimeProperty("ModSettings.category.order", "1")
-  @runtimeProperty("ModSettings.displayName", "Mod-VAD-Delivery-Block-Atelier")
-  @runtimeProperty("ModSettings.description", "Mod-VAD-Delivery-Block-Atelier-Desc")
-  public let atelierWatsonLocked: Bool = false;
-  @runtimeProperty("ModSettings.mod", "Virtual Atelier")
   @runtimeProperty("ModSettings.category", "Mod-VAD-Delivery-Settings")
   @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Mod-VAD-Delivery-Standard-Time-Min")
@@ -509,7 +504,7 @@ public class AtelierDeliveryDebugHotkey {
   protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
     if ListenerAction.IsAction(action, n"restore_default_settings") && ListenerAction.IsButtonJustReleased(action) {
       // this.DumpCurrentPlayerPosition();
-      this.ShowRandomSmsMessage();
+      // this.ShowRandomSmsMessage();
     }
   }
   private final func DumpCurrentPlayerPosition() -> Void {
@@ -621,6 +616,7 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     this.spawnedMappins = new inkHashMap();
     this.spawnConfig = new AtelierDropPointsSpawnerConfig();
     this.spawnConfig.Init();
+    this.spawnConfig.BuildPrologueList();
     this.spawnConfig.BuildNightCityList();
     this.spawnConfig.BuildDogtownList();
   }
@@ -699,6 +695,13 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
   public final func GetAvailableDropPoints() -> array<ref<AtelierDropPointInstance>> {
     let result: array<ref<AtelierDropPointInstance>>;
     let chunk: array<ref<AtelierDropPointInstance>>;
+    let supportedTags: array<CName> = this.spawnConfig.GetIterationTagsPrologue();
+    for entityTag in supportedTags {
+      chunk = this.spawnConfig.GetSpawnPointsByTag(entityTag);
+      for item in chunk {
+        ArrayPush(result, item);
+      };
+    };
     if this.IsNightCityUnlocked() {
       let supportedTags: array<CName> = this.spawnConfig.GetIterationTagsNightCity();
       for entityTag in supportedTags {
@@ -745,6 +748,17 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     if GameInstance.GetSystemRequestsHandler().IsPreGame() {
       return;
     };
+    let supportedTags: array<CName> = this.spawnConfig.GetIterationTagsPrologue();
+    this.Log(s"! Prologue, supported tags: \(ArraySize(supportedTags))");
+    for entityTag in supportedTags {
+      this.Log(s"> Check tag \(entityTag):");
+      if !this.entitySystem.IsPopulated(entityTag) {
+        this.Log(s"-> Call for spawn entities");
+        this.SpawnInstancesByTag(entityTag);
+      } else {
+        this.Log(s"-> Entities already spawned");
+      };
+    };
     if this.nightCityUnlocked {
       let supportedTags: array<CName> = this.spawnConfig.GetIterationTagsNightCity();
       this.Log(s"! Night City, supported tags: \(ArraySize(supportedTags))");
@@ -790,7 +804,7 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     let welcomeFact: Int32 = questsSystem.GetFact(factName);
     let welcomeDisplayed: Bool = Equals(welcomeFact, 1);
     this.Log(s"HandleInitialNotification, welcomeDisplayed = \(welcomeDisplayed)");
-    if this.nightCityUnlocked && !welcomeDisplayed && this.IsPhoneAvailable() {
+    if !welcomeDisplayed && this.IsPhoneAvailable() {
       messenger = DeliveryMessengerSystem.Get(this.GetGameInstance());
       messenger.PushWelcomeNotificationItem();
       questsSystem.SetFact(factName, 1);
@@ -820,8 +834,12 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     };
   }
   public final func DespawnAll() -> Void {
+    let supportedTagsPrologue: array<CName> = this.spawnConfig.GetIterationTagsPrologue();
     let supportedTagsNightCity: array<CName> = this.spawnConfig.GetIterationTagsNightCity();
     let supportedTagsDogtown: array<CName> = this.spawnConfig.GetIterationTagsDogtown();
+    for tag in supportedTagsPrologue {
+      this.entitySystem.DeleteTagged(tag);
+    };
     for tag in supportedTagsNightCity {
       this.entitySystem.DeleteTagged(tag);
     };
@@ -846,10 +864,17 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     };
   }
   private final func HasPendingEntities() -> Bool {
+    let prologueUpdateRequired: Bool = false;
     let nightCityUpdateRequired: Bool = false;
     let dogtownUpdateRequired: Bool = false;
+    let supportedTagsPrologue: array<CName> = this.spawnConfig.GetIterationTagsPrologue();
     let supportedTagsNightCity: array<CName> = this.spawnConfig.GetIterationTagsNightCity();
     let supportedTagsDogtown: array<CName> = this.spawnConfig.GetIterationTagsDogtown();
+    for tag in supportedTagsPrologue {
+      if !this.entitySystem.IsPopulated(tag) {
+        prologueUpdateRequired = true;
+      };
+    };
     for tag in supportedTagsNightCity {
       if !this.entitySystem.IsPopulated(tag) {
         nightCityUpdateRequired = true;
@@ -860,7 +885,7 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
         dogtownUpdateRequired = true;
       };
     };
-    return nightCityUpdateRequired || dogtownUpdateRequired;
+    return prologueUpdateRequired || nightCityUpdateRequired || dogtownUpdateRequired;
   }
   private final func IsPhoneAvailable() -> Bool {
     let phoneSystem: wref<PhoneSystem> = GameInstance.GetScriptableSystemsContainer(this.GetGameInstance()).Get(n"PhoneSystem") as PhoneSystem;
@@ -906,10 +931,36 @@ public class DropPointsSpawnerCallbackNewDropPoint extends DelayCallback {
 **/
 public class AtelierDropPointsSpawnerConfig {
   private let spawnPoints: ref<inkHashMap>;
+  private let iterationTagsPrologue: array<CName>;
   private let iterationTagsNightCity: array<CName>;
   private let iterationTagsDogtown: array<CName>;
   public final func Init() -> Void {
     this.spawnPoints = new inkHashMap();
+  }
+  public final func BuildPrologueList() -> Void {
+    // PROLOGUE ITERATION: 
+    let iterationTagPrologue: CName = n"NightCity_Prologue1";
+    let iterationSpawnsPrologue: array<ref<AtelierDropPointInstance>>;
+    ArrayPush(this.iterationTagsPrologue, iterationTagPrologue);
+    // Watson, Little China
+    ArrayPush(
+      iterationSpawnsPrologue,
+      AtelierDropPointInstance.Create(
+        "LocKey#10963",
+        t"Districts.Watson",
+        t"Districts.LittleChina",
+        AtelierDeliveryDropPoint.LittleChina,
+        n"LittleChina",
+        n"droppoint19",
+        iterationTagPrologue,
+        this.CreatePosition(-1450.845215, 1221.096802, 23.061127, 1.0),
+        this.CreateOrientation(0.0, 0.0, -0.928518, 0.371288),
+        r"djkovrik\\gameplay\\gui\\virtual_atelier_delivery_droppoints2.inkatlas"
+      )
+    );
+    let iterationListPrologue: ref<AtelierDropPointsList> = AtelierDropPointsList.Create(iterationSpawnsPrologue);
+    this.spawnPoints.Insert(this.Key(iterationTagPrologue), iterationListPrologue);
+    this.Log(s"Stored \(ArraySize(iterationListPrologue.points)) points for key \(this.Key(iterationTagPrologue))");
   }
   // When any new version adds more drop points then new iteration tag must be used
   public final func BuildNightCityList() -> Void {
@@ -1229,35 +1280,14 @@ public class AtelierDropPointsSpawnerConfig {
     };
     return emptyArray;
   }
+  public final func GetIterationTagsPrologue() -> array<CName> {
+    return this.iterationTagsPrologue;
+  }
   public final func GetIterationTagsNightCity() -> array<CName> {
     return this.iterationTagsNightCity;
   }
-  public final func GetSpawnPointsNightCity() -> array<ref<AtelierDropPointInstance>> {
-    let result: array<ref<AtelierDropPointInstance>>;
-    let chunk: array<ref<AtelierDropPointInstance>>;
-    let supportedTags: array<CName> = this.GetIterationTagsNightCity();
-    for entityTag in supportedTags {
-      chunk = this.GetSpawnPointsByTag(entityTag);
-      for item in chunk {
-        ArrayPush(result, item);
-      };
-    };
-    return result;
-  }
   public final func GetIterationTagsDogtown() -> array<CName> {
     return this.iterationTagsDogtown;
-  }
-  public final func GetSpawnPointsDogtown() -> array<ref<AtelierDropPointInstance>> {
-    let result: array<ref<AtelierDropPointInstance>>;
-    let chunk: array<ref<AtelierDropPointInstance>>;
-    let supportedTags: array<CName> = this.GetIterationTagsDogtown();
-    for entityTag in supportedTags {
-      chunk = this.GetSpawnPointsByTag(entityTag);
-      for item in chunk {
-        ArrayPush(result, item);
-      };
-    };
-    return result;
   }
   private final func CreatePosition(x: Float, y: Float, z: Float, w: Float) -> Vector4 {
     let instance: Vector4 = new Vector4(x, y, z, w);
@@ -1338,6 +1368,7 @@ protected cb func OnRequestComponents(ri: EntityRequestComponentsInterface) -> B
   || Equals(hash, 3081670176u) // West Wind Estate
   || Equals(hash, 3145583149u) // Sunset Motel
   || Equals(hash, 2444101793u) // Longshore Stacks
+  || Equals(hash, 900254894u)  // Little China
   { 
     EntityGameInterface.Destroy(this.GetEntity());
   };
@@ -3319,6 +3350,7 @@ public abstract class AtelierDeliveryUtils {
       case AtelierDeliveryDropPoint.WestWindEstate: return "LocKey#10958";
       case AtelierDeliveryDropPoint.SunsetMotel: return "LocKey#37971";
       case AtelierDeliveryDropPoint.LongshoreStacks: return "LocKey#93789";
+      case AtelierDeliveryDropPoint.LittleChina: return "LocKey#10963";
       default: return "";
     };
   }
@@ -3369,6 +3401,7 @@ public abstract class AtelierDeliveryUtils {
       case n"WestWindEstate": return AtelierDeliveryDropPoint.WestWindEstate;
       case n"SunsetMotel": return AtelierDeliveryDropPoint.SunsetMotel;
       case n"LongshoreStacks": return AtelierDeliveryDropPoint.LongshoreStacks;
+      case n"LittleChina": return AtelierDeliveryDropPoint.LittleChina;
     };
     return AtelierDeliveryDropPoint.None;
   }

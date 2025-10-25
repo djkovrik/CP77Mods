@@ -53,6 +53,7 @@ public abstract class AtelierDeliveryUtils {
       case AtelierDeliveryDropPoint.WestWindEstate: return "LocKey#10958";
       case AtelierDeliveryDropPoint.SunsetMotel: return "LocKey#37971";
       case AtelierDeliveryDropPoint.LongshoreStacks: return "LocKey#93789";
+      case AtelierDeliveryDropPoint.LittleChina: return "LocKey#10963";
       default: return "";
     };
   }
@@ -108,6 +109,7 @@ public abstract class AtelierDeliveryUtils {
       case n"WestWindEstate": return AtelierDeliveryDropPoint.WestWindEstate;
       case n"SunsetMotel": return AtelierDeliveryDropPoint.SunsetMotel;
       case n"LongshoreStacks": return AtelierDeliveryDropPoint.LongshoreStacks;
+      case n"LittleChina": return AtelierDeliveryDropPoint.LittleChina;
     };
 
     return AtelierDeliveryDropPoint.None;

@@ -308,14 +308,6 @@ public class VirtualStoreController extends gameuiMenuGameController {
 
   @if(ModuleExists("AtelierDelivery"))
   private final func HandleBuyButtonClick() -> Void {
-    let spawner: ref<AtelierDropPointsSpawner> = AtelierDropPointsSpawner.Get(this.player.GetGame());
-
-    // Use VA flow is delivery is not available yet
-    if !spawner.IsNightCityUnlocked() {
-      this.ShowPurchaseAllConfirmationPopup();
-      return ;
-    };
-
     let store: String = this.GetVirtualStoreName();
     let orderId: Int32 = OrderProcessingSystem.Get(this.player.GetGame()).GetNextOrderId();
     let currentGoods: array<ref<VirtualCartItem>> = this.cartManager.GetCurrentGoods();
