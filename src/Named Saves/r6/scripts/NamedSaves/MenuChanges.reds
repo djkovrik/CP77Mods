@@ -191,12 +191,14 @@ public class NamedSavesSearchEvent extends Event {
   public let query: String;
   public let lifepath: LifePathFilter;
   public let type: SaveTypeFilter;
+  public let questFilter: String;
 
-  public final static func Create(query: String, lifepath: LifePathFilter, type: SaveTypeFilter) -> ref<NamedSavesSearchEvent> {
+  public final static func Create(query: String, lifepath: LifePathFilter, type: SaveTypeFilter, text: String) -> ref<NamedSavesSearchEvent> {
     let instance: ref<NamedSavesSearchEvent> = new NamedSavesSearchEvent();
     instance.query = query;
     instance.lifepath = lifepath;
     instance.type = type;
+    instance.questFilter = text;
     return instance;
   }
 }
@@ -244,7 +246,7 @@ protected cb func OnSearchInput(widget: wref<inkWidget>) {
 protected cb func OnSearchInput(widget: wref<inkWidget>) {
   let inputQuery: String = UTF8StrLower(this.m_searchInput.GetText());
   let uiSystem: ref<UISystem> = GameInstance.GetUISystem(this.GetPlayerControlledObject().GetGame());
-  uiSystem.QueueEvent(NamedSavesSearchEvent.Create(inputQuery, this.m_lifePathFilter, this.m_saveTypeFilter));
+  uiSystem.QueueEvent(NamedSavesSearchEvent.Create(inputQuery, this.m_lifePathFilter, this.m_saveTypeFilter, this.filterSavesSearchText));
 }
 
 @if(!ModuleExists("FilterSaves"))
@@ -267,7 +269,8 @@ protected cb func OnNamedSavesSearchEvent(evt: ref<NamedSavesSearchEvent>) -> Bo
   let filteredBySearch: Bool = Equals(evt.query, "") || StrContains(this.m_customNoteText, evt.query);
   let filteredByLifepath: Bool = Equals(this.m_lifepathCompat, evt.lifepath) || Equals(evt.lifepath, LifePathFilter.All);
   let filteredBySaveType: Bool = Equals(this.m_saveTypeCompat, evt.type) || Equals(evt.type, SaveTypeFilter.All);
-  let shouldShow: Bool = filteredBySearch && filteredByLifepath && filteredBySaveType;
+  let filteredByQuest: Bool = this.DoesSavePassQuestFilter(evt.questFilter);
+  let shouldShow: Bool = filteredBySearch && filteredByLifepath && filteredBySaveType && filteredByQuest;
 
   if NotEquals(isVisible, shouldShow) {
     root.SetVisible(shouldShow);
