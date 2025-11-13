@@ -11,6 +11,7 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
   private let stock: array<ref<VirtualStockItem>>;
   private let currentPlayerMoney: Int32;
   private let currentGoodsPrice: Int32;
+  private let maxQuantityPerBatch: Int32 = 1000;
 
   private let ownedItems: array<TweakDBID>;
   private let ownedTagsToShow: array<CName>;
@@ -60,7 +61,7 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
         price = Cast<Int32>(item.price);
         availableMoney = this.GetCurrentPlayerMoney() - this.GetCurrentGoodsPrice();
         let amount: Int32 = availableMoney / price / quantity;
-        return amount;
+        return amount < this.maxQuantityPerBatch ? amount : this.maxQuantityPerBatch;
       };
     };
 
