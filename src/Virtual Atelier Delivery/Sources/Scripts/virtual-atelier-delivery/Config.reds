@@ -2,7 +2,7 @@ module AtelierDelivery
 
 public class VirtualAtelierDeliveryConfig {
   
-  public final static func Debug() -> Bool = true;
+  public final static func Debug() -> Bool = false;
 
   // kept for backward compatibility
   public let atelierWatsonLocked: Bool = false;

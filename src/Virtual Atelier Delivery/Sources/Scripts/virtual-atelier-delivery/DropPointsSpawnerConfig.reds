@@ -96,9 +96,9 @@ public class AtelierDropPointsSpawnerConfig {
         t"Districts.Northside",
         AtelierDeliveryDropPoint.MartinSt,
         n"MartinSt",
-        n"droppoint3",
+        n"droppoint3_fix1",
         iterationTag1,
-        this.CreatePosition(-1475.607837, 2192.650830, 18.200005, 1.0),
+        this.CreatePosition(-1475.367837, 2192.900830, 18.200005, 1.0),
         this.CreateOrientation(0.0, 0.0, -0.490099, 0.892979),
         r"djkovrik\\gameplay\\gui\\virtual_atelier_delivery_droppoints1.inkatlas"
       )

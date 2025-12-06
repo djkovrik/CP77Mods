@@ -237,6 +237,8 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     } else {
       this.Log("Player not in Dogtown, skip spawning");
     };
+
+    this.FixAlreadySpawnedEntities();
   }
 
   public final func ScheduleInitialNotification() -> Void {
@@ -309,20 +311,38 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
 
   private final func SpawnInstancesByTag(entityTag: CName) -> Void {
     let instances: array<ref<AtelierDropPointInstance>> = this.spawnConfig.GetSpawnPointsByTag(entityTag);
-    let deviceSpec: ref<DynamicEntitySpec>;
-
     for instance in instances {
-      deviceSpec = new DynamicEntitySpec();
-      deviceSpec.templatePath = r"djkovrik\\gameplay\\devices\\drop_points\\drop_point_va.ent";
-      deviceSpec.appearanceName = n"default";
-      deviceSpec.position = instance.position;
-      deviceSpec.orientation = instance.orientation;
-      deviceSpec.persistSpawn = true;
-      deviceSpec.alwaysSpawned = true;
-      deviceSpec.tags = [ instance.uniqueTag, instance.indexTag, instance.iterationTag, this.typeTag ];
-      this.Log(s"--> spawning entity with tags [ \(instance.uniqueTag), \(instance.iterationTag), \(this.typeTag) ] at position \(instance.position)");
-      this.entitySystem.CreateEntity(deviceSpec);
+      this.SpawnDropPointEntity(instance);
     };
+  }
+
+  private final func FixAlreadySpawnedEntities() -> Void {
+    this.Log("FixAlreadySpawnedEntities");
+    let dropPoints: array<ref<AtelierDropPointInstance>> = this.GetAvailableDropPoints();
+    // Fix #1: Northside
+    let fix1tag: CName = n"droppoint3";
+    if this.entitySystem.IsPopulated(fix1tag) {
+      this.Log("Northside already spawned, repositioning...");
+      this.entitySystem.DeleteTagged(fix1tag);
+      for dropPoint in dropPoints {
+        if Equals(dropPoint.type, AtelierDeliveryDropPoint.MartinSt) && !this.entitySystem.IsPopulated(dropPoint.indexTag) {
+          this.SpawnDropPointEntity(dropPoint);
+        };
+      };
+    };
+  }
+
+  private final func SpawnDropPointEntity(instance: ref<AtelierDropPointInstance>) -> Void {
+    let deviceSpec: ref<DynamicEntitySpec> = new DynamicEntitySpec();
+    deviceSpec.templatePath = r"djkovrik\\gameplay\\devices\\drop_points\\drop_point_va.ent";
+    deviceSpec.appearanceName = n"default";
+    deviceSpec.position = instance.position;
+    deviceSpec.orientation = instance.orientation;
+    deviceSpec.persistSpawn = true;
+    deviceSpec.alwaysSpawned = true;
+    deviceSpec.tags = [ instance.uniqueTag, instance.indexTag, instance.iterationTag, this.typeTag ];
+    this.Log(s"--> spawning entity with tags [ \(instance.uniqueTag), \(instance.indexTag) \(instance.iterationTag), \(this.typeTag) ] at position \(instance.position)");
+    this.entitySystem.CreateEntity(deviceSpec);
   }
 
   private final func HasPendingEntities() -> Bool {
