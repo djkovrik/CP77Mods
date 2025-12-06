@@ -14,11 +14,11 @@ public class OrderManagerButton extends CustomButton {
         let root: ref<inkFlex> = new inkFlex();
         root.SetName(n"button");
         root.SetInteractive(true);
-        root.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+        root.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
         root.SetAnchor(inkEAnchor.CenterRight);
         root.SetHAlign(inkEHorizontalAlign.Right);
         root.SetVAlign(inkEVerticalAlign.Center);
-        root.SetSize(new Vector2(100.0, 100.0));
+        root.SetSize(Vector2(100.0, 100.0));
 
         let minSize: ref<inkRectangle> = new inkRectangle();
         minSize.SetName(n"minSize");
@@ -26,7 +26,7 @@ public class OrderManagerButton extends CustomButton {
         minSize.SetAffectsLayoutWhenHidden(true);
         minSize.SetHAlign(inkEHorizontalAlign.Left);
         minSize.SetVAlign(inkEVerticalAlign.Top);
-        minSize.SetSize(new Vector2(280.0, 80.0));
+        minSize.SetSize(Vector2(280.0, 80.0));
         minSize.Reparent(root);
         
         let frame: ref<inkImage> = new inkImage();
@@ -35,8 +35,8 @@ public class OrderManagerButton extends CustomButton {
         frame.SetTexturePart(n"cell_fg");
         frame.SetNineSliceScale(true);
         frame.SetVAlign(inkEVerticalAlign.Top);
-        frame.SetAnchorPoint(new Vector2(0.5, 0.5));
-        frame.SetSize(new Vector2(280.0, 80.0));
+        frame.SetAnchorPoint(Vector2(0.5, 0.5));
+        frame.SetSize(Vector2(280.0, 80.0));
         frame.SetStyle(r"base\\gameplay\\gui\\common\\dialogs_popups.inkstyle");
         frame.BindProperty(n"tintColor", n"PopupButton.frameColor");
         frame.BindProperty(n"opacity", n"PopupButton.frameOpacity");
@@ -53,7 +53,7 @@ public class OrderManagerButton extends CustomButton {
         label.SetOverflowPolicy(textOverflowPolicy.AdjustToSize);
         label.SetFitToContent(true);
         label.SetVAlign(inkEVerticalAlign.Center);
-        label.SetSize(new Vector2(100.0, 32.0));
+        label.SetSize(Vector2(100.0, 32.0));
         label.SetStyle(r"base\\gameplay\\gui\\common\\dialogs_popups.inkstyle");
         label.BindProperty(n"fontStyle", n"MainColors.BodyFontWeight");
         label.BindProperty(n"fontSize", n"MainColors.ReadableMedium");

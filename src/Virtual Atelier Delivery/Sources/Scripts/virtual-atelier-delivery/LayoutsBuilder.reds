@@ -19,13 +19,13 @@ public abstract class LayoutsBuilder {
     leftPart.SetAnchorPoint(0.0, 0.0);
     leftPart.Reparent(rootCanvas);
 
-    customerInfo.SetMargin(new inkMargin(16.0, 32.0, 0.0, 0.0));
+    customerInfo.SetMargin(inkMargin(16.0, 32.0, 0.0, 0.0));
     customerInfo.Reparent(leftPart);
 
-    orderInfo.SetMargin(new inkMargin(16.0, 32.0, 0.0, 0.0));
+    orderInfo.SetMargin(inkMargin(16.0, 32.0, 0.0, 0.0));
     orderInfo.Reparent(leftPart);
 
-    deliverySelector.SetMargin(new inkMargin(16.0, 32.0, 0.0, 0.0));
+    deliverySelector.SetMargin(inkMargin(16.0, 32.0, 0.0, 0.0));
     deliverySelector.Reparent(leftPart);
 
     let total: ref<inkText> = new inkText();
@@ -34,8 +34,8 @@ public abstract class LayoutsBuilder {
     total.SetFontSize(48);
     total.SetFontStyle(n"Medium");
     total.SetAnchor(inkEAnchor.CenterLeft);
-    total.SetAnchorPoint(new Vector2(0.0, 0.5));
-    total.SetMargin(new inkMargin(16.0, 32.0, 0.0, 8.0));
+    total.SetAnchorPoint(Vector2(0.0, 0.5));
+    total.SetMargin(inkMargin(16.0, 32.0, 0.0, 8.0));
     total.SetLetterCase(textLetterCase.OriginalCase);
     total.SetText("Total: 1234567890$");
     total.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
@@ -44,7 +44,7 @@ public abstract class LayoutsBuilder {
 
     destinationSelector.SetAnchor(inkEAnchor.TopRight);
     destinationSelector.SetAnchorPoint(1.0, 0.0);
-    destinationSelector.SetMargin(new inkMargin(0.0, 16.0, 48.0, 0.0));
+    destinationSelector.SetMargin(inkMargin(0.0, 16.0, 48.0, 0.0));
     destinationSelector.Reparent(rootCanvas);
 
     let dropPointPreview: ref<inkCompoundWidget> = LayoutsBuilder.BuildDropPointPreviewContainer();
@@ -63,8 +63,8 @@ public abstract class LayoutsBuilder {
     orderInfoHeader.SetFontSize(50);
     orderInfoHeader.SetFontStyle(n"Regular");
     orderInfoHeader.SetAnchor(inkEAnchor.CenterLeft);
-    orderInfoHeader.SetAnchorPoint(new Vector2(0.0, 0.5));
-    orderInfoHeader.SetMargin(new inkMargin(0.0, 0.0, 0.0, 16.0));
+    orderInfoHeader.SetAnchorPoint(Vector2(0.0, 0.5));
+    orderInfoHeader.SetMargin(inkMargin(0.0, 0.0, 0.0, 16.0));
     orderInfoHeader.SetLetterCase(textLetterCase.OriginalCase);
     orderInfoHeader.SetText(GetLocalizedTextByKey(n"Mod-VAD-Order-Info"));
     orderInfoHeader.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
@@ -80,8 +80,8 @@ public abstract class LayoutsBuilder {
     storeName.SetWrapping(true, 580, textWrappingPolicy.PerCharacter);
     storeName.SetOverflowPolicy(textOverflowPolicy.DotsEnd);
     storeName.SetAnchor(inkEAnchor.CenterLeft);
-    storeName.SetAnchorPoint(new Vector2(0.0, 0.5));
-    storeName.SetMargin(new inkMargin(0.0, 0.0, 0.0, 8.0));
+    storeName.SetAnchorPoint(Vector2(0.0, 0.5));
+    storeName.SetMargin(inkMargin(0.0, 0.0, 0.0, 8.0));
     storeName.SetLetterCase(textLetterCase.OriginalCase);
     storeName.SetText("All Foods Online");
     storeName.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
@@ -94,8 +94,8 @@ public abstract class LayoutsBuilder {
     totalItems.SetFontSize(42);
     totalItems.SetFontStyle(n"Regular");
     totalItems.SetAnchor(inkEAnchor.CenterLeft);
-    totalItems.SetAnchorPoint(new Vector2(0.0, 0.5));
-    totalItems.SetMargin(new inkMargin(0.0, 0.0, 0.0, 8.0));
+    totalItems.SetAnchorPoint(Vector2(0.0, 0.5));
+    totalItems.SetMargin(inkMargin(0.0, 0.0, 0.0, 8.0));
     totalItems.SetLetterCase(textLetterCase.OriginalCase);
     totalItems.SetText("Items quantity: 1234567890");
     totalItems.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
@@ -108,8 +108,8 @@ public abstract class LayoutsBuilder {
     actualWeight.SetFontSize(42);
     actualWeight.SetFontStyle(n"Regular");
     actualWeight.SetAnchor(inkEAnchor.CenterLeft);
-    actualWeight.SetAnchorPoint(new Vector2(0.0, 0.5));
-    actualWeight.SetMargin(new inkMargin(0.0, 0.0, 0.0, 16.0));
+    actualWeight.SetAnchorPoint(Vector2(0.0, 0.5));
+    actualWeight.SetMargin(inkMargin(0.0, 0.0, 0.0, 16.0));
     actualWeight.SetLetterCase(textLetterCase.OriginalCase);
     actualWeight.SetText("Items weight: 1234567890");
     actualWeight.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
@@ -122,8 +122,8 @@ public abstract class LayoutsBuilder {
     subtotal.SetFontSize(42);
     subtotal.SetFontStyle(n"Regular");
     subtotal.SetAnchor(inkEAnchor.CenterLeft);
-    subtotal.SetAnchorPoint(new Vector2(0.0, 0.5));
-    subtotal.SetMargin(new inkMargin(0.0, 0.0, 0.0, 8.0));
+    subtotal.SetAnchorPoint(Vector2(0.0, 0.5));
+    subtotal.SetMargin(inkMargin(0.0, 0.0, 0.0, 8.0));
     subtotal.SetLetterCase(textLetterCase.OriginalCase);
     subtotal.SetText("Subtotal: 1234567890$");
     subtotal.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
@@ -162,7 +162,7 @@ public abstract class LayoutsBuilder {
     content.SetAnchor(inkEAnchor.CenterLeft);
     content.SetHAlign(inkEHorizontalAlign.Left);
     content.SetVAlign(inkEVerticalAlign.Center);
-    content.SetMargin(new inkMargin(32.0, 16.0, 32.0, 16.0));
+    content.SetMargin(inkMargin(32.0, 16.0, 32.0, 16.0));
     content.SetAnchorPoint(0.5, 0.5);
     content.Reparent(customerInfo);
 
@@ -176,8 +176,8 @@ public abstract class LayoutsBuilder {
     header.SetFontSize(40);
     header.SetFontStyle(n"Medium");
     header.SetAnchor(inkEAnchor.CenterLeft);
-    header.SetAnchorPoint(new Vector2(0.0, 0.5));
-    header.SetMargin(new inkMargin(0.0, 0.0, 16.0, 0.0));
+    header.SetAnchorPoint(Vector2(0.0, 0.5));
+    header.SetMargin(inkMargin(0.0, 0.0, 16.0, 0.0));
     header.SetLetterCase(textLetterCase.OriginalCase);
     header.SetText(GetLocalizedTextByKey(n"Mod-VAD-Customer-Info"));
     header.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
@@ -190,8 +190,8 @@ public abstract class LayoutsBuilder {
     clientName.SetFontSize(40);
     clientName.SetFontStyle(n"Regular");
     clientName.SetAnchor(inkEAnchor.CenterLeft);
-    clientName.SetAnchorPoint(new Vector2(0.0, 0.5));
-    clientName.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+    clientName.SetAnchorPoint(Vector2(0.0, 0.5));
+    clientName.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
     clientName.SetLetterCase(textLetterCase.OriginalCase);
     clientName.SetText("Valerie ******");
     clientName.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
@@ -208,8 +208,8 @@ public abstract class LayoutsBuilder {
     contactInfo.SetFontSize(40);
     contactInfo.SetFontStyle(n"Medium");
     contactInfo.SetAnchor(inkEAnchor.CenterLeft);
-    contactInfo.SetAnchorPoint(new Vector2(0.0, 0.5));
-    contactInfo.SetMargin(new inkMargin(0.0, 0.0, 16.0, 0.0));
+    contactInfo.SetAnchorPoint(Vector2(0.0, 0.5));
+    contactInfo.SetMargin(inkMargin(0.0, 0.0, 16.0, 0.0));
     contactInfo.SetLetterCase(textLetterCase.OriginalCase);
     contactInfo.SetText(GetLocalizedTextByKey(n"Mod-VAD-Contact-Info"));
     contactInfo.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
@@ -222,8 +222,8 @@ public abstract class LayoutsBuilder {
     notProvided.SetFontSize(40);
     notProvided.SetFontStyle(n"Regular");
     notProvided.SetAnchor(inkEAnchor.CenterLeft);
-    notProvided.SetAnchorPoint(new Vector2(0.0, 0.5));
-    notProvided.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+    notProvided.SetAnchorPoint(Vector2(0.0, 0.5));
+    notProvided.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
     notProvided.SetLetterCase(textLetterCase.OriginalCase);
     notProvided.SetText(GetLocalizedTextByKey(n"Mod-VAD-Contact-Info-Not-Provided"));
     notProvided.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
@@ -255,17 +255,17 @@ public abstract class LayoutsBuilder {
     deliveryHeader.SetFontSize(50);
     deliveryHeader.SetFontStyle(n"Regular");
     deliveryHeader.SetAnchor(inkEAnchor.CenterLeft);
-    deliveryHeader.SetAnchorPoint(new Vector2(0.0, 0.5));
+    deliveryHeader.SetAnchorPoint(Vector2(0.0, 0.5));
     deliveryHeader.SetLetterCase(textLetterCase.OriginalCase);
     deliveryHeader.SetText(GetLocalizedTextByKey(n"Mod-VAD-Shipment-Method"));
-    deliveryHeader.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+    deliveryHeader.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
     deliveryHeader.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     deliveryHeader.BindProperty(n"tintColor", n"MainColors.Blue");
     deliveryHeader.Reparent(deliverySelector);
 
     let deliveryCheckboxes: ref<inkHorizontalPanel> = new inkHorizontalPanel();
     deliveryCheckboxes.SetName(n"deliveryCheckboxes");
-    deliveryCheckboxes.SetMargin(new inkMargin(0.0, 20.0, 0.0, 20.0));
+    deliveryCheckboxes.SetMargin(inkMargin(0.0, 20.0, 0.0, 20.0));
     deliveryCheckboxes.Reparent(deliverySelector);
 
     let checkboxStandard: ref<inkHorizontalPanel> = LayoutsBuilder.BuildCheckbox(n"checkboxStandard", n"Mod-VAD-Shipment-Standard");
@@ -279,8 +279,8 @@ public abstract class LayoutsBuilder {
     shippingCost.SetFontSize(38);
     shippingCost.SetFontStyle(n"Regular");
     shippingCost.SetAnchor(inkEAnchor.CenterLeft);
-    shippingCost.SetAnchorPoint(new Vector2(0.0, 0.5));
-    shippingCost.SetMargin(new inkMargin(4.0, 0.0, 0.0, 0.0));
+    shippingCost.SetAnchorPoint(Vector2(0.0, 0.5));
+    shippingCost.SetMargin(inkMargin(4.0, 0.0, 0.0, 0.0));
     shippingCost.SetLetterCase(textLetterCase.OriginalCase);
     shippingCost.SetText("Shipping cost: 123$");
     shippingCost.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
@@ -293,7 +293,7 @@ public abstract class LayoutsBuilder {
     estimatedDelivery.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
     estimatedDelivery.SetFontSize(38);
     estimatedDelivery.SetFontStyle(n"Regular");
-    estimatedDelivery.SetMargin(new inkMargin(4.0, 4.0, 0.0, 8.0));
+    estimatedDelivery.SetMargin(inkMargin(4.0, 4.0, 0.0, 8.0));
     estimatedDelivery.SetLetterCase(textLetterCase.OriginalCase);
     estimatedDelivery.SetText("Delivery time: 1-2 days");
     estimatedDelivery.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
@@ -343,7 +343,7 @@ public abstract class LayoutsBuilder {
     foreground.SetAnchorPoint(0.5, 0.5);
     foreground.SetHAlign(inkEHorizontalAlign.Right);
     foreground.SetVAlign(inkEVerticalAlign.Top);
-    foreground.SetMargin(new inkMargin(0.0, 8.0, 8.0, 0.0));
+    foreground.SetMargin(inkMargin(0.0, 8.0, 8.0, 0.0));
     foreground.SetSize(25.0, 25.0);
     foreground.SetVisible(false);
     foreground.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
@@ -368,7 +368,7 @@ public abstract class LayoutsBuilder {
     checkboxLabel.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
     checkboxLabel.SetFontSize(42);
     checkboxLabel.SetFontStyle(n"Regular");
-    checkboxLabel.SetMargin(new inkMargin(12.0, 0.0, 32.0, 0.0));
+    checkboxLabel.SetMargin(inkMargin(12.0, 0.0, 32.0, 0.0));
     checkboxLabel.SetLetterCase(textLetterCase.OriginalCase);
     checkboxLabel.SetVerticalAlignment(textVerticalAlignment.Center);
     checkboxLabel.SetText(GetLocalizedTextByKey(locKey));
@@ -389,8 +389,8 @@ public abstract class LayoutsBuilder {
     header.SetFontSize(50);
     header.SetFontStyle(n"Regular");
     header.SetAnchor(inkEAnchor.CenterLeft);
-    header.SetAnchorPoint(new Vector2(0.0, 0.5));
-    header.SetMargin(new inkMargin(0.0, 0.0, 0.0, 8.0));
+    header.SetAnchorPoint(Vector2(0.0, 0.5));
+    header.SetMargin(inkMargin(0.0, 0.0, 0.0, 8.0));
     header.SetLetterCase(textLetterCase.OriginalCase);
     header.SetText(GetLocalizedTextByKey(n"Mod-VAD-Shipment-Destination"));
     header.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
@@ -401,14 +401,14 @@ public abstract class LayoutsBuilder {
     scrollWrapper.SetName(n"scrollWrapper");
     scrollWrapper.SetHAlign(inkEHorizontalAlign.Fill);
     scrollWrapper.SetVAlign(inkEVerticalAlign.Top);
-    scrollWrapper.SetMargin(new inkMargin(0.0, 12.0, 0.0, 12.0));
+    scrollWrapper.SetMargin(inkMargin(0.0, 12.0, 0.0, 12.0));
     scrollWrapper.SetSize(660.0, 560.0);
     scrollWrapper.SetInteractive(true);
 
     let scrollArea: ref<inkScrollArea> = new inkScrollArea();
     scrollArea.SetName(n"scrollArea");
     scrollArea.SetAnchor(inkEAnchor.Fill);
-    scrollArea.SetMargin(new inkMargin(0, 0, 16.0, 0));
+    scrollArea.SetMargin(inkMargin(0, 0, 16.0, 0));
     scrollArea.fitToContentDirection = inkFitToContentDirection.Horizontal;
     scrollArea.useInternalMask = true;
     scrollArea.Reparent(scrollWrapper, -1);
@@ -417,7 +417,7 @@ public abstract class LayoutsBuilder {
     sliderArea.SetName(n"sliderArea");
     sliderArea.SetAnchor(inkEAnchor.RightFillVerticaly);
     sliderArea.SetSize(15.0, 0.0);
-    sliderArea.SetMargin(new inkMargin(16.0, 0.0, 0.0, 0.0));
+    sliderArea.SetMargin(inkMargin(16.0, 0.0, 0.0, 0.0));
     sliderArea.SetInteractive(true);
     sliderArea.Reparent(scrollWrapper, -1);
 
@@ -484,7 +484,7 @@ public abstract class LayoutsBuilder {
     dropPointPreview.SetSize(680.0, 300.0);
     dropPointPreview.SetAnchor(inkEAnchor.BottomRight);
     dropPointPreview.SetAnchorPoint(1.0, 1.0);
-    dropPointPreview.SetMargin(new inkMargin(0.0, 0.0, 32.0, 16.0));
+    dropPointPreview.SetMargin(inkMargin(0.0, 0.0, 32.0, 16.0));
 
     let dropPointPreviewImage: ref<inkImage> = new inkImage();
     dropPointPreviewImage.SetName(n"image");

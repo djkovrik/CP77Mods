@@ -12,7 +12,7 @@ public class DeliveryMessengerSystem extends ScriptableSystem {
     return system;
   }
 
-  private func OnAttach() -> Void {
+  public func OnAttach() -> Void {
     if GameInstance.GetSystemRequestsHandler().IsPreGame() {
       return;
     };

@@ -18,7 +18,7 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     return system;
   }
 
-  private func OnAttach() -> Void {
+  public func OnAttach() -> Void {
     this.entitySystem = GameInstance.GetDynamicEntitySystem();
     this.delaySystem = GameInstance.GetDelaySystem(this.GetGameInstance());
     this.handled = false;
@@ -36,7 +36,7 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     this.spawnConfig.BuildDogtownList();
   }
 
-  private func OnRestored(saveVersion: Int32, gameVersion: Int32) -> Void {
+  public func OnRestored(saveVersion: Int32, gameVersion: Int32) -> Void {
     this.Log("OnRestored");
     if !this.handled {
       this.HandleSpawning();

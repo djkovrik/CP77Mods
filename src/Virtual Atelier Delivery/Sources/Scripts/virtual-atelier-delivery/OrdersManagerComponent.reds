@@ -23,14 +23,14 @@ public class OrdersManagerComponent extends inkComponent {
     scrollWrapper.SetAnchorPoint(0.5, 0.0);
     scrollWrapper.SetHAlign(inkEHorizontalAlign.Fill);
     scrollWrapper.SetVAlign(inkEVerticalAlign.Top);
-    scrollWrapper.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+    scrollWrapper.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
     scrollWrapper.SetSize(2600.0, 960.0);
     scrollWrapper.SetInteractive(true);
 
     let scrollArea: ref<inkScrollArea> = new inkScrollArea();
     scrollArea.SetName(n"scrollArea");
     scrollArea.SetAnchor(inkEAnchor.Fill);
-    scrollArea.SetMargin(new inkMargin(0, 0, 16.0, 0));
+    scrollArea.SetMargin(inkMargin(0, 0, 16.0, 0));
     scrollArea.fitToContentDirection = inkFitToContentDirection.Horizontal;
     scrollArea.useInternalMask = true;
     scrollArea.Reparent(scrollWrapper, -1);
@@ -39,7 +39,7 @@ public class OrdersManagerComponent extends inkComponent {
     sliderArea.SetName(n"sliderArea");
     sliderArea.SetAnchor(inkEAnchor.RightFillVerticaly);
     sliderArea.SetSize(15.0, 0.0);
-    sliderArea.SetMargin(new inkMargin(16.0, 0.0, 0.0, 0.0));
+    sliderArea.SetMargin(inkMargin(16.0, 0.0, 0.0, 0.0));
     sliderArea.SetInteractive(true);
     sliderArea.Reparent(scrollWrapper, -1);
 
@@ -74,7 +74,7 @@ public class OrdersManagerComponent extends inkComponent {
 
     let components: ref<inkVerticalPanel> = new inkVerticalPanel();
     components.SetName(n"components");
-    components.SetChildMargin(new inkMargin(0.0, 24.0, 0.0, 24.0));
+    components.SetChildMargin(inkMargin(0.0, 24.0, 0.0, 24.0));
     components.Reparent(scrollArea);
 
     sliderFill.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
@@ -93,9 +93,9 @@ public class OrdersManagerComponent extends inkComponent {
     empty.SetFontStyle(n"Regular");
     empty.SetFontSize(64);
     empty.SetAnchor(inkEAnchor.Centered);
-    empty.SetAnchorPoint(new Vector2(0.5, 0.5));
+    empty.SetAnchorPoint(Vector2(0.5, 0.5));
     empty.SetLetterCase(textLetterCase.OriginalCase);
-    empty.SetMargin(new inkMargin(48.0, 48.0, 48.0, 48.0));
+    empty.SetMargin(inkMargin(48.0, 48.0, 48.0, 48.0));
     empty.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     empty.BindProperty(n"tintColor", n"MainColors.Gold");
     empty.SetVisible(false);

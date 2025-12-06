@@ -42,7 +42,7 @@ public class OrdersManagerItemComponent extends inkComponent {
     icon.SetName(n"icon");
     icon.SetSize(90.0, 90.0);
     icon.SetAnchor(inkEAnchor.Centered);
-    icon.SetAnchorPoint(new Vector2(0.5, 0.5));
+    icon.SetAnchorPoint(Vector2(0.5, 0.5));
     icon.SetHAlign(inkEHorizontalAlign.Center);
     icon.SetVAlign(inkEVerticalAlign.Center);
     icon.SetContentHAlign(inkEHorizontalAlign.Fill);
@@ -57,7 +57,7 @@ public class OrdersManagerItemComponent extends inkComponent {
     // Store name and status
     let storeAndStatus: ref<inkVerticalPanel> = new inkVerticalPanel();
     storeAndStatus.SetName(n"storeAndStatus");
-    storeAndStatus.SetMargin(new inkMargin(48.0, 0.0, 0.0, 0.0));
+    storeAndStatus.SetMargin(inkMargin(48.0, 0.0, 0.0, 0.0));
     storeAndStatus.Reparent(mainRow);
 
     let storeName: ref<inkText> = new inkText();
@@ -97,7 +97,7 @@ public class OrdersManagerItemComponent extends inkComponent {
     badgeWrapper.SetName(n"badgeWrapper");
     badgeWrapper.SetFitToContent(false);
     badgeWrapper.SetSize(300.0, 60.0);
-    badgeWrapper.SetMargin(new inkMargin(64.0, 0.0, 0.0, 0.0));
+    badgeWrapper.SetMargin(inkMargin(64.0, 0.0, 0.0, 0.0));
     badgeWrapper.Reparent(mainRow);
 
     // Badge
@@ -135,7 +135,7 @@ public class OrdersManagerItemComponent extends inkComponent {
     badgeText.SetAnchorPoint(0.5, 0.5);
     badgeText.SetHAlign(inkEHorizontalAlign.Left);
     badgeText.SetVAlign(inkEVerticalAlign.Center);
-    badgeText.SetMargin(new inkMargin(16.0, 2.0, 16.0, 2.0));
+    badgeText.SetMargin(inkMargin(16.0, 2.0, 16.0, 2.0));
     badgeText.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
     badgeText.SetFontSize(44);
     badgeText.SetLetterCase(textLetterCase.UpperCase);
@@ -153,7 +153,7 @@ public class OrdersManagerItemComponent extends inkComponent {
     price.SetAnchorPoint(0.5, 0.5);
     price.SetHAlign(inkEHorizontalAlign.Left);
     price.SetVAlign(inkEVerticalAlign.Center);
-    price.SetMargin(new inkMargin(32.0, 0.0, 0.0, 0.0));
+    price.SetMargin(inkMargin(32.0, 0.0, 0.0, 0.0));
     price.SetHorizontalAlignment(textHorizontalAlignment.Center);
     price.SetVerticalAlignment(textVerticalAlignment.Center);
     price.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
@@ -167,7 +167,7 @@ public class OrdersManagerItemComponent extends inkComponent {
     locationWrapper.SetSize(680.0, 80.0);
     locationWrapper.SetAnchor(inkEAnchor.CenterLeft);
     locationWrapper.SetAnchorPoint(0.5, 0.5);
-    locationWrapper.SetMargin(new inkMargin(32.0, 0.0, 32.0, 0.0));
+    locationWrapper.SetMargin(inkMargin(32.0, 0.0, 32.0, 0.0));
     locationWrapper.Reparent(mainRow);
 
     // Location

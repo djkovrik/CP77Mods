@@ -51,8 +51,8 @@ public class OrderCheckoutDestinationItem extends inkComponent {
     title.SetFontSize(34);
     title.SetFontStyle(n"Regular");
     title.SetAnchor(inkEAnchor.CenterLeft);
-    title.SetAnchorPoint(new Vector2(0.0, 0.5));
-    title.SetMargin(new inkMargin(16.0, 0.0, 16.0, 0.0));
+    title.SetAnchorPoint(Vector2(0.0, 0.5));
+    title.SetMargin(inkMargin(16.0, 0.0, 16.0, 0.0));
     title.SetLetterCase(textLetterCase.OriginalCase);
     title.SetText("Drop point name");
     title.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
@@ -69,8 +69,8 @@ public class OrderCheckoutDestinationItem extends inkComponent {
     subtitle.SetFontSize(32);
     subtitle.SetFontStyle(n"Regular");
     subtitle.SetAnchor(inkEAnchor.CenterLeft);
-    subtitle.SetAnchorPoint(new Vector2(0.0, 0.5));
-    subtitle.SetMargin(new inkMargin(16.0, 0.0, 16.0, 0.0));
+    subtitle.SetAnchorPoint(Vector2(0.0, 0.5));
+    subtitle.SetMargin(inkMargin(16.0, 0.0, 16.0, 0.0));
     subtitle.SetLetterCase(textLetterCase.OriginalCase);
     subtitle.SetText("District, subdistrict");
     subtitle.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");

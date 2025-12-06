@@ -402,7 +402,7 @@ public class AtelierDropPointsSpawnerConfig {
   }
 
   private final func CreatePosition(x: Float, y: Float, z: Float, w: Float) -> Vector4 {
-    let instance: Vector4 = new Vector4(x, y, z, w);
+    let instance: Vector4 = Vector4(x, y, z, w);
     return instance;
   }
 

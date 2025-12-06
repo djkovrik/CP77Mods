@@ -12,7 +12,7 @@ public class OrderTrackingTicker extends ScriptableSystem {
     return system;
   }
 
-  private func OnAttach() -> Void {
+  public func OnAttach() -> Void {
     if GameInstance.GetSystemRequestsHandler().IsPreGame() {
       return;
     };
