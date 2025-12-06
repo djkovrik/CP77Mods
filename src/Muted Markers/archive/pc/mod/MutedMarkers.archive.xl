@@ -8,3 +8,4 @@ localization:
     es-es: base\localization\es-es\onscreens\muted-markers.json
     tr-tr: base\localization\tr-tr\onscreens\muted-markers.json
     pt-br: base\localization\pt-br\onscreens\muted-markers.json
+    it-it: base\localization\it-it\onscreens\muted-markers.json
