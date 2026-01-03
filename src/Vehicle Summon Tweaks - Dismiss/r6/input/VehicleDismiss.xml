@@ -19,5 +19,6 @@
     <!-- inputUserMapping -->
 	<mapping name="VehicleDismiss_Button" type="Button" >
         <button id="IK_R" overridableUI="dismissVehicle" />
+		<button id="IK_Pad_DigitUp" overridableUI="dismissVehicleController" />
     </mapping>
 </bindings>

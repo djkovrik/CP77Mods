@@ -15,6 +15,13 @@ public class VehicleSummonDismissConfig {
   @runtimeProperty("ModSettings.mod", "Vehicle Dismiss")
   @runtimeProperty("ModSettings.category", "UI-Settings-GenaralInput")
   @runtimeProperty("ModSettings.category.order", "0")
+  @runtimeProperty("ModSettings.displayName", "UI-Settings-Controller")
+  @runtimeProperty("ModSettings.description", "UI-Settings-Bind")
+  public let dismissVehicleController: EInputKey = EInputKey.IK_Pad_DigitUp;
+
+  @runtimeProperty("ModSettings.mod", "Vehicle Dismiss")
+  @runtimeProperty("ModSettings.category", "UI-Settings-GenaralInput")
+  @runtimeProperty("ModSettings.category.order", "0")
   @runtimeProperty("ModSettings.displayName", "Gameplay-Devices-Interactions-Helpers-Hold")
   @runtimeProperty("ModSettings.description", "")
   public let hold: Bool = true;
@@ -48,10 +55,17 @@ protected cb func OnUpdateInteraction(argValue: Variant) -> Bool {
   let firstChoice: InteractionChoiceData;
   let newChoice: InteractionChoiceData;
 
+  let inputKey: EInputKey;
+  if player.PlayerLastUsedPad() {
+    inputKey = cfg.dismissVehicleController;
+  } else {
+    inputKey = cfg.dismissVehicle;
+  };
+
   if choicesCount > 0 && player.IsLookingAtOwnedVehicle() {
     firstChoice = interactionChoices[0];
     newChoice.inputAction = n"VehicleDismiss";
-    newChoice.rawInputKey = cfg.dismissVehicle;
+    newChoice.rawInputKey = inputKey;
     newChoice.isHoldAction = cfg.hold;
     newChoice.localizedName = GetLocalizedTextByKey(n"Mod-Dismiss-Action");
     newChoice.type = firstChoice.type;
