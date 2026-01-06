@@ -1,0 +1,1088 @@
+struct WorldMapTooltipData
+{
+	var controller : weak< BaseWorldMapMappinController >;
+	var mappin : weak< IMappin >;
+	var journalEntry : weak< JournalEntry >;
+	var fastTravelEnabled : Bool;
+	default fastTravelEnabled = false;
+	var delamainTaxiEnabled : Bool;
+	default delamainTaxiEnabled = false;
+	var travelCost : Int32;
+	var playerMoney : Int32;
+	var readJournal : Bool;
+	default readJournal = false;
+	var moreInfo : Bool;
+	default moreInfo = false;
+	var isCollection : Bool;
+}
+
+struct FixerTooltipMapData
+{
+	var fixerLocKey : CName;
+	var fixerIcon : UIIcon_Record;
+	var fixerDescription : CName;
+	var additionalDescriptionKey : CName;
+	var allQuestsAmount : Int32;
+	var generalQuestsProgress : Int32;
+	var allQuestsInCurrentPackage : Int32;
+	var currentPackageProgress : Int32;
+}
+
+enum WorldMapTooltipType
+{
+	Default = 0,
+	Police = 1,
+}
+
+class WorldMapTooltipContainer extends inkLogicController
+{
+	protected editable var m_defaultTooltip : inkWidgetRef;
+	protected editable var m_policeTooltip : inkWidgetRef;
+	protected var m_defaultTooltipController : weak< WorldMapTooltipBaseController >;
+	protected var m_policeTooltipController : weak< WorldMapTooltipBaseController >;
+	protected var m_tooltips : weak< WorldMapTooltipBaseController >[ 3 ];
+	protected var m_currentVisibleIndex : Int32;
+	default m_currentVisibleIndex = -1;
+
+	protected event OnInitialize()
+	{
+		m_defaultTooltipController = ( ( WorldMapTooltipBaseController )( inkWidgetRef.GetController( m_defaultTooltip ) ) );
+		m_policeTooltipController = ( ( WorldMapTooltipBaseController )( inkWidgetRef.GetController( m_policeTooltip ) ) );
+		m_tooltips[ 1 ] = m_policeTooltipController;
+		m_tooltips[ 2 ] = m_defaultTooltipController;
+		HideAll( true );
+	}
+
+	public function Show( target : WorldMapTooltipType )
+	{
+		var oldController, newController : weak< WorldMapTooltipBaseController >;
+		var priority : Int32;
+		newController = GetTooltipController( target );
+		priority = GetControllerPriorityIndex( newController );
+		if( priority == m_currentVisibleIndex )
+		{
+			return;
+		}
+		if( newController.m_active || newController.m_visible )
+		{
+			return;
+		}
+		newController.m_active = true;
+		if( m_currentVisibleIndex != -1 )
+		{
+			oldController = m_tooltips[ m_currentVisibleIndex ];
+			if( m_currentVisibleIndex < priority )
+			{
+				oldController.HideInstant();
+				newController.Show();
+				m_currentVisibleIndex = priority;
+			}
+			else
+			{
+			}
+		}
+		else
+		{
+			newController.Show();
+			m_currentVisibleIndex = priority;
+		}
+	}
+
+	public function Hide( target : WorldMapTooltipType )
+	{
+		var oldController, newController : weak< WorldMapTooltipBaseController >;
+		var priority : Int32;
+		var shouldHideInstant : Bool;
+		shouldHideInstant = false;
+		oldController = GetTooltipController( target );
+		priority = GetControllerPriorityIndex( oldController );
+		oldController.m_active = false;
+		if( oldController.m_visible )
+		{
+			if( ( m_currentVisibleIndex != -1 ) && ( m_currentVisibleIndex == priority ) )
+			{
+				for( m_currentVisibleIndex = m_currentVisibleIndex - 1; m_currentVisibleIndex >= 0; m_currentVisibleIndex -= 1 )
+				{
+					newController = m_tooltips[ m_currentVisibleIndex ];
+					if( newController.m_active )
+					{
+						newController.Show();
+						shouldHideInstant = true;
+						break;
+					}
+				}
+			}
+			if( shouldHideInstant )
+			{
+				oldController.HideInstant();
+			}
+			else
+			{
+				oldController.Hide();
+			}
+		}
+	}
+
+	public function HideAll( optional force : Bool )
+	{
+		var i, total : Int32;
+		total = m_tooltips.Size();
+		for( i = 0; i < total; i += 1 )
+		{
+			m_tooltips[ i ].m_active = false;
+			m_tooltips[ i ].HideInstant( force );
+		}
+	}
+
+	public function SetData( target : WorldMapTooltipType, const data : ref< WorldMapTooltipData >, menu : WorldMapMenuGameController )
+	{
+		GetTooltipController( target ).SetData( data, menu );
+	}
+
+	public function PlayPaymentErrorAnimation()
+	{
+		GetTooltipController( WorldMapTooltipType.Default ).PlayLibraryAnimation( 'NotEnoughMoney' );
+	}
+
+	private function GetTooltipController( type : WorldMapTooltipType ) : weak< WorldMapTooltipBaseController >
+	{
+		switch( type )
+		{
+			case WorldMapTooltipType.Police:
+				return m_policeTooltipController;
+			default:
+				return m_defaultTooltipController;
+		}
+	}
+
+	private function GetControllerPriorityIndex( controller : weak< WorldMapTooltipBaseController > ) : Int32
+	{
+		var i, total : Int32;
+		total = m_tooltips.Size();
+		for( i = 0; i < total; i += 1 )
+		{
+			if( m_tooltips[ i ] == controller )
+			{
+				return i;
+			}
+		}
+		return -1;
+	}
+
+}
+
+class WorldMapTooltipBaseController extends inkLogicController
+{
+	protected editable var m_root : inkWidgetRef;
+	private var m_showHideAnim : inkAnimProxy;
+	var m_visible : Bool;
+	default m_visible = false;
+	var m_active : Bool;
+	default m_active = false;
+
+	protected virtual function GetShowAnimation() : CName
+	{
+		return 'ShowTooltip';
+	}
+
+	protected virtual function GetHideAnimation() : CName
+	{
+		return 'HideTooltip';
+	}
+
+	public virtual function Show()
+	{
+		if( !( m_visible ) )
+		{
+			if( m_showHideAnim )
+			{
+				m_showHideAnim.Stop();
+			}
+			m_showHideAnim = PlayLibraryAnimation( GetShowAnimation() );
+			m_visible = true;
+		}
+	}
+
+	public virtual function HideInstant( optional force : Bool )
+	{
+		if( m_visible || force )
+		{
+			if( m_showHideAnim )
+			{
+				m_showHideAnim.Stop();
+			}
+			inkWidgetRef.SetOpacity( m_root, 0.0 );
+			m_visible = false;
+		}
+	}
+
+	public virtual function Hide()
+	{
+		if( m_visible )
+		{
+			if( m_showHideAnim )
+			{
+				m_showHideAnim.Stop();
+			}
+			m_showHideAnim = PlayLibraryAnimation( GetHideAnimation() );
+			m_visible = false;
+		}
+	}
+
+	public virtual function SetData( const data : ref< WorldMapTooltipData >, menu : WorldMapMenuGameController ) {}
+}
+
+class WorldMapTooltipController extends WorldMapTooltipBaseController
+{
+	protected editable var m_titleText : inkTextRef;
+	protected editable var m_fixerIcon : inkImageRef;
+	protected editable var m_descText : inkTextRef;
+	protected editable var m_warningText : inkTextRef;
+	protected editable var m_additionalDescText : inkTextRef;
+	protected editable var m_lineBreak : inkWidgetRef;
+	protected editable var m_icon : inkImageRef;
+	protected editable var m_ep1Icon : inkImageRef;
+	protected editable var m_inputOpenJournalContainer : inkCompoundRef;
+	protected editable var m_inputInteractContainer : inkCompoundRef;
+	protected editable var m_inputMoreInfoContainer : inkCompoundRef;
+	protected editable var m_inputDelamainTaxiContainer : inkCompoundRef;
+	protected editable var m_travelCostContainer : inkCompoundRef;
+	protected editable var m_travelCostText : inkTextRef;
+	protected editable var m_threatLevelPanel : inkWidgetRef;
+	protected editable var m_threatLevelValue : inkTextRef;
+	protected editable var m_fixerPanel : inkWidgetRef;
+	protected editable var m_linkImage : inkImageRef;
+	private var m_gigProgress : Float;
+	private editable var m_bar : inkWidgetRef;
+	private var m_barAnimationProxy : inkAnimProxy;
+	private var m_animationProxy : inkAnimProxy;
+	private editable var m_gigBarCompletedText : inkTextRef;
+	private editable var m_gigBarTotalText : inkTextRef;
+
+	protected event OnInitialize()
+	{
+		Reset();
+	}
+
+	public override function SetData( const data : ref< WorldMapTooltipData >, menu : WorldMapMenuGameController )
+	{
+		var journalManager : JournalManager;
+		var player : weak< GameObject >;
+		var mappinVariant : gamedataMappinVariant;
+		var mappinPhase : gamedataMappinPhase;
+		var fastTravelmappin : FastTravelMappin;
+		var pointData : FastTravelPointData;
+		var vehicleMappin : VehicleMappin;
+		var vehicleObject : weak< VehicleObject >;
+		var ripperdocRecord : RipperdocMappin_Record;
+		var racingRecord : RacingMappin_Record;
+		var m_objective : JournalQuestObjective;
+		var m_quest : JournalQuest;
+		var m_phase : JournalQuestPhase;
+		var m_mappin : JournalQuestMapPin;
+		var fixerData : FixerTooltipMapData;
+		var iconRecord : UIIcon_Record;
+		var titleStr : String;
+		var descStr : String;
+		var warnStr : String;
+		var cost : Int32;
+		var ripperdocName : String;
+		var recommendedLvl : Uint32;
+		var inputInteract : Bool;
+		var inputOpenJournal : Bool;
+		var inputMoreInfo : Bool;
+		var levelState : CName;
+		var threatVisible : Bool;
+		var threatString : String;
+		var isInGigGroupmappin : Bool;
+		var isDelamainTaxi : Bool;
+		var contentID : TweakDBID;
+		var contentRecord : weak< ContentAssignment_Record >;
+		var curveModifier : weak< CurveStatModifier_Record >;
+		var playerLevel : Int32;
+		var journalID : String;
+		var prefix, suffix : String;
+		var iconAtlasPartName : CName;
+		var apartmentOffer : PurchaseOffer_Record;
+		var vehicleOffer : VehicleOffer_Record;
+		var price : Int32;
+		var poiMappin : PointOfInterestMappin;
+		var textParams : inkTextParams;
+		var fixerIcon : UIIcon_Record;
+		var vendorName: String; // Real Vendor Names
+		warnStr = "None";
+		recommendedLvl = 0;
+		inputInteract = false;
+		inputOpenJournal = false;
+		inputMoreInfo = false;
+		threatVisible = false;
+		isInGigGroupmappin = false;
+		isDelamainTaxi = false;
+		journalManager = menu.GetJournalManager();
+		player = menu.GetPlayer();
+		playerLevel = RoundMath( GameInstance.GetStatsSystem( player.GetGame() ).GetStatValue( player.GetEntityID(), gamedataStatType.Level ) );
+		inkImageRef.SetVisible( m_fixerIcon, false );
+		if( ( ( ( data.controller != NULL ) && ( data.mappin != NULL ) ) && ( journalManager != NULL ) ) && ( player != NULL ) )
+		{
+			inkTextRef.SetVisible( m_descText, true );
+			inkWidgetRef.SetVisible( m_fixerPanel, false );
+			inkImageRef.SetVisible( m_linkImage, false );
+			inkTextRef.SetVisible( m_additionalDescText, false );
+			GetRootWidget().SetState( 'Default' );
+			mappinVariant = data.mappin.GetVariant();
+			mappinPhase = data.mappin.GetPhase();
+			fastTravelmappin = ( ( FastTravelMappin )( data.mappin ) );
+			vehicleMappin = ( ( VehicleMappin )( data.mappin ) );
+			if( ( ( ( ( ( ( ( ( ( ( ( ( mappinVariant == gamedataMappinVariant.QuestGiverVariant || mappinVariant == gamedataMappinVariant.RetrievingVariant ) || mappinVariant == gamedataMappinVariant.HuntForPsychoVariant ) || mappinVariant == gamedataMappinVariant.ThieveryVariant ) || mappinVariant == gamedataMappinVariant.SabotageVariant ) || mappinVariant == gamedataMappinVariant.ClientInDistressVariant ) || mappinVariant == gamedataMappinVariant.CourierVariant ) || mappinVariant == gamedataMappinVariant.Zzz09_CourierSandboxActivityVariant ) || mappinVariant == gamedataMappinVariant.BountyHuntVariant ) || mappinVariant == gamedataMappinVariant.ConvoyVariant ) || mappinVariant == gamedataMappinVariant.Zzz02_MotorcycleForPurchaseVariant ) || mappinVariant == gamedataMappinVariant.Zzz06_NCPDGigVariant ) || mappinVariant == gamedataMappinVariant.Zzz05_ApartmentToPurchaseVariant ) || mappinVariant == gamedataMappinVariant.Zzz12_WorldEncounterVariant )
+			{
+				isInGigGroupmappin = true;
+			}
+			if( vehicleMappin )
+			{
+				vehicleObject = vehicleMappin.GetVehicle();
+				if( vehicleObject )
+				{
+					titleStr = vehicleObject.GetDisplayName();
+					if( IsVehicleUnlocked( vehicleObject, player ) )
+					{
+						descStr = GetLocalizedText( "UI-MappinTypes-PersonalVehicleDescription" );
+					}
+					else
+					{
+						descStr = "None";
+					}
+				}
+				else
+				{
+					titleStr = GetLocalizedText( "UI-MappinTypes-PersonalVehicle" );
+					descStr = GetLocalizedText( "UI-MappinTypes-PersonalVehicleDescription" );
+				}
+			}
+			else if( fastTravelmappin )
+			{
+				pointData = fastTravelmappin.GetPointData();
+				descStr = GetLocalizedText( "UI-MappinTypes-FastTravel" );
+				titleStr = ( ( data.isCollection ) ? ( GetLocalizedText( "UI-MappinTypes-FastTravelDescription" ) ) : ( pointData.GetPointDisplayName() ) );
+				inputInteract = data.fastTravelEnabled;
+			}
+			else
+			{
+				if( mappinPhase == gamedataMappinPhase.UndiscoveredPhase && isInGigGroupmappin )
+				{
+					titleStr = "UI-MappinTypes-Gig";
+					descStr = "UI-MappinTypes-GigDescription";
+				}
+				else if( mappinPhase == gamedataMappinPhase.UndiscoveredPhase )
+				{
+					titleStr = "UI-MappinTypes-Undiscovered";
+				}
+				else
+				{
+					m_mappin = ( ( JournalQuestMapPin )( data.journalEntry ) );
+					if( m_mappin != NULL )
+					{
+						m_objective = ( ( JournalQuestObjective )( journalManager.GetParentEntry( m_mappin ) ) );
+						if( m_objective != NULL )
+						{
+							m_phase = ( ( JournalQuestPhase )( journalManager.GetParentEntry( m_objective ) ) );
+							if( m_phase != NULL )
+							{
+								m_quest = ( ( JournalQuest )( journalManager.GetParentEntry( m_phase ) ) );
+								if( m_quest != NULL )
+								{
+									GetRootWidget().SetState( 'Quest' );
+									titleStr = m_quest.GetTitle( journalManager );
+									descStr = m_objective.GetDescription();
+									if( isInGigGroupmappin )
+									{
+										fixerIcon = TweakDBInterface.GetUIIconRecord( QuestLogUtils.GetFixerData( journalManager, m_objective ) );
+										if( fixerIcon.AtlasPartName() != 'None' )
+										{
+											inkImageRef.SetTexturePart( m_fixerIcon, fixerIcon.AtlasPartName() );
+											inkImageRef.SetVisible( m_fixerIcon, true );
+										}
+									}
+								}
+							}
+						}
+					}
+					if( mappinVariant == gamedataMappinVariant.FixerVariant )
+					{
+						fixerData = MappinUIUtils.GetFixerVariantData( GameInstance.GetQuestsSystem( player.GetGame() ), data.mappin );
+						titleStr = GetLocalizedTextByKey( fixerData.fixerLocKey );
+						iconRecord = fixerData.fixerIcon;
+						m_gigProgress = ( ( Float )( fixerData.generalQuestsProgress ) ) / ( ( Float )( fixerData.allQuestsAmount ) );
+						inkTextRef.SetText( m_gigBarCompletedText, ( ( String )( fixerData.generalQuestsProgress ) ) );
+						inkTextRef.SetText( m_gigBarTotalText, ( ( String )( fixerData.allQuestsAmount ) ) );
+						inkTextRef.SetVisible( m_descText, false );
+						inkWidgetRef.SetVisible( m_fixerPanel, true );
+						GetRootWidget().SetState( 'Fixer' );
+						PlayAnim( 'OnTooltipIntro', 'OnFixerProgressBarAnim' );
+						if( fixerData.additionalDescriptionKey == '' )
+						{
+							inkTextRef.SetVisible( m_additionalDescText, false );
+						}
+						else
+						{
+							inkTextRef.SetLocalizedTextScript( m_additionalDescText, fixerData.additionalDescriptionKey );
+							inkTextRef.SetVisible( m_additionalDescText, true );
+						}
+					}
+					else if( mappinVariant == gamedataMappinVariant.Zzz01_CarForPurchaseVariant || mappinVariant == gamedataMappinVariant.Zzz02_MotorcycleForPurchaseVariant )
+					{
+						poiMappin = ( ( PointOfInterestMappin )( data.mappin ) );
+						if( poiMappin != NULL )
+						{
+							vehicleOffer = GetVehicleOfferForMapPin( poiMappin, journalManager );
+							if( vehicleOffer != NULL )
+							{
+								InkImageUtils.RequestSetImage( this, m_linkImage, vehicleOffer.PreviewImage().GetID(), 'OnIconCallback' );
+								price = vehicleOffer.PriceHandle().OverrideValue();
+								titleStr = ( NameToString( vehicleOffer.BrandName() ) + " " ) + GetLocalizedText( vehicleOffer.Name() );
+								descStr = ( GetLocalizedText( "LocKey#15374" ) + ": €$" ) + IntToString( price );
+							}
+						}
+					}
+					else if( mappinVariant == gamedataMappinVariant.Zzz05_ApartmentToPurchaseVariant )
+					{
+						poiMappin = ( ( PointOfInterestMappin )( data.mappin ) );
+						if( poiMappin != NULL )
+						{
+							apartmentOffer = GetApartmentOfferForMapPin( poiMappin, journalManager );
+							if( apartmentOffer != NULL )
+							{
+								InkImageUtils.RequestSetImage( this, m_linkImage, apartmentOffer.PreviewImage().GetID(), 'OnIconCallback' );
+								apartmentOffer.Name();
+								titleStr = GetLocalizedText( apartmentOffer.Name() );
+								price = apartmentOffer.PriceHandle().OverrideValue();
+								descStr = "LocKey#93557";
+								textParams = new inkTextParams;
+								textParams.AddNumber( "price", price );
+							}
+						}
+					}
+					else if( mappinVariant == gamedataMappinVariant.Zzz09_CourierSandboxActivityVariant )
+					{
+						if( GameInstance.GetQuestsSystem( player.GetGame() ).GetFact( 'CourierDiscovered' ) == 0 )
+						{
+							titleStr = "UI-MappinTypes-CourierTitleBeforeDiscovery";
+							descStr = "UI-MappinTypes-CourierDescBeforeDiscovery";
+						}
+						else
+						{
+							titleStr = "UI-MappinTypes-CourierTitleDiscovered";
+							descStr = "UI-MappinTypes-CourierDescDiscovered";
+						}
+					}
+					else if( mappinVariant == gamedataMappinVariant.ServicePointRipperdocVariant )
+					{
+						journalID = data.journalEntry.GetId();
+						contentID = TDBID.Create( "Mappins." + journalID );
+						ripperdocRecord = TweakDBInterface.GetRipperdocMappinRecord( contentID );
+						iconAtlasPartName = ripperdocRecord.AtlasPartName();
+						if( iconAtlasPartName != '' )
+						{
+							inkImageRef.SetVisible( m_fixerIcon, true );
+							inkImageRef.SetTexturePart( m_fixerIcon, iconAtlasPartName );
+						}
+						titleStr = GetLocalizedTextByKey( 'UI-MappinTypes-RipperdocServicePoint' );
+						ripperdocName = GetLocalizedText( ripperdocRecord.LocalizedName() );
+						if( ripperdocName != "" )
+						{
+							titleStr += ( " - " + ripperdocName );
+						}
+						descStr = NameToString( MappinUIUtils.MappinToDescriptionString( mappinVariant ) );
+						inkTextRef.SetVisible( m_additionalDescText, false );
+						iconAtlasPartName = '';
+					}
+					else if( mappinVariant == gamedataMappinVariant.Zzz18_RacingVariant )
+					{
+						journalID = data.journalEntry.GetId();
+						contentID = TDBID.Create( "Mappins." + journalID );
+						racingRecord = TweakDBInterface.GetRacingMappinRecord( contentID );
+						titleStr = GetLocalizedText( racingRecord.Title() );
+						descStr = GetLocalizedText( racingRecord.Description() );
+					}
+					else if( mappinVariant == gamedataMappinVariant.Zzz20_DelamainTaxiDestinationVariant )
+					{
+						titleStr = GetLocalizedTextByKey( 'UI-MappinTypes-DelamainDestination' );
+						descStr = "None";
+						warnStr = ( ( data.travelCost > data.playerMoney ) ? ( GetLocalizedTextByKey( 'Story-base-gameplay-gui-fullscreen-hub_menu-vendor_hub-_localizationString0' ) ) : ( "None" ) );
+						cost = data.travelCost;
+						isDelamainTaxi = true;
+					}
+					if( titleStr == "" )
+					{
+						titleStr = NameToString( MappinUIUtils.MappinToString( mappinVariant, mappinPhase ) );
+					}
+					if( descStr == "" )
+					{
+						descStr = NameToString( MappinUIUtils.MappinToDescriptionString( mappinVariant ) );
+					}
+				}
+				if( isInGigGroupmappin )
+				{
+					GetRootWidget().SetState( 'Gig' );
+				}
+				if( data.journalEntry != NULL )
+				{
+					recommendedLvl = journalManager.GetRecommendedLevel( data.journalEntry );
+					if( m_quest )
+					{
+						contentID = m_quest.GetRecommendedLevelID();
+					}
+					else
+					{
+						journalID = data.journalEntry.GetId();
+						if( ( StrBeginsWith( journalID, "mq" ) || StrBeginsWith( journalID, "sq" ) ) || StrBeginsWith( journalID, "q" ) )
+						{
+							StrSplitFirst( journalID, "_", prefix, suffix );
+							journalID = prefix;
+						}
+						contentID = TDBID.Create( "DeviceContentAssignment." + journalID );
+					}
+					contentRecord = TweakDBInterface.GetContentAssignmentRecord( contentID );
+					if( contentRecord )
+					{
+						curveModifier = ( ( CurveStatModifier_Record )( contentRecord.PowerLevelMod() ) );
+						if( curveModifier )
+						{
+							recommendedLvl = ( ( Uint32 )( RoundF( GameInstance.GetStatsDataSystem( player.GetGame() ).GetValueFromCurve( StringToName( curveModifier.Id() ), ( ( Float )( playerLevel ) ), StringToName( curveModifier.Column() ) ) ) ) );
+						}
+						else
+						{
+							recommendedLvl = ( ( Uint32 )( GameInstance.GetLevelAssignmentSystem( player.GetGame() ).GetLevelAssignment( contentID ) ) );
+						}
+					}
+				}
+				levelState = QuestLogUtils.GetLevelState( playerLevel, ( ( Int32 )( recommendedLvl ) ) );
+				switch( levelState )
+				{
+					case 'ThreatHigh':
+						threatVisible = true;
+					threatString = GetLocalizedText( "UI-Tooltips-ThreatHigh" );
+					break;
+					case 'ThreatVeryHigh':
+						threatVisible = true;
+					threatString = GetLocalizedText( "UI-Tooltips-ThreatVeryHigh" );
+					break;
+					default:
+						break;
+				}
+			}
+			inputOpenJournal = data.readJournal && !( data.fastTravelEnabled );
+			inputMoreInfo = data.moreInfo;
+		}
+		inkWidgetRef.SetVisible( m_threatLevelPanel, threatVisible );
+		if( threatVisible )
+		{
+			inkTextRef.SetText( m_threatLevelValue, threatString );
+		}
+		if( data.isCollection )
+		{
+			inputOpenJournal = false;
+			inputInteract = false;
+			inputMoreInfo = false;
+		}
+		inkTextRef.SetText( m_titleText, titleStr );
+		if( descStr == "None" )
+		{
+			inkTextRef.SetVisible( m_descText, false );
+		}
+		else
+		{
+			inkTextRef.SetVisible( m_descText, true );
+			if( textParams == NULL )
+			{
+				inkTextRef.SetText( m_descText, descStr );
+			}
+			else
+			{
+				inkTextRef.SetLocalizedTextScript( m_descText, descStr, textParams );
+			}
+		}
+		if( warnStr == "None" )
+		{
+			inkTextRef.SetVisible( m_warningText, false );
+		}
+		else
+		{
+			inkTextRef.SetVisible( m_warningText, true );
+			inkTextRef.SetText( m_warningText, warnStr );
+		}
+		if( journalManager.IsEp1Entry( data.journalEntry ) )
+		{
+			inkImageRef.SetVisible( m_ep1Icon, true );
+		}
+		else
+		{
+			inkImageRef.SetVisible( m_ep1Icon, false );
+		}
+		iconAtlasPartName = iconRecord.AtlasPartName();
+		if( iconAtlasPartName != 'None' )
+		{
+			if( iconAtlasPartName == 'c_mrhands' )
+			{
+				if( GameInstance.GetQuestsSystem( player.GetGame() ).GetFact( 'q303_hands_scene_done' ) == 0 )
+				{
+					inkImageRef.SetTexturePart( m_icon, 'c_mrhands' );
+				}
+				else
+				{
+					inkImageRef.SetTexturePart( m_icon, 'c_mr_hands' );
+				}
+			}
+			else
+			{
+				inkImageRef.SetTexturePart( m_icon, iconAtlasPartName );
+			}
+		}
+		if( ( inkTextRef.IsVisible( m_descText ) || inkWidgetRef.IsVisible( m_fixerPanel ) ) || inkWidgetRef.IsVisible( m_threatLevelPanel ) )
+		{
+			inkWidgetRef.SetVisible( m_lineBreak, true );
+		}
+		else
+		{
+			inkWidgetRef.SetVisible( m_lineBreak, false );
+		}
+		inkCompoundRef.SetVisible( m_inputOpenJournalContainer, inputOpenJournal );
+		inkCompoundRef.SetVisible( m_inputInteractContainer, inputInteract );
+		inkCompoundRef.SetVisible( m_inputMoreInfoContainer, inputMoreInfo );
+		inkCompoundRef.SetVisible( m_inputDelamainTaxiContainer, isDelamainTaxi && data.delamainTaxiEnabled );
+		if( cost > 0 )
+		{
+			inkCompoundRef.SetVisible( m_travelCostContainer, true );
+			inkTextRef.SetText( m_travelCostText, IntToString( cost ) );
+		}
+		else
+		{
+			inkCompoundRef.SetVisible( m_travelCostContainer, false );
+		}
+		
+		// Real Vendor Names - begin
+		vendorName = GetRealVendorName(data);
+		if (vendorName != "" && mappinVariant != gamedataMappinVariant.ServicePointRipperdocVariant)
+		{
+			inkTextRef.SetText(m_titleText, vendorName);
+		}
+		// Real Vendor Names - end
+	}
+
+	protected event OnIconCallback( e : iconAtlasCallbackData )
+	{
+		inkImageRef.SetVisible( m_linkImage, e.loadResult == inkIconResult.Success );
+	}
+
+	private function IsVehicleUnlocked( vehicleObject : weak< VehicleObject >, player : weak< GameObject > ) : Bool
+	{
+		var i, limit : Int32;
+		var vehicles : array< PlayerVehicle >;
+		var targetId : TweakDBID;
+		if( vehicleObject.IsPlayerVehicle() )
+		{
+			targetId = vehicleObject.GetRecordID();
+			GameInstance.GetVehicleSystem( player.GetGame() ).GetPlayerUnlockedVehicles( vehicles );
+			for( i = 0, limit = vehicles.Size(); i < limit; i += 1 )
+			{
+				if( vehicles[ i ].recordID == targetId )
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	private function GetVehicleOfferForMapPin( poiMappin : PointOfInterestMappin, journalManager : JournalManager ) : VehicleOffer_Record
+	{
+		var offerId : TweakDBID;
+		var slotName : String;
+		slotName = NameToString( poiMappin.GetSlotName() );
+		offerId = TDBID.Create( ( "Vehicle." + slotName ) + "_offer" );
+		if( !( TDBID.IsValid( offerId ) ) )
+		{
+			return NULL;
+		}
+		return TweakDBInterface.GetVehicleOfferRecord( offerId );
+	}
+
+	private function GetApartmentOfferForMapPin( poiMappin : PointOfInterestMappin, journalManager : JournalManager ) : PurchaseOffer_Record
+	{
+		var offerId : TweakDBID;
+		var slotName : String;
+		slotName = NameToString( poiMappin.GetSlotName() );
+		offerId = TDBID.Create( ( "Apartment." + slotName ) + "_offer" );
+		if( !( TDBID.IsValid( offerId ) ) )
+		{
+			return NULL;
+		}
+		return TweakDBInterface.GetPurchaseOfferRecord( offerId );
+	}
+
+	private function DisplayAttachedImage( objective : JournalQuestObjective, widget : inkImageRef, journalManager : JournalManager )
+	{
+		var childEntries : array< weak< JournalEntry > >;
+		var imageEntry : JournalImageEntry;
+		var i : Int32;
+		var unpackFilter : JournalRequestStateFilter;
+		unpackFilter.active = true;
+		unpackFilter.inactive = true;
+		QuestLogUtils.UnpackRecursiveWithFilter( journalManager, objective, unpackFilter, childEntries, true );
+		for( i = 0; i < childEntries.Size(); i += 1 )
+		{
+			imageEntry = ( ( JournalImageEntry )( childEntries[ i ] ) );
+			if( imageEntry )
+			{
+				inkImageRef.SetVisible( widget, true );
+				InkImageUtils.RequestSetImage( this, widget, imageEntry.GetThumbnailImageID() );
+				return;
+			}
+		}
+		inkImageRef.SetVisible( widget, false );
+	}
+
+	protected event OnFixerProgressBarAnim( anim : inkAnimProxy )
+	{
+		var barProgress : inkAnimDef;
+		var sizeInterpolator : inkAnimSize;
+		var barWidthSize : Float;
+		var barHeightSize : Float;
+		var barStartSize : Vector2;
+		var barEndSize : Vector2;
+		barWidthSize = 300.0;
+		barHeightSize = 6.0;
+		barStartSize = Vector2( 0.0, barHeightSize );
+		barEndSize = Vector2( AbsF( m_gigProgress * barWidthSize ), barHeightSize );
+		barProgress = new inkAnimDef;
+		sizeInterpolator = new inkAnimSize;
+		sizeInterpolator.SetDuration( 0.40000001 );
+		sizeInterpolator.SetStartSize( barStartSize );
+		sizeInterpolator.SetEndSize( barEndSize );
+		sizeInterpolator.SetType( inkanimInterpolationType.Quintic );
+		sizeInterpolator.SetMode( inkanimInterpolationMode.EasyInOut );
+		barProgress.AddInterpolator( sizeInterpolator );
+		m_barAnimationProxy = inkWidgetRef.PlayAnimation( m_bar, barProgress );
+	}
+
+	protected function GetLevelState( playerLevel, recommendedLvl : Int32 ) : CName
+	{
+		return QuestLogUtils.GetLevelState( playerLevel, recommendedLvl );
+	}
+
+	protected function Reset()
+	{
+		SetData( WorldMapTooltipData(), NULL );
+	}
+
+	public function PlayAnim( animName : CName, optional callBack : CName )
+	{
+		if( m_animationProxy && m_animationProxy.IsPlaying() )
+		{
+			m_animationProxy.Stop();
+		}
+		m_animationProxy = PlayLibraryAnimation( animName );
+		if( callBack != '' )
+		{
+			m_animationProxy.RegisterToCallback( inkanimEventType.OnFinish, this, callBack );
+		}
+	}
+
+	// Real Vendor Names - begin
+	private function GetRealVendorName(const data : ref<WorldMapTooltipData>): String
+	{
+		var entry: String;
+		var targetId: TweakDBID;
+		var vendorName: String;
+
+		entry = data.journalEntry.GetId();
+		targetId = TDBID.Create("Vendors." + entry + ".localizedName");
+		vendorName = TweakDBInterface.GetString(targetId, "");
+
+		// Some hardcoded thingies
+		switch (entry) {
+			// Fingers M.D.
+			case "wbr_jpn_netrunner_02":
+				if (data.mappin.GetVariant() == gamedataMappinVariant.ServicePointRipperdocVariant) {
+					vendorName = "LocKey#45149";
+				}
+				if (data.mappin.GetVariant() == gamedataMappinVariant.ServicePointNetTrainerVariant) {
+					vendorName = "LocKey#45176";
+				}
+				break;
+			// Chan Hoon Nam 
+			case "wbr_jpn_netrun_02":
+				vendorName = "LocKey#45176";
+				break;
+			// Ded Zed
+			case "wat_nid_clothingshop_01":
+				vendorName = "Ded Zed";
+				break;
+			// Stylishly
+			case "std_rcr_cloth_01":
+				vendorName = "LocKey#44380";
+				break;
+			// Stylishly
+			case "hey_spr_cloth_01":
+				vendorName = "LocKey#44380";
+				break;
+			// Stylishly
+			case "wat_lch_clothingshop_01":
+				vendorName = "LocKey#44380";
+				break;
+			// Capitan Caliente
+			case "std_rcr_foodshop_01":
+				vendorName = "LocKey#44384";
+				break;
+			// Gun-O-Rama
+			case "std_rcr_guns_01":
+				vendorName = "LocKey#44381";
+				break;
+			// Red Dirt
+			case "std_arr_food_01":
+				vendorName = "LocKey#44379";
+				break;
+			// 2nd Amendment
+			case "hey_rey_guns_01":
+				vendorName = "LocKey#45094";
+				break;
+			// 2nd Amendment
+			case "hey_gle_guns_01":
+				vendorName = "LocKey#45094";
+				break;
+			// 2nd Amendment
+			case "pac_wwd_guns_01":
+				vendorName = "LocKey#45094";
+				break;
+			// Dicky Twister
+			case "hey_rey_food_02":
+				vendorName = "LocKey#45076";
+				break;
+			// Avante
+			case "cct_cpz_clothingstore_02":
+				vendorName = "Avante";
+				break;
+			// Avante
+			case "wbr_hil_clothingshop_01":
+				vendorName = "Avante";
+				break;
+			// Red Peaks
+			case "bls_ina_se1_foodshop_03":
+				vendorName = "LocKey#51260";
+				break;
+			// Red Peaks
+			case "bls_ina_se1_junkshop_01":
+				vendorName = "LocKey#51260";
+				break;
+			// Fresh Food
+			case "hey_spr_food_01":
+				vendorName = "LocKey#45074";
+				break;
+			// El Pinche Pollo
+			case "hey_gle_food_02":
+				vendorName = "LocKey#45080";
+				break;
+			// Nina Kraviz
+			case "wbr_hil_ripperdoc_01":
+				vendorName = "LocKey#45150";
+				break;
+			// Ginger Panda
+			case "wbr_jpn_food_04":
+				vendorName = "LocKey#45066";
+				break;
+			// Christine Markov
+			case "wbr_jpn_tech_01":
+				vendorName = "LocKey#33127";
+				break;
+			// Shinto Shrine (Monk Merchant)
+			case "wbr_jpn_junk_03":
+				vendorName = "LocKey#45111";
+				break;
+			// The Manufactory - Weapons
+			case "std_arr_guns_01":
+				vendorName = GetLocalizedText("LocKey#21251") + " - " + GetLocalizedText("LocKey#45222");
+				break;
+			// The Manufactory - Clothes
+			case "std_arr_cloth_01":
+				vendorName = GetLocalizedText("LocKey#21251") + " - " + GetLocalizedText("LocKey#46807");
+				break;
+			// The Manufactory - Meds
+			case "std_arr_medic_01":
+				vendorName = GetLocalizedText("LocKey#21251") + " - " + GetLocalizedText("LocKey#39888");
+				break;
+			// Jig-Jig Street - Dealer
+			case "wbr_jpn_junk_02":
+				vendorName = GetLocalizedText("LocKey#79214") + " - " + GetLocalizedText("LocKey#47308");
+				break;
+			// Saeko's (Blossoming Sakura Clothier)
+			case "wbr_jpn_cloth_01":
+				vendorName = "LocKey#54065";
+				break;
+			// Old Nature Clinic
+			case "cct_cpz_medicstore_01":
+				vendorName = "LocKey#45135";
+				break;
+			// Spector Cheng
+			case "wbr_jpn_ws_melee_01":
+				vendorName = "LocKey#45164";
+				break;
+			// Ramen Joint
+			case "wbr_jpn_food_01":
+				vendorName = "LocKey#45063";
+				break;
+			// Just Food
+			case "wbr_jpn_foodshop_05_japantown":
+				vendorName = "LocKey#45067";
+				break;
+			// El Coyote Cojo
+			case "hey_rey_food_01":
+				vendorName = "LocKey#45075";
+				break;
+			// Pacifica Melee Vendor
+			case "pac_wwd_ripperdoc_01":
+				vendorName = "";
+				break;
+			default:
+			// do nothing
+				break;
+		}
+
+		return vendorName;
+	}
+	// Real Vendor Names - end
+}
+
+class WorldMapPoliceTooltipController extends WorldMapTooltipController
+{
+
+	protected override function GetShowAnimation() : CName
+	{
+		return 'ShowPoliceTooltip';
+	}
+
+	protected override function GetHideAnimation() : CName
+	{
+		return 'HidePoliceTooltip';
+	}
+
+	public override function SetData( const data : ref< WorldMapTooltipData >, menu : WorldMapMenuGameController )
+	{
+		var journalManager : JournalManager;
+		var player : weak< GameObject >;
+		var mappinVariant : gamedataMappinVariant;
+		var mappinPhase : gamedataMappinPhase;
+		var titleStr : String;
+		var descStr : String;
+		var recommendedLvl : Int32;
+		var playerLevel : Int32;
+		var threatVisible : Bool;
+		var threatString : String;
+		var contentID : TweakDBID;
+		var contentRecord : weak< ContentAssignment_Record >;
+		var curveModifier : weak< CurveStatModifier_Record >;
+		var powerLevel : Float;
+		var levelState : CName;
+		var journalQuest : JournalQuest;
+		recommendedLvl = 0;
+		threatVisible = false;
+		journalManager = menu.GetJournalManager();
+		player = menu.GetPlayer();
+		powerLevel = GameInstance.GetStatsSystem( player.GetGame() ).GetStatValue( player.GetEntityID(), gamedataStatType.Level );
+		if( ( ( ( data.controller != NULL ) && ( data.mappin != NULL ) ) && ( journalManager != NULL ) ) && ( player != NULL ) )
+		{
+			mappinVariant = data.mappin.GetVariant();
+			mappinPhase = data.mappin.GetPhase();
+			if( mappinPhase == gamedataMappinPhase.UndiscoveredPhase )
+			{
+				titleStr = "UI-MappinTypes-Undiscovered";
+			}
+			else if( mappinPhase == gamedataMappinPhase.UndiscoveredPhase && mappinVariant == gamedataMappinVariant.QuestGiverVariant )
+			{
+				titleStr = "UI-MappinTypes-Gig";
+				descStr = "UI-MappinTypes-GigDescription";
+				mappinVariant = mappinVariant;
+			}
+			else if( mappinPhase == gamedataMappinPhase.CompletedPhase )
+			{
+				titleStr = NameToString( MappinUIUtils.MappinToString( mappinVariant, mappinPhase ) );
+				descStr = "UI-Notifications-QuestCompleted";
+			}
+			else
+			{
+				titleStr = NameToString( MappinUIUtils.MappinToString( mappinVariant, mappinPhase ) );
+				descStr = NameToString( MappinUIUtils.MappinToDescriptionString( mappinVariant ) );
+			}
+			if( data.journalEntry != NULL )
+			{
+				recommendedLvl = ( ( Int32 )( journalManager.GetRecommendedLevel( data.journalEntry ) ) );
+				journalQuest = ( ( JournalQuest )( data.journalEntry ) );
+				if( journalQuest )
+				{
+					contentID = journalQuest.GetRecommendedLevelID();
+				}
+				else
+				{
+					contentID = TDBID.Create( "DeviceContentAssignment." + data.journalEntry.GetId() );
+				}
+				contentRecord = TweakDBInterface.GetContentAssignmentRecord( contentID );
+				if( contentRecord )
+				{
+					curveModifier = ( ( CurveStatModifier_Record )( contentRecord.PowerLevelMod() ) );
+					if( curveModifier )
+					{
+						recommendedLvl = RoundMath( GameInstance.GetStatsDataSystem( player.GetGame() ).GetValueFromCurve( StringToName( curveModifier.Id() ), powerLevel, StringToName( curveModifier.Column() ) ) );
+					}
+					else
+					{
+						recommendedLvl = GameInstance.GetLevelAssignmentSystem( player.GetGame() ).GetLevelAssignment( contentID );
+					}
+				}
+			}
+			playerLevel = ( ( Int32 )( GameInstance.GetStatsSystem( player.GetGame() ).GetStatValue( player.GetEntityID(), gamedataStatType.Level ) ) );
+			levelState = QuestLogUtils.GetLevelState( playerLevel, recommendedLvl );
+			switch( levelState )
+			{
+				case 'ThreatHigh':
+					threatVisible = true;
+				threatString = GetLocalizedText( "UI-Tooltips-ThreatHigh" );
+					break;
+				case 'ThreatVeryHigh':
+					threatVisible = true;
+				threatString = GetLocalizedText( "UI-Tooltips-ThreatVeryHigh" );
+					break;
+				default:
+						break;
+			}
+			inkTextRef.SetText( m_threatLevelValue, threatString );
+		}
+		inkWidgetRef.SetVisible( m_threatLevelPanel, threatVisible );
+		if( threatVisible )
+		{
+			inkTextRef.SetText( m_threatLevelValue, threatString );
+		}
+		inkTextRef.SetText( m_titleText, titleStr );
+		if( descStr == "None" )
+		{
+			inkTextRef.SetVisible( m_descText, false );
+		}
+		else
+		{
+			inkTextRef.SetVisible( m_descText, true );
+			inkTextRef.SetText( m_descText, descStr );
+		}
+	}
+
+}
+
+class WorldMapGangItemController extends inkLogicController
+{
+	private editable var m_factionNameText : inkTextRef;
+	private editable var m_factionIconImage : inkImageRef;
+
+	public function SetData( affiliationRecord : weak< Affiliation_Record > )
+	{
+		inkTextRef.SetLocalizedText( m_factionNameText, affiliationRecord.LocalizedName() );
+		inkImageRef.SetTexturePart( m_factionIconImage, affiliationRecord.IconPath() );
+	}
+
+}
+

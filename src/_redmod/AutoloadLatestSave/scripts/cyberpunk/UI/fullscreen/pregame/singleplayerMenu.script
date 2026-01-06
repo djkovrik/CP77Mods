@@ -1,0 +1,1481 @@
+import enum CloudSavesQueryStatus : Uint8
+{
+	NotFetched,
+	FetchedSuccessfully,
+	CloudSavesDisabled,
+	NotLoggedIn,
+	FetchFailed,
+}
+
+import enum inkMarketingConsentPopupType
+{
+	None,
+	ThirdParty,
+	Newsletter,
+	Both,
+	SignIn,
+}
+
+importonly class ShowEngagementScreen extends IScriptable
+{
+	import var show : Bool;
+}
+
+importonly class ShowInitializeUserScreen extends IScriptable
+{
+	import var show : Bool;
+}
+
+importonly class MainMenuGameController extends gameuiMenuItemListGameController
+{
+	public import function LoadBackgroundWidget( dataID : Uint64 );
+}
+
+class RetrySaveDataRequestDelay extends Event
+{
+}
+
+import class gameuiSaveHandlingController extends gameuiMenuGameController
+{
+	public import function DeleteSavedGame( saveId : Int32 );
+	public import function IsTransferSavedExportSupported() : Bool;
+	public import function IsTransferSavedImportSupported() : Bool;
+	public import function TransferSavedGame( scriptableData : IScriptable );
+	public import function RequestSaveFailedNotification();
+	public import function RequestGameSavedNotification();
+	public import function IsSaveFailedNotificationActive() : Bool;
+	public import function IsGameSavedNotificationActive() : Bool;
+	public import function LoadSaveInGame( saveId : Int32 );
+	public import function LoadModdedSave( saveId : Int32 );
+	public import function OverrideSavedGame( saveId : Int32, optional showXbCompatWarn : Bool );
+	public import function SetNextInitialLoadingScreen( tweakID : Uint64 );
+	public import function PreSpawnInitialLoadingScreen( tweakID : Uint64 );
+
+	public function ShowSavingLockedNotification( const locks : ref< array< gameSaveLock > > )
+	{
+		GameInstance.GetUISystem( GetPlayerControlledObject().GetGame() ).QueueEvent( new UIInGameNotificationRemoveEvent );
+		GameInstance.GetUISystem( GetPlayerControlledObject().GetGame() ).QueueEvent( UIInGameNotificationEvent.CreateSavingLockedEvent( locks ) );
+	}
+
+}
+
+enum ExpansionStatus
+{
+	NotAvailable = 0,
+	Available = 1,
+	Owned = 2,
+	Downloaded = 3,
+	Downloading = 4,
+	DownloadError = 5,
+	Reloading = 6,
+	Processing = 7,
+	PreOrder = 8,
+	PreOrderOwned = 9,
+	Hidden = 10,
+}
+
+class ExpansionBannerController extends inkLogicController
+{
+	[ category = "Main" ]
+	private editable var m_statusTextRef : inkTextRef;
+	[ category = "Main" ]
+	private editable var m_inputHintRef : inkWidgetRef;
+	[ category = "Main" ]
+	private editable var m_indicatorRef : inkWidgetRef;
+	[ category = "Error" ]
+	private editable var m_errorPanelRef : inkWidgetRef;
+	[ category = "Error" ]
+	private editable var m_errorIconRef : inkWidgetRef;
+	private var m_expansionStatus : ExpansionStatus;
+	private var m_root : weak< inkWidget >;
+
+	protected event OnInitialize()
+	{
+		m_root = GetRootWidget();
+	}
+
+	public function SetStatus( value : ExpansionStatus )
+	{
+		m_expansionStatus = value;
+		UpdateVisuals();
+	}
+
+	public function GetStatus() : ExpansionStatus
+	{
+		return m_expansionStatus;
+	}
+
+	private function UpdateVisuals()
+	{
+		switch( m_expansionStatus )
+		{
+			case ExpansionStatus.NotAvailable:
+			case ExpansionStatus.Processing:
+			case ExpansionStatus.Available:
+				m_root.SetVisible( true );
+			m_root.SetInteractive( true );
+			inkTextRef.SetText( m_statusTextRef, GetLocalizedTextByKey( 'UI-DLC-EP1-PurchaseFlow-MainMenuBanner-LearnMore' ) );
+			inkWidgetRef.SetVisible( m_indicatorRef, false );
+			inkWidgetRef.SetVisible( m_inputHintRef, true );
+			inkWidgetRef.SetVisible( m_errorIconRef, false );
+			break;
+			case ExpansionStatus.Owned:
+				m_root.SetVisible( true );
+			m_root.SetInteractive( true );
+			inkTextRef.SetText( m_statusTextRef, GetLocalizedTextByKey( 'UI-DLC-EP1-PurchaseFlow-MainMenuBanner-StartDownload' ) );
+			inkWidgetRef.SetVisible( m_indicatorRef, true );
+			inkWidgetRef.SetVisible( m_inputHintRef, false );
+			inkWidgetRef.SetVisible( m_errorIconRef, true );
+			break;
+			case ExpansionStatus.Downloaded:
+			case ExpansionStatus.Hidden:
+				m_root.SetVisible( false );
+			break;
+			case ExpansionStatus.Downloading:
+			case ExpansionStatus.Reloading:
+				m_root.SetVisible( true );
+			m_root.SetInteractive( false );
+			inkTextRef.SetText( m_statusTextRef, GetLocalizedTextByKey( 'UI-DLC-EP1-PurchaseFlow-MainMenuBanner-Downloading' ) );
+			inkWidgetRef.SetVisible( m_indicatorRef, false );
+			inkWidgetRef.SetVisible( m_inputHintRef, false );
+			inkWidgetRef.SetVisible( m_errorIconRef, false );
+			break;
+			case ExpansionStatus.Reloading:
+				m_root.SetVisible( true );
+			m_root.SetInteractive( false );
+			inkTextRef.SetText( m_statusTextRef, GetLocalizedTextByKey( 'UI-SystemNotification-SaveTransfer-ExportSpinner' ) );
+			inkWidgetRef.SetVisible( m_indicatorRef, false );
+			inkWidgetRef.SetVisible( m_inputHintRef, false );
+			inkWidgetRef.SetVisible( m_errorIconRef, false );
+			break;
+			case ExpansionStatus.DownloadError:
+				m_root.SetVisible( true );
+			m_root.SetInteractive( true );
+			inkTextRef.SetText( m_statusTextRef, GetLocalizedTextByKey( 'UI-DLC-EP1-PurchaseFlow-MainMenuBanner-AttentionRequired' ) );
+			inkWidgetRef.SetVisible( m_indicatorRef, true );
+			inkWidgetRef.SetVisible( m_inputHintRef, false );
+			inkWidgetRef.SetVisible( m_errorIconRef, true );
+			break;
+			case ExpansionStatus.PreOrder:
+				m_root.SetVisible( true );
+			m_root.SetInteractive( true );
+			inkTextRef.SetText( m_statusTextRef, GetLocalizedTextByKey( 'UI-DLC-EP1-PurchaseFlow-MainMenuBanner-PreOrderNow' ) );
+			inkWidgetRef.SetVisible( m_indicatorRef, false );
+			inkWidgetRef.SetVisible( m_inputHintRef, true );
+			inkWidgetRef.SetVisible( m_errorIconRef, false );
+			break;
+			case ExpansionStatus.PreOrderOwned:
+				m_root.SetVisible( true );
+			m_root.SetInteractive( true );
+			inkTextRef.SetText( m_statusTextRef, GetLocalizedTextByKey( 'UI-DLC-EP1-PurchaseFlow-MainMenuBanner-Date' ) );
+			inkWidgetRef.SetVisible( m_indicatorRef, true );
+			inkWidgetRef.SetVisible( m_inputHintRef, false );
+			inkWidgetRef.SetVisible( m_errorIconRef, false );
+			break;
+		}
+	}
+
+}
+
+class PatchNotesCheckData extends IScriptable
+{
+	var m_ownExpansion : Bool;
+}
+
+class SingleplayerMenuData extends inkUserData
+{
+	var mainMenuShownFirstTime : Bool;
+	var showExpansionHint : Bool;
+}
+
+class SingleplayerMenuGameController extends MainMenuGameController
+{
+	[ category = "Logo" ]
+	private editable var m_baseLogoContainer : inkCompoundRef;
+	[ category = "Logo" ]
+	private editable var m_ep1LogoContainer : inkCompoundRef;
+	[ category = "Buttons" ]
+	private editable var m_gogButtonWidgetRef : inkWidgetRef;
+	[ category = "Buttons" ]
+	private editable var m_accountSelector : inkCompoundRef;
+	[ category = "Buttons" ]
+	private editable var m_gameVersionButton : inkCompoundRef;
+	[ category = "Buttons" ]
+	private editable var m_patch2Notification : inkCompoundRef;
+	[ category = "Buttons" ]
+	private editable var m_patch2NotificationDelay : Float;
+	default m_patch2NotificationDelay = 10.f;
+	[ category = "Expansion" ]
+	private editable var m_expansionBanner : inkCompoundRef;
+	[ category = "Expansion" ]
+	private editable var m_ep1IdName : CName;
+	default m_ep1IdName = 'EP1';
+	private editable var m_buttonHintsManagerRef : inkWidgetRef;
+	private editable var m_continuetooltipContainer : inkCompoundRef;
+	private editable var m_tooltipsManagerRef : inkWidgetRef;
+	private editable var m_versionTextRef : inkTextRef;
+	private editable var m_eulaWidget : inkWidgetRef;
+	private editable var m_quitGameWidget : inkWidgetRef;
+	private editable var m_sliderWidget : inkWidgetRef;
+	private editable var m_declineButtonWidget : inkWidgetRef;
+	private editable var m_acceptButtonWidget : inkWidgetRef;
+	private editable var m_declineButtonText : inkTextRef;
+	private editable var m_acceptButtonText : inkTextRef;
+	private var m_onlineSystem : weak< IOnlineSystem >;
+	private var m_requestHandler : weak< inkISystemRequestsHandler >;
+	private var m_buttonHintsController : weak< ButtonHints >;
+	private var m_continueGameTooltipController : weak< ContinueGameTooltip >;
+	private var m_expansionHintController : weak< inkLogicController >;
+	private var m_expansionBannerController : weak< ExpansionBannerController >;
+	private var m_accountSelectorController : weak< MenuAccountLogicController >;
+	private var m_textAnimController : weak< inkTextReplaceController >;
+	private var m_tooltipsManager : weak< gameuiTooltipsManager >;
+	private var m_uiSystem : UISystem;
+	private var m_patchNotesCheckData : PatchNotesCheckData;
+	private var m_dataSyncStatus : CloudSavesQueryStatus;
+	private var m_savesCount : Int32;
+	private var m_savesReady : Bool;
+	private var m_isOffline : Bool;
+	private var m_isModded : Bool;
+	private var m_isExpansionHintShown : Bool;
+	private var m_isMainMenuShownFirstTime : Bool;
+	private var m_isPatch2NotificationShown : Bool;
+	private var m_isReloadPopupShown : Bool;
+	private var m_isEp1Enabled : Bool;
+	private var m_gameVersion : String;
+	private var m_patch2NotificationIntroName : CName;
+	default m_patch2NotificationIntroName = 'patch2_notification_intro';
+	private var m_patch2NotificationOutroName : CName;
+	default m_patch2NotificationOutroName = 'patch2_notification_outro';
+	private var m_patch2NotificationAnimProxy : inkAnimProxy;
+	private var m_gameVersionAnim : inkAnimProxy;
+	private var m_eulaIsAccepted : Bool;
+	default m_eulaIsAccepted = false;
+	private var m_isEulaWindowOpened : Bool;
+	default m_isEulaWindowOpened = false;
+	private var m_eulaRead : Bool;
+	default m_eulaRead = false;
+	private var m_sliderController : weak< inkSliderController >;
+	private var m_declineButtonController : weak< inkButtonController >;
+	private var m_acceptButtonController : weak< inkButtonController >;
+	private var m_eulaAnimationProxy : inkAnimProxy;
+
+	protected event OnInitialize()
+	{
+		m_requestHandler = GetSystemRequestsHandler();
+		m_savesCount = 0;
+		m_savesCount = m_requestHandler.RequestSavesCountSync();
+		m_requestHandler.RegisterToCallback( 'OnSavesForLoadReady', this, 'OnSavesForLoadReady' );
+		m_requestHandler.RegisterToCallback( 'OnBoughtFullGame', this, 'OnRedrawRequested' );
+		m_requestHandler.RegisterToCallback( 'OnSaveMetadataReady', this, 'OnSaveMetadataReady' );
+		m_requestHandler.RegisterToCallback( 'OnCloudSavesQueryStatusChanged', this, 'OnCloudSavesQueryStatusChanged' );
+		m_requestHandler.RegisterToCallback( 'OnAdditionalContentPurchaseResult', this, 'OnAdditionalContentPurchaseResult_MainMenu' );
+		m_requestHandler.RegisterToCallback( 'OnAdditionalContentStatusUpdateResult', this, 'OnAdditionalContentStatusUpdateResult_MainMenu' );
+		m_requestHandler.RegisterToCallback( 'OnAdditionalContentInstallationResult', this, 'OnAdditionalContentInstallationResult_MainMenu' );
+		m_requestHandler.RegisterToCallback( 'OnAdditionalContentInstallationRequestResult', this, 'OnAdditionalContentInstallationRequestResult_MainMenu' );
+		m_requestHandler.RegisterToCallback( 'OnAdditionalContentDataReloadProgressCallback', this, 'OnAdditionalContentDataReloadProgress_MainMenu' );
+		m_requestHandler.RegisterToCallback( 'OnMarketingConsentPopupTypeResult', this, 'OnMarketingConsentPopupTypeResult' );
+		m_requestHandler.RequestSavesForLoad();
+		SetNextInitialLoadingScreen( m_requestHandler.GetLatestSaveMetadata().initialLoadingScreenID );
+		m_onlineSystem = GameInstance.GetOnlineSystem( GetPlayerControlledObject().GetGame() );
+		super.OnInitialize();
+		if( !( m_uiSystem ) )
+		{
+			m_uiSystem = GameInstance.GetUISystem( GetPlayerControlledObject().GetGame() );
+		}
+		if( inkWidgetRef.IsValid( m_buttonHintsManagerRef ) )
+		{
+			m_buttonHintsController = ( ( ButtonHints )( SpawnFromExternal( inkWidgetRef.Get( m_buttonHintsManagerRef ), R"base\gameplay\gui\common\buttonhints.inkwidget", 'Root' ).GetController() ) );
+			m_buttonHintsController.AddButtonHint( 'select', GetLocalizedText( "UI-UserActions-Select" ) );
+		}
+		m_textAnimController = ( ( inkTextReplaceController )( inkTextRef.GetController( m_versionTextRef ) ) );
+		inkCompoundRef.RegisterToCallback( m_gameVersionButton, 'OnHoverOver', this, 'OnGameVersionHoverOver' );
+		inkCompoundRef.RegisterToCallback( m_gameVersionButton, 'OnHoverOut', this, 'OnGameVersionHoverOut' );
+		inkCompoundRef.RegisterToCallback( m_gameVersionButton, 'OnPress', this, 'OnGameVersionPress' );
+		inkCompoundRef.RegisterToCallback( m_patch2Notification, 'OnPress', this, 'OnGameVersionPress' );
+		m_accountSelectorController = ( ( MenuAccountLogicController )( inkCompoundRef.Get( m_accountSelector ).GetController() ) );
+		m_tooltipsManager = ( ( gameuiTooltipsManager )( inkWidgetRef.GetControllerByType( m_tooltipsManagerRef, 'gameuiTooltipsManager' ) ) );
+		m_tooltipsManager.Setup( ETooltipsStyle.Menus );
+		m_expansionBannerController = ( ( ExpansionBannerController )( inkCompoundRef.GetController( m_expansionBanner ) ) );
+		m_expansionBannerController.SetStatus( ExpansionStatus.Hidden );
+		if( !( m_uiSystem.GetIsEulaAccepted() ) )
+		{
+			InitializeAndShowEula();
+		}
+		else
+		{
+			FinishMenuInitialization();
+		}
+	}
+
+	protected event OnUninitialize()
+	{
+		UnregisterFromGlobalInputCallback( 'OnPostOnRelease', this, 'OnGlobalRelease' );
+		m_menuListController.GetRootWidget().UnregisterFromCallback( 'OnRelease', this, 'OnListRelease' );
+		m_menuListController.GetRootWidget().UnregisterFromCallback( 'OnRepeat', this, 'OnListRelease' );
+		inkCompoundRef.UnregisterFromCallback( m_gameVersionButton, 'OnPress', this, 'OnGameVersionPress' );
+		inkCompoundRef.UnregisterFromCallback( m_patch2Notification, 'OnPress', this, 'OnGameVersionPress' );
+		if( GameInstance.GetOnlineSystem( GetPlayerControlledObject().GetGame() ) )
+		{
+			inkWidgetRef.UnregisterFromCallback( m_gogButtonWidgetRef, 'OnRelease', this, 'OnGogPressed' );
+		}
+		super.OnUninitialize();
+		m_requestHandler.UnregisterFromCallback( 'OnBoughtFullGame', this, 'OnRedrawRequested' );
+		m_requestHandler.UnregisterFromCallback( 'OnAdditionalContentPurchaseResult', this, 'OnAdditionalContentPurchaseResult_MainMenu' );
+		m_requestHandler.UnregisterFromCallback( 'OnAdditionalContentStatusUpdateResult', this, 'OnAdditionalContentStatusUpdateResult_MainMenu' );
+		m_requestHandler.UnregisterFromCallback( 'OnAdditionalContentInstallationResult', this, 'OnAdditionalContentInstallationResult_MainMenu' );
+		m_requestHandler.UnregisterFromCallback( 'OnAdditionalContentInstallationRequestResult', this, 'OnAdditionalContentInstallationRequestResult_MainMenu' );
+		m_requestHandler.UnregisterFromCallback( 'OnAdditionalContentDataReloadProgressCallback', this, 'OnAdditionalContentDataReloadProgress_MainMenu' );
+		m_requestHandler.UnregisterFromCallback( 'OnMarketingConsentPopupTypeResult', this, 'OnMarketingConsentPopupTypeResult' );
+		m_menuEventDispatcher.UnregisterFromEvent( 'OnShowOneTimeMessages', this, 'OnShowOneTimeMessages' );
+		m_menuEventDispatcher.UnregisterFromEvent( 'OnCheckPatchNotes', this, 'OnCheckPatchNotes' );
+		m_menuEventDispatcher.UnregisterFromEvent( 'OnOpenPatchNotes', this, 'OnOpenPatchNotes' );
+		m_menuEventDispatcher.UnregisterFromEvent( 'OnClosePatchNotes', this, 'OnClosePatchNotes' );
+		m_menuEventDispatcher.UnregisterFromEvent( 'OnCloseExpansionPopup', this, 'OnCloseExpansionPopup' );
+		m_menuEventDispatcher.UnregisterFromEvent( 'OnPurchaseDisabledError', this, 'OnPurchaseDisabledError' );
+		m_menuEventDispatcher.UnregisterFromEvent( 'OnShowMainMenuTooltip', this, 'OnShowMainMenuTooltip' );
+		m_menuEventDispatcher.UnregisterFromEvent( 'OnHideMainMenuTooltip', this, 'OnHideMainMenuTooltip' );
+	}
+
+	protected event OnSetUserData( userData : IScriptable )
+	{
+		var data : SingleplayerMenuData;
+		data = ( ( SingleplayerMenuData )( userData ) );
+		if( data )
+		{
+			m_isExpansionHintShown = data.showExpansionHint;
+			m_isMainMenuShownFirstTime = data.mainMenuShownFirstTime;
+		}
+	}
+
+	protected event OnSetMenuEventDispatcher( menuEventDispatcher : weak< inkMenuEventDispatcher > )
+	{
+		super.OnSetMenuEventDispatcher( menuEventDispatcher );
+		menuEventDispatcher.RegisterToEvent( 'OnShowOneTimeMessages', this, 'OnShowOneTimeMessages' );
+		menuEventDispatcher.RegisterToEvent( 'OnCheckPatchNotes', this, 'OnCheckPatchNotes' );
+		menuEventDispatcher.RegisterToEvent( 'OnOpenPatchNotes', this, 'OnOpenPatchNotes' );
+		menuEventDispatcher.RegisterToEvent( 'OnClosePatchNotes', this, 'OnClosePatchNotes' );
+		menuEventDispatcher.RegisterToEvent( 'OnCloseExpansionPopup', this, 'OnCloseExpansionPopup' );
+		menuEventDispatcher.RegisterToEvent( 'OnPurchaseDisabledError', this, 'OnPurchaseDisabledError' );
+		m_menuEventDispatcher.RegisterToEvent( 'OnShowMainMenuTooltip', this, 'OnShowMainMenuTooltip' );
+		m_menuEventDispatcher.RegisterToEvent( 'OnHideMainMenuTooltip', this, 'OnHideMainMenuTooltip' );
+	}
+
+	private function UpdateExpansionBannerState()
+	{
+		inkCompoundRef.RegisterToCallback( m_expansionBanner, 'OnRelease', this, 'OnExpansionBannerPressed' );
+		if( m_expansionBannerController != NULL )
+		{
+			m_expansionBannerController = ( ( ExpansionBannerController )( inkCompoundRef.GetController( m_expansionBanner ) ) );
+		}
+		if( m_requestHandler.IsAdditionalContentEnabled( m_ep1IdName ) )
+		{
+			m_expansionBannerController.SetStatus( ExpansionStatus.Downloaded );
+		}
+		else if( m_requestHandler.IsAdditionalContentOwned( m_ep1IdName ) )
+		{
+			if( !( m_requestHandler.IsAdditionalContentReleased( m_ep1IdName ) ) )
+			{
+				m_expansionBannerController.SetStatus( ExpansionStatus.PreOrderOwned );
+			}
+			else
+			{
+				m_expansionBannerController.SetStatus( ExpansionStatus.Owned );
+			}
+		}
+		else
+		{
+			m_expansionBannerController.SetStatus( ExpansionStatus.Available );
+		}
+	}
+
+	private function SwitchGameLogo( isEP1Installed : Bool )
+	{
+		inkCompoundRef.SetVisible( m_baseLogoContainer, !( isEP1Installed ) );
+		inkCompoundRef.SetVisible( m_ep1LogoContainer, isEP1Installed );
+	}
+
+	public function OnAdditionalContentPurchaseResult_MainMenu( id : CName, success : Bool )
+	{
+		if( success && id == m_ep1IdName )
+		{
+			m_expansionBannerController.SetStatus( ExpansionStatus.Owned );
+			OpenExpansionInfoPopup( ExpansionPopupType.ThankYou, true );
+		}
+		else
+		{
+			ShowExpansionError( ExpansionErrorType.PurchaseFailed );
+			UpdateExpansionBannerState();
+		}
+	}
+
+	public function OnAdditionalContentStatusUpdateResult_MainMenu( id : CName, success : Bool )
+	{
+		if( success && id == m_ep1IdName )
+		{
+			m_expansionBannerController.SetStatus( ExpansionStatus.Owned );
+			OpenExpansionInfoPopup( ExpansionPopupType.ThankYou, true );
+		}
+		else
+		{
+			ShowExpansionError( ExpansionErrorType.PurchaseFailed );
+			UpdateExpansionBannerState();
+		}
+	}
+
+	public function OnAdditionalContentInstallationResult_MainMenu( id : CName, success : Bool )
+	{
+		if( success && id == m_ep1IdName )
+		{
+			m_expansionBannerController.SetStatus( ExpansionStatus.Available );
+			if( m_requestHandler.IsAdditionalContentEnabled( m_ep1IdName ) )
+			{
+				SpawnExpansionHint();
+			}
+		}
+		else
+		{
+			ShowExpansionError( ExpansionErrorType.InstallFailed );
+			UpdateExpansionBannerState();
+			SwitchGameLogo( success );
+		}
+	}
+
+	public function OnAdditionalContentInstallationRequestResult_MainMenu( id : CName, success : Bool )
+	{
+		if( success && id == m_ep1IdName )
+		{
+			m_expansionBannerController.SetStatus( ExpansionStatus.Downloading );
+		}
+		else
+		{
+			if( !( m_requestHandler.IsInstallThroughAppEnabled() ) )
+			{
+				ShowExpansionError( ExpansionErrorType.InstallDisabled );
+			}
+			else
+			{
+				ShowExpansionError( ExpansionErrorType.InstallRequestFailed );
+			}
+		}
+	}
+
+	public function OnAdditionalContentDataReloadProgress_MainMenu( progress : Float )
+	{
+		if( progress >= 1.0 )
+		{
+			m_expansionBannerController.SetStatus( ExpansionStatus.Downloaded );
+			SwitchGameLogo( true );
+			if( !( m_isExpansionHintShown ) )
+			{
+				SpawnExpansionHint();
+			}
+		}
+		else if( !( m_isReloadPopupShown ) && ( progress > 0.0 ) )
+		{
+			m_expansionBannerController.SetStatus( ExpansionStatus.Reloading );
+			OpenExpansionInfoPopup( ExpansionPopupType.Reloading, true );
+			m_isReloadPopupShown = true;
+		}
+	}
+
+	public function ShowAdditionalDataInvalidError( validationResult : Uint32 )
+	{
+		var errorTitle, errorDescription : CName;
+		var platform : String;
+		var errorCode : Uint32;
+		if( validationResult > 0 )
+		{
+			platform = GetPlatformShortName();
+			if( validationResult & 16 )
+			{
+				errorTitle = 'UI-DLC-EP1-Errors-DirectStorageUnsupported_Title_XSX';
+				errorDescription = 'UI-DLC-EP1-Errors-DirectStorageUnsupported_Description_XSX';
+				errorCode = validationResult;
+			}
+			else if( ( validationResult & 4 ) || ( validationResult & 8 ) )
+			{
+				errorTitle = 'UI-DLC-EP1-Errors-InstallMismatch_Title';
+				errorDescription = 'UI-DLC-EP1-Errors-InstallMismatch_Description';
+				errorCode = validationResult;
+				if( platform == "xseriesx" || platform == "xseriess" )
+				{
+					errorTitle = errorTitle + '_XSX';
+					errorDescription = errorDescription + '_XSX';
+				}
+				if( platform == "ps5" )
+				{
+					errorTitle = errorTitle + '_PS5';
+					errorDescription = errorDescription + '_PS5';
+				}
+			}
+			else
+			{
+				errorTitle = 'UI-DLC-EP1-Errors-InstallIncomplete_Title';
+				errorDescription = 'UI-DLC-EP1-Errors-InstallIncomplete_Description';
+				if( validationResult <= 0 )
+				{
+					errorCode = 95053;
+				}
+				if( platform == "xseriesx" || platform == "xseriess" )
+				{
+					errorTitle = errorTitle + '_XSX';
+					errorDescription = errorDescription + '_XSX';
+				}
+				if( platform == "ps5" )
+				{
+					errorTitle = errorTitle + '_PS5';
+					errorDescription = errorDescription + '_PS5';
+				}
+			}
+			PushErrorPopup( errorTitle, errorDescription, errorCode );
+		}
+	}
+
+	protected event OnPurchaseDisabledError( userData : IScriptable )
+	{
+		ShowExpansionError( ExpansionErrorType.PurchaseDisabled );
+	}
+
+	protected event OnExpansionBannerPressed( evt : inkPointerEvent )
+	{
+		if( evt.IsAction( 'click' ) )
+		{
+			ExpansionBannerInteracted();
+		}
+	}
+
+	private function ExpansionBannerInteracted()
+	{
+		if( m_expansionBannerController.GetStatus() != ExpansionStatus.NotAvailable )
+		{
+			switch( m_expansionBannerController.GetStatus() )
+			{
+				case ExpansionStatus.Available:
+					m_requestHandler.LogPreorderBannerClick( m_ep1IdName );
+				OpenExpansionInfoPopup( ExpansionPopupType.Features, true );
+				break;
+				case ExpansionStatus.Owned:
+					m_requestHandler.RequestAdditionalContentInstall( m_ep1IdName );
+				break;
+				case ExpansionStatus.PreOrder:
+					m_requestHandler.LogPreorderBannerClick( m_ep1IdName );
+				OpenExpansionInfoPopup( ExpansionPopupType.PreOrder, true );
+				break;
+				case ExpansionStatus.PreOrderOwned:
+					OpenExpansionInfoPopup( ExpansionPopupType.PreOrder, true );
+				break;
+				default:
+					break;
+			}
+		}
+	}
+
+	private function OpenExpansionInfoPopup( type : ExpansionPopupType, forcibly : Bool )
+	{
+		var popupRequestEvt : OpenExpansionPopupEvent;
+		popupRequestEvt = new OpenExpansionPopupEvent;
+		popupRequestEvt.m_type = type;
+		popupRequestEvt.m_state = m_expansionBannerController.GetStatus();
+		popupRequestEvt.m_forcibly = forcibly;
+		QueueBroadcastEvent( popupRequestEvt );
+	}
+
+	protected event OnShowOneTimeMessages( userData : IScriptable ) {}
+
+	protected event OnCheckPatchNotes( userData : IScriptable )
+	{
+		m_patchNotesCheckData = ( ( PatchNotesCheckData )( userData ) );
+		CheckPatchNotes();
+	}
+
+	private function CheckPatchNotes()
+	{
+		if( !( m_uiSystem ) )
+		{
+			m_uiSystem = GameInstance.GetUISystem( GetPlayerControlledObject().GetGame() );
+		}
+		if( !( m_uiSystem.GetIsEulaAccepted() ) )
+		{
+			return;
+		}
+		if( !( m_requestHandler ) )
+		{
+			m_requestHandler = GetSystemRequestsHandler();
+		}
+		if( m_patchNotesCheckData.m_ownExpansion && m_uiSystem.IsPatchIntroNeeded( gameuiPatchIntro.Patch2000_EP1 ) )
+		{
+			OpenExpansionInfoPopup( ExpansionPopupType.ThankYou, true );
+			SpawnExpansionHint();
+			m_uiSystem.MarkPatchIntroAsSeen( gameuiPatchIntro.Patch2000_EP1 );
+		}
+		if( ( ( m_uiSystem.IsPatchIntroNeeded( gameuiPatchIntro.Patch2000 ) || m_uiSystem.IsPatchIntroNeeded( gameuiPatchIntro.Patch2100 ) ) || m_uiSystem.IsPatchIntroNeeded( gameuiPatchIntro.Patch2200 ) ) || m_uiSystem.IsPatchIntroNeeded( gameuiPatchIntro.Patch2300 ) )
+		{
+			m_isPatch2NotificationShown = true;
+			ShowPatch2Notification();
+		}
+		else
+		{
+			m_isPatch2NotificationShown = false;
+		}
+	}
+
+	protected event OnOpenPatchNotes( userData : IScriptable )
+	{
+		SetControlsVisible( false );
+	}
+
+	protected event OnClosePatchNotes( userData : IScriptable )
+	{
+		m_isPatch2NotificationShown = false;
+		m_uiSystem.MarkPatchIntroAsSeen( gameuiPatchIntro.Patch2000 );
+		m_uiSystem.MarkPatchIntroAsSeen( gameuiPatchIntro.Patch2100 );
+		m_uiSystem.MarkPatchIntroAsSeen( gameuiPatchIntro.Patch2200 );
+		SetControlsVisible( true );
+	}
+
+	protected event OnShowMainMenuTooltip( userData : IScriptable )
+	{
+		var tooltipData : MainMenuTooltipData;
+		tooltipData = ( ( MainMenuTooltipData )( userData ) );
+		if( tooltipData != NULL )
+		{
+			if( tooltipData.targetWidget != NULL )
+			{
+				m_tooltipsManager.ShowTooltipAtWidget( tooltipData.identifier, tooltipData.targetWidget, tooltipData.data, tooltipData.placement );
+			}
+			else
+			{
+				m_tooltipsManager.ShowTooltip( tooltipData.identifier, tooltipData.data );
+			}
+		}
+	}
+
+	protected event OnHideMainMenuTooltip( userData : IScriptable )
+	{
+		m_tooltipsManager.HideTooltips();
+	}
+
+	protected event OnCloseExpansionPopup( userData : IScriptable )
+	{
+		if( m_isPatch2NotificationShown )
+		{
+			ShowPatch2Notification();
+		}
+		else
+		{
+			SetButtonsVisible( true );
+		}
+		ShowRussianLanguageDisclaimer();
+	}
+
+	protected event OnPatch2NotificationIntroFinished( anim : inkAnimProxy )
+	{
+		var animOptions : inkAnimOptions;
+		SetButtonsVisible( true );
+		m_patch2NotificationAnimProxy.UnregisterFromCallback( inkanimEventType.OnFinish, this, 'OnPatch2NotificationIntroFinished' );
+		inkCompoundRef.SetVisible( m_gameVersionButton, true );
+		animOptions.executionDelay = m_patch2NotificationDelay;
+		m_patch2NotificationAnimProxy = PlayLibraryAnimation( m_patch2NotificationOutroName, animOptions );
+		m_patch2NotificationAnimProxy.RegisterToCallback( inkanimEventType.OnFinish, this, 'OnPatch2NotificationOutroFinished' );
+		m_uiSystem.MarkPatchIntroAsSeen( gameuiPatchIntro.Patch2000 );
+		m_uiSystem.MarkPatchIntroAsSeen( gameuiPatchIntro.Patch2100 );
+		m_uiSystem.MarkPatchIntroAsSeen( gameuiPatchIntro.Patch2200 );
+		m_uiSystem.MarkPatchIntroAsSeen( gameuiPatchIntro.Patch2300 );
+	}
+
+	protected event OnPatch2NotificationOutroFinished( anim : inkAnimProxy )
+	{
+		m_isPatch2NotificationShown = false;
+		inkCompoundRef.SetVisible( m_patch2Notification, false );
+		m_patch2NotificationAnimProxy.UnregisterFromCallback( inkanimEventType.OnFinish, this, 'OnPatch2NotificationOutroFinished' );
+		m_uiSystem.MarkPatchIntroAsSeen( gameuiPatchIntro.Patch2000 );
+		m_uiSystem.MarkPatchIntroAsSeen( gameuiPatchIntro.Patch2100 );
+		m_uiSystem.MarkPatchIntroAsSeen( gameuiPatchIntro.Patch2200 );
+		m_uiSystem.MarkPatchIntroAsSeen( gameuiPatchIntro.Patch2300 );
+	}
+
+	private function ShowPatch2Notification()
+	{
+		inkCompoundRef.SetVisible( m_patch2Notification, true );
+		inkCompoundRef.SetVisible( m_gameVersionButton, true );
+		m_patch2NotificationAnimProxy = PlayLibraryAnimation( m_patch2NotificationIntroName );
+		m_patch2NotificationAnimProxy.RegisterToCallback( inkanimEventType.OnFinish, this, 'OnPatch2NotificationIntroFinished' );
+	}
+
+	private function OpenPatchNotesPopup( mode : Bool )
+	{
+		var popupRequestEvt : OpenPatchNotesPopupEvent;
+		if( m_patch2NotificationAnimProxy )
+		{
+			m_patch2NotificationAnimProxy.GotoEndAndStop();
+			m_uiSystem.MarkPatchIntroAsSeen( gameuiPatchIntro.Patch2000 );
+			m_uiSystem.MarkPatchIntroAsSeen( gameuiPatchIntro.Patch2100 );
+			m_uiSystem.MarkPatchIntroAsSeen( gameuiPatchIntro.Patch2200 );
+			m_uiSystem.MarkPatchIntroAsSeen( gameuiPatchIntro.Patch2300 );
+		}
+		popupRequestEvt = new OpenPatchNotesPopupEvent;
+		QueueBroadcastEvent( popupRequestEvt );
+	}
+
+	private function SetControlsVisible( visible : Bool )
+	{
+		inkCompoundRef.SetVisible( m_menuList, visible );
+		inkWidgetRef.SetVisible( m_buttonHintsManagerRef, visible );
+		SetButtonsVisible( visible );
+	}
+
+	private function SetButtonsVisible( visible : Bool )
+	{
+		inkWidgetRef.SetVisible( m_gogButtonWidgetRef, visible );
+		inkCompoundRef.SetVisible( m_patch2Notification, m_isPatch2NotificationShown && visible );
+		inkCompoundRef.SetVisible( m_gameVersionButton, !( m_isPatch2NotificationShown ) && visible );
+		if( m_accountSelectorController.IsEnabled() )
+		{
+			inkCompoundRef.SetVisible( m_accountSelector, visible );
+		}
+	}
+
+	protected event OnRedrawRequested()
+	{
+		ShowActionsList();
+	}
+
+	protected event OnTooltipContainerSpawned( widget : inkWidget, userData : IScriptable )
+	{
+		var previewImageWidget : weak< inkImage >;
+		widget.SetVisible( false );
+		m_continueGameTooltipController = ( ( ContinueGameTooltip )( widget.GetController() ) );
+		if( m_savesReady || m_dataSyncStatus == CloudSavesQueryStatus.FetchedSuccessfully )
+		{
+			previewImageWidget = m_continueGameTooltipController.GetPreviewImageWidget();
+			if( previewImageWidget )
+			{
+				GetSystemRequestsHandler().RequestSavedGameScreenshot( 0, previewImageWidget );
+			}
+			m_continueGameTooltipController.UpdateNetworkStatus( m_dataSyncStatus );
+			m_continueGameTooltipController.SetOfflineStatus( m_isOffline );
+		}
+	}
+
+	protected event OnExpansionHintSpawned( widget : inkWidget, userData : IScriptable )
+	{
+		widget.SetVisible( true );
+		m_continueGameTooltipController.GetRootWidget().SetVisible( false );
+		m_isExpansionHintShown = true;
+		if( !( m_expansionHintController ) )
+		{
+			m_expansionHintController = widget.GetController();
+			m_menuEventDispatcher.SpawnEvent( 'OnExpansionHint' );
+		}
+	}
+
+	protected event OnContinueButtonEnter( evt : inkPointerEvent )
+	{
+		if( ( ( m_savesCount > 0 ) || !( m_savesReady ) ) && !( m_isExpansionHintShown ) )
+		{
+			m_continueGameTooltipController.GetRootWidget().SetVisible( true );
+		}
+	}
+
+	protected event OnContinueButtonLeave( evt : inkPointerEvent )
+	{
+		m_continueGameTooltipController.GetRootWidget().SetVisible( false );
+	}
+
+	protected event OnSavesForLoadReady( saves : array< String > )
+	{
+		var previewImageWidget : weak< inkImage >;
+		var prevSavesCount : Int32;
+		prevSavesCount = m_savesCount;
+		m_savesCount = saves.Size();
+		m_savesReady = true;
+		if( ( m_savesCount > 0 ) && ( prevSavesCount == 0 ) )
+		{
+			ShowActionsList();
+		}
+		if( m_continueGameTooltipController )
+		{
+			if( m_savesCount > 0 )
+			{
+				previewImageWidget = m_continueGameTooltipController.GetPreviewImageWidget();
+				if( previewImageWidget )
+				{
+					GetSystemRequestsHandler().RequestSavedGameScreenshot( 0, m_continueGameTooltipController.GetPreviewImageWidget() );
+				}
+			}
+			else
+			{
+				m_continueGameTooltipController.GetRootWidget().SetVisible( false );
+			}
+		}
+		
+		// Autoload Latest Save
+		if (m_savesCount > 0) {
+			GetSystemRequestsHandler().LoadSavedGame(0);
+		};
+	}
+
+	protected override function ShowActionsList()
+	{
+		var continueButton : weak< inkWidget >;
+		super.ShowActionsList();
+		continueButton = inkCompoundRef.GetWidgetByIndex( m_menuList, 0 );
+		continueButton.RegisterToCallback( 'OnEnter', this, 'OnContinueButtonEnter' );
+		continueButton.RegisterToCallback( 'OnLeave', this, 'OnContinueButtonLeave' );
+	}
+
+	protected event OnSaveMetadataReady( info : SaveMetadataInfo )
+	{
+		var characterCustomizationSystem : gameuiICharacterCustomizationSystem;
+		if( info.saveIndex == 0 )
+		{
+			if( info.isValid )
+			{
+				m_isModded = info.isModded;
+				characterCustomizationSystem = GameInstance.GetCharacterCustomizationSystem( GetPlayerControlledObject().GetGame() );
+				m_continueGameTooltipController.SetMetadata( info, m_isEp1Enabled );
+				m_continueGameTooltipController.CheckThumbnailCensorship( !( characterCustomizationSystem.IsNudityAllowed() ) );
+				LoadBackgroundWidget( info.initialLoadingScreenID );
+			}
+			else
+			{
+				m_continueGameTooltipController.SetInvalid( info );
+			}
+		}
+	}
+
+	private override function PopulateMenuItemList()
+	{
+		if( m_savesCount > 0 )
+		{
+			AddMenuItem( GetLocalizedText( "UI-ScriptExports-Continue0" ), PauseMenuAction.QuickLoad );
+		}
+		AddMenuItem( GetLocalizedText( "UI-ScriptExports-NewGame0" ), 'OnNewGame' );
+		AddMenuItem( GetLocalizedText( "UI-ScriptExports-LoadGame0" ), 'OnLoadGame' );
+		AddMenuItem( GetLocalizedText( "UI-Labels-Settings" ), 'OnSwitchToSettings' );
+		AddMenuItem( GetLocalizedText( "UI-Labels-Credits" ), 'OnCreditsPicker' );
+		if( TrialHelper.IsInPS5TrialMode() )
+		{
+			AddMenuItem( GetLocalizedText( "UI-Notifications-Ps5TrialBuyMenuItem" ), 'OnBuyGame' );
+		}
+		m_menuListController.Refresh();
+		SetCursorOverWidget( inkCompoundRef.GetWidgetByIndex( m_menuList, 0 ) );
+	}
+
+	protected event OnListRelease( e : inkPointerEvent )
+	{
+		if( e.IsHandled() )
+		{
+			return false;
+		}
+		m_menuListController.HandleInput( e, this );
+	}
+
+	protected event OnGlobalRelease( e : inkPointerEvent )
+	{
+		var delayEvent : RetrySaveDataRequestDelay;
+		if( e.IsHandled() )
+		{
+			return false;
+		}
+		if( e.IsAction( 'back' ) )
+		{
+			PlaySound( 'Button', 'OnPress' );
+			m_menuEventDispatcher.SpawnEvent( 'OnBack' );
+			e.Handle();
+		}
+		else if( e.IsAction( 'gog_rewards' ) )
+		{
+			PlaySound( 'Button', 'OnPress' );
+			m_menuEventDispatcher.SpawnEvent( 'OnGOGProfile' );
+			e.Handle();
+		}
+		else if( ( ( e.IsAction( 'navigate_down' ) || e.IsAction( 'navigate_up' ) ) || e.IsAction( 'navigate_left' ) ) || e.IsAction( 'navigate_right' ) )
+		{
+			SetCursorOverWidget( inkCompoundRef.GetWidgetByIndex( m_menuList, 0 ) );
+		}
+		else if( e.IsAction( 'reload' ) && !( m_continueGameTooltipController.IsBusy() ) )
+		{
+			m_continueGameTooltipController.DisplayDataSyncIndicator( true );
+			delayEvent = new RetrySaveDataRequestDelay;
+			GameInstance.GetDelaySystem( GetPlayerControlledObject().GetGame() ).DelayEvent( GetPlayerControlledObject(), delayEvent, 1.0 );
+		}
+		else if( e.IsAction( 'expansion_popup' ) && inkCompoundRef.IsVisible( m_expansionBanner ) )
+		{
+			ExpansionBannerInteracted();
+		}
+		else if( e.IsAction( 'game_version' ) )
+		{
+			OpenPatchNotesPopup( true );
+		}
+		else if( !( IsFinal() ) && e.IsAction( 'toggle_crafting' ) )
+		{
+			ShowSignInPopup();
+		}
+	}
+
+	protected event OnRetrySaveDataRequestDelay( evt : RetrySaveDataRequestDelay )
+	{
+		m_requestHandler.RequestSavesForLoad();
+		m_onlineSystem.RequestInitialStatus();
+	}
+
+	protected event OnGogPressed( evt : inkPointerEvent )
+	{
+		if( evt.IsAction( 'click' ) )
+		{
+			PlaySound( 'Button', 'OnPress' );
+			evt.Handle();
+			m_menuEventDispatcher.SpawnEvent( 'OnGOGProfile' );
+		}
+	}
+
+	protected event OnGameVersionPress( evt : inkPointerEvent )
+	{
+		if( evt.IsAction( 'click' ) )
+		{
+			PlaySound( 'Button', 'OnPress' );
+			evt.Handle();
+			OpenPatchNotesPopup( true );
+		}
+	}
+
+	protected event OnGameVersionHoverOver( evt : inkPointerEvent )
+	{
+		if( m_gameVersionAnim )
+		{
+			m_gameVersionAnim.GotoStartAndStop();
+		}
+		else
+		{
+			m_gameVersion = m_textAnimController.GetBaseText();
+		}
+		m_textAnimController.SetDelay( 4.0 );
+		m_textAnimController.SetDuration( 1.5 );
+		m_textAnimController.SetTargetText( "2.0.77" );
+		m_gameVersionAnim = m_textAnimController.PlaySetAnimation();
+	}
+
+	protected event OnGameVersionHoverOut( evt : inkPointerEvent )
+	{
+		if( m_gameVersionAnim && ( ( m_gameVersionAnim.GetProgression() < 0.5 ) && m_gameVersionAnim.IsPlaying() ) )
+		{
+			m_gameVersionAnim.GotoStartAndStop();
+			inkTextRef.SetText( m_versionTextRef, m_gameVersion );
+		}
+		else
+		{
+			m_textAnimController.SetDelay( 1.0 );
+			m_textAnimController.SetDuration( 1.0 );
+			m_textAnimController.SetTargetText( m_gameVersion );
+			m_gameVersionAnim = m_textAnimController.PlaySetAnimation();
+		}
+	}
+
+	protected event OnCloudSavesQueryStatusChanged( status : CloudSavesQueryStatus )
+	{
+		var previewImageWidget : weak< inkImage >;
+		m_dataSyncStatus = status;
+		if( m_continueGameTooltipController )
+		{
+			m_continueGameTooltipController.UpdateNetworkStatus( m_dataSyncStatus );
+			if( m_dataSyncStatus == CloudSavesQueryStatus.FetchedSuccessfully )
+			{
+				previewImageWidget = m_continueGameTooltipController.GetPreviewImageWidget();
+				if( previewImageWidget )
+				{
+					GetSystemRequestsHandler().RequestSavedGameScreenshot( 0, m_continueGameTooltipController.GetPreviewImageWidget() );
+				}
+			}
+		}
+	}
+
+	protected event OnOnlineStatusChanged( value : GOGRewardsSystemStatus )
+	{
+		var error : GOGRewardsSystemErrors;
+		error = m_onlineSystem.GetError();
+		m_isOffline = error != GOGRewardsSystemErrors.None;
+		if( m_continueGameTooltipController )
+		{
+			m_continueGameTooltipController.SetOfflineStatus( m_isOffline );
+		}
+	}
+
+	protected override function HandleMenuItemActivate( data : PauseMenuListItemData ) : Bool
+	{
+		if( super.HandleMenuItemActivate( data ) )
+		{
+			return false;
+		}
+		switch( data.action )
+		{
+			case PauseMenuAction.QuickLoad:
+				if( m_savesCount > 0 )
+				{
+					GameInstance.GetTelemetrySystem( GetPlayerControlledObject().GetGame() ).LogLastCheckpointLoaded();
+					if( m_isModded )
+					{
+						LoadModdedSave( 0 );
+					}
+					else
+					{
+						GetSystemRequestsHandler().LoadLastCheckpoint( false );
+					}
+					return true;
+				}
+			break;
+		}
+		return false;
+	}
+
+	private function SpawnExpansionHint()
+	{
+		AsyncSpawnFromLocal( inkCompoundRef.Get( m_continuetooltipContainer ), 'ExpansionHintTooltip', this, 'OnExpansionHintSpawned' );
+	}
+
+	private function ShowRussianLanguageDisclaimer()
+	{
+		var voName : CName;
+		var voVar : ConfigVarListName;
+		if( !( m_uiSystem ) )
+		{
+			m_uiSystem = GameInstance.GetUISystem( GetPlayerControlledObject().GetGame() );
+		}
+		voVar = ( ( ConfigVarListName )( GetSystemRequestsHandler().GetUserSettings().GetVar( '/language', 'VoiceOver' ) ) );
+		if( voVar )
+		{
+			voName = voVar.GetValue();
+			if( voName == 'ru-ru' )
+			{
+				GetSystemRequestsHandler().RequestSystemNotificationGeneric( 'UI-SystemNotification-ruVO-LaunchPopUpHeader', 'UI-SystemNotification-ruVO-LaunchPopUpMessage' );
+			}
+		}
+	}
+
+	private function PushErrorPopup( title : CName, description : CName, optional errorCode : Uint32 )
+	{
+		var errorPopupEvt : OpenExpansionErrorPopupEvent;
+		errorPopupEvt = new OpenExpansionErrorPopupEvent;
+		errorPopupEvt.m_title = title;
+		errorPopupEvt.m_description = description;
+		errorPopupEvt.m_errorCode = errorCode;
+		QueueBroadcastEvent( errorPopupEvt );
+	}
+
+	private function ShowExpansionError( error : ExpansionErrorType )
+	{
+		var errorTitle, errorDescription : CName;
+		var errorCode : Uint32;
+		switch( error )
+		{
+			case ExpansionErrorType.PurchaseFailed:
+				errorTitle = 'UI-DLC-EP1-Errors-PurchaseFailed_Title';
+			errorDescription = 'UI-DLC-EP1-Errors-PurchaseFailed_Description';
+			errorCode = 92516;
+			break;
+			case ExpansionErrorType.PurchaseDisabled:
+				errorTitle = 'UI-DLC-EP1-Errors-PurchaseDisabled_Title';
+			errorDescription = 'UI-DLC-EP1-Errors-PurchaseDisabled_Description';
+			errorCode = 92518;
+			break;
+			case ExpansionErrorType.InstallFailed:
+				errorTitle = 'UI-DLC-EP1-Errors-InstallFailed_Title';
+			errorDescription = 'UI-DLC-EP1-Errors-InstallFailed_Description';
+			errorCode = 92520;
+			break;
+			case ExpansionErrorType.InstallRequestFailed:
+				errorTitle = 'UI-DLC-EP1-Errors-InstallRequestFailed_Title';
+			errorDescription = 'UI-DLC-EP1-Errors-InstallRequestFailed_Description';
+			errorCode = 92522;
+			break;
+			case ExpansionErrorType.InstallDisabled:
+				errorTitle = 'UI-DLC-EP1-Errors-InstallDisabled_Title';
+			errorDescription = 'UI-DLC-EP1-Errors-InstallDisabled_Description';
+			errorCode = 92524;
+			break;
+			case ExpansionErrorType.DataInvalid:
+				errorTitle = 'UI-DLC-EP1-Errors-InstallIncomplete_Title';
+			errorDescription = 'UI-DLC-EP1-Errors-InstallIncomplete_Description';
+			errorCode = 95053;
+			break;
+		}
+		if( ( ( GetPlatformShortName() == "xseriesx" || GetPlatformShortName() == "xseriess" ) && errorTitle != '' ) && errorDescription != '' )
+		{
+			errorTitle = errorTitle + '_XSX';
+			errorDescription = errorDescription + '_XSX';
+		}
+		if( ( GetPlatformShortName() == "ps5" && errorTitle != '' ) && errorDescription != '' )
+		{
+			errorTitle = errorTitle + '_PS5';
+			errorDescription = errorDescription + '_PS5';
+		}
+		PushErrorPopup( errorTitle, errorDescription, errorCode );
+	}
+
+	protected event OnMarketingConsentPopupTypeResult( resultType : inkMarketingConsentPopupType )
+	{
+		if( resultType != inkMarketingConsentPopupType.None )
+		{
+			if( resultType == inkMarketingConsentPopupType.SignIn )
+			{
+				ShowSignInPopup();
+			}
+			else
+			{
+				ShowMarketingConsentPopup( resultType );
+			}
+		}
+	}
+
+	private function ShowMarketingConsentPopup( type : inkMarketingConsentPopupType )
+	{
+		var marketingPopupEvt : MarketingConsentPopupEvent;
+		marketingPopupEvt = new MarketingConsentPopupEvent;
+		marketingPopupEvt.m_type = type;
+		QueueBroadcastEvent( marketingPopupEvt );
+	}
+
+	private function ShowSignInPopup()
+	{
+		var marketingPopupEvt : SignInPopupEvent;
+		marketingPopupEvt = new SignInPopupEvent;
+		QueueBroadcastEvent( marketingPopupEvt );
+		m_requestHandler.RequestMarketingConsentSignInVersionUpdate();
+	}
+
+	private function OnFirstTimeMainMenu()
+	{
+		m_requestHandler.LogPreorderBannerImpression( m_ep1IdName );
+		ShowAdditionalDataInvalidError( m_requestHandler.GetAdditionalContentValidationResult( m_ep1IdName ) );
+		m_requestHandler.RequestMarketingConsentPopupType();
+	}
+
+	private function DBG_ShowAccountButton()
+	{
+		if( m_accountSelectorController )
+		{
+			m_accountSelectorController.ShowAccountButton();
+		}
+	}
+
+	private function InitializeAndShowEula()
+	{
+		if( !( m_uiSystem.GetIsEulaAccepted() ) )
+		{
+			inkWidgetRef.SetVisible( m_eulaWidget, true );
+			if( GetPlatformShortName() != "windows" && GetPlatformShortName() != "linux" )
+			{
+				inkWidgetRef.SetVisible( m_quitGameWidget, false );
+			}
+			SetControlsVisible( false );
+			m_isEulaWindowOpened = true;
+			PlayLibraryAnimation( 'eula_intro' );
+			RegisterToGlobalInputCallback( 'OnPostOnPress', this, 'OnButtonPress' );
+			GetPlayerControlledObject().RegisterInputListener( this, 'system_quit_game' );
+			m_sliderController = ( ( inkSliderController )( inkWidgetRef.GetControllerByType( m_sliderWidget, 'inkSliderController' ) ) );
+			m_sliderController.RegisterToCallback( 'OnSliderValueChanged', this, 'OnEulaScrollbarValueChanged' );
+			m_declineButtonController = ( ( inkButtonController )( inkWidgetRef.GetControllerByType( m_declineButtonWidget, 'inkButtonController' ) ) );
+			m_declineButtonController.RegisterToCallback( 'OnButtonClick', this, 'OnDeclineButtonClick' );
+			m_declineButtonController.RegisterToCallback( 'OnButtonStateChanged', this, 'OnDeclineButtonStateChanged' );
+			m_acceptButtonController = ( ( inkButtonController )( inkWidgetRef.GetControllerByType( m_acceptButtonWidget, 'inkButtonController' ) ) );
+			m_acceptButtonController.RegisterToCallback( 'OnButtonClick', this, 'OnAcceptButtonClick' );
+			m_acceptButtonController.RegisterToCallback( 'OnButtonStateChanged', this, 'OnAcceptButtonStateChanged' );
+		}
+		else
+		{
+			inkWidgetRef.SetVisible( m_eulaWidget, false );
+		}
+	}
+
+	private function UninitializeEula()
+	{
+		SetControlsVisible( true );
+		UnregisterFromGlobalInputCallback( 'OnPostOnPress', this, 'OnButtonPress' );
+		m_sliderController.UnregisterFromCallback( 'OnSliderValueChanged', this, 'OnEulaScrollbarValueChanged' );
+		m_declineButtonController.UnregisterFromCallback( 'OnButtonClick', this, 'OnDeclineButtonClick' );
+		m_declineButtonController.UnregisterFromCallback( 'OnButtonStateChanged', this, 'OnDeclineButtonStateChanged' );
+		m_acceptButtonController.UnregisterFromCallback( 'OnButtonClick', this, 'OnAcceptButtonClick' );
+		m_acceptButtonController.UnregisterFromCallback( 'OnButtonStateChanged', this, 'OnAcceptButtonStateChanged' );
+	}
+
+	protected event OnEulaScrollbarValueChanged( sliderController : weak< inkSliderController >, progress, value : Float )
+	{
+		if( progress >= 1.0 )
+		{
+			m_eulaRead = true;
+			inkWidgetRef.SetInteractive( m_declineButtonWidget, true );
+			inkTextRef.SetState( m_declineButtonText, 'Normal' );
+			inkWidgetRef.SetInteractive( m_acceptButtonWidget, true );
+			inkTextRef.SetState( m_acceptButtonText, 'Normal' );
+		}
+	}
+
+	protected event OnDeclineButtonClick( controller : weak< inkButtonController > )
+	{
+		OnDeclineButtonPressed();
+	}
+
+	private function OnDeclineButtonPressed()
+	{
+		var playbackOptions : inkAnimOptions;
+		if( m_isEulaWindowOpened && m_eulaRead )
+		{
+			inkTextRef.SetState( m_declineButtonText, EnumValueToName( 'inkEButtonState', ( ( Int64 )( inkEButtonState.Press ) ) ) );
+			inkTextRef.SetState( m_acceptButtonText, EnumValueToName( 'inkEButtonState', ( ( Int64 )( inkEButtonState.Normal ) ) ) );
+			m_isEulaWindowOpened = false;
+			playbackOptions.playReversed = true;
+			m_eulaAnimationProxy = PlayLibraryAnimation( 'eula_intro', playbackOptions );
+			m_eulaAnimationProxy.RegisterToCallback( inkanimEventType.OnFinish, this, 'OnEulaDeclined' );
+		}
+	}
+
+	protected event OnEulaDeclined( e : inkAnimProxy )
+	{
+		if( m_eulaAnimationProxy )
+		{
+			m_eulaAnimationProxy.UnregisterFromCallback( inkanimEventType.OnFinish, this, 'OnEulaDeclined' );
+		}
+		inkTextRef.SetState( m_declineButtonText, EnumValueToName( 'inkEButtonState', ( ( Int64 )( inkEButtonState.Normal ) ) ) );
+		m_eulaAnimationProxy = PlayLibraryAnimation( 'eula_decline_loop' );
+		m_eulaAnimationProxy.RegisterToCallback( inkanimEventType.OnFinish, this, 'OnEulaReopen' );
+	}
+
+	protected event OnEulaReopen( e : inkAnimProxy )
+	{
+		if( m_eulaAnimationProxy )
+		{
+			m_eulaAnimationProxy.UnregisterFromCallback( inkanimEventType.OnFinish, this, 'OnEulaReopen' );
+		}
+		m_isEulaWindowOpened = true;
+	}
+
+	protected event OnDeclineButtonStateChanged( controller : weak< inkButtonController >, oldState : inkEButtonState, newState : inkEButtonState )
+	{
+		inkTextRef.SetState( m_declineButtonText, EnumValueToName( 'inkEButtonState', ( ( Int64 )( newState ) ) ) );
+	}
+
+	protected event OnAcceptButtonClick( controller : weak< inkButtonController > )
+	{
+		OnAcceptButtonPressed();
+	}
+
+	private function OnAcceptButtonPressed()
+	{
+		var playbackOptions : inkAnimOptions;
+		if( m_isEulaWindowOpened && m_eulaRead )
+		{
+			inkTextRef.SetState( m_acceptButtonText, EnumValueToName( 'inkEButtonState', ( ( Int64 )( inkEButtonState.Press ) ) ) );
+			inkTextRef.SetState( m_declineButtonText, EnumValueToName( 'inkEButtonState', ( ( Int64 )( inkEButtonState.Normal ) ) ) );
+			m_isEulaWindowOpened = false;
+			playbackOptions.playReversed = true;
+			m_eulaAnimationProxy = PlayLibraryAnimation( 'eula_intro', playbackOptions );
+			m_eulaAnimationProxy.RegisterToCallback( inkanimEventType.OnFinish, this, 'OnEulaIsAccepted' );
+		}
+	}
+
+	protected event OnEulaIsAccepted( e : inkAnimProxy )
+	{
+		if( m_eulaAnimationProxy )
+		{
+			m_eulaAnimationProxy.UnregisterFromCallback( inkanimEventType.OnFinish, this, 'OnEulaIsAccepted' );
+		}
+		m_uiSystem.SetIsEulaAccepted( true );
+		UninitializeEula();
+		FinishMenuInitialization();
+		m_requestHandler.RequestTelemetryConsent( false );
+		CheckPatchNotes();
+	}
+
+	private function FinishMenuInitialization()
+	{
+		RegisterToGlobalInputCallback( 'OnPostOnRelease', this, 'OnGlobalRelease' );
+		m_menuListController.GetRootWidget().RegisterToCallback( 'OnRelease', this, 'OnListRelease' );
+		m_menuListController.GetRootWidget().RegisterToCallback( 'OnRepeat', this, 'OnListRelease' );
+		if( m_isExpansionHintShown )
+		{
+			SpawnExpansionHint();
+		}
+		if( m_isMainMenuShownFirstTime )
+		{
+			OnFirstTimeMainMenu();
+		}
+		UpdateExpansionBannerState();
+		SwitchGameLogo( m_requestHandler.IsAdditionalContentEnabled( m_ep1IdName ) );
+		if( GameInstance.GetOnlineSystem( GetPlayerControlledObject().GetGame() ) )
+		{
+			inkWidgetRef.RegisterToCallback( m_gogButtonWidgetRef, 'OnRelease', this, 'OnGogPressed' );
+			inkWidgetRef.SetVisible( m_gogButtonWidgetRef, true );
+			inkWidgetRef.SetInteractive( m_gogButtonWidgetRef, true );
+		}
+		else
+		{
+			inkWidgetRef.SetVisible( m_gogButtonWidgetRef, false );
+			inkWidgetRef.SetInteractive( m_gogButtonWidgetRef, false );
+		}
+		AsyncSpawnFromLocal( inkCompoundRef.Get( m_continuetooltipContainer ), 'ContinueTooltip', this, 'OnTooltipContainerSpawned' );
+		m_isEp1Enabled = IsEP1();
+		GetTelemetrySystem().ClearPlaythroughEp1();
+	}
+
+	protected event OnAcceptButtonStateChanged( controller : weak< inkButtonController >, oldState : inkEButtonState, newState : inkEButtonState )
+	{
+		inkTextRef.SetState( m_acceptButtonText, EnumValueToName( 'inkEButtonState', ( ( Int64 )( newState ) ) ) );
+	}
+
+	protected event OnButtonPress( evt : inkPointerEvent )
+	{
+		if( !( evt.IsHandled() ) )
+		{
+			if( evt.IsAction( 'system_accept_eula' ) && inkWidgetRef.IsInteractive( m_acceptButtonWidget ) )
+			{
+				OnAcceptButtonPressed();
+			}
+			else if( evt.IsAction( 'back' ) && inkWidgetRef.IsInteractive( m_declineButtonWidget ) )
+			{
+				OnDeclineButtonPressed();
+			}
+			evt.Handle();
+		}
+	}
+
+	protected event OnAction( action : ListenerAction, consumer : ListenerActionConsumer )
+	{
+		if( ListenerAction.IsAction( action, 'system_quit_game' ) && ListenerAction.GetType( action ) == gameinputActionType.BUTTON_HOLD_COMPLETE )
+		{
+			if( CanExitGame() )
+			{
+				ExitGame();
+			}
+		}
+	}
+
+}
+
+class ExpansionErrorPopupController extends inkGameController
+{
+	private editable var m_title : inkTextRef;
+	private editable var m_description : inkTextRef;
+	private editable var m_errorCodeText : inkTextRef;
+	private editable var m_closeButtonRef : inkWidgetRef;
+	private editable var m_introAnimationName : CName;
+	default m_introAnimationName = 'intro';
+	private editable var m_outroAnimationName : CName;
+	default m_outroAnimationName = 'outro';
+	private var m_data : ExpansionErrorPopuppData;
+	private var m_animProxy : inkAnimProxy;
+
+	protected event OnInitialize()
+	{
+		SetupData();
+		RegisterToGlobalInputCallback( 'OnPostOnRelease', this, 'OnRelease' );
+		inkWidgetRef.RegisterToCallback( m_closeButtonRef, 'OnPress', this, 'OnPressClose' );
+		SetMessage();
+		m_animProxy = PlayLibraryAnimation( m_introAnimationName );
+	}
+
+	protected event OnUninitialize()
+	{
+		UnregisterFromGlobalInputCallback( 'OnPostOnRelease', this, 'OnRelease' );
+		inkWidgetRef.UnregisterFromCallback( m_closeButtonRef, 'OnPress', this, 'OnPressClose' );
+	}
+
+	private function SetupData()
+	{
+		m_data = ( ( ExpansionErrorPopuppData )( GetRootWidget().GetUserData( 'ExpansionErrorPopuppData' ) ) );
+	}
+
+	private function SetMessage()
+	{
+		var title : String;
+		var description : String;
+		var error : String;
+		title = GetLocalizedTextByKey( m_data.title );
+		if( title != "" )
+		{
+			inkTextRef.SetText( m_title, title );
+		}
+		description = GetLocalizedTextByKey( m_data.description );
+		if( description != "" )
+		{
+			inkTextRef.SetText( m_description, description );
+		}
+		else if( m_data.errorCode < 90000 )
+		{
+			inkTextRef.SetText( m_description, "Archive files could not be loaded correctly. Make sure both the game and Phantom Liberty have fully completed the installation / update process." );
+		}
+		if( m_data.errorCode > 0 )
+		{
+			error += " (Error: ";
+			error += IntToString( ( ( Int32 )( m_data.errorCode ) ) );
+			error += ")";
+			inkTextRef.SetText( m_errorCodeText, error );
+		}
+	}
+
+	protected event OnPressClose( evt : inkPointerEvent )
+	{
+		if( evt.IsAction( 'click' ) )
+		{
+			Close();
+		}
+	}
+
+	protected event OnRelease( evt : inkPointerEvent )
+	{
+		if( evt.IsAction( 'close_popup' ) || evt.IsAction( 'system_notification_confirm' ) )
+		{
+			Close();
+		}
+	}
+
+	private function Close()
+	{
+		PlaySound( 'Button', 'OnPress' );
+		if( m_animProxy )
+		{
+			m_animProxy.GotoEndAndStop();
+		}
+		m_animProxy = PlayLibraryAnimation( m_outroAnimationName );
+		m_animProxy.RegisterToCallback( inkanimEventType.OnFinish, this, 'OnOutroAnimationFinished' );
+	}
+
+	protected event OnOutroAnimationFinished( proxy : inkAnimProxy )
+	{
+		m_data.token.TriggerCallback( m_data );
+	}
+
+}
+
+class OpenExpansionErrorPopupEvent extends Event
+{
+	var m_title : CName;
+	var m_description : CName;
+	var m_errorCode : Uint32;
+}
+
+class ExpansionErrorPopuppData extends inkGameNotificationData
+{
+	var title : CName;
+	var description : CName;
+	var errorCode : Uint32;
+}
+
+enum ExpansionErrorType
+{
+	PurchaseFailed = 0,
+	PurchaseDisabled = 1,
+	InstallFailed = 2,
+	InstallRequestFailed = 3,
+	InstallDisabled = 4,
+	DataInvalid = 5,
+}
+
+class MainMenuTooltipData
+{
+	var identifier : CName;
+	var data : ATooltipData;
+	var targetWidget : weak< inkWidget >;
+	var placement : gameuiETooltipPlacement;
+}
+

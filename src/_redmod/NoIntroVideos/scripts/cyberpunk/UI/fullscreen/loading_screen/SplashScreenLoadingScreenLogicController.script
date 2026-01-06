@@ -1,0 +1,16 @@
+// Import whole class and rewrite animation names
+import class SplashScreenLoadingScreenLogicController extends ILoadingLogicController
+{
+	import var logosTrainAnimation: CName;
+	import var localizedMessageAnimation: CName;
+	import var gameIntroAnimation: CName;
+	import var longLogosTrainAnimation: CName;
+
+	protected event OnInitialize()
+	{
+		logosTrainAnimation = 'after_skip_pressed';
+		localizedMessageAnimation = 'after_skip_pressed';
+		gameIntroAnimation = 'after_skip_pressed';
+		longLogosTrainAnimation = 'after_skip_pressed';
+	}
+}
