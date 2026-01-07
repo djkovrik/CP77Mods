@@ -34,7 +34,8 @@ private func DetermineCurrentVisibility() -> Void {
     let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfigQuest.ShowWithWeapon;
     let showForZoom: Bool = this.lhud_isZoomActive && this.lhudConfigQuest.ShowWithZoom;
     let showForArea: Bool = this.lhud_isInDangerZone && this.lhudConfigQuest.ShowInDangerArea;
-    let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForAutoDrive || showForScanner || showForWeapon || showForZoom || showForArea;
+    let showIfTracked: Bool = this.lhudConfigQuest.AlwaysShowTrackedMarker && MappinChecker.IsTracked(this.m_mappin);
+    let isVisible: Bool = showIfTracked || showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForAutoDrive || showForScanner || showForWeapon || showForZoom || showForArea;
     this.lhud_isVisibleNow = shouldBeVisible && isVisible;
     this.SetRootVisible(this.lhud_isVisibleNow);
     return ;

@@ -802,6 +802,13 @@ public class WorldMarkersModuleConfigQuest {
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Area")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Area-Desc")
   public let ShowInDangerArea: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Quest")
+  @runtimeProperty("ModSettings.category.order", "9")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-POI-Tracked")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Tracked-Desc")
+  public let AlwaysShowTrackedMarker: Bool = false;
 }
 
 public class WorldMarkersModuleConfigLoot {
