@@ -1,6 +1,7 @@
 module LimitedHudListeners
 
 import LimitedHudCommon.*
+import LimitedHudMappinChecker.*
 
 // Input actions listener class
 public class LHUDInputListener {
@@ -184,8 +185,10 @@ public class LHUDBlackboardsListener {
   // Mounted state bb callback
   protected cb func OnMountedStateChanged(value: Bool) -> Bool {
     let isDriver: Bool = VehicleComponent.IsDriver(this.playerInstance.GetGame(), this.playerInstance);
+    let hasTracked: Bool = MappinChecker.HasTrackedMappins(this.playerInstance.GetGame());
     let show: Bool = isDriver && value;
     this.playerInstance.QueueLHUDEvent(LHUDEventType.InVehicle, show);
+    this.playerInstance.QueueLHUDEvent(LHUDEventType.TrackedMarkers, hasTracked);
   }
 
   // Weapon + vehicle  
@@ -456,4 +459,49 @@ protected cb func OnScannerDetailsShown(animationProxy: ref<inkAnimProxy>) -> Bo
 protected cb func OnScannerDetailsHidden(animationProxy: ref<inkAnimProxy>) -> Bool {
   wrappedMethod(animationProxy);
   this.m_player.QueueLHUDEvent(LHUDEventType.ScannerDetails, false);
+}
+
+// TRACKED MARKERS UPDATING
+@wrapMethod(WorldMapMenuGameController)
+protected cb func OnUninitialize() -> Bool {
+  wrappedMethod();
+  let hasTracked: Bool = MappinChecker.HasTrackedMappins(this.m_player.GetGame());
+  this.m_player.QueueLHUDEvent(LHUDEventType.TrackedMarkers, hasTracked);
+}
+
+@wrapMethod(questLogGameController)
+protected cb func OnUninitialize() -> Bool {
+  wrappedMethod();
+  let hasTracked: Bool = MappinChecker.HasTrackedMappins(this.m_game);
+  this.GetPlayerControlledObject().QueueLHUDEvent(LHUDEventType.TrackedMarkers, hasTracked);
+}
+
+
+@addField(QuestTrackerGameController)
+private let lhudDelaySystem: wref<DelaySystem>;
+
+@addField(QuestTrackerGameController)
+private let lhudShowMinimapDelayId: DelayID;
+
+@wrapMethod(QuestTrackerGameController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+  this.lhudDelaySystem = GameInstance.GetDelaySystem(this.m_player.GetGame());
+}
+
+@wrapMethod(QuestTrackerGameController)
+protected cb func OnTrackedEntryChanges(hash: Uint32, className: CName, notifyOption: JournalNotifyOption, changeType: JournalChangeType) -> Bool {
+  wrappedMethod(hash, className, notifyOption, changeType);
+  let callback: ref<LHUDShowMinimapCallback> = new LHUDShowMinimapCallback();
+  callback.player = this.m_player;
+  this.lhudDelaySystem.CancelCallback(this.lhudShowMinimapDelayId);
+  this.lhudShowMinimapDelayId = this.lhudDelaySystem.DelayCallback(callback, 1.0, true);
+}
+
+public class LHUDShowMinimapCallback extends DelayCallback {
+  public let player: wref<GameObject>;
+  public func Call() -> Void {
+    let hasTracked: Bool = MappinChecker.HasTrackedMappins(this.player.GetGame());
+    this.player.QueueLHUDEvent(LHUDEventType.TrackedMarkers, hasTracked);
+  }
 }

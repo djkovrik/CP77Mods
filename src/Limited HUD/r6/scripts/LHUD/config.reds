@@ -391,6 +391,13 @@ public class MinimapModuleConfig {
   @runtimeProperty("ModSettings.mod", "LHUD")
   @runtimeProperty("ModSettings.category", "Mod-LHUD-Minimap")
   @runtimeProperty("ModSettings.category.order", "5")
+  @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Vehicle-Tracked")
+  @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Vehicle-Tracked-Desc")
+  public let ShowInVehicleWithMarkers: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Minimap")
+  @runtimeProperty("ModSettings.category.order", "5")
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-AutoPilot")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-AutoPilot-Desc")
   public let ShowWithAutoDrive: Bool = true;

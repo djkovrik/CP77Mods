@@ -137,4 +137,18 @@ public class MappinChecker {
   public static func IsTracked(mappin: wref<IMappin>) -> Bool {
     return mappin.IsPlayerTracked();
   }
+
+  public static func HasTrackedMappins(gi: GameInstance) -> Bool {
+    let mappinSystem: ref<MappinSystem> = GameInstance.GetMappinSystem(gi);
+    let mappins: array<ref<IMappin>>;
+    let counter: Int32;
+    mappinSystem.GetMappins(gamemappinsMappinTargetType.Map, mappins);
+    for mappin in mappins {
+      if mappin.IsPlayerTracked() {
+        counter += 1;
+      };
+    };
+
+    return NotEquals(counter, 0);
+  }
 }

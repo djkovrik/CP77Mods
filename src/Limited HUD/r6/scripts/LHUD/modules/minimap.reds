@@ -27,6 +27,9 @@ public func DetermineCurrentVisibility() -> Void {
   let showForWanted: Bool = this.lhud_isWanted && this.lhudConfig.ShowWhenWanted;
   let showForArea: Bool = this.lhud_isInDangerZone && this.lhudConfig.ShowInDangerArea;
   let scannerDetailsVisible: Bool = this.lhud_isScannerDetailsActive;
+  if this.lhudConfig.ShowInVehicleWithMarkers {
+    showForVehicle = this.lhud_isInVehicle && this.lhud_hasTrackedMarkers;
+  };
 
   let isVisible: Bool = showForGlobalHotkey || showForMinimapHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForAutoDrive || showForScanner || showForWeapon || showForZoom || showForWanted || showForArea;
   if this.lhud_isBraindanceActive || scannerDetailsVisible { isVisible = false; };

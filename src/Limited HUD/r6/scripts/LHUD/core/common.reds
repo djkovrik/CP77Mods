@@ -24,6 +24,7 @@ public enum LHUDEventType {
   DangerousZone = 18,
   AutoDrive = 19,
   AutoDriveDelamain = 20,
+  TrackedMarkers = 21,
 }
 
 public enum LHUDFillColors {
@@ -114,6 +115,7 @@ public class LHUDOnCoolExitEvent extends Event {}
 @addField(inkGameController) public let lhud_isInDangerZone: Bool;
 @addField(inkGameController) public let lhud_inAutoDrive: Bool;
 @addField(inkGameController) public let lhud_inAutoDriveDelamain: Bool;
+@addField(inkGameController) public let lhud_hasTrackedMarkers: Bool;
 
 // Visibility condition flags for inkLogicController instances
 @addField(inkLogicController) public let lhud_isGlobalFlagToggled: Bool;
@@ -206,6 +208,9 @@ protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
       break;
     case LHUDEventType.AutoDriveDelamain:
       this.lhud_inAutoDriveDelamain = evt.isActive;
+      break;
+    case LHUDEventType.TrackedMarkers:
+      this.lhud_hasTrackedMarkers = evt.isActive;
       break;
     default:
       break;
@@ -389,7 +394,7 @@ public func HasAnyWeaponEquipped_LHUD() -> Bool {
 }
 
 // Send config refreshing event
-@wrapMethod(PauseMenuBackgroundGameController)
+@wrapMethod(PauseMenuGameController)
 protected cb func OnUninitialize() -> Bool {
   GameInstance.GetUISystem(this.GetPlayerControlledObject().GetGame()).QueueEvent(new LHUDConfigUpdatedEvent());
   wrappedMethod();
