@@ -402,8 +402,8 @@ public final func PreviewDamage(value: Int32) -> Void {
       damagePercentage = MinF(damagePercentage, currentHealthPercentage);
       renderTransformXPivot = damagePercentage < 1.0 ? (currentHealthPercentage - damagePercentage) / (1.0 - damagePercentage) : 1.0;
       offset = 100.0 + 150.0 * damagePercentage - 150.0 * currentHealthPercentage;
-      inkWidgetRef.SetRenderTransformPivot(this.m_damagePreviewWidget, new Vector2(renderTransformXPivot, 1.0));
-      inkWidgetRef.SetScale(this.m_damagePreviewWidget, new Vector2(damagePercentage, 1.0));
+      inkWidgetRef.SetRenderTransformPivot(this.m_damagePreviewWidget, Vector2(renderTransformXPivot, 1.0));
+      inkWidgetRef.SetScale(this.m_damagePreviewWidget, Vector2(damagePercentage, 1.0));
       inkWidgetRef.SetMargin(this.m_damagePreviewArrow, 0.0, -22.0, offset, 0.0);
       // if !IsDefined(this.m_damagePreviewAnimProxy) || !this.m_damagePreviewAnimProxy.IsPlaying() {
       //   animOptions.loopType = inkanimLoopType.Cycle;

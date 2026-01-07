@@ -16,7 +16,7 @@ protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
 }
 
 @addMethod(QuestMappinController)
-private func DetermineCurrentVisibility() -> Void {
+public func DetermineCurrentVisibility() -> Void {
   // -- Default conditions
   let isInQuestArea: Bool = this.m_questMappin != null && this.m_questMappin.IsInsideTrigger();
   let showWhenClamped: Bool = this.isCurrentlyClamped ? !this.m_shouldHideWhenClamped : true;

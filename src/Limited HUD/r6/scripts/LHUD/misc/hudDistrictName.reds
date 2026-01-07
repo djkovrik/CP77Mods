@@ -30,7 +30,7 @@ private func InitDistrictLabel() -> Void {
   container.SetAnchorPoint(0.0, 1.0);
   container.SetSize(450.0, 34.0);
   container.SetFitToContent(true);
-  container.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+  container.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
   container.Reparent(root);
 
   this.m_districtContainer = container;

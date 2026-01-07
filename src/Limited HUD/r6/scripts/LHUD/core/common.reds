@@ -262,7 +262,7 @@ protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
 
 // Pass LHUDEvent to AllBlackboardDefinitions
 @addMethod(AllBlackboardDefinitions)
-protected func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
+public func ConsumeLHUDEvent(evt: ref<LHUDEvent>) -> Void {
   LHUDLogDebug(s" <- \(this.GetClassName()) consume event: " + ToString(evt.type) + " " + ToString(evt.isActive));
   switch(evt.type) {
     case LHUDEventType.GlobalHotkey: 
