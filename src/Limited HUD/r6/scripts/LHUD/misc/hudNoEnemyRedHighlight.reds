@@ -9,45 +9,18 @@ protected cb func OnGameAttached() -> Bool {
   this.lhudAddonsConfig = new LHUDAddonsConfig();
 }
 
-@replaceMethod(ScriptedPuppet)
+@wrapMethod(ScriptedPuppet)
 public const func GetCurrentOutline() -> EFocusOutlineType {
-  let attitude: EAIAttitude;
-  let outlineType: EFocusOutlineType;
-  let playerPuppet: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(this.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
+  let wrapped: EFocusOutlineType = wrappedMethod();
   let hasPingEffect: Bool = this.HasPingEffectLHUD();
-  if this.IsQuest() {
-    return EFocusOutlineType.QUEST;
+  let puppet: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(this.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
+  let puppetAttitude: EAIAttitude = GameObject.GetAttitudeTowards(this, puppet);
+
+  if Equals(puppetAttitude, EAIAttitude.AIA_Hostile) && this.lhudAddonsConfig.HighlightUnderPingOnly && hasPingEffect {
+    return EFocusOutlineType.HOSTILE;
   };
-  if !this.IsActive() {
-    return EFocusOutlineType.ITEM;
-  };
-  attitude = GameObject.GetAttitudeTowards(this, playerPuppet);
-  if this.IsAggressive() || this.IsBoss() || Equals(this.GetNPCRarity(), gamedataNPCRarity.MaxTac) {
-    if Equals(attitude, EAIAttitude.AIA_Friendly) {
-      outlineType = EFocusOutlineType.FRIENDLY;
-    } else {
-      if this.IsPrevention() && Equals(attitude, EAIAttitude.AIA_Neutral) {
-        outlineType = EFocusOutlineType.NEUTRAL;
-      } else {
-        if this.lhudAddonsConfig.HighlightUnderPingOnly {
-          if hasPingEffect {
-            outlineType = EFocusOutlineType.HOSTILE;
-          } else {
-            outlineType = EFocusOutlineType.INVALID;
-          };
-        } else {
-          outlineType = EFocusOutlineType.HOSTILE;
-        };
-      };
-    };
-  } else {
-    if this.IsTaggedinFocusMode() {
-      outlineType = EFocusOutlineType.NEUTRAL;
-    } else {
-      outlineType = EFocusOutlineType.INVALID;
-    };
-  };
-  return outlineType;
+
+  return wrapped;
 }
 
 
