@@ -88,7 +88,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
   private let m_virtualWidgets: ref<inkWeakHashMap>;
   private let m_allWidgets: ref<inkWeakHashMap>;
 
-  protected cb func OnInitialize() -> Bool {
+  public cb func OnInitialize() -> Bool {
     let playerPuppet: wref<GameObject>;
     this.m_backpackInventoryListenerCallback = new RevisedBackpackInventoryListenerCallback();
     this.m_backpackInventoryListenerCallback.Setup(this);
@@ -111,7 +111,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     super.OnInitialize();
   }
 
-  protected cb func OnUninitialize() -> Bool {
+  public cb func OnUninitialize() -> Bool {
     GameInstance.GetDelaySystem(this.m_player.GetGame()).CancelCallback(this.m_delayedOutfitCooldownResetCallbackId);
     this.m_menuEventDispatcher.UnregisterFromEvent(n"OnBack", this, n"OnBack");
     this.m_menuEventDispatcher.UnregisterFromEvent(n"OnCloseMenu", this, n"OnCloseMenu");
@@ -188,7 +188,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     };
   }
 
-  protected cb func OnSetMenuEventDispatcher(menuEventDispatcher: wref<inkMenuEventDispatcher>) -> Bool {
+  public cb func OnSetMenuEventDispatcher(menuEventDispatcher: wref<inkMenuEventDispatcher>) -> Bool {
     this.Log("OnSetMenuEventDispatcher");
     super.OnSetMenuEventDispatcher(menuEventDispatcher);
     this.m_menuEventDispatcher = menuEventDispatcher;
@@ -208,7 +208,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     };
   }
 
-  protected cb func OnBack(userData: ref<IScriptable>) -> Bool {
+  public cb func OnBack(userData: ref<IScriptable>) -> Bool {
     if !this.m_afterCloseRequest {
       super.OnBack(userData);
     } else {
@@ -266,9 +266,9 @@ public class RevisedBackpackController extends gameuiMenuGameController {
 
   private final func PlayIntroAnimation() -> Void {
     let duration: Float = 0.2;
-    let categories: ref<inkAnimDef> = this.AnimateTranslationAndOpacity(new Vector2(0.0, -200.0), new Vector2(0.0, 0.0), duration, 0.0);
-    let header: ref<inkAnimDef> = this.AnimateTranslationAndOpacity(new Vector2(0.0, -100.0), new Vector2(0.0, 0.0), duration, 0.0);
-    let filters: ref<inkAnimDef> = this.AnimateTranslationAndOpacity(new Vector2(0.0, 100.0), new Vector2(0.0, 0.0), duration, 0.0);
+    let categories: ref<inkAnimDef> = this.AnimateTranslationAndOpacity(Vector2(0.0, -200.0), Vector2(0.0, 0.0), duration, 0.0);
+    let header: ref<inkAnimDef> = this.AnimateTranslationAndOpacity(Vector2(0.0, -100.0), Vector2(0.0, 0.0), duration, 0.0);
+    let filters: ref<inkAnimDef> = this.AnimateTranslationAndOpacity(Vector2(0.0, 100.0), Vector2(0.0, 0.0), duration, 0.0);
     let list: ref<inkAnimDef> = this.AnimateOpacity(duration, duration);
 
     this.m_animProxyCategories = inkWidgetRef.PlayAnimation(this.m_animTargetCategories, categories);
@@ -1264,7 +1264,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
 
   private final func OnInventoryRequestTooltip(itemData: wref<UIInventoryItem>, widget: wref<inkWidget>) -> Void {
     let placement: gameuiETooltipPlacement = gameuiETooltipPlacement.RightTop;
-    let margin: inkMargin = new inkMargin(0.0, 0.0, 0.0, 0.0);
+    let margin: inkMargin = inkMargin(0.0, 0.0, 0.0, 0.0);
     let itemToCompare: wref<UIInventoryItem>;
     let itemTooltipData: ref<UIInventoryItemTooltipWrapper>;
     let itemTooltips: [CName; 2];
@@ -1613,7 +1613,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     translationInterpolator.SetMode(inkanimInterpolationMode.EasyInOut);
     translationInterpolator.SetDirection(inkanimInterpolationDirection.FromTo);
     translationInterpolator.SetStartTranslation(inkWidgetRef.GetTranslation(this.m_categoryIndicator));
-    translationInterpolator.SetEndTranslation(new Vector2(newTranslation, 0.0));
+    translationInterpolator.SetEndTranslation(Vector2(newTranslation, 0.0));
     translationsAnimDef.AddInterpolator(translationInterpolator);
     inkWidgetRef.PlayAnimation(this.m_categoryIndicator, translationsAnimDef);
   }
@@ -1621,7 +1621,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
   private final func ShowColumnNameTooltip(target: ref<inkWidget>, message: String) -> Void {
     let tooltipData: ref<MessageTooltipData> = new MessageTooltipData();
     tooltipData.Title = message;
-    this.m_TooltipsManager.ShowTooltipAtWidget(0, target, tooltipData, gameuiETooltipPlacement.LeftTop, true, new inkMargin(64.0, -80.0, 0.0, 0.0));
+    this.m_TooltipsManager.ShowTooltipAtWidget(0, target, tooltipData, gameuiETooltipPlacement.LeftTop, true, inkMargin(64.0, -80.0, 0.0, 0.0));
   }
 
   private final func PlaySound(evt: CName) -> Void {

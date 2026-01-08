@@ -111,19 +111,19 @@ public class CustomMarkerPopup extends InMenuPopup {
     commonPanel.SetHAlign(inkEHorizontalAlign.Center);
     commonPanel.SetVAlign(inkEVerticalAlign.Center);
     commonPanel.SetAnchor(inkEAnchor.Centered);
-    commonPanel.SetMargin(new inkMargin(50.0, 50.0, 50.0, 50.0));
+    commonPanel.SetMargin(inkMargin(50.0, 50.0, 50.0, 50.0));
     commonPanel.Reparent(root);
 
     // TOP PANEL: input with text label
 
     // Text label
     let textInputLabel: ref<inkText> = this.CreateTextLabel(this.m_translator.GetText("CustomMarkers-DescriptionLabel"));
-    textInputLabel.SetMargin(new inkMargin(0.0, 0.0, 0.0, 10.0));
+    textInputLabel.SetMargin(inkMargin(0.0, 0.0, 0.0, 10.0));
     // Input field
     this.m_input = HubTextInput.Create();
     // Top panel
     let topPanel: ref<inkVerticalPanel> = new inkVerticalPanel();
-    topPanel.SetMargin(new inkMargin(0.0, 0.0, 0.0, 25.0));
+    topPanel.SetMargin(inkMargin(0.0, 0.0, 0.0, 25.0));
     // Reparent
     textInputLabel.Reparent(topPanel);
     this.m_input.Reparent(topPanel);
@@ -133,11 +133,11 @@ public class CustomMarkerPopup extends InMenuPopup {
 
     // Icons panel 1
     let iconsPanel1: ref<inkHorizontalPanel> = new inkHorizontalPanel();
-    iconsPanel1.SetMargin(new inkMargin(0.0, 50.0, 0.0, 0.0));
+    iconsPanel1.SetMargin(inkMargin(0.0, 50.0, 0.0, 0.0));
     let iconNames1: array<CName> = Icons.Row1();
     let atlasResource: ResRef = r"base\\gameplay\\gui\\common\\icons\\mappin_icons.inkatlas";
     let newIcon: ref<IconPreviewItem>;
-    let margin: inkMargin = new inkMargin(20.0, 0.0, 0.0, 0.0);
+    let margin: inkMargin = inkMargin(20.0, 0.0, 0.0, 0.0);
     for name in iconNames1 {
       newIcon = IconPreviewItem.Create(atlasResource, name, margin, CustomMarkersConfig.IconColorActive(), CustomMarkersConfig.IconColorInactive());
       newIcon.RegisterToCallback(n"OnClick", this, n"OnIconClick");
@@ -190,7 +190,7 @@ public class CustomMarkerPopup extends InMenuPopup {
   private func CreateRootFlex() -> ref<inkFlex> {
     let root: ref<inkFlex> = new inkFlex();
     root.SetName(n"root");
-    root.SetMargin(new inkMargin(50.0, 50.0, 50.0, 0.0));
+    root.SetMargin(inkMargin(50.0, 50.0, 50.0, 0.0));
     root.SetAnchor(inkEAnchor.Centered);
     root.SetAnchorPoint(0.5, 0.0);
 

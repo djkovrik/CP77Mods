@@ -4,14 +4,14 @@ public abstract class MPGUtils {
   
   public static final func GetLineHDRColor(line: ModNCartLine) -> HDRColor {
     switch line {
-      case ModNCartLine.A_RED: return new HDRColor(1.0, 0.266250998, 0.266250014, 1.0);
-      case ModNCartLine.B_YELLOW: return new HDRColor(1.0, 0.981656015, 0.266250014, 1.0);
-      case ModNCartLine.C_CYAN: return new HDRColor(0.0, 0.999997973, 1.0, 1.0);
-      case ModNCartLine.D_GREEN: return new HDRColor(0.0974999964, 1.0, 0.187749997, 1.0);
-      case ModNCartLine.E_ORANGE: return new HDRColor(0.917500019, 0.410138994, 0.0539029986, 1.0);
+      case ModNCartLine.A_RED: return HDRColor(1.0, 0.266250998, 0.266250014, 1.0);
+      case ModNCartLine.B_YELLOW: return HDRColor(1.0, 0.981656015, 0.266250014, 1.0);
+      case ModNCartLine.C_CYAN: return HDRColor(0.0, 0.999997973, 1.0, 1.0);
+      case ModNCartLine.D_GREEN: return HDRColor(0.0974999964, 1.0, 0.187749997, 1.0);
+      case ModNCartLine.E_ORANGE: return HDRColor(0.917500019, 0.410138994, 0.0539029986, 1.0);
     };
 
-    return new HDRColor(1.0, 1.0, 1.0, 1.0);
+    return HDRColor(1.0, 1.0, 1.0, 1.0);
   }
 
   public static func GetLinePartName(line: ModNCartLine) -> CName {

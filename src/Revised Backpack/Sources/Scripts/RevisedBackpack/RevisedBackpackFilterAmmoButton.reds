@@ -50,7 +50,7 @@ public class RevisedBackpackFilterAmmoButton extends inkComponent {
     counterContainer.SetSize(44.0, 44.0);
     counterContainer.SetAnchor(inkEAnchor.BottomRight);
     counterContainer.SetAnchorPoint(0.5, 0.5);
-    counterContainer.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+    counterContainer.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
     counterContainer.Reparent(root);
 
     let counterFrame: ref<inkImage> = new inkImage();
@@ -66,7 +66,7 @@ public class RevisedBackpackFilterAmmoButton extends inkComponent {
     let counterText: ref<inkText> = new inkText();
     counterText.SetName(n"counterText");
     counterText.SetText("0");
-    counterText.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+    counterText.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
     counterText.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
     counterText.SetFontSize(34);
     counterText.SetOpacity(0.5);

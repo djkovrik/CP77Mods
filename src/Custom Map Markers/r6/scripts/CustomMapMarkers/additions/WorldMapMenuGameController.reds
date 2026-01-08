@@ -37,7 +37,7 @@ private func CycleBetweenMappins() -> Void {
   let movePosition: Vector3;
   if this.m_cycleMappinPosition + 1 <= ArraySize(customMappins) {
     customMappinPosition = customMappins[this.m_cycleMappinPosition].position;
-    movePosition = new Vector3(customMappinPosition.X, customMappinPosition.Y, customMappinPosition.Z);
+    movePosition = Vector3(customMappinPosition.X, customMappinPosition.Y, customMappinPosition.Z);
     this.GetEntityPreview().MoveTo(movePosition);
     this.m_cycleMappinPosition = this.m_cycleMappinPosition + 1;
   } else {

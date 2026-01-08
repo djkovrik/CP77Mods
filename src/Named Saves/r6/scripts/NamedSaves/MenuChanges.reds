@@ -22,11 +22,11 @@ protected cb func OnInitialize() -> Bool {
   let container = new inkVerticalPanel();
   container.SetName(n"InputContainer");
   container.SetFitToContent(true);
-  container.SetTranslation(new Vector2(730.0, 140.0));
+  container.SetTranslation(Vector2(730.0, 140.0));
   container.SetHAlign(inkEHorizontalAlign.Left);
   container.SetVAlign(inkEVerticalAlign.Center);
   container.SetAnchor(inkEAnchor.CenterLeft );
-  container.SetAnchorPoint(new Vector2(1.0, 0.0));
+  container.SetAnchorPoint(Vector2(1.0, 0.0));
   container.Reparent(outerContainer, 1);
 
   let input: ref<HubTextInput> = HubTextInput.Create(); 
@@ -103,8 +103,8 @@ protected cb func OnInitialize() -> Bool {
   newText.SetHAlign(inkEHorizontalAlign.Fill);
   newText.SetVAlign(inkEVerticalAlign.Fill);
   newText.SetAnchor(inkEAnchor.BottomRight);
-  newText.SetMargin(new inkMargin(20.0, 0.0, 50.0, 0.0));
-  newText.SetAnchorPoint(new Vector2(1.0, 1.0));
+  newText.SetMargin(inkMargin(20.0, 0.0, 50.0, 0.0));
+  newText.SetAnchorPoint(Vector2(1.0, 1.0));
   newText.SetOpacity(0.6);
   newText.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
   newText.BindProperty(n"tintColor", n"MainColors.Green");
@@ -216,11 +216,11 @@ protected cb func OnInitialize() -> Bool {
   let container = new inkVerticalPanel();
   container.SetName(n"InputContainer");
   container.SetFitToContent(true);
-  container.SetTranslation(new Vector2(730.0, 140.0));
+  container.SetTranslation(Vector2(730.0, 140.0));
   container.SetHAlign(inkEHorizontalAlign.Left);
   container.SetVAlign(inkEVerticalAlign.Center);
   container.SetAnchor(inkEAnchor.CenterLeft );
-  container.SetAnchorPoint(new Vector2(1.0, 0.0));
+  container.SetAnchorPoint(Vector2(1.0, 0.0));
   container.Reparent(outerContainer, 1);
 
   let input: ref<HubTextInput> = HubTextInput.Create(); 

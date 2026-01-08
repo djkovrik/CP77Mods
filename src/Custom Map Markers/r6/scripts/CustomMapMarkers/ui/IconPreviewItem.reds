@@ -51,7 +51,7 @@ public class IconPreviewItem extends inkCustomController {
     let root: ref<inkCanvas> = new inkCanvas();
     root.SetName(this.m_texturePart);
     root.SetSize(70.0, 70.0);
-    root.SetAnchorPoint(new Vector2(0.5, 0.5));
+    root.SetAnchorPoint(Vector2(0.5, 0.5));
     root.SetInteractive(true);
 
     let icon: ref<inkImage> = new inkImage();
@@ -67,7 +67,7 @@ public class IconPreviewItem extends inkCustomController {
     icon.SetTileVAlign(inkEVerticalAlign.Center);
     icon.SetMargin(this.m_margin);
     icon.SetTintColor(this.m_tintInactive);
-    icon.SetScale(new Vector2(1.1, 1.1));
+    icon.SetScale(Vector2(1.1, 1.1));
     icon.Reparent(root);
 
     this.m_root = root;

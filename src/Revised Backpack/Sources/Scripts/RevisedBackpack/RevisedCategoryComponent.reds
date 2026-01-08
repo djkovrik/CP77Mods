@@ -23,7 +23,7 @@ public class RevisedCategoryComponent extends inkComponent {
     icon.SetTileHAlign(inkEHorizontalAlign.Fill);
     icon.SetTileVAlign(inkEVerticalAlign.Fill);
     icon.SetAnchor(inkEAnchor.Centered);
-    icon.SetAnchorPoint(new Vector2(0.5, 0.5));
+    icon.SetAnchorPoint(Vector2(0.5, 0.5));
     icon.SetSize(64.0, 64.0);
     icon.Reparent(root);
 
@@ -108,7 +108,7 @@ public class RevisedCategoryComponent extends inkComponent {
     scaleInterpolator.SetMode(inkanimInterpolationMode.EasyIn);
     scaleInterpolator.SetDirection(inkanimInterpolationDirection.FromTo);
     scaleInterpolator.SetStartScale(target.GetScale());
-    scaleInterpolator.SetEndScale(new Vector2(endScale, endScale));
+    scaleInterpolator.SetEndScale(Vector2(endScale, endScale));
     scaleInterpolator.SetDuration(0.1);
     scaleAnimDef.AddInterpolator(scaleInterpolator);
     target.PlayAnimation(scaleAnimDef);

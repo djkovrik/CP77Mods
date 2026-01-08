@@ -393,13 +393,13 @@ public class RevisedBackpackFiltersController extends inkLogicController {
 
     let leftColumn: ref<inkVerticalPanel> = new inkVerticalPanel();
     leftColumn.SetName(n"leftColumn");
-    leftColumn.SetMargin(new inkMargin(0.0, 0.0, 96.0, 0.0));
+    leftColumn.SetMargin(inkMargin(0.0, 0.0, 96.0, 0.0));
     leftColumn.Reparent(outerContainer);
 
     let inputRow: ref<inkHorizontalPanel> = new inkHorizontalPanel();
     inputRow.SetName(n"inputRow");
-    inputRow.SetMargin(new inkMargin(0.0, 0.0, 0.0, 32.0));
-    inputRow.SetChildMargin(new inkMargin(0.0, 0.0, 16.0, 0.0));
+    inputRow.SetMargin(inkMargin(0.0, 0.0, 0.0, 32.0));
+    inputRow.SetChildMargin(inkMargin(0.0, 0.0, 16.0, 0.0));
     inputRow.Reparent(leftColumn);
 
     let nameFilterInput: ref<HubTextInput> = HubTextInput.Create();
@@ -422,8 +422,8 @@ public class RevisedBackpackFiltersController extends inkLogicController {
 
     let checkboxesRow: ref<inkHorizontalPanel> = new inkHorizontalPanel();
     checkboxesRow.SetName(n"checkboxesRow");
-    checkboxesRow.SetMargin(new inkMargin(0.0, 0.0, 0.0, 32.0));
-    checkboxesRow.SetChildMargin(new inkMargin(0.0, 0.0, 24.0, 0.0));
+    checkboxesRow.SetMargin(inkMargin(0.0, 0.0, 0.0, 32.0));
+    checkboxesRow.SetChildMargin(inkMargin(0.0, 0.0, 24.0, 0.0));
     checkboxesRow.Reparent(leftColumn);
 
     let tier1: ref<inkCompoundWidget> = this.BuildCheckbox(n"tier1", n"Gameplay-RPG-Stats-Tiers-Tier1", this.tier1Enabled);
@@ -460,7 +460,7 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     rightColumn.SetName(n"rightColumn");
     rightColumn.SetOpacity(0.0);
     rightColumn.SetAffectsLayoutWhenHidden(true);
-    rightColumn.SetChildMargin(new inkMargin(0.0, 0.0, 0.0, 24.0));
+    rightColumn.SetChildMargin(inkMargin(0.0, 0.0, 0.0, 24.0));
     rightColumn.Reparent(outerContainer);
     this.buttonsContainer = rightColumn;
 
@@ -489,13 +489,13 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     ammoColumn.SetName(n"ammoColumn");
     ammoColumn.SetOpacity(0.0);
     ammoColumn.SetAffectsLayoutWhenHidden(true);
-    ammoColumn.SetMargin(new inkMargin(64.0, 0.0, 0.0, 0.0));
+    ammoColumn.SetMargin(inkMargin(64.0, 0.0, 0.0, 0.0));
     ammoColumn.Reparent(outerContainer);
     this.ammoContainer = ammoColumn;
 
     let ammoRow1: ref<inkHorizontalPanel> = new inkHorizontalPanel();
     ammoRow1.SetName(n"ammoRow1");
-    ammoRow1.SetChildMargin(new inkMargin(48.0, 0.0, 0.0, 48.0));
+    ammoRow1.SetChildMargin(inkMargin(48.0, 0.0, 0.0, 48.0));
     ammoRow1.Reparent(ammoColumn);
 
     let handgunAmmoQuery: ItemID = ItemID.CreateQuery(t"Ammo.HandgunAmmo");
@@ -518,7 +518,7 @@ public class RevisedBackpackFiltersController extends inkLogicController {
 
     let ammoRow2: ref<inkHorizontalPanel> = new inkHorizontalPanel();
     ammoRow2.SetName(n"ammoRow2");
-    ammoRow2.SetChildMargin(new inkMargin(48.0, 0.0, 0.0, 48.0));
+    ammoRow2.SetChildMargin(inkMargin(48.0, 0.0, 0.0, 48.0));
     ammoRow2.Reparent(ammoColumn);
 
     let rifleAmmoQuery: ItemID = ItemID.CreateQuery(t"Ammo.RifleAmmo");
@@ -603,7 +603,7 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     let label: ref<inkText> = new inkText();
     label.SetName(n"label");
     label.SetText(GetLocalizedTextByKey(displayNameKey));
-    label.SetMargin(new inkMargin(16.0, 0.0, 0.0, 0.0));
+    label.SetMargin(inkMargin(16.0, 0.0, 0.0, 0.0));
     label.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
     label.SetFontSize(42);
     label.SetFitToContent(true);

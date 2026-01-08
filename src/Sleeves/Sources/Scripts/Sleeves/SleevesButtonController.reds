@@ -114,8 +114,8 @@ public class SleevesButtonController extends inkGameController {
     translationInterpolator.SetType(inkanimInterpolationType.Linear);
     translationInterpolator.SetMode(inkanimInterpolationMode.EasyIn);
     translationInterpolator.SetDirection(inkanimInterpolationDirection.FromTo);
-    translationInterpolator.SetStartTranslation(new Vector2(60.0, 0.0));
-    translationInterpolator.SetEndTranslation(new Vector2(0.0, 0.0));
+    translationInterpolator.SetStartTranslation(Vector2(60.0, 0.0));
+    translationInterpolator.SetEndTranslation(Vector2(0.0, 0.0));
 
     moveElementsAnimDef.AddInterpolator(transparencyInterpolator);
     moveElementsAnimDef.AddInterpolator(translationInterpolator);
@@ -143,8 +143,8 @@ public class SleevesButtonController extends inkGameController {
     translationInterpolator.SetType(inkanimInterpolationType.Linear);
     translationInterpolator.SetMode(inkanimInterpolationMode.EasyIn);
     translationInterpolator.SetDirection(inkanimInterpolationDirection.FromTo);
-    translationInterpolator.SetStartTranslation(new Vector2(0.0, 0.0));
-    translationInterpolator.SetEndTranslation(new Vector2(60.0, 0.0));
+    translationInterpolator.SetStartTranslation(Vector2(0.0, 0.0));
+    translationInterpolator.SetEndTranslation(Vector2(60.0, 0.0));
 
     moveElementsAnimDef.AddInterpolator(transparencyInterpolator);
     moveElementsAnimDef.AddInterpolator(translationInterpolator);

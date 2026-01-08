@@ -34,7 +34,7 @@ private final func AddRevisedBackpackMenuItem() -> Void {
   let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
   let container: ref<inkCompoundWidget> = root.GetWidgetByPathName(n"mainMenu/buttonsContainer/panel_inventory") as inkCompoundWidget;
   let improvedBackpackItem: ref<inkWidget> = this.SpawnFromLocal(container, n"menu_button");
-  improvedBackpackItem.SetMargin(new inkMargin(0.0, 510.0, 0.0, 0.0));
+  improvedBackpackItem.SetMargin(inkMargin(0.0, 510.0, 0.0, 0.0));
   
   let data: MenuData;
   data.disabled = isInComaQuest;

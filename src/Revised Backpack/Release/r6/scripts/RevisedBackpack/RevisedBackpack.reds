@@ -1,4 +1,4 @@
-// RevisedBackpack v0.9.12
+// RevisedBackpack v0.9.13
 module RevisedBackpack
 
 import Codeware.UI.HubTextInput
@@ -771,7 +771,7 @@ private final func AddRevisedBackpackMenuItem() -> Void {
   let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
   let container: ref<inkCompoundWidget> = root.GetWidgetByPathName(n"mainMenu/buttonsContainer/panel_inventory") as inkCompoundWidget;
   let improvedBackpackItem: ref<inkWidget> = this.SpawnFromLocal(container, n"menu_button");
-  improvedBackpackItem.SetMargin(new inkMargin(0.0, 510.0, 0.0, 0.0));
+  improvedBackpackItem.SetMargin(inkMargin(0.0, 510.0, 0.0, 0.0));
   let data: MenuData;
   data.disabled = isInComaQuest;
   data.fullscreenName = n"revised_backpack";
@@ -877,7 +877,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
   private let m_outfitCooldownPeroid: Float;
   private let m_virtualWidgets: ref<inkWeakHashMap>;
   private let m_allWidgets: ref<inkWeakHashMap>;
-  protected cb func OnInitialize() -> Bool {
+  public cb func OnInitialize() -> Bool {
     let playerPuppet: wref<GameObject>;
     this.m_backpackInventoryListenerCallback = new RevisedBackpackInventoryListenerCallback();
     this.m_backpackInventoryListenerCallback.Setup(this);
@@ -898,7 +898,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     this.SpawnPreviews();
     super.OnInitialize();
   }
-  protected cb func OnUninitialize() -> Bool {
+  public cb func OnUninitialize() -> Bool {
     GameInstance.GetDelaySystem(this.m_player.GetGame()).CancelCallback(this.m_delayedOutfitCooldownResetCallbackId);
     this.m_menuEventDispatcher.UnregisterFromEvent(n"OnBack", this, n"OnBack");
     this.m_menuEventDispatcher.UnregisterFromEvent(n"OnCloseMenu", this, n"OnCloseMenu");
@@ -965,7 +965,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
       this.TryToSelectNextItem();
     };
   }
-  protected cb func OnSetMenuEventDispatcher(menuEventDispatcher: wref<inkMenuEventDispatcher>) -> Bool {
+  public cb func OnSetMenuEventDispatcher(menuEventDispatcher: wref<inkMenuEventDispatcher>) -> Bool {
     this.Log("OnSetMenuEventDispatcher");
     super.OnSetMenuEventDispatcher(menuEventDispatcher);
     this.m_menuEventDispatcher = menuEventDispatcher;
@@ -983,7 +983,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
       };
     };
   }
-  protected cb func OnBack(userData: ref<IScriptable>) -> Bool {
+  public cb func OnBack(userData: ref<IScriptable>) -> Bool {
     if !this.m_afterCloseRequest {
       super.OnBack(userData);
     } else {
@@ -1036,9 +1036,9 @@ public class RevisedBackpackController extends gameuiMenuGameController {
   }
   private final func PlayIntroAnimation() -> Void {
     let duration: Float = 0.2;
-    let categories: ref<inkAnimDef> = this.AnimateTranslationAndOpacity(new Vector2(0.0, -200.0), new Vector2(0.0, 0.0), duration, 0.0);
-    let header: ref<inkAnimDef> = this.AnimateTranslationAndOpacity(new Vector2(0.0, -100.0), new Vector2(0.0, 0.0), duration, 0.0);
-    let filters: ref<inkAnimDef> = this.AnimateTranslationAndOpacity(new Vector2(0.0, 100.0), new Vector2(0.0, 0.0), duration, 0.0);
+    let categories: ref<inkAnimDef> = this.AnimateTranslationAndOpacity(Vector2(0.0, -200.0), Vector2(0.0, 0.0), duration, 0.0);
+    let header: ref<inkAnimDef> = this.AnimateTranslationAndOpacity(Vector2(0.0, -100.0), Vector2(0.0, 0.0), duration, 0.0);
+    let filters: ref<inkAnimDef> = this.AnimateTranslationAndOpacity(Vector2(0.0, 100.0), Vector2(0.0, 0.0), duration, 0.0);
     let list: ref<inkAnimDef> = this.AnimateOpacity(duration, duration);
     this.m_animProxyCategories = inkWidgetRef.PlayAnimation(this.m_animTargetCategories, categories);
     this.m_animProxyHeader = inkWidgetRef.PlayAnimation(this.m_animTargetHeader, header);
@@ -1920,7 +1920,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
   }
   private final func OnInventoryRequestTooltip(itemData: wref<UIInventoryItem>, widget: wref<inkWidget>) -> Void {
     let placement: gameuiETooltipPlacement = gameuiETooltipPlacement.RightTop;
-    let margin: inkMargin = new inkMargin(0.0, 0.0, 0.0, 0.0);
+    let margin: inkMargin = inkMargin(0.0, 0.0, 0.0, 0.0);
     let itemToCompare: wref<UIInventoryItem>;
     let itemTooltipData: ref<UIInventoryItemTooltipWrapper>;
     let itemTooltips: [CName; 2];
@@ -2233,14 +2233,14 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     translationInterpolator.SetMode(inkanimInterpolationMode.EasyInOut);
     translationInterpolator.SetDirection(inkanimInterpolationDirection.FromTo);
     translationInterpolator.SetStartTranslation(inkWidgetRef.GetTranslation(this.m_categoryIndicator));
-    translationInterpolator.SetEndTranslation(new Vector2(newTranslation, 0.0));
+    translationInterpolator.SetEndTranslation(Vector2(newTranslation, 0.0));
     translationsAnimDef.AddInterpolator(translationInterpolator);
     inkWidgetRef.PlayAnimation(this.m_categoryIndicator, translationsAnimDef);
   }
   private final func ShowColumnNameTooltip(target: ref<inkWidget>, message: String) -> Void {
     let tooltipData: ref<MessageTooltipData> = new MessageTooltipData();
     tooltipData.Title = message;
-    this.m_TooltipsManager.ShowTooltipAtWidget(0, target, tooltipData, gameuiETooltipPlacement.LeftTop, true, new inkMargin(64.0, -80.0, 0.0, 0.0));
+    this.m_TooltipsManager.ShowTooltipAtWidget(0, target, tooltipData, gameuiETooltipPlacement.LeftTop, true, inkMargin(64.0, -80.0, 0.0, 0.0));
   }
   private final func PlaySound(evt: CName) -> Void {
     GameObject.PlaySoundEvent(this.m_player, evt);
@@ -2737,7 +2737,7 @@ public class RevisedBackpackFilterAmmoButton extends inkComponent {
     counterContainer.SetSize(44.0, 44.0);
     counterContainer.SetAnchor(inkEAnchor.BottomRight);
     counterContainer.SetAnchorPoint(0.5, 0.5);
-    counterContainer.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+    counterContainer.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
     counterContainer.Reparent(root);
     let counterFrame: ref<inkImage> = new inkImage();
     counterFrame.SetName(n"counterFrame");
@@ -2751,7 +2751,7 @@ public class RevisedBackpackFilterAmmoButton extends inkComponent {
     let counterText: ref<inkText> = new inkText();
     counterText.SetName(n"counterText");
     counterText.SetText("0");
-    counterText.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+    counterText.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
     counterText.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
     counterText.SetFontSize(34);
     counterText.SetOpacity(0.5);
@@ -3249,12 +3249,12 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     outerContainer.Reparent(root);
     let leftColumn: ref<inkVerticalPanel> = new inkVerticalPanel();
     leftColumn.SetName(n"leftColumn");
-    leftColumn.SetMargin(new inkMargin(0.0, 0.0, 96.0, 0.0));
+    leftColumn.SetMargin(inkMargin(0.0, 0.0, 96.0, 0.0));
     leftColumn.Reparent(outerContainer);
     let inputRow: ref<inkHorizontalPanel> = new inkHorizontalPanel();
     inputRow.SetName(n"inputRow");
-    inputRow.SetMargin(new inkMargin(0.0, 0.0, 0.0, 32.0));
-    inputRow.SetChildMargin(new inkMargin(0.0, 0.0, 16.0, 0.0));
+    inputRow.SetMargin(inkMargin(0.0, 0.0, 0.0, 32.0));
+    inputRow.SetChildMargin(inkMargin(0.0, 0.0, 16.0, 0.0));
     inputRow.Reparent(leftColumn);
     let nameFilterInput: ref<HubTextInput> = HubTextInput.Create();
     nameFilterInput.SetName(n"nameFilterInput");
@@ -3274,8 +3274,8 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     this.typeFilterInput = typeFilterInput;
     let checkboxesRow: ref<inkHorizontalPanel> = new inkHorizontalPanel();
     checkboxesRow.SetName(n"checkboxesRow");
-    checkboxesRow.SetMargin(new inkMargin(0.0, 0.0, 0.0, 32.0));
-    checkboxesRow.SetChildMargin(new inkMargin(0.0, 0.0, 24.0, 0.0));
+    checkboxesRow.SetMargin(inkMargin(0.0, 0.0, 0.0, 32.0));
+    checkboxesRow.SetChildMargin(inkMargin(0.0, 0.0, 24.0, 0.0));
     checkboxesRow.Reparent(leftColumn);
     let tier1: ref<inkCompoundWidget> = this.BuildCheckbox(n"tier1", n"Gameplay-RPG-Stats-Tiers-Tier1", this.tier1Enabled);
     let tier2: ref<inkCompoundWidget> = this.BuildCheckbox(n"tier2", n"Gameplay-RPG-Stats-Tiers-Tier2", this.tier2Enabled);
@@ -3307,7 +3307,7 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     rightColumn.SetName(n"rightColumn");
     rightColumn.SetOpacity(0.0);
     rightColumn.SetAffectsLayoutWhenHidden(true);
-    rightColumn.SetChildMargin(new inkMargin(0.0, 0.0, 0.0, 24.0));
+    rightColumn.SetChildMargin(inkMargin(0.0, 0.0, 0.0, 24.0));
     rightColumn.Reparent(outerContainer);
     this.buttonsContainer = rightColumn;
     let buttonSelect: ref<RevisedFiltersButton> = RevisedFiltersButton.Create();
@@ -3332,12 +3332,12 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     ammoColumn.SetName(n"ammoColumn");
     ammoColumn.SetOpacity(0.0);
     ammoColumn.SetAffectsLayoutWhenHidden(true);
-    ammoColumn.SetMargin(new inkMargin(64.0, 0.0, 0.0, 0.0));
+    ammoColumn.SetMargin(inkMargin(64.0, 0.0, 0.0, 0.0));
     ammoColumn.Reparent(outerContainer);
     this.ammoContainer = ammoColumn;
     let ammoRow1: ref<inkHorizontalPanel> = new inkHorizontalPanel();
     ammoRow1.SetName(n"ammoRow1");
-    ammoRow1.SetChildMargin(new inkMargin(48.0, 0.0, 0.0, 48.0));
+    ammoRow1.SetChildMargin(inkMargin(48.0, 0.0, 0.0, 48.0));
     ammoRow1.Reparent(ammoColumn);
     let handgunAmmoQuery: ItemID = ItemID.CreateQuery(t"Ammo.HandgunAmmo");
     let handgunCount: Int32 = this.m_transactionSystem.GetItemQuantity(this.m_player, handgunAmmoQuery);
@@ -3357,7 +3357,7 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     this.ammoButtonShotgun = ammoShotgun;
     let ammoRow2: ref<inkHorizontalPanel> = new inkHorizontalPanel();
     ammoRow2.SetName(n"ammoRow2");
-    ammoRow2.SetChildMargin(new inkMargin(48.0, 0.0, 0.0, 48.0));
+    ammoRow2.SetChildMargin(inkMargin(48.0, 0.0, 0.0, 48.0));
     ammoRow2.Reparent(ammoColumn);
     let rifleAmmoQuery: ItemID = ItemID.CreateQuery(t"Ammo.RifleAmmo");
     let rifleCount: Int32 = this.m_transactionSystem.GetItemQuantity(this.m_player, rifleAmmoQuery);
@@ -3434,7 +3434,7 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     let label: ref<inkText> = new inkText();
     label.SetName(n"label");
     label.SetText(GetLocalizedTextByKey(displayNameKey));
-    label.SetMargin(new inkMargin(16.0, 0.0, 0.0, 0.0));
+    label.SetMargin(inkMargin(16.0, 0.0, 0.0, 0.0));
     label.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
     label.SetFontSize(42);
     label.SetFitToContent(true);
@@ -4007,7 +4007,7 @@ public class RevisedCategoryComponent extends inkComponent {
     icon.SetTileHAlign(inkEHorizontalAlign.Fill);
     icon.SetTileVAlign(inkEVerticalAlign.Fill);
     icon.SetAnchor(inkEAnchor.Centered);
-    icon.SetAnchorPoint(new Vector2(0.5, 0.5));
+    icon.SetAnchorPoint(Vector2(0.5, 0.5));
     icon.SetSize(64.0, 64.0);
     icon.Reparent(root);
     return root;
@@ -4078,7 +4078,7 @@ public class RevisedCategoryComponent extends inkComponent {
     scaleInterpolator.SetMode(inkanimInterpolationMode.EasyIn);
     scaleInterpolator.SetDirection(inkanimInterpolationDirection.FromTo);
     scaleInterpolator.SetStartScale(target.GetScale());
-    scaleInterpolator.SetEndScale(new Vector2(endScale, endScale));
+    scaleInterpolator.SetEndScale(Vector2(endScale, endScale));
     scaleInterpolator.SetDuration(0.1);
     scaleAnimDef.AddInterpolator(scaleInterpolator);
     target.PlayAnimation(scaleAnimDef);
@@ -4266,12 +4266,12 @@ public class RevisedFiltersButton extends SimpleButton {
     }
 }
 public class RevisedPreviewGarmentController extends WardrobeSetPreviewGameController {
-  protected cb func OnPreviewInitialized() -> Bool {
+  public cb func OnPreviewInitialized() -> Bool {
     super.OnPreviewInitialized();
     this.PreviewUnequipFromSlot(t"AttachmentSlots.WeaponLeft");
     this.PreviewUnequipFromSlot(t"AttachmentSlots.WeaponRight");
   }
-  protected cb func OnUninitialize() -> Bool {
+  public cb func OnUninitialize() -> Bool {
     this.CleanUpPuppet();
     super.OnUninitialize();
   }

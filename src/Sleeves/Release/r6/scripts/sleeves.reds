@@ -1,4 +1,4 @@
-// Sleeves v3.2.7
+// Sleeves v3.2.8
 @if(ModuleExists("ArchiveXL.DynamicAppearance"))
 import ArchiveXL.DynamicAppearance.*
 import Codeware.UI.*
@@ -292,8 +292,8 @@ public class SleevesButtonController extends inkGameController {
     translationInterpolator.SetType(inkanimInterpolationType.Linear);
     translationInterpolator.SetMode(inkanimInterpolationMode.EasyIn);
     translationInterpolator.SetDirection(inkanimInterpolationDirection.FromTo);
-    translationInterpolator.SetStartTranslation(new Vector2(60.0, 0.0));
-    translationInterpolator.SetEndTranslation(new Vector2(0.0, 0.0));
+    translationInterpolator.SetStartTranslation(Vector2(60.0, 0.0));
+    translationInterpolator.SetEndTranslation(Vector2(0.0, 0.0));
     moveElementsAnimDef.AddInterpolator(transparencyInterpolator);
     moveElementsAnimDef.AddInterpolator(translationInterpolator);
     proxy = targetWidget.PlayAnimation(moveElementsAnimDef);
@@ -316,8 +316,8 @@ public class SleevesButtonController extends inkGameController {
     translationInterpolator.SetType(inkanimInterpolationType.Linear);
     translationInterpolator.SetMode(inkanimInterpolationMode.EasyIn);
     translationInterpolator.SetDirection(inkanimInterpolationDirection.FromTo);
-    translationInterpolator.SetStartTranslation(new Vector2(0.0, 0.0));
-    translationInterpolator.SetEndTranslation(new Vector2(60.0, 0.0));
+    translationInterpolator.SetStartTranslation(Vector2(0.0, 0.0));
+    translationInterpolator.SetEndTranslation(Vector2(60.0, 0.0));
     moveElementsAnimDef.AddInterpolator(transparencyInterpolator);
     moveElementsAnimDef.AddInterpolator(translationInterpolator);
     proxy = targetWidget.PlayAnimation(moveElementsAnimDef);
@@ -405,13 +405,13 @@ public class SleevesPopupComponent extends inkComponent {
     internalPanel.SetHAlign(inkEHorizontalAlign.Center);
     internalPanel.SetVAlign(inkEVerticalAlign.Center);
     internalPanel.SetAnchor(inkEAnchor.Centered);
-    internalPanel.SetMargin(new inkMargin(16.0, 16.0, 16.0, 16.0));
+    internalPanel.SetMargin(inkMargin(16.0, 16.0, 16.0, 16.0));
     internalPanel.Reparent(root);
     // - Mode label
     let modeName: ref<inkText> = new inkText();
     modeName.SetName(n"modeName");
     modeName.SetText(s"Test");
-    modeName.SetMargin(new inkMargin(0.0, 0.0, 0.0, 8.0));
+    modeName.SetMargin(inkMargin(0.0, 0.0, 0.0, 8.0));
     modeName.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
     modeName.SetFontSize(42);
     modeName.SetFitToContent(true);

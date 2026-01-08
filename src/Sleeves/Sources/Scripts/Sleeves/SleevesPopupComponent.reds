@@ -17,14 +17,14 @@ public class SleevesPopupComponent extends inkComponent {
     internalPanel.SetHAlign(inkEHorizontalAlign.Center);
     internalPanel.SetVAlign(inkEVerticalAlign.Center);
     internalPanel.SetAnchor(inkEAnchor.Centered);
-    internalPanel.SetMargin(new inkMargin(16.0, 16.0, 16.0, 16.0));
+    internalPanel.SetMargin(inkMargin(16.0, 16.0, 16.0, 16.0));
     internalPanel.Reparent(root);
 
     // - Mode label
     let modeName: ref<inkText> = new inkText();
     modeName.SetName(n"modeName");
     modeName.SetText(s"Test");
-    modeName.SetMargin(new inkMargin(0.0, 0.0, 0.0, 8.0));
+    modeName.SetMargin(inkMargin(0.0, 0.0, 0.0, 8.0));
     modeName.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
     modeName.SetFontSize(42);
     modeName.SetFitToContent(true);

@@ -36,7 +36,7 @@ protected cb func OnInitialize() -> Bool {
   container.SetFitToContent(true);
   container.SetHAlign(inkEHorizontalAlign.Left);
   container.SetAnchor(inkEAnchor.TopLeft);
-  container.SetMargin(new inkMargin(0.0, 196.0, 0.0, 0.0));
+  container.SetMargin(inkMargin(0.0, 196.0, 0.0, 0.0));
   container.Reparent(outerContainer);
   container.SetVisible(false);
   this.nameInputContainer = container;

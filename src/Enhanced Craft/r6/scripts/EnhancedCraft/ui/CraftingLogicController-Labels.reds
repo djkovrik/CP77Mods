@@ -32,7 +32,7 @@ public func Init(craftingGameController: wref<CraftingMainGameController>) -> Vo
     skins.SetVAlign(inkEVerticalAlign.Bottom);
     skins.SetAnchor(inkEAnchor.BottomLeft);
     skins.SetAnchorPoint(0.0, 1.0);
-    skins.SetMargin(new inkMargin(0.0, 0.0, 0.0, 45.0));
+    skins.SetMargin(inkMargin(0.0, 0.0, 0.0, 45.0));
     skins.SetLetterCase(textLetterCase.UpperCase);
     skins.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     skins.BindProperty(n"tintColor", n"MainColors.Red");
@@ -50,7 +50,7 @@ public func Init(craftingGameController: wref<CraftingMainGameController>) -> Vo
     counter.SetVAlign(inkEVerticalAlign.Top);
     counter.SetAnchor(inkEAnchor.TopRight);
     counter.SetAnchorPoint(1.0, 1.0);
-    counter.SetMargin(new inkMargin(0.0, -60.0, 45.0, 0.0));
+    counter.SetMargin(inkMargin(0.0, -60.0, 45.0, 0.0));
     counter.SetLetterCase(textLetterCase.UpperCase);
     counter.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     counter.BindProperty(n"tintColor", n"MainColors.Red");
@@ -68,7 +68,7 @@ public func Init(craftingGameController: wref<CraftingMainGameController>) -> Vo
     randomizer.SetVAlign(inkEVerticalAlign.Bottom);
     randomizer.SetAnchor(inkEAnchor.BottomLeft);
     randomizer.SetAnchorPoint(0.0, 1.0);
-    randomizer.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+    randomizer.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
     randomizer.SetLetterCase(textLetterCase.UpperCase);
     randomizer.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     randomizer.BindProperty(n"tintColor", n"MainColors.Red");

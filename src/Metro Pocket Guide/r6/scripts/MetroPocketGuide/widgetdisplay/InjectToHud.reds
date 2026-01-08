@@ -29,13 +29,13 @@ private final func InjectMetroPocketGuideSlot() -> Void {
     layout.HAlign = inkEHorizontalAlign.Left;
     layout.VAlign = inkEVerticalAlign.Top;
     layout.anchor = inkEAnchor.TopLeft;
-    layout.anchorPoint = new Vector2(0.0, 0.0); 
+    layout.anchorPoint = Vector2(0.0, 0.0); 
     slot.SetLayout(layout);
     slot.Reparent(root);
   };
 
   let scale: Float = config.scale;
-  slot.SetScale(new Vector2(scale, scale));
+  slot.SetScale(Vector2(scale, scale));
 
   let translationX: Float = Cast<Float>(config.offsetFromLeft);
   let translationY: Float = Cast<Float>(config.offsetFromTop);

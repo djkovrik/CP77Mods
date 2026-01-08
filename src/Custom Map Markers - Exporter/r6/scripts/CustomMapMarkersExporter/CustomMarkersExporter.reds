@@ -132,7 +132,7 @@ public class CustomMappinDataDTO {
 
   public static func FromDTO(data: ref<CustomMappinDataDTO>) -> ref<CustomMappinData> {
     let result: ref<CustomMappinData> = new CustomMappinData();
-    let position: Vector4 = new Vector4(data.X, data.Y, data.Z, data.W);
+    let position: Vector4 = Vector4(data.X, data.Y, data.Z, data.W);
     result.position = position;
     result.description = StringToName(data.description);
     result.type = StringToName(data.type);

@@ -116,7 +116,7 @@ protected func Update() -> Void {
         if this.m_wasAlive {
           if !this.m_isCamera {
             inkImageRef.SetTexturePart(this.iconWidget, n"enemy_icon_4");
-            inkWidgetRef.SetScale(this.iconWidget, new Vector2(0.75, 0.75));
+            inkWidgetRef.SetScale(this.iconWidget, Vector2(0.75, 0.75));
           };
           this.m_defaultOpacity = MinF(this.m_defaultOpacity, 0.50);
           this.m_wasAlive = false;

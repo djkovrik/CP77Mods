@@ -13,7 +13,7 @@ protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpaw
 }
 
 @addMethod(GameObject)
-private func ShowIguanaNotification() -> Void {
+public func ShowIguanaNotification() -> Void {
   let onScreenMessage: SimpleScreenMessage;
   let blackboardDef = GetAllBlackboardDefs().UI_Notifications;
   let blackboard = GameInstance.GetBlackboardSystem(this.GetGame()).Get(blackboardDef);

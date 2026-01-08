@@ -8,12 +8,12 @@ private final func CreateHighlightMarker() -> ref<inkImage> {
     icon.SetTexturePart(n"arrow1");
     icon.SetFitToContent(false);
     icon.SetAnchor(inkEAnchor.CenterLeft);
-    icon.SetAnchorPoint(new Vector2(0.5, 0.5));
-    icon.SetMargin(new inkMargin(-24.0, 0.0, 0.0, 0.0));
+    icon.SetAnchorPoint(Vector2(0.5, 0.5));
+    icon.SetMargin(inkMargin(-24.0, 0.0, 0.0, 0.0));
     icon.SetHAlign(inkEHorizontalAlign.Left);
     icon.SetVAlign(inkEVerticalAlign.Center);
     icon.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     icon.BindProperty(n"tintColor", n"MainColors.Blue");
-    icon.SetSize(new Vector2(30.0, 40.0));
+    icon.SetSize(Vector2(30.0, 40.0));
     return icon;
 }

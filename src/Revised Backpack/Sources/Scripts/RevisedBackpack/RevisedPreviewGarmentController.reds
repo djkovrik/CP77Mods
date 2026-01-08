@@ -2,13 +2,13 @@ module RevisedBackpack
 
 public class RevisedPreviewGarmentController extends WardrobeSetPreviewGameController {
 
-  protected cb func OnPreviewInitialized() -> Bool {
+  public cb func OnPreviewInitialized() -> Bool {
     super.OnPreviewInitialized();
     this.PreviewUnequipFromSlot(t"AttachmentSlots.WeaponLeft");
     this.PreviewUnequipFromSlot(t"AttachmentSlots.WeaponRight");
   }
 
-  protected cb func OnUninitialize() -> Bool {
+  public cb func OnUninitialize() -> Bool {
     this.CleanUpPuppet();
     super.OnUninitialize();
   }

@@ -23,8 +23,8 @@ protected cb func InitializeHighlightAnimation() -> Bool {
   this.highlightAnimDef = new inkAnimDef();
 
   let translationInterpolator: ref<inkAnimTranslation> = new inkAnimTranslation();
-  translationInterpolator.SetStartTranslation(new Vector2(0.0, 0.0));
-  translationInterpolator.SetEndTranslation(new Vector2(-16.0, 0.0));
+  translationInterpolator.SetStartTranslation(Vector2(0.0, 0.0));
+  translationInterpolator.SetEndTranslation(Vector2(-16.0, 0.0));
   translationInterpolator.SetType(inkanimInterpolationType.Linear);
   translationInterpolator.SetMode(inkanimInterpolationMode.EasyInOut);
   translationInterpolator.SetDirection(inkanimInterpolationDirection.FromTo);

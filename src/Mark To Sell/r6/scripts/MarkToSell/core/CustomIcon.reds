@@ -12,12 +12,12 @@ protected cb func OnInitialize() -> Bool {
   image.SetAtlasResource(r"base\\gameplay\\gui\\common\\icons\\mappin_icons.inkatlas");
   image.SetTexturePart(n"junk");
   image.SetAnchor(inkEAnchor.Centered);
-  image.SetSize(new Vector2(50.0, 50.0));
-  image.SetScale(new Vector2(0.8, 0.8));
+  image.SetSize(Vector2(50.0, 50.0));
+  image.SetScale(Vector2(0.8, 0.8));
   image.SetOpacity(0.75);
   image.SetVisible(false);
-  image.SetAnchorPoint(new Vector2(0.5, 0.5));
-  image.SetMargin(new inkMargin(0.0, -10.0, -10.0, 0.0));
+  image.SetAnchorPoint(Vector2(0.5, 0.5));
+  image.SetMargin(inkMargin(0.0, -10.0, -10.0, 0.0));
 
   if IsDefined(itemContainer) {
     image.Reparent(itemContainer, 100);

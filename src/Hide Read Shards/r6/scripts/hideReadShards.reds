@@ -2,7 +2,7 @@
 public class HideShardCaseEvent extends Event {}
 
 @addMethod(ShardCaseContainer)
-private func DestroyShard() -> Void {
+public func DestroyShard() -> Void {
   GameInstance.GetDelaySystem(this.GetGame()).DelayEvent(this, new HideShardCaseEvent(), 1.0);
 }
 

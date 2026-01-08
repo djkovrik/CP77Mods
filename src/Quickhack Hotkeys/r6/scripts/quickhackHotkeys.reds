@@ -148,7 +148,7 @@ private final func SetVisibility(value: Bool) -> Void {
       this.m_memorySpendAnimation.UnregisterFromAllCallbacks(inkanimEventType.OnFinish);
     };
     this.HACK_wasPlayedOnTarget = false;
-    this.m_lastCompiledTarget = new EntityID();
+    this.m_lastCompiledTarget = EntityID();
     if this.m_contextHelpOverlay {
       this.ShowTutorialOverlay(false);
     };
@@ -254,15 +254,15 @@ protected cb func OnInitialize() -> Bool {
   wrapper.SetHAlign(inkEHorizontalAlign.Fill);
   wrapper.SetVAlign(inkEVerticalAlign.Fill);
   wrapper.SetAnchor(inkEAnchor.Fill);
-  wrapper.SetAnchorPoint(new Vector2(0.5, 0.5));
+  wrapper.SetAnchorPoint(Vector2(0.5, 0.5));
   wrapper.Reparent(container);
 
   this.m_buttonHint = this.SpawnFromExternal(wrapper, r"base\\gameplay\\gui\\common\\buttonhints.inkwidget", n"Root");
-  this.m_buttonHint.SetMargin(new inkMargin(0.0, 0.0, 8.0, 16.0));
+  this.m_buttonHint.SetMargin(inkMargin(0.0, 0.0, 8.0, 16.0));
   this.m_buttonHint.SetHAlign(inkEHorizontalAlign.Center);
   this.m_buttonHint.SetVAlign(inkEVerticalAlign.Bottom);
   this.m_buttonHint.SetAnchor(inkEAnchor.BottomCenter);
-  this.m_buttonHint.SetAnchorPoint(new Vector2(1.0, 0.0));
+  this.m_buttonHint.SetAnchorPoint(Vector2(1.0, 0.0));
   this.m_buttonHint.SetOpacity(0.8);
   this.m_buttonHintController = this.m_buttonHint.GetController() as ButtonHints;
 }
