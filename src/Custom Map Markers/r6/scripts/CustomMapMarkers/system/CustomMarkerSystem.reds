@@ -1,6 +1,5 @@
 module CustomMarkers.System
 
-import Codeware.Localization.*
 import CustomMarkers.Common.*
 import CustomMarkers.Config.*
 
@@ -18,14 +17,10 @@ public class CustomMarkerSystem extends ScriptableSystem {
 
   private let m_mappinSystem: ref<MappinSystem>;
 
-  private let m_translator: ref<LocalizationSystem>;
-
   private persistent let m_mappins: array<ref<CustomMappinData>>;
 
   private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
     this.m_mappinSystem = GameInstance.GetMappinSystem(this.GetGameInstance());
-    this.m_translator = LocalizationSystem.GetInstance(this.GetGameInstance());
-    CMM(s"Initialized! Your game language code: \(ToString(this.m_translator.GetInterfaceLanguage()))");
     CMM(s"Persisted data loaded, mappins count: \(ToString(ArraySize(this.m_mappins)))");
   }
 
@@ -37,7 +32,7 @@ public class CustomMarkerSystem extends ScriptableSystem {
 
   public func AddCustomMappin(title: String, description: String, texturePart: CName, position: Vector4, persist: Bool) -> Void {
     if this.IsMarkerExists(position) && persist {
-      this.ShowCustomWarning(this.m_translator.GetText("CustomMarkers-AlreadyExists"));
+      this.ShowCustomWarning(GetLocalizedTextByKey(n"CustomMarkers-AlreadyExists"));
       return ;
     };
 
@@ -46,7 +41,7 @@ public class CustomMarkerSystem extends ScriptableSystem {
     if persist {
       this.AddPersistedMappin(description, texturePart, position);
     };
-    this.ShowCustomMessage(this.m_translator.GetText("CustomMarkers-AddedMessage"));
+    this.ShowCustomMessage(GetLocalizedTextByKey(n"CustomMarkers-AddedMessage"));
     CMM(s"Registered mappin at position \(ToString(position)) as \(NameToString(texturePart))");
   }
 
@@ -98,7 +93,7 @@ public class CustomMarkerSystem extends ScriptableSystem {
     let persistedMappins: array<ref<CustomMappinData>> = this.m_mappins;
     let counter: Int32 = 0;
     for mappin in persistedMappins {
-      this.AddCustomMappin(this.m_translator.GetText("CustomMarkers-MarkerTitle"), NameToString(mappin.description), mappin.type, mappin.position, false);
+      this.AddCustomMappin(GetLocalizedTextByKey(n"CustomMarkers-MarkerTitle"), NameToString(mappin.description), mappin.type, mappin.position, false);
       counter = counter + 1;
     };
 

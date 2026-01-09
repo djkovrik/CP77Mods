@@ -1,7 +1,6 @@
 module CustomMarkers.UI
 
 import Codeware.UI.*
-import Codeware.Localization.*
 import CustomMarkers.Config.*
 import CustomMarkers.Common.*
 import CustomMarkers.UI.*
@@ -20,11 +19,8 @@ public class CustomMarkerPopup extends InMenuPopup {
 
   private let m_buttonOk: ref<MarkerPopupButton>;
 
-  private let m_translator: wref<LocalizationSystem>;
-
   protected cb func OnCreate() -> Void {
     super.OnCreate();
-    this.m_translator = LocalizationSystem.GetInstance(this.GetGame());
     this.CreateWidgets();
     this.SetupInitialLayout();
   }
@@ -117,7 +113,7 @@ public class CustomMarkerPopup extends InMenuPopup {
     // TOP PANEL: input with text label
 
     // Text label
-    let textInputLabel: ref<inkText> = this.CreateTextLabel(this.m_translator.GetText("CustomMarkers-DescriptionLabel"));
+    let textInputLabel: ref<inkText> = this.CreateTextLabel(GetLocalizedTextByKey(n"CustomMarkers-DescriptionLabel"));
     textInputLabel.SetMargin(inkMargin(0.0, 0.0, 0.0, 10.0));
     // Input field
     this.m_input = HubTextInput.Create();
@@ -139,7 +135,7 @@ public class CustomMarkerPopup extends InMenuPopup {
     let newIcon: ref<IconPreviewItem>;
     let margin: inkMargin = inkMargin(20.0, 0.0, 0.0, 0.0);
     for name in iconNames1 {
-      newIcon = IconPreviewItem.Create(atlasResource, name, margin, CustomMarkersConfig.IconColorActive(), CustomMarkersConfig.IconColorInactive());
+      newIcon = IconPreviewItem.Create(atlasResource, name, margin);
       newIcon.RegisterToCallback(n"OnClick", this, n"OnIconClick");
       newIcon.Reparent(iconsPanel1);
       ArrayPush(this.m_icons, newIcon);
@@ -148,13 +144,13 @@ public class CustomMarkerPopup extends InMenuPopup {
     let iconsPanel2: ref<inkHorizontalPanel> = new inkHorizontalPanel();
     let iconNames2: array<CName> = Icons.Row2();
     for name in iconNames2 {
-      newIcon = IconPreviewItem.Create(atlasResource, name, margin, CustomMarkersConfig.IconColorActive(), CustomMarkersConfig.IconColorInactive());
+      newIcon = IconPreviewItem.Create(atlasResource, name, margin);
       newIcon.RegisterToCallback(n"OnClick", this, n"OnIconClick");
       newIcon.Reparent(iconsPanel2);
       ArrayPush(this.m_icons, newIcon);
     };
     // Text label
-    let selectIconLabel: ref<inkText> = this.CreateTextLabel(this.m_translator.GetText("CustomMarkers-PickIconLabel"));
+    let selectIconLabel: ref<inkText> = this.CreateTextLabel(GetLocalizedTextByKey(n"CustomMarkers-PickIconLabel"));
     // Middle panel
     let middlePanel: ref<inkVerticalPanel> = new inkVerticalPanel();
     // Reparent
@@ -205,7 +201,8 @@ public class CustomMarkerPopup extends InMenuPopup {
     pattern.SetContentVAlign(inkEVerticalAlign.Fill);
     pattern.SetTileHAlign(inkEHorizontalAlign.Left);
     pattern.SetTileVAlign(inkEVerticalAlign.Top);
-    pattern.SetTintColor(Colors.BaseBlack());
+    pattern.BindProperty(n"tintColor", n"MainColors.Black");
+    pattern.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     pattern.SetOpacity(0.95);
     pattern.Reparent(root);
 
@@ -220,7 +217,8 @@ public class CustomMarkerPopup extends InMenuPopup {
     frame.SetContentVAlign(inkEVerticalAlign.Fill);
     frame.SetTileHAlign(inkEHorizontalAlign.Left);
     frame.SetTileVAlign(inkEVerticalAlign.Top);
-    frame.SetTintColor(Colors.MainRed());
+    frame.BindProperty(n"tintColor", n"MainColors.Red");
+    frame.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     frame.SetOpacity(0.95);
     frame.Reparent(root);
 
@@ -239,7 +237,8 @@ public class CustomMarkerPopup extends InMenuPopup {
     label.SetVerticalAlignment(textVerticalAlignment.Top);
     label.SetAnchor(inkEAnchor.TopLeft);
     label.SetLetterCase(textLetterCase.OriginalCase);
-    label.SetTintColor(Colors.MainRed());
+    label.BindProperty(n"tintColor", n"MainColors.Red");
+    label.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     return label;
   }
 

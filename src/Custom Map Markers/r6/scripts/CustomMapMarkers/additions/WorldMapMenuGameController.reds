@@ -1,13 +1,9 @@
-import Codeware.Localization.*
 import CustomMarkers.System.*
 import CustomMarkers.Common.*
 import CustomMarkers.UI.*
 
 @addField(WorldMapMenuGameController)
 protected let m_customMarkerSystem: ref<CustomMarkerSystem>;
-
-@addField(WorldMapMenuGameController)
-protected let m_translator: ref<LocalizationSystem>;
 
 @addField(WorldMapMenuGameController)
 protected let m_cycleMappinPosition: Int32;
@@ -18,14 +14,13 @@ protected cb func OnInitialize() -> Bool {
 
   let container: ref<ScriptableSystemsContainer> = GameInstance.GetScriptableSystemsContainer(this.m_player.GetGame());
   this.m_customMarkerSystem = container.Get(n"CustomMarkers.System.CustomMarkerSystem") as CustomMarkerSystem;
-  this.m_translator = LocalizationSystem.GetInstance(this.m_player.GetGame());
   this.m_cycleMappinPosition = 0;
 }
 
 // Catch marker creation requests
 @addMethod(WorldMapMenuGameController)
 protected cb func OnRequestMarkerCreationEvent(evt: ref<RequestMarkerCreationEvent>) -> Bool {
-  this.m_customMarkerSystem.AddCustomMappin(this.m_translator.GetText("CustomMarkers-MarkerTitle"), evt.m_description, evt.m_texturePart, true);
+  this.m_customMarkerSystem.AddCustomMappin(GetLocalizedTextByKey(n"CustomMarkers-MarkerTitle"), evt.m_description, evt.m_texturePart, true);
   this.m_menuEventDispatcher.SpawnEvent(n"OnNewMarkerAdded");
 }
 

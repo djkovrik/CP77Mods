@@ -9,7 +9,8 @@ public class Icons {
     n"TakeControl",
     n"Techie",
     n"Solo",
-    n"Netrunner"
+    n"Netrunner",
+    n"apartment"
   ]
   public static func Row2() -> array<CName> = [
     n"GetIn", 
@@ -19,6 +20,7 @@ public class Icons {
     n"Reflex",
     n"LifepathCorpo",
     n"LifepathNomad",
-    n"LifepathStreetKid"
+    n"LifepathStreetKid",
+    n"danger"
   ]
 }

@@ -1,4 +1,5 @@
 import CustomMarkers.Config.*
+import CustomMarkers.Common.*
 
 // Set worldmap icon
 @wrapMethod(BaseWorldMapMappinController)
@@ -67,10 +68,17 @@ protected func SetCustomMarkerIcon(mappin: ref<IMappin>, image: inkImageRef) -> 
 @addMethod(BaseMappinBaseController)
 protected func SetCustomMarkerTint(mappin: ref<IMappin>, image: inkImageRef) -> Void {
   let mappinData: ref<GameplayRoleMappinData>;
+  let config: ref<CustomMarkersConfig>;
+  let icon: ref<inkWidget>;
+  let iconColor: CName;
   if IsDefined(mappin) {
      mappinData = mappin.GetScriptData() as GameplayRoleMappinData;
+     config = new CustomMarkersConfig();
+     iconColor = CustomMarkersConfig.GetColorStyleName(config.markerColorActive);
      if IsDefined(mappinData) && mappinData.m_isMappinCustom {
-      inkWidgetRef.SetTintColor(image, CustomMarkersConfig.IconColorActive());
+      icon = inkWidgetRef.Get(image);
+      icon.BindProperty(n"tintColor", iconColor);
+      icon.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
      };
   };
 }

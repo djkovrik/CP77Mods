@@ -1,5 +1,7 @@
 module CustomMarkers.UI
 
+import CustomMarkers.Common.*
+import CustomMarkers.Config.*
 import Codeware.UI.*
 
 public class IconPreviewItem extends inkCustomController {
@@ -14,24 +16,20 @@ public class IconPreviewItem extends inkCustomController {
 
   protected let m_margin: inkMargin;
 
-  protected let m_tintActive: HDRColor;
-
-  protected let m_tintInactive: HDRColor;
-
   protected let m_useSounds: Bool;
 
   protected let m_isHovered: Bool;
 
   protected let m_isPressed: Bool;
 
-  public static func Create(atlasResource: ResRef, texturePart: CName, margin: inkMargin, active: HDRColor, inactive: HDRColor) -> ref<IconPreviewItem> {
+  private let config: ref<CustomMarkersConfig>;
+
+  public static func Create(atlasResource: ResRef, texturePart: CName, margin: inkMargin) -> ref<IconPreviewItem> {
     let self: ref<IconPreviewItem> = new IconPreviewItem();
     self.SetName(texturePart);
     self.SetAtlasResource(atlasResource);
     self.SetTexturePart(texturePart);
     self.SetMargin(margin);
-    self.SetActiveTint(active);
-    self.SetInactiveTint(inactive);
     self.CreateInstance();
 
     return self;
@@ -39,6 +37,7 @@ public class IconPreviewItem extends inkCustomController {
 
   protected cb func OnCreate() -> Void {
     super.OnCreate();
+    this.config = new CustomMarkersConfig();
     this.CreateWidgets();
   }
 
@@ -55,6 +54,7 @@ public class IconPreviewItem extends inkCustomController {
     root.SetInteractive(true);
 
     let icon: ref<inkImage> = new inkImage();
+    let iconColor: CName = CustomMarkersConfig.GetColorStyleName(this.config.markerColorInactive);
     icon.SetName(this.m_texturePart);
     icon.SetInteractive(true);
     icon.SetAtlasResource(this.m_atlasResource);
@@ -66,7 +66,8 @@ public class IconPreviewItem extends inkCustomController {
     icon.SetTileHAlign(inkEHorizontalAlign.Center);
     icon.SetTileVAlign(inkEVerticalAlign.Center);
     icon.SetMargin(this.m_margin);
-    icon.SetTintColor(this.m_tintInactive);
+    icon.BindProperty(n"tintColor", iconColor);
+    icon.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     icon.SetScale(Vector2(1.1, 1.1));
     icon.Reparent(root);
 
@@ -84,11 +85,17 @@ public class IconPreviewItem extends inkCustomController {
   }
 
   public func Tint() -> Void {
-    this.m_icon.SetTintColor(this.m_tintActive);
+    let iconColor: CName = CustomMarkersConfig.GetColorStyleName(this.config.markerColorActive);
+    this.m_icon.UnbindProperty(n"tintColor");
+    this.m_icon.BindProperty(n"tintColor", iconColor);
+    this.m_icon.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
   }
 
   public func Dim() -> Void {
-    this.m_icon.SetTintColor(this.m_tintInactive);
+    let iconColor: CName = CustomMarkersConfig.GetColorStyleName(this.config.markerColorInactive);
+    this.m_icon.UnbindProperty(n"tintColor");
+    this.m_icon.BindProperty(n"tintColor", iconColor);
+    this.m_icon.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
   }
 
   protected func SetHoveredState(isHovered: Bool) -> Void {
@@ -172,14 +179,6 @@ public class IconPreviewItem extends inkCustomController {
 
   public func SetMargin(margin: inkMargin) -> Void {
     this.m_margin = margin;
-  }
-
-  public func SetActiveTint(tint: HDRColor) -> Void {
-    this.m_tintActive = tint;
-  }
-
-  public func SetInactiveTint(tint: HDRColor) -> Void {
-    this.m_tintInactive = tint;
   }
 
   public func SetPosition(x: Float, y: Float) -> Void {

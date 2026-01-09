@@ -1,0 +1,9 @@
+localization:
+  onscreens:
+    en-us: djkovrik\custommapmarkers\localization\en-us\cmm.json
+    de-de: djkovrik\custommapmarkers\localization\de-de\cmm.json
+    es-es: djkovrik\custommapmarkers\localization\es-es\cmm.json
+    fr-fr: djkovrik\custommapmarkers\localization\fr-fr\cmm.json
+    ru-ru: djkovrik\custommapmarkers\localization\ru-ru\cmm.json
+    zh-cn: djkovrik\custommapmarkers\localization\zh-cn\cmm.json
+    zh-tw: djkovrik\custommapmarkers\localization\zh-tw\cmm.json

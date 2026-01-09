@@ -1,20 +1,15 @@
 module CustomMarkers.Common
 
-public class Colors {
-  // Base colors
-  public static func BaseYellow() -> HDRColor = HDRColor(1.0, 1.0, 0.0, 1.0)
-  public static func BaseGreen() -> HDRColor = HDRColor(0.0, 1.0, 0.0, 1.0)
-  public static func BaseDarkGreen() -> HDRColor = HDRColor(0.1, 0.5, 0.1, 1.0)
-  public static func BaseOrange() -> HDRColor = HDRColor(1.0, 0.5, 0.0, 1.0)
-  public static func BaseWhite() -> HDRColor = HDRColor(1.0, 1.0, 1.0, 1.0)
-  public static func BaseBlack() -> HDRColor = HDRColor(0.0, 0.0, 0.0, 1.0)
-  public static func BaseGrey() -> HDRColor = HDRColor(0.5, 0.5, 0.5, 0.5)
-  // Colors from the default game theme
-  public static func MainRed() -> HDRColor = HDRColor(1.1761, 0.3809, 0.3476, 1.0)
-  public static func MainBlue() -> HDRColor = HDRColor(0.368627, 0.964706, 1.0, 1.0)
-  public static func MainGreen() -> HDRColor = HDRColor(0.113725, 0.929412, 0.513726, 1.0)
-  public static func MainYellow() -> HDRColor = HDRColor(1.1192, 0.8441, 0.2565, 1.0)
-  public static func MainGold() -> HDRColor = HDRColor(1.1192, 0.8441, 0.2565, 1.0)
-  // Option for custom color (HDR RGBA)
-  public static func Custom() -> HDRColor = HDRColor(1.0, 1.0, 1.0, 1.0)
+public enum CmmColors {
+  Yellow = 0,
+  Green = 1,
+  DarkGreen = 2,
+  Orange = 3,
+  White = 4,
+  Grey = 5,
+  Red = 6,
+  DarkRed = 7,
+  Blue = 8,
+  DarkBlue = 9,
+  Gold = 10,
 }
