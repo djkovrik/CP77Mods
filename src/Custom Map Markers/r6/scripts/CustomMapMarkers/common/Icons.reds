@@ -2,8 +2,8 @@ module CustomMarkers.Common
 
 public class Icons {
   public static func Row1() -> array<CName> = [
-    n"asterix", 
     n"codex_character",
+    n"asterix", 
     n"map_bounty",
     n"Distract",
     n"TakeControl",
@@ -13,8 +13,8 @@ public class Icons {
     n"apartment"
   ]
   public static func Row2() -> array<CName> = [
-    n"GetIn", 
     n"Allow",
+    n"GetIn", 
     n"devil_horns",
     n"Cool",
     n"Reflex",

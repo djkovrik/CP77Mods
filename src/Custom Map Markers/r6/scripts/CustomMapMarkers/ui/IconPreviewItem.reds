@@ -68,7 +68,7 @@ public class IconPreviewItem extends inkCustomController {
     icon.SetMargin(this.m_margin);
     icon.BindProperty(n"tintColor", iconColor);
     icon.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-    icon.SetScale(Vector2(1.1, 1.1));
+    icon.SetScale(Vector2(1.0, 1.0));
     icon.Reparent(root);
 
     this.m_root = root;
@@ -104,6 +104,12 @@ public class IconPreviewItem extends inkCustomController {
       if !this.m_isHovered {
         this.m_isPressed = false;
       }
+
+      if this.m_isHovered {
+        this.m_icon.SetScale(Vector2(1.1, 1.1));
+      } else {
+        this.m_icon.SetScale(Vector2(1.0, 1.0));
+      }
     }
   }
 
@@ -114,6 +120,7 @@ public class IconPreviewItem extends inkCustomController {
   }
 
   protected cb func OnHoverOver(evt: ref<inkPointerEvent>) -> Bool {
+    this.PlaySound(n"Button", n"OnHover");
     this.SetHoveredState(true);
   }
 
@@ -123,6 +130,7 @@ public class IconPreviewItem extends inkCustomController {
 
   protected cb func OnPress(evt: ref<inkPointerEvent>) -> Bool {
     if evt.IsAction(n"click") {
+      this.PlaySound(n"Button", n"OnPress");
       this.SetPressedState(true);
     }
   }
@@ -135,7 +143,6 @@ public class IconPreviewItem extends inkCustomController {
         }
 
         this.CallCustomCallback(n"OnClick");
-
         this.SetPressedState(false);
       }
     }

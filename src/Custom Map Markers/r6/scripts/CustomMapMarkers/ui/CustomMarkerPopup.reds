@@ -40,7 +40,6 @@ public class CustomMarkerPopup extends InMenuPopup {
   protected cb func OnConfirm() -> Void {}
 
   protected cb func OnIconClick(widget: wref<inkWidget>) -> Bool {
-    // everything fires onClick since 1.5
     if Equals(widget.GetClassName(), n"inkCanvasWidget") {
       this.m_selectedIcon = widget.GetName();
       for icon in this.m_icons {
@@ -130,10 +129,11 @@ public class CustomMarkerPopup extends InMenuPopup {
     // Icons panel 1
     let iconsPanel1: ref<inkHorizontalPanel> = new inkHorizontalPanel();
     iconsPanel1.SetMargin(inkMargin(0.0, 50.0, 0.0, 0.0));
+    iconsPanel1.SetChildMargin(inkMargin(4.0, 4.0, 4.0, 4.0));
     let iconNames1: array<CName> = Icons.Row1();
     let atlasResource: ResRef = r"base\\gameplay\\gui\\common\\icons\\mappin_icons.inkatlas";
     let newIcon: ref<IconPreviewItem>;
-    let margin: inkMargin = inkMargin(20.0, 0.0, 0.0, 0.0);
+    let margin: inkMargin = inkMargin(32.0, 0.0, 0.0, 0.0);
     for name in iconNames1 {
       newIcon = IconPreviewItem.Create(atlasResource, name, margin);
       newIcon.RegisterToCallback(n"OnClick", this, n"OnIconClick");
@@ -142,6 +142,7 @@ public class CustomMarkerPopup extends InMenuPopup {
     };
     // Icons panel 2
     let iconsPanel2: ref<inkHorizontalPanel> = new inkHorizontalPanel();
+    iconsPanel2.SetChildMargin(inkMargin(4.0, 4.0, 4.0, 4.0));
     let iconNames2: array<CName> = Icons.Row2();
     for name in iconNames2 {
       newIcon = IconPreviewItem.Create(atlasResource, name, margin);
