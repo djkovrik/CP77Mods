@@ -32,7 +32,7 @@ class HudPainterController extends gameuiSettingsMenuGameController {
 
   private let dynamicColorPreviewInfo: ref<inkHashMap>;
 
-  protected cb func OnInitialize() {
+  public cb func OnInitialize() {
     this.m_storage = HudPainterStorage.Get();
     this.m_player = this.GetPlayerControlledObject();
     this.dynamicColorPreviewInfo = new inkHashMap();
@@ -66,17 +66,17 @@ class HudPainterController extends gameuiSettingsMenuGameController {
 
   // -- CORE
 
-  protected cb func OnSetMenuEventDispatcher(menuEventDispatcher: wref<inkMenuEventDispatcher>) -> Bool {
+  public cb func OnSetMenuEventDispatcher(menuEventDispatcher: wref<inkMenuEventDispatcher>) -> Bool {
     super.OnSetMenuEventDispatcher(menuEventDispatcher);
     this.m_menuEventDispatcher = menuEventDispatcher;
     this.m_menuEventDispatcher.RegisterToEvent(n"OnBack", this, n"OnBack");
   }
 
-  protected cb func OnBack(userData: ref<IScriptable>) -> Bool {
+  public cb func OnBack(userData: ref<IScriptable>) -> Bool {
     this.m_menuEventDispatcher.SpawnEvent(n"OnCloseHudPainterScreen");
   }
 
-  protected cb func OnUninitialize() -> Bool {
+  public cb func OnUninitialize() -> Bool {
     this.m_menuEventDispatcher.UnregisterFromEvent(n"OnBack", this, n"OnBack");
     this.UnregisterCallbacks();
     this.dynamicColorPreviewInfo.Clear();

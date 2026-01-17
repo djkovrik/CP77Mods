@@ -26,7 +26,7 @@ public class HudPainterStylePropertyDTO {
   public let alpha: Int32;
 
   public final func AsHDRColor() -> HDRColor {
-    return new HDRColor(this.red, this.green, this.blue, Cast<Float>(this.alpha));
+    return HDRColor(this.red, this.green, this.blue, Cast<Float>(this.alpha));
   }
 }
 

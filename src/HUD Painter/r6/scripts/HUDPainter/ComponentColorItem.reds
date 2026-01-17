@@ -83,8 +83,8 @@ public class ComponentColorItem extends inkComponent {
     previewDefault.SetHAlign(inkEHorizontalAlign.Center);
     previewDefault.SetVAlign(inkEVerticalAlign.Center);
     previewDefault.SetAnchor(inkEAnchor.Centered);
-    previewDefault.SetTintColor(new HDRColor(1.0, 1.0, 1.0, 1.0));
-    previewDefault.SetSize(new Vector2(40.0, 40.0));
+    previewDefault.SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    previewDefault.SetSize(Vector2(40.0, 40.0));
     previewDefault.SetMargin(16.0, 0.0, 0.0, 0.0);
     previewDefault.Reparent(panel);
 
@@ -93,8 +93,8 @@ public class ComponentColorItem extends inkComponent {
     previewCustom.SetHAlign(inkEHorizontalAlign.Center);
     previewCustom.SetVAlign(inkEVerticalAlign.Center);
     previewCustom.SetAnchor(inkEAnchor.Centered);
-    previewCustom.SetTintColor(new HDRColor(1.0, 1.0, 1.0, 1.0));
-    previewCustom.SetSize(new Vector2(40.0, 40.0));
+    previewCustom.SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    previewCustom.SetSize(Vector2(40.0, 40.0));
     previewCustom.SetMargin(4.0, 0.0, 0.0, 0.0);
     previewCustom.Reparent(panel);
 

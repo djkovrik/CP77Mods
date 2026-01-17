@@ -227,7 +227,7 @@ class HudPainterWorldMapPatch extends ScriptableService {
       this.Log(s"- \(keyStr) found");
     } else {
       this.Log(s"- \(keyStr) not found");
-      color = new Color(Cast<Uint8>(255), Cast<Uint8>(255), Cast<Uint8>(255), Cast<Uint8>(255));
+      color = Color(Cast<Uint8>(255), Cast<Uint8>(255), Cast<Uint8>(255), Cast<Uint8>(255));
     };
 
     return color;
@@ -253,7 +253,7 @@ class HudPainterWorldMapPatch extends ScriptableService {
     let redColor: Uint8 = Cast<Uint8>(Min(red, 255));
     let greenColor: Uint8 = Cast<Uint8>(Min(green, 255));
     let blueColor: Uint8 = Cast<Uint8>(Min(blue, 255));
-    return new Color(redColor, greenColor, blueColor, Cast<Uint8>(255));
+    return Color(redColor, greenColor, blueColor, Cast<Uint8>(255));
   }
 
   private final func Key(name: String) -> Uint64 {

@@ -1,10 +1,10 @@
 // --- HEALTHBAR: Red, Blue, PanelBlue, ActiveBlue, DarkBlue, Overshield, Grey
 
 @addField(healthbarWidgetGameController)
-private let dynamicColorPreviewInfo: ref<inkHashMap>;
+public let dynamicColorPreviewInfo: ref<inkHashMap>;
 
 @addField(healthbarWidgetGameController)
-private let previewPopulated: Bool;
+public let previewPopulated: Bool;
 
 @wrapMethod(healthbarWidgetGameController)
 protected cb func OnInitialize() -> Bool {
@@ -409,7 +409,7 @@ protected cb func OnHudPainterInkStyleRefreshed(evt: ref<HudPainterInkStyleRefre
 // --- SAFE AREA NOTIFICATION: Green
 
 @addField(GenericNotificationController)
-private let dynamicColorPreviewInfo: ref<inkHashMap>;
+public let dynamicColorPreviewInfo: ref<inkHashMap>;
 
 @wrapMethod(GenericNotificationController)
 protected cb func OnInitialize() -> Bool {
@@ -510,7 +510,7 @@ protected cb func OnHudPainterPreviewModeEnabled(evt: ref<HudPainterPreviewModeE
   let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
   if IsDefined(root) && Equals(root.GetName(), StringToName(s"\(PreviewTabType.UpdateMessage)")) && !this.previewPopulated {
     this.previewPopulated = true;
-    this.GetRootWidget().SetScale(new Vector2(0.666, 0.666));
+    this.GetRootWidget().SetScale(Vector2(0.666, 0.666));
     this.GetRootWidget().SetOpacity(1.0);
     inkTextRef.SetText(this.m_titleRef, "Message title");
     inkTextRef.SetText(this.m_textRef, "Manually enhanced message text");
@@ -600,8 +600,8 @@ protected cb func OnHudPainterPreviewModeEnabled(evt: ref<HudPainterPreviewModeE
     inkTextRef.SetText(this.m_radioSubtitle, "Some text from radio here.");
     inkWidgetRef.SetVisible(this.m_radioSpeaker, true);
     inkWidgetRef.SetVisible(this.m_radioSubtitle, true);
-    inkWidgetRef.SetMargin(this.m_radioSpeaker, new inkMargin(0.0, 68.0, 20.0, 0.0));
-    inkWidgetRef.SetMargin(this.m_radioSubtitle, new inkMargin(0.0, 68.0, 0.0, 0.0));
+    inkWidgetRef.SetMargin(this.m_radioSpeaker, inkMargin(0.0, 68.0, 20.0, 0.0));
+    inkWidgetRef.SetMargin(this.m_radioSubtitle, inkMargin(0.0, 68.0, 0.0, 0.0));
   };
 }
 

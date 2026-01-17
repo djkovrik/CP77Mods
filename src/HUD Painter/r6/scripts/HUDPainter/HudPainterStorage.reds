@@ -179,9 +179,9 @@ public class HudPainterStorage extends ScriptableService {
       item = new HudPainterColorItem();
       item.name = propertyFrom.name;
       item.type = HudPainterColorType.Default;
-      item.defaultColor = new HDRColor(propertyFrom.red, propertyFrom.green, propertyFrom.blue, 1.0);
-      item.customColor = new HDRColor(propertyTo.red, propertyTo.green, propertyTo.blue, 1.0);
-      item.presetColor = new HDRColor(propertyTo.red, propertyTo.green, propertyTo.blue, 1.0);
+      item.defaultColor = HDRColor(propertyFrom.red, propertyFrom.green, propertyFrom.blue, 1.0);
+      item.customColor = HDRColor(propertyTo.red, propertyTo.green, propertyTo.blue, 1.0);
+      item.presetColor = HDRColor(propertyTo.red, propertyTo.green, propertyTo.blue, 1.0);
       ArrayPush(result, item);
       index += 1;
     };
@@ -194,9 +194,9 @@ public class HudPainterStorage extends ScriptableService {
       item = new HudPainterColorItem();
       item.name = propertyFrom.name;
       item.type = HudPainterColorType.Johnny;
-      item.defaultColor = new HDRColor(propertyFrom.red, propertyFrom.green, propertyFrom.blue, 1.0);
-      item.customColor = new HDRColor(propertyTo.red, propertyTo.green, propertyTo.blue, 1.0);
-      item.presetColor = new HDRColor(propertyTo.red, propertyTo.green, propertyTo.blue, 1.0);
+      item.defaultColor = HDRColor(propertyFrom.red, propertyFrom.green, propertyFrom.blue, 1.0);
+      item.customColor = HDRColor(propertyTo.red, propertyTo.green, propertyTo.blue, 1.0);
+      item.presetColor = HDRColor(propertyTo.red, propertyTo.green, propertyTo.blue, 1.0);
       ArrayPush(result, item);
       index += 1;
     };

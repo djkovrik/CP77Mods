@@ -64,7 +64,7 @@ public class CustomColorPickerController extends inkGameController {
         break;
     };
 
-    let newCustomColor: HDRColor = new HDRColor(
+    let newCustomColor: HDRColor = HDRColor(
       Cast<Float>(this.sliderValueR) / 255.0,
       Cast<Float>(this.sliderValueG) / 255.0,
       Cast<Float>(this.sliderValueB) / 255.0,

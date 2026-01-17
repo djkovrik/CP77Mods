@@ -60,7 +60,7 @@ public class HudPainterPreviewController extends inkGameController {
     heathbar.tabType = PreviewTabType.Healthbar;
     heathbar.previewResourcePath = r"base\\gameplay\\gui\\widgets\\healthbar\\playerhealthbar.inkwidget";
     heathbar.previewLibraryID = n"RootVert";
-    heathbar.previewAnchorPoint = new Vector2(0.5, 0.0);
+    heathbar.previewAnchorPoint = Vector2(0.5, 0.0);
     heathbar.affectedColors = "Red, Blue, PanelBlue, ActiveBlue, DarkBlue, Overshield, Grey, NPC_Chatter";
     ArrayPush(this.m_items, heathbar);
     // Quest tracker
@@ -69,7 +69,7 @@ public class HudPainterPreviewController extends inkGameController {
     questTracker.tabType = PreviewTabType.QuestTracker;
     questTracker.previewResourcePath = r"base\\gameplay\\gui\\widgets\\quests\\quest_tracker.inkwidget";
     questTracker.previewLibraryID = n"Root";
-    questTracker.previewAnchorPoint = new Vector2(0.5, 0.5);
+    questTracker.previewAnchorPoint = Vector2(0.5, 0.5);
     questTracker.affectedColors = "ActiveYellow, ActiveGreen, CombatRed, StreetCred";
     ArrayPush(this.m_items, questTracker);
     // Ammo counter
@@ -78,7 +78,7 @@ public class HudPainterPreviewController extends inkGameController {
     ammoCounter.tabType = PreviewTabType.AmmoCounter;
     ammoCounter.previewResourcePath = r"base\\gameplay\\gui\\widgets\\ammo_counter\\ammo_counter.inkwidget";
     ammoCounter.previewLibraryID = n"Root";
-    ammoCounter.previewAnchorPoint = new Vector2(0.5, 0.0);
+    ammoCounter.previewAnchorPoint = Vector2(0.5, 0.0);
     ammoCounter.affectedColors = "Red, ActiveRed, Blue";
     ArrayPush(this.m_items, ammoCounter);
     // Safe notification
@@ -87,7 +87,7 @@ public class HudPainterPreviewController extends inkGameController {
     notificationSafe.tabType = PreviewTabType.NotificationSafe;
     notificationSafe.previewResourcePath = r"base\\gameplay\\gui\\widgets\\notifications\\zonealert_notification.inkwidget";
     notificationSafe.previewLibraryID = n"Area_Safe";
-    notificationSafe.previewAnchorPoint = new Vector2(0.5, 0.0);
+    notificationSafe.previewAnchorPoint = Vector2(0.5, 0.0);
     notificationSafe.affectedColors = "Green";
     ArrayPush(this.m_items, notificationSafe);
     // Update Message
@@ -96,7 +96,7 @@ public class HudPainterPreviewController extends inkGameController {
     updateMessage.tabType = PreviewTabType.UpdateMessage;
     updateMessage.previewResourcePath = r"base\\gameplay\\gui\\widgets\\notifications\\quest_update.inkwidget";
     updateMessage.previewLibraryID = n"notification_quest_updated";
-    updateMessage.previewAnchorPoint = new Vector2(0.5, 0.0);
+    updateMessage.previewAnchorPoint = Vector2(0.5, 0.0);
     updateMessage.affectedColors = "Yellow, White";
     ArrayPush(this.m_items, updateMessage);
     // Subtitles
@@ -105,7 +105,7 @@ public class HudPainterPreviewController extends inkGameController {
     subtitles.tabType = PreviewTabType.Subtitles;
     subtitles.previewResourcePath = r"base\\gameplay\\gui\\widgets\\subtitles\\subtitles.inkwidget";
     subtitles.previewLibraryID = n"Line";
-    subtitles.previewAnchorPoint = new Vector2(0.5, 0.0);
+    subtitles.previewAnchorPoint = Vector2(0.5, 0.0);
     subtitles.affectedColors = "ActiveRed, Blue, MildBlue";
     ArrayPush(this.m_items, subtitles);
   }
