@@ -291,6 +291,8 @@ public class AtelierStoresListController extends inkGameController {
 
   private func InitializeTabs() -> Void {
     let categoryTab: ref<AtelierStoresCategoryTab>;
+    let totalStores: array<ref<VirtualShop>> = this.system.GetStores();
+    this.categoriesContainer.SetVisible(NotEquals(ArraySize(totalStores), 0));
     for category in this.categories {
       categoryTab = AtelierStoresCategoryTab.Create(category);
       categoryTab.Reparent(this.categoriesContainer);
@@ -396,7 +398,6 @@ public class AtelierStoresListController extends inkGameController {
     panel.SetFitToContent(true);
     panel.SetAnchor(inkEAnchor.Centered);
     panel.SetAnchorPoint(new Vector2(0.5, 0.5));
-    panel.SetMargin(new inkMargin(0.0, 0.0, 160.0, 0.0));
     panel.Reparent(root);
 
     let emptyStateImage: ref<inkImage> = new inkImage();
@@ -405,7 +406,9 @@ public class AtelierStoresListController extends inkGameController {
     emptyStateImage.SetTexturePart(n"chick V");
     emptyStateImage.SetInteractive(false);
     emptyStateImage.SetAnchorPoint(new Vector2(0.5, 0.5));
-    emptyStateImage.SetFitToContent(true);
+    emptyStateImage.SetMargin(new inkMargin(0.0, 220.0, 0.0, 40.0));
+    emptyStateImage.SetFitToContent(false);
+    emptyStateImage.SetSize(new Vector2(249.0, 790.0));
     emptyStateImage.Reparent(this.GetRootCompoundWidget());
     emptyStateImage.SetHAlign(inkEHorizontalAlign.Center);
     emptyStateImage.SetVAlign(inkEVerticalAlign.Center);
