@@ -176,6 +176,8 @@ private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
   } else {
     wrappedMethod(e);
   };
+
+  this.UpdateButtonsContainerVisibility();
 }
 
 @wrapMethod(WorldMapMenuGameController)
@@ -185,7 +187,15 @@ private final func HandleReleaseInput(e: ref<inkPointerEvent>) -> Void {
   } else {
     wrappedMethod(e);
   };
+
+  this.UpdateButtonsContainerVisibility();
 }
+
+@addMethod(WorldMapMenuGameController)
+private final func UpdateButtonsContainerVisibility() -> Void {
+  this.metroButtonsContainer.SetVisible(!this.m_isPanning);
+}
+
 
 // Check if event reated to any custom button
 @addMethod(WorldMapMenuGameController)
