@@ -11358,6 +11358,18 @@ Items.Craftable_Common_Masamune_nowaki_2077:
   iconPath: weapon_Preset_Base_Masamune_None__Arasaka_2077
   visualTags: [ Arasaka_2077 ]
 
+Items.Craftable_Common_Masamune_nowaki_default:
+  $base: Items.Craftable_Common_Masamune
+  appearanceName: nowaki_default
+  iconPath: weapon_Preset_Base_Masamune_None__Arasaka_2020
+  visualTags: [ Arasaka_2020 ]
+
+Items.Craftable_Common_Masamune_trauma:
+  $base: Items.Craftable_Common_Masamune
+  appearanceName: trauma
+  iconPath: weapon_Preset_Base_Masamune_None__Trauma
+  visualTags: [ Trauma ]
+
 Items.Craftable_Common_Masamune_default_flashlight:
   $base: Items.Craftable_Common_Masamune
   appearanceName: default_flashlight
@@ -11385,6 +11397,8 @@ Items.Craftable_Common_Masamune.ecraftVariants:
  - t"Items.Craftable_Common_Masamune_pimp_01"
  - t"Items.Craftable_Common_Masamune_pimp_02"
  - t"Items.Craftable_Common_Masamune_nowaki_2077"
+ - t"Items.Craftable_Common_Masamune_nowaki_default"
+ - t"Items.Craftable_Common_Masamune_trauma"
  - t"Items.Craftable_Common_Masamune_default_flashlight"
  - t"Items.Craftable_Common_Masamune_default_flashlight_shadow"
  - t"Items.Craftable_Common_Masamune_afterlife"
@@ -11438,6 +11452,18 @@ Items.Craftable_Uncommon_Masamune_nowaki_2077:
   iconPath: weapon_Preset_Base_Masamune_None__Arasaka_2077
   visualTags: [ Arasaka_2077 ]
 
+Items.Craftable_Uncommon_Masamune_nowaki_default:
+  $base: Items.Craftable_Uncommon_Masamune
+  appearanceName: nowaki_default
+  iconPath: weapon_Preset_Base_Masamune_None__Arasaka_2020
+  visualTags: [ Arasaka_2020 ]
+
+Items.Craftable_Uncommon_Masamune_trauma:
+  $base: Items.Craftable_Uncommon_Masamune
+  appearanceName: trauma
+  iconPath: weapon_Preset_Base_Masamune_None__Trauma
+  visualTags: [ Trauma ]
+
 Items.Craftable_Uncommon_Masamune_default_flashlight:
   $base: Items.Craftable_Uncommon_Masamune
   appearanceName: default_flashlight
@@ -11465,6 +11491,8 @@ Items.Craftable_Uncommon_Masamune.ecraftVariants:
  - t"Items.Craftable_Uncommon_Masamune_pimp_01"
  - t"Items.Craftable_Uncommon_Masamune_pimp_02"
  - t"Items.Craftable_Uncommon_Masamune_nowaki_2077"
+ - t"Items.Craftable_Uncommon_Masamune_nowaki_default"
+ - t"Items.Craftable_Uncommon_Masamune_trauma"
  - t"Items.Craftable_Uncommon_Masamune_default_flashlight"
  - t"Items.Craftable_Uncommon_Masamune_default_flashlight_shadow"
  - t"Items.Craftable_Uncommon_Masamune_afterlife"
@@ -11518,6 +11546,18 @@ Items.Craftable_Rare_Masamune_nowaki_2077:
   iconPath: weapon_Preset_Base_Masamune_None__Arasaka_2077
   visualTags: [ Arasaka_2077 ]
 
+Items.Craftable_Rare_Masamune_nowaki_default:
+  $base: Items.Craftable_Rare_Masamune
+  appearanceName: nowaki_default
+  iconPath: weapon_Preset_Base_Masamune_None__Arasaka_2020
+  visualTags: [ Arasaka_2020 ]
+
+Items.Craftable_Rare_Masamune_trauma:
+  $base: Items.Craftable_Rare_Masamune
+  appearanceName: trauma
+  iconPath: weapon_Preset_Base_Masamune_None__Trauma
+  visualTags: [ Trauma ]
+
 Items.Craftable_Rare_Masamune_default_flashlight:
   $base: Items.Craftable_Rare_Masamune
   appearanceName: default_flashlight
@@ -11545,6 +11585,8 @@ Items.Craftable_Rare_Masamune.ecraftVariants:
  - t"Items.Craftable_Rare_Masamune_pimp_01"
  - t"Items.Craftable_Rare_Masamune_pimp_02"
  - t"Items.Craftable_Rare_Masamune_nowaki_2077"
+ - t"Items.Craftable_Rare_Masamune_nowaki_default"
+ - t"Items.Craftable_Rare_Masamune_trauma"
  - t"Items.Craftable_Rare_Masamune_default_flashlight"
  - t"Items.Craftable_Rare_Masamune_default_flashlight_shadow"
  - t"Items.Craftable_Rare_Masamune_afterlife"
@@ -11598,6 +11640,18 @@ Items.Craftable_Epic_Masamune_nowaki_2077:
   iconPath: weapon_Preset_Base_Masamune_None__Arasaka_2077
   visualTags: [ Arasaka_2077 ]
 
+Items.Craftable_Epic_Masamune_nowaki_default:
+  $base: Items.Craftable_Epic_Masamune
+  appearanceName: nowaki_default
+  iconPath: weapon_Preset_Base_Masamune_None__Arasaka_2020
+  visualTags: [ Arasaka_2020 ]
+
+Items.Craftable_Epic_Masamune_trauma:
+  $base: Items.Craftable_Epic_Masamune
+  appearanceName: trauma
+  iconPath: weapon_Preset_Base_Masamune_None__Trauma
+  visualTags: [ Trauma ]
+
 Items.Craftable_Epic_Masamune_default_flashlight:
   $base: Items.Craftable_Epic_Masamune
   appearanceName: default_flashlight
@@ -11625,6 +11679,8 @@ Items.Craftable_Epic_Masamune.ecraftVariants:
  - t"Items.Craftable_Epic_Masamune_pimp_01"
  - t"Items.Craftable_Epic_Masamune_pimp_02"
  - t"Items.Craftable_Epic_Masamune_nowaki_2077"
+ - t"Items.Craftable_Epic_Masamune_nowaki_default"
+ - t"Items.Craftable_Epic_Masamune_trauma"
  - t"Items.Craftable_Epic_Masamune_default_flashlight"
  - t"Items.Craftable_Epic_Masamune_default_flashlight_shadow"
  - t"Items.Craftable_Epic_Masamune_afterlife"
@@ -11678,6 +11734,18 @@ Items.Craftable_Legendary_Masamune_nowaki_2077:
   iconPath: weapon_Preset_Base_Masamune_None__Arasaka_2077
   visualTags: [ Arasaka_2077 ]
 
+Items.Craftable_Legendary_Masamune_nowaki_default:
+  $base: Items.Craftable_Legendary_Masamune
+  appearanceName: nowaki_default
+  iconPath: weapon_Preset_Base_Masamune_None__Arasaka_2020
+  visualTags: [ Arasaka_2020 ]
+
+Items.Craftable_Legendary_Masamune_trauma:
+  $base: Items.Craftable_Legendary_Masamune
+  appearanceName: trauma
+  iconPath: weapon_Preset_Base_Masamune_None__Trauma
+  visualTags: [ Trauma ]
+
 Items.Craftable_Legendary_Masamune_default_flashlight:
   $base: Items.Craftable_Legendary_Masamune
   appearanceName: default_flashlight
@@ -11705,6 +11773,8 @@ Items.Craftable_Legendary_Masamune.ecraftVariants:
  - t"Items.Craftable_Legendary_Masamune_pimp_01"
  - t"Items.Craftable_Legendary_Masamune_pimp_02"
  - t"Items.Craftable_Legendary_Masamune_nowaki_2077"
+ - t"Items.Craftable_Legendary_Masamune_nowaki_default"
+ - t"Items.Craftable_Legendary_Masamune_trauma"
  - t"Items.Craftable_Legendary_Masamune_default_flashlight"
  - t"Items.Craftable_Legendary_Masamune_default_flashlight_shadow"
  - t"Items.Craftable_Legendary_Masamune_afterlife"

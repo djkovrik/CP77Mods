@@ -517,26 +517,36 @@ Items.Craftable_Epic_Machete_Borg_neon2.isPresetIconic: true
 Items.Craftable_Legendary_Machete_Borg_neon2.isPresetIconic: true
 # --- Items.Craftable_Common_Masamune
 Items.Craftable_Common_Masamune_nowaki_2077.isPresetIconic: true
+Items.Craftable_Common_Masamune_nowaki_default.isPresetIconic: true
+Items.Craftable_Common_Masamune_trauma.isPresetIconic: true
 Items.Craftable_Common_Masamune_default_flashlight.isPresetIconic: true
 Items.Craftable_Common_Masamune_default_flashlight_shadow.isPresetIconic: true
 Items.Craftable_Common_Masamune_afterlife.isPresetIconic: true
 # --- Items.Craftable_Uncommon_Masamune
 Items.Craftable_Uncommon_Masamune_nowaki_2077.isPresetIconic: true
+Items.Craftable_Uncommon_Masamune_nowaki_default.isPresetIconic: true
+Items.Craftable_Uncommon_Masamune_trauma.isPresetIconic: true
 Items.Craftable_Uncommon_Masamune_default_flashlight.isPresetIconic: true
 Items.Craftable_Uncommon_Masamune_default_flashlight_shadow.isPresetIconic: true
 Items.Craftable_Uncommon_Masamune_afterlife.isPresetIconic: true
 # --- Items.Craftable_Rare_Masamune
 Items.Craftable_Rare_Masamune_nowaki_2077.isPresetIconic: true
+Items.Craftable_Rare_Masamune_nowaki_default.isPresetIconic: true
+Items.Craftable_Rare_Masamune_trauma.isPresetIconic: true
 Items.Craftable_Rare_Masamune_default_flashlight.isPresetIconic: true
 Items.Craftable_Rare_Masamune_default_flashlight_shadow.isPresetIconic: true
 Items.Craftable_Rare_Masamune_afterlife.isPresetIconic: true
 # --- Items.Craftable_Epic_Masamune
 Items.Craftable_Epic_Masamune_nowaki_2077.isPresetIconic: true
+Items.Craftable_Epic_Masamune_nowaki_default.isPresetIconic: true
+Items.Craftable_Epic_Masamune_trauma.isPresetIconic: true
 Items.Craftable_Epic_Masamune_default_flashlight.isPresetIconic: true
 Items.Craftable_Epic_Masamune_default_flashlight_shadow.isPresetIconic: true
 Items.Craftable_Epic_Masamune_afterlife.isPresetIconic: true
 # --- Items.Craftable_Legendary_Masamune
 Items.Craftable_Legendary_Masamune_nowaki_2077.isPresetIconic: true
+Items.Craftable_Legendary_Masamune_nowaki_default.isPresetIconic: true
+Items.Craftable_Legendary_Masamune_trauma.isPresetIconic: true
 Items.Craftable_Legendary_Masamune_default_flashlight.isPresetIconic: true
 Items.Craftable_Legendary_Masamune_default_flashlight_shadow.isPresetIconic: true
 Items.Craftable_Legendary_Masamune_afterlife.isPresetIconic: true
