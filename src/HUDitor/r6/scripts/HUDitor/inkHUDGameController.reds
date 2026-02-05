@@ -25,13 +25,13 @@ public class HUDitorInputListener {
     this.cursor.SetTexturePart(n"mouse_frame");
     this.cursor.SetHAlign(inkEHorizontalAlign.Center);
     this.cursor.SetVAlign(inkEVerticalAlign.Center);
-    this.cursor.SetAnchorPoint(new Vector2(0.5, 0.5));
+    this.cursor.SetAnchorPoint(Vector2(0.5, 0.5));
     this.cursor.SetFitToContent(true);
     this.cursor.SetSizeRule(inkESizeRule.Fixed);
     this.cursor.SetVisible(false);
     this.cursor.SetBrushMirrorType(inkBrushMirrorType.NoMirror);
     this.cursor.Reparent(root);
-    this.cursor.ChangeTranslation(new Vector2(600.0, 600.0));
+    this.cursor.ChangeTranslation(Vector2(600.0, 600.0));
   }
 
   protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
@@ -43,12 +43,12 @@ public class HUDitorInputListener {
     if (isActive) {
       if Equals(actionName, n"CameraMouseX") {
         currentInput = ListenerAction.GetValue(action);
-        this.cursor.ChangeTranslation(new Vector2(currentInput, 0.0));
+        this.cursor.ChangeTranslation(Vector2(currentInput, 0.0));
       };
 
       if Equals(actionName, n"CameraMouseY") {
         currentInput = ListenerAction.GetValue(action);
-        this.cursor.ChangeTranslation(new Vector2(0.0, -currentInput));
+        this.cursor.ChangeTranslation(Vector2(0.0, -currentInput));
       };
     };
 

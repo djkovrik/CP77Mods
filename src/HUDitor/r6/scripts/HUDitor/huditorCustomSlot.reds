@@ -19,8 +19,8 @@ public class HUDitorCustomSlot extends inkCanvas {
 
   // Used in Lua
   private func SetPersistedState(locationX: Float, locationY: Float, scaleX: Float, scaleY: Float) {
-    let persistedTranslation: Vector2 = new Vector2(locationX, locationY);
-    let persistedScale: Vector2 = new Vector2(scaleX, scaleY);
+    let persistedTranslation: Vector2 = Vector2(locationX, locationY);
+    let persistedScale: Vector2 = Vector2(scaleX, scaleY);
     this.SetTranslation(persistedTranslation);
     this.SetScale(persistedScale);
   }
@@ -69,15 +69,15 @@ public class HUDitorCustomSlot extends inkCanvas {
 
   public func OnResetHUDWidgets(event: ref<ResetAllHUDWidgets>) -> Void {
     if this.IsHUDWidget() {
-      let scale: Vector2 = new Vector2(0.666667, 0.666667);
-      this.SetTranslation(new Vector2(0.0, 0.0));
+      let scale: Vector2 = Vector2(0.666667, 0.666667);
+      this.SetTranslation(Vector2(0.0, 0.0));
       this.SetScale(scale);
-      this.UpdatePersistedState(new Vector2(0.0, 0.0), scale);
+      this.UpdatePersistedState(Vector2(0.0, 0.0), scale);
     };
   }
 
 
-  protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
+  public cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
     let currentInput: Float;
     let translationAdjustValue: Float = 1.0;
 
@@ -97,7 +97,7 @@ public class HUDitorCustomSlot extends inkCanvas {
         currentInput = ListenerAction.GetValue(action);
         currentTranslation = this.GetTranslation();
         currentTranslation.X += currentInput * 0.6;
-        this.ChangeTranslation(new Vector2(currentInput * 0.6, 0));
+        this.ChangeTranslation(Vector2(currentInput * 0.6, 0));
         this.UpdatePersistedState(currentTranslation, this.GetScale());
       };
 
@@ -105,7 +105,7 @@ public class HUDitorCustomSlot extends inkCanvas {
         currentInput = -ListenerAction.GetValue(action);
         currentTranslation = this.GetTranslation();
         currentTranslation.Y += currentInput * 0.6;
-        this.ChangeTranslation(new Vector2(0, currentInput * 0.6));
+        this.ChangeTranslation(Vector2(0, currentInput * 0.6));
         this.UpdatePersistedState(currentTranslation, this.GetScale());
       };
     };
@@ -162,8 +162,8 @@ public class HUDitorCustomSlot extends inkCanvas {
         finalXScale = 5.0;
       };
           
-      this.SetScale(new Vector2(finalXScale, finalYScale));
-      this.UpdatePersistedState(this.GetTranslation(), new Vector2(finalXScale, finalYScale));
+      this.SetScale(Vector2(finalXScale, finalYScale));
+      this.UpdatePersistedState(this.GetTranslation(), Vector2(finalXScale, finalYScale));
     };
   }
 }
