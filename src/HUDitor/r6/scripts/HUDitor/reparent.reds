@@ -844,6 +844,26 @@ protected cb func OnInitialize() -> Bool {
   return wrap;
 }
 
+// -- Phone avatar fluff cleanup (kudos to Strahlimeier)
+@wrapMethod(NewHudPhoneGameController)
+private func SetPhoneFunction(newState: EHudPhoneFunction) -> Void {
+  wrappedMethod(newState);
+ 
+  // When phone goes inactive, clean up avatar slot
+  if Equals(newState, EHudPhoneFunction.Inactive) {
+    let system: ref<inkSystem> = GameInstance.GetInkSystem();
+    if IsDefined(system) {
+      let hudRoot: ref<inkCompoundWidget> = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
+      if IsDefined(hudRoot) {
+        let phoneAvatarSlot: ref<inkCompoundWidget> = hudRoot.GetWidgetByPathName(n"NewPhoneAvatar") as inkCompoundWidget;
+        if IsDefined(phoneAvatarSlot) {
+          phoneAvatarSlot.RemoveAllChildren();
+        };
+      };
+    };
+  };
+}
+
 // -- FPS Counter hacks
 @addMethod(inkHUDGameController)
 protected cb func OnReparentFpsCounterEvent(evt: ref<ReparentFpsCounterEvent>) -> Bool {
