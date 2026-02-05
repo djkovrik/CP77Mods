@@ -1,3 +1,4 @@
+import Codeware.UI.inkCustomController
 import HUDrag.HUDitorConfig
 import HUDrag.HUDitorWatcher
 
@@ -34,173 +35,25 @@ import FpsCounter.FPSCounterChangeStateEvent
 @addField(inkGameController) public let fpsCounterSlot: wref<HUDitorCustomSlot>;
 
 @addMethod(inkGameController)
-protected cb func OnScannerDetailsAppearedEvent(event: ref<ScannerDetailsAppearedEvent>) -> Bool {
+protected cb func OnActiveHuditorWidgetChanged(event: ref<SetActiveHUDEditorWidgetEvent>) -> Bool {
   if this.IsA(n"gameuiRootHudGameController") {
-    this.minimapSlot.OnScannerDetailsAppearedEvent(event);
-    this.questTrackerSlot.OnScannerDetailsAppearedEvent(event);
-  };
-}
-
-@addMethod(inkGameController)
-protected cb func OnGameSessionInitialized(event: ref<GameSessionInitializedEvent>) -> Bool {
-  if this.IsA(n"gameuiRootHudGameController") {
-    this.minimapSlot.OnGameSessionInitialized(event);
-    this.questTrackerSlot.OnGameSessionInitialized(event);
-    this.wantedSlot.OnGameSessionInitialized(event);
-    this.questNotificationsSlot.OnGameSessionInitialized(event);
-    this.itemNotificationsSlot.OnGameSessionInitialized(event);
-    this.vehicleSummonSlot.OnGameSessionInitialized(event);
-    this.weaponRosterSlot.OnGameSessionInitialized(event);
-    this.crouchIndicatorSlot.OnGameSessionInitialized(event);
-    this.dpadSlot.OnGameSessionInitialized(event);
-    this.phoneHotkeySlot.OnGameSessionInitialized(event);
-    this.healthbarSlot.OnGameSessionInitialized(event);
-    this.staminaBarSlot.OnGameSessionInitialized(event);
-    this.phoneCallAvatarSlot.OnGameSessionInitialized(event);
-    this.phoneControlSlot.OnGameSessionInitialized(event);
-    this.inputHintSlot.OnGameSessionInitialized(event);
-    this.carHudSlot.OnGameSessionInitialized(event);
-    this.autoDriveSlot.OnGameSessionInitialized(event);
-    this.crystalCoatSlot.OnGameSessionInitialized(event);
-    this.vehicleRadioSlot.OnGameSessionInitialized(event);
-    this.vehicleHotkeySlot.OnGameSessionInitialized(event);
-    this.bossHealthbarSlot.OnGameSessionInitialized(event);
-    this.dialogChoicesSlot.OnGameSessionInitialized(event);
-    this.dialogSubtitlesSlot.OnGameSessionInitialized(event);
-    this.progressBarSlot.OnGameSessionInitialized(event);
-    this.e3CompassSlot.OnGameSessionInitialized(event);
-    this.fpsCounterSlot.OnGameSessionInitialized(event);
-  };
-}
-
-@addMethod(inkGameController)
-protected cb func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidgetEvent>) -> Bool {
-  if this.IsA(n"gameuiRootHudGameController") {
-    this.minimapSlot.OnEnableHUDEditorWidget(event);
-    this.questTrackerSlot.OnEnableHUDEditorWidget(event);
-    this.wantedSlot.OnEnableHUDEditorWidget(event);
-    this.questNotificationsSlot.OnEnableHUDEditorWidget(event);
-    this.itemNotificationsSlot.OnEnableHUDEditorWidget(event);
-    this.vehicleSummonSlot.OnEnableHUDEditorWidget(event);
-    this.weaponRosterSlot.OnEnableHUDEditorWidget(event);
-    this.crouchIndicatorSlot.OnEnableHUDEditorWidget(event);
-    this.dpadSlot.OnEnableHUDEditorWidget(event);
-    this.phoneHotkeySlot.OnEnableHUDEditorWidget(event);
-    this.healthbarSlot.OnEnableHUDEditorWidget(event);
-    this.staminaBarSlot.OnEnableHUDEditorWidget(event);
-    this.phoneCallAvatarSlot.OnEnableHUDEditorWidget(event);
-    this.phoneControlSlot.OnEnableHUDEditorWidget(event);
-    this.inputHintSlot.OnEnableHUDEditorWidget(event);
-    this.carHudSlot.OnEnableHUDEditorWidget(event);
-    this.autoDriveSlot.OnEnableHUDEditorWidget(event);
-    this.crystalCoatSlot.OnEnableHUDEditorWidget(event);
-    this.vehicleRadioSlot.OnEnableHUDEditorWidget(event);
-    this.vehicleHotkeySlot.OnEnableHUDEditorWidget(event);
-    this.bossHealthbarSlot.OnEnableHUDEditorWidget(event);
-    this.dialogChoicesSlot.OnEnableHUDEditorWidget(event);
-    this.dialogSubtitlesSlot.OnEnableHUDEditorWidget(event);
-    this.progressBarSlot.OnEnableHUDEditorWidget(event);
-    this.e3CompassSlot.OnEnableHUDEditorWidget(event);
-    this.fpsCounterSlot.OnEnableHUDEditorWidget(event);
     this.huditorWidgetName.SetVisible(true);
     this.huditorWidgetName.SetText(HUDitorTexts.GetWidgetName(event.activeWidget));
   };
 }
 
 @addMethod(inkGameController)
-protected cb func OnDisableHUDEditorWidgets(event: ref<DisableHUDEditor>) -> Bool {
+protected cb func OnHuditorDisableEvent(event: ref<DisableHUDEditorEvent>) -> Bool {
   if this.IsA(n"gameuiRootHudGameController") {
-    this.minimapSlot.OnDisableHUDEditorWidgets(event);
-    this.questTrackerSlot.OnDisableHUDEditorWidgets(event);
-    this.wantedSlot.OnDisableHUDEditorWidgets(event);
-    this.questNotificationsSlot.OnDisableHUDEditorWidgets(event);
-    this.itemNotificationsSlot.OnDisableHUDEditorWidgets(event);
-    this.vehicleSummonSlot.OnDisableHUDEditorWidgets(event);
-    this.weaponRosterSlot.OnDisableHUDEditorWidgets(event);
-    this.crouchIndicatorSlot.OnDisableHUDEditorWidgets(event);
-    this.dpadSlot.OnDisableHUDEditorWidgets(event);
-    this.phoneHotkeySlot.OnDisableHUDEditorWidgets(event);
-    this.healthbarSlot.OnDisableHUDEditorWidgets(event);
-    this.staminaBarSlot.OnDisableHUDEditorWidgets(event);
-    this.phoneCallAvatarSlot.OnDisableHUDEditorWidgets(event);
-    this.phoneControlSlot.OnDisableHUDEditorWidgets(event);
-    this.inputHintSlot.OnDisableHUDEditorWidgets(event);
-    this.carHudSlot.OnDisableHUDEditorWidgets(event);
-    this.autoDriveSlot.OnDisableHUDEditorWidgets(event);
-    this.crystalCoatSlot.OnDisableHUDEditorWidgets(event);
-    this.vehicleRadioSlot.OnDisableHUDEditorWidgets(event);
-    this.vehicleHotkeySlot.OnDisableHUDEditorWidgets(event);
-    this.bossHealthbarSlot.OnDisableHUDEditorWidgets(event);
-    this.dialogChoicesSlot.OnDisableHUDEditorWidgets(event);
-    this.dialogSubtitlesSlot.OnDisableHUDEditorWidgets(event);
-    this.progressBarSlot.OnDisableHUDEditorWidgets(event);
-    this.e3CompassSlot.OnDisableHUDEditorWidgets(event);
-    this.fpsCounterSlot.OnDisableHUDEditorWidgets(event);
     this.huditorWidgetName.SetVisible(false);
   };
 }
 
 @addMethod(inkGameController)
-protected cb func OnResetHUDWidgets(event: ref<ResetAllHUDWidgets>) {
+protected cb func OnScannerDetailsAppearedEvent(event: ref<ScannerDetailsAppearedEvent>) -> Bool {
   if this.IsA(n"gameuiRootHudGameController") {
-    this.minimapSlot.OnResetHUDWidgets(event);
-    this.questTrackerSlot.OnResetHUDWidgets(event);
-    this.wantedSlot.OnResetHUDWidgets(event);
-    this.questNotificationsSlot.OnResetHUDWidgets(event);
-    this.itemNotificationsSlot.OnResetHUDWidgets(event);
-    this.vehicleSummonSlot.OnResetHUDWidgets(event);
-    this.weaponRosterSlot.OnResetHUDWidgets(event);
-    this.crouchIndicatorSlot.OnResetHUDWidgets(event);
-    this.dpadSlot.OnResetHUDWidgets(event);
-    this.phoneHotkeySlot.OnResetHUDWidgets(event);
-    this.healthbarSlot.OnResetHUDWidgets(event);
-    this.staminaBarSlot.OnResetHUDWidgets(event);
-    this.phoneCallAvatarSlot.OnResetHUDWidgets(event);
-    this.phoneControlSlot.OnResetHUDWidgets(event);
-    this.inputHintSlot.OnResetHUDWidgets(event);
-    this.carHudSlot.OnResetHUDWidgets(event);
-    this.autoDriveSlot.OnResetHUDWidgets(event);
-    this.crystalCoatSlot.OnResetHUDWidgets(event);
-    this.vehicleRadioSlot.OnResetHUDWidgets(event);
-    this.vehicleHotkeySlot.OnResetHUDWidgets(event);
-    this.bossHealthbarSlot.OnResetHUDWidgets(event);
-    this.dialogChoicesSlot.OnResetHUDWidgets(event);
-    this.dialogSubtitlesSlot.OnResetHUDWidgets(event);
-    this.progressBarSlot.OnResetHUDWidgets(event);
-    this.e3CompassSlot.OnResetHUDWidgets(event);
-    this.fpsCounterSlot.OnResetHUDWidgets(event);
-  };
-}
-
-@addMethod(inkGameController)
-protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
-  if this.IsA(n"gameuiRootHudGameController") {
-    this.minimapSlot.OnAction(action, consumer);
-    this.questTrackerSlot.OnAction(action, consumer);
-    this.wantedSlot.OnAction(action, consumer);
-    this.questNotificationsSlot.OnAction(action, consumer);
-    this.itemNotificationsSlot.OnAction(action, consumer);
-    this.vehicleSummonSlot.OnAction(action, consumer);
-    this.weaponRosterSlot.OnAction(action, consumer);
-    this.crouchIndicatorSlot.OnAction(action, consumer);
-    this.dpadSlot.OnAction(action, consumer);
-    this.phoneHotkeySlot.OnAction(action, consumer);
-    this.healthbarSlot.OnAction(action, consumer);
-    this.staminaBarSlot.OnAction(action, consumer);
-    this.phoneCallAvatarSlot.OnAction(action, consumer);
-    this.phoneControlSlot.OnAction(action, consumer);
-    this.inputHintSlot.OnAction(action, consumer);
-    this.carHudSlot.OnAction(action, consumer);
-    this.autoDriveSlot.OnAction(action, consumer);
-    this.crystalCoatSlot.OnAction(action, consumer);
-    this.vehicleRadioSlot.OnAction(action, consumer);
-    this.vehicleHotkeySlot.OnAction(action, consumer);
-    this.bossHealthbarSlot.OnAction(action, consumer);
-    this.dialogChoicesSlot.OnAction(action, consumer);
-    this.dialogSubtitlesSlot.OnAction(action, consumer);
-    this.progressBarSlot.OnAction(action, consumer);
-    this.e3CompassSlot.OnAction(action, consumer);
-    this.fpsCounterSlot.OnAction(action, consumer);
+    this.minimapSlot.OnScannerDetailsAppearedEvent(event);
+    this.questTrackerSlot.OnScannerDetailsAppearedEvent(event);
   };
 }
 
@@ -231,8 +84,7 @@ private func CreateCustomSlots() -> Void {
   let config: ref<HUDitorConfig> = new HUDitorConfig();
 
   if config.questTrackerEnabled {
-    let questTrackerSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-    questTrackerSlot.SetName(n"NewTracker");
+    let questTrackerSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewTracker");
     questTrackerSlot.SetFitToContent(true);
     questTrackerSlot.SetInteractive(false);
     questTrackerSlot.SetAffectsLayoutWhenHidden(false);
@@ -245,8 +97,7 @@ private func CreateCustomSlots() -> Void {
   };
 
   if config.minimapEnabled && !config.compatE3CompassEnabled {
-    let minimapSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-    minimapSlot.SetName(n"NewMinimap");
+    let minimapSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewMinimap");
     minimapSlot.SetFitToContent(true);
     minimapSlot.SetInteractive(false);
     minimapSlot.SetAffectsLayoutWhenHidden(false);
@@ -259,8 +110,7 @@ private func CreateCustomSlots() -> Void {
   };
 
   if config.wantedBarEnabled {
-    let wantedSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-    wantedSlot.SetName(n"NewWanted");
+    let wantedSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewWanted");
     wantedSlot.SetFitToContent(true);
     wantedSlot.SetInteractive(false);
     wantedSlot.SetAffectsLayoutWhenHidden(false);
@@ -274,8 +124,7 @@ private func CreateCustomSlots() -> Void {
   };
 
   if config.questNotificationsEnabled {
-    let questNotificationsSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-    questNotificationsSlot.SetName(n"NewQuestNotifications");
+    let questNotificationsSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewQuestNotifications");
     questNotificationsSlot.SetFitToContent(true);
     questNotificationsSlot.SetInteractive(false);
     questNotificationsSlot.SetAffectsLayoutWhenHidden(false);
@@ -289,8 +138,7 @@ private func CreateCustomSlots() -> Void {
   };
 
   if config.itemNotificationsEnabled {
-    let itemNotificationsSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-    itemNotificationsSlot.SetName(n"NewItemNotifications");
+    let itemNotificationsSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewItemNotifications");
     itemNotificationsSlot.SetFitToContent(true);
     itemNotificationsSlot.SetInteractive(false);
     itemNotificationsSlot.SetAffectsLayoutWhenHidden(false);
@@ -304,8 +152,7 @@ private func CreateCustomSlots() -> Void {
   };
 
   if config.vehicleSummonEnabled {
-    let vehicleSummonSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-    vehicleSummonSlot.SetName(n"NewVehicleSummon");
+    let vehicleSummonSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewVehicleSummon");
     vehicleSummonSlot.SetFitToContent(true);
     vehicleSummonSlot.SetInteractive(false);
     vehicleSummonSlot.SetAffectsLayoutWhenHidden(false);
@@ -319,8 +166,7 @@ private func CreateCustomSlots() -> Void {
   };
 
   if config.weaponRosterEnabled {
-    let weaponRosterSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-    weaponRosterSlot.SetName(n"NewWeaponRoster");
+    let weaponRosterSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewWeaponRoster");
     weaponRosterSlot.SetFitToContent(true);
     weaponRosterSlot.SetInteractive(false);
     weaponRosterSlot.SetAffectsLayoutWhenHidden(false);
@@ -334,8 +180,7 @@ private func CreateCustomSlots() -> Void {
   };
 
   if config.crouchIndicatorEnabled {
-    let crouchIndicatorSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-    crouchIndicatorSlot.SetName(n"NewCrouchIndicator");
+    let crouchIndicatorSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewCrouchIndicator");
     crouchIndicatorSlot.SetFitToContent(true);
     crouchIndicatorSlot.SetInteractive(false);
     crouchIndicatorSlot.SetAffectsLayoutWhenHidden(false);
@@ -349,8 +194,7 @@ private func CreateCustomSlots() -> Void {
   }
 
   if config.dpadEnabled {
-    let dpadSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-    dpadSlot.SetName(n"NewDpad");
+    let dpadSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewDpad");
     dpadSlot.SetFitToContent(true);
     dpadSlot.SetInteractive(false);
     dpadSlot.SetAffectsLayoutWhenHidden(false);
@@ -364,8 +208,7 @@ private func CreateCustomSlots() -> Void {
   };
 
   if config.phoneHotkeyEnabled {
-    let phoneHotkeySlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-    phoneHotkeySlot.SetName(n"NewPhoneHotkey");
+    let phoneHotkeySlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewPhoneHotkey");
     phoneHotkeySlot.SetFitToContent(true);
     phoneHotkeySlot.SetInteractive(false);
     phoneHotkeySlot.SetAffectsLayoutWhenHidden(false);
@@ -379,8 +222,7 @@ private func CreateCustomSlots() -> Void {
   };
 
   if config.playerHealthbarEnabled {
-    let healthbarSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-    healthbarSlot.SetName(n"NewHealthBar");
+    let healthbarSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewHealthBar");
     healthbarSlot.SetFitToContent(true);
     healthbarSlot.SetInteractive(false);
     healthbarSlot.SetAffectsLayoutWhenHidden(false);
@@ -394,8 +236,7 @@ private func CreateCustomSlots() -> Void {
   };
 
   if config.playerStaminabarEnabled {
-    let staminaBarSlot: ref<HUDitorCustomSlot>  = new HUDitorCustomSlot();
-    staminaBarSlot.SetName(n"NewStaminaBar");
+    let staminaBarSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewStaminaBar");
     staminaBarSlot.SetFitToContent(true);
     staminaBarSlot.SetInteractive(false);
     staminaBarSlot.SetAffectsLayoutWhenHidden(false);
@@ -409,8 +250,7 @@ private func CreateCustomSlots() -> Void {
   };
 
   if config.incomingCallAvatarEnabled {
-    let phoneCallAvatarSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-    phoneCallAvatarSlot.SetName(n"NewPhoneAvatar");
+    let phoneCallAvatarSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewPhoneAvatar");
     phoneCallAvatarSlot.SetFitToContent(true);
     phoneCallAvatarSlot.SetInteractive(false);
     phoneCallAvatarSlot.SetAffectsLayoutWhenHidden(false);
@@ -423,8 +263,7 @@ private func CreateCustomSlots() -> Void {
   };
 
   if config.incomingCallButtonEnabled {
-    let phoneControlSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-    phoneControlSlot.SetName(n"NewPhoneControl");
+    let phoneControlSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewPhoneControl");
     phoneControlSlot.SetFitToContent(true);
     phoneControlSlot.SetInteractive(false);
     phoneControlSlot.SetAffectsLayoutWhenHidden(false);
@@ -438,8 +277,7 @@ private func CreateCustomSlots() -> Void {
   };
 
   if config.inputHintsEnabled {
-    let inputHintSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-    inputHintSlot.SetName(n"NewInputHint");
+    let inputHintSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewInputHint");
     inputHintSlot.SetFitToContent(true);
     inputHintSlot.SetInteractive(false);
     inputHintSlot.SetAffectsLayoutWhenHidden(false);
@@ -453,8 +291,7 @@ private func CreateCustomSlots() -> Void {
   };
 
   if config.speedometerEnabled {
-    let carHudSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-    carHudSlot.SetName(n"NewCarHud");
+    let carHudSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewCarHud");
     carHudSlot.SetFitToContent(true);
     carHudSlot.SetInteractive(false);
     carHudSlot.SetAffectsLayoutWhenHidden(false);
@@ -468,8 +305,7 @@ private func CreateCustomSlots() -> Void {
   };
 
   if config.autoDriveEnabled {
-    let autoDriveSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-    autoDriveSlot.SetName(n"NewAutoDrive");
+    let autoDriveSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewAutoDrive");
     autoDriveSlot.SetFitToContent(true);
     autoDriveSlot.SetInteractive(false);
     autoDriveSlot.SetAffectsLayoutWhenHidden(false);
@@ -483,8 +319,7 @@ private func CreateCustomSlots() -> Void {
   };
 
   if config.crystalCoatEnabled {
-    let crystalCoatSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-    crystalCoatSlot.SetName(n"NewCrystalCoat");
+    let crystalCoatSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewCrystalCoat");
     crystalCoatSlot.SetFitToContent(true);
     crystalCoatSlot.SetInteractive(false);
     crystalCoatSlot.SetAffectsLayoutWhenHidden(false);
@@ -498,8 +333,7 @@ private func CreateCustomSlots() -> Void {
   };
 
   if config.vehicleRadioEnabled {
-    let vehicleRadioSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-    vehicleRadioSlot.SetName(n"NewVehicleRadio");
+    let vehicleRadioSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewVehicleRadio");
     vehicleRadioSlot.SetFitToContent(true);
     vehicleRadioSlot.SetInteractive(false);
     vehicleRadioSlot.SetAffectsLayoutWhenHidden(false);
@@ -513,8 +347,7 @@ private func CreateCustomSlots() -> Void {
   };
 
   if config.vehicleHotkeyEnabled {
-    let vehicleHotkeySlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-    vehicleHotkeySlot.SetName(n"NewVehicleHotkey");
+    let vehicleHotkeySlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewVehicleHotkey");
     vehicleHotkeySlot.SetFitToContent(true);
     vehicleHotkeySlot.SetInteractive(false);
     vehicleHotkeySlot.SetAffectsLayoutWhenHidden(false);
@@ -525,11 +358,11 @@ private func CreateCustomSlots() -> Void {
     root.RemoveChildByName(n"NewVehicleHotkey");
     vehicleHotkeySlot.Reparent(root, 19);
     this.vehicleHotkeySlot = vehicleHotkeySlot;
+    ModLog(n"DEBUG", "Vehicle hotkey slot created");
   };
 
   if config.bossHealthbarEnabled {
-    let bossHealthbarSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-    bossHealthbarSlot.SetName(n"NewBossHealthbar");
+    let bossHealthbarSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewBossHealthbar");
     bossHealthbarSlot.SetFitToContent(true);
     bossHealthbarSlot.SetInteractive(false);
     bossHealthbarSlot.SetAffectsLayoutWhenHidden(false);
@@ -543,8 +376,7 @@ private func CreateCustomSlots() -> Void {
   };
 
   if config.dialogChoicesEnabled {
-    let dialogChoicesSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-    dialogChoicesSlot.SetName(n"NewDialogChoices");
+    let dialogChoicesSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewDialogChoices");
     dialogChoicesSlot.SetFitToContent(true);
     dialogChoicesSlot.SetInteractive(false);
     dialogChoicesSlot.SetAffectsLayoutWhenHidden(false);
@@ -558,8 +390,7 @@ private func CreateCustomSlots() -> Void {
   };
 
   if config.dialogSubtitlesEnabled {
-    let dialogSubtitlesSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-    dialogSubtitlesSlot.SetName(n"NewDialogSubtitles");
+    let dialogSubtitlesSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewDialogSubtitles");
     dialogSubtitlesSlot.SetFitToContent(false);
     dialogSubtitlesSlot.SetInteractive(false);
     dialogSubtitlesSlot.SetAffectsLayoutWhenHidden(false);
@@ -572,8 +403,7 @@ private func CreateCustomSlots() -> Void {
   };
 
   if config.progressWidgetEnabled {
-    let progressBarSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-    progressBarSlot.SetName(n"NewProgressBar");
+    let progressBarSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewProgressBar");
     progressBarSlot.SetFitToContent(false);
     progressBarSlot.SetInteractive(false);
     progressBarSlot.SetAffectsLayoutWhenHidden(false);
@@ -585,8 +415,7 @@ private func CreateCustomSlots() -> Void {
   };
 
   if config.compatE3CompassEnabled {
-    let e3CompassSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-    e3CompassSlot.SetName(n"NewCompass");
+    let e3CompassSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewCompass");
     e3CompassSlot.SetFitToContent(false);
     e3CompassSlot.SetInteractive(false);
     e3CompassSlot.SetAffectsLayoutWhenHidden(false);
@@ -600,8 +429,7 @@ private func CreateCustomSlots() -> Void {
   };
 
   if config.fpsCounterEnabled {
-    let fpsCounterSlot: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
-    fpsCounterSlot.SetName(n"NewFpsCounter");
+    let fpsCounterSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewFpsCounter");
     fpsCounterSlot.SetFitToContent(false);
     fpsCounterSlot.SetInteractive(false);
     fpsCounterSlot.SetAffectsLayoutWhenHidden(false);
@@ -630,132 +458,132 @@ private func InitBaseWidgets() -> Void {
         if !config.questTrackerEnabled { break; }
         targetWidget = controller.GetRootCompoundWidget();
         targetWidget.SetAnchorPoint(Vector2(1.0, 0.0));
-        targetWidget.Reparent(this.questTrackerSlot);
+        targetWidget.Reparent(this.questTrackerSlot.GetRootCompoundWidget());
         break;
       case n"gameuiMinimapContainerController":
         if !config.minimapEnabled { break; }
         targetWidget = controller.GetRootCompoundWidget();
         targetWidget.SetAnchorPoint(Vector2(1.0, 0.0));
-        targetWidget.Reparent(this.minimapSlot);
+        targetWidget.Reparent(this.minimapSlot.GetRootCompoundWidget());
         break;
       case n"WantedBarGameController":
         if !config.wantedBarEnabled { break; }
         targetWidget = controller.GetRootCompoundWidget();
         targetWidget.SetAnchorPoint(Vector2(0.0, 1.0));
-        targetWidget.Reparent(this.wantedSlot);
+        targetWidget.Reparent(this.wantedSlot.GetRootCompoundWidget());
         break;
       case n"JournalNotificationQueue":
         if !config.questNotificationsEnabled { break; }
         targetWidget = controller.GetRootCompoundWidget();
         targetWidget.SetAnchorPoint(Vector2(0.0, 1.0));
-        targetWidget.Reparent(this.questNotificationsSlot);
+        targetWidget.Reparent(this.questNotificationsSlot.GetRootCompoundWidget());
         break;
       case n"ItemsNotificationQueue":
         if !config.itemNotificationsEnabled { break; }
         targetWidget = controller.GetRootCompoundWidget();
         targetWidget.SetAnchorPoint(Vector2(0.0, 0.0));
-        targetWidget.Reparent(this.itemNotificationsSlot);
+        targetWidget.Reparent(this.itemNotificationsSlot.GetRootCompoundWidget());
         break;
       case n"VehicleSummonWidgetGameController":
         if !config.vehicleSummonEnabled { break; }
         targetWidget = controller.GetRootCompoundWidget();
         targetWidget.SetAnchorPoint(Vector2(1.0, 1.0));
-        targetWidget.Reparent(this.vehicleSummonSlot);
+        targetWidget.Reparent(this.vehicleSummonSlot.GetRootCompoundWidget());
         break;
       case n"gameuiWeaponRosterGameController":
         if !config.weaponRosterEnabled { break; }
         targetWidget = controller.GetRootCompoundWidget();
         targetWidget.SetAnchorPoint(Vector2(1.0, 1.0));
-        targetWidget.Reparent(this.weaponRosterSlot);
+        targetWidget.Reparent(this.weaponRosterSlot.GetRootCompoundWidget());
         break;
       case n"CrouchIndicatorGameController":
         if !config.crouchIndicatorEnabled { break; }
         targetWidget = controller.GetRootCompoundWidget();
         targetWidget.SetAnchorPoint(Vector2(1.0, 1.0));
-        targetWidget.Reparent(this.crouchIndicatorSlot);
+        targetWidget.Reparent(this.crouchIndicatorSlot.GetRootCompoundWidget());
         break;
       case n"HotkeysWidgetController":
         if !config.dpadEnabled { break; }
         targetWidget = controller.GetRootCompoundWidget();
         targetWidget.SetAnchorPoint(Vector2(0.0, 1.0));
-        targetWidget.Reparent(this.dpadSlot);
+        targetWidget.Reparent(this.dpadSlot.GetRootCompoundWidget());
         break;
       case n"PhoneHotkeyController":
       if !config.phoneHotkeyEnabled { break; }
         targetWidget = controller.GetRootCompoundWidget();
         targetWidget.SetAnchorPoint(Vector2(0.5, 0.5));
-        targetWidget.Reparent(this.phoneHotkeySlot);
+        targetWidget.Reparent(this.phoneHotkeySlot.GetRootCompoundWidget());
         break;
       case n"gameuiHudHealthbarGameController":
         if !config.playerHealthbarEnabled { break; }
         targetWidget = controller.GetRootCompoundWidget();
         targetWidget.SetAnchorPoint(Vector2(0.0, 0.0));
-        targetWidget.Reparent(this.healthbarSlot);
+        targetWidget.Reparent(this.healthbarSlot.GetRootCompoundWidget());
         break;
       case n"StaminabarWidgetGameController":
         if !config.playerStaminabarEnabled { break; }
         targetWidget = controller.GetRootCompoundWidget();
         targetWidget.SetAnchorPoint(Vector2(0.0, 0.0));
-        targetWidget.Reparent(this.staminaBarSlot);
+        targetWidget.Reparent(this.staminaBarSlot.GetRootCompoundWidget());
         break;
       case n"gameuiInputHintManagerGameController":
         if !config.inputHintsEnabled { break; }
         targetWidget = controller.GetRootCompoundWidget();
         targetWidget.SetAnchorPoint(Vector2(1.0, 0.5));
-        targetWidget.Reparent(this.inputHintSlot);
+        targetWidget.Reparent(this.inputHintSlot.GetRootCompoundWidget());
         break;
       case n"hudCarController":
         if !config.speedometerEnabled { break; }
         targetWidget = controller.GetRootCompoundWidget();
         targetWidget.SetAnchorPoint(Vector2(0.0, 1.0));
-        targetWidget.Reparent(this.carHudSlot);
+        targetWidget.Reparent(this.carHudSlot.GetRootCompoundWidget());
         break;
       case n"AutoDriveController":
         if !config.autoDriveEnabled { break; }
         targetWidget = controller.GetRootCompoundWidget();
         targetWidget.SetAnchorPoint(Vector2(0.0, 1.0));
-        targetWidget.Reparent(this.autoDriveSlot);
+        targetWidget.Reparent(this.autoDriveSlot.GetRootCompoundWidget());
         break;
       case n"vehicleVisualCustomizationHotkeyController":
         if !config.crystalCoatEnabled { break; }
         targetWidget = controller.GetRootCompoundWidget();
         targetWidget.SetAnchorPoint(Vector2(0.0, 1.0));
-        targetWidget.Reparent(this.crystalCoatSlot);
+        targetWidget.Reparent(this.crystalCoatSlot.GetRootCompoundWidget());
         break;
       case n"RadioHotkeyController":
         if !config.vehicleRadioEnabled { break; }
         targetWidget = controller.GetRootCompoundWidget();
         targetWidget.SetAnchorPoint(Vector2(0.0, 1.0));
-        targetWidget.Reparent(this.vehicleRadioSlot);
+        targetWidget.Reparent(this.vehicleRadioSlot.GetRootCompoundWidget());
         break;
       case n"BossHealthBarGameController":
         if !config.bossHealthbarEnabled { break; }
         targetWidget = controller.GetRootCompoundWidget();
         targetWidget.SetAnchorPoint(Vector2(0.5, 0.0));
-        targetWidget.Reparent(this.bossHealthbarSlot);
+        targetWidget.Reparent(this.bossHealthbarSlot.GetRootCompoundWidget());
         break;
       case n"dialogWidgetGameController":
         if !config.dialogChoicesEnabled { break; }
         targetWidget = controller.GetRootCompoundWidget();
         targetWidget.SetAnchorPoint(Vector2(0.5, 0.5));
-        targetWidget.Reparent(this.dialogChoicesSlot);
+        targetWidget.Reparent(this.dialogChoicesSlot.GetRootCompoundWidget());
         break;
       case n"SubtitlesGameController":
         if !config.dialogSubtitlesEnabled { break; }
         targetWidget = controller.GetRootCompoundWidget();
         targetWidget.SetAnchorPoint(Vector2(0.5, 1.0));
-        targetWidget.Reparent(this.dialogSubtitlesSlot);
+        targetWidget.Reparent(this.dialogSubtitlesSlot.GetRootCompoundWidget());
         break;
       case n"HUDProgressBarController":
         if !config.progressWidgetEnabled { break; }
         targetWidget = controller.GetRootCompoundWidget();
         targetWidget.SetAnchorPoint(Vector2(0.5, 1.0));
-        targetWidget.Reparent(this.progressBarSlot);
+        targetWidget.Reparent(this.progressBarSlot.GetRootCompoundWidget());
         break;
       case n"IronsightGameController":
         if !config.compatE3CompassEnabled { break; }
         targetWidget = controller.GetRootCompoundWidget();
-        targetWidget.Reparent(this.e3CompassSlot);
+        targetWidget.Reparent(this.e3CompassSlot.GetRootCompoundWidget());
         break;
     };
   }
@@ -768,28 +596,28 @@ private func InitResolutionWatcher() -> Void {
   let system: ref<HUDitorWatcher> = HUDitorWatcher.Get(GetGameInstance());
   system.AddTarget(this.huditorWidgetName);
   
-  if IsDefined(this.minimapSlot) { system.AddTarget(this.minimapSlot); }
-  if IsDefined(this.questTrackerSlot) { system.AddTarget(this.questTrackerSlot); }
-  if IsDefined(this.wantedSlot) { system.AddTarget(this.wantedSlot); }
-  if IsDefined(this.questNotificationsSlot) { system.AddTarget(this.questNotificationsSlot); }
-  if IsDefined(this.itemNotificationsSlot) { system.AddTarget(this.itemNotificationsSlot); }
-  if IsDefined(this.vehicleSummonSlot) { system.AddTarget(this.vehicleSummonSlot); }
-  if IsDefined(this.weaponRosterSlot) { system.AddTarget(this.weaponRosterSlot); }
-  if IsDefined(this.crouchIndicatorSlot) { system.AddTarget(this.crouchIndicatorSlot); }
-  if IsDefined(this.dpadSlot) { system.AddTarget(this.dpadSlot); }
-  if IsDefined(this.phoneHotkeySlot) { system.AddTarget(this.phoneHotkeySlot); }
-  if IsDefined(this.healthbarSlot) { system.AddTarget(this.healthbarSlot); }
-  if IsDefined(this.staminaBarSlot) { system.AddTarget(this.staminaBarSlot); }
-  if IsDefined(this.phoneCallAvatarSlot) { system.AddTarget(this.phoneCallAvatarSlot); }
-  if IsDefined(this.phoneControlSlot) { system.AddTarget(this.phoneControlSlot); }
-  if IsDefined(this.inputHintSlot) { system.AddTarget(this.inputHintSlot); }
-  if IsDefined(this.carHudSlot) { system.AddTarget(this.carHudSlot); }
-  if IsDefined(this.bossHealthbarSlot) { system.AddTarget(this.bossHealthbarSlot); }
-  if IsDefined(this.dialogChoicesSlot) { system.AddTarget(this.dialogChoicesSlot); }
-  if IsDefined(this.dialogSubtitlesSlot) { system.AddTarget(this.dialogSubtitlesSlot); }
-  if IsDefined(this.progressBarSlot) { system.AddTarget(this.progressBarSlot); }
-  if IsDefined(this.e3CompassSlot) { system.AddTarget(this.e3CompassSlot); }
-  if IsDefined(this.fpsCounterSlot) { system.AddTarget(this.fpsCounterSlot); }
+  if IsDefined(this.minimapSlot) { system.AddTarget(this.minimapSlot.GetRootCompoundWidget()); }
+  if IsDefined(this.questTrackerSlot) { system.AddTarget(this.questTrackerSlot.GetRootCompoundWidget()); }
+  if IsDefined(this.wantedSlot) { system.AddTarget(this.wantedSlot.GetRootCompoundWidget()); }
+  if IsDefined(this.questNotificationsSlot) { system.AddTarget(this.questNotificationsSlot.GetRootCompoundWidget()); }
+  if IsDefined(this.itemNotificationsSlot) { system.AddTarget(this.itemNotificationsSlot.GetRootCompoundWidget()); }
+  if IsDefined(this.vehicleSummonSlot) { system.AddTarget(this.vehicleSummonSlot.GetRootCompoundWidget()); }
+  if IsDefined(this.weaponRosterSlot) { system.AddTarget(this.weaponRosterSlot.GetRootCompoundWidget()); }
+  if IsDefined(this.crouchIndicatorSlot) { system.AddTarget(this.crouchIndicatorSlot.GetRootCompoundWidget()); }
+  if IsDefined(this.dpadSlot) { system.AddTarget(this.dpadSlot.GetRootCompoundWidget()); }
+  if IsDefined(this.phoneHotkeySlot) { system.AddTarget(this.phoneHotkeySlot.GetRootCompoundWidget()); }
+  if IsDefined(this.healthbarSlot) { system.AddTarget(this.healthbarSlot.GetRootCompoundWidget()); }
+  if IsDefined(this.staminaBarSlot) { system.AddTarget(this.staminaBarSlot.GetRootCompoundWidget()); }
+  if IsDefined(this.phoneCallAvatarSlot) { system.AddTarget(this.phoneCallAvatarSlot.GetRootCompoundWidget()); }
+  if IsDefined(this.phoneControlSlot) { system.AddTarget(this.phoneControlSlot.GetRootCompoundWidget()); }
+  if IsDefined(this.inputHintSlot) { system.AddTarget(this.inputHintSlot.GetRootCompoundWidget()); }
+  if IsDefined(this.carHudSlot) { system.AddTarget(this.carHudSlot.GetRootCompoundWidget()); }
+  if IsDefined(this.bossHealthbarSlot) { system.AddTarget(this.bossHealthbarSlot.GetRootCompoundWidget()); }
+  if IsDefined(this.dialogChoicesSlot) { system.AddTarget(this.dialogChoicesSlot.GetRootCompoundWidget()); }
+  if IsDefined(this.dialogSubtitlesSlot) { system.AddTarget(this.dialogSubtitlesSlot.GetRootCompoundWidget()); }
+  if IsDefined(this.progressBarSlot) { system.AddTarget(this.progressBarSlot.GetRootCompoundWidget()); }
+  if IsDefined(this.e3CompassSlot) { system.AddTarget(this.e3CompassSlot.GetRootCompoundWidget()); }
+  if IsDefined(this.fpsCounterSlot) { system.AddTarget(this.fpsCounterSlot.GetRootCompoundWidget()); }
 }
 
 @addMethod(inkGameController)

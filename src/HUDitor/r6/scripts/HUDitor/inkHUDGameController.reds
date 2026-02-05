@@ -89,15 +89,14 @@ public class HUDitorInputListener {
 
       if isActive {
         if Equals(actionName, n"world_map_filter_navigation_down") {
-          let resetEvent: ref<ResetAllHUDWidgets> = new ResetAllHUDWidgets();
-          this.uiSystem.QueueEvent(resetEvent);
+          this.uiSystem.QueueEvent(new ResetAllHUDWidgetsEvent());
         };
 
         if Equals(actionName, n"cancel") || Equals(actionName, n"back") {
           HUDWidgetsManager.GetInstance().isActive = false;
 
           this.uiSystem.QueueEvent(new HidePreviewEvent());
-          this.uiSystem.QueueEvent(new DisableHUDEditor());
+          this.uiSystem.QueueEvent(new DisableHUDEditorEvent());
           this.systemRequestsHandler.UnpauseGame();
 
           this.cursor.SetVisible(false);
@@ -133,7 +132,7 @@ public class HUDitorInputListener {
             HUDWidgetsManager.GetInstance().isActive = false;
 
             this.uiSystem.QueueEvent(new HidePreviewEvent());
-            this.uiSystem.QueueEvent(new DisableHUDEditor());
+            this.uiSystem.QueueEvent(new DisableHUDEditorEvent());
             this.systemRequestsHandler.UnpauseGame();
 
             this.cursor.SetVisible(false);

@@ -1,8 +1,93 @@
+import Codeware.UI.inkCustomController
 import HUDrag.HUDWidgetsManager.*
 
-public class HUDitorCustomSlot extends inkCanvas {
-  
+public class HUDitorCustomSlot extends inkCustomController {
+  private let name: CName;
   private let isMouseDown: Bool;
+
+  public static func Create(name: CName) -> ref<HUDitorCustomSlot> {
+    let self: ref<HUDitorCustomSlot> = new HUDitorCustomSlot();
+    self.SetName(name);
+    self.CreateInstance();
+    return self;
+  }
+
+  protected cb func OnCreate() -> Void {
+    super.OnCreate();
+
+    let root: ref<inkCanvas> = new inkCanvas();
+    this.SetRootWidget(root);
+    this.SetContainerWidget(root);
+    this.GetRootWidget().SetName(this.name);
+  }
+
+  public final func GetName() -> CName {
+    return this.name;
+  }
+
+  public final func SetName(widgetName: CName) -> Void {
+    this.name = widgetName;
+  }
+
+  public final func GetScale() -> Vector2 {
+    return this.GetRootWidget().GetScale();
+  }
+
+  public final func SetScale(scale: Vector2) -> Void {
+    this.GetRootWidget().SetScale(scale);
+  }
+
+  public final func GetTranslation() -> Vector2 {
+    return this.GetRootWidget().GetTranslation();
+  }
+
+  public final func SetTranslation(translationVector: Vector2) -> Void {
+    this.GetRootWidget().SetTranslation(translationVector);
+  }
+
+  public final func IsVisible() -> Bool {
+    return this.GetRootWidget().IsVisible();
+  }
+
+  public final func SetVisible(visible: Bool) -> Void {
+    this.GetRootWidget().SetVisible(visible);
+  }
+
+  public final func ChangeTranslation(translationVector: Vector2) -> Void {
+    this.GetRootWidget().ChangeTranslation(translationVector);
+  }
+
+  public final func GetOpacity() -> Float {
+    return this.GetRootWidget().GetOpacity();
+  }
+
+  public final func SetOpacity(opacity: Float) -> Void {
+    this.GetRootWidget().SetOpacity(opacity);
+  }
+
+  public final func SetFitToContent(fitToContent: Bool) -> Void {
+    this.GetRootWidget().SetFitToContent(fitToContent);
+  }
+
+  public final func SetInteractive(value: Bool) -> Void {
+    this.GetRootWidget().SetInteractive(value);
+  }
+
+  public final func SetAffectsLayoutWhenHidden(affectsLayoutWhenHidden: Bool) -> Void {
+    this.GetRootWidget().SetAffectsLayoutWhenHidden(affectsLayoutWhenHidden);
+  }
+
+  public final func SetAnchor(anchor: inkEAnchor) -> Void {
+    this.GetRootWidget().SetAnchor(anchor);
+  }
+
+  public final func SetAnchorPoint(anchorPoint: Vector2) -> Void {
+    this.GetRootWidget().SetAnchorPoint(anchorPoint);
+  }
+
+  public final func SetMargin(margin: inkMargin) -> Void {
+    this.GetRootWidget().SetMargin(margin);
+  }
 
   // Called from Lua
   private func LoadPersistedState() {}
@@ -11,10 +96,8 @@ public class HUDitorCustomSlot extends inkCanvas {
   private func UpdatePersistedState(translation: Vector2, scale: Vector2) {}
 
   // Call for a method that's observed in Lua, which then loads widgets' persisted state
-  public func OnGameSessionInitialized(evt: ref<GameSessionInitializedEvent>) -> Void {
-    if this.IsHUDWidget() {
-      this.LoadPersistedState();
-    };
+  protected cb func OnGameSessionInitialized(evt: ref<GameSessionInitializedEvent>) -> Bool {
+    this.LoadPersistedState();
   }
 
   // Used in Lua
@@ -25,19 +108,17 @@ public class HUDitorCustomSlot extends inkCanvas {
     this.SetScale(persistedScale);
   }
 
-  public func OnEnableHUDEditorWidget(event: ref<SetActiveHUDEditorWidgetEvent>) -> Void {
+  protected cb func OnSetActiveHUDEditorWidgetEvent(event: ref<SetActiveHUDEditorWidgetEvent>) -> Bool {
     let widgetName: CName = this.GetName();
     let hudEditorWidgetName: CName = event.activeWidget;
 
-    if (this.IsHUDWidget()) {
-      if Equals(widgetName, hudEditorWidgetName) {
-        this.SetOpacity(1);
-        this.SetVisible(true);
-        HUDWidgetsManager.GetInstance().AssignHUDWidgetListeners(this);
-      } else {
-        this.SetOpacity(0.15);
-        HUDWidgetsManager.GetInstance().RemoveHUDWidgetListeners(this);
-      };
+    if Equals(widgetName, hudEditorWidgetName) {
+      this.SetOpacity(1);
+      this.SetVisible(true);
+      this.RegisterInputListeners();
+    } else {
+      this.SetOpacity(0.15);
+      this.UnregisterInputListeners();
     };
   }
 
@@ -49,35 +130,20 @@ public class HUDitorCustomSlot extends inkCanvas {
     };
   }
 
-  private func IsHUDWidget() -> Bool {
-    let hudWidgets: array<CName> = HUDWidgetsManager.GetInstance().GetSlots();
-    let widgetName: CName = this.GetName();
-
-    if !Equals(widgetName, n"") {
-      return ArrayContains(hudWidgets, widgetName);
-    } else {
-      return false;
-    };
+  protected cb func OnDisableHUDEditorEvent(event: ref<DisableHUDEditorEvent>) -> Bool {
+    this.SetOpacity(1.0);
+    this.UnregisterInputListeners();
   }
 
-  public func OnDisableHUDEditorWidgets(event: ref<DisableHUDEditor>) -> Void {
-    if this.IsHUDWidget() {
-      this.SetOpacity(1.0);
-      HUDWidgetsManager.GetInstance().RemoveHUDWidgetListeners(this);
-    };
-  }
-
-  public func OnResetHUDWidgets(event: ref<ResetAllHUDWidgets>) -> Void {
-    if this.IsHUDWidget() {
-      let scale: Vector2 = Vector2(0.666667, 0.666667);
-      this.SetTranslation(Vector2(0.0, 0.0));
-      this.SetScale(scale);
-      this.UpdatePersistedState(Vector2(0.0, 0.0), scale);
-    };
+  protected cb func OnResetAllHUDWidgetsEvent(event: ref<ResetAllHUDWidgetsEvent>) -> Bool {
+    let scale: Vector2 = Vector2(0.666667, 0.666667);
+    this.SetTranslation(Vector2(0.0, 0.0));
+    this.SetScale(scale);
+    this.UpdatePersistedState(Vector2(0.0, 0.0), scale);
   }
 
 
-  public cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
+  protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
     let currentInput: Float;
     let translationAdjustValue: Float = 1.0;
 
@@ -165,5 +231,33 @@ public class HUDitorCustomSlot extends inkCanvas {
       this.SetScale(Vector2(finalXScale, finalYScale));
       this.UpdatePersistedState(this.GetTranslation(), Vector2(finalXScale, finalYScale));
     };
+  }
+
+  private final func RegisterInputListeners() -> Void {
+    let player: wref<PlayerPuppet> = GetPlayer(GetGameInstance());
+    player.RegisterInputListener(this, n"mouse_wheel");
+    player.RegisterInputListener(this, n"CameraMouseX");
+    player.RegisterInputListener(this, n"CameraMouseY");
+    player.RegisterInputListener(this, n"click");
+    player.RegisterInputListener(this, n"Forward");
+    player.RegisterInputListener(this, n"Right");
+    player.RegisterInputListener(this, n"Back");
+    player.RegisterInputListener(this, n"Left");
+  }
+
+  private final func UnregisterInputListeners() -> Void {
+    let player: wref<PlayerPuppet> = GetPlayer(GetGameInstance());
+    player.UnregisterInputListener(this, n"CameraMouseX");
+    player.UnregisterInputListener(this, n"CameraMouseY");
+    player.UnregisterInputListener(this, n"mouse_wheel");
+    player.UnregisterInputListener(this, n"click");
+    player.UnregisterInputListener(this, n"Forward");
+    player.UnregisterInputListener(this, n"Right");
+    player.UnregisterInputListener(this, n"Back");
+    player.UnregisterInputListener(this, n"Left");
+}
+
+  private final func Log(str: String) -> Void {
+    // ModLog(n"Slot", str);
   }
 }

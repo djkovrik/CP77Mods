@@ -110,28 +110,4 @@ public class HUDWidgetsManager {
     player.RegisterInputListener(hudGameController, n"CameraMouseY");
     player.RegisterInputListener(hudGameController, n"click");
   }
-
-  public func AssignHUDWidgetListeners(customSlot: ref<HUDitorCustomSlot>) {
-    let player: wref<PlayerPuppet> = this.GetPlayerPuppet();
-    player.RegisterInputListener(customSlot, n"mouse_wheel");
-    player.RegisterInputListener(customSlot, n"CameraMouseX");
-    player.RegisterInputListener(customSlot, n"CameraMouseY");
-    player.RegisterInputListener(customSlot, n"click");
-    player.RegisterInputListener(customSlot, n"Forward");
-    player.RegisterInputListener(customSlot, n"Right");
-    player.RegisterInputListener(customSlot, n"Back");
-    player.RegisterInputListener(customSlot, n"Left");
-  }
-
-   public func RemoveHUDWidgetListeners(customSlot: ref<HUDitorCustomSlot>) {
-    let player: wref<PlayerPuppet> = this.GetPlayerPuppet();
-    player.UnregisterInputListener(customSlot, n"CameraMouseX");
-    player.UnregisterInputListener(customSlot, n"CameraMouseY");
-    player.UnregisterInputListener(customSlot, n"mouse_wheel");
-    player.UnregisterInputListener(customSlot, n"click");
-    player.UnregisterInputListener(customSlot, n"Forward");
-    player.UnregisterInputListener(customSlot, n"Right");
-    player.UnregisterInputListener(customSlot, n"Back");
-    player.UnregisterInputListener(customSlot, n"Left");
-  }
 }
