@@ -728,12 +728,6 @@ private func InitBaseWidgets() -> Void {
         targetWidget.SetAnchorPoint(Vector2(0.0, 1.0));
         targetWidget.Reparent(this.vehicleRadioSlot);
         break;
-      case n"CarHotkeyController":
-        if !config.vehicleHotkeyEnabled { break; }
-        targetWidget = controller.GetRootCompoundWidget();
-        targetWidget.SetAnchorPoint(Vector2(0.0, 1.0));
-        targetWidget.Reparent(this.vehicleHotkeySlot);
-        break;
       case n"BossHealthBarGameController":
         if !config.bossHealthbarEnabled { break; }
         targetWidget = controller.GetRootCompoundWidget();
@@ -765,6 +759,8 @@ private func InitBaseWidgets() -> Void {
         break;
     };
   }
+
+  this.QueueEvent(new HuditorInitializedEvent());
 }
 
 @addMethod(inkGameController)
@@ -889,5 +885,23 @@ protected cb func OnHuditorFpsCounterTrack(evt: ref<FPSCounterChangeStateEvent>)
       container = hudRoot.GetWidgetByPathName(n"NewFpsCounter") as inkCompoundWidget;
       root.Reparent(container, 27);
     };
+  };
+}
+
+// -- Reparent vehicle hotkey
+@addMethod(HotkeysWidgetController)
+protected cb func OnHuditorInitializedEvent(evt: ref<HuditorInitializedEvent>) -> Bool {
+  let config: ref<HUDitorConfig> = new HUDitorConfig();
+  let vehicleSlot: ref<inkWidget>;
+  let system: ref<inkSystem>;
+  let root: ref<inkCompoundWidget>;
+  let newParent: ref<inkCompoundWidget>;
+
+  if config.vehicleHotkeyEnabled {
+    vehicleSlot = this.GetRootCompoundWidget().GetWidget(n"mainCanvas/vehicleSlot");
+    system = GameInstance.GetInkSystem();
+    root = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
+    newParent = root.GetWidgetByPathName(n"NewVehicleHotkey") as inkCompoundWidget;
+    vehicleSlot.Reparent(newParent);
   };
 }

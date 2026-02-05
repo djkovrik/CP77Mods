@@ -14,6 +14,8 @@ public class HidePreviewEvent extends Event {}
 
 public class HijackSlotsEvent extends Event {}
 
+public class HuditorInitializedEvent extends Event {}
+
 public class ScannerDetailsAppearedEvent extends Event {
   public let isVisible: Bool;
   public let isHackable: Bool;
