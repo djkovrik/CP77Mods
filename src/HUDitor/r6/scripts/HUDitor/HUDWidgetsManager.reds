@@ -25,15 +25,12 @@ public class HUDWidgetsManager {
     if config.questTrackerEnabled { ArrayPush(this.slots, n"NewTracker"); }
     if config.minimapEnabled && !config.compatE3CompassEnabled { ArrayPush(this.slots, n"NewMinimap"); }
     if config.wantedBarEnabled { ArrayPush(this.slots, n"NewWanted"); }
-    if config.incomingCallAvatarEnabled { ArrayPush(this.slots, n"NewPhoneAvatar"); }
-    if config.incomingCallButtonEnabled { ArrayPush(this.slots, n"NewPhoneControl"); }
     if config.questNotificationsEnabled { ArrayPush(this.slots, n"NewQuestNotifications"); }
     if config.itemNotificationsEnabled { ArrayPush(this.slots, n"NewItemNotifications"); }
     if config.vehicleSummonEnabled { ArrayPush(this.slots, n"NewVehicleSummon"); }
     if config.weaponRosterEnabled { ArrayPush(this.slots, n"NewWeaponRoster"); }
     if config.crouchIndicatorEnabled { ArrayPush(this.slots, n"NewCrouchIndicator"); }
     if config.dpadEnabled { ArrayPush(this.slots, n"NewDpad"); }
-    if config.phoneHotkeyEnabled { ArrayPush(this.slots, n"NewPhoneHotkey"); }
     if config.playerHealthbarEnabled { ArrayPush(this.slots, n"NewHealthBar"); }
     if config.playerStaminabarEnabled { ArrayPush(this.slots, n"NewStaminaBar"); }
     if config.inputHintsEnabled { ArrayPush(this.slots, n"NewInputHint"); }
@@ -42,6 +39,9 @@ public class HUDWidgetsManager {
     if config.crystalCoatEnabled { ArrayPush(this.slots, n"NewCrystalCoat"); }
     if config.vehicleRadioEnabled { ArrayPush(this.slots, n"NewVehicleRadio"); }
     if config.vehicleHotkeyEnabled { ArrayPush(this.slots, n"NewVehicleHotkey"); }
+    if config.phoneHotkeyEnabled { ArrayPush(this.slots, n"NewPhoneHotkey"); }
+    if config.incomingCallAvatarEnabled { ArrayPush(this.slots, n"NewPhoneAvatar"); }
+    if config.incomingCallButtonEnabled { ArrayPush(this.slots, n"NewPhoneControl"); }
     if config.bossHealthbarEnabled { ArrayPush(this.slots, n"NewBossHealthbar"); }
     if config.dialogChoicesEnabled { ArrayPush(this.slots, n"NewDialogChoices"); }
     if config.dialogSubtitlesEnabled { ArrayPush(this.slots, n"NewDialogSubtitles"); }

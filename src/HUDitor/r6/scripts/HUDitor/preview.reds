@@ -20,7 +20,6 @@ protected cb func OnDisplayPreviewEvent(event: ref<DisplayPreviewEvent>) -> Bool
   if config.phoneHotkeyEnabled { this.ShowPhoneHotkey(true); }
   if config.playerHealthbarEnabled { this.ShowHealthbar(true); }
   if config.playerStaminabarEnabled { this.ShowStaminaBar(true); }
-  if config.incomingCallAvatarEnabled { this.ShowIncomingPhoneCall(true); }
   if config.inputHintsEnabled { this.ShowInputHints(true); }
   if config.bossHealthbarEnabled { this.ShowBossHealthbar(true); }
   if config.progressWidgetEnabled { this.ShowHudProgressBarController(true); }
@@ -35,8 +34,16 @@ protected cb func OnActiveWidgetChanged(event: ref<SetActiveHUDEditorWidgetEvent
     this.ShowJournalNotification(); 
   };
 
-  if this.IsA(n"ItemsNotificationQueue") && Equals(widgetName, n"NewItemNotifications") &&config.itemNotificationsEnabled { 
+  if this.IsA(n"ItemsNotificationQueue") && Equals(widgetName, n"NewItemNotifications") && config.itemNotificationsEnabled { 
     this.ShowItemsNotification(); 
+  };
+
+  if this.IsA(n"NewHudPhoneGameController") && Equals(widgetName, n"NewPhoneAvatar") && config.incomingCallAvatarEnabled {
+    this.ShowIncomingPhoneCall(true);
+  };
+
+  if this.IsA(n"NewHudPhoneGameController") && Equals(widgetName, n"NewPhoneControl") && config.incomingCallButtonEnabled {
+    this.ShowIncomingPhoneCall(true);
   };
 }
 
@@ -289,10 +296,18 @@ private func ShowBossHealthbar(show: Bool) -> Void {
   };
 }
 
+@addField(NewHudPhoneGameController)
+public let huditorPreviewVisible: Bool;
+
 @addMethod(inkGameController)
 private func ShowIncomingPhoneCall(show: Bool) -> Void {
   if this.IsA(n"NewHudPhoneGameController") {
     let controller = this as NewHudPhoneGameController;
+
+    if Equals(controller.huditorPreviewVisible, show) {
+      return ;
+    };
+
     let phoneCallInfo: PhoneCallInformation;
     phoneCallInfo.callMode = questPhoneCallMode.Video;
     phoneCallInfo.isAudioCall = false;
@@ -320,6 +335,8 @@ private func ShowIncomingPhoneCall(show: Bool) -> Void {
       let phoneAvatar: ref<inkCompoundWidget> = hudRoot.GetWidgetByPathName(n"NewPhoneAvatar") as inkCompoundWidget;
       phoneAvatar.RemoveAllChildren();
     };
+
+    controller.huditorPreviewVisible = show;
   };
 }
 
