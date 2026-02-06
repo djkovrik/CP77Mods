@@ -10,6 +10,13 @@ public class HUDitorConfig {
   public let huditorEditor: EInputKey = EInputKey.IK_F7;
 
   @runtimeProperty("ModSettings.mod", "HUDitor")
+  @runtimeProperty("ModSettings.category", "UI-Settings-GenaralInput")
+  @runtimeProperty("ModSettings.category.order", "0")
+  @runtimeProperty("ModSettings.displayName", "Gameplay-Devices-Interactions-Helpers-Hold")
+  @runtimeProperty("ModSettings.description", "")
+  public let hold: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "HUDitor")
   @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")
   @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "Mod-HUDitor-Widget-Tracker")

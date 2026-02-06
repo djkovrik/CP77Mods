@@ -358,7 +358,6 @@ private func CreateCustomSlots() -> Void {
     root.RemoveChildByName(n"NewVehicleHotkey");
     vehicleHotkeySlot.Reparent(root, 19);
     this.vehicleHotkeySlot = vehicleHotkeySlot;
-    ModLog(n"DEBUG", "Vehicle hotkey slot created");
   };
 
   if config.bossHealthbarEnabled {

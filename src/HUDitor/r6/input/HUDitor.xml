@@ -1,16 +1,23 @@
 <?xml version="1.0"?>
 <bindings>
-    <!-- inputContexts -->
-    <context name="HUDitor" >
+	<!-- inputContexts -->
+	<context name="HUDitor" >
 		<action name="HUDitor_Editor" map="HUDitor_Editor_Button" />
-    </context>
+	</context>
 
-    <context name="UIToggles" append="true">
-        <include name="HUDitor" />
-    </context>
+	<context name="UIToggles" append="true">
+		<include name="HUDitor" />
+	</context>
 
-    <!-- inputUserMapping -->
+	<acceptedEvents action="HUDitor_Editor" >
+		<event name="BUTTON_HOLD_COMPLETE" />
+		<event name="BUTTON_RELEASED" />
+	</acceptedEvents>
+
+	<hold action="HUDitor_Editor"  timeout="0.4" />
+
+	<!-- inputUserMapping -->
 	<mapping name="HUDitor_Editor_Button" type="Button" >
-        <button id="IK_F7" overridableUI="huditorEditor" />
-    </mapping>
+		<button id="IK_F7" overridableUI="huditorEditor" />
+	</mapping>
 </bindings>

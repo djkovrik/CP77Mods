@@ -1,4 +1,5 @@
 import HUDrag.HUDWidgetsManager.*
+import HUDrag.HUDitorConfig
 
 public class HUDitorInputListener {
   let systemRequestsHandler: wref<inkISystemRequestsHandler>;
@@ -92,40 +93,52 @@ public class HUDitorInputListener {
           this.PersistHUDWidgetsState();
         };
       };
+    };
 
-      if Equals(actionName, n"HUDitor_Editor") {
-        huditorAvailable = this.questSystem.GetFact(n"unlock_car_hud_dpad") > 0;
-        if !huditorAvailable {
-          this.ShowHuditorBlockedCustomMessage();
-          return true;
+    let config: ref<HUDitorConfig>;
+    let released: Bool;
+    let hold: Bool;
+
+    if Equals(actionName, n"HUDitor_Editor") {
+      config = new HUDitorConfig();
+      released = Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED);
+      hold = Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_HOLD_COMPLETE);
+
+      if released && config.hold || hold && !config.hold {
+        return true;
+      };
+
+      huditorAvailable = this.questSystem.GetFact(n"unlock_car_hud_dpad") > 0;
+      if !huditorAvailable {
+        this.ShowHuditorBlockedCustomMessage();
+        return true;
+      };
+
+      if !isActive {
+        let activeWidget: CName = n"";
+        let slots: array<CName> = this.hudWidgetsManager.GetSlots();
+        if ArraySize(slots) > 0 {
+          activeWidget = slots[0];
         };
+        this.systemRequestsHandler.PauseGame();
+        let enableHUDEditorEvent: ref<SetActiveHUDEditorWidgetEvent> = new SetActiveHUDEditorWidgetEvent();
+        enableHUDEditorEvent.activeWidget = activeWidget;
+        HUDWidgetsManager.GetInstance().isActive = true;
+        HUDWidgetsManager.GetInstance().activeWidget = activeWidget;
 
-        if !isActive {
-          let activeWidget: CName = n"";
-          let slots: array<CName> = this.hudWidgetsManager.GetSlots();
-          if ArraySize(slots) > 0 {
-            activeWidget = slots[0];
-          };
-          this.systemRequestsHandler.PauseGame();
-          let enableHUDEditorEvent: ref<SetActiveHUDEditorWidgetEvent> = new SetActiveHUDEditorWidgetEvent();
-          enableHUDEditorEvent.activeWidget = activeWidget;
-          HUDWidgetsManager.GetInstance().isActive = true;
-          HUDWidgetsManager.GetInstance().activeWidget = activeWidget;
+        this.uiSystem.QueueEvent(new DisplayPreviewEvent());
+        this.uiSystem.QueueEvent(enableHUDEditorEvent);
 
-          this.uiSystem.QueueEvent(new DisplayPreviewEvent());
-          this.uiSystem.QueueEvent(enableHUDEditorEvent);
+        this.cursor.SetVisible(true);
+      } else {
+        HUDWidgetsManager.GetInstance().isActive = false;
 
-          this.cursor.SetVisible(true);
-        } else {
-          HUDWidgetsManager.GetInstance().isActive = false;
+        this.uiSystem.QueueEvent(new HidePreviewEvent());
+        this.uiSystem.QueueEvent(new DisableHUDEditorEvent());
+        this.systemRequestsHandler.UnpauseGame();
 
-          this.uiSystem.QueueEvent(new HidePreviewEvent());
-          this.uiSystem.QueueEvent(new DisableHUDEditorEvent());
-          this.systemRequestsHandler.UnpauseGame();
-
-          this.cursor.SetVisible(false);
-          this.PersistHUDWidgetsState();
-        };
+        this.cursor.SetVisible(false);
+        this.PersistHUDWidgetsState();
       };
     };
   }
