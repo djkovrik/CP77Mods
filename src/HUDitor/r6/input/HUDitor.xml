@@ -11,6 +11,6 @@
 
     <!-- inputUserMapping -->
 	<mapping name="HUDitor_Editor_Button" type="Button" >
-        <button id="IK_F7" />
+        <button id="IK_F7" overridableUI="huditorEditor" />
     </mapping>
 </bindings>

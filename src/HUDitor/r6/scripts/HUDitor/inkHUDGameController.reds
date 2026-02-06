@@ -5,7 +5,6 @@ public class HUDitorInputListener {
   let uiSystem: wref<UISystem>;
   let questSystem: wref<QuestsSystem>;
   let cursor: ref<inkImage>;
-  let isShiftDown: Bool;
   let hudWidgetsManager: wref<HUDWidgetsManager>;
   let blackboard: wref<IBlackboard>;
 
@@ -62,16 +61,6 @@ public class HUDitorInputListener {
       };
     };
 
-    if Equals(actionName, n"ToggleSprint") {
-      if (ListenerAction.IsButtonJustPressed(action)) {
-        this.isShiftDown = true;
-      };
-
-      if (ListenerAction.IsButtonJustReleased(action)) {
-        this.isShiftDown = false;
-      };
-    };
-
     if ListenerAction.IsButtonJustPressed(action) {
       if Equals(actionName, n"right_button") && isActive {
         this.hudWidgetsManager.SwitchToNextWidget();
@@ -104,40 +93,38 @@ public class HUDitorInputListener {
         };
       };
 
-      if this.isShiftDown || Equals(actionName, n"HUDitor_Editor") {
+      if Equals(actionName, n"HUDitor_Editor") {
         huditorAvailable = this.questSystem.GetFact(n"unlock_car_hud_dpad") > 0;
         if !huditorAvailable {
           this.ShowHuditorBlockedCustomMessage();
           return true;
         };
 
-        if Equals(actionName, n"UI_Unequip") || Equals(actionName, n"HUDitor_Editor")  {
-          if !isActive {
-            let activeWidget: CName = n"";
-            let slots: array<CName> = this.hudWidgetsManager.GetSlots();
-            if ArraySize(slots) > 0 {
-              activeWidget = slots[0];
-            };
-            this.systemRequestsHandler.PauseGame();
-            let enableHUDEditorEvent: ref<SetActiveHUDEditorWidgetEvent> = new SetActiveHUDEditorWidgetEvent();
-            enableHUDEditorEvent.activeWidget = activeWidget;
-            HUDWidgetsManager.GetInstance().isActive = true;
-            HUDWidgetsManager.GetInstance().activeWidget = activeWidget;
-
-            this.uiSystem.QueueEvent(new DisplayPreviewEvent());
-            this.uiSystem.QueueEvent(enableHUDEditorEvent);
-
-            this.cursor.SetVisible(true);
-          } else {
-            HUDWidgetsManager.GetInstance().isActive = false;
-
-            this.uiSystem.QueueEvent(new HidePreviewEvent());
-            this.uiSystem.QueueEvent(new DisableHUDEditorEvent());
-            this.systemRequestsHandler.UnpauseGame();
-
-            this.cursor.SetVisible(false);
-            this.PersistHUDWidgetsState();
+        if !isActive {
+          let activeWidget: CName = n"";
+          let slots: array<CName> = this.hudWidgetsManager.GetSlots();
+          if ArraySize(slots) > 0 {
+            activeWidget = slots[0];
           };
+          this.systemRequestsHandler.PauseGame();
+          let enableHUDEditorEvent: ref<SetActiveHUDEditorWidgetEvent> = new SetActiveHUDEditorWidgetEvent();
+          enableHUDEditorEvent.activeWidget = activeWidget;
+          HUDWidgetsManager.GetInstance().isActive = true;
+          HUDWidgetsManager.GetInstance().activeWidget = activeWidget;
+
+          this.uiSystem.QueueEvent(new DisplayPreviewEvent());
+          this.uiSystem.QueueEvent(enableHUDEditorEvent);
+
+          this.cursor.SetVisible(true);
+        } else {
+          HUDWidgetsManager.GetInstance().isActive = false;
+
+          this.uiSystem.QueueEvent(new HidePreviewEvent());
+          this.uiSystem.QueueEvent(new DisableHUDEditorEvent());
+          this.systemRequestsHandler.UnpauseGame();
+
+          this.cursor.SetVisible(false);
+          this.PersistHUDWidgetsState();
         };
       };
     };
