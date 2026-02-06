@@ -261,3 +261,21 @@ public class HUDitorCustomSlot extends inkCustomController {
     // ModLog(n"Slot", str);
   }
 }
+
+// -- Track states to hide some reparented slots
+@wrapMethod(PlayerPuppet)
+protected cb func OnSceneTierChange(newState: Int32) -> Bool {
+  wrappedMethod(newState);
+  let evt: ref<HuditorSlotEvent> = new HuditorSlotEvent();
+  evt.isVisible = newState <= 2;
+  GameInstance.GetUISystem(this.GetGame()).QueueEvent(evt);
+  // ModLog(n"DEBUG", s"OnSceneTierChange \(newState)");
+}
+
+@wrapMethod(PlayerPuppet)
+protected cb func OnVisionStateChange(newState: Int32) -> Bool {
+  wrappedMethod(newState);
+  let evt: ref<HuditorSlotEvent> = new HuditorSlotEvent();
+  evt.isVisible = newState < 1;
+  GameInstance.GetUISystem(this.GetGame()).QueueEvent(evt);
+}

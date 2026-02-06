@@ -7,6 +7,10 @@ public class ScannerDetailsAppearedEvent extends Event {
   public let isHackable: Bool;
 }
 
+public class HuditorSlotEvent extends Event {
+  public let isVisible: Bool;
+}
+
 public class GameSessionInitializedEvent extends Event {}
 public class DisableHUDEditorEvent extends Event {}
 public class ResetAllHUDWidgetsEvent extends Event {}

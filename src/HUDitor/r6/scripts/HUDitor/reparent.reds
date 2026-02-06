@@ -50,6 +50,17 @@ protected cb func OnHuditorDisableEvent(event: ref<DisableHUDEditorEvent>) -> Bo
 }
 
 @addMethod(inkGameController)
+protected cb func OnHuditorSlotEvent(event: ref<HuditorSlotEvent>) -> Bool {
+  if this.IsA(n"gameuiRootHudGameController") {
+    this.phoneHotkeySlot.SetVisible(event.isVisible);
+    this.autoDriveSlot.SetVisible(event.isVisible);
+    this.crystalCoatSlot.SetVisible(event.isVisible);
+    this.vehicleRadioSlot.SetVisible(event.isVisible);
+    this.vehicleHotkeySlot.SetVisible(event.isVisible);
+  };
+}
+
+@addMethod(inkGameController)
 protected cb func OnScannerDetailsAppearedEvent(event: ref<ScannerDetailsAppearedEvent>) -> Bool {
   if this.IsA(n"gameuiRootHudGameController") {
     this.minimapSlot.OnScannerDetailsAppearedEvent(event);
