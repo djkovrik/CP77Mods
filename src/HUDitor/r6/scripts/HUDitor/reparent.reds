@@ -518,6 +518,12 @@ private func InitBaseWidgets() -> Void {
         targetWidget.SetAnchorPoint(Vector2(0.0, 1.0));
         targetWidget.Reparent(this.dpadSlot.GetRootCompoundWidget());
         break;
+      case n"HotkeyConsumableWidgetController":
+        if !config.dpadEnabled { break; }
+        targetWidget = controller.GetRootCompoundWidget();
+        targetWidget.SetAnchorPoint(Vector2(0.0, 1.0));
+        targetWidget.Reparent(this.dpadSlot.GetRootCompoundWidget());
+        break;
       case n"PhoneHotkeyController":
       if !config.phoneHotkeyEnabled { break; }
         targetWidget = controller.GetRootCompoundWidget();

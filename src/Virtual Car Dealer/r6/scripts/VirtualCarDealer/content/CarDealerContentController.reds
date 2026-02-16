@@ -73,8 +73,8 @@ public class CarDealerContentController extends inkGameController {
     emptyMessage1.SetHAlign(inkEHorizontalAlign.Center);
     emptyMessage1.SetVAlign(inkEVerticalAlign.Center);
     emptyMessage1.SetAnchor(inkEAnchor.Centered);
-    emptyMessage1.SetAnchorPoint(new Vector2(0.5, 0.5));
-    emptyMessage1.SetMargin(new inkMargin(0.0, 0.0, 0.0, 40.0));
+    emptyMessage1.SetAnchorPoint(Vector2(0.5, 0.5));
+    emptyMessage1.SetMargin(inkMargin(0.0, 0.0, 0.0, 40.0));
     emptyMessage1.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     emptyMessage1.BindProperty(n"tintColor", n"MainColors.White");
     emptyMessage1.Reparent(vertical);
@@ -90,7 +90,7 @@ public class CarDealerContentController extends inkGameController {
     emptyMessage2.SetHAlign(inkEHorizontalAlign.Center);
     emptyMessage2.SetVAlign(inkEVerticalAlign.Center);
     emptyMessage2.SetAnchor(inkEAnchor.Centered);
-    emptyMessage2.SetAnchorPoint(new Vector2(0.5, 1.0));
+    emptyMessage2.SetAnchorPoint(Vector2(0.5, 1.0));
     emptyMessage2.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     emptyMessage2.BindProperty(n"tintColor", n"MainColors.White");
     emptyMessage2.Reparent(vertical);
@@ -106,8 +106,8 @@ public class CarDealerContentController extends inkGameController {
     sponsored.SetHAlign(inkEHorizontalAlign.Center);
     sponsored.SetVAlign(inkEVerticalAlign.Center);
     sponsored.SetAnchor(inkEAnchor.Centered);
-    sponsored.SetAnchorPoint(new Vector2(0.5, 0.5));
-    sponsored.SetMargin(new inkMargin(0.0, 260.0, 0.0, 20.0));
+    sponsored.SetAnchorPoint(Vector2(0.5, 0.5));
+    sponsored.SetMargin(inkMargin(0.0, 260.0, 0.0, 20.0));
     sponsored.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     sponsored.BindProperty(n"tintColor", n"MainColors.ActiveBlue");
     sponsored.Reparent(vertical);
@@ -117,12 +117,12 @@ public class CarDealerContentController extends inkGameController {
     emptyImage.SetAtlasResource(r"base\\gameplay\\gui\\world\\adverts\\rayfield\\rayfield.inkatlas");
     emptyImage.SetTexturePart(n"logo");
     emptyImage.SetInteractive(false);
-    emptyImage.SetAnchorPoint(new Vector2(0.5, 0.5));
+    emptyImage.SetAnchorPoint(Vector2(0.5, 0.5));
     emptyImage.SetFitToContent(true);
     emptyImage.SetHAlign(inkEHorizontalAlign.Center);
     emptyImage.SetVAlign(inkEVerticalAlign.Center);
     emptyImage.SetAnchor(inkEAnchor.Centered);
-    emptyImage.SetAnchorPoint(new Vector2(0.5, 0.5));
+    emptyImage.SetAnchorPoint(Vector2(0.5, 0.5));
     emptyImage.Reparent(vertical);
   }
 
@@ -133,23 +133,23 @@ public class CarDealerContentController extends inkGameController {
     rootCanvas.SetName(n"RootCanvas");
     rootCanvas.SetFitToContent(true);
     rootCanvas.SetInteractive(true);
-    rootCanvas.SetSize(new Vector2(2600.0, 1000.0));
+    rootCanvas.SetSize(Vector2(2600.0, 1000.0));
     rootCanvas.SetHAlign(inkEHorizontalAlign.Center);
     rootCanvas.SetVAlign(inkEVerticalAlign.Center);
     rootCanvas.SetAnchor(inkEAnchor.Centered);
-    rootCanvas.SetAnchorPoint(new Vector2(0.5, 0.5));
-    rootCanvas.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+    rootCanvas.SetAnchorPoint(Vector2(0.5, 0.5));
+    rootCanvas.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
     rootCanvas.Reparent(root);
 
     let horizontalPanel: ref<inkVerticalPanel> = new inkVerticalPanel();
     horizontalPanel.SetName(n"HorizontalRoot");
     horizontalPanel.SetFitToContent(true);
     horizontalPanel.SetInteractive(true);
-    horizontalPanel.SetSize(new Vector2(2600.0, 1000.0));
+    horizontalPanel.SetSize(Vector2(2600.0, 1000.0));
     horizontalPanel.SetHAlign(inkEHorizontalAlign.Center);
     horizontalPanel.SetVAlign(inkEVerticalAlign.Center);
     horizontalPanel.SetAnchor(inkEAnchor.Centered);
-    horizontalPanel.SetAnchorPoint(new Vector2(0.5, 0.5));
+    horizontalPanel.SetAnchorPoint(Vector2(0.5, 0.5));
     horizontalPanel.Reparent(rootCanvas);
 
     let dynamicContentContainer: ref<inkVerticalPanel> = new inkVerticalPanel();
@@ -190,9 +190,9 @@ public class CarDealerContentController extends inkGameController {
     rowTop.SetName(n"ButtonsTop");
     rowTop.SetFitToContent(true);
     rowTop.SetAnchor(inkEAnchor.Centered);
-    rowTop.SetAnchorPoint(new Vector2(0.5, 0.5));
-    rowTop.SetMargin(new inkMargin(0.0, 140.0, 0.0, 0.0));
-    rowTop.SetChildMargin(new inkMargin(20.0, 0.0, 20.0, 0.0));
+    rowTop.SetAnchorPoint(Vector2(0.5, 0.5));
+    rowTop.SetMargin(inkMargin(0.0, 140.0, 0.0, 0.0));
+    rowTop.SetChildMargin(inkMargin(20.0, 0.0, 20.0, 0.0));
 
     let prev: ref<CustomHubButton> = CustomHubButton.Create();
     prev.SetName(n"ButtonPrev");
@@ -220,7 +220,7 @@ public class CarDealerContentController extends inkGameController {
     colorContainer.SetName(n"ButtonBuyContainer");
     colorContainer.SetFitToContent(true);
     colorContainer.SetHAlign(inkEHorizontalAlign.Center);
-    colorContainer.SetChildMargin(new inkMargin(240.0, 0.0, 0.0, 0.0));
+    colorContainer.SetChildMargin(inkMargin(240.0, 0.0, 0.0, 0.0));
     colorContainer.Reparent(rowTop);
 
     let color: ref<CustomHubButton> = CustomHubButton.Create();
@@ -239,9 +239,9 @@ public class CarDealerContentController extends inkGameController {
     rowBottom.SetFitToContent(true);
     rowBottom.SetHAlign(inkEHorizontalAlign.Fill);
     rowBottom.SetAnchor(inkEAnchor.CenterRight);
-    rowBottom.SetAnchorPoint(new Vector2(0.5, 0.5));
-    rowBottom.SetMargin(new inkMargin(0.0, 40.0, 0.0, 0.0));
-    rowBottom.SetChildMargin(new inkMargin(20.0, 0.0, 20.0, 0.0));
+    rowBottom.SetAnchorPoint(Vector2(0.5, 0.5));
+    rowBottom.SetMargin(inkMargin(0.0, 40.0, 0.0, 0.0));
+    rowBottom.SetChildMargin(inkMargin(20.0, 0.0, 20.0, 0.0));
 
     let fixer: ref<CustomHubButton> = CustomHubButton.Create();
     fixer.SetName(n"ButtonFixer");
@@ -428,29 +428,29 @@ public class CarDealerContentController extends inkGameController {
     infoPanel.SetHAlign(inkEHorizontalAlign.Right);
     infoPanel.SetVAlign(inkEVerticalAlign.Center);
     infoPanel.SetAnchor(inkEAnchor.CenterRight);
-    infoPanel.SetMargin(new inkMargin(0.0, 100.0, 0.0, 0.0));
-    infoPanel.SetAnchorPoint(new Vector2(0.5, 0.5));
+    infoPanel.SetMargin(inkMargin(0.0, 100.0, 0.0, 0.0));
+    infoPanel.SetAnchorPoint(Vector2(0.5, 0.5));
 
     // Image
     let imageContainer: ref<inkCanvas> = new inkCanvas();
     imageContainer.SetName(n"ImageContainer");
-    imageContainer.SetSize(new Vector2(1860.0, 609.0));
+    imageContainer.SetSize(Vector2(1860.0, 609.0));
     imageContainer.SetInteractive(false);
     imageContainer.SetFitToContent(true);
     imageContainer.SetHAlign(inkEHorizontalAlign.Center);
     imageContainer.SetVAlign(inkEVerticalAlign.Center);
     imageContainer.SetAnchor(inkEAnchor.Centered);
-    imageContainer.SetAnchorPoint(new Vector2(0.5, 0.5));
+    imageContainer.SetAnchorPoint(Vector2(0.5, 0.5));
     imageContainer.Reparent(infoPanel);
 
     let background: ref<inkRectangle> = new inkRectangle();
     background.SetName(n"ImageBackground");
     background.SetFitToContent(true);
     background.SetAnchor(inkEAnchor.Fill);
-    background.SetAnchorPoint(new Vector2(0.5, 0.5));
+    background.SetAnchorPoint(Vector2(0.5, 0.5));
     background.SetHAlign(inkEHorizontalAlign.Fill);
     background.SetVAlign(inkEVerticalAlign.Fill);
-    background.SetTintColor(new HDRColor(0.0, 0.0, 0.0, 1.0));
+    background.SetTintColor(HDRColor(0.0, 0.0, 0.0, 1.0));
     background.SetOpacity(0.8);
     background.Reparent(imageContainer);
 
@@ -463,7 +463,7 @@ public class CarDealerContentController extends inkGameController {
     carImage.SetHAlign(inkEHorizontalAlign.Center);
     carImage.SetVAlign(inkEVerticalAlign.Center);
     carImage.SetAnchor(inkEAnchor.Centered);
-    carImage.SetAnchorPoint(new Vector2(0.5, 0.5));
+    carImage.SetAnchorPoint(Vector2(0.5, 0.5));
     carImage.Reparent(imageContainer);
 
     // Frame around the image
@@ -495,19 +495,19 @@ public class CarDealerContentController extends inkGameController {
     carName.SetHAlign(inkEHorizontalAlign.Left);
     carName.SetVAlign(inkEVerticalAlign.Top);
     carName.SetAnchor(inkEAnchor.TopLeft);
-    carName.SetAnchorPoint(new Vector2(0.5, 0.5));
-    carName.SetMargin(new inkMargin(0.0, -80.0, 0.0, 0.0));
+    carName.SetAnchorPoint(Vector2(0.5, 0.5));
+    carName.SetMargin(inkMargin(0.0, -80.0, 0.0, 0.0));
     carName.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     carName.BindProperty(n"tintColor", n"MainColors.Blue");
     carName.Reparent(infoPanel);
 
     let priceCredContainer: ref<inkHorizontalPanel> = new inkHorizontalPanel();
     priceCredContainer.SetName(n"PriceCredContainer");
-    priceCredContainer.SetMargin(new inkMargin(0.0, -80.0, 0.0, 0.0));
+    priceCredContainer.SetMargin(inkMargin(0.0, -80.0, 0.0, 0.0));
     priceCredContainer.SetHAlign(inkEHorizontalAlign.Right);
     priceCredContainer.SetVAlign(inkEVerticalAlign.Top);
     priceCredContainer.SetAnchor(inkEAnchor.TopRight);
-    priceCredContainer.SetAnchorPoint(new Vector2(0.5, 0.5));
+    priceCredContainer.SetAnchorPoint(Vector2(0.5, 0.5));
 
     // Car cred
     carCred = new inkText();
@@ -518,7 +518,7 @@ public class CarDealerContentController extends inkGameController {
     carCred.SetLetterCase(textLetterCase.OriginalCase);
     carCred.SetText(s"\(cred) SC");
     carCred.SetFitToContent(true);
-    carCred.SetMargin(new inkMargin(0.0, 0.0, 60.0, 0.0));
+    carCred.SetMargin(inkMargin(0.0, 0.0, 60.0, 0.0));
     carCred.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     carCred.BindProperty(n"tintColor", n"MainColors.Green");
     carCred.Reparent(priceCredContainer);
@@ -549,8 +549,8 @@ public class CarDealerContentController extends inkGameController {
     carStatus.SetHAlign(inkEHorizontalAlign.Center);
     carStatus.SetVAlign(inkEVerticalAlign.Bottom);
     carStatus.SetAnchor(inkEAnchor.BottomCenter);
-    carStatus.SetAnchorPoint(new Vector2(0.5, 0.5));
-    carStatus.SetMargin(new inkMargin(0.0, 0.0, 0.0, -100.0));
+    carStatus.SetAnchorPoint(Vector2(0.5, 0.5));
+    carStatus.SetMargin(inkMargin(0.0, 0.0, 0.0, -100.0));
     let lotNumber: Int32 = this.vehicleIndex + 1;
     let totalLots: Int32 = this.vehicleLastIndex + 1;
     carStatus.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");

@@ -2,7 +2,6 @@ module CarDealer.System
 import CarDealer.Classes.PurchasableVehicleBundle
 import CarDealer.Classes.PurchasableVehicleVariant
 import CarDealer.Classes.AutofixerItemData
-import CarDealer.Config.CarDealerConfig
 import CarDealer.Utils.CarDealerLog
 
 @if(ModuleExists("VehiclePersistence.System"))
@@ -112,11 +111,7 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
   }
 
   public func IsPurchased(id: TweakDBID) -> Bool {
-    if CarDealerConfig.HandleColorVariantsAsSingleLot() {
-      return this.IsBundlePurchased(id);
-    } else {
-      return this.IsSeparatePurchased(id);
-    };
+    return this.IsSeparatePurchased(id);
   }
 
   public func Purchase(id: TweakDBID) -> Void {
@@ -230,40 +225,6 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
       };
     };
     return CheckIfVehicleIsPersistent(this.GetGameInstance(), id);
-  }
-
-  private func IsBundlePurchased(id: TweakDBID) -> Bool {
-    let currentBundle: ref<PurchasableVehicleBundle>;
-    let currentVariant: ref<PurchasableVehicleVariant>;
-    let targetBundle: ref<PurchasableVehicleBundle>;
-    // Find target bundle
-    let i: Int32 = 0;
-    let j: Int32;
-    let bundleFound: Bool = false;
-    while i < ArraySize(this.m_storeVehicles) && !bundleFound {
-      currentBundle = this.m_storeVehicles[i];
-      j = 0;
-      while j < ArraySize(currentBundle.variants)  && !bundleFound {
-        currentVariant = currentBundle.variants[j];
-        if Equals(currentVariant.record.GetID(), id) {
-          targetBundle = currentBundle;
-          bundleFound = true;
-        };
-        j += 1;
-      };
-      i += 1;
-    };
-
-    // Check if anything inside the bundle is purchased
-    if bundleFound {
-      for variant in targetBundle.variants {
-        if this.IsSeparatePurchased(variant.record.GetID()) {
-          return true;
-        };
-      };
-    };
-
-    return false;
   }
 
   private func FindPriceInBundles(id: TweakDBID) -> Int32 {
