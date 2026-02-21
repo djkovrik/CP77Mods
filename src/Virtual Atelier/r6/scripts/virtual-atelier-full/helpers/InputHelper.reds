@@ -36,10 +36,10 @@ public abstract class AtelierInputHelper {
 
     if controller.isLeftMouseDown {
       if event.IsAction(n"mouse_x") && isScaleAllowed {
-        previewWidget.ChangeTranslation(new Vector2(amount, 0.0));      
+        previewWidget.ChangeTranslation(Vector2(amount, 0.0));      
       };
       if event.IsAction(n"mouse_y") && isScaleAllowed {
-        previewWidget.ChangeTranslation(new Vector2(0.0, -1.0 * amount));
+        previewWidget.ChangeTranslation(Vector2(0.0, -1.0 * amount));
       };
     };
 
@@ -64,7 +64,7 @@ public abstract class AtelierInputHelper {
       if (finalXScale > 3.0) {
         finalXScale = 3.0;
       };
-      previewWidget.SetScale(new Vector2(finalXScale, finalYScale));
+      previewWidget.SetScale(Vector2(finalXScale, finalYScale));
     };
 
     return true;

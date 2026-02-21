@@ -252,11 +252,11 @@ public class AtelierStoresListController extends inkGameController {
     virtualStores.SetText(GetLocalizedTextByKey(n"VA-Virtual-Stores"));
     virtualStores.SetFitToContent(true);
     virtualStores.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-    virtualStores.SetScale(new Vector2(1.1, 1.1));
+    virtualStores.SetScale(Vector2(1.1, 1.1));
     virtualStores.SetFontSize(60);
     virtualStores.SetInteractive(true);
     virtualStores.SetLetterCase(textLetterCase.UpperCase);
-    virtualStores.SetMargin(new inkMargin(0.0, 0.0, 48.0, 0.0));
+    virtualStores.SetMargin(inkMargin(0.0, 0.0, 48.0, 0.0));
     virtualStores.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     virtualStores.BindProperty(n"tintColor", n"MainColors.ActiveWhite");
     virtualStores.Reparent(this.topMenu);
@@ -270,7 +270,7 @@ public class AtelierStoresListController extends inkGameController {
     activeOrders.SetFontSize(60);
     activeOrders.SetInteractive(true);
     activeOrders.SetLetterCase(textLetterCase.UpperCase);
-    activeOrders.SetMargin(new inkMargin(48.0, 0.0, 0.0, 0.0));
+    activeOrders.SetMargin(inkMargin(48.0, 0.0, 0.0, 0.0));
     activeOrders.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     activeOrders.BindProperty(n"tintColor", n"MainColors.Gold");
     activeOrders.Reparent(this.topMenu);
@@ -333,10 +333,10 @@ public class AtelierStoresListController extends inkGameController {
     leftImage.SetAtlasResource(r"base/gameplay/gui/world/adverts/jingujishop/jingujishop.inkatlas");
     leftImage.SetTexturePart(n"chick V");
     leftImage.SetInteractive(false);
-    leftImage.SetAnchorPoint(new Vector2(0.5, 0.5));
+    leftImage.SetAnchorPoint(Vector2(0.5, 0.5));
     leftImage.SetFitToContent(true);
-    leftImage.SetMargin(new inkMargin(400.0, 720.0, 0.0, 0.0));
-    leftImage.SetTranslation(new Vector2(-560.0, 0.0));
+    leftImage.SetMargin(inkMargin(400.0, 720.0, 0.0, 0.0));
+    leftImage.SetTranslation(Vector2(-560.0, 0.0));
     leftImage.Reparent(root);
 
     let rightImage: ref<inkImage> = new inkImage();
@@ -345,9 +345,9 @@ public class AtelierStoresListController extends inkGameController {
     rightImage.SetInteractive(false);
     rightImage.SetHAlign(inkEHorizontalAlign.Right);
     rightImage.SetVAlign(inkEVerticalAlign.Bottom);
-    rightImage.SetAnchorPoint(new Vector2(0.5, 0.5));
+    rightImage.SetAnchorPoint(Vector2(0.5, 0.5));
     rightImage.SetFitToContent(true);
-    rightImage.SetMargin(new inkMargin(3500.0, 720.0, 0.0, 0.0));
+    rightImage.SetMargin(inkMargin(3500.0, 720.0, 0.0, 0.0));
     rightImage.Reparent(root);
   }
 
@@ -397,7 +397,7 @@ public class AtelierStoresListController extends inkGameController {
     panel.SetName(n"emptyPanel");
     panel.SetFitToContent(true);
     panel.SetAnchor(inkEAnchor.Centered);
-    panel.SetAnchorPoint(new Vector2(0.5, 0.5));
+    panel.SetAnchorPoint(Vector2(0.5, 0.5));
     panel.Reparent(root);
 
     let emptyStateImage: ref<inkImage> = new inkImage();
@@ -405,10 +405,10 @@ public class AtelierStoresListController extends inkGameController {
     emptyStateImage.SetName(n"empty");
     emptyStateImage.SetTexturePart(n"chick V");
     emptyStateImage.SetInteractive(false);
-    emptyStateImage.SetAnchorPoint(new Vector2(0.5, 0.5));
-    emptyStateImage.SetMargin(new inkMargin(0.0, 220.0, 0.0, 40.0));
+    emptyStateImage.SetAnchorPoint(Vector2(0.5, 0.5));
+    emptyStateImage.SetMargin(inkMargin(0.0, 220.0, 0.0, 40.0));
     emptyStateImage.SetFitToContent(false);
-    emptyStateImage.SetSize(new Vector2(249.0, 790.0));
+    emptyStateImage.SetSize(Vector2(249.0, 790.0));
     emptyStateImage.Reparent(this.GetRootCompoundWidget());
     emptyStateImage.SetHAlign(inkEHorizontalAlign.Center);
     emptyStateImage.SetVAlign(inkEVerticalAlign.Center);
@@ -426,7 +426,7 @@ public class AtelierStoresListController extends inkGameController {
     emptyStateMessage.SetVAlign(inkEVerticalAlign.Center);
     emptyStateMessage.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     emptyStateMessage.BindProperty(n"tintColor", n"MainColors.Blue");
-    emptyStateMessage.SetSize(new Vector2(100.0, 32.0));
+    emptyStateMessage.SetSize(Vector2(100.0, 32.0));
     emptyStateMessage.Reparent(panel);
   }
 
@@ -454,7 +454,7 @@ public class AtelierStoresListController extends inkGameController {
     scaleInterpolator.SetMode(inkanimInterpolationMode.EasyIn);
     scaleInterpolator.SetDirection(inkanimInterpolationDirection.FromTo);
     scaleInterpolator.SetStartScale(target.GetScale());
-    scaleInterpolator.SetEndScale(new Vector2(endScale, endScale));
+    scaleInterpolator.SetEndScale(Vector2(endScale, endScale));
     scaleInterpolator.SetDuration(0.1);
     scaleAnimDef.AddInterpolator(scaleInterpolator);
     target.PlayAnimation(scaleAnimDef);

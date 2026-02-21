@@ -82,11 +82,11 @@ class AtelierStoresListItemController extends inkVirtualCompoundItemController {
       n"itemNewLabel"
     ).GetController() as ItemLabelController;
 
-    this.isNewController.GetRootCompoundWidget().SetMargin(new inkMargin(60.0, 60.0, 0.0, 0.0));
+    this.isNewController.GetRootCompoundWidget().SetMargin(inkMargin(60.0, 60.0, 0.0, 0.0));
 
     let itemContainer: ref<inkVerticalPanel> = new inkVerticalPanel();
-    itemContainer.SetSize(new Vector2(360.0, 360.0));
-    itemContainer.SetPadding(new inkMargin(40.0, 40.0, 40.0, 40.0));
+    itemContainer.SetSize(Vector2(360.0, 360.0));
+    itemContainer.SetPadding(inkMargin(40.0, 40.0, 40.0, 40.0));
     itemContainer.Reparent(root);
 
     let storeImage: ref<inkImage> = new inkImage();
@@ -94,8 +94,8 @@ class AtelierStoresListItemController extends inkVirtualCompoundItemController {
     storeImage.SetAnchor(inkEAnchor.Centered);
     storeImage.SetHAlign(inkEHorizontalAlign.Center);
     storeImage.SetVAlign(inkEVerticalAlign.Center);
-    storeImage.SetAnchorPoint(new Vector2(0.5, 0.5));
-    storeImage.SetSize(new Vector2(320.0, 280.0));
+    storeImage.SetAnchorPoint(Vector2(0.5, 0.5));
+    storeImage.SetSize(Vector2(320.0, 280.0));
     storeImage.SetFitToContent(false);
     storeImage.SetSizeRule(inkESizeRule.Fixed);
     storeImage.Reparent(itemContainer);
@@ -110,7 +110,7 @@ class AtelierStoresListItemController extends inkVirtualCompoundItemController {
     storeLabel.SetHAlign(inkEHorizontalAlign.Center);
     storeLabel.SetVAlign(inkEVerticalAlign.Center);
     storeLabel.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-    storeLabel.SetSize(new Vector2(320.0, 60.0));
+    storeLabel.SetSize(Vector2(320.0, 60.0));
     storeLabel.SetWrapping(true, 320.0, textWrappingPolicy.Default);
     storeLabel.Reparent(itemContainer);
 
@@ -125,8 +125,8 @@ class AtelierStoresListItemController extends inkVirtualCompoundItemController {
     bookmarkIcon.SetContentVAlign(inkEVerticalAlign.Fill);
     bookmarkIcon.SetTileHAlign(inkEHorizontalAlign.Left);
     bookmarkIcon.SetTileVAlign(inkEVerticalAlign.Top);
-    bookmarkIcon.SetSize(new Vector2(64.0, 64.0));
-    bookmarkIcon.SetMargin(new inkMargin(-12.0, -12.0, 0.0, 0.0));
+    bookmarkIcon.SetSize(Vector2(64.0, 64.0));
+    bookmarkIcon.SetMargin(inkMargin(-12.0, -12.0, 0.0, 0.0));
     bookmarkIcon.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     bookmarkIcon.BindProperty(n"tintColor", n"MainColors.Yellow");
     bookmarkIcon.SetOpacity(0.7);
@@ -163,7 +163,7 @@ class AtelierStoresListItemController extends inkVirtualCompoundItemController {
     scaleInterpolator.SetType(inkanimInterpolationType.Linear);
     scaleInterpolator.SetDirection(inkanimInterpolationDirection.FromTo);
     scaleInterpolator.SetStartScale(targetWidget.GetScale());
-    scaleInterpolator.SetEndScale(new Vector2(endScale, endScale));
+    scaleInterpolator.SetEndScale(Vector2(endScale, endScale));
     scaleInterpolator.SetDuration(this.scaleAnimDuration);
     moveElementsAnimDef.AddInterpolator(scaleInterpolator);
     proxy = targetWidget.PlayAnimation(moveElementsAnimDef);

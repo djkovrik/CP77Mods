@@ -23,7 +23,7 @@ public class AtelierStoresCategoryTab extends inkComponent {
     label.SetFontSize(44);
     label.SetInteractive(true);
     label.SetLetterCase(textLetterCase.UpperCase);
-    label.SetMargin(new inkMargin(32.0, 0.0, 32.0, 0.0));
+    label.SetMargin(inkMargin(32.0, 0.0, 32.0, 0.0));
     label.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     label.BindProperty(n"tintColor", n"MainColors.White");
     return label;
@@ -121,7 +121,7 @@ public class AtelierStoresCategoryTab extends inkComponent {
     scaleInterpolator.SetMode(inkanimInterpolationMode.EasyIn);
     scaleInterpolator.SetDirection(inkanimInterpolationDirection.FromTo);
     scaleInterpolator.SetStartScale(target.GetScale());
-    scaleInterpolator.SetEndScale(new Vector2(endScale, endScale));
+    scaleInterpolator.SetEndScale(Vector2(endScale, endScale));
     scaleInterpolator.SetDuration(0.1);
     scaleAnimDef.AddInterpolator(scaleInterpolator);
     target.PlayAnimation(scaleAnimDef);

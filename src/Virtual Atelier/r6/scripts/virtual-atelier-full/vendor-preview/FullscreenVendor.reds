@@ -182,7 +182,7 @@ private func RefreshEquippedState() -> Void {
 }
 
 @addMethod(FullscreenVendorGameController)
-private final func GetIsVirtual() -> Bool {
+public final func GetIsVirtual() -> Bool {
   return Equals(this.m_vendorUserData.vendorData.data.vendorId, "VirtualVendor");
 }
 

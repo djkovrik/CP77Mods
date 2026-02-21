@@ -21,7 +21,7 @@ public class VirtualCartImageButton extends VirtualAtelierControl {
     root.SetName(n"root");
     root.SetChildOrder(inkEChildOrder.Backward);
     root.SetInteractive(true);
-    root.SetMargin(new inkMargin(16.0, 0.0, 0.0, 0.0));
+    root.SetMargin(inkMargin(16.0, 0.0, 0.0, 0.0));
 
     let label: ref<inkText> = new inkText();
     label.SetName(n"label");
@@ -33,15 +33,15 @@ public class VirtualCartImageButton extends VirtualAtelierControl {
     label.SetAnchor(inkEAnchor.CenterRight);
     label.SetHAlign(inkEHorizontalAlign.Right);
     label.SetVAlign(inkEVerticalAlign.Center);
-    label.SetAnchorPoint(new Vector2(0.5, 0.5));
-    label.SetMargin(new inkMargin(30.0, 0.0, 0.0, 0.0));
+    label.SetAnchorPoint(Vector2(0.5, 0.5));
+    label.SetMargin(inkMargin(30.0, 0.0, 0.0, 0.0));
     label.SetText(AtelierTexts.ButtonBuy());
     label.SetLetterCase(textLetterCase.UpperCase);
     label.Reparent(root);
 
     let iconWrapper: ref<inkCanvas> = new inkCanvas();
     iconWrapper.SetName(n"iconWrapper");
-    iconWrapper.SetSize(new Vector2(sizeTotal, sizeTotal));
+    iconWrapper.SetSize(Vector2(sizeTotal, sizeTotal));
     iconWrapper.Reparent(root);
 
     let icon: ref<inkImage> = new inkImage();
@@ -49,8 +49,8 @@ public class VirtualCartImageButton extends VirtualAtelierControl {
     icon.SetAtlasResource(r"base\\gameplay\\gui\\virtual_atelier_cart.inkatlas");
     icon.SetTexturePart(n"cart");
     icon.SetAnchor(inkEAnchor.Centered);
-    icon.SetAnchorPoint(new Vector2(0.5, 0.5));
-    icon.SetSize(new Vector2(sizeTotal, sizeTotal));
+    icon.SetAnchorPoint(Vector2(0.5, 0.5));
+    icon.SetSize(Vector2(sizeTotal, sizeTotal));
     icon.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     icon.BindProperty(n"tintColor", VirtualAtelierControlStyle.ColorImageButtonIcon());
     icon.Reparent(iconWrapper);
@@ -58,8 +58,8 @@ public class VirtualCartImageButton extends VirtualAtelierControl {
     let circleContainer: ref<inkCanvas> = new inkCanvas();
     circleContainer.SetName(n"container");
     circleContainer.SetAnchor(inkEAnchor.TopRight);
-    circleContainer.SetAnchorPoint(new Vector2(0.5, 0.5));
-    circleContainer.SetSize(new Vector2(sizeCircle, sizeCircle));
+    circleContainer.SetAnchorPoint(Vector2(0.5, 0.5));
+    circleContainer.SetSize(Vector2(sizeCircle, sizeCircle));
     circleContainer.Reparent(iconWrapper);
 
     let circle: ref<inkCircle> = new inkCircle();
@@ -67,8 +67,8 @@ public class VirtualCartImageButton extends VirtualAtelierControl {
     circle.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     circle.BindProperty(n"tintColor", VirtualAtelierControlStyle.ColorImageButtonCircle());
     circle.SetAnchor(inkEAnchor.Fill);
-    circle.SetSize(new Vector2(sizeCircle, sizeCircle));
-    circle.SetAnchorPoint(new Vector2(0.5, 0.5));
+    circle.SetSize(Vector2(sizeCircle, sizeCircle));
+    circle.SetAnchorPoint(Vector2(0.5, 0.5));
     circle.SetOpacity(0.4);
     circle.Reparent(circleContainer);
 
@@ -80,7 +80,7 @@ public class VirtualCartImageButton extends VirtualAtelierControl {
     counter.BindProperty(n"fontSize", VirtualAtelierControlStyle.FontSizeImageButtonCounter());
     counter.BindProperty(n"fontStyle", VirtualAtelierControlStyle.FontStyleImageButtonCounter());
     counter.SetAnchor(inkEAnchor.Centered);
-    counter.SetAnchorPoint(new Vector2(0.5, 0.5));
+    counter.SetAnchorPoint(Vector2(0.5, 0.5));
     counter.Reparent(root);
     counter.SetText("0");
     counter.Reparent(circleContainer);

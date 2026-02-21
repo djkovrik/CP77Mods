@@ -40,7 +40,7 @@ public class VirtualStoreDataView extends BackpackDataView {
     return DerivedFilterResult.Pass;
   }
 
-  protected func PreSortingInjection(builder: ref<ItemCompareBuilder>) -> ref<ItemCompareBuilder> {
+  public func PreSortingInjection(builder: ref<ItemCompareBuilder>) -> ref<ItemCompareBuilder> {
     return builder.QuestItem();
   }
 }

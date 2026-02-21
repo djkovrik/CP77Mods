@@ -82,7 +82,7 @@ private final func RefreshAtelierItemOwnedIndicator() -> Void {
   let isOwned: Bool = this.cartManager.IsItemOwned(ItemID.GetTDBID(itemID)) || data.hasOwned;
 
   if isWeapon && !isMelee {
-    this.ownedIndicator.SetMargin(new inkMargin(16.0, 0.0, 0.0, 58.0));
+    this.ownedIndicator.SetMargin(inkMargin(16.0, 0.0, 0.0, 58.0));
   };
 
   this.ownedIndicator.SetVisible(data.isVirtualItem && isOwned);
@@ -120,7 +120,7 @@ private final func CreateQuantityIndicator() -> Void {
   quantity.SetVisible(false);
   quantity.SetAnchor(inkEAnchor.TopLeft);
   quantity.SetHAlign(inkEHorizontalAlign.Left);
-  quantity.SetMargin(new inkMargin(40.0, 0.0, 0.0, 0.0));
+  quantity.SetMargin(inkMargin(40.0, 0.0, 0.0, 0.0));
   quantity.SetText("x1000");
   quantity.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
   quantity.SetFontSize(38);
@@ -143,15 +143,15 @@ private final func CreateOwnedIndicator() -> Void {
   container.RemoveChildByName(n"tick");
   indicator.SetName(n"tick");
   indicator.SetAnchor(inkEAnchor.TopLeft);
-  indicator.SetAnchorPoint(new Vector2(1.0, 0.0));
+  indicator.SetAnchorPoint(Vector2(1.0, 0.0));
   indicator.SetHAlign(inkEHorizontalAlign.Left);
   indicator.SetVAlign(inkEVerticalAlign.Bottom);
   indicator.SetAtlasResource(r"base\\gameplay\\gui\\virtual_atelier_owned.inkatlas");
   indicator.SetTexturePart(n"tick");
   indicator.SetOpacity(0.2);
   indicator.SetVisible(false);
-  indicator.SetSize(new Vector2(32.0, 32.0));
-  indicator.SetMargin(new inkMargin(16.0, 0.0, 0.0, 16.0));
+  indicator.SetSize(Vector2(32.0, 32.0));
+  indicator.SetMargin(inkMargin(16.0, 0.0, 0.0, 16.0));
   indicator.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
   indicator.BindProperty(n"tintColor", VirtualAtelierControlStyle.OwnedLabelColor());
   indicator.Reparent(container, 21);

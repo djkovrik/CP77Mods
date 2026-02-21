@@ -21,8 +21,8 @@ public class VirtualCartTextButton extends VirtualAtelierControl {
     label.SetAnchor(inkEAnchor.Centered);
     label.SetHAlign(inkEHorizontalAlign.Center);
     label.SetVAlign(inkEVerticalAlign.Center);
-    label.SetAnchorPoint(new Vector2(0.5, 0.5));
-    label.SetMargin(new inkMargin(46.0, 0.0, 0.0, 0.0));
+    label.SetAnchorPoint(Vector2(0.5, 0.5));
+    label.SetMargin(inkMargin(46.0, 0.0, 0.0, 0.0));
     label.SetText("Button text");
     label.SetInteractive(true);
     label.SetLetterCase(textLetterCase.UpperCase);

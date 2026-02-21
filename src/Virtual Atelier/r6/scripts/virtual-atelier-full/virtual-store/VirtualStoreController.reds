@@ -56,7 +56,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
   private let totalItemsPrice: Int32;
   private let allItemsAdded: Bool;
 
-  protected cb func OnInitialize() -> Bool {
+  public cb func OnInitialize() -> Bool {
     this.InitializeCoreSystems();
     this.InitializeWidgets();
     this.InitializeDataSource();
@@ -71,7 +71,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.PlaySound(n"GameMenu", n"OnOpen");
   }
 
-  protected cb func OnUninitialize() -> Bool {
+  public cb func OnUninitialize() -> Bool {
     this.player.SetSkipDeviceExit(false);
     this.uiInventorySystem.FlushFullscreenCache();
     this.cartManager.ClearCart();
@@ -94,7 +94,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     let controller: ref<DropdownListController>;
     if evt.IsAction(n"click") {
       this.PlaySound(n"Button", n"OnPress");
-      this.sortingDropdown.SetTranslation(new Vector2(2650.00, 270.00));
+      this.sortingDropdown.SetTranslation(Vector2(2650.00, 270.00));
       controller = this.sortingDropdown.GetController() as DropdownListController;
       controller.SetTriggerButton(this.vendorSortingButton.GetController() as DropdownButtonController);
       controller.Toggle();
@@ -448,7 +448,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
 
     let cartControls: ref<inkHorizontalPanel> = new inkHorizontalPanel();
     cartControls.SetName(n"cartControls");
-    cartControls.SetMargin(new inkMargin(0.0, 190.0, 0.0, 0.0));
+    cartControls.SetMargin(inkMargin(0.0, 190.0, 0.0, 0.0));
     cartControls.SetAnchor(inkEAnchor.TopLeft);
     cartControls.SetHAlign(inkEHorizontalAlign.Left);
     cartControls.SetChildOrder(inkEChildOrder.Forward);
@@ -477,7 +477,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     let searchContainer: ref<inkCanvas> = new inkCanvas();
     searchContainer.SetName(n"searchContainer");
     searchContainer.SetAnchor(inkEAnchor.TopRight);
-    searchContainer.SetMargin(new inkMargin(0.0, 170.0, 600.0, 0.0));
+    searchContainer.SetMargin(inkMargin(0.0, 170.0, 600.0, 0.0));
     searchContainer.Reparent(vendorHeader);
 
     let searchInput: ref<HubTextInput> = HubTextInput.Create();
@@ -492,9 +492,9 @@ public class VirtualStoreController extends gameuiMenuGameController {
     let balancesContainer: ref<inkVerticalPanel> = new inkVerticalPanel();
     balancesContainer.SetName(n"balancesContainer");
     balancesContainer.SetAnchor(inkEAnchor.TopCenter);
-    balancesContainer.SetAnchorPoint(new Vector2(1.0, 0.5));
-    balancesContainer.SetMargin(new inkMargin(0.0, 200.0, 0.0, 0.0));
-    balancesContainer.SetSize(new Vector2(800.0, 400.0));
+    balancesContainer.SetAnchorPoint(Vector2(1.0, 0.5));
+    balancesContainer.SetMargin(inkMargin(0.0, 200.0, 0.0, 0.0));
+    balancesContainer.SetSize(Vector2(800.0, 400.0));
     balancesContainer.Reparent(wrapper);
 
     // Player
@@ -525,7 +525,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     let eddiesAmount: ref<inkText> = new inkText();
     eddiesAmount.SetName(n"eddiesAmount");
     eddiesAmount.SetAnchor(inkEAnchor.CenterRight);
-    eddiesAmount.SetAnchorPoint(new Vector2(0.5, 0.5));
+    eddiesAmount.SetAnchorPoint(Vector2(0.5, 0.5));
     eddiesAmount.SetHAlign(inkEHorizontalAlign.Right);
     eddiesAmount.SetText("1000");
     eddiesAmount.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
@@ -533,7 +533,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     eddiesAmount.SetFontStyle(n"Medium");
     eddiesAmount.SetFitToContent(true);
     eddiesAmount.SetLetterCase(textLetterCase.UpperCase);
-    eddiesAmount.SetMargin(new inkMargin(20.0, 0.0, 0.0, 0.0));
+    eddiesAmount.SetMargin(inkMargin(20.0, 0.0, 0.0, 0.0));
     eddiesAmount.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     eddiesAmount.BindProperty(n"tintColor", n"MainColors.PanelRed");
     eddiesAmount.BindProperty(n"fontSize", n"MainColors.ReadableFontSize");
@@ -544,13 +544,13 @@ public class VirtualStoreController extends gameuiMenuGameController {
     let eddiesIcon: ref<inkImage> = new inkImage();
     eddiesIcon.SetName(n"eddiesIcon");
     eddiesIcon.SetAnchor(inkEAnchor.Centered);
-    eddiesIcon.SetAnchorPoint(new Vector2(0.5, 0.5));
+    eddiesIcon.SetAnchorPoint(Vector2(0.5, 0.5));
     eddiesIcon.SetHAlign(inkEHorizontalAlign.Right);
     eddiesIcon.SetAtlasResource(r"base\\gameplay\\gui\\common\\icons\\atlas_cash.inkatlas");
     eddiesIcon.SetTexturePart(n"cash_symbol_normal");
     eddiesIcon.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     eddiesIcon.BindProperty(n"tintColor", n"MainColors.Yellow");
-    eddiesIcon.SetSize(new Vector2(58.0, 35.0));
+    eddiesIcon.SetSize(Vector2(58.0, 35.0));
     eddiesIcon.SetBrushMirrorType(inkBrushMirrorType.NoMirror);
     eddiesIcon.SetBrushTileType(inkBrushTileType.NoTile);
     eddiesIcon.SetContentHAlign(inkEHorizontalAlign.Center);
@@ -574,7 +574,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     cartMoneyHeader.BindProperty(n"fontSize", n"MainColors.ReadableSmall");
     cartMoneyHeader.BindProperty(n"fontWeight", n"MainColors.BodyFontWeight");
     cartMoneyHeader.SetFitToContent(true);
-    cartMoneyHeader.SetMargin(new inkMargin(0.0, 20.0, 0.0, 0.0));
+    cartMoneyHeader.SetMargin(inkMargin(0.0, 20.0, 0.0, 0.0));
 
     let cartMoneyValues: ref<inkHorizontalPanel> = new inkHorizontalPanel();
     cartMoneyValues.SetName(n"cartMoneyValues");
@@ -586,7 +586,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     let cartEddiesAmount: ref<inkText> = new inkText();
     cartEddiesAmount.SetName(n"cartEddiesAmount");
     cartEddiesAmount.SetAnchor(inkEAnchor.CenterRight);
-    cartEddiesAmount.SetAnchorPoint(new Vector2(0.5, 0.5));
+    cartEddiesAmount.SetAnchorPoint(Vector2(0.5, 0.5));
     cartEddiesAmount.SetHAlign(inkEHorizontalAlign.Right);
     cartEddiesAmount.SetText("0");
     cartEddiesAmount.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
@@ -594,7 +594,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     cartEddiesAmount.SetFontStyle(n"Medium");
     cartEddiesAmount.SetFitToContent(true);
     cartEddiesAmount.SetLetterCase(textLetterCase.UpperCase);
-    cartEddiesAmount.SetMargin(new inkMargin(20.0, 0.0, 0.0, 0.0));
+    cartEddiesAmount.SetMargin(inkMargin(20.0, 0.0, 0.0, 0.0));
     cartEddiesAmount.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     cartEddiesAmount.BindProperty(n"tintColor", n"MainColors.PanelRed");
     cartEddiesAmount.BindProperty(n"fontSize", n"MainColors.ReadableFontSize");
@@ -610,13 +610,13 @@ public class VirtualStoreController extends gameuiMenuGameController {
     let cartEddiesIcon: ref<inkImage> = new inkImage();
     cartEddiesIcon.SetName(n"cartEddiesIcon");
     cartEddiesIcon.SetAnchor(inkEAnchor.Centered);
-    cartEddiesIcon.SetAnchorPoint(new Vector2(0.5, 0.5));
+    cartEddiesIcon.SetAnchorPoint(Vector2(0.5, 0.5));
     cartEddiesIcon.SetHAlign(inkEHorizontalAlign.Right);
     cartEddiesIcon.SetAtlasResource(r"base\\gameplay\\gui\\common\\icons\\atlas_cash.inkatlas");
     cartEddiesIcon.SetTexturePart(n"cash_symbol_normal");
     cartEddiesIcon.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     cartEddiesIcon.BindProperty(n"tintColor", n"MainColors.Yellow");
-    cartEddiesIcon.SetSize(new Vector2(58.0, 35.0));
+    cartEddiesIcon.SetSize(Vector2(58.0, 35.0));
     cartEddiesIcon.SetBrushMirrorType(inkBrushMirrorType.NoMirror);
     cartEddiesIcon.SetBrushTileType(inkBrushTileType.NoTile);
     cartEddiesIcon.SetContentHAlign(inkEHorizontalAlign.Center);

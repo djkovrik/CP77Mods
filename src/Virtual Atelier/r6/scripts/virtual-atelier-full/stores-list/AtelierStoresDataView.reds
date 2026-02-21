@@ -30,7 +30,7 @@ public class AtelierStoresDataView extends ScriptableDataView {
     return StrCmp(leftEntry.storeName, rightEntry.storeName) < 0;
   }
 
-  private func FilterItem(data: ref<IScriptable>) -> Bool {
+  public func FilterItem(data: ref<IScriptable>) -> Bool {
     let shop: ref<VirtualShop> = data as VirtualShop;
     if !IsDefined(shop) || Equals(this.activeCategory, VirtualStoreCategory.AllItems) {
       return true;
