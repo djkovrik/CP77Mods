@@ -9,6 +9,7 @@ public class VirtualAtelierStoresManager extends ScriptableSystem {
   private let current: ref<VirtualShop>;
   private persistent let bookmarked: array<CName>;
   private persistent let prevStores: array<CName>;
+  private persistent let itemCounts: array<ref<StoreItemCountWrapper>>;
 
   public static func GetInstance(gi: GameInstance) -> ref<VirtualAtelierStoresManager> {
     let system: ref<VirtualAtelierStoresManager> = GameInstance.GetScriptableSystemsContainer(gi).Get(n"VirtualAtelier.Systems.VirtualAtelierStoresManager") as VirtualAtelierStoresManager;
@@ -96,14 +97,25 @@ public class VirtualAtelierStoresManager extends ScriptableSystem {
     let current: array<ref<VirtualShop>> = this.stores;
     let refreshed: array<ref<VirtualShop>>;
     let previousIds: array<CName> = this.prevStores;
-    let id: CName;
+    let previousCounters: array<ref<StoreItemCountWrapper>> = this.itemCounts;
+    let currentCounters: array<ref<StoreItemCountWrapper>> = this.GetStoresItemCounts();
+    let previousCounter: Int32;
+    let currentCounter: Int32;
+    let storeID: CName;
+    let newlyInstalledStore: Bool;
+    let updatedStore: Bool;
     for store in current {
-      id = store.storeID;
-      store.isNew = !ArrayContains(previousIds, id) && ArraySize(previousIds) > 0 ;
+      storeID = store.storeID;
+      newlyInstalledStore = NotEquals(ArraySize(previousIds), 0) && !ArrayContains(previousIds, storeID);
+      previousCounter = this.GetCounterByStoreId(previousCounters, storeID);
+      currentCounter = this.GetCounterByStoreId(currentCounters, storeID);
+      updatedStore = NotEquals(previousCounter, -1) && NotEquals(previousCounter, currentCounter);
+      store.isNew = newlyInstalledStore || updatedStore;
       ArrayPush(refreshed, store);
     };
     this.stores = refreshed;
     this.prevStores = this.GetStoresIds();
+    this.itemCounts = currentCounters;
   }
 
   public func RefreshBookmarks() -> Void {
@@ -144,6 +156,42 @@ public class VirtualAtelierStoresManager extends ScriptableSystem {
     };
 
     return result;
+  }
+
+  private func GetStoresItemCounts() -> array<ref<StoreItemCountWrapper>> {
+    let result: array<ref<StoreItemCountWrapper>>;
+    let item: ref<StoreItemCountWrapper>;
+    let counter: Int32;
+    let itemTDBID: TweakDBID;
+    let itemID: ItemID;
+
+    for store in this.stores {
+      item = new StoreItemCountWrapper();
+      counter = 0;
+      for itemStr in store.items {
+        itemTDBID = TDBID.Create(itemStr);
+        itemID = ItemID.FromTDBID(itemTDBID);
+        if ItemID.IsValid(itemID) {
+          counter += 1;
+        }
+      };
+
+      item.storeID = store.storeID;
+      item.itemCount = counter;
+      ArrayPush(result, item);
+    };
+
+    return result;
+  }
+
+  private func GetCounterByStoreId(source: array<ref<StoreItemCountWrapper>>, storeID: CName) -> Int32 {
+    for item in source {
+      if Equals(item.storeID, storeID) {
+        return item.itemCount;
+      };
+    };
+
+    return -1;
   }
 
   private func GetItemCategory(id: TweakDBID) -> VirtualStoreCategory {

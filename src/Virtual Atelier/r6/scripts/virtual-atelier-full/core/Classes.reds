@@ -97,3 +97,8 @@ public class VirtualStoreCategorySelectedEvent extends Event {
     return evt;
   }
 }
+
+public class StoreItemCountWrapper {
+  public persistent let storeID: CName;
+  public persistent let itemCount: Int32;
+}
