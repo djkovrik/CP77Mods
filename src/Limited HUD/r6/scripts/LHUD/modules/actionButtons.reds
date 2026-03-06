@@ -356,6 +356,12 @@ protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
   this.DetermineCurrentVisibility();
 }
 
+@wrapMethod(AutoDriveController)
+private final func OnCinematicCameraChanged(active: Bool) -> Void {
+  wrappedMethod(active);
+  this.DetermineCurrentVisibility();
+}
+
 @addMethod(AutoDriveController)
 public func DetermineCurrentVisibility() -> Void {
   if !this.lhudConfig.IsEnabled {
@@ -379,8 +385,12 @@ public func DetermineCurrentVisibility() -> Void {
   this.lhud_isVisibleNow = isVisible;
   if isVisible {
     this.AnimateAlphaLHUD(this.GetRootWidget(), this.lhudConfig.Opacity, 0.3);
+    this.AnimateAlphaLHUD(this.m_autoDriveContentContainer, this.lhudConfig.Opacity, 0.3);
+    this.AnimateAlphaLHUD(this.m_inputHintContainer, this.lhudConfig.Opacity, 0.3);
   } else {
     this.AnimateAlphaLHUD(this.GetRootWidget(), 0.0, 0.3);
+    this.AnimateAlphaLHUD(this.m_autoDriveContentContainer, 0.0, 0.3);
+    this.AnimateAlphaLHUD(this.m_inputHintContainer, 0.0, 0.3);
   };
 }
 
