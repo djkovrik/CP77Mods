@@ -57,6 +57,7 @@ private let qhConfig: ref<QuickhackHotkeysConfig>;
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
   this.qhConfig = new QuickhackHotkeysConfig();
+  inkWidgetRef.SetVisible(this.m_changeTarget, false);
 }
 
 @replaceMethod(QuickhacksListGameController)
@@ -312,4 +313,9 @@ protected final func RegisterToInput() -> Void {
   let puppet: ref<GameObject> = this.GetPlayer();
   puppet.UnregisterInputListener(this, n"QH_MoveLeft");
   puppet.UnregisterInputListener(this, n"QH_MoveRight");
+}
+
+@replaceMethod(QuickhacksListGameController)
+protected cb func OnScannerChangeTargetTooltipVisibilityChanged(value: Bool) -> Bool {
+  inkWidgetRef.SetVisible(this.m_changeTarget, false);
 }
