@@ -1,3 +1,5 @@
+module SmarterScrapper
+
 @if(ModuleExists("AtelierDelivery"))
 import AtelierDelivery.OrderProcessingSystem
 
@@ -242,6 +244,7 @@ public func HasExcludedQuestActive() -> Bool {
     Equals(trackedObjective.GetId(), "01b_follow_songbird") ||
     Equals(trackedObjective.GetId(), "02_escape_vip_area") ||
     Equals(trackedObjective.GetId(), "03_escape_vip_area") ||
+    Equals(trackedObjective.GetId(), "01_talk_to_jackie") ||
   false;
 }
 
