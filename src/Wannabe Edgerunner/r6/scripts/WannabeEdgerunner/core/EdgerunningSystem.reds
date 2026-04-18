@@ -90,6 +90,16 @@ public class EdgerunningSystem extends ScriptableSystem {
   private persistent let humanityRestoringActionTakenSocial: Bool = false;
   private persistent let humanityRestoringActionTakenShower: Bool = false;
 
+  // WEA Add-on fields (˘ω˘)
+  public let m_weaSleepPending: Bool;
+  public let m_weaSleepCheckTime: Float;
+  public let m_weaSleepBypass: Bool;
+  public let m_weaCurrentTwitchTier: Int32;
+  public let m_weaHostilityPulseId: DelayID;
+  public let m_weaNeuroReduction: Float;
+  private persistent let m_weaSmokeCount: Int32;
+  private persistent let m_weaSmokeLastDay: Int32;
+
   public static func GetInstance(gameInstance: GameInstance) -> ref<EdgerunningSystem> {
     let system: ref<EdgerunningSystem> = GameInstance.GetScriptableSystemsContainer(gameInstance).Get(n"Edgerunning.System.EdgerunningSystem") as EdgerunningSystem;
     return system;
@@ -180,6 +190,30 @@ public class EdgerunningSystem extends ScriptableSystem {
     };
 
     this.ScheduleHumanityRestoreEffect(psychoDuration + 3.0);
+
+    // WEA: hostility pulse - broadcast combat stims so nearby NPCs react to psychosis (╯°□°)╯︵ ┻━┻
+    let weaConfig = WEAConfig.Get();
+    if weaConfig.psychosisHostilityEnabled {
+      let radius = Cast<Float>(weaConfig.psychosisHostilityRadius);
+
+      // instant burst + repeating 1s callback
+      let broadcastPlayer = GetPlayer(GetGameInstance());
+      if IsDefined(broadcastPlayer) {
+        let broadcaster = broadcastPlayer.GetStimBroadcasterComponent();
+        if IsDefined(broadcaster) {
+          broadcaster.TriggerSingleBroadcast(broadcastPlayer, gamedataStimType.Combat, radius);
+          broadcaster.TriggerSingleBroadcast(broadcastPlayer, gamedataStimType.Gunshot, radius);
+          broadcaster.TriggerSingleBroadcast(broadcastPlayer, gamedataStimType.Explosion, radius);
+          broadcaster.TriggerSingleBroadcast(broadcastPlayer, gamedataStimType.CombatCall, radius);
+        };
+      };
+
+      let callback = new WEA_HostilityPulseCallback();
+      callback.m_systemRef = this;
+      callback.m_radius = radius;
+      this.m_weaHostilityPulseId = GameInstance.GetDelaySystem(GetGameInstance()).DelayCallback(callback, 1.0, true);
+      E(s"! WEA Psychosis: hostility pulse started, radius \(radius)m");
+    };
   }
 
   public func RunPostPsychosisFlow() -> Void {
@@ -211,6 +245,10 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func StopPsychosisFlow() -> Void {
+    // WEA: stop hostility pulse (´• ω •`)
+    GameInstance.GetDelaySystem(GetGameInstance()).CancelCallback(this.m_weaHostilityPulseId);
+    E("! WEA Psychosis: hostility pulse stopped");
+
     E(s"? Stop psychosis");
     this.effectsHelper.StopNewPsychosisEffect();
     this.effectsHelper.CancelCycledFx();
@@ -245,6 +283,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func OnEnemyKilled(affiliation: gamedataAffiliation) -> Void {
+    this.WEA_SetNeuroBypass();
     if this.effectsChecker.IsPossessed() {
       this.StopEverythingNew();
       E(s"! Playing as Johnny - all effects removed");
@@ -276,8 +315,34 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func OnRestoreAction(action: HumanityRestoringAction) -> Void {
+    // WEA: sleep verification - must actually sleep, not just tap the bed (¬_¬)
+    let weaConfig = WEAConfig.Get();
+    let isVerifiedSleep = false; // true only on the bypass path - tells the scaling code it's safe to read checkTime
+    if Equals(action, HumanityRestoringAction.Sleep) && weaConfig.sleepVerificationEnabled {
+      if this.m_weaSleepBypass {
+        this.m_weaSleepBypass = false;
+        isVerifiedSleep = true;
+      } else {
+        if !this.m_weaSleepPending {
+          this.m_weaSleepPending = true;
+          this.m_weaSleepCheckTime = GameInstance.GetTimeSystem(GetGameInstance()).GetGameTimeStamp();
+          let verifyCb = new WEA_SleepVerifyCallback();
+          verifyCb.m_systemRef = this;
+          GameInstance.GetDelaySystem(GetGameInstance()).DelayCallback(verifyCb, 10.0, false);
+        };
+        return;
+      };
+    };
+
     switch (action) {
       case HumanityRestoringAction.Sleep:
+        // WEA: snapshot for sleep scaling ♪(´▽｀)
+        let weaPreRestoreHumanity: Int32 = 0;
+        let weaApplyScaling: Bool = isVerifiedSleep && weaConfig.sleepScalingEnabled;
+        if weaApplyScaling {
+          weaPreRestoreHumanity = this.GetHumanityCurrent();
+        };
+
         this.StopEverythingNew();
         this.SetWentFullPsycho(false);
         if !this.config.fullHumanityRestoreOnSleep {
@@ -306,6 +371,36 @@ public class EdgerunningSystem extends ScriptableSystem {
         }
         StatusEffectHelper.RemoveStatusEffect(this.player, t"BaseStatusEffect.LifeAffirmedBuff");
         E("! Rested, humanity value restored.");
+
+        // WEA: scale restore by hours slept - short naps = less humanity (´-ω-`)
+        if weaApplyScaling {
+          let sleepNow = GameInstance.GetTimeSystem(GetGameInstance()).GetGameTimeStamp();
+          let hoursSlept = (sleepNow - this.m_weaSleepCheckTime) / 3600.0;
+          let fullHours = Cast<Float>(weaConfig.sleepScalingFullHours);
+          let scaleFactor: Float = 1.0;
+          if fullHours > 0.0 && hoursSlept < fullHours {
+            scaleFactor = hoursSlept / fullHours;
+          };
+          if scaleFactor < 1.0 {
+            let restoredAmount = this.GetHumanityCurrent() - weaPreRestoreHumanity;
+            if restoredAmount > 0 {
+              let excess = Cast<Float>(restoredAmount) * (1.0 - scaleFactor);
+              E(s"! WEA Sleep: slept \(hoursSlept)h, scale \(scaleFactor * 100.0)%, clawing back \(excess)");
+              this.AddHumanityDamage(excess);
+            };
+          };
+        };
+
+        // WEA: sleep recovery cap (｡•́︿•̀｡)
+        if weaConfig.sleepRecoveryCap < 100 {
+          let totalHumanity = this.GetHumanityTotal();
+          let maxAllowed = (totalHumanity * weaConfig.sleepRecoveryCap) / 100;
+          let currentHumanity = this.GetHumanityCurrent();
+          if currentHumanity > maxAllowed {
+            let excess = Cast<Float>(currentHumanity - maxAllowed);
+            this.AddHumanityDamage(excess);
+          };
+        };
         break;
       case HumanityRestoringAction.Lover:
         if !this.humanityRestoringActionTakenLover { StatusEffectHelper.ApplyStatusEffect(this.player, t"BaseStatusEffect.LifeAffirmedBuff", this.player.GetEntityID()); }
@@ -355,6 +450,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func OnBerserkActivation(item: ItemID) -> Void {
+    this.WEA_SetNeuroBypass();
     E("BERSERK ACTIVATED");
     let itemRecord: ref<Item_Record> = RPGManager.GetItemRecord(item);
     let quality: gamedataQuality = itemRecord.Quality().Type();
@@ -408,6 +504,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func OnOverClockActivation(itemRecord: ref<Item_Record>) -> Void {
+    this.WEA_SetNeuroBypass();
     E("OVERCLOCK ACTIVATED");
     let quality: gamedataQuality = itemRecord.Quality().Type();
     let qualityMult: Float;
@@ -460,6 +557,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func OnSandevistanActivation(item: ItemID) -> Void {
+    this.WEA_SetNeuroBypass();
     E("SANDEVISTAN ACTIVATED");
     let itemRecord: ref<Item_Record> = RPGManager.GetItemRecord(item);
     let quality: gamedataQuality = itemRecord.Quality().Type();
@@ -513,6 +611,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func OnKerenzikovActivation() -> Void {
+    this.WEA_SetNeuroBypass();
     E("KERENZIKOV ACTIVATED");
     let itemRecord: ref<Item_Record> = this.cyberwareHelper.GetCurrentKerenzikov();
     if !IsDefined(itemRecord) {
@@ -571,6 +670,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func OnOpticalCamoActivation() -> Void {
+    this.WEA_SetNeuroBypass();
     E("OPTICAL CAMO ACTIVATED");
     let itemRecord: ref<Item_Record> = this.cyberwareHelper.GetCurrentOpticalCamo();
     if !IsDefined(itemRecord) {
@@ -630,6 +730,7 @@ public class EdgerunningSystem extends ScriptableSystem {
 
 
   public func OnBloodPumpActivation() -> Void {
+    this.WEA_SetNeuroBypass();
     E("BLOOD PUMP ACTIVATED");
     let itemRecord: ref<Item_Record> = this.cyberwareHelper.GetCurrentBloodPump();
     if !IsDefined(itemRecord) {
@@ -686,6 +787,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func OnArmsCyberwareActivation(type: gamedataItemType) -> Void {
+    this.WEA_SetNeuroBypass();
     let itemId: ItemID = EquipmentSystem.GetInstance(this.player).GetActiveItem(this.player, gamedataEquipmentArea.ArmsCW);
     let itemRecord: ref<Item_Record> = RPGManager.GetItemRecord(itemId);
     let itemType: gamedataItemType = RPGManager.GetItemType(itemId);
@@ -785,6 +887,15 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func AddHumanityDamage(cost: Float) -> Void {
+    // WEA: neuro tier reduction - soften damage instead of blocking, floor at 1.0 (╹◡╹)
+    let weaConfig = WEAConfig.Get();
+    if weaConfig.neuroEnabled && this.m_weaNeuroReduction > 0.0 {
+      let reduced = cost * (1.0 - this.m_weaNeuroReduction);
+      if reduced < 1.0 { reduced = 1.0; };
+      E(s"! WEA Neuro: damage \(cost) reduced to \(reduced) (block \(this.m_weaNeuroReduction * 100.0)%)");
+      cost = reduced;
+    };
+
     let total: Int32 = this.GetHumanityTotal();
     let damage: Int32 = CeilF(cost);
 
@@ -952,6 +1063,9 @@ public class EdgerunningSystem extends ScriptableSystem {
     evt.color = this.GetHumanityColor();
     GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(evt);
 
+    // WEA: update twitch tier on humanity change (ᗒᗣᗕ)՞
+    this.WEA_UpdateTwitchTier();
+
     if this.effectsChecker.IsRipperdocBuffActive() && !this.IsWentFullPsycho() { return; };
     if this.effectsChecker.IsNewPsychosisActive() { return; };
     if this.effectsChecker.IsNewPostPsychosisActive() { return; };
@@ -1097,6 +1211,9 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   private func ShowHumanityRestoredMessage(opt amount: Int32) -> Void {
+    // WEA: optional HUD message suppression (･ω<)
+    if WEAConfig.Get().hideHumanityMessages { return; };
+
     let onScreenMessage: SimpleScreenMessage;
     let blackboardDef = GetAllBlackboardDefs().UI_Notifications;
     let blackboard = GameInstance.GetBlackboardSystem(this.player.GetGame()).Get(blackboardDef);
@@ -1131,6 +1248,90 @@ public class EdgerunningSystem extends ScriptableSystem {
     system.effectsHelper.RunNewPrePsychosisEffect();
     // system.effectsHelper.RunNewPsychosisEffect();
     // system.effectsHelper.RunNewPostPsychosisEffect();
+  }
+
+  // WEA Add-on helpers ٩(｡•́‿•̀｡)۶
+  public func WEA_GetSmokeCount() -> Int32 { return this.m_weaSmokeCount; }
+  public func WEA_SetSmokeCount(value: Int32) -> Void { this.m_weaSmokeCount = value; }
+  public func WEA_GetSmokeLastDay() -> Int32 { return this.m_weaSmokeLastDay; }
+  public func WEA_SetSmokeLastDay(value: Int32) -> Void { this.m_weaSmokeLastDay = value; }
+
+  public func WEA_GetHumanityPercent() -> Int32 {
+    let total = this.GetHumanityTotal();
+    if total <= 0 { return 0; };
+    let current = this.GetHumanityCurrent();
+    return (current * 100) / total;
+  }
+
+  // bypass IsRipperdocBuffActive once so AddHumanityDamage can apply tier reduction
+  private func WEA_SetNeuroBypass() -> Void {
+    let config = WEAConfig.Get();
+    if config.neuroEnabled && this.m_weaNeuroReduction > 0.0 {
+      this.effectsChecker.m_weaBypassBuff = true;
+    };
+  }
+
+  // twitch tier picker - fires from InvalidateCurrentState (ᗒᗣᗕ)՞
+  private func WEA_UpdateTwitchTier() -> Void {
+    let config = WEAConfig.Get();
+    if !config.twitchEnabled {
+      this.WEA_ClearAllTwitch();
+      return;
+    };
+
+    let twitchPlayer = GetPlayer(GetGameInstance());
+    if !IsDefined(twitchPlayer) {
+      this.WEA_ClearAllTwitch();
+      return;
+    };
+
+    let humanityPercent = this.WEA_GetHumanityPercent();
+    let total = this.GetHumanityTotal();
+    let threshold = this.GetPsychosisThreshold();
+
+    // convert the absolute threshold to a percent so we can compare apples to apples
+    let severePercent = 0;
+    if total > 0 {
+      severePercent = (threshold * 100) / total;
+    };
+
+    let targetTier = 0;
+    if humanityPercent < config.twitchThresholdMild { targetTier = 1; };
+    if humanityPercent < config.twitchThresholdModerate { targetTier = 2; };
+    if severePercent > 0 && humanityPercent <= severePercent { targetTier = 3; };
+
+    if targetTier != this.m_weaCurrentTwitchTier {
+      this.WEA_ApplyTwitchTier(targetTier, twitchPlayer);
+    };
+  }
+
+  private func WEA_ApplyTwitchTier(tier: Int32, player: ref<PlayerPuppet>) -> Void {
+    this.WEA_ClearAllTwitch();
+    this.m_weaCurrentTwitchTier = tier;
+
+    if tier >= 1 {
+      StatusEffectHelper.ApplyStatusEffect(player, t"WEA_StatusEffect.Twitch_01");
+    };
+    if tier >= 2 {
+      StatusEffectHelper.RemoveStatusEffect(player, t"WEA_StatusEffect.Twitch_01");
+      StatusEffectHelper.ApplyStatusEffect(player, t"WEA_StatusEffect.Twitch_02");
+    };
+    if tier >= 3 {
+      StatusEffectHelper.RemoveStatusEffect(player, t"WEA_StatusEffect.Twitch_02");
+      StatusEffectHelper.ApplyStatusEffect(player, t"WEA_StatusEffect.Twitch_03");
+    };
+  }
+
+  private func WEA_ClearAllTwitch() -> Void {
+    let clearPlayer = GetPlayer(GetGameInstance());
+    if !IsDefined(clearPlayer) { return; };
+
+    if this.m_weaCurrentTwitchTier > 0 {
+      StatusEffectHelper.RemoveStatusEffect(clearPlayer, t"WEA_StatusEffect.Twitch_01");
+      StatusEffectHelper.RemoveStatusEffect(clearPlayer, t"WEA_StatusEffect.Twitch_02");
+      StatusEffectHelper.RemoveStatusEffect(clearPlayer, t"WEA_StatusEffect.Twitch_03");
+      this.m_weaCurrentTwitchTier = 0;
+    };
   }
 }
 
