@@ -16,7 +16,7 @@ protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
 }
 
 @addMethod(QuestMappinController)
-public func DetermineCurrentVisibility() -> Void {
+public func DetermineCurrentVisibility() -> Bool {
   // -- Default conditions
   let isInQuestArea: Bool = this.m_questMappin != null && this.m_questMappin.IsInsideTrigger();
   let showWhenClamped: Bool = this.isCurrentlyClamped ? !this.m_shouldHideWhenClamped : true;
@@ -38,7 +38,7 @@ public func DetermineCurrentVisibility() -> Void {
     let isVisible: Bool = showIfTracked || showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForAutoDrive || showForScanner || showForWeapon || showForZoom || showForArea;
     this.lhud_isVisibleNow = shouldBeVisible && isVisible;
     this.SetRootVisible(this.lhud_isVisibleNow);
-    return ;
+    return true;
   };
   // ---- Loot
   if this.lhudConfigLoot.IsEnabled && MappinChecker.IsLootMarker(this.m_mappin) {
@@ -55,7 +55,7 @@ public func DetermineCurrentVisibility() -> Void {
     let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForAutoDrive || showForScanner || showForWeapon || showForZoom || showForArea;
     this.lhud_isVisibleNow = shouldBeVisible && isVisible;
     this.SetRootVisible(this.lhud_isVisibleNow);
-    return ;
+    return true;
   };
   // ---- Vehicles
   if this.lhudConfigVehicles.IsEnabled && MappinChecker.IsVehicleIcon(this.m_mappin) {
@@ -68,7 +68,7 @@ public func DetermineCurrentVisibility() -> Void {
     let isVisible: Bool = showForGlobalHotkey || showForVehicle || showForAutoDrive || showForScanner || showForZoom || showForArea;
     this.lhud_isVisibleNow = shouldBeVisible && isVisible && !this.lhud_isBraindanceActive;
     this.SetRootVisible(this.lhud_isVisibleNow);
-    return ;
+    return true;
   };
   // ---- POIs
   if this.lhudConfigPOI.IsEnabled && MappinChecker.IsPlaceOfInterestIcon(this.m_mappin) {
@@ -86,7 +86,7 @@ public func DetermineCurrentVisibility() -> Void {
     let isVisible: Bool = showIfTracked || showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForAutoDrive || showForScanner || showForWeapon || showForZoom || showForArea;
     this.lhud_isVisibleNow = shouldBeVisible && isVisible && !this.lhud_isBraindanceActive;
     this.SetRootVisible(this.lhud_isVisibleNow);
-    return ;
+    return true;
   };
   // ---- Combat
   if this.lhudConfigCombat.IsEnabled && MappinChecker.IsCombatMarker(this.m_mappin) {
@@ -102,7 +102,7 @@ public func DetermineCurrentVisibility() -> Void {
     let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom || showForArea;
     this.lhud_isVisibleNow = shouldBeVisible && isVisible;
     this.SetRootVisible(this.lhud_isVisibleNow);
-    return ;
+    return true;
   };
   // ---- Devices and interactions
   if this.lhudConfigDevices.IsEnabled && MappinChecker.IsDeviceInteraction(this.m_mappin) {
@@ -110,13 +110,12 @@ public func DetermineCurrentVisibility() -> Void {
     let isVisible: Bool = showForScanner && shouldBeVisible;
     this.lhud_isVisibleNow = isVisible;
     this.SetRootVisible(this.lhud_isVisibleNow);
-    return ;
+    return true;
   };
 
-  this.lhud_isVisibleNow = shouldBeVisible;
-  this.SetRootVisible(shouldBeVisible);
-  let data: ref<GameplayRoleMappinData> = this.m_mappin.GetScriptData() as GameplayRoleMappinData;
-  LHUDLogMarker(s"MISSED MAPPIN: \(this.m_mappin.GetVariant()), role: \(data.m_gameplayRole), visibility \(this.lhud_isVisibleNow)");
+  // let data: ref<GameplayRoleMappinData> = this.m_mappin.GetScriptData() as GameplayRoleMappinData;
+  // LHUDLogMarker(s"MISSED MAPPIN: \(this.m_mappin.GetVariant()), role: \(data.m_gameplayRole), visibility \(this.lhud_isVisibleNow)");
+  return false;
 }
 
 @addField(QuestMappinController) private let lhudConfigQuest: ref<WorldMarkersModuleConfigQuest>;
@@ -139,14 +138,20 @@ protected cb func OnInitialize() -> Bool {
   this.DetermineCurrentVisibility();
 }
 
-@replaceMethod(QuestMappinController)
+@wrapMethod(QuestMappinController)
 private func UpdateVisibility() -> Void {
-  this.DetermineCurrentVisibility();
+  if !this.DetermineCurrentVisibility() {
+    wrappedMethod();
+    this.lhud_isVisibleNow = this.GetRootWidget().IsVisible();
+  }
 }
 
-@replaceMethod(GameplayMappinController)
+@wrapMethod(GameplayMappinController)
 private func UpdateVisibility() -> Void {
-  this.DetermineCurrentVisibility();
+  if !this.DetermineCurrentVisibility() {
+    wrappedMethod();
+    this.lhud_isVisibleNow = this.GetRootWidget().IsVisible();
+  }
 }
 
 @addMethod(QuestMappinController)
