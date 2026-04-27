@@ -15,12 +15,34 @@ protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
   this.DetermineCurrentVisibility();
 }
 
+@if(!ModuleExists("DisclosedHiddenGems.Core"))
 @addMethod(QuestMappinController)
-public func DetermineCurrentVisibility() -> Bool {
-  // -- Default conditions
+public func ShouldMappinBeVisible() -> Bool {
   let isInQuestArea: Bool = this.m_questMappin != null && this.m_questMappin.IsInsideTrigger();
   let showWhenClamped: Bool = this.isCurrentlyClamped ? !this.m_shouldHideWhenClamped : true;
   let shouldBeVisible: Bool = this.m_mappin.IsVisible() && showWhenClamped && !isInQuestArea;
+
+  return shouldBeVisible;
+}
+
+@if(ModuleExists("DisclosedHiddenGems.Core"))
+@addMethod(QuestMappinController)
+public func ShouldMappinBeVisible() -> Bool {
+  let isInQuestArea: Bool = this.m_questMappin != null && this.m_questMappin.IsInsideTrigger();
+  let showWhenClamped: Bool = this.isCurrentlyClamped ? !this.m_shouldHideWhenClamped : true;
+  let shouldBeVisible: Bool = this.m_mappin.IsVisible() && showWhenClamped && !isInQuestArea;
+
+  if this.IsHiddenGem() {
+    return this.ShouldHiddenGemMappinBeVisible() && shouldBeVisible;
+  } else {
+    return shouldBeVisible;
+  }
+}
+
+@addMethod(QuestMappinController)
+public func DetermineCurrentVisibility() -> Bool {
+  // -- Default conditions
+  let shouldBeVisible: Bool = this.ShouldMappinBeVisible();
   // -- LHUD Conditions
   // ---- Quests
   if this.lhudConfigQuest.IsEnabled && MappinChecker.IsQuestIcon(this.m_mappin) {
