@@ -546,17 +546,30 @@ protected cb func OnStartTakedownEvent(startTakedownEvent: ref<StartTakedownEven
 
 // --- INJECT HOTKEY PRESS RESULT INTO DEFAULT CHECK
 
-@replaceMethod(FirstEquipSystem)
+@wrapMethod(FirstEquipSystem)
 public final const func HasPlayedFirstEquip(weaponID: TweakDBID) -> Bool {
   let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.GetGameInstance());
   let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(this.GetGameInstance()).GetLocalPlayerMainGameObject() as PlayerPuppet;
   let weapon: wref<WeaponObject> = transactionSystem.GetItemInSlot(player, t"AttachmentSlots.WeaponRight") as WeaponObject;
+  let hasPlayedFirstEquipUnmodded: Bool = wrappedMethod(weaponID);
 
-  if !IsDefined(player) || !IsDefined(weapon) {
+  if !IsDefined(player) || !IsDefined(weapon) || !hasPlayedFirstEquipUnmodded {
     return false;
   };
 
   return !player.ShouldRunFirstEquipEQ(weapon);
+}
+
+@addMethod(FirstEquipSystem)
+public final const func HasPlayedFirstEquipForThisWeapon(weaponID: TweakDBID) -> Bool {
+  let i: Int32 = 0;
+  while i < ArraySize(this.m_equipDataArray) {
+    if this.m_equipDataArray[i].weaponID == weaponID {
+      return this.m_equipDataArray[i].hasPlayedFirstEquip;
+    };
+    i += 1;
+  };
+  return false;
 }
 
 
@@ -576,7 +589,11 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
   let transactionSystem: ref<TransactionSystem> = scriptInterface.GetTransactionSystem();
   let statSystem: ref<StatsSystem> = scriptInterface.GetStatsSystem();
   let mappedInstanceData: InstanceDataMappedToReferenceName = this.GetMappedInstanceData(stateMachineInstanceData.referenceName);
+  let firstEqSystem: ref<FirstEquipSystem> = FirstEquipSystem.GetInstance(scriptInterface.owner);
+  let firstEquip: Bool = false;	
+  let requestToSend: ref<CompletionOfFirstEquipRequest>;			 
   let itemObject: wref<WeaponObject> = transactionSystem.GetItemInSlot(scriptInterface.executionOwner, TDBID.Create(mappedInstanceData.attachmentSlot)) as WeaponObject;
+  let weaponTdbId: TweakDBID = ItemID.GetTDBID(itemObject.GetItemID());
   let isInCombat: Bool = scriptInterface.localBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat) == EnumInt(gamePSMCombat.InCombat);
   let playerPuppet: ref<PlayerPuppet> = scriptInterface.owner as PlayerPuppet;
   if TweakDBInterface.GetBool(t"player.weapon.enableWeaponBlur", false) {
@@ -588,13 +605,20 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
     if Equals(playerPuppet.ShouldSkipFirstEquipEQ(), true) {
       playerPuppet.SetSkipFirstEquipEQ(false);
     } else {
-      if playerPuppet.ShouldRunFirstEquipEQ(itemObject) {
+      if !firstEqSystem.HasPlayedFirstEquip(weaponTdbId) || playerPuppet.ShouldRunFirstEquipEQ(itemObject) || Equals(this.GetProcessedEquipmentManipulationRequest(stateMachineInstanceData, stateContext).equipAnim, gameEquipAnimationType.FirstEquip) {
         weaponEquipAnimFeature.firstEquip = true;
         stateContext.SetConditionBoolParameter(n"firstEquip", true, true);
+		    firstEquip = true;
+
+        if !firstEqSystem.HasPlayedFirstEquipForThisWeapon(weaponTdbId) {
+          requestToSend = new CompletionOfFirstEquipRequest();
+          requestToSend.weaponID = weaponTdbId;
+          firstEqSystem.QueueRequest(requestToSend);
+        };
       };
     };
   };
-
+  scriptInterface.localBlackboard.SetBool(GetAllBlackboardDefs().PlayerStateMachine.IsWeaponFirstEquip, firstEquip);
   animFeature.stateTransitionDuration = statSystem.GetStatValue(Cast<StatsObjectID>(itemObject.GetEntityID()), gamedataStatType.EquipDuration);
   animFeature.itemState = 1;
   animFeature.itemType = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(item)).ItemType().AnimFeatureIndex();
@@ -606,7 +630,7 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
   weaponEquipEvent = new WeaponEquipEvent();
   weaponEquipEvent.animFeature = weaponEquipAnimFeature;
   weaponEquipEvent.item = itemObject;
-  GameInstance.GetDelaySystem(scriptInterface.executionOwner.GetGame()).DelayEvent(scriptInterface.executionOwner, weaponEquipEvent, 0.03);
+  scriptInterface.executionOwner.QueueEvent(weaponEquipEvent);
   if itemObject.WeaponHasTag(n"Throwable") && !scriptInterface.GetStatPoolsSystem().HasStatPoolValueReachedMax(Cast<StatsObjectID>(itemObject.GetEntityID()), gamedataStatPoolType.ThrowRecovery) {
     animFeatureMeleeData = new AnimFeature_MeleeData();
     animFeatureMeleeData.isThrowReloading = true;
@@ -627,7 +651,6 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
       };
     };
   };
-
   autoRefillRatio = statSystem.GetStatValue(Cast<StatsObjectID>(itemObject.GetEntityID()), gamedataStatType.MagazineAutoRefill);
   if autoRefillRatio > 0.00 {
     magazineCapacity = WeaponObject.GetMagazineCapacity(itemObject);
