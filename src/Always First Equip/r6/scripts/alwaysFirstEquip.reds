@@ -365,10 +365,10 @@ public func ShouldRunFirstEquipEQ(weapon: wref<WeaponObject>) -> Bool {
     probability = this.firstEquipConfig.percentageProbability;
     random = RandRange(0, 100);
 
-    if probability < 0 { return false; }
-    if probability > 100 { return true; }
+    if probability <= 0 { return false; }
+    if probability >= 100 { return true; }
 
-    return random <= probability;
+    return random < probability;
   };
 }
 
@@ -380,10 +380,10 @@ public func ShouldRunIdleBreakEQ() -> Bool {
   let probability: Int32 = this.firstEquipConfig.animationProbabilityIdleBreak;
   let random: Int32 = RandRange(0, 100);
 
-  if probability < 0 { return false; }
-  if probability > 100 { return true; }
+  if probability <= 0 { return false; }
+  if probability >= 100 { return true; }
 
-  return random <= probability;
+  return random < probability;
 }
 
 @addMethod(PlayerPuppet)
@@ -561,7 +561,7 @@ public final const func HasPlayedFirstEquip(weaponID: TweakDBID) -> Bool {
 }
 
 @addMethod(FirstEquipSystem)
-public final const func HasPlayedFirstEquipForThisWeapon(weaponID: TweakDBID) -> Bool {
+public final func HasPlayedFirstEquipForThisWeapon(weaponID: TweakDBID) -> Bool {
   let i: Int32 = 0;
   while i < ArraySize(this.m_equipDataArray) {
     if this.m_equipDataArray[i].weaponID == weaponID {
@@ -605,7 +605,7 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
     if Equals(playerPuppet.ShouldSkipFirstEquipEQ(), true) {
       playerPuppet.SetSkipFirstEquipEQ(false);
     } else {
-      if !firstEqSystem.HasPlayedFirstEquip(weaponTdbId) || playerPuppet.ShouldRunFirstEquipEQ(itemObject) || Equals(this.GetProcessedEquipmentManipulationRequest(stateMachineInstanceData, stateContext).equipAnim, gameEquipAnimationType.FirstEquip) {
+      if !firstEqSystem.HasPlayedFirstEquip(weaponTdbId) || Equals(this.GetProcessedEquipmentManipulationRequest(stateMachineInstanceData, stateContext).equipAnim, gameEquipAnimationType.FirstEquip) {
         weaponEquipAnimFeature.firstEquip = true;
         stateContext.SetConditionBoolParameter(n"firstEquip", true, true);
 		    firstEquip = true;
