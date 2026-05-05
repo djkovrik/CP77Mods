@@ -34,19 +34,31 @@ protected cb func OnInitialize() -> Bool {
 }
 
 // Save spawned mappins
-@wrapMethod(DropPointSystem)
-private final func RegisterDropPointMappin(data: ref<DropPointMappinRegistrationData>) -> Void {
-  wrappedMethod(data);
+@addField(DropPointSystem)
+private let spawner: ref<AtelierDropPointsSpawner>;
 
-  let spawner: ref<AtelierDropPointsSpawner> = AtelierDropPointsSpawner.Get(this.GetGameInstance());
+@wrapMethod(DropPointSystem)
+private func OnRestored(saveVersion: Int32, gameVersion: Int32) -> Void {
+  wrappedMethod(saveVersion, gameVersion);
+  this.spawner = AtelierDropPointsSpawner.Get(GetGameInstance());
+}
+
+@replaceMethod(DropPointSystem)
+private final func RegisterDropPointMappin(data: ref<DropPointMappinRegistrationData>) -> Void {
+  let mappinData: MappinData;
+  let mappinID: NewMappinID;
+  if data == null || NotEquals(data.GetMappinID(), mappinID) {
+    return;
+  };
+  mappinData.mappinType = t"Mappins.DropPointStaticMappin";
+  mappinData.variant = gamedataMappinVariant.ServicePointDropPointVariant;
+  mappinData.active = true;
+  mappinID = this.GetMappinSystem().RegisterMappin(mappinData, data.GetPosition());
+  data.SetMappinID(mappinID);
+
   let entityId: EntityID = data.GetOwnerID();
-  let mappinData: ref<DropPointMappinRegistrationData> = this.GetMappinData(entityId);
-  let mappinId: NewMappinID;
-  if IsDefined(mappinData) {
-    mappinId = mappinData.GetMappinID();
-    if NotEquals(mappinId.value, Cast<Uint64>(0)) && spawner.IsCustomDropPoint(entityId) {
-      spawner.SaveSpawnedMappinId(entityId, mappinId);
-    };
+  if this.spawner.IsCustomDropPoint(entityId) {
+    this.spawner.SaveSpawnedMappinId(entityId, mappinID);
   };
 }
 

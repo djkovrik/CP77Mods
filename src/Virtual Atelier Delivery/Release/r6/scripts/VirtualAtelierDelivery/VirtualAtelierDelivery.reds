@@ -1,4 +1,4 @@
-// VirtualAtelierDelivery v1.0.10
+// VirtualAtelierDelivery v1.0.11
 module AtelierDelivery
 
 import Codeware.UI.*
@@ -3451,18 +3451,28 @@ protected cb func OnInitialize() -> Bool {
   this.spawner = AtelierDropPointsSpawner.Get(this.m_player.GetGame());
 }
 // Save spawned mappins
+@addField(DropPointSystem)
+private let spawner: ref<AtelierDropPointsSpawner>;
 @wrapMethod(DropPointSystem)
+private func OnRestored(saveVersion: Int32, gameVersion: Int32) -> Void {
+  wrappedMethod(saveVersion, gameVersion);
+  this.spawner = AtelierDropPointsSpawner.Get(GetGameInstance());
+}
+@replaceMethod(DropPointSystem)
 private final func RegisterDropPointMappin(data: ref<DropPointMappinRegistrationData>) -> Void {
-  wrappedMethod(data);
-  let spawner: ref<AtelierDropPointsSpawner> = AtelierDropPointsSpawner.Get(this.GetGameInstance());
+  let mappinData: MappinData;
+  let mappinID: NewMappinID;
+  if data == null || NotEquals(data.GetMappinID(), mappinID) {
+    return;
+  };
+  mappinData.mappinType = t"Mappins.DropPointStaticMappin";
+  mappinData.variant = gamedataMappinVariant.ServicePointDropPointVariant;
+  mappinData.active = true;
+  mappinID = this.GetMappinSystem().RegisterMappin(mappinData, data.GetPosition());
+  data.SetMappinID(mappinID);
   let entityId: EntityID = data.GetOwnerID();
-  let mappinData: ref<DropPointMappinRegistrationData> = this.GetMappinData(entityId);
-  let mappinId: NewMappinID;
-  if IsDefined(mappinData) {
-    mappinId = mappinData.GetMappinID();
-    if NotEquals(mappinId.value, Cast<Uint64>(0)) && spawner.IsCustomDropPoint(entityId) {
-      spawner.SaveSpawnedMappinId(entityId, mappinId);
-    };
+  if this.spawner.IsCustomDropPoint(entityId) {
+    this.spawner.SaveSpawnedMappinId(entityId, mappinID);
   };
 }
 // Show VA tooltip
