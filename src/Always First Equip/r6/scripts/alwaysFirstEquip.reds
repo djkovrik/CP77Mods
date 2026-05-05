@@ -553,6 +553,10 @@ public final const func HasPlayedFirstEquip(weaponID: TweakDBID) -> Bool {
   let weapon: wref<WeaponObject> = transactionSystem.GetItemInSlot(player, t"AttachmentSlots.WeaponRight") as WeaponObject;
   let hasPlayedFirstEquipUnmodded: Bool = wrappedMethod(weaponID);
 
+  if !IsDefined(weapon) {
+    weapon = transactionSystem.GetItemInSlot(GetPlayer(this.GetGameInstance()), t"AttachmentSlots.WeaponRight") as WeaponObject;
+  }
+
   if !IsDefined(player) || !IsDefined(weapon) || !hasPlayedFirstEquipUnmodded {
     return false;
   };
