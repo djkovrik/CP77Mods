@@ -15,6 +15,9 @@ public class PsychosisEffectsChecker {
   private let questsSystem: ref<QuestsSystem>;
   private let possessed: Bool;
 
+  // WEA: one-shot bypass flag, consumed on read ಠ‿ಠ
+  public let m_weaBypassBuff: Bool;
+
   public func Init(player: ref<PlayerPuppet>) -> Void {
     this.player = player;
     this.playerSystem = GameInstance.GetPlayerSystem(this.player.GetGame());
@@ -38,6 +41,11 @@ public class PsychosisEffectsChecker {
   }
 
   public func IsRipperdocBuffActive() -> Bool {
+    // WEA: bypass flag - return false once so neuro reduction applies
+    if this.m_weaBypassBuff {
+      this.m_weaBypassBuff = false;
+      return false;
+    };
     let checked: Bool = StatusEffectSystem.ObjectHasStatusEffectWithTag(this.player, n"Neuroblockers");
     E(s"? Check for neuroblockers tag: \(checked)");
     return checked;
