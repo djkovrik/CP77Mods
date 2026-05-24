@@ -25,8 +25,6 @@ public final func GetRecipesData(itemRecord: ref<Item_Record>, iconicsMultiplier
   let result: array<ref<RecipeData>>;
   let originalRecipe: ref<RecipeData> = this.GetRecipeData(itemRecord);
 
-  let listOfIngredients: array<IngredientData>;
-  let tempListOfIngredients: array<wref<RecipeElement_Record>>;
   let tempRecipeData: ItemRecipe;
   let tempItemCategory: ref<ItemCategory_Record>;
   let newRecipeData: ref<RecipeData>;
@@ -48,6 +46,8 @@ public final func GetRecipesData(itemRecord: ref<Item_Record>, iconicsMultiplier
     L(s" -> detected variant: \(TDBID.ToStringDEBUG(currentItemId)) \(currentItemRecord.Quality().Name()), is iconic: \(isPresetIconic)");
     if isWeapon {
       if this.IsWeaponVariantAvailable(currentItemId, quality, isPresetIconic) {
+        let listOfIngredients: array<IngredientData>;
+        let tempListOfIngredients: array<wref<RecipeElement_Record>>;
         tempRecipeData = this.m_playerCraftBook.GetRecipeData(itemRecord.GetID());
         tempItemCategory = currentItemRecord.ItemCategory();
         newRecipeData = new RecipeData();
@@ -58,6 +58,7 @@ public final func GetRecipesData(itemRecord: ref<Item_Record>, iconicsMultiplier
         newRecipeData.type = LocKeyToString(tempItemCategory.LocalizedCategory());
         newRecipeData.id = currentItemRecord;
         newRecipeData.amount = tempRecipeData.amount;
+        newRecipeData.quality = currentItemRecord.Quality().Type();
         itemRecord.CraftingData().CraftingRecipe(tempListOfIngredients);
         j = 0;
         while j < ArraySize(tempListOfIngredients) {

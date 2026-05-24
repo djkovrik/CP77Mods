@@ -64,14 +64,17 @@ public class EnhancedCraftSystem extends ScriptableSystem {
   }
 
   public func RefreshSingleItem(itemData: ref<gameItemData>) -> Void {
-    let hasCustomName: Bool = this.HasCustomName(itemData.GetID());
+    let customName: String;
 
-    if hasCustomName {
-      itemData.hasCustomName = this.HasCustomName(itemData.GetID());
-      itemData.customName = this.GetCustomName(itemData.GetID());
+    if this.TryGetCustomName(itemData.GetID(), customName) {
+      itemData.hasCustomName = true;
+      itemData.customName = customName;
+    } else {
+      itemData.hasCustomName = false;
+      itemData.customName = "";
     };
 
-    L(s"RefreshSingleItem \(ItemID.GetCombinedHash(itemData.GetID())), name: \(hasCustomName)");
+    L(s"RefreshSingleItem \(ItemID.GetCombinedHash(itemData.GetID())), name: \(itemData.hasCustomName)");
   }
 
   // -- Saves custom name
@@ -108,6 +111,20 @@ public class EnhancedCraftSystem extends ScriptableSystem {
     return "";
   }
 
+  private func TryGetCustomName(itemId: ItemID, out name: String) -> Bool {
+    let id: Uint64 = ItemID.GetCombinedHash(itemId);
+
+    for record in this.m_nameRecords {
+      if Equals(record.id, id) {
+        name = NameToString(record.name);
+        return true;
+      };
+    };
+
+    name = "";
+    return false;
+  }
+
   private func GetConfig() -> ref<ECraftConfig> {
     return this.config;
   }
@@ -124,9 +141,15 @@ public class EnhancedCraftSystem extends ScriptableSystem {
     L(s"RefreshStoredNames: player items detected: \(ArraySize(playerItems))");
 
     // Iterate through player items and assign custom names
+    let customName: String;
     for data in playerItemsData {
-      data.hasCustomName = this.HasCustomName(data.GetID());
-      data.customName = this.GetCustomName(data.GetID());
+      if this.TryGetCustomName(data.GetID(), customName) {
+        data.hasCustomName = true;
+        data.customName = customName;
+      } else {
+        data.hasCustomName = false;
+        data.customName = "";
+      };
     };
 
     if shouldClean {

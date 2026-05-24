@@ -16,6 +16,14 @@ private let nameInputContainer: wref<inkCompoundWidget>;
 @addField(CraftingMainGameController)
 private let craftedItemName: wref<inkText>;
 
+@addField(CraftingMainGameController)
+private let nameInputGlobalCallbackRegistered: Bool;
+
+@addMethod(CraftingMainGameController)
+private func HasEnhancedCraftNameInput() -> Bool {
+  return IsDefined(this.nameInput) && IsDefined(this.nameInputContainer) && IsDefined(this.craftedItemName);
+}
+
 // -- Inject text input into CraftingLogicController
 @wrapMethod(CraftingMainGameController)
 protected cb func OnInitialize() -> Bool {
@@ -31,6 +39,11 @@ protected cb func OnInitialize() -> Bool {
   // Insert input
   let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
   let outerContainer: ref<inkCompoundWidget> = root.GetWidget(n"craftingPanel/inkCanvasWidget2/inkCanvasWidget7/itemDetailsContainer") as inkCompoundWidget;
+  this.craftedItemName = root.GetWidget(n"craftingPanel/inkCanvasWidget2/inkCanvasWidget7/itemDetailsContainer/itemTitle/header/itemName") as inkText;
+  if !IsDefined(outerContainer) || !IsDefined(this.craftedItemName) {
+    return true;
+  };
+
   let container: ref<inkVerticalPanel> = new inkVerticalPanel();
   container.SetSize(600.0, 100.0);
   container.SetFitToContent(true);
@@ -47,14 +60,16 @@ protected cb func OnInitialize() -> Bool {
   this.nameInput = input;
 
   this.RegisterToGlobalInputCallback(n"OnPostOnRelease", this, n"OnGlobalInput");
-
-  // Find item name inkText
-  this.craftedItemName = root.GetWidget(n"craftingPanel/inkCanvasWidget2/inkCanvasWidget7/itemDetailsContainer/itemTitle/header/itemName") as inkText;
+  this.nameInputGlobalCallbackRegistered = true;
 }
 
 // -- Catch text input events
 @addMethod(CraftingMainGameController)
 protected cb func OnTextInput(widget: wref<inkWidget>) -> Bool {
+  if !this.HasEnhancedCraftNameInput() {
+    return false;
+  };
+
   let text: String = this.nameInput.GetText();
   if NotEquals(text, "") {
     this.craftedItemName.SetText(text);
@@ -73,6 +88,9 @@ protected cb func OnGlobalInput(evt: ref<inkPointerEvent>) -> Void {
 
 @wrapMethod(CraftingMainGameController)
 protected cb func OnUninitialize() -> Bool {
-  this.UnregisterFromGlobalInputCallback(n"OnPostOnRelease", this, n"OnGlobalInput");
+  if this.nameInputGlobalCallbackRegistered {
+    this.UnregisterFromGlobalInputCallback(n"OnPostOnRelease", this, n"OnGlobalInput");
+    this.nameInputGlobalCallbackRegistered = false;
+  };
   wrappedMethod();
 }
