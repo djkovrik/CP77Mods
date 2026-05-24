@@ -17,6 +17,8 @@ public class CustomMarkerSystem extends ScriptableSystem {
 
   private let m_mappinSystem: ref<MappinSystem>;
 
+  private let m_persistedMappinsRestored: Bool;
+
   private persistent let m_mappins: array<ref<CustomMappinData>>;
 
   private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
@@ -88,6 +90,12 @@ public class CustomMarkerSystem extends ScriptableSystem {
   }
 
   public func RestorePersistedMappins() -> Void {
+    if this.m_persistedMappinsRestored {
+      return ;
+    };
+
+    this.m_persistedMappinsRestored = true;
+
     CMM(s"Trying to restore persisted mappins: \(ArraySize(this.m_mappins))");
     this.RefreshPersistedMappins();
     let persistedMappins: array<ref<CustomMappinData>> = this.m_mappins;

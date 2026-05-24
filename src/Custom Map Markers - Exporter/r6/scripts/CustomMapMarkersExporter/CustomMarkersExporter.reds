@@ -27,9 +27,14 @@ public class CustomMarkersExporter extends ScriptableService {
 
     let persistedDto: ref<CustomMappinsDTO> = this.GetPersistedMappinsDTO();
 
-    if !IsDefined(persistedDto) && NotEquals(ArraySize(currentMappins), 0) {
-      this.Log(s"No persisted mappins detected - creating new \(this.fileName)");
-      this.PersistNewRevision(currentMappins);
+    if !IsDefined(persistedDto) {
+      if NotEquals(ArraySize(currentMappins), 0) {
+        this.Log(s"No persisted mappins detected - creating new \(this.fileName)");
+        this.PersistNewRevision(currentMappins);
+      } else {
+        this.Log("No persisted mappins detected and no active mappins to persist");
+      };
+
       return currentMappins;
     };
 
@@ -85,8 +90,17 @@ public class CustomMarkersExporter extends ScriptableService {
 
     let file: ref<File> = this.storage.GetFile(this.fileName);
     let json: ref<JsonObject> = file.ReadAsJson() as JsonObject;
+    if !IsDefined(json) {
+      this.Log(s"File \(this.fileName) read failed");
+      return null;
+    };
 
     let parsed: ref<CustomMappinsDTO> = FromJson(json, n"CustomMarkers.Export.CustomMappinsDTO") as CustomMappinsDTO;
+    if !IsDefined(parsed) {
+      this.Log(s"File \(this.fileName) parse failed");
+      return null;
+    };
+
     this.Log(s"File \(this.fileName) parsed: \(IsDefined(parsed)), mappins: \(ArraySize(parsed.mappins))");
     for parsedMappin in parsed.mappins {
       this.Log(s"- \(parsedMappin.description) \(parsedMappin.type) - [\(parsedMappin.X), \(parsedMappin.Y), \(parsedMappin.Z), \(parsedMappin.W)]");

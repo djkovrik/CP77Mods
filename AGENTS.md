@@ -99,6 +99,12 @@ Use TweakXL docs when touching TweakXL APIs:
 - If a file starts with a `module` declaration, keep new public APIs/imports consistent with that namespace. If no module is present, understand that the file is in global scope.
 - Prefer existing game helpers over new utility code when they already solve the problem. Use Codeware/TweakXL helpers only when the mod already depends on them or the change explicitly adds that dependency.
 
+## Debug Logging
+
+- For temporary debug logging in mods that already depend on Codeware or are compiled with Codeware available, prefer `ModLog(n"ModName", "Log string");`. The first argument is a mod-specific log name/channel, not a fixed severity string.
+- If Codeware is not available or the mod should not depend on it, use vanilla `FTLog("Log string");` instead.
+- Keep debug logs clearly identifiable with a mod-specific prefix, and remove or gate noisy temporary logs before finishing unless the user explicitly wants them kept.
+
 ## Language Notes
 
 - redscript is statically typed. Prefer explicit local variable, parameter, and return types when inference is not obvious from nearby game code.

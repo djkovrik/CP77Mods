@@ -8,6 +8,9 @@ protected let m_customMarkerSystem: ref<CustomMarkerSystem>;
 @addField(WorldMapMenuGameController)
 protected let m_cycleMappinPosition: Int32;
 
+@addField(WorldMapMenuGameController)
+protected let m_suppressCustomMarkerPopup: Bool;
+
 @wrapMethod(WorldMapMenuGameController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
@@ -15,6 +18,7 @@ protected cb func OnInitialize() -> Bool {
   let container: ref<ScriptableSystemsContainer> = GameInstance.GetScriptableSystemsContainer(this.m_player.GetGame());
   this.m_customMarkerSystem = container.Get(n"CustomMarkers.System.CustomMarkerSystem") as CustomMarkerSystem;
   this.m_cycleMappinPosition = 0;
+  this.m_suppressCustomMarkerPopup = false;
 }
 
 // Catch marker creation requests
@@ -57,6 +61,8 @@ private func MoveFromCustomToPlayer() -> Void {
 private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
   let customMappin: ref<IMappin>;
   let customMappinData: ref<GameplayRoleMappinData>;
+  let customMappinPosition: Vector4;
+  let targetMappinController: ref<BaseWorldMapMappinController>;
   if e.IsAction(n"world_map_menu_track_waypoint") {
     this.m_pressedRMB = true;
     this.TryTrackQuestOrSetWaypoint();
@@ -76,22 +82,33 @@ private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
       };
     } else {
       if e.IsAction(n"world_map_menu_zoom_to_mappin") {
+        targetMappinController = e.GetTarget().GetController() as BaseWorldMapMappinController;
         // Default logic
         if this.HasSelectedMappin() && this.CanZoomToMappin(this.selectedMappin) {
           this.PlaySound(n"Button", n"OnPress");
           this.ZoomToMappin(this.selectedMappin);
         };
         // Open popup when clicked on free space
-        if !this.HasSelectedMappin() && this.m_player.PlayerLastUsedKBM() {
-          this.PlaySound(n"Button", n"OnPress");
-          CustomMarkerPopup.Show(this, this.m_player);
+        if !this.HasSelectedMappin() && this.m_player.PlayerLastUsedKBM() && !IsDefined(targetMappinController) {
+          if this.m_suppressCustomMarkerPopup {
+            this.m_suppressCustomMarkerPopup = false;
+          } else {
+            this.PlaySound(n"Button", n"OnPress");
+            CustomMarkerPopup.Show(this, this.m_player);
+          };
         } else {
-          // Delete mappin if clicked on custom
-          customMappin = this.selectedMappin.GetMappin();
-          customMappinData = customMappin.GetScriptData() as GameplayRoleMappinData;
-          if IsDefined(customMappinData) && customMappinData.m_isMappinCustom {
-            this.m_customMarkerSystem.DeleteCustomMappin(customMappin.GetWorldPosition());
-            this.PlaySound(n"MapPin", n"OnDelete");
+          if this.HasSelectedMappin() {
+            // Delete mappin if clicked on custom
+            customMappin = this.selectedMappin.GetMappin();
+            customMappinData = customMappin.GetScriptData() as GameplayRoleMappinData;
+            if IsDefined(customMappinData) && customMappinData.m_isMappinCustom {
+              customMappinPosition = customMappin.GetWorldPosition();
+              this.m_suppressCustomMarkerPopup = true;
+              this.SetSelectedMappin(null);
+              this.m_customMarkerSystem.DeleteCustomMappin(customMappinPosition);
+              this.PlaySound(n"MapPin", n"OnDelete");
+              e.Consume();
+            };
           };
         };
       } else {
@@ -109,8 +126,10 @@ private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
               this.m_isZooming = true;
             };
           } else {
-            if e.IsAction(n"world_map_menu_fast_travel") && this.HasSelectedMappin() && Equals(this.selectedMappin.GetMappinVariant(), gamedataMappinVariant.FastTravelVariant) && this.IsFastTravelEnabled() {
+            if e.IsAction(n"world_map_menu_fast_travel") && this.HasSelectedMappin() && (Equals(this.selectedMappin.GetMappinVariant(), gamedataMappinVariant.FastTravelVariant) || Equals(this.selectedMappin.GetMappinVariant(), gamedataMappinVariant.Zzz17_NCARTVariant)) && this.IsFastTravelEnabled() {
               this.m_audioSystem.Play(n"ui_menu_item_crafting_start");
+              this.PrepFastTravel();
+              SetFactValue(this.GetOwner().GetGame(), n"ue_metro_map_ui_ft_clicked", 1);
               this.m_startedFastTraveling = true;
               this.m_isPanning = true;
             };
