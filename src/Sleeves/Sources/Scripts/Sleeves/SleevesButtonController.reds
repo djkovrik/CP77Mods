@@ -62,7 +62,7 @@ public class SleevesButtonController extends inkGameController {
   }
 
   private final func UnregisterInputListeners() -> Void {
-    this.UnregisterFromCallback(n"OnEnter", this, n"OnRelease");
+    this.UnregisterFromCallback(n"OnEnter", this, n"OnHoverOver");
     this.UnregisterFromCallback(n"OnLeave", this, n"OnHoverOut");
     this.UnregisterFromCallback(n"OnRelease", this, n"OnClick");
   }

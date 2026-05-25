@@ -5,8 +5,19 @@ private final func ShowSleevesButton(show: Bool) -> Void {
 
 @addMethod(gameuiInventoryGameController)
 protected cb func OnShowSleevesPopupEvent(evt: ref<ShowSleevesPopupEvent>) -> Bool {
-  let bundle: ref<SleevesInfoBundle> = SleevesStateSystem.Get(this.m_player.GetGame()).GetInfoBundle();
-  SleevesPopup.Show(this, bundle);
+  let system: ref<SleevesStateSystem> = SleevesStateSystem.Get(this.m_player.GetGame());
+  let bundle: ref<SleevesInfoBundle>;
+
+  if !IsDefined(system) {
+    return false;
+  };
+
+  system.RefreshSleevesState();
+  bundle = system.GetInfoBundle();
+
+  if IsDefined(bundle) && ArraySize(bundle.items) > 0 {
+    SleevesPopup.Show(this, bundle);
+  };
 }
 
 @wrapMethod(gameuiInventoryGameController)

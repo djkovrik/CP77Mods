@@ -26,6 +26,8 @@ class SleevesStateSystem extends ScriptableSystem {
   }
 
   public final func HasToggleableSleeves() -> Bool {
+    this.EnsureBundle();
+
     for item in this.bundle.items {
       if item.Excluded() {
         return false;
@@ -39,6 +41,8 @@ class SleevesStateSystem extends ScriptableSystem {
   }
 
   public final func HasSleevesActivated() -> Bool {
+    this.EnsureBundle();
+
     for item in this.bundle.items {
       if NotEquals(item.mode, SleevesMode.Wardrobe) && this.IsToggled(item.itemTDBID)  {
         return true;
@@ -53,6 +57,7 @@ class SleevesStateSystem extends ScriptableSystem {
   }
 
   public final func GetInfoBundle() -> ref<SleevesInfoBundle> {
+    this.EnsureBundle();
     return this.bundle;
   }
 
@@ -150,26 +155,28 @@ class SleevesStateSystem extends ScriptableSystem {
     // Populate list
     for slotID in targetSlots {
       itemObject = this.transactionSystem.GetItemInSlot(player, slotID);
-      itemID = itemObject.GetItemID();
-      itemTDBID = ItemID.GetTDBID(itemID);
-      isSlotEquipped = this.equipmentSystem.IsEquipped(player, itemID, this.SlotToArea(slotID));
-      if ItemID.IsValid(itemID) && isSlotEquipped {
-        if !this.HasCached(slotID, itemTDBID, mode) {
-          slotName = this.GetLocalizedSlotName(slotID, mode);
-          itemName = GetLocalizedTextByKey(RPGManager.GetItemRecord(itemID).DisplayName());
-          itemAppearance = this.transactionSystem.GetItemAppearance(player, itemID);
-          visualItemID = this.equipmentSystem.GetActiveVisualItem(player, this.SlotToArea(slotID));
-          visualItemName = GetLocalizedTextByKey(RPGManager.GetItemRecord(visualItemID).DisplayName());
-          info = SleevedSlotInfo.Create(slotID, slotName, itemID, itemName, itemAppearance, visualItemID, visualItemName, mode);
-          this.Cache(info);
-          SleevesLog(s"! Created: \(info.itemName) with base \(info.GetItemAppearance()) and tpp \(info.GetItemTppAppearance())");
-          SleevesLog(s"-> \(info.itemName) \(mode) added to cache");
-        } else {
-          info = this.GetCached(slotID, itemTDBID, mode);
-          SleevesLog(s"! Restored: \(info.itemName) with base \(info.GetItemAppearance()) and tpp \(info.GetItemTppAppearance())");
-          SleevesLog(s"<- \(info.itemName) \(mode)` restored from cache");
+      if IsDefined(itemObject) {
+        itemID = itemObject.GetItemID();
+        itemTDBID = ItemID.GetTDBID(itemID);
+        isSlotEquipped = this.equipmentSystem.IsEquipped(player, itemID, this.SlotToArea(slotID));
+        if ItemID.IsValid(itemID) && isSlotEquipped {
+          if !this.HasCached(slotID, itemTDBID, mode) {
+            slotName = this.GetLocalizedSlotName(slotID, mode);
+            itemName = GetLocalizedTextByKey(RPGManager.GetItemRecord(itemID).DisplayName());
+            itemAppearance = this.transactionSystem.GetItemAppearance(player, itemID);
+            visualItemID = this.equipmentSystem.GetActiveVisualItem(player, this.SlotToArea(slotID));
+            visualItemName = GetLocalizedTextByKey(RPGManager.GetItemRecord(visualItemID).DisplayName());
+            info = SleevedSlotInfo.Create(slotID, slotName, itemID, itemName, itemAppearance, visualItemID, visualItemName, mode);
+            this.Cache(info);
+            SleevesLog(s"! Created: \(info.itemName) with base \(info.GetItemAppearance()) and tpp \(info.GetItemTppAppearance())");
+            SleevesLog(s"-> \(info.itemName) \(mode) added to cache");
+          } else {
+            info = this.GetCached(slotID, itemTDBID, mode);
+            SleevesLog(s"! Restored: \(info.itemName) with base \(info.GetItemAppearance()) and tpp \(info.GetItemTppAppearance())");
+            SleevesLog(s"<- \(info.itemName) \(mode)` restored from cache");
+          };
+          ArrayPush(infoItems, info);
         };
-        ArrayPush(infoItems, info);
       };
     };
 
@@ -212,26 +219,28 @@ class SleevesStateSystem extends ScriptableSystem {
     // Populate list
     for slotID in targetSlots {
       itemObject = this.transactionSystem.GetItemInSlot(player, slotID);
-      itemID = itemObject.GetItemID();
-      itemTDBID = ItemID.GetTDBID(itemID);
-      isSlotEquipped = IsSlotOccupiedCustom(player.GetGame(), slotID);
-      if ItemID.IsValid(itemID) && isSlotEquipped {
-        if !this.HasCached(slotID, itemTDBID, mode) {
-          slotName = this.GetLocalizedSlotName(slotID, mode);
-          itemName = GetLocalizedTextByKey(RPGManager.GetItemRecord(itemID).DisplayName());
-          itemAppearance = this.transactionSystem.GetItemAppearance(player, itemID);
-          visualItemID = this.equipmentSystem.GetActiveVisualItem(player, this.SlotToArea(slotID));
-          visualItemName = GetLocalizedTextByKey(RPGManager.GetItemRecord(visualItemID).DisplayName());
-          info = SleevedSlotInfo.Create(slotID, slotName, itemID, itemName, itemAppearance, visualItemID, visualItemName, mode);
-          this.Cache(info);
-          SleevesLog(s"! Created: \(info.itemName) with base \(info.GetItemAppearance()) and tpp \(info.GetItemTppAppearance())");
-          SleevesLog(s"-> \(info.itemName) added to cache");
-        } else {
-          info = this.GetCached(slotID, itemTDBID, mode);
-          SleevesLog(s"! Restored: \(info.itemName) with base \(info.GetItemAppearance()) and tpp \(info.GetItemTppAppearance())");
-          SleevesLog(s"<- \(info.itemName) restored from cache");
+      if IsDefined(itemObject) {
+        itemID = itemObject.GetItemID();
+        itemTDBID = ItemID.GetTDBID(itemID);
+        isSlotEquipped = IsSlotOccupiedCustom(player.GetGame(), slotID);
+        if ItemID.IsValid(itemID) && isSlotEquipped {
+          if !this.HasCached(slotID, itemTDBID, mode) {
+            slotName = this.GetLocalizedSlotName(slotID, mode);
+            itemName = GetLocalizedTextByKey(RPGManager.GetItemRecord(itemID).DisplayName());
+            itemAppearance = this.transactionSystem.GetItemAppearance(player, itemID);
+            visualItemID = itemID;
+            visualItemName = itemName;
+            info = SleevedSlotInfo.Create(slotID, slotName, itemID, itemName, itemAppearance, visualItemID, visualItemName, mode);
+            this.Cache(info);
+            SleevesLog(s"! Created: \(info.itemName) with base \(info.GetItemAppearance()) and tpp \(info.GetItemTppAppearance())");
+            SleevesLog(s"-> \(info.itemName) added to cache");
+          } else {
+            info = this.GetCached(slotID, itemTDBID, mode);
+            SleevesLog(s"! Restored: \(info.itemName) with base \(info.GetItemAppearance()) and tpp \(info.GetItemTppAppearance())");
+            SleevesLog(s"<- \(info.itemName) restored from cache");
+          };
+          ArrayPush(infoItems, info);
         };
-        ArrayPush(infoItems, info);
       };
     };
 
@@ -250,7 +259,7 @@ class SleevesStateSystem extends ScriptableSystem {
         return gamedataEquipmentArea.OuterChest;
       case t"AttachmentSlots.Chest":
         return gamedataEquipmentArea.InnerChest;
-      case t"AttachmentSlots.Outit":
+      case t"AttachmentSlots.Outfit":
         return gamedataEquipmentArea.Outfit;
     };
     return gamedataEquipmentArea.Invalid;
@@ -298,6 +307,14 @@ class SleevesStateSystem extends ScriptableSystem {
 
   private final func GetPlayer() -> ref<PlayerPuppet> {
     return GetPlayer(GetGameInstance());
+  }
+
+  private final func EnsureBundle() -> Void {
+    let items: array<ref<SleevedSlotInfo>>;
+
+    if !IsDefined(this.bundle) {
+      this.bundle = SleevesInfoBundle.Create(SleevesMode.Vanilla, items);
+    };
   }
 
   private final func LogCurrentInfo() -> Void {

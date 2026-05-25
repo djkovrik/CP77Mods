@@ -54,6 +54,10 @@ public class SleevesPopupComponent extends inkComponent {
   }
 
   private final func UpdateContent() -> Void {
+    if !IsDefined(this.data) {
+      return;
+    };
+
     let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
     let itemsContainer: ref<inkCompoundWidget> = root.GetWidgetByPathName(n"internalPanel/items") as inkCompoundWidget;
     if IsDefined(this.data) && ArraySize(this.data.items) > 0 {

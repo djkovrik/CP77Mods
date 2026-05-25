@@ -93,6 +93,10 @@ private let sleevesDelayCallback: DelayID;
 public final func TriggerSleevesRefreshCallback(opt clearCache: Bool) -> Void {
   let triggerDelaySeconds: Float = 1.0;
   let delaySystem: ref<DelaySystem> = GameInstance.GetDelaySystem(this.GetGame());
+  if !IsDefined(delaySystem) {
+    return;
+  };
+
   delaySystem.CancelCallback(this.sleevesDelayCallback);
   this.sleevesDelayCallback = delaySystem.DelayCallback(SlotsButtonRefreshCallback.Create(this), triggerDelaySeconds, false);
 
@@ -111,7 +115,15 @@ public class SlotsButtonRefreshCallback extends DelayCallback {
   }
 
   public func Call() -> Void {
+    if !IsDefined(this.owner) {
+      return;
+    };
+
     let system: ref<SleevesStateSystem> = SleevesStateSystem.Get(this.owner.GetGame());
+    if !IsDefined(system) {
+      return;
+    };
+
     system.RefreshSleevesState();
     RefreshSleevesButtonEvent.Send(this.owner);
   }
