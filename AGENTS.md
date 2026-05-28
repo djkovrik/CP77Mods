@@ -229,6 +229,7 @@ When modifying an existing `.reds` file, inspect surrounding code before editing
 ## Validation
 
 - After edits, review changed `.reds` files for exact signatures, balanced braces, semicolons, and redscript-specific literals.
+- Never write compile output to `<BASE_REDSCRIPTS>` / `<GAME_ROOT>\r6\cache\final.redscripts`. This is the original game script bundle used as the compile base; overwriting it can break startup by baking mod classes into the precompiled scripts and causing `SYM_REDEFINITION` errors. All compile validation must write only to `final_patched.redscripts` next to `<REDSCRIPT_CLI>`.
 - When compile validation is useful, first check that `<REDSCRIPT_CLI>`, `<BASE_REDSCRIPTS>`, and the target `.reds` file or mod folder exist. If `<REDSCRIPT_CLI>` or `<BASE_REDSCRIPTS>` is missing, skip compile validation and report that it was not run.
 - For a single-file mod, compile that `.reds` file as the first `-s`. For a multi-file mod, compile the mod folder as the first `-s`.
 - Add optional dependency roots as extra `-s` arguments only when the local path exists: `<CODEWARE_SCRIPTS_ROOT>`, `<ARCHIVEXL_SCRIPTS_ROOT>`, `<TWEAKXL_SCRIPTS_ROOT>`, and `<MOD_SETTINGS_SCRIPTS_ROOT>`. Missing optional roots are not errors.
