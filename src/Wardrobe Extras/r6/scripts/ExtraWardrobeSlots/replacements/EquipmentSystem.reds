@@ -24,7 +24,7 @@ public final func OnRestored() -> Void {
 }
 
 @addMethod(EquipmentSystemPlayerData)
-public final const func GetActiveWardrobeSetExtra() -> ref<ClothingSetExtra> {
+public final func GetActiveWardrobeSetExtra() -> ref<ClothingSetExtra> {
   let set: ref<ClothingSetExtra>;
   if this.IsVisualSetActive() {
     set = this.m_wardrobeSystemExtra.GetActiveClothingSet();
@@ -85,7 +85,7 @@ public final func EquipWardrobeSetExtra(setID: gameWardrobeClothingSetIndexExtra
 }
 
 @addMethod(EquipmentSystemPlayerData)
-public final const func FindWardrobeClothingSetByIDExtra(setID: gameWardrobeClothingSetIndexExtra) -> ref<ClothingSetExtra> {
+public final func FindWardrobeClothingSetByIDExtra(setID: gameWardrobeClothingSetIndexExtra) -> ref<ClothingSetExtra> {
   let clothingSets: array<ref<ClothingSetExtra>> = this.m_wardrobeSystemExtra.GetClothingSets();
   let i: Int32 = 0;
   while i <= ArraySize(clothingSets) {
@@ -111,6 +111,7 @@ public final func UnequipWardrobeSetExtra() -> Void {
     this.m_visualUnequipTransition = false;
     this.m_wardrobeSystemExtra.SetActiveClothingSetIndex(gameWardrobeClothingSetIndexExtra.INVALID);
   };
+  this.UpdateUIBBAreaChanged(gamedataEquipmentArea.Outfit, 0);
 }
 
 @replaceMethod(EquipmentSystem)
@@ -128,7 +129,7 @@ private final func OnUnequipWardrobeSetRequest(request: ref<UnequipWardrobeSetRe
 @addMethod(EquipmentSystemPlayerData)
 public final func DeleteWardrobeSetExtra(setID: gameWardrobeClothingSetIndexExtra) -> Void {
   if Equals(this.m_wardrobeSystemExtra.GetActiveClothingSetIndex(), setID) {
-    this.UnequipWardrobeSet();
+    this.UnequipWardrobeSetExtra();
   };
   this.m_wardrobeSystemExtra.DeleteClothingSet(setID);
 }

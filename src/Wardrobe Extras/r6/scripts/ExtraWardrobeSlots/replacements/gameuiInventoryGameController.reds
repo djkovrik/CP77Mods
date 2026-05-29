@@ -41,7 +41,7 @@ private final func RefreshUI() -> Void {
       if isOutfitSlot || !wardrbeSetChanged {
         displays[j].InvalidateContent(isOutfitSlot, equippedClothingSetIndex);
       };
-      displays[j].SetLocked(isOutfitEquipped && isLockedArea);
+      displays[j].SetLocked(isOutfitEquipped && isLockedArea, true);
       displays[j].SetTransmoged(ArrayContains(this.m_wardrobeOutfitAreas, displays[j].GetEquipmentArea()));
       j += 1;
     };
@@ -65,7 +65,7 @@ private final func RefreshEquippedWardrobeItems() -> Void {
 }
 
 @replaceMethod(gameuiInventoryGameController)
-private final func PopulateArea(targetRoot: wref<inkCompoundWidget>, container: ref<EquipmentAreaDisplays>, numberOfSlots: Int32, equipmentAreas: array<gamedataEquipmentArea>) -> Void {
+private final func PopulateArea(targetRoot: wref<inkCompoundWidget>, container: ref<EquipmentAreaDisplays>, numberOfSlots: Int32, const equipmentAreas: script_ref<[gamedataEquipmentArea]>) -> Void {
   let clothingSet: gameWardrobeClothingSetIndexExtra;
   let clothingSetIndex: Int32;
   let currentEquipmentArea: gamedataEquipmentArea;
@@ -74,7 +74,7 @@ private final func PopulateArea(targetRoot: wref<inkCompoundWidget>, container: 
   let slot: wref<InventoryItemDisplayController>;
   let outfit: ItemID = this.m_InventoryManager.GetEquippedItemIdInArea(gamedataEquipmentArea.Outfit);
   let isOutfitEquipped: Bool = ItemID.IsValid(outfit);
-  let isOutfitSlot: Bool = ArrayContains(equipmentAreas, gamedataEquipmentArea.Outfit);
+  let isOutfitSlot: Bool = ArrayContains(Deref(equipmentAreas), gamedataEquipmentArea.Outfit);
   if isOutfitSlot {
     clothingSet = WardrobeSystemExtra.GetInstance(this.m_player.GetGame()).GetActiveClothingSetIndex();
     clothingSetIndex = WardrobeSystemExtra.WardrobeClothingSetIndexToNumber(clothingSet);
@@ -98,12 +98,13 @@ private final func PopulateArea(targetRoot: wref<inkCompoundWidget>, container: 
         currentEquipmentArea = InventoryItemData.GetEquipmentArea(equipedCyberwares[i]);
         container.displayControllers[i].Bind(this.m_InventoryManager, currentEquipmentArea, i, ItemDisplayContext.GearPanel);
       } else {
-        currentEquipmentArea = equipmentAreas[0];
+        currentEquipmentArea = Deref(equipmentAreas)[0];
         container.displayControllers[i].Bind(this.m_InventoryManager, currentEquipmentArea, i, ItemDisplayContext.GearPanel, clothingSetIndex > -1, clothingSetIndex);
       };
       container.displayControllers[i].BindComparisonAndScriptableSystem(this.m_uiScriptableSystem, this.m_comparisonResolver);
-      container.displayControllers[i].SetLocked(isOutfitEquipped && this.IsAreaLockedByOutfit(currentEquipmentArea));
+      container.displayControllers[i].SetLocked(isOutfitEquipped && this.IsAreaLockedByOutfit(currentEquipmentArea), true);
       container.displayControllers[i].SetTransmoged(ArrayContains(this.m_wardrobeOutfitAreas, currentEquipmentArea));
+      container.displayControllers[i].SetItemCounterDisabled(true);
     };
     i += 1;
   };
@@ -113,9 +114,13 @@ private final func PopulateArea(targetRoot: wref<inkCompoundWidget>, container: 
 protected cb func OnEquipmentClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
   let hotkey: EHotkey;
   let itemData: InventoryItemData;
+  let pressedOpenModsExclusiveHotkey: Bool;
   let controller: wref<InventoryItemDisplayController> = evt.display;
   if Equals(this.m_mode, InventoryModes.Item) {
     return false;
+  };
+  if evt.actionName.IsAction(n"install_quickhack") {
+    pressedOpenModsExclusiveHotkey = true;
   };
   if evt.actionName.IsAction(n"unequip_item") {
     itemData = controller.GetItemData();
@@ -129,7 +134,7 @@ protected cb func OnEquipmentClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
     };
     if !InventoryItemData.IsEmpty(itemData) {
       this.m_InventoryManager.GetHotkeyTypeForItemID(InventoryItemData.GetID(itemData), hotkey);
-      if NotEquals(hotkey, EHotkey.INVALID) {
+      if NotEquals(hotkey, EHotkey.INVALID) && NotEquals(hotkey, EHotkey.LBRB) {
         this.m_equipmentSystem.GetPlayerData(this.m_player).ClearItemFromHotkey(hotkey);
         this.NotifyItemUpdate(gamedataEquipmentArea.Invalid, 0, hotkey);
       } else {
@@ -147,6 +152,7 @@ protected cb func OnEquipmentClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
         this.UnequipItem(controller, itemData);
       };
       this.PlaySound(n"ItemAdditional", n"OnUnequip");
+      this.PlayRumble(RumbleStrength.Light, RumbleType.Pulse, RumblePosition.Right);
     };
   } else {
     if evt.actionName.IsAction(n"select") || evt.actionName.IsAction(n"click") {
@@ -159,7 +165,17 @@ protected cb func OnEquipmentClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
         return false;
       };
       itemData = controller.GetItemData();
-      if InventoryDataManagerV2.IsEquipmentAreaCyberware(controller.GetEquipmentArea()) && (InventoryItemData.IsEmpty(itemData) || controller.GetAttachmentsSize() <= 0) {
+      if InventoryDataManagerV2.IsEquipmentAreaCyberware(controller.GetEquipmentArea()) {
+        if InventoryItemData.IsEmpty(itemData) {
+          return false;
+        };
+        if controller.GetAttachmentsSize() > 0 {
+          this.OpenCyberwareModificationScreen(controller.GetItemDisplayData());
+        } else {
+          if !pressedOpenModsExclusiveHotkey {
+            this.OpenCyberwareMenu();
+          };
+        };
         return false;
       };
       if !evt.toggleVisibilityRequest {

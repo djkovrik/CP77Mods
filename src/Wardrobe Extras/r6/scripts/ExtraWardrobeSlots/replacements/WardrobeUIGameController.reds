@@ -28,7 +28,7 @@ protected cb func OnInitialize() -> Bool {
   // Move text label
   let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
   let wardrobeLabel: ref<inkText> = root.GetWidget(n"setEditorScreenContainer/setContainer/setPickerPanel/setsLabel") as inkText;
-  wardrobeLabel.SetMargin(new inkMargin(0.0, 0.0, 0.0, 0.0));
+  wardrobeLabel.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
 }
 
 @replaceMethod(WardrobeUIGameController)
@@ -105,16 +105,19 @@ private final func FinalizeTransmog() -> Void {
     if Equals(EquipmentSystem.GetActiveWardrobeSetIDExtra(this.m_player), gameWardrobeClothingSetIndexExtra.INVALID) {
       this.m_setEditorController.GetPreviewController().RestorePuppetEquipment();
     } else {
+      this.m_setEditorController.GetPreviewController().SyncUnderwearToEquipmentSystem();
       this.UnequipSetExtra();
     };
   } else {
+    this.m_setEditorController.GetPreviewController().SyncUnderwearToEquipmentSystem();
     this.EquipSetExtra(this.m_finalEquippedSetExtra);
   };
   this.m_setEditorController.GetPreviewController().DelayedResetItemAppearanceInSlot(t"AttachmentSlots.Chest");
   slots = WardrobeSystemExtra.GetInstance(this.m_player.GetGame()).GetClothingSets();
   slotsUsed = ArraySize(slots);
-  // GameInstance.GetTelemetrySystem(this.m_player.GetGame()).LogWardrobeUsed(slotsUsed);
+  GameInstance.GetTelemetrySystem(this.m_player.GetGame()).LogWardrobeUsed(slotsUsed);
 }
+
 
 @replaceMethod(WardrobeUIGameController)
 private final func SendDeleteRequests() -> Void {

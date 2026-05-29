@@ -31,7 +31,7 @@ private func CreateUnblockLabel() -> ref<inkText> {
   label.SetInteractive(true);
   label.SetVisible(false);
   label.SetAnchorPoint(0.0, 1.0);
-  label.SetMargin(new inkMargin(0.0, 0.0, 0.0, 100.0));
+  label.SetMargin(inkMargin(0.0, 0.0, 0.0, 100.0));
   label.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
   label.BindProperty(n"tintColor", n"MainColors.Blue");
 
@@ -91,7 +91,7 @@ private func InvalidateUnblockButtonState() -> Void {
 }
 
 @replaceMethod(WardrobeSetEditorUIController)
-private final func PopulateArea(targetRoot: wref<inkCompoundWidget>, container: ref<EquipmentAreaDisplays>, numberOfSlots: Int32, equipmentAreas: array<gamedataEquipmentArea>) -> Void {
+private final func PopulateArea(targetRoot: wref<inkCompoundWidget>, container: ref<EquipmentAreaDisplays>, numberOfSlots: Int32, const equipmentAreas: script_ref<[gamedataEquipmentArea]>) -> Void {
   let availableItems: array<InventoryItemData>;
   let currentEquipmentArea: gamedataEquipmentArea;
   let i: Int32;
@@ -110,7 +110,7 @@ private final func PopulateArea(targetRoot: wref<inkCompoundWidget>, container: 
   while i < numberOfSlots {
     currentEquipmentArea = gamedataEquipmentArea.Invalid;
     if IsDefined(container.displayControllers[i]) {
-      currentEquipmentArea = equipmentAreas[0];
+      currentEquipmentArea = Deref(equipmentAreas)[0];
       availableItems = this.m_wardrobeSystemExtra.GetFilteredInventoryItemsData(currentEquipmentArea, this.m_InventoryManager);
       itemCount = ArraySize(availableItems);
       container.displayControllers[i].BindVisualSlot(currentEquipmentArea, itemCount, data, i, ItemDisplayContext.GearPanel);
@@ -160,7 +160,7 @@ protected cb func OnEquipmentkHoverOver(evt: ref<ItemDisplayHoverOverEvent>) -> 
   let slotName: String;
   let slotHidden: Bool = ArrayContains(this.m_hiddenEquipmentAreas, evt.display.GetEquipmentArea());
   if !slotHidden && !InventoryItemData.IsEmpty(evt.itemData) {
-    itemTooltipData = this.m_InventoryManager.GetTooltipDataForVisualItem(evt.itemData, InventoryItemData.IsEquipped(evt.itemData));
+    itemTooltipData = this.m_InventoryManager.GetTooltipDataForVisualItem(evt.itemData, InventoryItemData.IsEquipped(evt.itemData), this.m_displayContextData);
     this.m_tooltipsManager.ShowTooltipAtWidget(n"visualTooltip", evt.widget, itemTooltipData, gameuiETooltipPlacement.RightTop, true);
     WardrobeSystemExtra.SendWardrobeInspectItemRequest(this.m_player.GetGame(), InventoryItemData.GetID(evt.itemData));
   } else {
@@ -178,7 +178,7 @@ protected cb func OnEquipmentHoverOver(evt: ref<ItemDisplayHoverOverEvent>) -> B
   let slotName: String;
   let slotHidden: Bool = ArrayContains(this.m_hiddenEquipmentAreas, evt.display.GetEquipmentArea());
   if !slotHidden && !InventoryItemData.IsEmpty(evt.itemData) {
-    itemTooltipData = this.m_InventoryManager.GetTooltipDataForVisualItem(evt.itemData, InventoryItemData.IsEquipped(evt.itemData));
+    itemTooltipData = this.m_InventoryManager.GetTooltipDataForVisualItem(evt.itemData, InventoryItemData.IsEquipped(evt.itemData), this.m_displayContextData);
     this.m_tooltipsManager.ShowTooltipAtWidget(n"visualTooltip", evt.widget, itemTooltipData, gameuiETooltipPlacement.RightTop, true);
     WardrobeSystemExtra.SendWardrobeInspectItemRequest(this.m_player.GetGame(), InventoryItemData.GetID(evt.itemData));
   } else {

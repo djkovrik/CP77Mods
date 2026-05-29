@@ -2,7 +2,7 @@
 private persistent let m_newWardrobeSetsExtra: array<gameWardrobeClothingSetIndexExtra>;
 
 @addMethod(UIScriptableSystem)
-public final const func IsWardrobeSetNewExtra(wardrobeSet: gameWardrobeClothingSetIndexExtra) -> Bool {
+public final func IsWardrobeSetNewExtra(wardrobeSet: gameWardrobeClothingSetIndexExtra) -> Bool {
   return ArrayContains(this.m_newWardrobeSetsExtra, wardrobeSet);
 }
 
