@@ -14,6 +14,14 @@ public class VirtualStoreDataView extends BackpackDataView {
     this.DisableSorting();
   }
 
+  public func FilterItem(data: ref<IScriptable>) -> Bool {
+    return true;
+  }
+
+  public func SortItem(left: ref<IScriptable>, right: ref<IScriptable>) -> Bool {
+    return false;
+  }
+
   public func DerivedFilterItem(data: ref<IScriptable>) -> DerivedFilterResult {
     let data: ref<VendorInventoryItemData> = data as VendorInventoryItemData;
 

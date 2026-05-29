@@ -58,7 +58,26 @@ class VirtualStockItem {
   public let weight: Float;
   public let quality: CName;
   public let quantity: Int32;
-  public let itemData: ref<gameItemData>;
+  public let name: String;
+  public let searchName: String;
+  public let equipmentArea: gamedataEquipmentArea;
+  public let itemType: gamedataItemType;
+  public let itemCategory: gamedataItemCategory;
+  public let isClothing: Bool;
+  public let isRangedWeapon: Bool;
+  public let isMeleeWeapon: Bool;
+  public let isCyberware: Bool;
+  public let isConsumable: Bool;
+  public let isGrenade: Bool;
+  public let isAttachment: Bool;
+  public let isProgram: Bool;
+  public let isQuest: Bool;
+  public let isJunk: Bool;
+  public let isDLCAdded: Bool;
+  public let isOwnable: Bool;
+  public let notInWardrobe: Bool;
+  public let qualityRank: Int32;
+  public let itemTypeRank: Int32;
 }
 
 class VirtualCartItem {

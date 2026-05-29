@@ -191,8 +191,7 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
 
   public final func SaveOwnedItem(item: ref<VirtualStockItem>) -> Bool {
     let id: TweakDBID = item.itemTDBID;
-    let data: ref<gameItemData> = item.itemData;
-    if !this.IsItemOwned(id) && this.ShouldControlOwnership(data) {
+    if !this.IsItemOwned(id) && item.isOwnable {
       ArrayPush(this.ownedItems, id);
     };
     return false;

@@ -47,4 +47,9 @@ public class VirtualCartTextButton extends VirtualAtelierControl {
   public final func SetText(text: String) -> Void {
     this.label.SetText(text);
   }
+
+  public final func SetFontSize(size: Int32) -> Void {
+    this.label.UnbindProperty(n"fontSize");
+    this.label.SetFontSize(size);
+  }
 }

@@ -10,6 +10,24 @@ import Codeware.UI.*
 @if(ModuleExists("AtelierDelivery"))
 import AtelierDelivery.*
 
+public class VirtualStorePageRenderCallback extends DelayCallback {
+  public let controller: wref<VirtualStoreController>;
+  public let token: Int32;
+
+  public func Call() -> Void {
+    if IsDefined(this.controller) {
+      this.controller.ContinuePageRender(this.token);
+    };
+  }
+
+  public static func Create(controller: ref<VirtualStoreController>, token: Int32) -> ref<VirtualStorePageRenderCallback> {
+    let callback: ref<VirtualStorePageRenderCallback> = new VirtualStorePageRenderCallback();
+    callback.controller = controller;
+    callback.token = token;
+    return callback;
+  }
+}
+
 public class VirtualStoreController extends gameuiMenuGameController {
   private let player: wref<PlayerPuppet>;
   private let previewManager: wref<VirtualAtelierPreviewManager>;
@@ -40,14 +58,27 @@ public class VirtualStoreController extends gameuiMenuGameController {
   private let cartIcon: wref<VirtualCartImageButton>;
   private let cartButtonClear: wref<VirtualCartTextButton>;
   private let cartButtonAddAll: wref<VirtualCartTextButton>;
+  private let pagePrevButton: wref<VirtualCartTextButton>;
+  private let pageNextButton: wref<VirtualCartTextButton>;
+  private let pageLabel: wref<inkText>;
 
   // Store data
   private let virtualStock: array<ref<VirtualStockItem>>;
+  private let filteredStock: array<ref<VirtualStockItem>>;
+  private let currentPageItemData: array<ref<gameItemData>>;
+  private let pendingPageStock: array<ref<VirtualStockItem>>;
+  private let pendingPageItems: array<ref<IScriptable>>;
+  private let pendingPageIndex: Int32;
+  private let pageRenderToken: Int32;
+  private let pageBatchSize: Int32 = 30;
   private let virtualStore: ref<VirtualShop>;
   private let storeListController: wref<inkVirtualGridController>;
   private let storeDataView: ref<VirtualStoreDataView>;
   private let storeDataSource: ref<ScriptableDataSource>;
   private let storeItemsClassifier: ref<VirtualStoreTemplateClassifier>;
+  private let currentPage: Int32;
+  private let totalPages: Int32;
+  private let pageSize: Int32 = 150;
 
   private let popupToken: ref<inkGameNotificationToken>;
   private let currentTutorialsFact: Int32;
@@ -111,6 +142,8 @@ public class VirtualStoreController extends gameuiMenuGameController {
       if evt.triggerButton.GetRootWidget() == this.vendorSortingButton {
         evt.triggerButton.SetData(data);
         this.storeDataView.SetSortMode(identifier);
+        this.SortVirtualStock();
+        this.ApplyStockView(true);
         setVendorSortingRequest = new UIScriptableSystemSetVendorPanelVendorSorting();
         setVendorSortingRequest.sortMode = EnumInt(identifier);
         this.uiScriptableSystem.QueueRequest(setVendorSortingRequest);
@@ -119,12 +152,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
   }
 
   protected cb func OnSearchInput(widget: wref<inkWidget>) {
-    this.storeDataView.SetSearchQuery(this.searchInput.GetText());
-    this.storeDataView.Filter();
-    this.storeDataView.EnableSorting();
-    this.storeDataView.SetFilterType(this.lastVendorFilter);
-    this.storeDataView.SetSortMode(this.storeDataView.GetSortMode());
-    this.storeDataView.DisableSorting();
+    this.ApplyStockView(true);
   }
 
   protected cb func OnVendorFilterChange(controller: wref<inkRadioGroupController>, selectedIndex: Int32) -> Bool {
@@ -134,9 +162,8 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.storeDataView.SetSearchQuery("");
 
     let category: ItemFilterCategory = this.filterManager.GetAt(selectedIndex);
-    this.storeDataView.SetFilterType(category);
     this.lastVendorFilter = category;
-    this.storeDataView.SetSortMode(this.storeDataView.GetSortMode());
+    this.ApplyStockView(true);
     this.PlayLibraryAnimation(n"vendor_grid_show");
     this.PlaySound(n"Button", n"OnPress");
     this.scrollController.SetScrollPosition(0.0);
@@ -391,6 +418,12 @@ public class VirtualStoreController extends gameuiMenuGameController {
       case n"clear":
         this.ShowRemoveAllConfirmationPopup();
         break;
+      case n"prevPage":
+        this.ShowPreviousPage();
+        break;
+      case n"nextPage":
+        this.ShowNextPage();
+        break;
       default:
         // do nothing
         break;
@@ -473,6 +506,46 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.cartIcon = buttonCart;
     this.cartButtonClear = buttonClear;
     this.cartButtonAddAll = buttonAddAll;
+
+    let pageControls: ref<inkHorizontalPanel> = new inkHorizontalPanel();
+    pageControls.SetName(n"pageControls");
+    pageControls.SetMargin(inkMargin(0.0, 220.0, 0.0, 0.0));
+    pageControls.SetAnchor(inkEAnchor.Centered);
+    pageControls.SetAnchorPoint(Vector2(0.5, 0.0));
+    pageControls.SetHAlign(inkEHorizontalAlign.Center);
+    pageControls.SetChildOrder(inkEChildOrder.Forward);
+    pageControls.SetInteractive(true);
+    pageControls.Reparent(vendorHeader);
+
+    let pagePrev: ref<VirtualCartTextButton> = VirtualCartTextButton.Create("<");
+    pagePrev.SetName(n"prevPage");
+    pagePrev.SetFontSize(60);
+    pagePrev.Reparent(pageControls);
+
+    let pageText: ref<inkText> = new inkText();
+    pageText.SetName(n"pageLabel");
+    pageText.SetAnchor(inkEAnchor.Centered);
+    pageText.SetHAlign(inkEHorizontalAlign.Center);
+    pageText.SetVAlign(inkEVerticalAlign.Center);
+    pageText.SetAnchorPoint(Vector2(0.5, 0.5));
+    pageText.SetMargin(inkMargin(36.0, 0.0, 0.0, 0.0));
+    pageText.SetText("1 / 1");
+    pageText.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+    pageText.SetFontSize(42);
+    pageText.SetFontStyle(n"Medium");
+    pageText.SetFitToContent(true);
+    pageText.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    pageText.BindProperty(n"tintColor", n"MainColors.Blue");
+    pageText.Reparent(pageControls);
+
+    let pageNext: ref<VirtualCartTextButton> = VirtualCartTextButton.Create(">");
+    pageNext.SetName(n"nextPage");
+    pageNext.SetFontSize(60);
+    pageNext.Reparent(pageControls);
+
+    this.pagePrevButton = pagePrev;
+    this.pageNextButton = pageNext;
+    this.pageLabel = pageText;
 
     let searchContainer: ref<inkCanvas> = new inkCanvas();
     searchContainer.SetName(n"searchContainer");
@@ -706,14 +779,13 @@ public class VirtualStoreController extends gameuiMenuGameController {
     let wardrobeItemIDs: array<ItemID> = GameInstance.GetWardrobeSystem(this.player.GetGame()).GetStoredItemIDs();
     this.cartManager.AppendWardrobeItems(wardrobeItemIDs);
 
-    // Populate virtual stock
-    let inventoryManager: ref<InventoryManager> = GameInstance.GetInventoryManager(this.player.GetGame());
     let storeItems: array<String> = this.GetVirtualStoreItems();
     let itemsPrices: array<Int32> = this.GetVirtualStorePrices();
     let itemsQualities: array<CName> = this.GetVirtualStoreQualities();
     let itemsQuantities: array<Int32> = this.GetVirtualStoreQuantities();
     let vendorObject: ref<GameObject> = this.vendorDataManager.GetVendorInstance(); 
     let totalPrice: Float = 0.0;
+    let wardrobeItemAppearances: array<CName> = this.GetWardrobeAppearances(wardrobeItemIDs);
 
     let stockItem: ref<VirtualStockItem>;
     let virtualItemIndex = 0;
@@ -721,26 +793,41 @@ public class VirtualStoreController extends gameuiMenuGameController {
     while virtualItemIndex < ArraySize(storeItems) {
       let itemTDBID: TweakDBID = TDBID.Create(storeItems[virtualItemIndex]);
       let itemId: ItemID = ItemID.FromTDBID(itemTDBID);
-      let itemData: ref<gameItemData>;
+      let itemRecord: ref<Item_Record>;
       if ItemID.IsValid(itemId) {
-        itemData = inventoryManager.CreateBasicItemData(itemId, this.player);
         AtelierDebug(s"Store item: \(ToString(storeItems[virtualItemIndex]))");
-        itemData.isVirtualItem = true;
-        itemData.hasOwned = this.cartManager.IsItemOwned(itemTDBID);
+        itemRecord = TweakDBInterface.GetItemRecord(itemTDBID);
         stockItem = new VirtualStockItem();
         stockItem.itemID = itemId;
         stockItem.itemTDBID = itemTDBID;
         stockItem.price = Cast<Float>(itemsPrices[virtualItemIndex]);
-        stockItem.weight = RPGManager.GetItemWeight(itemData);
+        if (RoundF(stockItem.price) == 0) {
+          stockItem.price = Cast<Float>(RPGManager.CalculateBuyPrice(this.player.GetGame(), vendorObject, itemId, 1.0) * itemsQuantities[virtualItemIndex]);
+        };
+        stockItem.weight = 0.1;
         stockItem.quality = itemsQualities[virtualItemIndex];
         stockItem.quantity = itemsQuantities[virtualItemIndex];
-        AtelierDebug(s"   Dynamic tags: \(ToString(itemData.GetDynamicTags()))");
+        stockItem.name = LocKeyToString(itemRecord.DisplayName());
+        stockItem.searchName = UTF8StrLower(GetLocalizedText(stockItem.name));
+        stockItem.equipmentArea = itemRecord.EquipArea().Type();
+        stockItem.itemType = itemRecord.ItemType().Type();
+        stockItem.itemCategory = itemRecord.ItemCategory().Type();
+        stockItem.isClothing = UIInventoryItemsManager.IsItemTypeCloting(stockItem.itemType) || itemRecord.TagsContains(n"Clothing");
+        stockItem.isRangedWeapon = itemRecord.TagsContains(n"RangedWeapon");
+        stockItem.isMeleeWeapon = itemRecord.TagsContains(n"MeleeWeapon");
+        stockItem.isCyberware = UIInventoryItemsManager.IsItemTypeCyberware(stockItem.itemType) || itemRecord.TagsContains(n"Cyberware") || itemRecord.TagsContains(n"Fragment");
+        stockItem.isConsumable = itemRecord.TagsContains(n"Consumable");
+        stockItem.isGrenade = itemRecord.TagsContains(n"Grenade");
+        stockItem.isAttachment = itemRecord.TagsContains(n"itemPart") && !itemRecord.TagsContains(n"Fragment") && !itemRecord.TagsContains(n"SoftwareShard");
+        stockItem.isProgram = itemRecord.TagsContains(n"SoftwareShard") || itemRecord.TagsContains(n"QuickhackCraftingPart");
+        stockItem.isQuest = itemRecord.TagsContains(n"Quest");
+        stockItem.isJunk = itemRecord.TagsContains(n"Junk");
+        stockItem.isDLCAdded = itemRecord.TagsContains(n"DLCAdded");
+        stockItem.isOwnable = stockItem.isClothing || stockItem.isRangedWeapon || stockItem.isMeleeWeapon || stockItem.isCyberware;
+        stockItem.notInWardrobe = stockItem.isClothing && !ArrayContains(wardrobeItemAppearances, itemRecord.AppearanceName());
+        stockItem.qualityRank = this.GetQualityRank(stockItem.quality);
+        stockItem.itemTypeRank = EnumInt(stockItem.equipmentArea) * 10000 + EnumInt(stockItem.itemType);
         AtelierDebug(s"   VirtPrice: \(ToString(stockItem.price))");
-        if (RoundF(stockItem.price) == 0) {
-          stockItem.price = Cast<Float>(AtelierItemsHelper.ScaleItemPrice(this.player, vendorObject, itemId, stockItem.quality) * stockItem.quantity);
-        };
-        AtelierDebug(s"   CalcPrice: \(ToString(stockItem.price))");
-        stockItem.itemData = itemData;
         ArrayPush(this.virtualStock, stockItem);
         totalPrice += stockItem.price;
       };
@@ -748,38 +835,396 @@ public class VirtualStoreController extends gameuiMenuGameController {
     };
 
     this.totalItemsPrice = Cast<Int32>(totalPrice);
-    this.ScaleStockItems();
+    this.BuildFilterList();
+    this.SortVirtualStock();
   }
 
-  private final func ScaleStockItems() -> Void {
-    let itemRecord: wref<Item_Record>;
-    let i: Int32 = 0;
-    while i < ArraySize(this.virtualStock) {
-      itemRecord = TweakDBInterface.GetItemRecord(this.virtualStock[i].itemTDBID);
-      if !itemRecord.IsSingleInstance() {
-        AtelierItemsHelper.ScaleItem(this.player, this.virtualStock[i].itemData, this.virtualStock[i].quality);
-      };
-      i += 1;
-    };
-  }
-
-  private final func ConvertGameDataIntoInventoryData(data: array<ref<VirtualStockItem>>, owner: wref<GameObject>) -> array<InventoryItemData> {
+  private final func ConvertStockIntoInventoryData(data: array<ref<VirtualStockItem>>, owner: wref<GameObject>) -> array<InventoryItemData> {
+    let gameItemData: ref<gameItemData>;
     let itemData: InventoryItemData;
     let itemDataArray: array<InventoryItemData>;
     let stockItem: ref<VirtualStockItem>;
+    let inventoryManager: ref<InventoryManager> = GameInstance.GetInventoryManager(this.player.GetGame());
+    let itemRecord: wref<Item_Record>;
     let i: Int32 = 0;
+    ArrayClear(this.currentPageItemData);
     while i < ArraySize(data) {
       stockItem = data[i];
-      itemData = this.inventoryManager.GetInventoryItemData(owner, stockItem.itemData);
+      gameItemData = inventoryManager.CreateBasicItemData(stockItem.itemID, this.player);
+      gameItemData.isVirtualItem = true;
+      gameItemData.hasOwned = this.cartManager.IsItemOwned(stockItem.itemTDBID);
+      itemRecord = TweakDBInterface.GetItemRecord(stockItem.itemTDBID);
+      if !itemRecord.IsSingleInstance() {
+        AtelierItemsHelper.ScaleItem(this.player, gameItemData, stockItem.quality);
+      };
+      itemData = this.inventoryManager.GetInventoryItemData(owner, gameItemData);
       InventoryItemData.SetIsVendorItem(itemData, true);
       InventoryItemData.SetPrice(itemData, stockItem.price);
       InventoryItemData.SetBuyPrice(itemData, stockItem.price);
       InventoryItemData.SetQuantity(itemData, stockItem.quantity);
       InventoryItemData.SetQuality(itemData, stockItem.quality);
+      ArrayPush(this.currentPageItemData, gameItemData);
       ArrayPush(itemDataArray, itemData);
       i += 1;
     };
     return itemDataArray;
+  }
+
+  private final func MaterializeStockItem(stockItem: ref<VirtualStockItem>, owner: wref<GameObject>) -> ref<VendorInventoryItemData> {
+    let gameItemData: ref<gameItemData>;
+    let itemData: InventoryItemData;
+    let itemRecord: wref<Item_Record>;
+    let inventoryManager: ref<InventoryManager> = GameInstance.GetInventoryManager(this.player.GetGame());
+
+    gameItemData = inventoryManager.CreateBasicItemData(stockItem.itemID, this.player);
+    gameItemData.isVirtualItem = true;
+    gameItemData.hasOwned = this.cartManager.IsItemOwned(stockItem.itemTDBID);
+    itemRecord = TweakDBInterface.GetItemRecord(stockItem.itemTDBID);
+    if !itemRecord.IsSingleInstance() {
+      AtelierItemsHelper.ScaleItem(this.player, gameItemData, stockItem.quality);
+    };
+    itemData = this.inventoryManager.GetInventoryItemData(owner, gameItemData);
+    InventoryItemData.SetIsVendorItem(itemData, true);
+    InventoryItemData.SetPrice(itemData, stockItem.price);
+    InventoryItemData.SetBuyPrice(itemData, stockItem.price);
+    InventoryItemData.SetQuantity(itemData, stockItem.quantity);
+    InventoryItemData.SetQuality(itemData, stockItem.quality);
+    ArrayPush(this.currentPageItemData, gameItemData);
+
+    return this.WrapVendorInventoryData(itemData, stockItem);
+  }
+
+  private final func GetWardrobeAppearances(wardrobeItemIDs: array<ItemID>) -> array<CName> {
+    let result: array<CName>;
+    let itemRecord: wref<Item_Record>;
+    let i: Int32 = 0;
+    while i < ArraySize(wardrobeItemIDs) {
+      itemRecord = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(wardrobeItemIDs[i]));
+      if IsDefined(itemRecord) {
+        ArrayPush(result, itemRecord.AppearanceName());
+      };
+      i += 1;
+    };
+    return result;
+  }
+
+  private final func BuildFilterList() -> Void {
+    let i: Int32 = 0;
+    let stockItem: ref<VirtualStockItem>;
+    this.filterManager.Clear(true);
+    this.filterManager.AddFilter(ItemFilterCategory.AllItems);
+    while i < ArraySize(this.virtualStock) {
+      stockItem = this.virtualStock[i];
+      if stockItem.isRangedWeapon {
+        this.filterManager.AddFilter(ItemFilterCategory.RangedWeapons);
+      };
+      if stockItem.isMeleeWeapon {
+        this.filterManager.AddFilter(ItemFilterCategory.MeleeWeapons);
+      };
+      if stockItem.isClothing {
+        this.filterManager.AddFilter(ItemFilterCategory.Clothes);
+      };
+      if stockItem.isConsumable {
+        this.filterManager.AddFilter(ItemFilterCategory.Consumables);
+      };
+      if stockItem.isGrenade {
+        this.filterManager.AddFilter(ItemFilterCategory.Grenades);
+      };
+      if stockItem.isAttachment {
+        this.filterManager.AddFilter(ItemFilterCategory.Attachments);
+      };
+      if stockItem.isProgram {
+        this.filterManager.AddFilter(ItemFilterCategory.Programs);
+      };
+      if stockItem.isCyberware {
+        this.filterManager.AddFilter(ItemFilterCategory.Cyberware);
+      };
+      if stockItem.isJunk {
+        this.filterManager.AddFilter(ItemFilterCategory.Junk);
+      };
+      if stockItem.isQuest {
+        this.filterManager.AddFilter(ItemFilterCategory.Quest);
+      };
+      if stockItem.notInWardrobe {
+        this.filterManager.AddFilter(ItemFilterCategory.NewWardrobeAppearances);
+      };
+      i += 1;
+    };
+    this.filterManager.SortFiltersList();
+    this.filterManager.InsertFilter(0, ItemFilterCategory.AllItems);
+  }
+
+  private final func ApplyStockView(resetPage: Bool) -> Void {
+    let i: Int32 = 0;
+    let query: String = "";
+    if IsDefined(this.searchInput) {
+      query = UTF8StrLower(this.searchInput.GetText());
+    };
+    ArrayClear(this.filteredStock);
+    while i < ArraySize(this.virtualStock) {
+      if this.FilterStockItem(this.virtualStock[i], this.lastVendorFilter, query) {
+        ArrayPush(this.filteredStock, this.virtualStock[i]);
+      };
+      i += 1;
+    };
+    this.totalPages = (ArraySize(this.filteredStock) + this.pageSize - 1) / this.pageSize;
+    if this.totalPages < 1 {
+      this.totalPages = 1;
+    };
+    if resetPage {
+      this.currentPage = 0;
+    };
+    if this.currentPage >= this.totalPages {
+      this.currentPage = this.totalPages - 1;
+    };
+    this.RenderCurrentPage();
+  }
+
+  private final func FilterStockItem(stockItem: ref<VirtualStockItem>, filter: ItemFilterCategory, query: String) -> Bool {
+    if NotEquals(query, "") && !StrContains(stockItem.searchName, query) {
+      return false;
+    };
+    switch filter {
+      case ItemFilterCategory.RangedWeapons:
+        return stockItem.isRangedWeapon;
+      case ItemFilterCategory.MeleeWeapons:
+        return stockItem.isMeleeWeapon;
+      case ItemFilterCategory.Clothes:
+        return stockItem.isClothing;
+      case ItemFilterCategory.Consumables:
+        return stockItem.isConsumable;
+      case ItemFilterCategory.Grenades:
+        return stockItem.isGrenade;
+      case ItemFilterCategory.Attachments:
+        return stockItem.isAttachment;
+      case ItemFilterCategory.Programs:
+        return stockItem.isProgram;
+      case ItemFilterCategory.Cyberware:
+        return stockItem.isCyberware;
+      case ItemFilterCategory.Junk:
+        return stockItem.isJunk;
+      case ItemFilterCategory.Quest:
+        return stockItem.isQuest;
+      case ItemFilterCategory.NewWardrobeAppearances:
+        return stockItem.notInWardrobe;
+      case ItemFilterCategory.AllItems:
+        return true;
+    };
+    return true;
+  }
+
+  private final func SortVirtualStock() -> Void {
+    if ArraySize(this.virtualStock) > 1 {
+      this.QuickSortVirtualStock(0, ArraySize(this.virtualStock) - 1);
+    };
+  }
+
+  private final func QuickSortVirtualStock(leftIndex: Int32, rightIndex: Int32) -> Void {
+    let i: Int32 = leftIndex;
+    let j: Int32 = rightIndex;
+    let pivot: ref<VirtualStockItem> = this.virtualStock[(leftIndex + rightIndex) / 2];
+    let temp: ref<VirtualStockItem>;
+
+    while i <= j {
+      while this.IsStockLess(this.virtualStock[i], pivot) {
+        i += 1;
+      };
+      while this.IsStockLess(pivot, this.virtualStock[j]) {
+        j -= 1;
+      };
+      if i <= j {
+        temp = this.virtualStock[i];
+        this.virtualStock[i] = this.virtualStock[j];
+        this.virtualStock[j] = temp;
+        i += 1;
+        j -= 1;
+      };
+    };
+
+    if leftIndex < j {
+      this.QuickSortVirtualStock(leftIndex, j);
+    };
+    if i < rightIndex {
+      this.QuickSortVirtualStock(i, rightIndex);
+    };
+  }
+
+  private final func IsStockLess(left: ref<VirtualStockItem>, right: ref<VirtualStockItem>) -> Bool {
+    switch this.storeDataView.GetSortMode() {
+      case ItemSortMode.NameAsc:
+        return StrCmp(left.searchName, right.searchName) < 0;
+      case ItemSortMode.NameDesc:
+        return StrCmp(left.searchName, right.searchName) > 0;
+      case ItemSortMode.QualityAsc:
+        if NotEquals(left.qualityRank, right.qualityRank) {
+          return left.qualityRank < right.qualityRank;
+        };
+        return StrCmp(left.searchName, right.searchName) < 0;
+      case ItemSortMode.QualityDesc:
+        if NotEquals(left.qualityRank, right.qualityRank) {
+          return left.qualityRank > right.qualityRank;
+        };
+        return StrCmp(left.searchName, right.searchName) < 0;
+      case ItemSortMode.WeightAsc:
+        if NotEquals(left.weight, right.weight) {
+          return left.weight < right.weight;
+        };
+        return StrCmp(left.searchName, right.searchName) < 0;
+      case ItemSortMode.WeightDesc:
+        if NotEquals(left.weight, right.weight) {
+          return left.weight > right.weight;
+        };
+        return StrCmp(left.searchName, right.searchName) < 0;
+      case ItemSortMode.PriceAsc:
+        if NotEquals(left.price, right.price) {
+          return left.price < right.price;
+        };
+        return StrCmp(left.searchName, right.searchName) < 0;
+      case ItemSortMode.PriceDesc:
+        if NotEquals(left.price, right.price) {
+          return left.price > right.price;
+        };
+        return StrCmp(left.searchName, right.searchName) < 0;
+      case ItemSortMode.ItemType:
+        if NotEquals(left.itemTypeRank, right.itemTypeRank) {
+          return left.itemTypeRank < right.itemTypeRank;
+        };
+        return StrCmp(left.searchName, right.searchName) < 0;
+    };
+    if NotEquals(left.qualityRank, right.qualityRank) {
+      return left.qualityRank > right.qualityRank;
+    };
+    if NotEquals(left.itemTypeRank, right.itemTypeRank) {
+      return left.itemTypeRank < right.itemTypeRank;
+    };
+    return StrCmp(left.searchName, right.searchName) < 0;
+  }
+
+  private final func RenderCurrentPage() -> Void {
+    let items: array<ref<IScriptable>>;
+    let startIndex: Int32 = this.currentPage * this.pageSize;
+    let endIndex: Int32 = startIndex + this.pageSize;
+    let i: Int32 = startIndex;
+
+    this.pageRenderToken += 1;
+    this.pendingPageIndex = 0;
+    ArrayClear(this.pendingPageStock);
+    ArrayClear(this.pendingPageItems);
+    this.storeDataSource.Reset(items);
+    ArrayClear(this.currentPageItemData);
+    this.RefreshPaginationControls();
+    this.scrollController.SetScrollPosition(0.0);
+
+    while i < endIndex && i < ArraySize(this.filteredStock) {
+      ArrayPush(this.pendingPageStock, this.filteredStock[i]);
+      i += 1;
+    };
+
+    if ArraySize(this.pendingPageStock) > 0 {
+      this.SchedulePageRenderBatch(this.pageRenderToken);
+    };
+  }
+
+  private final func SchedulePageRenderBatch(token: Int32) -> Void {
+    GameInstance.GetDelaySystem(this.player.GetGame()).DelayCallback(VirtualStorePageRenderCallback.Create(this, token), 0.01, false);
+  }
+
+  public final func ContinuePageRender(token: Int32) -> Void {
+    let owner: wref<GameObject>;
+    let processed: Int32 = 0;
+    let item: ref<VendorInventoryItemData>;
+    let isFirstBatch: Bool;
+
+    if NotEquals(token, this.pageRenderToken) {
+      return;
+    };
+
+    isFirstBatch = this.pendingPageIndex == 0;
+    owner = this.vendorDataManager.GetVendorInstance();
+    while this.pendingPageIndex < ArraySize(this.pendingPageStock) && processed < this.pageBatchSize {
+      item = this.MaterializeStockItem(this.pendingPageStock[this.pendingPageIndex], owner);
+      ArrayPush(this.pendingPageItems, item);
+      this.pendingPageIndex += 1;
+      processed += 1;
+    };
+    if isFirstBatch || this.pendingPageIndex >= ArraySize(this.pendingPageStock) {
+      this.storeDataSource.Reset(this.pendingPageItems);
+    };
+
+    if this.pendingPageIndex < ArraySize(this.pendingPageStock) {
+      this.SchedulePageRenderBatch(token);
+    };
+  }
+
+  private final func WrapVendorInventoryData(itemData: InventoryItemData, stockItem: ref<VirtualStockItem>) -> ref<VendorInventoryItemData> {
+    let requirements: array<SItemStackRequirementData>;
+    let data: ref<VendorInventoryItemData> = new VendorInventoryItemData();
+    data.ItemData = itemData;
+    if stockItem.isCyberware {
+      requirements = RPGManager.GetEquipRequirements(this.player, InventoryItemData.GetGameItemData(data.ItemData));
+      InventoryItemData.SetEquipRequirements(data.ItemData, requirements);
+    };
+    InventoryItemData.SetIsEquippable(data.ItemData, EquipmentSystem.GetInstance(this.player).GetPlayerData(this.player).IsEquippable(InventoryItemData.GetGameItemData(data.ItemData)));
+    data.IsVendorItem = true;
+    data.IsEnoughMoney = this.vendorDataManager.GetLocalPlayerCurrencyAmount() >= Cast<Int32>(InventoryItemData.GetBuyPrice(itemData));
+    data.IsDLCAddedActiveItem = stockItem.isDLCAdded && this.uiScriptableSystem.IsDLCAddedActiveItem(stockItem.itemTDBID);
+    data.NotInWardrobe = stockItem.notInWardrobe;
+    this.inventoryManager.GetOrCreateInventoryItemSortData(data.ItemData, this.uiScriptableSystem);
+    return data;
+  }
+
+  private final func RefreshPaginationControls() -> Void {
+    let hasMultiplePages: Bool = this.totalPages > 1;
+    if IsDefined(this.pageLabel) {
+      this.pageLabel.SetText(s"\(this.currentPage + 1) / \(this.totalPages)");
+      this.pageLabel.SetVisible(hasMultiplePages);
+    };
+    if IsDefined(this.pagePrevButton) {
+      this.pagePrevButton.Dim(this.currentPage <= 0);
+      this.pagePrevButton.SetEnabled(this.currentPage > 0);
+      this.pagePrevButton.GetRootWidget().SetVisible(hasMultiplePages);
+    };
+    if IsDefined(this.pageNextButton) {
+      this.pageNextButton.Dim(this.currentPage >= this.totalPages - 1);
+      this.pageNextButton.SetEnabled(this.currentPage < this.totalPages - 1);
+      this.pageNextButton.GetRootWidget().SetVisible(hasMultiplePages);
+    };
+  }
+
+  private final func ShowPreviousPage() -> Void {
+    if this.currentPage > 0 {
+      this.currentPage -= 1;
+      this.RenderCurrentPage();
+    };
+  }
+
+  private final func ShowNextPage() -> Void {
+    if this.currentPage < this.totalPages - 1 {
+      this.currentPage += 1;
+      this.RenderCurrentPage();
+    };
+  }
+
+  private final func GetQualityRank(quality: CName) -> Int32 {
+    if Equals(quality, n"Common") {
+      return 1;
+    };
+    if Equals(quality, n"Uncommon") {
+      return 2;
+    };
+    if Equals(quality, n"Rare") {
+      return 3;
+    };
+    if Equals(quality, n"Epic") {
+      return 4;
+    };
+    if Equals(quality, n"Legendary") {
+      return 5;
+    };
+    if Equals(quality, n"Iconic") {
+      return 6;
+    };
+    return 0;
   }
 
   // Darkcopse prices tweak
@@ -850,85 +1295,11 @@ public class VirtualStoreController extends gameuiMenuGameController {
   }
 
   private func PopulateVirtualShop() -> Void {
-    let i: Int32;
-    let items: array<ref<IScriptable>>;
-    let currentPlayerMoney: Int32;
-    let vendorInventory: array<InventoryItemData>;
-    let vendorInventoryData: ref<VendorInventoryItemData>;
-    let vendorInventorySize: Int32;
-    let isAnyNewAppearance: Bool;
-    let itemRecord: wref<Item_Record>;
-    let limit: Int32;
-    let wardrobeItemAppearances: array<CName>;
-    let wardrobeItemIDs: array<ItemID>;
-
-    this.filterManager.Clear();
-    this.filterManager.AddFilter(ItemFilterCategory.AllItems);
     this.FillVirtualStock();
-    vendorInventory = this.ConvertGameDataIntoInventoryData(this.virtualStock, this.vendorDataManager.GetVendorInstance());
-    vendorInventorySize = ArraySize(vendorInventory);
-    currentPlayerMoney = this.vendorDataManager.GetLocalPlayerCurrencyAmount();
-
-    AtelierDebug(s"Resulting list size: \(vendorInventorySize)");
-
-    wardrobeItemIDs = GameInstance.GetWardrobeSystem(this.player.GetGame()).GetStoredItemIDs();
-
-    i = 0;
-    limit = ArraySize(wardrobeItemIDs);
-    while i < limit {
-      itemRecord = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(wardrobeItemIDs[i]));
-      ArrayPush(wardrobeItemAppearances, itemRecord.AppearanceName());
-      i += 1;
-    };
-
-    i = 0;
-    while i < vendorInventorySize {
-      vendorInventoryData = new VendorInventoryItemData();
-      vendorInventoryData.ItemData = vendorInventory[i];
-
-      // Darkcopse requirements displaying fix
-      let requirements: array<SItemStackRequirementData>;
-      if InventoryItemData.GetGameItemData(vendorInventoryData.ItemData).HasTag(n"Cyberware") {
-        requirements = RPGManager.GetEquipRequirements(this.player, InventoryItemData.GetGameItemData(vendorInventoryData.ItemData));
-        InventoryItemData.SetEquipRequirements(vendorInventoryData.ItemData, requirements);
-      };
-      InventoryItemData.SetIsEquippable(vendorInventoryData.ItemData, EquipmentSystem.GetInstance(this.player).GetPlayerData(this.player).IsEquippable(InventoryItemData.GetGameItemData(vendorInventoryData.ItemData)));
-
-      vendorInventoryData.IsVendorItem = true;
-      vendorInventoryData.IsEnoughMoney = currentPlayerMoney >= Cast<Int32>(InventoryItemData.GetBuyPrice(vendorInventory[i]));
-      vendorInventoryData.IsDLCAddedActiveItem = this.uiScriptableSystem.IsDLCAddedActiveItem(ItemID.GetTDBID(InventoryItemData.GetID(vendorInventory[i])));
-
-      // Check if appearance exists in wardrobe
-      if this.HasClothingCategory(vendorInventoryData.ItemData) {
-        itemRecord = RPGManager.GetItemRecord(InventoryItemData.GetID(vendorInventoryData.ItemData));
-        vendorInventoryData.NotInWardrobe = !ArrayContains(wardrobeItemAppearances, itemRecord.AppearanceName());
-        if vendorInventoryData.NotInWardrobe {
-          isAnyNewAppearance = true;
-        };
-      };
-
-      this.inventoryManager.GetOrCreateInventoryItemSortData(vendorInventoryData.ItemData, this.uiScriptableSystem);      
-      this.filterManager.AddItem(vendorInventoryData.ItemData.GameItemData);
-
-      // Add not in wardrobe filter
-      if isAnyNewAppearance {
-        this.filterManager.AddFilter(ItemFilterCategory.NewWardrobeAppearances);
-      };
-
-      ArrayPush(items, vendorInventoryData);
-      i += 1;
-    };
-
-    this.storeDataSource.Reset(items);
-    this.filterManager.SortFiltersList();
-    this.filterManager.InsertFilter(0, ItemFilterCategory.AllItems);
     this.SetFilters(this.filtersContainer, this.filterManager.GetIntFiltersList(), n"OnVendorFilterChange");
-    this.storeDataView.EnableSorting();
-    this.storeDataView.SetFilterType(this.lastVendorFilter);
-    this.storeDataView.SetSortMode(this.storeDataView.GetSortMode());
-    this.storeDataView.DisableSorting();
+    this.ApplyStockView(true);
     this.ToggleFilter(this.filtersContainer, EnumInt(this.lastVendorFilter));
-    this.filtersContainer.SetVisible(ArraySize(items) > 0);
+    this.filtersContainer.SetVisible(ArraySize(this.virtualStock) > 0);
     this.PlayLibraryAnimation(n"vendor_grid_show");
 
     this.cartManager.StoreVirtualStock(this.virtualStock);
