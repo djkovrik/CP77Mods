@@ -70,6 +70,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
   private let pendingPageItems: array<ref<IScriptable>>;
   private let pendingPageIndex: Int32;
   private let pageRenderToken: Int32;
+  private let isUninitializing: Bool;
   private let pageBatchSize: Int32 = 30;
   private let virtualStore: ref<VirtualShop>;
   private let storeListController: wref<inkVirtualGridController>;
@@ -88,6 +89,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
   private let allItemsAdded: Bool;
 
   public cb func OnInitialize() -> Bool {
+    this.isUninitializing = false;
     this.InitializeCoreSystems();
     this.InitializeWidgets();
     this.InitializeDataSource();
@@ -103,6 +105,12 @@ public class VirtualStoreController extends gameuiMenuGameController {
   }
 
   public cb func OnUninitialize() -> Bool {
+    this.isUninitializing = true;
+    this.pageRenderToken += 1;
+    ArrayClear(this.pendingPageStock);
+    ArrayClear(this.pendingPageItems);
+    ArrayClear(this.currentPageItemData);
+
     this.player.SetSkipDeviceExit(false);
     this.uiInventorySystem.FlushFullscreenCache();
     this.cartManager.ClearCart();
@@ -797,6 +805,9 @@ public class VirtualStoreController extends gameuiMenuGameController {
       if ItemID.IsValid(itemId) {
         AtelierDebug(s"Store item: \(ToString(storeItems[virtualItemIndex]))");
         itemRecord = TweakDBInterface.GetItemRecord(itemTDBID);
+        if !IsDefined(itemRecord) {
+          AtelierDebug(s"Store item skipped, Item_Record not found: \(ToString(storeItems[virtualItemIndex]))");
+        } else {
         stockItem = new VirtualStockItem();
         stockItem.itemID = itemId;
         stockItem.itemTDBID = itemTDBID;
@@ -830,6 +841,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
         AtelierDebug(s"   VirtPrice: \(ToString(stockItem.price))");
         ArrayPush(this.virtualStock, stockItem);
         totalPrice += stockItem.price;
+        };
       };
       virtualItemIndex += 1;
     };
@@ -854,7 +866,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
       gameItemData.isVirtualItem = true;
       gameItemData.hasOwned = this.cartManager.IsItemOwned(stockItem.itemTDBID);
       itemRecord = TweakDBInterface.GetItemRecord(stockItem.itemTDBID);
-      if !itemRecord.IsSingleInstance() {
+      if IsDefined(itemRecord) && !itemRecord.IsSingleInstance() {
         AtelierItemsHelper.ScaleItem(this.player, gameItemData, stockItem.quality);
       };
       itemData = this.inventoryManager.GetInventoryItemData(owner, gameItemData);
@@ -880,7 +892,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     gameItemData.isVirtualItem = true;
     gameItemData.hasOwned = this.cartManager.IsItemOwned(stockItem.itemTDBID);
     itemRecord = TweakDBInterface.GetItemRecord(stockItem.itemTDBID);
-    if !itemRecord.IsSingleInstance() {
+    if IsDefined(itemRecord) && !itemRecord.IsSingleInstance() {
       AtelierItemsHelper.ScaleItem(this.player, gameItemData, stockItem.quality);
     };
     itemData = this.inventoryManager.GetInventoryItemData(owner, gameItemData);
@@ -1120,12 +1132,17 @@ public class VirtualStoreController extends gameuiMenuGameController {
       i += 1;
     };
 
+    this.RefreshCartControls();
+
     if ArraySize(this.pendingPageStock) > 0 {
       this.SchedulePageRenderBatch(this.pageRenderToken);
     };
   }
 
   private final func SchedulePageRenderBatch(token: Int32) -> Void {
+    if this.isUninitializing || !IsDefined(this.player) {
+      return;
+    };
     GameInstance.GetDelaySystem(this.player.GetGame()).DelayCallback(VirtualStorePageRenderCallback.Create(this, token), 0.01, false);
   }
 
@@ -1135,7 +1152,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     let item: ref<VendorInventoryItemData>;
     let isFirstBatch: Bool;
 
-    if NotEquals(token, this.pageRenderToken) {
+    if this.isUninitializing || NotEquals(token, this.pageRenderToken) || !IsDefined(this.storeDataSource) || !IsDefined(this.vendorDataManager) || !IsDefined(this.cartManager) || !IsDefined(this.player) {
       return;
     };
 
@@ -1143,7 +1160,9 @@ public class VirtualStoreController extends gameuiMenuGameController {
     owner = this.vendorDataManager.GetVendorInstance();
     while this.pendingPageIndex < ArraySize(this.pendingPageStock) && processed < this.pageBatchSize {
       item = this.MaterializeStockItem(this.pendingPageStock[this.pendingPageIndex], owner);
-      ArrayPush(this.pendingPageItems, item);
+      if IsDefined(item) {
+        ArrayPush(this.pendingPageItems, item);
+      };
       this.pendingPageIndex += 1;
       processed += 1;
     };
@@ -1409,10 +1428,34 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
     this.cartButtonClear.Dim(!cartIsNotEmpty);
     this.cartButtonClear.SetEnabled(cartIsNotEmpty);
 
-    let enoughMoneyForBuyAll: Bool = playerMoney >= this.totalItemsPrice;
-    let addAllButtonEnabled: Bool = enoughMoneyForBuyAll && !this.allItemsAdded;
+    let enoughMoneyForBuyAll: Bool = playerMoney >= this.cartManager.GetCurrentGoodsPrice() + this.GetCurrentPageGoodsPriceToAdd();
+    let addAllButtonEnabled: Bool = ArraySize(this.pendingPageStock) > 0 && enoughMoneyForBuyAll && !this.AreCurrentPageGoodsAdded();
     this.cartButtonAddAll.Dim(!addAllButtonEnabled);
     this.cartButtonAddAll.SetEnabled(addAllButtonEnabled);
+  }
+
+  private final func GetCurrentPageGoodsPriceToAdd() -> Int32 {
+    let total: Float = 0.0;
+    for stockItem in this.pendingPageStock {
+      if !this.cartManager.IsAddedToCart(stockItem.itemID, stockItem.quantity) {
+        total += stockItem.price;
+      };
+    };
+    return Cast<Int32>(total);
+  }
+
+  private final func AreCurrentPageGoodsAdded() -> Bool {
+    if ArraySize(this.pendingPageStock) < 1 {
+      return false;
+    };
+
+    for stockItem in this.pendingPageStock {
+      if !this.cartManager.IsAddedToCart(stockItem.itemID, stockItem.quantity) {
+        return false;
+      };
+    };
+
+    return true;
   }
 
   private func RefreshMoneyLabels() -> Void {
@@ -1447,8 +1490,10 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
   protected cb func OnAddAllConfirmationPopupClosed(data: ref<inkGameNotificationData>) {
     let resultData: ref<GenericMessageNotificationCloseData> = data as GenericMessageNotificationCloseData;
     if Equals(resultData.result, GenericMessageNotificationResult.Confirm) {
-      for stockItem in this.virtualStock {
-        this.cartManager.AddToCart(stockItem, 1);
+      for stockItem in this.pendingPageStock {
+        if !this.cartManager.IsAddedToCart(stockItem.itemID, stockItem.quantity) {
+          this.cartManager.AddToCart(stockItem, 1);
+        };
       };
       this.allItemsAdded = true;
       this.RefreshCartControls();

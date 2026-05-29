@@ -15,17 +15,18 @@ public class VirtualAtelierCart {
   }
 
   public final func Insert(stockItem: ref<VirtualStockItem>, purchaseAmount: Int32) -> Bool {
-    let key: Uint64 = this.Hash(stockItem.itemID, stockItem.quantity);
+    let key: Uint64;
     let cartItem: ref<VirtualCartItem>;
     if IsDefined(stockItem) {
+      key = this.Hash(stockItem.itemID, stockItem.quantity);
       cartItem = this.GetOrCreateCartItem(stockItem);
       cartItem.purchaseAmount = purchaseAmount;
       if this.Exists(stockItem.itemID, stockItem.quantity) {
         this.map.Set(key, cartItem);
       } else {
         this.map.Insert(key, cartItem);
+        ArrayPush(this.keys, key);
       };
-      ArrayPush(this.keys, key);
       return true;
     };
 

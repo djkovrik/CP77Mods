@@ -67,18 +67,19 @@ public class VirtualAtelierStoresManager extends ScriptableSystem {
     AtelierLog("Building store categories list...");
     for currentStore in this.stores {
       lastIndex = ArraySize(currentStore.items) - 1;
-      if lastIndex < 0 { lastIndex = 0; };
-      firstItem = TDBID.Create(currentStore.items[0]);
-      lastItem = TDBID.Create(currentStore.items[lastIndex]);
-      firstItemCategory = this.GetItemCategory(firstItem);
-      lastItemCategory = this.GetItemCategory(lastItem);
-      let storeCategories: array<VirtualStoreCategory>;
-      ArrayPush(storeCategories, firstItemCategory);
-      ArrayPush(storeCategories, lastItemCategory);
-      currentStore.categories = storeCategories;
-      if !ArrayContains(this.categories, firstItemCategory) { ArrayPush(this.categories, firstItemCategory); }
-      if !ArrayContains(this.categories, lastItemCategory) { ArrayPush(this.categories, lastItemCategory); }
-      AtelierLog(s"- store \(currentStore.storeName) categories: \(firstItemCategory) + \(lastItemCategory)");
+      if lastIndex >= 0 {
+        firstItem = TDBID.Create(currentStore.items[0]);
+        lastItem = TDBID.Create(currentStore.items[lastIndex]);
+        firstItemCategory = this.GetItemCategory(firstItem);
+        lastItemCategory = this.GetItemCategory(lastItem);
+        let storeCategories: array<VirtualStoreCategory>;
+        ArrayPush(storeCategories, firstItemCategory);
+        ArrayPush(storeCategories, lastItemCategory);
+        currentStore.categories = storeCategories;
+        if !ArrayContains(this.categories, firstItemCategory) { ArrayPush(this.categories, firstItemCategory); }
+        if !ArrayContains(this.categories, lastItemCategory) { ArrayPush(this.categories, lastItemCategory); }
+        AtelierLog(s"- store \(currentStore.storeName) categories: \(firstItemCategory) + \(lastItemCategory)");
+      };
     };
   }
 
@@ -196,6 +197,9 @@ public class VirtualAtelierStoresManager extends ScriptableSystem {
 
   private func GetItemCategory(id: TweakDBID) -> VirtualStoreCategory {
     let record: ref<Item_Record> = TweakDBInterface.GetItemRecord(id);
+    if !IsDefined(record) {
+      return VirtualStoreCategory.Other;
+    };
     let itemType: gamedataItemType = record.ItemType().Type();
 
     if UIInventoryItemsManager.IsItemTypeCloting(itemType) {
