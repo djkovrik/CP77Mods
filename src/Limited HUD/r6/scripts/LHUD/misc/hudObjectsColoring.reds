@@ -1,6 +1,29 @@
 import LimitedHudConfig.LHUDAddonsColoringConfig
 import LimitedHudCommon.*
 
+@addField(AllBlackboardDefinitions)
+private let lhudAddonsColoringConfigCache: ref<LHUDAddonsColoringConfig>;
+
+@addMethod(AllBlackboardDefinitions)
+public func GetLHUDAddonsColoringConfig() -> ref<LHUDAddonsColoringConfig> {
+  if !IsDefined(this.lhudAddonsColoringConfigCache) {
+    this.lhudAddonsColoringConfigCache = new LHUDAddonsColoringConfig();
+  };
+
+  return this.lhudAddonsColoringConfigCache;
+}
+
+@addMethod(AllBlackboardDefinitions)
+public func ResetLHUDAddonsColoringConfig() -> Void {
+  this.lhudAddonsColoringConfigCache = null;
+}
+
+@wrapMethod(PauseMenuGameController)
+protected cb func OnUninitialize() -> Bool {
+  GetAllBlackboardDefs().ResetLHUDAddonsColoringConfig();
+  wrappedMethod();
+}
+
 // Change or remove fill and outline coloring for characters and objects
 // You can change return numbers for object categories below (but do not delete semicolon)
 // This file contains default in-game values so configure it as you like
@@ -14,7 +37,7 @@ import LimitedHudCommon.*
 // Light green: 4           Blue: 5           Orange: 6       Red: 7
 @replaceMethod(FocusForcedHighlightData)
 private final func GetFillColorIndex() -> Int32 {
-  let config: ref<LHUDAddonsColoringConfig> = new LHUDAddonsColoringConfig();
+  let config: ref<LHUDAddonsColoringConfig> = GetAllBlackboardDefs().GetLHUDAddonsColoringConfig();
   switch this.highlightType {
     case EFocusForcedHighlightType.INTERACTION:             return EnumInt(config.FillInteraction); // 2
     case EFocusForcedHighlightType.IMPORTANT_INTERACTION:   return EnumInt(config.FillImportantInteraction); // 5
@@ -44,7 +67,7 @@ private final func GetFillColorIndex() -> Int32 {
 // Light red: 4             Light yellow: 5   Blue: 6     White: 7
 @replaceMethod(FocusForcedHighlightData)
 private final func GetOutlineColorIndex() -> Int32 {
-  let config: ref<LHUDAddonsColoringConfig> = new LHUDAddonsColoringConfig();
+  let config: ref<LHUDAddonsColoringConfig> = GetAllBlackboardDefs().GetLHUDAddonsColoringConfig();
   switch this.outlineType {
     case EFocusOutlineType.INTERACTION:               return EnumInt(config.OutlineInteraction); // 3
     case EFocusOutlineType.IMPORTANT_INTERACTION:     return EnumInt(config.OutlineImportantInteraction); // 6

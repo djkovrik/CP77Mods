@@ -75,6 +75,15 @@ protected cb func OnInitialize() -> Bool {
   };
 }
 
+@wrapMethod(QuestTrackerGameController)
+protected cb func OnUninitialize() -> Bool {
+  let player: ref<PlayerPuppet> = this.m_player as PlayerPuppet;
+  if IsDefined(player) {
+    GameInstance.GetDelaySystem(player.GetGame()).CancelCallback(this.lhudDelayId);
+  };
+  wrappedMethod();
+}
+
 @addMethod(QuestTrackerGameController)
 protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> Void {
   this.lhudConfig = new QuestTrackerModuleConfig();
@@ -119,6 +128,9 @@ private func ShowForJournalUpdate() -> Void {
 public class LHUDHideQuestTrackerCallback extends DelayCallback {
   public let player: wref<PlayerPuppet>;
   public func Call() -> Void {
+    if !IsDefined(this.player) {
+      return ;
+    };
     this.player.QueueLHUDEvent(LHUDEventType.QuestTracker, false);
   }
 }

@@ -90,14 +90,16 @@ public class MappinChecker {
     let variant: gamedataMappinVariant = mappin.GetVariant();
     let data: ref<GameplayRoleMappinData> = mappin.GetScriptData() as GameplayRoleMappinData;
 
-    if Equals(data.m_textureID, t"MappinIcons.ShardMappin") {
-      return true;
+    if IsDefined(data) {
+      if Equals(data.m_textureID, t"MappinIcons.ShardMappin") {
+        return true;
+      };
     };
 
     return 
        Equals(variant, gamedataMappinVariant.LootVariant) 
     || Equals(variant, gamedataMappinVariant.NPCVariant)
-    || Equals(data.m_gameplayRole, EGameplayRole.Loot)
+    || IsDefined(data) && Equals(data.m_gameplayRole, EGameplayRole.Loot)
     || false;
   }
 
@@ -114,6 +116,10 @@ public class MappinChecker {
 
   public static func IsDeviceInteraction(mappin: wref<IMappin>) -> Bool {
     let data: ref<GameplayRoleMappinData> = mappin.GetScriptData() as GameplayRoleMappinData;
+    if !IsDefined(data) {
+      return false;
+    };
+
     let role: EGameplayRole = data.m_gameplayRole;
 
 

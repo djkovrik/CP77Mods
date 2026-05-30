@@ -572,13 +572,15 @@ private let lhudConfig: ref<ActionButtonsModuleConfig>;
 
 @wrapMethod(CarHotkeyController)
 protected func Initialize() -> Bool {
-  wrappedMethod();
+  let wrapped: Bool = wrappedMethod();
   this.lhudConfig = new ActionButtonsModuleConfig();
   if this.lhudConfig.IsEnabled {
     this.lhud_isVisibleNow = false;
     this.GetRootWidget().SetOpacity(0.0);
     this.OnInitializeFinished();
   };
+
+  return wrapped;
 }
 
 @addMethod(CarHotkeyController)

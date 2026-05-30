@@ -268,6 +268,9 @@ public class LHUDLaunchCallback extends DelayCallback {
   public func Call() -> Void {
     LHUDLogStartup("-- InitialStateEvent - execute callback");
     let listener: ref<LHUDBlackboardsListener> = this.bbListener;
+    if !IsDefined(listener) {
+      return ;
+    };
     listener.PostLaunchCall();
   }
 }
@@ -309,6 +312,9 @@ private final func PlayerAttachedCallback(playerPuppet: ref<GameObject>) -> Void
   wrappedMethod(playerPuppet);
 
   let player: ref<PlayerPuppet> = playerPuppet as PlayerPuppet;
+  if !IsDefined(player) {
+    return ;
+  };
   // Hotkeys listener
   this.inputListenerLHUD = new LHUDInputListener();
   this.inputListenerLHUD.SetPlayerInstance(player);
@@ -322,10 +328,14 @@ private final func PlayerAttachedCallback(playerPuppet: ref<GameObject>) -> Void
 @wrapMethod(HUDManager)
 private final func PlayerDetachedCallback(playerPuppet: ref<GameObject>) -> Void {
   let player: ref<PlayerPuppet> = playerPuppet as PlayerPuppet;
-  player.UnregisterInputListener(this.inputListenerLHUD);
+  if IsDefined(player) && IsDefined(this.inputListenerLHUD) {
+    player.UnregisterInputListener(this.inputListenerLHUD);
+  };
+  if IsDefined(this.blabockardsListenerLHUD) {
+    this.blabockardsListenerLHUD.UnregisterListeners();
+    this.blabockardsListenerLHUD.UninitializeData();
+  };
   this.inputListenerLHUD = null;
-  this.blabockardsListenerLHUD.UnregisterListeners();
-  this.blabockardsListenerLHUD.UninitializeData();
   this.blabockardsListenerLHUD = null;
   wrappedMethod(playerPuppet);
 }
@@ -335,8 +345,15 @@ private final func PlayerDetachedCallback(playerPuppet: ref<GameObject>) -> Void
 @addMethod(inkGameController)
 protected cb func OnInitializeFinished() -> Void {
   LHUDLogStartup("LaunchInitialStateEvents - inkGameController -> OnInitializeFinished");
-  let manager: ref<HUDManager> = GameInstance.GetScriptableSystemsContainer(this.GetPlayerControlledObject().GetGame()).Get(n"HUDManager") as HUDManager;
-  manager.blabockardsListenerLHUD.LaunchInitialStateEvents();
+  let player: ref<GameObject> = this.GetPlayerControlledObject();
+  if !IsDefined(player) {
+    return ;
+  };
+
+  let manager: ref<HUDManager> = GameInstance.GetScriptableSystemsContainer(player.GetGame()).Get(n"HUDManager") as HUDManager;
+  if IsDefined(manager) && IsDefined(manager.blabockardsListenerLHUD) {
+    manager.blabockardsListenerLHUD.LaunchInitialStateEvents();
+  };
 }
 
 @addField(PlayerPuppet)
@@ -359,14 +376,21 @@ protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpaw
 protected cb func OnLHUDInitLaunchEvent(evt: ref<LHUDInitLaunchEvent>) -> Bool {
   LHUDLogStartup("LaunchInitialStateEvents - PlayerPuppet -> OnLHUDInitLaunchEvent");
   let manager: ref<HUDManager> = GameInstance.GetScriptableSystemsContainer(this.GetGame()).Get(n"HUDManager") as HUDManager;
-  manager.blabockardsListenerLHUD.LaunchInitialStateEvents();
+  if IsDefined(manager) && IsDefined(manager.blabockardsListenerLHUD) {
+    manager.blabockardsListenerLHUD.LaunchInitialStateEvents();
+  };
 }
 
 @wrapMethod(PauseMenuGameController)
 protected cb func OnUninitialize() -> Bool {
   LHUDLogStartup("LaunchInitialStateEvents - PauseMenuGameController -> OnUninitialize");
-  let manager: ref<HUDManager> = GameInstance.GetScriptableSystemsContainer(this.GetPlayerControlledObject().GetGame()).Get(n"HUDManager") as HUDManager;
-  manager.blabockardsListenerLHUD.LaunchInitialStateEvents();
+  let player: ref<GameObject> = this.GetPlayerControlledObject();
+  if IsDefined(player) {
+    let manager: ref<HUDManager> = GameInstance.GetScriptableSystemsContainer(player.GetGame()).Get(n"HUDManager") as HUDManager;
+    if IsDefined(manager) && IsDefined(manager.blabockardsListenerLHUD) {
+      manager.blabockardsListenerLHUD.LaunchInitialStateEvents();
+    };
+  };
   wrappedMethod();
 }
 
@@ -498,9 +522,20 @@ protected cb func OnTrackedEntryChanges(hash: Uint32, className: CName, notifyOp
   this.lhudShowMinimapDelayId = this.lhudDelaySystem.DelayCallback(callback, 1.0, true);
 }
 
+@wrapMethod(QuestTrackerGameController)
+protected cb func OnUninitialize() -> Bool {
+  if IsDefined(this.lhudDelaySystem) {
+    this.lhudDelaySystem.CancelCallback(this.lhudShowMinimapDelayId);
+  };
+  wrappedMethod();
+}
+
 public class LHUDShowMinimapCallback extends DelayCallback {
   public let player: wref<GameObject>;
   public func Call() -> Void {
+    if !IsDefined(this.player) {
+      return ;
+    };
     let hasTracked: Bool = MappinChecker.HasTrackedMappins(this.player.GetGame());
     this.player.QueueLHUDEvent(LHUDEventType.TrackedMarkers, hasTracked);
   }
