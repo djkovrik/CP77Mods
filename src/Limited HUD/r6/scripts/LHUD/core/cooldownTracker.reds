@@ -10,8 +10,16 @@ public class LhudCooldownTracker extends ScriptableSystem {
   }
 
   public final func SwapIds(oldItemId: ItemID, newItemId: ItemID) -> Void {
-    if this.Remove(oldItemId) {
-      this.Add(newItemId);
+    let changed: Bool = this.Remove(oldItemId);
+    if changed {
+      changed = this.Add(newItemId) || changed;
+      this.Notify();
+    };
+  }
+
+  public final func ClearItem(itemId: ItemID) -> Void {
+    if this.Remove(itemId) {
+      this.Notify();
     };
   }
 

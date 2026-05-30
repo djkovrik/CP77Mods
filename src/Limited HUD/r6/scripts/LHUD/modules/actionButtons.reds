@@ -300,6 +300,20 @@ protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> 
 @addField(ChargedHotkeyItemBaseController)
 private let cooldownIsActive: Bool;
 
+@addMethod(ChargedHotkeyItemBaseController)
+private final func ClearCooldownLHUD() -> Void {
+  let player: ref<PlayerPuppet> = this.GetPlayer();
+  if IsDefined(player) {
+    LhudCooldownTracker.Get(player.GetGame()).ClearItem(InventoryItemData.GetID(this.m_currentItem));
+  };
+}
+
+@wrapMethod(ChargedHotkeyItemBaseController)
+protected cb func OnUninitialize() -> Bool {
+  this.ClearCooldownLHUD();
+  wrappedMethod();
+}
+
 @wrapMethod(ChargedHotkeyItemBaseController)
 public final func UpdateChargeValue(newValue: Float, percToPoints: Float, valueChanged: Bool) -> Void {
   wrappedMethod(newValue, percToPoints, valueChanged);
