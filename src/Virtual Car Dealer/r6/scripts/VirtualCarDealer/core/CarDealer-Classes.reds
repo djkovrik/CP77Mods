@@ -34,6 +34,10 @@ public class AutofixerSellEvent extends Event {
   public let data: ref<AutofixerItemData>;
 }
 
+public class AutofixerSellCompletedEvent extends Event {
+  public let data: ref<AutofixerItemData>;
+}
+
 public class VehiclesListTemplateClassifier extends inkVirtualItemTemplateClassifier {
 
 }

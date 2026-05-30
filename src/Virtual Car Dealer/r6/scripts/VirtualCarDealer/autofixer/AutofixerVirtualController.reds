@@ -5,6 +5,7 @@ import CarDealer.Classes.AutofixerSellEvent
 import CarDealer.Classes.AutofixerItemData
 import CarDealer.Classes.AutofixerSellConfirmationEvent
 import CarDealer.Classes.AutofixerSellConfirmedEvent
+import CarDealer.Classes.AutofixerSellCompletedEvent
 
 public class AutofixerVirtualController extends inkGameController {
   private let m_vehiclesList: ref<inkVirtualGridController>;
@@ -31,10 +32,33 @@ public class AutofixerVirtualController extends inkGameController {
     this.PopulateVehicleList();
   }
 
+  protected cb func OnUninitialize() -> Bool {
+    if IsDefined(this.m_vehiclesList) {
+      this.m_vehiclesList.SetSource(null);
+      this.m_vehiclesList.SetClassifier(null);
+    };
+    if IsDefined(this.m_vehiclesDataView) {
+      this.m_vehiclesDataView.SetSource(null);
+    };
+    this.m_vehiclesList = null;
+    this.m_vehiclesListScrollController = null;
+    this.m_vehiclesDataSource = null;
+    this.m_vehiclesDataView = null;
+    this.m_vehiclesTemplateClassifier = null;
+    this.m_carDealerSystem = null;
+    this.m_sellingPopupData = null;
+    this.m_sellConfirmationToken = null;
+  }
+
   protected cb func OnAutofixerSellEvent(evt: ref<AutofixerSellEvent>) -> Bool {
     let player: ref<GameObject> = this.GetPlayerControlledObject();
-    GameObject.PlaySoundEvent(player, n"ui_menu_item_sold");
-    this.m_carDealerSystem.SellOwnedVehicle(player, evt.data);
+    let completedEvent: ref<AutofixerSellCompletedEvent>;
+    if IsDefined(evt) && IsDefined(evt.data) && IsDefined(this.m_carDealerSystem) && this.m_carDealerSystem.SellOwnedVehicle(player, evt.data) {
+      GameObject.PlaySoundEvent(player, n"ui_menu_item_sold");
+      completedEvent = new AutofixerSellCompletedEvent();
+      completedEvent.data = evt.data;
+      this.QueueEvent(completedEvent);
+    };
   }
 
   protected cb func OnAutofixerSellConfirmationEvent(evt: ref<AutofixerSellConfirmationEvent>) -> Bool {

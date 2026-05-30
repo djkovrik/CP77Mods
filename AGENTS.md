@@ -69,6 +69,8 @@ Use the redscript wiki for language rules and common patterns:
 - `https://wiki.redmodding.org/redscript/references-and-examples/common-patterns/persistence`
 - `https://wiki.redmodding.org/redscript/references-and-examples/logging`
 
+When an existing script uses one of these language features, first infer intent from nearby local code. When adding, changing, or relying on feature-specific syntax, verify against this quick reference and open the linked wiki page if anything is unclear or not covered here. Local game/mod sources are the authority for game APIs and signatures; the wiki is the authority for redscript language syntax and compiler features.
+
 Use Codeware docs when touching Codeware APIs:
 
 - `https://github.com/psiberx/cp2077-codeware/wiki`
@@ -118,6 +120,26 @@ Use TweakXL docs when touching TweakXL APIs:
 - Use conditional compilation only when the target environment or optional dependency really requires it, and verify the wiki syntax first.
 - For math, random, and utility functions, prefer documented built-ins or existing game helpers. Check the relevant wiki page before guessing names or overloads.
 - Treat Codeware and TweakXL as optional installed dependencies: use their APIs only when the script is intended to require them, and verify symbols against the local dependency `.reds` files.
+
+## Language Feature Quick Reference
+
+- Annotations patch existing game classes/functions, not modded ones. Do not use patch annotations on native functions. Prefer `@wrapMethod(ClassName)` with `wrappedMethod(...)` for composability, use `@replaceMethod(ClassName)` or `@replaceGlobal()` only when replacement is intentional, and use `@addMethod(ClassName)` / `@addField(ClassName)` for extensions.
+- Intrinsics include `Equals`, `NotEquals`, `IsDefined`, `ToString`, `EnumInt`, `IntEnum`, `ToVariant`, `FromVariant`, and array helpers such as `ArraySize`, `ArrayPush`, `ArrayPop`, `ArrayClear`, `ArrayResize`, `ArrayContains`, `ArrayFindFirst`, `ArrayFindLast`, `ArrayCount`, `ArrayInsert`, `ArrayRemove`, `ArrayErase`, and `ArrayLast`. `FromVariant` can fail at runtime if the stored type does not match.
+- Loops are `while` and `for elem in array`; redscript does not support `continue`. To skip the rest of an iteration, restructure the conditional or move the loop body into a helper function and `return`.
+- Strings support interpolation with the `s"..."` prefix and `\(expr)`, regular concatenation with `+`, conversion through helpers such as `ToString`, `NameToString`, `StringToName`, `StringToFloat`, and `StringToInt`, and operations such as `StrContains`, `StrLen`, `StrFindFirst`, `StrReplace`, `StrSplit`, `StrUpper`, and `StrLower`.
+- Modules start with `module Some.Path` at the top of the file. Module items are private to the module unless marked `public` and imported elsewhere. Without a module header, code is in global scope. Runtime names for module items are fully qualified by module path.
+- Conditional compilation uses `@if(condition)` before imports, classes, methods, fields, wrappers, or replacements. Conditions may use `true`, `false`, logical operators `&&`, `||`, `!`, `?:`, and `ModuleExists("Some.Module")`. Gate optional imports and any code that references optional module symbols with the same condition.
+
+## Common Patterns Quick Reference
+
+- Safe downcasting uses `let value = source as TargetType;` followed by `if IsDefined(value) { ... }`. The `as` operator returns `null` on failed dynamic casts and keeps the same reference kind, such as `ref<T>` to `ref<U>` or `wref<T>` to `wref<U>`.
+- redscript has no native constructors. Create instances with `new ClassName()` and assign fields, or define a static `Create(...) -> ref<ClassName>` helper when repeated initialization should be one-line and consistent.
+- For map-like storage, prefer existing game map types when nearby code already uses them. `inkHashMap` stores `Uint64 -> ref<IScriptable>` and `inkWeakHashMap` stores `Uint64 -> wref<IScriptable>`; custom classes can be values when they extend `IScriptable`. Common keys include numeric `TweakDBID` values from `TDBID.ToNumber(t"...")`.
+- Heterogeneous array literals work when the expected type is `array<Variant>`; literal elements are converted to `Variant`. Prefer an explicitly typed local `let values: array<Variant> = [...]` when inference could be ambiguous.
+- Custom singleton-like systems extend `ScriptableSystem` and are accessed through `GameInstance.GetScriptableSystemsContainer(gameInstance).Get(n"Full.Module.SystemName") as SystemName`. Include the module namespace in the `CName` when the system class is declared in a module.
+- Delayed work uses `DelayCallback` subclasses with a `Call()` method and a static `Create(...)` helper for captured data. Schedule with `GameInstance.GetDelaySystem(gameInstance).DelayCallback(callback, delaySeconds, isAffectedByTimeDilation)`.
+- Generic callbacks based on Codeware reflection require Codeware and should not be used in mods that are meant to stay vanilla-only. Store callback targets as `wref<IScriptable>`, method names as `CName`, arguments as `array<Variant>`, and mark callback target methods with `cb`. Static callback names use `n"ModuleName.ClassName::MethodName"`; omit `ModuleName` only for global-scope classes.
+- Persistence applies to fields in classes extending `ScriptableSystem` or `PersistentState`. Mark every field that must be saved with `persistent`, including fields inside persisted class instances. Do not persist `String`, `Variant`, `ResRef`, or arrays of those types.
 
 ## Virtual List DataView/DataSource Pattern
 

@@ -57,38 +57,56 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
     // Check all vehicle records
     for record in TweakDBInterface.GetRecords(n"Vehicle") {
       let currentRecord: ref<Vehicle_Record> = record as Vehicle_Record;
-      let currentId: TweakDBID = currentRecord.GetID();
-      let currentCred: Int32 = TweakDBInterface.GetInt(currentId + t".dealerCred", 0);
-      let currentPrice: Int32 = TweakDBInterface.GetInt(currentId + t".dealerPrice", 0);
-      // Dealer record detected
-      if NotEquals(currentPrice, 0) {
-        CarDealerLog(s" - vehicle detected: \(TDBID.ToStringDEBUG(currentId)) \(GetLocalizedTextByKey(currentRecord.DisplayName())): \(currentPrice) $");
-        // Let's make a new bundle
-        newBundle = new PurchasableVehicleBundle();
-        newBundle.cred = currentCred;
-        newBundle.price = currentPrice;
-        // And then check if dealer variants available
-        let dealerVariants: array<String> = TweakDBInterface.GetStringArray(currentId + t".dealerVariants");
-        let vehicleVariantIds: array<TweakDBID> = this.GetTDBIDs(dealerVariants);
-        if Equals(ArraySize(vehicleVariantIds), 0) {
-          // No variants detected - add core record
-          ArrayPush(vehicleVariantIds, currentId);
+      if IsDefined(currentRecord) {
+        let currentId: TweakDBID = currentRecord.GetID();
+        if TDBID.IsValid(currentId) {
+          let currentCred: Int32 = TweakDBInterface.GetInt(currentId + t".dealerCred", 0);
+          let currentPrice: Int32 = TweakDBInterface.GetInt(currentId + t".dealerPrice", 0);
+          // Dealer record detected
+          if NotEquals(currentPrice, 0) {
+            CarDealerLog(s" - vehicle detected: \(TDBID.ToStringDEBUG(currentId)) \(GetLocalizedTextByKey(currentRecord.DisplayName())): \(currentPrice) $");
+            // Let's make a new bundle
+            newBundle = new PurchasableVehicleBundle();
+            newBundle.cred = currentCred;
+            newBundle.price = currentPrice;
+            // And then check if dealer variants available
+            let dealerVariants: array<String> = TweakDBInterface.GetStringArray(currentId + t".dealerVariants");
+            let vehicleVariantIds: array<TweakDBID> = this.GetTDBIDs(dealerVariants);
+            if Equals(ArraySize(vehicleVariantIds), 0) {
+              // No variants detected - add core record
+              ArrayPush(vehicleVariantIds, currentId);
+            };
+            // Populate variants archive
+            let detectedVariants: array<ref<PurchasableVehicleVariant>>;
+            // Iterate through detected variants
+            for currentVehicleVariantId in vehicleVariantIds {
+              if TDBID.IsValid(currentVehicleVariantId) {
+                let currentVariantRecord: ref<Vehicle_Record> = TweakDBInterface.GetVehicleRecord(currentVehicleVariantId) as Vehicle_Record;
+                if IsDefined(currentVariantRecord) {
+                  newVariant = new PurchasableVehicleVariant();
+                  newVariant.record = currentVariantRecord;
+                  // Variants is not empty so should take paths from each variant record
+                  newVariant.dealerAtlasPath = ResRef.FromString(TweakDBInterface.GetString(currentVehicleVariantId + t".dealerAtlasPath", ""));
+                  newVariant.dealerPartName = StringToName(TweakDBInterface.GetString(currentVehicleVariantId + t".dealerPartName", ""));
+                  ArrayPush(detectedVariants, newVariant);
+                  CarDealerLog(s" --- variant: \(newVariant.dealerPartName)");
+                } else {
+                  CarDealerLog(s" --- skipped missing variant record: \(TDBID.ToStringDEBUG(currentVehicleVariantId))");
+                };
+              } else {
+                CarDealerLog(s" --- skipped invalid variant: \(TDBID.ToStringDEBUG(currentVehicleVariantId))");
+              };
+            };
+            if ArraySize(detectedVariants) > 0 {
+              newBundle.variants = detectedVariants;
+              ArrayPush(result, newBundle);
+            } else {
+              CarDealerLog(s" - skipped vehicle with no valid variants: \(TDBID.ToStringDEBUG(currentId))");
+            };
+          };
+        } else {
+          CarDealerLog(" - skipped vehicle with invalid TDBID");
         };
-        // Populate variants archive
-        let detectedVariants: array<ref<PurchasableVehicleVariant>>;
-        // Iterate through detected variants
-        for currentVehicleVariantId in vehicleVariantIds {
-          let currentVariantRecord: ref<Vehicle_Record> = TweakDBInterface.GetVehicleRecord(currentVehicleVariantId) as Vehicle_Record;
-          newVariant = new PurchasableVehicleVariant();
-          newVariant.record = currentVariantRecord;
-          // Variants is not empty so should take paths from each variant record
-          newVariant.dealerAtlasPath = ResRef.FromString(TweakDBInterface.GetString(currentVehicleVariantId + t".dealerAtlasPath", ""));
-          newVariant.dealerPartName = StringToName(TweakDBInterface.GetString(currentVehicleVariantId + t".dealerPartName", ""));
-          ArrayPush(detectedVariants, newVariant);
-          CarDealerLog(s" --- variant: \(newVariant.dealerPartName)");
-        };
-        newBundle.variants = detectedVariants;
-        ArrayPush(result, newBundle);
       };
     };
 
@@ -101,11 +119,13 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
 
   public func IsPurchasable(id: TweakDBID) -> Bool {
     for vehicle in this.m_storeVehicles {
-      for variant in vehicle.variants {
-      if Equals(variant.record.GetID(), id) {
-        return true;
+      if IsDefined(vehicle) {
+        for variant in vehicle.variants {
+          if IsDefined(variant) && IsDefined(variant.record) && Equals(variant.record.GetID(), id) {
+            return true;
+          };
+        };
       };
-      }
     };
     return false;
   }
@@ -114,20 +134,32 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
     return this.IsSeparatePurchased(id);
   }
 
-  public func Purchase(id: TweakDBID) -> Void {
-    this.m_vehicleSystem.EnablePlayerVehicleID(id, true);
+  public func Purchase(id: TweakDBID) -> Bool {
+    if !TDBID.IsValid(id) {
+      CarDealerLog(s"Failed to purchase vehicle with invalid ID: \(TDBID.ToStringDEBUG(id))");
+      return false;
+    };
+    if !this.m_vehicleSystem.EnablePlayerVehicleID(id, true) {
+      CarDealerLog(s"Failed to purchase vehicle: \(TDBID.ToStringDEBUG(id))");
+      return false;
+    };
     SyncPersistentVehicles(this.GetGameInstance());
     let soldVehicles: array<TweakDBID> = this.m_soldVehicles;
     if ArrayContains(soldVehicles, id) {
       ArrayRemove(soldVehicles, id);
       this.m_soldVehicles = soldVehicles;
     };
+    return true;
   }
 
   public func BuyAll() -> Void {
     for vehicle in this.m_storeVehicles {
-      for variant in vehicle.variants {
-        this.Purchase(variant.record.GetID());
+      if IsDefined(vehicle) {
+        for variant in vehicle.variants {
+          if IsDefined(variant) && IsDefined(variant.record) {
+            this.Purchase(variant.record.GetID());
+          };
+        };
       };
     };
   }
@@ -135,10 +167,27 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
   public func ClearSoldVehicles() -> Void {
     let vehicleSystem: ref<VehicleSystem> = GameInstance.GetVehicleSystem(this.GetGameInstance());
     let soldVehicles: array<TweakDBID> = this.m_soldVehicles;
+    let failedVehicles: array<TweakDBID>;
+    let restoredCount: Int32 = 0;
     ArrayClear(this.m_soldVehicles);
     for soldVehicle in soldVehicles {
-      vehicleSystem.EnablePlayerVehicleID(soldVehicle, true); 
+      if TDBID.IsValid(soldVehicle) {
+        if vehicleSystem.EnablePlayerVehicleID(soldVehicle, true) {
+          restoredCount += 1;
+          FTLog(s"Restored sold vehicle: \(TDBID.ToStringDEBUG(soldVehicle))");
+        } else {
+          ArrayPush(failedVehicles, soldVehicle);
+          FTLog(s"Failed to restore sold vehicle: \(TDBID.ToStringDEBUG(soldVehicle))");
+        };
+      } else {
+        FTLog(s"Skipped invalid sold vehicle ID: \(TDBID.ToStringDEBUG(soldVehicle))");
+      };
     };
+    this.m_soldVehicles = failedVehicles;
+    if restoredCount > 0 {
+      SyncPersistentVehicles(this.GetGameInstance());
+    };
+    FTLog(s"Vehicles restored: \(restoredCount)");
   }
 
   public func IsInDangerZone(player: ref<PlayerPuppet>) -> Bool {
@@ -156,6 +205,7 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
     let vehicleRecord: ref<Vehicle_Record>;
     let vehicleId: TweakDBID;
     let item: ref<AutofixerItemData>;
+    let vehicleIcon: wref<UIIcon_Record>;
     let price: Int32;
     let sellPrice: Float;
     let isVanillaVehicle: Bool;
@@ -171,41 +221,58 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
     for playerVehicle in playerVehicles {
       if TDBID.IsValid(playerVehicle.recordID) {
         vehicleRecord = TweakDBInterface.GetVehicleRecord(playerVehicle.recordID);
-        vehicleId = vehicleRecord.GetID();
-        price = TweakDBInterface.GetInt(vehicleId + t".autofixer", 0);
-        if Equals(price, 0) { 
-          isVanillaVehicle = false;
-          price = this.FindPriceInBundles(vehicleId); 
+        if IsDefined(vehicleRecord) {
+          vehicleIcon = vehicleRecord.Icon();
+          if IsDefined(vehicleIcon) {
+            vehicleId = vehicleRecord.GetID();
+            price = TweakDBInterface.GetInt(vehicleId + t".autofixer", 0);
+            if Equals(price, 0) { 
+              isVanillaVehicle = false;
+              price = this.FindPriceInBundles(vehicleId); 
+            } else {
+              isVanillaVehicle = true;
+            };
+            sellPrice = Cast<Float>(price) * this.m_sellPriceModifier;
+            item = new AutofixerItemData();
+            item.title = GetLocalizedTextByKey(vehicleRecord.DisplayName());
+            item.price = Cast<Int32>(sellPrice);
+            item.atlasResource = vehicleIcon.AtlasResourcePath();
+            item.textureName = vehicleIcon.AtlasPartName();
+            item.vehicleID = playerVehicle.recordID;
+            item.sold = false;
+            item.vanilla = isVanillaVehicle;
+            CarDealerLog(s"Owned vehicle: \(TDBID.ToStringDEBUG(item.vehicleID)) \(item.title) with price \(price) and sell price \(item.price), vanilla: \(item.vanilla)");
+            ArrayPush(result, item);
+          } else {
+            CarDealerLog(s"Skipped owned vehicle with missing icon: \(TDBID.ToStringDEBUG(playerVehicle.recordID))");
+          };
         } else {
-          isVanillaVehicle = true;
+          CarDealerLog(s"Skipped owned vehicle with missing record: \(TDBID.ToStringDEBUG(playerVehicle.recordID))");
         };
-        sellPrice = Cast<Float>(price) * this.m_sellPriceModifier;
-        item = new AutofixerItemData();
-        item.title = GetLocalizedTextByKey(vehicleRecord.DisplayName());
-        item.price = Cast<Int32>(sellPrice);
-        item.atlasResource = vehicleRecord.Icon().AtlasResourcePath();
-        item.textureName = vehicleRecord.Icon().AtlasPartName();
-        item.vehicleID = playerVehicle.recordID;
-        item.sold = false;
-        item.vanilla = isVanillaVehicle;
-        CarDealerLog(s"Owned vehicle: \(TDBID.ToStringDEBUG(item.vehicleID)) \(item.title) with price \(price) and sell price \(item.price), vanilla: \(item.vanilla)");
-        ArrayPush(result, item);
+      } else {
+        CarDealerLog(s"Skipped owned vehicle with invalid ID: \(TDBID.ToStringDEBUG(playerVehicle.recordID))");
       };
     };
 
     return result;
   }
 
-  public func SellOwnedVehicle(player: ref<GameObject>, data: ref<AutofixerItemData>) -> Void {
+  public func SellOwnedVehicle(player: ref<GameObject>, data: ref<AutofixerItemData>) -> Bool {
+    if !IsDefined(player) || !IsDefined(data) || !TDBID.IsValid(data.vehicleID) {
+      CarDealerLog("Failed to sell vehicle: invalid sell request");
+      return false;
+    };
     if ArrayContains(this.m_soldVehicles, data.vehicleID) {
-      return ;
+      return false;
     };
     if RemoveVehicle(this.GetGameInstance(), this.m_vehicleSystem, data.vehicleID) {
       this.m_transactionSystem.GiveItem(player, MarketSystem.Money(), data.price);
       ArrayPush(this.m_soldVehicles, data.vehicleID);
+      return true;
     } else {
       CarDealerLog(s"Failed to sell vehicle: \(data.title)");
     };
+    return false;
   }
 
   private func GetTDBIDs(items: array<String>) -> array<TweakDBID> {
@@ -238,13 +305,15 @@ public class PurchasableVehicleSystem extends ScriptableSystem {
     while i < ArraySize(this.m_storeVehicles) && !bundleFound {
       currentBundle = this.m_storeVehicles[i];
       j = 0;
-      while j < ArraySize(currentBundle.variants)  && !bundleFound {
-        currentVariant = currentBundle.variants[j];
-        if Equals(currentVariant.record.GetID(), id) {
-          targetBundle = currentBundle;
-          bundleFound = true;
+      if IsDefined(currentBundle) {
+        while j < ArraySize(currentBundle.variants)  && !bundleFound {
+          currentVariant = currentBundle.variants[j];
+          if IsDefined(currentVariant) && IsDefined(currentVariant.record) && Equals(currentVariant.record.GetID(), id) {
+            targetBundle = currentBundle;
+            bundleFound = true;
+          };
+          j += 1;
         };
-        j += 1;
       };
       i += 1;
     };

@@ -28,15 +28,21 @@ public class CarDealerContentController extends inkGameController {
     this.purchaseSystem = PurchasableVehicleSystem.GetInstance(GetGameInstance());
     this.vehiclesStock = this.purchaseSystem.m_storeVehicles;
     let stockSize: Int32 = ArraySize(this.vehiclesStock);
-    this.vehicleIndex = 0;
-    this.vehicleLastIndex = stockSize - 1;
-    this.vehicleVariantIndex = 0;
-    this.vehicleVariantLastIndex = ArraySize(this.vehiclesStock[this.vehicleIndex].variants) - 1;
 
     let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
     root.RemoveAllChildren();
 
     if Equals(stockSize, 0) {
+      this.ShowDealerEmptyScreen();
+      return ;
+    };
+
+    this.vehicleIndex = 0;
+    this.vehicleLastIndex = stockSize - 1;
+    this.vehicleVariantIndex = 0;
+    this.vehicleVariantLastIndex = ArraySize(this.vehiclesStock[this.vehicleIndex].variants) - 1;
+
+    if this.vehicleVariantLastIndex < 0 {
       this.ShowDealerEmptyScreen();
     } else {
       this.ShowDealerScreen();
@@ -626,10 +632,13 @@ public class CarDealerContentController extends inkGameController {
     let isPurchased: Bool = this.purchaseSystem.IsPurchased(id);
     if !isPurchased && this.HasEnoughMoneyDealer(price) && this.HasEnoughStreetCredDealer(cred) {
       this.PlayCustomSoundDealer(n"ui_menu_onpress");
-      this.purchaseSystem.Purchase(id);
-      this.RemoveMoneyFromPlayerDealer(price);
-      this.PushPurchasedNotificationDealer(id);
-      this.ShowDealerCurrentPage();
+      if this.purchaseSystem.Purchase(id) {
+        this.RemoveMoneyFromPlayerDealer(price);
+        this.PushPurchasedNotificationDealer(id);
+        this.ShowDealerCurrentPage();
+      } else {
+        CarDealerLog(s"Purchase failed, money was not removed: \(TDBID.ToStringDEBUG(id))");
+      };
     };
   }
 
