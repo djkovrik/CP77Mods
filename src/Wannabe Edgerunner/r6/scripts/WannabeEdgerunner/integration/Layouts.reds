@@ -17,8 +17,8 @@ protected cb func OnInitialize() -> Bool {
   outerContainer.SetVAlign(inkEVerticalAlign.Bottom);
   outerContainer.SetAnchor(inkEAnchor.BottomCenter);
   outerContainer.SetInteractive(true);
-  outerContainer.SetAnchorPoint(new Vector2(0.5, 0.5));
-  outerContainer.SetMargin(new inkMargin(0.0, 0.0, 434.0, 160.0));
+  outerContainer.SetAnchorPoint(Vector2(0.5, 0.5));
+  outerContainer.SetMargin(inkMargin(0.0, 0.0, 434.0, 160.0));
   outerContainer.Reparent(root, 5);
 
   this.edgerunnerHumanityBar = this.SpawnFromExternal(
@@ -154,6 +154,10 @@ protected cb func OnBack(userData: ref<IScriptable>) -> Bool {
 @addMethod(healthbarWidgetGameController)
 public func RefreshHumanityBars(current: Int32, total: Int32, color: CName) -> Void {
   if this.IsPlayingAsJohnny() {return ; };
+  if total <= 0 {
+    this.humanityBarProgress.SetWidth(0.0);
+    return ;
+  };
 
   let fullWidth: Float = this.humanityBarFull.GetWidth();
   let step: Float = fullWidth / Cast<Float>(total);
@@ -178,12 +182,12 @@ protected cb func OnInitialize() -> Bool {
   this.humanityBarContainer.SetHAlign(inkEHorizontalAlign.Left);
   this.humanityBarContainer.SetVAlign(inkEVerticalAlign.Top);
   this.humanityBarContainer.SetAnchor(inkEAnchor.TopLeft);
-  this.humanityBarContainer.SetAnchorPoint(new Vector2(0.0, 0.0));
-  this.humanityBarContainer.SetSize(new Vector2(530.0, 12.0));
+  this.humanityBarContainer.SetAnchorPoint(Vector2(0.0, 0.0));
+  this.humanityBarContainer.SetSize(Vector2(530.0, 12.0));
   this.humanityBarContainer.Reparent(container, 0);
 
   let progressContainer: ref<inkCanvas> = new inkCanvas();
-  progressContainer.SetSize(new Vector2(530.0, 8.0));
+  progressContainer.SetSize(Vector2(530.0, 8.0));
   progressContainer.Reparent(this.humanityBarContainer);
 
   this.humanityBarFull = new inkRectangle();
@@ -191,7 +195,7 @@ protected cb func OnInitialize() -> Bool {
   this.humanityBarFull.SetAnchor(inkEAnchor.TopLeft);
   this.humanityBarFull.SetHAlign(inkEHorizontalAlign.Left);
   this.humanityBarFull.SetVAlign(inkEVerticalAlign.Top);
-  this.humanityBarFull.SetSize(new Vector2(530.0, 10.0));
+  this.humanityBarFull.SetSize(Vector2(530.0, 10.0));
   this.humanityBarFull.SetOpacity(0.75);
   this.humanityBarFull.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
   this.humanityBarFull.BindProperty(n"tintColor", n"MainColors.FaintRed");
@@ -202,7 +206,7 @@ protected cb func OnInitialize() -> Bool {
   this.humanityBarProgress.SetAnchor(inkEAnchor.TopLeft);
   this.humanityBarProgress.SetHAlign(inkEHorizontalAlign.Left);
   this.humanityBarProgress.SetVAlign(inkEVerticalAlign.Center);
-  this.humanityBarProgress.SetSize(new Vector2(530.0, 10.0));
+  this.humanityBarProgress.SetSize(Vector2(530.0, 10.0));
   this.humanityBarProgress.Reparent(progressContainer);
 
   let current: Int32 = this.edgerunningSystem.GetHumanityCurrent();

@@ -218,6 +218,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.preventionHelper.CancelScheduledPreventionActivity();
     this.teleportHelper.CancelScheduledTeleportEvents();
     this.delaySystem.CancelDelay(this.postPsychosisDelayId);
+    this.delaySystem.CancelDelay(this.humanityRestoreDelayId);
   }
 
   public func StopPostPsychosisFlow() -> Void {
@@ -241,7 +242,12 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public func OnSettingsChanged() -> Void {
     this.config = new EdgerunningConfig();
-    this.effectsHelper.RefreshConfig();
+    if IsDefined(this.effectsHelper) {
+      this.effectsHelper.RefreshConfig();
+    };
+    if IsDefined(this.preventionHelper) {
+      this.preventionHelper.RefreshConfig(this.config);
+    };
   }
 
   public func OnEnemyKilled(affiliation: gamedataAffiliation) -> Void {
@@ -356,7 +362,17 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public func OnBerserkActivation(item: ItemID) -> Void {
     E("BERSERK ACTIVATED");
+    if !ItemID.IsValid(item) {
+      E("Berserk item is not valid, skip");
+      return;
+    };
+
     let itemRecord: ref<Item_Record> = RPGManager.GetItemRecord(item);
+    if !IsDefined(itemRecord) {
+      E("Berserk item record is not defined, skip");
+      return;
+    };
+
     let quality: gamedataQuality = itemRecord.Quality().Type();
     let qualityMult: Float;
     switch (quality) {
@@ -409,6 +425,11 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public func OnOverClockActivation(itemRecord: ref<Item_Record>) -> Void {
     E("OVERCLOCK ACTIVATED");
+    if !IsDefined(itemRecord) {
+      E("Overclock item record is not defined, skip");
+      return;
+    };
+
     let quality: gamedataQuality = itemRecord.Quality().Type();
     let qualityMult: Float;
     switch (quality) {
@@ -461,7 +482,17 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public func OnSandevistanActivation(item: ItemID) -> Void {
     E("SANDEVISTAN ACTIVATED");
+    if !ItemID.IsValid(item) {
+      E("Sandevistan item is not valid, skip");
+      return;
+    };
+
     let itemRecord: ref<Item_Record> = RPGManager.GetItemRecord(item);
+    if !IsDefined(itemRecord) {
+      E("Sandevistan item record is not defined, skip");
+      return;
+    };
+
     let quality: gamedataQuality = itemRecord.Quality().Type();
     let qualityMult: Float;
     switch (quality) {
@@ -687,14 +718,18 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public func OnArmsCyberwareActivation(type: gamedataItemType) -> Void {
     let itemId: ItemID = EquipmentSystem.GetInstance(this.player).GetActiveItem(this.player, gamedataEquipmentArea.ArmsCW);
-    let itemRecord: ref<Item_Record> = RPGManager.GetItemRecord(itemId);
-    let itemType: gamedataItemType = RPGManager.GetItemType(itemId);
-    
-    if !IsDefined(itemRecord) {
+    if !ItemID.IsValid(itemId) {
+      E("Arms cyberware item is not valid, skip");
       return;
     };
 
-    E(s"ARMS CYBERWARE ACTIVATED: \(itemType)");
+    let itemRecord: ref<Item_Record> = RPGManager.GetItemRecord(itemId);
+    if !IsDefined(itemRecord) {
+      E("Arms cyberware item record is not defined, skip");
+      return;
+    };
+
+    E(s"ARMS CYBERWARE ACTIVATED: \(type)");
 
     let quality: gamedataQuality = itemRecord.Quality().Type();
     let qualityMult: Float;
@@ -735,7 +770,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     };
 
     let cost: Float;
-    switch itemType {
+    switch type {
       case gamedataItemType.Cyb_Launcher:
         cost = Cast<Float>(this.config.launcherUsageCost) * qualityMult;
         break;
@@ -752,13 +787,13 @@ public class EdgerunningSystem extends ScriptableSystem {
 
     if !this.effectsChecker.IsRipperdocBuffActive() && !this.effectsChecker.IsNewPostPsychosisActive() {
       this.AddHumanityDamage(cost);
-      E(s"! Arms cyberware activated: \(itemType) \(quality) - costs \(cost) humanity");
+      E(s"! Arms cyberware activated: \(type) \(quality) - costs \(cost) humanity");
       this.InvalidateCurrentState();
     } else {
       E("! Humanity freezed, arms cyberware costs no humanity");
     };
 
-    switch itemType {
+    switch type {
       case gamedataItemType.Cyb_Launcher:
         this.DamageHealthToPercent(this.config.launcherUsageDamage);
         break;
@@ -1144,7 +1179,9 @@ public class LaunchCycledPsychosisCheckCallback extends DelayCallback {
   }
 
   public func Call() -> Void {
-    this.system.OnLaunchCycledPsychosisCheckCallback();
+    if IsDefined(this.system) {
+      this.system.OnLaunchCycledPsychosisCheckCallback();
+    };
   }
 }
 
@@ -1158,7 +1195,9 @@ public class LaunchPostPsychosisEffectCallback extends DelayCallback {
   }
 
   public func Call() -> Void {
-    this.system.OnLaunchPostPsychosisCallback();
+    if IsDefined(this.system) {
+      this.system.OnLaunchPostPsychosisCallback();
+    };
   }
 }
 
@@ -1172,7 +1211,9 @@ public class LaunchPostPsychosisHumanityRestoreCallback extends DelayCallback {
   }
 
   public func Call() -> Void {
-    this.system.RemoveHumanityDamage(10);
-    this.system.InvalidateCurrentState();
+    if IsDefined(this.system) {
+      this.system.RemoveHumanityDamage(10);
+      this.system.InvalidateCurrentState();
+    };
   }
 }

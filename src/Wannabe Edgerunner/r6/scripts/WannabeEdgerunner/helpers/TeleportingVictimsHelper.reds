@@ -42,7 +42,7 @@ public class TeleportVictimsHelper {
   public func OnVictimSpawnCallback(position: Vector4, characterId: TweakDBID) -> Void {
     let randX: Float = RandRangeF(-2.5, 2.5);
     let randY: Float = RandRangeF(-2.5, 2.5);
-    let newPosition: Vector4 = new Vector4(position.X + randX, position.Y + randY, position.Z, position.W);
+    let newPosition: Vector4 = Vector4(position.X + randX, position.Y + randY, position.Z, position.W);
     let worldTransform: WorldTransform;
     WorldTransform.SetPosition(worldTransform, newPosition);
     let requestId: Uint32 = this.preventionSystem.RequestUnitSpawn(characterId, worldTransform);
@@ -65,6 +65,8 @@ public class VictimsSpawnCallback extends DelayCallback {
   }
 
   public func Call() -> Void {
-    this.helper.OnVictimSpawnCallback(this.position, this.characterId);
+    if IsDefined(this.helper) {
+      this.helper.OnVictimSpawnCallback(this.position, this.characterId);
+    };
   }
 }

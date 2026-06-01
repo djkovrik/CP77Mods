@@ -43,6 +43,10 @@ public class TeleportHelper {
   }
 
   public func OnPrepareTeleportCallback() -> Void {
+    if !IsDefined(this.player) {
+      return;
+    };
+
     let currentDistrict: gamedataDistrict = this.player.GetPreventionSystem().GetCurrentDistrictForEdgerunner();
     let isPrologDone: Bool = this.player.IsPrologueFinished();
     let destination: ref<TeleportData>;
@@ -66,6 +70,10 @@ public class TeleportHelper {
   }
 
   public func OnPlayerTeleportCallback(position: Vector4) -> Void {
+    if !IsDefined(this.player) {
+      return;
+    };
+
     if !this.CanBeTeleported() {
       return ;
     };
@@ -77,6 +85,10 @@ public class TeleportHelper {
   }
 
   public func OnPostTeleportEffectsCallback() -> Void {
+    if !IsDefined(this.player) {
+      return;
+    };
+
     E("Teleport - Apply post-effects");
     let timeSystem: ref<TimeSystem> = GameInstance.GetTimeSystem(this.player.GetGame());
     let sps: ref<StatPoolsSystem> = GameInstance.GetStatPoolsSystem(this.player.GetGame());
@@ -143,7 +155,9 @@ public class PrepareTeleportCallback extends DelayCallback {
   }
 
   public func Call() -> Void {
-    this.helper.OnPrepareTeleportCallback();
+    if IsDefined(this.helper) {
+      this.helper.OnPrepareTeleportCallback();
+    };
   }
 }
 
@@ -159,7 +173,9 @@ public class PlayerTeleportCallback extends DelayCallback {
   }
 
   public func Call() -> Void {
-    this.helper.OnPlayerTeleportCallback(this.position);
+    if IsDefined(this.helper) {
+      this.helper.OnPlayerTeleportCallback(this.position);
+    };
   }
 }
 
@@ -174,6 +190,8 @@ public class PostTeleportEffectsCallback extends DelayCallback {
   }
 
   public func Call() -> Void {
-    this.helper.OnPostTeleportEffectsCallback();
+    if IsDefined(this.helper) {
+      this.helper.OnPostTeleportEffectsCallback();
+    };
   }
 }

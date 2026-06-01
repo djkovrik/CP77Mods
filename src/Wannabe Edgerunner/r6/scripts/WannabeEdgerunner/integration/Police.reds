@@ -41,7 +41,8 @@ public func ClearWantedLevel() -> Void {
 private final func ShouldSpawnPatrolVehicleWhenInSearch() -> Bool {
   let shouldSpawn: Bool = wrappedMethod();
   let isInInterior: Bool = IsEntityInInteriorArea(this.m_player);
-  let isPsychosisActive: Bool = Equals(StatusEffectSystem.ObjectHasStatusEffect(this.m_player, t"BaseStatusEffect.ActivePsychosisBuff"), true);
+  let isPsychosisActive: Bool = Equals(StatusEffectSystem.ObjectHasStatusEffect(this.m_player, t"BaseStatusEffect.NewPsychosisEffectNormalFx"), true)
+    || Equals(StatusEffectSystem.ObjectHasStatusEffect(this.m_player, t"BaseStatusEffect.NewPsychosisEffectLightFx"), true);
   return (isPsychosisActive && !isInInterior) || shouldSpawn;
 }
 

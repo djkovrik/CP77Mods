@@ -22,6 +22,10 @@ public class TeleportingPreventionHelper {
     this.delaySystem = GameInstance.GetDelaySystem(player.GetGame());
   }
 
+  public func RefreshConfig(config: ref<EdgerunningConfig>) -> Void {
+    this.config = config;
+  }
+
   public func SchedulePoliceActivity(delay: Float) -> Void {
     E("Prevention - Schedule police flow");
     this.policeActivityDelayId = this.delaySystem.DelayCallback(LaunchPoliceActivityCallback.Create(this), delay, true);
@@ -41,11 +45,19 @@ public class TeleportingPreventionHelper {
   }
 
   public func OnLaunchPoliceActivityCallback() -> Void {
+    if !IsDefined(this.player) {
+      return;
+    };
+
     E("Prevention - Launch police flow");
     this.player.GetPreventionSystem().SpawnPoliceForPsychosis(this.config);
   }
 
   public func OnTriggerDrawWeaponCallback() -> Void {
+    if !IsDefined(this.player) {
+      return;
+    };
+
     E("Prevention - Draw weapon");
     let equipmentSystem: wref<EquipmentSystem> = this.player.GetEquipmentSystem();
     let drawItemRequest: ref<DrawItemRequest> = new DrawItemRequest();
@@ -55,10 +67,25 @@ public class TeleportingPreventionHelper {
   }
 
   public func OnTriggerRandomShotCallback() -> Void {
+    if !IsDefined(this.player) {
+      return;
+    };
+
     E("Prevention - Shot");
     let weaponObject: ref<WeaponObject> = GameObject.GetActiveWeapon(this.player);
+    if !IsDefined(weaponObject) {
+      E("Prevention - no active weapon, skip shot");
+      return;
+    };
+
+    let weaponRecord: ref<WeaponItem_Record> = weaponObject.GetWeaponRecord();
+    if !IsDefined(weaponRecord) {
+      E("Prevention - active weapon has no record, skip shot");
+      return;
+    };
+
     let simTime: Float = EngineTime.ToFloat(GameInstance.GetSimTime(this.player.GetGame()));
-    AIWeapon.Fire(this.player, weaponObject, simTime, 1.0, weaponObject.GetWeaponRecord().PrimaryTriggerMode().Type());
+    AIWeapon.Fire(this.player, weaponObject, simTime, 1.0, weaponRecord.PrimaryTriggerMode().Type());
   }
 }
 
@@ -72,7 +99,9 @@ public class LaunchPoliceActivityCallback extends DelayCallback {
   }
 
   public func Call() -> Void {
-    this.helper.OnLaunchPoliceActivityCallback();
+    if IsDefined(this.helper) {
+      this.helper.OnLaunchPoliceActivityCallback();
+    };
   }
 }
 
@@ -86,7 +115,9 @@ public class TriggerDrawWeaponCallback extends DelayCallback {
   }
 
   public func Call() -> Void {
-    this.helper.OnTriggerDrawWeaponCallback();
+    if IsDefined(this.helper) {
+      this.helper.OnTriggerDrawWeaponCallback();
+    };
   }
 }
 
@@ -100,6 +131,8 @@ public class TriggerRandomShotCallback extends DelayCallback {
   }
 
   public func Call() -> Void {
-    this.helper.OnTriggerRandomShotCallback();
+    if IsDefined(this.helper) {
+      this.helper.OnTriggerRandomShotCallback();
+    };
   }
 }

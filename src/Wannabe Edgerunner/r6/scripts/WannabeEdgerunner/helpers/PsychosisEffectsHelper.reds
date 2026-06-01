@@ -111,6 +111,10 @@ public class PsychosisEffectsHelper {
   }
 
   public func OnLaunchCycledSFXCallback() -> Void {
+    if !IsDefined(this.player) {
+      return;
+    };
+
     E("Sfx - OnLaunchCycledSFXCallback");
     let random: Int32 = RandRange(0, ArraySize(this.cyberpsychosisSFX));
     let bundle: ref<SFXBundle> = this.cyberpsychosisSFX[random];
@@ -170,7 +174,9 @@ public class LaunchCycledSFXCallback extends DelayCallback {
   }
 
   public func Call() -> Void {
-    this.helper.OnLaunchCycledSFXCallback();
+    if IsDefined(this.helper) {
+      this.helper.OnLaunchCycledSFXCallback();
+    };
   }
 }
 
@@ -186,8 +192,10 @@ public class PlaySFXCallback extends DelayCallback {
   }
 
 	public func Call() -> Void {
-    GameObject.PlaySoundEvent(this.player, this.sfxName);
-    E(s"Run \(this.sfxName) sfx");
+    if IsDefined(this.player) {
+      GameObject.PlaySoundEvent(this.player, this.sfxName);
+      E(s"Run \(this.sfxName) sfx");
+    };
 	}
 }
 
@@ -203,8 +211,10 @@ public class PlayVFXCallback extends DelayCallback {
   }
 
 	public func Call() -> Void {
-    GameObjectEffectHelper.StartEffectEvent(this.player, this.vfxName, false);
-    E(s"Run \(this.vfxName) vfx");
+    if IsDefined(this.player) {
+      GameObjectEffectHelper.StartEffectEvent(this.player, this.vfxName, false);
+      E(s"Run \(this.vfxName) vfx");
+    };
 	}
 }
 
@@ -220,8 +230,10 @@ public class ApplyStatusEffectCallback extends DelayCallback {
   }
 
 	public func Call() -> Void {
-    GameInstance.GetStatusEffectSystem(this.player.GetGame()).ApplyStatusEffect(this.player.GetEntityID(), this.id, this.player.GetRecordID(), this.player.GetEntityID());
-    E(s"Apply \(TDBID.ToStringDEBUG(this.id)) effect to player");
+    if IsDefined(this.player) {
+      GameInstance.GetStatusEffectSystem(this.player.GetGame()).ApplyStatusEffect(this.player.GetEntityID(), this.id, this.player.GetRecordID(), this.player.GetEntityID());
+      E(s"Apply \(TDBID.ToStringDEBUG(this.id)) effect to player");
+    };
 	}
 }
 
@@ -237,7 +249,9 @@ public class RemoveStatusEffectCallback extends DelayCallback {
   }
 
 	public func Call() -> Void {
-    GameInstance.GetStatusEffectSystem(this.player.GetGame()).RemoveStatusEffect(this.player.GetEntityID(), this.id);
-    E(s"Remove \(TDBID.ToStringDEBUG(this.id)) effect from player");
+    if IsDefined(this.player) {
+      GameInstance.GetStatusEffectSystem(this.player.GetGame()).RemoveStatusEffect(this.player.GetEntityID(), this.id);
+      E(s"Remove \(TDBID.ToStringDEBUG(this.id)) effect from player");
+    };
   }
 }

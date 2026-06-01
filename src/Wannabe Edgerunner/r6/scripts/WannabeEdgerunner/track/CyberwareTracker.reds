@@ -143,6 +143,7 @@ public final func GetCyberwareFromSlots() -> array<ref<Item_Record>> {
   let result: array<ref<Item_Record>>;
   let record: ref<Item_Record>;
   let equipSlots: array<SEquipSlot>;
+  let equipAreaIndex: Int32;
   let i: Int32;
 
   for slot in [
@@ -158,12 +159,20 @@ public final func GetCyberwareFromSlots() -> array<ref<Item_Record>> {
       gamedataEquipmentArea.ArmsCW,
       gamedataEquipmentArea.LegsCW
     ] {
-      equipSlots = this.m_equipment.equipAreas[this.GetEquipAreaIndex(slot)].equipSlots;
+      equipAreaIndex = this.GetEquipAreaIndex(slot);
+      ArrayClear(equipSlots);
+      if equipAreaIndex < 0 || equipAreaIndex >= ArraySize(this.m_equipment.equipAreas) {
+        E(s"Skip cyberware slot \(slot): equip area index \(equipAreaIndex) is not valid");
+      } else {
+        equipSlots = this.m_equipment.equipAreas[equipAreaIndex].equipSlots;
+      };
       i = 0;
       while i < ArraySize(equipSlots) {
         if ItemID.IsValid(equipSlots[i].itemID) {
           record = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(equipSlots[i].itemID));
-          ArrayPush(result, record);
+          if IsDefined(record) {
+            ArrayPush(result, record);
+          };
         };
         i += 1;
       };
@@ -227,10 +236,22 @@ public final static func AwardExperienceFromDamage(hitEvent: ref<gameHitEvent>, 
   wrappedMethod(hitEvent, damagePercentage);
 
   let record: wref<Item_Record>;
+  if !IsDefined(hitEvent) || !IsDefined(hitEvent.target) {
+    return;
+  };
+
   let data: ref<AttackData> = hitEvent.attackData;
   let type: gamedataItemType;
+  if !IsDefined(data) || !IsDefined(data.GetInstigator()) || !IsDefined(data.GetWeapon()) {
+    return;
+  };
+
   if data.GetInstigator().IsPlayer() && !hitEvent.target.IsPlayer() {
     record = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(data.GetWeapon().GetItemID()));
+    if !IsDefined(record) {
+      return;
+    };
+
     type = record.ItemType().Type();
     switch type {
       case gamedataItemType.Cyb_NanoWires:

@@ -124,7 +124,7 @@ public class NewHumanityBarController extends inkGameController {
         rightMargin = this.barMarginNormal + this.barWidth;
       };
 
-      widget.SetScale(new Vector2(0.0, 1.0));
+      widget.SetScale(Vector2(0.0, 1.0));
       widget.SetMargin(0.0, 0.0, rightMargin, 0.0);
       widget.SetUserData(HumanityBarUserData.Create(showDanger));
       ArrayPush(this.bars, widget);
@@ -222,8 +222,8 @@ public class NewHumanityBarController extends inkGameController {
     let scaleInterpolator: ref<inkAnimScale> = new inkAnimScale();
     scaleInterpolator.SetMode(inkanimInterpolationMode.EasyOut);
     scaleInterpolator.SetType(inkanimInterpolationType.Linear);
-    scaleInterpolator.SetStartScale(new Vector2(0.0, 1.0));
-    scaleInterpolator.SetEndScale(new Vector2(1.0, 1.0));
+    scaleInterpolator.SetStartScale(Vector2(0.0, 1.0));
+    scaleInterpolator.SetEndScale(Vector2(1.0, 1.0));
     scaleInterpolator.SetDuration(this.barIntroAnimDuration);
     this.barIntroAnimDef.AddInterpolator(scaleInterpolator);
   }
@@ -248,8 +248,8 @@ public class NewHumanityBarController extends inkGameController {
     let scaleInterpolatorThreshold: ref<inkAnimScale> = new inkAnimScale();
     scaleInterpolatorThreshold.SetMode(inkanimInterpolationMode.EasyOut);
     scaleInterpolatorThreshold.SetType(inkanimInterpolationType.Linear);
-    scaleInterpolatorThreshold.SetStartScale(new Vector2(1.0, 0.5));
-    scaleInterpolatorThreshold.SetEndScale(new Vector2(1.0, 1.0));
+    scaleInterpolatorThreshold.SetStartScale(Vector2(1.0, 0.5));
+    scaleInterpolatorThreshold.SetEndScale(Vector2(1.0, 1.0));
     scaleInterpolatorThreshold.SetStartDelay(this.thresholdIntroAnimDuration);
     scaleInterpolatorThreshold.SetDuration(this.indicatorIntroAnimDuration);
 
@@ -268,10 +268,18 @@ public class NewHumanityBarController extends inkGameController {
   }
 
   private final func GetBarCount() -> Int32 {
+    if this.humanityTotal <= 0 {
+      return 0;
+    };
+
     return this.humanityCurrent * this.barCount / this.humanityTotal;
   }
 
   private final func GetThresholdBarCount() -> Int32 {
+    if this.humanityTotal <= 0 {
+      return 0;
+    };
+
     return this.psychosisThreshold * this.barCount / this.humanityTotal;
   }
 

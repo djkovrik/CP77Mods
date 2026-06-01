@@ -113,7 +113,7 @@ public class CyberwareHelper {
       || Equals(id, t"Items.AdvancedBloodPumpEpicPlus")
       || Equals(id, t"Items.AdvancedBloodPumpLegendary")
       || Equals(id, t"Items.AdvancedBloodPumpLegendaryPlus")
-      || Equals(id, t"tems.AdvancedBloodPumpLegendaryPlusPlus");
+      || Equals(id, t"Items.AdvancedBloodPumpLegendaryPlusPlus");
   }
 
   private func IsKerenzikov(record: ref<Item_Record>) -> Bool {
