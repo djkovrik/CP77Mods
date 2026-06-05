@@ -71,7 +71,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
   private let pendingPageIndex: Int32;
   private let pageRenderToken: Int32;
   private let isUninitializing: Bool;
-  private let pageBatchSize: Int32 = 30;
+  private let pageBatchSize: Int32 = 50;
   private let virtualStore: ref<VirtualShop>;
   private let storeListController: wref<inkVirtualGridController>;
   private let storeDataView: ref<VirtualStoreDataView>;
@@ -79,7 +79,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
   private let storeItemsClassifier: ref<VirtualStoreTemplateClassifier>;
   private let currentPage: Int32;
   private let totalPages: Int32;
-  private let pageSize: Int32 = 150;
+  private let pageSize: Int32;
 
   private let popupToken: ref<inkGameNotificationToken>;
   private let currentTutorialsFact: Int32;
@@ -979,6 +979,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
       };
       i += 1;
     };
+    this.UpdatePageSize();
     this.totalPages = (ArraySize(this.filteredStock) + this.pageSize - 1) / this.pageSize;
     if this.totalPages < 1 {
       this.totalPages = 1;
@@ -990,6 +991,17 @@ public class VirtualStoreController extends gameuiMenuGameController {
       this.currentPage = this.totalPages - 1;
     };
     this.RenderCurrentPage();
+  }
+
+  private final func UpdatePageSize() -> Void {
+    if IsDefined(this.config) && this.config.enableStorePagination {
+      this.pageSize = this.config.paginationPageSize;
+    } else {
+      this.pageSize = ArraySize(this.filteredStock);
+    };
+    if this.pageSize < 1 {
+      this.pageSize = 1;
+    };
   }
 
   private final func FilterStockItem(stockItem: ref<VirtualStockItem>, filter: ItemFilterCategory, query: String) -> Bool {
@@ -1166,7 +1178,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
       this.pendingPageIndex += 1;
       processed += 1;
     };
-    if isFirstBatch || this.pendingPageIndex >= ArraySize(this.pendingPageStock) {
+    if (this.config.enableStorePagination && isFirstBatch) || this.pendingPageIndex >= ArraySize(this.pendingPageStock) {
       this.storeDataSource.Reset(this.pendingPageItems);
     };
 
