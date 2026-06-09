@@ -102,6 +102,10 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
     return this.cart.GetCart();
   }
 
+  public final func SyncCurrentBalances() -> Void {
+    this.RefreshCurrentBalances();
+  }
+
   public final func PurchaseGoods(cartItems: array<ref<VirtualCartItem>>) -> Void {
     let cartItems: array<ref<VirtualCartItem>> = this.cart.GetCart();
     let itemID: ItemID;

@@ -1477,11 +1477,6 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
     this.cartMoney.SetText(GetFormattedMoneyVA(cartAmount));
   }
 
-  private func RefreshMoneyLabelInstantBuy() -> Void {
-    let playerAmount: Int32 = this.vendorDataManager.GetLocalPlayerCurrencyAmount();
-    this.playerMoney.SetText(s"\(playerAmount)");
-  }
-
   private func ShowAddAllConfirmationPopup() -> Void {
     this.popupToken = GenericMessageNotification.Show(this, this.virtualStore.storeName, AtelierTexts.ConfirmationAddAll(), GenericMessageNotificationType.ConfirmCancel);
     this.popupToken.RegisterListener(this, n"OnAddAllConfirmationPopupClosed");
@@ -1580,6 +1575,7 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
     let itemID: ItemID = InventoryItemData.GetID(inventoryItemData);
     let price = InventoryItemData.GetPrice(inventoryItemData);
     let quantity: Int32 = InventoryItemData.GetQuantity(inventoryItemData);
+    let stockItem: ref<VirtualStockItem> = this.GetStockItem(itemID, quantity);
     let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.player.GetGame());
     let playerMoney: Int32 = this.vendorDataManager.GetLocalPlayerCurrencyAmount();
     let vendorNotification: ref<UIMenuNotificationEvent>;
@@ -1591,9 +1587,13 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
     } else {
       transactionSystem.GiveItem(this.player, itemID, quantity);
       transactionSystem.RemoveItemByTDBID(this.player, t"Items.money", Cast(price));
-      // Refresh stock to regenerate ItemIDs
-      this.PopulateVirtualShop();
-      this.RefreshMoneyLabelInstantBuy();
+      if IsDefined(stockItem) {
+        this.cartManager.SaveOwnedItem(stockItem);
+      };
+      this.cartManager.SyncCurrentBalances();
+      this.RefreshMoneyLabels();
+      this.RefreshVirtualItemState();
+      this.PlaySound(n"Item", n"OnBuy");
     };
   }
 
