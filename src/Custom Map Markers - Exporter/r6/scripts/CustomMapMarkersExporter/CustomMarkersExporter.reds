@@ -25,9 +25,9 @@ public class CustomMarkersExporter extends ScriptableService {
   public final func RebuildMappinsWithStorageData(currentMappins: array<ref<CustomMappinData>>) -> array<ref<CustomMappinData>> {
     this.Log("RebuildMappinsWithStorageData call");
 
-    let persistedDto: ref<CustomMappinsDTO> = this.GetPersistedMappinsDTO();
+    let persistedReadResult: ref<CustomMappinsReadResult> = this.GetPersistedMappinsReadResult();
 
-    if !IsDefined(persistedDto) {
+    if Equals(persistedReadResult.status, CustomMappinsReadStatus.Missing) {
       if NotEquals(ArraySize(currentMappins), 0) {
         this.Log(s"No persisted mappins detected - creating new \(this.fileName)");
         this.PersistNewRevision(currentMappins);
@@ -38,27 +38,38 @@ public class CustomMarkersExporter extends ScriptableService {
       return currentMappins;
     };
 
-    if Equals(ArraySize(persistedDto.mappins), ArraySize(currentMappins)) {
-      this.Log("Storage mappins count is the same as active mappins count, no update needed");
+    if Equals(persistedReadResult.status, CustomMappinsReadStatus.Invalid) {
+      this.Log(s"Storage \(this.fileName) is invalid, keeping save data and avoiding overwrite");
       return currentMappins;
     };
 
-    let updatedMappins: array<ref<CustomMappinData>> = currentMappins;
+    let rebuiltMappins: array<ref<CustomMappinData>> = this.BuildMappinsFromDTO(persistedReadResult.dto);
+    this.Log(s"Storage \(this.fileName) loaded as source of truth, mappins: \(ArraySize(rebuiltMappins))");
+    return rebuiltMappins;
+  }
+
+  public final func GetOtherModsMappinData() -> array<ref<CustomMappinData>> {
+    this.Log("GetOtherModsMappinData call");
+
+    let modsDTOs: array<ref<CustomMappinsDTO>> = this.GetOtherModsMappinsDTOs();
+    let modsMappins: array<ref<CustomMappinData>>;
     let newData: ref<CustomMappinData>;
-    this.Log(s"Storage mappins \(ArraySize(persistedDto.mappins)) mappins, active mappins: \(ArraySize(currentMappins))");
-    for mappinDto in persistedDto.mappins {
-      newData = CustomMappinDataDTO.FromDTO(mappinDto);
-      if !this.HasMappin(updatedMappins, newData) {
-        this.Log(s"New mappin detected: \(newData.description)");
-        ArrayPush(updatedMappins, newData);
+
+    for modDto in modsDTOs {
+      if IsDefined(modDto) {
+        for mappinDto in modDto.mappins {
+          if IsDefined(mappinDto) {
+            newData = CustomMappinDataDTO.FromDTO(mappinDto);
+            if !this.HasMappin(modsMappins, newData) {
+              this.Log(s"New mod mappin detected: \(newData.description)");
+              ArrayPush(modsMappins, newData);
+            };
+          };
+        };
       };
     };
 
-    if this.PersistNewRevision(updatedMappins) {
-      this.Log("Storage mappins updated");
-    };
-
-    return updatedMappins;
+    return modsMappins;
   }
 
   public final func PersistNewRevision(mappins: array<ref<CustomMappinData>>) -> Bool {
@@ -77,40 +88,92 @@ public class CustomMarkersExporter extends ScriptableService {
     return status;
   }
 
-  private final func GetPersistedMappinsDTO() -> ref<CustomMappinsDTO> {
-    this.Log("GetPersistedMappinsDTO call");
+  private final func GetPersistedMappinsReadResult() -> ref<CustomMappinsReadResult> {
+    this.Log("GetPersistedMappinsReadResult call");
+    let result: ref<CustomMappinsReadResult> = new CustomMappinsReadResult();
     let markersDataStatus: FileSystemStatus = this.storage.Exists(this.fileName);
     let markersDataExists: Bool = Equals(markersDataStatus, FileSystemStatus.True);
     this.Log(s"Markers data status: \(markersDataStatus), file exists: \(markersDataExists)");
 
     if !markersDataExists {
       this.Log("Data file does not exist!");
-      return null;
+      result.status = CustomMappinsReadStatus.Missing;
+      return result;
     };
 
     let file: ref<File> = this.storage.GetFile(this.fileName);
     let json: ref<JsonObject> = file.ReadAsJson() as JsonObject;
     if !IsDefined(json) {
       this.Log(s"File \(this.fileName) read failed");
-      return null;
+      result.status = CustomMappinsReadStatus.Invalid;
+      return result;
     };
 
     let parsed: ref<CustomMappinsDTO> = FromJson(json, n"CustomMarkers.Export.CustomMappinsDTO") as CustomMappinsDTO;
     if !IsDefined(parsed) {
       this.Log(s"File \(this.fileName) parse failed");
-      return null;
+      result.status = CustomMappinsReadStatus.Invalid;
+      return result;
     };
 
     this.Log(s"File \(this.fileName) parsed: \(IsDefined(parsed)), mappins: \(ArraySize(parsed.mappins))");
     for parsedMappin in parsed.mappins {
       this.Log(s"- \(parsedMappin.description) \(parsedMappin.type) - [\(parsedMappin.X), \(parsedMappin.Y), \(parsedMappin.Z), \(parsedMappin.W)]");
     }
-    return parsed;
+    result.status = CustomMappinsReadStatus.Loaded;
+    result.dto = parsed;
+    return result;
+  }
+
+  private final func GetOtherModsMappinsDTOs() -> array<ref<CustomMappinsDTO>> {
+    this.Log("GetOtherModsMappinsDTOs call");
+
+    let result: array<ref<CustomMappinsDTO>>;
+    let files: array<ref<File>> = this.storage.GetFiles();
+    let fileExtension: String;
+    let isJsonFile: Bool;
+    let modFileName: String;
+    let parsed: ref<CustomMappinsDTO>;
+    for file in files {
+      modFileName = file.GetFilename();
+      fileExtension = StrLower(file.GetExtension());
+      isJsonFile = Equals(fileExtension, "json") || Equals(fileExtension, ".json");
+
+      if Equals(StrLower(modFileName), this.fileName) {
+        this.Log(s"Skip \(modFileName) read");
+      } else if !isJsonFile {
+        this.Log(s"Skip non-json file \(modFileName)");
+      } else {
+        let json: ref<JsonObject> = file.ReadAsJson() as JsonObject;
+        if !IsDefined(json) {
+          this.Log(s"File \(modFileName) read failed");
+        } else {
+          this.Log(s"Parsing \(modFileName)...");
+          parsed = FromJson(json, n"CustomMarkers.Export.CustomMappinsDTO") as CustomMappinsDTO;
+          if !IsDefined(parsed) {
+            this.Log(s"File \(modFileName) parse failed");
+          } else {
+            this.Log(s"Mod storage \(modFileName) parsed: \(IsDefined(parsed)), mappins: \(ArraySize(parsed.mappins))");
+            for parsedMappin in parsed.mappins {
+              this.Log(s"- \(parsedMappin.description) \(parsedMappin.type) - [\(parsedMappin.X), \(parsedMappin.Y), \(parsedMappin.Z), \(parsedMappin.W)]");
+            };
+            ArrayPush(result, parsed);
+          };
+        };
+      };
+    };
+
+    return result;
   }
 
   private final func HasMappin(source: array<ref<CustomMappinData>>, mappin: ref<CustomMappinData>) -> Bool {
+    if !IsDefined(mappin) {
+      return false;
+    };
+
     for sourcePin in source {
-      if Equals(Cast<Int32>(sourcePin.position.X), Cast<Int32>(mappin.position.X)) 
+      if IsDefined(sourcePin)
+        && Equals(Cast<Int32>(sourcePin.position.X), Cast<Int32>(mappin.position.X)) 
         && Equals(Cast<Int32>(sourcePin.position.Y), Cast<Int32>(mappin.position.Y))
         && Equals(Cast<Int32>(sourcePin.position.Z), Cast<Int32>(mappin.position.Z)) {
         return true;
@@ -120,8 +183,28 @@ public class CustomMarkersExporter extends ScriptableService {
     return false;
   }
 
+  private final func BuildMappinsFromDTO(dto: ref<CustomMappinsDTO>) -> array<ref<CustomMappinData>> {
+    let result: array<ref<CustomMappinData>>;
+    let newData: ref<CustomMappinData>;
+
+    if !IsDefined(dto) {
+      return result;
+    };
+
+    for mappinDto in dto.mappins {
+      if IsDefined(mappinDto) {
+        newData = CustomMappinDataDTO.FromDTO(mappinDto);
+        if !this.HasMappin(result, newData) {
+          ArrayPush(result, newData);
+        };
+      };
+    };
+
+    return result;
+  }
+
   private final func Log(str: String) -> Void {
-    // ModLog(n"Markers", str);
+    ModLog(n"Exporter", str);
   }
 }
 
@@ -156,4 +239,15 @@ public class CustomMappinDataDTO {
 
 public class CustomMappinsDTO {
   public let mappins: array<ref<CustomMappinDataDTO>>;
+}
+
+public enum CustomMappinsReadStatus {
+  Missing = 0,
+  Invalid = 1,
+  Loaded = 2,
+}
+
+public class CustomMappinsReadResult {
+  public let status: CustomMappinsReadStatus;
+  public let dto: ref<CustomMappinsDTO>;
 }

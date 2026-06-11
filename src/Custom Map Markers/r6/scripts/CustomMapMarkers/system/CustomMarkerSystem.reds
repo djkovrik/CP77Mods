@@ -21,6 +21,8 @@ public class CustomMarkerSystem extends ScriptableSystem {
 
   private persistent let m_mappins: array<ref<CustomMappinData>>;
 
+  private let m_externalMappins: array<ref<CustomMappinData>>;
+
   private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
     this.m_mappinSystem = GameInstance.GetMappinSystem(this.GetGameInstance());
     CMM(s"Persisted data loaded, mappins count: \(ToString(ArraySize(this.m_mappins)))");
@@ -49,18 +51,34 @@ public class CustomMarkerSystem extends ScriptableSystem {
 
   public func DeleteCustomMappin(position: Vector4) -> Void {
     let mappins: array<MappinEntry>;
+    let mappinRef: ref<IMappin>;
+    let mappinData: ref<GameplayRoleMappinData>;
     this.m_mappinSystem.GetMappinEntries(gamemappinsMappinTargetType.World, mappins);
     for mappin in mappins {
-      if Equals(mappin.worldPosition, position) {
+      mappinData = null;
+      mappinRef = this.m_mappinSystem.GetMappin(mappin.id);
+      if IsDefined(mappinRef) {
+        mappinData = mappinRef.GetScriptData() as GameplayRoleMappinData;
+      };
+      if IsDefined(mappinData) && mappinData.m_isMappinCustom && Equals(mappin.worldPosition, position) {
         this.m_mappinSystem.UnregisterMappin(mappin.id);
-        this.DeletePersistedMappin(position);
+        if !this.DeletePersistedMappin(position) {
+          this.DeleteExternalMappin(position);
+        };
         CMM(s"Unregistered mappin at position \(ToString(position))");
       };
     };
   }
 
   public func GetCustomMappins() -> array<ref<CustomMappinData>> {
-    return this.m_mappins;
+    let result: array<ref<CustomMappinData>> = this.m_mappins;
+    for mappin in this.m_externalMappins {
+      if IsDefined(mappin) && !this.HasMappin(result, mappin) {
+        ArrayPush(result, mappin);
+      };
+    };
+
+    return result;
   }
 
   private func AddPersistedMappin(description: String, type: CName, position: Vector4) -> Void {
@@ -75,18 +93,36 @@ public class CustomMarkerSystem extends ScriptableSystem {
     this.RefreshStorageData();
   }
 
-  private func DeletePersistedMappin(position: Vector4) -> Void {
+  private func DeletePersistedMappin(position: Vector4) -> Bool {
     let persistedMappins: array<ref<CustomMappinData>> = this.m_mappins;
     let index: Int32 = 0;
     for mappin in persistedMappins {
-      if Equals(mappin.position, position) {
+      if IsDefined(mappin) && Equals(mappin.position, position) {
         ArrayErase(persistedMappins, index);
-      }
+        this.m_mappins = persistedMappins;
+        CMM(s"Persisted mappin deleted: \(position), persisted mappins count: \(ArraySize(this.m_mappins))");
+        this.RefreshStorageData();
+        return true;
+      };
       index = index + 1;
     };
-    this.m_mappins = persistedMappins;
-    CMM(s"Persisted mappin deleted: \(position), persisted mappins count: \(ArraySize(this.m_mappins))");
-    this.RefreshStorageData();
+    CMM(s"No persisted mappin found to delete at position \(position)");
+    return false;
+  }
+
+  private func DeleteExternalMappin(position: Vector4) -> Bool {
+    let externalMappins: array<ref<CustomMappinData>> = this.m_externalMappins;
+    let index: Int32 = 0;
+    for mappin in externalMappins {
+      if IsDefined(mappin) && Equals(mappin.position, position) {
+        ArrayErase(externalMappins, index);
+        this.m_externalMappins = externalMappins;
+        CMM(s"External mappin removed from runtime data: \(position), external mappins count: \(ArraySize(this.m_externalMappins))");
+        return true;
+      };
+      index = index + 1;
+    };
+    return false;
   }
 
   public func RestorePersistedMappins() -> Void {
@@ -98,7 +134,8 @@ public class CustomMarkerSystem extends ScriptableSystem {
 
     CMM(s"Trying to restore persisted mappins: \(ArraySize(this.m_mappins))");
     this.RefreshPersistedMappins();
-    let persistedMappins: array<ref<CustomMappinData>> = this.m_mappins;
+    this.RefreshOtherModsMappins();
+    let persistedMappins: array<ref<CustomMappinData>> = this.GetCustomMappins();
     let counter: Int32 = 0;
     for mappin in persistedMappins {
       this.AddCustomMappin(GetLocalizedTextByKey(n"CustomMarkers-MarkerTitle"), NameToString(mappin.description), mappin.type, mappin.position, false);
@@ -116,12 +153,30 @@ public class CustomMarkerSystem extends ScriptableSystem {
   }
 
   @if(ModuleExists("CustomMarkers.Export"))
+  public final func RefreshOtherModsMappins() -> Void {
+    let updatedMappins: array<ref<CustomMappinData>>;
+    let exporter: ref<CustomMarkersExporter> = CustomMarkersExporter.Get();
+    let otherModsMappins: array<ref<CustomMappinData>> = exporter.GetOtherModsMappinData();
+    for mappin in otherModsMappins {
+      if IsDefined(mappin) && !this.HasMappin(this.m_mappins, mappin) && !this.HasMappin(updatedMappins, mappin) {
+        ArrayPush(updatedMappins, mappin);
+      };
+    };
+    this.m_externalMappins = updatedMappins;
+  }
+
+  @if(ModuleExists("CustomMarkers.Export"))
   public final func RefreshStorageData() -> Void {
     CustomMarkersExporter.Get().PersistNewRevision(this.m_mappins);
   }
 
   @if(!ModuleExists("CustomMarkers.Export"))
   public final func RefreshPersistedMappins() -> Void {
+    // do nothing
+  }
+
+  @if(!ModuleExists("CustomMarkers.Export"))
+  public final func RefreshOtherModsMappins() -> Void {
     // do nothing
   }
 
@@ -173,11 +228,23 @@ public class CustomMarkerSystem extends ScriptableSystem {
   }
 
   private func IsMarkerExists(position: Vector4) -> Bool {
-    for mappin in this.m_mappins {
-      if Equals(mappin.position, position) {
+    return this.HasMappinAtPosition(this.m_mappins, position) || this.HasMappinAtPosition(this.m_externalMappins, position);
+  }
+
+  private func HasMappinAtPosition(source: array<ref<CustomMappinData>>, position: Vector4) -> Bool {
+    for mappin in source {
+      if IsDefined(mappin) && Equals(mappin.position, position) {
         return true;
       };
     };
     return false;
+  }
+
+  private func HasMappin(source: array<ref<CustomMappinData>>, mappin: ref<CustomMappinData>) -> Bool {
+    if !IsDefined(mappin) {
+      return false;
+    };
+
+    return this.HasMappinAtPosition(source, mappin.position);
   }
 }
