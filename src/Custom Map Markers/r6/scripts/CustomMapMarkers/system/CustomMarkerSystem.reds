@@ -29,12 +29,28 @@ public class CustomMarkerSystem extends ScriptableSystem {
   }
 
   public func AddCustomMappin(title: String, description: String, texturePart: CName, persist: Bool) -> Void {
-    let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(this.GetGameInstance()).GetLocalPlayerMainGameObject() as PlayerPuppet;
+    let playerSystem: ref<PlayerSystem> = GameInstance.GetPlayerSystem(this.GetGameInstance());
+    if !IsDefined(playerSystem) {
+      CMM("Cannot add custom mappin: player system is not available");
+      return ;
+    };
+
+    let player: ref<PlayerPuppet> = playerSystem.GetLocalPlayerMainGameObject() as PlayerPuppet;
+    if !IsDefined(player) {
+      CMM("Cannot add custom mappin: player is not available");
+      return ;
+    };
+
     let position: Vector4 = player.GetWorldPosition();
     this.AddCustomMappin(title, description, texturePart, position, persist);
   }
 
   public func AddCustomMappin(title: String, description: String, texturePart: CName, position: Vector4, persist: Bool) -> Void {
+    if !this.EnsureMappinSystem() {
+      CMM("Cannot add custom mappin: mappin system is not available");
+      return ;
+    };
+
     if this.IsMarkerExists(position) && persist {
       this.ShowCustomWarning(GetLocalizedTextByKey(n"CustomMarkers-AlreadyExists"));
       return ;
@@ -50,6 +66,11 @@ public class CustomMarkerSystem extends ScriptableSystem {
   }
 
   public func DeleteCustomMappin(position: Vector4) -> Void {
+    if !this.EnsureMappinSystem() {
+      CMM("Cannot delete custom mappin: mappin system is not available");
+      return ;
+    };
+
     let mappins: array<MappinEntry>;
     let mappinRef: ref<IMappin>;
     let mappinData: ref<GameplayRoleMappinData>;
@@ -148,6 +169,11 @@ public class CustomMarkerSystem extends ScriptableSystem {
   @if(ModuleExists("CustomMarkers.Export"))
   public final func RefreshPersistedMappins() -> Void {
     let exporter: ref<CustomMarkersExporter> = CustomMarkersExporter.Get();
+    if !IsDefined(exporter) {
+      CMM("Cannot refresh persisted mappins: exporter is not available");
+      return ;
+    };
+
     let updatedMappins: array<ref<CustomMappinData>> = exporter.RebuildMappinsWithStorageData(this.m_mappins);
     this.m_mappins = updatedMappins;
   }
@@ -156,6 +182,11 @@ public class CustomMarkerSystem extends ScriptableSystem {
   public final func RefreshOtherModsMappins() -> Void {
     let updatedMappins: array<ref<CustomMappinData>>;
     let exporter: ref<CustomMarkersExporter> = CustomMarkersExporter.Get();
+    if !IsDefined(exporter) {
+      CMM("Cannot refresh external mappins: exporter is not available");
+      return ;
+    };
+
     let otherModsMappins: array<ref<CustomMappinData>> = exporter.GetOtherModsMappinData();
     for mappin in otherModsMappins {
       if IsDefined(mappin) && !this.HasMappin(this.m_mappins, mappin) && !this.HasMappin(updatedMappins, mappin) {
@@ -167,7 +198,12 @@ public class CustomMarkerSystem extends ScriptableSystem {
 
   @if(ModuleExists("CustomMarkers.Export"))
   public final func RefreshStorageData() -> Void {
-    CustomMarkersExporter.Get().PersistNewRevision(this.m_mappins);
+    let exporter: ref<CustomMarkersExporter> = CustomMarkersExporter.Get();
+    if IsDefined(exporter) {
+      exporter.PersistNewRevision(this.m_mappins);
+    } else {
+      CMM("Cannot refresh storage data: exporter is not available");
+    };
   }
 
   @if(!ModuleExists("CustomMarkers.Export"))
@@ -214,6 +250,10 @@ public class CustomMarkerSystem extends ScriptableSystem {
     let onScreenMessage: SimpleScreenMessage;
     let blackboardDef = GetAllBlackboardDefs().UI_Notifications;
     let blackboard = GameInstance.GetBlackboardSystem(this.GetGameInstance()).Get(blackboardDef);
+    if !IsDefined(blackboard) {
+      return ;
+    };
+
     onScreenMessage.isShown = true;
     onScreenMessage.message = text;
     onScreenMessage.duration = 2.00;
@@ -224,7 +264,10 @@ public class CustomMarkerSystem extends ScriptableSystem {
     let evt: ref<UIInGameNotificationEvent> = new UIInGameNotificationEvent();
     evt.m_isCustom = true;
     evt.m_text = text;
-    GameInstance.GetUISystem(this.GetGameInstance()).QueueEvent(evt);
+    let uiSystem: ref<UISystem> = GameInstance.GetUISystem(this.GetGameInstance());
+    if IsDefined(uiSystem) {
+      uiSystem.QueueEvent(evt);
+    };
   }
 
   private func IsMarkerExists(position: Vector4) -> Bool {
@@ -246,5 +289,13 @@ public class CustomMarkerSystem extends ScriptableSystem {
     };
 
     return this.HasMappinAtPosition(source, mappin.position);
+  }
+
+  private func EnsureMappinSystem() -> Bool {
+    if !IsDefined(this.m_mappinSystem) {
+      this.m_mappinSystem = GameInstance.GetMappinSystem(this.GetGameInstance());
+    };
+
+    return IsDefined(this.m_mappinSystem);
   }
 }

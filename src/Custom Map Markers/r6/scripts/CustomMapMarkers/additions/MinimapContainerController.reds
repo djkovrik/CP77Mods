@@ -4,7 +4,18 @@ import CustomMarkers.System.*
 @wrapMethod(MinimapContainerController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
-  let container: ref<ScriptableSystemsContainer> = GameInstance.GetScriptableSystemsContainer(this.GetPlayerControlledObject().GetGame());
+  let player: wref<GameObject> = this.GetPlayerControlledObject();
+  if !IsDefined(player) {
+    return false;
+  };
+
+  let container: ref<ScriptableSystemsContainer> = GameInstance.GetScriptableSystemsContainer(player.GetGame());
+  if !IsDefined(container) {
+    return false;
+  };
+
   let markerSystem: ref<CustomMarkerSystem> = container.Get(n"CustomMarkers.System.CustomMarkerSystem") as CustomMarkerSystem;
-  markerSystem.RestorePersistedMappins();
+  if IsDefined(markerSystem) {
+    markerSystem.RestorePersistedMappins();
+  };
 }

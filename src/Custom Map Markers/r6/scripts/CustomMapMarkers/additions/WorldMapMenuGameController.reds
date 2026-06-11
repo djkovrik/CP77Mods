@@ -15,8 +15,13 @@ protected let m_suppressCustomMarkerPopup: Bool;
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
 
-  let container: ref<ScriptableSystemsContainer> = GameInstance.GetScriptableSystemsContainer(this.m_player.GetGame());
-  this.m_customMarkerSystem = container.Get(n"CustomMarkers.System.CustomMarkerSystem") as CustomMarkerSystem;
+  let container: ref<ScriptableSystemsContainer>;
+  if IsDefined(this.m_player) {
+    container = GameInstance.GetScriptableSystemsContainer(this.m_player.GetGame());
+    if IsDefined(container) {
+      this.m_customMarkerSystem = container.Get(n"CustomMarkers.System.CustomMarkerSystem") as CustomMarkerSystem;
+    };
+  };
   this.m_cycleMappinPosition = 0;
   this.m_suppressCustomMarkerPopup = false;
 }
@@ -24,20 +29,37 @@ protected cb func OnInitialize() -> Bool {
 // Catch marker creation requests
 @addMethod(WorldMapMenuGameController)
 protected cb func OnRequestMarkerCreationEvent(evt: ref<RequestMarkerCreationEvent>) -> Bool {
+  if !IsDefined(evt) || !IsDefined(this.m_customMarkerSystem) {
+    return false;
+  };
+
   this.m_customMarkerSystem.AddCustomMappin(GetLocalizedTextByKey(n"CustomMarkers-MarkerTitle"), evt.m_description, evt.m_texturePart, true);
-  this.m_menuEventDispatcher.SpawnEvent(n"OnNewMarkerAdded");
+  if IsDefined(this.m_menuEventDispatcher) {
+    this.m_menuEventDispatcher.SpawnEvent(n"OnNewMarkerAdded");
+  };
 }
 
 // Move-to-player hotkey now cycles custom mappins as well
 @addMethod(WorldMapMenuGameController)
 private func CycleBetweenMappins() -> Void {
+  if !IsDefined(this.m_customMarkerSystem) {
+    return ;
+  };
+
   let customMappins: array<ref<CustomMappinData>> = this.m_customMarkerSystem.GetCustomMappins();
   let customMappinPosition: Vector4;
   let movePosition: Vector3;
   if this.m_cycleMappinPosition + 1 <= ArraySize(customMappins) {
+    if !IsDefined(customMappins[this.m_cycleMappinPosition]) {
+      this.m_cycleMappinPosition = this.m_cycleMappinPosition + 1;
+      return ;
+    };
+
     customMappinPosition = customMappins[this.m_cycleMappinPosition].position;
     movePosition = Vector3(customMappinPosition.X, customMappinPosition.Y, customMappinPosition.Z);
-    this.GetEntityPreview().MoveTo(movePosition);
+    if IsDefined(this.GetEntityPreview()) {
+      this.GetEntityPreview().MoveTo(movePosition);
+    };
     this.m_cycleMappinPosition = this.m_cycleMappinPosition + 1;
   } else {
     this.m_cycleMappinPosition = 0;
@@ -50,7 +72,7 @@ private func MoveFromCustomToPlayer() -> Void {
   if (this.selectedMappin as WorldMapPlayerMappinController) == null {
     this.MoveToPlayer();
   } else {
-    if ArraySize(this.m_mappinsPositions) > 0 {
+    if ArraySize(this.m_mappinsPositions) > 0 && IsDefined(this.GetEntityPreview()) {
       this.GetEntityPreview().MoveTo(this.m_mappinsPositions[0]);
     };
   };
@@ -63,6 +85,10 @@ private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
   let customMappinData: ref<GameplayRoleMappinData>;
   let customMappinPosition: Vector4;
   let targetMappinController: ref<BaseWorldMapMappinController>;
+  if !IsDefined(e) {
+    return ;
+  };
+
   if e.IsAction(n"world_map_menu_track_waypoint") {
     this.m_pressedRMB = true;
     this.TryTrackQuestOrSetWaypoint();
@@ -82,14 +108,16 @@ private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
       };
     } else {
       if e.IsAction(n"world_map_menu_zoom_to_mappin") {
-        targetMappinController = e.GetTarget().GetController() as BaseWorldMapMappinController;
+        if IsDefined(e.GetTarget()) {
+          targetMappinController = e.GetTarget().GetController() as BaseWorldMapMappinController;
+        };
         // Default logic
         if this.HasSelectedMappin() && this.CanZoomToMappin(this.selectedMappin) {
           this.PlaySound(n"Button", n"OnPress");
           this.ZoomToMappin(this.selectedMappin);
         };
         // Open popup when clicked on free space
-        if !this.HasSelectedMappin() && this.m_player.PlayerLastUsedKBM() && !IsDefined(targetMappinController) {
+        if !this.HasSelectedMappin() && IsDefined(this.m_player) && this.m_player.PlayerLastUsedKBM() && !IsDefined(targetMappinController) {
           if this.m_suppressCustomMarkerPopup {
             this.m_suppressCustomMarkerPopup = false;
           } else {
@@ -100,12 +128,16 @@ private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
           if this.HasSelectedMappin() {
             // Delete mappin if clicked on custom
             customMappin = this.selectedMappin.GetMappin();
-            customMappinData = customMappin.GetScriptData() as GameplayRoleMappinData;
+            if IsDefined(customMappin) {
+              customMappinData = customMappin.GetScriptData() as GameplayRoleMappinData;
+            };
             if IsDefined(customMappinData) && customMappinData.m_isMappinCustom {
               customMappinPosition = customMappin.GetWorldPosition();
               this.m_suppressCustomMarkerPopup = true;
               this.SetSelectedMappin(null);
-              this.m_customMarkerSystem.DeleteCustomMappin(customMappinPosition);
+              if IsDefined(this.m_customMarkerSystem) {
+                this.m_customMarkerSystem.DeleteCustomMappin(customMappinPosition);
+              };
               this.PlaySound(n"MapPin", n"OnDelete");
               e.Consume();
             };
@@ -149,7 +181,14 @@ private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
 // Disable click-to-zoom for custom mappins
 @wrapMethod(WorldMapMenuGameController)
 public final func CanZoomToMappin(controller: wref<BaseWorldMapMappinController>) -> Bool {
-  let mappinData: ref<GameplayRoleMappinData> = this.selectedMappin.GetMappin().GetScriptData() as GameplayRoleMappinData;
+  let mappin: ref<IMappin>;
+  let mappinData: ref<GameplayRoleMappinData>;
+  if IsDefined(controller) {
+    mappin = controller.GetMappin();
+  };
+  if IsDefined(mappin) {
+    mappinData = mappin.GetScriptData() as GameplayRoleMappinData;
+  };
   if IsDefined(mappinData) && mappinData.m_isMappinCustom {
     return false;
   };

@@ -27,12 +27,16 @@ public class CustomMarkerPopup extends InMenuPopup {
 
   protected cb func OnShow() -> Void {
     super.OnShow();
-    this.m_input.RegisterToCallback(n"OnInput", this, n"OnInput");
+    if IsDefined(this.m_input) {
+      this.m_input.RegisterToCallback(n"OnInput", this, n"OnInput");
+    };
   }
 
   protected cb func OnHide() -> Void {
     super.OnHide();
-    this.m_input.UnregisterFromCallback(n"OnInput", this, n"OnInput");
+    if IsDefined(this.m_input) {
+      this.m_input.UnregisterFromCallback(n"OnInput", this, n"OnInput");
+    };
   }
 
   protected cb func OnShown() -> Void {}
@@ -40,7 +44,7 @@ public class CustomMarkerPopup extends InMenuPopup {
   protected cb func OnConfirm() -> Void {}
 
   protected cb func OnIconClick(widget: wref<inkWidget>) -> Bool {
-    if Equals(widget.GetClassName(), n"inkCanvasWidget") {
+    if IsDefined(widget) && Equals(widget.GetClassName(), n"inkCanvasWidget") {
       this.m_selectedIcon = widget.GetName();
       for icon in this.m_icons {
         if Equals(this.m_selectedIcon, icon.GetName()) {
@@ -53,21 +57,27 @@ public class CustomMarkerPopup extends InMenuPopup {
   }
 
   protected cb func OnCancelButtonClick(evt: ref<inkPointerEvent>) -> Bool {
-    if evt.IsAction(n"click") {
+    if IsDefined(evt) && evt.IsAction(n"click") {
       this.PlaySound(n"Button", n"OnPress");
       this.Close();
     };
   }
 
   protected cb func OnCreateButtonClick(evt: ref<inkPointerEvent>) -> Bool {
-    let text = this.m_input.GetText();
+    let text: String;
     let createdEvent: ref<RequestMarkerCreationEvent>;
-    if evt.IsAction(n"click") {
+    if IsDefined(this.m_input) {
+      text = this.m_input.GetText();
+    };
+
+    if IsDefined(evt) && evt.IsAction(n"click") {
       if NotEquals(text, "") {
         createdEvent = new RequestMarkerCreationEvent();
         createdEvent.m_description = text;
         createdEvent.m_texturePart = this.m_selectedIcon;
-        this.m_uiSystem.QueueEvent(createdEvent);
+        if IsDefined(this.m_uiSystem) {
+          this.m_uiSystem.QueueEvent(createdEvent);
+        };
       } else {
         CMM("You have not entered marker description");
       };
@@ -78,8 +88,10 @@ public class CustomMarkerPopup extends InMenuPopup {
   }
 
   protected cb func OnInput(event: ref<inkCharacterEvent>) -> Void {
-    let isDisabled: Bool = StrLen(this.m_input.GetText()) == 0;
-    this.m_buttonOk.SetDisabled(isDisabled);
+    if IsDefined(this.m_input) && IsDefined(this.m_buttonOk) {
+      let isDisabled: Bool = StrLen(this.m_input.GetText()) == 0;
+      this.m_buttonOk.SetDisabled(isDisabled);
+    };
   }
 
   public func SetUISystemInstance(uiSystem: ref<UISystem>) -> Void {
@@ -91,8 +103,17 @@ public class CustomMarkerPopup extends InMenuPopup {
   }
 
   public static func Show(requester: ref<inkGameController>, player: ref<GameObject>) -> Void {
+    if !IsDefined(requester) || !IsDefined(player) {
+      return ;
+    };
+
+    let uiSystem: ref<UISystem> = GameInstance.GetUISystem(player.GetGame());
+    if !IsDefined(uiSystem) {
+      return ;
+    };
+
     let popup: ref<CustomMarkerPopup> = new CustomMarkerPopup();
-    popup.SetUISystemInstance(GameInstance.GetUISystem(player.GetGame()));
+    popup.SetUISystemInstance(uiSystem);
     popup.Open(requester);
   }
 
@@ -176,7 +197,9 @@ public class CustomMarkerPopup extends InMenuPopup {
   }
 
   private func SetupInitialLayout() -> Void {
-    this.m_buttonOk.SetDisabled(true);
+    if IsDefined(this.m_buttonOk) {
+      this.m_buttonOk.SetDisabled(true);
+    };
 
     if ArraySize(this.m_icons) > 0 {
       this.m_selectedIcon = this.m_icons[0].GetName();
