@@ -78,12 +78,61 @@ private func MoveFromCustomToPlayer() -> Void {
   };
 }
 
+@addMethod(WorldMapMenuGameController)
+private func CanOpenCustomMarkerPopup(e: ref<inkPointerEvent>, targetWidget: wref<inkWidget>, targetMappinController: ref<BaseWorldMapMappinController>) -> Bool {
+  if !IsDefined(e) || e.IsHandled() || e.IsConsumed() {
+    return false;
+  };
+
+  if !IsDefined(this.m_player) || !IsDefined(this.m_customMarkerSystem) {
+    return false;
+  };
+
+  if this.HasSelectedMappin() || !this.m_player.PlayerLastUsedKBM() || IsDefined(targetMappinController) {
+    return false;
+  };
+
+  if !IsDefined(targetWidget) || !this.IsCustomMarkerMapSurfaceTarget(targetWidget) {
+    return false;
+  };
+
+  return true;
+}
+
+@addMethod(WorldMapMenuGameController)
+private func IsCustomMarkerMapSurfaceTarget(targetWidget: wref<inkWidget>) -> Bool {
+  let entityPreview: wref<inkWorldMapPreviewGameController>;
+  if !IsDefined(targetWidget) || !targetWidget.IsVisible() {
+    return false;
+  };
+
+  if targetWidget == this.GetRootWidget() {
+    return true;
+  };
+
+  if targetWidget == this.GetSpawnContainer() {
+    return true;
+  };
+
+  if targetWidget == inkWidgetRef.Get(this.entityPreviewSpawnContainer) {
+    return true;
+  };
+
+  entityPreview = this.GetEntityPreview();
+  if IsDefined(entityPreview) && targetWidget == entityPreview.GetRootWidget() {
+    return true;
+  };
+
+  return false;
+}
+
 // Attach to mouse middle button clicks
 @replaceMethod(WorldMapMenuGameController)
 private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
   let customMappin: ref<IMappin>;
   let customMappinData: ref<GameplayRoleMappinData>;
   let customMappinPosition: Vector4;
+  let targetWidget: wref<inkWidget>;
   let targetMappinController: ref<BaseWorldMapMappinController>;
   if !IsDefined(e) {
     return ;
@@ -108,8 +157,9 @@ private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
       };
     } else {
       if e.IsAction(n"world_map_menu_zoom_to_mappin") {
-        if IsDefined(e.GetTarget()) {
-          targetMappinController = e.GetTarget().GetController() as BaseWorldMapMappinController;
+        targetWidget = e.GetTarget();
+        if IsDefined(targetWidget) {
+          targetMappinController = targetWidget.GetController() as BaseWorldMapMappinController;
         };
         // Default logic
         if this.HasSelectedMappin() && this.CanZoomToMappin(this.selectedMappin) {
@@ -117,12 +167,16 @@ private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
           this.ZoomToMappin(this.selectedMappin);
         };
         // Open popup when clicked on free space
-        if !this.HasSelectedMappin() && IsDefined(this.m_player) && this.m_player.PlayerLastUsedKBM() && !IsDefined(targetMappinController) {
+        if this.CanOpenCustomMarkerPopup(e, targetWidget, targetMappinController) {
           if this.m_suppressCustomMarkerPopup {
             this.m_suppressCustomMarkerPopup = false;
+            e.Handle();
+            e.Consume();
           } else {
             this.PlaySound(n"Button", n"OnPress");
             CustomMarkerPopup.Show(this, this.m_player);
+            e.Handle();
+            e.Consume();
           };
         } else {
           if this.HasSelectedMappin() {
