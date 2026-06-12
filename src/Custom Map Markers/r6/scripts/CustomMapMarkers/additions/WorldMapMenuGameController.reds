@@ -11,6 +11,9 @@ protected let m_cycleMappinPosition: Int32;
 @addField(WorldMapMenuGameController)
 protected let m_suppressCustomMarkerPopup: Bool;
 
+@addField(WorldMapMenuGameController)
+protected let m_customMarkerMapInputActive: Bool;
+
 @wrapMethod(WorldMapMenuGameController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
@@ -24,6 +27,25 @@ protected cb func OnInitialize() -> Bool {
   };
   this.m_cycleMappinPosition = 0;
   this.m_suppressCustomMarkerPopup = false;
+  this.m_customMarkerMapInputActive = false;
+}
+
+@wrapMethod(WorldMapMenuGameController)
+protected cb func OnUninitialize() -> Bool {
+  this.m_customMarkerMapInputActive = false;
+  wrappedMethod();
+}
+
+@wrapMethod(WorldMapMenuGameController)
+protected cb func OnEntityAttached() -> Bool {
+  wrappedMethod();
+  this.m_customMarkerMapInputActive = true;
+}
+
+@wrapMethod(WorldMapMenuGameController)
+protected cb func OnEntityDetached() -> Bool {
+  this.m_customMarkerMapInputActive = false;
+  wrappedMethod();
 }
 
 // Catch marker creation requests
@@ -84,6 +106,10 @@ private func CanOpenCustomMarkerPopup(e: ref<inkPointerEvent>, targetWidget: wre
     return false;
   };
 
+  if !this.IsCustomMarkerMapInputActive() {
+    return false;
+  };
+
   if !IsDefined(this.m_player) || !IsDefined(this.m_customMarkerSystem) {
     return false;
   };
@@ -92,38 +118,24 @@ private func CanOpenCustomMarkerPopup(e: ref<inkPointerEvent>, targetWidget: wre
     return false;
   };
 
-  if !IsDefined(targetWidget) || !this.IsCustomMarkerMapSurfaceTarget(targetWidget) {
-    return false;
-  };
-
   return true;
 }
 
 @addMethod(WorldMapMenuGameController)
-private func IsCustomMarkerMapSurfaceTarget(targetWidget: wref<inkWidget>) -> Bool {
-  let entityPreview: wref<inkWorldMapPreviewGameController>;
-  if !IsDefined(targetWidget) || !targetWidget.IsVisible() {
+private func IsCustomMarkerMapInputActive() -> Bool {
+  if !this.m_customMarkerMapInputActive {
     return false;
   };
 
-  if targetWidget == this.GetRootWidget() {
-    return true;
+  if !this.IsEntityAttachedAndSetup() {
+    return false;
   };
 
-  if targetWidget == this.GetSpawnContainer() {
-    return true;
+  if !IsDefined(this.GetRootWidget()) || !this.GetRootWidget().IsVisible() {
+    return false;
   };
 
-  if targetWidget == inkWidgetRef.Get(this.entityPreviewSpawnContainer) {
-    return true;
-  };
-
-  entityPreview = this.GetEntityPreview();
-  if IsDefined(entityPreview) && targetWidget == entityPreview.GetRootWidget() {
-    return true;
-  };
-
-  return false;
+  return true;
 }
 
 // Attach to mouse middle button clicks
