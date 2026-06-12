@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<bindings>
+    <!-- inputContexts -->
+    <context name="CustomMapMarkers" >
+		<action name="CMM_Main" map="CMM_Main_Hotkey" />
+    </context>
+
+    <context name="UIShared" append="true">
+        <include name="CustomMapMarkers" />
+    </context>
+
+    <!-- inputUserMapping -->
+	<mapping name="CMM_Main_Hotkey" type="Button" >
+        <button id="IK_MiddleMouse" overridableUI="cmmCustomHotkey" />
+    </mapping>
+</bindings>

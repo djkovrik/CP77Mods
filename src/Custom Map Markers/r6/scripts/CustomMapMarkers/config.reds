@@ -68,6 +68,7 @@ public class CustomMarkersConfig {
   @runtimeProperty("ModSettings.category", "UI-Settings-KeyBindings")
   @runtimeProperty("ModSettings.category.order", "0")
   @runtimeProperty("ModSettings.displayName", "CustomMarkers-NewHotkey")
+  @runtimeProperty("ModSettings.dependency", "rebindHotkey")
   @runtimeProperty("ModSettings.description", "")
   public let cmmCustomHotkey: EInputKey = EInputKey.IK_MiddleMouse;
 

@@ -1,9 +1,13 @@
 import CustomMarkers.System.*
 import CustomMarkers.Common.*
+import CustomMarkers.Config.*
 import CustomMarkers.UI.*
 
 @addField(WorldMapMenuGameController)
 protected let m_customMarkerSystem: ref<CustomMarkerSystem>;
+
+@addField(WorldMapMenuGameController)
+protected let m_cmmConfig: ref<CustomMarkersConfig>;
 
 @addField(WorldMapMenuGameController)
 protected let m_cycleMappinPosition: Int32;
@@ -23,6 +27,7 @@ protected cb func OnInitialize() -> Bool {
     container = GameInstance.GetScriptableSystemsContainer(this.m_player.GetGame());
     if IsDefined(container) {
       this.m_customMarkerSystem = container.Get(n"CustomMarkers.System.CustomMarkerSystem") as CustomMarkerSystem;
+      this.m_cmmConfig = new CustomMarkersConfig();
     };
   };
   this.m_cycleMappinPosition = 0;
@@ -150,13 +155,17 @@ private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
     return ;
   };
 
+  let shouldTriggerCmmFromVanilla: Bool = e.IsAction(n"world_map_menu_zoom_to_mappin") && !this.m_cmmConfig.rebindHotkey;
+  let shouldTriggerCmmFromRebind: Bool = e.IsAction(n"CMM_Main") && this.m_cmmConfig.rebindHotkey;
+  let shouldTriggerCmm: Bool = shouldTriggerCmmFromVanilla || shouldTriggerCmmFromRebind;
+
   if e.IsAction(n"world_map_menu_track_waypoint") {
     this.m_pressedRMB = true;
     this.TryTrackQuestOrSetWaypoint();
   } else {
     if e.IsAction(n"world_map_menu_jump_to_player") {
       if !this.m_justOpenedQuestJournal {
-        // Cycle through mappins list instead of just moving to player
+        // Cycle through mappins list instead of just moving to player - IK_Tab
         this.CycleBetweenMappins();
         // this.PlaySound(n"Button", n"OnPress");
         // if (this.selectedMappin as WorldMapPlayerMappinController) == null {
@@ -168,7 +177,8 @@ private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
         // };
       };
     } else {
-      if e.IsAction(n"world_map_menu_zoom_to_mappin") {
+      // IK_MiddleMouse
+      if e.IsAction(n"world_map_menu_zoom_to_mappin") || e.IsAction(n"CMM_Main") {
         targetWidget = e.GetTarget();
         if IsDefined(targetWidget) {
           targetMappinController = targetWidget.GetController() as BaseWorldMapMappinController;
@@ -180,15 +190,17 @@ private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
         };
         // Open popup when clicked on free space
         if this.CanOpenCustomMarkerPopup(e, targetWidget, targetMappinController) {
-          if this.m_suppressCustomMarkerPopup {
-            this.m_suppressCustomMarkerPopup = false;
-            e.Handle();
-            e.Consume();
-          } else {
-            this.PlaySound(n"Button", n"OnPress");
-            CustomMarkerPopup.Show(this, this.m_player);
-            e.Handle();
-            e.Consume();
+          if shouldTriggerCmm {
+            if this.m_suppressCustomMarkerPopup {
+              this.m_suppressCustomMarkerPopup = false;
+              e.Handle();
+              e.Consume();
+            } else {
+              this.PlaySound(n"Button", n"OnPress");
+              CustomMarkerPopup.Show(this, this.m_player);
+              e.Handle();
+              e.Consume();
+            };
           };
         } else {
           if this.HasSelectedMappin() {
@@ -197,7 +209,7 @@ private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
             if IsDefined(customMappin) {
               customMappinData = customMappin.GetScriptData() as GameplayRoleMappinData;
             };
-            if IsDefined(customMappinData) && customMappinData.m_isMappinCustom && !customMappinData.m_isMappinExternal {
+            if IsDefined(customMappinData) && customMappinData.m_isMappinCustom && !customMappinData.m_isMappinExternal && shouldTriggerCmm {
               customMappinPosition = customMappin.GetWorldPosition();
               this.m_suppressCustomMarkerPopup = true;
               this.SetSelectedMappin(null);
