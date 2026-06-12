@@ -197,7 +197,7 @@ private final func HandlePressInput(e: ref<inkPointerEvent>) -> Void {
             if IsDefined(customMappin) {
               customMappinData = customMappin.GetScriptData() as GameplayRoleMappinData;
             };
-            if IsDefined(customMappinData) && customMappinData.m_isMappinCustom {
+            if IsDefined(customMappinData) && customMappinData.m_isMappinCustom && !customMappinData.m_isMappinExternal {
               customMappinPosition = customMappin.GetWorldPosition();
               this.m_suppressCustomMarkerPopup = true;
               this.SetSelectedMappin(null);

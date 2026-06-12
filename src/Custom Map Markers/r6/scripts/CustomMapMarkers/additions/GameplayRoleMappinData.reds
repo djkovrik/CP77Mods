@@ -2,6 +2,9 @@
 public let m_isMappinCustom: Bool;
 
 @addField(GameplayRoleMappinData)
+public let m_isMappinExternal: Bool;
+
+@addField(GameplayRoleMappinData)
 public let m_customMappinTitle: String;
 
 @addField(GameplayRoleMappinData)

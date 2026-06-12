@@ -296,7 +296,7 @@ public class CustomMarkersExporter extends ScriptableService {
   }
 
   private final func Log(str: String) -> Void {
-    ModLog(n"Exporter", str);
+    // ModLog(n"Exporter", str);
   }
 }
 

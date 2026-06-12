@@ -46,6 +46,10 @@ public class CustomMarkerSystem extends ScriptableSystem {
   }
 
   public func AddCustomMappin(title: String, description: String, texturePart: CName, position: Vector4, persist: Bool) -> Void {
+    this.AddCustomMappin(title, description, texturePart, position, persist, false);
+  }
+
+  public func AddCustomMappin(title: String, description: String, texturePart: CName, position: Vector4, persist: Bool, isExternal: Bool) -> Void {
     if !this.EnsureMappinSystem() {
       CMM("Cannot add custom mappin: mappin system is not available");
       return ;
@@ -56,7 +60,7 @@ public class CustomMarkerSystem extends ScriptableSystem {
       return ;
     };
 
-    let mappinData: MappinData = this.CreateMappinData(title, description, texturePart, position);
+    let mappinData: MappinData = this.CreateMappinData(title, description, texturePart, position, isExternal);
     this.m_mappinSystem.RegisterMappin(mappinData, position);
     if persist {
       this.AddPersistedMappin(description, texturePart, position);
@@ -81,11 +85,9 @@ public class CustomMarkerSystem extends ScriptableSystem {
       if IsDefined(mappinRef) {
         mappinData = mappinRef.GetScriptData() as GameplayRoleMappinData;
       };
-      if IsDefined(mappinData) && mappinData.m_isMappinCustom && Equals(mappin.worldPosition, position) {
+      if IsDefined(mappinData) && mappinData.m_isMappinCustom && !mappinData.m_isMappinExternal && Equals(mappin.worldPosition, position) {
         this.m_mappinSystem.UnregisterMappin(mappin.id);
-        if !this.DeletePersistedMappin(position) {
-          this.DeleteExternalMappin(position);
-        };
+        this.DeletePersistedMappin(position);
         CMM(s"Unregistered mappin at position \(ToString(position))");
       };
     };
@@ -131,21 +133,6 @@ public class CustomMarkerSystem extends ScriptableSystem {
     return false;
   }
 
-  private func DeleteExternalMappin(position: Vector4) -> Bool {
-    let externalMappins: array<ref<CustomMappinData>> = this.m_externalMappins;
-    let index: Int32 = 0;
-    for mappin in externalMappins {
-      if IsDefined(mappin) && Equals(mappin.position, position) {
-        ArrayErase(externalMappins, index);
-        this.m_externalMappins = externalMappins;
-        CMM(s"External mappin removed from runtime data: \(position), external mappins count: \(ArraySize(this.m_externalMappins))");
-        return true;
-      };
-      index = index + 1;
-    };
-    return false;
-  }
-
   public func RestorePersistedMappins() -> Void {
     if this.m_persistedMappinsRestored {
       return ;
@@ -156,10 +143,13 @@ public class CustomMarkerSystem extends ScriptableSystem {
     CMM(s"Trying to restore persisted mappins: \(ArraySize(this.m_mappins))");
     this.RefreshPersistedMappins();
     this.RefreshOtherModsMappins();
-    let persistedMappins: array<ref<CustomMappinData>> = this.GetCustomMappins();
     let counter: Int32 = 0;
-    for mappin in persistedMappins {
+    for mappin in this.m_mappins {
       this.AddCustomMappin(GetLocalizedTextByKey(n"CustomMarkers-MarkerTitle"), NameToString(mappin.description), mappin.type, mappin.position, false);
+      counter = counter + 1;
+    };
+    for mappin in this.m_externalMappins {
+      this.AddCustomMappin(GetLocalizedTextByKey(n"CustomMarkers-MarkerTitle"), NameToString(mappin.description), mappin.type, mappin.position, false, true);
       counter = counter + 1;
     };
 
@@ -221,7 +211,7 @@ public class CustomMarkerSystem extends ScriptableSystem {
     // do nothing
   }
 
-  private func CreateMappinData(title: String, description: String, texturePart: CName, position: Vector4) -> MappinData {
+  private func CreateMappinData(title: String, description: String, texturePart: CName, position: Vector4, isExternal: Bool) -> MappinData {
     let roleMappinData: ref<GameplayRoleMappinData> = new GameplayRoleMappinData();
     let mappinData: MappinData;
 
@@ -232,6 +222,7 @@ public class CustomMarkerSystem extends ScriptableSystem {
     roleMappinData.m_textureID = t"MappinIcons.GenericDeviceMappin";
     roleMappinData.m_showOnMiniMap = true;
     roleMappinData.m_isMappinCustom = true;
+    roleMappinData.m_isMappinExternal = isExternal;
     roleMappinData.m_customMappinTitle = title;
     roleMappinData.m_customMappinDescription = description;
     roleMappinData.m_customMappinTexturePart = texturePart;

@@ -73,9 +73,13 @@ protected func SetCustomMarkerTint(mappin: ref<IMappin>, image: inkImageRef) -> 
   let iconColor: CName;
   if IsDefined(mappin) {
      mappinData = mappin.GetScriptData() as GameplayRoleMappinData;
-     config = new CustomMarkersConfig();
-     iconColor = CustomMarkersConfig.GetColorStyleName(config.markerColorActive);
      if IsDefined(mappinData) && mappinData.m_isMappinCustom {
+      config = new CustomMarkersConfig();
+      if mappinData.m_isMappinExternal {
+        iconColor = CustomMarkersConfig.GetColorStyleName(config.markerColorOther);
+      } else {
+        iconColor = CustomMarkersConfig.GetColorStyleName(config.markerColorActive);
+      };
       icon = inkWidgetRef.Get(image);
       icon.BindProperty(n"tintColor", iconColor);
       icon.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
