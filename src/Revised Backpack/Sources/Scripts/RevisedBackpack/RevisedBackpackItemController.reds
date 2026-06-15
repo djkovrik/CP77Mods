@@ -51,22 +51,35 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
   }
 
   protected cb func OnUninitialize() -> Bool {
-    let evt: ref<inkPointerEvent>;
-    this.OnHoverOut(evt);
-  }
+    if IsDefined(this.m_shadow) {
+      this.m_shadow.SetVisible(false);
+    };
 
-  protected cb func OnHoverOver(evt: ref<inkPointerEvent>) -> Bool {
-    this.m_shadow.SetVisible(true);
-    let target: ref<inkWidget> = evt.GetTarget();
-    let isName: Bool = Equals(target.GetName(), n"nameContainer");
     if IsDefined(this.m_item) {
-      this.QueueEvent(RevisedBackpackItemHoverOverEvent.Create(this.m_item, isName, target));
-      this.SetIsNew(false);
+      this.QueueEvent(RevisedBackpackItemHoverOutEvent.Create(this.m_item));
+      this.m_item = null;
     };
   }
 
+  protected cb func OnHoverOver(evt: ref<inkPointerEvent>) -> Bool {
+    if !IsDefined(this.m_item) || !IsDefined(evt) || !IsDefined(evt.GetTarget()) {
+      return false;
+    };
+
+    if IsDefined(this.m_shadow) {
+      this.m_shadow.SetVisible(true);
+    };
+    let target: ref<inkWidget> = evt.GetTarget();
+    let isName: Bool = Equals(target.GetName(), n"nameContainer");
+    this.QueueEvent(RevisedBackpackItemHoverOverEvent.Create(this.m_item, isName, target));
+    this.SetIsNew(false);
+  }
+
   protected cb func OnHoverOut(evt: ref<inkPointerEvent>) -> Bool {
-    this.m_shadow.SetVisible(false);
+    if IsDefined(this.m_shadow) {
+      this.m_shadow.SetVisible(false);
+    };
+
     if IsDefined(this.m_item) {
       this.QueueEvent(RevisedBackpackItemHoverOutEvent.Create(this.m_item));
     };
@@ -76,7 +89,17 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     let displayReleaseEvent: ref<RevisedItemDisplayReleaseEvent>;
     let toggleQuestTagEvent: ref<RevisedToggleQuestTagEvent>;
     let toggleCustomJunkEvent: ref<RevisedToggleCustomJunkEvent>;
-    let targetName: CName = evt.GetTarget().GetName();
+    let target: ref<inkWidget>;
+    let targetName: CName = n"";
+    if !IsDefined(this.m_item) || !IsDefined(evt) {
+      return false;
+    };
+
+    target = evt.GetTarget();
+    if IsDefined(target) {
+      targetName = target.GetName();
+    };
+
     if evt.IsAction(n"click") && Equals(targetName, n"quest") && this.CanToggleQuestTag() {
       toggleQuestTagEvent = new RevisedToggleQuestTagEvent();
       toggleQuestTagEvent.itemData = this.m_item.data;
@@ -101,6 +124,10 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
 
   protected cb func OnHold(evt: ref<inkPointerEvent>) -> Bool {
     let displayHoldEvent: ref<RevisedItemDisplayHoldEvent>;
+    if !IsDefined(this.m_item) || !IsDefined(evt) {
+      return false;
+    };
+
     if evt.GetHoldProgress() >= 1.0 {
       displayHoldEvent = new RevisedItemDisplayHoldEvent();
       displayHoldEvent.itemData = this.m_item.data;
@@ -112,6 +139,10 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
   }
 
   protected cb func OnPressed(evt: ref<inkPointerEvent>) -> Bool {
+    if !IsDefined(evt) {
+      return false;
+    };
+
     let pressEvent: ref<RevisedItemDisplayPressEvent> = new RevisedItemDisplayPressEvent();
     pressEvent.display = this;
     pressEvent.actionName = evt.GetActionName();
@@ -126,9 +157,15 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
   }
 
   public final func SetItemSelected(selected: Bool) -> Void {
+    if !IsDefined(this.m_item) {
+      return;
+    };
+
     this.Log(s"SetSelected \(this.GetNameLabel()): \(selected)");
     this.m_item.SetSelectedFlag(selected);
-    this.m_selection.SetVisible(this.m_item.GetSelectedFlag());
+    if IsDefined(this.m_selection) {
+      this.m_selection.SetVisible(this.m_item.GetSelectedFlag());
+    };
   }
 
   public final func GetIsNew() -> Bool {
@@ -186,6 +223,10 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
   }
 
   public final func RefreshView() -> Void {
+    if !IsDefined(this.m_item) || !IsDefined(this.m_item.inventoryItem) || !IsDefined(this.m_item.data) {
+      return;
+    };
+
     let label: String = this.m_item.nameLabel;
     let quantity: Int32 = this.m_item.inventoryItem.GetQuantity();
     if quantity > 1 { label += s" (\(quantity))"; }

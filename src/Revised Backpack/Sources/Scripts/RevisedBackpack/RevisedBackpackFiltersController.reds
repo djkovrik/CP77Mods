@@ -61,7 +61,9 @@ public class RevisedBackpackFiltersController extends inkLogicController {
 
   protected cb func OnUninitialize() -> Bool {
     this.UnregisterListeners();
-    this.m_delaySystem.CancelCallback(this.m_debounceCalbackId);
+    if IsDefined(this.m_delaySystem) {
+      this.m_delaySystem.CancelCallback(this.m_debounceCalbackId);
+    };
 
     if IsDefined(this.m_animProxy) {
       if this.m_animProxy.IsPlaying() {
@@ -137,6 +139,11 @@ public class RevisedBackpackFiltersController extends inkLogicController {
 
   public final func ApplyFiltersDelayed() -> Void {
     let callback: ref<RevisedBackpackFilterDebounceCallback> = new RevisedBackpackFilterDebounceCallback();
+    if !IsDefined(this.m_delaySystem) {
+      this.ApplyFilters();
+      return;
+    };
+
     callback.m_controller = this;
     this.m_delaySystem.CancelCallback(this.m_debounceCalbackId);
     this.m_debounceCalbackId = this.m_delaySystem.DelayCallback(callback, 0.2, false);

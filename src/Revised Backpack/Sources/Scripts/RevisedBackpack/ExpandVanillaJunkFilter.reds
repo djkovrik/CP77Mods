@@ -6,18 +6,30 @@ public let revisedBackpackSystem: wref<RevisedBackpackSystem>;
 @wrapMethod(UIInventoryItemsManager)
 public final func AttachPlayer(player: wref<PlayerPuppet>) -> Void {
   wrappedMethod(player);
-  this.revisedBackpackSystem = RevisedBackpackSystem.GetInstance(player.GetGame());
+  if IsDefined(player) {
+    this.revisedBackpackSystem = RevisedBackpackSystem.GetInstance(player.GetGame());
+  } else {
+    this.revisedBackpackSystem = null;
+  };
 }
 
 @addMethod(UIInventoryItemsManager)
 public final func IsCustomJunk(itemId: ItemID) -> Bool {
+  if !ItemID.IsValid(itemId) || !IsDefined(this.revisedBackpackSystem) {
+    return false;
+  };
+
   return this.revisedBackpackSystem.IsAddedToJunk(itemId);
 }
 
 @wrapMethod(UIInventoryItem)
 public final func IsJunk() -> Bool {
   let wrapped: Bool = wrappedMethod();
-  let isCustomJunk: Bool = this.m_manager.IsCustomJunk(this.ID);
+  let isCustomJunk: Bool;
+  if IsDefined(this.m_manager) {
+    isCustomJunk = this.m_manager.IsCustomJunk(this.ID);
+  };
+
   return wrapped || isCustomJunk;
 }
 

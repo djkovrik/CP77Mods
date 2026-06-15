@@ -176,6 +176,7 @@ Responsibility rules:
 - For inventory-derived lists, prefer extending `BackpackDataView` and overriding its extension points instead of reimplementing category/sort logic.
 - Use `DataView.Size()` / `GetItem(index)` for visible filtered order; use `dataSource.GetArray()` when logic must inspect all backing items.
 - Keep `ref<>` for DataSource/DataView/classifier ownership and `wref<>` for widget/controller references unless nearby code proves otherwise.
+- Treat `inkVirtualCompoundItemController.OnUninitialize()` as part of virtual row recycling, not always final destruction. Do not unregister row self-callbacks such as `OnRelease`, `OnEnter`, `OnLeave`, `OnHold`, or `OnPress` there unless a nearby vanilla virtual item controller does the same and re-register behavior is proven. Removing those callbacks can break clicks/selection when recycled rows receive new data without a fresh `OnInitialize()`.
 
 ## Search Workflow
 

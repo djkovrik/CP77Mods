@@ -6,6 +6,8 @@ public class RevisedBackpackDataView extends ScriptableDataView {
   private let m_sorting: revisedSorting;
   private let m_sortingMode: revisedSortingMode;
   private let m_filtering: ref<RevisedFilteringEvent>;
+  private let m_nameQueryLower: String;
+  private let m_typeQueryLower: String;
   private let m_newItemsOnTop: Bool;
   private let m_favoriteItemsOnTop: Bool;
   private let m_skipCustomFilters: Bool;
@@ -302,20 +304,34 @@ public class RevisedBackpackDataView extends ScriptableDataView {
   public final func SetCategory(category: ref<RevisedBackpackCategory>) -> Void {
     if NotEquals(this.m_selectedCategory, category) {
       this.m_selectedCategory = category;
-      this.m_skipAmmoFilter = NotEquals(category.id, 20);
+      if IsDefined(category) {
+        this.m_skipAmmoFilter = NotEquals(category.id, 20);
+      } else {
+        this.m_skipAmmoFilter = true;
+      };
       this.Filter();
     };
   }
   
   public final func SetFilters(event: ref<RevisedFilteringEvent>) -> Void {
+    if !IsDefined(event) {
+      return;
+    };
+
     this.m_skipCustomFilters = event.filtersReset;
     this.m_filtering = event;
+    this.m_nameQueryLower = UTF8StrLower(event.nameQuery);
+    this.m_typeQueryLower = UTF8StrLower(event.typeQuery);
     this.Log(s"SetFilters with [\(event.nameQuery)] and [\(event.typeQuery)] and ammo \(TDBID.ToStringDEBUG(event.ammo)) and tiers \(ArraySize(event.tiers))");
     this.Filter();
   }
 
   public func FilterItem(data: ref<IScriptable>) -> Bool {
     let itemWrapper: ref<RevisedItemWrapper> = data as RevisedItemWrapper;
+    if !IsDefined(itemWrapper) || !IsDefined(this.m_selectedCategory) || !IsDefined(this.m_selectedCategory.predicate) {
+      return false;
+    };
+
     let name: String = itemWrapper.nameLabel;
     let nameNotEmpty: Bool = NotEquals(name, "");
     let predicate: Bool = this.m_selectedCategory.predicate.Check(itemWrapper);
@@ -323,21 +339,25 @@ public class RevisedBackpackDataView extends ScriptableDataView {
       return nameNotEmpty && predicate;
     };
 
+    if !IsDefined(this.m_filtering) {
+      return nameNotEmpty && predicate;
+    };
+
     let nameSearchMatched: Bool = true;
-    if NotEquals(this.m_filtering.nameQuery, "") {
-      nameSearchMatched = this.ItemTextsContainQuery(itemWrapper, this.m_filtering.nameQuery);
+    if NotEquals(this.m_nameQueryLower, "") {
+      nameSearchMatched = StrContains(itemWrapper.searchText, this.m_nameQueryLower);
     };
 
     let typeSearchMatched: Bool = true;
-    if NotEquals(this.m_filtering.typeQuery, "") {
-      typeSearchMatched = this.ItemTypeContainsQuery(itemWrapper, this.m_filtering.typeQuery);
+    if NotEquals(this.m_typeQueryLower, "") {
+      typeSearchMatched = StrContains(itemWrapper.typeSearchText, this.m_typeQueryLower);
     };
 
     let tierMatched: Bool = ArrayContains(this.m_filtering.tiers, itemWrapper.tier);
 
     let ammoMatched: Bool = true;
     if NotEquals(this.m_filtering.ammo, t"") && !this.m_skipAmmoFilter {
-      ammoMatched = Equals(this.m_filtering.ammo, itemWrapper.GetAmmo());
+      ammoMatched = Equals(this.m_filtering.ammo, itemWrapper.ammo);
     };
 
     return nameNotEmpty && predicate && nameSearchMatched && typeSearchMatched && tierMatched && ammoMatched;
@@ -350,39 +370,6 @@ public class RevisedBackpackDataView extends ScriptableDataView {
     } else {
       this.Sort();
     };
-  }
-
-  private final func ItemTextsContainQuery(item: ref<RevisedItemWrapper>, query: String) -> Bool {
-    let combined: String = "";
-    let itemRecord: ref<Item_Record> = TweakDBInterface.GetItemRecord(item.id);
-    let weaponRecord: ref<WeaponItem_Record>;
-
-    // Name
-    let itemName: String = UTF8StrLower(GetLocalizedTextByKey(itemRecord.DisplayName()));
-    combined += itemName;
-
-    // Weapon evolution
-    let evolution: String;
-    if CraftingMainLogicController.IsWeapon(itemRecord.EquipArea().Type()) {
-      weaponRecord = itemRecord as WeaponItem_Record;
-      if IsDefined(weaponRecord) {
-        evolution = UIItemsHelper.GetItemTypeKey(weaponRecord.ItemType().Type(), weaponRecord.Evolution().Type());
-        combined += UTF8StrLower(GetLocalizedText(evolution));
-      };
-    };
-
-    // Description
-    let description: String = UTF8StrLower(GetLocalizedTextByKey(itemRecord.LocalizedDescription()));
-    combined += description;
-
-    return StrContains(combined, UTF8StrLower(query));
-  }
-
-  private final func ItemTypeContainsQuery(item: ref<RevisedItemWrapper>, query: String) -> Bool {
-    let itemTypeString: String = UTF8StrLower(item.typeLabel);
-    let substring: String = UTF8StrLower(query);
-    this.Log(s"ItemTypeContainsQuery search \(substring) inside \(itemTypeString)");
-    return StrContains(itemTypeString, substring);
   }
 
   private final func Log(str: String) -> Void {

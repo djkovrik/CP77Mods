@@ -34,7 +34,10 @@ public class RevisedItemWrapper {
   public let equipArea: gamedataEquipmentArea;
   public let type: gamedataItemType;
   public let typeLabel: String;
+  public let typeSearchText: String;
   public let typeValue: Int32;
+  public let searchText: String;
+  public let ammo: TweakDBID;
   public let tier: gamedataQuality;
   public let tierLabel: String;
   public let tierValue: Int32;
@@ -105,12 +108,7 @@ public class RevisedItemWrapper {
   }
 
   public final func GetAmmo() -> TweakDBID {
-    let weaponRecord: ref<WeaponItem_Record> = TweakDBInterface.GetItemRecord(this.id) as WeaponItem_Record;
-    if IsDefined(weaponRecord) {
-      return weaponRecord.Ammo().GetID();
-    };
-
-    return t"";
+    return this.ammo;
   }
 }
 
@@ -387,7 +385,9 @@ public class RevisedBackpackFilterDebounceCallback extends DelayCallback {
   public let m_controller: wref<RevisedBackpackFiltersController>;
 
   public func Call() -> Void {
-    this.m_controller.ApplyFilters();
+    if IsDefined(this.m_controller) {
+      this.m_controller.ApplyFilters();
+    };
   }
 }
 

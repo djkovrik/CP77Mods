@@ -1,4 +1,4 @@
-// RevisedBackpack v0.9.13
+// RevisedBackpack v0.9.14
 module RevisedBackpack
 
 import Codeware.UI.HubTextInput
@@ -36,7 +36,10 @@ public class RevisedItemWrapper {
   public let equipArea: gamedataEquipmentArea;
   public let type: gamedataItemType;
   public let typeLabel: String;
+  public let typeSearchText: String;
   public let typeValue: Int32;
+  public let searchText: String;
+  public let ammo: TweakDBID;
   public let tier: gamedataQuality;
   public let tierLabel: String;
   public let tierValue: Int32;
@@ -95,13 +98,10 @@ public class RevisedItemWrapper {
     this.customJunk = customJunk;
   }
   public final func GetAmmo() -> TweakDBID {
-    let weaponRecord: ref<WeaponItem_Record> = TweakDBInterface.GetItemRecord(this.id) as WeaponItem_Record;
-    if IsDefined(weaponRecord) {
-      return weaponRecord.Ammo().GetID();
-    };
-    return t"";
+    return this.ammo;
   }
 }
+
 public abstract class RevisedCategoryPredicate {
   public func Check(item: ref<RevisedItemWrapper>) -> Bool;
 }
@@ -325,10 +325,14 @@ public class RevisedBackpackOutfitCooldownResetCallback extends DelayCallback {
 }
 public class RevisedBackpackFilterDebounceCallback extends DelayCallback {
   public let m_controller: wref<RevisedBackpackFiltersController>;
+
   public func Call() -> Void {
-    this.m_controller.ApplyFilters();
+    if IsDefined(this.m_controller) {
+      this.m_controller.ApplyFilters();
+    };
   }
 }
+
 public class RevisedBackpackTemplateClassifier extends inkVirtualItemTemplateClassifier {}
 public class RevisedCustomEventBackpackOpened extends CallbackSystemEvent {
   public let opened: Bool;
@@ -390,6 +394,7 @@ public class RevisedBackpackAmmoHoverOutEvent extends Event {
     return evt;
   }
 }
+
 public class RevisedBackpackCustomFontSize extends ScriptableService {
   private let backpackFontSize: Int32 = 36;
   private cb func OnLoad() {
@@ -671,18 +676,33 @@ public let revisedBackpackSystem: wref<RevisedBackpackSystem>;
 @wrapMethod(UIInventoryItemsManager)
 public final func AttachPlayer(player: wref<PlayerPuppet>) -> Void {
   wrappedMethod(player);
-  this.revisedBackpackSystem = RevisedBackpackSystem.GetInstance(player.GetGame());
+  if IsDefined(player) {
+    this.revisedBackpackSystem = RevisedBackpackSystem.GetInstance(player.GetGame());
+  } else {
+    this.revisedBackpackSystem = null;
+  };
 }
+
 @addMethod(UIInventoryItemsManager)
 public final func IsCustomJunk(itemId: ItemID) -> Bool {
+  if !ItemID.IsValid(itemId) || !IsDefined(this.revisedBackpackSystem) {
+    return false;
+  };
+
   return this.revisedBackpackSystem.IsAddedToJunk(itemId);
 }
+
 @wrapMethod(UIInventoryItem)
 public final func IsJunk() -> Bool {
   let wrapped: Bool = wrappedMethod();
-  let isCustomJunk: Bool = this.m_manager.IsCustomJunk(this.ID);
+  let isCustomJunk: Bool;
+  if IsDefined(this.m_manager) {
+    isCustomJunk = this.m_manager.IsCustomJunk(this.ID);
+  };
+
   return wrapped || isCustomJunk;
 }
+
 @wrapMethod(FullscreenVendorGameController)
 private final func PopulatePlayerInventory() -> Void {
   wrappedMethod();
@@ -1101,12 +1121,24 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     this.HandleItemQuantityModified(itemQuantityChangedData.itemID, itemQuantityChangedData.isBackpackItem);
   }
   private final func HandleItemQuantityModified(itemID: ItemID, backpackItem: Bool) -> Void {
-    if backpackItem {
-      if !this.m_uiInventorySystem.GetPlayerItem(itemID).GetItemData().HasTag(n"CraftingPart") {
-        this.RefreshUINextFrame();
-      };
+    let itemData: ref<gameItemData>;
+    let playerItem: wref<UIInventoryItem>;
+    if !backpackItem || !ItemID.IsValid(itemID) || !IsDefined(this.m_uiInventorySystem) {
+      return;
+    };
+
+    playerItem = this.m_uiInventorySystem.GetPlayerItem(itemID);
+    if !IsDefined(playerItem) {
+      this.RefreshUINextFrame();
+      return;
+    };
+
+    itemData = playerItem.GetItemData();
+    if !IsDefined(itemData) || !itemData.HasTag(n"CraftingPart") {
+      this.RefreshUINextFrame();
     };
   }
+
   private final func TryToSelectNextItem() -> Void {
     this.Log("TryToSelectNextItem");
     let selectedItems: Int32 = ArraySize(this.m_selectedItems);
@@ -1256,29 +1288,38 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     limit = ArraySize(values);
     while i < limit {
       let shouldSkipItem: Bool = false;
+      wrappedItem = null;
       uiInventoryItem = values[i] as UIInventoryItem;
-      if ItemID.HasFlag(uiInventoryItem.GetID(), gameEItemIDFlag.Preview) || uiInventoryItem.HasAnyTag(tagsToFilterOut)  {
-        shouldSkipItem = true;
-      };
-      if ArrayContains(this.m_itemDropQueueItems, uiInventoryItem.ID) {
-        quantity = uiInventoryItem.GetQuantity(true);
-        dropItem = this.GetDropQueueItem(uiInventoryItem.ID);
-        if dropItem.quantity >= quantity {
+
+      if IsDefined(uiInventoryItem) {
+        if ItemID.HasFlag(uiInventoryItem.GetID(), gameEItemIDFlag.Preview) || uiInventoryItem.HasAnyTag(tagsToFilterOut)  {
           shouldSkipItem = true;
-        } else {
-          uiInventoryItem.SetQuantity(quantity - dropItem.quantity);
+        };
+
+        if ArrayContains(this.m_itemDropQueueItems, uiInventoryItem.ID) {
+          quantity = uiInventoryItem.GetQuantity(true);
+          dropItem = this.GetDropQueueItem(uiInventoryItem.ID);
+          if dropItem.quantity >= quantity {
+            shouldSkipItem = true;
+          } else {
+            uiInventoryItem.SetQuantity(quantity - dropItem.quantity);
+          };
+        };
+
+        if uiInventoryItem.IsJunk() {
+          ArrayPush(this.m_junkItems, uiInventoryItem);
+        };
+
+        if !shouldSkipItem {
+          wrappedItem = this.BuildWrappedItem(uiInventoryItem);
+          ArrayPush(wrappedItems, wrappedItem);
+        };
+
+        if IsDefined(wrappedItem) && wrappedItem.GetCustomJunkFlag() {
+          ArrayPush(this.m_customJunkItems, wrappedItem);
         };
       };
-      if uiInventoryItem.IsJunk() {
-        ArrayPush(this.m_junkItems, uiInventoryItem);
-      };
-      if !shouldSkipItem {
-        wrappedItem = this.BuildWrappedItem(uiInventoryItem);
-        ArrayPush(wrappedItems, wrappedItem);
-      };
-      if wrappedItem.GetCustomJunkFlag() {
-        ArrayPush(this.m_customJunkItems, wrappedItem);
-      };
+
       i += 1;
     };
     this.itemsListDataSource.Reset(wrappedItems);
@@ -2077,9 +2118,18 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     let itemRecord: ref<Item_Record> = uiInventoryItem.GetItemRecord();
     let itemType: gamedataItemType = itemRecord.ItemType().Type();
     let itemEvolution: gamedataWeaponEvolution = gamedataWeaponEvolution.Invalid;
+    let weaponRecord: ref<WeaponItem_Record>;
+    let ammo: TweakDBID = t"";
+    let searchText: String;
+    let typeLabel: String;
     if uiInventoryItem.IsWeapon() {
       itemEvolution = uiInventoryItem.GetWeaponEvolution();
+      weaponRecord = itemRecord as WeaponItem_Record;
+      if IsDefined(weaponRecord) {
+        ammo = weaponRecord.Ammo().GetID();
+      };
     };
+
     let dps: Float = 0.0;
     let dpsStat: wref<UIInventoryItemStat> = uiInventoryItem.GetPrimaryStat();
     if uiInventoryItem.IsWeapon() && Equals(dpsStat.Type, gamedataStatType.EffectiveDPS) {
@@ -2102,19 +2152,30 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     let tier: gamedataQuality = uiInventoryItem.GetQuality();
     let price: Float = uiInventoryItem.GetSellPrice();
     let weight: Float = uiInventoryItem.GetWeight();
+    let itemName: String = GetLocalizedTextByKey(itemRecord.DisplayName());
+    typeLabel = this.BuildTypeLabel(data, equipArea, itemTdbid, itemType, itemEvolution);
+    searchText = UTF8StrLower(itemName);
+    if IsDefined(weaponRecord) {
+      searchText += UTF8StrLower(GetLocalizedText(UIItemsHelper.GetItemTypeKey(weaponRecord.ItemType().Type(), weaponRecord.Evolution().Type())));
+    };
+    searchText += UTF8StrLower(GetLocalizedTextByKey(itemRecord.LocalizedDescription()));
+
     let wrappedItem: ref<RevisedItemWrapper> = new RevisedItemWrapper();
     wrappedItem.id = itemTdbid;
     wrappedItem.data = data;
     wrappedItem.inventoryItem = uiInventoryItem;
     wrappedItem.equipArea = equipArea;
     wrappedItem.type = itemType;
-    wrappedItem.typeLabel = this.BuildTypeLabel(data, equipArea, itemTdbid, itemType, itemEvolution);
+    wrappedItem.typeLabel = typeLabel;
+    wrappedItem.typeSearchText = UTF8StrLower(typeLabel);
     wrappedItem.typeValue = ItemCompareBuilder.GetItemTypeOrder(data, equipArea, itemType);
+    wrappedItem.searchText = searchText;
+    wrappedItem.ammo = ammo;
     wrappedItem.tier = tier;
     wrappedItem.tierLabel = this.BuildTierLabel(uiInventoryItem);
     wrappedItem.tierValue = this.BuildTierValue(uiInventoryItem);
     wrappedItem.evolution = itemEvolution;
-    wrappedItem.nameLabel = GetLocalizedTextByKey(itemRecord.DisplayName());
+    wrappedItem.nameLabel = itemName;
     wrappedItem.price = price;
     wrappedItem.priceLabel = IntToString(RoundF(price));
     wrappedItem.weight = weight;
@@ -2341,6 +2402,8 @@ public class RevisedBackpackDataView extends ScriptableDataView {
   private let m_sorting: revisedSorting;
   private let m_sortingMode: revisedSortingMode;
   private let m_filtering: ref<RevisedFilteringEvent>;
+  private let m_nameQueryLower: String;
+  private let m_typeQueryLower: String;
   private let m_newItemsOnTop: Bool;
   private let m_favoriteItemsOnTop: Bool;
   private let m_skipCustomFilters: Bool;
@@ -2618,37 +2681,61 @@ public class RevisedBackpackDataView extends ScriptableDataView {
   public final func SetCategory(category: ref<RevisedBackpackCategory>) -> Void {
     if NotEquals(this.m_selectedCategory, category) {
       this.m_selectedCategory = category;
-      this.m_skipAmmoFilter = NotEquals(category.id, 20);
+      if IsDefined(category) {
+        this.m_skipAmmoFilter = NotEquals(category.id, 20);
+      } else {
+        this.m_skipAmmoFilter = true;
+      };
       this.Filter();
     };
   }
+  
   public final func SetFilters(event: ref<RevisedFilteringEvent>) -> Void {
+    if !IsDefined(event) {
+      return;
+    };
+
     this.m_skipCustomFilters = event.filtersReset;
     this.m_filtering = event;
+    this.m_nameQueryLower = UTF8StrLower(event.nameQuery);
+    this.m_typeQueryLower = UTF8StrLower(event.typeQuery);
     this.Log(s"SetFilters with [\(event.nameQuery)] and [\(event.typeQuery)] and ammo \(TDBID.ToStringDEBUG(event.ammo)) and tiers \(ArraySize(event.tiers))");
     this.Filter();
   }
+
   public func FilterItem(data: ref<IScriptable>) -> Bool {
     let itemWrapper: ref<RevisedItemWrapper> = data as RevisedItemWrapper;
+    if !IsDefined(itemWrapper) || !IsDefined(this.m_selectedCategory) || !IsDefined(this.m_selectedCategory.predicate) {
+      return false;
+    };
+
     let name: String = itemWrapper.nameLabel;
     let nameNotEmpty: Bool = NotEquals(name, "");
     let predicate: Bool = this.m_selectedCategory.predicate.Check(itemWrapper);
     if this.m_skipCustomFilters {
       return nameNotEmpty && predicate;
     };
+
+    if !IsDefined(this.m_filtering) {
+      return nameNotEmpty && predicate;
+    };
+
     let nameSearchMatched: Bool = true;
-    if NotEquals(this.m_filtering.nameQuery, "") {
-      nameSearchMatched = this.ItemTextsContainQuery(itemWrapper, this.m_filtering.nameQuery);
+    if NotEquals(this.m_nameQueryLower, "") {
+      nameSearchMatched = StrContains(itemWrapper.searchText, this.m_nameQueryLower);
     };
+
     let typeSearchMatched: Bool = true;
-    if NotEquals(this.m_filtering.typeQuery, "") {
-      typeSearchMatched = this.ItemTypeContainsQuery(itemWrapper, this.m_filtering.typeQuery);
+    if NotEquals(this.m_typeQueryLower, "") {
+      typeSearchMatched = StrContains(itemWrapper.typeSearchText, this.m_typeQueryLower);
     };
+
     let tierMatched: Bool = ArrayContains(this.m_filtering.tiers, itemWrapper.tier);
     let ammoMatched: Bool = true;
     if NotEquals(this.m_filtering.ammo, t"") && !this.m_skipAmmoFilter {
-      ammoMatched = Equals(this.m_filtering.ammo, itemWrapper.GetAmmo());
+      ammoMatched = Equals(this.m_filtering.ammo, itemWrapper.ammo);
     };
+
     return nameNotEmpty && predicate && nameSearchMatched && typeSearchMatched && tierMatched && ammoMatched;
   }
   public final func RefreshList() -> Void {
@@ -2658,33 +2745,6 @@ public class RevisedBackpackDataView extends ScriptableDataView {
     } else {
       this.Sort();
     };
-  }
-  private final func ItemTextsContainQuery(item: ref<RevisedItemWrapper>, query: String) -> Bool {
-    let combined: String = "";
-    let itemRecord: ref<Item_Record> = TweakDBInterface.GetItemRecord(item.id);
-    let weaponRecord: ref<WeaponItem_Record>;
-    // Name
-    let itemName: String = UTF8StrLower(GetLocalizedTextByKey(itemRecord.DisplayName()));
-    combined += itemName;
-    // Weapon evolution
-    let evolution: String;
-    if CraftingMainLogicController.IsWeapon(itemRecord.EquipArea().Type()) {
-      weaponRecord = itemRecord as WeaponItem_Record;
-      if IsDefined(weaponRecord) {
-        evolution = UIItemsHelper.GetItemTypeKey(weaponRecord.ItemType().Type(), weaponRecord.Evolution().Type());
-        combined += UTF8StrLower(GetLocalizedText(evolution));
-      };
-    };
-    // Description
-    let description: String = UTF8StrLower(GetLocalizedTextByKey(itemRecord.LocalizedDescription()));
-    combined += description;
-    return StrContains(combined, UTF8StrLower(query));
-  }
-  private final func ItemTypeContainsQuery(item: ref<RevisedItemWrapper>, query: String) -> Bool {
-    let itemTypeString: String = UTF8StrLower(item.typeLabel);
-    let substring: String = UTF8StrLower(query);
-    this.Log(s"ItemTypeContainsQuery search \(substring) inside \(itemTypeString)");
-    return StrContains(itemTypeString, substring);
   }
   private final func Log(str: String) -> Void {
     if RevisedBackpackUtils.ShowRevisedBackpackLogs() {
@@ -2951,7 +3011,10 @@ public class RevisedBackpackFiltersController extends inkLogicController {
   }
   protected cb func OnUninitialize() -> Bool {
     this.UnregisterListeners();
-    this.m_delaySystem.CancelCallback(this.m_debounceCalbackId);
+    if IsDefined(this.m_delaySystem) {
+      this.m_delaySystem.CancelCallback(this.m_debounceCalbackId);
+    };
+
     if IsDefined(this.m_animProxy) {
       if this.m_animProxy.IsPlaying() {
         this.m_animProxy.Stop();
@@ -3016,6 +3079,11 @@ public class RevisedBackpackFiltersController extends inkLogicController {
   }
   public final func ApplyFiltersDelayed() -> Void {
     let callback: ref<RevisedBackpackFilterDebounceCallback> = new RevisedBackpackFilterDebounceCallback();
+    if !IsDefined(this.m_delaySystem) {
+      this.ApplyFilters();
+      return;
+    };
+
     callback.m_controller = this;
     this.m_delaySystem.CancelCallback(this.m_debounceCalbackId);
     this.m_debounceCalbackId = this.m_delaySystem.DelayCallback(callback, 0.2, false);
@@ -3515,30 +3583,57 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     this.RegisterToCallback(n"OnHold", this, n"OnHold");
     this.RegisterToCallback(n"OnPress", this, n"OnPressed");
   }
+
   protected cb func OnUninitialize() -> Bool {
-    let evt: ref<inkPointerEvent>;
-    this.OnHoverOut(evt);
-  }
-  protected cb func OnHoverOver(evt: ref<inkPointerEvent>) -> Bool {
-    this.m_shadow.SetVisible(true);
-    let target: ref<inkWidget> = evt.GetTarget();
-    let isName: Bool = Equals(target.GetName(), n"nameContainer");
+    if IsDefined(this.m_shadow) {
+      this.m_shadow.SetVisible(false);
+    };
+
     if IsDefined(this.m_item) {
-      this.QueueEvent(RevisedBackpackItemHoverOverEvent.Create(this.m_item, isName, target));
-      this.SetIsNew(false);
+      this.QueueEvent(RevisedBackpackItemHoverOutEvent.Create(this.m_item));
+      this.m_item = null;
     };
   }
+
+  protected cb func OnHoverOver(evt: ref<inkPointerEvent>) -> Bool {
+    if !IsDefined(this.m_item) || !IsDefined(evt) || !IsDefined(evt.GetTarget()) {
+      return false;
+    };
+
+    if IsDefined(this.m_shadow) {
+      this.m_shadow.SetVisible(true);
+    };
+    let target: ref<inkWidget> = evt.GetTarget();
+    let isName: Bool = Equals(target.GetName(), n"nameContainer");
+    this.QueueEvent(RevisedBackpackItemHoverOverEvent.Create(this.m_item, isName, target));
+    this.SetIsNew(false);
+  }
+
   protected cb func OnHoverOut(evt: ref<inkPointerEvent>) -> Bool {
-    this.m_shadow.SetVisible(false);
+    if IsDefined(this.m_shadow) {
+      this.m_shadow.SetVisible(false);
+    };
+
     if IsDefined(this.m_item) {
       this.QueueEvent(RevisedBackpackItemHoverOutEvent.Create(this.m_item));
     };
   }
+
   protected cb func OnRelease(evt: ref<inkPointerEvent>) -> Bool {
     let displayReleaseEvent: ref<RevisedItemDisplayReleaseEvent>;
     let toggleQuestTagEvent: ref<RevisedToggleQuestTagEvent>;
     let toggleCustomJunkEvent: ref<RevisedToggleCustomJunkEvent>;
-    let targetName: CName = evt.GetTarget().GetName();
+    let target: ref<inkWidget>;
+    let targetName: CName = n"";
+    if !IsDefined(this.m_item) || !IsDefined(evt) {
+      return false;
+    };
+
+    target = evt.GetTarget();
+    if IsDefined(target) {
+      targetName = target.GetName();
+    };
+
     if evt.IsAction(n"click") && Equals(targetName, n"quest") && this.CanToggleQuestTag() {
       toggleQuestTagEvent = new RevisedToggleQuestTagEvent();
       toggleQuestTagEvent.itemData = this.m_item.data;
@@ -3562,6 +3657,10 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
   }
   protected cb func OnHold(evt: ref<inkPointerEvent>) -> Bool {
     let displayHoldEvent: ref<RevisedItemDisplayHoldEvent>;
+    if !IsDefined(this.m_item) || !IsDefined(evt) {
+      return false;
+    };
+
     if evt.GetHoldProgress() >= 1.0 {
       displayHoldEvent = new RevisedItemDisplayHoldEvent();
       displayHoldEvent.itemData = this.m_item.data;
@@ -3572,6 +3671,10 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     };
   }
   protected cb func OnPressed(evt: ref<inkPointerEvent>) -> Bool {
+    if !IsDefined(evt) {
+      return false;
+    };
+
     let pressEvent: ref<RevisedItemDisplayPressEvent> = new RevisedItemDisplayPressEvent();
     pressEvent.display = this;
     pressEvent.actionName = evt.GetActionName();
@@ -3584,10 +3687,17 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     };
   }
   public final func SetItemSelected(selected: Bool) -> Void {
+    if !IsDefined(this.m_item) {
+      return;
+    };
+
     this.Log(s"SetSelected \(this.GetNameLabel()): \(selected)");
     this.m_item.SetSelectedFlag(selected);
-    this.m_selection.SetVisible(this.m_item.GetSelectedFlag());
+    if IsDefined(this.m_selection) {
+      this.m_selection.SetVisible(this.m_item.GetSelectedFlag());
+    };
   }
+
   public final func GetIsNew() -> Bool {
     return this.m_item.GetNewFlag();
   }
@@ -3631,6 +3741,10 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     return this.m_item;
   }
   public final func RefreshView() -> Void {
+    if !IsDefined(this.m_item) || !IsDefined(this.m_item.inventoryItem) || !IsDefined(this.m_item.data) {
+      return;
+    };
+
     let label: String = this.m_item.nameLabel;
     let quantity: Int32 = this.m_item.inventoryItem.GetQuantity();
     if quantity > 1 { label += s" (\(quantity))"; }
@@ -3904,7 +4018,10 @@ public class RevisedBackpackSortController extends inkLogicController {
 }
 public class RevisedBackpackSystem extends ScriptableSystem {
   private persistent let customJunk: array<ItemID>;
+  private let customJunkHashes: array<Uint64>;
+
   private let categories: array<ref<RevisedBackpackCategory>>;
+  
   public static func GetInstance(gi: GameInstance) -> ref<RevisedBackpackSystem> {
     return GameInstance.GetScriptableSystemsContainer(gi).Get(n"RevisedBackpack.RevisedBackpackSystem") as RevisedBackpackSystem;
   }
@@ -3929,49 +4046,102 @@ public class RevisedBackpackSystem extends ScriptableSystem {
     return this.categories;
   }
   public final func IsAddedToJunk(itemId: ItemID) -> Bool {
-    return ArrayContains(this.customJunk, itemId);
+    if !ItemID.IsValid(itemId) {
+      return false;
+    };
+
+    if ArraySize(this.customJunk) > 0 && Equals(ArraySize(this.customJunkHashes), 0) {
+      this.RebuildCustomJunkCache();
+    };
+
+    return ArrayContains(this.customJunkHashes, ItemID.GetCombinedHash(itemId));
   }
+
   public final func AddToJunk(itemId: ItemID) -> Bool {
+    let hash: Uint64;
+    if !ItemID.IsValid(itemId) {
+      return false;
+    };
+
     if this.IsAddedToJunk(itemId) {
       return false;
     };
+
+    hash = ItemID.GetCombinedHash(itemId);
     ArrayPush(this.customJunk, itemId);
+    ArrayPush(this.customJunkHashes, hash);
     return true;
   }
+
   public final func RemoveFromJunk(itemId: ItemID) -> Bool {
+    let hash: Uint64;
+    if !ItemID.IsValid(itemId) {
+      return false;
+    };
+
     if !this.IsAddedToJunk(itemId)  {
       return false;
     };
+
+    hash = ItemID.GetCombinedHash(itemId);
     ArrayRemove(this.customJunk, itemId);
+    ArrayRemove(this.customJunkHashes, hash);
     return true;
   }
+
   public final func HasCustomJunk() -> Bool {
     return ArraySize(this.customJunk) > 0;
   }
   public final func InvalidateCustomJunk(inventory: array<ref<IScriptable>>) -> Void {
     let updated: array<ItemID>;
+    let updatedHashes: array<Uint64>;
+    let hash: Uint64;
     let itemId: ItemID;
     let wrapper: ref<RevisedItemWrapper>;
     for item in inventory {
       wrapper = item as RevisedItemWrapper;
-      if IsDefined(wrapper) {
+      if IsDefined(wrapper) && IsDefined(wrapper.data) {
         itemId = wrapper.data.GetID();
         if this.IsAddedToJunk(itemId) {
-          ArrayPush(updated, itemId);
+          hash = ItemID.GetCombinedHash(itemId);
+          if !ArrayContains(updatedHashes, hash) {
+            ArrayPush(updated, itemId);
+            ArrayPush(updatedHashes, hash);
+          };
         };
       }
     };
+
     this.customJunk = updated;
+    this.customJunkHashes = updatedHashes;
   }
+
   public final func ClearCustomJunk() -> Void {
     ArrayClear(this.customJunk);
+    ArrayClear(this.customJunkHashes);
   }
+
   private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
     this.Log("OnInitialize, can access game systems");
+    this.RebuildCustomJunkCache();
     if Equals(ArraySize(this.categories), 0) {
       this.FillDefaultCategories();
     };
   }
+
+  private final func RebuildCustomJunkCache() -> Void {
+    let hash: Uint64;
+    ArrayClear(this.customJunkHashes);
+    for itemId in this.customJunk {
+      if ItemID.IsValid(itemId) {
+        hash = ItemID.GetCombinedHash(itemId);
+        if !ArrayContains(this.customJunkHashes, hash) {
+          ArrayPush(this.customJunkHashes, hash);
+        };
+      };
+    };
+  }
+
   private final func FillDefaultCategories() -> Void {
     let newCategories: array<ref<RevisedBackpackCategory>> = RevisedBackpackDefaultConfig.Categories();
     this.AddNewCategories(newCategories);

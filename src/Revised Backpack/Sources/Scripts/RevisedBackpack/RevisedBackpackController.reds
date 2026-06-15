@@ -342,10 +342,21 @@ public class RevisedBackpackController extends gameuiMenuGameController {
   }
 
   private final func HandleItemQuantityModified(itemID: ItemID, backpackItem: Bool) -> Void {
-    if backpackItem {
-      if !this.m_uiInventorySystem.GetPlayerItem(itemID).GetItemData().HasTag(n"CraftingPart") {
-        this.RefreshUINextFrame();
-      };
+    let itemData: ref<gameItemData>;
+    let playerItem: wref<UIInventoryItem>;
+    if !backpackItem || !ItemID.IsValid(itemID) || !IsDefined(this.m_uiInventorySystem) {
+      return;
+    };
+
+    playerItem = this.m_uiInventorySystem.GetPlayerItem(itemID);
+    if !IsDefined(playerItem) {
+      this.RefreshUINextFrame();
+      return;
+    };
+
+    itemData = playerItem.GetItemData();
+    if !IsDefined(itemData) || !itemData.HasTag(n"CraftingPart") {
+      this.RefreshUINextFrame();
     };
   }
 
@@ -514,33 +525,36 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     limit = ArraySize(values);
     while i < limit {
       let shouldSkipItem: Bool = false;
+      wrappedItem = null;
       uiInventoryItem = values[i] as UIInventoryItem;
 
-      if ItemID.HasFlag(uiInventoryItem.GetID(), gameEItemIDFlag.Preview) || uiInventoryItem.HasAnyTag(tagsToFilterOut)  {
-        shouldSkipItem = true;
-      };
-
-      if ArrayContains(this.m_itemDropQueueItems, uiInventoryItem.ID) {
-        quantity = uiInventoryItem.GetQuantity(true);
-        dropItem = this.GetDropQueueItem(uiInventoryItem.ID);
-        if dropItem.quantity >= quantity {
+      if IsDefined(uiInventoryItem) {
+        if ItemID.HasFlag(uiInventoryItem.GetID(), gameEItemIDFlag.Preview) || uiInventoryItem.HasAnyTag(tagsToFilterOut)  {
           shouldSkipItem = true;
-        } else {
-          uiInventoryItem.SetQuantity(quantity - dropItem.quantity);
         };
-      };
 
-      if uiInventoryItem.IsJunk() {
-        ArrayPush(this.m_junkItems, uiInventoryItem);
-      };
+        if ArrayContains(this.m_itemDropQueueItems, uiInventoryItem.ID) {
+          quantity = uiInventoryItem.GetQuantity(true);
+          dropItem = this.GetDropQueueItem(uiInventoryItem.ID);
+          if dropItem.quantity >= quantity {
+            shouldSkipItem = true;
+          } else {
+            uiInventoryItem.SetQuantity(quantity - dropItem.quantity);
+          };
+        };
 
-      if !shouldSkipItem {
-        wrappedItem = this.BuildWrappedItem(uiInventoryItem);
-        ArrayPush(wrappedItems, wrappedItem);
-      };
+        if uiInventoryItem.IsJunk() {
+          ArrayPush(this.m_junkItems, uiInventoryItem);
+        };
 
-      if wrappedItem.GetCustomJunkFlag() {
-        ArrayPush(this.m_customJunkItems, wrappedItem);
+        if !shouldSkipItem {
+          wrappedItem = this.BuildWrappedItem(uiInventoryItem);
+          ArrayPush(wrappedItems, wrappedItem);
+        };
+
+        if IsDefined(wrappedItem) && wrappedItem.GetCustomJunkFlag() {
+          ArrayPush(this.m_customJunkItems, wrappedItem);
+        };
       };
 
       i += 1;
@@ -1438,8 +1452,16 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     let itemRecord: ref<Item_Record> = uiInventoryItem.GetItemRecord();
     let itemType: gamedataItemType = itemRecord.ItemType().Type();
     let itemEvolution: gamedataWeaponEvolution = gamedataWeaponEvolution.Invalid;
+    let weaponRecord: ref<WeaponItem_Record>;
+    let ammo: TweakDBID = t"";
+    let searchText: String;
+    let typeLabel: String;
     if uiInventoryItem.IsWeapon() {
       itemEvolution = uiInventoryItem.GetWeaponEvolution();
+      weaponRecord = itemRecord as WeaponItem_Record;
+      if IsDefined(weaponRecord) {
+        ammo = weaponRecord.Ammo().GetID();
+      };
     };
 
     
@@ -1468,6 +1490,13 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     let tier: gamedataQuality = uiInventoryItem.GetQuality();
     let price: Float = uiInventoryItem.GetSellPrice();
     let weight: Float = uiInventoryItem.GetWeight();
+    let itemName: String = GetLocalizedTextByKey(itemRecord.DisplayName());
+    typeLabel = this.BuildTypeLabel(data, equipArea, itemTdbid, itemType, itemEvolution);
+    searchText = UTF8StrLower(itemName);
+    if IsDefined(weaponRecord) {
+      searchText += UTF8StrLower(GetLocalizedText(UIItemsHelper.GetItemTypeKey(weaponRecord.ItemType().Type(), weaponRecord.Evolution().Type())));
+    };
+    searchText += UTF8StrLower(GetLocalizedTextByKey(itemRecord.LocalizedDescription()));
 
     let wrappedItem: ref<RevisedItemWrapper> = new RevisedItemWrapper();
     wrappedItem.id = itemTdbid;
@@ -1475,13 +1504,16 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     wrappedItem.inventoryItem = uiInventoryItem;
     wrappedItem.equipArea = equipArea;
     wrappedItem.type = itemType;
-    wrappedItem.typeLabel = this.BuildTypeLabel(data, equipArea, itemTdbid, itemType, itemEvolution);
+    wrappedItem.typeLabel = typeLabel;
+    wrappedItem.typeSearchText = UTF8StrLower(typeLabel);
     wrappedItem.typeValue = ItemCompareBuilder.GetItemTypeOrder(data, equipArea, itemType);
+    wrappedItem.searchText = searchText;
+    wrappedItem.ammo = ammo;
     wrappedItem.tier = tier;
     wrappedItem.tierLabel = this.BuildTierLabel(uiInventoryItem);
     wrappedItem.tierValue = this.BuildTierValue(uiInventoryItem);
     wrappedItem.evolution = itemEvolution;
-    wrappedItem.nameLabel = GetLocalizedTextByKey(itemRecord.DisplayName());
+    wrappedItem.nameLabel = itemName;
     wrappedItem.price = price;
     wrappedItem.priceLabel = IntToString(RoundF(price));
     wrappedItem.weight = weight;
