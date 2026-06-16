@@ -227,8 +227,14 @@ public class CustomMarkerSystem extends ScriptableSystem {
     roleMappinData.m_customMappinDescription = description;
     roleMappinData.m_customMappinTexturePart = texturePart;
 
-    mappinData.mappinType = t"Mappins.QuestStaticMappinDefinition";
-    mappinData.variant = gamedataMappinVariant.DefaultQuestVariant;
+    if isExternal {
+      mappinData.mappinType = t"Mappins.QuestStaticMappinDefinition";
+      mappinData.variant = gamedataMappinVariant.DefaultQuestVariant;
+    } else {
+      mappinData.mappinType = t"Mappins.CustomMapMarkersMappinDefinition";
+      mappinData.variant = gamedataMappinVariant.CPO_PingGoHereVariant;
+    };
+
     mappinData.active = true;
     mappinData.debugCaption = s"Custom mappin \(description)";
     mappinData.scriptData = roleMappinData;
