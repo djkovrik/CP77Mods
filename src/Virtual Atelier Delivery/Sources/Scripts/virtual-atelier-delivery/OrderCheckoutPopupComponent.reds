@@ -36,8 +36,16 @@ public class OrderCheckoutPopupComponent extends inkComponent {
   }
 
   public final func GetOrderBundle() -> ref<PurchasedAtelierBundle> {
+    if !this.HasValidDeliveryPoint() {
+      return null;
+    };
+
     let bundle: ref<PurchasedAtelierBundle> = PurchasedAtelierBundle.Create(this.params, this.totalOrderPrice, this.selectedDeliveryType, this.selectedDropPoint);
     return bundle;
+  }
+
+  public final func HasValidDeliveryPoint() -> Bool {
+    return NotEquals(this.selectedDropPoint, AtelierDeliveryDropPoint.None);
   }
 
   protected cb func OnCreate() -> ref<inkWidget> {
@@ -48,6 +56,7 @@ public class OrderCheckoutPopupComponent extends inkComponent {
     this.InitializeWidgets();
     this.RegisterInputListeners();
     this.PopulateOrderData();
+    this.SelectFirstAvailableDropPoint();
     this.StandardDeliveryClicked();
   }
 
@@ -95,9 +104,33 @@ public class OrderCheckoutPopupComponent extends inkComponent {
   }
 
   protected cb func OnAtelierDestinationSelectedEvent(evt: ref<AtelierDestinationSelectedEvent>) -> Bool {
-    this.selectedDropPoint = evt.data.type;
-    this.dropPointPreview.SetAtlasResource(evt.data.inkAtlas);
-    this.dropPointPreview.SetTexturePart(evt.data.uniqueTag);
+    if IsDefined(evt) && IsDefined(evt.data) {
+      this.ApplySelectedDropPoint(evt.data);
+    };
+  }
+
+  private final func SelectFirstAvailableDropPoint() -> Void {
+    let spawnSystem: ref<AtelierDropPointsSpawner> = AtelierDropPointsSpawner.Get(GetGameInstance());
+    if !IsDefined(spawnSystem) {
+      return;
+    };
+
+    let dropPoints: array<ref<AtelierDropPointInstance>> = spawnSystem.GetAvailableDropPoints();
+    if ArraySize(dropPoints) > 0 {
+      this.ApplySelectedDropPoint(dropPoints[0]);
+    };
+  }
+
+  private final func ApplySelectedDropPoint(data: ref<AtelierDropPointInstance>) -> Void {
+    if !IsDefined(data) {
+      return;
+    };
+
+    this.selectedDropPoint = data.type;
+    if IsDefined(this.dropPointPreview) {
+      this.dropPointPreview.SetAtlasResource(data.inkAtlas);
+      this.dropPointPreview.SetTexturePart(data.uniqueTag);
+    };
   }
 
   private final func InitializeWidgets() -> Void {

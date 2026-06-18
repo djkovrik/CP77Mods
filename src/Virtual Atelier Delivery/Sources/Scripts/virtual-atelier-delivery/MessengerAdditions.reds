@@ -19,7 +19,7 @@ public final static func GetContactMessageData(out contactData: ref<ContactData>
   if Equals(contactData.contactId, "virtual_atelier_delivery") {
     deliveryMessenger = DeliveryMessengerSystem.Get(GetGameInstance());
     entryHash = deliveryMessenger.GetLastEntryHash();
-    if deliveryMessenger.HasUnreadMessage() && !ArrayContains(contactData.unreadMessages, entryHash) {
+    if NotEquals(entryHash, 0) && deliveryMessenger.HasUnreadMessage() && !ArrayContains(contactData.unreadMessages, entryHash) {
       ArrayPush(contactData.unreadMessages, entryHash);
     };
   };

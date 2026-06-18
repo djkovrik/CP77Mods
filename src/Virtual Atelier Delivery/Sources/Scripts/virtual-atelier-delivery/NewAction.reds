@@ -37,6 +37,18 @@ protected cb func OnInstantiated() -> Bool {
 
 @addMethod(DropPointControllerPS)
 protected final func OnOpenVaDeliveryUI(evt: ref<OpenVaDeliveryUI>) -> EntityNotificationType {
+  if !IsDefined(this.dropPointsSpawner) {
+    this.dropPointsSpawner = AtelierDropPointsSpawner.Get(this.GetGameInstance());
+  };
+
+  if !IsDefined(this.ordersSystem) {
+    this.ordersSystem = OrderProcessingSystem.Get(this.GetGameInstance());
+  };
+
+  if !IsDefined(this.dropPointsSpawner) || !IsDefined(this.ordersSystem) {
+    return EntityNotificationType.DoNotNotifyEntity;
+  };
+
   let entityId: EntityID = this.GetMyEntityID();
   let dropPointTag: CName = this.dropPointsSpawner.GetUniqueTagByEntityId(entityId);
   this.ordersSystem.GetArrivedItems(dropPointTag);
@@ -55,7 +67,11 @@ public func GetActions(out outActions: [ref<DeviceAction>], context: GetActionsC
   };
 
   let entityId: EntityID = this.GetMyEntityID();
-  if this.dropPointsSpawner.IsCustomDropPoint(entityId) {
+  if !IsDefined(this.dropPointsSpawner) {
+    this.dropPointsSpawner = AtelierDropPointsSpawner.Get(this.GetGameInstance());
+  };
+
+  if IsDefined(this.dropPointsSpawner) && this.dropPointsSpawner.IsCustomDropPoint(entityId) {
     ArrayPush(outActions, this.ActionOpenVaDeliveryUI(context.processInitiatorObject));
     this.SetActionIllegality(outActions, this.m_illegalActions.regularActions);
     return true;

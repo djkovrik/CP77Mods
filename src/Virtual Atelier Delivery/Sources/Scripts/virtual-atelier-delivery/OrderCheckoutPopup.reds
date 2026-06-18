@@ -11,6 +11,7 @@ public class OrderCheckoutPopup extends InMenuPopup {
   let buttonConfirm: wref<PopupButton>;
 
   let component: wref<OrderCheckoutPopupComponent>;
+  let confirmed: Bool;
 
   public final static func Show(requester: ref<inkGameController>, params: ref<AtelierDeliveryPopupParams>, timeSystem: ref<TimeSystem>, ordersSystem: ref<OrderProcessingSystem>, uiSystem: ref<UISystem>) -> Void {
     let popup: ref<OrderCheckoutPopup> = new OrderCheckoutPopup();
@@ -55,11 +56,30 @@ public class OrderCheckoutPopup extends InMenuPopup {
   }
 
   protected cb func OnConfirm() -> Void {
+    if this.confirmed {
+      return;
+    };
+
+    if !IsDefined(this.component) || !this.component.HasValidDeliveryPoint() || !IsDefined(this.timeSystem) || !IsDefined(this.ordersSystem) || !IsDefined(this.uiSystem) {
+      this.PlaySound(n"Button", n"OnPress");
+      return;
+    };
+
     let newOrder: ref<PurchasedAtelierBundle> = this.component.GetOrderBundle();
+    if !IsDefined(newOrder) {
+      this.PlaySound(n"Button", n"OnPress");
+      return;
+    };
+
     let currentTimestamp: Float = this.timeSystem.GetGameTimeStamp();
     newOrder.SetPurchaseTimestamp(currentTimestamp);
-    let id: Int32 = this.ordersSystem.AddNewOrder(newOrder);
-    this.uiSystem.QueueEvent(AtelierDeliveryOrderCreatedEvent.Create(id, newOrder.GetTotalPrice()));
+    let id: Int32 = this.ordersSystem.TryCreatePaidOrder(newOrder);
+    if id > 0 {
+      this.confirmed = true;
+      this.uiSystem.QueueEvent(AtelierDeliveryOrderCreatedEvent.Create(id, newOrder.GetTotalPrice()));
+    } else {
+      this.PlaySound(n"Button", n"OnPress");
+    };
   }
 
   protected cb func OnCancel() -> Void {

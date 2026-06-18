@@ -463,7 +463,11 @@ public abstract class LayoutsBuilder {
     scrollWrapper.AttachController(scrollController);
 
     let spawnSystem: ref<AtelierDropPointsSpawner> = AtelierDropPointsSpawner.Get(GetGameInstance());
-    let dropPoints: array<ref<AtelierDropPointInstance>> = spawnSystem.GetAvailableDropPoints();
+    let dropPoints: array<ref<AtelierDropPointInstance>>;
+    if IsDefined(spawnSystem) {
+      dropPoints = spawnSystem.GetAvailableDropPoints();
+    };
+
     let component: ref<OrderCheckoutDestinationItem>;
     for dropPoint in dropPoints {
       component = OrderCheckoutDestinationItem.Create(dropPoint);

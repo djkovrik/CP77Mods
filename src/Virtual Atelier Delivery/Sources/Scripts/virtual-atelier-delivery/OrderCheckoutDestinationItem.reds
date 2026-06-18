@@ -103,15 +103,17 @@ public class OrderCheckoutDestinationItem extends inkComponent {
   }
 
   protected cb func OnClick(evt: ref<inkPointerEvent>) -> Bool {
-    if evt.IsAction(n"click") {
+    if evt.IsAction(n"click") && IsDefined(this.data) {
       this.PlaySound(n"Button", n"OnPress");
       this.QueueEvent(AtelierDestinationSelectedEvent.Create(this.data));
     };
   }
 
   protected cb func OnAtelierDestinationSelectedEvent(evt: ref<AtelierDestinationSelectedEvent>) -> Bool {
-    this.selected = Equals(this.data.type, evt.data.type);
-    this.UpdateState();
+    if IsDefined(this.data) && IsDefined(evt) && IsDefined(evt.data) {
+      this.selected = Equals(this.data.type, evt.data.type);
+      this.UpdateState();
+    };
   }
 
   private final func InitializeWidgets() -> Void {

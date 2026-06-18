@@ -17,7 +17,9 @@ public let dropPointImageContainer: wref<inkCompoundWidget>;
 
 @addMethod(WorldMapTooltipContainer)
 public final func SetIsCustomMappin(custom: Bool, imageInfo: ref<DropPointImageInfo>) -> Void {
-  this.m_defaultTooltipController.SetIsCustomMappin(custom, imageInfo);
+  if IsDefined(this.m_defaultTooltipController) {
+    this.m_defaultTooltipController.SetIsCustomMappin(custom, imageInfo);
+  };
 }
 
 @addMethod(WorldMapTooltipBaseController)
@@ -57,7 +59,11 @@ private final func RegisterDropPointMappin(data: ref<DropPointMappinRegistration
   data.SetMappinID(mappinID);
 
   let entityId: EntityID = data.GetOwnerID();
-  if this.spawner.IsCustomDropPoint(entityId) {
+  if !IsDefined(this.spawner) {
+    this.spawner = AtelierDropPointsSpawner.Get(GetGameInstance());
+  };
+
+  if IsDefined(this.spawner) && this.spawner.IsCustomDropPoint(entityId) {
     this.spawner.SaveSpawnedMappinId(entityId, mappinID);
   };
 }
@@ -69,6 +75,10 @@ protected cb func OnInitialize() -> Bool {
 
   let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
   let container: ref<inkCompoundWidget> = root.GetWidgetByPathName(n"tooltip/tooltipFlex/mainLayout/content/mainContent") as inkCompoundWidget;
+  if !IsDefined(container) {
+    return true;
+  };
+
   let dropPointPreview: ref<inkCompoundWidget> = LayoutsBuilder.BuildDropPointPreviewContainer();
   dropPointPreview.SetAffectsLayoutWhenHidden(false);
   dropPointPreview.SetVisible(false);
@@ -79,23 +89,37 @@ protected cb func OnInitialize() -> Bool {
 @wrapMethod(WorldMapTooltipController)
 protected final func Reset() -> Void {
   wrappedMethod();
-  this.dropPointImageContainer.SetVisible(false);
+  if IsDefined(this.dropPointImageContainer) {
+    this.dropPointImageContainer.SetVisible(false);
+  };
 }
 
 @wrapMethod(WorldMapMenuGameController)
 private final func UpdateTooltip(tooltipType: WorldMapTooltipType, controller: wref<BaseWorldMapMappinController>) -> Void {
-  let mappin: ref<RuntimeMappin> = controller.GetMappin() as RuntimeMappin;
-  let mappinId: NewMappinID = mappin.GetNewMappinID();
-  let isCustomMappin: Bool = this.spawner.IsCustomDropPoint(mappinId);
+  let mappin: ref<RuntimeMappin>;
+  let mappinId: NewMappinID;
+  let isCustomMappin: Bool = false;
   let dropPointInstance: ref<AtelierDropPointInstance>;
   let imageInfo: ref<DropPointImageInfo>;
-  if isCustomMappin {
+
+  if IsDefined(controller) {
+    mappin = controller.GetMappin() as RuntimeMappin;
+  };
+
+  if IsDefined(mappin) && IsDefined(this.spawner) {
+    mappinId = mappin.GetNewMappinID();
+    isCustomMappin = this.spawner.IsCustomDropPoint(mappinId);
+  };
+
+  if isCustomMappin && IsDefined(this.spawner) {
     dropPointInstance = this.spawner.FindInstanceByMappinId(mappinId);
     if IsDefined(dropPointInstance) {
       imageInfo = DropPointImageInfo.Create(dropPointInstance.inkAtlas, dropPointInstance.uniqueTag);
     };
   };
-  this.m_tooltipController.SetIsCustomMappin(isCustomMappin, imageInfo);
+  if IsDefined(this.m_tooltipController) {
+    this.m_tooltipController.SetIsCustomMappin(isCustomMappin, imageInfo);
+  };
   wrappedMethod(tooltipType, controller);
 }
 
@@ -104,9 +128,13 @@ public func SetData(const data: script_ref<WorldMapTooltipData>, menu: ref<World
   wrappedMethod(data, menu);
   let deliveryPoint: AtelierDeliveryDropPoint;
   let deliveryPointLocKey: String;
-  this.dropPointImageContainer.SetVisible(this.isCustomMappin);
-  let image: ref<inkImage> = this.dropPointImageContainer.GetWidgetByPathName(n"image") as inkImage;
-  if this.isCustomMappin {
+  let image: ref<inkImage>;
+  if IsDefined(this.dropPointImageContainer) {
+    this.dropPointImageContainer.SetVisible(this.isCustomMappin);
+    image = this.dropPointImageContainer.GetWidgetByPathName(n"image") as inkImage;
+  };
+
+  if this.isCustomMappin && IsDefined(this.previewImageInfo) {
     deliveryPoint = AtelierDeliveryUtils.GetDropPointByTag(this.previewImageInfo.texturePart);
     deliveryPointLocKey = AtelierDeliveryUtils.GetDeliveryPointLocKey(deliveryPoint);
     inkTextRef.SetText(this.m_titleText, GetLocalizedTextByKey(n"Mod-VAD-Marker"));
@@ -115,8 +143,10 @@ public func SetData(const data: script_ref<WorldMapTooltipData>, menu: ref<World
     inkTextRef.SetText(this.m_additionalDescText, GetLocalizedTextByKey(n"Mod-VAD-Marker-Description"));
     inkWidgetRef.SetVisible(this.m_additionalDescText, true);
     inkWidgetRef.SetOpacity(this.m_additionalDescText, 0.4);
-    image.SetAtlasResource(this.previewImageInfo.atlas);
-    image.SetTexturePart(this.previewImageInfo.texturePart);
+    if IsDefined(image) {
+      image.SetAtlasResource(this.previewImageInfo.atlas);
+      image.SetTexturePart(this.previewImageInfo.texturePart);
+    };
   };
 }
 
@@ -124,8 +154,13 @@ public func SetData(const data: script_ref<WorldMapTooltipData>, menu: ref<World
 @addMethod(BaseMappinBaseController)
 protected final func IsCustomMappinVA() -> Bool {
   let spawner: ref<AtelierDropPointsSpawner> = AtelierDropPointsSpawner.Get(GetGameInstance());
-  let entityId: EntityID = this.GetMappin().GetEntityID();
-  let mappinId: NewMappinID = this.GetMappin().GetNewMappinID();
+  let mappin: wref<IMappin> = this.GetMappin();
+  if !IsDefined(spawner) || !IsDefined(mappin) {
+    return false;
+  };
+
+  let entityId: EntityID = mappin.GetEntityID();
+  let mappinId: NewMappinID = mappin.GetNewMappinID();
   let isCustomMappin: Bool = spawner.IsCustomDropPoint(entityId) || spawner.IsCustomDropPoint(mappinId);
   return isCustomMappin;
 }
@@ -146,7 +181,8 @@ protected final func UpdateIconVA(opt forMinimap: Bool) -> Void {
 @wrapMethod(BaseWorldMapMappinController)
 protected func UpdateIcon() -> Void {
   wrappedMethod();
-  if Equals(this.GetMappin().GetVariant(), gamedataMappinVariant.ServicePointDropPointVariant) {
+  let mappin: wref<IMappin> = this.GetMappin();
+  if IsDefined(mappin) && Equals(mappin.GetVariant(), gamedataMappinVariant.ServicePointDropPointVariant) {
     this.UpdateIconVA();
   };
 }
@@ -154,7 +190,8 @@ protected func UpdateIcon() -> Void {
 @wrapMethod(QuestMappinController)
 protected func UpdateIcon() -> Void {
   wrappedMethod();
-  if Equals(this.GetMappin().GetVariant(), gamedataMappinVariant.ServicePointDropPointVariant) {
+  let mappin: wref<IMappin> = this.GetMappin();
+  if IsDefined(mappin) && Equals(mappin.GetVariant(), gamedataMappinVariant.ServicePointDropPointVariant) {
     this.UpdateIconVA();
   };
 }
@@ -162,7 +199,8 @@ protected func UpdateIcon() -> Void {
 @wrapMethod(MinimapPOIMappinController)
 protected final func UpdateIcon() -> Void {
   wrappedMethod();
-  if Equals(this.GetMappin().GetVariant(), gamedataMappinVariant.ServicePointDropPointVariant) {
+  let mappin: wref<IMappin> = this.GetMappin();
+  if IsDefined(mappin) && Equals(mappin.GetVariant(), gamedataMappinVariant.ServicePointDropPointVariant) {
     this.UpdateIconVA(true);
   };
 }
@@ -170,7 +208,7 @@ protected final func UpdateIcon() -> Void {
 // Move to custom mappin
 @wrapMethod(WorldMapMenuGameController)
 protected cb func OnMapNavigationDelay(evt: ref<MapNavigationDelay>) -> Bool {
-  if NotEquals(this.m_initMappinFocus.deliveryPoint, AtelierDeliveryDropPoint.None) {
+  if IsDefined(this.m_initMappinFocus) && NotEquals(this.m_initMappinFocus.deliveryPoint, AtelierDeliveryDropPoint.None) {
     this.MoveToCustomDeliveryPoint(this.m_initMappinFocus.deliveryPoint);
     return true;
   };
@@ -190,6 +228,10 @@ private final func MoveToCustomDeliveryPoint(target: AtelierDeliveryDropPoint) -
 
 @addMethod(WorldMapMenuGameController)
 private final func FindDropPointInstance(target: AtelierDeliveryDropPoint) -> ref<AtelierDropPointInstance> {
+  if !IsDefined(this.spawner) {
+    return null;
+  };
+
   let dropPoints: array<ref<AtelierDropPointInstance>> = this.spawner.GetAvailableDropPoints();
   for dropPoint in dropPoints {
     if Equals(dropPoint.type, target) {

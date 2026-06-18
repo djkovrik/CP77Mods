@@ -58,6 +58,10 @@ public class OrderProcessingSystem extends ScriptableSystem {
   }
 
   public final func AddNewOrder(order: ref<PurchasedAtelierBundle>) -> Int32 {
+    if !IsDefined(order) {
+      return -1;
+    };
+
     this.Log("New order saved: ");
     this.Log(s"- storeName: \(order.storeName)");
     this.Log(s"- orderId: \(order.orderId)");
@@ -81,6 +85,24 @@ public class OrderProcessingSystem extends ScriptableSystem {
     return createdOrderId;
   }
 
+  public final func TryCreatePaidOrder(order: ref<PurchasedAtelierBundle>) -> Int32 {
+    if !this.IsReady() || !IsDefined(order) {
+      return -1;
+    };
+
+    let price: Int32 = order.GetTotalPrice();
+    if price <= 0 {
+      return -1;
+    };
+
+    if this.transactionSystem.GetItemQuantity(this.player, MarketSystem.Money()) < price {
+      return -1;
+    };
+
+    this.transactionSystem.RemoveItemByTDBID(this.player, t"Items.money", price);
+    return this.AddNewOrder(order);
+  }
+
   public final func GetArrivedItems(tag: CName) -> Void {
     let dropPoint: AtelierDeliveryDropPoint = AtelierDeliveryUtils.GetDropPointByTag(tag);
     let orders: array<ref<PurchasedAtelierBundle>> = this.orders;
@@ -97,10 +119,11 @@ public class OrderProcessingSystem extends ScriptableSystem {
     let receivedAnything: Bool = false;
     let deliveredIds: array<Int32>;
     for arrivedOrder in arrivedOrders {
-      this.GiveBundleItemsToPlayer(arrivedOrder);
-      this.MarkOrderAsReceived(arrivedOrder);
-      ArrayPush(deliveredIds, arrivedOrder.orderId);
-      receivedAnything = true;
+      if this.GiveBundleItemsToPlayer(arrivedOrder) {
+        this.MarkOrderAsReceived(arrivedOrder);
+        ArrayPush(deliveredIds, arrivedOrder.orderId);
+        receivedAnything = true;
+      };
     };
 
     if receivedAnything {
@@ -139,32 +162,69 @@ public class OrderProcessingSystem extends ScriptableSystem {
   }
 
   @if(!ModuleExists("VendorPreview.Config"))
-  private final func GiveBundleItemsToPlayer(bundle: ref<PurchasedAtelierBundle>) -> Void {
-    // do nothing
+  private final func GiveBundleItemsToPlayer(bundle: ref<PurchasedAtelierBundle>) -> Bool {
+    return false;
   }
 
   @if(ModuleExists("VendorPreview.Config"))
-  private final func GiveBundleItemsToPlayer(bundle: ref<PurchasedAtelierBundle>) -> Void {
-    let cartItems: array<ref<WrappedVirtualCartItem>> = bundle.purchasedItems;
-    let itemID: ItemID;
-    let itemData: ref<gameItemData>;
-    let stockItem: ref<WrappedVirtualStockItem>;
+  private final func GiveBundleItemsToPlayer(bundle: ref<PurchasedAtelierBundle>) -> Bool {
+    if !this.IsReady() || !IsDefined(bundle) {
+      return false;
+    };
 
-    // Add items
+    let cartItems: array<ref<WrappedVirtualCartItem>> = bundle.purchasedItems;
+    let gaveAnything: Bool = false;
+
     ArrayClear(this.purchasedItems);
     for cartItem in cartItems {
-      let i: Int32 = 0;
-      while i < cartItem.purchaseAmount {
-        stockItem = cartItem.stockItem;
-        itemID = ItemID.FromTDBID(stockItem.id);
-        ArrayPush(this.purchasedItems, itemID);
-        itemData = this.inventoryManager.CreateBasicItemData(itemID, this.player);
+      if this.TryGiveCartItemToPlayer(cartItem) {
+        gaveAnything = true;
+      };
+    };
+
+    return gaveAnything;
+  }
+
+  private final func TryGiveCartItemToPlayer(cartItem: ref<WrappedVirtualCartItem>) -> Bool {
+    if !IsDefined(cartItem) || cartItem.purchaseAmount <= 0 {
+      return false;
+    };
+
+    let stockItem: ref<WrappedVirtualStockItem> = cartItem.stockItem;
+    if !this.IsStockItemValid(stockItem) {
+      return false;
+    };
+
+    let itemID: ItemID = ItemID.FromTDBID(stockItem.id);
+    if !ItemID.IsValid(itemID) {
+      return false;
+    };
+
+    let gaveAnything: Bool = false;
+    let itemData: ref<gameItemData>;
+    let i: Int32 = 0;
+    while i < cartItem.purchaseAmount {
+      itemData = this.inventoryManager.CreateBasicItemData(itemID, this.player);
+      if IsDefined(itemData) {
         itemData.isVirtualItem = true;
         this.transactionSystem.GiveItem(this.player, itemID, stockItem.quantity);
         this.ScaleItem(this.player, itemData, stockItem.quality);
-        i += 1;
+        ArrayPush(this.purchasedItems, itemID);
+        gaveAnything = true;
       };
+      i += 1;
     };
+
+    return gaveAnything;
+  }
+
+  private final func IsStockItemValid(stockItem: ref<WrappedVirtualStockItem>) -> Bool {
+    if !IsDefined(stockItem) || stockItem.quantity <= 0 || !TDBID.IsValid(stockItem.id) {
+      return false;
+    };
+
+    let itemRecord: ref<Item_Record> = TweakDBInterface.GetItemRecord(stockItem.id);
+    return IsDefined(itemRecord);
   }
 
   public final func RefreshOrdersState() -> Void {
@@ -177,6 +237,7 @@ public class OrderProcessingSystem extends ScriptableSystem {
     let diff: Float;
 
     for order in orders {
+      if IsDefined(order) {
       shipmentTimestamp = order.GetShipmentTimestamp();
       deliveryTimestamp = order.GetDeliveryTimestamp();
       receivedTimestamp = order.GetReceivedTimestamp();
@@ -186,7 +247,7 @@ public class OrderProcessingSystem extends ScriptableSystem {
         diff = shipmentTimestamp - now;
         order.SetNextStatusUpdateDiff(diff);
         ArrayPush(refreshedOrders, order);
-      } else if now > shipmentTimestamp && now < deliveryTimestamp {
+      } else if now >= shipmentTimestamp && now < deliveryTimestamp {
         // already shipped, delivering in progress
         diff = deliveryTimestamp - now;
         order.SetNextStatusUpdateDiff(diff);
@@ -196,7 +257,7 @@ public class OrderProcessingSystem extends ScriptableSystem {
           this.NotifyAboutOrderShipment(order);
         };
         ArrayPush(refreshedOrders, order);
-      } else if now > deliveryTimestamp && Equals(receivedTimestamp, 0.0) {
+      } else if now >= deliveryTimestamp && Equals(receivedTimestamp, 0.0) {
         // ready for pickup
         order.SetNextStatusUpdateDiff(0.0);
         order.SetDeliveryStatus(AtelierDeliveryStatus.Arrived);
@@ -205,10 +266,11 @@ public class OrderProcessingSystem extends ScriptableSystem {
           this.NotifyAboutOrderArrival(order);
         };
         ArrayPush(refreshedOrders, order);
-      } else if now - receivedTimestamp < this.receivedClearPeriod {
+      } else if receivedTimestamp > 0.0 && now - receivedTimestamp < this.receivedClearPeriod {
         // received already, check if order should be deleted from the list
         order.SetDeliveryStatus(AtelierDeliveryStatus.Delivered);
         ArrayPush(refreshedOrders, order);
+      };
       };
     };
 
@@ -315,5 +377,9 @@ public class OrderProcessingSystem extends ScriptableSystem {
     if VirtualAtelierDeliveryConfig.Debug() {
       ModLog(n"DeliveryOrders", str);
     };
+  }
+
+  private final func IsReady() -> Bool {
+    return IsDefined(this.player) && IsDefined(this.timeSystem) && IsDefined(this.transactionSystem) && IsDefined(this.inventoryManager);
   }
 }

@@ -59,17 +59,24 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
   }
 
   public final func IsCustomDropPoint(id: EntityID) -> Bool {
+    if !this.EnsureInitialized() {
+      return false;
+    };
+
     return this.entitySystem.IsTagged(id, this.typeTag);
   }
 
   public final func IsCustomDropPoint(targetId: NewMappinID) -> Bool {
+    if !this.EnsureInitialized() {
+      return false;
+    };
+
     let values: array<wref<IScriptable>>;
     this.spawnedMappins.GetValues(values);
     let entry: ref<MappinIdWrapper>;
     for value in values {
       entry = value as MappinIdWrapper;
-      let id: NewMappinID = entry.id;
-      if Equals(id, targetId) {
+      if IsDefined(entry) && Equals(entry.id, targetId) {
         return true;
       };
     };
@@ -78,7 +85,15 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
   }
 
   public final func SaveSpawnedMappinId(entityId: EntityID, mappinId: NewMappinID) -> Void {
+    if !this.EnsureInitialized() {
+      return;
+    };
+
     let tags: array<CName> = this.entitySystem.GetTags(entityId);
+    if Equals(ArraySize(tags), 0) {
+      return;
+    };
+
     let uniqueTag: CName = tags[0];
     let key: Uint64 = NameToHash(uniqueTag);
     if !this.spawnedMappins.KeyExist(key) {
@@ -88,6 +103,10 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
   }
 
   public final func GetUniqueTagByEntityId(entityId: EntityID) -> CName {
+    if !this.EnsureInitialized() {
+      return n"";
+    };
+
     let tags: array<CName> = this.entitySystem.GetTags(entityId);
     if Equals(ArraySize(tags), 0) {
       return n"";
@@ -97,13 +116,17 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
   }
 
   public final func FindInstanceByMappinId(mappinId: NewMappinID) -> ref<AtelierDropPointInstance> {
+    if !this.EnsureInitialized() {
+      return null;
+    };
+
     let values: array<wref<IScriptable>>;
     this.spawnedMappins.GetValues(values);
     let entry: ref<MappinIdWrapper>;
     let target: ref<MappinIdWrapper>;
     for value in values {
       entry = value as MappinIdWrapper;
-      if Equals(entry.id, mappinId) {
+      if IsDefined(entry) && Equals(entry.id, mappinId) {
         target = entry;
       };
     };
@@ -125,6 +148,9 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
   public final func GetAvailableDropPoints() -> array<ref<AtelierDropPointInstance>> {
     let result: array<ref<AtelierDropPointInstance>>;
     let chunk: array<ref<AtelierDropPointInstance>>;
+    if !this.EnsureInitialized() {
+      return result;
+    };
 
     let supportedTags: array<CName> = this.spawnConfig.GetIterationTagsPrologue();
     for entityTag in supportedTags {
@@ -178,6 +204,10 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     this.Log(s"HandleSpawning");
 
     if GameInstance.GetSystemRequestsHandler().IsPreGame() {
+      return;
+    };
+
+    if !this.EnsureInitialized() {
       return;
     };
 
@@ -349,6 +379,10 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     let prologueUpdateRequired: Bool = false;
     let nightCityUpdateRequired: Bool = false;
     let dogtownUpdateRequired: Bool = false;
+    if !this.EnsureInitialized() {
+      return false;
+    };
+
     let supportedTagsPrologue: array<CName> = this.spawnConfig.GetIterationTagsPrologue();
     let supportedTagsNightCity: array<CName> = this.spawnConfig.GetIterationTagsNightCity();
     let supportedTagsDogtown: array<CName> = this.spawnConfig.GetIterationTagsDogtown();
@@ -372,6 +406,30 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     };
 
     return prologueUpdateRequired || nightCityUpdateRequired || dogtownUpdateRequired;
+  }
+
+  private final func EnsureInitialized() -> Bool {
+    if !IsDefined(this.entitySystem) {
+      this.entitySystem = GameInstance.GetDynamicEntitySystem();
+    };
+
+    if !IsDefined(this.delaySystem) {
+      this.delaySystem = GameInstance.GetDelaySystem(this.GetGameInstance());
+    };
+
+    if !IsDefined(this.spawnedMappins) {
+      this.spawnedMappins = new inkHashMap();
+    };
+
+    if !IsDefined(this.spawnConfig) {
+      this.spawnConfig = new AtelierDropPointsSpawnerConfig();
+      this.spawnConfig.Init();
+      this.spawnConfig.BuildPrologueList();
+      this.spawnConfig.BuildNightCityList();
+      this.spawnConfig.BuildDogtownList();
+    };
+
+    return IsDefined(this.entitySystem) && IsDefined(this.delaySystem) && IsDefined(this.spawnedMappins) && IsDefined(this.spawnConfig);
   }
 
   private final func IsPhoneAvailable() -> Bool {

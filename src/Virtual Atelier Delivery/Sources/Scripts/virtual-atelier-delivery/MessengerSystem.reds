@@ -6,6 +6,7 @@ public class DeliveryMessengerSystem extends ScriptableSystem {
   persistent let hasUnreadMessage: Bool = false;
 
   private let conversation: wref<JournalPhoneConversation>;
+  private let journalReady: Bool;
 
   public static func Get(gi: GameInstance) -> ref<DeliveryMessengerSystem> {
     let system: ref<DeliveryMessengerSystem> = GameInstance.GetScriptableSystemsContainer(gi).Get(n"AtelierDelivery.DeliveryMessengerSystem") as DeliveryMessengerSystem;
@@ -27,11 +28,38 @@ public class DeliveryMessengerSystem extends ScriptableSystem {
 
   private cb func OnJournalLoaded(token: ref<ResourceToken>) {
     this.Log("OnJournalLoaded");
+    if !IsDefined(token) {
+      return;
+    };
+
     let journal: ref<gameJournalResource> = token.GetResource() as gameJournalResource;
+    if !IsDefined(journal) {
+      return;
+    };
+
     let journalRoot: ref<gameJournalRootFolderEntry> = journal.entry as gameJournalRootFolderEntry;
+    if !IsDefined(journalRoot) || Equals(ArraySize(journalRoot.entries), 0) {
+      return;
+    };
+
     let primaryFolder: ref<gameJournalPrimaryFolderEntry> = journalRoot.entries[0] as gameJournalPrimaryFolderEntry;
+    if !IsDefined(primaryFolder) || Equals(ArraySize(primaryFolder.entries), 0) {
+      return;
+    };
+
     let contact: ref<JournalContact> = primaryFolder.entries[0] as JournalContact;
+    if !IsDefined(contact) || Equals(ArraySize(contact.entries), 0) {
+      return;
+    };
+
     this.conversation = contact.entries[0] as JournalPhoneConversation;
+    this.journalReady = IsDefined(this.conversation) && ArraySize(this.conversation.entries) > 0;
+
+    this.TrimHistoryToConversation();
+    this.ApplyPersistedTextsToConversation();
+    if this.hasUnreadMessage {
+      this.NotifyAboutLastHistoryItem();
+    };
   }
 
   private cb func OnSessionReady(event: ref<GameSessionEvent>) {
@@ -54,10 +82,18 @@ public class DeliveryMessengerSystem extends ScriptableSystem {
   }
 
   public final func GetLastEntryHash() -> Int32 {
+    if !this.IsJournalReady() || Equals(ArraySize(this.history), 0) {
+      return 0;
+    };
+
     let journalManager: ref<JournalManager> = GameInstance.GetJournalManager(this.GetGameInstance());
     let currentHistory: array<ref<DeliveryHistoryItem>> = this.history;
     let currentConversationMessages: array<ref<JournalEntry>> = this.conversation.entries;
     let lastIndex: Int32 = ArraySize(currentHistory) - 1;
+    if lastIndex < 0 || lastIndex >= ArraySize(currentConversationMessages) {
+      return 0;
+    };
+
     return journalManager.GetEntryHash(currentConversationMessages[lastIndex]);
   }
 
@@ -82,46 +118,73 @@ public class DeliveryMessengerSystem extends ScriptableSystem {
   }
 
   public final func PushNewNotificationItem(item: ref<DeliveryHistoryItem>) -> Void {
+    if !IsDefined(item) {
+      return;
+    };
+
     this.Log(s"PushNewNotificationItem \(item.LocalizedString())");
-    let relatedEntriesCount: Int32 = ArraySize(this.conversation.entries);
     let currentHistory: array<ref<DeliveryHistoryItem>> = this.history;
     this.uniqueIndex = this.uniqueIndex + 1;
     item = DeliveryHistoryItem.WrapWithIndex(item, this.uniqueIndex);
     ArrayPush(currentHistory, item);
+    this.history = currentHistory;
 
-    let updatedHistory: array<ref<DeliveryHistoryItem>> = this.TakeLast(currentHistory, relatedEntriesCount);
-    this.history = updatedHistory;
+    if !this.IsJournalReady() {
+      this.hasUnreadMessage = true;
+      return;
+    };
+
+    this.TrimHistoryToConversation();
     this.ApplyPersistedTextsToConversation();
     this.NotifyAboutLastHistoryItem();
   }
 
   private final func ApplyPersistedTextsToConversation() -> Void {
+    if !this.IsJournalReady() {
+      return;
+    };
+
     let currentHistory: array<ref<DeliveryHistoryItem>> = this.history;
     this.Log(s"ApplyPersistedTextsToConversation, persistend history size: \(ArraySize(currentHistory))");
     let message: ref<JournalPhoneMessage>;
     let messageText: String;
     let historyItem: ref<DeliveryHistoryItem>;
     let lastIndex: Int32 = ArraySize(currentHistory) - 1;
+    let entriesCount: Int32 = ArraySize(this.conversation.entries);
     let index: Int32 = 0;
     let path: String;
-    while index <= lastIndex {
+    while index <= lastIndex && index < entriesCount {
       message = this.conversation.entries[index] as JournalPhoneMessage;
-      path = s"contacts/virtual_atelier_delivery/notifications/\(message.GetId())";
       historyItem = currentHistory[index];
-      messageText = historyItem.LocalizedString();
-      message.text = CreateLocalizationString(messageText);
+      if IsDefined(message) && IsDefined(historyItem) {
+        path = s"contacts/virtual_atelier_delivery/notifications/\(message.GetId())";
+        messageText = historyItem.LocalizedString();
+        message.text = CreateLocalizationString(messageText);
+        this.Log(s" - updated \(path) text");
+      };
       index += 1;
-      this.Log(s" - updated \(path) text");
     };
   }
 
   private final func NotifyAboutLastHistoryItem() -> Void {
+    if !this.IsJournalReady() || Equals(ArraySize(this.history), 0) {
+      return;
+    };
+
     this.Log("NotifyAboutLastHistoryItem");
     let journalManager: ref<JournalManager> = GameInstance.GetJournalManager(this.GetGameInstance());
     let currentHistory: array<ref<DeliveryHistoryItem>> = this.history;
     let currentConversationMessages: array<ref<JournalEntry>> = this.conversation.entries;
     let lastIndex: Int32 = ArraySize(currentHistory) - 1;
+    if lastIndex < 0 || lastIndex >= ArraySize(currentConversationMessages) {
+      return;
+    };
+
     let lastMessage: ref<JournalPhoneMessage> = currentConversationMessages[lastIndex] as JournalPhoneMessage;
+    if !IsDefined(lastMessage) {
+      return;
+    };
+
     let path: String = s"contacts/virtual_atelier_delivery/notifications/\(lastMessage.GetId())";
     this.Log(s" - notify about \(path)");
     this.hasUnreadMessage = true;
@@ -148,6 +211,19 @@ public class DeliveryMessengerSystem extends ScriptableSystem {
 
     this.Log(s"TakeLast input size \(ArraySize(items)), output size \(ArraySize(result))");
     return result;
+  }
+
+  private final func TrimHistoryToConversation() -> Void {
+    if !this.IsJournalReady() {
+      return;
+    };
+
+    let relatedEntriesCount: Int32 = ArraySize(this.conversation.entries);
+    this.history = this.TakeLast(this.history, relatedEntriesCount);
+  }
+
+  private final func IsJournalReady() -> Bool {
+    return this.journalReady && IsDefined(this.conversation) && ArraySize(this.conversation.entries) > 0;
   }
 
   private final func Log(str: String) -> Void {
