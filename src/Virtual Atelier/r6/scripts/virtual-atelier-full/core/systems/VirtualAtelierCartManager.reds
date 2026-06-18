@@ -56,10 +56,22 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
   public final func GetBuyableAmount(itemID: ItemID, quantity: Int32) -> Int32 {
     let price: Int32;
     let availableMoney: Int32;
+    if quantity <= 0 {
+      return 0;
+    };
+
     for item in this.stock {
-      if Equals(item.itemID, itemID) {
+      if IsDefined(item) && Equals(item.itemID, itemID) {
         price = Cast<Int32>(item.price);
+        if price <= 0 {
+          return 0;
+        };
+
         availableMoney = this.GetCurrentPlayerMoney() - this.GetCurrentGoodsPrice();
+        if availableMoney <= 0 {
+          return 0;
+        };
+
         let amount: Int32 = availableMoney / price / quantity;
         return amount < this.maxQuantityPerBatch ? amount : this.maxQuantityPerBatch;
       };
@@ -149,12 +161,14 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
 
     for value in values {
       current = value as VirtualCartItem;
-      singleItemWeight = current.stockItem.weight;
-      if Equals(singleItemWeight, 0.0) {
-        singleItemWeight = 0.1;
+      if IsDefined(current) && IsDefined(current.stockItem) && current.purchaseAmount > 0 && current.stockItem.quantity > 0 {
+        singleItemWeight = current.stockItem.weight;
+        if singleItemWeight <= 0.0 {
+          singleItemWeight = 0.1;
+        };
+        currentWeight = singleItemWeight * Cast<Float>(current.stockItem.quantity) * Cast<Float>(current.purchaseAmount);
+        total += currentWeight;
       };
-      currentWeight = singleItemWeight * Cast<Float>(current.stockItem.quantity);
-      total += currentWeight;
     };
 
     return total;

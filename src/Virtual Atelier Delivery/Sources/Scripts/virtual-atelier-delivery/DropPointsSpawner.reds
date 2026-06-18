@@ -89,12 +89,11 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
       return;
     };
 
-    let tags: array<CName> = this.entitySystem.GetTags(entityId);
-    if Equals(ArraySize(tags), 0) {
+    let uniqueTag: CName = this.GetDropPointTagByEntityId(entityId);
+    if Equals(uniqueTag, n"") {
       return;
     };
 
-    let uniqueTag: CName = tags[0];
     let key: Uint64 = NameToHash(uniqueTag);
     if !this.spawnedMappins.KeyExist(key) {
       this.spawnedMappins.Insert(key, MappinIdWrapper.Create(mappinId, uniqueTag));
@@ -103,6 +102,10 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
   }
 
   public final func GetUniqueTagByEntityId(entityId: EntityID) -> CName {
+    return this.GetDropPointTagByEntityId(entityId);
+  }
+
+  private final func GetDropPointTagByEntityId(entityId: EntityID) -> CName {
     if !this.EnsureInitialized() {
       return n"";
     };
@@ -112,7 +115,13 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
       return n"";
     };
 
-    return tags[0];
+    for tag in tags {
+      if NotEquals(AtelierDeliveryUtils.GetDropPointByTag(tag), AtelierDeliveryDropPoint.None) {
+        return tag;
+      };
+    };
+
+    return n"";
   }
 
   public final func FindInstanceByMappinId(mappinId: NewMappinID) -> ref<AtelierDropPointInstance> {

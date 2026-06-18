@@ -331,8 +331,6 @@ public class VirtualStoreController extends gameuiMenuGameController {
 
   @if(ModuleExists("AtelierDelivery"))
   protected cb func OnAtelierDeliveryOrderCreatedEvent(evt: ref<AtelierDeliveryOrderCreatedEvent>) -> Bool {
-		let ts: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.player.GetGame());
-    ts.RemoveItemByTDBID(this.player, t"Items.money", evt.price);
     this.cartManager.ClearCart();
     this.allItemsAdded = false;
     this.RefreshCartControls();
@@ -1286,13 +1284,19 @@ public class VirtualStoreController extends gameuiMenuGameController {
     let defaultQuality = n"Rare";
     // Darkcopse qualities tweak
     if (ArraySize(qualities) == 1) {
-      defaultQuality = StringToName(qualities[0]);
+      let qualityCName: CName = StringToName(qualities[0]);
+      if IsNameValid(qualityCName) && !Equals(qualityCName, n"") {
+        defaultQuality = qualityCName;
+      };
     };
 
     let i: Int32 = 0;
 
     while (i < ArraySize(items)) {
-      let itemQuality: String = qualities[i];
+      let itemQuality: String = "";
+      if i < ArraySize(qualities) {
+        itemQuality = qualities[i];
+      };
 
       if Equals(itemQuality, "") {
         ArrayPush(qualitiesCNames, defaultQuality);

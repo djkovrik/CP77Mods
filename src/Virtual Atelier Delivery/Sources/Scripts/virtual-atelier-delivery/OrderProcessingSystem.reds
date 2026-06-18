@@ -207,8 +207,8 @@ public class OrderProcessingSystem extends ScriptableSystem {
       itemData = this.inventoryManager.CreateBasicItemData(itemID, this.player);
       if IsDefined(itemData) {
         itemData.isVirtualItem = true;
-        this.transactionSystem.GiveItem(this.player, itemID, stockItem.quantity);
         this.ScaleItem(this.player, itemData, stockItem.quality);
+        this.transactionSystem.GiveItem(this.player, itemID, stockItem.quantity);
         ArrayPush(this.purchasedItems, itemID);
         gaveAnything = true;
       };
