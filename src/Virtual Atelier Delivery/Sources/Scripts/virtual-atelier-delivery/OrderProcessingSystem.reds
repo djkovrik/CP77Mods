@@ -14,6 +14,7 @@ public class OrderProcessingSystem extends ScriptableSystem {
 
   private persistent let orders: array<ref<PurchasedAtelierBundle>>;
   private persistent let nextOrderId: Int32;
+  private persistent let lastSelectedDropPoint: AtelierDeliveryDropPoint;
 
   private let receivedClearPeriod: Float;
   
@@ -57,6 +58,10 @@ public class OrderProcessingSystem extends ScriptableSystem {
     return this.orders;
   }
 
+  public final func GetLastSelectedDropPoint() -> AtelierDeliveryDropPoint {
+    return this.lastSelectedDropPoint;
+  }
+
   public final func AddNewOrder(order: ref<PurchasedAtelierBundle>) -> Int32 {
     if !IsDefined(order) {
       return -1;
@@ -77,12 +82,19 @@ public class OrderProcessingSystem extends ScriptableSystem {
     this.Log(s"- receivedTimestamp: \(order.receivedTimestamp)");
     this.Log(s"- nextStatusUpdateDiff: \(order.nextStatusUpdateDiff)");
     ArrayPush(this.orders, order);
+    this.SetLastSelectedDropPoint(order.GetDeliveryPoint());
 
     this.RefreshOrdersState();
 
     let createdOrderId: Int32 = this.nextOrderId;
     this.nextOrderId = this.nextOrderId + 1;
     return createdOrderId;
+  }
+
+  private final func SetLastSelectedDropPoint(dropPoint: AtelierDeliveryDropPoint) -> Void {
+    if NotEquals(dropPoint, AtelierDeliveryDropPoint.None) {
+      this.lastSelectedDropPoint = dropPoint;
+    };
   }
 
   public final func TryCreatePaidOrder(order: ref<PurchasedAtelierBundle>) -> Int32 {

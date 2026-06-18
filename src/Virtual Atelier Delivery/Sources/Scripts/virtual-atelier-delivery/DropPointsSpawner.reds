@@ -192,6 +192,21 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     return result;
   }
 
+  public final func FindAvailableDropPoint(target: AtelierDeliveryDropPoint) -> ref<AtelierDropPointInstance> {
+    if Equals(target, AtelierDeliveryDropPoint.None) {
+      return null;
+    };
+
+    let dropPoints: array<ref<AtelierDropPointInstance>> = this.GetAvailableDropPoints();
+    for dropPoint in dropPoints {
+      if IsDefined(dropPoint) && Equals(dropPoint.type, target) {
+        return dropPoint;
+      };
+    };
+
+    return null;
+  }
+
   private final func CheckForQuestFacts() -> Void {
     this.Log(s"CheckForQuestFacts");
     let questsSystem: ref<QuestsSystem> = GameInstance.GetQuestsSystem(this.GetGameInstance());

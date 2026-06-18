@@ -116,9 +116,24 @@ public class OrderCheckoutPopupComponent extends inkComponent {
     };
 
     let dropPoints: array<ref<AtelierDropPointInstance>> = spawnSystem.GetAvailableDropPoints();
-    if ArraySize(dropPoints) > 0 {
-      this.ApplySelectedDropPoint(dropPoints[0]);
+    let selectedDropPoint: ref<AtelierDropPointInstance> = spawnSystem.FindAvailableDropPoint(this.GetLastSelectedDropPoint());
+
+    if !IsDefined(selectedDropPoint) && ArraySize(dropPoints) > 0 {
+      selectedDropPoint = dropPoints[0];
     };
+
+    if IsDefined(selectedDropPoint) {
+      this.ApplySelectedDropPoint(selectedDropPoint);
+    };
+  }
+
+  private final func GetLastSelectedDropPoint() -> AtelierDeliveryDropPoint {
+    let ordersSystem: ref<OrderProcessingSystem> = OrderProcessingSystem.Get(GetGameInstance());
+    if IsDefined(ordersSystem) {
+      return ordersSystem.GetLastSelectedDropPoint();
+    };
+
+    return AtelierDeliveryDropPoint.None;
   }
 
   private final func ApplySelectedDropPoint(data: ref<AtelierDropPointInstance>) -> Void {
