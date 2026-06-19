@@ -23,6 +23,8 @@ public class OrderCheckoutPopupComponent extends inkComponent {
   let orderTotal: wref<inkText>;
 
   let dropPointPreview: wref<inkImage>;
+  let destinationScrollController: wref<inkScrollController>;
+  let destinationItems: wref<inkCompoundWidget>;
 
   let selectedDeliveryType: AtelierDeliveryType;
   let selectedDropPoint: AtelierDeliveryDropPoint;
@@ -58,6 +60,7 @@ public class OrderCheckoutPopupComponent extends inkComponent {
     this.PopulateOrderData();
     this.SelectFirstAvailableDropPoint();
     this.StandardDeliveryClicked();
+    this.ScheduleScrollToSelectedDropPoint();
   }
 
   protected cb func OnUninitialize() -> Void {
@@ -136,6 +139,34 @@ public class OrderCheckoutPopupComponent extends inkComponent {
     return AtelierDeliveryDropPoint.None;
   }
 
+  private final func ScheduleScrollToSelectedDropPoint() -> Void {
+    let delaySystem: ref<DelaySystem> = GameInstance.GetDelaySystem(GetGameInstance());
+    if IsDefined(delaySystem) {
+      delaySystem.DelayCallback(OrderCheckoutScrollToDropPointCallback.Create(this), 0.10, false);
+    };
+  }
+
+  public final func ScrollToSelectedDropPoint() -> Void {
+    if !IsDefined(this.destinationScrollController) || !IsDefined(this.destinationItems) || Equals(this.selectedDropPoint, AtelierDeliveryDropPoint.None) {
+      return;
+    };
+
+    let itemWidget: ref<inkWidget>;
+    let item: ref<OrderCheckoutDestinationItem>;
+    let i: Int32 = 0;
+    while i < this.destinationItems.GetNumChildren() {
+      itemWidget = this.destinationItems.GetWidget(i);
+      item = itemWidget.GetController() as OrderCheckoutDestinationItem;
+      if IsDefined(item) && Equals(item.GetDropPointType(), this.selectedDropPoint) {
+        this.destinationScrollController.EnsureVisible(itemWidget);
+        this.destinationScrollController.UpdateScrollPositionFromScrollArea();
+        return;
+      };
+
+      i += 1;
+    };
+  }
+
   private final func ApplySelectedDropPoint(data: ref<AtelierDropPointInstance>) -> Void {
     if !IsDefined(data) {
       return;
@@ -165,6 +196,8 @@ public class OrderCheckoutPopupComponent extends inkComponent {
     this.shippingTime = root.GetWidgetByPathName(n"leftColumn/deliverySelector/estimatedDelivery") as inkText;
     this.orderTotal = root.GetWidgetByPathName(n"leftColumn/total") as inkText;
     this.dropPointPreview = root.GetWidgetByPathName(n"dropPointPreview/image") as inkImage;
+    this.destinationScrollController = root.GetWidgetByPathName(n"destinationPanel/scrollWrapper").GetController() as inkScrollController;
+    this.destinationItems = root.GetWidgetByPathName(n"destinationPanel/scrollWrapper/scrollArea/components") as inkCompoundWidget;
   }
 
   private final func RegisterInputListeners() -> Void {
@@ -304,6 +337,22 @@ public class OrderCheckoutPopupComponent extends inkComponent {
   private final func Log(str: String) -> Void {
     if VirtualAtelierDeliveryConfig.Debug() {
       ModLog(n"DeliveryCheckout", str);
+    };
+  }
+}
+
+public class OrderCheckoutScrollToDropPointCallback extends DelayCallback {
+  private let target: wref<OrderCheckoutPopupComponent>;
+
+  public final static func Create(target: wref<OrderCheckoutPopupComponent>) -> ref<OrderCheckoutScrollToDropPointCallback> {
+    let instance: ref<OrderCheckoutScrollToDropPointCallback> = new OrderCheckoutScrollToDropPointCallback();
+    instance.target = target;
+    return instance;
+  }
+
+  public func Call() -> Void {
+    if IsDefined(this.target) {
+      this.target.ScrollToSelectedDropPoint();
     };
   }
 }

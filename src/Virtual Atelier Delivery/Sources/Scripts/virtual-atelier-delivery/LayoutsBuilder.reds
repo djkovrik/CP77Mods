@@ -468,15 +468,9 @@ public abstract class LayoutsBuilder {
       dropPoints = spawnSystem.GetAvailableDropPoints();
     };
 
-    let component: ref<OrderCheckoutDestinationItem>;
-    for dropPoint in dropPoints {
-      component = OrderCheckoutDestinationItem.Create(dropPoint);
-      component.Reparent(components);
-    };
-
-    // Auto select saved drop point, falling back to the first available one.
+    let defaultDropPoint: ref<AtelierDropPointInstance>;
     if NotEquals(ArraySize(dropPoints), 0) {
-      let defaultDropPoint: ref<AtelierDropPointInstance> = dropPoints[0];
+      defaultDropPoint = dropPoints[0];
       let ordersSystem: ref<OrderProcessingSystem> = OrderProcessingSystem.Get(GetGameInstance());
       if IsDefined(ordersSystem) {
         let savedDropPoint: ref<AtelierDropPointInstance> = spawnSystem.FindAvailableDropPoint(ordersSystem.GetLastSelectedDropPoint());
@@ -484,7 +478,15 @@ public abstract class LayoutsBuilder {
           defaultDropPoint = savedDropPoint;
         };
       };
+    };
 
+    let component: ref<OrderCheckoutDestinationItem>;
+    for dropPoint in dropPoints {
+      component = OrderCheckoutDestinationItem.Create(dropPoint);
+      component.Reparent(components);
+    };
+
+    if IsDefined(defaultDropPoint) {
       GameInstance.GetUISystem(GetGameInstance()).QueueEvent(AtelierDestinationSelectedEvent.Create(defaultDropPoint));
     };
 

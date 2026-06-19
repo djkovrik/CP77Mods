@@ -15,6 +15,14 @@ public class OrderCheckoutDestinationItem extends inkComponent {
     return instance;
   }
 
+  public final func GetDropPointType() -> AtelierDeliveryDropPoint {
+    if IsDefined(this.data) {
+      return this.data.type;
+    };
+
+    return AtelierDeliveryDropPoint.None;
+  }
+
   protected cb func OnCreate() -> ref<inkWidget> {
     let wrapper: ref<inkCanvas> = new inkCanvas();
     wrapper.SetName(n"wrapper");
