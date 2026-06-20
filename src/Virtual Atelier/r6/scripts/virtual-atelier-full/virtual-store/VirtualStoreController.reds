@@ -1580,7 +1580,9 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
     let price = InventoryItemData.GetPrice(inventoryItemData);
     let quantity: Int32 = InventoryItemData.GetQuantity(inventoryItemData);
     let stockItem: ref<VirtualStockItem> = this.GetStockItem(itemID, quantity);
+    let itemData: ref<gameItemData>;
     let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.player.GetGame());
+    let inventoryManager: ref<InventoryManager> = GameInstance.GetInventoryManager(this.player.GetGame());
     let playerMoney: Int32 = this.vendorDataManager.GetLocalPlayerCurrencyAmount();
     let vendorNotification: ref<UIMenuNotificationEvent>;
 
@@ -1589,6 +1591,12 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
       vendorNotification.m_notificationType = UIMenuNotificationType.VNotEnoughMoney;
       GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(vendorNotification);
     } else {
+      if IsDefined(stockItem) {
+        itemID = ItemID.FromTDBID(stockItem.itemTDBID);
+        itemData = inventoryManager.CreateBasicItemData(itemID, this.player);
+        itemData.isVirtualItem = true;
+        AtelierItemsHelper.ScaleItem(this.player, itemData, stockItem.quality);
+      };
       transactionSystem.GiveItem(this.player, itemID, quantity);
       transactionSystem.RemoveItemByTDBID(this.player, t"Items.money", Cast(price));
       if IsDefined(stockItem) {
