@@ -1,4 +1,4 @@
-// VirtualAtelierDelivery v1.1.0
+// VirtualAtelierDelivery v1.1.1
 module AtelierDelivery
 
 import Codeware.UI.*
@@ -3140,15 +3140,15 @@ public class OrderProcessingSystem extends ScriptableSystem {
       return false;
     };
 
-    let itemID: ItemID = ItemID.FromTDBID(stockItem.id);
-    if !ItemID.IsValid(itemID) {
-      return false;
-    };
-
     let gaveAnything: Bool = false;
+    let itemID: ItemID;
     let itemData: ref<gameItemData>;
     let i: Int32 = 0;
     while i < cartItem.purchaseAmount {
+      itemID = ItemID.FromTDBID(stockItem.id);
+      if !ItemID.IsValid(itemID) {
+        return gaveAnything;
+      };
       itemData = this.inventoryManager.CreateBasicItemData(itemID, this.player);
       if IsDefined(itemData) {
         itemData.isVirtualItem = true;
