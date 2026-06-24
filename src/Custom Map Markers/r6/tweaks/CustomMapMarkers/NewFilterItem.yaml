@@ -32,8 +32,14 @@ Mappins.CustomMapMarkersMappinDefinition:
 WorldMappinUIProfile.CustomMapMarkers:
   $base: WorldMappinUIProfile.Quest
 
-MinimapMappinUIProfile.CustomMapMarkers:
-  $base: MinimapMappinUIProfile.Quest
+WorldMap.ZoomLevelImportant.mappinFilterGroups:
+  - !append-once WorldMap.CustomMapMarkersFilterGroup
 
-WorldMap.QuestFilterGroup.mappins:
-  - !append-once Mappins.CustomMapMarkersVariant
+WorldMap.ZoomLevelAllMappins.mappinFilterGroups:
+  - !append-once WorldMap.CustomMapMarkersFilterGroup
+
+WorldMap.ZoomLevelExtraMappins.mappinFilterGroups:
+  - !append-once WorldMap.CustomMapMarkersFilterGroup
+
+WorldMap.ZoomLevelSubDistricts.mappinFilterGroups:
+  - !append-once WorldMap.CustomMapMarkersFilterGroup
