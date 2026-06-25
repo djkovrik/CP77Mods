@@ -121,3 +121,12 @@ public class StoreItemCountWrapper {
   public persistent let storeID: CName;
   public persistent let itemCount: Int32;
 }
+
+public class VirtualStoreHeaderWrapper {
+  public let label: String;
+  public let counter: Int32;
+}
+
+public class inkBorderVA extends inkBorder {}
+
+public class SearchComponentClearFocusEvent extends Event {}

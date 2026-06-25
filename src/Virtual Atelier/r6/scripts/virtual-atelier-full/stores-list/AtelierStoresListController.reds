@@ -26,16 +26,20 @@ public class AtelierStoresListController extends inkGameController {
   private let storesContainer: wref<inkCompoundWidget>;
   private let ordersContainer: wref<inkCompoundWidget>;
   private let placeholderContainer: wref<inkCompoundWidget>;
+  private let searchContainer: wref<inkCompoundWidget>;
   private let categoriesContainer: wref<inkCompoundWidget>;
   private let logo: wref<inkWidget>;
 
   private let buttonStores: wref<inkText>;
   private let buttonOrders: wref<inkText>;
+  private let buttonSearch: wref<inkText>;
 
   private let storesHovered: Bool = false;
   private let storesSelected: Bool = false;
   private let ordersHovered: Bool = false;
+  private let searchHovered: Bool = false;
   private let ordersSelected: Bool = false;
+  private let searchSelected: Bool = false;
 
   protected cb func OnInitialize() {
     let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
@@ -85,10 +89,17 @@ public class AtelierStoresListController extends inkGameController {
     if Equals(name, n"virtualStores") {
       this.storesHovered = true;
       this.ordersHovered = false;
+      this.searchHovered = false;
     };
     if Equals(name, n"activeOrders") {
       this.storesHovered = false;
       this.ordersHovered = true;
+      this.searchHovered = false;
+    };
+    if Equals(name, n"search") {
+      this.storesHovered = false;
+      this.ordersHovered = false;
+      this.searchHovered = true;
     };
 
     this.RefreshControlsColor();
@@ -104,6 +115,9 @@ public class AtelierStoresListController extends inkGameController {
     if Equals(name, n"activeOrders") {
       this.ordersHovered = false;
     };
+    if Equals(name, n"search") {
+      this.searchHovered = false;
+    };
     this.RefreshControlsColor();
   }
 
@@ -114,24 +128,50 @@ public class AtelierStoresListController extends inkGameController {
       let atelierBlocked: Bool = this.ShouldBlockAtelier();
       if Equals(name, n"virtualStores") {
         this.storesSelected = true;
+        this.ordersSelected = false;
+        this.searchSelected = false;
+
         this.storesContainer.SetVisible(!atelierBlocked);
         this.categoriesContainer.SetVisible(!atelierBlocked);
         this.placeholderContainer.SetVisible(atelierBlocked);
-        this.AnimateScale(this.buttonStores, 1.1);
-        this.ordersSelected = false;
         this.ordersContainer.SetVisible(false);
+        this.searchContainer.SetVisible(false);
+
+        this.AnimateScale(this.buttonStores, 1.1);
         this.AnimateScale(this.buttonOrders, 1.0);
+        this.AnimateScale(this.buttonSearch, 1.0);
       };
       
       if Equals(name, n"activeOrders") {
         this.storesSelected = false;
+        this.ordersSelected = true;
+        this.searchSelected = false;
+
         this.storesContainer.SetVisible(false);
         this.placeholderContainer.SetVisible(false);
         this.categoriesContainer.SetVisible(false);
-        this.AnimateScale(this.buttonStores, 1.0);
-        this.ordersSelected = true;
         this.ordersContainer.SetVisible(true);
+        this.searchContainer.SetVisible(false);
+ 
+        this.AnimateScale(this.buttonStores, 1.0);
         this.AnimateScale(this.buttonOrders, 1.1);
+        this.AnimateScale(this.buttonSearch, 1.0);
+      };
+
+      if Equals(name, n"search") {
+        this.storesSelected = false;
+        this.ordersSelected = false;
+        this.searchSelected = true;
+
+        this.storesContainer.SetVisible(false);
+        this.placeholderContainer.SetVisible(false);
+        this.categoriesContainer.SetVisible(false);
+        this.ordersContainer.SetVisible(false);
+        this.searchContainer.SetVisible(true);
+ 
+        this.AnimateScale(this.buttonStores, 1.0);
+        this.AnimateScale(this.buttonOrders, 1.0);
+        this.AnimateScale(this.buttonSearch, 1.1);
       };
 
       this.RefreshControlsColor();
@@ -204,6 +244,10 @@ public class AtelierStoresListController extends inkGameController {
     this.storesDataView.UpdateView();
   }
 
+  protected cb func OnSearchComponentClearFocusEvent(evt: ref<SearchComponentClearFocusEvent>) -> Bool {
+    this.RequestSetFocus(null);
+  }
+
   private func RegisterCallbacks() -> Void {
     this.RegisterToCallback(n"OnRelease", this, n"OnRelease");
     this.buttonStores.RegisterToCallback(n"OnPress", this, n"OnPress");
@@ -212,6 +256,9 @@ public class AtelierStoresListController extends inkGameController {
     this.buttonOrders.RegisterToCallback(n"OnPress", this, n"OnPress");
     this.buttonOrders.RegisterToCallback(n"OnHoverOver", this, n"OnHoverOver");
     this.buttonOrders.RegisterToCallback(n"OnHoverOut", this, n"OnHoverOut");
+    this.buttonSearch.RegisterToCallback(n"OnPress", this, n"OnPress");
+    this.buttonSearch.RegisterToCallback(n"OnHoverOver", this, n"OnHoverOver");
+    this.buttonSearch.RegisterToCallback(n"OnHoverOut", this, n"OnHoverOut");
   }
 
   private func UnregisterCallbacks() -> Void {
@@ -222,6 +269,9 @@ public class AtelierStoresListController extends inkGameController {
     this.buttonOrders.UnregisterFromCallback(n"OnPress", this, n"OnPress");
     this.buttonOrders.UnregisterFromCallback(n"OnHoverOver", this, n"OnHoverOver");
     this.buttonOrders.UnregisterFromCallback(n"OnHoverOut", this, n"OnHoverOut");
+    this.buttonSearch.UnregisterFromCallback(n"OnPress", this, n"OnPress");
+    this.buttonSearch.UnregisterFromCallback(n"OnHoverOver", this, n"OnHoverOver");
+    this.buttonSearch.UnregisterFromCallback(n"OnHoverOut", this, n"OnHoverOut");
   }
 
   private func InitializeData() -> Void {
@@ -243,9 +293,14 @@ public class AtelierStoresListController extends inkGameController {
     this.ordersContainer = root.GetWidgetByPathName(n"ordersContainer") as inkCompoundWidget;
     this.placeholderContainer = root.GetWidgetByPathName(n"placeholderContainer") as inkCompoundWidget;
     this.categoriesContainer = root.GetWidgetByPathName(n"categories") as inkCompoundWidget;
+    this.searchContainer = root.GetWidgetByPathName(n"searchContainer") as inkCompoundWidget;
     this.logo = root.GetWidgetByPathName(n"logo");
+
     let ordersComponent: ref<inkComponent> = this.GetOrdersComponent();
     ordersComponent.Reparent(this.ordersContainer);
+
+    let searchComponent: ref<inkComponent> = new SearchEngineComponent();
+    searchComponent.Reparent(this.searchContainer);
 
     let virtualStores: ref<inkText> = new inkText();
     virtualStores.SetName(n"virtualStores");
@@ -256,11 +311,25 @@ public class AtelierStoresListController extends inkGameController {
     virtualStores.SetFontSize(60);
     virtualStores.SetInteractive(true);
     virtualStores.SetLetterCase(textLetterCase.UpperCase);
-    virtualStores.SetMargin(inkMargin(0.0, 0.0, 48.0, 0.0));
+    virtualStores.SetMargin(inkMargin(48.0, 0.0, 48.0, 0.0));
     virtualStores.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     virtualStores.BindProperty(n"tintColor", n"MainColors.ActiveWhite");
     virtualStores.Reparent(this.topMenu);
     this.buttonStores = virtualStores;
+
+    let search: ref<inkText> = new inkText();
+    search.SetName(n"search");
+    search.SetText(GetLocalizedTextByKey(n"VA-Search-Title"));
+    search.SetFitToContent(true);
+    search.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+    search.SetFontSize(60);
+    search.SetInteractive(true);
+    search.SetLetterCase(textLetterCase.UpperCase);
+    search.SetMargin(inkMargin(48.0, 0.0, 48.0, 0.0));
+    search.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    search.BindProperty(n"tintColor", n"MainColors.Gold");
+    search.Reparent(this.topMenu);
+    this.buttonSearch = search;
 
     let activeOrders: ref<inkText> = new inkText();
     activeOrders.SetName(n"activeOrders");
@@ -270,7 +339,7 @@ public class AtelierStoresListController extends inkGameController {
     activeOrders.SetFontSize(60);
     activeOrders.SetInteractive(true);
     activeOrders.SetLetterCase(textLetterCase.UpperCase);
-    activeOrders.SetMargin(inkMargin(48.0, 0.0, 0.0, 0.0));
+    activeOrders.SetMargin(inkMargin(48.0, 0.0, 48.0, 0.0));
     activeOrders.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     activeOrders.BindProperty(n"tintColor", n"MainColors.Gold");
     activeOrders.Reparent(this.topMenu);
@@ -302,6 +371,7 @@ public class AtelierStoresListController extends inkGameController {
   private func RefreshControlsColor() -> Void {
     let storesColor: CName;
     let ordersColor: CName;
+    let searchColor: CName;
 
     if !this.storesHovered && !this.storesSelected {
       storesColor = n"MainColors.White";
@@ -323,8 +393,19 @@ public class AtelierStoresListController extends inkGameController {
       ordersColor = n"MainColors.ActiveRed";
     };
 
+    if !this.searchHovered && !this.searchSelected {
+      searchColor = n"MainColors.White";
+    } else if this.searchHovered && !this.searchSelected {
+      searchColor = n"MainColors.Red";
+    } else if !this.searchHovered && this.searchSelected {
+      searchColor = n"MainColors.Gold";
+    } else if this.searchHovered && this.searchSelected  {
+      searchColor = n"MainColors.ActiveRed";
+    };
+
     this.buttonStores.BindProperty(n"tintColor", storesColor);
     this.buttonOrders.BindProperty(n"tintColor", ordersColor);
+    this.buttonSearch.BindProperty(n"tintColor", searchColor);
   }
 
   private func ShowSideImages() -> Void {

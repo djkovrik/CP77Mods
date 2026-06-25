@@ -20,6 +20,10 @@ public class VirtualAtelierStoresManager extends ScriptableSystem {
     return this.stores;
   }
 
+  public func GetStoresCount() -> Int32 {
+    return ArraySize(this.stores);
+  }
+
   public func SetStores(stores: array<ref<VirtualShop>>) -> Void {
     this.stores = stores;
   }
