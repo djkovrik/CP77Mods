@@ -217,6 +217,7 @@ public class AtelierStoresListController extends inkGameController {
     vendorData.data.vendorId = "VirtualVendor";
     vendorData.data.entityID = this.player.GetEntityID();
     vendorData.data.isActive = true;
+    this.system.ClearSearchResults();
     this.system.SetCurrentStore(virtualStore);
     GameInstance.GetUISystem(this.player.GetGame()).RequestVendorMenu(vendorData);
     return true;

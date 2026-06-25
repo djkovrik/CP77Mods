@@ -7,6 +7,8 @@ public class VirtualAtelierStoresManager extends ScriptableSystem {
   private let stores: array<ref<VirtualShop>>;
   private let categories: array<VirtualStoreCategory>;
   private let current: ref<VirtualShop>;
+  private let searchResults: array<ref<VirtualStoreSearchResult>>;
+  private let searchResultsCounter: Int32;
   private persistent let bookmarked: array<CName>;
   private persistent let prevStores: array<CName>;
   private persistent let itemCounts: array<ref<StoreItemCountWrapper>>;
@@ -34,6 +36,68 @@ public class VirtualAtelierStoresManager extends ScriptableSystem {
 
   public func GetCurrentStore() -> ref<VirtualShop> {
     return this.current;
+  }
+
+  public func GetSearchResults() -> array<ref<VirtualStoreSearchResult>> {
+    return this.searchResults;
+  }
+
+  public func GetSearchResultsCounter() -> Int32 {
+    return this.searchResultsCounter;
+  }
+
+  public func GetSearchResultsStoresCounter() -> Int32 {
+    return ArraySize(this.searchResults);
+  }
+
+  public func HasSearchResults() -> Bool {
+    return this.searchResultsCounter > 0;
+  }
+
+  public func ClearSearchResults() -> Void {
+    ArrayClear(this.searchResults);
+    this.searchResultsCounter = 0;
+  }
+
+  public func SearchStores(criteria: ref<VirtualStoreSearchCriteria>) -> Int32 {
+    let wardrobeItemIDs: array<ItemID> = GameInstance.GetWardrobeSystem(this.GetGameInstance()).GetStoredItemIDs();
+    let wardrobeAppearances: array<CName> = this.GetWardrobeAppearances(wardrobeItemIDs);
+    let result: ref<VirtualStoreSearchResult>;
+    let itemTDBID: TweakDBID;
+    let itemID: ItemID;
+    let itemRecord: ref<Item_Record>;
+    let i: Int32;
+
+    this.ClearSearchResults();
+
+    if !IsDefined(criteria) {
+      return 0;
+    };
+
+    for store in this.stores {
+      result = new VirtualStoreSearchResult();
+      result.store = store;
+      i = 0;
+      while i < ArraySize(store.items) {
+        itemTDBID = TDBID.Create(store.items[i]);
+        itemID = ItemID.FromTDBID(itemTDBID);
+        if ItemID.IsValid(itemID) {
+          itemRecord = TweakDBInterface.GetItemRecord(itemTDBID);
+          if IsDefined(itemRecord) && this.MatchesSearchCriteria(itemRecord, criteria, wardrobeAppearances) {
+            ArrayPush(result.itemIndexes, i);
+            result.counter += 1;
+            this.searchResultsCounter += 1;
+          };
+        };
+        i += 1;
+      };
+
+      if result.counter > 0 {
+        ArrayPush(this.searchResults, result);
+      };
+    };
+
+    return this.searchResultsCounter;
   }
 
   public func AddBookmark(storeID: CName) -> Void {
@@ -152,6 +216,179 @@ public class VirtualAtelierStoresManager extends ScriptableSystem {
     };
 
     this.bookmarked = actuallyBookmarked;
+  }
+
+  private func MatchesSearchCriteria(record: ref<Item_Record>, criteria: ref<VirtualStoreSearchCriteria>, wardrobeAppearances: array<CName>) -> Bool {
+    let itemType: gamedataItemType = record.ItemType().Type();
+    let localizedName: String;
+    let primarySelected: Bool = this.IsPrimarySearchFilterSelected(criteria);
+    let secondarySelected: Bool = this.IsSecondarySearchFilterSelected(criteria);
+
+    if NotEquals(criteria.query, "") {
+      localizedName = UTF8StrLower(GetLocalizedText(LocKeyToString(record.DisplayName())));
+      if !StrContains(localizedName, criteria.query) {
+        return false;
+      };
+    };
+
+    if primarySelected && !this.MatchesPrimarySearchFilters(itemType, record, criteria) {
+      return false;
+    };
+
+    if secondarySelected && !this.MatchesSecondarySearchFilters(itemType, record, criteria, wardrobeAppearances) {
+      return false;
+    };
+
+    return true;
+  }
+
+  private func IsPrimarySearchFilterSelected(criteria: ref<VirtualStoreSearchCriteria>) -> Bool {
+    return criteria.rangedWeapons || criteria.meleeWeapons || criteria.clothes || criteria.consumables || criteria.grenades || criteria.attachments || criteria.programs || criteria.cyberware || criteria.junk;
+  }
+
+  private func IsSecondarySearchFilterSelected(criteria: ref<VirtualStoreSearchCriteria>) -> Bool {
+    return criteria.face || criteria.feet || criteria.head || criteria.legs || criteria.innerChest || criteria.outerChest || criteria.outfit || criteria.newWardrobe;
+  }
+
+  private func MatchesPrimarySearchFilters(itemType: gamedataItemType, record: ref<Item_Record>, criteria: ref<VirtualStoreSearchCriteria>) -> Bool {
+    if criteria.rangedWeapons && this.MatchesSearchRangedWeapons(itemType, record) {
+      return true;
+    };
+    if criteria.meleeWeapons && this.MatchesSearchMeleeWeapons(itemType, record) {
+      return true;
+    };
+    if criteria.clothes && this.MatchesSearchClothes(itemType, record) {
+      return true;
+    };
+    if criteria.consumables && this.MatchesSearchConsumables(itemType, record) {
+      return true;
+    };
+    if criteria.grenades && this.MatchesSearchGrenades(itemType, record) {
+      return true;
+    };
+    if criteria.attachments && this.MatchesSearchAttachments(itemType, record) {
+      return true;
+    };
+    if criteria.programs && this.MatchesSearchPrograms(itemType, record) {
+      return true;
+    };
+    if criteria.cyberware && this.MatchesSearchCyberware(itemType, record) {
+      return true;
+    };
+    if criteria.junk && this.MatchesSearchJunk(itemType, record) {
+      return true;
+    };
+    return false;
+  }
+
+  private func MatchesSecondarySearchFilters(itemType: gamedataItemType, record: ref<Item_Record>, criteria: ref<VirtualStoreSearchCriteria>, wardrobeAppearances: array<CName>) -> Bool {
+    if criteria.face && this.MatchesSearchFace(itemType, record) {
+      return true;
+    };
+    if criteria.feet && this.MatchesSearchFeet(itemType, record) {
+      return true;
+    };
+    if criteria.head && this.MatchesSearchHead(itemType, record) {
+      return true;
+    };
+    if criteria.legs && this.MatchesSearchLegs(itemType, record) {
+      return true;
+    };
+    if criteria.innerChest && this.MatchesSearchInnerChest(itemType, record) {
+      return true;
+    };
+    if criteria.outerChest && this.MatchesSearchOuterChest(itemType, record) {
+      return true;
+    };
+    if criteria.outfit && this.MatchesSearchOutfit(itemType, record) {
+      return true;
+    };
+    if criteria.newWardrobe && this.MatchesSearchNewWardrobe(itemType, record, wardrobeAppearances) {
+      return true;
+    };
+    return false;
+  }
+
+  private func MatchesSearchRangedWeapons(itemType: gamedataItemType, record: ref<Item_Record>) -> Bool {
+    return record.TagsContains(n"RangedWeapon");
+  }
+
+  private func MatchesSearchMeleeWeapons(itemType: gamedataItemType, record: ref<Item_Record>) -> Bool {
+    return record.TagsContains(n"MeleeWeapon");
+  }
+
+  private func MatchesSearchClothes(itemType: gamedataItemType, record: ref<Item_Record>) -> Bool {
+    return UIInventoryItemsManager.IsItemTypeCloting(itemType) || record.TagsContains(n"Clothing");
+  }
+
+  private func MatchesSearchConsumables(itemType: gamedataItemType, record: ref<Item_Record>) -> Bool {
+    return record.TagsContains(n"Consumable");
+  }
+
+  private func MatchesSearchGrenades(itemType: gamedataItemType, record: ref<Item_Record>) -> Bool {
+    return record.TagsContains(n"Grenade");
+  }
+
+  private func MatchesSearchAttachments(itemType: gamedataItemType, record: ref<Item_Record>) -> Bool {
+    return record.TagsContains(n"itemPart") && !record.TagsContains(n"Fragment") && !record.TagsContains(n"SoftwareShard");
+  }
+
+  private func MatchesSearchPrograms(itemType: gamedataItemType, record: ref<Item_Record>) -> Bool {
+    return record.TagsContains(n"SoftwareShard") || record.TagsContains(n"QuickhackCraftingPart");
+  }
+
+  private func MatchesSearchCyberware(itemType: gamedataItemType, record: ref<Item_Record>) -> Bool {
+    return UIInventoryItemsManager.IsItemTypeCyberware(itemType) || record.TagsContains(n"Cyberware") || record.TagsContains(n"Fragment");
+  }
+
+  private func MatchesSearchJunk(itemType: gamedataItemType, record: ref<Item_Record>) -> Bool {
+    return record.TagsContains(n"Junk");
+  }
+
+  private func MatchesSearchFace(itemType: gamedataItemType, record: ref<Item_Record>) -> Bool {
+    return Equals(itemType, gamedataItemType.Clo_Face);
+  }
+
+  private func MatchesSearchFeet(itemType: gamedataItemType, record: ref<Item_Record>) -> Bool {
+    return Equals(itemType, gamedataItemType.Clo_Feet);
+  }
+
+  private func MatchesSearchHead(itemType: gamedataItemType, record: ref<Item_Record>) -> Bool {
+    return Equals(itemType, gamedataItemType.Clo_Head);
+  }
+
+  private func MatchesSearchLegs(itemType: gamedataItemType, record: ref<Item_Record>) -> Bool {
+    return Equals(itemType, gamedataItemType.Clo_Legs);
+  }
+
+  private func MatchesSearchInnerChest(itemType: gamedataItemType, record: ref<Item_Record>) -> Bool {
+    return Equals(itemType, gamedataItemType.Clo_InnerChest);
+  }
+
+  private func MatchesSearchOuterChest(itemType: gamedataItemType, record: ref<Item_Record>) -> Bool {
+    return Equals(itemType, gamedataItemType.Clo_OuterChest);
+  }
+
+  private func MatchesSearchOutfit(itemType: gamedataItemType, record: ref<Item_Record>) -> Bool {
+    return Equals(itemType, gamedataItemType.Clo_Outfit);
+  }
+
+  private func MatchesSearchNewWardrobe(itemType: gamedataItemType, record: ref<Item_Record>, wardrobeAppearances: array<CName>) -> Bool {
+    return this.MatchesSearchClothes(itemType, record) && !ArrayContains(wardrobeAppearances, record.AppearanceName());
+  }
+
+  private func GetWardrobeAppearances(wardrobeItemIDs: array<ItemID>) -> array<CName> {
+    let result: array<CName>;
+    let itemRecord: wref<Item_Record>;
+    let i: Int32 = 0;
+    while i < ArraySize(wardrobeItemIDs) {
+      itemRecord = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(wardrobeItemIDs[i]));
+      if IsDefined(itemRecord) {
+        ArrayPush(result, itemRecord.AppearanceName());
+      };
+      i += 1;
+    };
+    return result;
   }
 
   private func GetStoresIds() -> array<CName> {

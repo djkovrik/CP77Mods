@@ -70,6 +70,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
   private let pendingPageItems: array<ref<IScriptable>>;
   private let pendingPageIndex: Int32;
   private let pageRenderToken: Int32;
+  private let pendingPageLastStoreID: CName;
   private let isUninitializing: Bool;
   private let pageBatchSize: Int32 = 50;
   private let virtualStore: ref<VirtualShop>;
@@ -80,6 +81,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
   private let currentPage: Int32;
   private let totalPages: Int32;
   private let pageSize: Int32;
+  private let isSearchResultsMode: Bool;
 
   private let popupToken: ref<inkGameNotificationToken>;
   private let currentTutorialsFact: Int32;
@@ -445,6 +447,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.SpawnPreviewPuppet();
     this.storesManager = VirtualAtelierStoresManager.GetInstance(this.player.GetGame());
     this.virtualStore = this.storesManager.GetCurrentStore();
+    this.isSearchResultsMode = this.storesManager.GetSearchResultsStoresCounter() > 0;
     this.questsSystem = GameInstance.GetQuestsSystem(this.player.GetGame());
     this.uiSystem = GameInstance.GetUISystem(this.player.GetGame());
     this.uiScriptableSystem = UIScriptableSystem.GetInstance(this.player.GetGame());
@@ -793,6 +796,11 @@ public class VirtualStoreController extends gameuiMenuGameController {
     let totalPrice: Float = 0.0;
     let wardrobeItemAppearances: array<CName> = this.GetWardrobeAppearances(wardrobeItemIDs);
 
+    if this.isSearchResultsMode {
+      this.FillVirtualSearchStock(wardrobeItemAppearances, vendorObject);
+      return;
+    };
+
     let stockItem: ref<VirtualStockItem>;
     let virtualItemIndex = 0;
     ArrayClear(this.virtualStock);
@@ -809,6 +817,9 @@ public class VirtualStoreController extends gameuiMenuGameController {
         stockItem = new VirtualStockItem();
         stockItem.itemID = itemId;
         stockItem.itemTDBID = itemTDBID;
+        stockItem.sourceStoreID = this.virtualStore.storeID;
+        stockItem.sourceStoreName = this.virtualStore.storeName;
+        stockItem.sourceStoreCounter = ArraySize(this.virtualStore.items);
         stockItem.price = Cast<Float>(itemsPrices[virtualItemIndex]);
         if (RoundF(stockItem.price) == 0) {
           stockItem.price = Cast<Float>(RPGManager.CalculateBuyPrice(this.player.GetGame(), vendorObject, itemId, 1.0) * itemsQuantities[virtualItemIndex]);
@@ -842,6 +853,88 @@ public class VirtualStoreController extends gameuiMenuGameController {
         };
       };
       virtualItemIndex += 1;
+    };
+
+    this.totalItemsPrice = Cast<Int32>(totalPrice);
+    this.BuildFilterList();
+    this.SortVirtualStock();
+  }
+
+  private final func FillVirtualSearchStock(wardrobeItemAppearances: array<CName>, vendorObject: ref<GameObject>) -> Void {
+    let searchResults: array<ref<VirtualStoreSearchResult>> = this.storesManager.GetSearchResults();
+    let result: ref<VirtualStoreSearchResult>;
+    let storeItems: array<String>;
+    let itemsPrices: array<Int32>;
+    let itemsQualities: array<CName>;
+    let itemsQuantities: array<Int32>;
+    let stockItem: ref<VirtualStockItem>;
+    let itemTDBID: TweakDBID;
+    let itemId: ItemID;
+    let itemRecord: ref<Item_Record>;
+    let totalPrice: Float = 0.0;
+    let resultIndex: Int32 = 0;
+    let resultItemIndex: Int32;
+    let virtualItemIndex: Int32;
+
+    ArrayClear(this.virtualStock);
+
+    while resultIndex < ArraySize(searchResults) {
+      result = searchResults[resultIndex];
+      if IsDefined(result) && IsDefined(result.store) {
+        storeItems = result.store.items;
+        itemsPrices = this.GetStorePrices(result.store);
+        itemsQualities = this.GetStoreQualities(result.store);
+        itemsQuantities = this.GetStoreQuantities(result.store);
+        resultItemIndex = 0;
+
+        while resultItemIndex < ArraySize(result.itemIndexes) {
+          virtualItemIndex = result.itemIndexes[resultItemIndex];
+          itemTDBID = TDBID.Create(storeItems[virtualItemIndex]);
+          itemId = ItemID.FromTDBID(itemTDBID);
+          if ItemID.IsValid(itemId) {
+            itemRecord = TweakDBInterface.GetItemRecord(itemTDBID);
+            if IsDefined(itemRecord) {
+              stockItem = new VirtualStockItem();
+              stockItem.itemID = itemId;
+              stockItem.itemTDBID = itemTDBID;
+              stockItem.sourceStoreID = result.store.storeID;
+              stockItem.sourceStoreName = result.store.storeName;
+              stockItem.sourceStoreCounter = result.counter;
+              stockItem.price = Cast<Float>(itemsPrices[virtualItemIndex]);
+              if (RoundF(stockItem.price) == 0) {
+                stockItem.price = Cast<Float>(RPGManager.CalculateBuyPrice(this.player.GetGame(), vendorObject, itemId, 1.0) * itemsQuantities[virtualItemIndex]);
+              };
+              stockItem.weight = 0.1;
+              stockItem.quality = itemsQualities[virtualItemIndex];
+              stockItem.quantity = itemsQuantities[virtualItemIndex];
+              stockItem.name = LocKeyToString(itemRecord.DisplayName());
+              stockItem.searchName = UTF8StrLower(GetLocalizedText(stockItem.name));
+              stockItem.equipmentArea = itemRecord.EquipArea().Type();
+              stockItem.itemType = itemRecord.ItemType().Type();
+              stockItem.itemCategory = itemRecord.ItemCategory().Type();
+              stockItem.isClothing = UIInventoryItemsManager.IsItemTypeCloting(stockItem.itemType) || itemRecord.TagsContains(n"Clothing");
+              stockItem.isRangedWeapon = itemRecord.TagsContains(n"RangedWeapon");
+              stockItem.isMeleeWeapon = itemRecord.TagsContains(n"MeleeWeapon");
+              stockItem.isCyberware = UIInventoryItemsManager.IsItemTypeCyberware(stockItem.itemType) || itemRecord.TagsContains(n"Cyberware") || itemRecord.TagsContains(n"Fragment");
+              stockItem.isConsumable = itemRecord.TagsContains(n"Consumable");
+              stockItem.isGrenade = itemRecord.TagsContains(n"Grenade");
+              stockItem.isAttachment = itemRecord.TagsContains(n"itemPart") && !itemRecord.TagsContains(n"Fragment") && !itemRecord.TagsContains(n"SoftwareShard");
+              stockItem.isProgram = itemRecord.TagsContains(n"SoftwareShard") || itemRecord.TagsContains(n"QuickhackCraftingPart");
+              stockItem.isQuest = itemRecord.TagsContains(n"Quest");
+              stockItem.isJunk = itemRecord.TagsContains(n"Junk");
+              stockItem.isDLCAdded = itemRecord.TagsContains(n"DLCAdded");
+              stockItem.isOwnable = stockItem.isClothing || stockItem.isRangedWeapon || stockItem.isMeleeWeapon || stockItem.isCyberware;
+              stockItem.notInWardrobe = stockItem.isClothing && !ArrayContains(wardrobeItemAppearances, itemRecord.AppearanceName());
+              stockItem.qualityRank = this.GetQualityRank(stockItem.quality);
+              stockItem.itemTypeRank = EnumInt(stockItem.equipmentArea) * 10000 + EnumInt(stockItem.itemType);
+              ArrayPush(this.virtualStock, stockItem);
+              totalPrice += stockItem.price;
+            };
+          };
+          resultItemIndex += 1;
+        };
+      };
+      resultIndex += 1;
     };
 
     this.totalItemsPrice = Cast<Int32>(totalPrice);
@@ -923,6 +1016,9 @@ public class VirtualStoreController extends gameuiMenuGameController {
     let stockItem: ref<VirtualStockItem>;
     this.filterManager.Clear(true);
     this.filterManager.AddFilter(ItemFilterCategory.AllItems);
+    if this.isSearchResultsMode {
+      return;
+    };
     while i < ArraySize(this.virtualStock) {
       stockItem = this.virtualStock[i];
       if stockItem.isRangedWeapon {
@@ -963,11 +1059,10 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.filterManager.SortFiltersList();
     this.filterManager.InsertFilter(0, ItemFilterCategory.AllItems);
   }
-
   private final func ApplyStockView(resetPage: Bool) -> Void {
     let i: Int32 = 0;
     let query: String = "";
-    if IsDefined(this.searchInput) {
+    if IsDefined(this.searchInput) && !this.isSearchResultsMode {
       query = UTF8StrLower(this.searchInput.GetText());
     };
     ArrayClear(this.filteredStock);
@@ -1037,10 +1132,33 @@ public class VirtualStoreController extends gameuiMenuGameController {
 
   private final func SortVirtualStock() -> Void {
     if ArraySize(this.virtualStock) > 1 {
-      this.QuickSortVirtualStock(0, ArraySize(this.virtualStock) - 1);
+      if this.isSearchResultsMode {
+        this.SortVirtualStockGroups();
+      } else {
+        this.QuickSortVirtualStock(0, ArraySize(this.virtualStock) - 1);
+      };
     };
   }
 
+  private final func SortVirtualStockGroups() -> Void {
+    let startIndex: Int32 = 0;
+    let i: Int32 = 1;
+    let count: Int32 = ArraySize(this.virtualStock);
+
+    while i < count {
+      if !Equals(this.virtualStock[i].sourceStoreID, this.virtualStock[startIndex].sourceStoreID) {
+        if startIndex < i - 1 {
+          this.QuickSortVirtualStock(startIndex, i - 1);
+        };
+        startIndex = i;
+      };
+      i += 1;
+    };
+
+    if startIndex < count - 1 {
+      this.QuickSortVirtualStock(startIndex, count - 1);
+    };
+  }
   private final func QuickSortVirtualStock(leftIndex: Int32, rightIndex: Int32) -> Void {
     let i: Int32 = leftIndex;
     let j: Int32 = rightIndex;
@@ -1130,6 +1248,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
 
     this.pageRenderToken += 1;
     this.pendingPageIndex = 0;
+    this.pendingPageLastStoreID = n"";
     ArrayClear(this.pendingPageStock);
     ArrayClear(this.pendingPageItems);
     this.storeDataSource.Reset(items);
@@ -1169,6 +1288,10 @@ public class VirtualStoreController extends gameuiMenuGameController {
     isFirstBatch = this.pendingPageIndex == 0;
     owner = this.vendorDataManager.GetVendorInstance();
     while this.pendingPageIndex < ArraySize(this.pendingPageStock) && processed < this.pageBatchSize {
+      if this.isSearchResultsMode && !Equals(this.pendingPageLastStoreID, this.pendingPageStock[this.pendingPageIndex].sourceStoreID) {
+        ArrayPush(this.pendingPageItems, this.CreateSearchHeader(this.pendingPageStock[this.pendingPageIndex]));
+        this.pendingPageLastStoreID = this.pendingPageStock[this.pendingPageIndex].sourceStoreID;
+      };
       item = this.MaterializeStockItem(this.pendingPageStock[this.pendingPageIndex], owner);
       if IsDefined(item) {
         ArrayPush(this.pendingPageItems, item);
@@ -1183,6 +1306,13 @@ public class VirtualStoreController extends gameuiMenuGameController {
     if this.pendingPageIndex < ArraySize(this.pendingPageStock) {
       this.SchedulePageRenderBatch(token);
     };
+  }
+
+  private final func CreateSearchHeader(stockItem: ref<VirtualStockItem>) -> ref<VirtualStoreHeaderWrapper> {
+    let header: ref<VirtualStoreHeaderWrapper> = new VirtualStoreHeaderWrapper();
+    header.label = stockItem.sourceStoreName;
+    header.counter = stockItem.sourceStoreCounter;
+    return header;
   }
 
   private final func WrapVendorInventoryData(itemData: InventoryItemData, stockItem: ref<VirtualStockItem>) -> ref<VendorInventoryItemData> {
@@ -1256,10 +1386,9 @@ public class VirtualStoreController extends gameuiMenuGameController {
     return 0;
   }
 
-  // Darkcopse prices tweak
-  private final func GetVirtualStorePrices() -> array<Int32> { 
-    let items: array<String> = this.virtualStore.items;
-    let prices: array<Int32> = this.virtualStore.prices;
+  private final func GetStorePrices(store: ref<VirtualShop>) -> array<Int32> { 
+    let items: array<String> = store.items;
+    let prices: array<Int32> = store.prices;
     let defaultPrice = 0;
 
     if (ArraySize(prices) == 1) {
@@ -1276,13 +1405,12 @@ public class VirtualStoreController extends gameuiMenuGameController {
     return prices;
   }
 
-  private final func GetVirtualStoreQualities() -> array<CName> {
-    let items: array<String> = this.virtualStore.items;
-    let qualities: array<String> = this.virtualStore.qualities;
+  private final func GetStoreQualities(store: ref<VirtualShop>) -> array<CName> {
+    let items: array<String> = store.items;
+    let qualities: array<String> = store.qualities;
     let qualitiesCNames: array<CName> = [];
 
     let defaultQuality = n"Rare";
-    // Darkcopse qualities tweak
     if (ArraySize(qualities) == 1) {
       let qualityCName: CName = StringToName(qualities[0]);
       if IsNameValid(qualityCName) && !Equals(qualityCName, n"") {
@@ -1316,10 +1444,9 @@ public class VirtualStoreController extends gameuiMenuGameController {
     return qualitiesCNames;
   }
 
-  // Darkcopse quantities tweak
-  private final func GetVirtualStoreQuantities() -> array<Int32> {
-    let items: array<String> = this.virtualStore.items;
-    let quantities: array<Int32> = this.virtualStore.quantities;
+  private final func GetStoreQuantities(store: ref<VirtualShop>) -> array<Int32> {
+    let items: array<String> = store.items;
+    let quantities: array<Int32> = store.quantities;
     let i: Int32 = 0;
     if (ArraySize(items) > ArraySize(quantities)) {
       while (i < (ArraySize(items) - ArraySize(quantities))) {
@@ -1327,6 +1454,19 @@ public class VirtualStoreController extends gameuiMenuGameController {
       };
     };
     return quantities;
+  }
+  // Darkcopse prices tweak
+  private final func GetVirtualStorePrices() -> array<Int32> {
+    return this.GetStorePrices(this.virtualStore);
+  }
+
+  private final func GetVirtualStoreQualities() -> array<CName> {
+    return this.GetStoreQualities(this.virtualStore);
+  }
+
+  // Darkcopse quantities tweak
+  private final func GetVirtualStoreQuantities() -> array<Int32> {
+    return this.GetStoreQuantities(this.virtualStore);
   }
 
   private func PopulateVirtualShop() -> Void {
@@ -1482,19 +1622,19 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
   }
 
   private func ShowAddAllConfirmationPopup() -> Void {
-    this.popupToken = GenericMessageNotification.Show(this, this.virtualStore.storeName, AtelierTexts.ConfirmationAddAll(), GenericMessageNotificationType.ConfirmCancel);
+    this.popupToken = GenericMessageNotification.Show(this, this.GetVirtualStoreName(), AtelierTexts.ConfirmationAddAll(), GenericMessageNotificationType.ConfirmCancel);
     this.popupToken.RegisterListener(this, n"OnAddAllConfirmationPopupClosed");
   }
 
   private func ShowRemoveAllConfirmationPopup() -> Void {
-    this.popupToken = GenericMessageNotification.Show(this, this.virtualStore.storeName, AtelierTexts.ConfirmationRemoveAll(), GenericMessageNotificationType.ConfirmCancel);
+    this.popupToken = GenericMessageNotification.Show(this, this.GetVirtualStoreName(), AtelierTexts.ConfirmationRemoveAll(), GenericMessageNotificationType.ConfirmCancel);
     this.popupToken.RegisterListener(this, n"OnRemoveAllConfirmationPopupClosed");
   }
 
   private func ShowPurchaseAllConfirmationPopup() -> Void {
     let price: Int32 = this.cartManager.GetCurrentGoodsPrice();
     let priceStr: String = GetFormattedMoneyVA(price);
-    this.popupToken = GenericMessageNotification.Show(this, this.virtualStore.storeName, AtelierTexts.ConfirmationPurchase(priceStr), GenericMessageNotificationType.ConfirmCancel);
+    this.popupToken = GenericMessageNotification.Show(this, this.GetVirtualStoreName(), AtelierTexts.ConfirmationPurchase(priceStr), GenericMessageNotificationType.ConfirmCancel);
     this.popupToken.RegisterListener(this, n"OnPurchaseConfirmationPopupClosed");
   }
 
@@ -1545,6 +1685,13 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
   }
 
   private final func GetVirtualStoreName() -> String {
+    if this.isSearchResultsMode {
+      let searchResults: array<ref<VirtualStoreSearchResult>> = this.storesManager.GetSearchResults();
+      if ArraySize(searchResults) == 1 && IsDefined(searchResults[0]) && IsDefined(searchResults[0].store) {
+        return searchResults[0].store.storeName;
+      };
+      return GetLocalizedTextByKey(n"VA-Search-Bundle");
+    };
     return this.virtualStore.storeName;
   }
 

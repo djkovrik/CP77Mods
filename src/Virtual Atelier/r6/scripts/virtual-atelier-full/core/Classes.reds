@@ -54,6 +54,9 @@ public class VirtualShop {
 class VirtualStockItem {
   public let itemID: ItemID;
   public let itemTDBID: TweakDBID;
+  public let sourceStoreID: CName;
+  public let sourceStoreName: String;
+  public let sourceStoreCounter: Int32;
   public let price: Float;
   public let weight: Float;
   public let quality: CName;
@@ -124,6 +127,33 @@ public class StoreItemCountWrapper {
 
 public class VirtualStoreHeaderWrapper {
   public let label: String;
+  public let counter: Int32;
+}
+
+public class VirtualStoreSearchCriteria {
+  public let query: String;
+  public let rangedWeapons: Bool;
+  public let meleeWeapons: Bool;
+  public let clothes: Bool;
+  public let consumables: Bool;
+  public let grenades: Bool;
+  public let attachments: Bool;
+  public let programs: Bool;
+  public let cyberware: Bool;
+  public let junk: Bool;
+  public let face: Bool;
+  public let feet: Bool;
+  public let head: Bool;
+  public let legs: Bool;
+  public let innerChest: Bool;
+  public let outerChest: Bool;
+  public let outfit: Bool;
+  public let newWardrobe: Bool;
+}
+
+public class VirtualStoreSearchResult {
+  public let store: ref<VirtualShop>;
+  public let itemIndexes: array<Int32>;
   public let counter: Int32;
 }
 

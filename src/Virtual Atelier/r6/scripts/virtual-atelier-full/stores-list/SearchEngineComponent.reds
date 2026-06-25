@@ -7,11 +7,10 @@ public class SearchEngineComponent extends inkComponent {
   private let storeManagerSystem: wref<VirtualAtelierStoresManager>;
   private let uiSystem: wref<UISystem>;
 
-  let indicatorShowAnimproxy: ref<inkAnimProxy>;
-  let indicatorHideAnimproxy: ref<inkAnimProxy>;
+  private let indicatorShowAnimproxy: ref<inkAnimProxy>;
+  private let indicatorHideAnimproxy: ref<inkAnimProxy>;
 
   // Widgets
-  private let storesCounter: wref<inkText>;
   private let searchInput: wref<HubTextInputSearch>;
   private let buttonReset: wref<SimpleButtonSearch>;
   private let buttonSearch: wref<SimpleButtonSearch>;
@@ -113,6 +112,7 @@ public class SearchEngineComponent extends inkComponent {
   protected cb func OnSearchInput(widget: wref<inkWidget>) {
     if IsDefined(this.searchInput) {
       this.searchInputQuery = UTF8StrLower(this.searchInput.GetText());
+      this.ClearSearchResults();
       this.InvalidateSearchControls();
     };
   }
@@ -181,6 +181,7 @@ public class SearchEngineComponent extends inkComponent {
 
     this.searchInputQuery = "";
     this.resultsCounter = 0;
+    this.storeManagerSystem.ClearSearchResults();
 
     this.checkboxRangedWeaponsChecked = false;
     this.checkboxMeleeWeaponsChecked = false;
@@ -207,12 +208,76 @@ public class SearchEngineComponent extends inkComponent {
   private final func OnSearchClick() -> Void {
     this.Log("OnSearchClick");
     this.ShowSearchingIndicator();
-    this.resultsCounter = 99999;
+    this.resultsCounter = this.storeManagerSystem.SearchStores(this.CreateSearchCriteria());
+    this.ShowResultsIndicator();
+    this.InvalidateSearchControls();
   }
 
   private final func OnResultsClick() -> Void {
+    let results: array<ref<VirtualStoreSearchResult>> = this.storeManagerSystem.GetSearchResults();
+    let result: ref<VirtualStoreSearchResult>;
     this.Log("OnResultsClick");
-    this.ShowResultsIndicator();
+
+    if this.resultsCounter <= 0 || ArraySize(results) <= 0 {
+      return;
+    };
+
+    result = results[0];
+    if IsDefined(result) && IsDefined(result.store) {
+      this.OpenVirtualStore(result.store);
+    };
+  }
+
+  private final func CreateSearchCriteria() -> ref<VirtualStoreSearchCriteria> {
+    let criteria: ref<VirtualStoreSearchCriteria> = new VirtualStoreSearchCriteria();
+
+    if IsDefined(this.searchInput) {
+      this.searchInputQuery = UTF8StrLower(this.searchInput.GetText());
+    };
+
+    criteria.query = this.searchInputQuery;
+    criteria.rangedWeapons = this.checkboxRangedWeaponsChecked;
+    criteria.meleeWeapons = this.checkboxMeleeWeaponsChecked;
+    criteria.clothes = this.checkboxClothesChecked;
+    criteria.consumables = this.checkboxConsumablesChecked;
+    criteria.grenades = this.checkboxGrenadesChecked;
+    criteria.attachments = this.checkboxAttachmentsChecked;
+    criteria.programs = this.checkboxProgramsChecked;
+    criteria.cyberware = this.checkboxCyberwareChecked;
+    criteria.junk = this.checkboxJunkChecked;
+    criteria.face = this.checkboxFaceChecked;
+    criteria.feet = this.checkboxFeetChecked;
+    criteria.head = this.checkboxHeadChecked;
+    criteria.legs = this.checkboxLegsChecked;
+    criteria.innerChest = this.checkboxInnerChestChecked;
+    criteria.outerChest = this.checkboxOuterChestChecked;
+    criteria.outfit = this.checkboxOutfitChecked;
+    criteria.newWardrobe = this.checkboxNewWardrobeChecked;
+
+    return criteria;
+  }
+
+  private final func ClearSearchResults() -> Void {
+    this.resultsCounter = 0;
+    this.storeManagerSystem.ClearSearchResults();
+    if IsDefined(this.resultsLabel) {
+      this.resultsLabel.SetVisible(false);
+    };
+  }
+
+  private final func OpenVirtualStore(store: ref<VirtualShop>) -> Void {
+    let vendorData: ref<VendorPanelData>;
+
+    if !IsDefined(store) {
+      return;
+    };
+
+    vendorData = new VendorPanelData();
+    vendorData.data.vendorId = "VirtualVendor";
+    vendorData.data.entityID = this.player.GetEntityID();
+    vendorData.data.isActive = true;
+    this.storeManagerSystem.SetCurrentStore(store);
+    GameInstance.GetUISystem(this.player.GetGame()).RequestVendorMenu(vendorData);
   }
 
   private final func OnCheckboxClick(target: ref<inkWidget>) -> Void {
@@ -289,6 +354,7 @@ public class SearchEngineComponent extends inkComponent {
         break;
     };
 
+    this.ClearSearchResults();
     this.InvalidateSearchControls();
   }
 
@@ -504,7 +570,7 @@ public class SearchEngineComponent extends inkComponent {
     let counterParams: ref<inkTextParams> = new inkTextParams();
     let counterLabel: String = GetLocalizedTextByKey(n"VA-Search-Stores-Count");
     storesCount.SetName(n"storesCount");
-    storesCount.SetFontSize(42);
+    storesCount.SetFontSize(46);
     storesCount.SetFontStyle(n"Regular");
     storesCount.SetMargin(0.0, 16.0, 0.0, 16.0);
     storesCount.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
