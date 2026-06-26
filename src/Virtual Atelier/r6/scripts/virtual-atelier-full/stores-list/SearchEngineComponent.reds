@@ -1,6 +1,24 @@
 module VirtualAtelier.UI
 import VirtualAtelier.Systems.VirtualAtelierStoresManager
+import VirtualAtelier.Logs.*
 import Codeware.UI.*
+public class VirtualAtelierStoreSearchCallback extends DelayCallback {
+  public let component: wref<SearchEngineComponent>;
+  public let token: Int32;
+
+  public func Call() -> Void {
+    if IsDefined(this.component) {
+      this.component.ContinueSearch(this.token);
+    };
+  }
+
+  public static func Create(component: ref<SearchEngineComponent>, token: Int32) -> ref<VirtualAtelierStoreSearchCallback> {
+    let callback: ref<VirtualAtelierStoreSearchCallback> = new VirtualAtelierStoreSearchCallback();
+    callback.component = component;
+    callback.token = token;
+    return callback;
+  }
+}
 
 public class SearchEngineComponent extends inkComponent {
   private let player: wref<PlayerPuppet>;
@@ -41,6 +59,12 @@ public class SearchEngineComponent extends inkComponent {
   private let searchInputQuery: String;
   private let storesCount: Int32;
   private let resultsCounter: Int32;
+  private let searchRequestToken: Int32;
+  private let searchDelayId: DelayID;
+  private let isSearching: Bool;
+  private let searchBatchSize: Int32 = 100;
+  private let searchInitialDelay: Float = 0.16;
+  private let searchBatchDelay: Float = 0.01;
 
   private let checkboxRangedWeaponsChecked: Bool;
   private let checkboxMeleeWeaponsChecked: Bool;
@@ -86,6 +110,13 @@ public class SearchEngineComponent extends inkComponent {
   }
 
   protected cb func OnUninitialize() -> Void {
+    this.isSearching = false;
+    this.searchRequestToken += 1;
+    this.CancelScheduledSearchCallback();
+    if IsDefined(this.storeManagerSystem) {
+      this.storeManagerSystem.CancelSearchStores();
+    };
+
     if IsDefined(this.indicatorShowAnimproxy) {
       this.indicatorShowAnimproxy.Stop();
       this.indicatorShowAnimproxy = null;
@@ -180,8 +211,7 @@ public class SearchEngineComponent extends inkComponent {
     this.UpdateCheckbox(this.checkboxNewWardrobe, false);
 
     this.searchInputQuery = "";
-    this.resultsCounter = 0;
-    this.storeManagerSystem.ClearSearchResults();
+    this.ClearSearchResults();
 
     this.checkboxRangedWeaponsChecked = false;
     this.checkboxMeleeWeaponsChecked = false;
@@ -208,9 +238,44 @@ public class SearchEngineComponent extends inkComponent {
   private final func OnSearchClick() -> Void {
     this.Log("OnSearchClick");
     this.ShowSearchingIndicator();
-    this.resultsCounter = this.storeManagerSystem.SearchStores(this.CreateSearchCriteria());
-    this.ShowResultsIndicator();
+    this.resultsCounter = 0;
+    this.isSearching = true;
+    this.searchRequestToken = this.storeManagerSystem.BeginSearchStores(this.CreateSearchCriteria());
     this.InvalidateSearchControls();
+    this.ScheduleSearchBatch(this.searchRequestToken, this.searchInitialDelay);
+  }
+
+  private final func ScheduleSearchBatch(token: Int32, delay: Float) -> Void {
+    if !this.isSearching || NotEquals(token, this.searchRequestToken) || !IsDefined(this.player) {
+      return;
+    };
+
+    this.CancelScheduledSearchCallback();
+    this.searchDelayId = GameInstance.GetDelaySystem(this.player.GetGame()).DelayCallback(VirtualAtelierStoreSearchCallback.Create(this, token), delay, false);
+  }
+
+  public final func ContinueSearch(token: Int32) -> Void {
+    let finished: Bool;
+
+    if !this.isSearching || NotEquals(token, this.searchRequestToken) || !IsDefined(this.storeManagerSystem) {
+      return;
+    };
+
+    this.searchDelayId = GetInvalidDelayID();
+    finished = this.storeManagerSystem.ContinueSearchStores(token, this.searchBatchSize);
+    if !this.isSearching || NotEquals(token, this.searchRequestToken) {
+      return;
+    };
+
+    if finished {
+      this.isSearching = false;
+      this.searchDelayId = GetInvalidDelayID();
+      this.resultsCounter = this.storeManagerSystem.GetSearchResultsCounter();
+      this.ShowResultsIndicator();
+      this.InvalidateSearchControls();
+    } else {
+      this.ScheduleSearchBatch(token, this.searchBatchDelay);
+    };
   }
 
   private final func OnResultsClick() -> Void {
@@ -218,7 +283,7 @@ public class SearchEngineComponent extends inkComponent {
     let result: ref<VirtualStoreSearchResult>;
     this.Log("OnResultsClick");
 
-    if this.resultsCounter <= 0 || ArraySize(results) <= 0 {
+    if this.isSearching || this.resultsCounter <= 0 || ArraySize(results) <= 0 {
       return;
     };
 
@@ -257,9 +322,23 @@ public class SearchEngineComponent extends inkComponent {
     return criteria;
   }
 
+  private final func CancelScheduledSearchCallback() -> Void {
+    if this.searchDelayId != GetInvalidDelayID() && IsDefined(this.player) {
+      GameInstance.GetDelaySystem(this.player.GetGame()).CancelCallback(this.searchDelayId);
+    };
+    this.searchDelayId = GetInvalidDelayID();
+  }
   private final func ClearSearchResults() -> Void {
+    this.isSearching = false;
+    this.searchRequestToken += 1;
+    this.CancelScheduledSearchCallback();
     this.resultsCounter = 0;
-    this.storeManagerSystem.ClearSearchResults();
+    if IsDefined(this.storeManagerSystem) {
+      this.storeManagerSystem.ClearSearchResults();
+    };
+    if IsDefined(this.searchIndicator) {
+      this.searchIndicator.SetVisible(false);
+    };
     if IsDefined(this.resultsLabel) {
       this.resultsLabel.SetVisible(false);
     };
@@ -861,10 +940,10 @@ public class SearchEngineComponent extends inkComponent {
       || this.checkboxOutfitChecked
       || this.checkboxNewWardrobeChecked;
 
-    let resultsAvailable: Bool = this.resultsCounter > 0;
+    let resultsAvailable: Bool = this.resultsCounter > 0 && !this.isSearching;
 
     this.buttonReset.SetDisabled(!filtersChanged);
-    this.buttonSearch.SetDisabled(!filtersChanged);
+    this.buttonSearch.SetDisabled(!filtersChanged || this.isSearching);
     this.buttonResults.SetDisabled(!resultsAvailable);
   }
 
@@ -949,7 +1028,7 @@ public class SearchEngineComponent extends inkComponent {
   }
 
   private final func Log(str: String) -> Void {
-    ModLog(n"Search", str);
+    AtelierDebug(str);
   }
 }
 

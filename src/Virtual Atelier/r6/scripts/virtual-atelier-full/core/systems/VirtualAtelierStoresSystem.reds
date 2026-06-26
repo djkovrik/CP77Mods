@@ -9,6 +9,14 @@ public class VirtualAtelierStoresManager extends ScriptableSystem {
   private let current: ref<VirtualShop>;
   private let searchResults: array<ref<VirtualStoreSearchResult>>;
   private let searchResultsCounter: Int32;
+  private let searchBatchCriteria: ref<VirtualStoreSearchCriteria>;
+  private let searchBatchWardrobeAppearances: array<CName>;
+  private let searchBatchResult: ref<VirtualStoreSearchResult>;
+  private let searchBatchStoreIndex: Int32;
+  private let searchBatchItemIndex: Int32;
+  private let searchBatchToken: Int32;
+  private let searchBatchPrepared: Bool;
+  private let searchBatchActive: Bool;
   private persistent let bookmarked: array<CName>;
   private persistent let prevStores: array<CName>;
   private persistent let itemCounts: array<ref<StoreItemCountWrapper>>;
@@ -55,8 +63,20 @@ public class VirtualAtelierStoresManager extends ScriptableSystem {
   }
 
   public func ClearSearchResults() -> Void {
+    this.CancelSearchStores();
     ArrayClear(this.searchResults);
     this.searchResultsCounter = 0;
+  }
+
+  public func CancelSearchStores() -> Void {
+    this.searchBatchToken += 1;
+    this.searchBatchActive = false;
+    this.searchBatchPrepared = false;
+    this.searchBatchCriteria = null;
+    this.searchBatchResult = null;
+    this.searchBatchStoreIndex = 0;
+    this.searchBatchItemIndex = 0;
+    ArrayClear(this.searchBatchWardrobeAppearances);
   }
 
   public func SearchStores(criteria: ref<VirtualStoreSearchCriteria>) -> Int32 {
@@ -100,6 +120,90 @@ public class VirtualAtelierStoresManager extends ScriptableSystem {
     return this.searchResultsCounter;
   }
 
+  public func BeginSearchStores(criteria: ref<VirtualStoreSearchCriteria>) -> Int32 {
+    this.CancelSearchStores();
+    ArrayClear(this.searchResults);
+    this.searchResultsCounter = 0;
+
+    if !IsDefined(criteria) {
+      return this.searchBatchToken;
+    };
+
+    this.searchBatchCriteria = criteria;
+    this.searchBatchStoreIndex = 0;
+    this.searchBatchItemIndex = 0;
+    this.searchBatchResult = null;
+    this.searchBatchPrepared = false;
+    this.searchBatchActive = true;
+
+    return this.searchBatchToken;
+  }
+
+  public func ContinueSearchStores(token: Int32, batchSize: Int32) -> Bool {
+    let processed: Int32 = 0;
+    let store: ref<VirtualShop>;
+    let itemTDBID: TweakDBID;
+    let itemID: ItemID;
+    let itemRecord: ref<Item_Record>;
+
+    if !this.searchBatchActive || NotEquals(token, this.searchBatchToken) {
+      return true;
+    };
+
+    if batchSize < 1 {
+      batchSize = 1;
+    };
+
+    if !this.searchBatchPrepared {
+      if IsDefined(this.searchBatchCriteria) && this.searchBatchCriteria.newWardrobe {
+        this.searchBatchWardrobeAppearances = this.GetWardrobeAppearances(GameInstance.GetWardrobeSystem(this.GetGameInstance()).GetStoredItemIDs());
+      };
+      this.searchBatchPrepared = true;
+    };
+
+    while this.searchBatchStoreIndex < ArraySize(this.stores) && processed < batchSize {
+      store = this.stores[this.searchBatchStoreIndex];
+      if !IsDefined(this.searchBatchResult) {
+        this.searchBatchResult = new VirtualStoreSearchResult();
+        this.searchBatchResult.store = store;
+      };
+
+      while this.searchBatchItemIndex < ArraySize(store.items) && processed < batchSize {
+        itemTDBID = TDBID.Create(store.items[this.searchBatchItemIndex]);
+        itemID = ItemID.FromTDBID(itemTDBID);
+        if ItemID.IsValid(itemID) {
+          itemRecord = TweakDBInterface.GetItemRecord(itemTDBID);
+          if IsDefined(itemRecord) && this.MatchesSearchCriteria(itemRecord, this.searchBatchCriteria, this.searchBatchWardrobeAppearances) {
+            ArrayPush(this.searchBatchResult.itemIndexes, this.searchBatchItemIndex);
+            this.searchBatchResult.counter += 1;
+            this.searchResultsCounter += 1;
+          };
+        };
+
+        this.searchBatchItemIndex += 1;
+        processed += 1;
+      };
+
+      if this.searchBatchItemIndex >= ArraySize(store.items) {
+        if this.searchBatchResult.counter > 0 {
+          ArrayPush(this.searchResults, this.searchBatchResult);
+        };
+        this.searchBatchResult = null;
+        this.searchBatchStoreIndex += 1;
+        this.searchBatchItemIndex = 0;
+      };
+    };
+
+    if this.searchBatchStoreIndex >= ArraySize(this.stores) {
+      this.searchBatchActive = false;
+      this.searchBatchCriteria = null;
+      this.searchBatchResult = null;
+      ArrayClear(this.searchBatchWardrobeAppearances);
+      return true;
+    };
+
+    return false;
+  }
   public func AddBookmark(storeID: CName) -> Void {
     let current: array<CName> = this.bookmarked;
     ArrayPush(current, storeID);
