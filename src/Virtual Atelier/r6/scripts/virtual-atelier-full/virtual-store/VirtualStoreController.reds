@@ -233,9 +233,9 @@ public class VirtualStoreController extends gameuiMenuGameController {
   protected cb func OnInventoryItemHoverOver(evt: ref<ItemDisplayHoverOverEvent>) -> Bool {
     let atelierActions: ref<AtelierActions> = AtelierActions.Get(this.player);
     let itemID: ItemID = InventoryItemData.GetID(evt.itemData);
-    let quantity: Int32 = InventoryItemData.GetQuantity(evt.itemData);
+    let stockItem: ref<VirtualStockItem> = this.GetStockItemFromItemData(evt.itemData);
     let isEquipped: Bool = this.previewManager.GetIsEquipped(itemID);
-    let isAddedToCart: Bool = this.cartManager.IsAddedToCart(itemID, quantity);
+    let isAddedToCart: Bool = this.cartManager.IsStockAddedToCart(stockItem);
     let isWeapon: Bool = RPGManager.IsItemWeapon(itemID);
     let isClothing: Bool = RPGManager.IsItemClothing(itemID);
     let hintLabel: String;
@@ -815,6 +815,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
           AtelierDebug(s"Store item skipped, Item_Record not found: \(ToString(storeItems[virtualItemIndex]))");
         } else {
         stockItem = new VirtualStockItem();
+        stockItem.stockKey = Cast<Uint64>(ArraySize(this.virtualStock) + 1);
         stockItem.itemID = itemId;
         stockItem.itemTDBID = itemTDBID;
         stockItem.sourceStoreID = this.virtualStore.storeID;
@@ -895,6 +896,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
             itemRecord = TweakDBInterface.GetItemRecord(itemTDBID);
             if IsDefined(itemRecord) {
               stockItem = new VirtualStockItem();
+              stockItem.stockKey = Cast<Uint64>(ArraySize(this.virtualStock) + 1);
               stockItem.itemID = itemId;
               stockItem.itemTDBID = itemTDBID;
               stockItem.sourceStoreID = result.store.storeID;
@@ -956,6 +958,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
       gameItemData = inventoryManager.CreateBasicItemData(stockItem.itemID, this.player);
       gameItemData.isVirtualItem = true;
       gameItemData.hasOwned = this.cartManager.IsItemOwned(stockItem.itemTDBID);
+      gameItemData.virtualStockItem = stockItem;
       itemRecord = TweakDBInterface.GetItemRecord(stockItem.itemTDBID);
       if IsDefined(itemRecord) && !itemRecord.IsSingleInstance() {
         AtelierItemsHelper.ScaleItem(this.player, gameItemData, stockItem.quality);
@@ -982,6 +985,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     gameItemData = inventoryManager.CreateBasicItemData(stockItem.itemID, this.player);
     gameItemData.isVirtualItem = true;
     gameItemData.hasOwned = this.cartManager.IsItemOwned(stockItem.itemTDBID);
+    gameItemData.virtualStockItem = stockItem;
     itemRecord = TweakDBInterface.GetItemRecord(stockItem.itemTDBID);
     if IsDefined(itemRecord) && !itemRecord.IsSingleInstance() {
       AtelierItemsHelper.ScaleItem(this.player, gameItemData, stockItem.quality);
@@ -1486,17 +1490,19 @@ public class VirtualStoreController extends gameuiMenuGameController {
     };
 
     let atelierActions: ref<AtelierActions> = AtelierActions.Get(this.player);
-    let itemID: ItemID = InventoryItemData.GetID(this.lastItemHoverOverEvent.itemData);
-    let quantity: Int32 = InventoryItemData.GetQuantity(this.lastItemHoverOverEvent.itemData);
-    let isAddedToCart: Bool = this.cartManager.IsAddedToCart(itemID, quantity);
-    let isEnoughMoney: Bool = this.cartManager.PlayerHasEnoughMoneyFor(itemID);
+    let stockItem: ref<VirtualStockItem> = this.GetStockItemFromItemData(this.lastItemHoverOverEvent.itemData);
+    let isAddedToCart: Bool = this.cartManager.IsStockAddedToCart(stockItem);
+    let isEnoughMoney: Bool = this.cartManager.PlayerHasEnoughMoneyForStock(stockItem);
     let hintLabel: String;
+
+    if !IsDefined(stockItem) {
+      return ;
+    };
 
     if !isEnoughMoney && !isAddedToCart {
       return ;
     };
 
-    let stockItem: ref<VirtualStockItem> = this.GetStockItem(itemID, quantity);
     if isAddedToCart {
       if this.cartManager.RemoveFromCart(stockItem) {
         hintLabel = GetLocalizedTextByKey(n"VA-Cart-Add");
@@ -1520,9 +1526,8 @@ public class VirtualStoreController extends gameuiMenuGameController {
       return ;
     };
 
-    let itemID: ItemID = InventoryItemData.GetID(this.lastItemHoverOverEvent.itemData);
-    let quantity: Int32 = InventoryItemData.GetQuantity(this.lastItemHoverOverEvent.itemData);
-    let availableForPurchase: Int32 = this.cartManager.GetBuyableAmount(itemID, quantity);
+    let stockItem: ref<VirtualStockItem> = this.GetStockItemFromItemData(this.lastItemHoverOverEvent.itemData);
+    let availableForPurchase: Int32 = this.cartManager.GetBuyableAmountForStock(stockItem);
 
     if availableForPurchase < 1 {
       return ;
@@ -1548,9 +1553,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
 
 protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>) -> Bool {
     let quantityData: ref<QuantityPickerPopupCloseData> = data as QuantityPickerPopupCloseData;
-    let itemID: ItemID = InventoryItemData.GetID(quantityData.itemData);
-    let quantity: Int32 = InventoryItemData.GetQuantity(quantityData.itemData);
-    let stockItem: ref<VirtualStockItem> = this.GetStockItem(itemID, quantity);
+    let stockItem: ref<VirtualStockItem> = this.GetStockItemFromItemData(quantityData.itemData);
     if quantityData.choosenQuantity != -1 {
       this.cartManager.AddToCart(stockItem, quantityData.choosenQuantity);
     };
@@ -1593,7 +1596,7 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
   private final func GetCurrentPageGoodsPriceToAdd() -> Int32 {
     let total: Float = 0.0;
     for stockItem in this.pendingPageStock {
-      if !this.cartManager.IsAddedToCart(stockItem.itemID, stockItem.quantity) {
+      if !this.cartManager.IsStockAddedToCart(stockItem) {
         total += stockItem.price;
       };
     };
@@ -1606,7 +1609,7 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
     };
 
     for stockItem in this.pendingPageStock {
-      if !this.cartManager.IsAddedToCart(stockItem.itemID, stockItem.quantity) {
+      if !this.cartManager.IsStockAddedToCart(stockItem) {
         return false;
       };
     };
@@ -1642,7 +1645,7 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
     let resultData: ref<GenericMessageNotificationCloseData> = data as GenericMessageNotificationCloseData;
     if Equals(resultData.result, GenericMessageNotificationResult.Confirm) {
       for stockItem in this.pendingPageStock {
-        if !this.cartManager.IsAddedToCart(stockItem.itemID, stockItem.quantity) {
+        if !this.cartManager.IsStockAddedToCart(stockItem) {
           this.cartManager.AddToCart(stockItem, 1);
         };
       };
@@ -1716,6 +1719,15 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
     return null;
   }
 
+  private final func GetStockItemFromItemData(itemData: InventoryItemData) -> ref<VirtualStockItem> {
+    let gameItemData: ref<gameItemData> = InventoryItemData.GetGameItemData(itemData);
+    if IsDefined(gameItemData) && IsDefined(gameItemData.virtualStockItem) {
+      return gameItemData.virtualStockItem;
+    };
+
+    return this.GetStockItem(InventoryItemData.GetID(itemData), InventoryItemData.GetQuantity(itemData));
+  }
+
   private final func SpawnPreviewPuppet() -> Void {
     let wrapper: ref<inkCompoundWidget> = this.GetRootCompoundWidget().GetWidgetByPathName(n"wrapper") as inkCompoundWidget;
     wrapper.SetInteractive(true);
@@ -1726,7 +1738,7 @@ protected cb func OnQuantityPickerPopupClosed(data: ref<inkGameNotificationData>
     let itemID: ItemID = InventoryItemData.GetID(inventoryItemData);
     let price = InventoryItemData.GetPrice(inventoryItemData);
     let quantity: Int32 = InventoryItemData.GetQuantity(inventoryItemData);
-    let stockItem: ref<VirtualStockItem> = this.GetStockItem(itemID, quantity);
+    let stockItem: ref<VirtualStockItem> = this.GetStockItemFromItemData(inventoryItemData);
     let itemData: ref<gameItemData>;
     let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.player.GetGame());
     let inventoryManager: ref<InventoryManager> = GameInstance.GetInventoryManager(this.player.GetGame());

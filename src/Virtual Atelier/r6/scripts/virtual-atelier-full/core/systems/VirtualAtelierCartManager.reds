@@ -53,6 +53,15 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
     return false;
   }
 
+  public final func PlayerHasEnoughMoneyForStock(stockItem: ref<VirtualStockItem>) -> Bool {
+    if !IsDefined(stockItem) {
+      return false;
+    };
+
+    let price: Int32 = Cast<Int32>(stockItem.price);
+    let availableMoney: Int32 = this.GetCurrentPlayerMoney() - this.GetCurrentGoodsPrice();
+    return availableMoney >= price;
+  }
   public final func GetBuyableAmount(itemID: ItemID, quantity: Int32) -> Int32 {
     let price: Int32;
     let availableMoney: Int32;
@@ -80,6 +89,24 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
     return 0;
   }
 
+  public final func GetBuyableAmountForStock(stockItem: ref<VirtualStockItem>) -> Int32 {
+    if !IsDefined(stockItem) || stockItem.quantity <= 0 {
+      return 0;
+    };
+
+    let price: Int32 = Cast<Int32>(stockItem.price);
+    if price <= 0 {
+      return 0;
+    };
+
+    let availableMoney: Int32 = this.GetCurrentPlayerMoney() - this.GetCurrentGoodsPrice();
+    if availableMoney <= 0 {
+      return 0;
+    };
+
+    let amount: Int32 = availableMoney / price / stockItem.quantity;
+    return amount < this.maxQuantityPerBatch ? amount : this.maxQuantityPerBatch;
+  }
   public final func AddToCart(stockItem: ref<VirtualStockItem>, purchaseAmount: Int32) -> Bool {
     let added: Bool = this.cart.Insert(stockItem, purchaseAmount);
     this.RefreshCurrentBalances();
@@ -96,10 +123,16 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
     return this.cart.Exists(itemID, quantity);
   }
 
+  public final func IsStockAddedToCart(stockItem: ref<VirtualStockItem>) -> Bool {
+    return this.cart.ExistsStock(stockItem);
+  }
   public final func GetAddedQuantity(itemID: ItemID, quantity: Int32) -> Int32 {
     return this.cart.GetPurchaseAmount(itemID, quantity);
   }
 
+  public final func GetAddedStockQuantity(stockItem: ref<VirtualStockItem>) -> Int32 {
+    return this.cart.GetStockPurchaseAmount(stockItem);
+  }
   public final func GetCartSize() -> Int32 {
     return this.cart.GetSize();
   }

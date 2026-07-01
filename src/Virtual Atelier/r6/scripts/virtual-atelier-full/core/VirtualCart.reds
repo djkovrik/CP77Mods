@@ -10,7 +10,15 @@ public class VirtualAtelierCart {
   }
 
   public final func Exists(itemID: ItemID, quantity: Int32) -> Bool {
-    let key: Uint64 = this.Hash(itemID, quantity);
+    return IsDefined(this.Get(itemID, quantity));
+  }
+
+  public final func ExistsStock(stockItem: ref<VirtualStockItem>) -> Bool {
+    if !IsDefined(stockItem) {
+      return false;
+    };
+
+    let key: Uint64 = this.HashStock(stockItem);
     return ArrayContains(this.keys, key);
   }
 
@@ -18,10 +26,10 @@ public class VirtualAtelierCart {
     let key: Uint64;
     let cartItem: ref<VirtualCartItem>;
     if IsDefined(stockItem) {
-      key = this.Hash(stockItem.itemID, stockItem.quantity);
+      key = this.HashStock(stockItem);
       cartItem = this.GetOrCreateCartItem(stockItem);
       cartItem.purchaseAmount = purchaseAmount;
-      if this.Exists(stockItem.itemID, stockItem.quantity) {
+      if this.ExistsStock(stockItem) {
         this.map.Set(key, cartItem);
       } else {
         this.map.Insert(key, cartItem);
@@ -36,8 +44,8 @@ public class VirtualAtelierCart {
   public final func Remove(stockItem: ref<VirtualStockItem>) -> Bool {
     let key: Uint64;
     if IsDefined(stockItem) {
-      key = this.Hash(stockItem.itemID, stockItem.quantity);
-      if this.Exists(stockItem.itemID, stockItem.quantity) {
+      key = this.HashStock(stockItem);
+      if this.ExistsStock(stockItem) {
         this.map.Remove(key);
         ArrayRemove(this.keys, key);
         return true;
@@ -48,10 +56,22 @@ public class VirtualAtelierCart {
   }
 
   public final func Get(itemID: ItemID, quantity: Int32) -> ref<VirtualCartItem> {
+    let current: ref<VirtualCartItem>;
+    for key in this.keys {
+      current = this.map.Get(key) as VirtualCartItem;
+      if IsDefined(current) && IsDefined(current.stockItem) && Equals(current.stockItem.itemID, itemID) && Equals(current.stockItem.quantity, quantity) {
+        return current;
+      };
+    };
+
+    return null;
+  }
+
+  public final func GetStock(stockItem: ref<VirtualStockItem>) -> ref<VirtualCartItem> {
     let key: Uint64;
     let current: ref<VirtualCartItem>;
-    if this.Exists(itemID, quantity) {
-      key = this.Hash(itemID, quantity);
+    if this.ExistsStock(stockItem) {
+      key = this.HashStock(stockItem);
       current = this.map.Get(key) as VirtualCartItem;
       return current;
     };
@@ -63,6 +83,16 @@ public class VirtualAtelierCart {
     let current: ref<VirtualCartItem>;
     if this.Exists(itemID, quantity) {
       current = this.Get(itemID, quantity);
+      return current.purchaseAmount;
+    };
+
+    return -1;
+  }
+
+  public final func GetStockPurchaseAmount(stockItem: ref<VirtualStockItem>) -> Int32 {
+    let current: ref<VirtualCartItem>;
+    if this.ExistsStock(stockItem) {
+      current = this.GetStock(stockItem);
       return current.purchaseAmount;
     };
 
@@ -90,10 +120,10 @@ public class VirtualAtelierCart {
   }
 
   private final func GetOrCreateCartItem(stockItem: ref<VirtualStockItem>) -> ref<VirtualCartItem> {
-    let key: Uint64 = this.Hash(stockItem.itemID, stockItem.quantity);
+    let key: Uint64 = this.HashStock(stockItem);
     let cartItem: ref<VirtualCartItem>;
 
-    if this.Exists(stockItem.itemID, stockItem.quantity) {
+    if this.ExistsStock(stockItem) {
       cartItem = this.map.Get(key) as VirtualCartItem;
     } else {
       cartItem = new VirtualCartItem();
@@ -102,6 +132,14 @@ public class VirtualAtelierCart {
     };
 
     return cartItem;
+  }
+
+  private final func HashStock(stockItem: ref<VirtualStockItem>) -> Uint64 {
+    if NotEquals(stockItem.stockKey, Cast<Uint64>(0u)) {
+      return stockItem.stockKey;
+    };
+
+    return this.Hash(stockItem.itemID, stockItem.quantity);
   }
 
   private final func Hash(itemID: ItemID, quantity: Int32) -> Uint64 {

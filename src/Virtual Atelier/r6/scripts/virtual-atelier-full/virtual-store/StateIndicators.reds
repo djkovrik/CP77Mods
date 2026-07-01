@@ -44,18 +44,16 @@ private final func RefreshAtelierEquipLabel() -> Void {
 
 @addMethod(InventoryItemDisplayController)
 private final func RefreshAtelierCartIndicator() -> Void {
-  let itemID: ItemID = InventoryItemData.GetID(this.m_itemData);
-  let quantity: Int32 = InventoryItemData.GetQuantity(this.m_itemData);
-  let isAddedToCart: Bool = this.cartManager.IsAddedToCart(itemID, quantity);
+  let stockItem: ref<VirtualStockItem> = this.GetAtelierStockItem();
+  let isAddedToCart: Bool = this.cartManager.IsStockAddedToCart(stockItem);
   this.cartIndicator.SetVisible(isAddedToCart);
 }
 
 @addMethod(InventoryItemDisplayController)
 private final func RefreshAtelierEnoughMoneyIndicator() -> Void {
-  let itemID: ItemID = InventoryItemData.GetID(this.m_itemData);
-  let quantity: Int32 = InventoryItemData.GetQuantity(this.m_itemData);
-  let enoughMoney: Bool = this.cartManager.PlayerHasEnoughMoneyFor(itemID);
-  let isAddedToCart: Bool = this.cartManager.IsAddedToCart(itemID, quantity);
+  let stockItem: ref<VirtualStockItem> = this.GetAtelierStockItem();
+  let enoughMoney: Bool = this.cartManager.PlayerHasEnoughMoneyForStock(stockItem);
+  let isAddedToCart: Bool = this.cartManager.IsStockAddedToCart(stockItem);
   if !enoughMoney && !isAddedToCart {
     inkWidgetRef.SetState(this.m_requirementsWrapper, n"Money");
     this.m_requirementsMet = false;
@@ -66,11 +64,20 @@ private final func RefreshAtelierEnoughMoneyIndicator() -> Void {
 
 @addMethod(InventoryItemDisplayController)
 private final func RefreshAtelierQuantityIndicator() -> Void {
-  let itemID: ItemID = InventoryItemData.GetID(this.m_itemData);
-  let quantity: Int32 = InventoryItemData.GetQuantity(this.m_itemData);
-  let purchaseAmount: Int32 = this.cartManager.GetAddedQuantity(itemID, quantity);
+  let stockItem: ref<VirtualStockItem> = this.GetAtelierStockItem();
+  let purchaseAmount: Int32 = this.cartManager.GetAddedStockQuantity(stockItem);
   this.quantityIndicator.SetVisible(purchaseAmount > 1);
   this.quantityIndicator.SetText(s"x\(purchaseAmount)");
+}
+
+@addMethod(InventoryItemDisplayController)
+private final func GetAtelierStockItem() -> ref<VirtualStockItem> {
+  let data: ref<gameItemData> = InventoryItemData.GetGameItemData(this.m_itemData);
+  if IsDefined(data) {
+    return data.virtualStockItem;
+  };
+
+  return null;
 }
 
 @addMethod(InventoryItemDisplayController)

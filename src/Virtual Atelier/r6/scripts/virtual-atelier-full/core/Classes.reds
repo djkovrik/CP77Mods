@@ -52,6 +52,7 @@ public class VirtualShop {
 }
 
 class VirtualStockItem {
+  public let stockKey: Uint64;
   public let itemID: ItemID;
   public let itemTDBID: TweakDBID;
   public let sourceStoreID: CName;
