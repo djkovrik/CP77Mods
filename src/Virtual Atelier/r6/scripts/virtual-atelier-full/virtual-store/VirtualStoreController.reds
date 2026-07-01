@@ -108,6 +108,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
 
   public cb func OnUninitialize() -> Bool {
     this.isUninitializing = true;
+    this.UninitializeListeners();
     this.pageRenderToken += 1;
     ArrayClear(this.pendingPageStock);
     ArrayClear(this.pendingPageItems);
@@ -724,6 +725,23 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.RegisterToGlobalInputCallback(n"OnPostOnRelease", this, n"OnHandleGlobalRelease");
   }
 
+  private final func UninitializeListeners() -> Void {
+    if IsDefined(this.searchInput) {
+      this.searchInput.UnregisterFromCallback(n"OnInput", this, n"OnSearchInput");
+    };
+    if IsDefined(this.vendorSortingButton) {
+      this.vendorSortingButton.UnregisterFromCallback(n"OnRelease", this, n"OnVendorSortingButtonClicked");
+    };
+    if IsDefined(this.filtersContainer) {
+      let radioGroup: ref<FilterRadioGroup> = this.filtersContainer.GetController() as FilterRadioGroup;
+      if IsDefined(radioGroup) {
+        radioGroup.UnregisterFromCallback(n"OnValueChanged", this, n"OnVendorFilterChange");
+      };
+    };
+    this.UnregisterFromGlobalInputCallback(n"OnPostOnHold", this, n"OnHandleGlobalHold");
+    this.UnregisterFromGlobalInputCallback(n"OnPostOnRelease", this, n"OnHandleGlobalRelease");
+  }
+
   private final func SetupDropdown() -> Void {
     let controller: ref<DropdownListController>;
     let data: ref<DropdownItemData>;
@@ -890,48 +908,52 @@ public class VirtualStoreController extends gameuiMenuGameController {
 
         while resultItemIndex < ArraySize(result.itemIndexes) {
           virtualItemIndex = result.itemIndexes[resultItemIndex];
-          itemTDBID = TDBID.Create(storeItems[virtualItemIndex]);
-          itemId = ItemID.FromTDBID(itemTDBID);
-          if ItemID.IsValid(itemId) {
-            itemRecord = TweakDBInterface.GetItemRecord(itemTDBID);
-            if IsDefined(itemRecord) {
-              stockItem = new VirtualStockItem();
-              stockItem.stockKey = Cast<Uint64>(ArraySize(this.virtualStock) + 1);
-              stockItem.itemID = itemId;
-              stockItem.itemTDBID = itemTDBID;
-              stockItem.sourceStoreID = result.store.storeID;
-              stockItem.sourceStoreName = result.store.storeName;
-              stockItem.sourceStoreCounter = result.counter;
-              stockItem.price = Cast<Float>(itemsPrices[virtualItemIndex]);
-              if (RoundF(stockItem.price) == 0) {
-                stockItem.price = Cast<Float>(RPGManager.CalculateBuyPrice(this.player.GetGame(), vendorObject, itemId, 1.0) * itemsQuantities[virtualItemIndex]);
+          if this.IsSearchResultIndexValid(virtualItemIndex, ArraySize(storeItems), ArraySize(itemsPrices), ArraySize(itemsQualities), ArraySize(itemsQuantities)) {
+            itemTDBID = TDBID.Create(storeItems[virtualItemIndex]);
+            itemId = ItemID.FromTDBID(itemTDBID);
+            if ItemID.IsValid(itemId) {
+              itemRecord = TweakDBInterface.GetItemRecord(itemTDBID);
+              if IsDefined(itemRecord) {
+                stockItem = new VirtualStockItem();
+                stockItem.stockKey = Cast<Uint64>(ArraySize(this.virtualStock) + 1);
+                stockItem.itemID = itemId;
+                stockItem.itemTDBID = itemTDBID;
+                stockItem.sourceStoreID = result.store.storeID;
+                stockItem.sourceStoreName = result.store.storeName;
+                stockItem.sourceStoreCounter = result.counter;
+                stockItem.price = Cast<Float>(itemsPrices[virtualItemIndex]);
+                if (RoundF(stockItem.price) == 0) {
+                  stockItem.price = Cast<Float>(RPGManager.CalculateBuyPrice(this.player.GetGame(), vendorObject, itemId, 1.0) * itemsQuantities[virtualItemIndex]);
+                };
+                stockItem.weight = 0.1;
+                stockItem.quality = itemsQualities[virtualItemIndex];
+                stockItem.quantity = itemsQuantities[virtualItemIndex];
+                stockItem.name = LocKeyToString(itemRecord.DisplayName());
+                stockItem.searchName = UTF8StrLower(GetLocalizedText(stockItem.name));
+                stockItem.equipmentArea = itemRecord.EquipArea().Type();
+                stockItem.itemType = itemRecord.ItemType().Type();
+                stockItem.itemCategory = itemRecord.ItemCategory().Type();
+                stockItem.isClothing = UIInventoryItemsManager.IsItemTypeCloting(stockItem.itemType) || itemRecord.TagsContains(n"Clothing");
+                stockItem.isRangedWeapon = itemRecord.TagsContains(n"RangedWeapon");
+                stockItem.isMeleeWeapon = itemRecord.TagsContains(n"MeleeWeapon");
+                stockItem.isCyberware = UIInventoryItemsManager.IsItemTypeCyberware(stockItem.itemType) || itemRecord.TagsContains(n"Cyberware") || itemRecord.TagsContains(n"Fragment");
+                stockItem.isConsumable = itemRecord.TagsContains(n"Consumable");
+                stockItem.isGrenade = itemRecord.TagsContains(n"Grenade");
+                stockItem.isAttachment = itemRecord.TagsContains(n"itemPart") && !itemRecord.TagsContains(n"Fragment") && !itemRecord.TagsContains(n"SoftwareShard");
+                stockItem.isProgram = itemRecord.TagsContains(n"SoftwareShard") || itemRecord.TagsContains(n"QuickhackCraftingPart");
+                stockItem.isQuest = itemRecord.TagsContains(n"Quest");
+                stockItem.isJunk = itemRecord.TagsContains(n"Junk");
+                stockItem.isDLCAdded = itemRecord.TagsContains(n"DLCAdded");
+                stockItem.isOwnable = stockItem.isClothing || stockItem.isRangedWeapon || stockItem.isMeleeWeapon || stockItem.isCyberware;
+                stockItem.notInWardrobe = stockItem.isClothing && !ArrayContains(wardrobeItemAppearances, itemRecord.AppearanceName());
+                stockItem.qualityRank = this.GetQualityRank(stockItem.quality);
+                stockItem.itemTypeRank = EnumInt(stockItem.equipmentArea) * 10000 + EnumInt(stockItem.itemType);
+                ArrayPush(this.virtualStock, stockItem);
+                totalPrice += stockItem.price;
               };
-              stockItem.weight = 0.1;
-              stockItem.quality = itemsQualities[virtualItemIndex];
-              stockItem.quantity = itemsQuantities[virtualItemIndex];
-              stockItem.name = LocKeyToString(itemRecord.DisplayName());
-              stockItem.searchName = UTF8StrLower(GetLocalizedText(stockItem.name));
-              stockItem.equipmentArea = itemRecord.EquipArea().Type();
-              stockItem.itemType = itemRecord.ItemType().Type();
-              stockItem.itemCategory = itemRecord.ItemCategory().Type();
-              stockItem.isClothing = UIInventoryItemsManager.IsItemTypeCloting(stockItem.itemType) || itemRecord.TagsContains(n"Clothing");
-              stockItem.isRangedWeapon = itemRecord.TagsContains(n"RangedWeapon");
-              stockItem.isMeleeWeapon = itemRecord.TagsContains(n"MeleeWeapon");
-              stockItem.isCyberware = UIInventoryItemsManager.IsItemTypeCyberware(stockItem.itemType) || itemRecord.TagsContains(n"Cyberware") || itemRecord.TagsContains(n"Fragment");
-              stockItem.isConsumable = itemRecord.TagsContains(n"Consumable");
-              stockItem.isGrenade = itemRecord.TagsContains(n"Grenade");
-              stockItem.isAttachment = itemRecord.TagsContains(n"itemPart") && !itemRecord.TagsContains(n"Fragment") && !itemRecord.TagsContains(n"SoftwareShard");
-              stockItem.isProgram = itemRecord.TagsContains(n"SoftwareShard") || itemRecord.TagsContains(n"QuickhackCraftingPart");
-              stockItem.isQuest = itemRecord.TagsContains(n"Quest");
-              stockItem.isJunk = itemRecord.TagsContains(n"Junk");
-              stockItem.isDLCAdded = itemRecord.TagsContains(n"DLCAdded");
-              stockItem.isOwnable = stockItem.isClothing || stockItem.isRangedWeapon || stockItem.isMeleeWeapon || stockItem.isCyberware;
-              stockItem.notInWardrobe = stockItem.isClothing && !ArrayContains(wardrobeItemAppearances, itemRecord.AppearanceName());
-              stockItem.qualityRank = this.GetQualityRank(stockItem.quality);
-              stockItem.itemTypeRank = EnumInt(stockItem.equipmentArea) * 10000 + EnumInt(stockItem.itemType);
-              ArrayPush(this.virtualStock, stockItem);
-              totalPrice += stockItem.price;
             };
+          } else {
+            AtelierDebug(s"Search result item skipped, index out of range: \(virtualItemIndex)");
           };
           resultItemIndex += 1;
         };
@@ -942,6 +964,25 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.totalItemsPrice = Cast<Int32>(totalPrice);
     this.BuildFilterList();
     this.SortVirtualStock();
+  }
+
+  private final func IsSearchResultIndexValid(index: Int32, storeItemsSize: Int32, pricesSize: Int32, qualitiesSize: Int32, quantitiesSize: Int32) -> Bool {
+    if index < 0 {
+      return false;
+    };
+    if index >= storeItemsSize {
+      return false;
+    };
+    if index >= pricesSize {
+      return false;
+    };
+    if index >= qualitiesSize {
+      return false;
+    };
+    if index >= quantitiesSize {
+      return false;
+    };
+    return true;
   }
 
   private final func ConvertStockIntoInventoryData(data: array<ref<VirtualStockItem>>, owner: wref<GameObject>) -> array<InventoryItemData> {

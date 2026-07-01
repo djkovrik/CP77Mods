@@ -75,9 +75,13 @@ public class AtelierStoresListController extends inkGameController {
 
   protected cb func OnUninitialize() -> Bool {
     this.UnregisterCallbacks();
-    this.storesList.SetSource(null);
-    this.storesList.SetClassifier(null);
-    this.storesDataView.SetSource(null);
+    if IsDefined(this.storesList) {
+      this.storesList.SetSource(null);
+      this.storesList.SetClassifier(null);
+    };
+    if IsDefined(this.storesDataView) {
+      this.storesDataView.SetSource(null);
+    };
     this.storesDataView = null;
     this.storesDataSource = null;
     this.storesTemplateClassifier = null;
