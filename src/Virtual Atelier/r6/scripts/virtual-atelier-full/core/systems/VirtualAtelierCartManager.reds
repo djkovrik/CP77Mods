@@ -14,6 +14,7 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
   private let maxQuantityPerBatch: Int32 = 1000;
 
   private let ownedItems: array<TweakDBID>;
+  private let wardrobeItems: array<TweakDBID>;
   private let ownedTagsToShow: array<CName>;
 
   public static func GetInstance(gi: GameInstance) -> ref<VirtualAtelierCartManager> {
@@ -234,9 +235,11 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
     };
   }
 
-  public final func AppendWardrobeItems(itemIds: array<ItemID>) -> Void {
+  public final func SaveWardrobeItems(itemIds: array<ItemID>) -> Void {
+    ArrayClear(this.wardrobeItems);
+
     for id in itemIds {
-      ArrayPush(this.ownedItems, ItemID.GetTDBID(id));
+      ArrayPush(this.wardrobeItems, ItemID.GetTDBID(id));
     };
   }
 
@@ -250,6 +253,10 @@ public class VirtualAtelierCartManager extends ScriptableSystem {
 
   public final func IsItemOwned(id: TweakDBID) -> Bool {
     return ArrayContains(this.ownedItems, id);
+  }
+
+  public final func IsItemInWardrobe(id: TweakDBID) -> Bool {
+    return ArrayContains(this.wardrobeItems, id);
   }
 
   public final func ShouldControlOwnership(data: wref<gameItemData>) -> Bool {

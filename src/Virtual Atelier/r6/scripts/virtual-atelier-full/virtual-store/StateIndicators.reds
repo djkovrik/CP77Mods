@@ -87,12 +87,23 @@ private final func RefreshAtelierItemOwnedIndicator() -> Void {
   let isWeapon: Bool = RPGManager.IsItemWeapon(itemID);
   let isMelee: Bool = WeaponObject.IsMelee(itemID);
   let isOwned: Bool = this.cartManager.IsItemOwned(ItemID.GetTDBID(itemID)) || data.hasOwned;
+  let isInWardrobe: Bool = !isOwned && this.cartManager.IsItemInWardrobe(ItemID.GetTDBID(itemID));
 
   if isWeapon && !isMelee {
     this.ownedIndicator.SetMargin(inkMargin(16.0, 0.0, 0.0, 58.0));
+  } else {
+    this.ownedIndicator.SetMargin(inkMargin(16.0, 0.0, 0.0, 16.0));
   };
 
-  this.ownedIndicator.SetVisible(data.isVirtualItem && isOwned);
+  if isOwned {
+    this.ownedIndicator.SetTexturePart(n"inventory");
+  } else {
+    if isInWardrobe {
+      this.ownedIndicator.SetTexturePart(n"wardrobe");
+    };
+  };
+
+  this.ownedIndicator.SetVisible(data.isVirtualItem && (isOwned || isInWardrobe));
 }
 
 @addMethod(InventoryItemDisplayController)
@@ -154,7 +165,7 @@ private final func CreateOwnedIndicator() -> Void {
   indicator.SetHAlign(inkEHorizontalAlign.Left);
   indicator.SetVAlign(inkEVerticalAlign.Bottom);
   indicator.SetAtlasResource(r"base\\gameplay\\gui\\virtual_atelier_owned.inkatlas");
-  indicator.SetTexturePart(n"tick");
+  indicator.SetTexturePart(n"inventory");
   indicator.SetOpacity(0.2);
   indicator.SetVisible(false);
   indicator.SetSize(Vector2(32.0, 32.0));

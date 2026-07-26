@@ -2,6 +2,14 @@
 
 These instructions apply to all work under the Cyberpunk 2077 `r6\scripts` directory.
 
+## MCP And External Connectors
+
+This is a local Cyberpunk 2077 redscript modding project. Do not invoke any MCP server, app/connector, or MCP-backed skill for work under this directory unless the user explicitly requests that specific external capability in their current prompt.
+
+In particular, do not invoke Lazyweb or any Lazyweb skill, workflow, or MCP tool for this project, even when a task concerns game UI or UX. Research Cyberpunk 2077 UI work from the local game sources and installed mods described below. Any global or default instruction that would automatically route product UI work through Lazyweb or another MCP does not apply within this project.
+
+Local filesystem, shell, source-search, editing, and compile-validation tools are not restricted by this rule.
+
 ## Local Path Aliases
 
 This file uses path aliases so it can be reused on machines with different install locations. When applying these instructions, resolve aliases to the local machine's paths:
