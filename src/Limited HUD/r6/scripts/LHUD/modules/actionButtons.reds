@@ -30,9 +30,15 @@ public func DetermineCurrentVisibility() -> Void {
   if NotEquals(this.lhud_isVisibleNow, isVisible) {
     this.lhud_isVisibleNow = isVisible;
     if isVisible {
-      this.AnimateAlphaLHUD(this.GetRootWidget(), this.lhudConfig.Opacity, 0.3);
+      this.AnimateAlphaLHUD(this.GetRootCompoundWidget(), this.lhudConfig.Opacity, 0.3);
+      this.AnimateAlphaLHUD(this.m_phoneSlot, this.lhudConfig.Opacity, 0.3);
+      this.AnimateAlphaLHUD(this.m_carSlot, this.lhudConfig.Opacity, 0.3);
+      this.AnimateAlphaLHUD(this.m_radioSlot, this.lhudConfig.Opacity, 0.3);
     } else {
-      this.AnimateAlphaLHUD(this.GetRootWidget(), 0.0, 0.3);
+      this.AnimateAlphaLHUD(this.GetRootCompoundWidget(), 0.0, 0.3);
+      this.AnimateAlphaLHUD(this.m_phoneSlot, 0.0, 0.3);
+      this.AnimateAlphaLHUD(this.m_carSlot, 0.0, 0.3);
+      this.AnimateAlphaLHUD(this.m_radioSlot, 0.0, 0.3);
     };
   };
 }
@@ -47,6 +53,9 @@ protected cb func OnInitialize() -> Bool {
   if this.lhudConfig.IsEnabled {
     this.lhud_isVisibleNow = false;
     this.GetRootWidget().SetOpacity(0.0);
+    inkWidgetRef.SetOpacity(this.m_phoneSlot, 0.0);
+    inkWidgetRef.SetOpacity(this.m_carSlot, 0.0);
+    inkWidgetRef.SetOpacity(this.m_radioSlot, 0.0);
     this.OnInitializeFinished();
   };
 }
