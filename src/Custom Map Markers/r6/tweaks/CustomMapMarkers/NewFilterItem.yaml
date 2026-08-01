@@ -14,9 +14,6 @@ WorldMap.CustomMapMarkersFilterGroup:
     - Mappins.CustomMapMarkersVariant
   shouldCollectMappins: False
 
-WorldMap.WorldMapQuickFiltersList.list:
-  - !append-once WorldMap.CustomMapMarkersFilterGroup
-
 WorldMap.WorldMapCustomFiltersList.list:
   - !append-once WorldMap.CustomMapMarkersFilterGroup
 
