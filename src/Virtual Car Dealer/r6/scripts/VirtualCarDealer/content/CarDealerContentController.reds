@@ -249,17 +249,19 @@ public class CarDealerContentController extends inkGameController {
     rowBottom.SetMargin(inkMargin(0.0, 40.0, 0.0, 0.0));
     rowBottom.SetChildMargin(inkMargin(20.0, 0.0, 20.0, 0.0));
 
-    let fixer: ref<CustomHubButton> = CustomHubButton.Create();
-    fixer.SetName(n"ButtonFixer");
-    fixer.SetText(GetLocalizedText("LocKey#6760"));
-    fixer.ToggleAnimations(true);
-    fixer.ToggleSounds(true);
-    fixer.SetTextColor(n"MainColors.Green");
-    fixer.SetHoverColor(n"MainColors.Green");
-    fixer.SetFluffColor(n"MainColors.ActiveGreen");
-    fixer.SetLeftSideColor(n"MainColors.ActiveGreen");
-    fixer.Reparent(rowBottom);
-    this.buttonFixer = fixer;
+    if this.ShouldShowSellButton() {
+      let fixer: ref<CustomHubButton> = CustomHubButton.Create();
+      fixer.SetName(n"ButtonFixer");
+      fixer.SetText(GetLocalizedText("LocKey#6760"));
+      fixer.ToggleAnimations(true);
+      fixer.ToggleSounds(true);
+      fixer.SetTextColor(n"MainColors.Green");
+      fixer.SetHoverColor(n"MainColors.Green");
+      fixer.SetFluffColor(n"MainColors.ActiveGreen");
+      fixer.SetLeftSideColor(n"MainColors.ActiveGreen");
+      fixer.Reparent(rowBottom);
+      this.buttonFixer = fixer;
+    };
 
     let buy: ref<CustomHubButton> = CustomHubButton.Create();
     buy.SetName(n"ButtonBuy");
@@ -652,5 +654,15 @@ public class CarDealerContentController extends inkGameController {
       r"base\\gameplay\\gui\\autofixer.inkwidget", 
       n"AutofixerManager:CarDealer.AutofixerVirtualController"
     );
+  }
+
+  @if(!ModuleExists("CarDealer.Sell"))
+  private final func ShouldShowSellButton() -> Bool {
+    return true;
+  }
+
+  @if(ModuleExists("CarDealer.Sell"))
+  private final func ShouldShowSellButton() -> Bool {
+    return false;
   }
 }
