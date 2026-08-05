@@ -183,10 +183,4 @@ public class OrderCheckoutDestinationItem extends inkComponent {
 
     return districtName;
   }
-
-  private final func Log(str: String) -> Void {
-    if VirtualAtelierDeliveryConfig.Debug() {
-      ModLog(n"DeliveryItem", str);
-    };
-  }
 }

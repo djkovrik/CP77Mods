@@ -38,8 +38,6 @@ protected cb func OnRequestComponents(ri: EntityRequestComponentsInterface) -> B
 
 @wrapMethod(InteractiveDevice)
 protected cb func OnPerformedAction(evt: ref<PerformedAction>) -> Bool {
-  if VirtualAtelierDeliveryConfig.Debug() {
-    ModLog(n"EntityHash", s"\(this.GetClassName()): \(EntityID.GetHash(this.GetEntityID())) at \(this.GetWorldPosition()) with \(this.GetWorldOrientation())");
-  };
+  // ModLog(n"EntityHash", s"\(this.GetClassName()): \(EntityID.GetHash(this.GetEntityID())) at \(this.GetWorldPosition()) with \(this.GetWorldOrientation())");
   return wrappedMethod(evt);
 }

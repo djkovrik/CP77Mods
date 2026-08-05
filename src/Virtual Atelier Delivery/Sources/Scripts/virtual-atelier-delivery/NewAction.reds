@@ -27,30 +27,43 @@ private let dropPointsSpawner: wref<AtelierDropPointsSpawner>;
 @addField(DropPointControllerPS)
 private let ordersSystem: wref<OrderProcessingSystem>;
 
+@addMethod(DropPointControllerPS)
+private final func VADLogPickup(str: String) -> Void {
+  let config: ref<VirtualAtelierDeliveryConfig> = new VirtualAtelierDeliveryConfig();
+  if config.debug {
+    ModLog(n"DeliveryOrders", str);
+  };
+}
 
 @addMethod(DropPointControllerPS)
 protected cb func OnInstantiated() -> Bool {
   super.OnInstantiated();
   this.dropPointsSpawner = AtelierDropPointsSpawner.Get(this.GetGameInstance());
   this.ordersSystem = OrderProcessingSystem.Get(this.GetGameInstance());
+  this.VADLogPickup(s"Pickup terminal instantiated: entity=\(this.GetMyEntityID()), spawner=\(IsDefined(this.dropPointsSpawner)), ordersSystem=\(IsDefined(this.ordersSystem))");
 }
 
 @addMethod(DropPointControllerPS)
 protected final func OnOpenVaDeliveryUI(evt: ref<OpenVaDeliveryUI>) -> EntityNotificationType {
+  this.VADLogPickup(s"Pickup interaction received: entity=\(this.GetMyEntityID())");
   if !IsDefined(this.dropPointsSpawner) {
+    this.VADLogPickup("Pickup interaction: cached spawner is missing, trying to reacquire it");
     this.dropPointsSpawner = AtelierDropPointsSpawner.Get(this.GetGameInstance());
   };
 
   if !IsDefined(this.ordersSystem) {
+    this.VADLogPickup("Pickup interaction: cached order system is missing, trying to reacquire it");
     this.ordersSystem = OrderProcessingSystem.Get(this.GetGameInstance());
   };
 
   if !IsDefined(this.dropPointsSpawner) || !IsDefined(this.ordersSystem) {
+    this.VADLogPickup(s"Pickup interaction FAILED: spawner=\(IsDefined(this.dropPointsSpawner)), ordersSystem=\(IsDefined(this.ordersSystem))");
     return EntityNotificationType.DoNotNotifyEntity;
   };
 
   let entityId: EntityID = this.GetMyEntityID();
   let dropPointTag: CName = this.dropPointsSpawner.GetUniqueTagByEntityId(entityId);
+  this.VADLogPickup(s"Pickup interaction resolved terminal: entity=\(entityId), uniqueTag=\(dropPointTag)");
   this.ordersSystem.GetArrivedItems(dropPointTag);
   return EntityNotificationType.DoNotNotifyEntity;
 }

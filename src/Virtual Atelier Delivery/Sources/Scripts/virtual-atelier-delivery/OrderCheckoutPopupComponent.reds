@@ -115,18 +115,25 @@ public class OrderCheckoutPopupComponent extends inkComponent {
   private final func SelectFirstAvailableDropPoint() -> Void {
     let spawnSystem: ref<AtelierDropPointsSpawner> = AtelierDropPointsSpawner.Get(GetGameInstance());
     if !IsDefined(spawnSystem) {
+      this.Log("Destination auto-selection FAILED: AtelierDropPointsSpawner is not available");
       return;
     };
 
     let dropPoints: array<ref<AtelierDropPointInstance>> = spawnSystem.GetAvailableDropPoints();
-    let selectedDropPoint: ref<AtelierDropPointInstance> = spawnSystem.FindAvailableDropPoint(this.GetLastSelectedDropPoint());
+    let lastSelectedDropPoint: AtelierDeliveryDropPoint = this.GetLastSelectedDropPoint();
+    let selectedDropPoint: ref<AtelierDropPointInstance> = spawnSystem.FindAvailableDropPoint(lastSelectedDropPoint);
+
+    this.Log(s"Destination auto-selection: availablePoints=\(ArraySize(dropPoints)), lastSelected=\(lastSelectedDropPoint), lastSelectedAvailable=\(IsDefined(selectedDropPoint))");
 
     if !IsDefined(selectedDropPoint) && ArraySize(dropPoints) > 0 {
       selectedDropPoint = dropPoints[0];
+      this.Log(s"Destination auto-selection: using first available point \(selectedDropPoint.type) with tag \(selectedDropPoint.uniqueTag)");
     };
 
     if IsDefined(selectedDropPoint) {
       this.ApplySelectedDropPoint(selectedDropPoint);
+    } else {
+      this.Log("Destination auto-selection FAILED: no available delivery point was found");
     };
   }
 
@@ -169,13 +176,17 @@ public class OrderCheckoutPopupComponent extends inkComponent {
 
   private final func ApplySelectedDropPoint(data: ref<AtelierDropPointInstance>) -> Void {
     if !IsDefined(data) {
+      this.Log("Destination selection ignored: selected drop point data is not defined");
       return;
     };
 
     this.selectedDropPoint = data.type;
+    this.Log(s"Destination selected: point=\(data.type), uniqueTag=\(data.uniqueTag), iterationTag=\(data.iterationTag)");
     if IsDefined(this.dropPointPreview) {
       this.dropPointPreview.SetAtlasResource(data.inkAtlas);
       this.dropPointPreview.SetTexturePart(data.uniqueTag);
+    } else {
+      this.Log("Destination selection warning: drop point preview widget is not defined");
     };
   }
 
@@ -335,7 +346,7 @@ public class OrderCheckoutPopupComponent extends inkComponent {
   }
 
   private final func Log(str: String) -> Void {
-    if VirtualAtelierDeliveryConfig.Debug() {
+    if this.config.debug {
       ModLog(n"DeliveryCheckout", str);
     };
   }

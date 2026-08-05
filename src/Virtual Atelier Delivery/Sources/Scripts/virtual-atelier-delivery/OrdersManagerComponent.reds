@@ -163,10 +163,4 @@ public class OrdersManagerComponent extends inkComponent {
       component.Reparent(this.components);
     };
   }
-
-  private final func Log(str: String) -> Void {
-    if VirtualAtelierDeliveryConfig.Debug() {
-      ModLog(n"DeliveryOrder", str);
-    };
-  }
 }

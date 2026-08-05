@@ -66,4 +66,11 @@ public class VirtualAtelierDeliveryConfig {
   @runtimeProperty("ModSettings.min", "25")
   @runtimeProperty("ModSettings.max", "1000")
   public let priorityDeliveryPrice: Int32 = 50;
+
+  @runtimeProperty("ModSettings.mod", "Virtual Atelier")
+  @runtimeProperty("ModSettings.category", "UI-Settings-Gameplay-Misc-MiscSectionTitle")
+  @runtimeProperty("ModSettings.category.order", "3")
+  @runtimeProperty("ModSettings.displayName", "UI-Settings-Language-Debug")
+  @runtimeProperty("ModSettings.description", "")
+  public let debug: Bool = false;
 }

@@ -1493,11 +1493,22 @@ public class VirtualStoreController extends gameuiMenuGameController {
     let items: array<String> = store.items;
     let quantities: array<Int32> = store.quantities;
     let i: Int32 = 0;
-    if (ArraySize(items) > ArraySize(quantities)) {
-      while (i < (ArraySize(items) - ArraySize(quantities))) {
-        ArrayPush(quantities, 1); 
+
+    while i < ArraySize(items) {
+      if i >= ArraySize(quantities) {
+        AtelierDebug(s"Store quantity defaulted to 1 for missing entry: store=\(store.storeName), item=\(items[i]), index=\(i)");
+        ArrayPush(quantities, 1);
+      } else if Equals(quantities[i], 0) {
+        AtelierDebug(s"Store quantity normalized from legacy 0 to 1: store=\(store.storeName), item=\(items[i]), index=\(i)");
+        quantities[i] = 1;
+      } else if quantities[i] < 0 {
+        AtelierDebug(s"Store quantity normalized from invalid \(quantities[i]) to 1: store=\(store.storeName), item=\(items[i]), index=\(i)");
+        quantities[i] = 1;
       };
+
+      i += 1;
     };
+
     return quantities;
   }
   // Darkcopse prices tweak

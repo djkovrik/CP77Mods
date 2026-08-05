@@ -5,6 +5,7 @@ public class DeliveryMessengerSystem extends ScriptableSystem {
   persistent let uniqueIndex: Int32 = 0;
   persistent let hasUnreadMessage: Bool = false;
 
+  private let config: ref<VirtualAtelierDeliveryConfig>;
   private let conversation: wref<JournalPhoneConversation>;
   private let journalReady: Bool;
 
@@ -17,6 +18,8 @@ public class DeliveryMessengerSystem extends ScriptableSystem {
     if GameInstance.GetSystemRequestsHandler().IsPreGame() {
       return;
     };
+
+    this.config = new VirtualAtelierDeliveryConfig();
 
     let token: ref<ResourceToken> = GameInstance.GetResourceDepot().LoadResource(r"djkovrik\\atelier\\delivery.journal");
     token.RegisterCallback(this, n"OnJournalLoaded");
@@ -227,7 +230,7 @@ public class DeliveryMessengerSystem extends ScriptableSystem {
   }
 
   private final func Log(str: String) -> Void {
-    if VirtualAtelierDeliveryConfig.Debug() {
+    if IsDefined(this.config) && this.config.debug {
       ModLog(n"DeliveryMessenger", str);
     };
   }

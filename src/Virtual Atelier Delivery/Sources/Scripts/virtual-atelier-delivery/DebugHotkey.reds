@@ -1,5 +1,5 @@
 module AtelierDelivery
-
+/*
 public class AtelierDeliveryDebugHotkey {
   private let player: wref<PlayerPuppet>;
   private let timeSystem: wref<TimeSystem>;
@@ -13,7 +13,7 @@ public class AtelierDeliveryDebugHotkey {
 
   protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
     if ListenerAction.IsAction(action, n"restore_default_settings") && ListenerAction.IsButtonJustReleased(action) {
-      // this.DumpCurrentPlayerPosition();
+      this.DumpCurrentPlayerPosition();
       // this.ShowRandomSmsMessage();
     }
   }
@@ -64,18 +64,15 @@ private let atelierDeliveryDebugHotkey: ref<AtelierDeliveryDebugHotkey>;
 @wrapMethod(PlayerPuppet)
 protected cb func OnGameAttached() -> Bool {
   wrappedMethod();
-  if VirtualAtelierDeliveryConfig.Debug() {
-    this.atelierDeliveryDebugHotkey = new AtelierDeliveryDebugHotkey();
-    this.atelierDeliveryDebugHotkey.SetPlayer(this);
-    this.RegisterInputListener(this.atelierDeliveryDebugHotkey);
-  };
+  this.atelierDeliveryDebugHotkey = new AtelierDeliveryDebugHotkey();
+  this.atelierDeliveryDebugHotkey.SetPlayer(this);
+  this.RegisterInputListener(this.atelierDeliveryDebugHotkey);
 }
 
 @wrapMethod(PlayerPuppet)
 protected cb func OnDetach() -> Bool {
   wrappedMethod();
-  if VirtualAtelierDeliveryConfig.Debug() {
-    this.UnregisterInputListener(this.atelierDeliveryDebugHotkey);
-    this.atelierDeliveryDebugHotkey = null;
-  };
+  this.UnregisterInputListener(this.atelierDeliveryDebugHotkey);
+  this.atelierDeliveryDebugHotkey = null;
 }
+*/

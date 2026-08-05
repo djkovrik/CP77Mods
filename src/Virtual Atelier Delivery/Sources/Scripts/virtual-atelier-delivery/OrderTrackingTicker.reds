@@ -2,6 +2,7 @@ module AtelierDelivery
 
 public class OrderTrackingTicker extends ScriptableSystem {
   private let delaySystem: wref<DelaySystem>;
+  private let config: ref<VirtualAtelierDeliveryConfig>;
   private let delayId: DelayID;
   private let checkingPeriodShort: Float = 5.0;
   private let checkingPeriodNormal: Float = 20.0;
@@ -28,6 +29,7 @@ public class OrderTrackingTicker extends ScriptableSystem {
       .SetLifetime(CallbackLifetime.Session);
 
     this.delaySystem = GameInstance.GetDelaySystem(this.GetGameInstance());
+    this.config = new VirtualAtelierDeliveryConfig();
   }
 
   public final func ScheduleCallbackNormal() -> Void {
@@ -69,7 +71,7 @@ public class OrderTrackingTicker extends ScriptableSystem {
   }
 
   private final func Log(str: String) -> Void {
-    if VirtualAtelierDeliveryConfig.Debug() {
+    if IsDefined(this.config) && this.config.debug {
       ModLog(n"DeliveryOrders", str);
     };
   }

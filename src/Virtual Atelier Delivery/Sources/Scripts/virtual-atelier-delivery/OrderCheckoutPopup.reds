@@ -87,10 +87,4 @@ public class OrderCheckoutPopup extends InMenuPopup {
   }
 
   protected cb func OnShown() {}
-
-  private final func Log(str: String) -> Void {
-    if VirtualAtelierDeliveryConfig.Debug() {
-      ModLog(n"DeliveryPopup", str);
-    };
-  }
 }

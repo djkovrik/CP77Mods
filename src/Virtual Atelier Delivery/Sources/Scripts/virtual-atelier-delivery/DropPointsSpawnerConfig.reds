@@ -9,12 +9,14 @@ module AtelierDelivery
   inkatlas texturePart name should match uniqueTag
 **/
 public class AtelierDropPointsSpawnerConfig {
+  private let config: ref<VirtualAtelierDeliveryConfig>;
   private let spawnPoints: ref<inkHashMap>;
   private let iterationTagsPrologue: array<CName>;
   private let iterationTagsNightCity: array<CName>;
   private let iterationTagsDogtown: array<CName>;
 
   public final func Init() -> Void {
+    this.config = new VirtualAtelierDeliveryConfig();
     this.spawnPoints = new inkHashMap();
   }
 
@@ -420,7 +422,7 @@ public class AtelierDropPointsSpawnerConfig {
   }
 
   private final func Log(str: String) -> Void {
-    if VirtualAtelierDeliveryConfig.Debug() {
+    if IsDefined(this.config) && this.config.debug {
       ModLog(n"DeliverySpawnerConfig", str);
     };
   }

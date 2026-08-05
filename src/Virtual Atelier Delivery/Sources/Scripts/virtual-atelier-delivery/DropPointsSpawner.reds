@@ -3,6 +3,7 @@ module AtelierDelivery
 public class AtelierDropPointsSpawner extends ScriptableSystem {
   private let entitySystem: wref<DynamicEntitySystem>;
   private let delaySystem: wref<DelaySystem>;
+  private let config: ref<VirtualAtelierDeliveryConfig>;
   private let handled: Bool;
   private let spawnConfig: ref<AtelierDropPointsSpawnerConfig>;
   private let initialCallbackId: DelayID;
@@ -22,6 +23,7 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     this.entitySystem = GameInstance.GetDynamicEntitySystem();
     this.delaySystem = GameInstance.GetDelaySystem(this.GetGameInstance());
     this.handled = false;
+    this.config = new VirtualAtelierDeliveryConfig();
 
     if GameInstance.GetSystemRequestsHandler().IsPreGame() {
       return;
@@ -107,20 +109,24 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
 
   private final func GetDropPointTagByEntityId(entityId: EntityID) -> CName {
     if !this.EnsureInitialized() {
+      this.Log(s"Pickup terminal lookup FAILED for entity \(entityId): spawner is not initialized");
       return n"";
     };
 
     let tags: array<CName> = this.entitySystem.GetTags(entityId);
     if Equals(ArraySize(tags), 0) {
+      this.Log(s"Pickup terminal lookup FAILED for entity \(entityId): entity has no dynamic tags");
       return n"";
     };
 
     for tag in tags {
       if NotEquals(AtelierDeliveryUtils.GetDropPointByTag(tag), AtelierDeliveryDropPoint.None) {
+        this.Log(s"Pickup terminal lookup succeeded for entity \(entityId): uniqueTag=\(tag), totalTags=\(ArraySize(tags))");
         return tag;
       };
     };
 
+    this.Log(s"Pickup terminal lookup FAILED for entity \(entityId): none of its \(ArraySize(tags)) tags maps to a delivery point");
     return n"";
   }
 
@@ -465,7 +471,7 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
   }
 
   private final func Log(str: String) -> Void {
-    if VirtualAtelierDeliveryConfig.Debug() {
+    if IsDefined(this.config) && this.config.debug {
       ModLog(n"DeliverySpawner", str);
     };
   }
