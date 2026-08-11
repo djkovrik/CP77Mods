@@ -14,11 +14,20 @@ public final class WardrobeSystemExtra extends ScriptableSystem {
 
   private persistent let blacklist: array<ItemID>;
 
+  private let isMigratingOldWardrobe: Bool;
+
+  private let photoModeExtraSelectorActive: Bool;
+
+  private let photoModeSelectedSetIndex: gameWardrobeClothingSetIndexExtra = gameWardrobeClothingSetIndexExtra.INVALID;
+
   private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
     let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(request.owner.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
     if IsDefined(player) {
       this.player = player;
       this.originalSystem = GameInstance.GetWardrobeSystem(this.player.GetGame());
+      if ArraySize(this.clothingSets) > 0 || NotEquals(this.activeSetIndex, gameWardrobeClothingSetIndexExtra.INVALID) {
+        this.RebuildOriginalWardrobeMirror();
+      };
       W(s"WardrobeSystemExtra initialized: current slot: \(this.activeSetIndex), current sets: \(ArraySize(this.clothingSets))");
     };
   }
@@ -97,6 +106,9 @@ public final class WardrobeSystemExtra extends ScriptableSystem {
     let currentSets: array<ref<ClothingSetExtra>> = this.clothingSets;
     ArrayPush(currentSets, clothingSet);
     this.clothingSets = currentSets;
+    if !this.isMigratingOldWardrobe {
+      this.RebuildOriginalWardrobeMirror();
+    };
   }
 
   public final func DeleteClothingSet(setIndex: gameWardrobeClothingSetIndexExtra) -> Void {
@@ -110,6 +122,7 @@ public final class WardrobeSystemExtra extends ScriptableSystem {
     };
 
     this.clothingSets = resultingSets;
+    this.RebuildOriginalWardrobeMirror();
   }
 
   public final func GetClothingSets() -> array<ref<ClothingSetExtra>> {
@@ -118,10 +131,79 @@ public final class WardrobeSystemExtra extends ScriptableSystem {
 
   public final func SetActiveClothingSetIndex(slotIndex: gameWardrobeClothingSetIndexExtra) -> Void {
     this.activeSetIndex = slotIndex;
+    if this.photoModeExtraSelectorActive {
+      this.photoModeSelectedSetIndex = slotIndex;
+    } else {
+      this.RebuildOriginalWardrobeMirror();
+    };
   }
 
   public final func GetActiveClothingSetIndex() -> gameWardrobeClothingSetIndexExtra {
     return this.activeSetIndex;
+  }
+
+  public final func SetPhotoModeExtraSelectorActive(active: Bool) -> Void {
+    this.photoModeExtraSelectorActive = active;
+    this.photoModeSelectedSetIndex = this.activeSetIndex;
+    if !active {
+      this.RebuildOriginalWardrobeMirror();
+    };
+  }
+
+  public final func IsPhotoModeExtraSelectorActive() -> Bool {
+    return this.photoModeExtraSelectorActive;
+  }
+
+  public final func SetPhotoModeSelectedSetIndex(slotIndex: gameWardrobeClothingSetIndexExtra) -> Void {
+    this.photoModeSelectedSetIndex = slotIndex;
+  }
+
+  public final func GetPhotoModeSelectedSetIndex() -> gameWardrobeClothingSetIndexExtra {
+    return this.photoModeSelectedSetIndex;
+  }
+
+  private final func RebuildOriginalWardrobeMirror() -> Void {
+    let activeSlotNumber: Int32;
+    let extraSets: array<ref<ClothingSetExtra>>;
+    let i: Int32;
+    let mirroredSet: ref<ClothingSetExtra>;
+    let originalSets: array<ref<ClothingSet>>;
+    let slotNumber: Int32;
+    if !IsDefined(this.originalSystem) || this.isMigratingOldWardrobe {
+      return;
+    };
+    originalSets = this.originalSystem.GetClothingSets();
+    i = 0;
+    while i < ArraySize(originalSets) {
+      this.originalSystem.DeleteClothingSet(originalSets[i].setID);
+      i += 1;
+    };
+    extraSets = this.clothingSets;
+    slotNumber = 0;
+    while slotNumber < EnumInt(gameWardrobeClothingSetIndex.COUNT) {
+      mirroredSet = null;
+      i = 0;
+      while i < ArraySize(extraSets) {
+        if WardrobeSystemExtra.WardrobeClothingSetIndexToNumber(extraSets[i].setID) == slotNumber {
+          mirroredSet = extraSets[i];
+        };
+        i += 1;
+      };
+      if IsDefined(mirroredSet) {
+        this.originalSystem.PushBackClothingSet(this.ToOriginalSet(mirroredSet, IntEnum<gameWardrobeClothingSetIndex>(slotNumber)));
+      };
+      slotNumber += 1;
+    };
+    originalSets = this.originalSystem.GetClothingSets();
+    if ArraySize(originalSets) == 0 && ArraySize(extraSets) > 0 {
+      this.originalSystem.PushBackClothingSet(this.ToOriginalSet(extraSets[0], gameWardrobeClothingSetIndex.Slot1));
+    };
+    activeSlotNumber = WardrobeSystemExtra.WardrobeClothingSetIndexToNumber(this.activeSetIndex);
+    if activeSlotNumber >= 0 && activeSlotNumber < EnumInt(gameWardrobeClothingSetIndex.COUNT) {
+      this.originalSystem.SetActiveClothingSetIndex(IntEnum<gameWardrobeClothingSetIndex>(activeSlotNumber));
+    } else {
+      this.originalSystem.SetActiveClothingSetIndex(gameWardrobeClothingSetIndex.INVALID);
+    };
   }
 
   public final func GetActiveClothingSet() -> ref<ClothingSetExtra> {
@@ -186,6 +268,27 @@ public final class WardrobeSystemExtra extends ScriptableSystem {
     return gameWardrobeClothingSetIndexExtra.INVALID;
   }
 
+  public final static func WardrobeClothingSetIndexToPhotoModeData(slotIndex: gameWardrobeClothingSetIndexExtra) -> Int32 {
+    let slotNumber: Int32 = WardrobeSystemExtra.WardrobeClothingSetIndexToNumber(slotIndex);
+    if slotNumber < 0 {
+      return EnumInt(gameWardrobeClothingSetIndex.INVALID);
+    };
+    if slotNumber >= EnumInt(gameWardrobeClothingSetIndex.INVALID) {
+      return slotNumber + 1;
+    };
+    return slotNumber;
+  }
+
+  public final static func PhotoModeDataToWardrobeClothingSetIndex(photoModeData: Int32) -> gameWardrobeClothingSetIndexExtra {
+    if photoModeData < 0 || photoModeData == EnumInt(gameWardrobeClothingSetIndex.INVALID) || photoModeData > EnumInt(gameWardrobeClothingSetIndexExtra.COUNT) {
+      return gameWardrobeClothingSetIndexExtra.INVALID;
+    };
+    if photoModeData > EnumInt(gameWardrobeClothingSetIndex.INVALID) {
+      return WardrobeSystemExtra.NumberToWardrobeClothingSetIndex(photoModeData - 1);
+    };
+    return WardrobeSystemExtra.NumberToWardrobeClothingSetIndex(photoModeData);
+  }
+
   public final static func SendWardrobeAddItemRequest(gameInstance: GameInstance, itemID: ItemID) -> Void {
     let request: ref<UIScriptableSystemWardrobeAddItem> = new UIScriptableSystemWardrobeAddItem();
     request.itemID = itemID;
@@ -206,8 +309,10 @@ public final class WardrobeSystemExtra extends ScriptableSystem {
     let wardrobeMigratedFact: Int32 = questsSystem.GetFact(factName);
     if ArraySize(oldSets) > 0 && NotEquals(lastActiveSlot, gameWardrobeClothingSetIndex.INVALID) && Equals(wardrobeMigratedFact, 0) {
       questsSystem.SetFact(factName, 1);
+      this.isMigratingOldWardrobe = true;
       this.MigrateOldSetIndex(lastActiveSlot);
       this.MigrateOldClothingSets(oldSets);
+      this.isMigratingOldWardrobe = false;
       EquipmentSystem.GetData(this.player).EquipWardrobeSetExtra(this.GetActiveClothingSetIndex());
       W(s"Migrated old sets: \(ArraySize(oldSets))");
     };
@@ -245,6 +350,14 @@ public final class WardrobeSystemExtra extends ScriptableSystem {
     set.setID = this.ToExtraIndex(oldSet.setID);
     set.clothingList = oldSet.clothingList;
     set.iconID = oldSet.iconID;
+    return set;
+  }
+
+  private func ToOriginalSet(extraSet: ref<ClothingSetExtra>, setID: gameWardrobeClothingSetIndex) -> ref<ClothingSet> {
+    let set: ref<ClothingSet> = new ClothingSet();
+    set.setID = setID;
+    set.clothingList = extraSet.clothingList;
+    set.iconID = extraSet.iconID;
     return set;
   }
 }
