@@ -2,6 +2,24 @@ import VirtualAtelier.Systems.VirtualAtelierPreviewManager
 
 public abstract class AtelierInputHelper {
   
+  @if(!ModuleExists("ItemPreviewControl"))
+  public static func ApplyGarmentPreviewHorizontalInput(
+    controller: ref<WardrobeSetPreviewGameController>,
+    previewWidget: ref<inkImage>,
+    amount: Float
+  ) -> Void {
+    previewWidget.ChangeTranslation(Vector2(amount, 0.0));
+  }
+
+  @if(ModuleExists("ItemPreviewControl"))
+  public static func ApplyGarmentPreviewHorizontalInput(
+    controller: ref<WardrobeSetPreviewGameController>,
+    previewWidget: ref<inkImage>,
+    amount: Float
+  ) -> Void {
+    controller.Rotate(amount * -2.125);
+  }
+
   public static func RegisterGlobalInputListeners(controller: ref<WardrobeSetPreviewGameController>) {
     controller.RegisterToGlobalInputCallback(n"OnPostOnPress", controller, n"OnGlobalPress");
     controller.RegisterToGlobalInputCallback(n"OnPostOnPress", controller, n"OnReleaseButton");
@@ -36,7 +54,7 @@ public abstract class AtelierInputHelper {
 
     if controller.isLeftMouseDown {
       if event.IsAction(n"mouse_x") && isScaleAllowed {
-        previewWidget.ChangeTranslation(Vector2(amount, 0.0));      
+        AtelierInputHelper.ApplyGarmentPreviewHorizontalInput(controller, previewWidget, amount);
       };
       if event.IsAction(n"mouse_y") && isScaleAllowed {
         previewWidget.ChangeTranslation(Vector2(0.0, -1.0 * amount));
