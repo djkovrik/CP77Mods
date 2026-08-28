@@ -1067,6 +1067,10 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     };
 
     if success {
+      if newFlag && this.m_system.IsAddedToJunk(data.GetID()) {
+        this.m_system.RemoveFromJunk(data.GetID());
+        evt.display.SetIsCustomJunkItem(false);
+      };
       evt.display.SetIsQuestItem(newFlag);
       this.PlaySound(n"ui_menu_onpress");
     };
@@ -1532,7 +1536,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     wrappedItem.selected = false;
     wrappedItem.customJunk = this.m_system.IsAddedToJunk(itemId);
     wrappedItem.questTagToggleable = RevisedBackpackUtils.CanToggleQuestTag(data);
-    wrappedItem.customJunkToggleable = RevisedBackpackUtils.CanToggleCustomJunk(uiInventoryItem);
+    wrappedItem.customJunkToggleable = RevisedBackpackUtils.CanToggleCustomJunk(uiInventoryItem, wrappedItem.isQuest);
     
     return wrappedItem;
   }

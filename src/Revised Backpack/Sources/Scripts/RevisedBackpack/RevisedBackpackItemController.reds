@@ -193,8 +193,10 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
 
   public final func SetIsQuestItem(flag: Bool) -> Void {
     this.m_item.SetQuestFlag(flag);
+    this.m_item.customJunkToggleable = RevisedBackpackUtils.CanToggleCustomJunk(this.m_item.inventoryItem, flag);
     this.m_itemName.BindProperty(n"tintColor", RevisedBackpackUtils.GetItemLabelColor(this.GetIsQuestItem(), this.m_item.inventoryItem.IsIconic()));
     this.m_itemQuest.SetVisible(this.GetIsQuestItem());
+    this.UpdateCustomJunkToggleableState();
   }
 
   public final func CanToggleQuestTag() -> Bool {
@@ -211,7 +213,7 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
   }
 
   public final func CanToggleCustomJunk() -> Bool {
-    return this.m_item.customJunkToggleable;
+    return this.m_item.customJunkToggleable && !this.GetIsQuestItem();
   }
 
   public final func GetNameLabel() -> String {
@@ -254,13 +256,17 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
       this.m_questContainer.SetOpacity(0.1);
     };
 
+    this.UpdateCustomJunkToggleableState();
+
+    // this.Log(s"RefreshView for \(this.m_item.nameLabel), selected \(this.m_item.GetSelectedFlag()), custom junk \(this.m_item.GetCustomJunkFlag())))");
+  }
+
+  private final func UpdateCustomJunkToggleableState() -> Void {
     if this.CanToggleCustomJunk() {
       this.m_customJunkContainer.SetOpacity(1.0);
     } else {
       this.m_customJunkContainer.SetOpacity(0.1);
     };
-
-    // this.Log(s"RefreshView for \(this.m_item.nameLabel), selected \(this.m_item.GetSelectedFlag()), custom junk \(this.m_item.GetCustomJunkFlag())))");
   }
 
   private final func Log(str: String) -> Void {

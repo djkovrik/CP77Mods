@@ -173,8 +173,13 @@ public abstract class RevisedBackpackUtils {
   }
 
   public final static func CanToggleCustomJunk(uiInventoryItem: ref<UIInventoryItem>) -> Bool {
+    return RevisedBackpackUtils.CanToggleCustomJunk(uiInventoryItem, uiInventoryItem.IsQuestItem());
+  }
+
+  public final static func CanToggleCustomJunk(uiInventoryItem: ref<UIInventoryItem>, isQuestItem: Bool) -> Bool {
     let data: ref<gameItemData> = uiInventoryItem.GetRealItemData();
     return RevisedBackpackUtils.CanToggleQuestTag(data) 
+      && !isQuestItem
       && !data.HasTag(n"Junk") 
       && !uiInventoryItem.IsPlayerFavourite() 
       && !uiInventoryItem.IsEquipped() 
