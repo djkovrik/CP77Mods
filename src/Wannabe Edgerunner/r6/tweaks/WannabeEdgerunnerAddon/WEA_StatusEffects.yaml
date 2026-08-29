@@ -1,0 +1,323 @@
+# Wannabe Edgerunner Add-on - weapon sway status effects
+# Three tiers of hand tremor: fast micro-twitches that get worse as humanity drops.
+# The key: very low SwayTraversalTime (fast) + small SwaySideMax (tiny amplitude) = trembling hands
+
+# ═════════════════════════════════════════════════════════════════
+# Shared records
+# ═════════════════════════════════════════════════════════════════
+
+WEA_StatusEffect.SingleStack:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - $type: gamedataConstantStatModifier_Record
+      statType: BaseStats.MaxStacks
+      modifierType: Additive
+      value: 1
+
+# ═════════════════════════════════════════════════════════════════
+# TIER 1 - Mild tremor (below 40% humanity)
+# Barely noticeable, just enough to make you uneasy
+# ═════════════════════════════════════════════════════════════════
+
+WEA_StatusEffect.Twitch_01_Mod_TraversalTime:
+  $type: gamedataConstantStatModifier_Record
+  value: 0.012
+  modifierType: Multiplier
+  statType: BaseStats.SwayTraversalTime
+
+WEA_StatusEffect.Twitch_01_Mod_StartDelay:
+  $type: gamedataConstantStatModifier_Record
+  value: 0
+  modifierType: Multiplier
+  statType: BaseStats.SwayStartDelay
+
+WEA_StatusEffect.Twitch_01_Mod_BlendTime:
+  $type: gamedataConstantStatModifier_Record
+  value: 0
+  modifierType: Multiplier
+  statType: BaseStats.SwayStartBlendTime
+
+WEA_StatusEffect.Twitch_01_Mod_AllowSway:
+  $type: gamedataConstantStatModifier_Record
+  value: 1
+  modifierType: Additive
+  statType: BaseStats.RecoilAllowSway
+
+WEA_StatusEffect.Twitch_01_Mod_SideMax:
+  $type: gamedataConstantStatModifier_Record
+  value: 0.012
+  modifierType: Multiplier
+  statType: BaseStats.SwaySideMaximumAngleDistance
+
+WEA_StatusEffect.Twitch_01_Mod_SideMin:
+  $type: gamedataConstantStatModifier_Record
+  value: 0.012
+  modifierType: Multiplier
+  statType: BaseStats.SwaySideMinimumAngleDistance
+
+WEA_StatusEffect.Twitch_01_StatGroup:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - WEA_StatusEffect.Twitch_01_Mod_TraversalTime
+    - WEA_StatusEffect.Twitch_01_Mod_StartDelay
+    - WEA_StatusEffect.Twitch_01_Mod_BlendTime
+    - WEA_StatusEffect.Twitch_01_Mod_AllowSway
+    - WEA_StatusEffect.Twitch_01_Mod_SideMax
+    - WEA_StatusEffect.Twitch_01_Mod_SideMin
+
+WEA_StatusEffect.Twitch_01_Effector:
+  $type: gamedataApplyStatGroupEffector_Record
+  applicationTarget: Weapon
+  removeWithEffector: True
+  statGroup: WEA_StatusEffect.Twitch_01_StatGroup
+  effectorClassName: ApplyStatGroupEffector
+  prereqRecord: Prereqs.AnyWeaponHeldPrereq
+  removeAfterActionCall: False
+  removeAfterPrereqCheck: False
+  statModifierGroups: []
+  reapplyOnWeaponChange: False
+
+WEA_StatusEffect.Twitch_01_Package:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  animationWrapperOverrides: []
+  effectors:
+    - WEA_StatusEffect.Twitch_01_Effector
+  items: []
+  statPools: []
+  stats: []
+
+WEA_StatusEffect.Twitch_01:
+  $type: gamedataStatusEffect_Record
+  duration: BaseStats.InfiniteDuration
+  dynamicDuration: False
+  isAffectedByTimeDilationNPC: True
+  isAffectedByTimeDilationPlayer: True
+  maxStacks: WEA_StatusEffect.SingleStack
+  reapplyPackagesOnMaxStacks: False
+  removeAllStacksWhenDurationEnds: False
+  removeOnStoryTier: False
+  replicated: True
+  savable: True
+  stopActiveSfxOnDeactivate: True
+  debugTags: []
+  gameplayTags:
+    - Debuff
+    - WEA_HumanityTwitch
+  immunityStats: []
+  packages:
+    - WEA_StatusEffect.Twitch_01_Package
+  SFX: []
+  VFX: []
+
+# ═════════════════════════════════════════════════════════════════
+# TIER 2 - Moderate tremor (below 25% humanity)
+# Hands are definitely shaking now. Getting harder to aim.
+# ═════════════════════════════════════════════════════════════════
+
+WEA_StatusEffect.Twitch_02_Mod_TraversalTime:
+  $type: gamedataConstantStatModifier_Record
+  value: 0.008
+  modifierType: Multiplier
+  statType: BaseStats.SwayTraversalTime
+
+WEA_StatusEffect.Twitch_02_Mod_StartDelay:
+  $type: gamedataConstantStatModifier_Record
+  value: 0
+  modifierType: Multiplier
+  statType: BaseStats.SwayStartDelay
+
+WEA_StatusEffect.Twitch_02_Mod_BlendTime:
+  $type: gamedataConstantStatModifier_Record
+  value: 0
+  modifierType: Multiplier
+  statType: BaseStats.SwayStartBlendTime
+
+WEA_StatusEffect.Twitch_02_Mod_AllowSway:
+  $type: gamedataConstantStatModifier_Record
+  value: 1
+  modifierType: Additive
+  statType: BaseStats.RecoilAllowSway
+
+WEA_StatusEffect.Twitch_02_Mod_SideMax:
+  $type: gamedataConstantStatModifier_Record
+  value: 0.022
+  modifierType: Multiplier
+  statType: BaseStats.SwaySideMaximumAngleDistance
+
+WEA_StatusEffect.Twitch_02_Mod_SideMin:
+  $type: gamedataConstantStatModifier_Record
+  value: 0.022
+  modifierType: Multiplier
+  statType: BaseStats.SwaySideMinimumAngleDistance
+
+WEA_StatusEffect.Twitch_02_StatGroup:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - WEA_StatusEffect.Twitch_02_Mod_TraversalTime
+    - WEA_StatusEffect.Twitch_02_Mod_StartDelay
+    - WEA_StatusEffect.Twitch_02_Mod_BlendTime
+    - WEA_StatusEffect.Twitch_02_Mod_AllowSway
+    - WEA_StatusEffect.Twitch_02_Mod_SideMax
+    - WEA_StatusEffect.Twitch_02_Mod_SideMin
+
+WEA_StatusEffect.Twitch_02_Effector:
+  $type: gamedataApplyStatGroupEffector_Record
+  applicationTarget: Weapon
+  removeWithEffector: True
+  statGroup: WEA_StatusEffect.Twitch_02_StatGroup
+  effectorClassName: ApplyStatGroupEffector
+  prereqRecord: Prereqs.AnyWeaponHeldPrereq
+  removeAfterActionCall: False
+  removeAfterPrereqCheck: False
+  statModifierGroups: []
+  reapplyOnWeaponChange: False
+
+WEA_StatusEffect.Twitch_02_Package:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  animationWrapperOverrides: []
+  effectors:
+    - WEA_StatusEffect.Twitch_02_Effector
+  items: []
+  statPools: []
+  stats: []
+
+WEA_StatusEffect.Twitch_02:
+  $type: gamedataStatusEffect_Record
+  duration: BaseStats.InfiniteDuration
+  dynamicDuration: False
+  isAffectedByTimeDilationNPC: True
+  isAffectedByTimeDilationPlayer: True
+  maxStacks: WEA_StatusEffect.SingleStack
+  reapplyPackagesOnMaxStacks: False
+  removeAllStacksWhenDurationEnds: False
+  removeOnStoryTier: False
+  replicated: True
+  savable: True
+  stopActiveSfxOnDeactivate: True
+  debugTags: []
+  gameplayTags:
+    - Debuff
+    - WEA_HumanityTwitch
+  immunityStats: []
+  packages:
+    - WEA_StatusEffect.Twitch_02_Package
+  SFX: []
+  VFX: []
+
+# ═════════════════════════════════════════════════════════════════
+# TIER 3 - Severe tremor (at/below psychosis threshold)
+# You're barely holding it together. The crosshair dances.
+# ═════════════════════════════════════════════════════════════════
+
+WEA_StatusEffect.Twitch_03_Mod_TraversalTime:
+  $type: gamedataConstantStatModifier_Record
+  value: 0.005
+  modifierType: Multiplier
+  statType: BaseStats.SwayTraversalTime
+
+WEA_StatusEffect.Twitch_03_Mod_StartDelay:
+  $type: gamedataConstantStatModifier_Record
+  value: 0
+  modifierType: Multiplier
+  statType: BaseStats.SwayStartDelay
+
+WEA_StatusEffect.Twitch_03_Mod_BlendTime:
+  $type: gamedataConstantStatModifier_Record
+  value: 0
+  modifierType: Multiplier
+  statType: BaseStats.SwayStartBlendTime
+
+WEA_StatusEffect.Twitch_03_Mod_AllowSway:
+  $type: gamedataConstantStatModifier_Record
+  value: 1
+  modifierType: Additive
+  statType: BaseStats.RecoilAllowSway
+
+WEA_StatusEffect.Twitch_03_Mod_SideMax:
+  $type: gamedataConstantStatModifier_Record
+  value: 0.038
+  modifierType: Multiplier
+  statType: BaseStats.SwaySideMaximumAngleDistance
+
+WEA_StatusEffect.Twitch_03_Mod_SideMin:
+  $type: gamedataConstantStatModifier_Record
+  value: 0.038
+  modifierType: Multiplier
+  statType: BaseStats.SwaySideMinimumAngleDistance
+
+WEA_StatusEffect.Twitch_03_StatGroup:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - WEA_StatusEffect.Twitch_03_Mod_TraversalTime
+    - WEA_StatusEffect.Twitch_03_Mod_StartDelay
+    - WEA_StatusEffect.Twitch_03_Mod_BlendTime
+    - WEA_StatusEffect.Twitch_03_Mod_AllowSway
+    - WEA_StatusEffect.Twitch_03_Mod_SideMax
+    - WEA_StatusEffect.Twitch_03_Mod_SideMin
+
+WEA_StatusEffect.Twitch_03_Effector:
+  $type: gamedataApplyStatGroupEffector_Record
+  applicationTarget: Weapon
+  removeWithEffector: True
+  statGroup: WEA_StatusEffect.Twitch_03_StatGroup
+  effectorClassName: ApplyStatGroupEffector
+  prereqRecord: Prereqs.AnyWeaponHeldPrereq
+  removeAfterActionCall: False
+  removeAfterPrereqCheck: False
+  statModifierGroups: []
+  reapplyOnWeaponChange: False
+
+WEA_StatusEffect.Twitch_03_Package:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  animationWrapperOverrides: []
+  effectors:
+    - WEA_StatusEffect.Twitch_03_Effector
+  items: []
+  statPools: []
+  stats: []
+
+WEA_StatusEffect.Twitch_03:
+  $type: gamedataStatusEffect_Record
+  duration: BaseStats.InfiniteDuration
+  dynamicDuration: False
+  isAffectedByTimeDilationNPC: True
+  isAffectedByTimeDilationPlayer: True
+  maxStacks: WEA_StatusEffect.SingleStack
+  reapplyPackagesOnMaxStacks: False
+  removeAllStacksWhenDurationEnds: False
+  removeOnStoryTier: False
+  replicated: True
+  savable: True
+  stopActiveSfxOnDeactivate: True
+  debugTags: []
+  gameplayTags:
+    - Debuff
+    - WEA_HumanityTwitch
+  immunityStats: []
+  packages:
+    - WEA_StatusEffect.Twitch_03_Package
+  SFX: []
+  VFX: []
