@@ -1,4 +1,4 @@
-// RevisedBackpack v0.9.15
+// RevisedBackpack v0.9.16
 module RevisedBackpack
 
 import Codeware.UI.HubTextInput
@@ -1771,6 +1771,10 @@ public class RevisedBackpackController extends gameuiMenuGameController {
       success = data.SetDynamicTag(n"Quest");
     };
     if success {
+      if newFlag && this.m_system.IsAddedToJunk(data.GetID()) {
+        this.m_system.RemoveFromJunk(data.GetID());
+        evt.display.SetIsCustomJunkItem(false);
+      };
       evt.display.SetIsQuestItem(newFlag);
       this.PlaySound(n"ui_menu_onpress");
     };
@@ -2194,7 +2198,8 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     wrappedItem.selected = false;
     wrappedItem.customJunk = this.m_system.IsAddedToJunk(itemId);
     wrappedItem.questTagToggleable = RevisedBackpackUtils.CanToggleQuestTag(data);
-    wrappedItem.customJunkToggleable = RevisedBackpackUtils.CanToggleCustomJunk(uiInventoryItem);
+    wrappedItem.customJunkToggleable = RevisedBackpackUtils.CanToggleCustomJunk(uiInventoryItem, wrappedItem.isQuest);
+    
     return wrappedItem;
   }
   private final func BuildTypeLabel(data: ref<gameItemData>, equipArea: gamedataEquipmentArea, id: TweakDBID, type: gamedataItemType, evolution: gamedataWeaponEvolution) -> String {
@@ -3591,7 +3596,6 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
 
     if IsDefined(this.m_item) {
       this.QueueEvent(RevisedBackpackItemHoverOutEvent.Create(this.m_item));
-      this.m_item = null;
     };
   }
 
@@ -3718,8 +3722,10 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
   }
   public final func SetIsQuestItem(flag: Bool) -> Void {
     this.m_item.SetQuestFlag(flag);
+    this.m_item.customJunkToggleable = RevisedBackpackUtils.CanToggleCustomJunk(this.m_item.inventoryItem, flag);
     this.m_itemName.BindProperty(n"tintColor", RevisedBackpackUtils.GetItemLabelColor(this.GetIsQuestItem(), this.m_item.inventoryItem.IsIconic()));
     this.m_itemQuest.SetVisible(this.GetIsQuestItem());
+    this.UpdateCustomJunkToggleableState();
   }
   public final func CanToggleQuestTag() -> Bool {
     return this.m_item.questTagToggleable;
@@ -3732,7 +3738,7 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     this.m_itemCustomJunk.SetVisible(this.GetIsCustomJunkItem());
   }
   public final func CanToggleCustomJunk() -> Bool {
-    return this.m_item.customJunkToggleable;
+    return this.m_item.customJunkToggleable && !this.GetIsQuestItem();
   }
   public final func GetNameLabel() -> String {
     return this.m_item.nameLabel;
@@ -3770,13 +3776,19 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     } else {
       this.m_questContainer.SetOpacity(0.1);
     };
+    this.UpdateCustomJunkToggleableState();
+
+    // this.Log(s"RefreshView for \(this.m_item.nameLabel), selected \(this.m_item.GetSelectedFlag()), custom junk \(this.m_item.GetCustomJunkFlag())))");
+  }
+
+  private final func UpdateCustomJunkToggleableState() -> Void {
     if this.CanToggleCustomJunk() {
       this.m_customJunkContainer.SetOpacity(1.0);
     } else {
       this.m_customJunkContainer.SetOpacity(0.1);
     };
-    // this.Log(s"RefreshView for \(this.m_item.nameLabel), selected \(this.m_item.GetSelectedFlag()), custom junk \(this.m_item.GetCustomJunkFlag())))");
   }
+
   private final func Log(str: String) -> Void {
     if RevisedBackpackUtils.ShowRevisedBackpackLogs() {
       ModLog(n"RevisedItemController", str);
@@ -4644,8 +4656,13 @@ public abstract class RevisedBackpackUtils {
     true;
   }
   public final static func CanToggleCustomJunk(uiInventoryItem: ref<UIInventoryItem>) -> Bool {
+    return RevisedBackpackUtils.CanToggleCustomJunk(uiInventoryItem, uiInventoryItem.IsQuestItem());
+  }
+
+  public final static func CanToggleCustomJunk(uiInventoryItem: ref<UIInventoryItem>, isQuestItem: Bool) -> Bool {
     let data: ref<gameItemData> = uiInventoryItem.GetRealItemData();
     return RevisedBackpackUtils.CanToggleQuestTag(data) 
+      && !isQuestItem
       && !data.HasTag(n"Junk") 
       && !uiInventoryItem.IsPlayerFavourite() 
       && !uiInventoryItem.IsEquipped() 
