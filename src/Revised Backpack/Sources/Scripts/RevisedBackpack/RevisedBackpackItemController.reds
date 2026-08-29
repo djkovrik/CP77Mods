@@ -57,7 +57,6 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
 
     if IsDefined(this.m_item) {
       this.QueueEvent(RevisedBackpackItemHoverOutEvent.Create(this.m_item));
-      this.m_item = null;
     };
   }
 
