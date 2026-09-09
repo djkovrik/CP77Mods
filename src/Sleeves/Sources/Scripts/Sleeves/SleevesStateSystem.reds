@@ -4,6 +4,7 @@ class SleevesStateSystem extends ScriptableSystem {
   private let bundle: ref<SleevesInfoBundle>;
   private let cache: ref<inkHashMap>;
   private let isBraindanceActive: Bool;
+  private let isArmCyberwareActive: Bool;
 
   private persistent let toggledItems: array<TweakDBID>;
 
@@ -91,12 +92,51 @@ class SleevesStateSystem extends ScriptableSystem {
     this.GetPlayer().TriggerSleevesRefreshCallback();
   }
 
+  public final func OnArmCyberwareStateChange(active: Bool) -> Void {
+    if NotEquals(this.isArmCyberwareActive, active) {
+      SleevesLog(s"Arm cyberware active: \(active)");
+      this.isArmCyberwareActive = active;
+      this.RefreshSleevesState();
+      RefreshSleevesButtonEvent.Send(this.GetPlayer());
+    };
+  }
+
+  public final func IsArmCyberwareActive() -> Bool {
+    return this.isArmCyberwareActive;
+  }
+
+  public final static func IsTargetArmCyberware(player: ref<PlayerPuppet>) -> Bool {
+    let weapon: ref<WeaponObject> = GameObject.GetActiveWeapon(player);
+    let config: ref<SleevesConfig>;
+    let weaponType: gamedataItemType;
+
+    if !IsDefined(weapon) || !weapon.WeaponHasTag(n"Cyberware") {
+      return false;
+    };
+
+    config = new SleevesConfig();
+    weaponType = WeaponObject.GetWeaponType(weapon.GetItemID());
+
+    switch weaponType {
+      case gamedataItemType.Cyb_MantisBlades:
+        return config.rollUpMantisBlades;
+      case gamedataItemType.Cyb_Launcher:
+        return config.rollUpLauncher;
+      case gamedataItemType.Cyb_StrongArms:
+        return config.rollUpStrongArms;
+      case gamedataItemType.Cyb_NanoWires:
+        return config.rollUpNanoWires;
+    };
+
+    return false;
+  }
+
   public final func ClearCache() -> Void {
     this.cache.Clear();
   }
 
   public final func RefreshSleevesState() -> Void {
-    SleevesLog(s"RefreshSleevesState called, bd active \(this.isBraindanceActive)");
+    SleevesLog(s"RefreshSleevesState called, bd active \(this.isBraindanceActive), arm cw active \(this.isArmCyberwareActive)");
 
     let player: wref<PlayerPuppet> = this.GetPlayer();
     let psmBlackboard: ref<IBlackboard> = player.GetPlayerStateMachineBlackboard();
@@ -106,7 +146,7 @@ class SleevesStateSystem extends ScriptableSystem {
 
     for item in this.bundle.items {
       if item.HasFppSuffix() || inVehicle && item.HasTppSuffix() {
-        if !this.isBraindanceActive {
+        if !this.isBraindanceActive && !this.isArmCyberwareActive {
           if item.IsToggled() {
             SleevesLog(s"Set \(item.GetItemTppAppearance()) appearance for \(ItemID.GetCombinedHash(item.itemID)) [\(item.itemName)]");
             this.transactionSystem.ChangeItemAppearanceByName(player, item.itemID, item.GetItemTppAppearance());
@@ -115,7 +155,7 @@ class SleevesStateSystem extends ScriptableSystem {
             this.transactionSystem.ChangeItemAppearanceByName(player, item.itemID, item.GetItemAppearance());
           };
         } else {
-          SleevesLog(s"Reset BD \(item.GetItemAppearance()) appearance for \(ItemID.GetCombinedHash(item.itemID)) [\(item.itemName)]");
+          SleevesLog(s"Reset BD/CW \(item.GetItemAppearance()) appearance for \(ItemID.GetCombinedHash(item.itemID)) [\(item.itemName)]");
           this.transactionSystem.ChangeItemAppearanceByName(player, item.itemID, item.GetItemAppearance());
         };
       };

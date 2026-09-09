@@ -69,6 +69,36 @@ protected cb func OnBraindanceToggle(value: Bool) -> Bool {
   };
 }
 
+// -- Arm cyberware
+@wrapMethod(gameuiCrosshairContainerController)
+protected cb func OnWeaponSwap(value: Variant) -> Bool {
+  let result: Bool = wrappedMethod(value);
+  let player: ref<PlayerPuppet> = GetPlayer(GetGameInstance());
+  let weaponTDBID: TweakDBID = FromVariant<TweakDBID>(value);
+  let isArmCyberwareActive: Bool = false;
+
+  if TDBID.IsValid(weaponTDBID) && NotEquals(weaponTDBID, TDBID.None()) {
+    isArmCyberwareActive = SleevesStateSystem.IsTargetArmCyberware(player);
+  };
+
+  SleevesStateSystem.Get(player.GetGame()).OnArmCyberwareStateChange(isArmCyberwareActive);
+  return result;
+}
+
+@wrapMethod(gameuiCrosshairBaseGameController)
+protected func OnCrosshairStateChange(oldState: gamePSMCrosshairStates, newState: gamePSMCrosshairStates) -> Void {
+  wrappedMethod(oldState, newState);
+
+  let player: ref<PlayerPuppet> = this.m_playerPuppet as PlayerPuppet;
+  if IsDefined(player) {
+    if Equals(newState, gamePSMCrosshairStates.LeftHandCyberware) {
+      SleevesStateSystem.Get(player.GetGame()).OnArmCyberwareStateChange(SleevesStateSystem.IsTargetArmCyberware(player));
+    } else if Equals(oldState, gamePSMCrosshairStates.LeftHandCyberware) {
+      SleevesStateSystem.Get(player.GetGame()).OnArmCyberwareStateChange(false);
+    };
+  };
+}
+
 // -- Handle unequip
 @wrapMethod(gameuiInventoryGameController)
 protected cb func OnEquipmentClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
