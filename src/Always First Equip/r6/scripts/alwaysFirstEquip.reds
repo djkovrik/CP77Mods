@@ -606,6 +606,32 @@ public func EQ(str: String) -> Void {
   // LogChannel(n"DEBUG", "> " + str);
 }
 
+@addField(UpperBodyEventsTransition)
+public let AFE_switchInputActive: Bool;
+
+@wrapMethod(UpperBodyEventsTransition)
+protected final func UpdateSwitchItem(timeDelta: Float, stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Bool {
+  this.AFE_switchInputActive = true;
+  let result: Bool = wrappedMethod(timeDelta, stateContext, scriptInterface);
+  this.AFE_switchInputActive = false;
+  return result;
+}
+
+@wrapMethod(DefaultTransition)
+protected final const func CheckEquipmentStateMachineState(const stateContext: ref<StateContext>, SMSide: EEquipmentSide, compareToState: EEquipmentState) -> Bool {
+  let result: Bool = wrappedMethod(stateContext, SMSide, compareToState);
+  let upperBody: ref<UpperBodyEventsTransition> = this as UpperBodyEventsTransition;
+  if result || !IsDefined(upperBody) {
+    return result;
+  };
+  if !upperBody.AFE_switchInputActive || NotEquals(SMSide, EEquipmentSide.Right) || NotEquals(compareToState, EEquipmentState.Equipped) {
+    return false;
+  };
+  let identifier: StateMachineIdentifier;
+  identifier.definitionName = n"Equipment";
+  identifier.referenceName = n"RightHand";
+  return stateContext.IsStateActiveWithIdentifier(identifier, n"firstEquip");
+}
 
 // --- SET SKIP ANIMATION FLAGS
 
