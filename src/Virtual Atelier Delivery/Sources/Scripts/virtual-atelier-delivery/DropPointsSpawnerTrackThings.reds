@@ -37,11 +37,10 @@ public final func OnFactChangedDogtown(val: Int32) -> Void {
   };
 }
 
-// Run check on ft to Dogtown
+// Recheck after any fast travel, including returns from revival mods.
 @wrapMethod(FastTravelSystem)
 protected cb func OnLoadingScreenFinished(value: Bool) -> Bool {
-  let playerInDogtown: Bool = GameInstance.GetPreventionSpawnSystem(this.GetGameInstance()).IsPlayerInDogTown();
-  if value && playerInDogtown {
+  if value {
     AtelierDropPointsSpawner.Get(this.GetGameInstance()).CheckAndHandleSpawning();
   };
   wrappedMethod(value);
