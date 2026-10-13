@@ -58,6 +58,12 @@ protected cb func OnCustomOutfitUpdated(evt: ref<OutfitUpdated>) -> Bool {
   this.m_player.TriggerSleevesRefreshCallback();
 }
 
+@if(ModuleExists("EquipmentEx"))
+@addMethod(gameuiInventoryGameController)
+protected cb func OnSleevesOutfitPartUpdated(evt: ref<OutfitPartUpdated>) -> Bool {
+  this.m_player.TriggerSleevesRefreshCallback();
+}
+
 // -- Braindance
 @wrapMethod(HUDManager)
 protected cb func OnBraindanceToggle(value: Bool) -> Bool {

@@ -1,4 +1,4 @@
-// Sleeves v3.3.0
+// Sleeves v3.3.1
 @if(ModuleExists("ArchiveXL.DynamicAppearance"))
 import ArchiveXL.DynamicAppearance.*
 import Codeware.UI.*
@@ -38,6 +38,7 @@ public class SleevesInfoBundle {
   }
 }
 public class SleevedSlotInfo {
+  public let itemObject: wref<ItemObject>;
   public let slotID: TweakDBID;
   public let slotName: String;
   public let itemID: ItemID;
@@ -381,6 +382,7 @@ protected cb func OnInitialize() -> Bool {
   this.SpawnFromExternal(container, r"base\\gameplay\\gui\\sleeves.inkwidget", n"SleevesButton:SleevesButtonController");
   this.ShowSleevesButton(true);
   RefreshSleevesButtonEvent.Send(this.m_player);
+  this.m_player.TriggerSleevesRefreshCallback();
 }
 @wrapMethod(gameuiInventoryGameController)
 protected cb func OnItemChooserItemChanged(e: ref<ItemChooserItemChanged>) -> Bool {
@@ -773,6 +775,11 @@ public final func DeleteWardrobeSet(setID: gameWardrobeClothingSetIndex) -> Void
 protected cb func OnCustomOutfitUpdated(evt: ref<OutfitUpdated>) -> Bool {
   this.m_player.TriggerSleevesRefreshCallback();
 }
+@if(ModuleExists("EquipmentEx"))
+@addMethod(gameuiInventoryGameController)
+protected cb func OnSleevesOutfitPartUpdated(evt: ref<OutfitPartUpdated>) -> Bool {
+  this.m_player.TriggerSleevesRefreshCallback();
+}
 // -- Braindance
 @wrapMethod(HUDManager)
 protected cb func OnBraindanceToggle(value: Bool) -> Bool {
@@ -1005,17 +1012,34 @@ class SleevesStateSystem extends ScriptableSystem {
         if !this.isBraindanceActive && !this.isArmCyberwareActive {
           if item.IsToggled() {
             SleevesLog(s"Set \(item.GetItemTppAppearance()) appearance for \(ItemID.GetCombinedHash(item.itemID)) [\(item.itemName)]");
-            this.transactionSystem.ChangeItemAppearanceByName(player, item.itemID, item.GetItemTppAppearance());
+            this.ApplySleevesAppearance(player, item, item.GetItemTppAppearance());
           } else {
             SleevesLog(s"Reset \(item.GetItemAppearance()) appearance for \(ItemID.GetCombinedHash(item.itemID)) [\(item.itemName)]");
-            this.transactionSystem.ChangeItemAppearanceByName(player, item.itemID, item.GetItemAppearance());
+            this.ApplySleevesAppearance(player, item, item.GetItemAppearance());
           };
         } else {
           SleevesLog(s"Reset BD/CW \(item.GetItemAppearance()) appearance for \(ItemID.GetCombinedHash(item.itemID)) [\(item.itemName)]");
-          this.transactionSystem.ChangeItemAppearanceByName(player, item.itemID, item.GetItemAppearance());
+          this.ApplySleevesAppearance(player, item, item.GetItemAppearance());
         };
       };
     };
+  }
+  private final func ApplySleevesAppearance(player: ref<GameObject>, item: ref<SleevedSlotInfo>, appearance: CName) -> Void {
+    if Equals(item.mode, SleevesMode.EquipmentEx) {
+      let liveItem: ref<ItemObject> = this.transactionSystem.GetItemInSlot(player, item.slotID);
+      if !IsSlotOccupiedCustom(player.GetGame(), item.slotID) || !IsDefined(liveItem) || !IsDefined(item.itemObject) {
+        return;
+      };
+      let liveItemID: ItemID = liveItem.GetItemID();
+      if !ItemID.HasFlag(liveItemID, gameEItemIDFlag.Preview) || NotEquals(liveItemID, item.itemID) || NotEquals(liveItem.GetEntityID(), item.itemObject.GetEntityID()) {
+        return;
+      };
+      if NotEquals(this.transactionSystem.GetItemAppearance(player, liveItemID), appearance) {
+        this.transactionSystem.ChangeItemAppearanceByName(player, liveItemID, appearance);
+      };
+      return;
+    };
+    this.transactionSystem.ChangeItemAppearanceByName(player, item.itemID, appearance);
   }
   public final func GetBasicSlotsItems(player: ref<GameObject>, isEquipmentExInstalled: Bool) -> ref<SleevesInfoBundle> {
     let currentWardrobeSet: gameWardrobeClothingSetIndex = EquipmentSystem.GetActiveWardrobeSetID(player);
@@ -1125,6 +1149,11 @@ class SleevesStateSystem extends ScriptableSystem {
             SleevesLog(s"! Restored: \(info.itemName) with base \(info.GetItemAppearance()) and tpp \(info.GetItemTppAppearance())");
             SleevesLog(s"<- \(info.itemName) restored from cache");
           };
+          // Refresh the preview identity, but preserve the cached base appearance:
+          // the live appearance may already contain the Sleeves TPP override.
+          info.itemID = itemID;
+          info.visualItemID = itemID;
+          info.itemObject = itemObject;
           ArrayPush(infoItems, info);
         };
       };

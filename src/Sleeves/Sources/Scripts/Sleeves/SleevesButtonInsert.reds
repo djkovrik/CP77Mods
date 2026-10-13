@@ -29,6 +29,7 @@ protected cb func OnInitialize() -> Bool {
   this.SpawnFromExternal(container, r"base\\gameplay\\gui\\sleeves.inkwidget", n"SleevesButton:SleevesButtonController");
   this.ShowSleevesButton(true);
   RefreshSleevesButtonEvent.Send(this.m_player);
+  this.m_player.TriggerSleevesRefreshCallback();
 }
 
 @wrapMethod(gameuiInventoryGameController)

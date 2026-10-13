@@ -39,6 +39,7 @@ public class SleevesInfoBundle {
 }
 
 public class SleevedSlotInfo {
+  public let itemObject: wref<ItemObject>;
   public let slotID: TweakDBID;
   public let slotName: String;
   public let itemID: ItemID;
