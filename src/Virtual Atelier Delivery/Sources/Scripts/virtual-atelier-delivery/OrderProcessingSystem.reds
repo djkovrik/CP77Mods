@@ -38,7 +38,9 @@ public class OrderProcessingSystem extends ScriptableSystem {
       this.nextOrderId = 1;
     };
 
-    this.Log(s"OrderProcessingSystem attached: player=\(IsDefined(this.player)), timeSystem=\(IsDefined(this.timeSystem)), transactionSystem=\(IsDefined(this.transactionSystem)), inventoryManager=\(IsDefined(this.inventoryManager)), persistedOrders=\(ArraySize(this.orders)), nextOrderId=\(this.nextOrderId)");
+    if this.IsDebugEnabled() {
+      this.Log(s"OrderProcessingSystem attached: player=\(IsDefined(this.player)), timeSystem=\(IsDefined(this.timeSystem)), transactionSystem=\(IsDefined(this.transactionSystem)), inventoryManager=\(IsDefined(this.inventoryManager)), persistedOrders=\(ArraySize(this.orders)), nextOrderId=\(this.nextOrderId)");
+    };
   }
 
   public final func GetNextOrderId() -> Int32 {
@@ -72,19 +74,21 @@ public class OrderProcessingSystem extends ScriptableSystem {
     };
 
     this.Log("New order saved: ");
-    this.Log(s"- storeName: \(order.storeName)");
-    this.Log(s"- orderId: \(order.orderId)");
-    this.Log(s"- items count: \(ArraySize(order.purchasedItems))");
-    this.Log(s"- totalPrice: \(order.totalPrice)");
-    this.Log(s"- totalWeight: \(order.totalWeight)");
-    this.Log(s"- deliveryType: \(order.deliveryType)");
-    this.Log(s"- deliveryPoint: \(order.deliveryPoint)");
-    this.Log(s"- deliveryStatus: \(order.deliveryStatus)");
-    this.Log(s"- purchaseTimestamp: \(order.purchaseTimestamp)");
-    this.Log(s"- shipmentTimestamp: \(order.shipmentTimestamp)");
-    this.Log(s"- deliveryTimestamp: \(order.deliveryTimestamp)");
-    this.Log(s"- receivedTimestamp: \(order.receivedTimestamp)");
-    this.Log(s"- nextStatusUpdateDiff: \(order.nextStatusUpdateDiff)");
+    if this.IsDebugEnabled() {
+      this.Log(s"- storeName: \(order.storeName)");
+      this.Log(s"- orderId: \(order.orderId)");
+      this.Log(s"- items count: \(ArraySize(order.purchasedItems))");
+      this.Log(s"- totalPrice: \(order.totalPrice)");
+      this.Log(s"- totalWeight: \(order.totalWeight)");
+      this.Log(s"- deliveryType: \(order.deliveryType)");
+      this.Log(s"- deliveryPoint: \(order.deliveryPoint)");
+      this.Log(s"- deliveryStatus: \(order.deliveryStatus)");
+      this.Log(s"- purchaseTimestamp: \(order.purchaseTimestamp)");
+      this.Log(s"- shipmentTimestamp: \(order.shipmentTimestamp)");
+      this.Log(s"- deliveryTimestamp: \(order.deliveryTimestamp)");
+      this.Log(s"- receivedTimestamp: \(order.receivedTimestamp)");
+      this.Log(s"- nextStatusUpdateDiff: \(order.nextStatusUpdateDiff)");
+    };
     ArrayPush(this.orders, order);
     this.SetLastSelectedDropPoint(order.GetDeliveryPoint());
 
@@ -108,20 +112,26 @@ public class OrderProcessingSystem extends ScriptableSystem {
     };
 
     if !this.IsReady() {
-      this.Log(s"Order #\(order.GetOrderId()) creation rejected: OrderProcessingSystem is not ready");
+      if this.IsDebugEnabled() {
+        this.Log(s"Order #\(order.GetOrderId()) creation rejected: OrderProcessingSystem is not ready");
+      };
       this.LogReadinessState("order creation");
       return -1;
     };
 
     let price: Int32 = order.GetTotalPrice();
     if price <= 0 {
-      this.Log(s"Order #\(order.GetOrderId()) creation rejected: invalid total price \(price)");
+      if this.IsDebugEnabled() {
+        this.Log(s"Order #\(order.GetOrderId()) creation rejected: invalid total price \(price)");
+      };
       return -1;
     };
 
     let playerMoney: Int32 = this.transactionSystem.GetItemQuantity(this.player, MarketSystem.Money());
     if playerMoney < price {
-      this.Log(s"Order #\(order.GetOrderId()) creation rejected: not enough money, required=\(price), available=\(playerMoney)");
+      if this.IsDebugEnabled() {
+        this.Log(s"Order #\(order.GetOrderId()) creation rejected: not enough money, required=\(price), available=\(playerMoney)");
+      };
       return -1;
     };
 
@@ -135,55 +145,81 @@ public class OrderProcessingSystem extends ScriptableSystem {
     let arrivedOrders: array<ref<PurchasedAtelierBundle>>;
     let orderIndex: Int32 = 0;
 
-    this.Log(s"=== Pickup request started: terminalTag=\(tag), resolvedDropPoint=\(dropPoint), storedOrders=\(ArraySize(orders)) ===");
+    if this.IsDebugEnabled() {
+      this.Log(s"=== Pickup request started: terminalTag=\(tag), resolvedDropPoint=\(dropPoint), storedOrders=\(ArraySize(orders)) ===");
+    };
     if Equals(tag, n"") {
       this.Log("Pickup request warning: terminal unique tag is empty");
     };
     if Equals(dropPoint, AtelierDeliveryDropPoint.None) {
-      this.Log(s"Pickup request warning: terminal tag \(tag) does not map to a delivery point");
+      if this.IsDebugEnabled() {
+        this.Log(s"Pickup request warning: terminal tag \(tag) does not map to a delivery point");
+      };
     };
 
     for order in orders {
       if !IsDefined(order) {
-        this.Log(s"Pickup scan: order at index \(orderIndex) is not defined, skipped");
+        if this.IsDebugEnabled() {
+          this.Log(s"Pickup scan: order at index \(orderIndex) is not defined, skipped");
+        };
       } else {
-        this.Log(s"Pickup scan: order #\(order.orderId) from \(order.storeName), status=\(order.deliveryStatus), target=\(order.deliveryPoint), items=\(ArraySize(order.purchasedItems))");
+        if this.IsDebugEnabled() {
+          this.Log(s"Pickup scan: order #\(order.orderId) from \(order.storeName), status=\(order.deliveryStatus), target=\(order.deliveryPoint), items=\(ArraySize(order.purchasedItems))");
+        };
         if Equals(order.deliveryPoint, dropPoint) && Equals(order.deliveryStatus, AtelierDeliveryStatus.Arrived) {
-          this.Log(s"Pickup scan: order #\(order.orderId) matched this terminal and is ready for pickup");
+          if this.IsDebugEnabled() {
+            this.Log(s"Pickup scan: order #\(order.orderId) matched this terminal and is ready for pickup");
+          };
           ArrayPush(arrivedOrders, order);
         } else {
           if NotEquals(order.deliveryPoint, dropPoint) {
-            this.Log(s"Pickup scan: order #\(order.orderId) skipped because it belongs to \(order.deliveryPoint), current terminal is \(dropPoint)");
+            if this.IsDebugEnabled() {
+              this.Log(s"Pickup scan: order #\(order.orderId) skipped because it belongs to \(order.deliveryPoint), current terminal is \(dropPoint)");
+            };
           };
           if NotEquals(order.deliveryStatus, AtelierDeliveryStatus.Arrived) {
-            this.Log(s"Pickup scan: order #\(order.orderId) skipped because status is \(order.deliveryStatus), expected Arrived");
+            if this.IsDebugEnabled() {
+              this.Log(s"Pickup scan: order #\(order.orderId) skipped because status is \(order.deliveryStatus), expected Arrived");
+            };
           };
         };
       };
       orderIndex += 1;
     };
 
-    this.Log(s"Pickup scan completed for \(dropPoint): matchedOrders=\(ArraySize(arrivedOrders))");
+    if this.IsDebugEnabled() {
+      this.Log(s"Pickup scan completed for \(dropPoint): matchedOrders=\(ArraySize(arrivedOrders))");
+    };
 
     let receivedAnything: Bool = false;
     let deliveredIds: array<Int32>;
     for arrivedOrder in arrivedOrders {
-      this.Log(s"Pickup delivery: trying order #\(arrivedOrder.orderId) from \(arrivedOrder.storeName), items=\(ArraySize(arrivedOrder.purchasedItems))");
+      if this.IsDebugEnabled() {
+        this.Log(s"Pickup delivery: trying order #\(arrivedOrder.orderId) from \(arrivedOrder.storeName), items=\(ArraySize(arrivedOrder.purchasedItems))");
+      };
       if this.GiveBundleItemsToPlayer(arrivedOrder) {
         let markedAsReceived: Bool = this.MarkOrderAsReceived(arrivedOrder);
-        this.Log(s"Pickup delivery: order #\(arrivedOrder.orderId) gave at least one item; markedAsReceived=\(markedAsReceived), grantedItemInstances=\(ArraySize(this.purchasedItems))");
+        if this.IsDebugEnabled() {
+          this.Log(s"Pickup delivery: order #\(arrivedOrder.orderId) gave at least one item; markedAsReceived=\(markedAsReceived), grantedItemInstances=\(ArraySize(this.purchasedItems))");
+        };
         if !markedAsReceived {
-          this.Log(s"Pickup delivery ERROR: order #\(arrivedOrder.orderId) items were granted, but the order could not be marked as received");
+          if this.IsDebugEnabled() {
+            this.Log(s"Pickup delivery ERROR: order #\(arrivedOrder.orderId) items were granted, but the order could not be marked as received");
+          };
         };
         ArrayPush(deliveredIds, arrivedOrder.orderId);
         receivedAnything = true;
       } else {
-        this.Log(s"Pickup delivery FAILED: order #\(arrivedOrder.orderId) was not issued because no bundle item could be granted");
+        if this.IsDebugEnabled() {
+          this.Log(s"Pickup delivery FAILED: order #\(arrivedOrder.orderId) was not issued because no bundle item could be granted");
+        };
       };
     };
 
     if receivedAnything {
-      this.Log(s"Pickup request succeeded at \(dropPoint): deliveredOrders=\(ArraySize(deliveredIds))");
+      if this.IsDebugEnabled() {
+        this.Log(s"Pickup request succeeded at \(dropPoint): deliveredOrders=\(ArraySize(deliveredIds))");
+      };
       GameObject.PlaySound(this.player, n"ui_menu_item_bought");
       if Equals(ArraySize(deliveredIds), 1) {
         this.NotifyAboutOrderDelivery(deliveredIds[0]);
@@ -191,12 +227,16 @@ public class OrderProcessingSystem extends ScriptableSystem {
         this.NotifyAboutOrdersDelivery(deliveredIds);
       };
     } else {
-      this.Log(s"Pickup request FAILED at \(dropPoint): no order was issued; matchedOrders=\(ArraySize(arrivedOrders))");
+      if this.IsDebugEnabled() {
+        this.Log(s"Pickup request FAILED at \(dropPoint): no order was issued; matchedOrders=\(ArraySize(arrivedOrders))");
+      };
       GameObject.PlaySound(this.player, n"ui_menu_attributes_fail");
     };
 
     this.RefreshOrdersState();
-    this.Log(s"=== Pickup request finished: terminalTag=\(tag), resolvedDropPoint=\(dropPoint) ===");
+    if this.IsDebugEnabled() {
+      this.Log(s"=== Pickup request finished: terminalTag=\(tag), resolvedDropPoint=\(dropPoint) ===");
+    };
   }
 
   public final func MarkOrderAsReceived(bundle: ref<PurchasedAtelierBundle>) -> Bool {
@@ -215,7 +255,9 @@ public class OrderProcessingSystem extends ScriptableSystem {
           now = this.timeSystem.GetGameTimeStamp();
           order.SetReceivedTimestamp(now);
           orderWasFound = true;
-          this.Log(s"Order #\(bundle.GetOrderId()) marked as received at timestamp \(now)");
+          if this.IsDebugEnabled() {
+            this.Log(s"Order #\(bundle.GetOrderId()) marked as received at timestamp \(now)");
+          };
         };
         ArrayPush(refreshedOrders, order);
       } else {
@@ -226,7 +268,9 @@ public class OrderProcessingSystem extends ScriptableSystem {
     if orderWasFound {
       this.orders = refreshedOrders;
     } else {
-      this.Log(s"MarkOrderAsReceived failed: order #\(bundle.GetOrderId()) from \(bundle.GetStoreName()) was not found in \(ArraySize(orders)) stored orders");
+      if this.IsDebugEnabled() {
+        this.Log(s"MarkOrderAsReceived failed: order #\(bundle.GetOrderId()) from \(bundle.GetStoreName()) was not found in \(ArraySize(orders)) stored orders");
+      };
     };
 
     return orderWasFound;
@@ -246,7 +290,9 @@ public class OrderProcessingSystem extends ScriptableSystem {
     };
 
     if !this.IsReady() {
-      this.Log(s"Pickup delivery FAILED for order #\(bundle.GetOrderId()): OrderProcessingSystem is not ready");
+      if this.IsDebugEnabled() {
+        this.Log(s"Pickup delivery FAILED for order #\(bundle.GetOrderId()): OrderProcessingSystem is not ready");
+      };
       this.LogReadinessState("pickup delivery");
       return false;
     };
@@ -255,24 +301,36 @@ public class OrderProcessingSystem extends ScriptableSystem {
     let gaveAnything: Bool = false;
     let cartItemIndex: Int32 = 0;
 
-    this.Log(s"Bundle validation started for order #\(bundle.GetOrderId()): cartItems=\(ArraySize(cartItems))");
+    if this.IsDebugEnabled() {
+      this.Log(s"Bundle validation started for order #\(bundle.GetOrderId()): cartItems=\(ArraySize(cartItems))");
+    };
     if Equals(ArraySize(cartItems), 0) {
-      this.Log(s"Pickup delivery FAILED for order #\(bundle.GetOrderId()): bundle contains no cart items");
+      if this.IsDebugEnabled() {
+        this.Log(s"Pickup delivery FAILED for order #\(bundle.GetOrderId()): bundle contains no cart items");
+      };
     };
 
     ArrayClear(this.purchasedItems);
     for cartItem in cartItems {
-      this.Log(s"Bundle item \(cartItemIndex + 1)/\(ArraySize(cartItems)): validation and grant started");
+      if this.IsDebugEnabled() {
+        this.Log(s"Bundle item \(cartItemIndex + 1)/\(ArraySize(cartItems)): validation and grant started");
+      };
       if this.TryGiveCartItemToPlayer(cartItem) {
         gaveAnything = true;
-        this.Log(s"Bundle item \(cartItemIndex + 1)/\(ArraySize(cartItems)): granted successfully");
+        if this.IsDebugEnabled() {
+          this.Log(s"Bundle item \(cartItemIndex + 1)/\(ArraySize(cartItems)): granted successfully");
+        };
       } else {
-        this.Log(s"Bundle item \(cartItemIndex + 1)/\(ArraySize(cartItems)): FAILED to grant");
+        if this.IsDebugEnabled() {
+          this.Log(s"Bundle item \(cartItemIndex + 1)/\(ArraySize(cartItems)): FAILED to grant");
+        };
       };
       cartItemIndex += 1;
     };
 
-    this.Log(s"Bundle delivery completed for order #\(bundle.GetOrderId()): gaveAnything=\(gaveAnything), grantedItemInstances=\(ArraySize(this.purchasedItems))");
+    if this.IsDebugEnabled() {
+      this.Log(s"Bundle delivery completed for order #\(bundle.GetOrderId()): gaveAnything=\(gaveAnything), grantedItemInstances=\(ArraySize(this.purchasedItems))");
+    };
     return gaveAnything;
   }
 
@@ -283,23 +341,34 @@ public class OrderProcessingSystem extends ScriptableSystem {
     };
 
     if cartItem.purchaseAmount <= 0 {
-      this.Log(s"Cart item validation FAILED: purchaseAmount=\(cartItem.purchaseAmount), expected a positive value");
+      if this.IsDebugEnabled() {
+        this.Log(s"Cart item validation FAILED: purchaseAmount=\(cartItem.purchaseAmount), expected a positive value");
+      };
       return false;
     };
 
     let stockItem: ref<WrappedVirtualStockItem> = cartItem.stockItem;
     if !this.IsStockItemValid(stockItem) {
-      this.Log(s"Cart item validation FAILED: stock item is invalid, purchaseAmount=\(cartItem.purchaseAmount)");
+      if this.IsDebugEnabled() {
+        this.Log(s"Cart item validation FAILED: stock item is invalid, purchaseAmount=\(cartItem.purchaseAmount)");
+      };
       return false;
     };
 
-    let itemTDBID: String = TDBID.ToStringDEBUG(stockItem.id);
+    let itemTDBID: String;
+    if this.IsDebugEnabled() {
+      itemTDBID = TDBID.ToStringDEBUG(stockItem.id);
+    };
     let effectiveQuantity: Int32 = stockItem.quantity;
     if Equals(effectiveQuantity, 0) {
       effectiveQuantity = 1;
-      this.Log(s"Cart item compatibility fallback for \(itemTDBID): persisted legacy quantity 0 will be granted as 1");
+      if this.IsDebugEnabled() {
+        this.Log(s"Cart item compatibility fallback for \(itemTDBID): persisted legacy quantity 0 will be granted as 1");
+      };
     };
-    this.Log(s"Cart item validated: id=\(itemTDBID), purchaseAmount=\(cartItem.purchaseAmount), storedQuantity=\(stockItem.quantity), effectiveQuantity=\(effectiveQuantity), quality=\(stockItem.quality)");
+    if this.IsDebugEnabled() {
+      this.Log(s"Cart item validated: id=\(itemTDBID), purchaseAmount=\(cartItem.purchaseAmount), storedQuantity=\(stockItem.quantity), effectiveQuantity=\(effectiveQuantity), quality=\(stockItem.quality)");
+    };
 
     let gaveAnything: Bool = false;
     let itemID: ItemID;
@@ -308,7 +377,9 @@ public class OrderProcessingSystem extends ScriptableSystem {
     while i < cartItem.purchaseAmount {
       itemID = ItemID.FromTDBID(stockItem.id);
       if !ItemID.IsValid(itemID) {
-        this.Log(s"Cart item grant FAILED for \(itemTDBID): ItemID.FromTDBID returned an invalid ItemID at purchase iteration \(i + 1)/\(cartItem.purchaseAmount)");
+        if this.IsDebugEnabled() {
+          this.Log(s"Cart item grant FAILED for \(itemTDBID): ItemID.FromTDBID returned an invalid ItemID at purchase iteration \(i + 1)/\(cartItem.purchaseAmount)");
+        };
         return gaveAnything;
       };
       itemData = this.inventoryManager.CreateBasicItemData(itemID, this.player);
@@ -318,18 +389,26 @@ public class OrderProcessingSystem extends ScriptableSystem {
         if this.transactionSystem.GiveItem(this.player, itemID, effectiveQuantity) {
           ArrayPush(this.purchasedItems, itemID);
           gaveAnything = true;
-          this.Log(s"Cart item grant succeeded for \(itemTDBID): quantity=\(effectiveQuantity), purchase iteration \(i + 1)/\(cartItem.purchaseAmount)");
+          if this.IsDebugEnabled() {
+            this.Log(s"Cart item grant succeeded for \(itemTDBID): quantity=\(effectiveQuantity), purchase iteration \(i + 1)/\(cartItem.purchaseAmount)");
+          };
         } else {
-          this.Log(s"Cart item grant FAILED for \(itemTDBID): TransactionSystem.GiveItem returned false for quantity=\(effectiveQuantity), purchase iteration \(i + 1)/\(cartItem.purchaseAmount)");
+          if this.IsDebugEnabled() {
+            this.Log(s"Cart item grant FAILED for \(itemTDBID): TransactionSystem.GiveItem returned false for quantity=\(effectiveQuantity), purchase iteration \(i + 1)/\(cartItem.purchaseAmount)");
+          };
         };
       } else {
-        this.Log(s"Cart item grant FAILED for \(itemTDBID): InventoryManager.CreateBasicItemData returned null at purchase iteration \(i + 1)/\(cartItem.purchaseAmount)");
+        if this.IsDebugEnabled() {
+          this.Log(s"Cart item grant FAILED for \(itemTDBID): InventoryManager.CreateBasicItemData returned null at purchase iteration \(i + 1)/\(cartItem.purchaseAmount)");
+        };
       };
       i += 1;
     };
 
     if !gaveAnything {
-      this.Log(s"Cart item grant FAILED for \(itemTDBID): no item instance was granted");
+      if this.IsDebugEnabled() {
+        this.Log(s"Cart item grant FAILED for \(itemTDBID): no item instance was granted");
+      };
     };
     return gaveAnything;
   }
@@ -340,24 +419,35 @@ public class OrderProcessingSystem extends ScriptableSystem {
       return false;
     };
 
-    let itemTDBID: String = TDBID.ToStringDEBUG(stockItem.id);
+    let itemTDBID: String;
+    if this.IsDebugEnabled() {
+      itemTDBID = TDBID.ToStringDEBUG(stockItem.id);
+    };
     if stockItem.quantity < 0 {
-      this.Log(s"Stock item validation FAILED for \(itemTDBID): quantity=\(stockItem.quantity), expected zero (legacy default) or a positive value");
+      if this.IsDebugEnabled() {
+        this.Log(s"Stock item validation FAILED for \(itemTDBID): quantity=\(stockItem.quantity), expected zero (legacy default) or a positive value");
+      };
       return false;
     };
 
     if Equals(stockItem.quantity, 0) {
-      this.Log(s"Stock item validation compatibility warning for \(itemTDBID): persisted legacy quantity 0 will be normalized during grant");
+      if this.IsDebugEnabled() {
+        this.Log(s"Stock item validation compatibility warning for \(itemTDBID): persisted legacy quantity 0 will be normalized during grant");
+      };
     };
 
     if !TDBID.IsValid(stockItem.id) {
-      this.Log(s"Stock item validation FAILED: invalid TweakDBID \(itemTDBID)");
+      if this.IsDebugEnabled() {
+        this.Log(s"Stock item validation FAILED: invalid TweakDBID \(itemTDBID)");
+      };
       return false;
     };
 
     let itemRecord: ref<Item_Record> = TweakDBInterface.GetItemRecord(stockItem.id);
     if !IsDefined(itemRecord) {
-      this.Log(s"Stock item validation FAILED for \(itemTDBID): Item_Record was not found; the source item mod may be missing, disabled, or updated");
+      if this.IsDebugEnabled() {
+        this.Log(s"Stock item validation FAILED for \(itemTDBID): Item_Record was not found; the source item mod may be missing, disabled, or updated");
+      };
       return false;
     };
 
@@ -374,7 +464,9 @@ public class OrderProcessingSystem extends ScriptableSystem {
     let diff: Float;
     let previousStatus: AtelierDeliveryStatus;
 
-    this.Log(s"=== RefreshOrdersState started: now=\(now), storedOrders=\(ArraySize(orders)) ===");
+    if this.IsDebugEnabled() {
+      this.Log(s"=== RefreshOrdersState started: now=\(now), storedOrders=\(ArraySize(orders)) ===");
+    };
 
     for order in orders {
       if IsDefined(order) {
@@ -383,20 +475,26 @@ public class OrderProcessingSystem extends ScriptableSystem {
         receivedTimestamp = order.GetReceivedTimestamp();
         previousStatus = order.GetDeliveryStatus();
 
-        this.Log(s"Status check order #\(order.GetOrderId()) from \(order.GetStoreName()): status=\(previousStatus), point=\(order.GetDeliveryPoint()), shipment=\(shipmentTimestamp), delivery=\(deliveryTimestamp), received=\(receivedTimestamp)");
+        if this.IsDebugEnabled() {
+          this.Log(s"Status check order #\(order.GetOrderId()) from \(order.GetStoreName()): status=\(previousStatus), point=\(order.GetDeliveryPoint()), shipment=\(shipmentTimestamp), delivery=\(deliveryTimestamp), received=\(receivedTimestamp)");
+        };
 
         if now < shipmentTimestamp {
           // not shipped yet
           diff = shipmentTimestamp - now;
           order.SetNextStatusUpdateDiff(diff);
-          this.Log(s"Status result order #\(order.GetOrderId()): remains \(order.GetDeliveryStatus()), shipment in \(diff) sec");
+          if this.IsDebugEnabled() {
+            this.Log(s"Status result order #\(order.GetOrderId()): remains \(order.GetDeliveryStatus()), shipment in \(diff) sec");
+          };
           ArrayPush(refreshedOrders, order);
         } else if now >= shipmentTimestamp && now < deliveryTimestamp {
           // already shipped, delivering in progress
           diff = deliveryTimestamp - now;
           order.SetNextStatusUpdateDiff(diff);
           order.SetDeliveryStatus(AtelierDeliveryStatus.Shipped);
-          this.Log(s"Status result order #\(order.GetOrderId()): \(previousStatus) -> \(order.GetDeliveryStatus()), arrival in \(diff) sec");
+          if this.IsDebugEnabled() {
+            this.Log(s"Status result order #\(order.GetOrderId()): \(previousStatus) -> \(order.GetDeliveryStatus()), arrival in \(diff) sec");
+          };
           if !order.IsShipmentNotified() && !this.IsJohnny() && this.IsPhoneAvailable() {
             order.SetShipmentNotified();
             this.NotifyAboutOrderShipment(order);
@@ -406,7 +504,9 @@ public class OrderProcessingSystem extends ScriptableSystem {
           // ready for pickup
           order.SetNextStatusUpdateDiff(0.0);
           order.SetDeliveryStatus(AtelierDeliveryStatus.Arrived);
-          this.Log(s"Status result order #\(order.GetOrderId()): \(previousStatus) -> \(order.GetDeliveryStatus()), ready for pickup at \(order.GetDeliveryPoint())");
+          if this.IsDebugEnabled() {
+            this.Log(s"Status result order #\(order.GetOrderId()): \(previousStatus) -> \(order.GetDeliveryStatus()), ready for pickup at \(order.GetDeliveryPoint())");
+          };
           if !order.IsArrivalNotified() && !this.IsJohnny() && this.IsPhoneAvailable() {
             order.SetArrivalNotified();
             this.NotifyAboutOrderArrival(order);
@@ -415,10 +515,14 @@ public class OrderProcessingSystem extends ScriptableSystem {
         } else if receivedTimestamp > 0.0 && now - receivedTimestamp < this.receivedClearPeriod {
           // received already, check if order should be deleted from the list
           order.SetDeliveryStatus(AtelierDeliveryStatus.Delivered);
-          this.Log(s"Status result order #\(order.GetOrderId()): \(previousStatus) -> \(order.GetDeliveryStatus()), retained for \(this.receivedClearPeriod - (now - receivedTimestamp)) sec");
+          if this.IsDebugEnabled() {
+            this.Log(s"Status result order #\(order.GetOrderId()): \(previousStatus) -> \(order.GetDeliveryStatus()), retained for \(this.receivedClearPeriod - (now - receivedTimestamp)) sec");
+          };
           ArrayPush(refreshedOrders, order);
         } else {
-          this.Log(s"Status result order #\(order.GetOrderId()): removed from active orders, status=\(previousStatus), receivedAge=\(now - receivedTimestamp) sec");
+          if this.IsDebugEnabled() {
+            this.Log(s"Status result order #\(order.GetOrderId()): removed from active orders, status=\(previousStatus), receivedAge=\(now - receivedTimestamp) sec");
+          };
         };
       } else {
         this.Log("Status check skipped an undefined persisted order; it will be removed from active orders");
@@ -427,7 +531,9 @@ public class OrderProcessingSystem extends ScriptableSystem {
 
     this.orders = refreshedOrders;
     this.PrintCurrentOrders();
-    this.Log(s"=== RefreshOrdersState finished: retainedOrders=\(ArraySize(this.orders)) ===");
+    if this.IsDebugEnabled() {
+      this.Log(s"=== RefreshOrdersState finished: retainedOrders=\(ArraySize(this.orders)) ===");
+    };
 
     OrderTrackingTicker.Get(this.player.GetGame()).ScheduleCallbackLong();
   }
@@ -454,12 +560,16 @@ public class OrderProcessingSystem extends ScriptableSystem {
   }
 
   private final func NotifyAboutOrderShipment(bundle: ref<PurchasedAtelierBundle>) -> Void {
-    this.Log(s"! Order \(bundle.GetOrderId()) from \(bundle.GetStoreName()) is shipped");
+    if this.IsDebugEnabled() {
+      this.Log(s"! Order \(bundle.GetOrderId()) from \(bundle.GetStoreName()) is shipped");
+    };
     DeliveryMessengerSystem.Get(this.player.GetGame()).PushShippedNotificationItem(bundle);
   }
 
   private final func NotifyAboutOrderArrival(bundle: ref<PurchasedAtelierBundle>) -> Void {
-    this.Log(s"! Order \(bundle.GetOrderId()) from \(bundle.GetStoreName()) is ready for pickup at \(bundle.GetDeliveryPoint())");
+    if this.IsDebugEnabled() {
+      this.Log(s"! Order \(bundle.GetOrderId()) from \(bundle.GetStoreName()) is ready for pickup at \(bundle.GetDeliveryPoint())");
+    };
     DeliveryMessengerSystem.Get(this.player.GetGame()).PushArrivedNotificationItem(bundle);
   }
 
@@ -498,14 +608,20 @@ public class OrderProcessingSystem extends ScriptableSystem {
   }
 
   private final func PrintCurrentOrders() -> Void {
-     let orders: array<ref<PurchasedAtelierBundle>> = this.orders;
-     this.Log("Active orders: ");
-     for order in orders {
+    if !this.IsDebugEnabled() {
+      return;
+    };
+    let orders: array<ref<PurchasedAtelierBundle>> = this.orders;
+    this.Log("Active orders: ");
+    for order in orders {
       this.PrintOrderStatus(order);
-     }
+    };
   }
 
   private final func PrintOrderStatus(order: ref<PurchasedAtelierBundle>) -> Void {
+    if !this.IsDebugEnabled() {
+      return;
+    };
     let info: String = s"- id #\(order.GetOrderId()) from \(order.GetStoreName()): \(order.GetDeliveryStatus()) [\(order.GetDeliveryPoint())]";
     let diff: Float = order.GetNextStatusUpdateDiff();
     if diff > 0.0 {
@@ -525,13 +641,20 @@ public class OrderProcessingSystem extends ScriptableSystem {
     AtelierItemsHelper.ScaleItem(this.player, itemData, quality);
   }
 
+  private final func IsDebugEnabled() -> Bool {
+    return IsDefined(this.config) && this.config.debug;
+  }
+
   private final func Log(str: String) -> Void {
-    if IsDefined(this.config) && this.config.debug {
+    if this.IsDebugEnabled() {
       ModLog(n"DeliveryOrders", str);
     };
   }
 
   private final func LogReadinessState(context: String) -> Void {
+    if !this.IsDebugEnabled() {
+      return;
+    };
     this.Log(s"Readiness failure during \(context): player=\(IsDefined(this.player)), timeSystem=\(IsDefined(this.timeSystem)), transactionSystem=\(IsDefined(this.transactionSystem)), inventoryManager=\(IsDefined(this.inventoryManager))");
   }
 

@@ -5,20 +5,21 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
   private let delaySystem: wref<DelaySystem>;
   private let config: ref<VirtualAtelierDeliveryConfig>;
   private let handled: Bool;
+  private let sessionReady: Bool;
   private let recoveryCallbackId: DelayID;
   private let recoveryGeneration: Uint32;
   private let recoveryEnabled: Bool;
   private let recoveryAttemptsLeft: Int32;
   private let readinessRetriesLeft: Int32;
   private let recoveryPending: Bool;
-  private let missingEntityIDs: array<EntityID>;
-  private let enabledEntityIDs: array<EntityID>;
+  private let retiredEntityIDs: array<EntityID>;
   private let spawnConfig: ref<AtelierDropPointsSpawnerConfig>;
   private let initialCallbackId: DelayID;
   private let dropPointsCallbackId: DelayID;
   private let nightCityUnlocked: Bool = false;
   private let dogtownUnlocked: Bool = false;
   private let typeTag: CName = n"VirtualAtelierDropPoint";
+  private let streamingTag: CName = n"VirtualAtelierDropPointStreamedV1";
 
   private let spawnedMappins: ref<inkHashMap>;
 
@@ -31,11 +32,17 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     this.entitySystem = GameInstance.GetDynamicEntitySystem();
     this.delaySystem = GameInstance.GetDelaySystem(this.GetGameInstance());
     this.handled = false;
+    this.sessionReady = false;
     this.recoveryCallbackId = GetInvalidDelayID();
+    this.initialCallbackId = GetInvalidDelayID();
+    this.dropPointsCallbackId = GetInvalidDelayID();
     this.recoveryEnabled = false;
-    ArrayClear(this.missingEntityIDs);
-    ArrayClear(this.enabledEntityIDs);
+    ArrayClear(this.retiredEntityIDs);
     this.config = new VirtualAtelierDeliveryConfig();
+
+    // Also retry after long loads, once all session data has been restored.
+    GameInstance.GetCallbackSystem().RegisterCallback(n"Session/Ready", this, n"OnSessionReady")
+      .SetLifetime(CallbackLifetime.Session);
 
     if GameInstance.GetSystemRequestsHandler().IsPreGame() {
       return;
@@ -48,6 +55,12 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     this.spawnConfig.BuildPrologueList();
     this.spawnConfig.BuildNightCityList();
     this.spawnConfig.BuildDogtownList();
+
+  }
+
+  private cb func OnSessionReady(event: ref<GameSessionEvent>) -> Void {
+    this.sessionReady = true;
+    this.HandleSpawning();
   }
 
   public func OnRestored(saveVersion: Int32, gameVersion: Int32) -> Void {
@@ -61,6 +74,7 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
   }
 
   public func OnDetach() -> Void {
+    this.sessionReady = false;
     this.StopRecovery();
     if IsDefined(this.delaySystem) {
       this.delaySystem.CancelCallback(this.initialCallbackId);
@@ -91,17 +105,7 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
       return false;
     };
 
-    let values: array<wref<IScriptable>>;
-    this.spawnedMappins.GetValues(values);
-    let entry: ref<MappinIdWrapper>;
-    for value in values {
-      entry = value as MappinIdWrapper;
-      if IsDefined(entry) && Equals(entry.id, targetId) {
-        return true;
-      };
-    };
-
-    return false;
+    return this.spawnedMappins.KeyExist(targetId.value);
   }
 
   public final func SaveSpawnedMappinId(entityId: EntityID, mappinId: NewMappinID) -> Void {
@@ -109,19 +113,29 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
       return;
     };
 
-    let uniqueTag: CName = this.GetDropPointTagByEntityId(entityId);
-    if Equals(uniqueTag, n"") {
+    let invalidID: NewMappinID;
+    if Equals(mappinId, invalidID) || this.IsRetiredDropPoint(entityId) {
       return;
     };
-
-    let key: Uint64 = NameToHash(uniqueTag);
-    if this.spawnedMappins.KeyExist(key) {
-      this.spawnedMappins.Set(key, MappinIdWrapper.Create(mappinId, uniqueTag));
-      this.Log(s"Updated mappinId \(mappinId.value) for \(uniqueTag)");
-    } else {
-      this.spawnedMappins.Insert(key, MappinIdWrapper.Create(mappinId, uniqueTag));
-      this.Log(s"Saved mappinId \(mappinId.value) with key \(key)");
+    let point: ref<AtelierDropPointInstance> = this.spawnConfig.GetPointByUniqueTag(this.GetDropPointTagByEntityId(entityId));
+    if !IsDefined(point) {
+      return;
     };
+    if this.spawnedMappins.KeyExist(mappinId.value) {
+      this.spawnedMappins.Set(mappinId.value, point);
+    } else {
+      this.spawnedMappins.Insert(mappinId.value, point);
+    };
+  }
+
+  public final func ForgetSpawnedMappinId(mappinId: NewMappinID) -> Void {
+    if IsDefined(this.spawnedMappins) {
+      this.spawnedMappins.Remove(mappinId.value);
+    };
+  }
+
+  public final func IsRetiredDropPoint(entityId: EntityID) -> Bool {
+    return ArrayContains(this.retiredEntityIDs, entityId);
   }
 
   public final func GetUniqueTagByEntityId(entityId: EntityID) -> CName {
@@ -130,24 +144,32 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
 
   private final func GetDropPointTagByEntityId(entityId: EntityID) -> CName {
     if !this.EnsureInitialized() {
-      this.Log(s"Pickup terminal lookup FAILED for entity \(entityId): spawner is not initialized");
+      if this.IsDebugEnabled() {
+        this.Log(s"Pickup terminal lookup FAILED for entity \(entityId): spawner is not initialized");
+      };
       return n"";
     };
 
     let tags: array<CName> = this.entitySystem.GetTags(entityId);
     if Equals(ArraySize(tags), 0) {
-      this.Log(s"Pickup terminal lookup FAILED for entity \(entityId): entity has no dynamic tags");
+      if this.IsDebugEnabled() {
+        this.Log(s"Pickup terminal lookup FAILED for entity \(entityId): entity has no dynamic tags");
+      };
       return n"";
     };
 
     for tag in tags {
       if NotEquals(AtelierDeliveryUtils.GetDropPointByTag(tag), AtelierDeliveryDropPoint.None) {
-        this.Log(s"Pickup terminal lookup succeeded for entity \(entityId): uniqueTag=\(tag), totalTags=\(ArraySize(tags))");
+        if this.IsDebugEnabled() {
+          this.Log(s"Pickup terminal lookup succeeded for entity \(entityId): uniqueTag=\(tag), totalTags=\(ArraySize(tags))");
+        };
         return tag;
       };
     };
 
-    this.Log(s"Pickup terminal lookup FAILED for entity \(entityId): none of its \(ArraySize(tags)) tags maps to a delivery point");
+    if this.IsDebugEnabled() {
+      this.Log(s"Pickup terminal lookup FAILED for entity \(entityId): none of its \(ArraySize(tags)) tags maps to a delivery point");
+    };
     return n"";
   }
 
@@ -156,29 +178,7 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
       return null;
     };
 
-    let values: array<wref<IScriptable>>;
-    this.spawnedMappins.GetValues(values);
-    let entry: ref<MappinIdWrapper>;
-    let target: ref<MappinIdWrapper>;
-    for value in values {
-      entry = value as MappinIdWrapper;
-      if IsDefined(entry) && Equals(entry.id, mappinId) {
-        target = entry;
-      };
-    };
-
-    if !IsDefined(target) {
-      return null;
-    };
-
-    let dropPoints: array<ref<AtelierDropPointInstance>> = this.GetAvailableDropPoints();
-    for dropPoint in dropPoints {
-      if Equals(target.tag, dropPoint.uniqueTag) {
-        return dropPoint;
-      };
-    };
-
-    return null;
+    return this.spawnedMappins.Get(mappinId.value) as AtelierDropPointInstance;
   }
 
   public final func GetAvailableDropPoints() -> array<ref<AtelierDropPointInstance>> {
@@ -235,7 +235,9 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
   }
 
   private final func CheckForQuestFacts() -> Void {
-    this.Log(s"CheckForQuestFacts");
+    if this.IsDebugEnabled() {
+      this.Log(s"CheckForQuestFacts");
+    };
     let questsSystem: ref<QuestsSystem> = GameInstance.GetQuestsSystem(this.GetGameInstance());
     let watsonFact: Int32 = questsSystem.GetFact(n"watson_prolog_lock");
     let unlockFact: Int32 = questsSystem.GetFact(n"unlock_car_hud_dpad");
@@ -279,8 +281,6 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
       this.delaySystem.CancelCallback(this.recoveryCallbackId);
     };
     this.recoveryCallbackId = GetInvalidDelayID();
-    ArrayClear(this.missingEntityIDs);
-    ArrayClear(this.enabledEntityIDs);
   }
 
   public final func HandleRecovery(generation: Uint32) -> Void {
@@ -299,9 +299,8 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
 
     // A registered entity can still be restoring/streaming. Never create replacements
     // based only on GetEntity() returning null during loading.
-    if !this.entitySystem.IsReady() || !IsDefined(GetPlayer(this.GetGameInstance())) {
+    if !this.sessionReady || !this.entitySystem.IsReady() || !IsDefined(GetPlayer(this.GetGameInstance())) {
       this.Log("Recovery: waiting for DynamicEntitySystem/player readiness");
-      ArrayClear(this.missingEntityIDs);
       this.readinessRetriesLeft -= 1;
       if this.readinessRetriesLeft > 0 {
         this.ScheduleRecovery(5.0);
@@ -319,88 +318,90 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
       this.handled = true;
       this.ScheduleInitialNotification();
     };
-    this.Log(s"Recovery audit: restored=\(this.entitySystem.IsRestored())");
+    if this.IsDebugEnabled() {
+      this.Log(s"Recovery audit: restored=\(this.entitySystem.IsRestored())");
+    };
     // Remove the legacy Northside placement before checking individual points.
     this.FixAlreadySpawnedEntities();
 
-    let missingNow: array<EntityID>;
     let tags: array<CName> = this.spawnConfig.GetIterationTagsPrologue();
     for tag in tags {
-      this.ReconcileInstancesByTag(tag, missingNow);
+      this.ReconcileInstancesByTag(tag);
     };
     if this.nightCityUnlocked {
       tags = this.spawnConfig.GetIterationTagsNightCity();
       for tag in tags {
-        this.ReconcileInstancesByTag(tag, missingNow);
+        this.ReconcileInstancesByTag(tag);
       };
     };
-    if this.dogtownUnlocked && GameInstance.GetPreventionSpawnSystem(this.GetGameInstance()).IsPlayerInDogTown() {
+    // Register unlocked destinations even outside their district. Population
+    // streaming controls the physical terminal; its map marker exists remotely.
+    if this.dogtownUnlocked {
       tags = this.spawnConfig.GetIterationTagsDogtown();
       for tag in tags {
-        this.ReconcileInstancesByTag(tag, missingNow);
+        this.ReconcileInstancesByTag(tag);
       };
     };
-    this.missingEntityIDs = missingNow;
     if this.recoveryPending && this.recoveryAttemptsLeft > 0 {
       this.ScheduleRecovery(5.0);
     } else {
-      this.Log(s"Recovery pass finished: unresolved=\(this.recoveryPending), waiting for the next lifecycle event");
+      if this.IsDebugEnabled() {
+        this.Log(s"Recovery pass finished: unresolved=\(this.recoveryPending), waiting for the next lifecycle event");
+      };
       this.StopRecovery();
     };
   }
 
-  private final func ReconcileInstancesByTag(tag: CName, out missingNow: array<EntityID>) -> Void {
+  private final func ReconcileInstancesByTag(tag: CName) -> Void {
     let instances: array<ref<AtelierDropPointInstance>> = this.spawnConfig.GetSpawnPointsByTag(tag);
     for instance in instances {
-      this.ReconcileDropPoint(instance, missingNow);
+      this.ReconcileDropPoint(instance);
     };
   }
 
-  private final func ReconcileDropPoint(instance: ref<AtelierDropPointInstance>, out missingNow: array<EntityID>) -> Void {
+  private final func ReconcileDropPoint(instance: ref<AtelierDropPointInstance>) -> Void {
     let ids: array<EntityID> = this.entitySystem.GetTaggedIDs(instance.indexTag);
     // Older registrations can still be recognized by their location tag.
     if Equals(ArraySize(ids), 0) {
       ids = this.entitySystem.GetTaggedIDs(instance.uniqueTag);
     };
-    this.Log(s"Recovery point \(instance.uniqueTag): registrations=\(ArraySize(ids))");
+    if this.IsDebugEnabled() {
+      this.Log(s"Recovery point \(instance.uniqueTag): registrations=\(ArraySize(ids))");
+    };
     if Equals(ArraySize(ids), 0) {
-      this.Log(s"Recovery point \(instance.uniqueTag): registration missing, creating");
+      if this.IsDebugEnabled() {
+        this.Log(s"Recovery point \(instance.uniqueTag): registration missing, creating");
+      };
       this.SpawnDropPointEntity(instance);
       this.recoveryPending = true;
       return;
     };
 
     for id in ids {
-      let managed: Bool = this.entitySystem.IsManaged(id);
-      let spawned: Bool = this.entitySystem.IsSpawned(id);
-      let spawning: Bool = this.entitySystem.IsSpawning(id);
-      let entity: ref<Entity> = this.entitySystem.GetEntity(id);
-      this.Log(s"Recovery point \(instance.uniqueTag): id=\(id), managed=\(managed), spawned=\(spawned), spawning=\(spawning), object=\(IsDefined(entity))");
       if !this.entitySystem.IsTagged(id, this.typeTag) {
-        this.Log(s"Recovery point \(instance.uniqueTag): foreign tag collision, leaving entity untouched");
-      } else {
-        if IsDefined(entity) {
-          ArrayRemove(this.enabledEntityIDs, id);
-        } else {
-          this.recoveryPending = true;
-          if managed && !spawned && !spawning {
-            ArrayPush(missingNow, id);
-            if ArrayContains(this.missingEntityIDs, id) && !ArrayContains(this.enabledEntityIDs, id) {
-              // Try reactivating once per event-driven recovery pass.
-              // Do not delete registered entities: a slow/failed spawn needs diagnosis,
-              // not an endless delete/create cycle or duplicate terminals.
-              let enabled: Bool = this.entitySystem.EnableEntity(id);
-              ArrayPush(this.enabledEntityIDs, id);
-              this.Log(s"Recovery point \(instance.uniqueTag): EnableEntity result=\(enabled)");
-            };
-          };
+        if this.IsDebugEnabled() {
+          this.Log(s"Recovery point \(instance.uniqueTag): foreign tag collision, leaving entity untouched");
         };
+      } else if this.IsRetiredDropPoint(id) {
+        // DeleteEntity finishes asynchronously. Wait for its registration to go
+        // away before creating a replacement at the same position.
+        this.recoveryPending = true;
+      } else if !this.entitySystem.IsTagged(id, this.streamingTag) {
+        // One-time migration of old alwaysSpawned/transient-ID registrations.
+        this.DeleteDropPointEntity(id);
+        this.recoveryPending = true;
+      } else {
+        // A managed streamed entity is valid even while its object is absent.
+        // Never enable or recreate it merely because the player is far away.
+        this.RegisterDropPointMappin(id, instance);
       };
     };
   }
 
   public final func ScheduleInitialNotification() -> Void {
-    this.Log(s"ScheduleInitialNotification...");
+    if this.IsDebugEnabled() {
+      this.Log(s"ScheduleInitialNotification...");
+    };
     this.delaySystem.CancelCallback(this.initialCallbackId);
     let callback: ref<DropPointsSpawnerCallbackInitial> = DropPointsSpawnerCallbackInitial.Create(this);
     this.initialCallbackId = this.delaySystem.DelayCallback(callback, 7.0, true);
@@ -413,7 +414,9 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     let welcomeFact: Int32 = questsSystem.GetFact(factName);
     let welcomeDisplayed: Bool = Equals(welcomeFact, 1);
     
-    this.Log(s"HandleInitialNotification, welcomeDisplayed = \(welcomeDisplayed)");
+    if this.IsDebugEnabled() {
+      this.Log(s"HandleInitialNotification, welcomeDisplayed = \(welcomeDisplayed)");
+    };
 
     if !welcomeDisplayed && this.IsPhoneAvailable() {
       messenger = DeliveryMessengerSystem.Get(this.GetGameInstance());
@@ -425,14 +428,18 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
   }
 
   public final func ScheduleNewDropPointsNotification() -> Void {
-    this.Log(s"ScheduleNewDropPointsNotification...");
+    if this.IsDebugEnabled() {
+      this.Log(s"ScheduleNewDropPointsNotification...");
+    };
     this.delaySystem.CancelCallback(this.dropPointsCallbackId);
     let callback: ref<DropPointsSpawnerCallbackNewDropPoint> = DropPointsSpawnerCallbackNewDropPoint.Create(this);
     this.dropPointsCallbackId = this.delaySystem.DelayCallback(callback, 7.0, true);
   }
 
   public final func HandleNewDropPointsNotification() -> Void {
-    this.Log(s"HandleNewDropPointsNotification");
+    if this.IsDebugEnabled() {
+      this.Log(s"HandleNewDropPointsNotification");
+    };
     let questsSystem: ref<QuestsSystem> = GameInstance.GetQuestsSystem(this.GetGameInstance());
     let playerInDogtown: Bool = GameInstance.GetPreventionSpawnSystem(this.GetGameInstance()).IsPlayerInDogTown();
     let messenger: ref<DeliveryMessengerSystem>;
@@ -441,7 +448,9 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     let longshoreStacksFactName: CName = n"vad_longshore_sacks_displayed";
     let longshoreStacksFact: Int32 = questsSystem.GetFact(longshoreStacksFactName);
     let longshoreStacksDisplayed: Bool = Equals(longshoreStacksFact, 1);
-    this.Log(s" - LongshoreStacks displayed: \(longshoreStacksDisplayed)");
+    if this.IsDebugEnabled() {
+      this.Log(s" - LongshoreStacks displayed: \(longshoreStacksDisplayed)");
+    };
     if playerInDogtown && !longshoreStacksDisplayed && this.IsPhoneAvailable() {
       messenger = DeliveryMessengerSystem.Get(this.GetGameInstance());
       messenger.PushNewDropPointNotificationItem(AtelierDeliveryDropPoint.LongshoreStacks, t"Districts.Dogtown");
@@ -454,37 +463,45 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     if !this.EnsureInitialized() {
       return;
     };
-    let supportedTagsPrologue: array<CName> = this.spawnConfig.GetIterationTagsPrologue();
-    let supportedTagsNightCity: array<CName> = this.spawnConfig.GetIterationTagsNightCity();
-    let supportedTagsDogtown: array<CName> = this.spawnConfig.GetIterationTagsDogtown();
-
-    for tag in supportedTagsPrologue {
-      this.entitySystem.DeleteTagged(tag);
-    };
-
-    for tag in supportedTagsNightCity {
-      this.entitySystem.DeleteTagged(tag);
-    };
-
-    for tag in supportedTagsDogtown {
-      this.entitySystem.DeleteTagged(tag);
+    this.delaySystem.CancelCallback(this.initialCallbackId);
+    this.delaySystem.CancelCallback(this.dropPointsCallbackId);
+    this.initialCallbackId = GetInvalidDelayID();
+    this.dropPointsCallbackId = GetInvalidDelayID();
+    let ids: array<EntityID> = this.entitySystem.GetTaggedIDs(this.typeTag);
+    for id in ids {
+      this.DeleteDropPointEntity(id);
     };
   }
 
   private final func FixAlreadySpawnedEntities() -> Void {
     this.Log("FixAlreadySpawnedEntities");
-    let dropPoints: array<ref<AtelierDropPointInstance>> = this.GetAvailableDropPoints();
     // Fix #1: Northside
-    let fix1tag: CName = n"droppoint3";
-    if this.entitySystem.IsPopulated(fix1tag) {
-      this.Log("Northside already spawned, repositioning...");
-      this.entitySystem.DeleteTagged(fix1tag);
-      for dropPoint in dropPoints {
-        if Equals(dropPoint.type, AtelierDeliveryDropPoint.MartinSt) && !this.entitySystem.IsPopulated(dropPoint.indexTag) {
-          this.SpawnDropPointEntity(dropPoint);
-        };
-      };
+    let ids: array<EntityID> = this.entitySystem.GetTaggedIDs(n"droppoint3");
+    for id in ids {
+      this.DeleteDropPointEntity(id);
     };
+  }
+
+  private final func DeleteDropPointEntity(id: EntityID) -> Void {
+    if !this.entitySystem.IsTagged(id, this.typeTag) || this.IsRetiredDropPoint(id) {
+      return;
+    };
+    if this.entitySystem.DeleteEntity(id) {
+      ArrayPush(this.retiredEntityIDs, id);
+      let request: ref<UnregisterDropPointMappinRequest> = new UnregisterDropPointMappinRequest();
+      request.ownerID = id;
+      request.removeFromSystem = true;
+      let dropPointSystem: ref<DropPointSystem> = GameInstance.GetScriptableSystemsContainer(this.GetGameInstance()).Get(n"DropPointSystem") as DropPointSystem;
+      dropPointSystem.QueueRequest(request);
+    };
+  }
+
+  private final func RegisterDropPointMappin(id: EntityID, instance: ref<AtelierDropPointInstance>) -> Void {
+    let request: ref<RegisterDropPointMappinRequest> = new RegisterDropPointMappinRequest();
+    request.ownerID = id;
+    request.position = instance.position;
+    let dropPointSystem: ref<DropPointSystem> = GameInstance.GetScriptableSystemsContainer(this.GetGameInstance()).Get(n"DropPointSystem") as DropPointSystem;
+    dropPointSystem.QueueRequest(request);
   }
 
   private final func SpawnDropPointEntity(instance: ref<AtelierDropPointInstance>) -> Void {
@@ -494,11 +511,20 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     deviceSpec.position = instance.position;
     deviceSpec.orientation = instance.orientation;
     deviceSpec.persistSpawn = true;
-    deviceSpec.alwaysSpawned = true;
-    deviceSpec.tags = [ instance.uniqueTag, instance.indexTag, instance.iterationTag, this.typeTag ];
-    this.Log(s"--> spawning entity with tags [ \(instance.uniqueTag), \(instance.indexTag) \(instance.iterationTag), \(this.typeTag) ] at position \(instance.position)");
+    // Stable owner IDs are required by persistent DropPointSystem mappins.
+    deviceSpec.persistState = true;
+    deviceSpec.alwaysSpawned = false;
+    deviceSpec.tags = [ instance.uniqueTag, instance.indexTag, instance.iterationTag, this.typeTag, this.streamingTag ];
+    if this.IsDebugEnabled() {
+      this.Log(s"--> spawning entity with tags [ \(instance.uniqueTag), \(instance.indexTag) \(instance.iterationTag), \(this.typeTag) ] at position \(instance.position)");
+    };
     let id: EntityID = this.entitySystem.CreateEntity(deviceSpec);
-    this.Log(s"Recovery point \(instance.uniqueTag): CreateEntity returned \(id), managed=\(this.entitySystem.IsManaged(id))");
+    if this.entitySystem.IsManaged(id) {
+      this.RegisterDropPointMappin(id, instance);
+    };
+    if this.IsDebugEnabled() {
+      this.Log(s"Recovery point \(instance.uniqueTag): CreateEntity returned \(id), managed=\(this.entitySystem.IsManaged(id))");
+    };
   }
 
   private final func EnsureInitialized() -> Bool {
@@ -533,8 +559,12 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     return false;
   }
 
+  public final func IsDebugEnabled() -> Bool {
+    return IsDefined(this.config) && this.config.debug;
+  }
+
   private final func Log(str: String) -> Void {
-    if IsDefined(this.config) && this.config.debug {
+    if this.IsDebugEnabled() {
       ModLog(n"DeliverySpawner", str);
     };
   }

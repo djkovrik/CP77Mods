@@ -45,27 +45,85 @@ private func OnRestored(saveVersion: Int32, gameVersion: Int32) -> Void {
   this.spawner = AtelierDropPointsSpawner.Get(GetGameInstance());
 }
 
-@replaceMethod(DropPointSystem)
+@wrapMethod(DropPointSystem)
 private final func RegisterDropPointMappin(data: ref<DropPointMappinRegistrationData>) -> Void {
-  let mappinData: MappinData;
-  let mappinID: NewMappinID;
-  if data == null || NotEquals(data.GetMappinID(), mappinID) {
+  wrappedMethod(data);
+  // Use the supplied registration directly. Looking it up again here turns
+  // restoration of N drop-point markers into N additional full-array scans.
+  this.VADCacheDropPointMappin(data);
+}
+
+@addMethod(DropPointSystem)
+private final func VADCacheDropPointMappin(data: ref<DropPointMappinRegistrationData>) -> Void {
+  if !IsDefined(data) {
     return;
   };
-  mappinData.mappinType = t"Mappins.DropPointStaticMappin";
-  mappinData.variant = gamedataMappinVariant.ServicePointDropPointVariant;
-  mappinData.active = true;
-  mappinID = this.GetMappinSystem().RegisterMappin(mappinData, data.GetPosition());
-  data.SetMappinID(mappinID);
-
   let entityId: EntityID = data.GetOwnerID();
   if !IsDefined(this.spawner) {
     this.spawner = AtelierDropPointsSpawner.Get(GetGameInstance());
   };
 
   if IsDefined(this.spawner) && this.spawner.IsCustomDropPoint(entityId) {
-    this.spawner.SaveSpawnedMappinId(entityId, mappinID);
+    this.spawner.SaveSpawnedMappinId(entityId, data.GetMappinID());
   };
+}
+
+@wrapMethod(DropPointSystem)
+protected final func OnRegisterDropPointMappinRequest(request: ref<RegisterDropPointMappinRequest>) -> Void {
+  if !IsDefined(this.spawner) {
+    this.spawner = AtelierDropPointsSpawner.Get(GetGameInstance());
+  };
+  if IsDefined(this.spawner) && this.spawner.IsRetiredDropPoint(request.ownerID) {
+    // Intentionally suppress late attach requests from a terminal being deleted.
+    // Otherwise they can recreate its persistent marker after cleanup.
+    return;
+  };
+  if !IsDefined(this.spawner) || !this.spawner.IsCustomDropPoint(request.ownerID) {
+    // Ordinary/modded non-Atelier drop points must not incur another lookup in
+    // m_mappins. Keep their original request/wrapper chain unchanged.
+    wrappedMethod(request);
+    return;
+  };
+
+  // Only Atelier terminals need tracking relinking and recovery of our index.
+  // Reuse this reference after vanilla processing; do not search a second time.
+  let registrationData: ref<DropPointMappinRegistrationData> = this.GetMappinData(request.ownerID);
+  let invalidID: NewMappinID;
+  if IsDefined(registrationData) && NotEquals(request.trackingAlternativeMappinID, invalidID) {
+    if NotEquals(registrationData.GetTrackingAlternativeMappinID(), request.trackingAlternativeMappinID) {
+      // A streamed-in terminal has a new dynamic marker. Allow vanilla to link
+      // the persistent static marker to that ID instead of keeping the old one.
+      registrationData.SetTrackingAlternativeMappinID(invalidID);
+    };
+  };
+  wrappedMethod(request);
+  // Restore the index even when vanilla already restored this marker before
+  // DynamicEntitySystem tags were available and skipped RegisterDropPointMappin.
+  // New registrations are cached by the RegisterDropPointMappin wrapper itself.
+  this.VADCacheDropPointMappin(registrationData);
+}
+
+@wrapMethod(DropPointSystem)
+private final func UnregisterDropPointMappin(data: ref<DropPointMappinRegistrationData>) -> Void {
+  let oldID: NewMappinID;
+  if IsDefined(data) {
+    oldID = data.GetMappinID();
+  };
+  wrappedMethod(data);
+  if IsDefined(this.spawner) {
+    this.spawner.ForgetSpawnedMappinId(oldID);
+  };
+}
+
+@wrapMethod(DropPoint)
+protected cb func OnDetach() -> Bool {
+  let spawner: ref<AtelierDropPointsSpawner> = AtelierDropPointsSpawner.Get(this.GetGame());
+  if IsDefined(spawner) && spawner.IsCustomDropPoint(this.GetEntityID()) {
+    // Keep the static marker, but re-register the dynamic tracking alternative
+    // on the next attach even if the same entity object is reused by streaming.
+    this.m_mappinInSystem = false;
+  };
+  return wrappedMethod();
 }
 
 // Show VA tooltip
@@ -108,12 +166,9 @@ private final func UpdateTooltip(tooltipType: WorldMapTooltipType, controller: w
 
   if IsDefined(mappin) && IsDefined(this.spawner) {
     mappinId = mappin.GetNewMappinID();
-    isCustomMappin = this.spawner.IsCustomDropPoint(mappinId);
-  };
-
-  if isCustomMappin && IsDefined(this.spawner) {
     dropPointInstance = this.spawner.FindInstanceByMappinId(mappinId);
-    if IsDefined(dropPointInstance) {
+    isCustomMappin = IsDefined(dropPointInstance);
+    if isCustomMappin {
       imageInfo = DropPointImageInfo.Create(dropPointInstance.inkAtlas, dropPointInstance.uniqueTag);
     };
   };

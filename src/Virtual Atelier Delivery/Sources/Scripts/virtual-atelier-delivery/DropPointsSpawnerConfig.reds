@@ -11,6 +11,7 @@ module AtelierDelivery
 public class AtelierDropPointsSpawnerConfig {
   private let config: ref<VirtualAtelierDeliveryConfig>;
   private let spawnPoints: ref<inkHashMap>;
+  private let pointsByUniqueTag: ref<inkHashMap>;
   private let iterationTagsPrologue: array<CName>;
   private let iterationTagsNightCity: array<CName>;
   private let iterationTagsDogtown: array<CName>;
@@ -18,6 +19,7 @@ public class AtelierDropPointsSpawnerConfig {
   public final func Init() -> Void {
     this.config = new VirtualAtelierDeliveryConfig();
     this.spawnPoints = new inkHashMap();
+    this.pointsByUniqueTag = new inkHashMap();
   }
 
   public final func BuildPrologueList() -> Void {
@@ -45,7 +47,10 @@ public class AtelierDropPointsSpawnerConfig {
 
     let iterationListPrologue: ref<AtelierDropPointsList> = AtelierDropPointsList.Create(iterationSpawnsPrologue);
     this.spawnPoints.Insert(this.Key(iterationTagPrologue), iterationListPrologue);
-    this.Log(s"Stored \(ArraySize(iterationListPrologue.points)) points for key \(this.Key(iterationTagPrologue))");
+    this.IndexPoints(iterationSpawnsPrologue);
+    if this.IsDebugEnabled() {
+      this.Log(s"Stored \(ArraySize(iterationListPrologue.points)) points for key \(this.Key(iterationTagPrologue))");
+    };
   }
 
   // When any new version adds more drop points then new iteration tag must be used
@@ -346,7 +351,10 @@ public class AtelierDropPointsSpawnerConfig {
 
     let iterationList1: ref<AtelierDropPointsList> = AtelierDropPointsList.Create(iterationSpawns1);
     this.spawnPoints.Insert(this.Key(iterationTag1), iterationList1);
-    this.Log(s"Stored \(ArraySize(iterationList1.points)) points for key \(this.Key(iterationTag1))");
+    this.IndexPoints(iterationSpawns1);
+    if this.IsDebugEnabled() {
+      this.Log(s"Stored \(ArraySize(iterationList1.points)) points for key \(this.Key(iterationTag1))");
+    };
   }
 
 
@@ -376,7 +384,20 @@ public class AtelierDropPointsSpawnerConfig {
 
     let iterationList1: ref<AtelierDropPointsList> = AtelierDropPointsList.Create(iterationSpawns1);
     this.spawnPoints.Insert(this.Key(iterationTag1), iterationList1);
-    this.Log(s"Stored \(ArraySize(iterationList1.points)) points for key \(this.Key(iterationTag1))");
+    this.IndexPoints(iterationSpawns1);
+    if this.IsDebugEnabled() {
+      this.Log(s"Stored \(ArraySize(iterationList1.points)) points for key \(this.Key(iterationTag1))");
+    };
+  }
+
+  private final func IndexPoints(points: array<ref<AtelierDropPointInstance>>) -> Void {
+    for point in points {
+      this.pointsByUniqueTag.Insert(this.Key(point.uniqueTag), point);
+    };
+  }
+
+  public final func GetPointByUniqueTag(tag: CName) -> ref<AtelierDropPointInstance> {
+    return this.pointsByUniqueTag.Get(this.Key(tag)) as AtelierDropPointInstance;
   }
 
   public final func GetSpawnPointsByTag(tag: CName) -> array<ref<AtelierDropPointInstance>> {
@@ -421,8 +442,12 @@ public class AtelierDropPointsSpawnerConfig {
     return NameToHash(tag);
   }
 
+  private final func IsDebugEnabled() -> Bool {
+    return IsDefined(this.config) && this.config.debug;
+  }
+
   private final func Log(str: String) -> Void {
-    if IsDefined(this.config) && this.config.debug {
+    if this.IsDebugEnabled() {
       ModLog(n"DeliverySpawnerConfig", str);
     };
   }
