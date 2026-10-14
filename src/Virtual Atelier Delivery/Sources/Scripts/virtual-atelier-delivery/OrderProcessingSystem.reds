@@ -12,6 +12,7 @@ public class OrderProcessingSystem extends ScriptableSystem {
   private let inventoryManager: wref<InventoryManager>;
   private let config: ref<VirtualAtelierDeliveryConfig>;
   private let purchasedItems: array<ItemID>;
+  private let purchasedItemIndex: ref<inkHashMap>;
 
   private persistent let orders: array<ref<PurchasedAtelierBundle>>;
   private persistent let nextOrderId: Int32;
@@ -49,15 +50,18 @@ public class OrderProcessingSystem extends ScriptableSystem {
 
   public final func HasActiveOrders() -> Bool {
     let currentOrders: array<ref<PurchasedAtelierBundle>> = this.orders;
-    let hasOrderToTrack: Bool = false;
     let status: AtelierDeliveryStatus;
     for order in currentOrders {
-      status = order.GetDeliveryStatus();
+      if IsDefined(order) {
+        status = order.GetDeliveryStatus();
+      } else {
+        status = AtelierDeliveryStatus.Delivered;
+      };
       if Equals(status, AtelierDeliveryStatus.Created) || Equals(status, AtelierDeliveryStatus.Shipped) {
-        hasOrderToTrack = true;
+        return true;
       };
     };
-    return hasOrderToTrack;
+    return false;
   }
 
   public final func GetOrders() -> array<ref<PurchasedAtelierBundle>> {
@@ -198,14 +202,11 @@ public class OrderProcessingSystem extends ScriptableSystem {
         this.Log(s"Pickup delivery: trying order #\(arrivedOrder.orderId) from \(arrivedOrder.storeName), items=\(ArraySize(arrivedOrder.purchasedItems))");
       };
       if this.GiveBundleItemsToPlayer(arrivedOrder) {
-        let markedAsReceived: Bool = this.MarkOrderAsReceived(arrivedOrder);
+        // arrivedOrders contains the same objects as this.orders. Do not search
+        // and rebuild all orders once per delivered bundle (O(arrived * orders)).
+        arrivedOrder.SetReceivedTimestamp(this.timeSystem.GetGameTimeStamp());
         if this.IsDebugEnabled() {
-          this.Log(s"Pickup delivery: order #\(arrivedOrder.orderId) gave at least one item; markedAsReceived=\(markedAsReceived), grantedItemInstances=\(ArraySize(this.purchasedItems))");
-        };
-        if !markedAsReceived {
-          if this.IsDebugEnabled() {
-            this.Log(s"Pickup delivery ERROR: order #\(arrivedOrder.orderId) items were granted, but the order could not be marked as received");
-          };
+          this.Log(s"Pickup delivery: order #\(arrivedOrder.orderId) marked as received; grantedItemInstances=\(ArraySize(this.purchasedItems))");
         };
         ArrayPush(deliveredIds, arrivedOrder.orderId);
         receivedAnything = true;
@@ -311,6 +312,7 @@ public class OrderProcessingSystem extends ScriptableSystem {
     };
 
     ArrayClear(this.purchasedItems);
+    this.purchasedItemIndex = new inkHashMap();
     for cartItem in cartItems {
       if this.IsDebugEnabled() {
         this.Log(s"Bundle item \(cartItemIndex + 1)/\(ArraySize(cartItems)): validation and grant started");
@@ -388,6 +390,7 @@ public class OrderProcessingSystem extends ScriptableSystem {
         this.ScaleItem(this.player, itemData, stockItem.quality);
         if this.transactionSystem.GiveItem(this.player, itemID, effectiveQuantity) {
           ArrayPush(this.purchasedItems, itemID);
+          this.IndexPurchasedItem(itemID);
           gaveAnything = true;
           if this.IsDebugEnabled() {
             this.Log(s"Cart item grant succeeded for \(itemTDBID): quantity=\(effectiveQuantity), purchase iteration \(i + 1)/\(cartItem.purchaseAmount)");
@@ -539,7 +542,26 @@ public class OrderProcessingSystem extends ScriptableSystem {
   }
 
   public final func IsItemPurchased(itemID: ItemID) -> Bool {
-    return ArrayContains(this.purchasedItems, itemID);
+    // Smarter Scrapper calls this from per-item inventory callbacks.
+    if !IsDefined(this.purchasedItemIndex) {
+      return false;
+    };
+    let bucket: ref<AtelierPurchasedItemBucket> = this.purchasedItemIndex.Get(ItemID.GetCombinedHash(itemID)) as AtelierPurchasedItemBucket;
+    return IsDefined(bucket) && ArrayContains(bucket.items, itemID);
+  }
+
+  private final func IndexPurchasedItem(itemID: ItemID) -> Void {
+    let key: Uint64 = ItemID.GetCombinedHash(itemID);
+    let bucket: ref<AtelierPurchasedItemBucket> = this.purchasedItemIndex.Get(key) as AtelierPurchasedItemBucket;
+    if !IsDefined(bucket) {
+      bucket = new AtelierPurchasedItemBucket();
+      this.purchasedItemIndex.Insert(key, bucket);
+    };
+    // Preserve exact ItemID equality if distinct IDs ever share a hash.
+    // Repeated grants of the same stackable item must not grow the bucket.
+    if !ArrayContains(bucket.items, itemID) {
+      ArrayPush(bucket.items, itemID);
+    };
   }
 
   private final func IsJohnny() -> Bool {
@@ -590,16 +612,29 @@ public class OrderProcessingSystem extends ScriptableSystem {
     let blackboardDef = GetAllBlackboardDefs().UI_Notifications;
     let blackboard: ref<IBlackboard> = GameInstance.GetBlackboardSystem(this.player.GetGame()).Get(blackboardDef);
     let messageToDisplay: String = s"\(GetLocalizedTextByKey(n"Mod-VAD-Orders-Delivered-Nofitication")) ";
-    let count: Int32 = ArraySize(ids);
-    let lastIndex: Int32 = count - 1;
-    let i: Int32 = 0;
-    while i < count {
-      if NotEquals(i, lastIndex) {
-        messageToDisplay += s"#\(ids[i]), ";
-      } else {
-        messageToDisplay += s"#\(ids[i])";
+    // Merge similarly sized chunks instead of repeatedly copying a growing
+    // prefix. This preserves the full list without quadratic string copying.
+    let chunks: array<String>;
+    for id in ids {
+      ArrayPush(chunks, s"#\(id)");
+    };
+    let merged: array<String>;
+    let i: Int32;
+    while ArraySize(chunks) > 1 {
+      ArrayClear(merged);
+      i = 0;
+      while i < ArraySize(chunks) {
+        if i + 1 < ArraySize(chunks) {
+          ArrayPush(merged, chunks[i] + ", " + chunks[i + 1]);
+        } else {
+          ArrayPush(merged, chunks[i]);
+        };
+        i += 2;
       };
-      i += 1;
+      chunks = merged;
+    };
+    if ArraySize(chunks) > 0 {
+      messageToDisplay += chunks[0];
     };
     onScreenMessage.message = messageToDisplay;
     onScreenMessage.isShown = true;
@@ -661,4 +696,8 @@ public class OrderProcessingSystem extends ScriptableSystem {
   private final func IsReady() -> Bool {
     return IsDefined(this.player) && IsDefined(this.timeSystem) && IsDefined(this.transactionSystem) && IsDefined(this.inventoryManager);
   }
+}
+
+class AtelierPurchasedItemBucket extends IScriptable {
+  public let items: array<ItemID>;
 }

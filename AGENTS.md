@@ -257,6 +257,15 @@ Use this folder guide before broad searches:
 
 When modifying an existing `.reds` file, inspect surrounding code before editing. When adding a new `.reds` file, choose a clear mod-specific filename and avoid collisions with installed mods.
 
+## Cost Of Calls And Loops
+
+- Before adding or changing a function call, inspect the callee implementation at least one level below the current function, including game methods and dependency helpers. Follow further calls when that first level delegates collection work. Do not infer cost from names such as `Get`, `Find`, `Register`, or `Refresh`.
+- Account for the caller's execution frequency: a callback invoked once per marker, entity, order, or list row is an implicit outer loop. A linear lookup over M entries invoked for N items costs O(N * M), potentially O(N squared), even when the edited function contains no loop.
+- Check callees for scans, array copies/rebuilds, sorting, growing string concatenation, widget creation, and eager formatting of disabled debug logs. Distinguish traversal of disjoint child collections from repeated traversal of the same shared collection.
+- Reuse objects and indices already available to the caller. Hoist invariant work outside loops, batch shared refreshes, or use an index when justified. Define index initialization, invalidation, removal, and session/restore behavior; use full identity keys rather than truncated hashes.
+- Check existing performance fixes and explain intentional exceptions in nearby comments. Do not reintroduce a removed scan merely to switch a replacement back to a wrapper.
+- State which collection sizes are bounded and which grow with saves, inventory, or installed mods. If a native implementation is unavailable, report its cost as unknown instead of assuming O(1). Validate changed behavior and describe remaining runtime profiling needs.
+
 ## Validation
 
 - After edits, review changed `.reds` files for exact signatures, balanced braces, semicolons, and redscript-specific literals.

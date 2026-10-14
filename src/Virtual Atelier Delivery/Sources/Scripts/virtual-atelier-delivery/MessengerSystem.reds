@@ -90,14 +90,12 @@ public class DeliveryMessengerSystem extends ScriptableSystem {
     };
 
     let journalManager: ref<JournalManager> = GameInstance.GetJournalManager(this.GetGameInstance());
-    let currentHistory: array<ref<DeliveryHistoryItem>> = this.history;
-    let currentConversationMessages: array<ref<JournalEntry>> = this.conversation.entries;
-    let lastIndex: Int32 = ArraySize(currentHistory) - 1;
-    if lastIndex < 0 || lastIndex >= ArraySize(currentConversationMessages) {
+    let lastIndex: Int32 = ArraySize(this.history) - 1;
+    if lastIndex < 0 || lastIndex >= ArraySize(this.conversation.entries) {
       return 0;
     };
 
-    return journalManager.GetEntryHash(currentConversationMessages[lastIndex]);
+    return journalManager.GetEntryHash(this.conversation.entries[lastIndex]);
   }
 
   public final func PushWelcomeNotificationItem() -> Void {
@@ -125,20 +123,26 @@ public class DeliveryMessengerSystem extends ScriptableSystem {
       return;
     };
 
-    this.Log(s"PushNewNotificationItem \(item.LocalizedString())");
-    let currentHistory: array<ref<DeliveryHistoryItem>> = this.history;
+    if IsDefined(this.config) && this.config.debug {
+      this.Log(s"PushNewNotificationItem \(item.LocalizedString())");
+    };
     this.uniqueIndex = this.uniqueIndex + 1;
     item = DeliveryHistoryItem.WrapWithIndex(item, this.uniqueIndex);
-    ArrayPush(currentHistory, item);
-    this.history = currentHistory;
+    ArrayPush(this.history, item);
 
     if !this.IsJournalReady() {
       this.hasUnreadMessage = true;
       return;
     };
 
-    this.TrimHistoryToConversation();
-    this.ApplyPersistedTextsToConversation();
+    if ArraySize(this.history) > ArraySize(this.conversation.entries) {
+      // Overflow shifts every journal slot; only this case needs a full refresh.
+      this.TrimHistoryToConversation();
+      this.ApplyPersistedTextsToConversation();
+    } else {
+      // Appending K messages must not repeatedly reformat the growing history.
+      this.ApplyHistoryText(ArraySize(this.history) - 1);
+    };
     this.NotifyAboutLastHistoryItem();
   }
 
@@ -147,25 +151,19 @@ public class DeliveryMessengerSystem extends ScriptableSystem {
       return;
     };
 
-    let currentHistory: array<ref<DeliveryHistoryItem>> = this.history;
-    this.Log(s"ApplyPersistedTextsToConversation, persistend history size: \(ArraySize(currentHistory))");
-    let message: ref<JournalPhoneMessage>;
-    let messageText: String;
-    let historyItem: ref<DeliveryHistoryItem>;
-    let lastIndex: Int32 = ArraySize(currentHistory) - 1;
-    let entriesCount: Int32 = ArraySize(this.conversation.entries);
+    let count: Int32 = Min(ArraySize(this.history), ArraySize(this.conversation.entries));
     let index: Int32 = 0;
-    let path: String;
-    while index <= lastIndex && index < entriesCount {
-      message = this.conversation.entries[index] as JournalPhoneMessage;
-      historyItem = currentHistory[index];
-      if IsDefined(message) && IsDefined(historyItem) {
-        path = s"contacts/virtual_atelier_delivery/notifications/\(message.GetId())";
-        messageText = historyItem.LocalizedString();
-        message.text = CreateLocalizationString(messageText);
-        this.Log(s" - updated \(path) text");
-      };
+    while index < count {
+      this.ApplyHistoryText(index);
       index += 1;
+    };
+  }
+
+  private final func ApplyHistoryText(index: Int32) -> Void {
+    let message: ref<JournalPhoneMessage> = this.conversation.entries[index] as JournalPhoneMessage;
+    let historyItem: ref<DeliveryHistoryItem> = this.history[index];
+    if IsDefined(message) && IsDefined(historyItem) {
+      message.text = CreateLocalizationString(historyItem.LocalizedString());
     };
   }
 
@@ -176,14 +174,12 @@ public class DeliveryMessengerSystem extends ScriptableSystem {
 
     this.Log("NotifyAboutLastHistoryItem");
     let journalManager: ref<JournalManager> = GameInstance.GetJournalManager(this.GetGameInstance());
-    let currentHistory: array<ref<DeliveryHistoryItem>> = this.history;
-    let currentConversationMessages: array<ref<JournalEntry>> = this.conversation.entries;
-    let lastIndex: Int32 = ArraySize(currentHistory) - 1;
-    if lastIndex < 0 || lastIndex >= ArraySize(currentConversationMessages) {
+    let lastIndex: Int32 = ArraySize(this.history) - 1;
+    if lastIndex < 0 || lastIndex >= ArraySize(this.conversation.entries) {
       return;
     };
 
-    let lastMessage: ref<JournalPhoneMessage> = currentConversationMessages[lastIndex] as JournalPhoneMessage;
+    let lastMessage: ref<JournalPhoneMessage> = this.conversation.entries[lastIndex] as JournalPhoneMessage;
     if !IsDefined(lastMessage) {
       return;
     };

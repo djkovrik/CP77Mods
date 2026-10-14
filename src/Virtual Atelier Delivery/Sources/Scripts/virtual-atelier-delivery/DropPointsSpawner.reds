@@ -12,7 +12,7 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
   private let recoveryAttemptsLeft: Int32;
   private let readinessRetriesLeft: Int32;
   private let recoveryPending: Bool;
-  private let retiredEntityIDs: array<EntityID>;
+  private let retiredEntityIDs: ref<inkHashMap>;
   private let spawnConfig: ref<AtelierDropPointsSpawnerConfig>;
   private let initialCallbackId: DelayID;
   private let dropPointsCallbackId: DelayID;
@@ -37,7 +37,7 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     this.initialCallbackId = GetInvalidDelayID();
     this.dropPointsCallbackId = GetInvalidDelayID();
     this.recoveryEnabled = false;
-    ArrayClear(this.retiredEntityIDs);
+    this.retiredEntityIDs = new inkHashMap();
     this.config = new VirtualAtelierDeliveryConfig();
 
     // Also retry after long loads, once all session data has been restored.
@@ -135,7 +135,9 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
   }
 
   public final func IsRetiredDropPoint(entityId: EntityID) -> Bool {
-    return ArrayContains(this.retiredEntityIDs, entityId);
+    // Called for every registration request, including other mods. Use the full
+    // 64-bit entity ID so lookup does not scan all retired terminals.
+    return IsDefined(this.retiredEntityIDs) && this.retiredEntityIDs.KeyExist(EntityID.ToHash(entityId));
   }
 
   public final func GetUniqueTagByEntityId(entityId: EntityID) -> CName {
@@ -487,7 +489,7 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
       return;
     };
     if this.entitySystem.DeleteEntity(id) {
-      ArrayPush(this.retiredEntityIDs, id);
+      this.retiredEntityIDs.Insert(EntityID.ToHash(id), new AtelierRetiredEntityMarker());
       let request: ref<UnregisterDropPointMappinRequest> = new UnregisterDropPointMappinRequest();
       request.ownerID = id;
       request.removeFromSystem = true;
@@ -569,3 +571,6 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     };
   }
 }
+
+// Session-local set value; never retain the spawner itself in its own map.
+class AtelierRetiredEntityMarker extends IScriptable {}
