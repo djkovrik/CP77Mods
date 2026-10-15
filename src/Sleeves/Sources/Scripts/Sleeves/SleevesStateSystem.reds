@@ -5,6 +5,8 @@ class SleevesStateSystem extends ScriptableSystem {
   private let cache: ref<inkHashMap>;
   private let isBraindanceActive: Bool;
   private let isArmCyberwareActive: Bool;
+  // Fixed indices: InnerChest and OuterChest. Track full ordinary ItemIDs, not records.
+  private let eexChangedEquipment: array<ItemID>;
 
   private persistent let toggledItems: array<TweakDBID>;
 
@@ -143,6 +145,7 @@ class SleevesStateSystem extends ScriptableSystem {
     let inVehicle: Bool = psmBlackboard.GetBool(GetAllBlackboardDefs().PlayerStateMachine.MountedToVehicle);
     this.bundle = GetSleevesInfo(player);
     this.LogCurrentInfo();
+    this.RestoreSleevesEquipment(player);
 
     for item in this.bundle.items {
       if item.HasFppSuffix() || inVehicle && item.HasTppSuffix() {
@@ -162,6 +165,64 @@ class SleevesStateSystem extends ScriptableSystem {
     };
   }
 
+  private final func TrackSleevesEquipment(player: ref<GameObject>, record: TweakDBID) -> Void {
+    let equipmentData: ref<EquipmentSystemPlayerData> = EquipmentSystem.GetData(player);
+    if !IsDefined(equipmentData) {
+      return;
+    };
+    if ArraySize(this.eexChangedEquipment) == 0 {
+      ArrayResize(this.eexChangedEquipment, 2);
+    };
+    let areas: array<gamedataEquipmentArea> = [gamedataEquipmentArea.InnerChest, gamedataEquipmentArea.OuterChest];
+    let i: Int32 = 0;
+    while i < 2 {
+      let equipped: ItemID = equipmentData.GetItemInEquipSlot(areas[i], 0);
+      if ItemID.IsValid(equipped) && !ItemID.HasFlag(equipped, gameEItemIDFlag.Preview) && Equals(ItemID.GetTDBID(equipped), record) && equipmentData.IsSlotHidden(areas[i]) {
+        this.eexChangedEquipment[i] = equipped;
+      };
+      i += 1;
+    };
+  }
+
+  private final func RestoreSleevesEquipment(player: ref<GameObject>) -> Void {
+    if NotEquals(this.bundle.mode, SleevesMode.EquipmentEx) {
+      ArrayClear(this.eexChangedEquipment);
+      return;
+    };
+    if ArraySize(this.eexChangedEquipment) == 0 {
+      return;
+    };
+    let equipmentData: ref<EquipmentSystemPlayerData> = EquipmentSystem.GetData(player);
+    if !IsDefined(equipmentData) {
+      return;
+    };
+    let records: array<TweakDBID>;
+    if !GetSleevesEquipmentExRecords(player, records) {
+      return;
+    };
+    // Two base slots only. Membership checks traverse the active outfit at most twice;
+    // neither inventory size nor the number of saved outfits affects this work.
+    let areas: array<gamedataEquipmentArea> = [gamedataEquipmentArea.InnerChest, gamedataEquipmentArea.OuterChest];
+    let i: Int32 = 0;
+    while i < 2 {
+      let tracked: ItemID = this.eexChangedEquipment[i];
+      if ItemID.IsValid(tracked) {
+        let equipped: ItemID = equipmentData.GetItemInEquipSlot(areas[i], 0);
+        if NotEquals(equipped, tracked) || !equipmentData.IsSlotHidden(areas[i]) {
+          this.eexChangedEquipment[i] = ItemID.None();
+        } else if !ArrayContains(records, ItemID.GetTDBID(tracked)) {
+          if NotEquals(this.transactionSystem.GetItemAppearance(player, tracked), n"empty_appearance_default") {
+            // Restore only the appearance already required by EEX's hidden flag.
+            // ClearVisuals would also update transmog, other clothing layers and audio.
+            this.transactionSystem.ChangeItemAppearanceByName(player, tracked, n"empty_appearance_default");
+          };
+          // Keep tracking until the equipment/outfit changes: native requests are asynchronous.
+        };
+      };
+      i += 1;
+    };
+  }
+
   private final func ApplySleevesAppearance(player: ref<GameObject>, item: ref<SleevedSlotInfo>, appearance: CName) -> Void {
     if Equals(item.mode, SleevesMode.EquipmentEx) {
       let liveItem: ref<ItemObject> = this.transactionSystem.GetItemInSlot(player, item.slotID);
@@ -175,6 +236,7 @@ class SleevesStateSystem extends ScriptableSystem {
       };
 
       if NotEquals(this.transactionSystem.GetItemAppearance(player, liveItemID), appearance) {
+        this.TrackSleevesEquipment(player, item.itemTDBID);
         this.transactionSystem.ChangeItemAppearanceByName(player, liveItemID, appearance);
       };
       return;
