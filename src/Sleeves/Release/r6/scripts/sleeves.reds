@@ -1,4 +1,4 @@
-// Sleeves v3.3.1
+// Sleeves v3.3.2
 @if(ModuleExists("ArchiveXL.DynamicAppearance"))
 import ArchiveXL.DynamicAppearance.*
 import Codeware.UI.*
@@ -195,6 +195,32 @@ public func IsSlotOccupiedCustom(gi: GameInstance, slot: TweakDBID) -> Bool {
 public func IsSlotOccupiedCustom(gi: GameInstance, slot: TweakDBID) -> Bool {
   return OutfitSystem.GetInstance(gi).IsOccupied(slot);
 }
+@if(!ModuleExists("EquipmentEx"))
+public func GetSleevesEquipmentExRecords(player: ref<GameObject>, out records: array<TweakDBID>) -> Bool {
+  ArrayClear(records);
+  return false;
+}
+@if(ModuleExists("EquipmentEx"))
+public func GetSleevesEquipmentExRecords(player: ref<GameObject>, out records: array<TweakDBID>) -> Bool {
+  ArrayClear(records);
+  let system: ref<OutfitSystem> = OutfitSystem.GetInstance(player.GetGame());
+  if !IsDefined(system) || !system.IsActive() {
+    return false;
+  };
+  let transaction: ref<TransactionSystem> = GameInstance.GetTransactionSystem(player.GetGame());
+  // One scan of the active outfit, including slots not supported by the Sleeves UI.
+  // GetUsedSlots rebuilds a slot array; call it once, not once per tracked item.
+  let slots: array<TweakDBID> = system.GetUsedSlots();
+  for slot in slots {
+    let item: ref<ItemObject> = transaction.GetItemInSlot(player, slot);
+    if !IsDefined(item) {
+      // A partially spawned outfit cannot prove that a garment is absent.
+      return false;
+    };
+    ArrayPush(records, ItemID.GetTDBID(item.GetItemID()));
+  };
+  return true;
+}
 public class SleevesConfig {
   @runtimeProperty("ModSettings.mod", "Sleeves")
   @runtimeProperty("ModSettings.category", "Mod-Sleeves-Roll-Up")
@@ -361,19 +387,15 @@ private final func ShowSleevesButton(show: Bool) -> Void {
 protected cb func OnShowSleevesPopupEvent(evt: ref<ShowSleevesPopupEvent>) -> Bool {
   let system: ref<SleevesStateSystem> = SleevesStateSystem.Get(this.m_player.GetGame());
   let bundle: ref<SleevesInfoBundle>;
-
   if !IsDefined(system) {
     return false;
   };
-
   system.RefreshSleevesState();
   bundle = system.GetInfoBundle();
-
   if IsDefined(bundle) && ArraySize(bundle.items) > 0 {
     SleevesPopup.Show(this, bundle);
   };
 }
-
 @wrapMethod(gameuiInventoryGameController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
@@ -790,7 +812,6 @@ protected cb func OnBraindanceToggle(value: Bool) -> Bool {
     SleevesStateSystem.Get(this.GetGameInstance()).OnBraindanceEnter(false);
   };
 }
-
 // -- Arm cyberware
 @wrapMethod(gameuiCrosshairContainerController)
 protected cb func OnWeaponSwap(value: Variant) -> Bool {
@@ -798,19 +819,15 @@ protected cb func OnWeaponSwap(value: Variant) -> Bool {
   let player: ref<PlayerPuppet> = GetPlayer(GetGameInstance());
   let weaponTDBID: TweakDBID = FromVariant<TweakDBID>(value);
   let isArmCyberwareActive: Bool = false;
-
   if TDBID.IsValid(weaponTDBID) && NotEquals(weaponTDBID, TDBID.None()) {
     isArmCyberwareActive = SleevesStateSystem.IsTargetArmCyberware(player);
   };
-
   SleevesStateSystem.Get(player.GetGame()).OnArmCyberwareStateChange(isArmCyberwareActive);
   return result;
 }
-
 @wrapMethod(gameuiCrosshairBaseGameController)
 protected func OnCrosshairStateChange(oldState: gamePSMCrosshairStates, newState: gamePSMCrosshairStates) -> Void {
   wrappedMethod(oldState, newState);
-
   let player: ref<PlayerPuppet> = this.m_playerPuppet as PlayerPuppet;
   if IsDefined(player) {
     if Equals(newState, gamePSMCrosshairStates.LeftHandCyberware) {
@@ -820,7 +837,6 @@ protected func OnCrosshairStateChange(oldState: gamePSMCrosshairStates, newState
     };
   };
 }
-
 // -- Handle unequip
 @wrapMethod(gameuiInventoryGameController)
 protected cb func OnEquipmentClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
@@ -844,10 +860,8 @@ public final func TriggerSleevesRefreshCallback(opt clearCache: Bool) -> Void {
   if !IsDefined(delaySystem) {
     return;
   };
-
   delaySystem.CancelCallback(this.sleevesDelayCallback);
   this.sleevesDelayCallback = delaySystem.DelayCallback(SlotsButtonRefreshCallback.Create(this), triggerDelaySeconds, false);
-
   if clearCache {
     SleevesStateSystem.Get(this.GetGame()).ClearCache();
   };
@@ -859,17 +873,14 @@ public class SlotsButtonRefreshCallback extends DelayCallback {
     instance.owner = owner;
     return instance;
   }
-
   public func Call() -> Void {
     if !IsDefined(this.owner) {
       return;
     };
-
     let system: ref<SleevesStateSystem> = SleevesStateSystem.Get(this.owner.GetGame());
     if !IsDefined(system) {
       return;
     };
-
     system.RefreshSleevesState();
     RefreshSleevesButtonEvent.Send(this.owner);
   }
@@ -898,6 +909,8 @@ class SleevesStateSystem extends ScriptableSystem {
   private let cache: ref<inkHashMap>;
   private let isBraindanceActive: Bool;
   private let isArmCyberwareActive: Bool;
+  // Fixed indices: InnerChest and OuterChest. Track full ordinary ItemIDs, not records.
+  private let eexChangedEquipment: array<ItemID>;
   private persistent let toggledItems: array<TweakDBID>;
   public static func Get(gi: GameInstance) -> ref<SleevesStateSystem> {
     let system: ref<SleevesStateSystem> = GameInstance.GetScriptableSystemsContainer(gi).Get(n"SleevesStateSystem") as SleevesStateSystem;
@@ -1007,6 +1020,7 @@ class SleevesStateSystem extends ScriptableSystem {
     let inVehicle: Bool = psmBlackboard.GetBool(GetAllBlackboardDefs().PlayerStateMachine.MountedToVehicle);
     this.bundle = GetSleevesInfo(player);
     this.LogCurrentInfo();
+    this.RestoreSleevesEquipment(player);
     for item in this.bundle.items {
       if item.HasFppSuffix() || inVehicle && item.HasTppSuffix() {
         if !this.isBraindanceActive && !this.isArmCyberwareActive {
@@ -1024,6 +1038,62 @@ class SleevesStateSystem extends ScriptableSystem {
       };
     };
   }
+  private final func TrackSleevesEquipment(player: ref<GameObject>, record: TweakDBID) -> Void {
+    let equipmentData: ref<EquipmentSystemPlayerData> = EquipmentSystem.GetData(player);
+    if !IsDefined(equipmentData) {
+      return;
+    };
+    if ArraySize(this.eexChangedEquipment) == 0 {
+      ArrayResize(this.eexChangedEquipment, 2);
+    };
+    let areas: array<gamedataEquipmentArea> = [gamedataEquipmentArea.InnerChest, gamedataEquipmentArea.OuterChest];
+    let i: Int32 = 0;
+    while i < 2 {
+      let equipped: ItemID = equipmentData.GetItemInEquipSlot(areas[i], 0);
+      if ItemID.IsValid(equipped) && !ItemID.HasFlag(equipped, gameEItemIDFlag.Preview) && Equals(ItemID.GetTDBID(equipped), record) && equipmentData.IsSlotHidden(areas[i]) {
+        this.eexChangedEquipment[i] = equipped;
+      };
+      i += 1;
+    };
+  }
+  private final func RestoreSleevesEquipment(player: ref<GameObject>) -> Void {
+    if NotEquals(this.bundle.mode, SleevesMode.EquipmentEx) {
+      ArrayClear(this.eexChangedEquipment);
+      return;
+    };
+    if ArraySize(this.eexChangedEquipment) == 0 {
+      return;
+    };
+    let equipmentData: ref<EquipmentSystemPlayerData> = EquipmentSystem.GetData(player);
+    if !IsDefined(equipmentData) {
+      return;
+    };
+    let records: array<TweakDBID>;
+    if !GetSleevesEquipmentExRecords(player, records) {
+      return;
+    };
+    // Two base slots only. Membership checks traverse the active outfit at most twice;
+    // neither inventory size nor the number of saved outfits affects this work.
+    let areas: array<gamedataEquipmentArea> = [gamedataEquipmentArea.InnerChest, gamedataEquipmentArea.OuterChest];
+    let i: Int32 = 0;
+    while i < 2 {
+      let tracked: ItemID = this.eexChangedEquipment[i];
+      if ItemID.IsValid(tracked) {
+        let equipped: ItemID = equipmentData.GetItemInEquipSlot(areas[i], 0);
+        if NotEquals(equipped, tracked) || !equipmentData.IsSlotHidden(areas[i]) {
+          this.eexChangedEquipment[i] = ItemID.None();
+        } else if !ArrayContains(records, ItemID.GetTDBID(tracked)) {
+          if NotEquals(this.transactionSystem.GetItemAppearance(player, tracked), n"empty_appearance_default") {
+            // Restore only the appearance already required by EEX's hidden flag.
+            // ClearVisuals would also update transmog, other clothing layers and audio.
+            this.transactionSystem.ChangeItemAppearanceByName(player, tracked, n"empty_appearance_default");
+          };
+          // Keep tracking until the equipment/outfit changes: native requests are asynchronous.
+        };
+      };
+      i += 1;
+    };
+  }
   private final func ApplySleevesAppearance(player: ref<GameObject>, item: ref<SleevedSlotInfo>, appearance: CName) -> Void {
     if Equals(item.mode, SleevesMode.EquipmentEx) {
       let liveItem: ref<ItemObject> = this.transactionSystem.GetItemInSlot(player, item.slotID);
@@ -1035,6 +1105,7 @@ class SleevesStateSystem extends ScriptableSystem {
         return;
       };
       if NotEquals(this.transactionSystem.GetItemAppearance(player, liveItemID), appearance) {
+        this.TrackSleevesEquipment(player, item.itemTDBID);
         this.transactionSystem.ChangeItemAppearanceByName(player, liveItemID, appearance);
       };
       return;
