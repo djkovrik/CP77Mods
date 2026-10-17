@@ -2,18 +2,11 @@ import Edgerunning.System.EdgerunningSystem
 
 @addMethod(PreventionSystem)
 public func SpawnPoliceForPsychosis(config: ref<EdgerunningConfig>) -> Void {
-  let current: Int32 = EnumInt(this.m_heatStage);
-  let target: EPreventionHeatStage;
-  if IsDefined(this.m_player) {
-    target = this.GetHeatStageLevel(config.psychoHeatLevel);
-    if EnumInt(target) > current {
-      this.m_heatStage = target;
-    };
-    this.HeatPipeline("EnterCombat");
-    if Equals(config.psychoHeatLevel, WannabeHeatLevel.MaxTac) {
-      this.ChangeHeatStage(EPreventionHeatStage.Heat_5, "EnterCombat");
-      this.CheckPossibleSpawnPosAndRequestAVSpawn();
-    };
+  if !IsDefined(this.m_player) || !this.CanPreventionReactToInput() { return; };
+  let target: EPreventionHeatStage = this.GetHeatStageLevel(config.psychoHeatLevel);
+  if EnumInt(target) > EnumInt(this.m_heatStage) { this.ChangeHeatStage(target, "EnterCombat"); };
+  if Equals(config.psychoHeatLevel, WannabeHeatLevel.MaxTac) && this.CanRequestAVSpawn() {
+    this.CheckPossibleSpawnPosAndRequestAVSpawn();
   };
 }
 
@@ -21,15 +14,15 @@ public func SpawnPoliceForPsychosis(config: ref<EdgerunningConfig>) -> Void {
 @addMethod(PreventionSystem)
 public func GetHeatStageLevel(from: WannabeHeatLevel) -> EPreventionHeatStage {
   switch (from) {
-    case WannabeHeatLevel.One: return EPreventionHeatStage.Heat_0;
-    case WannabeHeatLevel.Two: return EPreventionHeatStage.Heat_1;
-    case WannabeHeatLevel.Three: return EPreventionHeatStage.Heat_2;
-    case WannabeHeatLevel.Four: return EPreventionHeatStage.Heat_3;
-    case WannabeHeatLevel.Five: return EPreventionHeatStage.Heat_4;
-    case WannabeHeatLevel.MaxTac: return EPreventionHeatStage.Heat_4;
+    case WannabeHeatLevel.One: return EPreventionHeatStage.Heat_1;
+    case WannabeHeatLevel.Two: return EPreventionHeatStage.Heat_2;
+    case WannabeHeatLevel.Three: return EPreventionHeatStage.Heat_3;
+    case WannabeHeatLevel.Four: return EPreventionHeatStage.Heat_4;
+    case WannabeHeatLevel.Five: return EPreventionHeatStage.Heat_5;
+    case WannabeHeatLevel.MaxTac: return EPreventionHeatStage.Heat_5;
   };
 
-  return EPreventionHeatStage.Heat_0;
+  return EPreventionHeatStage.Heat_1;
 }
 
 @addMethod(PreventionSystem)
@@ -40,17 +33,11 @@ public func ClearWantedLevel() -> Void {
 @wrapMethod(PreventionSystem)
 private final func ShouldSpawnPatrolVehicleWhenInSearch() -> Bool {
   let shouldSpawn: Bool = wrappedMethod();
+  if !IsDefined(this.m_player) { return shouldSpawn; };
   let isInInterior: Bool = IsEntityInInteriorArea(this.m_player);
-  let isPsychosisActive: Bool = Equals(StatusEffectSystem.ObjectHasStatusEffect(this.m_player, t"BaseStatusEffect.NewPsychosisEffectNormalFx"), true)
-    || Equals(StatusEffectSystem.ObjectHasStatusEffect(this.m_player, t"BaseStatusEffect.NewPsychosisEffectLightFx"), true);
+  let system: ref<EdgerunningSystem> = EdgerunningSystem.GetInstance(this.m_player.GetGame());
+  let isPsychosisActive: Bool = IsDefined(system) && system.IsPsychosisActive();
   return (isPsychosisActive && !isInInterior) || shouldSpawn;
 }
 
-@wrapMethod(PreventionSystem)
-private final func CanRequestAVSpawn() -> Bool {
-  let config: ref<EdgerunningConfig> = new EdgerunningConfig();
-  let system: ref<EdgerunningSystem> = EdgerunningSystem.GetInstance(this.m_player.GetGame());
-  let maxTacAvailable: Bool = Equals(config.psychoHeatLevel, WannabeHeatLevel.MaxTac) && system.IsPsychosisActive();
-  let wrapped: Bool = wrappedMethod();
-  return wrapped || maxTacAvailable;
-}
+// AV eligibility is owned by the original game (live squads, pending AVs, cooldown and quest rules).

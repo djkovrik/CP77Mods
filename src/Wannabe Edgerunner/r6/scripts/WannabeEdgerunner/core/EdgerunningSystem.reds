@@ -1,64 +1,99 @@
 module Edgerunning.System
 import Edgerunning.Common.E
 
-/**
-  public static func GetInstance(gameInstance: GameInstance) -> ref<EdgerunningSystem>
-
-  public func RunPrePsychosisFlow() -> Void
-  public func RunPsychosisFlow() -> Void
-  public func RunPostPsychosisFlow() -> Void
-  public func ScheduleNextPsychoCheck() -> Void
-  public func SchedulePostPsychosisEffect(delay: Float) -> Void
-  public func ScheduleHumanityRestoreEffect(delay: Float) -> Void
-  public func StopPrePsychosisFlow() -> Void
-  public func StopPsychosisFlow() -> Void
-  public func StopPostPsychosisFlow() -> Void
-  public func StopEverythingNew() -> Void
-
-  public func OnPossessionChanged(playerPossesion: gamedataPlayerPossesion) -> Void
-  public func OnSettingsChanged() -> Void
-  public func OnEnemyKilled(affiliation: gamedataAffiliation) -> Void
-  public func OnBuff() -> Void
-  public func OnBuffEnded() -> Void
-  public func OnRestoreAction(action: HumanityRestoringAction) -> Void
-  public func OnBerserkActivation(item: ItemID) -> Void
-  public func OnOverClockActivation(item: ItemID) -> Void
-  public func OnSandevistanActivation(item: ItemID) -> Void
-  public func OnKerenzikovActivation() -> Void
-  public func OnOpticalCamoActivation() -> Void
-  public func OnBloodPumpActivation() -> Void
-  public func OnArmsCyberwareActivation(type: gamedataItemType) -> Void
-
-  public func IsWentFullPsycho() -> Bool 
-  public func SetWentFullPsycho(value: Bool) -> Void 
-  public func AddHumanityDamage(cost: Float) -> Void
-  public func RemoveHumanityDamage(cost: Int32) -> Bool
-  public func ResetHumanityDamage() -> Void
-  public func AddHumanityPenalty(key: String, value: Int32) -> Void
-  public func RemoveHumanityPenalty(key: String) -> Void
-  public func GetPenaltyByKey(key: String) -> Int32
-  public func GetTotalPenalty() -> Int32
-  public func GetAdditionalPenaltiesDescription() -> String
-  public func GetHumanityCurrent() -> Int32
-  public func GetHumanityTotal() -> Int32
-  public func GetPsychosisThreshold() -> Int32
-  public func GetPsychosisChance() -> Int32
-  public func GetHumanityColor() -> CName
-  private func InvalidateCurrentState(opt onLoad: Bool) -> Void
-
-  public func IsPsychosisActive() -> Bool
-  private func IsPoliceSpawnAvailable() -> Bool
-  private func IsHumanityRestored() -> Bool
-  private func IsPsychosisBlocked() -> Bool
-  public func OnLaunchCycledPsychosisCheckCallback() -> Void
-  public func OnLaunchPostPsychosisCallback() -> Void
-
-  private func ShowHumanityRestoredMessage(amount: Int32) -> Void
-  private func DamageHealthToPercent(value: Int32) -> Void
-*/
 public class EdgerunningSystem extends ScriptableSystem {
 
   private let player: wref<PlayerPuppet>;
+
+  private let phase: EdgerunningPhase;
+  private let generation: Uint32;
+  private let attachedCallback: Uint32;
+  private let detachedCallback: Uint32;
+  private let transitioning: Bool;
+
+  public func GetPlayer() -> wref<PlayerPuppet> { return this.player; }
+  public func GetGeneration() -> Uint32 { return this.generation; }
+
+  public func IsCallbackCurrent(generation: Uint32, owner: wref<PlayerPuppet>) -> Bool {
+    if generation != this.generation || !IsDefined(owner) || owner != this.player { return false; };
+    if !this.IsEpisodeContextSafe() { this.StopEverythingNew(); return false; };
+    return true;
+  }
+
+  private func IsEpisodeContextSafe() -> Bool {
+    if !IsDefined(this.player) || !IsDefined(this.effectsChecker) || this.player.IsDead() { return false; };
+    let controlled: ref<GameObject> = GameInstance.GetPlayerSystem(this.GetGameInstance()).GetLocalPlayerControlledGameObject();
+    if controlled != this.player || this.effectsChecker.IsPossessed() || this.effectsChecker.IsRipperdocBuffActive() { return false; };
+    let tier: Int32 = this.psmBB.GetInt(GetAllBlackboardDefs().PlayerStateMachine.HighLevel);
+    return !(tier >= EnumInt(gamePSMHighLevel.SceneTier3) && tier <= EnumInt(gamePSMHighLevel.SceneTier5));
+  }
+
+  public func CanForceWeaponAction() -> Bool {
+    if !Equals(this.phase, EdgerunningPhase.Psychosis) || this.IsPsychosisBlocked() { return false; };
+    let upperBody: Int32 = this.psmBB.GetInt(GetAllBlackboardDefs().PlayerStateMachine.UpperBody);
+    return upperBody != EnumInt(gamePSMUpperBodyStates.Reload)
+      && upperBody != EnumInt(gamePSMUpperBodyStates.SwitchItems)
+      && upperBody != EnumInt(gamePSMUpperBodyStates.SwitchCyberware)
+      && upperBody != EnumInt(gamePSMUpperBodyStates.TemporaryUnequip)
+      && upperBody != EnumInt(gamePSMUpperBodyStates.ForceEmptyHands)
+      && this.psmBB.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Zones) != EnumInt(gamePSMZones.Safe)
+      && !StatusEffectSystem.ObjectHasStatusEffectWithTag(this.player, n"NoCombat")
+      && !StatusEffectSystem.ObjectHasStatusEffectWithTag(this.player, n"NoWeapons");
+  }
+
+  public func CanRequestPoliceActivity() -> Bool {
+    return Equals(this.phase, EdgerunningPhase.Psychosis) && !this.IsPsychosisBlocked() && this.IsPoliceSpawnAvailable();
+  }
+
+  public func CanBlackout() -> Bool { return this.IsPsychosisActive() && !this.IsPsychosisBlocked(); }
+
+  public func BeginBlackout() -> Void {
+    if Equals(this.phase, EdgerunningPhase.Psychosis) { this.phase = EdgerunningPhase.Blackout; };
+  }
+
+  // Only normal completion grants Humanity. Abort and load never replay the reward.
+  public func FinishEpisode() -> Void {
+    if !this.IsPsychosisActive() { return; };
+    this.StopEverythingNew();
+    this.RemoveHumanityDamage(10);
+    this.RunPostPsychosisFlow();
+    this.InvalidateCurrentState();
+  }
+
+  private func OnAttach() -> Void {
+    let ps: ref<PlayerSystem> = GameInstance.GetPlayerSystem(this.GetGameInstance());
+    if this.attachedCallback == 0u { this.attachedCallback = ps.RegisterPlayerPuppetAttachedCallback(this, n"OnEdgerunnerPlayerAttached"); };
+    if this.detachedCallback == 0u { this.detachedCallback = ps.RegisterPlayerPuppetDetachedCallback(this, n"OnEdgerunnerPlayerDetached"); };
+  }
+
+  private func OnDetach() -> Void {
+    this.StopEverythingNew();
+    let ps: ref<PlayerSystem> = GameInstance.GetPlayerSystem(this.GetGameInstance());
+    ps.UnregisterPlayerPuppetAttachedCallback(this.attachedCallback);
+    ps.UnregisterPlayerPuppetDetachedCallback(this.detachedCallback);
+    this.attachedCallback = 0u;
+    this.detachedCallback = 0u;
+    this.player = null;
+  }
+
+  private func OnRestored(saveVersion: Int32, gameVersion: Int32) -> Void {
+    this.StopEverythingNew();
+    if IsDefined(this.player) { this.InvalidateCurrentState(true); };
+  }
+
+  private func OnEdgerunnerPlayerDetached(player: ref<GameObject>) -> Void {
+    if player == this.player {
+      this.StopEverythingNew();
+      this.player = null;
+      this.psmBB = null;
+    };
+  }
+
+  private func OnEdgerunnerPlayerAttached(player: ref<GameObject>) -> Void {
+    this.InitializePlayer(player as PlayerPuppet);
+  }
+
+
   private let psmBB: ref<IBlackboard>;
   private let delaySystem: ref<DelaySystem>;
   private let questsSystem: ref<QuestsSystem>;
@@ -96,14 +131,12 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
-    if GameInstance.GetSystemRequestsHandler().IsPreGame() {
-      E("Game not loaded yet, skip EdgerunningSystem init");
-      return ;
-    };
+    this.InitializePlayer(request.owner as PlayerPuppet);
+  }
 
-    E("EdgerunningSystem init");
-
-    let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(request.owner.GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
+  private func InitializePlayer(player: ref<PlayerPuppet>) -> Void {
+    if !IsDefined(player) || player == this.player { return; };
+    this.StopEverythingNew();
     if IsDefined(player) {
       this.player = player;
       this.psmBB = this.player.GetPlayerStateMachineBlackboard();
@@ -113,6 +146,15 @@ public class EdgerunningSystem extends ScriptableSystem {
       this.statsPoolSystem = GameInstance.GetStatPoolsSystem(this.player.GetGame());
 
       this.config = new EdgerunningConfig();
+      // Read the applied TweakDB duration, including after a player replacement.
+      let durationModifiers: array<wref<StatModifier_Record>>;
+      let durationRecord: ref<StatModifierGroup_Record> = TweakDBInterface.GetStatModifierGroupRecord(t"Items.EdgerunnerPsychosisDuration");
+      if IsDefined(durationRecord) {
+        durationRecord.StatModifiers(durationModifiers);
+        if ArraySize(durationModifiers) > 0 {
+          this.config.psychoDuration = TweakDBInterface.GetFloat(durationModifiers[0].GetID() + t".value", this.config.psychoDuration);
+        };
+      };
       this.effectsHelper = new PsychosisEffectsHelper();
       this.effectsHelper.Init(player);
       this.preventionHelper = new TeleportingPreventionHelper();
@@ -123,7 +165,10 @@ public class EdgerunningSystem extends ScriptableSystem {
       this.cyberwareHelper.Init(this.player, this.config);
       this.effectsChecker = new PsychosisEffectsChecker();
       this.effectsChecker.Init(this.player);
-      this.additionalPenalties = new inkIntHashMap();
+      if !IsDefined(this.additionalPenalties) {
+        this.additionalPenalties = new inkIntHashMap();
+        ArrayClear(this.additionalPenaltiesKeys);
+      };
 
       this.InvalidateCurrentState(true);
     };
@@ -134,43 +179,33 @@ public class EdgerunningSystem extends ScriptableSystem {
   // -- Control effects flows
 
   public func RunPrePsychosisFlow() -> Void {
-    if this.effectsChecker.IsNewPrePsychosisActive() {
+    if this.IsPsychosisActive() || Equals(this.phase, EdgerunningPhase.Recovery) || Equals(this.phase, EdgerunningPhase.PrePsychosis) || !this.IsEpisodeContextSafe() {
       E("? Pre-Psychosis already active - do nothing");
       return ;
     };
 
     this.StopEverythingNew();
+    this.phase = EdgerunningPhase.PrePsychosis;
     this.effectsHelper.RunNewPrePsychosisEffect();
     this.ScheduleNextPsychoCheck();
   }
 
   public func RunPsychosisFlow() -> Void {
-    if this.effectsChecker.IsNewPsychosisActive() {
+    if this.IsPsychosisActive() || this.IsPsychosisBlocked() {
       E("? Psychosis already active - do nothing");
       return ;
     };
     
     this.StopEverythingNew();
+    this.phase = EdgerunningPhase.Psychosis;
+    this.effectsHelper.RefreshConfig();
+    this.preventionHelper.RefreshConfig(this.config);
     this.effectsHelper.RunNewPsychosisEffect();
     this.SetWentFullPsycho(true);
 
-    if this.config.lightVisuals {
-      this.preventionHelper.ScheduleRandomWeaponActions(0.5);
-
-      if this.IsPoliceSpawnAvailable() {
-        this.preventionHelper.SchedulePoliceActivity(2.0);
-      };
-
-      this.effectsHelper.ScheduleCycledSfx(3.0);
-    } else {
-      this.preventionHelper.ScheduleRandomWeaponActions(4.5);
-
-      if this.IsPoliceSpawnAvailable() {
-        this.preventionHelper.SchedulePoliceActivity(6.0);
-      };
-
-      this.effectsHelper.ScheduleCycledSfx(7.0);
-    };
+    this.preventionHelper.ScheduleRandomWeaponActions(4.5);
+    if this.IsPoliceSpawnAvailable() { this.preventionHelper.SchedulePoliceActivity(6.0); };
+    this.effectsHelper.ScheduleCycledSfx(this.config.lightVisuals ? 3.0 : 7.0);
 
     let psychoDuration: Float = this.config.psychoDuration;
     if this.config.teleportOnEnd {
@@ -179,78 +214,102 @@ public class EdgerunningSystem extends ScriptableSystem {
       this.SchedulePostPsychosisEffect(psychoDuration + 2.0);
     };
 
-    this.ScheduleHumanityRestoreEffect(psychoDuration + 3.0);
+    // Completion belongs to the selected path, not an independent timer.
   }
 
   public func RunPostPsychosisFlow() -> Void {
+    if this.IsPsychosisActive() { this.FinishEpisode(); return; };
+    if !this.IsEpisodeContextSafe() || Equals(this.phase, EdgerunningPhase.Recovery) { return; };
     this.StopEverythingNew();
+    this.phase = EdgerunningPhase.Recovery;
+    this.effectsHelper.RefreshConfig();
     this.effectsHelper.RunNewPostPsychosisEffect();
   }
 
   public func ScheduleNextPsychoCheck() -> Void {
+    this.delaySystem.CancelCallback(this.psychosisCheckDelayId);
     let nextRun: Float = Cast<Float>(this.config.pcychoCheckPeriod) * 60.0;
     E(s"? Psycho check - scheduled after \(nextRun) seconds");
     this.psychosisCheckDelayId = this.delaySystem.DelayCallback(LaunchCycledPsychosisCheckCallback.Create(this), nextRun, true);
   }
 
   public func SchedulePostPsychosisEffect(delay: Float) -> Void {
+    this.delaySystem.CancelCallback(this.postPsychosisDelayId);
     E(s"? Post Psycho effect - scheduled after \(delay) seconds");
     this.postPsychosisDelayId = this.delaySystem.DelayCallback(LaunchPostPsychosisEffectCallback.Create(this), delay, true);
   }
 
   public func ScheduleHumanityRestoreEffect(delay: Float) -> Void {
+    this.delaySystem.CancelCallback(this.humanityRestoreDelayId);
     E(s"? Post Psycho Humanity restore - scheduled after \(delay) seconds");
     this.humanityRestoreDelayId = this.delaySystem.DelayCallback(LaunchPostPsychosisHumanityRestoreCallback.Create(this), delay, true);
   }
 
 
   public func StopPrePsychosisFlow() -> Void {
-    E(s"? Stop pre-psychosis");
-    this.effectsHelper.StopNewPrePsychosisEffect();
-    this.delaySystem.CancelDelay(this.psychosisCheckDelayId);
+    if Equals(this.phase, EdgerunningPhase.PrePsychosis) { this.StopEverythingNew(); };
   }
 
   public func StopPsychosisFlow() -> Void {
-    E(s"? Stop psychosis");
-    this.effectsHelper.StopNewPsychosisEffect();
-    this.effectsHelper.CancelCycledFx();
-    this.effectsHelper.CancelOtherFxes();
-    this.preventionHelper.CancelScheduledPreventionActivity();
-    this.teleportHelper.CancelScheduledTeleportEvents();
-    this.delaySystem.CancelDelay(this.postPsychosisDelayId);
-    this.delaySystem.CancelDelay(this.humanityRestoreDelayId);
+    if this.IsPsychosisActive() { this.StopEverythingNew(); };
   }
 
   public func StopPostPsychosisFlow() -> Void {
-    E(s"? Stop post-psychosis");
-    this.effectsHelper.StopNewPostPsychosisEffect();
+    if Equals(this.phase, EdgerunningPhase.Recovery) { this.StopEverythingNew(); };
   }
 
   public func StopEverythingNew() -> Void {
-    E(s"? Stop everything ");
-    this.StopPrePsychosisFlow();
-    this.StopPsychosisFlow();
-    this.StopPostPsychosisFlow();
+    if this.transitioning { return; };
+    this.transitioning = true;
+    this.generation += 1u;
+    this.phase = EdgerunningPhase.Idle;
+    if IsDefined(this.delaySystem) {
+      this.delaySystem.CancelCallback(this.psychosisCheckDelayId);
+      this.delaySystem.CancelCallback(this.postPsychosisDelayId);
+      this.delaySystem.CancelCallback(this.humanityRestoreDelayId);
+      this.psychosisCheckDelayId = GetInvalidDelayID();
+      this.postPsychosisDelayId = GetInvalidDelayID();
+      this.humanityRestoreDelayId = GetInvalidDelayID();
+    };
+    if IsDefined(this.effectsHelper) {
+      this.effectsHelper.CancelPendingFx();
+      this.effectsHelper.CancelCycledFx();
+      this.effectsHelper.StopNewPrePsychosisEffect();
+      this.effectsHelper.StopNewPsychosisEffect();
+      this.effectsHelper.StopNewPostPsychosisEffect();
+      this.effectsHelper.CancelOtherFxes();
+    };
+    if IsDefined(this.preventionHelper) { this.preventionHelper.CancelScheduledPreventionActivity(); };
+    if IsDefined(this.teleportHelper) { this.teleportHelper.CancelScheduledTeleportEvents(); };
+    this.transitioning = false;
   }
-
 
   // -- React to outer events
 
   public func OnPossessionChanged(playerPossesion: gamedataPlayerPossesion) -> Void {
+    if !IsDefined(this.effectsChecker) { return; };
+    this.StopEverythingNew();
     this.effectsChecker.OnPossessionChanged(playerPossesion);
+    this.InvalidateCurrentState();
   }
 
   public func OnSettingsChanged() -> Void {
+    if !IsDefined(this.player) { return; };
+    let oldLightVisuals: Bool = this.config.lightVisuals;
+    let duration: Float = this.config.psychoDuration;
     this.config = new EdgerunningConfig();
-    if IsDefined(this.effectsHelper) {
+    // This setting is marked restart-required and also controls a TweakDB duration.
+    this.config.psychoDuration = duration;
+    if !this.IsPsychosisActive() {
+      if NotEquals(oldLightVisuals, this.config.lightVisuals) { this.StopEverythingNew(); };
       this.effectsHelper.RefreshConfig();
-    };
-    if IsDefined(this.preventionHelper) {
       this.preventionHelper.RefreshConfig(this.config);
     };
+    this.InvalidateCurrentState();
   }
 
   public func OnEnemyKilled(affiliation: gamedataAffiliation) -> Void {
+    if !IsDefined(this.player) || !IsDefined(this.effectsChecker) { return; };
     if this.effectsChecker.IsPossessed() {
       this.StopEverythingNew();
       E(s"! Playing as Johnny - all effects removed");
@@ -258,7 +317,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     };
 
     let cost: Float;
-    if !this.effectsChecker.IsRipperdocBuffActive() && !this.effectsChecker.IsNewPostPsychosisActive() {
+    if !this.effectsChecker.IsRipperdocBuffActive() && !this.IsRecoveryActive() {
       cost = Cast<Float>(EnemyCostHelper.GetEnemyCost(affiliation, this.config));
       this.AddHumanityDamage(cost);
       this.InvalidateCurrentState();
@@ -269,8 +328,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func OnBuff() -> Void {
-    this.StopPrePsychosisFlow();
-    this.StopPsychosisFlow();
+    this.StopEverythingNew();
   }
 
   public func OnBuffEnded() -> Void {
@@ -278,10 +336,12 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func OnEdgerunnerPerkActivated() -> Void {
+    if !IsDefined(this.effectsHelper) { return; };
     this.effectsHelper.CancelCycledFx();
   }
 
   public func OnRestoreAction(action: HumanityRestoringAction) -> Void {
+    if !IsDefined(this.player) || !IsDefined(this.config) || this.effectsChecker.IsPossessed() { return; };
     switch (action) {
       case HumanityRestoringAction.Sleep:
         this.StopEverythingNew();
@@ -298,18 +358,16 @@ public class EdgerunningSystem extends ScriptableSystem {
             // gain humanity based on our multiplier
             let amount: Int32 = (15 * currentHumanitySleepMultiplier) + 10;
             this.RemoveHumanityDamage(amount);
-            // resetting state
-            currentHumanitySleepMultiplier = 0;
-            this.humanityRestoringActionTakenLover = false;
-            this.humanityRestoringActionTakenPet = false;
-            this.humanityRestoringActionTakenDonation = false;
-            this.humanityRestoringActionTakenApartment = false;
-            this.humanityRestoringActionTakenSocial = false;
-            this.humanityRestoringActionTakenShower = false;
         } else {
             this.ResetHumanityDamage();
             this.ShowHumanityRestoredMessage();
         }
+        this.humanityRestoringActionTakenLover = false;
+        this.humanityRestoringActionTakenPet = false;
+        this.humanityRestoringActionTakenDonation = false;
+        this.humanityRestoringActionTakenApartment = false;
+        this.humanityRestoringActionTakenSocial = false;
+        this.humanityRestoringActionTakenShower = false;
         StatusEffectHelper.RemoveStatusEffect(this.player, t"BaseStatusEffect.LifeAffirmedBuff");
         E("! Rested, humanity value restored.");
         break;
@@ -361,6 +419,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func OnBerserkActivation(item: ItemID) -> Void {
+    if !IsDefined(this.player) || !IsDefined(this.effectsChecker) { return; };
     E("BERSERK ACTIVATED");
     if !ItemID.IsValid(item) {
       E("Berserk item is not valid, skip");
@@ -412,7 +471,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     };
 
     let cost: Float = Cast<Float>(this.config.berserkUsageCost) * qualityMult;
-    if !this.effectsChecker.IsRipperdocBuffActive() && !this.effectsChecker.IsNewPostPsychosisActive() {
+    if !this.effectsChecker.IsRipperdocBuffActive() && !this.IsRecoveryActive() {
       this.AddHumanityDamage(cost);
       E(s"! Berserk activated: \(quality) - costs \(cost) humanity");
       this.InvalidateCurrentState();
@@ -424,6 +483,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func OnOverClockActivation(itemRecord: ref<Item_Record>) -> Void {
+    if !IsDefined(this.player) || !IsDefined(this.effectsChecker) { return; };
     E("OVERCLOCK ACTIVATED");
     if !IsDefined(itemRecord) {
       E("Overclock item record is not defined, skip");
@@ -469,7 +529,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     };
 
     let cost: Float = Cast<Float>(this.config.overclockUsageCost) * qualityMult;
-    if !this.effectsChecker.IsRipperdocBuffActive() && !this.effectsChecker.IsNewPostPsychosisActive() {
+    if !this.effectsChecker.IsRipperdocBuffActive() && !this.IsRecoveryActive() {
       this.AddHumanityDamage(cost);
       E(s"! Overclock activated: \(quality) - costs \(cost) humanity");
       this.InvalidateCurrentState();
@@ -481,6 +541,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func OnSandevistanActivation(item: ItemID) -> Void {
+    if !IsDefined(this.player) || !IsDefined(this.effectsChecker) { return; };
     E("SANDEVISTAN ACTIVATED");
     if !ItemID.IsValid(item) {
       E("Sandevistan item is not valid, skip");
@@ -532,7 +593,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     };
 
     let cost: Float = Cast<Float>(this.config.sandevistanUsageCost) * qualityMult;
-    if !this.effectsChecker.IsRipperdocBuffActive() && !this.effectsChecker.IsNewPostPsychosisActive() {
+    if !this.effectsChecker.IsRipperdocBuffActive() && !this.IsRecoveryActive() {
       this.AddHumanityDamage(cost);
       E(s"! Sandevistan activated: \(quality) - costs \(cost) humanity");
       this.InvalidateCurrentState();
@@ -544,6 +605,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func OnKerenzikovActivation() -> Void {
+    if !IsDefined(this.player) || !IsDefined(this.effectsChecker) { return; };
     E("KERENZIKOV ACTIVATED");
     let itemRecord: ref<Item_Record> = this.cyberwareHelper.GetCurrentKerenzikov();
     if !IsDefined(itemRecord) {
@@ -590,7 +652,7 @@ public class EdgerunningSystem extends ScriptableSystem {
 
     let cost: Float = Cast<Float>(this.config.kerenzikovUsageCost) * qualityMult;
 
-    if !this.effectsChecker.IsRipperdocBuffActive() && !this.effectsChecker.IsNewPostPsychosisActive() {
+    if !this.effectsChecker.IsRipperdocBuffActive() && !this.IsRecoveryActive() {
       this.AddHumanityDamage(cost);
       E(s"! Kerenzikov activated: \(quality) - costs \(cost) humanity");
       this.InvalidateCurrentState();
@@ -602,6 +664,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func OnOpticalCamoActivation() -> Void {
+    if !IsDefined(this.player) || !IsDefined(this.effectsChecker) { return; };
     E("OPTICAL CAMO ACTIVATED");
     let itemRecord: ref<Item_Record> = this.cyberwareHelper.GetCurrentOpticalCamo();
     if !IsDefined(itemRecord) {
@@ -648,7 +711,7 @@ public class EdgerunningSystem extends ScriptableSystem {
 
     let cost: Float = Cast<Float>(this.config.opticalCamoUsageCost) * qualityMult;
 
-    if !this.effectsChecker.IsRipperdocBuffActive() && !this.effectsChecker.IsNewPostPsychosisActive() {
+    if !this.effectsChecker.IsRipperdocBuffActive() && !this.IsRecoveryActive() {
       this.AddHumanityDamage(cost);
       E(s"! Optical camo activated: \(quality) - costs \(cost) humanity");
       this.InvalidateCurrentState();
@@ -661,6 +724,7 @@ public class EdgerunningSystem extends ScriptableSystem {
 
 
   public func OnBloodPumpActivation() -> Void {
+    if !IsDefined(this.player) || !IsDefined(this.effectsChecker) { return; };
     E("BLOOD PUMP ACTIVATED");
     let itemRecord: ref<Item_Record> = this.cyberwareHelper.GetCurrentBloodPump();
     if !IsDefined(itemRecord) {
@@ -707,7 +771,7 @@ public class EdgerunningSystem extends ScriptableSystem {
 
     let cost: Float = Cast<Float>(this.config.bloodPumpUsageCost) * qualityMult;
 
-    if !this.effectsChecker.IsRipperdocBuffActive() && !this.effectsChecker.IsNewPostPsychosisActive() {
+    if !this.effectsChecker.IsRipperdocBuffActive() && !this.IsRecoveryActive() {
       this.AddHumanityDamage(cost);
       E(s"! Blood Pump activated: \(quality) - costs \(cost) humanity");
       this.InvalidateCurrentState();
@@ -717,6 +781,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func OnArmsCyberwareActivation(type: gamedataItemType) -> Void {
+    if !IsDefined(this.player) || !IsDefined(this.effectsChecker) { return; };
     let itemId: ItemID = EquipmentSystem.GetInstance(this.player).GetActiveItem(this.player, gamedataEquipmentArea.ArmsCW);
     if !ItemID.IsValid(itemId) {
       E("Arms cyberware item is not valid, skip");
@@ -785,7 +850,7 @@ public class EdgerunningSystem extends ScriptableSystem {
         break;
     };
 
-    if !this.effectsChecker.IsRipperdocBuffActive() && !this.effectsChecker.IsNewPostPsychosisActive() {
+    if !this.effectsChecker.IsRipperdocBuffActive() && !this.IsRecoveryActive() {
       this.AddHumanityDamage(cost);
       E(s"! Arms cyberware activated: \(type) \(quality) - costs \(cost) humanity");
       this.InvalidateCurrentState();
@@ -820,6 +885,8 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func AddHumanityDamage(cost: Float) -> Void {
+    if cost <= 0.0 || !IsDefined(this.player) || !IsDefined(this.config) { return; };
+    if this.effectsChecker.IsPossessed() || this.effectsChecker.IsRipperdocBuffActive() { return; };
     let total: Int32 = this.GetHumanityTotal();
     let damage: Int32 = CeilF(cost);
 
@@ -834,7 +901,8 @@ public class EdgerunningSystem extends ScriptableSystem {
         };
     };
 
-    this.currentHumanityDamage += damage;
+    this.currentHumanityDamage = Clamp(this.currentHumanityDamage, 0, total);
+    this.currentHumanityDamage += Min(damage, total - this.currentHumanityDamage);
     E(s"> AddHumanityDamage \(damage)");
     if this.currentHumanityDamage > total {
       this.currentHumanityDamage = total;
@@ -843,6 +911,9 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func RemoveHumanityDamage(cost: Int32) -> Void {
+    if !IsDefined(this.player) { return; };
+    cost = Max(0, cost);
+    this.currentHumanityDamage = Max(0, this.currentHumanityDamage);
     if cost > this.currentHumanityDamage {
       cost = this.currentHumanityDamage;
     };
@@ -857,10 +928,11 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public func ResetHumanityDamage() -> Void {
     this.currentHumanityDamage = 0;
-    this.psmBB.SetInt(GetAllBlackboardDefs().PlayerStateMachine.HumanityDamage, 0, true);
+    if IsDefined(this.psmBB) { this.psmBB.SetInt(GetAllBlackboardDefs().PlayerStateMachine.HumanityDamage, 0, true); };
   }
 
   public func AddHumanityPenalty(key: String, value: Int32) -> Void {
+    if !IsDefined(this.additionalPenalties) { this.additionalPenalties = new inkIntHashMap(); };
     if !ArrayContains(this.additionalPenaltiesKeys, key) {
       ArrayPush(this.additionalPenaltiesKeys, key);
     };
@@ -875,6 +947,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func RemoveHumanityPenalty(key: String) -> Void {
+    if !IsDefined(this.additionalPenalties) { return; };
     ArrayRemove(this.additionalPenaltiesKeys, key);
     let hash: Uint64 = this.Hash(key);
     if this.additionalPenalties.Remove(hash) {
@@ -883,6 +956,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func GetPenaltyByKey(key: String) -> Int32 {
+    if !IsDefined(this.additionalPenalties) { return -1; };
     let hash: Uint64 = this.Hash(key);
     if !this.additionalPenalties.KeyExist(hash) {
       return -1;
@@ -892,14 +966,15 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func GetTotalPenalty() -> Int32 {
+    if !IsDefined(this.additionalPenalties) { return 0; };
     let penalties: array<Int32>;
-    let sum: Int32 = 0;
+    let sum: Int64 = 0l;
     this.additionalPenalties.GetValues(penalties);
-    for penalty in penalties {
-      sum += penalty;
-    };
-
-    return sum;
+    for penalty in penalties { sum += Cast<Int64>(penalty); };
+    // External integrations can supply multiple large penalties or boosts.
+    if sum > 2147483647l { return 2147483647; };
+    if sum < -2147483647l { return -2147483647; };
+    return Cast<Int32>(sum);
   }
 
   public func GetAdditionalPenaltiesDescription() -> String {
@@ -938,11 +1013,15 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func GetHumanityTotal() -> Int32 {
+    if !IsDefined(this.player) || !IsDefined(this.config) { return 1; };
     let penalty: Int32 = this.GetTotalPenalty();
     let basePool: Int32 = this.config.baseHumanityPool;
     let playerLevel: Float = GameInstance.GetStatsSystem(this.player.GetGame()).GetStatValue(Cast<StatsObjectID>(this.player.GetEntityID()), gamedataStatType.Level);
     let additionalPool: Int32 = Cast<Int32>(this.config.humanityBonusPerLevel * playerLevel);
-    return basePool + additionalPool - penalty;
+    let total: Int64 = Cast<Int64>(basePool) + Cast<Int64>(additionalPool) - Cast<Int64>(penalty);
+    if total < 1l { return 1; };
+    if total > 2147483647l { return 2147483647; };
+    return Cast<Int32>(total);
   }
 
   public func GetHumanityColor() -> CName {
@@ -965,68 +1044,63 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func InvalidateCurrentState(opt firstLoad: Bool) -> Void {
-    let penalty: Int32 = this.GetTotalPenalty();
+    if !IsDefined(this.player) || !IsDefined(this.config) || this.transitioning { return; };
     let evt: ref<UpdateHumanityCounterEvent> = new UpdateHumanityCounterEvent();
     let basePool: Int32 = this.GetHumanityTotal();
+    this.currentHumanityDamage = Clamp(this.currentHumanityDamage, 0, basePool);
+    this.psmBB.SetInt(GetAllBlackboardDefs().PlayerStateMachine.HumanityDamage, this.currentHumanityDamage, true);
     this.currentHumanityPool = basePool - this.currentHumanityDamage;
     if this.currentHumanityPool < 0 { this.currentHumanityPool = 0; };
-    this.psychosisThreshold = this.config.psychosisThreshold;
+    this.psychosisThreshold = Max(0, this.config.psychosisThreshold);
     // Check if threshold > pool from incorrect mod settings
     if this.psychosisThreshold > basePool {
       this.psychosisThreshold = basePool / 2;
     };
-    let log: String = "";
-    log += s"total \(basePool), current \(this.currentHumanityPool), damage \(this.currentHumanityDamage) |";
-    log += s" threshold \(this.psychosisThreshold) |";
-    log += s" from mods \(penalty) |";
-    log += s" light visuals \(this.config.lightVisuals)";
-    E(s"INVALIDATE: \(log)");
-
     evt.current = this.GetHumanityCurrent();
-    evt.total = this.GetHumanityTotal();
+    evt.total = basePool;
     evt.color = this.GetHumanityColor();
     GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(evt);
 
-    if this.effectsChecker.IsRipperdocBuffActive() && !this.IsWentFullPsycho() { return; };
-    if this.effectsChecker.IsNewPsychosisActive() { return; };
-    if this.effectsChecker.IsNewPostPsychosisActive() { return; };
-    
-    // Detect post-psychosis
-    if this.IsWentFullPsycho() && !this.effectsChecker.IsNewPostPsychosisActive() {
-      this.RunPostPsychosisFlow();
-      return ;
-    }
-
-    // Playing as Johnny - cancel effects
-    if this.effectsChecker.IsPossessed() {
-      this.StopEverythingNew();
-      return ;
+    if !this.IsEpisodeContextSafe() { this.StopEverythingNew(); return; };
+    if this.IsPsychosisActive() { return; };
+    // Preserve the existing until-sleep consequence. Expiry of the presentation
+    // effect must not create a window in which cyberware costs change.
+    if !this.IsWentFullPsycho() && Equals(this.phase, EdgerunningPhase.Recovery) { this.StopEverythingNew(); };
+    if this.IsWentFullPsycho() {
+      if !Equals(this.phase, EdgerunningPhase.Recovery) {
+        this.RunPostPsychosisFlow();
+      } else {
+        if !this.effectsChecker.IsNewPostPsychosisActive() { this.effectsHelper.RunNewPostPsychosisEffect(); };
+      };
+      return;
     };
-
-    // Humanity restored - cancel effects
-    if this.currentHumanityPool > this.psychosisThreshold {
-      this.StopEverythingNew();
-      return ;
-    };
-
-    // Detect psychosis
-    if this.currentHumanityPool <= 0 && this.config.alwaysRunAtZero && !this.effectsChecker.IsNewPsychosisActive() {
+    if this.currentHumanityPool > this.psychosisThreshold { this.StopEverythingNew(); return; };
+    if this.currentHumanityPool <= 0 && this.config.alwaysRunAtZero && !this.IsPsychosisBlocked() {
       this.RunPsychosisFlow();
+      return;
     };
-
-    // Detect pre-psychosis
-    if this.currentHumanityPool < this.psychosisThreshold && !this.effectsChecker.IsNewPrePsychosisActive() {
+    if this.currentHumanityPool < this.psychosisThreshold || (this.currentHumanityPool == 0 && this.config.alwaysRunAtZero) {
       this.RunPrePsychosisFlow();
-      return ;
+      return;
     };
 
     E("NO EFFECTS APPLIED");
   }
 
   public func IsPsychosisActive() -> Bool {
-    return this.effectsChecker.IsNewPsychosisActive();
+    return Equals(this.phase, EdgerunningPhase.Psychosis) || Equals(this.phase, EdgerunningPhase.Blackout);
   }
 
+
+  public func IsRecoveryActive() -> Bool {
+    return Equals(this.phase, EdgerunningPhase.Recovery) && this.IsEpisodeContextSafe();
+  }
+
+  public func OnRecoveryEffectRemoved() -> Void {
+    if !this.transitioning && Equals(this.phase, EdgerunningPhase.Recovery) {
+      this.InvalidateCurrentState();
+    };
+  }
 
   // -- Internal checkers
 
@@ -1044,6 +1118,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   private func IsPsychosisBlocked() -> Bool {
+    if !this.IsEpisodeContextSafe() { return true; };
     let tier: Int32 = this.psmBB.GetInt(GetAllBlackboardDefs().PlayerStateMachine.HighLevel);
     E("? Check if psychosis available...");
     
@@ -1111,13 +1186,15 @@ public class EdgerunningSystem extends ScriptableSystem {
   // -- Callback reactions
 
   public func OnLaunchCycledPsychosisCheckCallback() -> Void {
+    this.psychosisCheckDelayId = GetInvalidDelayID();
+    if !Equals(this.phase, EdgerunningPhase.PrePsychosis) { return; };
     let random: Int32 = RandRange(0, 100);
     let threshold: Int32 = this.config.psychoChance;
     let triggered: Bool = random <= threshold;
     let forcedRun: Bool = Equals(this.currentHumanityPool, 0) && this.config.alwaysRunAtZero;
     E(s"? Run psychosis trigger check: roll \(random) against \(threshold), triggered: \(triggered), forced run: \(forcedRun)");
     let nextRun: Float = Cast<Float>(this.config.pcychoCheckPeriod) * 60.0;
-    if triggered || forcedRun {
+    if (triggered || forcedRun) && !this.IsPsychosisBlocked() {
       this.RunPsychosisFlow();
     } else {
       if !this.IsHumanityRestored() {
@@ -1128,7 +1205,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func OnLaunchPostPsychosisCallback() -> Void {
-    this.RunPostPsychosisFlow();
+    this.FinishEpisode();
   }
 
   private func ShowHumanityRestoredMessage(opt amount: Int32) -> Void {
@@ -1147,73 +1224,68 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   private func DamageHealthToPercent(value: Int32) -> Void {
-    if !this.effectsChecker.IsNewPostPsychosisActive() {
+    if !this.IsRecoveryActive() {
       E("Post-psychosis is not active, skip");
       return ;
     };
 
-    let totalHealth: Float = this.statsSystem.GetStatValue(Cast<StatsObjectID>(GetPlayer(this.player.GetGame()).GetEntityID()), gamedataStatType.Health);
+    let totalHealth: Float = this.statsSystem.GetStatValue(Cast<StatsObjectID>(this.player.GetEntityID()), gamedataStatType.Health);
     let damageValue: Float = totalHealth * Cast<Float>(value) / 100.0;
     E(s"Damage health: total \(totalHealth), damage to \(damageValue)");
     this.statsPoolSystem.RequestChangingStatPoolValue(Cast<StatsObjectID>(this.player.GetEntityID()), gamedataStatPoolType.Health, -damageValue, null, false, false);
   }
-
-  public static func Debug(gi: GameInstance) -> Void {
-    let system: ref<EdgerunningSystem> = EdgerunningSystem.GetInstance(gi);
-    // system.RunPsychosisFlow();
-    // system.AddHumanityDamage(10.0);
-    // system.InvalidateCurrentState(false);
-    system.effectsHelper.RunNewPrePsychosisEffect();
-    // system.effectsHelper.RunNewPsychosisEffect();
-    // system.effectsHelper.RunNewPostPsychosisEffect();
-  }
 }
 
-public class LaunchCycledPsychosisCheckCallback extends DelayCallback {
+public class LaunchCycledPsychosisCheckCallback extends EdgerunningEpisodeCallback {
   let system: wref<EdgerunningSystem>;
 
   public static func Create(system: ref<EdgerunningSystem>) -> ref<LaunchCycledPsychosisCheckCallback> {
     let self: ref<LaunchCycledPsychosisCheckCallback> = new LaunchCycledPsychosisCheckCallback();
     self.system = system;
+    self.BindEpisode(system.GetPlayer());
     return self;
   }
 
   public func Call() -> Void {
+    if !this.IsCurrentEpisode() { return; };
     if IsDefined(this.system) {
       this.system.OnLaunchCycledPsychosisCheckCallback();
     };
   }
 }
 
-public class LaunchPostPsychosisEffectCallback extends DelayCallback {
+public class LaunchPostPsychosisEffectCallback extends EdgerunningEpisodeCallback {
   let system: wref<EdgerunningSystem>;
 
   public static func Create(system: ref<EdgerunningSystem>) -> ref<LaunchPostPsychosisEffectCallback> {
     let self: ref<LaunchPostPsychosisEffectCallback> = new LaunchPostPsychosisEffectCallback();
     self.system = system;
+    self.BindEpisode(system.GetPlayer());
     return self;
   }
 
   public func Call() -> Void {
+    if !this.IsCurrentEpisode() { return; };
     if IsDefined(this.system) {
       this.system.OnLaunchPostPsychosisCallback();
     };
   }
 }
 
-public class LaunchPostPsychosisHumanityRestoreCallback extends DelayCallback {
+public class LaunchPostPsychosisHumanityRestoreCallback extends EdgerunningEpisodeCallback {
   let system: wref<EdgerunningSystem>;
 
   public static func Create(system: ref<EdgerunningSystem>) -> ref<LaunchPostPsychosisHumanityRestoreCallback> {
     let self: ref<LaunchPostPsychosisHumanityRestoreCallback> = new LaunchPostPsychosisHumanityRestoreCallback();
     self.system = system;
+    self.BindEpisode(system.GetPlayer());
     return self;
   }
 
   public func Call() -> Void {
+    if !this.IsCurrentEpisode() { return; };
     if IsDefined(this.system) {
-      this.system.RemoveHumanityDamage(10);
-      this.system.InvalidateCurrentState();
+      this.system.FinishEpisode();
     };
   }
 }

@@ -127,6 +127,10 @@ public class NewHumanityBarController extends inkGameController {
       widget.SetScale(Vector2(0.0, 1.0));
       widget.SetMargin(0.0, 0.0, rightMargin, 0.0);
       widget.SetUserData(HumanityBarUserData.Create(showDanger));
+      // SetUserData can run after child OnInitialize. Bind the same named child
+      // explicitly; a later OnInitialize reads the matching user data.
+      let bar: wref<inkWidget> = (widget as inkCompoundWidget).GetWidgetByPathName(n"bar");
+      if IsDefined(bar) { bar.BindProperty(n"tintColor", showDanger ? n"MainColors.Red" : n"MainColors.MildGreen"); };
       ArrayPush(this.bars, widget);
       i += 1;
     };

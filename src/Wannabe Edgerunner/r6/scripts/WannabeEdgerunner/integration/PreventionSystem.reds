@@ -18,7 +18,9 @@ protected final func SpawnRequestFinished(requestResult: SpawnRequestResult) -> 
   wrappedMethod(requestResult);
 
   let id: Uint32 = requestResult.requestID;
-  if ArrayContains(this.spawnedVictims, id) && requestResult.success {
+  if ArrayContains(this.spawnedVictims, id) {
+    this.DeleteSpawned(id);
+    if !requestResult.success { return; };
     E(s"Victims - found \(id), kill!");
     let npc: ref<NPCPuppet>;
     for object in requestResult.spawnedObjects {
@@ -26,7 +28,6 @@ protected final func SpawnRequestFinished(requestResult: SpawnRequestResult) -> 
       if IsDefined(npc) {
         npc.Kill(null, true, true);
         this.SpawnBloodPuddle(npc);
-        this.DeleteSpawned(id);
       };
     };
   };

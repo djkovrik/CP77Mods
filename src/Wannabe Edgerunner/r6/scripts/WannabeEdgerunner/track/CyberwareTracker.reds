@@ -115,27 +115,11 @@ public func StartAction(gameInstance: GameInstance) -> Void {
   };
 }
 
-@replaceMethod(InventoryDataManagerV2)
+@wrapMethod(InventoryDataManagerV2)
 public final static func IsEquipmentAreaCyberware(areaType: gamedataEquipmentArea) -> Bool {
-  switch areaType {
-    case gamedataEquipmentArea.AbilityCW:
-    case gamedataEquipmentArea.NervousSystemCW:
-    case gamedataEquipmentArea.MusculoskeletalSystemCW:
-    case gamedataEquipmentArea.IntegumentarySystemCW:
-    case gamedataEquipmentArea.ImmuneSystemCW:
-    case gamedataEquipmentArea.LegsCW:
-    case gamedataEquipmentArea.EyesCW:
-    case gamedataEquipmentArea.CardiovascularSystemCW:
-    case gamedataEquipmentArea.HandsCW:
-    case gamedataEquipmentArea.ArmsCW:
-    case gamedataEquipmentArea.SystemReplacementCW:
-    // added this one
-    case gamedataEquipmentArea.FrontalCortexCW:
-      return true;
-  };
-  return false;
+  let original: Bool = wrappedMethod(areaType);
+  return original || Equals(areaType, gamedataEquipmentArea.FrontalCortexCW);
 }
-
 
 // Get installed cyberware
 @addMethod(EquipmentSystemPlayerData)

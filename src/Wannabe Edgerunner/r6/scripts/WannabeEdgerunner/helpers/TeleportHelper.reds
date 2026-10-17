@@ -15,6 +15,15 @@ public class TeleportHelper {
   private let victimsHelper: ref<TeleportVictimsHelper>;
   private let effectsHelper: ref<PsychosisEffectsHelper>;
 
+  private let destination: ref<TeleportData>;
+  private let targetPosition: Vector4;
+
+  public func GetPlayer() -> wref<PlayerPuppet> { return this.player; }
+
+  private func FinishEpisode() -> Void {
+    EdgerunningSystem.GetInstance(this.player.GetGame()).FinishEpisode();
+  }
+
   private let prepareTeleportDelayId: DelayID; 
   private let teleportDelayId: DelayID; 
   private let postTeleportEffectsDelayId: DelayID; 
@@ -36,9 +45,12 @@ public class TeleportHelper {
   }
 
   public func CancelScheduledTeleportEvents() -> Void {
-    this.delaySystem.CancelDelay(this.prepareTeleportDelayId);
-    this.delaySystem.CancelDelay(this.teleportDelayId);
-    this.delaySystem.CancelDelay(this.postTeleportEffectsDelayId);
+    this.delaySystem.CancelCallback(this.prepareTeleportDelayId);
+    this.prepareTeleportDelayId = GetInvalidDelayID();
+    this.delaySystem.CancelCallback(this.teleportDelayId);
+    this.teleportDelayId = GetInvalidDelayID();
+    this.delaySystem.CancelCallback(this.postTeleportEffectsDelayId);
+    this.postTeleportEffectsDelayId = GetInvalidDelayID();
     this.victimsHelper.CancelScheduledVictimSpawns();
   }
 
@@ -47,6 +59,8 @@ public class TeleportHelper {
       return;
     };
 
+    if !this.CanBeTeleported() { this.FinishEpisode(); return; };
+    EdgerunningSystem.GetInstance(this.player.GetGame()).BeginBlackout();
     let currentDistrict: gamedataDistrict = this.player.GetPreventionSystem().GetCurrentDistrictForEdgerunner();
     let isPrologDone: Bool = this.player.IsPrologueFinished();
     let destination: ref<TeleportData>;
@@ -56,13 +70,12 @@ public class TeleportHelper {
       destination = this.destinationHelper.GetRandomTeleportDataPrologue();
     };
 
-    if !IsDefined(destination) { 
-      return ; 
-    };
+    if !IsDefined(destination) || ArraySize(destination.coords) == 0 { this.FinishEpisode(); return; };
 
     let position: Vector4 = TeleportData.GetRandomCoordinates(destination);
     E(s"Teleport - Selected destination: \(position) at \(destination.district)");
-    this.victimsHelper.ScheduleVictimsSpawn(destination);
+    this.destination = destination;
+    this.targetPosition = position;
     this.effectsHelper.PlayFastTravelFx();
 
     let teleportCallback: ref<PlayerTeleportCallback> = PlayerTeleportCallback.Create(this, position);
@@ -74,9 +87,7 @@ public class TeleportHelper {
       return;
     };
 
-    if !this.CanBeTeleported() {
-      return ;
-    };
+    if !this.CanBeTeleported() { this.FinishEpisode(); return; };
     E(s"Teleport - Target position: \(position)");
     this.RequestLoadingScreen();
     let rotation: EulerAngles;
@@ -89,29 +100,40 @@ public class TeleportHelper {
       return;
     };
 
+    if !this.CanBeTeleported() { this.FinishEpisode(); return; };
+    // Teleport is native and has no success return. Only commit consequences
+    // after the player is observed near the selected destination.
+    if Vector4.DistanceSquared(this.player.GetWorldPosition(), this.targetPosition) > 100.0 {
+      this.FinishEpisode();
+      return;
+    };
     E("Teleport - Apply post-effects");
     let timeSystem: ref<TimeSystem> = GameInstance.GetTimeSystem(this.player.GetGame());
     let sps: ref<StatPoolsSystem> = GameInstance.GetStatPoolsSystem(this.player.GetGame());
     let currentHealth: Float = sps.GetStatPoolValue(Cast<StatsObjectID>(this.player.GetEntityID()), gamedataStatPoolType.Health, false);
-    let targetHealth: Float = 20.0;
-    let diff: Float = AbsF(currentHealth - targetHealth);
-    // Damage health
-    E(s"Teleport - damage health from \(currentHealth) to \(targetHealth) (diff \(diff))");
-    sps.RequestChangingStatPoolValue(Cast<StatsObjectID>(this.player.GetEntityID()), gamedataStatPoolType.Health, -diff, null, false, false);
+    // Absolute HP, not percent. Keep low HP unchanged, cap higher HP at 20.
+    let targetHealth: Float = MinF(currentHealth, 20.0);
     // Skip time
     let currentTimestamp: Float = timeSystem.GetGameTimeStamp();
     let diff: Float = 4.0 * 3600.0;
     let newTimeStamp: Float = currentTimestamp + diff;
     timeSystem.SetGameTimeBySeconds(Cast<Int32>(newTimeStamp));
     GameTimeUtils.FastForwardPlayerState(this.player);
+    // FastForwardPlayerState can queue regeneration; set our final absolute
+    // value afterwards so it cannot heal over the blackout result.
+    sps.RequestSettingStatPoolValue(Cast<StatsObjectID>(this.player.GetEntityID()), gamedataStatPoolType.Health, targetHealth, null, false);
     // Equip weapon
     PlayerGameplayRestrictions.RequestLastUsedWeapon(this.player, gameEquipAnimationType.Instant);
     // Clear wanted level
     this.player.GetPreventionSystem().ClearWantedLevel();
+    // ClearWantedLevel reaches RequestDespawnAll and CancelAllSpawnRequests
+    // on the same PreventionSpawnSystem used for victims. Submit victims only
+    // after that cleanup, never before it.
+    this.victimsHelper.SpawnVictimsAt(this.destination, this.targetPosition);
     // Stop cycled effects
     this.effectsHelper.CancelCycledFx();
     // Apply post psychosis
-    this.effectsHelper.RunNewPostPsychosisEffect();
+    this.FinishEpisode();
   }
 
   private func RequestLoadingScreen() {
@@ -125,6 +147,7 @@ public class TeleportHelper {
   }
 
   private final func CanBeTeleported() -> Bool {
+    if !EdgerunningSystem.GetInstance(this.player.GetGame()).CanBlackout() { return false; };
     let bb: ref<IBlackboard> = this.player.GetPlayerStateMachineBlackboard();
     let dogtown: Bool = GameInstance.GetPreventionSpawnSystem(this.player.GetGame()).IsPlayerInDogTown();
     let paused: Bool = GameInstance.GetTimeSystem(this.player.GetGame()).IsPausedState();
@@ -145,34 +168,38 @@ public class TeleportHelper {
   }
 }
 
-public class PrepareTeleportCallback extends DelayCallback {
+public class PrepareTeleportCallback extends EdgerunningEpisodeCallback {
   let helper: wref<TeleportHelper>;
 
   public static func Create(helper: ref<TeleportHelper>) -> ref<PrepareTeleportCallback> {
     let self: ref<PrepareTeleportCallback> = new PrepareTeleportCallback();
     self.helper = helper;
+    self.BindEpisode(helper.GetPlayer());
     return self;
   }
 
   public func Call() -> Void {
+    if !this.IsCurrentEpisode() { return; };
     if IsDefined(this.helper) {
       this.helper.OnPrepareTeleportCallback();
     };
   }
 }
 
-public class PlayerTeleportCallback extends DelayCallback {
+public class PlayerTeleportCallback extends EdgerunningEpisodeCallback {
   let position: Vector4;
   let helper: wref<TeleportHelper>;
 
   public static func Create(helper: ref<TeleportHelper>, position: Vector4) -> ref<PlayerTeleportCallback> {
     let self: ref<PlayerTeleportCallback> = new PlayerTeleportCallback();
     self.helper = helper;
+    self.BindEpisode(helper.GetPlayer());
     self.position = position;
     return self;
   }
 
   public func Call() -> Void {
+    if !this.IsCurrentEpisode() { return; };
     if IsDefined(this.helper) {
       this.helper.OnPlayerTeleportCallback(this.position);
     };
@@ -180,16 +207,18 @@ public class PlayerTeleportCallback extends DelayCallback {
 }
 
 
-public class PostTeleportEffectsCallback extends DelayCallback {
+public class PostTeleportEffectsCallback extends EdgerunningEpisodeCallback {
   let helper: wref<TeleportHelper>;
 
   public static func Create(helper: ref<TeleportHelper>) -> ref<PostTeleportEffectsCallback> {
     let self: ref<PostTeleportEffectsCallback> = new PostTeleportEffectsCallback();
     self.helper = helper;
+    self.BindEpisode(helper.GetPlayer());
     return self;
   }
 
   public func Call() -> Void {
+    if !this.IsCurrentEpisode() { return; };
     if IsDefined(this.helper) {
       this.helper.OnPostTeleportEffectsCallback();
     };

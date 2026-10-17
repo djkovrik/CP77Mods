@@ -3,7 +3,9 @@ import Edgerunning.Common.E
 
 @wrapMethod(ScriptedPuppet)
 protected func RewardKiller(killer: wref<GameObject>, killType: gameKillType, isAnyDamageNonlethal: Bool) -> Void {
+  let rewardDisabled: Bool = this.m_killRewardDisabled;
   wrappedMethod(killer, killType, isAnyDamageNonlethal);
+  if rewardDisabled { return; };
 
   let record: ref<Character_Record> = this.GetRecord();
   let affiliation: gamedataAffiliation = record.Affiliation().Type();

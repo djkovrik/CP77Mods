@@ -54,6 +54,6 @@ public class PsychosisEffectsChecker {
   private func IsJohnny() -> Bool {
     let localPuppet: ref<PlayerPuppet> = this.playerSystem.GetLocalPlayerControlledGameObject() as PlayerPuppet;
     let factName: String = this.playerSystem.GetPossessedByJohnnyFactName();
-    return localPuppet.IsJohnnyReplacer() || this.questsSystem.GetFactStr(factName) == 1;
+    return !IsDefined(localPuppet) || localPuppet.IsJohnnyReplacer() || this.questsSystem.GetFactStr(factName) == 1;
   }
 }

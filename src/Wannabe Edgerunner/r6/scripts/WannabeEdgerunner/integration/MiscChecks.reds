@@ -30,8 +30,11 @@ public func IsPossessedE() -> Bool {
 @wrapMethod(PlayerPuppet)
 protected cb func OnSceneTierChange(newState: Int32) -> Bool {
   wrappedMethod(newState);
+  if EdgerunningSystem.GetInstance(this.GetGame()).GetPlayer() != this { return false; };
   E(s"-> Scene tier \(this.m_sceneTier)");
-  if Equals(this.m_sceneTier, GameplayTier.Tier4_FPPCinematic) || Equals(this.m_sceneTier, GameplayTier.Tier5_Cinematic) {
+  if newState >= 3 && newState <= 5 {
     EdgerunningSystem.GetInstance(this.GetGame()).StopEverythingNew();
+  } else {
+    EdgerunningSystem.GetInstance(this.GetGame()).InvalidateCurrentState();
   };
 }

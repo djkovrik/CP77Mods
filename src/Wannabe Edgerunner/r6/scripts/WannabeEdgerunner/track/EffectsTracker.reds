@@ -4,8 +4,11 @@ import Edgerunning.Common.E
 @wrapMethod(PlayerPuppet)
 protected cb func OnStatusEffectApplied(evt: ref<ApplyStatusEffectEvent>) -> Bool {
   wrappedMethod(evt);
+  let system: ref<EdgerunningSystem> = EdgerunningSystem.GetInstance(this.GetGame());
+  if !IsDefined(system) || system.GetPlayer() != this { return false; };
   let effectId: TweakDBID = evt.staticData.GetID();
-  if this.IsRipperdocMedBuff(effectId) {
+  let tags: array<CName> = evt.staticData.GameplayTags();
+  if ArrayContains(tags, n"Neuroblockers") {
     EdgerunningSystem.GetInstance(this.GetGame()).OnBuff();
   };
   if Equals(effectId, t"BaseStatusEffect.Tech_Master_Perk_3_Buff") {
@@ -16,17 +19,24 @@ protected cb func OnStatusEffectApplied(evt: ref<ApplyStatusEffectEvent>) -> Boo
 @wrapMethod(PlayerPuppet)
 protected cb func OnStatusEffectRemoved(evt: ref<RemoveStatusEffect>) -> Bool {
   wrappedMethod(evt);
+  let system: ref<EdgerunningSystem> = EdgerunningSystem.GetInstance(this.GetGame());
+  if !IsDefined(system) || system.GetPlayer() != this { return false; };
   let effectId: TweakDBID = evt.staticData.GetID();
-  if this.IsRipperdocMedBuff(effectId)  {
+  let tags: array<CName> = evt.staticData.GameplayTags();
+  if ArrayContains(tags, n"Neuroblockers")  {
     EdgerunningSystem.GetInstance(this.GetGame()).OnBuffEnded();
+  };
+  if Equals(effectId, t"BaseStatusEffect.NewPostPsychosisEffectNormalFx") || Equals(effectId, t"BaseStatusEffect.NewPostPsychosisEffectLightFx") {
+    EdgerunningSystem.GetInstance(this.GetGame()).OnRecoveryEffectRemoved();
   };
 }
 
 @addMethod(PlayerPuppet)
 private func IsRipperdocMedBuff(id: TweakDBID) -> Bool {
-  return Equals(t"BaseStatusEffect.RipperDocMedBuff", id)
-    || Equals(t"BaseStatusEffect.RipperDocMedBuffUncommon", id)
-    || Equals(t"BaseStatusEffect.RipperDocMedBuffCommon", id);
+  let record: ref<StatusEffect_Record> = TweakDBInterface.GetStatusEffectRecord(id);
+  if !IsDefined(record) { return false; };
+  let tags: array<CName> = record.GameplayTags();
+  return ArrayContains(tags, n"Neuroblockers");
 }
 
 // -- Track for interactions
@@ -55,6 +65,12 @@ protected cb func OnUninitialize() -> Bool {
 
 @addMethod(dialogWidgetGameController)
 protected cb func OnLastAttemptedChoiceCustom(value: Variant) -> Bool {
+  let choice: InteractionAttemptedChoice = FromVariant<InteractionAttemptedChoice>(value);
+  if !choice.isSuccess {
+    this.m_lastSelectedHub = "";
+    return false;
+  };
+  // Legacy context adapter: success is NOT proof that sleep completed.
   let action: HumanityRestoringAction = EdgerunnerInteractionChecker.Check(this.GetPlayerControlledObject().GetGame(), this.m_lastSelectedHub);
   if NotEquals(action, HumanityRestoringAction.Unknown) {
     EdgerunningSystem.GetInstance(this.GetPlayerControlledObject().GetGame()).OnRestoreAction(action);
