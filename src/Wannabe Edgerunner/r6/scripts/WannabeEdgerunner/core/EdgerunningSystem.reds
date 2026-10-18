@@ -10,9 +10,30 @@ public class EdgerunningSystem extends ScriptableSystem {
   private let attachedCallback: Uint32;
   private let detachedCallback: Uint32;
   private let transitioning: Bool;
+  private let psychosisCombat: ref<WEPsychosisCombat>;
+  private let psychosisShooting: Bool = true;
+  private let psychosisOutlines: Bool = true;
+  private let psychosisExcludeCivilians: Bool;
+
+  public func ConfigurePsychosisCombat(shoot: Bool, outline: Bool, excludeCivilians: Bool) -> Void {
+    if IsDefined(this.psychosisCombat) { this.psychosisCombat.Stop(); };
+    this.psychosisShooting = shoot;
+    this.psychosisOutlines = outline;
+    this.psychosisExcludeCivilians = excludeCivilians;
+    this.PrintPsychosisCombatStatus();
+  }
+
+  public func PrintPsychosisCombatStatus() -> Void {
+    FTLog(s"WE psychosisCombat shooting=\(this.psychosisShooting) outline=\(this.psychosisOutlines) excludeCivilians=\(this.psychosisExcludeCivilians) phase=\(this.phase) generation=\(this.generation); settings apply next episode");
+    if IsDefined(this.psychosisCombat) { this.psychosisCombat.PrintStatus(); };
+  }
 
   public func GetPlayer() -> wref<PlayerPuppet> { return this.player; }
   public func GetGeneration() -> Uint32 { return this.generation; }
+
+  public func IsCrowdPsychosisCurrent(generation: Uint32, owner: ref<PlayerPuppet>) -> Bool {
+    return Equals(this.phase, EdgerunningPhase.Psychosis) && this.generation == generation && this.player == owner && this.IsEpisodeContextSafe();
+  }
 
   public func IsCallbackCurrent(generation: Uint32, owner: wref<PlayerPuppet>) -> Bool {
     if generation != this.generation || !IsDefined(owner) || owner != this.player { return false; };
@@ -28,13 +49,13 @@ public class EdgerunningSystem extends ScriptableSystem {
     return !(tier >= EnumInt(gamePSMHighLevel.SceneTier3) && tier <= EnumInt(gamePSMHighLevel.SceneTier5));
   }
 
-  public func CanForceWeaponAction() -> Bool {
+  public func CanForceWeaponAction(opt preparingWeapon: Bool) -> Bool {
     if !Equals(this.phase, EdgerunningPhase.Psychosis) || this.IsPsychosisBlocked() { return false; };
     let upperBody: Int32 = this.psmBB.GetInt(GetAllBlackboardDefs().PlayerStateMachine.UpperBody);
     return upperBody != EnumInt(gamePSMUpperBodyStates.Reload)
-      && upperBody != EnumInt(gamePSMUpperBodyStates.SwitchItems)
+      && (preparingWeapon || upperBody != EnumInt(gamePSMUpperBodyStates.SwitchItems))
       && upperBody != EnumInt(gamePSMUpperBodyStates.SwitchCyberware)
-      && upperBody != EnumInt(gamePSMUpperBodyStates.TemporaryUnequip)
+      && (preparingWeapon || upperBody != EnumInt(gamePSMUpperBodyStates.TemporaryUnequip))
       && upperBody != EnumInt(gamePSMUpperBodyStates.ForceEmptyHands)
       && this.psmBB.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Zones) != EnumInt(gamePSMZones.Safe)
       && !StatusEffectSystem.ObjectHasStatusEffectWithTag(this.player, n"NoCombat")
@@ -48,6 +69,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   public func CanBlackout() -> Bool { return this.IsPsychosisActive() && !this.IsPsychosisBlocked(); }
 
   public func BeginBlackout() -> Void {
+    if IsDefined(this.psychosisCombat) { this.psychosisCombat.Stop(); };
     if Equals(this.phase, EdgerunningPhase.Psychosis) { this.phase = EdgerunningPhase.Blackout; };
   }
 
@@ -203,7 +225,10 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.effectsHelper.RunNewPsychosisEffect();
     this.SetWentFullPsycho(true);
 
-    this.preventionHelper.ScheduleRandomWeaponActions(4.5);
+    if this.psychosisShooting || this.psychosisOutlines {
+      this.psychosisCombat = new WEPsychosisCombat();
+      this.psychosisCombat.Start(this, this.psychosisShooting, this.psychosisOutlines, this.psychosisExcludeCivilians, this.effectsHelper.GetPsychosisOutlineDelay());
+    };
     if this.IsPoliceSpawnAvailable() { this.preventionHelper.SchedulePoliceActivity(6.0); };
     this.effectsHelper.ScheduleCycledSfx(this.config.lightVisuals ? 3.0 : 7.0);
 
@@ -263,6 +288,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.transitioning = true;
     this.generation += 1u;
     this.phase = EdgerunningPhase.Idle;
+    if IsDefined(this.psychosisCombat) { this.psychosisCombat.Stop(); };
     if IsDefined(this.delaySystem) {
       this.delaySystem.CancelCallback(this.psychosisCheckDelayId);
       this.delaySystem.CancelCallback(this.postPsychosisDelayId);

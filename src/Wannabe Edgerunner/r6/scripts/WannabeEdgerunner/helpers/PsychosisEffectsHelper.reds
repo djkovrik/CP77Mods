@@ -26,6 +26,10 @@ public class PsychosisEffectsHelper {
 
   public func GetPlayer() -> wref<PlayerPuppet> { return this.player; }
 
+  public func GetPsychosisOutlineDelay() -> Float {
+    return this.config.lightVisuals ? 2.0 : 9.0;
+  }
+
   public func CancelPendingFx() -> Void {
     for id in this.pendingFx { this.delaySystem.CancelCallback(id); };
     ArrayClear(this.pendingFx);

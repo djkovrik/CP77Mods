@@ -1,5 +1,18 @@
 import Edgerunning.System.EdgerunningSystem
 
+public exec func EdgerunnerPsychosisCombat(gi: GameInstance, shoot: Bool, outline: Bool, opt excludeCivilians: Bool) -> Void {
+  EdgerunningSystem.GetInstance(gi).ConfigurePsychosisCombat(shoot, outline, excludeCivilians);
+}
+
+public exec func EdgerunnerPsychosisCombatStatus(gi: GameInstance) -> Void {
+  EdgerunningSystem.GetInstance(gi).PrintPsychosisCombatStatus();
+}
+
+@if(ModuleExists("WannabeEdgerunnerDebug"))
+public exec func EdgerunnerPsychosisCombatStart(gi: GameInstance) -> Void {
+  EdgerunningSystem.GetInstance(gi).RunPsychosisFlow();
+}
+
 // CET command to stop FX effects - Game.EdgerunnerClear()
 public exec func EdgerunnerClear(gi: GameInstance) -> Void {
   EdgerunningSystem.GetInstance(gi).StopEverythingNew();
