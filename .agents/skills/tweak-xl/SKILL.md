@@ -6,7 +6,7 @@ description: Find Cyberpunk 2077 TweakDB records and implement TweakXL YAML, RED
 
 # TweakXL
 
-Resolve aliases from [root AGENTS.md](../../../AGENTS.md); retain its connector and performance rules. TweakXL modifies TweakDB. It does not pack textures or implement arbitrary gameplay code by itself.
+Resolve aliases from [root AGENTS.md](../../../AGENTS.md); apply its specification workflow before implementation, research destination, localization policy, critical-comments rule, connector and performance rules. TweakXL modifies TweakDB. It does not pack textures or implement arbitrary gameplay code by itself.
 
 ## Workflow
 

@@ -43,7 +43,7 @@ Use `<CODEWARE_SCRIPTS_ROOT>` as the authority for installed names and signature
 | Player variants | Separate gameplay, customization, inventory and photo-mode puppets; choose the correct instance. |
 | Ink UI | Layer/controller access, controller overrides when spawning, scripted `inkComponent`, and Codeware UI components. Preserve the project's virtual-row recycling rule. |
 | Resources | Resource depot existence checks and asynchronous load tokens; check callback target/resource lifetime before use. Resource reference assignment APIs differ from plain `ResRef` values. |
-| Localization | `Codeware.Localization` provider/packages, fallback language and locale-change handling; texts can be consumed by game localization and TweakDB. ArchiveXL is the asset-based alternative. |
+| Localization | Follow the [project localization policy](../../../../AGENTS.md#localization) and use [ArchiveXL resources](../../archive-xl/references/resources.md). |
 | Reflection | Inspect classes/properties/functions, check callable/status and variant types. Callback short names require `cb`; static names include the module/class. |
 | Utilities | Hash, bit, vector and identifier conversions; inspect local support rather than inventing names or truncating identity keys. |
 

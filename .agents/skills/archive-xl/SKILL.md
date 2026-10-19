@@ -6,7 +6,7 @@ description: Inspect and author Cyberpunk 2077 ArchiveXL resource configurations
 
 # ArchiveXL
 
-Resolve aliases from [root AGENTS.md](../../../AGENTS.md) and retain its external-tool policy. Use this skill to identify ArchiveXL files, evaluate its capabilities for a mod, or change resource integration. ArchiveXL loads and extends resources; TweakXL handles database records and redscript handles scripted behavior.
+Resolve aliases from [root AGENTS.md](../../../AGENTS.md); apply its specification workflow before implementation, research destination, localization policy, critical-comments rule and external-tool policy. Use this skill to identify ArchiveXL files, evaluate its capabilities for a mod, or change resource integration. ArchiveXL loads and extends resources; TweakXL handles database records and redscript handles scripted behavior.
 
 ## Workflow
 

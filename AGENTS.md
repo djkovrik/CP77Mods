@@ -63,6 +63,7 @@ These tools need context here rather than separate project skills. Include their
 
 ## Shared Workflow
 
+- Before mod implementation work, follow the specification workflow below. Save research under the project documentation paths below.
 - Inspect the original definition and existing installed mods before changing a shared resource, record, action or scripted method. Read surrounding context and follow referenced definitions.
 - Prefer narrowly scoped changes and mod-specific names. Inspect related `.reds`, `.yaml`/`.tweak`, `.xl`, CET Lua and native dependencies when diagnosing cross-layer behavior.
 - Use `rg` for source discovery. The detailed game-script navigation is in the redscript skill; the observed REDmod database map is in the tweak-xl skill.
@@ -70,6 +71,25 @@ These tools need context here rather than separate project skills. Include their
 - Keep depot paths within game resources separate from Windows installation paths. Document which files belong in each installation directory when a mod spans layers.
 - Source links are reference material, not standing authorization to invoke external connectors. Preserve the MCP policy above; use local sources first.
 - Report static checks separately from framework loading and actual in-game behavior. Documentation-only changes do not require compiling game scripts.
+
+## Documentation And Specifications
+
+Project documentation lives in `<MOD_SCRIPTS_ROOT>\docs`, outside individual mod script folders.
+
+- Save the results of every research task in `docs\research\<mod-name>`. Reuse an existing mod directory; Wannabe Edgerunner uses `docs\research\wannabe-edgerunner`. Keep findings, source references and supporting artifacts together there.
+- Before any work that changes or extends a mod's codebase, search `docs\spec` for its specification, including subdirectories and references to the mod's names. Read a matching specification in full and treat it as the primary source of truth for intended mod behavior.
+- When a specification exists, agree and finalize the corresponding specification changes with the user before editing implementation files. Existing explicit approval remains valid for the agreed scope; new implementation decisions that change that scope return to the specification first.
+- If no matching specification exists, use the usual modding workflow; creating one is not a prerequisite. A missing `docs\spec` directory also means no specification was found.
+
+## Localization
+
+- Assume mods use ArchiveXL localization by default. Use their localization resources; do not create Codeware localization providers, packages or a parallel localization system.
+- When creating, changing or updating localization, or when a localization key's actual text must be checked, ask the user for the directory containing that mod's localization JSON files and read the relevant files before proceeding with the dependent work. Reuse a path the user has already supplied for that mod in the current work.
+- Resolve text and keys from those JSON files rather than guessing from key names or introducing hardcoded text. Follow the [ArchiveXL skill](.agents/skills/archive-xl/SKILL.md) for resource integration.
+
+## Code Comments
+
+Leave code comments only at critically important points where the reason or constraint is not clear from the code, such as a compatibility workaround, lifecycle hazard or performance invariant. Explain why the code must behave that way; express routine behavior through clear names and structure.
 
 ## Cost Of Calls And Loops
 

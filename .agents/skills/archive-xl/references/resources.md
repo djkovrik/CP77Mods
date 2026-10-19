@@ -24,6 +24,8 @@ localization:
 
 The factory is a game `C2dArray` resource containing name/path/preload columns; it can register `.ent` or `.app` resources. Create/convert it with the appropriate resource tooling. This configuration registers the resource, not a new TweakDB item record.
 
+Before working on localization text or keys, follow the [project localization policy](../../../../AGENTS.md#localization) to obtain and read the mod's JSON sources.
+
 For new localization, use a unique secondary key. `femaleVariant` provides the default text when a male variant is absent. Editing existing translations uses their primary key. The first configured language is the fallback; order it deliberately and test unsupported-language fallback.
 
 ## Validation boundaries

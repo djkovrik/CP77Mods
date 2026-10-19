@@ -6,7 +6,7 @@ description: Develop and review Cyberpunk 2077 redscript mods, game hooks, Codew
 
 # redscript
 
-Use this for `.reds` behavior and scripting APIs. Resolve path aliases from [root AGENTS.md](../../../AGENTS.md); retain its connector restrictions and cost-of-calls rules. Game reference sources use `.swift` extensions but are not Swift.
+Use this for `.reds` behavior and scripting APIs. Resolve path aliases from [root AGENTS.md](../../../AGENTS.md); apply its specification workflow before implementation, research destination, localization policy, critical-comments rule, connector restrictions and cost-of-calls rules. Game reference sources use `.swift` extensions but are not Swift.
 
 ## Workflow
 
