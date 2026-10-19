@@ -643,6 +643,19 @@ protected final const func ToFirstEquip(const stateContext: ref<StateContext>, c
   return firstEquipResult.valid && firstEquipResult.value && !preventFirstEquip && this.ToEquipped(stateContext, scriptInterface);
 }
 
+@wrapMethod(DefaultTransition)
+protected final const func IsRightHandInEquippedState(const stateContext: ref<StateContext>) -> Bool {
+  let result: Bool = wrappedMethod(stateContext);
+  let weaponReadiness: ref<WeaponReadyListenerTransition> = this as WeaponReadyListenerTransition;
+  if result || !IsDefined(weaponReadiness) {
+    return result;
+  };
+  let identifier: StateMachineIdentifier;
+  identifier.definitionName = n"Equipment";
+  identifier.referenceName = n"RightHand";
+  return stateContext.IsStateActiveWithIdentifier(identifier, n"firstEquip");
+}
+
 @replaceMethod(FirstEquipEvents)
 protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
   let broadcaster: ref<StimBroadcasterComponent>;
