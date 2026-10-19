@@ -4,6 +4,9 @@ import Edgerunning.Common.E
 public class EdgerunningSystem extends ScriptableSystem {
 
   private let player: wref<PlayerPuppet>;
+  private let levelBlackboard: ref<IBlackboard>;
+  private let levelListener: ref<CallbackHandle>;
+  private let observedLevel: Int32;
 
   private let phase: EdgerunningPhase;
   private let generation: Uint32;
@@ -11,6 +14,10 @@ public class EdgerunningSystem extends ScriptableSystem {
   private let detachedCallback: Uint32;
   private let transitioning: Bool;
   private let psychosisCombat: ref<WEPsychosisCombat>;
+  private let passiveRecovery: ref<WEPassiveRecovery>;
+  private persistent let passiveRecoveryEnabled: Bool = false;
+  private persistent let passiveRecoveryDelay: Float = 60.0;
+  private persistent let passiveRecoveryEpisode: Bool = false;
   private let psychosisShooting: Bool = true;
   private let psychosisOutlines: Bool = true;
   private let psychosisExcludeCivilians: Bool;
@@ -82,13 +89,17 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.InvalidateCurrentState();
   }
 
-  private func OnAttach() -> Void {
+  public func OnAttach() -> Void {
+    E("1");
     let ps: ref<PlayerSystem> = GameInstance.GetPlayerSystem(this.GetGameInstance());
     if this.attachedCallback == 0u { this.attachedCallback = ps.RegisterPlayerPuppetAttachedCallback(this, n"OnEdgerunnerPlayerAttached"); };
     if this.detachedCallback == 0u { this.detachedCallback = ps.RegisterPlayerPuppetDetachedCallback(this, n"OnEdgerunnerPlayerDetached"); };
   }
 
-  private func OnDetach() -> Void {
+  public func OnDetach() -> Void {
+    E("2");
+    this.StopLevelTracking();
+    this.StopPassiveRecovery();
     this.StopEverythingNew();
     let ps: ref<PlayerSystem> = GameInstance.GetPlayerSystem(this.GetGameInstance());
     ps.UnregisterPlayerPuppetAttachedCallback(this.attachedCallback);
@@ -98,13 +109,24 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.player = null;
   }
 
-  private func OnRestored(saveVersion: Int32, gameVersion: Int32) -> Void {
+  public func OnRestored(saveVersion: Int32, gameVersion: Int32) -> Void {
+    E("3");
+    this.StopLevelTracking();
+    this.StopPassiveRecovery();
+    let restoredDelay: Float = this.passiveRecoveryEpisode ? 60.0 : this.passiveRecoveryDelay;
+    this.passiveRecoveryEpisode = false;
     this.StopEverythingNew();
-    if IsDefined(this.player) { this.InvalidateCurrentState(true); };
+    this.passiveRecoveryDelay = restoredDelay;
+    if IsDefined(this.player) {
+      this.OnSettingsChanged();
+      this.StartLevelTracking();
+    };
   }
 
   private func OnEdgerunnerPlayerDetached(player: ref<GameObject>) -> Void {
     if player == this.player {
+      this.StopLevelTracking();
+      this.StopPassiveRecovery();
       this.StopEverythingNew();
       this.player = null;
       this.psmBB = null;
@@ -161,6 +183,8 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   private func InitializePlayer(player: ref<PlayerPuppet>) -> Void {
     if !IsDefined(player) || player == this.player { return; };
+    this.StopLevelTracking();
+    this.StopPassiveRecovery();
     this.StopEverythingNew();
     if IsDefined(player) {
       this.player = player;
@@ -195,10 +219,33 @@ public class EdgerunningSystem extends ScriptableSystem {
       };
 
       this.InvalidateCurrentState(true);
+      this.StartLevelTracking();
+      this.ConfigurePassiveRecovery();
     };
 
   }
 
+
+  private func StartLevelTracking() -> Void {
+    if !IsDefined(this.player) || IsDefined(this.levelListener) { return; };
+    this.observedLevel = Cast<Int32>(this.statsSystem.GetStatValue(Cast<StatsObjectID>(this.player.GetEntityID()), gamedataStatType.Level));
+    this.levelBlackboard = GameInstance.GetBlackboardSystem(this.GetGameInstance()).Get(GetAllBlackboardDefs().UI_PlayerStats);
+    this.levelListener = this.levelBlackboard.RegisterListenerInt(GetAllBlackboardDefs().UI_PlayerStats.Level, this, n"OnHumanityLevelChanged");
+  }
+
+  private func StopLevelTracking() -> Void {
+    if IsDefined(this.levelBlackboard) && IsDefined(this.levelListener) {
+      this.levelBlackboard.UnregisterListenerInt(GetAllBlackboardDefs().UI_PlayerStats.Level, this.levelListener);
+    };
+    this.levelListener = null;
+    this.levelBlackboard = null;
+  }
+
+  protected cb func OnHumanityLevelChanged(level: Int32) -> Bool {
+    if !IsDefined(this.player) || !IsDefined(this.levelListener) || level == this.observedLevel { return false; };
+    this.observedLevel = level;
+    this.InvalidateCurrentState();
+  }
 
   public func RunPrePsychosisFlow() -> Void {
     if this.IsPsychosisActive() || Equals(this.phase, EdgerunningPhase.Recovery) || Equals(this.phase, EdgerunningPhase.PrePsychosis) || !this.IsEpisodeContextSafe() {
@@ -220,6 +267,8 @@ public class EdgerunningSystem extends ScriptableSystem {
     
     this.StopEverythingNew();
     this.phase = EdgerunningPhase.Psychosis;
+    this.passiveRecoveryEpisode = true;
+    this.ResetPassiveRecoveryDelay();
     this.effectsHelper.RefreshConfig();
     this.preventionHelper.RefreshConfig(this.config);
     this.effectsHelper.RunNewPsychosisEffect();
@@ -284,6 +333,11 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public func StopEverythingNew() -> Void {
     if this.transitioning { return; };
+    let endedEpisode: Bool = this.IsPsychosisActive();
+    if endedEpisode {
+      this.passiveRecoveryEpisode = false;
+      this.ResetPassiveRecoveryDelay();
+    };
     this.transitioning = true;
     this.generation += 1u;
     this.phase = EdgerunningPhase.Idle;
@@ -307,6 +361,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     if IsDefined(this.preventionHelper) { this.preventionHelper.CancelScheduledPreventionActivity(); };
     if IsDefined(this.teleportHelper) { this.teleportHelper.CancelScheduledTeleportEvents(); };
     this.transitioning = false;
+    if endedEpisode && IsDefined(this.passiveRecovery) { this.passiveRecovery.RefreshContext(); };
   }
 
 
@@ -314,6 +369,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     if !IsDefined(this.effectsChecker) { return; };
     this.StopEverythingNew();
     this.effectsChecker.OnPossessionChanged(playerPossesion);
+    if IsDefined(this.passiveRecovery) { this.passiveRecovery.RefreshContext(); };
     this.InvalidateCurrentState();
   }
 
@@ -330,6 +386,7 @@ public class EdgerunningSystem extends ScriptableSystem {
       this.preventionHelper.RefreshConfig(this.config);
     };
     this.InvalidateCurrentState();
+    this.ConfigurePassiveRecovery();
   }
 
   public func OnEnemyKilled(affiliation: gamedataAffiliation) -> Void {
@@ -929,6 +986,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.currentHumanityDamage = Clamp(this.currentHumanityDamage, 0, total);
     // Split only the incoming cost, avoiding loss of precision in a large saved integer.
     let available: Int32 = total - this.currentHumanityDamage;
+    if available > 0 { this.ResetPassiveRecoveryDelay(); };
     let combined: Float = exactCost + this.fractionalHumanityDamage;
     if combined >= Cast<Float>(available) {
       this.currentHumanityDamage = total;
@@ -1131,11 +1189,92 @@ public class EdgerunningSystem extends ScriptableSystem {
       return;
     };
     if this.currentHumanityExact < Cast<Float>(this.psychosisThreshold) || (this.currentHumanityPool == 0 && this.config.alwaysRunAtZero) {
-      this.RunPrePsychosisFlow();
+      if Equals(this.phase, EdgerunningPhase.PrePsychosis) {
+        if !this.effectsChecker.IsNewPrePsychosisActive() { this.effectsHelper.ApplyPrePsychosisStatusEffect(); };
+      } else {
+        this.RunPrePsychosisFlow();
+      };
       return;
     };
 
     E("NO EFFECTS APPLIED");
+  }
+
+  private func StopPassiveRecovery() -> Void {
+    if IsDefined(this.passiveRecovery) { this.passiveRecovery.Stop(); };
+    this.passiveRecovery = null;
+  }
+
+  private func ConfigurePassiveRecovery() -> Void {
+    if !IsDefined(this.config) { return; };
+    let enabled: Bool = this.config.passiveHumanityRecovery;
+    if NotEquals(enabled, this.passiveRecoveryEnabled) {
+      this.passiveRecoveryDelay = 60.0;
+      this.passiveRecoveryEnabled = enabled;
+    };
+    if !enabled { this.StopPassiveRecovery(); return; };
+    if !IsDefined(this.passiveRecovery) && IsDefined(this.player) {
+      this.passiveRecovery = new WEPassiveRecovery();
+      this.passiveRecovery.Start(this, this.player);
+    };
+  }
+
+  public func ResetPassiveRecoveryDelay() -> Void {
+    this.passiveRecoveryDelay = 60.0;
+    if IsDefined(this.passiveRecovery) { this.passiveRecovery.RefreshContext(); };
+  }
+
+  public func IsPassiveRecoveryContextSafe() -> Bool {
+    if !this.passiveRecoveryEnabled || !IsDefined(this.player) || !IsDefined(this.effectsChecker) { return false; };
+    if this.IsPsychosisActive() || this.player.IsDead() || !this.player.IsAttached() { return false; };
+    return GameInstance.GetPlayerSystem(this.GetGameInstance()).GetLocalPlayerControlledGameObject() == this.player
+      && !this.effectsChecker.IsPossessed();
+  }
+
+  public func AdvancePassiveRecovery(seconds: Float) -> Void {
+    if !this.passiveRecoveryEnabled || seconds <= 0.0 || !IsDefined(this.player) { return; };
+    let waiting: Float = MinF(seconds, this.passiveRecoveryDelay);
+    this.passiveRecoveryDelay = MaxF(0.0, this.passiveRecoveryDelay - waiting);
+    seconds -= waiting;
+    if seconds <= 0.0 || (this.currentHumanityDamage == 0 && this.fractionalHumanityDamage <= 0.0) { return; };
+
+    // Reuse the last evaluated maximum; never scan external penalties on a recovery tick.
+    let total: Int32 = this.currentHumanityPool + this.currentHumanityDamage;
+    let previousDamage: Int32 = this.currentHumanityDamage;
+    let previousChance: Int32 = this.GetPsychosisChance();
+    let previousColor: CName = this.GetHumanityColor();
+    let amount: Float = seconds / 120.0;
+    if amount <= this.fractionalHumanityDamage {
+      this.fractionalHumanityDamage -= amount;
+    } else {
+      amount -= this.fractionalHumanityDamage;
+      this.fractionalHumanityDamage = 0.0;
+      if amount >= Cast<Float>(this.currentHumanityDamage) {
+        this.currentHumanityDamage = 0;
+      } else {
+        let whole: Int32 = FloorF(amount);
+        this.currentHumanityDamage -= whole;
+        amount -= Cast<Float>(whole);
+        if amount > 0.0 {
+          this.currentHumanityDamage -= 1;
+          this.fractionalHumanityDamage = 1.0 - amount;
+        };
+      };
+    };
+    if this.fractionalHumanityDamage < 0.00001 { this.fractionalHumanityDamage = 0.0; };
+    this.currentHumanityPool = total - this.currentHumanityDamage;
+    this.currentHumanityExact = Cast<Float>(this.currentHumanityPool) - this.fractionalHumanityDamage;
+    if this.currentHumanityExact >= Cast<Float>(this.psychosisThreshold) { this.StopPrePsychosisFlow(); };
+
+    // Fractional progress is saved every tick; UI work is needed only for visible changes.
+    if previousDamage != this.currentHumanityDamage || previousChance != this.GetPsychosisChance() || NotEquals(previousColor, this.GetHumanityColor()) {
+      this.psmBB.SetInt(GetAllBlackboardDefs().PlayerStateMachine.HumanityDamage, this.currentHumanityDamage, true);
+      let evt: ref<UpdateHumanityCounterEvent> = new UpdateHumanityCounterEvent();
+      evt.current = this.currentHumanityPool;
+      evt.total = total;
+      evt.color = this.GetHumanityColor();
+      GameInstance.GetUISystem(this.player.GetGame()).QueueEvent(evt);
+    };
   }
 
   public func IsPsychosisActive() -> Bool {
@@ -1145,6 +1284,13 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public func IsRecoveryActive() -> Bool {
     return Equals(this.phase, EdgerunningPhase.Recovery) && this.IsEpisodeContextSafe();
+  }
+
+  public func OnPrePsychosisEffectRemoved() -> Void {
+    // Cleanup must not resurrect a phase or restart its pending check.
+    if !this.transitioning && Equals(this.phase, EdgerunningPhase.PrePsychosis) {
+      this.InvalidateCurrentState();
+    };
   }
 
   public func OnRecoveryEffectRemoved() -> Void {

@@ -48,10 +48,14 @@ public class PsychosisEffectsHelper {
   public func RunNewPrePsychosisEffect() -> Void {
     E("!!! Fx New - Pre Psychosis");
     this.PlayVFXDelayed(n"fx_damage_high", 0.5);
+    if !this.config.lightVisuals { this.PlayVFXDelayed(n"personal_link_glitch", 1.0); };
+    this.ApplyPrePsychosisStatusEffect();
+  }
+
+  public func ApplyPrePsychosisStatusEffect() -> Void {
     if this.config.lightVisuals {
       this.ApplyStatusEffect(t"BaseStatusEffect.NewPrePsychosisEffectLightFx");
     } else {
-      this.PlayVFXDelayed(n"personal_link_glitch", 1.0);
       this.ApplyStatusEffect(t"BaseStatusEffect.NewPrePsychosisEffectNormalFx");
     };
   }

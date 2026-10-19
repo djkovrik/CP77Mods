@@ -29,6 +29,9 @@ protected cb func OnStatusEffectRemoved(evt: ref<RemoveStatusEffect>) -> Bool {
   if Equals(effectId, t"BaseStatusEffect.NewPostPsychosisEffectNormalFx") || Equals(effectId, t"BaseStatusEffect.NewPostPsychosisEffectLightFx") {
     EdgerunningSystem.GetInstance(this.GetGame()).OnRecoveryEffectRemoved();
   };
+  if Equals(effectId, t"BaseStatusEffect.NewPrePsychosisEffectNormalFx") || Equals(effectId, t"BaseStatusEffect.NewPrePsychosisEffectLightFx") {
+    system.OnPrePsychosisEffectRemoved();
+  };
 }
 
 @addMethod(PlayerPuppet)

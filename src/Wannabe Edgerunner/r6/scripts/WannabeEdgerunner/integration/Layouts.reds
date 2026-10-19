@@ -40,6 +40,7 @@ protected cb func OnInitialize() -> Bool {
     r"base\\gameplay\\gui\\fullscreen\\wannabe_edgerunner_bars.inkwidget", 
     n"Root:Edgerunning.Controller.NewHumanityBarController"
   );
+  this.WEUpdateHumanityBarVisibility();
 }
 
 @wrapMethod(RipperdocMetersCapacity)
@@ -145,26 +146,20 @@ public func SetData(tooltipData: ref<ATooltipData>) -> Void {
 }
 
 @wrapMethod(RipperDocGameController)
-protected cb func OnPreviewCyberwareClick(evt: ref<inkPointerEvent>) -> Bool {
-  wrappedMethod(evt);
-  let bar: wref<NewHumanityBarController> = this.weHumanityController;
-  if IsDefined(bar) { bar.DismissHumanityTooltip(); };
-  this.edgerunnerHumanityBar.SetVisible(false);
+private final func DisplayInventory(visible: Bool) -> Void {
+  wrappedMethod(visible);
+  this.WEUpdateHumanityBarVisibility();
 }
 
-@wrapMethod(RipperDocGameController)
-protected cb func OnSelectorChange(evt: ref<RipperdocSelectorChangeEvent>) -> Bool {
-  wrappedMethod(evt);
-  let bar: wref<NewHumanityBarController> = this.weHumanityController;
-  if IsDefined(bar) { bar.DismissHumanityTooltip(); };
-  this.edgerunnerHumanityBar.SetVisible(false);
-}
-
-@wrapMethod(RipperDocGameController)
-protected cb func OnBack(userData: ref<IScriptable>) -> Bool {
-  wrappedMethod(userData);
-  this.edgerunnerHumanityBar.SetVisible(true);
-  this.WERefreshHumanityBar();
+@addMethod(RipperDocGameController)
+private func WEUpdateHumanityBarVisibility() -> Void {
+  if !IsDefined(this.edgerunnerHumanityBar) { return; };
+  if this.m_isInventoryOpen {
+    let bar: wref<NewHumanityBarController> = this.weHumanityController;
+    if IsDefined(bar) { bar.DismissHumanityTooltip(); };
+  };
+  this.edgerunnerHumanityBar.SetVisible(!this.m_isInventoryOpen);
+  if !this.m_isInventoryOpen { this.WERefreshHumanityBar(); };
 }
 
 

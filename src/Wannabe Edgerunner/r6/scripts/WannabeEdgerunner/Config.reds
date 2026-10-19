@@ -31,6 +31,13 @@ public class EdgerunningConfig {
   public let psychosisThreshold: Int32 = 20;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
+  @runtimeProperty("ModSettings.category", "Mod-Edg-Humanity")
+  @runtimeProperty("ModSettings.category.order", "1")
+  @runtimeProperty("ModSettings.displayName", "Mod-Edg-Humanity-Passive-Recovery")
+  @runtimeProperty("ModSettings.description", "Mod-Edg-Humanity-Passive-Recovery-Desc")
+  public let passiveHumanityRecovery: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "LocKey#20638")
   @runtimeProperty("ModSettings.category.order", "2")
   @runtimeProperty("ModSettings.displayName", "Mod-Edg-Check-Period")
@@ -336,7 +343,7 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Stats-Tiers-Tier1")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Quality-Desc")
-  @runtimeProperty("ModSettings.step", "0.2")
+  @runtimeProperty("ModSettings.step", "0.1")
   @runtimeProperty("ModSettings.min", "0.0")
   @runtimeProperty("ModSettings.max", "10.0") 
   public let qualityMultiplierCommon: Float = 2.0;
@@ -346,7 +353,7 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Stats-Tiers-Tier1plus")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Quality-Desc")
-  @runtimeProperty("ModSettings.step", "0.2")
+  @runtimeProperty("ModSettings.step", "0.1")
   @runtimeProperty("ModSettings.min", "0.0")
   @runtimeProperty("ModSettings.max", "10.0") 
   public let qualityMultiplierCommonPlus: Float = 1.9;
@@ -356,7 +363,7 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Stats-Tiers-Tier2")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Quality-Desc")
-  @runtimeProperty("ModSettings.step", "0.2")
+  @runtimeProperty("ModSettings.step", "0.1")
   @runtimeProperty("ModSettings.min", "0.0")
   @runtimeProperty("ModSettings.max", "10.0") 
   public let qualityMultiplierUncommon: Float = 1.8;
@@ -366,7 +373,7 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Stats-Tiers-Tier2plus")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Quality-Desc")
-  @runtimeProperty("ModSettings.step", "0.2")
+  @runtimeProperty("ModSettings.step", "0.1")
   @runtimeProperty("ModSettings.min", "0.0")
   @runtimeProperty("ModSettings.max", "10.0") 
   public let qualityMultiplierUncommonPlus: Float = 1.7;
@@ -376,7 +383,7 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Stats-Tiers-Tier3")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Quality-Desc")
-  @runtimeProperty("ModSettings.step", "0.2")
+  @runtimeProperty("ModSettings.step", "0.1")
   @runtimeProperty("ModSettings.min", "0.0")
   @runtimeProperty("ModSettings.max", "10.0") 
   public let qualityMultiplierRare: Float = 1.6;
@@ -386,7 +393,7 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Stats-Tiers-Tier3plus")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Quality-Desc")
-  @runtimeProperty("ModSettings.step", "0.2")
+  @runtimeProperty("ModSettings.step", "0.1")
   @runtimeProperty("ModSettings.min", "0.0")
   @runtimeProperty("ModSettings.max", "10.0") 
   public let qualityMultiplierRarePlus: Float = 1.5;
@@ -396,7 +403,7 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Stats-Tiers-Tier4")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Quality-Desc")
-  @runtimeProperty("ModSettings.step", "0.2")
+  @runtimeProperty("ModSettings.step", "0.1")
   @runtimeProperty("ModSettings.min", "0.0")
   @runtimeProperty("ModSettings.max", "10.0") 
   public let qualityMultiplierEpic: Float = 1.4;
@@ -406,7 +413,7 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Stats-Tiers-Tier4plus")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Quality-Desc")
-  @runtimeProperty("ModSettings.step", "0.2")
+  @runtimeProperty("ModSettings.step", "0.1")
   @runtimeProperty("ModSettings.min", "0.0")
   @runtimeProperty("ModSettings.max", "10.0") 
   public let qualityMultiplierEpicPlus: Float = 1.3;
@@ -416,7 +423,7 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Stats-Tiers-Tier5")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Quality-Desc")
-  @runtimeProperty("ModSettings.step", "0.2")
+  @runtimeProperty("ModSettings.step", "0.1")
   @runtimeProperty("ModSettings.min", "0.0")
   @runtimeProperty("ModSettings.max", "10.0") 
   public let qualityMultiplierLegendary: Float = 1.2;
@@ -426,7 +433,7 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Stats-Tiers-Tier5plus")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Quality-Desc")
-  @runtimeProperty("ModSettings.step", "0.2")
+  @runtimeProperty("ModSettings.step", "0.1")
   @runtimeProperty("ModSettings.min", "0.0")
   @runtimeProperty("ModSettings.max", "10.0") 
   public let qualityMultiplierLegendaryPlus: Float = 1.1;
@@ -436,7 +443,7 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.category.order", "6")
   @runtimeProperty("ModSettings.displayName", "Gameplay-RPG-Stats-Tiers-Tier5plusplus")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Quality-Desc")
-  @runtimeProperty("ModSettings.step", "0.2")
+  @runtimeProperty("ModSettings.step", "0.1")
   @runtimeProperty("ModSettings.min", "0.0")
   @runtimeProperty("ModSettings.max", "10.0") 
   public let qualityMultiplierLegendaryPlusPlus: Float = 1.1;

@@ -1,31 +1,25 @@
 import Edgerunning.System.EdgerunningSystem
 import Edgerunning.Common.E
 
+@addField(ScriptedPuppetPS)
+public persistent let weHumanityKillProcessed: Bool;
+
 @wrapMethod(ScriptedPuppet)
 protected func RewardKiller(killer: wref<GameObject>, killType: gameKillType, isAnyDamageNonlethal: Bool) -> Void {
-  let rewardDisabled: Bool = this.m_killRewardDisabled;
+  let processKill: Bool = false;
+  if !this.m_killRewardDisabled && IsDefined(killer as PlayerPuppet)
+    && NotEquals(killType, gameKillType.Defeat) && !this.m_forceDefeatReward
+    && Equals(this.GetNPCType(), gamedataNPCType.Human) {
+    let state: ref<ScriptedPuppetPS> = this.GetPuppetPS();
+    if IsDefined(state) && !state.weHumanityKillProcessed {
+      // Claim before the wrapper chain can reenter; keep the claim across streaming/load.
+      state.weHumanityKillProcessed = true;
+      processKill = true;
+    };
+  };
   wrappedMethod(killer, killType, isAnyDamageNonlethal);
-  if rewardDisabled { return; };
-
-  let record: ref<Character_Record> = this.GetRecord();
-  let affiliation: gamedataAffiliation = record.Affiliation().Type();
-  let type: ENeutralizeType;
-
-  if IsDefined(killer as PlayerPuppet) {
-    if Equals(killType, gameKillType.Defeat) || this.m_forceDefeatReward {
-      if isAnyDamageNonlethal {
-        type = ENeutralizeType.Unconscious;
-      } else {
-        type = ENeutralizeType.Defeated;
-      };
-    } else {
-      type = ENeutralizeType.Killed;
-    };
-
-    E(s"Reward killer: target - \(affiliation), killType: \(killType), neutralizeType: \(type), NPC type: \(this.GetNPCType())");
-    if Equals(type, ENeutralizeType.Killed) && Equals(this.GetNPCType(), gamedataNPCType.Human) {
-      EdgerunningSystem.GetInstance(this.GetGame()).OnEnemyKilled(affiliation);
-    };
+  if processKill {
+    EdgerunningSystem.GetInstance(this.GetGame()).OnEnemyKilled(this.GetRecord().Affiliation().Type());
   };
 }
 
