@@ -13,9 +13,14 @@ public exec func EdgerunnerPsychosisCombatStart(gi: GameInstance) -> Void {
   EdgerunningSystem.GetInstance(gi).RunPsychosisFlow();
 }
 
-// CET command to stop FX effects - Game.EdgerunnerClear()
+// One-shot emergency cleanup: Game.EdgerunnerClear().
 public exec func EdgerunnerClear(gi: GameInstance) -> Void {
-  EdgerunningSystem.GetInstance(gi).StopEverythingNew();
+  let system: ref<EdgerunningSystem> = EdgerunningSystem.GetInstance(gi);
+  if !IsDefined(system) {
+    FTLog("EdgerunnerClear: system unavailable; load a game with Wannabe Edgerunner enabled.");
+    return;
+  };
+  system.EmergencyClear();
 }
 
 // CET command to get current coords - Game.GetDistrict()

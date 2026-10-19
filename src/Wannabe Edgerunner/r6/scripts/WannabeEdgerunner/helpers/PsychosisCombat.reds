@@ -128,6 +128,17 @@ public class WEPsychosisCombat {
     if value && !this.stopped { this.Pause(); };
   }
 
+  public func EmergencyStop() -> Void {
+    if !this.stopped && IsDefined(this.player) {
+      let weapon: ref<WeaponObject> = GameObject.GetActiveWeapon(this.player);
+      if IsDefined(weapon) {
+        let stoppedFire: Bool = weapon.WEPsychosisCombatStopFire(this.player);
+        FTLog(s"EdgerunnerClear: native weapon stop accepted=\(stoppedFire)");
+      };
+    };
+    this.Stop();
+  }
+
   public func Stop() -> Void {
     if this.stopped { return; };
     if IsDefined(this.player) && this.player.wePsychosisCombat == this { this.player.wePsychosisCombat = null; };

@@ -365,6 +365,42 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
 
+  public func EmergencyClear() -> Void {
+    let currentPlayer: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(this.GetGameInstance()).GetLocalPlayerControlledGameObject() as PlayerPuppet;
+    if !IsDefined(currentPlayer) {
+      FTLog("EdgerunnerClear: no local player; load a game before clearing effects.");
+      return;
+    };
+    if this.transitioning { FTLog("EdgerunnerClear: cleanup in progress; retry after the current transition."); return; };
+
+    this.StopPassiveRecovery();
+    this.wentFullPsycho = false;
+    this.currentHumanityDamage = 0;
+    this.fractionalHumanityDamage = 0.0;
+    this.humanityRestoringActionTakenLover = false;
+    this.humanityRestoringActionTakenPet = false;
+    this.humanityRestoringActionTakenDonation = false;
+    this.humanityRestoringActionTakenApartment = false;
+    this.humanityRestoringActionTakenSocial = false;
+    this.humanityRestoringActionTakenShower = false;
+    if IsDefined(this.psychosisCombat) { this.psychosisCombat.EmergencyStop(); };
+    this.StopEverythingNew();
+    this.passiveRecoveryEpisode = false;
+    this.passiveRecoveryDelay = 60.0;
+    GameInstance.GetPreventionSpawnSystem(this.GetGameInstance()).WECancelPendingVictims();
+
+    // Removing Neuroblockers dispatches state updates: keep them out of this transaction.
+    this.transitioning = true;
+    let remaining: Int32 = WEEmergencyEffects.Clear(currentPlayer);
+    if IsDefined(this.player) && this.player != currentPlayer {
+      remaining += WEEmergencyEffects.Clear(this.player);
+    };
+    this.transitioning = false;
+    this.InvalidateCurrentState();
+    this.ConfigurePassiveRecovery();
+    FTLog(s"EdgerunnerClear: sequence cancelled, Humanity restored, aftermath/activity flags cleared; remaining owned status effects=\(remaining). Known FX/audio/camera stop requested. New gameplay remains enabled.");
+  }
+
   public func OnPossessionChanged(playerPossesion: gamedataPlayerPossesion) -> Void {
     if !IsDefined(this.effectsChecker) { return; };
     this.StopEverythingNew();
