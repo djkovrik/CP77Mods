@@ -49,12 +49,12 @@ public class EdgerunningSystem extends ScriptableSystem {
     return !(tier >= EnumInt(gamePSMHighLevel.SceneTier3) && tier <= EnumInt(gamePSMHighLevel.SceneTier5));
   }
 
-  public func CanForceWeaponAction(opt preparingWeapon: Bool) -> Bool {
+  public func CanForceWeaponAction(opt preparingWeapon: Bool, opt allowTransient: Bool) -> Bool {
     if !Equals(this.phase, EdgerunningPhase.Psychosis) || this.IsPsychosisBlocked() { return false; };
     let upperBody: Int32 = this.psmBB.GetInt(GetAllBlackboardDefs().PlayerStateMachine.UpperBody);
-    return upperBody != EnumInt(gamePSMUpperBodyStates.Reload)
-      && (preparingWeapon || upperBody != EnumInt(gamePSMUpperBodyStates.SwitchItems))
-      && upperBody != EnumInt(gamePSMUpperBodyStates.SwitchCyberware)
+    return (allowTransient || upperBody != EnumInt(gamePSMUpperBodyStates.Reload))
+      && (allowTransient || preparingWeapon || upperBody != EnumInt(gamePSMUpperBodyStates.SwitchItems))
+      && (allowTransient || upperBody != EnumInt(gamePSMUpperBodyStates.SwitchCyberware))
       && (preparingWeapon || upperBody != EnumInt(gamePSMUpperBodyStates.TemporaryUnequip))
       && upperBody != EnumInt(gamePSMUpperBodyStates.ForceEmptyHands)
       && this.psmBB.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Zones) != EnumInt(gamePSMZones.Safe)
@@ -1125,7 +1125,7 @@ public class EdgerunningSystem extends ScriptableSystem {
       };
       return;
     };
-    if this.currentHumanityExact >= Cast<Float>(this.psychosisThreshold) { this.StopEverythingNew(); return; };
+    if this.IsHumanityRestored() { this.StopEverythingNew(); return; };
     if this.currentHumanityPool <= 0 && this.config.alwaysRunAtZero && !this.IsPsychosisBlocked() {
       this.RunPsychosisFlow();
       return;
@@ -1164,7 +1164,8 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   private func IsHumanityRestored() -> Bool {
-    return this.currentHumanityExact >= Cast<Float>(this.psychosisThreshold);
+    return this.currentHumanityExact >= Cast<Float>(this.psychosisThreshold)
+      && !(this.currentHumanityPool == 0 && this.config.alwaysRunAtZero);
   }
 
   private func IsPsychosisBlocked() -> Bool {

@@ -1,4 +1,18 @@
+import Edgerunning.Controller.NewHumanityBarController
 import Edgerunning.System.EdgerunningSystem
+
+public class WEHumanityBarReadyEvent extends Event {
+  public let controller: wref<NewHumanityBarController>;
+}
+
+@addField(RipperDocGameController)
+private let weHumanityController: wref<NewHumanityBarController>;
+
+@addMethod(RipperDocGameController)
+protected cb func OnWEHumanityBarReadyEvent(evt: ref<WEHumanityBarReadyEvent>) -> Bool {
+  this.weHumanityController = evt.controller;
+  this.WERefreshHumanityBar();
+}
 
 // -- CYBERWARE MENU --
 
@@ -133,12 +147,16 @@ public func SetData(tooltipData: ref<ATooltipData>) -> Void {
 @wrapMethod(RipperDocGameController)
 protected cb func OnPreviewCyberwareClick(evt: ref<inkPointerEvent>) -> Bool {
   wrappedMethod(evt);
+  let bar: wref<NewHumanityBarController> = this.weHumanityController;
+  if IsDefined(bar) { bar.DismissHumanityTooltip(); };
   this.edgerunnerHumanityBar.SetVisible(false);
 }
 
 @wrapMethod(RipperDocGameController)
 protected cb func OnSelectorChange(evt: ref<RipperdocSelectorChangeEvent>) -> Bool {
   wrappedMethod(evt);
+  let bar: wref<NewHumanityBarController> = this.weHumanityController;
+  if IsDefined(bar) { bar.DismissHumanityTooltip(); };
   this.edgerunnerHumanityBar.SetVisible(false);
 }
 
@@ -146,8 +164,21 @@ protected cb func OnSelectorChange(evt: ref<RipperdocSelectorChangeEvent>) -> Bo
 protected cb func OnBack(userData: ref<IScriptable>) -> Bool {
   wrappedMethod(userData);
   this.edgerunnerHumanityBar.SetVisible(true);
+  this.WERefreshHumanityBar();
 }
 
+
+@addMethod(RipperDocGameController)
+private func WERefreshHumanityBar() -> Void {
+  if !IsDefined(this.edgerunnerHumanityBar) { return; };
+  let bar: wref<NewHumanityBarController> = this.weHumanityController;
+  if IsDefined(bar) { bar.RefreshHumanity(); };
+}
+
+@addMethod(RipperDocGameController)
+protected cb func OnUpdateHumanityCounterEvent(evt: ref<UpdateHumanityCounterEvent>) -> Bool {
+  this.WERefreshHumanityBar();
+}
 
 // -- HEALTHBAR --
 

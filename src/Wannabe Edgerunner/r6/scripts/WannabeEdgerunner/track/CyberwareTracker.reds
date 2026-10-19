@@ -16,32 +16,30 @@ private final func UnregisterInterestingFactsListeners() -> Void {
   wrappedMethod();
 }
 
+@addField(PlayerPuppet)
+private let weStarterGrantInProgress: Bool;
+
+@addMethod(PlayerPuppet)
+private final func WETryGrantStarterNeuroblocker() -> Void {
+  if this.weStarterGrantInProgress { return; };
+  let quests: ref<QuestsSystem> = GameInstance.GetQuestsSystem(this.GetGame());
+  if quests.GetFact(n"q001_hide_ammo_counter") != 0 || quests.GetFact(n"vik_neuroblockers_added") != 0 { return; };
+  this.weStarterGrantInProgress = true;
+  if GameInstance.GetTransactionSystem(this.GetGame()).GiveItemByTDBID(this, t"Items.ripperdoc_med_common", 1) {
+    quests.SetFact(n"vik_neuroblockers_added", 1);
+  };
+  this.weStarterGrantInProgress = false;
+}
+
 @addMethod(PlayerPuppet)
 public final func OnNeuroblockersFactChanged(val: Int32) -> Void {
-  let transactionSystem: ref<TransactionSystem>;
-  let questsSystem: ref<QuestsSystem>;
-  if val == 0 {
-    transactionSystem = GameInstance.GetTransactionSystem(this.GetGame());
-    questsSystem = GameInstance.GetQuestsSystem(this.GetGame());
-    transactionSystem.GiveItemByTDBID(this, t"Items.ripperdoc_med_common", 1);
-    questsSystem.SetFact(n"vik_neuroblockers_added", 1);
-  };
+  if val == 0 { this.WETryGrantStarterNeuroblocker(); };
 }
 
 @wrapMethod(PlayerPuppet)
 protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpawn>) -> Bool {
   wrappedMethod(evt);
-
-  let questsSystem: ref<QuestsSystem> = GameInstance.GetQuestsSystem(this.GetGame());
-  let transactionSystem: ref<TransactionSystem>;
-  let tutorialFact: Int32 = questsSystem.GetFact(n"q001_hide_ammo_counter");
-  let neuroblockersFact: Int32 = questsSystem.GetFact(n"vik_neuroblockers_added");
-
-  if Equals(tutorialFact, 0) && Equals(neuroblockersFact, 0) {
-    transactionSystem = GameInstance.GetTransactionSystem(this.GetGame());
-    transactionSystem.GiveItemByTDBID(this, t"Items.ripperdoc_med_common", 1);
-    questsSystem.SetFact(n"vik_neuroblockers_added", 1);
-  };
+  this.WETryGrantStarterNeuroblocker();
 }
 
 @wrapMethod(PlayerPuppet)

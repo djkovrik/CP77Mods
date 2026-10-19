@@ -36,6 +36,7 @@ public class WEPsychosisCombat {
   private let menuListener: ref<CallbackHandle>;
   private let photoListener: ref<CallbackHandle>;
   private let stopped: Bool;
+  private let paused: Bool;
   private let shoot: Bool;
   private let outline: Bool;
   private let excludeCivilians: Bool;
@@ -72,7 +73,7 @@ public class WEPsychosisCombat {
   private let crowdRoster: array<EntityID>;
 
   public func AllowsCrowdHeatException(npc: ref<NPCPuppet>) -> Bool {
-    if this.stopped || !this.shoot || !IsDefined(this.player) || !IsDefined(this.system) { return false; };
+    if this.stopped || this.paused || !this.shoot || !IsDefined(this.player) || !IsDefined(this.system) { return false; };
     if this.player.wePsychosisCombat != this || !this.system.IsCrowdPsychosisCurrent(this.generation, this.player) { return false; };
     if this.menu.GetBool(GetAllBlackboardDefs().UI_System.IsInMenu) || this.photo.GetBool(GetAllBlackboardDefs().PhotoMode.IsActive) { return false; };
     if GameInstance.GetTimeSystem(this.player.GetGame()).IsTimeDilationActive() { return false; };
@@ -124,7 +125,7 @@ public class WEPsychosisCombat {
   private func Now() -> Float { return EngineTime.ToFloat(GameInstance.GetSimTime(this.player.GetGame())); }
 
   protected cb func OnBlockedUI(value: Bool) -> Bool {
-    if value { this.Stop(); };
+    if value && !this.stopped { this.Pause(); };
   }
 
   public func Stop() -> Void {
@@ -163,26 +164,65 @@ public class WEPsychosisCombat {
     this.weapon = null;
   }
 
-  private func ContextSafe() -> Bool {
+  private func ContextSafe(opt allowTransient: Bool) -> Bool {
     if !IsDefined(this.system) || !this.system.IsCallbackCurrent(this.generation, this.player) { return false; };
-    if !this.system.CanForceWeaponAction(this.preparingWeapon && this.Now() <= this.drawDeadline) { return false; };
+    if !this.system.CanForceWeaponAction(this.preparingWeapon && this.Now() <= this.drawDeadline, allowTransient) { return false; };
     let bb: ref<IBlackboard> = this.player.GetPlayerStateMachineBlackboard();
-    return !this.menu.GetBool(GetAllBlackboardDefs().UI_System.IsInMenu)
+    let vision: Int32 = bb.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Vision);
+    return (allowTransient || (!this.menu.GetBool(GetAllBlackboardDefs().UI_System.IsInMenu)
       && !this.photo.GetBool(GetAllBlackboardDefs().PhotoMode.IsActive)
-      && !GameInstance.GetTimeSystem(this.player.GetGame()).IsTimeDilationActive()
+      && !GameInstance.GetTimeSystem(this.player.GetGame()).IsTimeDilationActive()))
       && !GameInstance.GetWorkspotSystem(this.player.GetGame()).IsActorInWorkspot(this.player)
       && bb.GetInt(GetAllBlackboardDefs().PlayerStateMachine.HighLevel) == 1
       && bb.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Vitals) == 0
-      && bb.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Vision) == 0
+      && (vision == EnumInt(gamePSMVision.Default) || (allowTransient && vision == EnumInt(gamePSMVision.Focus)))
       && !bb.GetBool(GetAllBlackboardDefs().PlayerStateMachine.SceneAimForced)
       && !bb.GetBool(GetAllBlackboardDefs().PlayerStateMachine.SceneSafeForced);
+  }
+
+  private func Pause() -> Void {
+    if this.stopped || this.paused { return; };
+    this.paused = true;
+    // Keep episode budgets; queued draw requests must lose their ownership.
+    this.preparingWeapon = false;
+    this.raiseWeapon = null;
+    if IsDefined(this.player) && this.player.wePsychosisDrawOwner == this { this.player.wePsychosisDrawOwner = null; };
+    this.ReleaseAim();
+    let i: Int32 = 0;
+    while i < ArraySize(this.highlights) {
+      this.SendHighlight(this.highlights[i], false);
+      i += 1;
+    };
+    ArrayClear(this.highlights);
+    this.result = n"paused";
+  }
+
+  private func CheckContext() -> Bool {
+    if this.ContextSafe() { return true; };
+    if this.stopped { return false; };
+    if !this.ContextSafe(true) { this.result = n"context_blocked"; this.Stop(); return false; };
+    this.Pause();
+    return false;
+  }
+
+  private func ScheduleTick() -> Void {
+    if this.stopped { return; };
+    let callback: ref<WEPsychosisCombatTick> = new WEPsychosisCombatTick();
+    callback.owner = this;
+    this.pending = this.delays.DelayCallback(callback, 0.1, false);
   }
 
   public func Tick() -> Void {
     this.pending = GetInvalidDelayID();
     if this.stopped { return; };
-    if !this.ContextSafe() { this.result = n"context_blocked"; this.Stop(); return; };
+    if !this.CheckContext() { this.ScheduleTick(); return; };
     let now: Float = this.Now();
+    if this.paused {
+      this.paused = false;
+      this.nextAttempt = MaxF(this.nextAttempt, now + 1.5);
+      this.nextSearch = now;
+      this.result = n"resumed";
+    };
     this.UpdatePublicSafeRequest(now);
     if this.preparingWeapon {
       let active: wref<WeaponObject> = GameObject.GetActiveWeapon(this.player);
@@ -198,7 +238,7 @@ public class WEPsychosisCombat {
           this.preparingWeapon = false;
           this.result = n"draw_timeout_or_empty";
           E("Psychosis combat draw timed out; no retry this episode");
-          if !this.system.CanForceWeaponAction() { this.Stop(); return; };
+          if !this.CheckContext() { this.ScheduleTick(); return; };
         };
       };
     };
@@ -210,11 +250,7 @@ public class WEPsychosisCombat {
         this.nextSearch = now + 0.5;
       };
     };
-    if !this.stopped {
-      let callback: ref<WEPsychosisCombatTick> = new WEPsychosisCombatTick();
-      callback.owner = this;
-      this.pending = this.delays.DelayCallback(callback, 0.1, false);
-    };
+    this.ScheduleTick();
   }
 
   private func VisualCandidate(npc: wref<NPCPuppet>) -> Bool {
@@ -360,7 +396,7 @@ public class WEPsychosisCombat {
   }
 
   public func HasPublicSafeRequest(weapon: ref<WeaponObject>) -> Bool {
-    return !this.stopped && IsDefined(weapon) && weapon == this.raiseWeapon;
+    return !this.stopped && !this.paused && IsDefined(weapon) && weapon == this.raiseWeapon;
   }
 
   public func AcceptPublicSafeRequest(player: ref<PlayerPuppet>, weapon: ref<WeaponObject>) -> Bool {
@@ -529,8 +565,9 @@ public class WEPsychosisCombat {
   }
 
   public func DispatchDraw() -> Void {
-    if this.stopped || !this.preparingWeapon || this.drawIssued { return; };
-    if !this.ContextSafe() || this.Now() >= this.drawDeadline { this.Stop(); return; };
+    if this.stopped || this.paused || !this.preparingWeapon || this.drawIssued { return; };
+    if !this.CheckContext() { return; };
+    if this.Now() >= this.drawDeadline { this.Stop(); return; };
     let equipment: ref<EquipmentSystemPlayerData> = EquipmentSystem.GetData(this.player);
     if !IsDefined(equipment) { this.Stop(); return; };
     let item: wref<gameItemData> = GameInstance.GetTransactionSystem(this.player.GetGame()).GetItemData(this.player, this.requestedItem);
@@ -551,7 +588,7 @@ public class WEPsychosisCombat {
   }
 
   public func ClaimFirstEquipSkip(player: ref<PlayerPuppet>, item: ItemID) -> Bool {
-    if this.stopped || !this.preparingWeapon || !this.drawIssued || player != this.player || item != this.requestedItem { return false; };
+    if this.stopped || this.paused || !this.preparingWeapon || !this.drawIssued || player != this.player || item != this.requestedItem { return false; };
     if this.Now() >= this.drawDeadline || !this.ContextSafe() { return false; };
     E("Psychosis combat first-equip suppressed for matching draw request");
     return true;
@@ -687,12 +724,12 @@ public class WEPsychosisCombat {
   }
 
   public func OnReadyAimUpdate(player: ref<PlayerPuppet>, weapon: ref<WeaponObject>, bridge: ref<StateGameScriptInterface>) -> Void {
-    if this.stopped || !this.aiming || player != this.player || weapon != this.weapon { return; };
+    if this.stopped || this.paused || !this.aiming || player != this.player || weapon != this.weapon { return; };
     if !IsDefined(bridge) || bridge.owner != weapon || bridge.executionOwner != player { return; };
     let now: Float = this.Now();
     if now < this.nextReadyAimCheck { return; };
     this.nextReadyAimCheck = now + 0.10;
-    if !this.ContextSafe() { this.result = n"context_blocked"; this.Stop(); return; };
+    if !this.CheckContext() { return; };
     weapon.wePsychosisCombatWeaponInterface = bridge;
     this.CheckAim(now);
   }
@@ -842,7 +879,7 @@ public class WEPsychosisCombat {
 
   public func PrintStatus() -> Void {
     FTLog(s"WE preparationTried=\(this.preparationTried) preparing=\(this.preparingWeapon) drawIssued=\(this.drawIssued) requestedItem=\(this.requestedItem) result=\(this.result)");
-    FTLog(s"WE psychosisCombat stopped=\(this.stopped) generation=\(this.generation) aiming=\(this.aiming) attempts=\(this.attempts)/6 FireCalls=\(this.shots)/3 outlines=\(ArraySize(this.highlights)) nativeParts=\(this.partsCount)");
+    FTLog(s"WE psychosisCombat stopped=\(this.stopped) paused=\(this.paused) generation=\(this.generation) aiming=\(this.aiming) attempts=\(this.attempts)/6 FireCalls=\(this.shots)/3 outlines=\(ArraySize(this.highlights)) nativeParts=\(this.partsCount)");
   }
 }
 

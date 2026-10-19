@@ -8,6 +8,7 @@ public class NewHumanityBarController extends inkGameController {
   private let humanityCurrent: Int32;
   private let humanityTotal: Int32;
   private let psychosisThreshold: Int32;
+  private let tooltipKind: Int32;
 
   private let icon: ref<inkImage>;
   private let currentHumanityContainer: ref<inkWidget>;
@@ -60,6 +61,9 @@ public class NewHumanityBarController extends inkGameController {
 
     this.InitCoreThings();
     this.SpawnBars();
+    let ready: ref<WEHumanityBarReadyEvent> = new WEHumanityBarReadyEvent();
+    ready.controller = this;
+    this.QueueEvent(ready);
   }
 
   private final func InitCoreThings() -> Void {
@@ -106,9 +110,9 @@ public class NewHumanityBarController extends inkGameController {
   }
 
   private final func SpawnBars() -> Void {
-    let i: Int32 = 1;
+    let i: Int32 = ArraySize(this.bars) + 1;
     let count: Int32 = this.GetBarCount();
-    let showDanger: Bool = this.humanityCurrent <= this.psychosisThreshold;
+    let showDanger: Bool = this.system.GetHumanityCurrentExact() < Cast<Float>(this.psychosisThreshold);
     let widget: ref<inkWidget>;
     while i <= count {
       widget = this.SpawnFromExternal(
@@ -124,7 +128,7 @@ public class NewHumanityBarController extends inkGameController {
         rightMargin = this.barMarginNormal + this.barWidth;
       };
 
-      widget.SetScale(Vector2(0.0, 1.0));
+      widget.SetScale(Vector2(this.barDisplayed ? 1.0 : 0.0, 1.0));
       widget.SetMargin(0.0, 0.0, rightMargin, 0.0);
       widget.SetUserData(HumanityBarUserData.Create(showDanger));
       // SetUserData can run after child OnInitialize. Bind the same named child
@@ -136,7 +140,43 @@ public class NewHumanityBarController extends inkGameController {
     };
   }
 
+  public func RefreshHumanity() -> Void {
+    if !IsDefined(this.system) || !IsDefined(this.barsContainer) { return; };
+    this.humanityCurrent = this.system.GetHumanityCurrent();
+    this.humanityTotal = this.system.GetHumanityTotal();
+    this.psychosisThreshold = this.system.GetPsychosisThreshold();
+    this.thresholdText.SetText(IntToString(this.psychosisThreshold));
+    this.currentHumanityText.SetText(IntToString(this.humanityCurrent));
+    let count: Int32 = this.GetBarCount();
+    while ArraySize(this.bars) > count {
+      this.barsContainer.RemoveChild(ArrayPop(this.bars));
+    };
+    this.SpawnBars();
+    let danger: Bool = this.system.GetHumanityCurrentExact() < Cast<Float>(this.psychosisThreshold);
+    let i: Int32 = 0;
+    let bar: wref<inkWidget>;
+    let data: ref<HumanityBarUserData>;
+    while i < ArraySize(this.bars) {
+      data = this.bars[i].GetUserData(n"HumanityBarUserData") as HumanityBarUserData;
+      if IsDefined(data) { data.danger = danger; };
+      bar = (this.bars[i] as inkCompoundWidget).GetWidgetByPathName(n"bar");
+      if IsDefined(bar) { bar.BindProperty(n"tintColor", danger ? n"MainColors.Red" : n"MainColors.MildGreen"); };
+      i += 1;
+    };
+    this.MoveBarDecorations();
+    if this.tooltipKind == 1 { this.PublishHumanityTooltip(); };
+    if this.tooltipKind == 2 { this.PublishThresholdTooltip(); };
+  }
+
+  public func DismissHumanityTooltip() -> Void {
+    if this.tooltipKind != 0 {
+      this.tooltipKind = 0;
+      this.QueueEvent(new CustomBarHoverOutEvent());
+    };
+  }
+
   protected cb func OnCyberwareMenuBarAppeared(evt: ref<CyberwareMenuBarAppeared>) -> Bool {
+    this.RefreshHumanity();
     if !this.barDisplayed {
       this.barDisplayed = true;
       this.ShowBars();
@@ -146,6 +186,11 @@ public class NewHumanityBarController extends inkGameController {
   }
 
   protected cb func OnCustomBarHoverOver(evt: ref<inkPointerEvent>) -> Bool {
+    this.tooltipKind = 1;
+    this.RefreshHumanity();
+  }
+
+  private func PublishHumanityTooltip() -> Void {
     let barHoverOverEvent: ref<CustomBarHoverOverEvent> = new CustomBarHoverOverEvent();
     barHoverOverEvent.humanityCurrent = this.humanityCurrent;
     barHoverOverEvent.humanityTotal = this.humanityTotal;
@@ -154,11 +199,17 @@ public class NewHumanityBarController extends inkGameController {
   }
 
   protected cb func OnCustomBarHoverOut(evt: ref<inkPointerEvent>) -> Bool {
+    this.tooltipKind = 0;
     let barHoverOutEvent: ref<CustomBarHoverOutEvent> = new CustomBarHoverOutEvent();
     this.QueueEvent(barHoverOutEvent);
   }
 
   protected cb func OnDangerSpanHoverOver(evt: ref<inkPointerEvent>) -> Bool {
+    this.tooltipKind = 2;
+    this.RefreshHumanity();
+  }
+
+  private func PublishThresholdTooltip() -> Void {
     let thresholdHoverEvent: ref<HumanityThresholdHoverOverEvent> = new HumanityThresholdHoverOverEvent();
     thresholdHoverEvent.humanityThreshold = this.psychosisThreshold;
     thresholdHoverEvent.humanityTotal = this.humanityTotal;
@@ -167,6 +218,7 @@ public class NewHumanityBarController extends inkGameController {
   }
 
   protected cb func OnDangerSpanHoverOut(evt: ref<inkPointerEvent>) -> Bool {
+    this.tooltipKind = 0;
     let barHoverOutEvent: ref<CustomBarHoverOutEvent> = new CustomBarHoverOutEvent();
     this.QueueEvent(barHoverOutEvent);
   }
@@ -276,7 +328,7 @@ public class NewHumanityBarController extends inkGameController {
       return 0;
     };
 
-    return this.humanityCurrent * this.barCount / this.humanityTotal;
+    return Clamp(Cast<Int32>(Cast<Int64>(this.humanityCurrent) * Cast<Int64>(this.barCount) / Cast<Int64>(this.humanityTotal)), 0, this.barCount);
   }
 
   private final func GetThresholdBarCount() -> Int32 {
@@ -284,7 +336,7 @@ public class NewHumanityBarController extends inkGameController {
       return 0;
     };
 
-    return this.psychosisThreshold * this.barCount / this.humanityTotal;
+    return Clamp(Cast<Int32>(Cast<Int64>(this.psychosisThreshold) * Cast<Int64>(this.barCount) / Cast<Int64>(this.humanityTotal)), 0, this.barCount);
   }
 
   private func SetIndicatorMargin(margin: Float) -> Void {
