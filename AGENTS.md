@@ -78,6 +78,7 @@ Project documentation lives in `<MOD_SCRIPTS_ROOT>\docs`, outside individual mod
 
 - Save the results of every research task in `docs\research\<mod-name>`. Reuse an existing mod directory; Wannabe Edgerunner uses `docs\research\wannabe-edgerunner`. Keep findings, source references and supporting artifacts together there.
 - Before any work that changes or extends a mod's codebase, search `docs\spec` for its specification, including subdirectories and references to the mod's names. Read a matching specification in full and treat it as the primary source of truth for intended mod behavior.
+- Maintain one authoritative specification document per mod. When developing a feature or changing existing behavior, update that mod's current specification in place, including its requirements, interactions and acceptance cases; do not create separate feature specifications, normative supplements or parallel drafts. Keep research, discussions and historical snapshots in `docs\research\<mod-name>` as supporting evidence, not competing sources of intended behavior.
 - When a specification exists, agree and finalize the corresponding specification changes with the user before editing implementation files. Existing explicit approval remains valid for the agreed scope; new implementation decisions that change that scope return to the specification first.
 - If no matching specification exists, use the usual modding workflow; creating one is not a prerequisite. A missing `docs\spec` directory also means no specification was found.
 

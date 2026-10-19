@@ -35,7 +35,7 @@ public class EdgerunningConfig {
   @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "Mod-Edg-Humanity-Passive-Recovery")
   @runtimeProperty("ModSettings.description", "Mod-Edg-Humanity-Passive-Recovery-Desc")
-  public let passiveHumanityRecovery: Bool = false;
+  public let passiveHumanityRecovery: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "Edgerunner")
   @runtimeProperty("ModSettings.category", "LocKey#20638")

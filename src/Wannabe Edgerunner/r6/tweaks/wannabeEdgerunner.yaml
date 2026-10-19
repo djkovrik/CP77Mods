@@ -336,19 +336,24 @@ BaseStatusEffect.LifeAffirmedBuff:
 
 # === Meds ===
 
+ConsumableBaseName.EdgerunnerNeuroblocker:
+  $type: ConsumableBaseName_Record
+  enumName: Invalid
+
 # - Rare
 Items.ripperdoc_med:
   $base: Items.LongLasting
   displayName: l"Mod-Edg-Ripper-Med"
   localizedDescription: l"Mod-Edg-Ripper-Med-Desc"
   quality: t"Quality.Rare"
-  iconPath: drugs_endotrisine
-  appearanceName: base_junk_item_medicine_bottle
+  iconPath: drugs_omage_blockers
+  entityName: pill_a
+  appearanceName: item_appearance_0
   itemType: ItemType.Con_LongLasting
+  consumableBaseName: ConsumableBaseName.EdgerunnerNeuroblocker
   tags:
-    - "Consumable"
-    - "Drug"
-    - "Medical"
+    - !append-once Drug
+    - !append-once Medical
   CraftingData:
     $type: CraftingPackage_Record
     craftingExpModifier: 1
@@ -391,13 +396,14 @@ Items.ripperdoc_med_uncommon:
   displayName: l"Mod-Edg-Ripper-Med"
   localizedDescription: l"Mod-Edg-Ripper-Med-Desc"
   quality: t"Quality.Uncommon"
-  iconPath: drugs_endotrisine
-  appearanceName: base_junk_item_medicine_bottle
+  iconPath: drugs_omage_blockers
+  entityName: pill_a
+  appearanceName: item_appearance_0
   itemType: ItemType.Con_LongLasting
+  consumableBaseName: ConsumableBaseName.EdgerunnerNeuroblocker
   tags:
-    - "Consumable"
-    - "Drug"
-    - "Medical"
+    - !append-once Drug
+    - !append-once Medical
   CraftingData:
     $type: CraftingPackage_Record
     craftingExpModifier: 1
@@ -437,13 +443,14 @@ Items.ripperdoc_med_common:
   displayName: l"Mod-Edg-Ripper-Med"
   localizedDescription: l"Mod-Edg-Ripper-Med-Desc"
   quality: t"Quality.Common"
-  iconPath: drugs_endotrisine
-  appearanceName: base_junk_item_medicine_bottle
+  iconPath: drugs_omage_blockers
+  entityName: pill_a
+  appearanceName: item_appearance_0
   itemType: ItemType.Con_LongLasting
+  consumableBaseName: ConsumableBaseName.EdgerunnerNeuroblocker
   tags:
-    - "Consumable"
-    - "Drug"
-    - "Medical"
+    - !append-once Drug
+    - !append-once Medical
   CraftingData:
     $type: CraftingPackage_Record
     craftingExpModifier: 1
