@@ -132,12 +132,15 @@ public class EdgerunningSystem extends ScriptableSystem {
   private let additionalPenaltiesKeys: array<String>;
 
   public let currentHumanityPool: Int32;
+  private let currentHumanityExact: Float;
   public let psychosisThreshold: Int32;
   public let psychosisCheckDelayId: DelayID;
   public let postPsychosisDelayId: DelayID;
   public let humanityRestoreDelayId: DelayID;
 
   private persistent let currentHumanityDamage: Int32 = 0;
+  // Keep the legacy saved integer and its type. Old saves start with no remainder.
+  private persistent let fractionalHumanityDamage: Float = 0.0;
   private persistent let wentFullPsycho: Bool = false;
 
   private persistent let humanityRestoringActionTakenLover: Bool = false;
@@ -168,7 +171,6 @@ public class EdgerunningSystem extends ScriptableSystem {
       this.statsPoolSystem = GameInstance.GetStatPoolsSystem(this.player.GetGame());
 
       this.config = new EdgerunningConfig();
-      // Read the applied TweakDB duration, including after a player replacement.
       let durationModifiers: array<wref<StatModifier_Record>>;
       let durationRecord: ref<StatModifierGroup_Record> = TweakDBInterface.GetStatModifierGroupRecord(t"Items.EdgerunnerPsychosisDuration");
       if IsDefined(durationRecord) {
@@ -195,10 +197,8 @@ public class EdgerunningSystem extends ScriptableSystem {
       this.InvalidateCurrentState(true);
     };
 
-    // EdgerunnerStats.Print(this, this.config);
   }
 
-  // -- Control effects flows
 
   public func RunPrePsychosisFlow() -> Void {
     if this.IsPsychosisActive() || Equals(this.phase, EdgerunningPhase.Recovery) || Equals(this.phase, EdgerunningPhase.PrePsychosis) || !this.IsEpisodeContextSafe() {
@@ -239,7 +239,6 @@ public class EdgerunningSystem extends ScriptableSystem {
       this.SchedulePostPsychosisEffect(psychoDuration + 2.0);
     };
 
-    // Completion belongs to the selected path, not an independent timer.
   }
 
   public func RunPostPsychosisFlow() -> Void {
@@ -310,7 +309,6 @@ public class EdgerunningSystem extends ScriptableSystem {
     this.transitioning = false;
   }
 
-  // -- React to outer events
 
   public func OnPossessionChanged(playerPossesion: gamedataPlayerPossesion) -> Void {
     if !IsDefined(this.effectsChecker) { return; };
@@ -374,14 +372,12 @@ public class EdgerunningSystem extends ScriptableSystem {
         this.SetWentFullPsycho(false);
         if !this.config.fullHumanityRestoreOnSleep {
             let currentHumanitySleepMultiplier: Int32 = 0;
-            // summing multiplier
             if this.humanityRestoringActionTakenLover { currentHumanitySleepMultiplier += 1; }
             if this.humanityRestoringActionTakenPet { currentHumanitySleepMultiplier += 1; }
             if this.humanityRestoringActionTakenDonation { currentHumanitySleepMultiplier += 1; }
             if this.humanityRestoringActionTakenApartment { currentHumanitySleepMultiplier += 1; }
             if this.humanityRestoringActionTakenSocial { currentHumanitySleepMultiplier += 1; }
             if this.humanityRestoringActionTakenShower { currentHumanitySleepMultiplier += 1; }
-            // gain humanity based on our multiplier
             let amount: Int32 = (15 * currentHumanitySleepMultiplier) + 10;
             this.RemoveHumanityDamage(amount);
         } else {
@@ -820,6 +816,12 @@ public class EdgerunningSystem extends ScriptableSystem {
       return;
     };
 
+    this.OnArmsCyberwareAttack(type, itemRecord);
+  }
+
+  public func OnArmsCyberwareAttack(type: gamedataItemType, itemRecord: ref<Item_Record>) -> Void {
+    if !IsDefined(this.player) || !IsDefined(this.effectsChecker) || !IsDefined(itemRecord) { return; };
+
     E(s"ARMS CYBERWARE ACTIVATED: \(type)");
 
     let quality: gamedataQuality = itemRecord.Quality().Type();
@@ -900,7 +902,6 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
 
-  // -- Handle Humanity
 
   public func IsWentFullPsycho() -> Bool {
     return this.wentFullPsycho;
@@ -914,20 +915,35 @@ public class EdgerunningSystem extends ScriptableSystem {
     if cost <= 0.0 || !IsDefined(this.player) || !IsDefined(this.config) { return; };
     if this.effectsChecker.IsPossessed() || this.effectsChecker.IsRipperdocBuffActive() { return; };
     let total: Int32 = this.GetHumanityTotal();
-    let damage: Int32 = CeilF(cost);
+    let exactCost: Float = cost;
 
-    // randomly an additional 5 humanity damage; life is cruel
     if this.config.cruelty {
         let random: Int32 = RandRange(0, 100);
         let crueltyThreshold: Int32 = 20;
-        let triggered: Bool = random <= crueltyThreshold;
+        let triggered: Bool = random < crueltyThreshold;
         if triggered {
-           damage = CeilF(cost + 5.0);
-           E(s"> AddHumanityDamage \(damage); random cruelty modifier applied.");
+           exactCost += 5.0;
         };
     };
 
     this.currentHumanityDamage = Clamp(this.currentHumanityDamage, 0, total);
+    // Split only the incoming cost, avoiding loss of precision in a large saved integer.
+    let available: Int32 = total - this.currentHumanityDamage;
+    let combined: Float = exactCost + this.fractionalHumanityDamage;
+    if combined >= Cast<Float>(available) {
+      this.currentHumanityDamage = total;
+      this.fractionalHumanityDamage = 0.0;
+      this.psmBB.SetInt(GetAllBlackboardDefs().PlayerStateMachine.HumanityDamage, total, true);
+      return;
+    };
+    let damage: Int32 = FloorF(combined);
+    this.fractionalHumanityDamage = combined - Cast<Float>(damage);
+    // Float arithmetic must not leave a phantom point after e.g. ten 1.1 costs.
+    if this.fractionalHumanityDamage > 0.99999 {
+      damage += 1;
+      this.fractionalHumanityDamage = 0.0;
+    };
+    if this.fractionalHumanityDamage < 0.00001 { this.fractionalHumanityDamage = 0.0; };
     this.currentHumanityDamage += Min(damage, total - this.currentHumanityDamage);
     E(s"> AddHumanityDamage \(damage)");
     if this.currentHumanityDamage > total {
@@ -940,6 +956,7 @@ public class EdgerunningSystem extends ScriptableSystem {
     if !IsDefined(this.player) { return; };
     cost = Max(0, cost);
     this.currentHumanityDamage = Max(0, this.currentHumanityDamage);
+    if cost > this.currentHumanityDamage { this.fractionalHumanityDamage = 0.0; };
     if cost > this.currentHumanityDamage {
       cost = this.currentHumanityDamage;
     };
@@ -954,6 +971,7 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public func ResetHumanityDamage() -> Void {
     this.currentHumanityDamage = 0;
+    this.fractionalHumanityDamage = 0.0;
     if IsDefined(this.psmBB) { this.psmBB.SetInt(GetAllBlackboardDefs().PlayerStateMachine.HumanityDamage, 0, true); };
   }
 
@@ -997,7 +1015,6 @@ public class EdgerunningSystem extends ScriptableSystem {
     let sum: Int64 = 0l;
     this.additionalPenalties.GetValues(penalties);
     for penalty in penalties { sum += Cast<Int64>(penalty); };
-    // External integrations can supply multiple large penalties or boosts.
     if sum > 2147483647l { return 2147483647; };
     if sum < -2147483647l { return -2147483647; };
     return Cast<Int32>(sum);
@@ -1017,13 +1034,11 @@ public class EdgerunningSystem extends ScriptableSystem {
       hash = this.Hash(key);
       value = this.additionalPenalties.Get(hash);
       localized = GetLocalizedTextByKey(StringToName(key));
-      // Swap signs for displaying penalty as negative and boost as positive
       if value > 0 {
         presentation = s"-\(value)";
       } else {
         presentation = s"+\(Abs(value))";
       };
-      // Check localized
       if NotEquals(localized, key) && NotEquals(localized, "") {
         desc += s"\n\(localized): \(presentation)";
       } else {
@@ -1036,6 +1051,10 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public func GetHumanityCurrent() -> Int32 {
     return this.currentHumanityPool;
+  }
+
+  public func GetHumanityCurrentExact() -> Float {
+    return this.currentHumanityExact;
   }
 
   public func GetHumanityTotal() -> Int32 {
@@ -1052,7 +1071,7 @@ public class EdgerunningSystem extends ScriptableSystem {
 
   public func GetHumanityColor() -> CName {
     let color: CName;
-    if this.currentHumanityPool > this.psychosisThreshold {
+    if this.currentHumanityExact >= Cast<Float>(this.psychosisThreshold) {
       color = n"MainColors.ActiveGreen"; 
     } else {
       color = n"MainColors.ActiveRed"; 
@@ -1066,7 +1085,10 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   public func GetPsychosisChance() -> Int32 {
-    return this.config.psychoChance;
+    if !IsDefined(this.config) || this.psychosisThreshold <= 0 { return 0; };
+    if this.currentHumanityExact >= Cast<Float>(this.psychosisThreshold) { return 0; };
+    let deficit: Float = ClampF(1.0 - this.currentHumanityExact / Cast<Float>(this.psychosisThreshold), 0.0, 1.0);
+    return Clamp(RoundF(Cast<Float>(this.config.psychoChance) * (1.0 + 2.0 * deficit)), 0, 100);
   }
 
   public func InvalidateCurrentState(opt firstLoad: Bool) -> Void {
@@ -1074,11 +1096,14 @@ public class EdgerunningSystem extends ScriptableSystem {
     let evt: ref<UpdateHumanityCounterEvent> = new UpdateHumanityCounterEvent();
     let basePool: Int32 = this.GetHumanityTotal();
     this.currentHumanityDamage = Clamp(this.currentHumanityDamage, 0, basePool);
+    this.fractionalHumanityDamage = ClampF(this.fractionalHumanityDamage, 0.0, 0.99999);
+    if this.currentHumanityDamage == basePool { this.fractionalHumanityDamage = 0.0; };
     this.psmBB.SetInt(GetAllBlackboardDefs().PlayerStateMachine.HumanityDamage, this.currentHumanityDamage, true);
     this.currentHumanityPool = basePool - this.currentHumanityDamage;
+    this.currentHumanityExact = Cast<Float>(this.currentHumanityPool) - this.fractionalHumanityDamage;
+    // HUD/public Int32 API rounds the remaining pool up; risk uses the exact value.
     if this.currentHumanityPool < 0 { this.currentHumanityPool = 0; };
     this.psychosisThreshold = Max(0, this.config.psychosisThreshold);
-    // Check if threshold > pool from incorrect mod settings
     if this.psychosisThreshold > basePool {
       this.psychosisThreshold = basePool / 2;
     };
@@ -1100,12 +1125,12 @@ public class EdgerunningSystem extends ScriptableSystem {
       };
       return;
     };
-    if this.currentHumanityPool > this.psychosisThreshold { this.StopEverythingNew(); return; };
+    if this.currentHumanityExact >= Cast<Float>(this.psychosisThreshold) { this.StopEverythingNew(); return; };
     if this.currentHumanityPool <= 0 && this.config.alwaysRunAtZero && !this.IsPsychosisBlocked() {
       this.RunPsychosisFlow();
       return;
     };
-    if this.currentHumanityPool < this.psychosisThreshold || (this.currentHumanityPool == 0 && this.config.alwaysRunAtZero) {
+    if this.currentHumanityExact < Cast<Float>(this.psychosisThreshold) || (this.currentHumanityPool == 0 && this.config.alwaysRunAtZero) {
       this.RunPrePsychosisFlow();
       return;
     };
@@ -1128,7 +1153,6 @@ public class EdgerunningSystem extends ScriptableSystem {
     };
   }
 
-  // -- Internal checkers
 
   private func IsPoliceSpawnAvailable() -> Bool {
     let zone: Int32 = this.psmBB.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Zones);
@@ -1140,7 +1164,7 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
   private func IsHumanityRestored() -> Bool {
-    return this.currentHumanityPool > this.psychosisThreshold;
+    return this.currentHumanityExact >= Cast<Float>(this.psychosisThreshold);
   }
 
   private func IsPsychosisBlocked() -> Bool {
@@ -1202,21 +1226,19 @@ public class EdgerunningSystem extends ScriptableSystem {
   }
 
 
-  // -- Misc
 
   private func Hash(str: String) -> Uint64 {
     return TDBID.ToNumber(TDBID.Create(str));
   }
 
 
-  // -- Callback reactions
 
   public func OnLaunchCycledPsychosisCheckCallback() -> Void {
     this.psychosisCheckDelayId = GetInvalidDelayID();
     if !Equals(this.phase, EdgerunningPhase.PrePsychosis) { return; };
     let random: Int32 = RandRange(0, 100);
-    let threshold: Int32 = this.config.psychoChance;
-    let triggered: Bool = random <= threshold;
+    let threshold: Int32 = this.GetPsychosisChance();
+    let triggered: Bool = random < threshold;
     let forcedRun: Bool = Equals(this.currentHumanityPool, 0) && this.config.alwaysRunAtZero;
     E(s"? Run psychosis trigger check: roll \(random) against \(threshold), triggered: \(triggered), forced run: \(forcedRun)");
     let nextRun: Float = Cast<Float>(this.config.pcychoCheckPeriod) * 60.0;

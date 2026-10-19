@@ -1,7 +1,6 @@
 import Edgerunning.System.EdgerunningSystem
 import Edgerunning.Common.E
 
-// Add Neuroblockers on Vik scene
 @addField(PlayerPuppet)
 private let neuroblockersFactListener: Uint32;
 
@@ -29,7 +28,6 @@ public final func OnNeuroblockersFactChanged(val: Int32) -> Void {
   };
 }
 
-// Check if Vik scene completed and neuroblockers not added
 @wrapMethod(PlayerPuppet)
 protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpawn>) -> Bool {
   wrappedMethod(evt);
@@ -46,7 +44,6 @@ protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpaw
   };
 }
 
-// Track overclock
 @wrapMethod(PlayerPuppet)
   protected cb func OnStatusEffectApplied(evt: ref<ApplyStatusEffectEvent>) -> Bool {
     let gameplayTags: array<CName> = evt.staticData.GameplayTags();
@@ -61,7 +58,6 @@ protected cb func OnMakePlayerVisibleAfterSpawn(evt: ref<EndGracePeriodAfterSpaw
   wrappedMethod(evt);
 }
 
-// Track berserk
 @wrapMethod(UseBerserkAction)
 public func StartAction(gameInstance: GameInstance) -> Void {
   wrappedMethod(gameInstance);
@@ -74,7 +70,6 @@ public func StartAction(gameInstance: GameInstance) -> Void {
   };
 }
 
-// Track Sandevistan
 @wrapMethod(UseSandevistanAction)
 public func StartAction(gameInstance: GameInstance) -> Void {
   wrappedMethod(gameInstance);
@@ -86,14 +81,12 @@ public func StartAction(gameInstance: GameInstance) -> Void {
   };
 }
 
-// Track Kerenzikov
 @wrapMethod(KerenzikovEvents)
 protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
   wrappedMethod(stateContext, scriptInterface);
   EdgerunningSystem.GetInstance(scriptInterface.GetGame()).OnKerenzikovActivation();
 }
 
-// Track Camo
 @wrapMethod(UseAction)
 public func StartAction(gameInstance: GameInstance) -> Void {
   wrappedMethod(gameInstance);
@@ -104,12 +97,10 @@ public func StartAction(gameInstance: GameInstance) -> Void {
   
   let id: TweakDBID = ItemID.GetTDBID(data.GetID());
 
-  // Optical cammo
   if CyberwareHelper.IsOpticalCamo(id) {
     EdgerunningSystem.GetInstance(gameInstance).OnOpticalCamoActivation();
   };
 
-  // Blood Pump
   if CyberwareHelper.IsBloodPump(id) {
     EdgerunningSystem.GetInstance(gameInstance).OnBloodPumpActivation();
   };
@@ -121,7 +112,6 @@ public final static func IsEquipmentAreaCyberware(areaType: gamedataEquipmentAre
   return original || Equals(areaType, gamedataEquipmentArea.FrontalCortexCW);
 }
 
-// Get installed cyberware
 @addMethod(EquipmentSystemPlayerData)
 public final func GetCyberwareFromSlots() -> array<ref<Item_Record>> {
   let result: array<ref<Item_Record>>;
@@ -166,7 +156,6 @@ public final func GetCyberwareFromSlots() -> array<ref<Item_Record>> {
   return result;
 }
 
-// -- CyberwareEx compat
 
 @if(ModuleExists("CyberwareEx"))
 @addMethod(PlayerPuppet)
@@ -214,41 +203,23 @@ public func GetCurrentSandevistan() -> ItemID {
   return EquipmentSystem.GetData(this).GetActiveItem(gamedataEquipmentArea.SystemReplacementCW);
 }
 
-// -- Arms cyberware usage
-@wrapMethod(RPGManager)
-public final static func AwardExperienceFromDamage(hitEvent: ref<gameHitEvent>, damagePercentage: Float) -> Void {
-  wrappedMethod(hitEvent, damagePercentage);
-
-  let record: wref<Item_Record>;
-  if !IsDefined(hitEvent) || !IsDefined(hitEvent.target) {
-    return;
+// Damage/XP callbacks fan out over targets and must never be the billing unit.
+@wrapMethod(MeleeAttackGenericEvents)
+protected final func SpawnAttackGameEffect(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>, startPosition: Vector4, middlePosition: Vector4, endPosition: Vector4, time: Float, colliderBox: Vector4, attackData: ref<MeleeAttackData>) -> Bool {
+  let success: Bool = wrappedMethod(stateContext, scriptInterface, startPosition, middlePosition, endPosition, time, colliderBox, attackData);
+  if !success || !IsDefined(scriptInterface.executionOwner as PlayerPuppet) { return success; };
+  let weapon: ref<WeaponObject> = scriptInterface.owner as WeaponObject;
+  if !IsDefined(weapon) { return success; };
+  let record: ref<Item_Record> = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(weapon.GetItemID()));
+  if !IsDefined(record) { return success; };
+  let type: gamedataItemType = record.ItemType().Type();
+  if Equals(type, gamedataItemType.Cyb_NanoWires) || Equals(type, gamedataItemType.Cyb_MantisBlades) {
+    EdgerunningSystem.GetInstance(scriptInterface.GetGame()).OnArmsCyberwareAttack(type, record);
   };
-
-  let data: ref<AttackData> = hitEvent.attackData;
-  let type: gamedataItemType;
-  if !IsDefined(data) || !IsDefined(data.GetInstigator()) || !IsDefined(data.GetWeapon()) {
-    return;
-  };
-
-  if data.GetInstigator().IsPlayer() && !hitEvent.target.IsPlayer() {
-    record = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(data.GetWeapon().GetItemID()));
-    if !IsDefined(record) {
-      return;
-    };
-
-    type = record.ItemType().Type();
-    switch type {
-      case gamedataItemType.Cyb_NanoWires:
-      case gamedataItemType.Cyb_MantisBlades:
-      // case gamedataItemType.Cyb_Launcher:
-        EdgerunningSystem.GetInstance(data.GetInstigator().GetGame()).OnArmsCyberwareActivation(type);
-        break;
-    };
-  };
+  return success;
 }
 
 
-// -- Projectile launcher usage
 @wrapMethod(LeftHandCyberwareTransition)
 public final func DetachProjectile(scriptInterface: ref<StateGameScriptInterface>, opt angleOffset: Float) -> Void {
   wrappedMethod(scriptInterface, angleOffset);
