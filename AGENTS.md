@@ -38,6 +38,8 @@ Additional aliases used by the project skills:
 - `<CET_MODS_ROOT>` = `<GAME_ROOT>\bin\x64\plugins\cyber_engine_tweaks\mods`
 - `<RED4EXT_ROOT>` = `<GAME_ROOT>\red4ext`
 - `<INPUT_MOD_ROOT>` = `<GAME_ROOT>\r6\input`
+- `<GAME_RESOURCES_ROOT>` = `D:\Games\Modding\CP2077\basegame` (optional; unpacked game resources)
+- `<WOLVENKIT_CLI_ROOT>` = `D:\Games\Modding\CP2077\WolvenKitConsole` (optional; WolvenKit CLI directory)
 
 Resolve these aliases recursively from this file; skills must not maintain a second set of machine-specific paths. Check optional source/tool paths before use. A missing reference path does not authorize installing dependencies or changing unrelated game files.
 
@@ -47,6 +49,7 @@ Read the matching local `SKILL.md` before planning, editing, diagnosing, or revi
 
 | Layer and trigger | Skill entrypoint |
 | --- | --- |
+| Find game resources, trace depot paths from TweakDB/scripts, inspect archive contents, selectively extract or convert resources with WolvenKit CLI | [resource-researcher](.agents/skills/resource-researcher/SKILL.md) |
 | Resource loading, `.xl`/`.archive.xl`, factories, localization assets, appearances, tags/refits, resource patching/linking, CCXL, dynamic materials; assess whether ArchiveXL fits a proposed mod | [archive-xl](.agents/skills/archive-xl/SKILL.md) |
 | TweakDB record discovery, `.tweak` reference files, TweakXL YAML/RED edits, ScriptableTweak, database mutations, vendors, stats, prerequisites, icon records | [tweak-xl](.agents/skills/tweak-xl/SKILL.md) |
 | `.reds`, game-script signatures/hooks, Codeware scripting, lifecycle/persistence, Ink/virtual lists, redscript compile validation | [redscript](.agents/skills/redscript/SKILL.md) |
