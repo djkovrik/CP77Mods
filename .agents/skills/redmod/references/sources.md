@@ -19,3 +19,5 @@ Scripting guidance expanded 2026-10-23 from user-supplied language documentation
 
 Updated local evidence: `core/systems/moddingSystem.script` and `GameInstance.GetModdingSystem` are present. The official compiler passed the isolated annotation/game-instance smoke test with fresh binary/hash output; see [the test record](../../../../docs/research/redmod/README.md#successful-compilation-after-update--2026-10-23). Only that test is compiler-verified, not all examples in these references.
 
+
+Updated Local Testing guide checked 2026-10-23: compiled binary/hash pairs go directly in r6/c77; renaming is optional and -LoadScriptMods remains required. Earlier patch_cache observations above are historical. The new procedure is documented but has not yet received a fresh in-game test here.
