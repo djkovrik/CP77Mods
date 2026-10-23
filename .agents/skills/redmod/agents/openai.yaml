@@ -1,0 +1,4 @@
+interface:
+  display_name: "REDmod"
+  short_description: "REDmod scripting, migration and mod.io packaging"
+  default_prompt: "Use $redmod to migrate this mod to official REDmod patches and verify its compatibility and build output."

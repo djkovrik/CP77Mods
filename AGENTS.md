@@ -18,6 +18,9 @@ This file uses path aliases so it can be reused on machines with different insta
 - `<MOD_SCRIPTS_ROOT>` = `<GAME_ROOT>\r6\scripts`
 - `<GAME_SOURCES_ROOT>` = `D:\Sources\other\redscript\sources`
 - `<REDSCRIPT_CLI>` = `D:\Sources\other\redscript\redscript-cli.exe`
+- `<REDMOD_ROOT>` = `<GAME_ROOT>\tools\redmod`
+- `<REDMOD_EXE>` = `<REDMOD_ROOT>\bin\redMod.exe`
+- `<REDMOD_SCRIPTS_ROOT>` = `<REDMOD_ROOT>\scripts`
 - `<BASE_REDSCRIPTS>` = `<GAME_ROOT>\r6\cache\final.redscripts`
 - `<CODEWARE_SCRIPTS_ROOT>` = `<GAME_ROOT>\red4ext\plugins\Codeware\Scripts`
 - `<ARCHIVEXL_SCRIPTS_ROOT>` = `<GAME_ROOT>\red4ext\plugins\ArchiveXL\Scripts`
@@ -53,8 +56,9 @@ Read the matching local `SKILL.md` before planning, editing, diagnosing, or revi
 | Resource loading, `.xl`/`.archive.xl`, factories, localization assets, appearances, tags/refits, resource patching/linking, CCXL, dynamic materials; assess whether ArchiveXL fits a proposed mod | [archive-xl](.agents/skills/archive-xl/SKILL.md) |
 | TweakDB record discovery, `.tweak` reference files, TweakXL YAML/RED edits, ScriptableTweak, database mutations, vendors, stats, prerequisites, icon records | [tweak-xl](.agents/skills/tweak-xl/SKILL.md) |
 | `.reds`, game-script signatures/hooks, Codeware scripting, lifecycle/persistence, Ink/virtual lists, redscript compile validation | [redscript](.agents/skills/redscript/SKILL.md) |
+| Official REDmod `.script` sources/annotations, redscript-to-REDmod migration, mod.io package preparation and local binary-patch testing | [redmod](.agents/skills/redmod/SKILL.md) |
 
-Use redscript for scripted behavior (the most frequent tool in this project), TweakXL for database definitions (also common), and ArchiveXL for resources (less frequent). A new item can require all three. Classify files by their consumer and schema, not just YAML-like syntax.
+Use redscript as the primary approach for scripted behavior, TweakXL for database definitions, and ArchiveXL for resources. REDmod is an auxiliary scripting/packaging approach, usually for mod.io; use its current official sources and compiler for that target. Migration requires checking language and dependency compatibility, especially Codeware; full functional equivalence is not always possible. A new item can require multiple layers. Classify files by their consumer and schema, not just extension or YAML-like syntax.
 
 ## Other Modding Layers
 
