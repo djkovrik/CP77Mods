@@ -1,6 +1,9 @@
 ## Script modifications for Cyberpunk 2077
 Powered by [redscript](https://github.com/jac3km4/redscript)
 
+**All Rights Reserved. AI / Text and Data Mining Rights Reserved.**
+See [LICENSE](LICENSE) for personal-use permissions and restrictions.
+
 #### Mods list:
 - [Always First Equip](https://www.nexusmods.com/cyberpunk2077/mods/2557 "Always First Equip")
 - [Custom Map Markers](https://www.nexusmods.com/cyberpunk2077/mods/3819 "Custom Map Markers")

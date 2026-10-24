@@ -1,15 +1,51 @@
-Copyright © 2026 djkovrik. All rights reserved.
+Copyright © 2026 djkovrik. All Rights Reserved.
 
-This repository contains source code, scripts, assets, and configuration files for various modifications (collectively referred to as "Software" or "Mods") for Cyberpunk 2077.
+Permission is granted to download, install, compile, run, study, and modify the
+mods, source code, scripts, assets, and other materials in this repository
+("Software") for your own personal, non-commercial use. You may keep private
+copies and backups. Retain applicable copyright and license notices.
 
-TERMS OF USE AND DISTRIBUTION:
-1. NO REDISTRIBUTION: You are not allowed to re-upload, mirror, or redistribute any of the Software or Mods contained in this repository, in whole or in part, to any other website, modding platform, or cloud storage without the author's express written permission. Official downloads must only be linked to this repository or the author's official mod pages (e.g., Nexus Mods).
-2. NO PORTING: You are strictly prohibited from porting, adapting, or converting any Software or Mods from this repository to run on any other gaming platforms, consoles (e.g., PlayStation, Xbox), or unofficial game clients/versions.
-3. NO COMMERCIAL USE: All contents of this repository are strictly non-commercial. You may not sell, rent, license, or otherwise monetize any of the Software, source code, or components.
-4. MODPACKS AND COLLECTIONS: 
-   - MODPACKS: Inclusion of any compiled files or assets of these Mods in public modpacks, standalone installers, or offline archives is strictly prohibited without prior written consent from the author.
-   - COLLECTIONS: You are permitted to include these Mods in automated download collections (such as Nexus Vortex Collections), provided that the collection does not re-host the actual mod files and strictly directs users to download the files from the author's official publication pages or this repository.
-5. SOURCE CODE USAGE: The source code is provided for educational and review purposes only. You may not use, copy, modify, or merge portions of this source code into your own public projects or modifications without express written permission from the author.
+Without djkovrik's prior express written permission, you may not publish,
+re-upload, mirror, share, or otherwise distribute the Software or its
+copyright-protected portions, in source or compiled form, whether unmodified
+or as part of a modified version, adaptation, translation, port, modpack,
+or other derivative release. This includes AI-assisted or AI-generated
+remakes and rewrites that reproduce or adapt copyright-protected portions
+of the Software. Attribution or a link to the original is not a substitute
+for permission. Personal modifications must remain private.
 
-LEGAL DISCLAIMER:
-The modifications in this repository are unofficial, fan-made contributions for Cyberpunk 2077. They comply with the CD PROJEKT RED Fan Content Guidelines. Cyberpunk 2077 and all related assets are trademarks of CD PROJEKT RED.
+AI / Text and Data Mining Rights Reserved
+
+To the extent applicable under Article 4(3) of Directive (EU) 2019/790 and
+its national implementing laws, djkovrik expressly reserves the rights to
+reproduce and extract the Software for text and data mining, including
+AI or machine learning training. The personal-use permission above does
+not authorize those uses without djkovrik's prior express written consent.
+This reservation is subject to the earlier permissions and applicable legal
+exceptions described below.
+
+These terms do not revoke or restrict permissions previously granted under
+MIT, the GNU GPL, or any other license. Previously licensed material may
+continue to be used, modified, and distributed under its earlier license,
+subject to that license's conditions, including when the same material
+appears in a later release. Earlier permissions do not automatically extend
+to newly added material that was not released under that earlier license.
+
+These terms apply only to material that djkovrik has the right to license.
+Third-party material remains subject to its respective licenses and rights.
+Nothing here limits uses permitted independently by applicable law, claims
+exclusive rights over ideas or functionality, or prohibits independently
+created implementations that do not copy or adapt copyright-protected
+portions of the Software.
+
+Viewing and forking through GitHub remain permitted to the extent provided
+by GitHub's Terms of Service. This does not grant additional permission to
+publish standalone mod releases or mirror the Software on other services.
+
+To the fullest extent permitted by law, the Software is provided "AS IS",
+without warranties, and the author is not liable for losses or damages
+arising from its use.
+
+These mods are unofficial fan works, not approved or endorsed by
+CD PROJEKT RED. Game content and trademarks belong to their respective
+rights holders.
