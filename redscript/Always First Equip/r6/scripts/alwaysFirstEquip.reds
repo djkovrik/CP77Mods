@@ -16,6 +16,18 @@ enum FirstEquipHotkeyState {
 private func AlwaysFirstEquipAction() -> CName = n"AlwaysFirstEquip"
 private func SafeWeaponAction() -> CName = n"SafeWeapon"
 
+public class FirstEquipOperation {
+  public let hotkeyRequested: Bool;
+  public let hotkeyCanceled: Bool;
+  public let hotkeyDispatched: Bool;
+  public let hotkeyRequestsCreated: Bool;
+  public let rightHotkeyConsumed: Bool;
+  public let leftHotkeyConsumed: Bool;
+  public let requestedItem: ItemID;
+  public let player: wref<PlayerPuppet>;
+  public let skip: Bool;
+}
+
 public class FirstEquipConfig {
 
   public static func Create() -> ref<FirstEquipConfig> {
@@ -203,21 +215,14 @@ public class FirstEquipGlobalInputListener {
 
       if Equals(actionName, SafeWeaponAction()) && actionPressed {
         if this.m_player.IsSafeStateForcedEQ() {
-          // The release half of the toggle must not depend on the attachment
-          // slot still reporting an equipped weapon. ForceSafe/PublicSafe can
-          // change weapon state before this second press is delivered.
           this.m_player.SetSafeStateForced(false);
         } else {
           if this.m_player.HasAnyWeaponEquippedEQ() {
-            // This toggle must also work while the weapon PSM is already in
-            // Safe and ReadyEvents.OnTick is inactive.
             this.m_player.SetSafeStateForced(true);
           };
         };
       };
 
-      // Aiming or firing always releases the custom safe stance before vanilla
-      // state-machine decisions consume the same input edge.
       if this.m_player.IsSafeStateForcedEQ() && actionPressed
         && (Equals(actionName, n"CameraAim") || Equals(actionName, n"RangedAttack")) {
         this.m_player.SetSafeStateForced(false);
@@ -229,9 +234,6 @@ public class FirstEquipGlobalInputListener {
         let hold: Bool = Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_HOLD_COMPLETE);
 
         if this.m_player.HasAnyWeaponEquippedEQ() {
-          // Latch input edges until ReadyEvents.OnTick consumes them. Do not clear
-          // a press when release/hold arrives between two ticks or in another
-          // weapon state (Shoot, Reload, etc.).
           if pressed {
             uiSystemBB.SetBool(GetAllBlackboardDefs().UI_System.FirstEqHotkeyPressed, true, false);
             uiSystemBB.SetBool(GetAllBlackboardDefs().UI_System.FirstEqHotkeyReleased, false, false);
@@ -244,11 +246,10 @@ public class FirstEquipGlobalInputListener {
             uiSystemBB.SetBool(GetAllBlackboardDefs().UI_System.FirstEqHotkeyReleased, true, false);
           };
         } else {
-          // Drawing a weapon is a press action. HOLD_COMPLETE and RELEASED must
-          // not enqueue duplicate DrawItemRequest instances.
           if !pressed {
             return false;
           };
+          this.m_player.CancelFirstEquipRequestEQ();
           if !IsDefined(this.m_player.firstEquipConfig) {
             return false;
           };
@@ -265,19 +266,22 @@ public class FirstEquipGlobalInputListener {
           if !IsDefined(playerData) {
             return false;
           };
-          itemID = playerData.GetItemInEquipSlot(gamedataEquipmentArea.WeaponWheel, slotForHotkey);
+          itemID = playerData.GetItemInEquipSlot(gamedataEquipmentArea.WeaponWheel, slotForHotkey == 3 ? EnumInt(WeaponSlot.MeleeSlot) : slotForHotkey);
           if !ItemID.IsValid(itemID) {
             return false;
           };
           drawItemRequest = new DrawItemRequest();
           drawItemRequest.itemID = itemID;
           drawItemRequest.owner = this.m_player;
-          uiSystemBB.SetBool(GetAllBlackboardDefs().UI_System.FirstEquipRequested, true, false);
           let equipmentSystem: ref<ScriptableSystem> = GameInstance.GetScriptableSystemsContainer(this.m_player.GetGame()).Get(n"EquipmentSystem");
           if IsDefined(equipmentSystem) {
+            let operation: ref<FirstEquipOperation> = new FirstEquipOperation();
+            operation.hotkeyRequested = true;
+            operation.requestedItem = itemID;
+            operation.player = this.m_player;
+            this.m_player.firstEquipRequest = operation;
+            drawItemRequest.firstEquipOperation = operation;
             equipmentSystem.QueueRequest(drawItemRequest);
-          } else {
-            uiSystemBB.SetBool(GetAllBlackboardDefs().UI_System.FirstEquipRequested, false, false);
           };
         };
       };
@@ -291,6 +295,7 @@ public class FirstEquipGlobalInputListener {
 @addField(PlayerPuppet) public let skipFirstEquip: Bool;
 @addField(PlayerPuppet) public let safeStateForced: Bool;
 @addField(PlayerPuppet) public let safeStateReleaseRequested: Bool;
+@addField(PlayerPuppet) public let leftSafeStateReleaseRequested: Bool;
 @addField(PlayerPuppet) public let firstEquipCooldowns: ref<inkIntHashMap>;
 @addField(PlayerPuppet) public let firstEquipInputListener: ref<FirstEquipGlobalInputListener>;
 
@@ -300,11 +305,17 @@ public class FirstEquipGlobalInputListener {
 @addField(ReadyEvents) public let isHoldActive: Bool;
 @addField(ReadyEvents) public let readyStateRequested: Bool;
 
-@addField(UI_SystemDef) public let FirstEquipRequested: BlackboardID_Bool;
 @addField(UI_SystemDef) public let FirstEqHotkeyPressed: BlackboardID_Bool;
 @addField(UI_SystemDef) public let FirstEqHotkeyReleased: BlackboardID_Bool;
 @addField(UI_SystemDef) public let FirstEqHotkeyHold: BlackboardID_Bool;
 @addField(UI_SystemDef) public let FirstEqLastUsedSlot: BlackboardID_Int;
+
+@addField(EquipmentSystemPlayerData) private let firstEquipOperation: ref<FirstEquipOperation>;
+@addField(EquipmentManipulationRequest) public let firstEquipOperation: ref<FirstEquipOperation>;
+@addField(EquipmentManipulationRequest) public let firstEquipItem: ItemID;
+@addField(EquipmentManipulationRequest) public let firstEquipHotkeyConsumed: Bool;
+@addField(DrawItemRequest) public let firstEquipOperation: ref<FirstEquipOperation>;
+@addField(PlayerPuppet) public let firstEquipRequest: ref<FirstEquipOperation>;
 
 
 // --- HOTKEY AND CONFIG
@@ -322,6 +333,7 @@ protected cb func OnGameAttached() -> Bool {
     this.firstEquipConfig = FirstEquipConfig.Create();
     this.safeStateForced = false;
     this.safeStateReleaseRequested = false;
+    this.leftSafeStateReleaseRequested = false;
     this.ResetFirstEquipInputStateEQ();
 }
 
@@ -336,19 +348,34 @@ protected cb func OnDetach() -> Bool {
     this.firstEquipConfig = null;
     this.safeStateForced = false;
     this.safeStateReleaseRequested = false;
+    this.leftSafeStateReleaseRequested = false;
     wrappedMethod();
 }
 
 @addMethod(PlayerPuppet)
 public func ResetFirstEquipInputStateEQ() -> Void {
+  this.CancelFirstEquipRequestEQ();
   let uiSystemBB: ref<IBlackboard> = GameInstance.GetBlackboardSystem(this.GetGame()).Get(GetAllBlackboardDefs().UI_System);
   if !IsDefined(uiSystemBB) {
     return;
   };
-  uiSystemBB.SetBool(GetAllBlackboardDefs().UI_System.FirstEquipRequested, false, false);
   uiSystemBB.SetBool(GetAllBlackboardDefs().UI_System.FirstEqHotkeyPressed, false, false);
   uiSystemBB.SetBool(GetAllBlackboardDefs().UI_System.FirstEqHotkeyReleased, false, false);
   uiSystemBB.SetBool(GetAllBlackboardDefs().UI_System.FirstEqHotkeyHold, false, false);
+}
+
+@addMethod(PlayerPuppet)
+public func CancelFirstEquipRequestEQ() -> Void {
+  if IsDefined(this.firstEquipRequest) {
+    this.firstEquipRequest.hotkeyCanceled = true;
+    this.firstEquipRequest = null;
+  };
+}
+
+@addMethod(PlayerPuppet)
+public func IsFirstEquipRequestActiveEQ(operation: ref<FirstEquipOperation>) -> Bool {
+  return IsDefined(operation) && operation.hotkeyRequested && !operation.hotkeyCanceled
+    && operation.player == this && this.firstEquipRequest == operation;
 }
 
 
@@ -358,12 +385,11 @@ public func ResetFirstEquipInputStateEQ() -> Void {
 public func SetSafeStateForced(forced: Bool) -> Void {
   if forced {
     this.safeStateReleaseRequested = false;
+    this.leftSafeStateReleaseRequested = false;
   } else {
     if this.safeStateForced {
-      // SafeDecisions exits through PublicSafe. Vanilla PublicSafe normally
-      // waits for combat/aim/fire, so remember that this particular transition
-      // was explicitly requested by the SafeWeapon toggle.
       this.safeStateReleaseRequested = true;
+      this.leftSafeStateReleaseRequested = IsDefined(GameObject.GetLeftActiveWeapon(this));
     };
   };
   this.safeStateForced = forced;
@@ -375,17 +401,19 @@ public func IsSafeStateForcedEQ() -> Bool {
 }
 
 @addMethod(PlayerPuppet)
-public func IsSafeStateReleaseRequestedEQ() -> Bool {
-  return this.safeStateReleaseRequested;
+public func IsSafeStateReleaseRequestedEQ(opt isLeftWeapon: Bool) -> Bool {
+  return isLeftWeapon ? this.leftSafeStateReleaseRequested : this.safeStateReleaseRequested;
 }
 
 @addMethod(PlayerPuppet)
-public func ClearSafeStateReleaseRequestEQ() -> Void {
-  this.safeStateReleaseRequested = false;
+public func ClearSafeStateReleaseRequestEQ(opt isLeftWeapon: Bool) -> Void {
+  if isLeftWeapon {
+    this.leftSafeStateReleaseRequested = false;
+  } else {
+    this.safeStateReleaseRequested = false;
+  };
 }
 
-// Feed the custom safe-stance toggle into the vanilla UpperBody/Weapon PSMs.
-// ForceSafeEvents remains the sole owner of the persistent safe animation state.
 @wrapMethod(DefaultTransition)
 public final const func IsSafeStateForced(const stateContext: ref<StateContext>, const scriptInterface: ref<StateGameScriptInterface>) -> Bool {
   if wrappedMethod(stateContext, scriptInterface) {
@@ -401,9 +429,6 @@ public final const func IsSafeStateForced(const stateContext: ref<StateContext>,
     && !scriptInterface.localBlackboard.GetBool(GetAllBlackboardDefs().PlayerStateMachine.SceneSafeForced);
 }
 
-// SafeDecisions routes a released forced-safe state through PublicSafe. The
-// vanilla PublicSafe exit does not consider IsSafeStateForced(), so explicitly
-// take its normal PublicSafeToReady transition for our toggle-off edge.
 @wrapMethod(PublicSafeDecisions)
 protected final const func ToPublicSafeToReady(const stateContext: ref<StateContext>, const scriptInterface: ref<StateGameScriptInterface>) -> Bool {
   if wrappedMethod(stateContext, scriptInterface) {
@@ -411,7 +436,7 @@ protected final const func ToPublicSafeToReady(const stateContext: ref<StateCont
   };
 
   let player: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
-  return IsDefined(player) && player.IsSafeStateReleaseRequestedEQ();
+  return IsDefined(player) && player.IsSafeStateReleaseRequestedEQ(this.IsLeftWeaponLogic());
 }
 
 @wrapMethod(PublicSafeToReadyEvents)
@@ -419,7 +444,7 @@ protected final func OnEnter(stateContext: ref<StateContext>, scriptInterface: r
   wrappedMethod(stateContext, scriptInterface);
   let player: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
   if IsDefined(player) {
-    player.ClearSafeStateReleaseRequestEQ();
+    player.ClearSafeStateReleaseRequestEQ(this.IsLeftWeaponLogic());
   };
 }
 
@@ -460,9 +485,6 @@ public func ShouldRunFirstEquipEQ(weapon: wref<WeaponObject>, requestedByHotkey:
   let isSprinting: Bool = Equals(PlayerPuppet.GetCurrentLocomotionState(this), gamePSMLocomotionStates.Sprint);
   if !this.firstEquipConfig.playWhileSprinting && isSprinting { return false; }
 
-  // A manual request bypasses probability/cooldown and the optional arms-CW
-  // exclusion, but still respects combat, stealth, vehicle, sprint and magazine
-  // restrictions just like the previous implementation.
   if requestedByHotkey {
     return true;
   };
@@ -603,17 +625,16 @@ public func ShouldSkipFirstEquipEQ() -> Bool {
 }
 
 public func EQ(str: String) -> Void {
-  // LogChannel(n"DEBUG", "> " + str);
 }
 
 @addField(UpperBodyEventsTransition)
-public let AFE_switchInputActive: Bool;
+public let switchInputActive: Bool;
 
 @wrapMethod(UpperBodyEventsTransition)
 protected final func UpdateSwitchItem(timeDelta: Float, stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Bool {
-  this.AFE_switchInputActive = true;
+  this.switchInputActive = true;
   let result: Bool = wrappedMethod(timeDelta, stateContext, scriptInterface);
-  this.AFE_switchInputActive = false;
+  this.switchInputActive = false;
   return result;
 }
 
@@ -624,7 +645,7 @@ protected final const func CheckEquipmentStateMachineState(const stateContext: r
   if result || !IsDefined(upperBody) {
     return result;
   };
-  if !upperBody.AFE_switchInputActive || NotEquals(SMSide, EEquipmentSide.Right) || NotEquals(compareToState, EEquipmentState.Equipped) {
+  if !upperBody.switchInputActive || NotEquals(SMSide, EEquipmentSide.Right) || NotEquals(compareToState, EEquipmentState.Equipped) {
     return false;
   };
   let identifier: StateMachineIdentifier;
@@ -653,6 +674,10 @@ protected final const func IsRightHandInEquippedState(const stateContext: ref<St
   let identifier: StateMachineIdentifier;
   identifier.definitionName = n"Equipment";
   identifier.referenceName = n"RightHand";
+  if stateContext.IsStateActiveWithIdentifier(identifier, n"firstEquip") {
+    return true;
+  };
+  identifier.referenceName = n"LeftHand";
   return stateContext.IsStateActiveWithIdentifier(identifier, n"firstEquip");
 }
 
@@ -660,8 +685,8 @@ protected final const func IsRightHandInEquippedState(const stateContext: ref<St
 protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
   let broadcaster: ref<StimBroadcasterComponent>;
   let weapon: ref<WeaponObject>;
-  if this.IsRightHandLogic(this.stateMachineInstanceData) {
-    weapon = GameObject.GetActiveWeapon(scriptInterface.executionOwner);
+  if this.IsRightHandLogic(this.stateMachineInstanceData) || this.IsLeftHandLogic(this.stateMachineInstanceData) {
+    weapon = this.GetSlotAttachedItemObject(scriptInterface, this.stateMachineInstanceData) as WeaponObject;
     if IsDefined(weapon) && !WeaponObject.IsFists(weapon.GetItemID()) {
       broadcaster = scriptInterface.executionOwner.GetStimBroadcasterComponent();
       if IsDefined(broadcaster) {
@@ -755,9 +780,123 @@ protected cb func OnStartTakedownEvent(startTakedownEvent: ref<StartTakedownEven
 
 // --- WEAPON EQUIP LOGIC
 
+@wrapMethod(EquipmentSystemPlayerData)
+public final func OnRestored() -> Void {
+  let player: ref<PlayerPuppet> = this.m_owner as PlayerPuppet;
+  if IsDefined(player) {
+    player.CancelFirstEquipRequestEQ();
+  };
+  this.firstEquipOperation = null;
+  wrappedMethod();
+}
+
+@wrapMethod(EquipmentSystemPlayerData)
+public final func OnDrawItemRequest(request: ref<DrawItemRequest>) -> Void {
+  let previousOperation: ref<FirstEquipOperation> = this.firstEquipOperation;
+  let operation: ref<FirstEquipOperation> = request.firstEquipOperation;
+  let player: ref<PlayerPuppet> = this.m_owner as PlayerPuppet;
+  if IsDefined(operation) {
+    if IsDefined(player) && player.IsFirstEquipRequestActiveEQ(operation) && !operation.hotkeyDispatched
+      && request.itemID == operation.requestedItem {
+      operation.hotkeyDispatched = true;
+    } else {
+      operation.hotkeyCanceled = true;
+    };
+  } else {
+    operation = new FirstEquipOperation();
+  };
+  this.firstEquipOperation = operation;
+  wrappedMethod(request);
+  if IsDefined(player) && player.firstEquipRequest == operation
+    && (operation.hotkeyCanceled || !operation.hotkeyRequestsCreated) {
+    player.CancelFirstEquipRequestEQ();
+  };
+  this.firstEquipOperation = previousOperation;
+}
+
+@wrapMethod(EquipmentSystemPlayerData)
+public final func OnEquipmentSystemWeaponManipulationRequest(request: ref<EquipmentSystemWeaponManipulationRequest>) -> Void {
+  let previousOperation: ref<FirstEquipOperation> = this.firstEquipOperation;
+  if !IsDefined(previousOperation) {
+    this.firstEquipOperation = new FirstEquipOperation();
+  };
+  wrappedMethod(request);
+  this.firstEquipOperation = previousOperation;
+}
+
+@wrapMethod(EquipmentSystemPlayerData)
+private final func HandleEquipWeapon(itemID: ItemID, out slotIndex: Int32, opt blockActiveSlotsUpdate: Bool, opt forceEquipWeapon: Bool, out isLeftWeapon: Bool) -> Bool {
+  let previousOperation: ref<FirstEquipOperation> = this.firstEquipOperation;
+  if !IsDefined(previousOperation) {
+    this.firstEquipOperation = new FirstEquipOperation();
+  };
+  let result: Bool = wrappedMethod(itemID, slotIndex, blockActiveSlotsUpdate, forceEquipWeapon, isLeftWeapon);
+  this.firstEquipOperation = previousOperation;
+  return result;
+}
+
+@wrapMethod(EquipmentSystemPlayerData)
+public final func RefreshCurrentItems(swappedSlotIndex: Int32) -> Void {
+  let previousOperation: ref<FirstEquipOperation> = this.firstEquipOperation;
+  if !IsDefined(previousOperation) {
+    this.firstEquipOperation = new FirstEquipOperation();
+  };
+  wrappedMethod(swappedSlotIndex);
+  this.firstEquipOperation = previousOperation;
+}
+
+@replaceMethod(EquipmentSystemPlayerData)
+private final func RequestEquipmentStateMachine(reqType: EquipmentManipulationRequestType, reqSlot: EquipmentManipulationRequestSlot, equipAnim: gameEquipAnimationType, referenceName: CName, requestName: CName, tempEquipOverWeapon: Bool, dualWieldLoadoutEdit: Bool) -> Void {
+  let instanceData: StateMachineInstanceData;
+  let operation: ref<FirstEquipOperation> = this.firstEquipOperation;
+  let expectedItem: ItemID;
+  let player: ref<PlayerPuppet> = this.m_owner as PlayerPuppet;
+  let weaRequest: ref<EquipmentManipulationRequest> = new EquipmentManipulationRequest();
+  let psmRequest: ref<PSMPostponedParameterScriptable> = new PSMPostponedParameterScriptable();
+  let psmAdd: ref<PSMAddOnDemandStateMachine> = new PSMAddOnDemandStateMachine();
+  let equipmentInitData: ref<EquipmentInitData> = new EquipmentInitData();
+  if (this.m_owner as PlayerPuppet).GetPlayerStateMachineBlackboard().GetInt(GetAllBlackboardDefs().PlayerStateMachine.UpperBody) != 5 {
+    weaRequest.requestType = reqType;
+    weaRequest.requestSlot = reqSlot;
+    weaRequest.equipAnim = equipAnim;
+    weaRequest.tempEquipOverWeapon = tempEquipOverWeapon;
+    weaRequest.dualWieldLoadoutEdit = dualWieldLoadoutEdit;
+    if !IsDefined(operation) {
+      operation = new FirstEquipOperation();
+    };
+    if !operation.hotkeyRequested && IsDefined(player) && IsDefined(player.firstEquipRequest)
+      && player.firstEquipRequest.hotkeyDispatched {
+      player.CancelFirstEquipRequestEQ();
+    };
+    if Equals(reqType, EquipmentManipulationRequestType.DualEquip) || operation.hotkeyRequested {
+      weaRequest.firstEquipOperation = operation;
+    };
+    if IsDefined(player) && player.IsFirstEquipRequestActiveEQ(operation)
+      && this.GetSlotActiveItem(EquipmentManipulationRequestSlot.Right) == operation.requestedItem
+      && (Equals(reqType, EquipmentManipulationRequestType.Equip) || Equals(reqType, EquipmentManipulationRequestType.DualEquip)) {
+      expectedItem = this.GetSlotActiveItem(Equals(referenceName, n"RightHand") ? EquipmentManipulationRequestSlot.Right : EquipmentManipulationRequestSlot.Left);
+      if ItemID.IsValid(expectedItem) && this.IsItemOfCategory(expectedItem, gamedataItemCategory.Weapon) {
+        weaRequest.firstEquipItem = expectedItem;
+        operation.hotkeyRequestsCreated = true;
+      };
+    };
+    psmRequest.value = weaRequest;
+    psmRequest.id = requestName;
+    psmRequest.aspect = gamestateMachineParameterAspect.Permanent;
+    this.m_owner.QueueEvent(psmRequest);
+  };
+  psmAdd.stateMachineName = n"Equipment";
+  instanceData.referenceName = referenceName;
+  psmAdd.instanceData = instanceData;
+  equipmentInitData.eqManipulationVarName = requestName;
+  psmAdd.instanceData.initData = equipmentInitData;
+  psmAdd.owner = this.m_owner;
+  this.m_owner.QueueEvent(psmAdd);
+}
+
 // Controls if firstEquip should be played, allows firstEquip in combat if PlayInCombatMode option enabled
 @replaceMethod(EquipmentBaseTransition)
-protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScriptInterface>, stateContext: ref<StateContext>, stateMachineInstanceData: StateMachineInstanceData, item: ItemID) -> Void {
+protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScriptInterface>, stateContext: ref<StateContext>, stateMachineInstanceData: StateMachineInstanceData, item: ItemID, isLeftWeapon: Bool) -> Void {
   let animFeatureMeleeData: ref<AnimFeature_MeleeData>;
   let autoRefillEvent: ref<SetAmmoCountEvent>;
   let autoRefillRatio: Float;
@@ -766,24 +905,41 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
   let forceFirstEquip: Bool;
   let hasPlayedFirstEquip: Bool;
   let hotkeyRequestsFirstEquip: Bool;
+  let leftHandAnimFeature: ref<AnimFeature_LeftHandAnimation>;
   let magazineCapacity: Uint32;
+  let otherItem: wref<WeaponObject>;
   let preventFirstEquip: Bool;
   let repeatFirstEquip: Bool;
+  let skipFirstEquip: Bool;
   let statsEvent: ref<UpdateWeaponStatsEvent>;
   let weaponEquipEvent: ref<WeaponEquipEvent>;
   let animFeature: ref<AnimFeature_EquipUnequipItem> = new AnimFeature_EquipUnequipItem();
+  let animFeatureName: CName = n"equipUnequipItem";
   let weaponEquipAnimFeature: ref<AnimFeature_EquipType> = new AnimFeature_EquipType();
   let transactionSystem: ref<TransactionSystem> = scriptInterface.GetTransactionSystem();
   let statSystem: ref<StatsSystem> = scriptInterface.GetStatsSystem();
-  let uiSystemBB: ref<IBlackboard> = GameInstance.GetBlackboardSystem(scriptInterface.GetGame()).Get(GetAllBlackboardDefs().UI_System);
   let mappedInstanceData: InstanceDataMappedToReferenceName = this.GetMappedInstanceData(stateMachineInstanceData.referenceName);
   let firstEqSystem: ref<FirstEquipSystem> = FirstEquipSystem.GetInstance(scriptInterface.owner);
   let firstEquip: Bool = false;
+  let processedRequest: ref<EquipmentManipulationRequest> = this.GetProcessedEquipmentManipulationRequest(stateMachineInstanceData, stateContext);
+  let operation: ref<FirstEquipOperation> = processedRequest.firstEquipOperation;
+  let hotkeyPending: Bool = !processedRequest.firstEquipHotkeyConsumed;
   let itemObject: wref<WeaponObject> = transactionSystem.GetItemInSlot(scriptInterface.executionOwner, TDBID.Create(mappedInstanceData.attachmentSlot)) as WeaponObject;
+  processedRequest.firstEquipHotkeyConsumed = true;
+  if IsDefined(operation) && ItemID.IsValid(processedRequest.firstEquipItem) {
+    if isLeftWeapon {
+      hotkeyPending = hotkeyPending && !operation.leftHotkeyConsumed;
+      operation.leftHotkeyConsumed = true;
+    } else {
+      hotkeyPending = hotkeyPending && !operation.rightHotkeyConsumed;
+      operation.rightHotkeyConsumed = true;
+    };
+  };
   if !IsDefined(itemObject) {
     return;
   };
-  let weaponTdbId: TweakDBID = ItemID.GetTDBID(itemObject.GetItemID());
+  let weaponItemID: ItemID = itemObject.GetItemID();
+  let weaponTdbId: TweakDBID = ItemID.GetTDBID(weaponItemID);
   let isInCombat: Bool = scriptInterface.localBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat) == EnumInt(gamePSMCombat.InCombat);
   let playerPuppet: ref<PlayerPuppet> = scriptInterface.owner as PlayerPuppet;
   stateContext.SetConditionBoolParameter(n"firstEquip", false, true);
@@ -792,23 +948,25 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
   };
 
   preventFirstEquip = scriptInterface.localBlackboard.GetBool(GetAllBlackboardDefs().PlayerStateMachine.ScenePreventFirstEquip) || scriptInterface.localBlackboard.GetBool(GetAllBlackboardDefs().PlayerStateMachine.MountedPreventFirstEquip);
-  equipAnimationRequestsFirstEquip = Equals(this.GetProcessedEquipmentManipulationRequest(stateMachineInstanceData, stateContext).equipAnim, gameEquipAnimationType.FirstEquip);
+  equipAnimationRequestsFirstEquip = Equals(processedRequest.equipAnim, gameEquipAnimationType.FirstEquip);
   forceFirstEquip = this.GetStaticBoolParameterDefault("forceFirstEquip", false);
   hasPlayedFirstEquip = IsDefined(firstEqSystem) && firstEqSystem.HasPlayedFirstEquip(weaponTdbId);
   canPlayInCombat = !isInCombat || IsDefined(playerPuppet) && IsDefined(playerPuppet.firstEquipConfig) && playerPuppet.firstEquipConfig.playInCombatMode;
-  if IsDefined(uiSystemBB) {
-    hotkeyRequestsFirstEquip = uiSystemBB.GetBool(GetAllBlackboardDefs().UI_System.FirstEquipRequested);
-    if hotkeyRequestsFirstEquip {
-      uiSystemBB.SetBool(GetAllBlackboardDefs().UI_System.FirstEquipRequested, false, false);
-    };
-  };
+  hotkeyRequestsFirstEquip = hotkeyPending && IsDefined(playerPuppet)
+    && playerPuppet.IsFirstEquipRequestActiveEQ(operation)
+    && ItemID.IsValid(processedRequest.firstEquipItem) && processedRequest.firstEquipItem == weaponItemID;
 
-  // Resolve the decision exactly once for this equip operation. FirstEquipSystem
-  // remains a pure record of whether the weapon has ever completed FirstEquip.
-  if IsDefined(playerPuppet) && IsDefined(firstEqSystem) && canPlayInCombat && !preventFirstEquip {
-    if Equals(playerPuppet.ShouldSkipFirstEquipEQ(), true) {
+  if IsDefined(playerPuppet) && IsDefined(firstEqSystem) && canPlayInCombat && !preventFirstEquip
+    && (this.IsRightHandLogic(stateMachineInstanceData) || Equals(processedRequest.requestType, EquipmentManipulationRequestType.DualEquip)) {
+    skipFirstEquip = IsDefined(operation) && operation.skip;
+    if !skipFirstEquip && playerPuppet.ShouldSkipFirstEquipEQ() {
       playerPuppet.SetSkipFirstEquipEQ(false);
-    } else {
+      if IsDefined(operation) {
+        operation.skip = true;
+      };
+      skipFirstEquip = true;
+    };
+    if !skipFirstEquip {
       repeatFirstEquip = hasPlayedFirstEquip && IsDefined(playerPuppet.firstEquipConfig) && playerPuppet.ShouldRunFirstEquipEQ(itemObject, hotkeyRequestsFirstEquip);
       if equipAnimationRequestsFirstEquip || forceFirstEquip || !hasPlayedFirstEquip || repeatFirstEquip {
         weaponEquipAnimFeature.firstEquip = true;
@@ -818,18 +976,39 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
     };
   };
   scriptInterface.localBlackboard.SetBool(GetAllBlackboardDefs().PlayerStateMachine.IsWeaponFirstEquip, firstEquip);
+  if this.IsLeftHandLogic(stateMachineInstanceData) {
+    animFeatureName = n"leftEquipUnequipItem";
+    otherItem = GameObject.GetRightActiveWeapon(scriptInterface.executionOwner);
+  } else {
+    if this.IsRightHandLogic(stateMachineInstanceData) {
+      animFeatureName = n"rightEquipUnequipItem";
+      otherItem = GameObject.GetLeftActiveWeapon(scriptInterface.executionOwner);
+    };
+  };
   animFeature.stateTransitionDuration = statSystem.GetStatValue(Cast<StatsObjectID>(itemObject.GetEntityID()), gamedataStatType.EquipDuration);
   animFeature.itemState = 1;
   animFeature.itemType = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(item)).ItemType().AnimFeatureIndex();
-  this.BlockAimingForTime(stateContext, scriptInterface, animFeature.stateTransitionDuration + 0.10);
+  if !isLeftWeapon {
+    this.BlockAimingForTime(stateContext, scriptInterface, animFeature.stateTransitionDuration + 0.10);
+  };
   weaponEquipAnimFeature.equipDuration = this.GetEquipDuration(scriptInterface, stateContext, stateMachineInstanceData);
   weaponEquipAnimFeature.unequipDuration = this.GetUnequipDuration(scriptInterface, stateContext, stateMachineInstanceData);
+  weaponEquipAnimFeature.dualWield = Equals(processedRequest.requestType, EquipmentManipulationRequestType.DualEquip) || IsDefined(transactionSystem.GetItemInSlot(scriptInterface.executionOwner, t"AttachmentSlots.WeaponRight")) && IsDefined(transactionSystem.GetItemInSlot(scriptInterface.executionOwner, t"AttachmentSlots.WeaponLeft"));
   scriptInterface.SetAnimationParameterFeature(mappedInstanceData.itemHandlingFeatureName, animFeature, scriptInterface.executionOwner);
-  scriptInterface.SetAnimationParameterFeature(n"equipUnequipItem", animFeature, itemObject);
+  scriptInterface.SetAnimationParameterFeature(animFeatureName, animFeature, itemObject);
+  if IsDefined(otherItem) {
+    scriptInterface.SetAnimationParameterFeature(animFeatureName, animFeature, otherItem);
+  };
   weaponEquipEvent = new WeaponEquipEvent();
   weaponEquipEvent.animFeature = weaponEquipAnimFeature;
   weaponEquipEvent.item = itemObject;
+  weaponEquipEvent.isLeftWeapon = this.IsLeftHandLogic(stateMachineInstanceData);
   scriptInterface.executionOwner.QueueEvent(weaponEquipEvent);
+  if weaponEquipAnimFeature.dualWield {
+    leftHandAnimFeature = new AnimFeature_LeftHandAnimation();
+    leftHandAnimFeature.lockLeftHandAnimation = true;
+    scriptInterface.SetAnimationParameterFeature(n"LeftHandAnimation", leftHandAnimFeature, scriptInterface.executionOwner);
+  };
   if itemObject.WeaponHasTag(n"Throwable") && !scriptInterface.GetStatPoolsSystem().HasStatPoolValueReachedMax(Cast<StatsObjectID>(itemObject.GetEntityID()), gamedataStatPoolType.ThrowRecovery) {
     animFeatureMeleeData = new AnimFeature_MeleeData();
     animFeatureMeleeData.isThrowReloading = true;
@@ -840,8 +1019,10 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
   scriptInterface.executionOwner.QueueEventForEntityID(itemObject.GetEntityID(), statsEvent);
   if weaponEquipAnimFeature.firstEquip {
     scriptInterface.SetAnimationParameterFloat(n"safe", 0.00);
-    stateContext.SetPermanentBoolParameter(n"WeaponInSafe", false, true);
-    stateContext.SetPermanentFloatParameter(n"TurnOffPublicSafeTimeStamp", EngineTime.ToFloat(GameInstance.GetSimTime(scriptInterface.owner.GetGame())), true);
+    if this.IsRightHandLogic(stateMachineInstanceData) {
+      stateContext.SetPermanentBoolParameter(n"WeaponInSafe", false, true);
+    };
+    stateContext.SetPermanentFloatParameter(this.GetTurnOffPublicSafeTimeStamp(stateMachineInstanceData), EngineTime.ToFloat(GameInstance.GetSimTime(scriptInterface.owner.GetGame())), true);
   } else {
     if stateContext.GetBoolParameter(n"InPublicZone", true) {
     } else {
@@ -861,12 +1042,12 @@ protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScrip
 }
 
 @wrapMethod(EquipmentBaseTransition)
-protected final const func HandleWeaponUnequip(scriptInterface: ref<StateGameScriptInterface>, stateContext: ref<StateContext>, stateMachineInstanceData: StateMachineInstanceData, item: ItemID) -> Void {
+protected final const func HandleWeaponUnequip(scriptInterface: ref<StateGameScriptInterface>, stateContext: ref<StateContext>, stateMachineInstanceData: StateMachineInstanceData, item: ItemID, isLeftWeapon: Bool) -> Void {
   let player: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
   if IsDefined(player) {
     player.SetSafeStateForced(false);
   };
-  wrappedMethod(scriptInterface, stateContext, stateMachineInstanceData, item);
+  wrappedMethod(scriptInterface, stateContext, stateMachineInstanceData, item, isLeftWeapon);
 }
 
 
@@ -910,12 +1091,12 @@ protected final func OnEnter(stateContext: ref<StateContext>, scriptInterface: r
   wrappedMethod(stateContext, scriptInterface);
   let player: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
   if IsDefined(player) && !player.IsSafeStateForcedEQ() {
-    // Fallback cleanup for paths that return directly to Ready without passing
-    // through PublicSafeToReadyEvents.
-    player.ClearSafeStateReleaseRequestEQ();
+    player.ClearSafeStateReleaseRequestEQ(this.IsLeftWeaponLogic());
   };
-  // The logical hotkey state intentionally survives Ready -> Shoot/Reload ->
-  // Ready transitions. Input edges are captured globally and consumed here.
+  if !this.IsRightWeaponLogic() {
+    return;
+  };
+
   this.savedIdleTimestamp = EngineTime.ToFloat(GameInstance.GetSimTime(scriptInterface.GetGame()));
   this.safeAnimFeature = new AnimFeature_SafeAction();
   this.isHoldActive = false;
@@ -923,13 +1104,16 @@ protected final func OnEnter(stateContext: ref<StateContext>, scriptInterface: r
 }
 
 @addMethod(ReadyEvents)
-protected final func AFE_ResetReadyAnimationState(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+protected final func ResetReadyAnimationStateEQ(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  if !this.IsRightWeaponLogic() {
+    return;
+  };
   let weapon: ref<WeaponObject>;
   stateContext.SetPermanentBoolParameter(n"TriggerHeld", false, true);
   if IsDefined(this.safeAnimFeature) {
     this.safeAnimFeature.triggerHeld = false;
     scriptInterface.SetAnimationParameterFeature(n"SafeAction", this.safeAnimFeature);
-    weapon = DefaultTransition.GetActiveWeapon(scriptInterface);
+    weapon = this.GetWeaponObject(scriptInterface);
     if IsDefined(weapon) {
       scriptInterface.SetAnimationParameterFeature(n"SafeAction", this.safeAnimFeature, weapon);
     };
@@ -940,37 +1124,36 @@ protected final func AFE_ResetReadyAnimationState(stateContext: ref<StateContext
 
 @wrapMethod(ReadyEvents)
 private final func OnExit(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
-  this.AFE_ResetReadyAnimationState(stateContext, scriptInterface);
+  this.ResetReadyAnimationStateEQ(stateContext, scriptInterface);
   wrappedMethod(stateContext, scriptInterface);
 }
 
 @wrapMethod(ReadyEvents)
 protected func OnForcedExit(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
-  this.AFE_ResetReadyAnimationState(stateContext, scriptInterface);
+  this.ResetReadyAnimationStateEQ(stateContext, scriptInterface);
   wrappedMethod(stateContext, scriptInterface);
 }
 
-// Keep hotkey detection in the per-frame Ready tick, while letting the game own
-// heavy-weapon handling, weapon stats and all future vanilla maintenance.
 @wrapMethod(ReadyEvents)
 protected final func OnTick(timeDelta: Float, stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  if !this.IsRightWeaponLogic() {
+    wrappedMethod(timeDelta, stateContext, scriptInterface);
+    return;
+  };
   let gameInstance: GameInstance = scriptInterface.GetGame();
   let currentTime: Float = EngineTime.ToFloat(GameInstance.GetSimTime(gameInstance));
   let player: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
 
-  // The mod supplies its own configurable IdleBreak schedule. Refreshing the
-  // vanilla timestamp prevents a second independent IdleBreak from firing, but
-  // the rest of the original OnTick still runs through wrappedMethod().
   if IsDefined(player) && IsDefined(player.firstEquipConfig) {
     this.m_timeStamp = currentTime;
   };
 
   wrappedMethod(timeDelta, stateContext, scriptInterface);
-  this.AFE_UpdateReadyHotkeysAndIdle(timeDelta, currentTime, stateContext, scriptInterface, player);
+  this.UpdateReadyHotkeysAndIdleEQ(timeDelta, currentTime, stateContext, scriptInterface, player);
 }
 
 @addMethod(ReadyEvents)
-protected final func AFE_UpdateReadyHotkeysAndIdle(timeDelta: Float, currentTime: Float, stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>, player: ref<PlayerPuppet>) -> Void {
+protected final func UpdateReadyHotkeysAndIdleEQ(timeDelta: Float, currentTime: Float, stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>, player: ref<PlayerPuppet>) -> Void {
   let behindCover: Bool;
   let buttonReleased: Bool;
   let combatState: Int32;
@@ -1003,8 +1186,6 @@ protected final func AFE_UpdateReadyHotkeysAndIdle(timeDelta: Float, currentTime
     scriptInterface.SetAnimationParameterFloat(n"safe", 0.00);
   };
 
-  // IDLE -> PREPARING. Consume only the edge that was actually handled so a
-  // press+release captured between ticks is still recognized as a tap.
   if Equals(this.firstEqHotkeyState, FirstEquipHotkeyState.IDLE) && pressed {
     this.firstEqHotkeyState = FirstEquipHotkeyState.PREPARING;
     uiSystemBB.SetBool(GetAllBlackboardDefs().UI_System.FirstEqHotkeyPressed, false, false);
@@ -1050,15 +1231,13 @@ protected final func AFE_UpdateReadyHotkeysAndIdle(timeDelta: Float, currentTime
     };
 
     if Equals(this.firstEqHotkeyState, FirstEquipHotkeyState.HOLD_ENDED) {
-      this.AFE_ResetReadyAnimationState(stateContext, scriptInterface);
+      this.ResetReadyAnimationStateEQ(stateContext, scriptInterface);
       this.firstEqHotkeyState = FirstEquipHotkeyState.IDLE;
       this.readyStateRequested = true;
     };
   };
 
-  // Resolve the active weapon at the moment the feature is sent. This avoids a
-  // stale TweakDBID after a weapon swap or interrupted equip.
-  weapon = DefaultTransition.GetActiveWeapon(scriptInterface);
+  weapon = this.GetWeaponObject(scriptInterface);
   if IsDefined(this.safeAnimFeature) && IsDefined(weapon) {
     weaponRecord = TweakDBInterface.GetWeaponItemRecord(ItemID.GetTDBID(weapon.GetItemID()));
     if IsDefined(weaponRecord) {
@@ -1082,6 +1261,7 @@ protected final func AFE_UpdateReadyHotkeysAndIdle(timeDelta: Float, currentTime
   combatState = scriptInterface.localBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat);
   behindCover = NotEquals(GameInstance.GetSpatialQueriesSystem(scriptInterface.GetGame()).GetPlayerObstacleSystem().GetCoverDirection(scriptInterface.executionOwner), gamePlayerCoverDirection.None);
   idleEligible = combatState != EnumInt(gamePSMCombat.InCombat)
+    && !player.IsInCombat()
     && !behindCover
     && !VehicleComponent.IsMountedToVehicle(player.GetGame(), player)
     && WeaponTransition.GetPlayerSpeed(scriptInterface) < 0.10

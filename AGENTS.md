@@ -95,7 +95,9 @@ Project documentation lives in `<MOD_SCRIPTS_ROOT>\docs`, outside individual mod
 - When creating, changing or updating localization, or when a localization key's actual text must be checked, ask the user for the directory containing that mod's localization JSON files and read the relevant files before proceeding with the dependent work. Reuse a path the user has already supplied for that mod in the current work.
 - Resolve text and keys from those JSON files rather than guessing from key names or introducing hardcoded text. Follow the [ArchiveXL skill](.agents/skills/archive-xl/SKILL.md) for resource integration.
 
-## Code Comments
+## Code Style And Comments
+
+When modifying existing scripts or codebases, first follow the author's established naming style in the edited file and surrounding code. Inspect existing declarations and usages before naming added or changed symbols. Introduce mod-specific prefixes only when that existing style cannot be determined confidently. Check candidate names against the target class, its ancestors and installed mods; choose collision-free names within the established style.
 
 Leave code comments only at critically important points where the reason or constraint is not clear from the code, such as a compatibility workaround, lifecycle hazard or performance invariant. Explain why the code must behave that way; express routine behavior through clear names and structure.
 
