@@ -1,0 +1,5 @@
+.vs
+build
+deps
+tests
+src/x64

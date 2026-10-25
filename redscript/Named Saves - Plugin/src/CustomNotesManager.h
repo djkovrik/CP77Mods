@@ -1,41 +1,50 @@
 #pragma once
 
-#include <fstream>
-#include <chrono>
-#include <string>
+#include <Windows.h>
+#include <ShlObj.h>
+#include <cstdint>
+#include <filesystem>
 #include <map>
-
-#include <RED4ext/RED4ext.hpp>
-
-using std::map;
-using std::multimap;
-using std::wstring;
-
-using namespace std::chrono;
+#include <mutex>
+#include <string>
+#include <string_view>
 
 namespace fs = std::filesystem;
+
+struct NoteFileOperations
+{
+    decltype(&SHGetKnownFolderPath) resolveFolder = &SHGetKnownFolderPath;
+    decltype(&CreateFileW) create = &CreateFileW;
+    decltype(&ReadFile) read = &ReadFile;
+    decltype(&WriteFile) write = &WriteFile;
+    decltype(&FlushFileBuffers) flush = &FlushFileBuffers;
+    decltype(&CloseHandle) close = &CloseHandle;
+    decltype(&MoveFileExW) replace = &MoveFileExW;
+};
 
 class CustomNotesManager
 {
     public:
-        CustomNotesManager();
+        using ErrorLogger = void (*)(const char*, DWORD) noexcept;
+        explicit CustomNotesManager(ErrorLogger logger = nullptr, NoteFileOperations operations = {}) noexcept;
+        explicit CustomNotesManager(fs::path root, ErrorLogger logger = nullptr,
+                                    NoteFileOperations operations = {});
         ~CustomNotesManager() = default;
 
-        void StoreCustomNote(RED4ext::CString note);
-        RED4ext::CString GetCustomNoteByIndex(INT32 index);
+        bool StoreCustomNote(std::string_view note) noexcept;
+        std::string GetCustomNoteByIndex(std::int32_t index) noexcept;
 
     private:
-        wstring GetCurrentSavesPath();
-        wstring GetFilePathByIndex(INT32 index);
-        INT32 GetLastSaveIndex();
+        bool EnsureSavesPath();
+        fs::path GetCurrentSavesPath();
+        fs::path GetFilePathByIndex(std::int32_t index) const;
+        std::int32_t GetLastSaveIndex();
+        bool WriteNote(const fs::path& path, std::string_view note);
+        void Report(const char* operation, DWORD error) const noexcept;
 
-        map<INT32, RED4ext::CString> notes;
-        wstring savedGamesPath;
+        std::map<std::int32_t, std::string> notes;
+        fs::path savedGamesPath;
+        ErrorLogger logger;
+        NoteFileOperations operations;
+        std::mutex mutex;
 };
-
-template<typename TP>
-time_t to_time_t(TP tp)
-{
-    auto sctp = time_point_cast<system_clock::duration>(tp - TP::clock::now() + system_clock::now());
-    return system_clock::to_time_t(sctp);
-}
