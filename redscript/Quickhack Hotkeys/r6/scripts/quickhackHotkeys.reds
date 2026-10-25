@@ -108,6 +108,9 @@ private final func SetVisibility(value: Bool) -> Void {
     if !this.m_active {
       this.m_playerObject.RegisterInputListener(this, n"UI_MoveDown");
       this.m_playerObject.RegisterInputListener(this, n"UI_MoveUp");
+      if Equals(GetPlatformShortName(), "emporium") {
+        this.m_playerObject.RegisterInputListener(this, n"UI_MoveAxis");
+      };
       this.m_playerObject.RegisterInputListener(this, n"context_help");
       this.m_playerObject.RegisterInputListener(this, n"UI_ApplyAndClose");
       this.m_playerObject.RegisterInputListener(this, n"SelectHack1");
