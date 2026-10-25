@@ -1,4 +1,4 @@
-// RevisedBackpack v0.9.16
+// RevisedBackpack v0.9.17
 module RevisedBackpack
 
 import Codeware.UI.HubTextInput
@@ -1911,7 +1911,7 @@ public class RevisedBackpackController extends gameuiMenuGameController {
         return;
       };
       this.m_equipRequested = true;
-      this.m_inventoryManager.EquipItem(itemData.ID, 0);
+      this.m_inventoryManager.EquipItem(itemData.ID, 0, true);
     };
     this.RefreshUINextFrame();
   }
@@ -1951,14 +1951,15 @@ public class RevisedBackpackController extends gameuiMenuGameController {
       this.m_equipRequested = true;
       if Equals(slotChooserData.itemData.GetEquipmentArea(), gamedataEquipmentArea.Weapon) {
         i = 0;
-        while i < 3 {
+        // Left-hand slots 3-5 must also release this ItemID before it is moved.
+        while i <= 5 {
           if slotChooserData.itemData.ID == this.m_inventoryManager.GetEquippedItemIdInArea(gamedataEquipmentArea.Weapon, i) {
             this.m_inventoryManager.UnequipItem(gamedataEquipmentArea.Weapon, i, true);
           };
           i += 1;
         };
       };
-      this.m_inventoryManager.EquipItem(slotChooserData.itemData.ID, slotChooserData.slotIndex);
+      this.m_inventoryManager.EquipItem(slotChooserData.itemData.ID, slotChooserData.slotIndex, true);
       this.PlaySound(n"ui_menu_onpress");
     };
     this.m_buttonHintsController.Show();
