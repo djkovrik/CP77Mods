@@ -7,6 +7,7 @@ import Codeware.UI.*
 @addField(WardrobeSetPreviewGameController) public let additionalData: ref<PreviewInventoryItemPreviewData>;
 @addField(WardrobeSetPreviewGameController) public let isLeftMouseDown: Bool;
 @addField(WardrobeSetPreviewGameController) public let previewActive: Bool;
+@addField(WardrobeSetPreviewGameController) public let atelierPreviewAttached: Bool;
 
 @addField(FullscreenVendorGameController) public let isPreviewMode: Bool;
 @addField(FullscreenVendorGameController) public let previewManager: wref<VirtualAtelierPreviewManager>;

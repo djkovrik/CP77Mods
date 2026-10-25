@@ -120,6 +120,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.cartManager.ClearVirtualStock();
     this.cartManager = null;
     this.previewManager.SetPreviewState(false);
+    this.previewManager.SetVirtualStorePreview(false);
     this.questsSystem.SetFact(n"disable_tutorials", this.currentTutorialsFact);
     this.storeDataView.SetSource(null);
     this.storeListController.SetSource(null);
@@ -291,7 +292,6 @@ public class VirtualStoreController extends gameuiMenuGameController {
 
   protected cb func OnInventoryClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
     let itemID: ItemID;
-    let isEquipped: Bool;
     let isWeapon: Bool;
     let isClothing: Bool;
     let hintLabel: String;
@@ -299,17 +299,16 @@ public class VirtualStoreController extends gameuiMenuGameController {
     if evt.actionName.IsAction(n"click") {
       // If no hold then change equip state
       itemID = InventoryItemData.GetID(evt.itemData);
-      isEquipped = this.previewManager.GetIsEquipped(itemID);
       isWeapon = RPGManager.IsItemWeapon(itemID);
       isClothing = RPGManager.IsItemClothing(itemID);
 
       if isClothing || isWeapon {
         this.previewManager.TogglePreviewItem(itemID);
         this.RefreshVirtualItemState();
-        if isEquipped {
-          hintLabel = GetLocalizedTextByKey(n"UI-UserActions-Equip");
-        } else {
+        if this.previewManager.GetIsEquipped(itemID) {
           hintLabel = GetLocalizedTextByKey(n"UI-UserActions-Unequip");
+        } else {
+          hintLabel = GetLocalizedTextByKey(n"UI-UserActions-Equip");
         };
 
         this.buttonHintsController.RemoveButtonHint(n"select");
@@ -443,6 +442,7 @@ public class VirtualStoreController extends gameuiMenuGameController {
     this.player = this.GetPlayerControlledObject() as PlayerPuppet;
     this.player.SetSkipDeviceExit(true);
     this.previewManager = VirtualAtelierPreviewManager.GetInstance(this.player.GetGame());
+    this.previewManager.SetVirtualStorePreview(true);
     this.previewManager.SetPreviewState(true);
     this.cartManager = VirtualAtelierCartManager.GetInstance(this.player.GetGame());
     this.SpawnPreviewPuppet();

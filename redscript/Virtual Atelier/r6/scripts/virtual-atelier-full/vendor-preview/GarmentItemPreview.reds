@@ -22,14 +22,16 @@ protected cb func OnPreviewInitialized() -> Bool {
   if this.previewActive {
     this.previewManager.InitializePuppet(this.GetGamePuppet());
     this.previewManager.InitializeCompatibilityHelper(this);
+    this.atelierPreviewAttached = true;
   };
 }
 
 @wrapMethod(WardrobeSetPreviewGameController)
 protected cb func OnUninitialize() -> Bool {
-  if this.previewActive {
+  if this.atelierPreviewAttached {
     this.UnregisterFromGlobalInputCallback(n"OnPostOnPress", this, n"OnGlobalPress");
-    this.previewManager.ResetGarment();
+    this.previewManager.UninitializePuppet(this.GetGamePuppet());
+    this.atelierPreviewAttached = false;
   };
 
   wrappedMethod();
@@ -65,7 +67,7 @@ protected cb func OnGlobalRelease(e: ref<inkPointerEvent>) -> Bool {
     if e.IsAction(n"mouse_left") {
       this.isLeftMouseDown = false;
     };
-    if e.IsAction(n"cancel") {
+    if e.IsAction(n"cancel") && this.m_isNotification && IsDefined(this.m_data.token) {
       this.m_data.token.TriggerCallback(null);
     };
   } else {

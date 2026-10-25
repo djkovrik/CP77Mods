@@ -52,6 +52,7 @@ protected cb func OnTogglePreviewMode(evt: ref<inkPointerEvent>) -> Bool {
 private final func ShowGarmentPreview() -> Void {
   let displayContext: ItemDisplayContext = ItemDisplayContext.Vendor;
   this.isPreviewMode = true;
+  this.previewManager.SetVirtualStorePreview(false);
   this.previewManager.SetPreviewState(true);
   this.m_itemPreviewPopupToken = AtelierNotificationTokensHelper.GetGarmentPreviewNotificationToken(this, displayContext) as inkGameNotificationToken;
   this.m_itemPreviewPopupToken.RegisterListener(this, n"OnEquipPreviewClosed");

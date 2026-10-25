@@ -9,6 +9,8 @@ public class VirtualAtelierPreviewManager extends ScriptableSystem {
   private let givenItems: array<ItemID>;
   private let puppetId: EntityID;
   private let screenWidthLimit: Float;
+  private let isVirtualStorePreview: Bool;
+  private let weaponPreview: ref<VirtualAtelierWeaponPreview>;
 
   private func OnPlayerAttach(request: ref<PlayerAttachRequest>) {
     this.InitializeInternals();
@@ -25,10 +27,40 @@ public class VirtualAtelierPreviewManager extends ScriptableSystem {
   }
 
   public func InitializePuppet(puppet: ref<gamePuppet>) -> Void {
+    if !IsDefined(puppet) || this.puppetId == puppet.GetEntityID() {
+      return;
+    };
+    this.ResetGarment();
+    ArrayClear(this.givenItems);
     ArrayClear(this.initialItems);
     this.puppetId = puppet.GetEntityID();
-    let gamePuppet: ref<gamePuppet> = this.GetGamePuppet();
-    this.transactionSystem.GetItemList(gamePuppet, this.initialItems);
+    this.transactionSystem.GetItemList(puppet, this.initialItems);
+    if this.isVirtualStorePreview {
+      let player: wref<PlayerPuppet> = GameInstance.GetPlayerSystem(this.GetGameInstance()).GetLocalPlayerControlledGameObject() as PlayerPuppet;
+      this.weaponPreview = VirtualAtelierWeaponPreview.Create(puppet, player);
+    } else {
+      this.weaponPreview = null;
+    };
+  }
+
+  public func UninitializePuppet(puppet: ref<gamePuppet>) -> Void {
+    let emptyId: EntityID;
+    if !IsDefined(puppet) || this.puppetId != puppet.GetEntityID() {
+      return;
+    };
+    this.ResetGarment();
+    this.weaponPreview = null;
+    this.compatibilityHelper = null;
+    ArrayClear(this.givenItems);
+    ArrayClear(this.initialItems);
+    this.puppetId = emptyId;
+  }
+
+  public func SetVirtualStorePreview(active: Bool) -> Void {
+    if this.isVirtualStorePreview && !active {
+      this.UninitializePuppet(this.GetGamePuppet());
+    };
+    this.isVirtualStorePreview = active;
   }
 
   public func InitializeCompatibilityHelper(helper: ref<gameuiMenuGameController>) -> Void {
@@ -48,10 +80,19 @@ public class VirtualAtelierPreviewManager extends ScriptableSystem {
   }
 
   public func GetIsEquipped(itemID: ItemID) -> Bool {
+    if IsDefined(this.weaponPreview) && this.weaponPreview.GetIsEquipped(itemID) {
+      return true;
+    };
     return ArrayContains(this.givenItems, itemID);
   }
 
   public func EquipItem(itemID: ItemID) -> Void {
+    if IsDefined(this.weaponPreview) && RPGManager.IsItemWeapon(itemID) {
+      if !this.weaponPreview.GetIsEquipped(itemID) {
+        this.weaponPreview.ToggleItem(itemID);
+      };
+      return;
+    };
     let puppet: ref<gamePuppet> = this.GetGamePuppet();
     let placementSlot: TweakDBID = this.compatibilityHelper.GetAtelierPlacementSlot(itemID);
 
@@ -66,6 +107,12 @@ public class VirtualAtelierPreviewManager extends ScriptableSystem {
   }
 
   public func UnequipItem(itemID: ItemID) -> Void {
+    if IsDefined(this.weaponPreview) && RPGManager.IsItemWeapon(itemID) {
+      if this.weaponPreview.GetIsEquipped(itemID) {
+        this.weaponPreview.ToggleItem(itemID);
+      };
+      return;
+    };
     let puppet: ref<gamePuppet> = this.GetGamePuppet();
     let placementSlot: TweakDBID = this.compatibilityHelper.GetAtelierPlacementSlot(itemID);
     this.transactionSystem.RemoveItemFromSlot(puppet, placementSlot, true);
@@ -79,8 +126,12 @@ public class VirtualAtelierPreviewManager extends ScriptableSystem {
       return;
     };
 
-    if ArraySize(this.initialItems) < 1 {
+    if ArraySize(this.initialItems) < 1 && !IsDefined(this.weaponPreview) {
       return;
+    };
+
+    if IsDefined(this.weaponPreview) {
+      this.weaponPreview.RemoveAll();
     };
 
     let j: Int32 = 0;
@@ -89,7 +140,7 @@ public class VirtualAtelierPreviewManager extends ScriptableSystem {
       let isWeapon: Bool = RPGManager.IsItemWeapon(currItemId);
       let isClothing: Bool = RPGManager.IsItemClothing(currItemId);
 
-      if (isWeapon || isClothing) {
+      if isClothing || (isWeapon && !IsDefined(this.weaponPreview)) {
         let currSlot: TweakDBID = this.compatibilityHelper.GetAtelierPlacementSlot(currItemId);
         this.transactionSystem.RemoveItemFromSlot(puppet, currSlot, true);
       }
@@ -101,6 +152,13 @@ public class VirtualAtelierPreviewManager extends ScriptableSystem {
   }
 
   public func RemovePreviewGarment() -> Void {
+    if IsDefined(this.weaponPreview) {
+      this.weaponPreview.RemovePreview();
+    };
+    this.RemoveGivenItems();
+  }
+
+  private func RemoveGivenItems() -> Void {
     let puppet: ref<gamePuppet> = this.GetGamePuppet();
     if !IsDefined(puppet) { 
       return;
@@ -129,6 +187,10 @@ public class VirtualAtelierPreviewManager extends ScriptableSystem {
       return;
     };
 
+    if IsDefined(this.weaponPreview) {
+      this.weaponPreview.Reset();
+    };
+
     if ArraySize(this.initialItems) < 1 {
       return;
     };
@@ -136,14 +198,20 @@ public class VirtualAtelierPreviewManager extends ScriptableSystem {
     let j: Int32 = 0;
     while j < ArraySize(this.initialItems) {
       let currItemId: ItemID = this.initialItems[j].GetID();
-      let currSlot = this.compatibilityHelper.GetAtelierPlacementSlot(currItemId);
-      this.transactionSystem.AddItemToSlot(puppet, currSlot, currItemId);
+      if !IsDefined(this.weaponPreview) || !RPGManager.IsItemWeapon(currItemId) {
+        let currSlot = this.compatibilityHelper.GetAtelierPlacementSlot(currItemId);
+        this.transactionSystem.AddItemToSlot(puppet, currSlot, currItemId);
+      };
       j += 1;
     };
   }
 
   public func ResetGarment() {
-    this.RemovePreviewGarment();
+    if IsDefined(this.weaponPreview) {
+      this.RemoveGivenItems();
+    } else {
+      this.RemovePreviewGarment();
+    };
     this.RevertInitialGarment();
   }
 
