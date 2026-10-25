@@ -461,7 +461,7 @@ public class WEPsychosisCombat {
         cycle = stats.GetStatValue(id, gamedataStatType.CycleTime);
       };
     };
-    let psmWeapon: Int32 = bb.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Weapon);
+    let psmWeapon: Int32 = bb.GetInt(GetAllBlackboardDefs().PlayerStateMachine.RightWeapon);
     let upper: Int32 = bb.GetInt(GetAllBlackboardDefs().PlayerStateMachine.UpperBody);
     let reasons: String = "";
     if !this.drawIssued { reasons += "draw_not_dispatched;"; };

@@ -19,9 +19,6 @@ public let wePsychosisCombatWeaponInterface: wref<StateGameScriptInterface>;
 @addField(WeaponObject)
 public let wePsychosisCombatWeaponMachine: CName;
 
-@addField(WeaponEventsTransition)
-public const let stateMachineInstanceData: StateMachineInstanceData;
-
 @addField(WeaponObject)
 public let wePsychosisCombatWeaponReference: CName;
 
@@ -148,15 +145,15 @@ public class WEPsychosisCombatEquipCompatibility {
 }
 
 @wrapMethod(EquipmentBaseTransition)
-protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScriptInterface>, stateContext: ref<StateContext>, stateMachineInstanceData: StateMachineInstanceData, item: ItemID) -> Void {
+protected final const func HandleWeaponEquip(scriptInterface: ref<StateGameScriptInterface>, stateContext: ref<StateContext>, stateMachineInstanceData: StateMachineInstanceData, item: ItemID, isLeftWeapon: Bool) -> Void {
   let player: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
-  let skip: Bool = IsDefined(player) && Equals(stateMachineInstanceData.referenceName, n"RightHand")
+  let skip: Bool = IsDefined(player) && !isLeftWeapon && Equals(stateMachineInstanceData.referenceName, n"RightHand")
     && IsDefined(player.wePsychosisDrawOwner) && player.wePsychosisDrawOwner.ClaimFirstEquipSkip(player, item);
   let previous: Bool;
   if skip {
     player.wePsychosisDrawOwner = null;
     previous = WEPsychosisCombatEquipCompatibility.Begin(player, scriptInterface.localBlackboard);
   };
-  wrappedMethod(scriptInterface, stateContext, stateMachineInstanceData, item);
+  wrappedMethod(scriptInterface, stateContext, stateMachineInstanceData, item, isLeftWeapon);
   if skip { WEPsychosisCombatEquipCompatibility.End(player, scriptInterface.localBlackboard, previous); };
 }

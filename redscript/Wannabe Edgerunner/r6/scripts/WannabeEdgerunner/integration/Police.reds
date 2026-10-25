@@ -31,7 +31,7 @@ public func ClearWantedLevel() -> Void {
 }
 
 @wrapMethod(PreventionSystem)
-private final func ShouldSpawnPatrolVehicleWhenInSearch() -> Bool {
+private final const func ShouldSpawnPatrolVehicleWhenInSearch() -> Bool {
   let shouldSpawn: Bool = wrappedMethod();
   if !IsDefined(this.m_player) { return shouldSpawn; };
   let isInInterior: Bool = IsEntityInInteriorArea(this.m_player);
