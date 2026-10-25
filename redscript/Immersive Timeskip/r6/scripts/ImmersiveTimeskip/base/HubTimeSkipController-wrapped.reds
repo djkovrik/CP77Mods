@@ -4,7 +4,7 @@ import ImmersiveTimeskip.Config.ITSConfig
 @replaceMethod(HubTimeSkipController)
 protected cb func OnTimeSkipButtonPressed(e: ref<inkPointerEvent>) -> Bool {
   let data: ref<TimeSkipPopupData>;
-  if !e.IsAction(n"click") {
+  if !e.IsAction(n"click") && !e.IsAction(n"tap") {
     return true;
   };
 

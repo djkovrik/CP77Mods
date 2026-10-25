@@ -2,12 +2,20 @@
 protected cb func OnInitialize() -> Bool {
   let cursorEvent: ref<TimeSkipCursorInitFinishedEvent>;
   let deadzoneConfig: ref<ConfigVarFloat>;
+  let controlsGroupBase: CName = n"/controls";
+  let deadzoneSettingName: CName = n"Axis_DeadzoneInnerFix";
   this.m_player = this.GetPlayerControlledObject();
   this.m_player.RegisterInputListener(this, n"__DEVICE_CHANGED__");
   this.m_gameInstance = (this.GetOwnerEntity() as GameObject).GetGame();
   this.m_timeSystem = GameInstance.GetTimeSystem(this.m_gameInstance);
-  deadzoneConfig = GameInstance.GetSettingsSystem(this.m_player.GetGame()).GetVar(n"/controls", n"Axis_DeadzoneInnerFix") as ConfigVarFloat;
-  this.m_axisInputThreshold = deadzoneConfig.GetValue();
+  if GameInstance.GetSettingsSystem(this.m_player.GetGame()).HasVar(controlsGroupBase, deadzoneSettingName) {
+    deadzoneConfig = GameInstance.GetSettingsSystem(this.m_player.GetGame()).GetVar(controlsGroupBase, deadzoneSettingName) as ConfigVarFloat;
+  };
+  if IsDefined(deadzoneConfig) {
+    this.m_axisInputThreshold = deadzoneConfig.GetValue();
+  } else {
+    this.m_axisInputThreshold = 0.35;
+  };
   this.m_data = this.GetRootWidget().GetUserData(n"TimeSkipPopupData") as TimeSkipPopupData;
   this.RegisterToGlobalInputCallback(n"OnPostOnRelease", this, n"OnGlobalInput");
   this.RegisterToGlobalInputCallback(n"OnPostOnRelative", this, n"OnMouseInput");
