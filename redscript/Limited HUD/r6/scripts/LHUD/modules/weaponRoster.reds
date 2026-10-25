@@ -68,26 +68,21 @@ protected cb func OnPSMVisionStateChanged(value: Int32) -> Bool {
 
 @replaceMethod(WeaponRosterGameController)
 protected cb func OnWeaponDataChanged(value: Variant) -> Bool {
-  let item: ref<gameItemData>;
-  let weaponType: gamedataItemType;
-  let data: SlotWeaponData = FromVariant<ref<SlotDataHolder>>(value).weapon;
-  this.m_isUnholstered = ItemID.IsValid(data.weaponID);
+  let rightWeaponData: SlotWeaponData = FromVariant<ref<SlotDataHolder>>(value).rightWeapon;
+  let leftWeaponData: SlotWeaponData = FromVariant<ref<SlotDataHolder>>(value).leftWeapon;
+  this.m_isUnholstered = ItemID.IsValid(rightWeaponData.weaponID);
   if this.m_isUnholstered {
-    if this.m_activeWeapon.weaponID != data.weaponID {
-      item = this.m_InventoryManager.GetPlayerItemData(data.weaponID);
-      this.m_weaponItemData = this.m_InventoryManager.GetInventoryItemData(item);
-      this.m_weaponRecord = TweakDBInterface.GetWeaponItemRecord(ItemID.GetTDBID(data.weaponID));
-      weaponType = this.m_weaponRecord.ItemTypeHandle().Type();
-      if NotEquals(weaponType, gamedataItemType.Wea_VehiclePowerWeapon) && NotEquals(weaponType, gamedataItemType.Wea_VehicleMissileLauncher) {
-        this.LoadWeaponIcon();
-        inkTextRef.SetText(this.m_weaponName, InventoryItemData.GetName(this.m_weaponItemData));
-        if NotEquals(this.m_weaponRecord.EvolutionHandle().Type(), gamedataWeaponEvolution.Smart) || this.ShouldIgnoreSmartUI() {
-          inkWidgetRef.SetVisible(this.m_smartLinkFirmwareOffline, false);
-          inkWidgetRef.SetVisible(this.m_smartLinkFirmwareOnline, false);
-        };
-      };
+    if this.m_activeRightWeapon.weaponID != rightWeaponData.weaponID {
+      this.ChangeWeaponData(rightWeaponData, this.m_rightWeaponItemData, this.m_rightWeaponRecord, this.m_rightWeaponName, false);
     };
-    this.m_activeWeapon = data;
+    if this.m_activeLeftWeapon.weaponID != leftWeaponData.weaponID {
+      if ItemID.IsValid(leftWeaponData.weaponID) {
+        this.ChangeWeaponData(leftWeaponData, this.m_leftWeaponItemData, this.m_leftWeaponRecord, this.m_leftWeaponName, true);
+      };
+      this.ToggleLeftWeaponVisibility(ItemID.IsValid(leftWeaponData.weaponID));
+    };
+    this.m_activeLeftWeapon = leftWeaponData;
+    this.m_activeRightWeapon = rightWeaponData;
     this.SetRosterSlotData();
     if !this.lhudConfig.IsEnabled {
       this.Unfold();
@@ -106,10 +101,17 @@ protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> 
 
 @addMethod(WeaponRosterGameController)
 protected cb func OnLHUDOnCoolExitEvent(evt: ref<LHUDOnCoolExitEvent>) -> Bool {
-  let weaponTotalAmmo: Int32 = RPGManager.GetAmmoCountValue(this.m_player, this.m_activeWeapon.weaponID) - this.m_activeWeapon.ammoCurrent;
+  let weaponTotalAmmo: Int32 = this.GetAllAmmoCount();
   let isWeaponTotalAmmoVisible: Bool = !this.m_inVehicle && !this.m_player.IsReplacer();
   if isWeaponTotalAmmoVisible {
-    inkTextRef.SetText(this.m_weaponTotalAmmo, this.GetAmmoText(weaponTotalAmmo, 4));
+    inkTextRef.SetText(this.m_rightWeaponTotalAmmo, this.GetAmmoText(weaponTotalAmmo, 4));
   };
-  inkWidgetRef.SetVisible(this.m_weaponTotalAmmo, isWeaponTotalAmmoVisible);
+  inkWidgetRef.SetVisible(this.m_rightWeaponTotalAmmo, isWeaponTotalAmmoVisible);
+  let isLeftWeaponTotalAmmoVisible: Bool = isWeaponTotalAmmoVisible
+    && ItemID.IsValid(this.m_activeLeftWeapon.weaponID)
+    && this.m_activeLeftWeapon.ammoId != this.m_activeRightWeapon.ammoId;
+  if isLeftWeaponTotalAmmoVisible {
+    inkTextRef.SetText(this.m_leftWeaponTotalAmmo, this.GetAmmoText(this.GetLeftAmmoCount(), 4));
+  };
+  inkWidgetRef.SetVisible(this.m_leftWeaponTotalAmmo, isLeftWeaponTotalAmmoVisible);
 }
