@@ -327,22 +327,22 @@ protected cb func OnInitialize() -> Bool {
   this.dynamicColorPreviewInfo.Insert(
     NameToHash(n"MainColors.Red"), 
     HudPainterPreviewInfo.Create([
-      n"weapon_on_foot/ammo_counter/additional_info/weapon_name",
-      n"weapon_on_foot/ammo_counter/weapon_wrapper/ammo_wrapper/AmmoAll"
+      n"weapon_on_foot/ammo_counter/additional_info/right_weapon_name",
+      n"weapon_on_foot/ammo_counter/weapon_wrapper/ammo_wrapper/right_ammo_all"
     ])
   );
   
   this.dynamicColorPreviewInfo.Insert(
     NameToHash(n"MainColors.ActiveRed"), 
     HudPainterPreviewInfo.Create([
-      n"weapon_on_foot/ammo_counter/weapon_wrapper/weapon_holder/weapon_icon"
+      n"weapon_on_foot/ammo_counter/weapon_wrapper/right_weapon_holder/right_weapon_icon"
     ])
   );
 
   this.dynamicColorPreviewInfo.Insert(
     NameToHash(n"MainColors.Blue"), 
     HudPainterPreviewInfo.Create([
-      n"weapon_on_foot/ammo_counter/weapon_wrapper/ammo_wrapper/AmmoCurrent"
+      n"weapon_on_foot/ammo_counter/weapon_wrapper/ammo_wrapper/right_ammo_current"
     ])
   );
 }
@@ -362,13 +362,13 @@ protected cb func OnHudPainterPreviewModeEnabled(evt: ref<HudPainterPreviewModeE
   let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
   if IsDefined(root) && Equals(root.GetName(), StringToName(s"\(PreviewTabType.AmmoCounter)")) && !this.previewPopulated {
     this.previewPopulated = true;
-    this.m_weaponRecord = TweakDBInterface.GetWeaponItemRecord(t"Items.Craftable_Legendary_Kyubi");
-    this.LoadWeaponIcon();
-    inkTextRef.SetText(this.m_weaponName, "Kyubi");
-    inkTextRef.SetText(this.m_weaponCurrentAmmo, "12");
-    inkTextRef.SetText(this.m_weaponTotalAmmo, "345");
-    inkWidgetRef.SetVisible(this.m_weaponCurrentAmmo, true);
-    inkWidgetRef.SetVisible(this.m_weaponTotalAmmo, true);
+    this.m_rightWeaponRecord = TweakDBInterface.GetWeaponItemRecord(t"Items.Craftable_Legendary_Kyubi");
+    this.LoadWeaponIcon(false);
+    inkTextRef.SetText(this.m_rightWeaponName, "Kyubi");
+    inkTextRef.SetText(this.m_rightWeaponCurrentAmmo, "12");
+    inkTextRef.SetText(this.m_rightWeaponTotalAmmo, "345");
+    inkWidgetRef.SetVisible(this.m_rightWeaponCurrentAmmo, true);
+    inkWidgetRef.SetVisible(this.m_rightWeaponTotalAmmo, true);
 
     if IsDefined(this.m_unfoldAnimTest) {
       this.m_unfoldAnimTest.GotoEndAndStop();
