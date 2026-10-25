@@ -2,12 +2,12 @@
 protected final func UpdateSwitchItem(timeDelta: Float, stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Bool {
   let nextWeaponJustPressed: Bool = scriptInterface.IsActionJustPressed(n"NextWeapon");
   let previousWeaponJustPressed: Bool = scriptInterface.IsActionJustPressed(n"PreviousWeapon");
-  let switchItemJustTapped: Bool = scriptInterface.IsActionJustTapped(n"SwitchItem");
+  let switchItemJustTapped: Bool = scriptInterface.IsActionJustTapped(n"SwitchItem", 0.35);
   let holsterButtonJustTapped: Bool = scriptInterface.IsActionJustReleased(n"HolsterWeapon");
   if !this.m_switchButtonPushed && !this.m_cyclePushed && !nextWeaponJustPressed && !previousWeaponJustPressed && !switchItemJustTapped && !holsterButtonJustTapped {
     return false;
   };
-  if StatusEffectSystem.ObjectHasStatusEffectWithTag(scriptInterface.executionOwner, n"FirearmsNoSwitch") || StatusEffectSystem.ObjectHasStatusEffectWithTag(scriptInterface.executionOwner, n"ShootingRangeCompetition") || StatusEffectSystem.ObjectHasStatusEffectWithTag(scriptInterface.executionOwner, n"Fists") || stateContext.IsStateMachineActive(n"Consumable") || stateContext.IsStateMachineActive(n"CombatGadget") || this.CheckEquipmentStateMachineState(stateContext, EEquipmentSide.Right, EEquipmentState.Equipping) {
+  if StatusEffectSystem.ObjectHasStatusEffectWithTag(scriptInterface.executionOwner, n"FirearmsNoSwitch") || StatusEffectSystem.ObjectHasStatusEffectWithTag(scriptInterface.executionOwner, n"ShootingRangeCompetition") || StatusEffectSystem.ObjectHasStatusEffectWithTag(scriptInterface.executionOwner, n"Fists") || stateContext.IsStateMachineActive(n"Consumable") || stateContext.GetBoolParameter(n"UnequipToGadgetOrConsumable", true) || stateContext.IsStateMachineActive(n"CombatGadget") || this.CheckEquipmentStateMachineState(stateContext, EEquipmentSide.Right, EEquipmentState.Equipping) {
     return false;
   };
   if holsterButtonJustTapped && !StatusEffectSystem.ObjectHasStatusEffectWithTag(scriptInterface.executionOwner, n"FirearmsNoUnequip") {

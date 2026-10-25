@@ -1,6 +1,7 @@
 @wrapMethod(UpperBodyEventsTransition)
 protected final func UpdateSwitchItem(timeDelta: Float, stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Bool {
-  if scriptInterface.IsActionJustHeld(n"Reload") {
+  // A handled Reload hold consumes this input; all other input follows the wrapper chain.
+  if scriptInterface.IsActionJustHeld(n"Reload") && !stateContext.GetBoolParameter(n"UnequipToGadgetOrConsumable", true) {
     if !StatusEffectSystem.ObjectHasStatusEffectWithTag(scriptInterface.executionOwner, n"FirearmsNoUnequip") && (
       DefaultTransition.IsHeavyWeaponEquipped(scriptInterface) || DefaultTransition.HasMeleeWeaponEquipped(scriptInterface) || DefaultTransition.IsRangedWeaponEquipped(scriptInterface)  || DefaultTransition.HasRightWeaponEquipped(scriptInterface)
     ) {
