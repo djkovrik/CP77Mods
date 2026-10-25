@@ -1,4 +1,5 @@
 module CarDealer.Classes
+import CarDealer.Transactions.VehicleTradeResult
 
 public class PurchasableVehicleBundle {
   public let cred: Int32;
@@ -12,6 +13,10 @@ public class PurchasableVehicleVariant {
   public let dealerPartName: CName;
 }
 
+public class AutofixerViewToken extends IScriptable {
+  public let active: Bool;
+}
+
 public class AutofixerItemData {
   public let title: String;
   public let price: Int32;
@@ -20,10 +25,16 @@ public class AutofixerItemData {
   public let vehicleID: TweakDBID;
   public let sold: Bool;
   public let vanilla: Bool;
+  public let busy: Bool;
+  public let requestSerial: Uint32;
+  public let handledSerial: Uint32;
+  public let tradeResult: VehicleTradeResult;
+  public let viewToken: wref<AutofixerViewToken>;
 }
 
 public class AutofixerSellConfirmationEvent extends Event {
   public let data: ref<AutofixerItemData>;
+  public let requestSerial: Uint32;
 }
 
 public class AutofixerSellConfirmedEvent extends Event {
@@ -32,9 +43,14 @@ public class AutofixerSellConfirmedEvent extends Event {
 
 public class AutofixerSellEvent extends Event {
   public let data: ref<AutofixerItemData>;
+  public let requestSerial: Uint32;
 }
 
 public class AutofixerSellCompletedEvent extends Event {
+  public let data: ref<AutofixerItemData>;
+}
+
+public class AutofixerSellResultEvent extends Event {
   public let data: ref<AutofixerItemData>;
 }
 

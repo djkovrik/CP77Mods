@@ -4,6 +4,7 @@ import CarDealer.Classes.PurchasableVehicleVariant
 import CarDealer.System.PurchasableVehicleSystem
 import CarDealer.Utils.CarDealerLog
 import CarDealer.Utils.DealerTexts
+import CarDealer.Transactions.VehicleTradeResult
 import Codeware.UI.*
 
 public class CarDealerContentController extends inkGameController {
@@ -184,7 +185,7 @@ public class CarDealerContentController extends inkGameController {
     let isPurchased: Bool = this.purchaseSystem.IsPurchased(id);
     let enoughCred: Bool = this.HasEnoughStreetCredDealer(cred);
     let enoughMoney: Bool = this.HasEnoughMoneyDealer(price);
-    let disableBuy: Bool = isPurchased || !enoughMoney || !enoughCred;
+    let disableBuy: Bool = this.purchaseSystem.IsTradeBlocked(id) || isPurchased || !enoughMoney || !enoughCred;
     let disableColor: Bool = Equals(this.vehicleVariantLastIndex, 0);
     this.buttonBuy.SetDisabled(disableBuy);
     this.buttonColor.SetDisabled(disableColor);
@@ -310,7 +311,8 @@ public class CarDealerContentController extends inkGameController {
   protected cb func OnDealerButtonClick(evt: ref<inkPointerEvent>) -> Bool {
     let targetName: CName = evt.GetTarget().GetName();
 
-    if evt.IsAction(n"click") {
+    if evt.IsAction(n"click") && !evt.IsHandled() {
+      evt.Handle();
       this.PlayCustomSoundDealer(n"ui_menu_onpress");
 
       switch targetName {
@@ -563,26 +565,33 @@ public class CarDealerContentController extends inkGameController {
     let totalLots: Int32 = this.vehicleLastIndex + 1;
     carStatus.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
 
-    if isPurchased {
-      carStatus.SetText(s"\(DealerTexts.Lot()) \(lotNumber) \(DealerTexts.Of()) \(totalLots): \(DealerTexts.Purchased())");
-      carStatus.BindProperty(n"tintColor", n"MainColors.Yellow");
+    let tradeState: VehicleTradeResult = this.purchaseSystem.GetTradeState(id);
+    if Equals(tradeState, VehicleTradeResult.CompensationPending) || Equals(tradeState, VehicleTradeResult.ReviewRequired) {
+      let state: String = Equals(tradeState, VehicleTradeResult.CompensationPending) ? DealerTexts.PendingStatus() : DealerTexts.ReviewStatus();
+      carStatus.SetText(s"\(DealerTexts.Lot()) \(lotNumber) \(DealerTexts.Of()) \(totalLots): \(state)");
+      carStatus.BindProperty(n"tintColor", n"MainColors.Red");
     } else {
-      if !enoughCred {
-          carStatus.SetText(s"\(DealerTexts.Lot()) \(lotNumber) \(DealerTexts.Of()) \(totalLots): \(DealerTexts.NoCred())");
-          carStatus.BindProperty(n"tintColor", n"MainColors.Green");
+      if isPurchased {
+        carStatus.SetText(s"\(DealerTexts.Lot()) \(lotNumber) \(DealerTexts.Of()) \(totalLots): \(DealerTexts.Purchased())");
+        carStatus.BindProperty(n"tintColor", n"MainColors.Yellow");
       } else {
-        if !enoughMoney {
-          carStatus.SetText(s"\(DealerTexts.Lot()) \(lotNumber) \(DealerTexts.Of()) \(totalLots): \(DealerTexts.NoMoni())");
-          carStatus.BindProperty(n"tintColor", n"MainColors.Red");
+        if !enoughCred {
+            carStatus.SetText(s"\(DealerTexts.Lot()) \(lotNumber) \(DealerTexts.Of()) \(totalLots): \(DealerTexts.NoCred())");
+            carStatus.BindProperty(n"tintColor", n"MainColors.Green");
         } else {
-          if isPurchasable {
-            carStatus.SetText(s"\(DealerTexts.Lot()) \(lotNumber) \(DealerTexts.Of()) \(totalLots): \(DealerTexts.Available())");
-            carStatus.BindProperty(n"tintColor", n"MainColors.ActiveGreen");
+          if !enoughMoney {
+            carStatus.SetText(s"\(DealerTexts.Lot()) \(lotNumber) \(DealerTexts.Of()) \(totalLots): \(DealerTexts.NoMoni())");
+            carStatus.BindProperty(n"tintColor", n"MainColors.Red");
+          } else {
+            if isPurchasable {
+              carStatus.SetText(s"\(DealerTexts.Lot()) \(lotNumber) \(DealerTexts.Of()) \(totalLots): \(DealerTexts.Available())");
+              carStatus.BindProperty(n"tintColor", n"MainColors.ActiveGreen");
+            };
           };
         };
       };
-    };
 
+    };
     carStatus.Reparent(infoPanel);
 
     return infoPanel;
@@ -608,11 +617,6 @@ public class CarDealerContentController extends inkGameController {
     return streetCred >= cred;
   }
 
-  // Remove money from player inventory
-  private func RemoveMoneyFromPlayerDealer(price: Int32) -> Bool {
-    return GameInstance.GetTransactionSystem(this.playerPuppet.GetGame()).RemoveItemByTDBID(this.playerPuppet, t"Items.money", price);
-  }
-
   // Show purchased notification
   private func PushPurchasedNotificationDealer(id: TweakDBID) -> Void {
     let bb: ref<IBlackboard> = GameInstance.GetBlackboardSystem(this.playerPuppet.GetGame()).Get(GetAllBlackboardDefs().VehiclePurchaseData);
@@ -629,19 +633,13 @@ public class CarDealerContentController extends inkGameController {
     let currentBundle: ref<PurchasableVehicleBundle> = this.vehiclesStock[this.vehicleIndex];
     let currentVehicle: ref<PurchasableVehicleVariant> = currentBundle.variants[this.vehicleVariantIndex];
     let id: TweakDBID = currentVehicle.record.GetID();
-    let cred: Int32 = currentBundle.cred;
-    let price: Int32 = currentBundle.price;
-    let isPurchased: Bool = this.purchaseSystem.IsPurchased(id);
-    if !isPurchased && this.HasEnoughMoneyDealer(price) && this.HasEnoughStreetCredDealer(cred) {
-      this.PlayCustomSoundDealer(n"ui_menu_onpress");
-      if this.purchaseSystem.Purchase(id) {
-        this.RemoveMoneyFromPlayerDealer(price);
-        this.PushPurchasedNotificationDealer(id);
-        this.ShowDealerCurrentPage();
-      } else {
-        CarDealerLog(s"Purchase failed, money was not removed: \(TDBID.ToStringDEBUG(id))");
-      };
+    let result: VehicleTradeResult = this.purchaseSystem.BuyVehicle(this.playerPuppet, currentBundle, currentVehicle);
+    if Equals(result, VehicleTradeResult.Completed) {
+      this.PushPurchasedNotificationDealer(id);
+    } else {
+      VirtualCarDealerTradePopup.Show(this, result, id);
     };
+    this.ShowDealerCurrentPage();
   }
 
   // -- Open autofixer page in parent container

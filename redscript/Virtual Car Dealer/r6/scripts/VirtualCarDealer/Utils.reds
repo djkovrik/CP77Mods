@@ -18,4 +18,9 @@ public class DealerTexts {
   public static func Next() -> String = GetLocalizedTextByKey(n"Mod-Car-Dealer-Next")
   public static func Buy() -> String = GetLocalizedTextByKey(n"Mod-Car-Dealer-Buy")
   public static func ChangeColor() -> String = GetLocalizedTextByKey(n"Mod-Car-Dealer-ChangeColor")
+  public static func TradeFailed() -> String = GetLocalizedTextByKey(n"Mod-Car-Dealer-Trade-Failed")
+  public static func TradePending() -> String = GetLocalizedTextByKey(n"Mod-Car-Dealer-Trade-Pending")
+  public static func TradeReview() -> String = GetLocalizedTextByKey(n"Mod-Car-Dealer-Trade-Review")
+  public static func PendingStatus() -> String = GetLocalizedTextByKey(n"Mod-Car-Dealer-Trade-Pending-Status")
+  public static func ReviewStatus() -> String = GetLocalizedTextByKey(n"Mod-Car-Dealer-Trade-Review-Status")
 }

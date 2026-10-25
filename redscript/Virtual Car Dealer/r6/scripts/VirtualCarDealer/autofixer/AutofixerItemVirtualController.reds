@@ -3,8 +3,11 @@ import CarDealer.Classes.AutofixerSellEvent
 import CarDealer.Classes.AutofixerSellConfirmationEvent
 import CarDealer.Classes.AutofixerSellConfirmedEvent
 import CarDealer.Classes.AutofixerSellCompletedEvent
+import CarDealer.Classes.AutofixerSellResultEvent
 import CarDealer.Classes.AutofixerItemData
 import CarDealer.Utils.CarDealerLog
+import CarDealer.Utils.DealerTexts
+import CarDealer.Transactions.VehicleTradeResult
 import Codeware.UI.*
 
 class AutofixerItemVirtualController extends inkVirtualCompoundItemController {
@@ -22,7 +25,11 @@ class AutofixerItemVirtualController extends inkVirtualCompoundItemController {
   }
 
   protected cb func OnButtonClick(evt: ref<inkPointerEvent>) -> Bool {
-    if evt.IsAction(n"click") && Equals(evt.GetTarget().GetName(), n"ButtonSell") && IsDefined(this.m_data) && !this.m_data.sold {
+    if evt.IsAction(n"click") && !evt.IsHandled() && Equals(evt.GetTarget().GetName(), n"ButtonSell") && IsDefined(this.m_data) && !this.m_data.sold && !this.m_data.busy && !this.IsTradeBlocked() {
+      evt.Handle();
+      this.m_data.busy = true;
+      this.m_data.requestSerial += 1u;
+      this.RefreshView();
       CarDealerLog("Vehicle sell clicked...");
       if this.m_data.vanilla {
         CarDealerLog("Request confirmation");
@@ -43,7 +50,7 @@ class AutofixerItemVirtualController extends inkVirtualCompoundItemController {
   }
 
   protected cb func OnAutofixerSellConfirmedEvent(evt: ref<AutofixerSellConfirmedEvent>) -> Bool {
-    if !IsDefined(evt) || NotEquals(evt.data, this.m_data) {
+    if !IsDefined(evt) || !IsDefined(this.m_data) || NotEquals(evt.data, this.m_data) {
       return false;
     };
 
@@ -51,7 +58,7 @@ class AutofixerItemVirtualController extends inkVirtualCompoundItemController {
   }
 
   protected cb func OnAutofixerSellCompletedEvent(evt: ref<AutofixerSellCompletedEvent>) -> Bool {
-    if !IsDefined(evt) || NotEquals(evt.data, this.m_data) {
+    if !IsDefined(evt) || !IsDefined(this.m_data) || NotEquals(evt.data, this.m_data) {
       return false;
     };
 
@@ -59,9 +66,16 @@ class AutofixerItemVirtualController extends inkVirtualCompoundItemController {
     this.RefreshView();
   }
 
+  protected cb func OnAutofixerSellResultEvent(evt: ref<AutofixerSellResultEvent>) -> Bool {
+    if IsDefined(evt) && IsDefined(this.m_data) && Equals(evt.data, this.m_data) {
+      this.RefreshView();
+    };
+  }
+
   private final func TriggerVehicleConfirmationPopup(data: ref<AutofixerItemData>) -> Void {
     let requestEvent: ref<AutofixerSellConfirmationEvent> = new AutofixerSellConfirmationEvent();
     requestEvent.data = data;
+    requestEvent.requestSerial = data.requestSerial;
     this.QueueEvent(requestEvent);
   }
 
@@ -69,6 +83,7 @@ class AutofixerItemVirtualController extends inkVirtualCompoundItemController {
     if IsDefined(this.m_data) && !this.m_data.sold {
       let sellEvent: ref<AutofixerSellEvent> = new AutofixerSellEvent();
       sellEvent.data = this.m_data;
+      sellEvent.requestSerial = this.m_data.requestSerial;
       this.QueueEvent(sellEvent);
     };
   }
@@ -79,12 +94,20 @@ class AutofixerItemVirtualController extends inkVirtualCompoundItemController {
     this.m_icon.SetAtlasResource(this.m_data.atlasResource);
     this.m_icon.SetTexturePart(this.m_data.textureName);
 
-    this.m_button.SetDisabledState(this.m_data.sold);
-    if this.m_data.sold {
-      this.m_button.SetText(GetLocalizedText("LocKey#8028"));
+    this.m_button.SetDisabledState(this.m_data.sold || this.m_data.busy || this.IsTradeBlocked());
+    if this.IsTradeBlocked() {
+      this.m_button.SetText(Equals(this.m_data.tradeResult, VehicleTradeResult.CompensationPending) ? DealerTexts.PendingStatus() : DealerTexts.ReviewStatus());
     } else {
-      this.m_button.SetText(GetLocalizedText("LocKey#17848"));
+      if this.m_data.sold {
+        this.m_button.SetText(GetLocalizedText("LocKey#8028"));
+      } else {
+        this.m_button.SetText(GetLocalizedText("LocKey#17848"));
+      };
     };
+  }
+
+  private func IsTradeBlocked() -> Bool {
+    return Equals(this.m_data.tradeResult, VehicleTradeResult.CompensationPending) || Equals(this.m_data.tradeResult, VehicleTradeResult.ReviewRequired);
   }
 
   private func InitializeWidgets() -> Void {
