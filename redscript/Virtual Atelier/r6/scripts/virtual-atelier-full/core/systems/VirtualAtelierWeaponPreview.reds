@@ -2,7 +2,6 @@ module VirtualAtelier.Systems
 
 public class VirtualAtelierPreviewWeapon extends IScriptable {
   public let itemID: ItemID;
-  public let isOwned: Bool;
 }
 
 public class VirtualAtelierWeaponPreview extends IScriptable {
@@ -14,6 +13,7 @@ public class VirtualAtelierWeaponPreview extends IScriptable {
   private let rightWeapon: ref<VirtualAtelierPreviewWeapon>;
   private let leftWeapon: ref<VirtualAtelierPreviewWeapon>;
   private let isSelectingWeapons: Bool;
+  private let givenWeapons: array<ref<VirtualAtelierPreviewWeapon>>;
 
   public static func Create(puppet: ref<gamePuppet>, player: wref<PlayerPuppet>) -> ref<VirtualAtelierWeaponPreview> {
     let preview: ref<VirtualAtelierWeaponPreview> = new VirtualAtelierWeaponPreview();
@@ -42,6 +42,12 @@ public class VirtualAtelierWeaponPreview extends IScriptable {
     } else if this.isSelectingWeapons && this.IsSameWeapon(this.leftWeapon, itemID) {
       this.ChangeWeapons(this.rightWeapon, null, true);
     } else {
+      // At most two active grants and one staged grant; retry failed cleanup before giving more.
+      if !this.ReleaseUnusedWeapons() {
+        if !this.ApplyWeapons(this.rightWeapon, this.leftWeapon) || !this.ReleaseUnusedWeapons() {
+          return;
+        };
+      };
       if NotEquals(EquipmentSystem.GetPlacementSlot(itemID), t"AttachmentSlots.WeaponRight") {
         return;
       };
@@ -54,7 +60,7 @@ public class VirtualAtelierWeaponPreview extends IScriptable {
       } else {
         this.ChangeWeapons(weapon, null, true);
       };
-      this.ReleaseWeapon(weapon);
+      this.ReleaseUnusedWeapons();
     };
   }
 
@@ -101,7 +107,7 @@ public class VirtualAtelierWeaponPreview extends IScriptable {
       if !this.transactionSystem.GivePreviewItemByItemID(this.puppet, itemID) {
         return null;
       };
-      weapon.isOwned = true;
+      ArrayPush(this.givenWeapons, weapon);
     };
     return weapon;
   }
@@ -148,14 +154,14 @@ public class VirtualAtelierWeaponPreview extends IScriptable {
           this.leftWeapon = null;
         };
       };
+      this.ReleaseUnusedWeapons();
       return false;
     };
 
     this.rightWeapon = right;
     this.leftWeapon = left;
     this.isSelectingWeapons = isSelecting;
-    this.ReleaseWeapon(previousRight);
-    this.ReleaseWeapon(previousLeft);
+    this.ReleaseUnusedWeapons();
     return true;
   }
 
@@ -184,14 +190,21 @@ public class VirtualAtelierWeaponPreview extends IScriptable {
     return this.transactionSystem.CanPlaceItemInSlot(this.puppet, slotID, weapon.itemID) && this.transactionSystem.AddItemToSlot(this.puppet, slotID, weapon.itemID, true);
   }
 
-  private func ReleaseWeapon(weapon: ref<VirtualAtelierPreviewWeapon>) -> Void {
-    if !IsDefined(weapon) || !weapon.isOwned || weapon == this.rightWeapon || weapon == this.leftWeapon {
-      return;
-    };
-    if !this.IsInSlot(t"AttachmentSlots.WeaponRight", weapon) && !this.IsInSlot(t"AttachmentSlots.WeaponLeft", weapon) {
-      if this.transactionSystem.RemoveItem(this.puppet, weapon.itemID, 1) {
-        weapon.isOwned = false;
+  private func ReleaseUnusedWeapons() -> Bool {
+    let weapon: ref<VirtualAtelierPreviewWeapon>;
+    let released: Bool = true;
+    let i: Int32 = ArraySize(this.givenWeapons) - 1;
+    while i >= 0 {
+      weapon = this.givenWeapons[i];
+      if weapon != this.rightWeapon && weapon != this.leftWeapon {
+        if !this.IsInSlot(t"AttachmentSlots.WeaponRight", weapon) && !this.IsInSlot(t"AttachmentSlots.WeaponLeft", weapon) && (!this.transactionSystem.HasItem(this.puppet, weapon.itemID) || this.transactionSystem.RemoveItem(this.puppet, weapon.itemID, 1)) {
+          ArrayErase(this.givenWeapons, i);
+        } else {
+          released = false;
+        };
       };
+      i -= 1;
     };
+    return released;
   }
 }

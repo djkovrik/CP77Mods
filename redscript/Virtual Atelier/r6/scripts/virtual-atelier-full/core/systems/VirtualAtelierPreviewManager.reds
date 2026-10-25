@@ -44,11 +44,15 @@ public class VirtualAtelierPreviewManager extends ScriptableSystem {
   }
 
   public func UninitializePuppet(puppet: ref<gamePuppet>) -> Void {
-    let emptyId: EntityID;
     if !IsDefined(puppet) || this.puppetId != puppet.GetEntityID() {
       return;
     };
     this.ResetGarment();
+    this.ClearPuppetState();
+  }
+
+  private func ClearPuppetState() -> Void {
+    let emptyId: EntityID;
     this.weaponPreview = null;
     this.compatibilityHelper = null;
     ArrayClear(this.givenItems);
@@ -57,9 +61,8 @@ public class VirtualAtelierPreviewManager extends ScriptableSystem {
   }
 
   public func SetVirtualStorePreview(active: Bool) -> Void {
-    if this.isVirtualStorePreview && !active {
-      this.UninitializePuppet(this.GetGamePuppet());
-    };
+    this.ResetGarment();
+    this.ClearPuppetState();
     this.isVirtualStorePreview = active;
   }
 
@@ -87,13 +90,16 @@ public class VirtualAtelierPreviewManager extends ScriptableSystem {
   }
 
   public func EquipItem(itemID: ItemID) -> Void {
-    if IsDefined(this.weaponPreview) && RPGManager.IsItemWeapon(itemID) {
-      if !this.weaponPreview.GetIsEquipped(itemID) {
+    if this.isVirtualStorePreview && RPGManager.IsItemWeapon(itemID) {
+      if IsDefined(this.weaponPreview) && !this.weaponPreview.GetIsEquipped(itemID) {
         this.weaponPreview.ToggleItem(itemID);
       };
       return;
     };
     let puppet: ref<gamePuppet> = this.GetGamePuppet();
+    if !IsDefined(puppet) || !IsDefined(this.compatibilityHelper) {
+      return;
+    };
     let placementSlot: TweakDBID = this.compatibilityHelper.GetAtelierPlacementSlot(itemID);
 
     let currentItemInSlot: ItemID = this.transactionSystem.GetItemInSlot(puppet, placementSlot).GetItemID();
@@ -107,13 +113,16 @@ public class VirtualAtelierPreviewManager extends ScriptableSystem {
   }
 
   public func UnequipItem(itemID: ItemID) -> Void {
-    if IsDefined(this.weaponPreview) && RPGManager.IsItemWeapon(itemID) {
-      if this.weaponPreview.GetIsEquipped(itemID) {
+    if this.isVirtualStorePreview && RPGManager.IsItemWeapon(itemID) {
+      if IsDefined(this.weaponPreview) && this.weaponPreview.GetIsEquipped(itemID) {
         this.weaponPreview.ToggleItem(itemID);
       };
       return;
     };
     let puppet: ref<gamePuppet> = this.GetGamePuppet();
+    if !IsDefined(puppet) || !IsDefined(this.compatibilityHelper) {
+      return;
+    };
     let placementSlot: TweakDBID = this.compatibilityHelper.GetAtelierPlacementSlot(itemID);
     this.transactionSystem.RemoveItemFromSlot(puppet, placementSlot, true);
     this.transactionSystem.RemoveItem(puppet, itemID, 1);

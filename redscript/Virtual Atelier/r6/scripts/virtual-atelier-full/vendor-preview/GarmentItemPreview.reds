@@ -5,10 +5,11 @@ import VirtualAtelier.Helpers.AtelierWidgetsHelper
 protected cb func OnInitialize() -> Bool {
   this.previewManager = VirtualAtelierPreviewManager.GetInstance(this.GetPlayerControlledObject().GetGame());
   this.previewActive = this.previewManager.IsPreviewActive();
+  this.atelierPreviewAttached = this.previewActive;
   
   wrappedMethod();
 
-  if this.previewActive {
+  if this.atelierPreviewAttached {
     this.RegisterToGlobalInputCallback(n"OnPostOnPress", this, n"OnGlobalPress");
     this.additionalData = this.GetRootWidget().GetUserData(n"InventoryItemPreviewData") as PreviewInventoryItemPreviewData;
     AtelierWidgetsHelper.AdjustGarmentPreviewWidgets(this);
@@ -19,10 +20,9 @@ protected cb func OnInitialize() -> Bool {
 protected cb func OnPreviewInitialized() -> Bool {
   wrappedMethod();
 
-  if this.previewActive {
+  if this.atelierPreviewAttached {
     this.previewManager.InitializePuppet(this.GetGamePuppet());
     this.previewManager.InitializeCompatibilityHelper(this);
-    this.atelierPreviewAttached = true;
   };
 }
 
