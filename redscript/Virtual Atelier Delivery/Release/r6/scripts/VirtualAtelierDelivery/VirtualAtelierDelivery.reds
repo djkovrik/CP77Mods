@@ -602,12 +602,21 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
   private let delaySystem: wref<DelaySystem>;
   private let config: ref<VirtualAtelierDeliveryConfig>;
   private let handled: Bool;
+  private let sessionReady: Bool;
+  private let recoveryCallbackId: DelayID;
+  private let recoveryGeneration: Uint32;
+  private let recoveryEnabled: Bool;
+  private let recoveryAttemptsLeft: Int32;
+  private let readinessRetriesLeft: Int32;
+  private let recoveryPending: Bool;
+  private let retiredEntityIDs: ref<inkHashMap>;
   private let spawnConfig: ref<AtelierDropPointsSpawnerConfig>;
   private let initialCallbackId: DelayID;
   private let dropPointsCallbackId: DelayID;
   private let nightCityUnlocked: Bool = false;
   private let dogtownUnlocked: Bool = false;
   private let typeTag: CName = n"VirtualAtelierDropPoint";
+  private let streamingTag: CName = n"VirtualAtelierDropPointStreamedV1";
   private let spawnedMappins: ref<inkHashMap>;
   public static func Get(gi: GameInstance) -> ref<AtelierDropPointsSpawner> {
     let system: ref<AtelierDropPointsSpawner> = GameInstance.GetScriptableSystemsContainer(gi).Get(n"AtelierDelivery.AtelierDropPointsSpawner") as AtelierDropPointsSpawner;
@@ -617,7 +626,16 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     this.entitySystem = GameInstance.GetDynamicEntitySystem();
     this.delaySystem = GameInstance.GetDelaySystem(this.GetGameInstance());
     this.handled = false;
+    this.sessionReady = false;
+    this.recoveryCallbackId = GetInvalidDelayID();
+    this.initialCallbackId = GetInvalidDelayID();
+    this.dropPointsCallbackId = GetInvalidDelayID();
+    this.recoveryEnabled = false;
+    this.retiredEntityIDs = new inkHashMap();
     this.config = new VirtualAtelierDeliveryConfig();
+    // Also retry after long loads, once all session data has been restored.
+    GameInstance.GetCallbackSystem().RegisterCallback(n"Session/Ready", this, n"OnSessionReady")
+      .SetLifetime(CallbackLifetime.Session);
     if GameInstance.GetSystemRequestsHandler().IsPreGame() {
       return;
     };
@@ -628,17 +646,27 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     this.spawnConfig.BuildNightCityList();
     this.spawnConfig.BuildDogtownList();
   }
+  private cb func OnSessionReady(event: ref<GameSessionEvent>) -> Void {
+    this.sessionReady = true;
+    this.HandleSpawning();
+  }
   public func OnRestored(saveVersion: Int32, gameVersion: Int32) -> Void {
     this.Log("OnRestored");
-    if !this.handled {
-      this.HandleSpawning();
-    };
+    this.HandleSpawning();
   }
   private func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
     this.Log("OnPlayerAttach");
-    if !this.handled {
-      this.HandleSpawning();
+    this.HandleSpawning();
+  }
+  public func OnDetach() -> Void {
+    this.sessionReady = false;
+    this.StopRecovery();
+    if IsDefined(this.delaySystem) {
+      this.delaySystem.CancelCallback(this.initialCallbackId);
+      this.delaySystem.CancelCallback(this.dropPointsCallbackId);
     };
+    this.initialCallbackId = GetInvalidDelayID();
+    this.dropPointsCallbackId = GetInvalidDelayID();
   }
   public final func IsNightCityUnlocked() -> Bool {
     return this.nightCityUnlocked;
@@ -656,77 +684,71 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     if !this.EnsureInitialized() {
       return false;
     };
-    let values: array<wref<IScriptable>>;
-    this.spawnedMappins.GetValues(values);
-    let entry: ref<MappinIdWrapper>;
-    for value in values {
-      entry = value as MappinIdWrapper;
-      if IsDefined(entry) && Equals(entry.id, targetId) {
-        return true;
-      };
-    };
-    return false;
+    return this.spawnedMappins.KeyExist(targetId.value);
   }
   public final func SaveSpawnedMappinId(entityId: EntityID, mappinId: NewMappinID) -> Void {
     if !this.EnsureInitialized() {
       return;
     };
-    let uniqueTag: CName = this.GetDropPointTagByEntityId(entityId);
-    if Equals(uniqueTag, n"") {
+    let invalidID: NewMappinID;
+    if Equals(mappinId, invalidID) || this.IsRetiredDropPoint(entityId) {
       return;
     };
-    let key: Uint64 = NameToHash(uniqueTag);
-    if !this.spawnedMappins.KeyExist(key) {
-      this.spawnedMappins.Insert(key, MappinIdWrapper.Create(mappinId, uniqueTag));
-      this.Log(s"Saved mappinId \(mappinId.value) with key \(key)");
+    let point: ref<AtelierDropPointInstance> = this.spawnConfig.GetPointByUniqueTag(this.GetDropPointTagByEntityId(entityId));
+    if !IsDefined(point) {
+      return;
     };
+    if this.spawnedMappins.KeyExist(mappinId.value) {
+      this.spawnedMappins.Set(mappinId.value, point);
+    } else {
+      this.spawnedMappins.Insert(mappinId.value, point);
+    };
+  }
+  public final func ForgetSpawnedMappinId(mappinId: NewMappinID) -> Void {
+    if IsDefined(this.spawnedMappins) {
+      this.spawnedMappins.Remove(mappinId.value);
+    };
+  }
+  public final func IsRetiredDropPoint(entityId: EntityID) -> Bool {
+    // Called for every registration request, including other mods. Use the full
+    // 64-bit entity ID so lookup does not scan all retired terminals.
+    return IsDefined(this.retiredEntityIDs) && this.retiredEntityIDs.KeyExist(EntityID.ToHash(entityId));
   }
   public final func GetUniqueTagByEntityId(entityId: EntityID) -> CName {
     return this.GetDropPointTagByEntityId(entityId);
   }
   private final func GetDropPointTagByEntityId(entityId: EntityID) -> CName {
     if !this.EnsureInitialized() {
-      this.Log(s"Pickup terminal lookup FAILED for entity \(entityId): spawner is not initialized");
+      if this.IsDebugEnabled() {
+        this.Log(s"Pickup terminal lookup FAILED for entity \(entityId): spawner is not initialized");
+      };
       return n"";
     };
     let tags: array<CName> = this.entitySystem.GetTags(entityId);
     if Equals(ArraySize(tags), 0) {
-      this.Log(s"Pickup terminal lookup FAILED for entity \(entityId): entity has no dynamic tags");
+      if this.IsDebugEnabled() {
+        this.Log(s"Pickup terminal lookup FAILED for entity \(entityId): entity has no dynamic tags");
+      };
       return n"";
     };
     for tag in tags {
       if NotEquals(AtelierDeliveryUtils.GetDropPointByTag(tag), AtelierDeliveryDropPoint.None) {
-        this.Log(s"Pickup terminal lookup succeeded for entity \(entityId): uniqueTag=\(tag), totalTags=\(ArraySize(tags))");
+        if this.IsDebugEnabled() {
+          this.Log(s"Pickup terminal lookup succeeded for entity \(entityId): uniqueTag=\(tag), totalTags=\(ArraySize(tags))");
+        };
         return tag;
       };
     };
-    this.Log(s"Pickup terminal lookup FAILED for entity \(entityId): none of its \(ArraySize(tags)) tags maps to a delivery point");
+    if this.IsDebugEnabled() {
+      this.Log(s"Pickup terminal lookup FAILED for entity \(entityId): none of its \(ArraySize(tags)) tags maps to a delivery point");
+    };
     return n"";
   }
   public final func FindInstanceByMappinId(mappinId: NewMappinID) -> ref<AtelierDropPointInstance> {
     if !this.EnsureInitialized() {
       return null;
     };
-    let values: array<wref<IScriptable>>;
-    this.spawnedMappins.GetValues(values);
-    let entry: ref<MappinIdWrapper>;
-    let target: ref<MappinIdWrapper>;
-    for value in values {
-      entry = value as MappinIdWrapper;
-      if IsDefined(entry) && Equals(entry.id, mappinId) {
-        target = entry;
-      };
-    };
-    if !IsDefined(target) {
-      return null;
-    };
-    let dropPoints: array<ref<AtelierDropPointInstance>> = this.GetAvailableDropPoints();
-    for dropPoint in dropPoints {
-      if Equals(target.tag, dropPoint.uniqueTag) {
-        return dropPoint;
-      };
-    };
-    return null;
+    return this.spawnedMappins.Get(mappinId.value) as AtelierDropPointInstance;
   }
   public final func GetAvailableDropPoints() -> array<ref<AtelierDropPointInstance>> {
     let result: array<ref<AtelierDropPointInstance>>;
@@ -774,7 +796,9 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     return null;
   }
   private final func CheckForQuestFacts() -> Void {
-    this.Log(s"CheckForQuestFacts");
+    if this.IsDebugEnabled() {
+      this.Log(s"CheckForQuestFacts");
+    };
     let questsSystem: ref<QuestsSystem> = GameInstance.GetQuestsSystem(this.GetGameInstance());
     let watsonFact: Int32 = questsSystem.GetFact(n"watson_prolog_lock");
     let unlockFact: Int32 = questsSystem.GetFact(n"unlock_car_hud_dpad");
@@ -783,71 +807,149 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     this.dogtownUnlocked = Equals(dogtownFact, 1); 
   }
   public final func CheckAndHandleSpawning() -> Void {
-    this.Log(s"CheckAndHandleSpawning");
-    if this.HasPendingEntities() {
-      this.HandleSpawning();
-    };
+    this.HandleSpawning();
   }
   public final func HandleSpawning() -> Void {
-    this.Log(s"HandleSpawning");
+    if GameInstance.GetSystemRequestsHandler().IsPreGame() || !this.EnsureInitialized() {
+      return;
+    };
+    // Each external event starts a bounded recovery pass, not a polling loop.
+    this.StopRecovery();
+    this.recoveryEnabled = true;
+    this.recoveryAttemptsLeft = 3;
+    this.readinessRetriesLeft = 6;
+    if this.handled {
+      this.ScheduleInitialNotification();
+    };
+    this.ScheduleRecovery(5.0);
+  }
+  private final func ScheduleRecovery(delay: Float) -> Void {
+    this.delaySystem.CancelCallback(this.recoveryCallbackId);
+    this.recoveryCallbackId = GetInvalidDelayID();
+    this.recoveryGeneration += 1u;
+    let callback: ref<DropPointsSpawnerCallbackRecovery> = DropPointsSpawnerCallbackRecovery.Create(this, this.recoveryGeneration);
+    this.recoveryCallbackId = this.delaySystem.DelayCallback(callback, delay, false);
+  }
+  private final func StopRecovery() -> Void {
+    this.recoveryEnabled = false;
+    this.recoveryGeneration += 1u;
+    if IsDefined(this.delaySystem) {
+      this.delaySystem.CancelCallback(this.recoveryCallbackId);
+    };
+    this.recoveryCallbackId = GetInvalidDelayID();
+  }
+  public final func HandleRecovery(generation: Uint32) -> Void {
+    if !this.recoveryEnabled || NotEquals(generation, this.recoveryGeneration) {
+      return;
+    };
+    this.recoveryCallbackId = GetInvalidDelayID();
     if GameInstance.GetSystemRequestsHandler().IsPreGame() {
+      this.StopRecovery();
       return;
     };
     if !this.EnsureInitialized() {
+      this.StopRecovery();
       return;
     };
-    this.CheckForQuestFacts();
-    this.ScheduleInitialNotification();
-    this.handled = true;
-    if GameInstance.GetSystemRequestsHandler().IsPreGame() {
-      return;
-    };
-    let supportedTags: array<CName> = this.spawnConfig.GetIterationTagsPrologue();
-    this.Log(s"! Prologue, supported tags: \(ArraySize(supportedTags))");
-    for entityTag in supportedTags {
-      this.Log(s"> Check tag \(entityTag):");
-      if !this.entitySystem.IsPopulated(entityTag) {
-        this.Log(s"-> Call for spawn entities");
-        this.SpawnInstancesByTag(entityTag);
+    // A registered entity can still be restoring/streaming. Never create replacements
+    // based only on GetEntity() returning null during loading.
+    if !this.sessionReady || !this.entitySystem.IsReady() || !IsDefined(GetPlayer(this.GetGameInstance())) {
+      this.Log("Recovery: waiting for DynamicEntitySystem/player readiness");
+      this.readinessRetriesLeft -= 1;
+      if this.readinessRetriesLeft > 0 {
+        this.ScheduleRecovery(5.0);
       } else {
-        this.Log(s"-> Entities already spawned");
+        this.Log("Recovery: readiness timeout, waiting for the next lifecycle event");
+        this.StopRecovery();
       };
+      return;
+    };
+    this.recoveryAttemptsLeft -= 1;
+    this.recoveryPending = false;
+    this.CheckForQuestFacts();
+    if !this.handled {
+      this.handled = true;
+      this.ScheduleInitialNotification();
+    };
+    if this.IsDebugEnabled() {
+      this.Log(s"Recovery audit: restored=\(this.entitySystem.IsRestored())");
+    };
+    // Remove the legacy Northside placement before checking individual points.
+    this.FixAlreadySpawnedEntities();
+    let tags: array<CName> = this.spawnConfig.GetIterationTagsPrologue();
+    for tag in tags {
+      this.ReconcileInstancesByTag(tag);
     };
     if this.nightCityUnlocked {
-      let supportedTags: array<CName> = this.spawnConfig.GetIterationTagsNightCity();
-      this.Log(s"! Night City, supported tags: \(ArraySize(supportedTags))");
-      for entityTag in supportedTags {
-        this.Log(s"> Check tag \(entityTag):");
-        if !this.entitySystem.IsPopulated(entityTag) {
-          this.Log(s"-> Call for spawn entities");
-          this.SpawnInstancesByTag(entityTag);
-        } else {
-          this.Log(s"-> Entities already spawned");
-        };
+      tags = this.spawnConfig.GetIterationTagsNightCity();
+      for tag in tags {
+        this.ReconcileInstancesByTag(tag);
       };
-    } else {
-      this.Log("Night City locked, skip spawning");
     };
-    let playerInDogtown: Bool = GameInstance.GetPreventionSpawnSystem(this.GetGameInstance()).IsPlayerInDogTown();
-    if this.dogtownUnlocked && playerInDogtown {
-      let supportedTags: array<CName> = this.spawnConfig.GetIterationTagsDogtown();
-      this.Log(s"! Dogtown, supported tags: \(ArraySize(supportedTags))");
-      for entityTag in supportedTags {
-        this.Log(s"> Check tag \(entityTag):");
-        if !this.entitySystem.IsPopulated(entityTag) {
-          this.Log(s"-> Call for spawn entities");
-          this.SpawnInstancesByTag(entityTag);
-        } else {
-          this.Log(s"-> Entities already spawned");
-        };
+    // Register unlocked destinations even outside their district. Population
+    // streaming controls the physical terminal; its map marker exists remotely.
+    if this.dogtownUnlocked {
+      tags = this.spawnConfig.GetIterationTagsDogtown();
+      for tag in tags {
+        this.ReconcileInstancesByTag(tag);
       };
-    } else {
-      this.Log("Player not in Dogtown, skip spawning");
     };
-    this.FixAlreadySpawnedEntities();
+    if this.recoveryPending && this.recoveryAttemptsLeft > 0 {
+      this.ScheduleRecovery(5.0);
+    } else {
+      if this.IsDebugEnabled() {
+        this.Log(s"Recovery pass finished: unresolved=\(this.recoveryPending), waiting for the next lifecycle event");
+      };
+      this.StopRecovery();
+    };
+  }
+  private final func ReconcileInstancesByTag(tag: CName) -> Void {
+    let instances: array<ref<AtelierDropPointInstance>> = this.spawnConfig.GetSpawnPointsByTag(tag);
+    for instance in instances {
+      this.ReconcileDropPoint(instance);
+    };
+  }
+  private final func ReconcileDropPoint(instance: ref<AtelierDropPointInstance>) -> Void {
+    let ids: array<EntityID> = this.entitySystem.GetTaggedIDs(instance.indexTag);
+    // Older registrations can still be recognized by their location tag.
+    if Equals(ArraySize(ids), 0) {
+      ids = this.entitySystem.GetTaggedIDs(instance.uniqueTag);
+    };
+    if this.IsDebugEnabled() {
+      this.Log(s"Recovery point \(instance.uniqueTag): registrations=\(ArraySize(ids))");
+    };
+    if Equals(ArraySize(ids), 0) {
+      if this.IsDebugEnabled() {
+        this.Log(s"Recovery point \(instance.uniqueTag): registration missing, creating");
+      };
+      this.SpawnDropPointEntity(instance);
+      this.recoveryPending = true;
+      return;
+    };
+    for id in ids {
+      if !this.entitySystem.IsTagged(id, this.typeTag) {
+        if this.IsDebugEnabled() {
+          this.Log(s"Recovery point \(instance.uniqueTag): foreign tag collision, leaving entity untouched");
+        };
+      } else if this.IsRetiredDropPoint(id) {
+        // DeleteEntity finishes asynchronously. Wait for its registration to go
+        // away before creating a replacement at the same position.
+        this.recoveryPending = true;
+      } else if !this.entitySystem.IsTagged(id, this.streamingTag) {
+        // One-time migration of old alwaysSpawned/transient-ID registrations.
+        this.DeleteDropPointEntity(id);
+        this.recoveryPending = true;
+      } else {
+        // A managed streamed entity is valid even while its object is absent.
+        // Never enable or recreate it merely because the player is far away.
+        this.RegisterDropPointMappin(id, instance);
+      };
+    };
   }
   public final func ScheduleInitialNotification() -> Void {
-    this.Log(s"ScheduleInitialNotification...");
+    if this.IsDebugEnabled() {
+      this.Log(s"ScheduleInitialNotification...");
+    };
     this.delaySystem.CancelCallback(this.initialCallbackId);
     let callback: ref<DropPointsSpawnerCallbackInitial> = DropPointsSpawnerCallbackInitial.Create(this);
     this.initialCallbackId = this.delaySystem.DelayCallback(callback, 7.0, true);
@@ -858,7 +960,9 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     let factName: CName = n"vad_welcome_displayed";
     let welcomeFact: Int32 = questsSystem.GetFact(factName);
     let welcomeDisplayed: Bool = Equals(welcomeFact, 1);
-    this.Log(s"HandleInitialNotification, welcomeDisplayed = \(welcomeDisplayed)");
+    if this.IsDebugEnabled() {
+      this.Log(s"HandleInitialNotification, welcomeDisplayed = \(welcomeDisplayed)");
+    };
     if !welcomeDisplayed && this.IsPhoneAvailable() {
       messenger = DeliveryMessengerSystem.Get(this.GetGameInstance());
       messenger.PushWelcomeNotificationItem();
@@ -867,13 +971,17 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     this.ScheduleNewDropPointsNotification();
   }
   public final func ScheduleNewDropPointsNotification() -> Void {
-    this.Log(s"ScheduleNewDropPointsNotification...");
+    if this.IsDebugEnabled() {
+      this.Log(s"ScheduleNewDropPointsNotification...");
+    };
     this.delaySystem.CancelCallback(this.dropPointsCallbackId);
     let callback: ref<DropPointsSpawnerCallbackNewDropPoint> = DropPointsSpawnerCallbackNewDropPoint.Create(this);
     this.dropPointsCallbackId = this.delaySystem.DelayCallback(callback, 7.0, true);
   }
   public final func HandleNewDropPointsNotification() -> Void {
-    this.Log(s"HandleNewDropPointsNotification");
+    if this.IsDebugEnabled() {
+      this.Log(s"HandleNewDropPointsNotification");
+    };
     let questsSystem: ref<QuestsSystem> = GameInstance.GetQuestsSystem(this.GetGameInstance());
     let playerInDogtown: Bool = GameInstance.GetPreventionSpawnSystem(this.GetGameInstance()).IsPlayerInDogTown();
     let messenger: ref<DeliveryMessengerSystem>;
@@ -881,7 +989,9 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     let longshoreStacksFactName: CName = n"vad_longshore_sacks_displayed";
     let longshoreStacksFact: Int32 = questsSystem.GetFact(longshoreStacksFactName);
     let longshoreStacksDisplayed: Bool = Equals(longshoreStacksFact, 1);
-    this.Log(s" - LongshoreStacks displayed: \(longshoreStacksDisplayed)");
+    if this.IsDebugEnabled() {
+      this.Log(s" - LongshoreStacks displayed: \(longshoreStacksDisplayed)");
+    };
     if playerInDogtown && !longshoreStacksDisplayed && this.IsPhoneAvailable() {
       messenger = DeliveryMessengerSystem.Get(this.GetGameInstance());
       messenger.PushNewDropPointNotificationItem(AtelierDeliveryDropPoint.LongshoreStacks, t"Districts.Dogtown");
@@ -889,39 +999,46 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     };
   }
   public final func DespawnAll() -> Void {
-    let supportedTagsPrologue: array<CName> = this.spawnConfig.GetIterationTagsPrologue();
-    let supportedTagsNightCity: array<CName> = this.spawnConfig.GetIterationTagsNightCity();
-    let supportedTagsDogtown: array<CName> = this.spawnConfig.GetIterationTagsDogtown();
-    for tag in supportedTagsPrologue {
-      this.entitySystem.DeleteTagged(tag);
+    this.StopRecovery();
+    if !this.EnsureInitialized() {
+      return;
     };
-    for tag in supportedTagsNightCity {
-      this.entitySystem.DeleteTagged(tag);
-    };
-    for tag in supportedTagsDogtown {
-      this.entitySystem.DeleteTagged(tag);
-    };
-  }
-  private final func SpawnInstancesByTag(entityTag: CName) -> Void {
-    let instances: array<ref<AtelierDropPointInstance>> = this.spawnConfig.GetSpawnPointsByTag(entityTag);
-    for instance in instances {
-      this.SpawnDropPointEntity(instance);
+    this.delaySystem.CancelCallback(this.initialCallbackId);
+    this.delaySystem.CancelCallback(this.dropPointsCallbackId);
+    this.initialCallbackId = GetInvalidDelayID();
+    this.dropPointsCallbackId = GetInvalidDelayID();
+    let ids: array<EntityID> = this.entitySystem.GetTaggedIDs(this.typeTag);
+    for id in ids {
+      this.DeleteDropPointEntity(id);
     };
   }
   private final func FixAlreadySpawnedEntities() -> Void {
     this.Log("FixAlreadySpawnedEntities");
-    let dropPoints: array<ref<AtelierDropPointInstance>> = this.GetAvailableDropPoints();
     // Fix #1: Northside
-    let fix1tag: CName = n"droppoint3";
-    if this.entitySystem.IsPopulated(fix1tag) {
-      this.Log("Northside already spawned, repositioning...");
-      this.entitySystem.DeleteTagged(fix1tag);
-      for dropPoint in dropPoints {
-        if Equals(dropPoint.type, AtelierDeliveryDropPoint.MartinSt) && !this.entitySystem.IsPopulated(dropPoint.indexTag) {
-          this.SpawnDropPointEntity(dropPoint);
-        };
-      };
+    let ids: array<EntityID> = this.entitySystem.GetTaggedIDs(n"droppoint3");
+    for id in ids {
+      this.DeleteDropPointEntity(id);
     };
+  }
+  private final func DeleteDropPointEntity(id: EntityID) -> Void {
+    if !this.entitySystem.IsTagged(id, this.typeTag) || this.IsRetiredDropPoint(id) {
+      return;
+    };
+    if this.entitySystem.DeleteEntity(id) {
+      this.retiredEntityIDs.Insert(EntityID.ToHash(id), new AtelierRetiredEntityMarker());
+      let request: ref<UnregisterDropPointMappinRequest> = new UnregisterDropPointMappinRequest();
+      request.ownerID = id;
+      request.removeFromSystem = true;
+      let dropPointSystem: ref<DropPointSystem> = GameInstance.GetScriptableSystemsContainer(this.GetGameInstance()).Get(n"DropPointSystem") as DropPointSystem;
+      dropPointSystem.QueueRequest(request);
+    };
+  }
+  private final func RegisterDropPointMappin(id: EntityID, instance: ref<AtelierDropPointInstance>) -> Void {
+    let request: ref<RegisterDropPointMappinRequest> = new RegisterDropPointMappinRequest();
+    request.ownerID = id;
+    request.position = instance.position;
+    let dropPointSystem: ref<DropPointSystem> = GameInstance.GetScriptableSystemsContainer(this.GetGameInstance()).Get(n"DropPointSystem") as DropPointSystem;
+    dropPointSystem.QueueRequest(request);
   }
   private final func SpawnDropPointEntity(instance: ref<AtelierDropPointInstance>) -> Void {
     let deviceSpec: ref<DynamicEntitySpec> = new DynamicEntitySpec();
@@ -930,37 +1047,20 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     deviceSpec.position = instance.position;
     deviceSpec.orientation = instance.orientation;
     deviceSpec.persistSpawn = true;
-    deviceSpec.alwaysSpawned = true;
-    deviceSpec.tags = [ instance.uniqueTag, instance.indexTag, instance.iterationTag, this.typeTag ];
-    this.Log(s"--> spawning entity with tags [ \(instance.uniqueTag), \(instance.indexTag) \(instance.iterationTag), \(this.typeTag) ] at position \(instance.position)");
-    this.entitySystem.CreateEntity(deviceSpec);
-  }
-  private final func HasPendingEntities() -> Bool {
-    let prologueUpdateRequired: Bool = false;
-    let nightCityUpdateRequired: Bool = false;
-    let dogtownUpdateRequired: Bool = false;
-    if !this.EnsureInitialized() {
-      return false;
+    // Stable owner IDs are required by persistent DropPointSystem mappins.
+    deviceSpec.persistState = true;
+    deviceSpec.alwaysSpawned = false;
+    deviceSpec.tags = [ instance.uniqueTag, instance.indexTag, instance.iterationTag, this.typeTag, this.streamingTag ];
+    if this.IsDebugEnabled() {
+      this.Log(s"--> spawning entity with tags [ \(instance.uniqueTag), \(instance.indexTag) \(instance.iterationTag), \(this.typeTag) ] at position \(instance.position)");
     };
-    let supportedTagsPrologue: array<CName> = this.spawnConfig.GetIterationTagsPrologue();
-    let supportedTagsNightCity: array<CName> = this.spawnConfig.GetIterationTagsNightCity();
-    let supportedTagsDogtown: array<CName> = this.spawnConfig.GetIterationTagsDogtown();
-    for tag in supportedTagsPrologue {
-      if !this.entitySystem.IsPopulated(tag) {
-        prologueUpdateRequired = true;
-      };
+    let id: EntityID = this.entitySystem.CreateEntity(deviceSpec);
+    if this.entitySystem.IsManaged(id) {
+      this.RegisterDropPointMappin(id, instance);
     };
-    for tag in supportedTagsNightCity {
-      if !this.entitySystem.IsPopulated(tag) {
-        nightCityUpdateRequired = true;
-      };
+    if this.IsDebugEnabled() {
+      this.Log(s"Recovery point \(instance.uniqueTag): CreateEntity returned \(id), managed=\(this.entitySystem.IsManaged(id))");
     };
-    for tag in supportedTagsDogtown {
-      if !this.entitySystem.IsPopulated(tag) {
-        dogtownUpdateRequired = true;
-      };
-    };
-    return prologueUpdateRequired || nightCityUpdateRequired || dogtownUpdateRequired;
   }
   private final func EnsureInitialized() -> Bool {
     if !IsDefined(this.entitySystem) {
@@ -988,12 +1088,17 @@ public class AtelierDropPointsSpawner extends ScriptableSystem {
     };
     return false;
   }
+  public final func IsDebugEnabled() -> Bool {
+    return IsDefined(this.config) && this.config.debug;
+  }
   private final func Log(str: String) -> Void {
-    if IsDefined(this.config) && this.config.debug {
+    if this.IsDebugEnabled() {
       ModLog(n"DeliverySpawner", str);
     };
   }
 }
+// Session-local set value; never retain the spawner itself in its own map.
+class AtelierRetiredEntityMarker extends IScriptable {}
 public class DropPointsSpawnerCallbackInitial extends DelayCallback {
   private let system: wref<AtelierDropPointsSpawner>;
   public static func Create(system: ref<AtelierDropPointsSpawner>) -> ref<DropPointsSpawnerCallbackInitial> {
@@ -1016,6 +1121,21 @@ public class DropPointsSpawnerCallbackNewDropPoint extends DelayCallback {
     this.system.HandleNewDropPointsNotification();
 	}
 }
+public class DropPointsSpawnerCallbackRecovery extends DelayCallback {
+  private let system: wref<AtelierDropPointsSpawner>;
+  private let generation: Uint32;
+  public static func Create(system: ref<AtelierDropPointsSpawner>, generation: Uint32) -> ref<DropPointsSpawnerCallbackRecovery> {
+    let callback: ref<DropPointsSpawnerCallbackRecovery> = new DropPointsSpawnerCallbackRecovery();
+    callback.system = system;
+    callback.generation = generation;
+    return callback;
+  }
+  public func Call() -> Void {
+    if IsDefined(this.system) {
+      this.system.HandleRecovery(this.generation);
+    };
+  }
+}
 /**
   Creating new drop point instance:
   - add new entry to AtelierDeliveryDropPoint enum (Classes.reds)
@@ -1026,12 +1146,14 @@ public class DropPointsSpawnerCallbackNewDropPoint extends DelayCallback {
 public class AtelierDropPointsSpawnerConfig {
   private let config: ref<VirtualAtelierDeliveryConfig>;
   private let spawnPoints: ref<inkHashMap>;
+  private let pointsByUniqueTag: ref<inkHashMap>;
   private let iterationTagsPrologue: array<CName>;
   private let iterationTagsNightCity: array<CName>;
   private let iterationTagsDogtown: array<CName>;
   public final func Init() -> Void {
     this.config = new VirtualAtelierDeliveryConfig();
     this.spawnPoints = new inkHashMap();
+    this.pointsByUniqueTag = new inkHashMap();
   }
   public final func BuildPrologueList() -> Void {
     // PROLOGUE ITERATION: 
@@ -1056,7 +1178,10 @@ public class AtelierDropPointsSpawnerConfig {
     );
     let iterationListPrologue: ref<AtelierDropPointsList> = AtelierDropPointsList.Create(iterationSpawnsPrologue);
     this.spawnPoints.Insert(this.Key(iterationTagPrologue), iterationListPrologue);
-    this.Log(s"Stored \(ArraySize(iterationListPrologue.points)) points for key \(this.Key(iterationTagPrologue))");
+    this.IndexPoints(iterationSpawnsPrologue);
+    if this.IsDebugEnabled() {
+      this.Log(s"Stored \(ArraySize(iterationListPrologue.points)) points for key \(this.Key(iterationTagPrologue))");
+    };
   }
   // When any new version adds more drop points then new iteration tag must be used
   public final func BuildNightCityList() -> Void {
@@ -1338,7 +1463,10 @@ public class AtelierDropPointsSpawnerConfig {
     );
     let iterationList1: ref<AtelierDropPointsList> = AtelierDropPointsList.Create(iterationSpawns1);
     this.spawnPoints.Insert(this.Key(iterationTag1), iterationList1);
-    this.Log(s"Stored \(ArraySize(iterationList1.points)) points for key \(this.Key(iterationTag1))");
+    this.IndexPoints(iterationSpawns1);
+    if this.IsDebugEnabled() {
+      this.Log(s"Stored \(ArraySize(iterationList1.points)) points for key \(this.Key(iterationTag1))");
+    };
   }
   // When any new version adds more drop points then new iteration tag must be used
   public final func BuildDogtownList() -> Void {
@@ -1364,7 +1492,18 @@ public class AtelierDropPointsSpawnerConfig {
     );
     let iterationList1: ref<AtelierDropPointsList> = AtelierDropPointsList.Create(iterationSpawns1);
     this.spawnPoints.Insert(this.Key(iterationTag1), iterationList1);
-    this.Log(s"Stored \(ArraySize(iterationList1.points)) points for key \(this.Key(iterationTag1))");
+    this.IndexPoints(iterationSpawns1);
+    if this.IsDebugEnabled() {
+      this.Log(s"Stored \(ArraySize(iterationList1.points)) points for key \(this.Key(iterationTag1))");
+    };
+  }
+  private final func IndexPoints(points: array<ref<AtelierDropPointInstance>>) -> Void {
+    for point in points {
+      this.pointsByUniqueTag.Insert(this.Key(point.uniqueTag), point);
+    };
+  }
+  public final func GetPointByUniqueTag(tag: CName) -> ref<AtelierDropPointInstance> {
+    return this.pointsByUniqueTag.Get(this.Key(tag)) as AtelierDropPointInstance;
   }
   public final func GetSpawnPointsByTag(tag: CName) -> array<ref<AtelierDropPointInstance>> {
     let key: Uint64 = this.Key(tag);
@@ -1400,8 +1539,11 @@ public class AtelierDropPointsSpawnerConfig {
   private final func Key(tag: CName) -> Uint64 {
     return NameToHash(tag);
   }
+  private final func IsDebugEnabled() -> Bool {
+    return IsDefined(this.config) && this.config.debug;
+  }
   private final func Log(str: String) -> Void {
-    if IsDefined(this.config) && this.config.debug {
+    if this.IsDebugEnabled() {
       ModLog(n"DeliverySpawnerConfig", str);
     };
   }
@@ -1437,11 +1579,10 @@ public final func OnFactChangedDogtown(val: Int32) -> Void {
     AtelierDropPointsSpawner.Get(this.GetGame()).HandleSpawning();
   };
 }
-// Run check on ft to Dogtown
+// Recheck after any fast travel, including returns from revival mods.
 @wrapMethod(FastTravelSystem)
 protected cb func OnLoadingScreenFinished(value: Bool) -> Bool {
-  let playerInDogtown: Bool = GameInstance.GetPreventionSpawnSystem(this.GetGameInstance()).IsPlayerInDogTown();
-  if value && playerInDogtown {
+  if value {
     AtelierDropPointsSpawner.Get(this.GetGameInstance()).CheckAndHandleSpawning();
   };
   wrappedMethod(value);
@@ -2042,13 +2183,11 @@ public class DeliveryMessengerSystem extends ScriptableSystem {
       return 0;
     };
     let journalManager: ref<JournalManager> = GameInstance.GetJournalManager(this.GetGameInstance());
-    let currentHistory: array<ref<DeliveryHistoryItem>> = this.history;
-    let currentConversationMessages: array<ref<JournalEntry>> = this.conversation.entries;
-    let lastIndex: Int32 = ArraySize(currentHistory) - 1;
-    if lastIndex < 0 || lastIndex >= ArraySize(currentConversationMessages) {
+    let lastIndex: Int32 = ArraySize(this.history) - 1;
+    if lastIndex < 0 || lastIndex >= ArraySize(this.conversation.entries) {
       return 0;
     };
-    return journalManager.GetEntryHash(currentConversationMessages[lastIndex]);
+    return journalManager.GetEntryHash(this.conversation.entries[lastIndex]);
   }
   public final func PushWelcomeNotificationItem() -> Void {
     let item: ref<DeliveryHistoryItem> = DeliveryHistoryItem.Welcome();
@@ -2070,43 +2209,42 @@ public class DeliveryMessengerSystem extends ScriptableSystem {
     if !IsDefined(item) {
       return;
     };
-    this.Log(s"PushNewNotificationItem \(item.LocalizedString())");
-    let currentHistory: array<ref<DeliveryHistoryItem>> = this.history;
+    if IsDefined(this.config) && this.config.debug {
+      this.Log(s"PushNewNotificationItem \(item.LocalizedString())");
+    };
     this.uniqueIndex = this.uniqueIndex + 1;
     item = DeliveryHistoryItem.WrapWithIndex(item, this.uniqueIndex);
-    ArrayPush(currentHistory, item);
-    this.history = currentHistory;
+    ArrayPush(this.history, item);
     if !this.IsJournalReady() {
       this.hasUnreadMessage = true;
       return;
     };
-    this.TrimHistoryToConversation();
-    this.ApplyPersistedTextsToConversation();
+    if ArraySize(this.history) > ArraySize(this.conversation.entries) {
+      // Overflow shifts every journal slot; only this case needs a full refresh.
+      this.TrimHistoryToConversation();
+      this.ApplyPersistedTextsToConversation();
+    } else {
+      // Appending K messages must not repeatedly reformat the growing history.
+      this.ApplyHistoryText(ArraySize(this.history) - 1);
+    };
     this.NotifyAboutLastHistoryItem();
   }
   private final func ApplyPersistedTextsToConversation() -> Void {
     if !this.IsJournalReady() {
       return;
     };
-    let currentHistory: array<ref<DeliveryHistoryItem>> = this.history;
-    this.Log(s"ApplyPersistedTextsToConversation, persistend history size: \(ArraySize(currentHistory))");
-    let message: ref<JournalPhoneMessage>;
-    let messageText: String;
-    let historyItem: ref<DeliveryHistoryItem>;
-    let lastIndex: Int32 = ArraySize(currentHistory) - 1;
-    let entriesCount: Int32 = ArraySize(this.conversation.entries);
+    let count: Int32 = Min(ArraySize(this.history), ArraySize(this.conversation.entries));
     let index: Int32 = 0;
-    let path: String;
-    while index <= lastIndex && index < entriesCount {
-      message = this.conversation.entries[index] as JournalPhoneMessage;
-      historyItem = currentHistory[index];
-      if IsDefined(message) && IsDefined(historyItem) {
-        path = s"contacts/virtual_atelier_delivery/notifications/\(message.GetId())";
-        messageText = historyItem.LocalizedString();
-        message.text = CreateLocalizationString(messageText);
-        this.Log(s" - updated \(path) text");
-      };
+    while index < count {
+      this.ApplyHistoryText(index);
       index += 1;
+    };
+  }
+  private final func ApplyHistoryText(index: Int32) -> Void {
+    let message: ref<JournalPhoneMessage> = this.conversation.entries[index] as JournalPhoneMessage;
+    let historyItem: ref<DeliveryHistoryItem> = this.history[index];
+    if IsDefined(message) && IsDefined(historyItem) {
+      message.text = CreateLocalizationString(historyItem.LocalizedString());
     };
   }
   private final func NotifyAboutLastHistoryItem() -> Void {
@@ -2115,13 +2253,11 @@ public class DeliveryMessengerSystem extends ScriptableSystem {
     };
     this.Log("NotifyAboutLastHistoryItem");
     let journalManager: ref<JournalManager> = GameInstance.GetJournalManager(this.GetGameInstance());
-    let currentHistory: array<ref<DeliveryHistoryItem>> = this.history;
-    let currentConversationMessages: array<ref<JournalEntry>> = this.conversation.entries;
-    let lastIndex: Int32 = ArraySize(currentHistory) - 1;
-    if lastIndex < 0 || lastIndex >= ArraySize(currentConversationMessages) {
+    let lastIndex: Int32 = ArraySize(this.history) - 1;
+    if lastIndex < 0 || lastIndex >= ArraySize(this.conversation.entries) {
       return;
     };
-    let lastMessage: ref<JournalPhoneMessage> = currentConversationMessages[lastIndex] as JournalPhoneMessage;
+    let lastMessage: ref<JournalPhoneMessage> = this.conversation.entries[lastIndex] as JournalPhoneMessage;
     if !IsDefined(lastMessage) {
       return;
     };
@@ -2188,9 +2324,12 @@ private let dropPointsSpawner: wref<AtelierDropPointsSpawner>;
 @addField(DropPointControllerPS)
 private let ordersSystem: wref<OrderProcessingSystem>;
 @addMethod(DropPointControllerPS)
+private final func VADIsDebugEnabled() -> Bool {
+  return IsDefined(this.dropPointsSpawner) && this.dropPointsSpawner.IsDebugEnabled();
+}
+@addMethod(DropPointControllerPS)
 private final func VADLogPickup(str: String) -> Void {
-  let config: ref<VirtualAtelierDeliveryConfig> = new VirtualAtelierDeliveryConfig();
-  if config.debug {
+  if this.VADIsDebugEnabled() {
     ModLog(n"DeliveryOrders", str);
   };
 }
@@ -2199,11 +2338,15 @@ protected cb func OnInstantiated() -> Bool {
   super.OnInstantiated();
   this.dropPointsSpawner = AtelierDropPointsSpawner.Get(this.GetGameInstance());
   this.ordersSystem = OrderProcessingSystem.Get(this.GetGameInstance());
-  this.VADLogPickup(s"Pickup terminal instantiated: entity=\(this.GetMyEntityID()), spawner=\(IsDefined(this.dropPointsSpawner)), ordersSystem=\(IsDefined(this.ordersSystem))");
+  if this.VADIsDebugEnabled() {
+    this.VADLogPickup(s"Pickup terminal instantiated: entity=\(this.GetMyEntityID()), spawner=\(IsDefined(this.dropPointsSpawner)), ordersSystem=\(IsDefined(this.ordersSystem))");
+  };
 }
 @addMethod(DropPointControllerPS)
 protected final func OnOpenVaDeliveryUI(evt: ref<OpenVaDeliveryUI>) -> EntityNotificationType {
-  this.VADLogPickup(s"Pickup interaction received: entity=\(this.GetMyEntityID())");
+  if this.VADIsDebugEnabled() {
+    this.VADLogPickup(s"Pickup interaction received: entity=\(this.GetMyEntityID())");
+  };
   if !IsDefined(this.dropPointsSpawner) {
     this.VADLogPickup("Pickup interaction: cached spawner is missing, trying to reacquire it");
     this.dropPointsSpawner = AtelierDropPointsSpawner.Get(this.GetGameInstance());
@@ -2213,30 +2356,31 @@ protected final func OnOpenVaDeliveryUI(evt: ref<OpenVaDeliveryUI>) -> EntityNot
     this.ordersSystem = OrderProcessingSystem.Get(this.GetGameInstance());
   };
   if !IsDefined(this.dropPointsSpawner) || !IsDefined(this.ordersSystem) {
-    this.VADLogPickup(s"Pickup interaction FAILED: spawner=\(IsDefined(this.dropPointsSpawner)), ordersSystem=\(IsDefined(this.ordersSystem))");
+    if this.VADIsDebugEnabled() {
+      this.VADLogPickup(s"Pickup interaction FAILED: spawner=\(IsDefined(this.dropPointsSpawner)), ordersSystem=\(IsDefined(this.ordersSystem))");
+    };
     return EntityNotificationType.DoNotNotifyEntity;
   };
   let entityId: EntityID = this.GetMyEntityID();
   let dropPointTag: CName = this.dropPointsSpawner.GetUniqueTagByEntityId(entityId);
-  this.VADLogPickup(s"Pickup interaction resolved terminal: entity=\(entityId), uniqueTag=\(dropPointTag)");
+  if this.VADIsDebugEnabled() {
+    this.VADLogPickup(s"Pickup interaction resolved terminal: entity=\(entityId), uniqueTag=\(dropPointTag)");
+  };
   this.ordersSystem.GetArrivedItems(dropPointTag);
   return EntityNotificationType.DoNotNotifyEntity;
 }
 @wrapMethod(DropPointControllerPS)
 public func GetActions(out outActions: [ref<DeviceAction>], context: GetActionsContext) -> Bool {
-  let dps: ref<DropPointSystem>;
-  if !super.GetActions(outActions, context) {
-    return false;
-  };
-  dps = this.GetDropPointSystem();
-  if !dps.IsEnabled() {
-    return false;
-  };
   let entityId: EntityID = this.GetMyEntityID();
   if !IsDefined(this.dropPointsSpawner) {
     this.dropPointsSpawner = AtelierDropPointsSpawner.Get(this.GetGameInstance());
   };
   if IsDefined(this.dropPointsSpawner) && this.dropPointsSpawner.IsCustomDropPoint(entityId) {
+    // Atelier terminals intentionally replace the vendor/quest actions. Only this
+    // branch bypasses wrappedMethod; ordinary drop points keep the full chain.
+    if !super.GetActions(outActions, context) || !this.GetDropPointSystem().IsEnabled() {
+      return false;
+    };
     ArrayPush(outActions, this.ActionOpenVaDeliveryUI(context.processInitiatorObject));
     this.SetActionIllegality(outActions, this.m_illegalActions.regularActions);
     return true;
@@ -2885,6 +3029,7 @@ public class OrderProcessingSystem extends ScriptableSystem {
   private let inventoryManager: wref<InventoryManager>;
   private let config: ref<VirtualAtelierDeliveryConfig>;
   private let purchasedItems: array<ItemID>;
+  private let purchasedItemIndex: ref<inkHashMap>;
   private persistent let orders: array<ref<PurchasedAtelierBundle>>;
   private persistent let nextOrderId: Int32;
   private persistent let lastSelectedDropPoint: AtelierDeliveryDropPoint;
@@ -2905,22 +3050,27 @@ public class OrderProcessingSystem extends ScriptableSystem {
     if Equals(this.nextOrderId, 0) {
       this.nextOrderId = 1;
     };
-    this.Log(s"OrderProcessingSystem attached: player=\(IsDefined(this.player)), timeSystem=\(IsDefined(this.timeSystem)), transactionSystem=\(IsDefined(this.transactionSystem)), inventoryManager=\(IsDefined(this.inventoryManager)), persistedOrders=\(ArraySize(this.orders)), nextOrderId=\(this.nextOrderId)");
+    if this.IsDebugEnabled() {
+      this.Log(s"OrderProcessingSystem attached: player=\(IsDefined(this.player)), timeSystem=\(IsDefined(this.timeSystem)), transactionSystem=\(IsDefined(this.transactionSystem)), inventoryManager=\(IsDefined(this.inventoryManager)), persistedOrders=\(ArraySize(this.orders)), nextOrderId=\(this.nextOrderId)");
+    };
   }
   public final func GetNextOrderId() -> Int32 {
     return this.nextOrderId;
   }
   public final func HasActiveOrders() -> Bool {
     let currentOrders: array<ref<PurchasedAtelierBundle>> = this.orders;
-    let hasOrderToTrack: Bool = false;
     let status: AtelierDeliveryStatus;
     for order in currentOrders {
-      status = order.GetDeliveryStatus();
+      if IsDefined(order) {
+        status = order.GetDeliveryStatus();
+      } else {
+        status = AtelierDeliveryStatus.Delivered;
+      };
       if Equals(status, AtelierDeliveryStatus.Created) || Equals(status, AtelierDeliveryStatus.Shipped) {
-        hasOrderToTrack = true;
+        return true;
       };
     };
-    return hasOrderToTrack;
+    return false;
   }
   public final func GetOrders() -> array<ref<PurchasedAtelierBundle>> {
     return this.orders;
@@ -2933,19 +3083,21 @@ public class OrderProcessingSystem extends ScriptableSystem {
       return -1;
     };
     this.Log("New order saved: ");
-    this.Log(s"- storeName: \(order.storeName)");
-    this.Log(s"- orderId: \(order.orderId)");
-    this.Log(s"- items count: \(ArraySize(order.purchasedItems))");
-    this.Log(s"- totalPrice: \(order.totalPrice)");
-    this.Log(s"- totalWeight: \(order.totalWeight)");
-    this.Log(s"- deliveryType: \(order.deliveryType)");
-    this.Log(s"- deliveryPoint: \(order.deliveryPoint)");
-    this.Log(s"- deliveryStatus: \(order.deliveryStatus)");
-    this.Log(s"- purchaseTimestamp: \(order.purchaseTimestamp)");
-    this.Log(s"- shipmentTimestamp: \(order.shipmentTimestamp)");
-    this.Log(s"- deliveryTimestamp: \(order.deliveryTimestamp)");
-    this.Log(s"- receivedTimestamp: \(order.receivedTimestamp)");
-    this.Log(s"- nextStatusUpdateDiff: \(order.nextStatusUpdateDiff)");
+    if this.IsDebugEnabled() {
+      this.Log(s"- storeName: \(order.storeName)");
+      this.Log(s"- orderId: \(order.orderId)");
+      this.Log(s"- items count: \(ArraySize(order.purchasedItems))");
+      this.Log(s"- totalPrice: \(order.totalPrice)");
+      this.Log(s"- totalWeight: \(order.totalWeight)");
+      this.Log(s"- deliveryType: \(order.deliveryType)");
+      this.Log(s"- deliveryPoint: \(order.deliveryPoint)");
+      this.Log(s"- deliveryStatus: \(order.deliveryStatus)");
+      this.Log(s"- purchaseTimestamp: \(order.purchaseTimestamp)");
+      this.Log(s"- shipmentTimestamp: \(order.shipmentTimestamp)");
+      this.Log(s"- deliveryTimestamp: \(order.deliveryTimestamp)");
+      this.Log(s"- receivedTimestamp: \(order.receivedTimestamp)");
+      this.Log(s"- nextStatusUpdateDiff: \(order.nextStatusUpdateDiff)");
+    };
     ArrayPush(this.orders, order);
     this.SetLastSelectedDropPoint(order.GetDeliveryPoint());
     this.RefreshOrdersState();
@@ -2964,18 +3116,24 @@ public class OrderProcessingSystem extends ScriptableSystem {
       return -1;
     };
     if !this.IsReady() {
-      this.Log(s"Order #\(order.GetOrderId()) creation rejected: OrderProcessingSystem is not ready");
+      if this.IsDebugEnabled() {
+        this.Log(s"Order #\(order.GetOrderId()) creation rejected: OrderProcessingSystem is not ready");
+      };
       this.LogReadinessState("order creation");
       return -1;
     };
     let price: Int32 = order.GetTotalPrice();
     if price <= 0 {
-      this.Log(s"Order #\(order.GetOrderId()) creation rejected: invalid total price \(price)");
+      if this.IsDebugEnabled() {
+        this.Log(s"Order #\(order.GetOrderId()) creation rejected: invalid total price \(price)");
+      };
       return -1;
     };
     let playerMoney: Int32 = this.transactionSystem.GetItemQuantity(this.player, MarketSystem.Money());
     if playerMoney < price {
-      this.Log(s"Order #\(order.GetOrderId()) creation rejected: not enough money, required=\(price), available=\(playerMoney)");
+      if this.IsDebugEnabled() {
+        this.Log(s"Order #\(order.GetOrderId()) creation rejected: not enough money, required=\(price), available=\(playerMoney)");
+      };
       return -1;
     };
     this.transactionSystem.RemoveItemByTDBID(this.player, t"Items.money", price);
@@ -2986,51 +3144,74 @@ public class OrderProcessingSystem extends ScriptableSystem {
     let orders: array<ref<PurchasedAtelierBundle>> = this.orders;
     let arrivedOrders: array<ref<PurchasedAtelierBundle>>;
     let orderIndex: Int32 = 0;
-    this.Log(s"=== Pickup request started: terminalTag=\(tag), resolvedDropPoint=\(dropPoint), storedOrders=\(ArraySize(orders)) ===");
+    if this.IsDebugEnabled() {
+      this.Log(s"=== Pickup request started: terminalTag=\(tag), resolvedDropPoint=\(dropPoint), storedOrders=\(ArraySize(orders)) ===");
+    };
     if Equals(tag, n"") {
       this.Log("Pickup request warning: terminal unique tag is empty");
     };
     if Equals(dropPoint, AtelierDeliveryDropPoint.None) {
-      this.Log(s"Pickup request warning: terminal tag \(tag) does not map to a delivery point");
+      if this.IsDebugEnabled() {
+        this.Log(s"Pickup request warning: terminal tag \(tag) does not map to a delivery point");
+      };
     };
     for order in orders {
       if !IsDefined(order) {
-        this.Log(s"Pickup scan: order at index \(orderIndex) is not defined, skipped");
+        if this.IsDebugEnabled() {
+          this.Log(s"Pickup scan: order at index \(orderIndex) is not defined, skipped");
+        };
       } else {
-        this.Log(s"Pickup scan: order #\(order.orderId) from \(order.storeName), status=\(order.deliveryStatus), target=\(order.deliveryPoint), items=\(ArraySize(order.purchasedItems))");
+        if this.IsDebugEnabled() {
+          this.Log(s"Pickup scan: order #\(order.orderId) from \(order.storeName), status=\(order.deliveryStatus), target=\(order.deliveryPoint), items=\(ArraySize(order.purchasedItems))");
+        };
         if Equals(order.deliveryPoint, dropPoint) && Equals(order.deliveryStatus, AtelierDeliveryStatus.Arrived) {
-          this.Log(s"Pickup scan: order #\(order.orderId) matched this terminal and is ready for pickup");
+          if this.IsDebugEnabled() {
+            this.Log(s"Pickup scan: order #\(order.orderId) matched this terminal and is ready for pickup");
+          };
           ArrayPush(arrivedOrders, order);
         } else {
           if NotEquals(order.deliveryPoint, dropPoint) {
-            this.Log(s"Pickup scan: order #\(order.orderId) skipped because it belongs to \(order.deliveryPoint), current terminal is \(dropPoint)");
+            if this.IsDebugEnabled() {
+              this.Log(s"Pickup scan: order #\(order.orderId) skipped because it belongs to \(order.deliveryPoint), current terminal is \(dropPoint)");
+            };
           };
           if NotEquals(order.deliveryStatus, AtelierDeliveryStatus.Arrived) {
-            this.Log(s"Pickup scan: order #\(order.orderId) skipped because status is \(order.deliveryStatus), expected Arrived");
+            if this.IsDebugEnabled() {
+              this.Log(s"Pickup scan: order #\(order.orderId) skipped because status is \(order.deliveryStatus), expected Arrived");
+            };
           };
         };
       };
       orderIndex += 1;
     };
-    this.Log(s"Pickup scan completed for \(dropPoint): matchedOrders=\(ArraySize(arrivedOrders))");
+    if this.IsDebugEnabled() {
+      this.Log(s"Pickup scan completed for \(dropPoint): matchedOrders=\(ArraySize(arrivedOrders))");
+    };
     let receivedAnything: Bool = false;
     let deliveredIds: array<Int32>;
     for arrivedOrder in arrivedOrders {
-      this.Log(s"Pickup delivery: trying order #\(arrivedOrder.orderId) from \(arrivedOrder.storeName), items=\(ArraySize(arrivedOrder.purchasedItems))");
+      if this.IsDebugEnabled() {
+        this.Log(s"Pickup delivery: trying order #\(arrivedOrder.orderId) from \(arrivedOrder.storeName), items=\(ArraySize(arrivedOrder.purchasedItems))");
+      };
       if this.GiveBundleItemsToPlayer(arrivedOrder) {
-        let markedAsReceived: Bool = this.MarkOrderAsReceived(arrivedOrder);
-        this.Log(s"Pickup delivery: order #\(arrivedOrder.orderId) gave at least one item; markedAsReceived=\(markedAsReceived), grantedItemInstances=\(ArraySize(this.purchasedItems))");
-        if !markedAsReceived {
-          this.Log(s"Pickup delivery ERROR: order #\(arrivedOrder.orderId) items were granted, but the order could not be marked as received");
+        // arrivedOrders contains the same objects as this.orders. Do not search
+        // and rebuild all orders once per delivered bundle (O(arrived * orders)).
+        arrivedOrder.SetReceivedTimestamp(this.timeSystem.GetGameTimeStamp());
+        if this.IsDebugEnabled() {
+          this.Log(s"Pickup delivery: order #\(arrivedOrder.orderId) marked as received; grantedItemInstances=\(ArraySize(this.purchasedItems))");
         };
         ArrayPush(deliveredIds, arrivedOrder.orderId);
         receivedAnything = true;
       } else {
-        this.Log(s"Pickup delivery FAILED: order #\(arrivedOrder.orderId) was not issued because no bundle item could be granted");
+        if this.IsDebugEnabled() {
+          this.Log(s"Pickup delivery FAILED: order #\(arrivedOrder.orderId) was not issued because no bundle item could be granted");
+        };
       };
     };
     if receivedAnything {
-      this.Log(s"Pickup request succeeded at \(dropPoint): deliveredOrders=\(ArraySize(deliveredIds))");
+      if this.IsDebugEnabled() {
+        this.Log(s"Pickup request succeeded at \(dropPoint): deliveredOrders=\(ArraySize(deliveredIds))");
+      };
       GameObject.PlaySound(this.player, n"ui_menu_item_bought");
       if Equals(ArraySize(deliveredIds), 1) {
         this.NotifyAboutOrderDelivery(deliveredIds[0]);
@@ -3038,11 +3219,15 @@ public class OrderProcessingSystem extends ScriptableSystem {
         this.NotifyAboutOrdersDelivery(deliveredIds);
       };
     } else {
-      this.Log(s"Pickup request FAILED at \(dropPoint): no order was issued; matchedOrders=\(ArraySize(arrivedOrders))");
+      if this.IsDebugEnabled() {
+        this.Log(s"Pickup request FAILED at \(dropPoint): no order was issued; matchedOrders=\(ArraySize(arrivedOrders))");
+      };
       GameObject.PlaySound(this.player, n"ui_menu_attributes_fail");
     };
     this.RefreshOrdersState();
-    this.Log(s"=== Pickup request finished: terminalTag=\(tag), resolvedDropPoint=\(dropPoint) ===");
+    if this.IsDebugEnabled() {
+      this.Log(s"=== Pickup request finished: terminalTag=\(tag), resolvedDropPoint=\(dropPoint) ===");
+    };
   }
   public final func MarkOrderAsReceived(bundle: ref<PurchasedAtelierBundle>) -> Bool {
     if !IsDefined(bundle) {
@@ -3059,7 +3244,9 @@ public class OrderProcessingSystem extends ScriptableSystem {
           now = this.timeSystem.GetGameTimeStamp();
           order.SetReceivedTimestamp(now);
           orderWasFound = true;
-          this.Log(s"Order #\(bundle.GetOrderId()) marked as received at timestamp \(now)");
+          if this.IsDebugEnabled() {
+            this.Log(s"Order #\(bundle.GetOrderId()) marked as received at timestamp \(now)");
+          };
         };
         ArrayPush(refreshedOrders, order);
       } else {
@@ -3069,7 +3256,9 @@ public class OrderProcessingSystem extends ScriptableSystem {
     if orderWasFound {
       this.orders = refreshedOrders;
     } else {
-      this.Log(s"MarkOrderAsReceived failed: order #\(bundle.GetOrderId()) from \(bundle.GetStoreName()) was not found in \(ArraySize(orders)) stored orders");
+      if this.IsDebugEnabled() {
+        this.Log(s"MarkOrderAsReceived failed: order #\(bundle.GetOrderId()) from \(bundle.GetStoreName()) was not found in \(ArraySize(orders)) stored orders");
+      };
     };
     return orderWasFound;
   }
@@ -3085,29 +3274,44 @@ public class OrderProcessingSystem extends ScriptableSystem {
       return false;
     };
     if !this.IsReady() {
-      this.Log(s"Pickup delivery FAILED for order #\(bundle.GetOrderId()): OrderProcessingSystem is not ready");
+      if this.IsDebugEnabled() {
+        this.Log(s"Pickup delivery FAILED for order #\(bundle.GetOrderId()): OrderProcessingSystem is not ready");
+      };
       this.LogReadinessState("pickup delivery");
       return false;
     };
     let cartItems: array<ref<WrappedVirtualCartItem>> = bundle.purchasedItems;
     let gaveAnything: Bool = false;
     let cartItemIndex: Int32 = 0;
-    this.Log(s"Bundle validation started for order #\(bundle.GetOrderId()): cartItems=\(ArraySize(cartItems))");
+    if this.IsDebugEnabled() {
+      this.Log(s"Bundle validation started for order #\(bundle.GetOrderId()): cartItems=\(ArraySize(cartItems))");
+    };
     if Equals(ArraySize(cartItems), 0) {
-      this.Log(s"Pickup delivery FAILED for order #\(bundle.GetOrderId()): bundle contains no cart items");
+      if this.IsDebugEnabled() {
+        this.Log(s"Pickup delivery FAILED for order #\(bundle.GetOrderId()): bundle contains no cart items");
+      };
     };
     ArrayClear(this.purchasedItems);
+    this.purchasedItemIndex = new inkHashMap();
     for cartItem in cartItems {
-      this.Log(s"Bundle item \(cartItemIndex + 1)/\(ArraySize(cartItems)): validation and grant started");
+      if this.IsDebugEnabled() {
+        this.Log(s"Bundle item \(cartItemIndex + 1)/\(ArraySize(cartItems)): validation and grant started");
+      };
       if this.TryGiveCartItemToPlayer(cartItem) {
         gaveAnything = true;
-        this.Log(s"Bundle item \(cartItemIndex + 1)/\(ArraySize(cartItems)): granted successfully");
+        if this.IsDebugEnabled() {
+          this.Log(s"Bundle item \(cartItemIndex + 1)/\(ArraySize(cartItems)): granted successfully");
+        };
       } else {
-        this.Log(s"Bundle item \(cartItemIndex + 1)/\(ArraySize(cartItems)): FAILED to grant");
+        if this.IsDebugEnabled() {
+          this.Log(s"Bundle item \(cartItemIndex + 1)/\(ArraySize(cartItems)): FAILED to grant");
+        };
       };
       cartItemIndex += 1;
     };
-    this.Log(s"Bundle delivery completed for order #\(bundle.GetOrderId()): gaveAnything=\(gaveAnything), grantedItemInstances=\(ArraySize(this.purchasedItems))");
+    if this.IsDebugEnabled() {
+      this.Log(s"Bundle delivery completed for order #\(bundle.GetOrderId()): gaveAnything=\(gaveAnything), grantedItemInstances=\(ArraySize(this.purchasedItems))");
+    };
     return gaveAnything;
   }
   private final func TryGiveCartItemToPlayer(cartItem: ref<WrappedVirtualCartItem>) -> Bool {
@@ -3116,21 +3320,32 @@ public class OrderProcessingSystem extends ScriptableSystem {
       return false;
     };
     if cartItem.purchaseAmount <= 0 {
-      this.Log(s"Cart item validation FAILED: purchaseAmount=\(cartItem.purchaseAmount), expected a positive value");
+      if this.IsDebugEnabled() {
+        this.Log(s"Cart item validation FAILED: purchaseAmount=\(cartItem.purchaseAmount), expected a positive value");
+      };
       return false;
     };
     let stockItem: ref<WrappedVirtualStockItem> = cartItem.stockItem;
     if !this.IsStockItemValid(stockItem) {
-      this.Log(s"Cart item validation FAILED: stock item is invalid, purchaseAmount=\(cartItem.purchaseAmount)");
+      if this.IsDebugEnabled() {
+        this.Log(s"Cart item validation FAILED: stock item is invalid, purchaseAmount=\(cartItem.purchaseAmount)");
+      };
       return false;
     };
-    let itemTDBID: String = TDBID.ToStringDEBUG(stockItem.id);
+    let itemTDBID: String;
+    if this.IsDebugEnabled() {
+      itemTDBID = TDBID.ToStringDEBUG(stockItem.id);
+    };
     let effectiveQuantity: Int32 = stockItem.quantity;
     if Equals(effectiveQuantity, 0) {
       effectiveQuantity = 1;
-      this.Log(s"Cart item compatibility fallback for \(itemTDBID): persisted legacy quantity 0 will be granted as 1");
+      if this.IsDebugEnabled() {
+        this.Log(s"Cart item compatibility fallback for \(itemTDBID): persisted legacy quantity 0 will be granted as 1");
+      };
     };
-    this.Log(s"Cart item validated: id=\(itemTDBID), purchaseAmount=\(cartItem.purchaseAmount), storedQuantity=\(stockItem.quantity), effectiveQuantity=\(effectiveQuantity), quality=\(stockItem.quality)");
+    if this.IsDebugEnabled() {
+      this.Log(s"Cart item validated: id=\(itemTDBID), purchaseAmount=\(cartItem.purchaseAmount), storedQuantity=\(stockItem.quantity), effectiveQuantity=\(effectiveQuantity), quality=\(stockItem.quality)");
+    };
     let gaveAnything: Bool = false;
     let itemID: ItemID;
     let itemData: ref<gameItemData>;
@@ -3138,7 +3353,9 @@ public class OrderProcessingSystem extends ScriptableSystem {
     while i < cartItem.purchaseAmount {
       itemID = ItemID.FromTDBID(stockItem.id);
       if !ItemID.IsValid(itemID) {
-        this.Log(s"Cart item grant FAILED for \(itemTDBID): ItemID.FromTDBID returned an invalid ItemID at purchase iteration \(i + 1)/\(cartItem.purchaseAmount)");
+        if this.IsDebugEnabled() {
+          this.Log(s"Cart item grant FAILED for \(itemTDBID): ItemID.FromTDBID returned an invalid ItemID at purchase iteration \(i + 1)/\(cartItem.purchaseAmount)");
+        };
         return gaveAnything;
       };
       itemData = this.inventoryManager.CreateBasicItemData(itemID, this.player);
@@ -3147,18 +3364,27 @@ public class OrderProcessingSystem extends ScriptableSystem {
         this.ScaleItem(this.player, itemData, stockItem.quality);
         if this.transactionSystem.GiveItem(this.player, itemID, effectiveQuantity) {
           ArrayPush(this.purchasedItems, itemID);
+          this.IndexPurchasedItem(itemID);
           gaveAnything = true;
-          this.Log(s"Cart item grant succeeded for \(itemTDBID): quantity=\(effectiveQuantity), purchase iteration \(i + 1)/\(cartItem.purchaseAmount)");
+          if this.IsDebugEnabled() {
+            this.Log(s"Cart item grant succeeded for \(itemTDBID): quantity=\(effectiveQuantity), purchase iteration \(i + 1)/\(cartItem.purchaseAmount)");
+          };
         } else {
-          this.Log(s"Cart item grant FAILED for \(itemTDBID): TransactionSystem.GiveItem returned false for quantity=\(effectiveQuantity), purchase iteration \(i + 1)/\(cartItem.purchaseAmount)");
+          if this.IsDebugEnabled() {
+            this.Log(s"Cart item grant FAILED for \(itemTDBID): TransactionSystem.GiveItem returned false for quantity=\(effectiveQuantity), purchase iteration \(i + 1)/\(cartItem.purchaseAmount)");
+          };
         };
       } else {
-        this.Log(s"Cart item grant FAILED for \(itemTDBID): InventoryManager.CreateBasicItemData returned null at purchase iteration \(i + 1)/\(cartItem.purchaseAmount)");
+        if this.IsDebugEnabled() {
+          this.Log(s"Cart item grant FAILED for \(itemTDBID): InventoryManager.CreateBasicItemData returned null at purchase iteration \(i + 1)/\(cartItem.purchaseAmount)");
+        };
       };
       i += 1;
     };
     if !gaveAnything {
-      this.Log(s"Cart item grant FAILED for \(itemTDBID): no item instance was granted");
+      if this.IsDebugEnabled() {
+        this.Log(s"Cart item grant FAILED for \(itemTDBID): no item instance was granted");
+      };
     };
     return gaveAnything;
   }
@@ -3167,21 +3393,32 @@ public class OrderProcessingSystem extends ScriptableSystem {
       this.Log("Stock item validation FAILED: stock item is not defined");
       return false;
     };
-    let itemTDBID: String = TDBID.ToStringDEBUG(stockItem.id);
+    let itemTDBID: String;
+    if this.IsDebugEnabled() {
+      itemTDBID = TDBID.ToStringDEBUG(stockItem.id);
+    };
     if stockItem.quantity < 0 {
-      this.Log(s"Stock item validation FAILED for \(itemTDBID): quantity=\(stockItem.quantity), expected zero (legacy default) or a positive value");
+      if this.IsDebugEnabled() {
+        this.Log(s"Stock item validation FAILED for \(itemTDBID): quantity=\(stockItem.quantity), expected zero (legacy default) or a positive value");
+      };
       return false;
     };
     if Equals(stockItem.quantity, 0) {
-      this.Log(s"Stock item validation compatibility warning for \(itemTDBID): persisted legacy quantity 0 will be normalized during grant");
+      if this.IsDebugEnabled() {
+        this.Log(s"Stock item validation compatibility warning for \(itemTDBID): persisted legacy quantity 0 will be normalized during grant");
+      };
     };
     if !TDBID.IsValid(stockItem.id) {
-      this.Log(s"Stock item validation FAILED: invalid TweakDBID \(itemTDBID)");
+      if this.IsDebugEnabled() {
+        this.Log(s"Stock item validation FAILED: invalid TweakDBID \(itemTDBID)");
+      };
       return false;
     };
     let itemRecord: ref<Item_Record> = TweakDBInterface.GetItemRecord(stockItem.id);
     if !IsDefined(itemRecord) {
-      this.Log(s"Stock item validation FAILED for \(itemTDBID): Item_Record was not found; the source item mod may be missing, disabled, or updated");
+      if this.IsDebugEnabled() {
+        this.Log(s"Stock item validation FAILED for \(itemTDBID): Item_Record was not found; the source item mod may be missing, disabled, or updated");
+      };
       return false;
     };
     return true;
@@ -3195,26 +3432,34 @@ public class OrderProcessingSystem extends ScriptableSystem {
     let receivedTimestamp: Float;   
     let diff: Float;
     let previousStatus: AtelierDeliveryStatus;
-    this.Log(s"=== RefreshOrdersState started: now=\(now), storedOrders=\(ArraySize(orders)) ===");
+    if this.IsDebugEnabled() {
+      this.Log(s"=== RefreshOrdersState started: now=\(now), storedOrders=\(ArraySize(orders)) ===");
+    };
     for order in orders {
       if IsDefined(order) {
         shipmentTimestamp = order.GetShipmentTimestamp();
         deliveryTimestamp = order.GetDeliveryTimestamp();
         receivedTimestamp = order.GetReceivedTimestamp();
         previousStatus = order.GetDeliveryStatus();
-        this.Log(s"Status check order #\(order.GetOrderId()) from \(order.GetStoreName()): status=\(previousStatus), point=\(order.GetDeliveryPoint()), shipment=\(shipmentTimestamp), delivery=\(deliveryTimestamp), received=\(receivedTimestamp)");
+        if this.IsDebugEnabled() {
+          this.Log(s"Status check order #\(order.GetOrderId()) from \(order.GetStoreName()): status=\(previousStatus), point=\(order.GetDeliveryPoint()), shipment=\(shipmentTimestamp), delivery=\(deliveryTimestamp), received=\(receivedTimestamp)");
+        };
         if now < shipmentTimestamp {
           // not shipped yet
           diff = shipmentTimestamp - now;
           order.SetNextStatusUpdateDiff(diff);
-          this.Log(s"Status result order #\(order.GetOrderId()): remains \(order.GetDeliveryStatus()), shipment in \(diff) sec");
+          if this.IsDebugEnabled() {
+            this.Log(s"Status result order #\(order.GetOrderId()): remains \(order.GetDeliveryStatus()), shipment in \(diff) sec");
+          };
           ArrayPush(refreshedOrders, order);
         } else if now >= shipmentTimestamp && now < deliveryTimestamp {
           // already shipped, delivering in progress
           diff = deliveryTimestamp - now;
           order.SetNextStatusUpdateDiff(diff);
           order.SetDeliveryStatus(AtelierDeliveryStatus.Shipped);
-          this.Log(s"Status result order #\(order.GetOrderId()): \(previousStatus) -> \(order.GetDeliveryStatus()), arrival in \(diff) sec");
+          if this.IsDebugEnabled() {
+            this.Log(s"Status result order #\(order.GetOrderId()): \(previousStatus) -> \(order.GetDeliveryStatus()), arrival in \(diff) sec");
+          };
           if !order.IsShipmentNotified() && !this.IsJohnny() && this.IsPhoneAvailable() {
             order.SetShipmentNotified();
             this.NotifyAboutOrderShipment(order);
@@ -3224,7 +3469,9 @@ public class OrderProcessingSystem extends ScriptableSystem {
           // ready for pickup
           order.SetNextStatusUpdateDiff(0.0);
           order.SetDeliveryStatus(AtelierDeliveryStatus.Arrived);
-          this.Log(s"Status result order #\(order.GetOrderId()): \(previousStatus) -> \(order.GetDeliveryStatus()), ready for pickup at \(order.GetDeliveryPoint())");
+          if this.IsDebugEnabled() {
+            this.Log(s"Status result order #\(order.GetOrderId()): \(previousStatus) -> \(order.GetDeliveryStatus()), ready for pickup at \(order.GetDeliveryPoint())");
+          };
           if !order.IsArrivalNotified() && !this.IsJohnny() && this.IsPhoneAvailable() {
             order.SetArrivalNotified();
             this.NotifyAboutOrderArrival(order);
@@ -3233,10 +3480,14 @@ public class OrderProcessingSystem extends ScriptableSystem {
         } else if receivedTimestamp > 0.0 && now - receivedTimestamp < this.receivedClearPeriod {
           // received already, check if order should be deleted from the list
           order.SetDeliveryStatus(AtelierDeliveryStatus.Delivered);
-          this.Log(s"Status result order #\(order.GetOrderId()): \(previousStatus) -> \(order.GetDeliveryStatus()), retained for \(this.receivedClearPeriod - (now - receivedTimestamp)) sec");
+          if this.IsDebugEnabled() {
+            this.Log(s"Status result order #\(order.GetOrderId()): \(previousStatus) -> \(order.GetDeliveryStatus()), retained for \(this.receivedClearPeriod - (now - receivedTimestamp)) sec");
+          };
           ArrayPush(refreshedOrders, order);
         } else {
-          this.Log(s"Status result order #\(order.GetOrderId()): removed from active orders, status=\(previousStatus), receivedAge=\(now - receivedTimestamp) sec");
+          if this.IsDebugEnabled() {
+            this.Log(s"Status result order #\(order.GetOrderId()): removed from active orders, status=\(previousStatus), receivedAge=\(now - receivedTimestamp) sec");
+          };
         };
       } else {
         this.Log("Status check skipped an undefined persisted order; it will be removed from active orders");
@@ -3244,11 +3495,31 @@ public class OrderProcessingSystem extends ScriptableSystem {
     };
     this.orders = refreshedOrders;
     this.PrintCurrentOrders();
-    this.Log(s"=== RefreshOrdersState finished: retainedOrders=\(ArraySize(this.orders)) ===");
+    if this.IsDebugEnabled() {
+      this.Log(s"=== RefreshOrdersState finished: retainedOrders=\(ArraySize(this.orders)) ===");
+    };
     OrderTrackingTicker.Get(this.player.GetGame()).ScheduleCallbackLong();
   }
   public final func IsItemPurchased(itemID: ItemID) -> Bool {
-    return ArrayContains(this.purchasedItems, itemID);
+    // Smarter Scrapper calls this from per-item inventory callbacks.
+    if !IsDefined(this.purchasedItemIndex) {
+      return false;
+    };
+    let bucket: ref<AtelierPurchasedItemBucket> = this.purchasedItemIndex.Get(ItemID.GetCombinedHash(itemID)) as AtelierPurchasedItemBucket;
+    return IsDefined(bucket) && ArrayContains(bucket.items, itemID);
+  }
+  private final func IndexPurchasedItem(itemID: ItemID) -> Void {
+    let key: Uint64 = ItemID.GetCombinedHash(itemID);
+    let bucket: ref<AtelierPurchasedItemBucket> = this.purchasedItemIndex.Get(key) as AtelierPurchasedItemBucket;
+    if !IsDefined(bucket) {
+      bucket = new AtelierPurchasedItemBucket();
+      this.purchasedItemIndex.Insert(key, bucket);
+    };
+    // Preserve exact ItemID equality if distinct IDs ever share a hash.
+    // Repeated grants of the same stackable item must not grow the bucket.
+    if !ArrayContains(bucket.items, itemID) {
+      ArrayPush(bucket.items, itemID);
+    };
   }
   private final func IsJohnny() -> Bool {
     let playerSystem: ref<PlayerSystem> = GameInstance.GetPlayerSystem(this.GetGameInstance());
@@ -3266,11 +3537,15 @@ public class OrderProcessingSystem extends ScriptableSystem {
     return false;
   }
   private final func NotifyAboutOrderShipment(bundle: ref<PurchasedAtelierBundle>) -> Void {
-    this.Log(s"! Order \(bundle.GetOrderId()) from \(bundle.GetStoreName()) is shipped");
+    if this.IsDebugEnabled() {
+      this.Log(s"! Order \(bundle.GetOrderId()) from \(bundle.GetStoreName()) is shipped");
+    };
     DeliveryMessengerSystem.Get(this.player.GetGame()).PushShippedNotificationItem(bundle);
   }
   private final func NotifyAboutOrderArrival(bundle: ref<PurchasedAtelierBundle>) -> Void {
-    this.Log(s"! Order \(bundle.GetOrderId()) from \(bundle.GetStoreName()) is ready for pickup at \(bundle.GetDeliveryPoint())");
+    if this.IsDebugEnabled() {
+      this.Log(s"! Order \(bundle.GetOrderId()) from \(bundle.GetStoreName()) is ready for pickup at \(bundle.GetDeliveryPoint())");
+    };
     DeliveryMessengerSystem.Get(this.player.GetGame()).PushArrivedNotificationItem(bundle);
   }
   private final func NotifyAboutOrderDelivery(id: Int32) -> Void {
@@ -3289,16 +3564,29 @@ public class OrderProcessingSystem extends ScriptableSystem {
     let blackboardDef = GetAllBlackboardDefs().UI_Notifications;
     let blackboard: ref<IBlackboard> = GameInstance.GetBlackboardSystem(this.player.GetGame()).Get(blackboardDef);
     let messageToDisplay: String = s"\(GetLocalizedTextByKey(n"Mod-VAD-Orders-Delivered-Nofitication")) ";
-    let count: Int32 = ArraySize(ids);
-    let lastIndex: Int32 = count - 1;
-    let i: Int32 = 0;
-    while i < count {
-      if NotEquals(i, lastIndex) {
-        messageToDisplay += s"#\(ids[i]), ";
-      } else {
-        messageToDisplay += s"#\(ids[i])";
+    // Merge similarly sized chunks instead of repeatedly copying a growing
+    // prefix. This preserves the full list without quadratic string copying.
+    let chunks: array<String>;
+    for id in ids {
+      ArrayPush(chunks, s"#\(id)");
+    };
+    let merged: array<String>;
+    let i: Int32;
+    while ArraySize(chunks) > 1 {
+      ArrayClear(merged);
+      i = 0;
+      while i < ArraySize(chunks) {
+        if i + 1 < ArraySize(chunks) {
+          ArrayPush(merged, chunks[i] + ", " + chunks[i + 1]);
+        } else {
+          ArrayPush(merged, chunks[i]);
+        };
+        i += 2;
       };
-      i += 1;
+      chunks = merged;
+    };
+    if ArraySize(chunks) > 0 {
+      messageToDisplay += chunks[0];
     };
     onScreenMessage.message = messageToDisplay;
     onScreenMessage.isShown = true;
@@ -3306,13 +3594,19 @@ public class OrderProcessingSystem extends ScriptableSystem {
     blackboard.SetVariant(blackboardDef.OnscreenMessage, ToVariant(onScreenMessage), true);
   }
   private final func PrintCurrentOrders() -> Void {
-     let orders: array<ref<PurchasedAtelierBundle>> = this.orders;
-     this.Log("Active orders: ");
-     for order in orders {
+    if !this.IsDebugEnabled() {
+      return;
+    };
+    let orders: array<ref<PurchasedAtelierBundle>> = this.orders;
+    this.Log("Active orders: ");
+    for order in orders {
       this.PrintOrderStatus(order);
-     }
+    };
   }
   private final func PrintOrderStatus(order: ref<PurchasedAtelierBundle>) -> Void {
+    if !this.IsDebugEnabled() {
+      return;
+    };
     let info: String = s"- id #\(order.GetOrderId()) from \(order.GetStoreName()): \(order.GetDeliveryStatus()) [\(order.GetDeliveryPoint())]";
     let diff: Float = order.GetNextStatusUpdateDiff();
     if diff > 0.0 {
@@ -3328,17 +3622,26 @@ public class OrderProcessingSystem extends ScriptableSystem {
   private final func ScaleItem(player: ref<PlayerPuppet>, itemData: ref<gameItemData>, quality: CName) {
     AtelierItemsHelper.ScaleItem(this.player, itemData, quality);
   }
+  private final func IsDebugEnabled() -> Bool {
+    return IsDefined(this.config) && this.config.debug;
+  }
   private final func Log(str: String) -> Void {
-    if IsDefined(this.config) && this.config.debug {
+    if this.IsDebugEnabled() {
       ModLog(n"DeliveryOrders", str);
     };
   }
   private final func LogReadinessState(context: String) -> Void {
+    if !this.IsDebugEnabled() {
+      return;
+    };
     this.Log(s"Readiness failure during \(context): player=\(IsDefined(this.player)), timeSystem=\(IsDefined(this.timeSystem)), transactionSystem=\(IsDefined(this.transactionSystem)), inventoryManager=\(IsDefined(this.inventoryManager))");
   }
   private final func IsReady() -> Bool {
     return IsDefined(this.player) && IsDefined(this.timeSystem) && IsDefined(this.transactionSystem) && IsDefined(this.inventoryManager);
   }
+}
+class AtelierPurchasedItemBucket extends IScriptable {
+  public let items: array<ItemID>;
 }
 public class OrdersManagerComponent extends inkComponent {
   let player: wref<GameObject>;
@@ -3926,25 +4229,79 @@ private func OnRestored(saveVersion: Int32, gameVersion: Int32) -> Void {
   wrappedMethod(saveVersion, gameVersion);
   this.spawner = AtelierDropPointsSpawner.Get(GetGameInstance());
 }
-@replaceMethod(DropPointSystem)
+@wrapMethod(DropPointSystem)
 private final func RegisterDropPointMappin(data: ref<DropPointMappinRegistrationData>) -> Void {
-  let mappinData: MappinData;
-  let mappinID: NewMappinID;
-  if data == null || NotEquals(data.GetMappinID(), mappinID) {
+  wrappedMethod(data);
+  // Use the supplied registration directly. Looking it up again here turns
+  // restoration of N drop-point markers into N additional full-array scans.
+  this.VADCacheDropPointMappin(data);
+}
+@addMethod(DropPointSystem)
+private final func VADCacheDropPointMappin(data: ref<DropPointMappinRegistrationData>) -> Void {
+  if !IsDefined(data) {
     return;
   };
-  mappinData.mappinType = t"Mappins.DropPointStaticMappin";
-  mappinData.variant = gamedataMappinVariant.ServicePointDropPointVariant;
-  mappinData.active = true;
-  mappinID = this.GetMappinSystem().RegisterMappin(mappinData, data.GetPosition());
-  data.SetMappinID(mappinID);
   let entityId: EntityID = data.GetOwnerID();
   if !IsDefined(this.spawner) {
     this.spawner = AtelierDropPointsSpawner.Get(GetGameInstance());
   };
   if IsDefined(this.spawner) && this.spawner.IsCustomDropPoint(entityId) {
-    this.spawner.SaveSpawnedMappinId(entityId, mappinID);
+    this.spawner.SaveSpawnedMappinId(entityId, data.GetMappinID());
   };
+}
+@wrapMethod(DropPointSystem)
+protected final func OnRegisterDropPointMappinRequest(request: ref<RegisterDropPointMappinRequest>) -> Void {
+  if !IsDefined(this.spawner) {
+    this.spawner = AtelierDropPointsSpawner.Get(GetGameInstance());
+  };
+  if IsDefined(this.spawner) && this.spawner.IsRetiredDropPoint(request.ownerID) {
+    // Intentionally suppress late attach requests from a terminal being deleted.
+    // Otherwise they can recreate its persistent marker after cleanup.
+    return;
+  };
+  if !IsDefined(this.spawner) || !this.spawner.IsCustomDropPoint(request.ownerID) {
+    // Ordinary/modded non-Atelier drop points must not incur another lookup in
+    // m_mappins. Keep their original request/wrapper chain unchanged.
+    wrappedMethod(request);
+    return;
+  };
+  // Only Atelier terminals need tracking relinking and recovery of our index.
+  // Reuse this reference after vanilla processing; do not search a second time.
+  let registrationData: ref<DropPointMappinRegistrationData> = this.GetMappinData(request.ownerID);
+  let invalidID: NewMappinID;
+  if IsDefined(registrationData) && NotEquals(request.trackingAlternativeMappinID, invalidID) {
+    if NotEquals(registrationData.GetTrackingAlternativeMappinID(), request.trackingAlternativeMappinID) {
+      // A streamed-in terminal has a new dynamic marker. Allow vanilla to link
+      // the persistent static marker to that ID instead of keeping the old one.
+      registrationData.SetTrackingAlternativeMappinID(invalidID);
+    };
+  };
+  wrappedMethod(request);
+  // Restore the index even when vanilla already restored this marker before
+  // DynamicEntitySystem tags were available and skipped RegisterDropPointMappin.
+  // New registrations are cached by the RegisterDropPointMappin wrapper itself.
+  this.VADCacheDropPointMappin(registrationData);
+}
+@wrapMethod(DropPointSystem)
+private final func UnregisterDropPointMappin(data: ref<DropPointMappinRegistrationData>) -> Void {
+  let oldID: NewMappinID;
+  if IsDefined(data) {
+    oldID = data.GetMappinID();
+  };
+  wrappedMethod(data);
+  if IsDefined(this.spawner) {
+    this.spawner.ForgetSpawnedMappinId(oldID);
+  };
+}
+@wrapMethod(DropPoint)
+protected cb func OnDetach() -> Bool {
+  let spawner: ref<AtelierDropPointsSpawner> = AtelierDropPointsSpawner.Get(this.GetGame());
+  if IsDefined(spawner) && spawner.IsCustomDropPoint(this.GetEntityID()) {
+    // Keep the static marker, but re-register the dynamic tracking alternative
+    // on the next attach even if the same entity object is reused by streaming.
+    this.m_mappinInSystem = false;
+  };
+  return wrappedMethod();
 }
 // Show VA tooltip
 @wrapMethod(WorldMapTooltipController)
@@ -3980,11 +4337,9 @@ private final func UpdateTooltip(tooltipType: WorldMapTooltipType, controller: w
   };
   if IsDefined(mappin) && IsDefined(this.spawner) {
     mappinId = mappin.GetNewMappinID();
-    isCustomMappin = this.spawner.IsCustomDropPoint(mappinId);
-  };
-  if isCustomMappin && IsDefined(this.spawner) {
     dropPointInstance = this.spawner.FindInstanceByMappinId(mappinId);
-    if IsDefined(dropPointInstance) {
+    isCustomMappin = IsDefined(dropPointInstance);
+    if isCustomMappin {
       imageInfo = DropPointImageInfo.Create(dropPointInstance.inkAtlas, dropPointInstance.uniqueTag);
     };
   };
