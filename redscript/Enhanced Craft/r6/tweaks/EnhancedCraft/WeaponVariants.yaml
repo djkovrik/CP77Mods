@@ -2373,6 +2373,12 @@ Items.Craftable_Common_Burya_soviet:
   iconPath: weapon_Preset_Burya_Default_None__AirDrop_Weapon
   visualTags: [ AirDrop_Weapon ]
 
+Items.Craftable_Common_Burya_king:
+  $base: Items.Craftable_Common_Burya
+  appearanceName: king
+  iconPath: weapon_Preset_Burya_Default_None__King_Gun
+  visualTags: [ King_Gun ]
+
 Items.Craftable_Common_Burya.ecraftVariants:
  - t"Items.Craftable_Common_Burya_default"
  - t"Items.Craftable_Common_Burya_military1"
@@ -2383,6 +2389,7 @@ Items.Craftable_Common_Burya.ecraftVariants:
  - t"Items.Craftable_Common_Burya_pimp2"
  - t"Items.Craftable_Common_Burya_comrade"
  - t"Items.Craftable_Common_Burya_soviet"
+ - t"Items.Craftable_Common_Burya_king"
 
 # --- Items.Craftable_Uncommon_Burya
 Items.Craftable_Uncommon_Burya_default:
@@ -2439,6 +2446,12 @@ Items.Craftable_Uncommon_Burya_soviet:
   iconPath: weapon_Preset_Burya_Default_None__AirDrop_Weapon
   visualTags: [ AirDrop_Weapon ]
 
+Items.Craftable_Uncommon_Burya_king:
+  $base: Items.Craftable_Uncommon_Burya
+  appearanceName: king
+  iconPath: weapon_Preset_Burya_Default_None__King_Gun
+  visualTags: [ King_Gun ]
+
 Items.Craftable_Uncommon_Burya.ecraftVariants:
  - t"Items.Craftable_Uncommon_Burya_default"
  - t"Items.Craftable_Uncommon_Burya_military1"
@@ -2449,6 +2462,7 @@ Items.Craftable_Uncommon_Burya.ecraftVariants:
  - t"Items.Craftable_Uncommon_Burya_pimp2"
  - t"Items.Craftable_Uncommon_Burya_comrade"
  - t"Items.Craftable_Uncommon_Burya_soviet"
+ - t"Items.Craftable_Uncommon_Burya_king"
 
 # --- Items.Craftable_Rare_Burya
 Items.Craftable_Rare_Burya_default:
@@ -2505,6 +2519,12 @@ Items.Craftable_Rare_Burya_soviet:
   iconPath: weapon_Preset_Burya_Default_None__AirDrop_Weapon
   visualTags: [ AirDrop_Weapon ]
 
+Items.Craftable_Rare_Burya_king:
+  $base: Items.Craftable_Rare_Burya
+  appearanceName: king
+  iconPath: weapon_Preset_Burya_Default_None__King_Gun
+  visualTags: [ King_Gun ]
+
 Items.Craftable_Rare_Burya.ecraftVariants:
  - t"Items.Craftable_Rare_Burya_default"
  - t"Items.Craftable_Rare_Burya_military1"
@@ -2515,6 +2535,7 @@ Items.Craftable_Rare_Burya.ecraftVariants:
  - t"Items.Craftable_Rare_Burya_pimp2"
  - t"Items.Craftable_Rare_Burya_comrade"
  - t"Items.Craftable_Rare_Burya_soviet"
+ - t"Items.Craftable_Rare_Burya_king"
 
 # --- Items.Craftable_Epic_Burya
 Items.Craftable_Epic_Burya_default:
@@ -2571,6 +2592,12 @@ Items.Craftable_Epic_Burya_soviet:
   iconPath: weapon_Preset_Burya_Default_None__AirDrop_Weapon
   visualTags: [ AirDrop_Weapon ]
 
+Items.Craftable_Epic_Burya_king:
+  $base: Items.Craftable_Epic_Burya
+  appearanceName: king
+  iconPath: weapon_Preset_Burya_Default_None__King_Gun
+  visualTags: [ King_Gun ]
+
 Items.Craftable_Epic_Burya.ecraftVariants:
  - t"Items.Craftable_Epic_Burya_default"
  - t"Items.Craftable_Epic_Burya_military1"
@@ -2581,6 +2608,7 @@ Items.Craftable_Epic_Burya.ecraftVariants:
  - t"Items.Craftable_Epic_Burya_pimp2"
  - t"Items.Craftable_Epic_Burya_comrade"
  - t"Items.Craftable_Epic_Burya_soviet"
+ - t"Items.Craftable_Epic_Burya_king"
 
 # --- Items.Craftable_Legendary_Burya
 Items.Craftable_Legendary_Burya_default:
@@ -2637,6 +2665,12 @@ Items.Craftable_Legendary_Burya_soviet:
   iconPath: weapon_Preset_Burya_Default_None__AirDrop_Weapon
   visualTags: [ AirDrop_Weapon ]
 
+Items.Craftable_Legendary_Burya_king:
+  $base: Items.Craftable_Legendary_Burya
+  appearanceName: king
+  iconPath: weapon_Preset_Burya_Default_None__King_Gun
+  visualTags: [ King_Gun ]
+
 Items.Craftable_Legendary_Burya.ecraftVariants:
  - t"Items.Craftable_Legendary_Burya_default"
  - t"Items.Craftable_Legendary_Burya_military1"
@@ -2647,6 +2681,7 @@ Items.Craftable_Legendary_Burya.ecraftVariants:
  - t"Items.Craftable_Legendary_Burya_pimp2"
  - t"Items.Craftable_Legendary_Burya_comrade"
  - t"Items.Craftable_Legendary_Burya_soviet"
+ - t"Items.Craftable_Legendary_Burya_king"
 
 # Carnage
 # --- Items.Craftable_Common_Carnage
@@ -7032,6 +7067,12 @@ Items.Craftable_Common_Katana_Witcher_sword_redplay:
   iconPath: weapon_Preset_Katana_Default_None__Witcher_Sword
   visualTags: [ Witcher_Sword ]
 
+Items.Craftable_Common_Katana_Witcher_Sigil:
+  $base: Items.Craftable_Common_Katana
+  appearanceName: Witcher_Sigil
+  iconPath: weapon_Preset_Katana_Default_None__Witcher_Sigil
+  visualTags: [ Witcher_Sigil ]
+
 Items.Craftable_Common_Katana.ecraftVariants:
  - t"Items.Craftable_Common_Katana_03_default"
  - t"Items.Craftable_Common_Katana_01_default"
@@ -7061,6 +7102,7 @@ Items.Craftable_Common_Katana.ecraftVariants:
  - t"Items.Craftable_Common_Katana_wakako_katana"
  - t"Items.Craftable_Common_Katana_01_thermal_blade"
  - t"Items.Craftable_Common_Katana_Witcher_sword_redplay"
+ - t"Items.Craftable_Common_Katana_Witcher_Sigil"
 
 # --- Items.Craftable_Uncommon_Katana
 Items.Craftable_Uncommon_Katana_03_default:
@@ -7231,6 +7273,12 @@ Items.Craftable_Uncommon_Katana_Witcher_sword_redplay:
   iconPath: weapon_Preset_Katana_Default_None__Witcher_Sword
   visualTags: [ Witcher_Sword ]
 
+Items.Craftable_Uncommon_Katana_Witcher_Sigil:
+  $base: Items.Craftable_Uncommon_Katana
+  appearanceName: Witcher_Sigil
+  iconPath: weapon_Preset_Katana_Default_None__Witcher_Sigil
+  visualTags: [ Witcher_Sigil ]
+
 Items.Craftable_Uncommon_Katana.ecraftVariants:
  - t"Items.Craftable_Uncommon_Katana_03_default"
  - t"Items.Craftable_Uncommon_Katana_01_default"
@@ -7260,6 +7308,7 @@ Items.Craftable_Uncommon_Katana.ecraftVariants:
  - t"Items.Craftable_Uncommon_Katana_wakako_katana"
  - t"Items.Craftable_Uncommon_Katana_01_thermal_blade"
  - t"Items.Craftable_Uncommon_Katana_Witcher_sword_redplay"
+ - t"Items.Craftable_Uncommon_Katana_Witcher_Sigil"
 
 # --- Items.Craftable_Rare_Katana
 Items.Craftable_Rare_Katana_03_default:
@@ -7430,6 +7479,12 @@ Items.Craftable_Rare_Katana_Witcher_sword_redplay:
   iconPath: weapon_Preset_Katana_Default_None__Witcher_Sword
   visualTags: [ Witcher_Sword ]
 
+Items.Craftable_Rare_Katana_Witcher_Sigil:
+  $base: Items.Craftable_Rare_Katana
+  appearanceName: Witcher_Sigil
+  iconPath: weapon_Preset_Katana_Default_None__Witcher_Sigil
+  visualTags: [ Witcher_Sigil ]
+
 Items.Craftable_Rare_Katana.ecraftVariants:
  - t"Items.Craftable_Rare_Katana_03_default"
  - t"Items.Craftable_Rare_Katana_01_default"
@@ -7459,6 +7514,7 @@ Items.Craftable_Rare_Katana.ecraftVariants:
  - t"Items.Craftable_Rare_Katana_wakako_katana"
  - t"Items.Craftable_Rare_Katana_01_thermal_blade"
  - t"Items.Craftable_Rare_Katana_Witcher_sword_redplay"
+ - t"Items.Craftable_Rare_Katana_Witcher_Sigil"
 
 # --- Items.Craftable_Epic_Katana
 Items.Craftable_Epic_Katana_03_default:
@@ -7629,6 +7685,12 @@ Items.Craftable_Epic_Katana_Witcher_sword_redplay:
   iconPath: weapon_Preset_Katana_Default_None__Witcher_Sword
   visualTags: [ Witcher_Sword ]
 
+Items.Craftable_Epic_Katana_Witcher_Sigil:
+  $base: Items.Craftable_Epic_Katana
+  appearanceName: Witcher_Sigil
+  iconPath: weapon_Preset_Katana_Default_None__Witcher_Sigil
+  visualTags: [ Witcher_Sigil ]
+
 Items.Craftable_Epic_Katana.ecraftVariants:
  - t"Items.Craftable_Epic_Katana_03_default"
  - t"Items.Craftable_Epic_Katana_01_default"
@@ -7658,6 +7720,7 @@ Items.Craftable_Epic_Katana.ecraftVariants:
  - t"Items.Craftable_Epic_Katana_wakako_katana"
  - t"Items.Craftable_Epic_Katana_01_thermal_blade"
  - t"Items.Craftable_Epic_Katana_Witcher_sword_redplay"
+ - t"Items.Craftable_Epic_Katana_Witcher_Sigil"
 
 # --- Items.Craftable_Legendary_Katana
 Items.Craftable_Legendary_Katana_03_default:
@@ -7828,6 +7891,12 @@ Items.Craftable_Legendary_Katana_Witcher_sword_redplay:
   iconPath: weapon_Preset_Katana_Default_None__Witcher_Sword
   visualTags: [ Witcher_Sword ]
 
+Items.Craftable_Legendary_Katana_Witcher_Sigil:
+  $base: Items.Craftable_Legendary_Katana
+  appearanceName: Witcher_Sigil
+  iconPath: weapon_Preset_Katana_Default_None__Witcher_Sigil
+  visualTags: [ Witcher_Sigil ]
+
 Items.Craftable_Legendary_Katana.ecraftVariants:
  - t"Items.Craftable_Legendary_Katana_03_default"
  - t"Items.Craftable_Legendary_Katana_01_default"
@@ -7857,6 +7926,7 @@ Items.Craftable_Legendary_Katana.ecraftVariants:
  - t"Items.Craftable_Legendary_Katana_wakako_katana"
  - t"Items.Craftable_Legendary_Katana_01_thermal_blade"
  - t"Items.Craftable_Legendary_Katana_Witcher_sword_redplay"
+ - t"Items.Craftable_Legendary_Katana_Witcher_Sigil"
 
 # Katana Military
 # --- Items.Craftable_Common_Katana_Military
@@ -8028,6 +8098,12 @@ Items.Craftable_Common_Katana_Military_Witcher_sword_redplay:
   iconPath: weapon_Preset_Katana_Default_None__Witcher_Sword
   visualTags: [ Witcher_Sword ]
 
+Items.Craftable_Common_Katana_Military_Witcher_Sigil:
+  $base: Items.Craftable_Common_Katana_Military
+  appearanceName: Witcher_Sigil
+  iconPath: weapon_Preset_Katana_Default_None__Witcher_Sigil
+  visualTags: [ Witcher_Sigil ]
+
 Items.Craftable_Common_Katana_Military.ecraftVariants:
  - t"Items.Craftable_Common_Katana_Military_03_default"
  - t"Items.Craftable_Common_Katana_Military_01_default"
@@ -8057,6 +8133,7 @@ Items.Craftable_Common_Katana_Military.ecraftVariants:
  - t"Items.Craftable_Common_Katana_Military_wakako_katana"
  - t"Items.Craftable_Common_Katana_Military_01_thermal_blade"
  - t"Items.Craftable_Common_Katana_Military_Witcher_sword_redplay"
+ - t"Items.Craftable_Common_Katana_Military_Witcher_Sigil"
 
 # --- Items.Craftable_Uncommon_Katana_Military
 Items.Craftable_Uncommon_Katana_Military_03_default:
@@ -8227,6 +8304,12 @@ Items.Craftable_Uncommon_Katana_Military_Witcher_sword_redplay:
   iconPath: weapon_Preset_Katana_Default_None__Witcher_Sword
   visualTags: [ Witcher_Sword ]
 
+Items.Craftable_Uncommon_Katana_Military_Witcher_Sigil:
+  $base: Items.Craftable_Uncommon_Katana_Military
+  appearanceName: Witcher_Sigil
+  iconPath: weapon_Preset_Katana_Default_None__Witcher_Sigil
+  visualTags: [ Witcher_Sigil ]
+
 Items.Craftable_Uncommon_Katana_Military.ecraftVariants:
  - t"Items.Craftable_Uncommon_Katana_Military_03_default"
  - t"Items.Craftable_Uncommon_Katana_Military_01_default"
@@ -8256,6 +8339,7 @@ Items.Craftable_Uncommon_Katana_Military.ecraftVariants:
  - t"Items.Craftable_Uncommon_Katana_Military_wakako_katana"
  - t"Items.Craftable_Uncommon_Katana_Military_01_thermal_blade"
  - t"Items.Craftable_Uncommon_Katana_Military_Witcher_sword_redplay"
+ - t"Items.Craftable_Uncommon_Katana_Military_Witcher_Sigil"
 
 # --- Items.Craftable_Epic_Katana_Military
 Items.Craftable_Epic_Katana_Military_03_default:
@@ -8426,6 +8510,12 @@ Items.Craftable_Epic_Katana_Military_Witcher_sword_redplay:
   iconPath: weapon_Preset_Katana_Default_None__Witcher_Sword
   visualTags: [ Witcher_Sword ]
 
+Items.Craftable_Epic_Katana_Military_Witcher_Sigil:
+  $base: Items.Craftable_Epic_Katana_Military
+  appearanceName: Witcher_Sigil
+  iconPath: weapon_Preset_Katana_Default_None__Witcher_Sigil
+  visualTags: [ Witcher_Sigil ]
+
 Items.Craftable_Epic_Katana_Military.ecraftVariants:
  - t"Items.Craftable_Epic_Katana_Military_03_default"
  - t"Items.Craftable_Epic_Katana_Military_01_default"
@@ -8455,6 +8545,7 @@ Items.Craftable_Epic_Katana_Military.ecraftVariants:
  - t"Items.Craftable_Epic_Katana_Military_wakako_katana"
  - t"Items.Craftable_Epic_Katana_Military_01_thermal_blade"
  - t"Items.Craftable_Epic_Katana_Military_Witcher_sword_redplay"
+ - t"Items.Craftable_Epic_Katana_Military_Witcher_Sigil"
 
 # --- Items.Craftable_Rare_Katana_Military_1
 Items.Craftable_Rare_Katana_Military_1_03_default:
@@ -8625,6 +8716,12 @@ Items.Craftable_Rare_Katana_Military_1_Witcher_sword_redplay:
   iconPath: weapon_Preset_Katana_Default_None__Witcher_Sword
   visualTags: [ Witcher_Sword ]
 
+Items.Craftable_Rare_Katana_Military_1_Witcher_Sigil:
+  $base: Items.Craftable_Rare_Katana_Military_1
+  appearanceName: Witcher_Sigil
+  iconPath: weapon_Preset_Katana_Default_None__Witcher_Sigil
+  visualTags: [ Witcher_Sigil ]
+
 Items.Craftable_Rare_Katana_Military_1.ecraftVariants:
  - t"Items.Craftable_Rare_Katana_Military_1_03_default"
  - t"Items.Craftable_Rare_Katana_Military_1_01_default"
@@ -8654,6 +8751,7 @@ Items.Craftable_Rare_Katana_Military_1.ecraftVariants:
  - t"Items.Craftable_Rare_Katana_Military_1_wakako_katana"
  - t"Items.Craftable_Rare_Katana_Military_1_01_thermal_blade"
  - t"Items.Craftable_Rare_Katana_Military_1_Witcher_sword_redplay"
+ - t"Items.Craftable_Rare_Katana_Military_1_Witcher_Sigil"
 
 # --- Items.Craftable_Legendary_Katana_Military
 Items.Craftable_Legendary_Katana_Military_03_default:
@@ -8824,6 +8922,12 @@ Items.Craftable_Legendary_Katana_Military_Witcher_sword_redplay:
   iconPath: weapon_Preset_Katana_Default_None__Witcher_Sword
   visualTags: [ Witcher_Sword ]
 
+Items.Craftable_Legendary_Katana_Military_Witcher_Sigil:
+  $base: Items.Craftable_Legendary_Katana_Military
+  appearanceName: Witcher_Sigil
+  iconPath: weapon_Preset_Katana_Default_None__Witcher_Sigil
+  visualTags: [ Witcher_Sigil ]
+
 Items.Craftable_Legendary_Katana_Military.ecraftVariants:
  - t"Items.Craftable_Legendary_Katana_Military_03_default"
  - t"Items.Craftable_Legendary_Katana_Military_01_default"
@@ -8853,6 +8957,7 @@ Items.Craftable_Legendary_Katana_Military.ecraftVariants:
  - t"Items.Craftable_Legendary_Katana_Military_wakako_katana"
  - t"Items.Craftable_Legendary_Katana_Military_01_thermal_blade"
  - t"Items.Craftable_Legendary_Katana_Military_Witcher_sword_redplay"
+ - t"Items.Craftable_Legendary_Katana_Military_Witcher_Sigil"
 
 # Kenshin
 # --- Items.Craftable_Common_Kenshin
@@ -9240,10 +9345,17 @@ Items.Craftable_Common_Knife_scorpion:
   iconPath: weapon_Preset_Knife_Default_None__Scorpion_Knife
   visualTags: [ Scorpion_Knife ]
 
+Items.Craftable_Common_Knife_tw3:
+  $base: Items.Craftable_Common_Knife
+  appearanceName: tw3
+  iconPath: weapon_Preset_Knife_Default_None__Witcher_Knife
+  visualTags: [ Witcher_Knife ]
+
 Items.Craftable_Common_Knife.ecraftVariants:
  - t"Items.Craftable_Common_Knife_military"
  - t"Items.Craftable_Common_Knife_military2"
  - t"Items.Craftable_Common_Knife_scorpion"
+ - t"Items.Craftable_Common_Knife_tw3"
 
 # --- Items.Craftable_Uncommon_Knife
 Items.Craftable_Uncommon_Knife_military:
@@ -9264,10 +9376,17 @@ Items.Craftable_Uncommon_Knife_scorpion:
   iconPath: weapon_Preset_Knife_Default_None__Scorpion_Knife
   visualTags: [ Scorpion_Knife ]
 
+Items.Craftable_Uncommon_Knife_tw3:
+  $base: Items.Craftable_Uncommon_Knife
+  appearanceName: tw3
+  iconPath: weapon_Preset_Knife_Default_None__Witcher_Knife
+  visualTags: [ Witcher_Knife ]
+
 Items.Craftable_Uncommon_Knife.ecraftVariants:
  - t"Items.Craftable_Uncommon_Knife_military"
  - t"Items.Craftable_Uncommon_Knife_military2"
  - t"Items.Craftable_Uncommon_Knife_scorpion"
+ - t"Items.Craftable_Uncommon_Knife_tw3"
 
 # --- Items.Craftable_Rare_Knife
 Items.Craftable_Rare_Knife_military:
@@ -9288,10 +9407,17 @@ Items.Craftable_Rare_Knife_scorpion:
   iconPath: weapon_Preset_Knife_Default_None__Scorpion_Knife
   visualTags: [ Scorpion_Knife ]
 
+Items.Craftable_Rare_Knife_tw3:
+  $base: Items.Craftable_Rare_Knife
+  appearanceName: tw3
+  iconPath: weapon_Preset_Knife_Default_None__Witcher_Knife
+  visualTags: [ Witcher_Knife ]
+
 Items.Craftable_Rare_Knife.ecraftVariants:
  - t"Items.Craftable_Rare_Knife_military"
  - t"Items.Craftable_Rare_Knife_military2"
  - t"Items.Craftable_Rare_Knife_scorpion"
+ - t"Items.Craftable_Rare_Knife_tw3"
 
 # --- Items.Craftable_Epic_Knife
 Items.Craftable_Epic_Knife_military:
@@ -9312,10 +9438,17 @@ Items.Craftable_Epic_Knife_scorpion:
   iconPath: weapon_Preset_Knife_Default_None__Scorpion_Knife
   visualTags: [ Scorpion_Knife ]
 
+Items.Craftable_Epic_Knife_tw3:
+  $base: Items.Craftable_Epic_Knife
+  appearanceName: tw3
+  iconPath: weapon_Preset_Knife_Default_None__Witcher_Knife
+  visualTags: [ Witcher_Knife ]
+
 Items.Craftable_Epic_Knife.ecraftVariants:
  - t"Items.Craftable_Epic_Knife_military"
  - t"Items.Craftable_Epic_Knife_military2"
  - t"Items.Craftable_Epic_Knife_scorpion"
+ - t"Items.Craftable_Epic_Knife_tw3"
 
 # --- Items.Craftable_Legendary_Knife
 Items.Craftable_Legendary_Knife_military:
@@ -9336,10 +9469,17 @@ Items.Craftable_Legendary_Knife_scorpion:
   iconPath: weapon_Preset_Knife_Default_None__Scorpion_Knife
   visualTags: [ Scorpion_Knife ]
 
+Items.Craftable_Legendary_Knife_tw3:
+  $base: Items.Craftable_Legendary_Knife
+  appearanceName: tw3
+  iconPath: weapon_Preset_Knife_Default_None__Witcher_Knife
+  visualTags: [ Witcher_Knife ]
+
 Items.Craftable_Legendary_Knife.ecraftVariants:
  - t"Items.Craftable_Legendary_Knife_military"
  - t"Items.Craftable_Legendary_Knife_military2"
  - t"Items.Craftable_Legendary_Knife_scorpion"
+ - t"Items.Craftable_Legendary_Knife_tw3"
 
 # Kukri
 # --- Items.Craftable_Common_Kukri

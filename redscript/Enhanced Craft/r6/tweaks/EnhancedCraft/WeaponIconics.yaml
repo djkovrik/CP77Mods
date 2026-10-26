@@ -138,18 +138,23 @@ Items.Craftable_Legendary_Baton_Gamma_alpha_murphy.isPresetIconic: true
 # --- Items.Craftable_Common_Burya
 Items.Craftable_Common_Burya_comrade.isPresetIconic: true
 Items.Craftable_Common_Burya_soviet.isPresetIconic: true
+Items.Craftable_Common_Burya_king.isPresetIconic: true
 # --- Items.Craftable_Uncommon_Burya
 Items.Craftable_Uncommon_Burya_comrade.isPresetIconic: true
 Items.Craftable_Uncommon_Burya_soviet.isPresetIconic: true
+Items.Craftable_Uncommon_Burya_king.isPresetIconic: true
 # --- Items.Craftable_Rare_Burya
 Items.Craftable_Rare_Burya_comrade.isPresetIconic: true
 Items.Craftable_Rare_Burya_soviet.isPresetIconic: true
+Items.Craftable_Rare_Burya_king.isPresetIconic: true
 # --- Items.Craftable_Epic_Burya
 Items.Craftable_Epic_Burya_comrade.isPresetIconic: true
 Items.Craftable_Epic_Burya_soviet.isPresetIconic: true
+Items.Craftable_Epic_Burya_king.isPresetIconic: true
 # --- Items.Craftable_Legendary_Burya
 Items.Craftable_Legendary_Burya_comrade.isPresetIconic: true
 Items.Craftable_Legendary_Burya_soviet.isPresetIconic: true
+Items.Craftable_Legendary_Burya_king.isPresetIconic: true
 # --- Items.Craftable_Common_Carnage
 Items.Craftable_Common_Carnage_mox.isPresetIconic: true
 Items.Craftable_Common_Carnage_edgerunner.isPresetIconic: true
@@ -305,6 +310,7 @@ Items.Craftable_Common_Katana_Witcher_Katana.isPresetIconic: true
 Items.Craftable_Common_Katana_wakako_katana.isPresetIconic: true
 Items.Craftable_Common_Katana_01_thermal_blade.isPresetIconic: true
 Items.Craftable_Common_Katana_Witcher_sword_redplay.isPresetIconic: true
+Items.Craftable_Common_Katana_Witcher_Sigil.isPresetIconic: true
 # --- Items.Craftable_Uncommon_Katana
 Items.Craftable_Uncommon_Katana_04_default.isPresetIconic: true
 Items.Craftable_Uncommon_Katana_02_takemura.isPresetIconic: true
@@ -315,6 +321,7 @@ Items.Craftable_Uncommon_Katana_Witcher_Katana.isPresetIconic: true
 Items.Craftable_Uncommon_Katana_wakako_katana.isPresetIconic: true
 Items.Craftable_Uncommon_Katana_01_thermal_blade.isPresetIconic: true
 Items.Craftable_Uncommon_Katana_Witcher_sword_redplay.isPresetIconic: true
+Items.Craftable_Uncommon_Katana_Witcher_Sigil.isPresetIconic: true
 # --- Items.Craftable_Rare_Katana
 Items.Craftable_Rare_Katana_04_default.isPresetIconic: true
 Items.Craftable_Rare_Katana_02_takemura.isPresetIconic: true
@@ -325,6 +332,7 @@ Items.Craftable_Rare_Katana_Witcher_Katana.isPresetIconic: true
 Items.Craftable_Rare_Katana_wakako_katana.isPresetIconic: true
 Items.Craftable_Rare_Katana_01_thermal_blade.isPresetIconic: true
 Items.Craftable_Rare_Katana_Witcher_sword_redplay.isPresetIconic: true
+Items.Craftable_Rare_Katana_Witcher_Sigil.isPresetIconic: true
 # --- Items.Craftable_Epic_Katana
 Items.Craftable_Epic_Katana_04_default.isPresetIconic: true
 Items.Craftable_Epic_Katana_02_takemura.isPresetIconic: true
@@ -335,6 +343,7 @@ Items.Craftable_Epic_Katana_Witcher_Katana.isPresetIconic: true
 Items.Craftable_Epic_Katana_wakako_katana.isPresetIconic: true
 Items.Craftable_Epic_Katana_01_thermal_blade.isPresetIconic: true
 Items.Craftable_Epic_Katana_Witcher_sword_redplay.isPresetIconic: true
+Items.Craftable_Epic_Katana_Witcher_Sigil.isPresetIconic: true
 # --- Items.Craftable_Legendary_Katana
 Items.Craftable_Legendary_Katana_04_default.isPresetIconic: true
 Items.Craftable_Legendary_Katana_02_takemura.isPresetIconic: true
@@ -345,6 +354,7 @@ Items.Craftable_Legendary_Katana_Witcher_Katana.isPresetIconic: true
 Items.Craftable_Legendary_Katana_wakako_katana.isPresetIconic: true
 Items.Craftable_Legendary_Katana_01_thermal_blade.isPresetIconic: true
 Items.Craftable_Legendary_Katana_Witcher_sword_redplay.isPresetIconic: true
+Items.Craftable_Legendary_Katana_Witcher_Sigil.isPresetIconic: true
 # --- Items.Craftable_Common_Katana_Military
 Items.Craftable_Common_Katana_Military_04_default.isPresetIconic: true
 Items.Craftable_Common_Katana_Military_02_takemura.isPresetIconic: true
@@ -355,6 +365,7 @@ Items.Craftable_Common_Katana_Military_Witcher_Katana.isPresetIconic: true
 Items.Craftable_Common_Katana_Military_wakako_katana.isPresetIconic: true
 Items.Craftable_Common_Katana_Military_01_thermal_blade.isPresetIconic: true
 Items.Craftable_Common_Katana_Military_Witcher_sword_redplay.isPresetIconic: true
+Items.Craftable_Common_Katana_Military_Witcher_Sigil.isPresetIconic: true
 # --- Items.Craftable_Uncommon_Katana_Military
 Items.Craftable_Uncommon_Katana_Military_04_default.isPresetIconic: true
 Items.Craftable_Uncommon_Katana_Military_02_takemura.isPresetIconic: true
@@ -365,6 +376,7 @@ Items.Craftable_Uncommon_Katana_Military_Witcher_Katana.isPresetIconic: true
 Items.Craftable_Uncommon_Katana_Military_wakako_katana.isPresetIconic: true
 Items.Craftable_Uncommon_Katana_Military_01_thermal_blade.isPresetIconic: true
 Items.Craftable_Uncommon_Katana_Military_Witcher_sword_redplay.isPresetIconic: true
+Items.Craftable_Uncommon_Katana_Military_Witcher_Sigil.isPresetIconic: true
 # --- Items.Craftable_Epic_Katana_Military
 Items.Craftable_Epic_Katana_Military_04_default.isPresetIconic: true
 Items.Craftable_Epic_Katana_Military_02_takemura.isPresetIconic: true
@@ -375,6 +387,7 @@ Items.Craftable_Epic_Katana_Military_Witcher_Katana.isPresetIconic: true
 Items.Craftable_Epic_Katana_Military_wakako_katana.isPresetIconic: true
 Items.Craftable_Epic_Katana_Military_01_thermal_blade.isPresetIconic: true
 Items.Craftable_Epic_Katana_Military_Witcher_sword_redplay.isPresetIconic: true
+Items.Craftable_Epic_Katana_Military_Witcher_Sigil.isPresetIconic: true
 # --- Items.Craftable_Rare_Katana_Military_1
 Items.Craftable_Rare_Katana_Military_1_04_default.isPresetIconic: true
 Items.Craftable_Rare_Katana_Military_1_02_takemura.isPresetIconic: true
@@ -385,6 +398,7 @@ Items.Craftable_Rare_Katana_Military_1_Witcher_Katana.isPresetIconic: true
 Items.Craftable_Rare_Katana_Military_1_wakako_katana.isPresetIconic: true
 Items.Craftable_Rare_Katana_Military_1_01_thermal_blade.isPresetIconic: true
 Items.Craftable_Rare_Katana_Military_1_Witcher_sword_redplay.isPresetIconic: true
+Items.Craftable_Rare_Katana_Military_1_Witcher_Sigil.isPresetIconic: true
 # --- Items.Craftable_Legendary_Katana_Military
 Items.Craftable_Legendary_Katana_Military_04_default.isPresetIconic: true
 Items.Craftable_Legendary_Katana_Military_02_takemura.isPresetIconic: true
@@ -395,6 +409,7 @@ Items.Craftable_Legendary_Katana_Military_Witcher_Katana.isPresetIconic: true
 Items.Craftable_Legendary_Katana_Military_wakako_katana.isPresetIconic: true
 Items.Craftable_Legendary_Katana_Military_01_thermal_blade.isPresetIconic: true
 Items.Craftable_Legendary_Katana_Military_Witcher_sword_redplay.isPresetIconic: true
+Items.Craftable_Legendary_Katana_Military_Witcher_Sigil.isPresetIconic: true
 # --- Items.Craftable_Common_Kenshin
 Items.Craftable_Common_Kenshin_frank.isPresetIconic: true
 Items.Craftable_Common_Kenshin_maelstrom.isPresetIconic: true
@@ -417,14 +432,19 @@ Items.Craftable_Legendary_Kenshin_maelstrom.isPresetIconic: true
 Items.Craftable_Legendary_Kenshin_spy.isPresetIconic: true
 # --- Items.Craftable_Common_Knife
 Items.Craftable_Common_Knife_scorpion.isPresetIconic: true
+Items.Craftable_Common_Knife_tw3.isPresetIconic: true
 # --- Items.Craftable_Uncommon_Knife
 Items.Craftable_Uncommon_Knife_scorpion.isPresetIconic: true
+Items.Craftable_Uncommon_Knife_tw3.isPresetIconic: true
 # --- Items.Craftable_Rare_Knife
 Items.Craftable_Rare_Knife_scorpion.isPresetIconic: true
+Items.Craftable_Rare_Knife_tw3.isPresetIconic: true
 # --- Items.Craftable_Epic_Knife
 Items.Craftable_Epic_Knife_scorpion.isPresetIconic: true
+Items.Craftable_Epic_Knife_tw3.isPresetIconic: true
 # --- Items.Craftable_Legendary_Knife
 Items.Craftable_Legendary_Knife_scorpion.isPresetIconic: true
+Items.Craftable_Legendary_Knife_tw3.isPresetIconic: true
 # --- Items.Craftable_Common_Kyubi
 Items.Craftable_Common_Kyubi_legendary.isPresetIconic: true
 Items.Craftable_Common_Kyubi_nusa.isPresetIconic: true
