@@ -71,6 +71,20 @@
          "alpha":1
       },
       {
+         "name":"MainColors.MediumRed",
+         "red":0.207843006,
+         "green":0.066666998,
+         "blue":0.0745100006,
+         "alpha":1
+      },
+      {
+         "name":"MainColors.DarkerRed",
+         "red":0.407842994,
+         "green":0.117647,
+         "blue":0.121569,
+         "alpha":1
+      },
+      {
          "name":"MainColors.Blue",
          "red":0.36862746,
          "green":0.96470594,
@@ -141,6 +155,13 @@
          "alpha":1
       },
       {
+         "name":"MainColors.DarkerBlue",
+         "red":0.0745100006,
+         "green":0.0784310028,
+         "blue":0.121569,
+         "alpha":1
+      },
+      {
          "name":"MainColors.Yellow",
          "red":1.1192,
          "green":0.8441,
@@ -201,6 +222,13 @@
          "red":0.8470589,
          "green":0.34901962,
          "blue":0.07058824,
+         "alpha":1
+      },
+      {
+         "name":"MainColors.PanelDarkYellow",
+         "red":0.141176,
+         "green":0.0705880001,
+         "blue":0.0627449974,
          "alpha":1
       },
       {
@@ -299,6 +327,34 @@
          "red":0.45882356,
          "green":0.45882356,
          "blue":0.45882356,
+         "alpha":1
+      },
+      {
+         "name":"MainColors.PanelDarkGrey",
+         "red":0.525489986,
+         "green":0.525489986,
+         "blue":0.525489986,
+         "alpha":1
+      },
+      {
+         "name":"MainColors.DarkerGrey",
+         "red":0.313726008,
+         "green":0.313726008,
+         "blue":0.313726008,
+         "alpha":1
+      },
+      {
+         "name":"MainColors.panelDarkerGrey",
+         "red":0.341176003,
+         "green":0.341176003,
+         "blue":0.341176003,
+         "alpha":1
+      },
+      {
+         "name":"MainColors.PanelDarkestGrey",
+         "red":0.0470589995,
+         "green":0.043136999,
+         "blue":0.0823530033,
          "alpha":1
       },
       {
