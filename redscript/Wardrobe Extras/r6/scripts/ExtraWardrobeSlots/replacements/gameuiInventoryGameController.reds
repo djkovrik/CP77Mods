@@ -101,10 +101,10 @@ private final func PopulateArea(targetRoot: wref<inkCompoundWidget>, container: 
         currentEquipmentArea = Deref(equipmentAreas)[0];
         container.displayControllers[i].Bind(this.m_InventoryManager, currentEquipmentArea, i, ItemDisplayContext.GearPanel, clothingSetIndex > -1, clothingSetIndex);
       };
+      container.displayControllers[i].SetItemCounterDisabled(true);
       container.displayControllers[i].BindComparisonAndScriptableSystem(this.m_uiScriptableSystem, this.m_comparisonResolver);
       container.displayControllers[i].SetLocked(isOutfitEquipped && this.IsAreaLockedByOutfit(currentEquipmentArea), true);
       container.displayControllers[i].SetTransmoged(ArrayContains(this.m_wardrobeOutfitAreas, currentEquipmentArea));
-      container.displayControllers[i].SetItemCounterDisabled(true);
     };
     i += 1;
   };
@@ -115,12 +115,21 @@ protected cb func OnEquipmentClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
   let hotkey: EHotkey;
   let itemData: InventoryItemData;
   let pressedOpenModsExclusiveHotkey: Bool;
+  let weaponDisplayController: ref<InventoryWeaponDisplayController>;
   let controller: wref<InventoryItemDisplayController> = evt.display;
   if Equals(this.m_mode, InventoryModes.Item) {
     return false;
   };
   if evt.actionName.IsAction(n"install_quickhack") {
     pressedOpenModsExclusiveHotkey = true;
+  };
+  if evt.actionName.IsAction(n"switch_to_secondary") && !InventoryItemData.IsEmpty(evt.itemData) && InventoryItemData.IsWeapon(evt.itemData) && InventoryItemData.CanDualWield(evt.itemData) {
+    this.ToggleDualWieldWeapon(evt.display.GetSlotIndex(), false);
+    return false;
+  };
+  if evt.actionName.IsAction(n"switch_to_primary") {
+    this.ToggleDualWieldWeapon(evt.display.GetSlotIndex(), true);
+    return false;
   };
   if evt.actionName.IsAction(n"unequip_item") {
     itemData = controller.GetItemData();
@@ -156,6 +165,16 @@ protected cb func OnEquipmentClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
     };
   } else {
     if evt.actionName.IsAction(n"select") || evt.actionName.IsAction(n"click") {
+      if this.m_canToggleWeapon {
+        if this.m_isInputLockedForClick {
+          this.m_isInputLockedForClick = false;
+          return false;
+        };
+        if this.m_isInputLockedForSelect {
+          this.m_isInputLockedForSelect = false;
+          return false;
+        };
+      };
       this.PlaySound(n"Button", n"OnPress");
       if Equals(controller.GetEquipmentArea(), gamedataEquipmentArea.Invalid) {
         return false;
@@ -179,6 +198,15 @@ protected cb func OnEquipmentClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
         return false;
       };
       if !evt.toggleVisibilityRequest {
+        weaponDisplayController = controller as InventoryWeaponDisplayController;
+        if IsDefined(weaponDisplayController) {
+          if weaponDisplayController.GetToggleToPrimary() || weaponDisplayController.GetToggleToSecondary() {
+            this.ToggleDualWieldWeapon(evt.display.GetSlotIndex(), weaponDisplayController.GetToggleToPrimary());
+            weaponDisplayController.ResetToggle();
+            evt.evt.Handle();
+            return false;
+          };
+        };
         this.OpenItemMode(controller.GetItemDisplayData());
       };
     };

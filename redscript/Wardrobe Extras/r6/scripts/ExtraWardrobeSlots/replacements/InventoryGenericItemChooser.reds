@@ -17,7 +17,8 @@ protected func RefreshMainItem(opt overrideClothingSet: Bool, opt clothingSetInd
   if !IsDefined(this.itemDisplay) {
     inkCompoundRef.RemoveAllChildren(this.m_itemContainer);
     this.itemDisplay = ItemDisplayUtils.SpawnCommonSlotController(this, this.m_itemContainer, this.GetDisplayToSpawn()) as InventoryItemDisplayController;
-    this.itemDisplay.Bind(this.inventoryDataManager, this.equipmentArea, this.slotIndex, ItemDisplayContext.GearPanel, equippedClothingSetIndex > -1, equippedClothingSetIndex);
+    this.itemDisplay.SetItemCounterDisabled(true);
+    this.itemDisplay.Bind(this.inventoryDataManager, this.equipmentArea, this.slotIndex, ItemDisplayContext.ItemChooser, equippedClothingSetIndex > -1, equippedClothingSetIndex);
     this.itemDisplay.SetTransmoged(showTransmogedIcon);
     this.itemDisplay.GetRootWidget().RegisterToCallback(n"OnRelease", this, n"OnItemInventoryClick");
     this.itemDisplay.GetRootWidget().RegisterToCallback(n"OnHoverOver", this, n"OnInventoryItemHoverOver");

@@ -318,7 +318,7 @@ public final func SendVisualEquipRequest() -> Void {
 
 @replaceMethod(WardrobeSetEditorUIController)
 protected cb func OnTakeOffButtonClicked(evt: ref<inkPointerEvent>) -> Bool {
-  if evt.IsAction(n"click") {
+  if evt.IsAction(n"click") || evt.IsAction(n"tap") {
     if this.m_setButtonController != null {
       this.SaveSet();
       this.m_wardrobeGameController.SetEquippedStateExtra(gameWardrobeClothingSetIndexExtra.INVALID);
@@ -329,7 +329,7 @@ protected cb func OnTakeOffButtonClicked(evt: ref<inkPointerEvent>) -> Bool {
 
 @replaceMethod(WardrobeSetEditorUIController)
 protected cb func OnWearButtonClicked(evt: ref<inkPointerEvent>) -> Bool {
-  if evt.IsAction(n"click") {
+  if evt.IsAction(n"click") || evt.IsAction(n"tap") {
     if this.m_setButtonController != null {
       this.SaveSet();
       this.m_wardrobeGameController.SetEquippedStateExtra(this.m_setButtonController.GetClothingSetExtra().setID);
@@ -340,7 +340,7 @@ protected cb func OnWearButtonClicked(evt: ref<inkPointerEvent>) -> Bool {
 
 @replaceMethod(WardrobeSetEditorUIController)
 protected cb func OnResetButtonClicked(evt: ref<inkPointerEvent>) -> Bool {
-  if evt.IsAction(n"click") {
+  if evt.IsAction(n"click") || evt.IsAction(n"tap") {
     if this.m_setButtonController != null {
       this.m_wardrobeGameController.ResetSetExtra(this.m_setButtonController.GetClothingSetExtra().setID);
       this.OpenSet(this.m_setButtonController);

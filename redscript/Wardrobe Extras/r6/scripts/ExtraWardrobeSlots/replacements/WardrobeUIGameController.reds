@@ -227,7 +227,7 @@ protected cb func OnSetClick(e: ref<inkPointerEvent>) -> Bool {
     return true;
   };
   actionName = e.GetActionName();
-  if actionName.IsAction(n"select") {
+  if actionName.IsAction(n"select") || actionName.IsAction(n"tap") {
     this.PlayWardrobeSound(n"Button", n"OnPress");
     if this.m_currentSetController.GetClothingSetChanged() {
       this.m_setEditorController.SaveSet();

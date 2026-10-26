@@ -183,7 +183,7 @@ public final func SetupData(buttonHints: wref<ButtonHints>, tooltipsManager: wre
 }
 
 @replaceMethod(InventoryItemModeLogicController)
-public final func CreateItemChooser(displayData: InventoryItemDisplayData, dataSource: ref<InventoryDataManagerV2>) -> ref<InventoryGenericItemChooser> {
+public final func CreateItemChooser(itemCategoryList: script_ref<inkCompoundRef>, displayData: InventoryItemDisplayData, dataSource: ref<InventoryDataManagerV2>) -> ref<InventoryGenericItemChooser> {
   let isClothingArea: Bool;
   let itemChooserRet: ref<InventoryGenericItemChooser>;
   let showTransmogedIcon: Bool;
@@ -205,20 +205,23 @@ public final func CreateItemChooser(displayData: InventoryItemDisplayData, dataS
     case gamedataEquipmentArea.SystemReplacementCW:
       itemChooserToCreate = n"cyberwareModsChooser";
   };
-  inkCompoundRef.RemoveAllChildren(this.m_itemCategoryList);
+  inkCompoundRef.RemoveAllChildren(Deref(itemCategoryList));
   isClothingArea = this.IsEquipmentAreaClothing(displayData.m_equipmentArea);
   if isClothingArea && NotEquals(this.m_wardrobeSystemExtra.GetActiveClothingSetIndex(), gameWardrobeClothingSetIndexExtra.INVALID) {
     showTransmogedIcon = true;
   };
-  itemChooserRet = this.SpawnFromLocal(inkWidgetRef.Get(this.m_itemCategoryList), itemChooserToCreate).GetController() as InventoryGenericItemChooser;
+  itemChooserRet = this.SpawnFromLocal(inkWidgetRef.Get(Deref(itemCategoryList)), itemChooserToCreate).GetController() as InventoryGenericItemChooser;
   itemChooserRet.Bind(this.m_player, dataSource, displayData.m_equipmentArea, displayData.m_slotIndex, this.m_TooltipsManager, showTransmogedIcon);
   itemChooserRet.BindUIScriptableSystem(this.m_uiScriptableSystem);
+  itemChooserRet.OnCreate();
   return itemChooserRet;
 }
 
 @replaceMethod(InventoryItemModeLogicController)
 protected cb func OnItemChooserUnequipItem(evt: ref<ItemChooserUnequipItem>) -> Bool {
-  let equipedItem: InventoryItemData = this.itemChooser.GetModifiedItemData();
+  let equipedItem: InventoryItemData;
+  this.SelectItemChooser(Equals(evt.itemData, this.m_leftItemChooser.GetModifiedItemData()) ? this.m_leftItemChooser : this.itemChooser);
+  equipedItem = this.m_selectedItemChooser.GetModifiedItemData();
   if !InventoryGPRestrictionHelper.CanEquip(equipedItem, this.m_player) || this.IsUnequipBlocked(InventoryItemData.GetID(equipedItem)) {
     this.ShowNotification(this.m_player.GetGame(), UIMenuNotificationType.InventoryActionBlocked);
     return false;
@@ -229,7 +232,7 @@ protected cb func OnItemChooserUnequipItem(evt: ref<ItemChooserUnequipItem>) -> 
     this.m_currentFilter = ItemFilterCategory.Invalid;
     this.RefreshAvailableItems();
     this.NotifyItemUpdate();
-    this.itemChooser.RefreshItems();
+    this.m_selectedItemChooser.RefreshItems();
   } else {
     if ArrayContains(this.m_lastEquipmentAreas, gamedataEquipmentArea.Outfit) {
       if NotEquals(this.m_wardrobeSystemExtra.GetActiveClothingSetIndex(), gameWardrobeClothingSetIndexExtra.INVALID) {
@@ -243,7 +246,8 @@ protected cb func OnItemChooserUnequipItem(evt: ref<ItemChooserUnequipItem>) -> 
         return false;
       };
     };
-    this.UnequipItem(this.itemChooser.GetModifiedItem(), equipedItem);
+    this.m_inventoryController.HandleCyberwareStyleUpdate(InventoryItemData.GetEquipmentArea(evt.itemData), evt.itemData.SlotID, true);
+    this.UnequipItem(this.m_selectedItemChooser.GetModifiedItem(), equipedItem);
   };
 }
 
@@ -277,7 +281,15 @@ protected cb func OnItemDisplayHoverOver(evt: ref<ItemDisplayHoverOverEvent>) ->
     this.m_TooltipsManager.ShowTooltipAtWidget(0, evt.widget, msgTooltipData, gameuiETooltipPlacement.RightTop, true, inkMargin(2.00, 0.00, 0.00, 0.00));
   } else {
     if !isEmpty {
-      equippedItem = this.itemChooser.GetSelectedItem().GetItemData();
+      if this.m_showLeftItemChooser && evt.display == this.itemChooser.GetModifiedItem() {
+        equippedItem = this.itemChooser.GetSelectedItem().GetItemData();
+      } else {
+        if this.m_showLeftItemChooser && evt.display == this.m_leftItemChooser.GetModifiedItem() {
+          equippedItem = this.m_leftItemChooser.GetSelectedItem().GetItemData();
+        } else {
+          equippedItem = this.m_selectedItemChooser.GetSelectedItem().GetItemData();
+        };
+      };
       if this.m_InventoryManager.IsSlotOverriden(evt.display.GetEquipmentArea()) {
         transmogItem = this.m_InventoryManager.GetVisualItemInSlot(evt.display.GetEquipmentArea());
       };
@@ -342,9 +354,13 @@ private final func HandleItemClick(const itemData: script_ref<InventoryItemData>
         item.itemID = InventoryItemData.GetID(itemData);
         item.quantity = 1;
         this.AddToDropQueue(item);
-        this.RefreshAvailableItems();
+        this.RefreshAvailableItems(true);
         this.PlaySound(n"Item", n"OnDrop");
         this.PlayRumble(RumbleStrength.SuperLight, RumbleType.Pulse, RumblePosition.Right);
+        if IsDefined(this.m_leftItemChooser) {
+          this.m_leftItemChooser.RefreshItems(shouldUpdate, -1);
+        };
+        this.itemChooser.RefreshItems(shouldUpdate, -1);
       };
     };
   } else {
@@ -354,41 +370,57 @@ private final func HandleItemClick(const itemData: script_ref<InventoryItemData>
       isClothing = this.IsEquipmentAreaClothing(InventoryItemData.GetEquipmentArea(itemData)) || Equals(InventoryItemData.GetEquipmentArea(itemData), gamedataEquipmentArea.Outfit);
       this.m_itemPreviewPopupToken = ItemPreviewHelper.ShowPreviewItem(this, itemData, isClothing, n"OnItemPreviewPopup");
     } else {
-      if actionName.IsAction(n"click") && NotEquals(displayContext, ItemDisplayContext.Attachment) && !(InventoryItemData.IsEquipped(itemData) && Equals(this.m_currentHotkey, EHotkey.INVALID)) {
-        modifiedItemData = this.itemChooser.GetModifiedItemData();
-        localEquippedData = InventoryItemData.GetGameItemData(modifiedItemData);
-        if RPGManager.IsWeaponMod(Deref(itemData).ItemType) && localEquippedData.HasPartInSlot(this.itemChooser.GetSelectedSlotID()) && !localEquippedData.HasTag(n"IconicWeapon") {
-          this.ShowNotification(this.m_player.GetGame(), UIMenuNotificationType.InventoryNoFreeSlot);
-          return;
-        };
-        shouldUpdate = true;
-        isEquippedItemBlocked = localEquippedData.HasTag(n"UnequipBlocked");
-        if isEquippedItemBlocked || !InventoryGPRestrictionHelper.CanEquip(itemData, this.m_player) {
-          this.ShowNotification(this.m_player.GetGame(), this.DetermineUIMenuNotificationType());
-          return;
-        };
-        if Equals(InventoryItemData.GetItemType(itemData), gamedataItemType.Clo_Outfit) {
-          if this.m_outfitInCooldown {
-            return;
+      if actionName.IsAction(n"click") && NotEquals(displayContext, ItemDisplayContext.Attachment) {
+        if InventoryItemData.IsEquipped(itemData) || InventoryItemData.IsEmpty(itemData) {
+          if Equals(Deref(itemData), this.itemChooser.GetModifiedItemData()) {
+            this.SelectItemChooserWithoutCallback(this.itemChooser);
+          } else {
+            if Equals(Deref(itemData), this.m_leftItemChooser.GetModifiedItemData()) {
+              this.SelectItemChooserWithoutCallback(this.m_leftItemChooser);
+            };
           };
-          if this.ScheduleOutfitCooldownReset() {
-            this.SetOutfitCooldown(true);
+        } else {
+          if !(InventoryItemData.IsEquipped(itemData) && Equals(this.m_currentHotkey, EHotkey.INVALID)) {
+            modifiedItemData = this.m_selectedItemChooser.GetModifiedItemData();
+            localEquippedData = InventoryItemData.GetGameItemData(modifiedItemData);
+            if RPGManager.IsWeaponMod(Deref(itemData).ItemType) && localEquippedData.HasPartInSlot(this.m_selectedItemChooser.GetSelectedSlotID()) && !localEquippedData.HasTag(n"IconicWeapon") {
+              this.ShowNotification(this.m_player.GetGame(), UIMenuNotificationType.InventoryNoFreeSlot);
+              return;
+            };
+            shouldUpdate = true;
+            isEquippedItemBlocked = localEquippedData.HasTag(n"UnequipBlocked");
+            if isEquippedItemBlocked || !InventoryGPRestrictionHelper.CanEquip(itemData, this.m_player) {
+              this.ShowNotification(this.m_player.GetGame(), this.DetermineUIMenuNotificationType());
+              return;
+            };
+            if Equals(InventoryItemData.GetItemType(itemData), gamedataItemType.Clo_Outfit) {
+              if this.m_outfitInCooldown {
+                return;
+              };
+              if this.ScheduleOutfitCooldownReset() {
+                this.SetOutfitCooldown(true);
+              };
+            };
+            this.EquipItem(itemData, this.m_selectedItemChooser.GetSlotIndex());
+            this.PlayRumble(RumbleStrength.Heavy, RumbleType.Pulse, RumblePosition.Right);
+            this.m_inventoryController.HandleCyberwareStyleUpdate(InventoryItemData.GetEquipmentArea(itemData), Deref(itemData).SlotID, true);
+            if ArrayContains(this.m_lastEquipmentAreas, gamedataEquipmentArea.Outfit) {
+              if NotEquals(this.m_wardrobeSystemExtra.GetActiveClothingSetIndex(), gameWardrobeClothingSetIndexExtra.INVALID) && InventoryItemData.IsEmpty(itemData) {
+                shouldUpdate = false;
+              };
+            };
+            if IsDefined(this.m_leftItemChooser) {
+              this.m_leftItemChooser.RefreshItems(shouldUpdate, -1);
+            };
+            this.itemChooser.RefreshItems(shouldUpdate, -1);
+            if !InventoryItemData.IsPart(itemData) {
+              this.m_viewMode = ItemViewModes.Item;
+              this.m_currentFilter = ItemFilterCategory.Invalid;
+              this.RefreshAvailableItems();
+            };
+            this.NotifyItemUpdate();
           };
         };
-        this.EquipItem(itemData, this.itemChooser.GetSlotIndex());
-        this.PlayRumble(RumbleStrength.Heavy, RumbleType.Pulse, RumblePosition.Right);
-        if ArrayContains(this.m_lastEquipmentAreas, gamedataEquipmentArea.Outfit) {
-          if NotEquals(this.m_wardrobeSystemExtra.GetActiveClothingSetIndex(), gameWardrobeClothingSetIndexExtra.INVALID) && InventoryItemData.IsEmpty(itemData) {
-            shouldUpdate = false;
-          };
-        };
-        this.itemChooser.RefreshItems(shouldUpdate, -1);
-        if !InventoryItemData.IsPart(itemData) {
-          this.m_viewMode = ItemViewModes.Item;
-          this.m_currentFilter = ItemFilterCategory.Invalid;
-          this.RefreshAvailableItems();
-        };
-        this.NotifyItemUpdate();
       };
     };
   };
