@@ -265,6 +265,9 @@ private func ShowStaminaBar(show: Bool) -> Void {
 @addMethod(inkGameController)
 private func ShowInputHints(show: Bool) -> Void {
   if this.IsA(n"gameuiInputHintManagerGameController") {
+    let controller = this as InputHintManagerGameController;
+    if !IsDefined(controller) { return; }
+    if NotEquals(controller.hintContainerId, n"GameplayInputHelper") { return; }
     if show {
       this.originalOpacity = this.GetRootWidget().GetOpacity();
       this.GetRootWidget().SetOpacity(1.0);

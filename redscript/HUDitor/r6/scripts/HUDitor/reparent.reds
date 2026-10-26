@@ -460,6 +460,7 @@ private func InitBaseWidgets() -> Void {
   let hudLayer: ref<inkLayerWrapper> = system.GetLayer(n"inkHUDLayer");
 
   let name: CName;
+  let hintController: wref<InputHintManagerGameController>;
   let targetWidget: ref<inkCompoundWidget>; 
   for controller in hudLayer.GetGameControllers() {
     name = controller.GetClassName();
@@ -544,6 +545,9 @@ private func InitBaseWidgets() -> Void {
         break;
       case n"gameuiInputHintManagerGameController":
         if !config.inputHintsEnabled { break; }
+        hintController = controller as InputHintManagerGameController;
+        if !IsDefined(hintController) { break; }
+        if NotEquals(hintController.hintContainerId, n"GameplayInputHelper") { break; }
         targetWidget = controller.GetRootCompoundWidget();
         targetWidget.SetAnchorPoint(Vector2(1.0, 0.5));
         targetWidget.Reparent(this.inputHintSlot.GetRootCompoundWidget());
