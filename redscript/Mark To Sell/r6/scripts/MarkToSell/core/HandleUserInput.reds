@@ -135,7 +135,7 @@ private func UpdateMarkForSaleHint(shouldShow: Bool, opt alreadyHasIt: Bool) {
 }
 
 @wrapMethod(InventoryItemModeLogicController)
-private final func SetInventoryItemButtonHintsHoverOut() -> Void {
+public final func SetInventoryItemButtonHintsHoverOut() -> Void {
   wrappedMethod();
   this.UpdateMarkForSaleHint(false);
 }

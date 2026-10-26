@@ -103,7 +103,7 @@ private final func SetInventoryItemButtonHintsHoverOver(const displayingData: sc
 
 // Hide new hint on item hover out
 @wrapMethod(InventoryItemModeLogicController)
-private final func SetInventoryItemButtonHintsHoverOut() -> Void {
+public final func SetInventoryItemButtonHintsHoverOut() -> Void {
   wrappedMethod();
   this.UpdateToggleTagsHints(false);
 }
