@@ -1,0 +1,21 @@
+localization:
+  onscreens:
+    en-us: djkovrik\namedsaves\localization\en-us\onscreens.json
+    ar-ar: djkovrik\namedsaves\localization\ar-ar\onscreens.json
+    cz-cz: djkovrik\namedsaves\localization\cz-cz\onscreens.json
+    de-de: djkovrik\namedsaves\localization\de-de\onscreens.json
+    es-es: djkovrik\namedsaves\localization\es-es\onscreens.json
+    es-mx: djkovrik\namedsaves\localization\es-mx\onscreens.json
+    fr-fr: djkovrik\namedsaves\localization\fr-fr\onscreens.json
+    hu-hu: djkovrik\namedsaves\localization\hu-hu\onscreens.json
+    it-it: djkovrik\namedsaves\localization\it-it\onscreens.json
+    jp-jp: djkovrik\namedsaves\localization\jp-jp\onscreens.json
+    kr-kr: djkovrik\namedsaves\localization\kr-kr\onscreens.json
+    pl-pl: djkovrik\namedsaves\localization\pl-pl\onscreens.json
+    pt-br: djkovrik\namedsaves\localization\pt-br\onscreens.json
+    ru-ru: djkovrik\namedsaves\localization\ru-ru\onscreens.json
+    th-th: djkovrik\namedsaves\localization\th-th\onscreens.json
+    tr-tr: djkovrik\namedsaves\localization\tr-tr\onscreens.json
+    ua-ua: djkovrik\namedsaves\localization\ua-ua\onscreens.json
+    zh-cn: djkovrik\namedsaves\localization\zh-cn\onscreens.json
+    zh-tw: djkovrik\namedsaves\localization\zh-tw\onscreens.json

@@ -138,6 +138,7 @@ public final func SetMetadata(metadata: ref<SaveMetadataInfo>, isVisible: Bool, 
 
   if IsDefined(this.m_namedSavesMenu) {
     this.OnNamedSavesSearchEvent(this.m_namedSavesMenu.CreateNamedSavesSearchEvent());
+    this.m_namedSavesMenu.RequestNamedSavesRefresh();
   };
 }
 
@@ -149,23 +150,20 @@ public final func SetInvalid(const label: script_ref<String>, isVisible: Bool) -
   this.m_customNote.SetVisible(false);
   if IsDefined(this.m_namedSavesMenu) {
     this.OnNamedSavesSearchEvent(this.m_namedSavesMenu.CreateNamedSavesSearchEvent());
+    this.m_namedSavesMenu.RequestNamedSavesRefresh();
   };
 }
 
 @addMethod(LoadListItem)
 public final func SetNamedSavesMenu(menu: wref<LoadGameMenuGameController>, evt: ref<NamedSavesSearchEvent>) -> Void {
   this.m_namedSavesMenu = menu;
-  if this.IsMetadataSet() {
-    this.OnNamedSavesSearchEvent(evt);
-  };
+  this.OnNamedSavesSearchEvent(evt);
 }
 
 @addMethod(LoadListItem)
-public final func RefreshNamedSavesGroupVisibility(expanded: Bool, evt: ref<NamedSavesSearchEvent>) -> Void {
+public final func RefreshNamedSavesGroupVisibility(expanded: Bool, evt: ref<NamedSavesSearchEvent>) -> Bool {
   this.m_namedSavesGroupExpanded = expanded;
-  // SetMetadata also hides the content wrapper for initially collapsed groups.
-  this.SetVisible(expanded);
-  this.OnNamedSavesSearchEvent(evt);
+  return this.ApplyNamedSavesSearch(evt);
 }
 
 @if(!ModuleExists("FilterSaves"))
@@ -241,10 +239,13 @@ public class NamedSavesSearchEvent extends Event {
 }
 
 @addField(LoadGameMenuGameController)
-private let m_searchInput: wref<HubTextInput>;
+private let searchInput: wref<HubTextInput>;
 
 @wrapMethod(LoadGameMenuGameController)
 protected cb func OnInitialize() -> Bool {
+  let config: ref<NamedSavesConfig> = new NamedSavesConfig();
+  this.namedSavesSearchAllCategories = config.searchAllCategories;
+  this.namedSavesHideCategoryHeaders = config.hideCategoryHeaders;
   wrappedMethod();
 
   let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
@@ -267,21 +268,26 @@ protected cb func OnInitialize() -> Bool {
   input.SetMaxLength(64);
   input.RegisterToCallback(n"OnInput", this, n"OnSearchInput");
   input.Reparent(container);
-  this.m_searchInput = input;
+  this.searchInput = input;
+  this.namedSavesReady = true;
 }
 
 @addMethod(LoadGameMenuGameController)
 protected cb func OnSearchInput(widget: wref<inkWidget>) {
-  let uiSystem: ref<UISystem> = GameInstance.GetUISystem(this.GetPlayerControlledObject().GetGame());
-  uiSystem.QueueEvent(this.CreateNamedSavesSearchEvent());
+  if this.namedSavesSearchAllCategories {
+    this.RefreshNamedSavesSearch(true);
+  } else {
+    let uiSystem: ref<UISystem> = GameInstance.GetUISystem(this.GetPlayerControlledObject().GetGame());
+    uiSystem.QueueEvent(this.CreateNamedSavesSearchEvent());
+  };
 }
 
 @if(!ModuleExists("FilterSaves"))
 @addMethod(LoadGameMenuGameController)
 public final func CreateNamedSavesSearchEvent() -> ref<NamedSavesSearchEvent> {
   let inputQuery: String = "";
-  if IsDefined(this.m_searchInput) {
-    inputQuery = UTF8StrLower(this.m_searchInput.GetText());
+  if IsDefined(this.searchInput) {
+    inputQuery = UTF8StrLower(this.searchInput.GetText());
   };
   return NamedSavesSearchEvent.Create(inputQuery);
 }
@@ -290,8 +296,8 @@ public final func CreateNamedSavesSearchEvent() -> ref<NamedSavesSearchEvent> {
 @addMethod(LoadGameMenuGameController)
 public final func CreateNamedSavesSearchEvent() -> ref<NamedSavesSearchEvent> {
   let inputQuery: String = "";
-  if IsDefined(this.m_searchInput) {
-    inputQuery = UTF8StrLower(this.m_searchInput.GetText());
+  if IsDefined(this.searchInput) {
+    inputQuery = UTF8StrLower(this.searchInput.GetText());
   };
   return NamedSavesSearchEvent.Create(inputQuery, this.m_lifePathFilter, this.m_saveTypeFilter, this.filterSavesSearchText);
 }
@@ -311,11 +317,27 @@ private final func SetupLoadItems(const saves: script_ref<array<String>>) -> Voi
     };
     index += 1;
   };
+  this.RefreshNamedSavesSearch(false);
 }
 
 @wrapMethod(LoadGameMenuGameController)
 private final func SetVisibilityOfSavesInGroup(playthroughIndex: Int32, newVisibility: Bool) -> Void {
   wrappedMethod(playthroughIndex, newVisibility);
+
+  if this.namedSavesSearchingAll {
+    if this.namedSavesHideCategoryHeaders {
+      newVisibility = true;
+      let header: wref<inkWidget> = this.m_saveGroupHeaderWidgets[playthroughIndex];
+      if IsDefined(header) {
+        let groupController: wref<LoadListGroup> = header.GetController() as LoadListGroup;
+        if IsDefined(groupController) {
+          groupController.SetExpandedState(true);
+        };
+      };
+    } else {
+      this.namedSavesGroups[playthroughIndex].expandedInSearch = newVisibility;
+    };
+  };
 
   let evt: ref<NamedSavesSearchEvent> = this.CreateNamedSavesSearchEvent();
   let buttons: array<wref<inkWidget>> = this.m_saveWidgetsMap[playthroughIndex];
@@ -330,36 +352,41 @@ private final func SetVisibilityOfSavesInGroup(playthroughIndex: Int32, newVisib
 
 @if(!ModuleExists("FilterSaves"))
 @addMethod(LoadListItem)
-protected cb func OnNamedSavesSearchEvent(evt: ref<NamedSavesSearchEvent>) -> Bool {
-  if !IsDefined(this.m_namedSavesMenu) {
-    return false;
-  };
-  let root: ref<inkWidget> = this.GetRootCompoundWidget();
-  let isVisible: Bool = root.IsVisible();
-  let shouldShow: Bool = this.m_namedSavesGroupExpanded && (Equals(evt.query, "") || StrContains(this.m_customNoteText, evt.query));
-
-  if NotEquals(isVisible, shouldShow) {
-    root.SetVisible(shouldShow);
-  };
+private final func MatchesNamedSavesSearch(evt: ref<NamedSavesSearchEvent>) -> Bool {
+  return Equals(evt.query, "") || StrContains(this.m_customNoteText, evt.query);
 }
 
 @if(ModuleExists("FilterSaves"))
 @addMethod(LoadListItem)
-protected cb func OnNamedSavesSearchEvent(evt: ref<NamedSavesSearchEvent>) -> Bool {
-  if !IsDefined(this.m_namedSavesMenu) {
-    return false;
-  };
-  let root: ref<inkWidget> = this.GetRootCompoundWidget();
-  let isVisible: Bool = root.IsVisible();
+private final func MatchesNamedSavesSearch(evt: ref<NamedSavesSearchEvent>) -> Bool {
   let filteredBySearch: Bool = Equals(evt.query, "") || StrContains(this.m_customNoteText, evt.query);
   let filteredByLifepath: Bool = Equals(this.m_lifepathCompat, evt.lifepath) || Equals(evt.lifepath, LifePathFilter.All);
   let filteredBySaveType: Bool = Equals(this.m_saveTypeCompat, evt.type) || Equals(evt.type, SaveTypeFilter.All);
   let filteredByQuest: Bool = this.DoesSavePassQuestFilter(evt.questFilter);
-  let shouldShow: Bool = this.m_namedSavesGroupExpanded && filteredBySearch && filteredByLifepath && filteredBySaveType && filteredByQuest;
+  return filteredBySearch && filteredByLifepath && filteredBySaveType && filteredByQuest;
+}
 
-  if NotEquals(isVisible, shouldShow) {
+@addMethod(LoadListItem)
+private final func ApplyNamedSavesSearch(evt: ref<NamedSavesSearchEvent>) -> Bool {
+  if !IsDefined(this.m_namedSavesMenu) {
+    return false;
+  };
+  let root: ref<inkWidget> = this.GetRootCompoundWidget();
+  let matches: Bool = this.IsMetadataSet() && this.MatchesNamedSavesSearch(evt);
+  let shouldShow: Bool = this.m_namedSavesGroupExpanded && matches;
+
+  if NotEquals(this.IsVisible(), shouldShow) {
+    this.SetVisible(shouldShow);
+  };
+  if NotEquals(root.IsVisible(), shouldShow) {
     root.SetVisible(shouldShow);
   };
+  return matches;
+}
+
+@addMethod(LoadListItem)
+protected cb func OnNamedSavesSearchEvent(evt: ref<NamedSavesSearchEvent>) -> Bool {
+  this.ApplyNamedSavesSearch(evt);
 }
 
 // Reset input focus on elsewhere click - copy-pasted from psiberx samples ^^
@@ -378,6 +405,6 @@ protected cb func OnButtonRelease(evt: ref<inkPointerEvent>) -> Bool {
 protected cb func OnButtonRelease(evt: ref<inkPointerEvent>) -> Bool {
   wrappedMethod(evt);
   if evt.IsAction(GetLifepathFilterButtonAction()) || evt.IsAction(GetSaveTypeFilterButtonAction()) {
-    this.m_searchInput.SetText("");
+    this.searchInput.SetText("");
   };
 }
