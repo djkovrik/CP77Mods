@@ -121,6 +121,23 @@ protected final func OnVehicleCameraChange(state: Bool) -> Void {
   GetPlayer(GetGameInstance()).TriggerSleevesRefreshCallback();
 }
 
+// -- Driver combat
+@wrapMethod(PlayerPuppet)
+protected cb func OnVehicleStateChange(newState: Int32) -> Bool {
+  let result: Bool = wrappedMethod(newState);
+  SleevesStateSystem.Get(this.GetGame()).OnDriverCombatStateChange();
+  return result;
+}
+
+@wrapMethod(gameuiCrosshairContainerController)
+protected cb func OnPSMVehicleInTPPChanged(value: Bool) -> Bool {
+  let result: Bool = wrappedMethod(value);
+  if IsDefined(this.m_Player) {
+    SleevesStateSystem.Get(this.m_Player.GetGame()).OnDriverCombatStateChange();
+  };
+  return result;
+}
+
 // -- Delayed refresh
 @addField(GameObject)
 private let sleevesDelayCallback: DelayID;

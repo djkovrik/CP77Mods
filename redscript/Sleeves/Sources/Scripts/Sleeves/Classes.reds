@@ -139,6 +139,20 @@ public class SleevedSlotInfo {
     return StringToName(newAppearanceString);
   }
 
+  @if(!ModuleExists("ArchiveXL.DynamicAppearance"))
+  public final func GetItemFppAppearance() -> CName {
+    let appearanceString: String = NameToString(this.itemAppearance);
+    appearanceString = StrReplace(appearanceString, "&TPP", "&FPP");
+    appearanceString = StrReplace(appearanceString, "&Full", "&Part");
+    return StringToName(appearanceString);
+  }
+
+  @if(ModuleExists("ArchiveXL.DynamicAppearance"))
+  public final func GetItemFppAppearance() -> CName {
+    let appearanceString: String = ConvertAppearanceNameToFPP(NameToString(this.itemAppearance));
+    return StringToName(ConvertAppearanceNameToPartialSleeves(appearanceString));
+  }
+
   public func HasFppSuffix() -> Bool {
     let app: String = NameToString(this.itemAppearance);
     return StrContains(app, "&FPP") || StrContains(app, "!") && StrContains(app, "fpp");

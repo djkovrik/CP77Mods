@@ -1,4 +1,4 @@
-// Sleeves v3.3.2
+// Sleeves v3.3.3
 @if(ModuleExists("ArchiveXL.DynamicAppearance"))
 import ArchiveXL.DynamicAppearance.*
 import Codeware.UI.*
@@ -120,6 +120,18 @@ public class SleevedSlotInfo {
       return StringToName(appearanceWithPart);
     };
     return StringToName(newAppearanceString);
+  }
+  @if(!ModuleExists("ArchiveXL.DynamicAppearance"))
+  public final func GetItemFppAppearance() -> CName {
+    let appearanceString: String = NameToString(this.itemAppearance);
+    appearanceString = StrReplace(appearanceString, "&TPP", "&FPP");
+    appearanceString = StrReplace(appearanceString, "&Full", "&Part");
+    return StringToName(appearanceString);
+  }
+  @if(ModuleExists("ArchiveXL.DynamicAppearance"))
+  public final func GetItemFppAppearance() -> CName {
+    let appearanceString: String = ConvertAppearanceNameToFPP(NameToString(this.itemAppearance));
+    return StringToName(ConvertAppearanceNameToPartialSleeves(appearanceString));
   }
   public func HasFppSuffix() -> Bool {
     let app: String = NameToString(this.itemAppearance);
@@ -850,6 +862,21 @@ protected final func OnVehicleCameraChange(state: Bool) -> Void {
   wrappedMethod(state);
   GetPlayer(GetGameInstance()).TriggerSleevesRefreshCallback();
 }
+// -- Driver combat
+@wrapMethod(PlayerPuppet)
+protected cb func OnVehicleStateChange(newState: Int32) -> Bool {
+  let result: Bool = wrappedMethod(newState);
+  SleevesStateSystem.Get(this.GetGame()).OnDriverCombatStateChange();
+  return result;
+}
+@wrapMethod(gameuiCrosshairContainerController)
+protected cb func OnPSMVehicleInTPPChanged(value: Bool) -> Bool {
+  let result: Bool = wrappedMethod(value);
+  if IsDefined(this.m_Player) {
+    SleevesStateSystem.Get(this.m_Player.GetGame()).OnDriverCombatStateChange();
+  };
+  return result;
+}
 // -- Delayed refresh
 @addField(GameObject)
 private let sleevesDelayCallback: DelayID;
@@ -909,7 +936,7 @@ class SleevesStateSystem extends ScriptableSystem {
   private let cache: ref<inkHashMap>;
   private let isBraindanceActive: Bool;
   private let isArmCyberwareActive: Bool;
-  // Fixed indices: InnerChest and OuterChest. Track full ordinary ItemIDs, not records.
+  private let isDriverCombatActive: Bool;
   private let eexChangedEquipment: array<ItemID>;
   private persistent let toggledItems: array<TweakDBID>;
   public static func Get(gi: GameInstance) -> ref<SleevesStateSystem> {
@@ -917,6 +944,7 @@ class SleevesStateSystem extends ScriptableSystem {
     return system;
   }
   private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
+    this.isDriverCombatActive = false;
     this.equipmentSystem = GameInstance.GetScriptableSystemsContainer(request.owner.GetGame()).Get(n"EquipmentSystem") as EquipmentSystem;
     this.transactionSystem = GameInstance.GetTransactionSystem(request.owner.GetGame());
     if !IsDefined(this.cache) {
@@ -1013,20 +1041,43 @@ class SleevesStateSystem extends ScriptableSystem {
   public final func ClearCache() -> Void {
     this.cache.Clear();
   }
+  private final func IsDriverCombatInFpp(psmBlackboard: ref<IBlackboard>) -> Bool {
+    return psmBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Vehicle) == EnumInt(gamePSMVehicle.DriverCombat)
+      && !psmBlackboard.GetBool(GetAllBlackboardDefs().PlayerStateMachine.IsVehicleInTPP);
+  }
+  public final func OnDriverCombatStateChange() -> Void {
+    let player: wref<PlayerPuppet> = this.GetPlayer();
+    if !IsDefined(player) || !IsDefined(this.equipmentSystem) || !IsDefined(this.transactionSystem) || !IsDefined(this.cache) {
+      return;
+    };
+    let psmBlackboard: ref<IBlackboard> = player.GetPlayerStateMachineBlackboard();
+    if IsDefined(psmBlackboard) && NotEquals(this.isDriverCombatActive, this.IsDriverCombatInFpp(psmBlackboard)) {
+      this.RefreshSleevesState();
+    };
+  }
   public final func RefreshSleevesState() -> Void {
     SleevesLog(s"RefreshSleevesState called, bd active \(this.isBraindanceActive), arm cw active \(this.isArmCyberwareActive)");
     let player: wref<PlayerPuppet> = this.GetPlayer();
+    if !IsDefined(player) || !IsDefined(this.equipmentSystem) || !IsDefined(this.transactionSystem) || !IsDefined(this.cache) {
+      return;
+    };
     let psmBlackboard: ref<IBlackboard> = player.GetPlayerStateMachineBlackboard();
+    if !IsDefined(psmBlackboard) {
+      return;
+    };
     let inVehicle: Bool = psmBlackboard.GetBool(GetAllBlackboardDefs().PlayerStateMachine.MountedToVehicle);
+    let wasDriverCombatActive: Bool = this.isDriverCombatActive;
+    this.isDriverCombatActive = this.IsDriverCombatInFpp(psmBlackboard);
     this.bundle = GetSleevesInfo(player);
     this.LogCurrentInfo();
     this.RestoreSleevesEquipment(player);
     for item in this.bundle.items {
-      if item.HasFppSuffix() || inVehicle && item.HasTppSuffix() {
+      if item.HasFppSuffix() || (inVehicle || wasDriverCombatActive || this.isDriverCombatActive) && item.HasTppSuffix() {
         if !this.isBraindanceActive && !this.isArmCyberwareActive {
           if item.IsToggled() {
-            SleevesLog(s"Set \(item.GetItemTppAppearance()) appearance for \(ItemID.GetCombinedHash(item.itemID)) [\(item.itemName)]");
-            this.ApplySleevesAppearance(player, item, item.GetItemTppAppearance());
+            let appearance: CName = this.isDriverCombatActive ? item.GetItemFppAppearance() : item.GetItemTppAppearance();
+            SleevesLog(s"Set \(appearance) appearance for \(ItemID.GetCombinedHash(item.itemID)) [\(item.itemName)]");
+            this.ApplySleevesAppearance(player, item, appearance);
           } else {
             SleevesLog(s"Reset \(item.GetItemAppearance()) appearance for \(ItemID.GetCombinedHash(item.itemID)) [\(item.itemName)]");
             this.ApplySleevesAppearance(player, item, item.GetItemAppearance());
