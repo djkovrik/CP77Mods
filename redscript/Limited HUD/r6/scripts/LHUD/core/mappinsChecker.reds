@@ -82,6 +82,8 @@ public class MappinChecker {
       || Equals(variant, gamedataMappinVariant.Zzz16_RelicDeviceSpecialVariant)
       || Equals(variant, gamedataMappinVariant.Zzz17_NCARTVariant)
       || Equals(variant, gamedataMappinVariant.Zzz18_RacingVariant)
+      || Equals(variant, gamedataMappinVariant.Zzz21_ServicePointGlamdocVariant)
+      || Equals(variant, gamedataMappinVariant.Zzz22_CityTourLandmark)
       || Equals(variant, gamedataMappinVariant.CPO_PingLootVariant)
       || false;
   }
