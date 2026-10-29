@@ -7,6 +7,7 @@ class SleevesStateSystem extends ScriptableSystem {
   private let isArmCyberwareActive: Bool;
   private let isDriverCombatActive: Bool;
   private let eexChangedEquipment: array<ItemID>;
+  private let isSleevesGlamdocActive: Bool;
 
   private persistent let toggledItems: array<TweakDBID>;
 
@@ -16,6 +17,7 @@ class SleevesStateSystem extends ScriptableSystem {
   }
 
   private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
+    this.isSleevesGlamdocActive = false;
     this.isDriverCombatActive = false;
     this.equipmentSystem = GameInstance.GetScriptableSystemsContainer(request.owner.GetGame()).Get(n"EquipmentSystem") as EquipmentSystem;
     this.transactionSystem = GameInstance.GetTransactionSystem(request.owner.GetGame());
@@ -249,7 +251,56 @@ class SleevesStateSystem extends ScriptableSystem {
     };
   }
 
+  public final func BeginSleevesGlamdoc() -> Void {
+    let player: ref<PlayerPuppet> = this.GetPlayer();
+    if !IsDefined(player) || !IsDefined(this.equipmentSystem) || !IsDefined(this.transactionSystem) {
+      return;
+    };
+    let info: ref<SleevesInfoBundle> = GetSleevesInfo(player);
+    if !IsDefined(info) || NotEquals(info.mode, SleevesMode.Wardrobe) {
+      return;
+    };
+    this.isSleevesGlamdocActive = true;
+    let data: ref<EquipmentSystemPlayerData> = this.equipmentSystem.GetPlayerData(player);
+    if !IsDefined(data) {
+      return;
+    };
+    for item in info.items {
+      let liveItem: ref<ItemObject> = this.transactionSystem.GetItemInSlot(player, item.slotID);
+      let visual: ItemID = data.GetVisualItemInSlot(this.SlotToArea(item.slotID));
+      if IsDefined(liveItem) && ItemID.IsValid(visual) {
+        let actual: ItemID = liveItem.GetItemID();
+        if Equals(actual, item.itemID) && !ItemID.HasFlag(actual, gameEItemIDFlag.Preview) && NotEquals(actual, visual) {
+          // Restore the vanilla transmog relationship before GlamDoc builds its preview.
+          this.transactionSystem.ChangeItemAppearanceByItemID(player, actual, visual);
+        };
+      };
+    };
+  }
+
+  public final func EndSleevesGlamdoc() -> Void {
+    if !this.isSleevesGlamdocActive {
+      return;
+    };
+    this.isSleevesGlamdocActive = false;
+    let player: ref<PlayerPuppet> = this.GetPlayer();
+    if IsDefined(player) {
+      player.TriggerSleevesRefreshCallback();
+    };
+  }
+
   private final func ApplySleevesAppearance(player: ref<GameObject>, item: ref<SleevedSlotInfo>, appearance: CName) -> Void {
+    if Equals(item.mode, SleevesMode.Wardrobe) {
+      if this.isSleevesGlamdocActive {
+        return;
+      };
+      let current: CName = this.transactionSystem.GetItemAppearance(player, item.itemID);
+      let skipWrite: Bool = Equals(current, appearance);
+      if skipWrite {
+        return;
+      };
+    };
+
     if Equals(item.mode, SleevesMode.EquipmentEx) {
       let liveItem: ref<ItemObject> = this.transactionSystem.GetItemInSlot(player, item.slotID);
       if !IsSlotOccupiedCustom(player.GetGame(), item.slotID) || !IsDefined(liveItem) || !IsDefined(item.itemObject) {
