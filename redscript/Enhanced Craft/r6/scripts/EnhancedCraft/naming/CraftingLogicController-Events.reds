@@ -5,6 +5,10 @@ import EnhancedCraft.Events.*
 // -- Launches EnhancedCraftRecipeClicked event which triggers custom name input text visibility refresh
 @wrapMethod(CraftingLogicController)
 protected func UpdateItemPreview(craftableController: ref<CraftableItemLogicController>) -> Void {
+  if this.preserveRecipePreview {
+    wrappedMethod(craftableController);
+    return ;
+  };
   let recipe: ref<RecipeData> = FromVariant<ref<IScriptable>>(craftableController.GetData()) as RecipeData;
   if !IsDefined(recipe) {
     wrappedMethod(craftableController);

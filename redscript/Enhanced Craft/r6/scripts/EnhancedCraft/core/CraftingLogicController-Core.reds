@@ -3,9 +3,30 @@ import EnhancedCraft.Events.*
 import EnhancedCraft.Common.*
 import EnhancedCraft.Config.*
 
+@wrapMethod(CraftingMainLogicController)
+private final func OnPressSelectedItem(evt: ref<inkPointerEvent>) -> Void {
+  let wasPreservingRecipePreview: Bool = this.preserveRecipePreview;
+  let recipe: ref<RecipeData>;
+  let isCraftPress: Bool = evt.IsAction(n"craft_item") || evt.IsAction(n"mouse_left");
+  if !isCraftPress && evt.IsAction(n"click") && IsDefined(this.m_Player) {
+    isCraftPress = this.m_Player.PlayerLastUsedKBM();
+  };
+  this.preserveRecipePreview = false;
+  if IsDefined(this as CraftingLogicController) && isCraftPress && this.isWeaponSelected && IsDefined(this.m_selectedRecipe) && IsDefined(this.m_currentSelected) {
+    recipe = FromVariant<ref<IScriptable>>(this.m_currentSelected.GetData()) as RecipeData;
+    this.preserveRecipePreview = IsDefined(recipe) && recipe == this.previewedRecipe;
+  };
+  wrappedMethod(evt);
+  this.preserveRecipePreview = wasPreservingRecipePreview;
+}
+
 @wrapMethod(CraftingLogicController)
 protected func UpdateItemPreview(craftableController: ref<CraftableItemLogicController>) -> Void {
+  if this.preserveRecipePreview {
+    return ;
+  };
   let recipe: ref<RecipeData> = FromVariant<ref<IScriptable>>(craftableController.GetData()) as RecipeData;
+  this.previewedRecipe = recipe;
   if !IsDefined(recipe) {
     wrappedMethod(craftableController);
     return ;
