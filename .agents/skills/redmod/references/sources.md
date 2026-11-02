@@ -1,5 +1,7 @@
 # Sources and confidence
 
+Owner-requested c77 environment isolation expanded 2026-11-02: the supplied RED4ext 1.31.0 and CET 1.38.1 ZIP entry tables identify `bin/x64/winmm.dll` and `bin/x64/version.dll`; both installed loaders match their ZIP entries by SHA-256. The convention now temporarily renames those loaders and the global `archive/pc/mod` directory alongside both redscript compiler files, then restores the recorded state. See [local evidence and limits](../../../../docs/research/redmod/local-test-isolation-2026-11-02.md) and the maintained [isolation procedure](local-test-isolation.md). This documentation update did not execute isolation or verify framework unloading in game.
+
 Reviewed 2026-10-22. All three requested developer articles were read through the browser; the ordinary web fetch could not retrieve them.
 
 - [How-to: Create Mods for Cross-Platform Mod Support](https://mod.io/g/cyberpunk-2077/r/how-to-create-mods-for-cross-platform-mod-support): project diagram, script folder/cache, local loading, binary patches, blacklist, dependencies, syntax and intrinsic table. The linked project-layout image was inspected too.

@@ -15,6 +15,8 @@ Resolve aliases from [root AGENTS.md](../../../AGENTS.md), including optional `<
 4. Inspect archives when files are missing, provenance matters or overrides are suspected. Under `<GAME_ROOT>\archive\pc`, `content` is the base game, `ep1` is Phantom Liberty, and `mod` contains installed mods. Enumerate relevant `.archive` files explicitly rather than assuming recursion. Identify each provider when archives contain the same depot path; listing order does not prove runtime precedence.
 5. Read [wolvenkit-cli.md](references/wolvenkit-cli.md) before CLI operations. Prefer one archive and one exact path, then a bounded candidate set. Extract into the research folder, separated by source archive. Keep installed archives and the shared unpacked snapshot intact.
 
+For renaming, texture/atlas settings, localization round trips, audio sources or world/scene resource chains, read [asset-workflows.md](references/asset-workflows.md). It also points to the section-wide guide inventory and distinguishes current workflows from historical examples.
+
 ## Completion
 
 Save findings and supporting artifacts under `docs\research\<mod-name>`; use `docs\research\resource-researcher` for general tooling research. Record starting references, resolved paths/hashes, source archives or unpacked files, CLI version and commands, inspected properties and unresolved links. Unknown hashes and dynamic paths remain unresolved until supported by evidence; absence in one snapshot is not proof of absence from the game.

@@ -16,6 +16,8 @@ Use this for `.reds` behavior and scripting APIs. Resolve path aliases from [roo
 4. Before navigating unfamiliar game code, use [game-sources-navigation.md](references/game-sources-navigation.md). For virtual lists/grids and row lifecycle, read [virtual-lists.md](references/virtual-lists.md) and its local examples before implementing infrastructure.
 5. After code edits, follow [compile-validation.md](references/compile-validation.md). Never overwrite `<BASE_REDSCRIPTS>`; use only the prescribed output beside `<REDSCRIPT_CLI>`. Report unavailable validation and remaining in-game checks.
 
+For temporary gameplay restrictions, fast-travel locks, custom player state machines or sound scheduling, read [gameplay-state-and-audio.md](references/gameplay-state-and-audio.md). It includes local-source corrections to tutorial examples.
+
 Prefer wrappers that preserve the exact overload and wrapper chain. Store player references as `wref<PlayerPuppet>`. Native API declarations do not make native functions patchable with script wrappers. Verify current APIs in local game/dependency sources, not tutorial snippets alone.
 
 For `ScriptableTweak` and database writes also load [tweak-xl](../tweak-xl/SKILL.md). For `.xl` assets/localization/resource integration also load [archive-xl](../archive-xl/SKILL.md). Do not introduce either dependency merely because it is installed.

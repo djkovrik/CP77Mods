@@ -4,15 +4,9 @@ Documentation-derived semantics, incorporated 2026-10-23. Examples are explanato
 
 ## Add fields and methods
 
-Annotations are top-level declarations targeting an existing class. The documented syntax also demonstrates a locally declared script class as a target; this is broader than assuming only original game classes are patchable. It does not establish unrestricted native patchability.
+Annotations are top-level declarations targeting an existing class. Earlier documentation demonstrates mod-defined targets, but community tests report load-time crashes. Modify owned classes directly; annotation examples below use schematic existing-game targets, not classes to declare in the mod. Inspect importonly restrictions and [reported runtime hazards](community-migration-caveats.md#patch-and-runtime-hazards).
 
 ```text
-class ExampleCounter {
-  function ReadValue() -> Int32 {
-    return 10;
-  }
-}
-
 @addField(ExampleCounter)
 var myMod_bonus: Int32;
 
@@ -22,7 +16,7 @@ function MyModReadBonus() -> Int32 {
 }
 ```
 
-`@addField` adds a member; it is not automatically persistent configuration unless it participates in the ModdingSystem mechanism. `@addMethod` requires a new name for the target class. If two mods add a method with the same name, the documented consequence is failure to load all mods and fallback to the base game, not last-one-wins. Search for collisions and use mod-specific member names; a module namespace does not excuse a collision on the patched class. Field-collision resolution is not specified here: prevent collisions rather than inventing a precedence rule.
+`@addField` adds a member; it is not automatically persistent configuration unless it participates in the ModdingSystem mechanism. `@addMethod` requires a new name for the target class. If two mods add a method with the same name, the documented consequence is failure to load all mods and fallback to the base game, not last-one-wins. Community reports observed loading despite duplicates but did not establish which implementation was called; collision behavior is not safe to depend on. Search the target, ancestors and installed mods for collisions; follow the author's established naming style, using prefixes only when that style is unclear; a module namespace does not excuse a collision on the patched class. Field-collision resolution is not specified here: prevent collisions rather than inventing a precedence rule.
 
 ## Wrap and replace
 
@@ -52,10 +46,6 @@ A replacement supplies the body and does not call the original. Among competing 
 For a target with no parameters and no return value:
 
 ```text
-class ExampleAction {
-  function Run() -> Void {}
-}
-
 @prefix(ExampleAction)
 function Run() -> Void {
   return;
@@ -83,7 +73,7 @@ function MyModAfterRun() -> Void {
 }
 ```
 
-The custom-name prefix must return `Bool`. `true` permits remaining prefixes and the body to proceed; `false` skips the remaining prefixes and original/replacement body. It does not suppress postfixes. Thus a postfix cannot assume the body executed. The custom-name postfix does not have the prefix's Boolean control contract.
+The custom-name prefix must return `Bool`. `true` permits remaining prefixes and the body to proceed; `false` skips the remaining prefixes and original/replacement body. Postfix execution after cancellation is disputed: the earlier official reference says it continues, but community tests report it is skipped. Do not rely on it for mandatory cleanup, or assume the body executed. The custom-name postfix does not have the prefix's Boolean control contract.
 
 These examples intentionally avoid parameters and return values on the target. The available semantics do not establish how prefixes/postfixes receive parameters, resolve overloads, edit results or supply a skipped non-void body's return value. Do not import Harmony/redscript conventions such as special result parameters. Resolve those cases from updated target documentation/compiler evidence; use a wrapper with an explicit return path when suitable.
 
@@ -101,6 +91,6 @@ B before
 B after
 ```
 
-The diagram assumes each wrapper calls through once. Wrappers surround the prefix/body/postfix pipeline; saying wrappers run first does not move their post-call work ahead of postfixes. Prefix cancellation skips later prefixes and the body, while postfixes remain eligible. A wrapper that never calls through does not establish that the inner pipeline runs at all.
+The diagram assumes each wrapper calls through once. Wrappers surround the prefix/body/postfix pipeline; saying wrappers run first does not move their post-call work ahead of postfixes. Prefix cancellation skips later prefixes and the body, with postfix execution disputed as described above. A wrapper that never calls through does not establish that the inner pipeline runs at all.
 
 Patch application is load-order-dependent as well as patch-type-dependent. Do not infer a precise ordering among several prefixes or several postfixes from the wrapper examples alone, nor assume other mods' order is fixed. Account for suppression, replacement conflicts and post-processing that overwrites another mod's result in compatibility tests.

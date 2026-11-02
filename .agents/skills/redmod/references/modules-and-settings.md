@@ -52,7 +52,7 @@ function ReadValue() -> Int32 {
 }
 ```
 
-Here `ExampleCounter.ReadValue` denotes an existing target such as the one in [annotations.md](annotations.md); this example illustrates annotation stacking, not a necessary no-op patch. If the condition fails, the patch is absent and the underlying method remains. In contrast, a new function or `@addMethod` may not exist at all. For those, provide an inverse-condition implementation or guard callers with the same condition, otherwise calls can crash or behave unexpectedly. Runtime selection is not proof that missing dependency types are exempt from compile-time resolution.
+Here `ExampleCounter.ReadValue` denotes an existing target such as the one in [annotations.md](annotations.md); this example illustrates annotation stacking, not a necessary no-op patch. If the condition fails, the patch is absent and the underlying method remains. In contrast, a new function or `@addMethod` may not exist at all. For new functions, provide an inverse-condition implementation or guard callers. For conditional added methods, prefer one version and guard callers: community tests report failures with multiple conditional addMethod versions. See [module and persistence caveats](community-migration-caveats.md). Runtime selection is not proof that missing dependency types are exempt from compile-time resolution.
 
 ## Engine game-instance getter
 
@@ -72,7 +72,7 @@ Adding fields to `ModdingSystem` creates disk-backed configuration that persists
 | --- | --- |
 | `Bool` | `BooleanToggle` |
 | `Int32` | `IntSlider` |
-| `Int64` | `KeybindsToggle` |
+| `Int64` (earlier reference; disputed) | `KeybindsToggle`; community reports require `Uint64`, see caveats |
 | `Float` | `FloatSlider` |
 | `String` | `ComboToggle` |
 
@@ -109,3 +109,5 @@ SaveCurrentConfigsValue()
 ```
 
 Names and types enumerate all mods' configuration. Filter to the intended mod, preserve the field's supported type when boxing/unboxing `Variant`, and avoid repeated global enumeration per UI row. The exact relationship/order of the two arrays, missing-name behavior and runtime name qualification are not specified here; verify them before indexing them as parallel arrays or hardcoding configuration names. These functions support discovery/read/write/save; they do not establish automatic widget creation or input binding registration.
+
+Before implementing persistent settings, read [community persistence observations](community-migration-caveats.md#persistent-configuration), especially restart-safe types, unknown-name reads and non-parallel name/type enumeration. These reports are not locally verified guarantees.

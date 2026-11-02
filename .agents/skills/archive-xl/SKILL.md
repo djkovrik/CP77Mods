@@ -15,6 +15,7 @@ Resolve aliases from [root AGENTS.md](../../../AGENTS.md); apply its specificati
    - Clothing appearances, variants, tags, body refits or legacy conversion: [appearances-and-tags.md](references/appearances-and-tags.md).
    - Patching, scopes, links, dynamic materials or repeated material data: [patching-and-materials.md](references/patching-and-materials.md).
    - Character-creator options, switchers, hair/colors, tattoos, eyebrows, eyes or lashes: [character-creator.md](references/character-creator.md).
+   - Weapon/projectile factories, photo-mode pose registration or scene lipsync: [specialized-integrations.md](references/specialized-integrations.md).
 3. Check the installed ArchiveXL version and `<ARCHIVEXL_BUNDLE_ROOT>` definitions for version-sensitive features. Read bundled configs as reference; author mod-owned files rather than changing the framework bundle.
 4. Trace every depot path and identifier across configuration, `.ent`, `.app`, `.mesh`, material/texture, localization and TweakDB. Search installed mods for collisions. Prefer unique paths and minimal patches over whole-resource replacement.
 5. Validate YAML structure with custom tags supported, resource links with available WolvenKit validation, and inspect `<GAME_ROOT>\red4ext\plugins\ArchiveXL\ArchiveXL.log` after a game load. Dynamic paths need explicit runtime checks; a generic YAML parse or successful redscript compile does not validate ArchiveXL behavior.

@@ -12,7 +12,7 @@ Resolve aliases from [root AGENTS.md](../../../AGENTS.md); apply its specificati
 
 1. Use [database-navigation.md](references/database-navigation.md) to locate original `.tweak` definitions in `<TWEAKDB_SOURCES_ROOT>`. Inspect the containing package, imports, inheritance and referenced records, then search installed tweaks/scripts/CET for competing changes.
 2. Read [formats-and-records.md](references/formats-and-records.md) before writing records. This project normally authors TweakXL YAML in `<MOD_TWEAKS_ROOT>`; original REDmod `.tweak` files are read-only reference data, not files to edit in place.
-3. For vendor stock, stats, prerequisites, HUD or inventory icons, read [gameplay-and-icons.md](references/gameplay-and-icons.md). Follow the entire record/resource chain rather than copying a flat dump.
+3. For vendor stock, stats, prerequisites, HUD/inventory icons, runtime tooltip values or PSM flats, read [gameplay-and-icons.md](references/gameplay-and-icons.md). Follow the entire record/resource chain rather than copying a flat dump.
 4. For dynamic changes or `ScriptableTweak`, read [script-extensions-and-validation.md](references/script-extensions-and-validation.md) and load [redscript](../redscript/SKILL.md). Verify installed API signatures under `<TWEAKXL_SCRIPTS_ROOT>` and inspect called helpers before making performance claims.
 5. Validate changed types, references, inheritance and custom YAML tags; inspect the TweakXL log after actual loading, then test the affected behavior. A YAML parser or redscript compiler alone cannot prove a database tweak works.
 

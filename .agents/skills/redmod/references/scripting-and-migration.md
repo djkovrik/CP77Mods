@@ -82,3 +82,7 @@ Map each observable requirement and state/lifecycle path to its implementation. 
 Preserve ordering, early returns, optional/out/const parameters, reference ownership, null behavior, persistent state, localization and complexity. Inspect collection work hidden in callees and repeated callbacks. Reuse existing game localization keys during pure migration; follow the project's localization policy when changing text/resources.
 
 The compiler enforces an engine-function blacklist for cross-platform scripts. Availability in PC sources does not imply permission on consoles. Dependency management is experimental and not integrated into the game's Update 2.5 mod.io flow; document required utility mods rather than promising automatic dependency installation.
+
+## Additional migration checks
+
+Read [community-migration-caveats.md](community-migration-caveats.md) during conversion or when diagnosing final-compile/runtime differences: loop-local lifetime, temporaries, casts/escapes, custom-system lookup, patch hazards and persistent settings. It distinguishes conservative adaptations from unverified third-party reports.
