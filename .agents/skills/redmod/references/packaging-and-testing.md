@@ -13,11 +13,42 @@ ModName/
   r6/scripts/*.script
   r6/cache/                 generated binary patches and hash companions
   r6/tweaks/               optional tweaks
-  archive/pc/mod/          optional archives and XL/JSON configuration
+  archive/                optional archives and supported XL/JSON sidecars
   Dependencies/           experimental script dependencies, when needed
 ```
 
 Downloaded examples also contain `about.json` with `ModInfo.ModName` and `ModInfo.ModID`. The updated compiler generated this metadata automatically for the smoke package, using the folder name and ModID -1. Do not invent a server ID; preserve tool-generated metadata. Keep obsolete whole-file scripts and legacy metadata outside the new submission root. Preserve any useful historical copy outside the package.
+
+## Archive layout for mod.io and c77
+
+Place `.archive` files and their supported loader configuration directly in the mod's flat `archive/` directory:
+
+```text
+ModName/
+  about.json
+  archive/
+    modname.archive
+    modname.archive.json   when loader configuration is required
+    modname.archive.xl     retained source configuration, when applicable
+  r6/scripts/
+  r6/cache/
+```
+
+| Context | Archive location |
+| --- | --- |
+| Source package passed to the compiler/preparer | `<ModName>/archive/` |
+| Full local test package | `<GAME_ROOT>/r6/c77/<ModName>/archive/` |
+| Source-upload ZIP, using the enclosing-folder rule below | `<ModName>/archive/` inside the ZIP |
+
+The global `<GAME_ROOT>/archive/pc/mod` directory belongs to PC mod installation/isolation. Legacy REDmod has its own layout. Neither supplies the resource directory structure inside a mod.io/c77 package. The separate binary/hash pair directly in c77 is a script-loading requirement, not a location for loose archive copies.
+
+Use lowercase archive and sidecar filenames as the project convention, keeping paired basenames aligned, e.g. `sleeves.archive`, `sleeves.archive.json`, `sleeves.archive.xl`. This is not a claim of a universal mod.io filename rule. Preserve internal depot paths and verify references when renaming; on Windows check actual filename case after a case-only rename.
+
+When a resource needs registration, include its supported native JSON configuration and validate the relevant sections against the cross-platform subset. A retained `.xl` is not proof that the PC ArchiveXL runtime is present. Ordinary replacements of existing depot paths may need no sidecar. Keep archive names, depot paths and localization keys distinct; inspect resources using the local resource-researcher skill before changing them.
+
+Before staging or delivery, check the source, installed package and ZIP entries against this layout and compare their file hashes. Keep a single owned resource set for the test; remove obsolete nested/direct copies only after identifying them and backing them up through the test journal. Preserve the global PC archive directory under the isolation procedure.
+
+**Local evidence, 2026-11-04:** the owner-supplied downloaded HeresBrendan modfile used flat `archive/` with `.archive`, `.archive.json` and `.archive.xl` siblings. Sleeves adopted that layout plus JSON localization registration; the owner then observed its localized title and later its atlas icon without PC frameworks. Directory placement and JSON registration changed together, so the test does not isolate their individual effects. The original custom inkwidget library remained unavailable. This is the working project layout for local tests/source packaging, not proof of arbitrary widget spawning, cloud acceptance or console behavior. See [flat-archive test](../../../../docs/research/sleeves/ui-spike-2026-11-03/flat-archive-test-2026-11-04.md) and [Sleeves 3.3.4 package](../../../../docs/research/sleeves/release-3.3.4/README.md).
 
 ## Validate locally
 

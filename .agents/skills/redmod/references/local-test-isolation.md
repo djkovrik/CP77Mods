@@ -18,7 +18,7 @@ The supplied RED4ext 1.31.0 ZIP contains `bin/x64/winmm.dll` and `red4ext/RED4ex
 
 Keep BOTH compiler targets even with RED4ext disabled: the library can be invoked independently of the EXE. Disabling compilation alone does not prove that previously compiled redscript code is absent. Continue the duplicate-feature and cache checks from [packaging-and-testing.md](packaging-and-testing.md).
 
-Rename only the global `<GAME_ROOT>/archive/pc/mod` folder. Preserve the entire directory, including non-archive sidecar files; do not delete or individually relocate its contents. Leave `<GAME_ROOT>/r6/c77/<ModName>/archive/pc/mod` and other c77 package content active. This isolation also suspends RED4ext plugins such as Codeware, ArchiveXL and TweakXL; evaluate the c77 package against its supported cross-platform content rather than relying on those installed PC extensions.
+Rename only the global `<GAME_ROOT>/archive/pc/mod` folder. Preserve the entire directory, including non-archive sidecar files; do not delete or individually relocate its contents. Leave `<GAME_ROOT>/r6/c77/<ModName>/archive/` and other c77 package content active; use the [package archive layout](packaging-and-testing.md#archive-layout-for-modio-and-c77). This isolation also suspends RED4ext plugins such as Codeware, ArchiveXL and TweakXL; evaluate the c77 package against its supported cross-platform content rather than relying on those installed PC extensions.
 
 ## Prepare and verify
 

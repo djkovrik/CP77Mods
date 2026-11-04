@@ -1,0 +1,614 @@
+// Popup mounting/layout adapted from Codeware UI, Copyright (c) 2021 Pavel Siberx (MIT).
+@module "Sleeves.UI"
+@using "Sleeves.Runtime"
+
+class SleevesAttachCallback extends DelayCallback {
+  var manager: weak<SleevesManager>;
+  public override function Call() {
+    if (this.manager) {
+      this.manager.TryAttach();
+    }
+  }
+}
+
+class SleevesManager extends IScriptable {
+  private var owner: weak<inkGameController>;
+  private var boundPlayer: weak<PlayerPuppet>;
+  private var notifications: weak<inkCompoundWidget>;
+  private var brackets: weak<inkWidget>;
+  private var delay: DelaySystem;
+  private var pending: DelayID;
+  private var attempts: Int32;
+  private var data: inkGameNotificationData;
+  private var token: inkGameNotificationToken;
+  private var wrapper: weak<inkCanvas>;
+  private var popup: weak<SleevesPopup>;
+  private var system: weak<SleevesModStateSystem>;
+  private var info: SleevesInfoBundle;
+  private var inVehicle: Bool;
+
+  public function Initialize(controller: inkGameController, game: GameInstance, player: PlayerPuppet) {
+    this.owner = controller;
+    this.boundPlayer = player;
+    player.sleevesPopupManager = this;
+    this.notifications = controller.GetChildWidgetByPath(n"NotificationsContainer") as inkCompoundWidget;
+    this.brackets = controller.GetChildWidgetByPath(n"BracketsContainer");
+    this.delay = GameInstance.GetDelaySystem(game);
+    this.system = SleevesModStateSystem.Get(game);
+  }
+
+  public function Show() {
+    if (!this.owner || !this.boundPlayer || !this.system || !this.notifications || !this.brackets || !this.delay || this.data) {
+      return;
+    }
+    this.system.BindPlayer(this.boundPlayer);
+    this.system.RefreshSleevesState();
+    this.info = this.system.GetInfoBundle();
+    this.inVehicle = this.system.InVehicle();
+    if (!this.info || this.info.items.Size() == 0) {
+      return;
+    }
+    // Never mount into a container already owned by another popup.
+    if (this.notifications.GetNumChildren() != 0) {
+      return;
+    }
+    this.data = new inkGameNotificationData;
+    this.data.notificationName = n"SleevesPopup";
+    this.data.queueName = n"menu_popup";
+    this.data.isBlocking = true;
+    this.data.useCursor = true;
+    this.token = this.owner.ShowGameNotification(this.data);
+    if (!this.token) {
+      this.data = NULL;
+      return;
+    }
+    this.token.RegisterListener(this, n"OnNotificationClosed");
+    this.attempts = 0;
+    this.QueueAttach();
+  }
+
+  private function QueueAttach() {
+    let callback: SleevesAttachCallback = new SleevesAttachCallback;
+    callback.manager = this;
+    this.pending = this.delay.DelayCallback(callback, 0.05, false);
+  }
+
+  public function TryAttach() {
+    if (!this.data || !this.owner || !this.notifications || !this.brackets) {
+      this.Close();
+      return;
+    }
+    let count: Int32 = this.notifications.GetNumChildren();
+    let container: inkCompoundWidget;
+    if (count == 1) {
+      container = this.notifications.GetWidgetByIndex(0) as inkCompoundWidget;
+    }
+    if (!container) {
+      this.attempts += 1;
+      if (this.attempts < 40 && count <= 1) {
+        this.QueueAttach();
+      } else {
+        this.Close();
+      }
+      return;
+    }
+    let createdWrapper: inkCanvas = new inkCanvas;
+    createdWrapper.SetName(n"SleevesWrapper");
+    createdWrapper.SetAnchor(inkEAnchor.Fill);
+    createdWrapper.SetAnchorPoint(Vector2(0.5, 0.5));
+    createdWrapper.SetSize(this.notifications.GetSize());
+    createdWrapper.Reparent(container);
+    this.wrapper = createdWrapper;
+    let root: inkCanvas = new inkCanvas;
+    root.SetName(n"SleevesRoot");
+    root.SetAnchor(this.brackets.GetAnchor());
+    root.SetAnchorPoint(this.brackets.GetAnchorPoint());
+    root.SetSize(this.brackets.GetSize());
+    root.SetScale(this.brackets.GetScale());
+    root.Reparent(this.wrapper);
+    let createdPopup: SleevesPopup = new SleevesPopup;
+    root.AttachController(createdPopup);
+    this.popup = createdPopup;
+    createdPopup.Initialize(root, this.owner, this);
+  }
+
+  public function IsOnTop() -> Bool {
+    if (!this.wrapper || !this.notifications) {
+      return false;
+    }
+    let count: Int32 = this.notifications.GetNumChildren();
+    return count > 0 && this.notifications.GetWidgetByIndex(count - 1) == this.wrapper.GetParentWidget();
+  }
+
+  public function IsToggled(index: Int32) -> Bool {
+    return this.info && index >= 0 && index < this.info.items.Size() && this.system.IsToggled(this.info.items[index].PreferenceID());
+  }
+
+  public function IsAvailable(index: Int32) -> Bool {
+    return this.info && index >= 0 && index < this.info.items.Size() && this.info.items[index].IsAvailable(this.inVehicle);
+  }
+
+  public function GetInfoBundle() -> SleevesInfoBundle {
+    return this.info;
+  }
+
+  public function Toggle(index: Int32) -> Bool {
+    return this.IsAvailable(index) && this.system && this.system.Toggle(this.info.items[index]);
+  }
+
+  public function Close() {
+    if (this.delay) {
+      this.delay.CancelCallback(this.pending);
+    }
+    if (this.popup) {
+      this.popup.Dispose();
+      this.popup = NULL;
+    }
+    if (this.wrapper) {
+      let parent: inkCompoundWidget = this.wrapper.GetParentWidget() as inkCompoundWidget;
+      if (parent) {
+        parent.RemoveChild(this.wrapper);
+      }
+      this.wrapper = NULL;
+    }
+    let closingToken: inkGameNotificationToken = this.token;
+    let closingData: inkGameNotificationData = this.data;
+    this.token = NULL;
+    this.data = NULL;
+    if (closingToken && closingData) {
+      closingToken.TriggerCallback(closingData);
+    }
+  }
+
+  protected event OnNotificationClosed(closedData: inkGameNotificationData) {
+    if (this.data == closedData) {
+      this.token = NULL;
+      this.Close();
+    }
+  }
+
+  public function Shutdown() {
+    this.Close();
+    if (this.boundPlayer && this.boundPlayer.sleevesPopupManager == this) {
+      this.boundPlayer.sleevesPopupManager = NULL;
+    }
+    this.boundPlayer = NULL;
+    this.owner = NULL;
+    this.notifications = NULL;
+    this.brackets = NULL;
+    this.delay = NULL;
+    this.system = NULL;
+    this.info = NULL;
+  }
+}
+
+class SleevesPopup extends inkLogicController {
+  private var owner: weak<inkGameController>;
+  private var manager: weak<SleevesManager>;
+  private var rows: array<weak<SleevesRow>>;
+  private var done: weak<inkCanvas>;
+  private var doneFrame: weak<inkWidget>;
+  private var doneBackground: weak<inkWidget>;
+  private var doneLabel: weak<inkText>;
+  private var selected: Int32;
+  private var highlighted: Int32;
+  private var initialized: Bool;
+
+  public function Initialize(root: inkCanvas, controller: inkGameController, popupManager: SleevesManager) {
+    this.owner = controller;
+    this.manager = popupManager;
+    this.selected = 0;
+    this.highlighted = -1;
+    let info: SleevesInfoBundle = popupManager.GetInfoBundle();
+    let rowCount: Int32 = info.items.Size();
+    let panelHeight: Float = 164.0 + Cast<Float>(rowCount) * 128.0;
+    let fader: inkRectangle = new inkRectangle;
+    fader.SetName(n"fader");
+    fader.SetAnchor(inkEAnchor.Fill);
+    fader.SetFitToContent(false);
+    fader.SetSize(root.GetSize());
+    fader.SetOpacity(0.7);
+    fader.SetTintColor(Cast<Uint8>(0), Cast<Uint8>(0), Cast<Uint8>(0), Cast<Uint8>(255));
+    fader.SetInteractive(true);
+    fader.Reparent(root);
+    let panel: inkCanvas = new inkCanvas;
+    panel.SetName(n"container");
+    panel.SetFitToContent(false);
+    panel.SetSizeRule(inkESizeRule.Fixed);
+    panel.SetSize(Vector2(820.0, panelHeight + 100.0));
+    panel.SetAnchor(inkEAnchor.Centered);
+    panel.SetAnchorPoint(Vector2(0.5, 0.5));
+    panel.SetInteractive(true);
+    panel.Reparent(root);
+    let background: inkImage = SleevesImage(n"background", n"cell_bg", 820.0, panelHeight);
+    background.UnbindProperty(n"tintColor");
+    background.BindProperty(n"tintColor", n"MainColors.Fullscreen_PrimaryBackgroundDarkest");
+    background.Reparent(panel);
+    let outline: inkImage = SleevesImage(n"outline", n"cell_fg", 820.0, panelHeight);
+    outline.SetOpacity(0.1);
+    outline.Reparent(panel);
+    let bracketBackground: inkImage = SleevesImage(n"bracketBackground", n"notification_bracket_simple_bg", 40.0, panelHeight);
+    bracketBackground.SetMargin(-40.0, 0.0, 0.0, 0.0);
+    bracketBackground.SetOpacity(0.2);
+    bracketBackground.Reparent(panel);
+    let bracket: inkImage = SleevesImage(n"bracket", n"notification_bracket_simple_fg", 40.0, panelHeight);
+    bracket.SetMargin(-40.0, 0.0, 0.0, 0.0);
+    bracket.SetOpacity(0.5);
+    bracket.Reparent(panel);
+    let accent: inkImage = SleevesImage(n"accent", n"tooltip_b_bracket_light_fg", 10.0, 160.0);
+    accent.SetMargin(820.0, (panelHeight - 160.0) * 0.5, 0.0, 0.0);
+    accent.Reparent(panel);
+    let title: inkText = SleevesText(n"title", GetLocalizedTextByKey(n"Mod-Sleeves-Title"), 50);
+    title.SetFontStyle(n"Semi-Bold");
+    title.SetLetterCase(textLetterCase.UpperCase);
+    title.SetFitToContent(false);
+    title.SetSize(Vector2(688.0, 64.0));
+    title.SetMargin(66.0, 20.0, 0.0, 0.0);
+    title.Reparent(panel);
+    let mode: inkText = SleevesText(n"mode", info.ModeName(), 42);
+    mode.SetFitToContent(false);
+    mode.SetSize(Vector2(660.0, 56.0));
+    mode.SetMargin(80.0, 88.0, 0.0, 0.0);
+    mode.UnbindProperty(n"tintColor");
+    mode.BindProperty(n"tintColor", n"MainColors.Blue");
+    mode.SetOpacity(0.75);
+    mode.Reparent(panel);
+    let index: Int32 = 0;
+    let rowTop: Float = 148.0;
+    let row: SleevesRow;
+    while (index < rowCount) {
+      row = new SleevesRow;
+      row.Initialize(panel, this, index, info.items[index], popupManager.IsAvailable(index), rowTop);
+      this.rows.PushBack(row);
+      rowTop += 128.0;
+      index += 1;
+    }
+    let createdDone: inkCanvas = new inkCanvas;
+    createdDone.SetName(n"done");
+    createdDone.SetFitToContent(false);
+    createdDone.SetSizeRule(inkESizeRule.Fixed);
+    createdDone.SetSize(Vector2(326.0, 80.0));
+    createdDone.SetStyle(R"base\gameplay\gui\common\dialogs_popups.inkstyle");
+    createdDone.SetAnchor(inkEAnchor.TopLeft);
+    createdDone.SetMargin(494.0, panelHeight + 20.0, 0.0, 0.0);
+    createdDone.SetInteractive(true);
+    createdDone.SetSupportFocus(true);
+    createdDone.Reparent(panel);
+    this.done = createdDone;
+    let createdDoneBackground: inkImage = SleevesImage(n"doneBackground", n"cell_bg", 326.0, 80.0);
+    createdDoneBackground.SetStyle(R"base\gameplay\gui\common\dialogs_popups.inkstyle");
+    createdDoneBackground.UnbindProperty(n"tintColor");
+    createdDoneBackground.BindProperty(n"tintColor", n"PopupButton.bgColor");
+    createdDoneBackground.BindProperty(n"opacity", n"PopupButton.bgOpacity");
+    createdDoneBackground.Reparent(createdDone);
+    this.doneBackground = createdDoneBackground;
+    let createdDoneFrame: inkImage = SleevesImage(n"doneFrame", n"cell_fg", 326.0, 80.0);
+    createdDoneFrame.SetStyle(R"base\gameplay\gui\common\dialogs_popups.inkstyle");
+    createdDoneFrame.UnbindProperty(n"tintColor");
+    createdDoneFrame.BindProperty(n"tintColor", n"PopupButton.frameColor");
+    createdDoneFrame.BindProperty(n"opacity", n"PopupButton.frameOpacity");
+    createdDoneFrame.Reparent(createdDone);
+    this.doneFrame = createdDoneFrame;
+    let hintsWidget: inkWidget = this.owner.SpawnFromExternal(createdDone, R"base\gameplay\gui\common\buttonhints.inkwidget", n"Root");
+    let buttonHintsController: ButtonHints;
+    if (hintsWidget) {
+      buttonHintsController = hintsWidget.GetController() as ButtonHints;
+    }
+    if (buttonHintsController) {
+      hintsWidget.SetAnchor(inkEAnchor.TopLeft);
+      hintsWidget.SetAnchorPoint(Vector2(0.0, 0.0));
+      hintsWidget.SetMargin(15.0, 8.0, 0.0, 0.0);
+      hintsWidget.SetInteractive(false);
+      buttonHintsController.AddButtonHint(n"one_click_confirm", "");
+    }
+    let createdDoneLabel: inkText = SleevesText(n"doneLabel", GetLocalizedTextByKey(n"UI-ScriptExports-Done0"), 40);
+    createdDoneLabel.SetLetterCase(textLetterCase.UpperCase);
+    createdDoneLabel.SetMargin(buttonHintsController ? 96.0 : 24.0, 12.0, 0.0, 0.0);
+    createdDoneLabel.SetStyle(R"base\gameplay\gui\common\dialogs_popups.inkstyle");
+    createdDoneLabel.UnbindProperty(n"tintColor");
+    createdDoneLabel.BindProperty(n"tintColor", n"PopupButton.textColor");
+    createdDoneLabel.BindProperty(n"opacity", n"PopupButton.textOpacity");
+    createdDoneLabel.Reparent(createdDone);
+    this.doneLabel = createdDoneLabel;
+    this.done.RegisterToCallback(n"OnRelease", this, n"OnDoneClick");
+    this.done.RegisterToCallback(n"OnEnter", this, n"OnDoneEnter");
+    this.done.RegisterToCallback(n"OnLeave", this, n"OnDoneLeave");
+    this.RegisterToGlobalInputCallback(n"OnPostOnRelease", this, n"OnGlobalRelease");
+    this.initialized = true;
+    this.RefreshControls();
+    this.FocusSelected();
+  }
+
+  public function Select(index: Int32) {
+    if (index < 0 || index > this.rows.Size()) {
+      return;
+    }
+    if (index < this.rows.Size() && this.manager.IsAvailable(index) && this.highlighted != index && this.owner) {
+      this.owner.PlaySound(n"Button", n"OnHover");
+    }
+    this.selected = index;
+    this.highlighted = index;
+    this.RefreshControls();
+  }
+
+  public function ClearHover(index: Int32) {
+    if (this.highlighted == index) {
+      this.highlighted = -1;
+      this.RefreshControls();
+    }
+  }
+
+  private function RefreshControls() {
+    let rowIndex: Int32 = 0;
+    while (rowIndex < this.rows.Size()) {
+      this.rows[rowIndex].Refresh(rowIndex == this.highlighted, this.manager.IsToggled(rowIndex));
+      rowIndex += 1;
+    }
+    let state: CName = this.highlighted == this.rows.Size() ? n"Hover" : n"Default";
+    this.done.SetState(state);
+    this.doneBackground.SetState(state);
+    this.doneFrame.SetState(state);
+    this.doneLabel.SetState(state);
+  }
+
+  private function FocusSelected() {
+    if (this.owner) {
+      if (this.selected < this.rows.Size()) {
+        this.owner.RequestSetFocus(this.rows[this.selected].GetRootWidget());
+      } else {
+        this.owner.RequestSetFocus(this.done);
+      }
+    }
+  }
+
+  public function Activate(index: Int32) {
+    if (!this.initialized || !this.manager || !this.manager.IsOnTop() || index < 0 || index > this.rows.Size()) {
+      return;
+    }
+    // Play through the game controller before Close disposes this logic controller.
+    if (index == this.rows.Size()) {
+      this.owner.PlaySound(n"Button", n"OnPress");
+      this.manager.Close();
+    } else if (this.manager.Toggle(index)) {
+      this.owner.PlaySound(n"Button", n"OnPress");
+      this.Select(index);
+    }
+  }
+
+  protected event OnDoneEnter(evt: inkPointerEvent) {
+    this.Select(this.rows.Size());
+  }
+
+  protected event OnDoneLeave(evt: inkPointerEvent) {
+    this.ClearHover(this.rows.Size());
+  }
+
+  protected event OnDoneClick(evt: inkPointerEvent) {
+    if (evt.IsAction(n"click") && !evt.IsHandled()) {
+      this.Activate(this.rows.Size());
+      evt.Handle();
+    }
+  }
+
+  protected event OnGlobalRelease(evt: inkPointerEvent) {
+    if (this.initialized && this.manager && this.manager.IsOnTop() && !evt.IsHandled()) {
+      if (evt.IsAction(n"one_click_confirm")) {
+        evt.Handle();
+        this.Activate(this.rows.Size());
+      } else if (evt.IsAction(n"cancel") || evt.IsAction(n"back")) {
+        evt.Handle();
+        this.manager.Close();
+      } else if (evt.IsAction(n"up_button")) {
+        this.Select((this.selected + this.rows.Size()) % (this.rows.Size() + 1));
+        this.FocusSelected();
+        evt.Handle();
+      } else if (evt.IsAction(n"down_button")) {
+        this.Select((this.selected + 1) % (this.rows.Size() + 1));
+        this.FocusSelected();
+        evt.Handle();
+      } else if (evt.IsAction(n"click")) {
+        let target: weak<inkWidget> = evt.GetTarget();
+        if (!target || target.CanSupportFocus()) {
+          evt.Handle();
+          this.Activate(this.selected);
+        }
+      }
+    }
+  }
+
+  public function Dispose() {
+    if (!this.initialized) {
+      return;
+    }
+    this.initialized = false;
+    this.UnregisterFromGlobalInputCallback(n"OnPostOnRelease", this, n"OnGlobalRelease");
+    this.done.UnregisterFromCallback(n"OnRelease", this, n"OnDoneClick");
+    this.done.UnregisterFromCallback(n"OnEnter", this, n"OnDoneEnter");
+    this.done.UnregisterFromCallback(n"OnLeave", this, n"OnDoneLeave");
+    let index: Int32 = 0;
+    while (index < this.rows.Size()) {
+      this.rows[index].Dispose();
+      index += 1;
+    }
+    this.rows.Clear();
+    if (this.owner) {
+      this.owner.RequestSetFocus(NULL);
+    }
+    this.owner = NULL;
+    this.manager = NULL;
+    this.done = NULL;
+    this.doneFrame = NULL;
+    this.doneBackground = NULL;
+    this.doneLabel = NULL;
+  }
+}
+
+class SleevesRow extends inkLogicController {
+  private var popup: weak<SleevesPopup>;
+  private var root: weak<inkCanvas>;
+  private var marker: weak<inkImage>;
+  private var frame: weak<inkImage>;
+  private var label: weak<inkText>;
+  private var index: Int32;
+  private var available: Bool;
+
+  public function Initialize(parent: inkCompoundWidget, popupController: SleevesPopup, rowIndex: Int32, item: SleevesItem, isAvailable: Bool, top: Float) {
+    this.popup = popupController;
+    this.index = rowIndex;
+    this.available = isAvailable;
+    let createdRoot: inkCanvas = new inkCanvas;
+    createdRoot.SetName(n"item");
+    createdRoot.SetFitToContent(false);
+    createdRoot.SetSizeRule(inkESizeRule.Fixed);
+    createdRoot.SetSize(Vector2(660.0, 120.0));
+    createdRoot.SetAnchor(inkEAnchor.TopLeft);
+    createdRoot.SetMargin(80.0, top, 0.0, 0.0);
+    createdRoot.SetInteractive(true);
+    createdRoot.SetSupportFocus(true);
+    createdRoot.AttachController(this);
+    createdRoot.Reparent(parent);
+    this.root = createdRoot;
+    let checkboxBackground: inkImage = SleevesImage(n"checkboxBackground", n"color_bg", 64.0, 64.0);
+    checkboxBackground.SetMargin(0.0, 28.0, 0.0, 0.0);
+    checkboxBackground.UnbindProperty(n"tintColor");
+    checkboxBackground.BindProperty(n"tintColor", isAvailable ? n"MainColors.FaintRed" : n"MainColors.Grey");
+    checkboxBackground.SetOpacity(isAvailable ? 1.0 : 0.1);
+    checkboxBackground.Reparent(createdRoot);
+    let createdFrame: inkImage = SleevesImage(n"checkboxFrame", n"color_fg", 64.0, 64.0);
+    createdFrame.SetMargin(0.0, 28.0, 0.0, 0.0);
+    createdFrame.Reparent(createdRoot);
+    this.frame = createdFrame;
+    let createdMarker: inkImage = SleevesImage(n"marker", n"color_bg", 38.0, 38.0);
+    createdMarker.SetMargin(13.0, 41.0, 0.0, 0.0);
+    createdMarker.Reparent(createdRoot);
+    this.marker = createdMarker;
+    let createdLabel: inkText = SleevesText(n"label", item.DisplayName(), 40);
+    createdLabel.textOverflowPolicy = textOverflowPolicy.DotsEnd;
+    createdLabel.SetFitToContent(false);
+    createdLabel.SetSize(Vector2(564.0, 54.0));
+    createdLabel.SetMargin(96.0, 6.0, 0.0, 0.0);
+    createdLabel.Reparent(this.root);
+    this.label = createdLabel;
+    let slotLabel: inkText = SleevesText(n"slot", item.slotName, 36);
+    slotLabel.SetFitToContent(false);
+    slotLabel.SetSize(Vector2(564.0, 54.0));
+    slotLabel.SetMargin(96.0, 60.0, 0.0, 0.0);
+    slotLabel.UnbindProperty(n"tintColor");
+    slotLabel.BindProperty(n"tintColor", n"MainColors.Grey");
+    slotLabel.Reparent(createdRoot);
+    this.root.RegisterToCallback(n"OnEnter", this, n"OnEnter");
+    this.root.RegisterToCallback(n"OnLeave", this, n"OnLeave");
+    this.root.RegisterToCallback(n"OnRelease", this, n"OnClick");
+  }
+
+  public function Refresh(selected: Bool, toggled: Bool) {
+    this.frame.UnbindProperty(n"tintColor");
+    this.frame.BindProperty(n"tintColor", !this.available ? n"MainColors.Grey" : selected ? n"MainColors.Red" : n"MainColors.MildRed");
+    this.frame.SetOpacity(this.available ? 1.0 : 0.5);
+    this.label.UnbindProperty(n"tintColor");
+    this.label.BindProperty(n"tintColor", selected && this.available ? n"MainColors.ActiveRed" : n"MainColors.Red");
+    this.marker.SetVisible(toggled && this.available);
+  }
+
+  protected event OnEnter(evt: inkPointerEvent) {
+    if (this.popup && this.available) {
+      this.popup.Select(this.index);
+    }
+  }
+
+  protected event OnLeave(evt: inkPointerEvent) {
+    if (this.popup) {
+      this.popup.ClearHover(this.index);
+    }
+  }
+
+  protected event OnClick(evt: inkPointerEvent) {
+    if (this.popup && this.available && evt.IsAction(n"click") && !evt.IsHandled()) {
+      this.popup.Activate(this.index);
+      evt.Handle();
+    }
+  }
+
+  public function Dispose() {
+    this.root.UnregisterFromCallback(n"OnEnter", this, n"OnEnter");
+    this.root.UnregisterFromCallback(n"OnLeave", this, n"OnLeave");
+    this.root.UnregisterFromCallback(n"OnRelease", this, n"OnClick");
+    this.popup = NULL;
+    this.root = NULL;
+    this.marker = NULL;
+    this.frame = NULL;
+    this.label = NULL;
+  }
+}
+
+function SleevesText(widgetName: CName, text: String, size: Int32) -> inkText {
+  let widget: inkText = new inkText;
+  widget.SetName(widgetName);
+  widget.SetInteractive(false);
+  widget.SetSizeRule(inkESizeRule.Fixed);
+  widget.SetAnchor(inkEAnchor.TopLeft);
+  widget.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+  widget.SetFontSize(size);
+  widget.SetFitToContent(true);
+  widget.SetLetterCase(textLetterCase.OriginalCase);
+  widget.SetStyle(R"base\gameplay\gui\common\main_colors.inkstyle");
+  widget.BindProperty(n"tintColor", n"MainColors.Red");
+  widget.SetText(text);
+  return widget;
+}
+
+function SleevesImage(widgetName: CName, part: CName, width: Float, height: Float) -> inkImage {
+  let widget: inkImage = new inkImage;
+  widget.SetName(widgetName);
+  widget.SetInteractive(false);
+  widget.SetAtlasResource(R"base\gameplay\gui\common\shapes\atlas_shapes_sync.inkatlas");
+  widget.SetFitToContent(false);
+  widget.SetSizeRule(inkESizeRule.Fixed);
+  widget.SetAnchor(inkEAnchor.TopLeft);
+  widget.SetTexturePart(part);
+  widget.useNineSliceScale = true;
+  widget.SetSize(width, height);
+  widget.SetStyle(R"base\gameplay\gui\common\main_colors.inkstyle");
+  widget.BindProperty(n"tintColor", n"MainColors.Red");
+  return widget;
+}
+
+@addField(PopupsManager)
+var sleevesManager: SleevesManager;
+
+@addField(PlayerPuppet)
+var sleevesPopupManager: SleevesManager;
+
+@wrapMethod(PopupsManager)
+event OnPlayerAttach(playerPuppet: GameObject) {
+  OnPlayerAttach(playerPuppet);
+  if (this.sleevesManager) {
+    this.sleevesManager.Shutdown();
+  }
+  let player: PlayerPuppet = playerPuppet as PlayerPuppet;
+  if (player) {
+    this.sleevesManager = new SleevesManager;
+    this.sleevesManager.Initialize(this, player.GetGame(), player);
+  } else {
+    this.sleevesManager = NULL;
+  }
+}
+
+@wrapMethod(PopupsManager)
+event OnPlayerDetach(playerPuppet: GameObject) {
+  if (this.sleevesManager) {
+    this.sleevesManager.Shutdown();
+    this.sleevesManager = NULL;
+  }
+  OnPlayerDetach(playerPuppet);
+}
+
+@wrapMethod(PopupsManager)
+event OnUninitialize() {
+  if (this.sleevesManager) {
+    this.sleevesManager.Shutdown();
+    this.sleevesManager = NULL;
+  }
+  OnUninitialize();
+}
+

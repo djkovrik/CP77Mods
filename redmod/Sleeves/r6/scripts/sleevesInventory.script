@@ -1,0 +1,238 @@
+@module "Sleeves.Inventory"
+@using "Sleeves.UI"
+@using "Sleeves.Runtime"
+
+class SleevesInventoryButton extends inkLogicController {
+  private var root: weak<inkCompoundWidget>;
+  private var owner: weak<gameuiInventoryGameController>;
+  private var frame: weak<inkWidget>;
+  private var player: weak<PlayerPuppet>;
+  private var icon: weak<inkImage>;
+  private var enabled: Bool;
+  private var shown: Bool;
+
+  public function Initialize(widget: inkCompoundWidget, controller: gameuiInventoryGameController, ownerPlayer: PlayerPuppet) {
+    this.root = widget;
+    this.owner = controller;
+    this.frame = widget.GetWidgetByPathName(n"frameHovered");
+    this.icon = widget.GetWidgetByPathName(n"icon") as inkImage;
+    this.player = ownerPlayer;
+    this.shown = true;
+    if (ownerPlayer) {
+      ownerPlayer.sleevesInventoryButton = this;
+    }
+    widget.SetInteractive(true);
+    widget.SetSupportFocus(true);
+    widget.RegisterToCallback(n"OnEnter", this, n"OnEnter");
+    widget.RegisterToCallback(n"OnLeave", this, n"OnLeave");
+    widget.RegisterToCallback(n"OnRelease", this, n"OnClick");
+    this.SetHovered(false);
+    this.RefreshState();
+  }
+
+  public function RefreshState() {
+    let system: SleevesModStateSystem;
+    if (this.player) {
+      system = SleevesModStateSystem.Get(this.player.GetGame());
+    }
+    this.enabled = system && system.HasToggleableSleeves();
+    let active: Bool = system && system.HasSleevesActivated();
+    this.icon.SetTexturePart(this.enabled && active ? n"sleeved" : n"sleeveless");
+    this.icon.UnbindProperty(n"tintColor");
+    this.icon.BindProperty(n"tintColor", this.enabled ? n"MainColors.Blue" : n"MainColors.MildRed");
+    this.icon.SetOpacity(this.enabled && !active ? 0.1 : 0.5);
+    this.SetShown(this.shown);
+    if (!this.enabled) {
+      this.SetHovered(false);
+    }
+  }
+
+  public function SetShown(value: Bool) {
+    this.shown = value;
+    this.root.SetVisible(value);
+    this.root.SetInteractive(value && this.enabled);
+    this.root.SetSupportFocus(value && this.enabled);
+    if (!value) {
+      this.SetHovered(false);
+    }
+  }
+
+  private function SetHovered(value: Bool) {
+    this.frame.SetVisible(value);
+  }
+
+  protected event OnEnter(evt: inkPointerEvent) {
+    if (this.owner && this.enabled) {
+      this.SetHovered(true);
+      this.owner.PlaySound(n"Button", n"OnHover");
+    }
+  }
+
+  protected event OnLeave(evt: inkPointerEvent) {
+    this.SetHovered(false);
+  }
+
+  protected event OnClick(evt: inkPointerEvent) {
+    if (this.owner && this.enabled && this.shown && evt.IsAction(n"click") && !evt.IsHandled()) {
+      evt.Handle();
+      this.owner.PlaySound(n"Button", n"OnPress");
+      this.owner.SleevesOpenPopup();
+    }
+  }
+
+  public function Dispose() {
+    if (this.player && this.player.sleevesInventoryButton == this) {
+      this.player.sleevesInventoryButton = NULL;
+    }
+    if (this.root) {
+      this.root.UnregisterFromCallback(n"OnEnter", this, n"OnEnter");
+      this.root.UnregisterFromCallback(n"OnLeave", this, n"OnLeave");
+      this.root.UnregisterFromCallback(n"OnRelease", this, n"OnClick");
+      let parent: inkCompoundWidget = this.root.GetParentWidget() as inkCompoundWidget;
+      if (parent) {
+        parent.RemoveChild(this.root);
+      }
+    }
+    this.root = NULL;
+    this.frame = NULL;
+    this.owner = NULL;
+    this.player = NULL;
+    this.icon = NULL;
+  }
+}
+
+function SleevesCreateInventoryButton(parent: inkCompoundWidget) -> inkCompoundWidget {
+  let root: inkCanvas = new inkCanvas;
+  root.SetName(n"SleevesButton");
+  root.SetFitToContent(false);
+  root.SetSize(Vector2(128.0, 128.0));
+  root.SetAnchor(inkEAnchor.TopRight);
+  root.SetAnchorPoint(Vector2(1.0, 0.0));
+  root.SetMargin(0.0, 80.0, 580.0, 0.0);
+  let background: inkImage = SleevesImage(n"background", n"bg", 128.0, 128.0);
+  background.SetAtlasResource(R"base\gameplay\gui\sleeves.inkatlas");
+  background.SetStyle(R"base\gameplay\gui\common\components\slots_style.inkstyle");
+  background.UnbindProperty(n"tintColor");
+  background.BindProperty(n"tintColor", n"TransmogDisplay.foreground");
+  background.SetOpacity(0.75);
+  background.Reparent(root);
+  let frame: inkImage = SleevesImage(n"frame", n"transmog_fg", 128.0, 128.0);
+  frame.SetAtlasResource(R"base\gameplay\gui\fullscreen\inventory\atlas_inventory.inkatlas");
+  frame.SetStyle(R"base\gameplay\gui\common\components\slots_style.inkstyle");
+  frame.UnbindProperty(n"tintColor");
+  frame.BindProperty(n"tintColor", n"TransmogDisplay.highlight");
+  frame.BindProperty(n"opacity", n"ItemDisplay.borderOpacity");
+  frame.Reparent(root);
+  let hoveredFrame: inkImage = SleevesImage(n"frameHovered", n"transmog_fg", 128.0, 128.0);
+  hoveredFrame.SetAtlasResource(R"base\gameplay\gui\fullscreen\inventory\atlas_inventory.inkatlas");
+  hoveredFrame.UnbindProperty(n"tintColor");
+  hoveredFrame.BindProperty(n"tintColor", n"MainColors.Blue");
+  hoveredFrame.SetOpacity(0.5);
+  hoveredFrame.Reparent(root);
+  let icon: inkImage = SleevesImage(n"icon", n"sleeved", 50.0, 50.0);
+  icon.SetAtlasResource(R"base\gameplay\gui\sleeves.inkatlas");
+  icon.useNineSliceScale = false;
+  icon.UnbindProperty(n"tintColor");
+  icon.BindProperty(n"tintColor", n"MainColors.Blue");
+  icon.SetOpacity(0.5);
+  icon.SetMargin(39.0, 39.0, 0.0, 0.0);
+  icon.Reparent(root);
+  root.Reparent(parent);
+  return root;
+}
+
+@addField(gameuiInventoryGameController)
+var sleevesButton: weak<SleevesInventoryButton>;
+
+@addMethod(gameuiInventoryGameController)
+function SleevesOpenPopup() {
+  let player: weak<PlayerPuppet> = this.m_player;
+  if (player && player.sleevesPopupManager) {
+    player.sleevesPopupManager.Show();
+  }
+}
+
+@wrapMethod(gameuiInventoryGameController)
+event OnInitialize() {
+  OnInitialize();
+  let system: SleevesModStateSystem;
+  if (this.m_player) {
+    system = SleevesModStateSystem.Get(this.m_player.GetGame());
+    if (system) {
+      system.BindPlayer(this.m_player);
+      system.RefreshSleevesState();
+    }
+  }
+  if (this.sleevesButton) {
+    this.sleevesButton.Dispose();
+    this.sleevesButton = NULL;
+  }
+  let root: inkCompoundWidget = this.GetRootCompoundWidget();
+  if (root) {
+    let parent: inkCompoundWidget = root.GetWidgetByPathName(n"default_wrapper") as inkCompoundWidget;
+    if (parent) {
+      let button: inkCompoundWidget = SleevesCreateInventoryButton(parent);
+      let buttonController: SleevesInventoryButton = new SleevesInventoryButton;
+      button.AttachController(buttonController);
+      this.sleevesButton = buttonController;
+      buttonController.Initialize(button, this, this.m_player);
+    }
+  }
+}
+
+@addField(PlayerPuppet)
+var sleevesInventoryButton: weak<SleevesInventoryButton>;
+
+@addMethod(PlayerPuppet)
+function RefreshSleevesInventoryButton() {
+  if (this.sleevesInventoryButton) {
+    this.sleevesInventoryButton.RefreshState();
+  }
+}
+
+@wrapMethod(gameuiInventoryGameController)
+event OnItemChooserItemChanged(e: ItemChooserItemChanged) {
+  OnItemChooserItemChanged(e);
+  if (this.sleevesButton) {
+    this.sleevesButton.SetShown(false);
+  }
+}
+
+@wrapMethod(gameuiInventoryGameController)
+event OnBack(userData: IScriptable) {
+  OnBack(userData);
+  if (this.sleevesButton) {
+    this.sleevesButton.SetShown(true);
+  }
+}
+
+@wrapMethod(gameuiInventoryGameController)
+event OnCloseMenu(userData: IScriptable) {
+  if (this.sleevesButton) {
+    this.sleevesButton.SetShown(false);
+  }
+  OnCloseMenu(userData);
+}
+
+@wrapMethod(MenuHubGameController)
+event OnDropQueueUpdatedEvent(evt: DropQueueUpdatedEvent) {
+  OnDropQueueUpdatedEvent(evt);
+  let player: PlayerPuppet = this.GetPlayerControlledObject() as PlayerPuppet;
+  if (player && player.sleevesInventoryButton) {
+    player.sleevesInventoryButton.SetShown(false);
+  }
+}
+
+@wrapMethod(gameuiInventoryGameController)
+event OnUninitialize() {
+  let player: weak<PlayerPuppet> = this.m_player;
+  if (player && player.sleevesPopupManager) {
+    player.sleevesPopupManager.Close();
+  }
+  if (this.sleevesButton) {
+    this.sleevesButton.Dispose();
+    this.sleevesButton = NULL;
+  }
+  OnUninitialize();
+}
+

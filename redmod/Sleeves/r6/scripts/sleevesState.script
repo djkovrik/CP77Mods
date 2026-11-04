@@ -1,0 +1,467 @@
+// Sleeves 3.3.4 - console edition.
+@module "Sleeves.Runtime"
+
+enum SleevesMode {
+  Vanilla = 0,
+  Wardrobe = 1,
+}
+
+class SleevesItem extends IScriptable {
+  var slotID: TweakDBID;
+  var itemID: ItemID;
+  var itemTDBID: TweakDBID;
+  var visualItemID: ItemID;
+  var visualItemTDBID: TweakDBID;
+  var itemName: String;
+  var visualItemName: String;
+  var slotName: String;
+  var itemAppearance: CName;
+  var mode: SleevesMode;
+  var toggled: Bool;
+
+  public function PreferenceID() -> TweakDBID {
+    return this.mode == SleevesMode.Wardrobe ? this.visualItemTDBID : this.itemTDBID;
+  }
+
+  public function DisplayName() -> String {
+    return this.mode == SleevesMode.Wardrobe ? this.visualItemName : this.itemName;
+  }
+
+  public function HasFppSuffix() -> Bool {
+    let appearance: String = NameToString(this.itemAppearance);
+    return StrContains(appearance, "&FPP") || StrContains(appearance, "!") && StrContains(appearance, "fpp");
+  }
+
+  public function HasTppSuffix() -> Bool {
+    let appearance: String = NameToString(this.itemAppearance);
+    return StrContains(appearance, "&TPP") || StrContains(appearance, "!") && StrContains(appearance, "tpp");
+  }
+
+  public function TppAppearance() -> CName {
+    if (!this.HasFppSuffix()) {
+      return this.itemAppearance;
+    }
+    let appearance: String = StrReplace(NameToString(this.itemAppearance), "&FPP", "&TPP");
+    return StringToName(StrReplace(appearance, "&Part", "&Full"));
+  }
+
+  public function FppAppearance() -> CName {
+    let appearance: String = StrReplace(NameToString(this.itemAppearance), "&TPP", "&FPP");
+    return StringToName(StrReplace(appearance, "&Full", "&Part"));
+  }
+
+  public function Excluded() -> Bool {
+    return this.itemTDBID == T"Items.MQ049_martinez_jacket" || this.visualItemTDBID == T"Items.MQ049_martinez_jacket";
+  }
+
+  public function IsAvailable(inVehicle: Bool) -> Bool {
+    return !this.Excluded() && (this.HasFppSuffix() || inVehicle && this.HasTppSuffix());
+  }
+}
+
+class SleevesInfoBundle extends IScriptable {
+  var mode: SleevesMode;
+  var items: array<SleevesItem>;
+
+  public function ModeName() -> String {
+    return GetLocalizedTextByKey(this.mode == SleevesMode.Wardrobe ? n"Gameplay-Devices-DisplayNames-Wardrobe" : n"Gameplay-RPG-Items-Categories-Clothing");
+  }
+}
+
+class SleevesRefreshCallback extends DelayCallback {
+  var system: weak<SleevesModStateSystem>;
+  public override function Call() {
+    if (this.system) {
+      this.system.RefreshSleevesState();
+    }
+  }
+}
+
+class SleevesModStateSystem extends ScriptableSystem {
+  private persistent var toggledItems: array<TweakDBID>;
+  private var player: weak<PlayerPuppet>;
+  private var equipmentSystem: weak<EquipmentSystem>;
+  private var transactionSystem: weak<TransactionSystem>;
+  private var delay: weak<DelaySystem>;
+  private var pending: DelayID;
+  private var bundle: SleevesInfoBundle;
+  private var cache: array<inkHashMap>;
+  private var isBraindanceActive: Bool;
+  private var isArmCyberwareActive: Bool;
+  private var isDriverCombatActive: Bool;
+  private var isSleevesGlamdocActive: Bool;
+
+  public static function Get(game: GameInstance) -> SleevesModStateSystem {
+    return GameInstance.GetScriptableSystemsContainer(game).Get(n"SleevesModStateSystem") as SleevesModStateSystem;
+  }
+
+  private export override function OnAttach() {
+    this.InitializeSystems();
+  }
+
+
+  private export override function OnDetach() {
+    this.ReleasePlayer();
+    this.equipmentSystem = NULL;
+    this.transactionSystem = NULL;
+    this.delay = NULL;
+  }
+
+  private function InitializeSystems() {
+    let game: GameInstance = this.GetGameInstance();
+    this.equipmentSystem = GameInstance.GetScriptableSystemsContainer(game).Get(n"EquipmentSystem") as EquipmentSystem;
+    this.transactionSystem = GameInstance.GetTransactionSystem(game);
+    this.delay = GameInstance.GetDelaySystem(game);
+    if (this.cache.Size() == 0) {
+      let index: Int32 = 0;
+      while (index < 6) {
+        this.cache.PushBack(new inkHashMap);
+        index += 1;
+      }
+    }
+  }
+
+  private export function OnPlayerAttach(request: PlayerAttachRequest) {
+    let attachedPlayer: PlayerPuppet = request.owner as PlayerPuppet;
+    if (attachedPlayer) {
+      this.BindPlayer(attachedPlayer);
+      this.QueueStartupRefresh();
+    }
+  }
+
+  private export function OnPlayerDetach(request: PlayerDetachRequest) {
+    if (this.player == request.owner) {
+      this.ReleasePlayer();
+    }
+  }
+
+  public function BindPlayer(owner: PlayerPuppet) {
+    if (this.player != owner) {
+      this.ReleasePlayer();
+      this.player = owner;
+      this.InitializeSystems();
+      this.isArmCyberwareActive = SleevesModStateSystem.IsTargetArmCyberware(owner);
+    }
+  }
+
+  public function ReleasePlayer() {
+    if (this.delay) {
+      this.delay.CancelCallback(this.pending);
+    }
+    this.player = NULL;
+    this.ClearCache();
+    this.isBraindanceActive = false;
+    this.isArmCyberwareActive = false;
+    this.isDriverCombatActive = false;
+    this.isSleevesGlamdocActive = false;
+  }
+
+  public function QueueStartupRefresh() {
+    let scenario: inkMenuScenario = new inkMenuScenario;
+    let requests: inkISystemRequestsHandler = scenario.GetSystemRequestsHandler();
+    if (!requests || !requests.IsPreGame()) {
+      this.QueueRefresh(false);
+    }
+  }
+
+  public function QueueRefresh(optional clearCache: Bool) {
+    if (clearCache) {
+      this.ClearCache();
+    }
+    if (this.player && this.delay) {
+      this.delay.CancelCallback(this.pending);
+      let callback: SleevesRefreshCallback = new SleevesRefreshCallback;
+      callback.system = this;
+      this.pending = this.delay.DelayCallback(callback, 1.0, false);
+    }
+  }
+
+  public function ClearCache() {
+    let index: Int32 = 0;
+    while (index < this.cache.Size()) {
+      this.cache[index].Clear();
+      index += 1;
+    }
+    this.bundle = NULL;
+  }
+
+  public function IsToggled(id: TweakDBID) -> Bool {
+    return this.toggledItems.Contains(id);
+  }
+
+  public function Toggle(item: SleevesItem) -> Bool {
+    if (!item || !this.player || !item.IsAvailable(this.InVehicle())) {
+      return false;
+    }
+    let id: TweakDBID = item.PreferenceID();
+    if (!TDBID.IsValid(id)) {
+      return false;
+    }
+    if (this.IsToggled(id)) {
+      this.toggledItems.Remove(id);
+    } else {
+      this.toggledItems.PushBack(id);
+    }
+    this.RefreshSleevesState();
+    return true;
+  }
+
+  public function GetInfoBundle() -> SleevesInfoBundle {
+    if (!this.bundle) {
+      this.bundle = this.CollectItems();
+    }
+    return this.bundle;
+  }
+
+  public function HasToggleableSleeves() -> Bool {
+    let info: SleevesInfoBundle = this.GetInfoBundle();
+    let index: Int32 = 0;
+    while (index < info.items.Size()) {
+      if (info.items[index].Excluded()) {
+        return false;
+      }
+      if (info.items[index].HasFppSuffix() || info.items[index].HasTppSuffix()) {
+        return true;
+      }
+      index += 1;
+    }
+    return false;
+  }
+
+  public function HasSleevesActivated() -> Bool {
+    let info: SleevesInfoBundle = this.GetInfoBundle();
+    let index: Int32 = 0;
+    while (index < info.items.Size()) {
+      if (this.IsToggled(info.items[index].PreferenceID())) {
+        return true;
+      }
+      index += 1;
+    }
+    return false;
+  }
+
+  public function InVehicle() -> Bool {
+    if (!this.player) {
+      return false;
+    }
+    let blackboard: IBlackboard = this.player.GetPlayerStateMachineBlackboard();
+    return blackboard && blackboard.GetBool(GetAllBlackboardDefs().PlayerStateMachine.MountedToVehicle);
+  }
+
+  private function IsDriverCombatInFpp(blackboard: IBlackboard) -> Bool {
+    return blackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Vehicle) == Cast<Int32>(gamePSMVehicle.DriverCombat)
+      && !blackboard.GetBool(GetAllBlackboardDefs().PlayerStateMachine.IsVehicleInTPP);
+  }
+
+  public function OnDriverCombatStateChange() {
+    if (this.player) {
+      let blackboard: IBlackboard = this.player.GetPlayerStateMachineBlackboard();
+      if (blackboard && this.isDriverCombatActive != this.IsDriverCombatInFpp(blackboard)) {
+        this.RefreshSleevesState();
+      }
+    }
+  }
+
+  public function OnBraindanceEnter(entered: Bool) {
+    this.isBraindanceActive = entered;
+    this.QueueRefresh(false);
+  }
+
+  public function OnArmCyberwareStateChange(active: Bool) {
+    if (this.isArmCyberwareActive != active) {
+      this.isArmCyberwareActive = active;
+      this.RefreshSleevesState();
+    }
+  }
+
+  public static function IsTargetArmCyberware(owner: PlayerPuppet) -> Bool {
+    let weapon: WeaponObject = GameObject.GetActiveWeapon(owner);
+    if (!weapon || !weapon.WeaponHasTag(n"Cyberware")) {
+      return false;
+    }
+    let weaponType: gamedataItemType = WeaponObject.GetWeaponType(weapon.GetItemID());
+    return weaponType == gamedataItemType.Cyb_MantisBlades || weaponType == gamedataItemType.Cyb_Launcher;
+  }
+
+  public function RefreshSleevesState() {
+    if (!this.player || !this.equipmentSystem || !this.transactionSystem) {
+      return;
+    }
+    let blackboard: IBlackboard = this.player.GetPlayerStateMachineBlackboard();
+    if (!blackboard) {
+      return;
+    }
+    let wasDriverCombatActive: Bool = this.isDriverCombatActive;
+    this.isDriverCombatActive = this.IsDriverCombatInFpp(blackboard);
+    let inVehicle: Bool = blackboard.GetBool(GetAllBlackboardDefs().PlayerStateMachine.MountedToVehicle);
+    this.bundle = this.CollectItems();
+    let index: Int32 = 0;
+    let item: SleevesItem;
+    let appearance: CName;
+    while (index < this.bundle.items.Size()) {
+      item = this.bundle.items[index];
+      if (item.HasFppSuffix() || (inVehicle || wasDriverCombatActive || this.isDriverCombatActive) && item.HasTppSuffix()) {
+        appearance = item.itemAppearance;
+        if (item.toggled && !this.isBraindanceActive && !this.isArmCyberwareActive) {
+          appearance = this.isDriverCombatActive ? item.FppAppearance() : item.TppAppearance();
+        }
+        this.ApplySleevesAppearance(item, appearance);
+      }
+      index += 1;
+    }
+    this.player.RefreshSleevesInventoryButton();
+  }
+
+  private function ApplySleevesAppearance(item: SleevesItem, appearance: CName) {
+    if (item.mode == SleevesMode.Wardrobe) {
+      if (this.isSleevesGlamdocActive || this.transactionSystem.GetItemAppearance(this.player, item.itemID) == appearance) {
+        return;
+      }
+    }
+    this.transactionSystem.ChangeItemAppearanceByName(this.player, item.itemID, appearance);
+  }
+
+  public function BeginSleevesGlamdoc() {
+    if (!this.player || !this.equipmentSystem || !this.transactionSystem) {
+      return;
+    }
+    let info: SleevesInfoBundle = this.CollectItems();
+    if (info.mode != SleevesMode.Wardrobe) {
+      return;
+    }
+    this.isSleevesGlamdocActive = true;
+    let equipmentData: EquipmentSystemPlayerData = this.equipmentSystem.GetPlayerData(this.player);
+    if (!equipmentData) {
+      return;
+    }
+    let index: Int32 = 0;
+    let item: SleevesItem;
+    let liveItem: ItemObject;
+    let visualID: ItemID;
+    let actual: ItemID;
+    while (index < info.items.Size()) {
+      item = info.items[index];
+      liveItem = this.transactionSystem.GetItemInSlot(this.player, item.slotID);
+      visualID = equipmentData.GetVisualItemInSlot(SleevesSlotToArea(item.slotID));
+      if (liveItem && ItemID.IsValid(visualID)) {
+        actual = liveItem.GetItemID();
+        if (actual == item.itemID && !ItemID.HasFlag(actual, gameEItemIDFlag.Preview) && actual != visualID) {
+          // Restore vanilla transmog before GlamDoc constructs its preview.
+          this.transactionSystem.ChangeItemAppearanceByItemID(this.player, actual, visualID);
+        }
+      }
+      index += 1;
+    }
+  }
+
+  public function EndSleevesGlamdoc() {
+    if (this.isSleevesGlamdocActive) {
+      this.isSleevesGlamdocActive = false;
+      this.QueueRefresh(false);
+    }
+  }
+
+  private function CollectItems() -> SleevesInfoBundle {
+    let info: SleevesInfoBundle = new SleevesInfoBundle;
+    if (!this.player || !this.equipmentSystem || !this.transactionSystem) {
+      return info;
+    }
+    info.mode = EquipmentSystem.GetActiveWardrobeSetID(this.player) != gameWardrobeClothingSetIndex.INVALID ? SleevesMode.Wardrobe : SleevesMode.Vanilla;
+    let equipmentData: EquipmentSystemPlayerData = this.equipmentSystem.GetPlayerData(this.player);
+    if (!equipmentData) {
+      return info;
+    }
+    let slots: array<TweakDBID> = [T"AttachmentSlots.Outfit", T"AttachmentSlots.Torso", T"AttachmentSlots.Chest"];
+    let index: Int32 = 0;
+    let liveItem: ItemObject;
+    let id: ItemID;
+    let record: TweakDBID;
+    let area: gamedataEquipmentArea;
+    let item: SleevesItem;
+    let visualID: ItemID;
+    let itemRecord: Item_Record;
+    let visualRecord: Item_Record;
+    let visualTDBID: TweakDBID;
+    let cacheIndex: Int32;
+    while (index < slots.Size()) {
+      liveItem = this.transactionSystem.GetItemInSlot(this.player, slots[index]);
+      if (liveItem) {
+        id = liveItem.GetItemID();
+        area = SleevesSlotToArea(slots[index]);
+        if (ItemID.IsValid(id) && equipmentData.IsEquipped(id, area)) {
+          record = ItemID.GetTDBID(id);
+          item = this.FindCached(slots[index], record, info.mode);
+          if (!item) {
+            item = new SleevesItem;
+            item.slotID = slots[index];
+            item.itemTDBID = record;
+            item.mode = info.mode;
+            item.itemAppearance = this.transactionSystem.GetItemAppearance(this.player, id);
+            item.slotName = SleevesSlotName(slots[index]);
+            itemRecord = RPGManager.GetItemRecord(id);
+            item.itemName = itemRecord ? GetLocalizedTextByKey(itemRecord.DisplayName()) : "";
+            cacheIndex = index + (info.mode == SleevesMode.Wardrobe ? 3 : 0);
+            this.cache[cacheIndex].Insert(TDBID.ToNumber(record), item);
+          }
+          // Refresh identity while retaining the base appearance, which may already be overridden live.
+          item.itemID = id;
+          visualID = equipmentData.GetVisualItemInSlot(area);
+          if (!ItemID.IsValid(visualID)) {
+            visualID = id;
+          }
+          item.visualItemID = visualID;
+          visualTDBID = ItemID.GetTDBID(visualID);
+          if (item.visualItemTDBID != visualTDBID) {
+            item.visualItemTDBID = visualTDBID;
+            visualRecord = RPGManager.GetItemRecord(visualID);
+            item.visualItemName = visualRecord ? GetLocalizedTextByKey(visualRecord.DisplayName()) : item.itemName;
+          }
+          item.toggled = this.IsToggled(item.PreferenceID());
+          info.items.PushBack(item);
+        }
+      }
+      index += 1;
+    }
+    return info;
+  }
+
+  private function FindCached(slot: TweakDBID, record: TweakDBID, mode: SleevesMode) -> SleevesItem {
+    let index: Int32 = slot == T"AttachmentSlots.Outfit" ? 0 : slot == T"AttachmentSlots.Torso" ? 1 : 2;
+    index += mode == SleevesMode.Wardrobe ? 3 : 0;
+    let key: Uint64 = TDBID.ToNumber(record);
+    if (this.cache[index].KeyExist(key)) {
+      return this.cache[index].Get(key) as SleevesItem;
+    }
+    return NULL;
+  }
+}
+
+function SleevesSlotToArea(slot: TweakDBID) -> gamedataEquipmentArea {
+  switch (slot) {
+    case T"AttachmentSlots.Torso": return gamedataEquipmentArea.OuterChest;
+    case T"AttachmentSlots.Chest": return gamedataEquipmentArea.InnerChest;
+    case T"AttachmentSlots.Outfit": return gamedataEquipmentArea.Outfit;
+  }
+  return gamedataEquipmentArea.Invalid;
+}
+
+function SleevesSlotName(slot: TweakDBID) -> String {
+  switch (slot) {
+    case T"AttachmentSlots.Outfit": return GetLocalizedTextByKey(n"Gameplay-Items-Item Type-Clo_Outfit");
+    case T"AttachmentSlots.Torso": return GetLocalizedTextByKey(n"Gameplay-Items-Item Type-Clo_OuterChest");
+    case T"AttachmentSlots.Chest": return GetLocalizedTextByKey(n"Gameplay-Items-Item Type-Clo_InnerChest");
+  }
+  return "";
+}
+
+@addMethod(GameObject)
+function TriggerSleevesRefreshCallback(optional clearCache: Bool) {
+  let owner: PlayerPuppet = this as PlayerPuppet;
+  if (owner) {
+    let system: SleevesModStateSystem = SleevesModStateSystem.Get(owner.GetGame());
+    if (system) {
+      system.BindPlayer(owner);
+      system.QueueRefresh(clearCache);
+    }
+  }
+}

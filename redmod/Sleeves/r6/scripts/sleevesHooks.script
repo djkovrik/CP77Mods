@@ -1,0 +1,183 @@
+@module "Sleeves.Runtime"
+
+@wrapMethod(PlayerPuppet)
+event OnGameAttached() {
+  OnGameAttached();
+  let system: SleevesModStateSystem = SleevesModStateSystem.Get(this.GetGame());
+  if (system) {
+    system.BindPlayer(this);
+    system.QueueStartupRefresh();
+  }
+}
+
+@wrapMethod(PlayerPuppet)
+event OnDetach() {
+  let system: SleevesModStateSystem = SleevesModStateSystem.Get(this.GetGame());
+  if (system) {
+    system.ReleasePlayer();
+  }
+  OnDetach();
+}
+
+@wrapMethod(EquipmentSystemPlayerData)
+const function UpdateUIBBAreaChanged(equipmentArea: gamedataEquipmentArea, slotIndex: Int32) {
+  UpdateUIBBAreaChanged(equipmentArea, slotIndex);
+  this.m_owner.TriggerSleevesRefreshCallback();
+}
+
+@wrapMethod(EquipmentSystemPlayerData)
+function OnQuestDisableWardrobeSetRequest(request: QuestDisableWardrobeSetRequest) {
+  OnQuestDisableWardrobeSetRequest(request);
+  this.m_owner.TriggerSleevesRefreshCallback(true);
+}
+
+@wrapMethod(EquipmentSystemPlayerData)
+function OnQuestRestoreWardrobeSetRequest(request: QuestRestoreWardrobeSetRequest) {
+  OnQuestRestoreWardrobeSetRequest(request);
+  this.m_owner.TriggerSleevesRefreshCallback(true);
+}
+
+@wrapMethod(EquipmentSystemPlayerData)
+function OnQuestEnableWardrobeSetRequest(request: QuestEnableWardrobeSetRequest) {
+  OnQuestEnableWardrobeSetRequest(request);
+  this.m_owner.TriggerSleevesRefreshCallback(true);
+}
+
+@wrapMethod(EquipmentSystemPlayerData)
+function EquipWardrobeSet(setID: gameWardrobeClothingSetIndex) {
+  EquipWardrobeSet(setID);
+  this.m_owner.TriggerSleevesRefreshCallback(true);
+}
+
+@wrapMethod(EquipmentSystemPlayerData)
+function UnequipWardrobeSet() {
+  UnequipWardrobeSet();
+  this.m_owner.TriggerSleevesRefreshCallback(true);
+}
+
+@wrapMethod(EquipmentSystemPlayerData)
+function DeleteWardrobeSet(setID: gameWardrobeClothingSetIndex) {
+  DeleteWardrobeSet(setID);
+  this.m_owner.TriggerSleevesRefreshCallback(true);
+}
+
+@wrapMethod(HUDManager)
+event OnBraindanceToggle(value: Bool) {
+  OnBraindanceToggle(value);
+  let system: SleevesModStateSystem = SleevesModStateSystem.Get(this.GetGameInstance());
+  if (system) {
+    system.OnBraindanceEnter(this.m_isBraindanceActive);
+  }
+}
+
+@wrapMethod(gameuiCrosshairContainerController)
+event OnWeaponSwap(value: Variant) {
+  OnWeaponSwap(value);
+  if (this.m_Player) {
+    let system: SleevesModStateSystem = SleevesModStateSystem.Get(this.m_Player.GetGame());
+    if (system) {
+      let weaponRecord: TweakDBID = (TweakDBID)value;
+      system.OnArmCyberwareStateChange(TDBID.IsValid(weaponRecord) && weaponRecord != TDBID.None() && SleevesModStateSystem.IsTargetArmCyberware(this.m_Player));
+    }
+  }
+}
+
+@wrapMethod(gameuiCrosshairBaseGameController)
+function OnCrosshairStateChange(oldState: gamePSMCrosshairStates, newState: gamePSMCrosshairStates) {
+  OnCrosshairStateChange(oldState, newState);
+  let player: PlayerPuppet = this.m_playerPuppet as PlayerPuppet;
+  if (player) {
+    let system: SleevesModStateSystem = SleevesModStateSystem.Get(player.GetGame());
+    if (system) {
+      if (newState == gamePSMCrosshairStates.LeftHandCyberware) {
+        system.OnArmCyberwareStateChange(SleevesModStateSystem.IsTargetArmCyberware(player));
+      } else if (oldState == gamePSMCrosshairStates.LeftHandCyberware) {
+        system.OnArmCyberwareStateChange(false);
+      }
+    }
+  }
+}
+
+@wrapMethod(gameuiInventoryGameController)
+event OnEquipmentClick(evt: ItemDisplayClickEvent) {
+  OnEquipmentClick(evt);
+  if (evt.actionName.IsAction(n"unequip_item") && this.m_player) {
+    this.m_player.TriggerSleevesRefreshCallback();
+  }
+}
+
+@wrapMethod(VehicleComponent)
+function OnVehicleCameraChange(state: Bool) {
+  OnVehicleCameraChange(state);
+  let player: PlayerPuppet = GetPlayer(GetGameInstanceFromEngine());
+  if (player) {
+    player.TriggerSleevesRefreshCallback();
+  }
+}
+
+@wrapMethod(PlayerPuppet)
+event OnVehicleStateChange(newState: Int32) {
+  OnVehicleStateChange(newState);
+  let system: SleevesModStateSystem = SleevesModStateSystem.Get(this.GetGame());
+  if (system) {
+    system.OnDriverCombatStateChange();
+  }
+}
+
+@wrapMethod(gameuiCrosshairContainerController)
+event OnPSMVehicleInTPPChanged(value: Bool) {
+  OnPSMVehicleInTPPChanged(value);
+  if (this.m_Player) {
+    let system: SleevesModStateSystem = SleevesModStateSystem.Get(this.m_Player.GetGame());
+    if (system) {
+      system.OnDriverCombatStateChange();
+    }
+  }
+}
+
+@wrapMethod(TakeOverControlSystem)
+const function EnablePlayerTPPRepresenation(enable: Bool) {
+  EnablePlayerTPPRepresenation(enable);
+  if (!enable) {
+    let player: PlayerPuppet = GetPlayer(this.GetGameInstance());
+    if (player) {
+      player.TriggerSleevesRefreshCallback();
+    }
+  }
+}
+
+@wrapMethod(RemoteControlDrivingHUDGameController)
+event OnPSMRemoteControlledVehicleCameraChangedToTPP(value: Bool) {
+  OnPSMRemoteControlledVehicleCameraChangedToTPP(value);
+  let player: PlayerPuppet = GetPlayer(GetGameInstanceFromEngine());
+  if (player) {
+    player.TriggerSleevesRefreshCallback();
+  }
+}
+
+@wrapMethod(RemoteControlDrivingHUDGameController)
+event OnRemoteControlledVehicleChanged(value: Variant) {
+  OnRemoteControlledVehicleChanged(value);
+  let player: PlayerPuppet = GetPlayer(GetGameInstanceFromEngine());
+  if (player) {
+    player.TriggerSleevesRefreshCallback();
+  }
+}
+
+@wrapMethod(GlamDocGameController)
+event OnInitialize() {
+  let system: SleevesModStateSystem = SleevesModStateSystem.Get(GetGameInstanceFromEngine());
+  if (system) {
+    system.BeginSleevesGlamdoc();
+  }
+  OnInitialize();
+}
+
+@wrapMethod(GlamDocGameController)
+event OnUninitialize() {
+  OnUninitialize();
+  let system: SleevesModStateSystem = SleevesModStateSystem.Get(GetGameInstanceFromEngine());
+  if (system) {
+    system.EndSleevesGlamdoc();
+  }
+}
