@@ -1,0 +1,35 @@
+@module "ImmersiveTimeskip"
+
+@addField(inkIGameController)
+var itsDefaultOpacity: Float;
+
+@addField(GameObject) 
+var itsTimeskipActive: Bool;
+
+
+@addField(PlayerPuppet)
+var itsTimeSystem: TimeSystem;
+
+@addField(PlayerPuppet) 
+var itsTimeskipPopupToken: inkGameNotificationToken;
+
+@addField(TimeskipGameController)
+var itsInitialDiff: Float;
+
+@addField(TimeskipGameController)
+var itsInitialTimestamp: Float;
+
+@addField(TimeskipGameController)
+var itsSecondsPerDegree: Float;
+
+@addField(HubTimeSkipController)
+var itsMenuEventDispatcher: weak<inkMenuEventDispatcher>;
+
+@addField(HubTimeSkipController)
+var itsPlayerInstance: weak<PlayerPuppet>;
+
+@addField(PlayerPuppet)
+var itsTimeskipManager: weak<PopupsManager>;
+
+@addField(PopupsManager)
+var itsOpenRequested: Bool;

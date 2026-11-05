@@ -1,0 +1,40 @@
+@module "ImmersiveTimeskip"
+
+@addMethod(HubTimeSkipController)
+event SetCustomMenuDispatcher(dispatcher: weak<inkMenuEventDispatcher>) {
+  this.itsMenuEventDispatcher = dispatcher;
+}
+
+@addMethod(HubTimeSkipController)
+event SetPlayerInstance(player: weak<PlayerPuppet>) {
+  this.itsPlayerInstance = player;
+}
+
+@wrapMethod(MenuHubGameController)
+event OnInitialize() {
+  OnInitialize();
+  this.m_timeCtrl.SetCustomMenuDispatcher(this.m_menuEventDispatcher);
+  this.m_timeCtrl.SetPlayerInstance(this.m_player);
+}
+
+@replaceMethod(HubTimeSkipController)
+event OnTimeSkipButtonPressed(e: inkPointerEvent) {
+  if (!e.IsAction('click') && !e.IsAction('tap')) {
+    return;
+  };
+  var manager: weak<PopupsManager> = this.itsPlayerInstance.itsTimeskipManager;
+  if (manager) {
+    manager.RequestTimeSkip();
+  }
+  this.itsMenuEventDispatcher.SpawnEvent('OnCloseHubMenu');
+}
+
+@wrapMethod(MenuHubGameController)
+event OnUninitialize() {
+  var manager: weak<PopupsManager> = this.m_player.itsTimeskipManager;
+  // Vanilla teardown removes hubMenu=0 before the availability check.
+  OnUninitialize();
+  if (manager) {
+    manager.ProcessTimeSkipRequest();
+  }
+}

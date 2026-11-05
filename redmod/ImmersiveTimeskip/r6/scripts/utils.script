@@ -1,0 +1,24 @@
+@module "ImmersiveTimeskip"
+
+class ITSUtils {
+  static function IsTimeskipAvailable(player: PlayerPuppet) -> Bool {
+    var gameInstance: GameInstance = player.GetGame();
+    var canTimeskip: Bool = GameTimeUtils.CanPlayerTimeSkip(player);
+    var notInElevator: Bool = !LiftDevice.IsPlayerInsideElevator(gameInstance);
+    var timeDilationNotActive: Bool = !GameInstance.GetTimeSystem(gameInstance).IsTimeDilationActive();
+    return canTimeskip && notInElevator && timeDilationNotActive;
+  }
+  static function AnimateAlpha(targetWidget: weak<inkWidget>, endAlpha: Float, duration: Float) -> inkAnimProxy {
+    var proxy: inkAnimProxy;
+    var moveElementsAnimDef: inkAnimDef = new inkAnimDef;
+    var transparencyInterpolator: inkAnimTransparency = new inkAnimTransparency;
+    transparencyInterpolator.SetType(inkanimInterpolationType.Linear);
+    transparencyInterpolator.SetMode(inkanimInterpolationMode.EasyIn);
+    transparencyInterpolator.SetDirection(inkanimInterpolationDirection.To);
+    transparencyInterpolator.SetEndTransparency(endAlpha);
+    transparencyInterpolator.SetDuration(duration);
+    moveElementsAnimDef.AddInterpolator(transparencyInterpolator);
+    proxy = targetWidget.PlayAnimation(moveElementsAnimDef);
+    return proxy;
+  }
+}

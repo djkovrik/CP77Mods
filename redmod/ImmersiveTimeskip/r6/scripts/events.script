@@ -1,0 +1,9 @@
+@module "ImmersiveTimeskip"
+
+class OpenTimeSkipMenuEvent extends Event {}
+
+class InterruptCustomTimeSkipEvent extends Event {}
+
+class TimeSkipMenuVisibilityEvent extends Event {
+  var visible: Bool;
+}

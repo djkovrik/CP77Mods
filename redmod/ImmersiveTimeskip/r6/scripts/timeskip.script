@@ -1,0 +1,192 @@
+@module "ImmersiveTimeskip"
+
+@replaceMethod(TimeskipGameController)
+event OnInitialize() {
+  // Preserve vanilla setup without the TimeSkip=0 world freeze.
+  var cursorEvent: TimeSkipCursorInitFinishedEvent;
+  var deadzoneConfig: ConfigVarFloat;
+  var controlsGroupBase: CName = '/controls';
+  var deadzoneSettingName: CName = 'Axis_DeadzoneInnerFix';
+  this.m_player = this.GetPlayerControlledObject();
+  this.m_player.RegisterInputListener(this, '__DEVICE_CHANGED__');
+  this.m_gameInstance = (this.GetOwnerEntity() as GameObject).GetGame();
+  this.m_timeSystem = GameInstance.GetTimeSystem(this.m_gameInstance);
+  if (GameInstance.GetSettingsSystem(this.m_player.GetGame()).HasVar(controlsGroupBase, deadzoneSettingName)) {
+    deadzoneConfig = GameInstance.GetSettingsSystem(this.m_player.GetGame()).GetVar(controlsGroupBase, deadzoneSettingName) as ConfigVarFloat;
+  };
+  if ((deadzoneConfig != NULL)) {
+    this.m_axisInputThreshold = deadzoneConfig.GetValue();
+  } else {
+    this.m_axisInputThreshold = 0.35;
+  };
+  this.m_data = this.GetRootWidget().GetUserData('TimeSkipPopupData') as TimeSkipPopupData;
+  this.RegisterToGlobalInputCallback('OnPostOnRelease', this, 'OnGlobalInput');
+  this.RegisterToGlobalInputCallback('OnPostOnRelative', this, 'OnMouseInput');
+  this.RegisterToGlobalInputCallback('OnPostOnAxis', this, 'OnGlobalAxisInput');
+  inkWidgetRef.RegisterToCallback(this.m_mouseHitTestRef, 'OnHoverOver', this, 'OnHoverOver');
+  inkWidgetRef.RegisterToCallback(this.m_mouseHitTestRef, 'OnHoverOut', this, 'OnHoverOut');
+  this.PlayAnimation(this.m_intoAnimation);
+  this.m_animProxy.RegisterToCallback(inkanimEventType.OnFinish, this, 'OnIntroFinished');
+  cursorEvent = new TimeSkipCursorInitFinishedEvent;
+  this.QueueEvent(cursorEvent);
+  GameInstance.GetGodModeSystem(this.m_player.GetGame()).AddGodMode(this.m_player.GetEntityID(), gameGodModeType.Invulnerable, 'TimeSkip');
+  this.DisplayTimeCurrent();
+  this.UpdateTargetTime(this.m_currentTimeAngle + 0.79);
+  var player: PlayerPuppet = this.m_player as PlayerPuppet;
+  if (player.itsTimeskipActive) {
+    this.TweakWidgetAppearance();
+  };
+}
+
+@replaceMethod(TimeskipGameController)
+event OnUninitialize() {
+  GameInstance.GetGodModeSystem(this.m_player.GetGame()).RemoveGodMode(this.m_player.GetEntityID(), gameGodModeType.Invulnerable, 'TimeSkip');
+}
+
+
+@addMethod(TimeskipGameController)
+function TweakWidgetAppearance() -> Void {
+  var root: weak<inkCompoundWidget> = this.GetRootCompoundWidget() as inkCompoundWidget;
+  root.GetWidget('bg1').SetVisible(false);
+  root.GetWidget('bk').SetVisible(false);
+  root.GetWidget('fluff').SetVisible(false);
+}
+
+@addMethod(TimeskipGameController)
+function FinalizeTimeskip() -> Void {
+  var player: PlayerPuppet = this.m_player as PlayerPuppet;
+  var evt: TimeSkipMenuVisibilityEvent = new TimeSkipMenuVisibilityEvent;
+  if (player.itsTimeskipActive) {
+    evt.visible = false;
+    GameInstance.GetUISystem(player.GetGame()).QueueEvent(evt);
+    player.itsTimeskipActive = false;
+    player.itsTimeskipPopupToken = NULL;
+  };
+}
+
+@addMethod(TimeskipGameController)
+function FastForwardTimeCustom(diff: Float) -> Void {
+  var timeDiff: Float = this.itsInitialDiff - diff;
+  var timeAddition: Float = timeDiff * this.itsSecondsPerDegree;
+  var newTimestamp: Int32 = Cast<Int32>((this.itsInitialTimestamp + timeAddition));
+  this.m_timeSystem.SetGameTimeBySeconds(newTimestamp);
+}
+
+@addMethod(TimeskipGameController)
+event OnInterruptCustomTimeSkipEvent(evt: InterruptCustomTimeSkipEvent) {
+  var player: PlayerPuppet = this.m_player as PlayerPuppet;
+  if (player.itsTimeskipActive) {
+    player.DisableCustomTimeFastForward();
+    GameInstance.GetAudioSystem(this.m_gameInstance).Play('ui_menu_map_timeskip_stop');
+    this.m_inputEnabled = true;
+    if ((this.m_animProxy != NULL)) {
+      this.m_animProxy.Stop(true);
+    };
+    if ((this.m_progressAnimProxy != NULL)) {
+      this.m_progressAnimProxy.Stop(true);
+    };
+    this.FinalizeTimeskip();
+    this.Cancel();
+  };
+}
+
+@wrapMethod(TimeskipGameController)
+function Apply() -> Void {
+  // The immersive branch deliberately bypasses vanilla instant time/state fast-forward.
+  var options: inkAnimOptions;
+  var player: PlayerPuppet = this.m_player as PlayerPuppet;
+
+  if (player.itsTimeskipActive) {
+    if (!this.m_inputEnabled) {
+      return;
+    };
+    this.m_inputEnabled = false;
+    if (this.m_hoursToSkip > 0) {
+      this.PlayTictocAnimation();
+      this.m_timeSkipped = true;
+      options.toMarker = this.m_loopAnimationMarkerFrom;
+      this.PlayAnimation(this.m_progressAnimation, options);
+      this.m_animProxy.RegisterToCallback(inkanimEventType.OnFinish, this, 'OnStartProgressionLoop');
+    };
+    GameInstance.GetAudioSystem(this.m_gameInstance).Play('ui_menu_map_timeskip');
+  } else {
+    Apply();
+  };
+}
+
+@wrapMethod(TimeskipGameController)
+event OnStartProgressionLoop(proxy: inkAnimProxy) {
+  OnStartProgressionLoop(proxy);
+  var player: PlayerPuppet = this.m_player as PlayerPuppet;
+  if (player.itsTimeskipActive && this.m_hoursToSkip > 0) {
+    player.EnableCustomTimeFastForward();
+  };
+}
+
+@wrapMethod(TimeskipGameController)
+event OnProgressAnimationFinished(proxy: inkAnimProxy) {
+  OnProgressAnimationFinished(proxy);
+  var player: PlayerPuppet = this.m_player as PlayerPuppet;
+  if (player.itsTimeskipActive) {
+    player.DisableCustomTimeFastForward();
+  };
+}
+
+
+@wrapMethod(TimeskipGameController)
+event OnCloseAfterFinishing(proxy: inkAnimProxy) {
+  OnCloseAfterFinishing(proxy);
+  this.FinalizeTimeskip();
+}
+
+@wrapMethod(TimeskipGameController)
+event OnCloseAfterCanceling(proxy: inkAnimProxy) {
+  OnCloseAfterCanceling(proxy);
+  this.FinalizeTimeskip();
+}
+
+@wrapMethod(TimeskipGameController)
+function PlayTictocAnimation() -> Void {
+  PlayTictocAnimation();
+  var angle: Float = Deg2Rad(inkWidgetRef.GetRotation(this.m_currentTimePointerRef));
+  if (angle > this.m_targetTimeAngle) {
+    this.itsInitialDiff = Rad2Deg(6.28 - angle + this.m_targetTimeAngle);
+  } else {
+    this.itsInitialDiff = Rad2Deg(this.m_targetTimeAngle - angle);
+  };
+  this.itsInitialTimestamp = this.m_timeSystem.GetGameTimeStamp();
+  var skipPeriod: Float = Cast<Float>(this.m_hoursToSkip) * 3600.0;
+  this.itsSecondsPerDegree = skipPeriod / this.itsInitialDiff;
+}
+
+
+@wrapMethod(TimeskipGameController)
+event OnUpdate(timeDelta: Float) {
+  var a: Float;
+  var d: Float;
+
+  if (!this.m_inputEnabled && this.m_player.itsTimeskipActive) {
+    if ((this.m_progressAnimProxy != NULL) && this.m_progressAnimProxy.IsPlaying()) {
+      a = Deg2Rad(inkWidgetRef.GetRotation(this.m_currentTimePointerRef));
+      if (a > this.m_targetTimeAngle) {
+        d = Rad2Deg(6.28 - a + this.m_targetTimeAngle);
+      } else {
+        d = Rad2Deg(this.m_targetTimeAngle - a);
+      };
+      this.FastForwardTimeCustom(d);
+    };
+  };
+
+  OnUpdate(timeDelta);
+}
+
+@wrapMethod(TimeskipGameController)
+event OnGlobalInput(e: inkPointerEvent) {
+  if (!e.IsHandled() && e.IsAction('cancel') && this.m_player.itsTimeskipActive && this.m_timeSkipped && (this.m_progressAnimProxy != NULL) && this.m_progressAnimProxy.IsPlaying()) {
+    // Consume cancel here so the vanilla input lock cannot suppress interruption.
+    e.Handle();
+    this.OnInterruptCustomTimeSkipEvent(new InterruptCustomTimeSkipEvent);
+    return;
+  };
+  OnGlobalInput(e);
+}

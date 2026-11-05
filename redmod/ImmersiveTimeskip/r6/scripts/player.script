@@ -1,0 +1,28 @@
+@module "ImmersiveTimeskip"
+
+@addMethod(PlayerPuppet)
+function EnableCustomTimeFastForward() -> Void {
+  this.itsTimeSystem.SetTimeDilation('customTimeSkip', 500.0);
+}
+
+@addMethod(PlayerPuppet)
+function DisableCustomTimeFastForward() -> Void {
+  this.itsTimeSystem.UnsetTimeDilation('customTimeSkip');
+}
+
+@wrapMethod(PlayerPuppet)
+event OnGameAttached() {
+  OnGameAttached();
+  this.itsTimeSystem = GameInstance.GetTimeSystem(this.GetGame());
+}
+
+@wrapMethod(PlayerPuppet)
+event OnDeath(evt: gameDeathEvent) {
+  OnDeath(evt);
+  GameInstance.GetUISystem(this.GetGame()).QueueEvent(new InterruptCustomTimeSkipEvent);
+}
+@wrapMethod(PhoneSystem)
+function OnTriggerCall(request: questTriggerCallRequest) -> Void {
+  GameInstance.GetUISystem(this.GetGameInstance()).QueueEvent(new InterruptCustomTimeSkipEvent);
+  OnTriggerCall(request);
+}

@@ -1,0 +1,96 @@
+@module "ImmersiveTimeskip"
+
+@addMethod(PopupsManager)
+event ShowTimeSkipPopup() {
+  var player: PlayerPuppet = (this as inkGameController).GetPlayerControlledObject() as PlayerPuppet;
+  var evt: TimeSkipMenuVisibilityEvent = new TimeSkipMenuVisibilityEvent;
+  evt.visible = true;
+  GameInstance.GetUISystem(player.GetGame()).QueueEvent(evt);
+  var data: TimeSkipPopupData = new TimeSkipPopupData;
+  data.notificationName = 'base\gameplay\gui\widgets\time_skip\time_skip.inkwidget';
+  data.isBlocking = true;
+  data.useCursor = true;
+  data.queueName = 'modal_popup';
+  player.itsTimeskipActive = true;
+  player.itsTimeskipPopupToken = (this as inkGameController).ShowGameNotification(data);
+  (this as inkGameController).PlaySound('Button', 'OnPress');
+}
+
+@addMethod(PopupsManager)
+function ShowTimeSkipNotAvailableNotification() -> Void {
+  var notification: UIInGameNotificationEvent = new UIInGameNotificationEvent;
+  notification.m_notificationType = UIInGameNotificationType.CombatRestriction;
+  GameInstance.GetUISystem((this as inkGameController).GetPlayerControlledObject().GetGame()).QueueEvent(notification);
+}
+
+@addMethod(PopupsManager)
+event OnOpenTimeSkipMenuEvent(evt: OpenTimeSkipMenuEvent) {
+  var preGame: Bool = this.GetSystemRequestsHandler().IsPreGame();
+  if (!preGame) {
+    var player: PlayerPuppet = this.GetPlayerControlledObject() as PlayerPuppet;
+    if (ITSUtils.IsTimeskipAvailable(player)) {
+      this.ShowTimeSkipPopup();
+    } else {
+      this.ShowTimeSkipNotAvailableNotification();
+    }
+  }
+}
+
+@wrapMethod(PopupsManager)
+event OnPlayerAttach(playerPuppet: GameObject) {
+  OnPlayerAttach(playerPuppet);
+  var player: PlayerPuppet = playerPuppet as PlayerPuppet;
+  if (player) {
+    player.itsTimeskipManager = this;
+  }
+  this.itsOpenRequested = false;
+}
+
+@addMethod(inkIGameController)
+event OnTimeSkipMenuVisibilityEvent(evt: TimeSkipMenuVisibilityEvent) {
+  var hideableWidgets: array<CName> = [
+    'HotkeysWidgetController',
+    'gameuiNewPhoneRelatedHUDGameController',
+    'CrouchIndicatorGameController',
+    'gameuiInputHintManagerGameController',
+    'gameuiMinimapContainerController',
+    'healthbarWidgetGameController',
+    'QuestTrackerGameController',
+    'weaponRosterGameController'
+  ];
+
+  if (hideableWidgets.Contains(this.GetClassName())) {
+    if (evt.visible) {
+      this.itsDefaultOpacity = this.GetRootCompoundWidget().GetOpacity();
+      ITSUtils.AnimateAlpha(this.GetRootCompoundWidget(), 0.0, 0.3);
+    } else {
+      if (this.itsDefaultOpacity != 0.0) {
+        ITSUtils.AnimateAlpha(this.GetRootCompoundWidget(), this.itsDefaultOpacity, 0.3);
+      };
+    };
+  };
+}
+
+@addMethod(PopupsManager)
+function RequestTimeSkip() -> Void {
+  this.itsOpenRequested = true;
+}
+
+@wrapMethod(PopupsManager)
+event OnPlayerDetach(playerPuppet: GameObject) {
+  this.itsOpenRequested = false;
+  var player: PlayerPuppet = playerPuppet as PlayerPuppet;
+  if (player && player.itsTimeskipManager == this) {
+    player.itsTimeskipManager = NULL;
+  }
+  OnPlayerDetach(playerPuppet);
+}
+
+@addMethod(PopupsManager)
+function ProcessTimeSkipRequest() -> Void {
+  if (!this.itsOpenRequested) {
+    return;
+  }
+  this.itsOpenRequested = false;
+  this.OnOpenTimeSkipMenuEvent(new OpenTimeSkipMenuEvent);
+}
