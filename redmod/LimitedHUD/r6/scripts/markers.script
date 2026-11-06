@@ -1,0 +1,183 @@
+@module "LimitedHUD"
+
+@addMethod(QuestMappinController)
+function LimitedMarkerAllowed(state: LimitedHUDContext) -> Bool {
+  let icon: gamedataMappinVariant = this.m_mappin.GetVariant();
+  switch (icon) {
+    case gamedataMappinVariant.ActionDealDamageVariant:
+    case gamedataMappinVariant.ConversationVariant:
+    case gamedataMappinVariant.DefaultVariant:
+    case gamedataMappinVariant.DefaultQuestVariant:
+    case gamedataMappinVariant.DefaultInteractionVariant:
+    case gamedataMappinVariant.QuestGiverVariant:
+    case gamedataMappinVariant.MinorActivityVariant:
+    case gamedataMappinVariant.Zzz06_NCPDGigVariant:
+    case gamedataMappinVariant.ExclamationMarkVariant:
+    case gamedataMappinVariant.RetrievingVariant:
+    case gamedataMappinVariant.ThieveryVariant:
+    case gamedataMappinVariant.SabotageVariant:
+    case gamedataMappinVariant.ClientInDistressVariant:
+    case gamedataMappinVariant.BountyHuntVariant:
+    case gamedataMappinVariant.CourierVariant:
+    case gamedataMappinVariant.GangWatchVariant:
+    case gamedataMappinVariant.OutpostVariant:
+    case gamedataMappinVariant.HiddenStashVariant:
+    case gamedataMappinVariant.HuntForPsychoVariant:
+    case gamedataMappinVariant.SmugglersDenVariant:
+    case gamedataMappinVariant.WanderingMerchantVariant:
+    case gamedataMappinVariant.ConvoyVariant:
+    case gamedataMappinVariant.FixerVariant:
+    case gamedataMappinVariant.Zzz01_CarForPurchaseVariant:
+    case gamedataMappinVariant.Zzz02_MotorcycleForPurchaseVariant:
+    case gamedataMappinVariant.Zzz04_PreventionVehicleVariant:
+    case gamedataMappinVariant.Zzz05_ApartmentToPurchaseVariant:
+    case gamedataMappinVariant.GPSPortalVariant:
+    case gamedataMappinVariant.PhoneCallVariant:
+    case gamedataMappinVariant.TarotVariant:
+    case gamedataMappinVariant.FocusClueVariant:
+    case gamedataMappinVariant.Zzz09_CourierSandboxActivityVariant:
+    case gamedataMappinVariant.Zzz12_WorldEncounterVariant:
+    case gamedataMappinVariant.Zzz20_DelamainTaxiDestinationVariant:
+      return state.zoom || state.scanning || this.m_mappin.IsPlayerTracked();
+    case gamedataMappinVariant.FastTravelVariant:
+    case gamedataMappinVariant.DropboxVariant:
+    case gamedataMappinVariant.ApartmentVariant:
+    case gamedataMappinVariant.ServicePointClothesVariant:
+    case gamedataMappinVariant.ServicePointFoodVariant:
+    case gamedataMappinVariant.ServicePointBarVariant:
+    case gamedataMappinVariant.ServicePointGunsVariant:
+    case gamedataMappinVariant.ServicePointMedsVariant:
+    case gamedataMappinVariant.ServicePointMeleeTrainerVariant:
+    case gamedataMappinVariant.ServicePointNetTrainerVariant:
+    case gamedataMappinVariant.ServicePointProstituteVariant:
+    case gamedataMappinVariant.ServicePointRipperdocVariant:
+    case gamedataMappinVariant.ServicePointTechVariant:
+    case gamedataMappinVariant.ServicePointJunkVariant:
+    case gamedataMappinVariant.EffectDropPointVariant:
+    case gamedataMappinVariant.ServicePointDropPointVariant:
+    case gamedataMappinVariant.CustomPositionVariant:
+    case gamedataMappinVariant.Zzz07_PlayerStashVariant:
+    case gamedataMappinVariant.Zzz08_WardrobeVariant:
+    case gamedataMappinVariant.Zzz11_RoadBlockadeVariant:
+    case gamedataMappinVariant.Zzz13_DogtownGateVariant:
+    case gamedataMappinVariant.Zzz14_ServicePointBlackMarketVariant:
+    case gamedataMappinVariant.Zzz16_RelicDeviceBasicVariant:
+    case gamedataMappinVariant.Zzz16_RelicDeviceSpecialVariant:
+    case gamedataMappinVariant.Zzz17_NCARTVariant:
+    case gamedataMappinVariant.Zzz18_RacingVariant:
+    case gamedataMappinVariant.Zzz21_ServicePointGlamdocVariant:
+    case gamedataMappinVariant.Zzz22_CityTourLandmark:
+    case gamedataMappinVariant.CPO_PingLootVariant:
+      return !state.braindance && (state.zoom || state.scanning || this.m_mappin.IsPlayerTracked());
+    case gamedataMappinVariant.VehicleVariant:
+    case gamedataMappinVariant.Zzz19_DelamainTaxiVariant:
+    case gamedataMappinVariant.Zzz03_MotorcycleVariant:
+      return !state.braindance && (state.zoom || state.scanning);
+    case gamedataMappinVariant.LootVariant:
+    case gamedataMappinVariant.NPCVariant:
+      return state.scanning;
+    case gamedataMappinVariant.GrenadeVariant:
+    case gamedataMappinVariant.Zzz12_QuickHackQueueVariant:
+    case gamedataMappinVariant.Zzz15_QuickHackDurationVariant:
+      return true;
+    case gamedataMappinVariant.Zzz10_RemoteControlDrivingVariant:
+      return state.combat || state.crouched || state.scanning;
+  }
+  let data: GameplayRoleMappinData = this.m_mappin.GetScriptData() as GameplayRoleMappinData;
+  if (data) {
+    if (data.m_textureID == T"MappinIcons.ShardMappin") { return state.scanning; }
+    switch (data.m_gameplayRole) {
+      case EGameplayRole.Loot:
+      case EGameplayRole.Alarm:
+      case EGameplayRole.ControlNetwork:
+      case EGameplayRole.ControlOtherDevice:
+      case EGameplayRole.ControlSelf:
+      case EGameplayRole.CutPower:
+      case EGameplayRole.Distract:
+      case EGameplayRole.ExplodeLethal:
+      case EGameplayRole.ExplodeNoneLethal:
+      case EGameplayRole.Fall:
+      case EGameplayRole.GrantInformation:
+      case EGameplayRole.HideBody:
+      case EGameplayRole.OpenPath:
+      case EGameplayRole.ClearPath:
+      case EGameplayRole.DistractVendingMachine:
+        return state.scanning;
+    }
+  }
+  return true;
+}
+
+@addMethod(QuestMappinController)
+function ApplyLimitedMarker() {
+  let state: LimitedHUDContext = LimitedHUDContext.Current();
+  this.BindLimitedSubscriber(state);
+  if (state && this.m_mappin && !this.LimitedMarkerAllowed(state)) {
+    this.SetRootVisible(false);
+  }
+}
+
+@wrapMethod(QuestMappinController)
+function UpdateVisibility() {
+  UpdateVisibility();
+  this.ApplyLimitedMarker();
+}
+
+@wrapMethod(GameplayMappinController)
+function UpdateVisibility() {
+  UpdateVisibility();
+  this.ApplyLimitedMarker();
+}
+
+@addMethod(QuestMappinController)
+function RefreshLimitedSubscriber() {
+  if (this.m_mappin) { this.UpdateVisibility(); }
+}
+
+@addField(StealthMappinController)
+var limitedObjectMarkerSuppressed: Bool;
+
+@addMethod(StealthMappinController)
+function ApplyLimitedEnemyMarker() {
+  let state: LimitedHUDContext = LimitedHUDContext.Current();
+  this.BindLimitedSubscriber(state);
+  let visible: Bool = state && (state.combat || state.crouched || state.scanning || this.m_mappin.IsTagged() || this.m_statusEffectShowing);
+  let warningOnly: Bool = !visible && this.m_detectionVisible && !this.m_isHiddenByQuest && inkWidgetRef.IsVisible(this.m_mainArt);
+  if (warningOnly) {
+    inkWidgetRef.SetVisible(this.m_objectMarker, false);
+  } else if (this.limitedObjectMarkerSuppressed) {
+    // Vanilla only reapplies this widget's visibility when its cached decision changes.
+    inkWidgetRef.SetVisible(this.m_objectMarker, this.m_objectMarkerVisible);
+  }
+  this.limitedObjectMarkerSuppressed = warningOnly;
+  this.GetRootWidget().SetOpacity(visible || warningOnly ? 1.0 : 0.0);
+}
+
+@wrapMethod(StealthMappinController)
+event OnUpdate() {
+  OnUpdate();
+  this.ApplyLimitedEnemyMarker();
+}
+
+@addMethod(StealthMappinController)
+function RefreshLimitedSubscriber() {
+  if (this.m_mappin) { this.ApplyLimitedEnemyMarker(); }
+}
+
+@wrapMethod(NameplateVisualsLogicController)
+function UpdateHealthbarVisibility() {
+  UpdateHealthbarVisibility();
+  this.ApplyLimitedHealthbar();
+}
+
+@addMethod(NameplateVisualsLogicController)
+function ApplyLimitedHealthbar() {
+  let state: LimitedHUDContext = LimitedHUDContext.Current();
+  this.BindLimitedSubscriber(state);
+  inkWidgetRef.SetOpacity(this.m_healthbarWidget, state && (state.combat || state.crouched || state.scanning) ? 1.0 : 0.0);
+}
+
+@addMethod(NameplateVisualsLogicController)
+function RefreshLimitedSubscriber() {
+  this.ApplyLimitedHealthbar();
+}

@@ -1,0 +1,61 @@
+@module "LimitedHUD"
+
+class LimitedHUDFade extends IScriptable {
+  private var widget: weak<inkWidget>;
+  private var animation: inkAnimProxy;
+  private var goal: Float;
+
+  public static function To(out fade: LimitedHUDFade, target: weak<inkWidget>, opacity: Float, optional seconds: Float) {
+    if (!target) { return; }
+    if (!fade) { fade = new LimitedHUDFade; }
+    if (fade.widget != target) {
+      fade.Stop();
+      fade.widget = target;
+      fade.goal = opacity;
+      target.SetOpacity(opacity);
+      return;
+    }
+    if (fade.goal == opacity) {
+      if (!fade.animation && target.GetOpacity() != opacity) { target.SetOpacity(opacity); }
+      return;
+    }
+
+    let start: Float = target.GetOpacity();
+    fade.Stop();
+    fade.goal = opacity;
+    if (start == opacity) {
+      target.SetOpacity(opacity);
+      return;
+    }
+    let alpha: inkAnimTransparency = new inkAnimTransparency;
+    alpha.SetType(inkanimInterpolationType.Linear);
+    alpha.SetMode(inkanimInterpolationMode.EasyIn);
+    alpha.SetDirection(inkanimInterpolationDirection.To);
+    alpha.SetStartTransparency(start);
+    alpha.SetEndTransparency(opacity);
+    alpha.SetDuration(seconds > 0.0 ? seconds : 0.3);
+    let timeline: inkAnimDef = new inkAnimDef;
+    timeline.AddInterpolator(alpha);
+    fade.animation = target.PlayAnimation(timeline);
+    if (fade.animation) {
+      fade.animation.RegisterToCallback(inkanimEventType.OnFinish, fade, 'OnFadeFinished');
+    } else {
+      target.SetOpacity(opacity);
+    }
+  }
+
+  private function Stop() {
+    if (this.animation) {
+      this.animation.UnregisterFromCallback(inkanimEventType.OnFinish, this, 'OnFadeFinished');
+      this.animation.Stop(true);
+      this.animation = NULL;
+    }
+  }
+
+  protected event OnFadeFinished(proxy: inkAnimProxy) {
+    if (proxy == this.animation) {
+      if (this.widget) { this.widget.SetOpacity(this.goal); }
+      this.animation = NULL;
+    }
+  }
+}

@@ -1,0 +1,11 @@
+@module "LimitedHUD"
+
+@wrapMethod(InputContextTransitionEvents)
+const function ShowGenericExplorationInputHints(stateContext: StateContext, scriptInterface: StateGameScriptInterface) {
+  // Keep the required cancel action during a charged throw. Other contexts supply their own hints.
+  if (stateContext.GetStateMachineCurrentState('CombatGadget') == 'combatGadgetCharge') {
+    ShowGenericExplorationInputHints(stateContext, scriptInterface);
+  } else {
+    stateContext.SetPermanentBoolParameter('isLocomotionInputHintDisplayed', true, true);
+  }
+}

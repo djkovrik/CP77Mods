@@ -1,0 +1,300 @@
+@module "LimitedHUD"
+
+abstract class LimitedHUDSubscriber extends IScriptable {
+  public var owner: weak<LimitedHUDContext>;
+  public virtual function Refresh() {}
+}
+
+class LimitedHUDSubscribers extends IScriptable {
+  private var entries: array<weak<LimitedHUDSubscriber>>;
+  private var sweepAt: Int32;
+
+  public function Subscribe(entry: LimitedHUDSubscriber) {
+    // Reclaim expired widgets even when no visibility condition changes for a long time.
+    if (this.entries.Size() >= this.sweepAt) {
+      let i: Int32 = this.entries.Size() - 1;
+      while (i >= 0) {
+        if (!this.entries[i]) { this.entries.EraseFast(i); }
+        i -= 1;
+      }
+      this.sweepAt = 32 + this.entries.Size() * 2;
+    }
+    this.entries.PushBack(entry);
+  }
+
+  public function Refresh() {
+    let i: Int32 = this.entries.Size() - 1;
+    while (i >= 0) {
+      let entry: LimitedHUDSubscriber = this.entries[i];
+      if (entry) { entry.Refresh(); }
+      else { this.entries.EraseFast(i); }
+      i -= 1;
+    }
+  }
+}
+
+class LimitedMinimapContainerControllerSubscriber extends LimitedHUDSubscriber {
+  public var target: weak<MinimapContainerController>;
+  public override function Refresh() {
+    if (this.target) { this.target.RefreshLimitedSubscriber(); }
+  }
+}
+
+@addField(MinimapContainerController)
+var limitedSubscription: LimitedMinimapContainerControllerSubscriber;
+
+@addMethod(MinimapContainerController)
+function BindLimitedSubscriber(state: LimitedHUDContext) {
+  if (!state || (this.limitedSubscription && this.limitedSubscription.owner == state)) { return; }
+  this.limitedSubscription = new LimitedMinimapContainerControllerSubscriber;
+  this.limitedSubscription.target = this;
+  this.limitedSubscription.owner = state;
+  state.panels.Subscribe(this.limitedSubscription);
+}
+
+class LimitedQuestTrackerGameControllerSubscriber extends LimitedHUDSubscriber {
+  public var target: weak<QuestTrackerGameController>;
+  public override function Refresh() {
+    if (this.target) { this.target.RefreshLimitedSubscriber(); }
+  }
+}
+
+@addField(QuestTrackerGameController)
+var limitedSubscription: LimitedQuestTrackerGameControllerSubscriber;
+
+@addMethod(QuestTrackerGameController)
+function BindLimitedSubscriber(state: LimitedHUDContext) {
+  if (!state || (this.limitedSubscription && this.limitedSubscription.owner == state)) { return; }
+  this.limitedSubscription = new LimitedQuestTrackerGameControllerSubscriber;
+  this.limitedSubscription.target = this;
+  this.limitedSubscription.owner = state;
+  state.panels.Subscribe(this.limitedSubscription);
+}
+
+class LimitedCrouchIndicatorGameControllerSubscriber extends LimitedHUDSubscriber {
+  public var target: weak<CrouchIndicatorGameController>;
+  public override function Refresh() {
+    if (this.target) { this.target.RefreshLimitedSubscriber(); }
+  }
+}
+
+@addField(CrouchIndicatorGameController)
+var limitedSubscription: LimitedCrouchIndicatorGameControllerSubscriber;
+
+@addMethod(CrouchIndicatorGameController)
+function BindLimitedSubscriber(state: LimitedHUDContext) {
+  if (!state || (this.limitedSubscription && this.limitedSubscription.owner == state)) { return; }
+  this.limitedSubscription = new LimitedCrouchIndicatorGameControllerSubscriber;
+  this.limitedSubscription.target = this;
+  this.limitedSubscription.owner = state;
+  state.panels.Subscribe(this.limitedSubscription);
+}
+
+class LimitedHotkeysWidgetControllerSubscriber extends LimitedHUDSubscriber {
+  public var target: weak<HotkeysWidgetController>;
+  public override function Refresh() {
+    if (this.target) { this.target.RefreshLimitedSubscriber(); }
+  }
+}
+
+@addField(HotkeysWidgetController)
+var limitedSubscription: LimitedHotkeysWidgetControllerSubscriber;
+
+@addMethod(HotkeysWidgetController)
+function BindLimitedSubscriber(state: LimitedHUDContext) {
+  if (!state || (this.limitedSubscription && this.limitedSubscription.owner == state)) { return; }
+  this.limitedSubscription = new LimitedHotkeysWidgetControllerSubscriber;
+  this.limitedSubscription.target = this;
+  this.limitedSubscription.owner = state;
+  state.panels.Subscribe(this.limitedSubscription);
+}
+
+class LimitedHotkeyConsumableWidgetControllerSubscriber extends LimitedHUDSubscriber {
+  public var target: weak<HotkeyConsumableWidgetController>;
+  public override function Refresh() {
+    if (this.target) { this.target.RefreshLimitedSubscriber(); }
+  }
+}
+
+@addField(HotkeyConsumableWidgetController)
+var limitedSubscription: LimitedHotkeyConsumableWidgetControllerSubscriber;
+
+@addMethod(HotkeyConsumableWidgetController)
+function BindLimitedSubscriber(state: LimitedHUDContext) {
+  if (!state || (this.limitedSubscription && this.limitedSubscription.owner == state)) { return; }
+  this.limitedSubscription = new LimitedHotkeyConsumableWidgetControllerSubscriber;
+  this.limitedSubscription.target = this;
+  this.limitedSubscription.owner = state;
+  state.panels.Subscribe(this.limitedSubscription);
+}
+
+class LimitedPhoneHotkeyControllerSubscriber extends LimitedHUDSubscriber {
+  public var target: weak<PhoneHotkeyController>;
+  public override function Refresh() {
+    if (this.target) { this.target.RefreshLimitedSubscriber(); }
+  }
+}
+
+@addField(PhoneHotkeyController)
+var limitedSubscription: LimitedPhoneHotkeyControllerSubscriber;
+
+@addMethod(PhoneHotkeyController)
+function BindLimitedSubscriber(state: LimitedHUDContext) {
+  if (!state || (this.limitedSubscription && this.limitedSubscription.owner == state)) { return; }
+  this.limitedSubscription = new LimitedPhoneHotkeyControllerSubscriber;
+  this.limitedSubscription.target = this;
+  this.limitedSubscription.owner = state;
+  state.panels.Subscribe(this.limitedSubscription);
+}
+
+class LimitedStaminabarWidgetGameControllerSubscriber extends LimitedHUDSubscriber {
+  public var target: weak<StaminabarWidgetGameController>;
+  public override function Refresh() {
+    if (this.target) { this.target.RefreshLimitedSubscriber(); }
+  }
+}
+
+@addField(StaminabarWidgetGameController)
+var limitedSubscription: LimitedStaminabarWidgetGameControllerSubscriber;
+
+@addMethod(StaminabarWidgetGameController)
+function BindLimitedSubscriber(state: LimitedHUDContext) {
+  if (!state || (this.limitedSubscription && this.limitedSubscription.owner == state)) { return; }
+  this.limitedSubscription = new LimitedStaminabarWidgetGameControllerSubscriber;
+  this.limitedSubscription.target = this;
+  this.limitedSubscription.owner = state;
+  state.panels.Subscribe(this.limitedSubscription);
+}
+
+class LimitedWeaponRosterGameControllerSubscriber extends LimitedHUDSubscriber {
+  public var target: weak<WeaponRosterGameController>;
+  public override function Refresh() {
+    if (this.target) { this.target.RefreshLimitedSubscriber(); }
+  }
+}
+
+@addField(WeaponRosterGameController)
+var limitedSubscription: LimitedWeaponRosterGameControllerSubscriber;
+
+@addMethod(WeaponRosterGameController)
+function BindLimitedSubscriber(state: LimitedHUDContext) {
+  if (!state || (this.limitedSubscription && this.limitedSubscription.owner == state)) { return; }
+  this.limitedSubscription = new LimitedWeaponRosterGameControllerSubscriber;
+  this.limitedSubscription.target = this;
+  this.limitedSubscription.owner = state;
+  state.panels.Subscribe(this.limitedSubscription);
+}
+
+class LimitedQuestMappinControllerSubscriber extends LimitedHUDSubscriber {
+  public var target: weak<QuestMappinController>;
+  public override function Refresh() {
+    if (this.target) { this.target.RefreshLimitedSubscriber(); }
+  }
+}
+
+@addField(QuestMappinController)
+var limitedSubscription: LimitedQuestMappinControllerSubscriber;
+
+@addMethod(QuestMappinController)
+function BindLimitedSubscriber(state: LimitedHUDContext) {
+  if (!state || (this.limitedSubscription && this.limitedSubscription.owner == state)) { return; }
+  this.limitedSubscription = new LimitedQuestMappinControllerSubscriber;
+  this.limitedSubscription.target = this;
+  this.limitedSubscription.owner = state;
+  state.markers.Subscribe(this.limitedSubscription);
+}
+
+class LimitedStealthMappinControllerSubscriber extends LimitedHUDSubscriber {
+  public var target: weak<StealthMappinController>;
+  public override function Refresh() {
+    if (this.target) { this.target.RefreshLimitedSubscriber(); }
+  }
+}
+
+@addField(StealthMappinController)
+var limitedSubscription: LimitedStealthMappinControllerSubscriber;
+
+@addMethod(StealthMappinController)
+function BindLimitedSubscriber(state: LimitedHUDContext) {
+  if (!state || (this.limitedSubscription && this.limitedSubscription.owner == state)) { return; }
+  this.limitedSubscription = new LimitedStealthMappinControllerSubscriber;
+  this.limitedSubscription.target = this;
+  this.limitedSubscription.owner = state;
+  state.markers.Subscribe(this.limitedSubscription);
+}
+
+class LimitedNameplateVisualsLogicControllerSubscriber extends LimitedHUDSubscriber {
+  public var target: weak<NameplateVisualsLogicController>;
+  public override function Refresh() {
+    if (this.target) { this.target.RefreshLimitedSubscriber(); }
+  }
+}
+
+@addField(NameplateVisualsLogicController)
+var limitedSubscription: LimitedNameplateVisualsLogicControllerSubscriber;
+
+@addMethod(NameplateVisualsLogicController)
+function BindLimitedSubscriber(state: LimitedHUDContext) {
+  if (!state || (this.limitedSubscription && this.limitedSubscription.owner == state)) { return; }
+  this.limitedSubscription = new LimitedNameplateVisualsLogicControllerSubscriber;
+  this.limitedSubscription.target = this;
+  this.limitedSubscription.owner = state;
+  state.markers.Subscribe(this.limitedSubscription);
+}
+
+class LimitedhealthbarWidgetGameControllerSubscriber extends LimitedHUDSubscriber {
+  public var target: weak<healthbarWidgetGameController>;
+  public override function Refresh() {
+    if (this.target) { this.target.RefreshLimitedSubscriber(); }
+  }
+}
+
+@addField(healthbarWidgetGameController)
+var limitedSubscription: LimitedhealthbarWidgetGameControllerSubscriber;
+
+@addMethod(healthbarWidgetGameController)
+function BindLimitedSubscriber(state: LimitedHUDContext) {
+  if (!state || (this.limitedSubscription && this.limitedSubscription.owner == state)) { return; }
+  this.limitedSubscription = new LimitedhealthbarWidgetGameControllerSubscriber;
+  this.limitedSubscription.target = this;
+  this.limitedSubscription.owner = state;
+  state.uploads.Subscribe(this.limitedSubscription);
+}
+
+class LimitedHotkeyCustomRadioWidgetControllerSubscriber extends LimitedHUDSubscriber {
+  public var target: weak<HotkeyCustomRadioWidgetController>;
+  public override function Refresh() {
+    if (this.target) { this.target.RefreshLimitedSubscriber(); }
+  }
+}
+
+@addField(HotkeyCustomRadioWidgetController)
+var limitedSubscription: LimitedHotkeyCustomRadioWidgetControllerSubscriber;
+
+@addMethod(HotkeyCustomRadioWidgetController)
+function BindLimitedSubscriber(state: LimitedHUDContext) {
+  if (!state || (this.limitedSubscription && this.limitedSubscription.owner == state)) { return; }
+  this.limitedSubscription = new LimitedHotkeyCustomRadioWidgetControllerSubscriber;
+  this.limitedSubscription.target = this;
+  this.limitedSubscription.owner = state;
+  state.panels.Subscribe(this.limitedSubscription);
+}
+
+class LimitedCarHotkeyControllerSubscriber extends LimitedHUDSubscriber {
+  public var target: weak<CarHotkeyController>;
+  public override function Refresh() {
+    if (this.target) { this.target.RefreshLimitedSubscriber(); }
+  }
+}
+
+@addField(CarHotkeyController)
+var limitedSubscription: LimitedCarHotkeyControllerSubscriber;
+
+@addMethod(CarHotkeyController)
+function BindLimitedSubscriber(state: LimitedHUDContext) {
+  if (!state || (this.limitedSubscription && this.limitedSubscription.owner == state)) { return; }
+  this.limitedSubscription = new LimitedCarHotkeyControllerSubscriber;
+  this.limitedSubscription.target = this;
+  this.limitedSubscription.owner = state;
+  state.panels.Subscribe(this.limitedSubscription);
+}

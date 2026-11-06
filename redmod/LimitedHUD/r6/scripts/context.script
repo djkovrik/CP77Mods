@@ -1,0 +1,231 @@
+@module "LimitedHUD"
+
+
+@addField(HUDManager)
+var limitedHUD: LimitedHUDContext;
+
+class LimitedHUDContext extends IScriptable {
+  public var panels: LimitedHUDSubscribers;
+  public var markers: LimitedHUDSubscribers;
+  public var uploads: LimitedHUDSubscribers;
+
+  public static function Current() -> LimitedHUDContext {
+    let game: GameInstance = GetGameInstanceFromEngine();
+    if (!GameInstance.IsValid(game)) { return NULL; }
+    let systems: ScriptableSystemsContainer = GameInstance.GetScriptableSystemsContainer(game);
+    if (systems) {
+      let manager: HUDManager = systems.Get('HUDManager') as HUDManager;
+      if (manager) { return manager.GetLimitedContext(); }
+    }
+    return NULL;
+  }
+
+  public var combat: Bool;
+  public var crouched: Bool;
+  public var scanning: Bool;
+  public var details: Bool;
+  public var braindance: Bool;
+  public var armed: Bool;
+  public var zoom: Bool;
+  public var mounted: Bool;
+  public var driving: Bool;
+  public var wanted: Bool;
+  public var calling: Bool;
+  public var uploading: Bool;
+  private var player: weak<PlayerPuppet>;
+  private var psm: weak<IBlackboard>;
+  private var equipment: weak<IBlackboard>;
+  private var vision: weak<IBlackboard>;
+  private var bd: weak<IBlackboard>;
+  private var police: weak<IBlackboard>;
+  private var drive: weak<IBlackboard>;
+  private var phone: weak<IBlackboard>;
+  private var onCombat: CallbackHandle;
+  private var onLocomotion: CallbackHandle;
+  private var onVehicle: CallbackHandle;
+  private var onZoomLevel: CallbackHandle;
+  private var onUpperBody: CallbackHandle;
+  private var onEquipmentData: CallbackHandle;
+  private var onUIVisible: CallbackHandle;
+  private var onIsActive: CallbackHandle;
+  private var onCurrentWantedLevel: CallbackHandle;
+  private var onAutoDriveDelamain: CallbackHandle;
+  private var onPhoneCallInformation: CallbackHandle;
+
+  public function ShowSupplies() -> Bool {
+    return !this.braindance && (!this.mounted || this.driving) && (this.combat || this.armed);
+  }
+
+  public function ShowWalkingShortcuts() -> Bool {
+    return !this.braindance && !this.mounted && !this.combat && this.zoom;
+  }
+
+  public function ShowDrivingShortcuts() -> Bool {
+    return !this.braindance && this.driving;
+  }
+
+  public function ShowPhone() -> Bool {
+    return this.ShowWalkingShortcuts() || this.ShowDrivingShortcuts() || (!this.braindance && this.calling);
+  }
+
+  public function Attach(owner: PlayerPuppet) {
+    this.player = owner;
+    let system: BlackboardSystem = GameInstance.GetBlackboardSystem(owner.GetGame());
+    let defs: AllBlackboardDefinitions = GetAllBlackboardDefs();
+    this.psm = system.GetLocalInstanced(owner.GetEntityID(), defs.PlayerStateMachine);
+    this.equipment = system.Get(defs.UI_EquipmentData);
+    this.vision = system.Get(defs.UI_Scanner);
+    this.bd = system.Get(defs.Braindance);
+    this.police = system.Get(defs.UI_WantedBar);
+    this.drive = system.Get(defs.UI_AutodriveData);
+    this.phone = system.Get(defs.UI_ComDevice);
+    this.onCombat = this.psm.RegisterListenerInt(defs.PlayerStateMachine.Combat, this, 'OnChangedInt');
+    this.onLocomotion = this.psm.RegisterListenerInt(defs.PlayerStateMachine.Locomotion, this, 'OnChangedInt');
+    this.onVehicle = this.psm.RegisterListenerInt(defs.PlayerStateMachine.Vehicle, this, 'OnChangedInt');
+    this.onZoomLevel = this.psm.RegisterListenerFloat(defs.PlayerStateMachine.ZoomLevel, this, 'OnZoomChanged');
+    this.onUpperBody = this.psm.RegisterListenerInt(defs.PlayerStateMachine.UpperBody, this, 'OnChangedInt');
+    this.onEquipmentData = this.equipment.RegisterListenerVariant(defs.UI_EquipmentData.EquipmentData, this, 'OnChangedVariant');
+    this.onUIVisible = this.vision.RegisterListenerBool(defs.UI_Scanner.UIVisible, this, 'OnChangedBool');
+    this.onIsActive = this.bd.RegisterListenerBool(defs.Braindance.IsActive, this, 'OnChangedBool');
+    this.onCurrentWantedLevel = this.police.RegisterListenerInt(defs.UI_WantedBar.CurrentWantedLevel, this, 'OnChangedInt');
+    this.onAutoDriveDelamain = this.drive.RegisterListenerBool(defs.UI_AutodriveData.AutoDriveDelamain, this, 'OnChangedBool');
+    this.onPhoneCallInformation = this.phone.RegisterListenerVariant(defs.UI_ComDevice.PhoneCallInformation, this, 'OnChangedVariant');
+    this.Refresh(true);
+    this.RefreshUploads();
+  }
+
+  public function RefreshUploads() {
+    let actions: array<TweakDBID> = this.psm.GetVariant(GetAllBlackboardDefs().PlayerStateMachine.UploadingQuickHackIDs) as array<TweakDBID>;
+    let active: Bool = actions.Size() > 0;
+    if (this.uploading != active) {
+      this.uploading = active;
+      this.uploads.Refresh();
+    }
+  }
+
+  public function Detach() {
+    if (!this.player) { return; }
+    let defs: AllBlackboardDefinitions = GetAllBlackboardDefs();
+    this.psm.UnregisterListenerInt(defs.PlayerStateMachine.Combat, this.onCombat);
+    this.psm.UnregisterListenerInt(defs.PlayerStateMachine.Locomotion, this.onLocomotion);
+    this.psm.UnregisterListenerInt(defs.PlayerStateMachine.Vehicle, this.onVehicle);
+    this.psm.UnregisterListenerFloat(defs.PlayerStateMachine.ZoomLevel, this.onZoomLevel);
+    this.psm.UnregisterListenerInt(defs.PlayerStateMachine.UpperBody, this.onUpperBody);
+    this.equipment.UnregisterListenerVariant(defs.UI_EquipmentData.EquipmentData, this.onEquipmentData);
+    this.vision.UnregisterListenerBool(defs.UI_Scanner.UIVisible, this.onUIVisible);
+    this.bd.UnregisterListenerBool(defs.Braindance.IsActive, this.onIsActive);
+    this.police.UnregisterListenerInt(defs.UI_WantedBar.CurrentWantedLevel, this.onCurrentWantedLevel);
+    this.drive.UnregisterListenerBool(defs.UI_AutodriveData.AutoDriveDelamain, this.onAutoDriveDelamain);
+    this.phone.UnregisterListenerVariant(defs.UI_ComDevice.PhoneCallInformation, this.onPhoneCallInformation);
+    this.player = NULL;
+  }
+
+  protected event OnChangedInt(value: Int32) {
+    this.Refresh(false);
+  }
+
+  protected event OnZoomChanged(value: Float) {
+    let active: Bool = !this.armed && !this.scanning && value > 1.0;
+    if (this.zoom != active) {
+      this.zoom = active;
+      this.NotifyMarkers();
+      this.Notify();
+    }
+  }
+
+  protected event OnChangedBool(value: Bool) {
+    this.Refresh(false);
+  }
+
+  protected event OnChangedVariant(value: Variant) {
+    this.Refresh(false);
+  }
+
+  private function NotifyMarkers() {
+    if (this.player) {
+      this.markers.Refresh();
+    }
+  }
+
+  public function Notify() {
+    if (this.player) {
+      this.panels.Refresh();
+    }
+  }
+
+  private function Refresh(force: Bool) {
+    if (!this.player) { return; }
+    let defs: AllBlackboardDefinitions = GetAllBlackboardDefs();
+    let nowCombat: Bool = this.psm.GetInt(defs.PlayerStateMachine.Combat) == (Int32)gamePSMCombat.InCombat;
+    let pose: gamePSMLocomotionStates = (gamePSMLocomotionStates)this.psm.GetInt(defs.PlayerStateMachine.Locomotion);
+    let nowCrouched: Bool = pose == gamePSMLocomotionStates.Crouch || pose == gamePSMLocomotionStates.CrouchSprint || pose == gamePSMLocomotionStates.CrouchDodge;
+    let slots: SlotDataHolder = this.equipment.GetVariant(defs.UI_EquipmentData.EquipmentData) as SlotDataHolder;
+    let weapon: WeaponObject = GameInstance.GetTransactionSystem(this.player.GetGame()).GetItemInSlot(this.player, T"AttachmentSlots.WeaponRight") as WeaponObject;
+    let nowArmed: Bool = (slots && ItemID.IsValid(slots.rightWeapon.weaponID)) || weapon != NULL || this.psm.GetInt(defs.PlayerStateMachine.Vehicle) == (Int32)gamePSMVehicle.DriverCombat;
+    let nowScanning: Bool = this.vision.GetBool(defs.UI_Scanner.UIVisible);
+    let nowBraindance: Bool = this.bd.GetBool(defs.Braindance.IsActive);
+    let nowZoom: Bool = !nowArmed && !nowScanning && this.psm.GetFloat(defs.PlayerStateMachine.ZoomLevel) > 1.0;
+    let nowMounted: Bool = VehicleComponent.IsMountedToVehicle(this.player.GetGame(), this.player);
+    let nowDriving: Bool = VehicleComponent.IsDriver(this.player.GetGame(), this.player) && !this.drive.GetBool(defs.UI_AutodriveData.AutoDriveDelamain);
+    let nowWanted: Bool = this.police.GetInt(defs.UI_WantedBar.CurrentWantedLevel) != 0;
+    let info: PhoneCallInformation = this.phone.GetVariant(defs.UI_ComDevice.PhoneCallInformation) as PhoneCallInformation;
+    let nowCalling: Bool = info.callPhase == questPhoneCallPhase.StartCall || info.callPhase == questPhoneCallPhase.IncomingCall;
+    if (!force && this.combat == nowCombat && this.crouched == nowCrouched && this.armed == nowArmed && this.scanning == nowScanning && this.braindance == nowBraindance && this.zoom == nowZoom && this.mounted == nowMounted && this.driving == nowDriving && this.wanted == nowWanted && this.calling == nowCalling) {
+      return;
+    }
+    let refreshMarkers: Bool = force || this.zoom != nowZoom || this.combat != nowCombat || this.crouched != nowCrouched || this.scanning != nowScanning || this.braindance != nowBraindance;
+    this.combat = nowCombat;
+    this.crouched = nowCrouched;
+    this.armed = nowArmed;
+    this.scanning = nowScanning;
+    if (!nowScanning) { this.details = false; }
+    this.braindance = nowBraindance;
+    this.zoom = nowZoom;
+    this.mounted = nowMounted;
+    this.driving = nowDriving;
+    this.wanted = nowWanted;
+    this.calling = nowCalling;
+    if (refreshMarkers) { this.NotifyMarkers(); }
+    this.Notify();
+  }
+}
+
+@addMethod(HUDManager)
+function GetLimitedContext() -> LimitedHUDContext {
+  if (!this.limitedHUD) {
+    this.limitedHUD = new LimitedHUDContext;
+    this.limitedHUD.panels = new LimitedHUDSubscribers;
+    this.limitedHUD.markers = new LimitedHUDSubscribers;
+    this.limitedHUD.uploads = new LimitedHUDSubscribers;
+  }
+  return this.limitedHUD;
+}
+
+@wrapMethod(HUDManager)
+function PlayerAttachedCallback(playerPuppet: GameObject) {
+  PlayerAttachedCallback(playerPuppet);
+  if (this.limitedHUD) { this.limitedHUD.Detach(); }
+  this.GetLimitedContext().Attach(playerPuppet as PlayerPuppet);
+}
+
+@wrapMethod(HUDManager)
+function PlayerDetachedCallback(playerPuppet: GameObject) {
+  if (this.limitedHUD) {
+    this.limitedHUD.Detach();
+    this.limitedHUD.details = false;
+  }
+  PlayerDetachedCallback(playerPuppet);
+}
+@wrapMethod(RPGManager)
+static function IncrementQuickHackBlackboard(gameInstance: GameInstance, actionID: TweakDBID) {
+  IncrementQuickHackBlackboard(gameInstance, actionID);
+  let state: LimitedHUDContext = LimitedHUDContext.Current();
+  if (state) { state.RefreshUploads(); }
+}
+
+@wrapMethod(RPGManager)
+static function DecrementQuickHackBlackboard(gameInstance: GameInstance, actionID: TweakDBID) {
+  DecrementQuickHackBlackboard(gameInstance, actionID);
+  let state: LimitedHUDContext = LimitedHUDContext.Current();
+  if (state) { state.RefreshUploads(); }
+}

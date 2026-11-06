@@ -1,0 +1,345 @@
+@module "LimitedHUD"
+
+@addField(CrouchIndicatorGameController)
+var limitedFade: LimitedHUDFade;
+
+@addField(WeaponRosterGameController)
+var limitedOffline: LimitedHUDFade;
+
+@addField(WeaponRosterGameController)
+var limitedOnline: LimitedHUDFade;
+
+@addField(HotkeysWidgetController)
+var limitedPanel: LimitedHUDFade;
+
+@addField(HotkeysWidgetController)
+var limitedConsumable: LimitedHUDFade;
+
+@addField(HotkeysWidgetController)
+var limitedGadget: LimitedHUDFade;
+
+@addField(HotkeysWidgetController)
+var limitedCyberware: LimitedHUDFade;
+
+@addField(HotkeysWidgetController)
+var limitedLeeroy: LimitedHUDFade;
+
+@addField(HotkeysWidgetController)
+var limitedTimeBank: LimitedHUDFade;
+
+@addField(HotkeysWidgetController)
+var limitedPhone: LimitedHUDFade;
+
+@addField(HotkeysWidgetController)
+var limitedCar: LimitedHUDFade;
+
+@addField(HotkeysWidgetController)
+var limitedRadio: LimitedHUDFade;
+
+@addField(HotkeyConsumableWidgetController)
+var limitedRideRadio: LimitedHUDFade;
+
+@addField(HotkeyConsumableWidgetController)
+var limitedCustomization: LimitedHUDFade;
+
+@addField(HotkeyConsumableWidgetController)
+var limitedAutodrive: LimitedHUDFade;
+
+@addField(HotkeyConsumableWidgetController)
+var limitedPanel: LimitedHUDFade;
+
+@addField(HotkeyConsumableWidgetController)
+var limitedConsumable: LimitedHUDFade;
+
+@addField(HotkeyConsumableWidgetController)
+var limitedConsumableWidget: weak<inkWidget>;
+
+@addField(HotkeyConsumableWidgetController)
+var limitedGadget: LimitedHUDFade;
+
+@addField(HotkeyConsumableWidgetController)
+var limitedGadgetWidget: weak<inkWidget>;
+
+@addField(HotkeyConsumableWidgetController)
+var limitedCyberware: LimitedHUDFade;
+
+@addField(HotkeyConsumableWidgetController)
+var limitedCyberwareWidget: weak<inkWidget>;
+
+@addField(PhoneHotkeyController)
+var limitedFade: LimitedHUDFade;
+
+@addField(StaminabarWidgetGameController)
+var limitedFade: LimitedHUDFade;
+
+@replaceMethod(healthbarWidgetGameController)
+event OnUpdateHealthBarVisibility() {
+  this.UpdateGodModeVisibility();
+  let cyberdeck: Bool = this.IsCyberdeckEquipped();
+  inkCompoundRef.SetVisible(this.m_quickhacksContainer, cyberdeck);
+  if( this.m_isAutodriveEnabled )
+  {
+    this.HideRequest();
+    return;
+  }
+  if( !( this.m_isInOverclockedState ) )
+  {
+    inkWidgetRef.Get( this.m_fullBar ).SetEffectEnabled( inkEffectType.ScanlineWipe, 'ScanlineWipe_0', false );
+    this.GetRootWidget().SetState( 'Default' );
+    this.m_healthMemoryJumpAnim.Stop();
+    this.m_pulseBar.Stop();
+    this.m_pulseText.Stop();
+    this.m_pulse.Stop();
+    if( this.m_currentVisionPSM != gamePSMVision.Default || this.m_isControllingDevice )
+    {
+      this.HideRequest();
+      return;
+    }
+  }
+  let state: LimitedHUDContext = LimitedHUDContext.Current();
+  this.BindLimitedSubscriber(state);
+  let lowRAM: Bool = cyberdeck && this.m_quickhacksMemoryPercent >= 0.0 && this.m_quickhacksMemoryPercent <= 98.0;
+  if (this.m_currentHealth != this.m_maximumHealth || this.m_combatModePSM == gamePSMCombat.InCombat || (state && state.uploading) || this.m_isInOverclockedState || lowRAM) {
+    this.ShowRequest();
+  } else {
+    this.HideRequest();
+  }
+}
+
+@replaceMethod(StaminabarWidgetGameController)
+function EvaluateStaminaBarVisibility() {
+  let state: LimitedHUDContext = LimitedHUDContext.Current();
+  this.BindLimitedSubscriber(state);
+  let visible: Bool = state && !state.braindance && (state.combat || this.m_currentBarValue < 1.0);
+  let permitted: Bool = !this.m_forceHidden && this.m_sceneTier != GameplayTier.Tier4_FPPCinematic && this.m_sceneTier != GameplayTier.Tier5_Cinematic;
+  this.m_RootWidget.SetVisible(permitted);
+  LimitedHUDFade.To(this.limitedFade, this.m_RootWidget, visible && permitted ? 0.7 : 0.0, 0.25);
+}
+
+@addMethod(StaminabarWidgetGameController)
+function RefreshLimitedSubscriber() {
+  if (this.m_RootWidget && this.GetOwnerEntity()) { this.EvaluateStaminaBarVisibility(); }
+}
+
+@wrapMethod(StaminabarWidgetGameController)
+event OnFocusedCoolPerkActive(evt: FocusPerkTriggerd) {
+  OnFocusedCoolPerkActive(evt);
+  this.EvaluateStaminaBarVisibility();
+}
+
+@addMethod(CrouchIndicatorGameController)
+function ApplyLimitedHUD() {
+  let state: LimitedHUDContext = LimitedHUDContext.Current();
+  this.BindLimitedSubscriber(state);
+  LimitedHUDFade.To(this.limitedFade, this.GetRootWidget(), state && state.crouched && !state.braindance ? 1.0 : 0.0);
+}
+
+@addMethod(CrouchIndicatorGameController)
+function RefreshLimitedSubscriber() {
+  this.ApplyLimitedHUD();
+}
+
+@wrapMethod(CrouchIndicatorGameController)
+event OnPlayerAttach(player: GameObject) {
+  OnPlayerAttach(player);
+  this.ApplyLimitedHUD();
+}
+
+@addMethod(WeaponRosterGameController)
+function ApplyLimitedHUD() {
+  let state: LimitedHUDContext = LimitedHUDContext.Current();
+  this.BindLimitedSubscriber(state);
+  let visible: Bool = state && !state.scanning && !state.braindance && (state.armed || state.combat || this.m_inWeaponizedVehicle);
+  if (visible && this.m_player && (this.m_isUnholstered || this.m_inWeaponizedVehicle)) {
+    this.Unfold();
+  } else {
+    this.Fold();
+  }
+  LimitedHUDFade.To(this.limitedOffline, inkWidgetRef.Get(this.m_smartLinkFirmwareOffline), visible ? 1.0 : 0.0);
+  LimitedHUDFade.To(this.limitedOnline, inkWidgetRef.Get(this.m_smartLinkFirmwareOnline), visible ? 1.0 : 0.0);
+}
+
+@addMethod(WeaponRosterGameController)
+function RefreshLimitedSubscriber() {
+  this.ApplyLimitedHUD();
+}
+
+@wrapMethod(WeaponRosterGameController)
+event OnInitialize() {
+  OnInitialize();
+  this.ApplyLimitedHUD();
+}
+
+@wrapMethod(WeaponRosterGameController)
+event OnUnmountingEvent(evt: UnmountingEvent) {
+  OnUnmountingEvent(evt);
+  if (this.m_player && this.m_rightWeaponRecord && !this.m_player.IsReplacer()) {
+    this.SetRosterSlotData();
+  }
+  this.ApplyLimitedHUD();
+}
+
+@addMethod(HotkeysWidgetController)
+function ApplyLimitedHUD() {
+  let state: LimitedHUDContext = LimitedHUDContext.Current();
+  this.BindLimitedSubscriber(state);
+  let walking: Bool = state && state.ShowWalkingShortcuts();
+  let radio: Bool = walking || (state && state.ShowDrivingShortcuts());
+  let supplies: Bool = state && state.ShowSupplies();
+  let combat: Bool = state && state.combat && !state.braindance;
+  LimitedHUDFade.To(this.limitedPhone, inkWidgetRef.Get(this.m_phoneSlot), state && state.ShowPhone() ? 1.0 : 0.0);
+  LimitedHUDFade.To(this.limitedCar, inkWidgetRef.Get(this.m_carSlot), walking ? 1.0 : 0.0);
+  LimitedHUDFade.To(this.limitedRadio, inkWidgetRef.Get(this.m_radioSlot), radio ? 1.0 : 0.0);
+  // Child item animations can restore their own opacity while the save is loading.
+  LimitedHUDFade.To(this.limitedPanel, inkWidgetRef.Get(this.m_dpadHintsPanel), supplies || combat ? 1.0 : 0.0);
+  LimitedHUDFade.To(this.limitedConsumable, this.m_consumables, supplies ? 1.0 : 0.0);
+  LimitedHUDFade.To(this.limitedGadget, this.m_gadgets, supplies ? 1.0 : 0.0);
+  LimitedHUDFade.To(this.limitedCyberware, this.m_cyberware, combat ? 1.0 : 0.0);
+  LimitedHUDFade.To(this.limitedLeeroy, this.m_leeroy, combat ? 1.0 : 0.0);
+  LimitedHUDFade.To(this.limitedTimeBank, this.m_timeBank, combat ? 1.0 : 0.0);
+}
+
+@wrapMethod(HotkeysWidgetController)
+event OnPlayerAttach(player: GameObject) {
+  OnPlayerAttach(player);
+  this.ApplyLimitedHUD();
+}
+
+@addMethod(HotkeysWidgetController)
+function RefreshLimitedSubscriber() {
+  this.ApplyLimitedHUD();
+}
+
+@wrapMethod(HotkeysWidgetController)
+event OnInitialize() {
+  OnInitialize();
+  this.ApplyLimitedHUD();
+}
+
+@addMethod(HotkeyConsumableWidgetController)
+function ApplyLimitedHUD() {
+  let state: LimitedHUDContext = LimitedHUDContext.Current();
+  this.BindLimitedSubscriber(state);
+  let ride: Bool = state && state.ShowDrivingShortcuts();
+  LimitedHUDFade.To(this.limitedRideRadio, inkWidgetRef.Get(this.m_radioSlot), ride ? 1.0 : 0.0);
+  LimitedHUDFade.To(this.limitedCustomization, inkWidgetRef.Get(this.m_vehicleCustomizationSlot), ride ? 1.0 : 0.0);
+  LimitedHUDFade.To(this.limitedAutodrive, inkWidgetRef.Get(this.m_autodriveSlot), ride ? 1.0 : 0.0);
+  let supplies: Bool = state && state.ShowSupplies();
+  let combat: Bool = state && state.combat && !state.braindance;
+  // Child item animations can restore their own opacity while the save is loading.
+  LimitedHUDFade.To(this.limitedPanel, inkWidgetRef.Get(this.m_container), supplies || combat ? 1.0 : 0.0);
+  LimitedHUDFade.To(this.limitedConsumable, this.limitedConsumableWidget, supplies ? 1.0 : 0.0);
+  LimitedHUDFade.To(this.limitedGadget, this.limitedGadgetWidget, supplies ? 1.0 : 0.0);
+  LimitedHUDFade.To(this.limitedCyberware, this.limitedCyberwareWidget, combat ? 1.0 : 0.0);
+}
+
+@wrapMethod(HotkeyConsumableWidgetController)
+event OnPlayerAttach(player: GameObject) {
+  OnPlayerAttach(player);
+  this.ApplyLimitedHUD();
+}
+
+@addMethod(HotkeyConsumableWidgetController)
+function RefreshLimitedSubscriber() {
+  this.ApplyLimitedHUD();
+}
+
+@replaceMethod(HotkeyConsumableWidgetController)
+event OnInitialize() {
+  // Retain the three spawned widgets so the supplies can fade independently of cyberware.
+  let library: ResRef = inkWidgetLibraryResource.GetPath(this.m_DpadHintLibraryPath.widgetLibrary);
+  this.SpawnFromExternal(inkCompoundRef.Get(this.m_radioSlot), library, 'radio');
+  this.SpawnFromExternal(inkCompoundRef.Get(this.m_vehicleCustomizationSlot), library, 'vehicleVisualCustomization');
+  this.SpawnFromExternal(inkCompoundRef.Get(this.m_autodriveSlot), inkWidgetLibraryResource.GetPath(this.m_autodriveLibraryPath.widgetLibrary), 'Root');
+  let container: weak<inkWidget> = inkCompoundRef.Get(this.m_container);
+  this.limitedConsumableWidget = this.SpawnFromExternal(container, library, 'consumable');
+  this.limitedGadgetWidget = this.SpawnFromExternal(container, library, 'gadgetVehicle');
+  this.limitedCyberwareWidget = this.SpawnFromExternal(container, library, 'cyberware');
+  this.ApplyLimitedHUD();
+}
+
+@addMethod(PhoneHotkeyController)
+function ApplyLimitedHUD() {
+  let state: LimitedHUDContext = LimitedHUDContext.Current();
+  this.BindLimitedSubscriber(state);
+  LimitedHUDFade.To(this.limitedFade, this.GetRootWidget(), state && state.ShowPhone() ? 1.0 : 0.0);
+}
+
+@addMethod(PhoneHotkeyController)
+function RefreshLimitedSubscriber() {
+  this.ApplyLimitedHUD();
+}
+
+@wrapMethod(PhoneHotkeyController)
+function UpdateData() {
+  UpdateData();
+  this.ApplyLimitedHUD();
+}
+@addMethod(healthbarWidgetGameController)
+function RefreshLimitedSubscriber() {
+  if (this.m_playerObject) { this.OnUpdateHealthBarVisibility(); }
+}
+
+@wrapMethod(WeaponRosterGameController)
+function Unfold() {
+  let state: LimitedHUDContext = LimitedHUDContext.Current();
+  if (this.m_player && state && !state.scanning && !state.braindance && (state.armed || state.combat || this.m_inWeaponizedVehicle)) {
+    Unfold();
+  }
+}
+
+@addField(HotkeyCustomRadioWidgetController)
+var limitedFade: LimitedHUDFade;
+
+@addMethod(HotkeyCustomRadioWidgetController)
+function RefreshLimitedSubscriber() {
+  let state: LimitedHUDContext = LimitedHUDContext.Current();
+  this.BindLimitedSubscriber(state);
+  LimitedHUDFade.To(this.limitedFade, inkWidgetRef.Get(this.m_radioSlot), state && (state.ShowWalkingShortcuts() || state.ShowDrivingShortcuts()) ? 1.0 : 0.0);
+}
+
+@wrapMethod(HotkeyCustomRadioWidgetController)
+event OnInitialize() {
+  OnInitialize();
+  this.RefreshLimitedSubscriber();
+}
+
+@addField(CarHotkeyController)
+var limitedFade: LimitedHUDFade;
+
+@addField(CarHotkeyController)
+var limitedPendingRadialRestore: Bool;
+
+@addMethod(CarHotkeyController)
+function RefreshLimitedSubscriber() {
+  let state: LimitedHUDContext = LimitedHUDContext.Current();
+  this.BindLimitedSubscriber(state);
+  let walking: Bool = state && state.ShowWalkingShortcuts();
+  if (walking && this.limitedPendingRadialRestore) {
+    this.limitedPendingRadialRestore = false;
+    this.ToggleVisibility(true, true);
+    this.GetRootWidget().SetOpacity(0.0);
+  }
+  LimitedHUDFade.To(this.limitedFade, this.GetRootWidget(), walking ? 1.0 : 0.0);
+}
+
+@wrapMethod(CarHotkeyController)
+function Initialize() -> Bool {
+  let initialized: Bool = Initialize();
+  this.RefreshLimitedSubscriber();
+  return initialized;
+}
+
+@wrapMethod(CarHotkeyController)
+event OnRadialMenuShown(value: Bool) {
+  let state: LimitedHUDContext = LimitedHUDContext.Current();
+  this.limitedPendingRadialRestore = !value && !(state && state.ShowWalkingShortcuts());
+  if (this.limitedPendingRadialRestore) {
+    // The vanilla close animation would reveal the summon button outside zoom.
+    this.ToggleVisibility(false, true);
+    this.RefreshLimitedSubscriber();
+  } else {
+    OnRadialMenuShown(value);
+  }
+}
+

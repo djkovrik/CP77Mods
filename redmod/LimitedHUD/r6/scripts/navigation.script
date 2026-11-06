@@ -1,0 +1,201 @@
+@module "LimitedHUD"
+
+@addField(MinimapContainerController)
+var limitedFade: LimitedHUDFade;
+
+@addMethod(MinimapContainerController)
+function ApplyLimitedHUD() {
+  let state: LimitedHUDContext = LimitedHUDContext.Current();
+  this.BindLimitedSubscriber(state);
+  let visible: Bool = state && !state.braindance && !state.scanning && !state.details && (state.zoom || state.driving || state.wanted);
+  LimitedHUDFade.To(this.limitedFade, this.GetRootWidget(), visible ? 0.9 : 0.0);
+}
+
+@addMethod(MinimapContainerController)
+function RefreshLimitedSubscriber() {
+  this.ApplyLimitedHUD();
+}
+
+@wrapMethod(MinimapContainerController)
+event OnInitialize() {
+  OnInitialize();
+  this.ApplyLimitedHUD();
+}
+@addField(MinimapContainerController)
+var limitedDistrict: inkCanvas;
+@addField(MinimapContainerController)
+var limitedDistrictName: inkText;
+@addField(MinimapContainerController)
+var limitedDistrictAvailable: Bool;
+
+@wrapMethod(MinimapContainerController)
+function InitializePlayer(player: GameObject) {
+  InitializePlayer(player);
+  let puppet: PlayerPuppet = player as PlayerPuppet;
+  let system: PlayerSystem = GameInstance.GetPlayerSystem(player.GetGame());
+  let johnny: Bool = puppet.IsJohnnyReplacer() || GameInstance.GetQuestsSystem(player.GetGame()).GetFactStr(system.GetPossessedByJohnnyFactName()) == 1;
+  this.limitedDistrictAvailable = !johnny;
+  if (johnny) {
+    if (this.limitedDistrict) { this.limitedDistrict.SetVisible(false); }
+    return;
+  }
+  if (!this.limitedDistrict) {
+    this.limitedDistrict = new inkCanvas;
+    this.limitedDistrict.SetAnchor(inkEAnchor.BottomFillHorizontaly);
+    this.limitedDistrict.SetAnchorPoint(Vector2(0.0, 1.0));
+    this.limitedDistrict.SetSize(Vector2(450.0, 34.0));
+    this.limitedDistrict.Reparent(this.GetRootCompoundWidget());
+    let background: inkRectangle = new inkRectangle;
+    background.SetAnchor(inkEAnchor.Fill);
+    background.SetStyle(R"base\gameplay\gui\common\main_colors.inkstyle");
+    background.BindProperty('tintColor', 'MainColors.Blue');
+    background.Reparent(this.limitedDistrict);
+    this.limitedDistrictName = new inkText;
+    this.limitedDistrictName.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+    this.limitedDistrictName.SetFontStyle('Bold');
+    this.limitedDistrictName.SetFontSize(30);
+    this.limitedDistrictName.SetAnchor(inkEAnchor.Centered);
+    this.limitedDistrictName.SetAnchorPoint(Vector2(0.5, 0.5));
+    this.limitedDistrictName.SetFitToContent(true);
+    this.limitedDistrictName.SetStyle(R"base\gameplay\gui\common\main_colors.inkstyle");
+    this.limitedDistrictName.BindProperty('tintColor', 'MainColors.DarkRed');
+    this.limitedDistrictName.Reparent(this.limitedDistrict);
+  }
+  this.limitedDistrictName.SetText(this.m_mapBlackboard.GetString(this.m_mapDefinition.currentLocation));
+  this.limitedDistrict.SetVisible(this.limitedDistrictAvailable && !this.m_playerInCombat && this.m_inPublicOrRestrictedZone);
+}
+
+@wrapMethod(MinimapContainerController)
+event OnLocationUpdated(value: String) {
+  OnLocationUpdated(value);
+  if (this.limitedDistrictName) { this.limitedDistrictName.SetText(value); }
+}
+
+@wrapMethod(MinimapContainerController)
+function SecurityZoneUpdate() {
+  SecurityZoneUpdate();
+  if (this.limitedDistrict) {
+    this.limitedDistrict.SetVisible(this.limitedDistrictAvailable && !this.m_playerInCombat && this.m_inPublicOrRestrictedZone);
+  }
+}
+
+@wrapMethod(MinimapContainerController)
+event OnPSMCombatChanged(psmCombatArg: gamePSMCombat) {
+  OnPSMCombatChanged(psmCombatArg);
+  if (this.limitedDistrict) {
+    this.limitedDistrict.SetVisible(this.limitedDistrictAvailable && !this.m_playerInCombat && this.m_inPublicOrRestrictedZone);
+  }
+}
+
+@addField(QuestTrackerGameController)
+var limitedFade: LimitedHUDFade;
+
+@addMethod(QuestTrackerGameController)
+function ApplyLimitedHUD() {
+  let state: LimitedHUDContext = LimitedHUDContext.Current();
+  this.BindLimitedSubscriber(state);
+  let visible: Bool = state && (state.braindance || (!state.details && (state.driving || state.zoom || this.limitedJournalUpdate)));
+  LimitedHUDFade.To(this.limitedFade, this.GetRootWidget(), visible ? 1.0 : 0.0);
+}
+
+@addMethod(QuestTrackerGameController)
+function RefreshLimitedSubscriber() {
+  this.ApplyLimitedHUD();
+}
+
+@wrapMethod(QuestTrackerGameController)
+event OnInitialize() {
+  OnInitialize();
+  this.ApplyLimitedHUD();
+}
+
+@addField(QuestTrackerGameController)
+var limitedJournalUpdate: Bool;
+@addField(QuestTrackerGameController)
+var limitedTimer: DelayID;
+
+class LimitedHUDJournalTimeout extends DelayCallback {
+  public var tracker: weak<QuestTrackerGameController>;
+  public override function Call() {
+    if (this.tracker) {
+      this.tracker.limitedJournalUpdate = false;
+      this.tracker.ApplyLimitedHUD();
+    }
+  }
+}
+
+@addMethod(QuestTrackerGameController)
+function ShowLimitedObjective() {
+  let delays: DelaySystem = GameInstance.GetDelaySystem(this.m_player.GetGame());
+  if (this.limitedJournalUpdate) { delays.CancelCallback(this.limitedTimer); }
+  let timeout: LimitedHUDJournalTimeout = new LimitedHUDJournalTimeout;
+  timeout.tracker = this;
+  this.limitedJournalUpdate = true;
+  this.ApplyLimitedHUD();
+  this.limitedTimer = delays.DelayCallback(timeout, 5.0);
+}
+
+@wrapMethod(QuestTrackerGameController)
+event OnUninitialize() {
+  if (this.m_player && this.limitedJournalUpdate) {
+    this.limitedJournalUpdate = false;
+    GameInstance.GetDelaySystem(this.m_player.GetGame()).CancelCallback(this.limitedTimer);
+  }
+  OnUninitialize();
+}
+
+@wrapMethod(QuestTrackerGameController)
+event OnStateChanges(hash: Uint32, className: CName, notifyOption: JournalNotifyOption, changeType: JournalChangeType) {
+  OnStateChanges(hash, className, notifyOption, changeType);
+  let entry: JournalEntry = this.m_journalManager.GetTrackedEntry();
+  if (entry && entry == this.m_journalManager.GetEntry(hash)) {
+    this.ShowLimitedObjective();
+  }
+}
+
+@wrapMethod(QuestTrackerGameController)
+event OnCounterChanged(hash: Uint32, className: CName, notifyOption: JournalNotifyOption, changeType: JournalChangeType) {
+  OnCounterChanged(hash, className, notifyOption, changeType);
+  let entry: JournalEntry = this.m_journalManager.GetTrackedEntry();
+  if (entry && entry == this.m_journalManager.GetEntry(hash)) {
+    this.ShowLimitedObjective();
+  }
+}
+
+@wrapMethod(QuestTrackerGameController)
+event OnObjectiveIsOptionalChanged(hash: Uint32, className: CName, notifyOption: JournalNotifyOption, changeType: JournalChangeType) {
+  OnObjectiveIsOptionalChanged(hash, className, notifyOption, changeType);
+  let entry: JournalEntry = this.m_journalManager.GetTrackedEntry();
+  if (entry && entry == this.m_journalManager.GetEntry(hash)) {
+    this.ShowLimitedObjective();
+  }
+}
+
+@wrapMethod(QuestTrackerGameController)
+event OnTrackedEntryChanges(hash: Uint32, className: CName, notifyOption: JournalNotifyOption, changeType: JournalChangeType) {
+  OnTrackedEntryChanges(hash, className, notifyOption, changeType);
+  let entry: JournalEntry = this.m_journalManager.GetTrackedEntry();
+  if (entry && entry == this.m_journalManager.GetEntry(hash)) {
+    this.ShowLimitedObjective();
+  }
+}
+
+@wrapMethod(scannerDetailsGameController)
+event OnScannerDetailsShown(animationProxy: inkAnimProxy) {
+  OnScannerDetailsShown(animationProxy);
+  let state: LimitedHUDContext = LimitedHUDContext.Current();
+  if (state) {
+    state.details = true;
+    state.Notify();
+  }
+}
+
+@wrapMethod(scannerDetailsGameController)
+event OnScannerDetailsHidden(animationProxy: inkAnimProxy) {
+  OnScannerDetailsHidden(animationProxy);
+  let state: LimitedHUDContext = LimitedHUDContext.Current();
+  if (state) {
+    state.details = false;
+    state.Notify();
+  }
+}
