@@ -42,7 +42,7 @@ public class MetroDirectionChecker extends ScriptableEnv {
     let lineB: array<Int32> = [ 19, 18, 12, 7, 16, 5, 17, 15 ];
     let lineC: array<Int32> = [ 10, 14, 8, 19 ];
     let lineD: array<Int32> = [ 6, 5, 4, 9, 10, 14, 13, 11, 12, 18 ];
-    let lineE: array<Int32> = [ 1, 2, 16, 7, 11, 13, 14, 6, 5, 4, 17 ];
+    let lineE: array<Int32> = [ 1, 2, 16, 7, 11, 13, 14, 6, 5, 4, 9, 17 ];
 
     this.PutData(n"ue_metro_show_line_a1", LineDirectionData.Create(n"ButtonHolder/ButtonFlex/ButtonPane/ButtonLineA1", ModNCartLine.A_RED, lineA, false));
     this.PutData(n"ue_metro_show_line_a2", LineDirectionData.Create(n"ButtonHolder/ButtonFlex/ButtonPane/ButtonLineA2", ModNCartLine.A_RED, lineA, true));

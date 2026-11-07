@@ -4,7 +4,7 @@ import MetroPocketGuide.Navigator.*
 public class MetroNodesGraph extends ScriptableEnv {
   private let graph: ref<inkHashMap>;
   private let stations: ref<inkHashMap>;
-  private let n: Int32 = 43;
+  private let n: Int32 = 44;
 
   private cb func OnLoad() {
     this.graph = new inkHashMap();
@@ -263,16 +263,19 @@ public class MetroNodesGraph extends ScriptableEnv {
     let E6 = MetroNode.Create(39, 6, ModNCartLine.E_ORANGE); this.SaveNode(E6);
     let E5 = MetroNode.Create(40, 5, ModNCartLine.E_ORANGE); this.SaveNode(E5);
     let E4 = MetroNode.Create(41, 4, ModNCartLine.E_ORANGE); this.SaveNode(E4);
+    let E9 = MetroNode.Create(43, 9, ModNCartLine.E_ORANGE); this.SaveNode(E9);
     let E17 = MetroNode.Create(42, 17, ModNCartLine.E_ORANGE); this.SaveNode(E17);
     
 
-    // -- Build graph, reference: https://i.imgur.com/8lHAfiA.png
+    // -- Build graph, reference:
+    // v1 - Initial: https://i.imgur.com/8lHAfiA.png
+    // v2 - Sarasti station connection to E fixed: https://i.imgur.com/rs59ngs.png
     
     this.graph.Insert(A1.Key(), MetroGraphNode.Create([ A2.Index(), E1.Index() ])); // A1
     this.graph.Insert(A2.Key(), MetroGraphNode.Create([ A1.Index(), A3.Index(), E2.Index() ])); // A2
     this.graph.Insert(A3.Key(), MetroGraphNode.Create([ A2.Index(), A7.Index() ])); // A3
     this.graph.Insert(A7.Key(), MetroGraphNode.Create([ A3.Index(), A9.Index(), B7.Index(), E7.Index() ])); // A7
-    this.graph.Insert(A9.Key(), MetroGraphNode.Create([ A7.Index(), A10.Index(), D9.Index() ])); // A9
+    this.graph.Insert(A9.Key(), MetroGraphNode.Create([ A7.Index(), A10.Index(), D9.Index(), E9.Index() ])); // A9
     this.graph.Insert(A10.Key(), MetroGraphNode.Create([ A9.Index(), A14.Index(), C10.Index(), D10.Index() ])); // A10
     this.graph.Insert(A14.Key(), MetroGraphNode.Create([ A10.Index(), A8.Index(), C14.Index(), D14.Index(), E14.Index() ])); // A14
     this.graph.Insert(A8.Key(), MetroGraphNode.Create([ A14.Index(), A15.Index(), C8.Index() ])); // A8
@@ -296,7 +299,7 @@ public class MetroNodesGraph extends ScriptableEnv {
     this.graph.Insert(D6.Key(), MetroGraphNode.Create([ D5.Index(), E6.Index() ])); // D6
     this.graph.Insert(D5.Key(), MetroGraphNode.Create([ D4.Index(), B5.Index(), E5.Index() ])); // D5
     this.graph.Insert(D4.Key(), MetroGraphNode.Create([ D9.Index(), E4.Index() ])) ;// D4
-    this.graph.Insert(D9.Key(), MetroGraphNode.Create([ D10.Index(), A9.Index() ])); // D9
+    this.graph.Insert(D9.Key(), MetroGraphNode.Create([ D10.Index(), A9.Index(), E9.Index() ])); // D9
     this.graph.Insert(D10.Key(), MetroGraphNode.Create([ D14.Index(), A10.Index(), C10.Index() ])); // D10
     this.graph.Insert(D13.Key(), MetroGraphNode.Create([ D11.Index(), E13.Index() ])); // D13
     this.graph.Insert(D11.Key(), MetroGraphNode.Create([ D12.Index(), E11.Index() ])); // D11
@@ -312,8 +315,9 @@ public class MetroNodesGraph extends ScriptableEnv {
     this.graph.Insert(E14.Key(), MetroGraphNode.Create([ E6.Index(), E13.Index(), A14.Index(), C14.Index(), D14.Index() ])); // E14
     this.graph.Insert(E6.Key(), MetroGraphNode.Create([ E5.Index(), E14.Index(), D6.Index() ])); // E6
     this.graph.Insert(E5.Key(), MetroGraphNode.Create([ E4.Index(), E6.Index(), B5.Index(), D5.Index() ])); // E5
-    this.graph.Insert(E4.Key(), MetroGraphNode.Create([ E17.Index(), E5.Index(), D4.Index() ])); // E4
-    this.graph.Insert(E17.Key(), MetroGraphNode.Create([ E4.Index(), B17.Index() ])); // E17
+    this.graph.Insert(E4.Key(), MetroGraphNode.Create([ E9.Index(), E5.Index(), D4.Index() ])); // E4
+    this.graph.Insert(E9.Key(), MetroGraphNode.Create([ E17.Index(), E4.Index(), A9.Index(), D9.Index() ])); // E9
+    this.graph.Insert(E17.Key(), MetroGraphNode.Create([ E9.Index(), B17.Index() ])); // E17
   }
 
   private final func SaveNode(node: ref<MetroNode>) -> Void {

@@ -61,7 +61,7 @@ public abstract class MetroDataHelper {
       case ENcartStations.JAPAN_TOWN_SOUTH: return [ ModNCartLine.D_GREEN, ModNCartLine.E_ORANGE ];
       case ENcartStations.DOWNTOWN_NORTH: return [ ModNCartLine.A_RED, ModNCartLine.B_YELLOW, ModNCartLine.E_ORANGE ];
       case ENcartStations.ARROYO: return [ ModNCartLine.A_RED, ModNCartLine.C_CYAN ];
-      case ENcartStations.CITY_CENTER: return [ ModNCartLine.A_RED, ModNCartLine.D_GREEN ];
+      case ENcartStations.CITY_CENTER: return [ ModNCartLine.A_RED, ModNCartLine.D_GREEN, ModNCartLine.E_ORANGE ];
       case ENcartStations.ARASAKA_TOWER: return [ ModNCartLine.A_RED, ModNCartLine.C_CYAN, ModNCartLine.D_GREEN ];
       case ENcartStations.WELLSPRINGS: return [ ModNCartLine.D_GREEN, ModNCartLine.E_ORANGE ];
       case ENcartStations.GLEN_NORTH: return [ ModNCartLine.B_YELLOW, ModNCartLine.D_GREEN ];
