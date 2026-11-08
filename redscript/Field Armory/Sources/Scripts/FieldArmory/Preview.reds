@@ -152,8 +152,7 @@ public class ArmoryPreview extends WardrobeSetPreviewGameController {
     AnimationControllerComponent.SetInputFloatToReplicate(puppet, n"has_left_weapon", 0.0);
 
     if this.appliedOutfit != this.choice {
-      this.RestoreOutfit();
-      if IsDefined(this.choice) && this.choice.valid { this.Dress(); }
+      this.UpdateOutfit();
     };
 
     this.PlaceHands(this.generation, 0);
@@ -271,18 +270,55 @@ public class ArmoryPreview extends WardrobeSetPreviewGameController {
     GameInstance.GetDelaySystem(this.GetGamePuppet().GetGame()).DelayCallback(callback, 0.05, false);
   }
 
-  private func Dress() {
+  @if(!ModuleExists("EquipmentEx"))
+  private func UpdateOutfit() {
+    if IsDefined(this.choice) && this.choice.valid {
+      this.ShowVanillaClothes(this.choice.parts);
+      this.appliedOutfit = this.choice;
+    } else {
+      this.RestoreOutfit();
+    };
+  }
+
+  @if(!ModuleExists("EquipmentEx"))
+  private func ShowVanillaClothes(items: array<ItemID>) {
+    let areas = [
+      gamedataEquipmentArea.Head, 
+      gamedataEquipmentArea.Face, 
+      gamedataEquipmentArea.InnerChest,
+      gamedataEquipmentArea.OuterChest, 
+      gamedataEquipmentArea.Legs, 
+      gamedataEquipmentArea.Feet
+    ];
+
+    for area in areas { this.PreviewUnequipFromEquipmentArea(area); }
+    for item in items { this.PreviewEquipItem(item); }
+    this.HandleUnderwearVisualTags();
+  }
+
+  @if(!ModuleExists("EquipmentEx"))
+  private func RestoreOutfit() {
+    if !IsDefined(this.appliedOutfit) { return; }
+    this.ShowVanillaClothes(this.GetVisualItems());
+    this.appliedOutfit = null;
+  }
+
+  @if(ModuleExists("EquipmentEx"))
+  private func UpdateOutfit() {
+    this.RestoreOutfit();
+    if !IsDefined(this.choice) || !this.choice.valid { return; }
     let puppet = this.GetGamePuppet();
     let ts = GameInstance.GetTransactionSystem(puppet.GetGame());
     let slots = [t"AttachmentSlots.Head", t"AttachmentSlots.Eyes", t"AttachmentSlots.Chest", t"AttachmentSlots.Torso", t"AttachmentSlots.Legs", t"AttachmentSlots.Feet"];
     this.AddProviderSlots(slots);
     for placement in this.choice.placements {
       if !ArrayContains(slots, placement) { ArrayPush(slots, placement); }
-    }
+    };
     for slot in slots { this.DressSlot(puppet, ts, slot); }
     this.appliedOutfit = this.choice;
   }
 
+  @if(ModuleExists("EquipmentEx"))
   private func DressSlot(puppet: ref<gamePuppet>, ts: ref<TransactionSystem>, slot: TweakDBID) {
     let original = ts.GetItemInSlot(puppet, slot);
     let before = IsDefined(original) ? original.GetItemID() : ItemID.None();
@@ -320,8 +356,7 @@ public class ArmoryPreview extends WardrobeSetPreviewGameController {
     }
   }
 
-  @if(!ModuleExists("EquipmentEx"))
-  private func AddProviderSlots(out slots: array<TweakDBID>) {}
+  @if(ModuleExists("EquipmentEx"))
   private func RestoreOutfit() {
     if !IsDefined(this.appliedOutfit) { return; }
     let puppet = this.GetGamePuppet();
