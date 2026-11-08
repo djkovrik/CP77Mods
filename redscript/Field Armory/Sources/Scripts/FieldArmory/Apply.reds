@@ -28,7 +28,6 @@ public class ArmoryOperation extends DelayCallback {
   private let attempts: Int32;
   private let restoreIssued: Bool;
   private let restoreWait: Int32;
-  private let moved: Int32;
   private let error: String;
 
   public static func Start(access: ref<StashAccess>, target: ref<Loadout>) -> String {
@@ -114,12 +113,6 @@ public class ArmoryOperation extends DelayCallback {
         if IsDefined(ExactItem(source, id)) { return false; }
       } else {
         if !IsDefined(ExactItem(source, id)) { return false; }
-        this.moved += 1;
-        if !this.reverting && this.system.failTransferNumber == this.moved {
-          this.system.failTransferNumber = 0;
-          this.error = Label("TransferBlocked");
-          return false;
-        };
         if !ts.TransferItem(source, dest, id, 1) || IsDefined(ExactItem(source, id)) || !IsDefined(ExactItem(dest, id)) {
           this.error = Label("TransferBlocked");
           return false;
@@ -251,7 +244,6 @@ public class ArmoryOperation extends DelayCallback {
     let screen = this.system.screen;
     if verified { this.system.journal = null; }
     this.system.pending = null;
-    this.system.failTransferNumber = 0;
     if IsDefined(screen) {
       if success { screen.Close(); }
       else { screen.Report(StrLen(this.error) > 0 ? this.error : Label("ApplyFailed")); }

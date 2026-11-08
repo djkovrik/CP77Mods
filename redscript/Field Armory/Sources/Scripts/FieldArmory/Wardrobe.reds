@@ -128,16 +128,43 @@ public class OutfitBackup {
 public func CaptureProvider(player: ref<PlayerPuppet>, backup: ref<OutfitBackup>) {
   let ex = OutfitSystem.GetInstance(player.GetGame());
   backup.active = ex.IsActive();
-  let prop = Reflection.GetClassOf(ex).GetProperty(n"m_state");
-  let state = FromVariant<ref<IScriptable>>(prop.GetValue(ex));
-  let parts = FromVariant<array<ref<OutfitPart>>>(Reflection.Call(state, n"GetParts"));
-  let slots = ex.GetUsedSlots();
-  backup.readable = !backup.active || (IsDefined(state) && ArraySize(parts) == ArraySize(slots));
-
-  for part in parts {
-    ArrayPush(backup.items, part.GetItemID());
-    ArrayPush(backup.placements, part.GetSlotID());
+  if !backup.active { backup.readable = true; return; }
+  let remaining = ex.GetUsedSlots();
+  for name in ex.GetOutfits() {
+    for part in ex.GetOutfitParts(name) {
+      CaptureOutfitItem(ex, part.GetItemID(), remaining, backup);
+    };
+    if ArraySize(remaining) == 0 { break; }
   };
+
+  if ArraySize(remaining) > 0 {
+    let inventory: array<wref<gameItemData>>;
+    GameInstance.GetTransactionSystem(player.GetGame()).GetItemList(player, inventory);
+    for item in inventory {
+      if Equals(RPGManager.GetItemCategory(item.GetID()), gamedataItemCategory.Clothing) {
+        CaptureOutfitItem(ex, item.GetID(), remaining, backup);
+      };
+      if ArraySize(remaining) == 0 { break; }
+    };
+  };
+
+  if ArraySize(remaining) > 0 {
+    for id in GameInstance.GetWardrobeSystem(player.GetGame()).GetStoredItemIDs() {
+      CaptureOutfitItem(ex, id, remaining, backup);
+      if ArraySize(remaining) == 0 { break; }
+    };
+  };
+  backup.readable = ArraySize(remaining) == 0;
+}
+
+@if(ModuleExists("EquipmentEx"))
+private func CaptureOutfitItem(ex: ref<OutfitSystem>, id: ItemID, out remaining: array<TweakDBID>, backup: ref<OutfitBackup>) {
+  let slot = ex.GetItemSlot(id);
+  if ArrayContains(remaining, slot) && ex.IsEquipped(id) {
+    ArrayPush(backup.items, id);
+    ArrayPush(backup.placements, slot);
+    ArrayRemove(remaining, slot);
+  }
 }
 
 public func BackupClothes(player: ref<PlayerPuppet>) -> ref<OutfitBackup> {
@@ -177,7 +204,7 @@ public func RestoreProvider(player: ref<PlayerPuppet>, backup: ref<OutfitBackup>
 
 @if(!ModuleExists("EquipmentEx"))
 public func RestoreProvider(player: ref<PlayerPuppet>, backup: ref<OutfitBackup>) -> Bool {
-  let eq: ref<EquipmentSystem> = EquipmentSystem.GetData(player);
+  let eq = EquipmentSystem.GetData(player);
   if Equals(backup.slot, gameWardrobeClothingSetIndex.INVALID) { 
     eq.UnequipWardrobeSet(); 
   } else { 

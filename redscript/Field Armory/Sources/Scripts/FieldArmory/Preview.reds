@@ -22,6 +22,7 @@ public class ArmoryPreview extends WardrobeSetPreviewGameController {
   private let appliedOutfit: ref<OutfitChoice>;
   private let outfitSlots: array<TweakDBID>;
   private let outfitBaseline: array<ItemID>;
+  private let outfitPlaced: array<ItemID>;
   private let outfitGrants: array<ItemID>;
   private let ready: Bool;
   private let grants: array<ItemID>;
@@ -82,7 +83,10 @@ public class ArmoryPreview extends WardrobeSetPreviewGameController {
 
     if this.Separate() && this.captured {
       this.Release();
-      this.RestoreOutfit();
+      if IsDefined(this.appliedOutfit) {
+        this.RestoreOutfit();
+        this.InitializeCurrentOutfit(this.GetGamePuppet());
+      }
       this.RestoreHand(t"AttachmentSlots.WeaponRight", this.originalRight);
       this.RestoreHand(t"AttachmentSlots.WeaponLeft", this.originalLeft);
       this.ReleaseBody();
@@ -223,7 +227,10 @@ public class ArmoryPreview extends WardrobeSetPreviewGameController {
   @if(ModuleExists("EquipmentEx"))
   private func InitializeCurrentOutfit(puppet: ref<gamePuppet>) {
     let outfits = OutfitSystem.GetInstance(puppet.GetGame());
-    if IsDefined(outfits) && outfits.IsActive() { outfits.EquipPuppetOutfit(puppet); }
+    if IsDefined(outfits) && outfits.IsActive() {
+      let items: array<ItemID>;
+      outfits.EquipPuppetOutfit(puppet, true, items);
+    }
   }
 
   @if(!ModuleExists("EquipmentEx"))
@@ -267,46 +274,72 @@ public class ArmoryPreview extends WardrobeSetPreviewGameController {
   private func Dress() {
     let puppet = this.GetGamePuppet();
     let ts = GameInstance.GetTransactionSystem(puppet.GetGame());
-    this.outfitSlots = [t"AttachmentSlots.Head", t"AttachmentSlots.Eyes", t"AttachmentSlots.Chest", t"AttachmentSlots.Torso", t"AttachmentSlots.Legs", t"AttachmentSlots.Feet"];
-    this.AddProviderSlots();
-    for slot in this.outfitSlots {
-      let original = ts.GetItemInSlot(puppet, slot);
-      let before = IsDefined(original) ? original.GetItemID() : ItemID.None();
-      ArrayPush(this.outfitBaseline, before);
-      if ItemID.IsValid(before) { ts.RemoveItemFromSlot(puppet, slot, true); }
+    let slots = [t"AttachmentSlots.Head", t"AttachmentSlots.Eyes", t"AttachmentSlots.Chest", t"AttachmentSlots.Torso", t"AttachmentSlots.Legs", t"AttachmentSlots.Feet"];
+    this.AddProviderSlots(slots);
+    for placement in this.choice.placements {
+      if !ArrayContains(slots, placement) { ArrayPush(slots, placement); }
     }
-    let i = 0;
-    for id in this.choice.parts {
-      let slot = this.choice.placements[i];
-      let preview = ts.CreatePreviewItemID(id);
-      if !ts.HasItem(puppet, preview) && ts.GivePreviewItemByItemID(puppet, id) { ArrayPush(this.outfitGrants, preview); }
-      if ts.HasItem(puppet, preview) && ts.CanPlaceItemInSlot(puppet, slot, preview) { ts.AddItemToSlot(puppet, slot, preview, true); }
-      i += 1;
-    }
+    for slot in slots { this.DressSlot(puppet, ts, slot); }
     this.appliedOutfit = this.choice;
   }
 
+  private func DressSlot(puppet: ref<gamePuppet>, ts: ref<TransactionSystem>, slot: TweakDBID) {
+    let original = ts.GetItemInSlot(puppet, slot);
+    let before = IsDefined(original) ? original.GetItemID() : ItemID.None();
+    let index = ArrayFindFirst(this.choice.placements, slot);
+    let preview = ItemID.None();
+
+    if index >= 0 {
+      let id = this.choice.parts[index];
+      if ItemID.IsValid(before) && ItemID.GetTDBID(before) == ItemID.GetTDBID(id) { return; }
+      if !ItemID.IsValid(before) && this.choice.wearing && ts.IsSlotSpawningAnyItem(puppet, slot) { return; }
+      preview = ts.CreatePreviewItemID(id);
+      if !ts.HasItem(puppet, preview) {
+        if !ts.GivePreviewItemByItemID(puppet, id) { return; }
+        ArrayPush(this.outfitGrants, preview);
+      };
+    } else {
+      if !ItemID.IsValid(before) { return; }
+    };
+    if ItemID.IsValid(before) && !ts.RemoveItemFromSlot(puppet, slot) { return; }
+
+    ArrayPush(this.outfitSlots, slot);
+    ArrayPush(this.outfitBaseline, before);
+
+    if ItemID.IsValid(preview) && ts.CanPlaceItemInSlot(puppet, slot, preview) && ts.AddItemToSlot(puppet, slot, preview, true) {
+      ArrayPush(this.outfitPlaced, preview);
+    } else { 
+      ArrayPush(this.outfitPlaced, ItemID.None()); 
+    };
+  }
+
   @if(ModuleExists("EquipmentEx"))
-  private func AddProviderSlots() {
-    let slots = OutfitSystem.GetInstance(this.view.access.player.GetGame()).GetOutfitSlots();
-    for slot in slots { if !ArrayContains(this.outfitSlots, slot) { ArrayPush(this.outfitSlots, slot); } }
+  private func AddProviderSlots(out slots: array<TweakDBID>) {
+    for slot in OutfitSystem.GetInstance(this.view.access.player.GetGame()).GetOutfitSlots() {
+      if !ArrayContains(slots, slot) { ArrayPush(slots, slot); }
+    }
   }
 
   @if(!ModuleExists("EquipmentEx"))
-  private func AddProviderSlots() {}
+  private func AddProviderSlots(out slots: array<TweakDBID>) {}
   private func RestoreOutfit() {
     if !IsDefined(this.appliedOutfit) { return; }
     let puppet = this.GetGamePuppet();
     let ts = GameInstance.GetTransactionSystem(puppet.GetGame());
     let i = 0;
     for slot in this.outfitSlots {
-      ts.RemoveItemFromSlot(puppet, slot, true);
-      this.RestoreHand(slot, this.outfitBaseline[i]);
+      if ItemID.IsValid(this.outfitPlaced[i]) && ts.HasItemInSlot(puppet, slot, this.outfitPlaced[i]) {
+        ts.RemoveItemFromSlot(puppet, slot);
+      }
+      if ts.IsSlotEmpty(puppet, slot) && !ts.IsSlotSpawningAnyItem(puppet, slot) {
+        this.RestoreHand(slot, this.outfitBaseline[i]);
+      }
       i += 1;
     }
     for id in this.outfitGrants { ts.RemoveItem(puppet, id, 1); }
     ArrayClear(this.outfitGrants);
     ArrayClear(this.outfitBaseline);
+    ArrayClear(this.outfitPlaced);
     ArrayClear(this.outfitSlots);
     this.appliedOutfit = null;
   }
