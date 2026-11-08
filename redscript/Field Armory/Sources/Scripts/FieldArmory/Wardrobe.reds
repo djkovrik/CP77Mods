@@ -133,26 +133,24 @@ public func CaptureProvider(player: ref<PlayerPuppet>, backup: ref<OutfitBackup>
   for name in ex.GetOutfits() {
     for part in ex.GetOutfitParts(name) {
       CaptureOutfitItem(ex, part.GetItemID(), remaining, backup);
-    };
+    }
     if ArraySize(remaining) == 0 { break; }
-  };
-
+  }
   if ArraySize(remaining) > 0 {
     let inventory: array<wref<gameItemData>>;
     GameInstance.GetTransactionSystem(player.GetGame()).GetItemList(player, inventory);
     for item in inventory {
       if Equals(RPGManager.GetItemCategory(item.GetID()), gamedataItemCategory.Clothing) {
         CaptureOutfitItem(ex, item.GetID(), remaining, backup);
-      };
+      }
       if ArraySize(remaining) == 0 { break; }
-    };
-  };
-
+    }
+  }
   if ArraySize(remaining) > 0 {
     for id in GameInstance.GetWardrobeSystem(player.GetGame()).GetStoredItemIDs() {
       CaptureOutfitItem(ex, id, remaining, backup);
       if ArraySize(remaining) == 0 { break; }
-    };
+    }
   };
   backup.readable = ArraySize(remaining) == 0;
 }

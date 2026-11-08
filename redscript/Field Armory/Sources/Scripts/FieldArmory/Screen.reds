@@ -274,6 +274,7 @@ public class ArmoryScreen extends InGamePopup {
     if Equals(action, n"manage") || Equals(action, n"equip") { width = 275.0; }
     if Equals(action, n"position") { width = 430.0; }
     let hasDetail = StrLen(detail) > 0;
+    let source = Equals(action, n"source");
     let height = this.target == this.body ? 104.0 : (button ? 78.0 : 68.0);
     let groupStart = Equals(action, n"pick") && (value == 0 || value == 3 || value == 6);
     let top = groupStart ? 17.0 : 6.0;
@@ -299,10 +300,10 @@ public class ArmoryScreen extends InGamePopup {
     };
     frame.SetTexturePart(n"cell_fg");
     frame.SetNineSliceScale(true);
-    this.Color(frame, button ? n"MainColors.Blue" : n"MainColors.Red");
+    this.Color(frame, (button || source) ? n"MainColors.Blue" : n"MainColors.Red");
     frame.Reparent(tile);
     row.SetAnchor(inkEAnchor.Fill);
-    row.SetMargin(inkMargin(24.0, 0.0, 20.0, hasDetail ? 35.0 : 0.0));
+    row.SetMargin(inkMargin(24.0, 0.0, source ? width * 0.5 : 20.0, hasDetail && !source ? 35.0 : 0.0));
     row.SetFontSize(button ? 38 : 33);
     row.SetVerticalAlignment(textVerticalAlignment.Center);
     if button { row.SetLetterCase(textLetterCase.UpperCase); }
@@ -313,14 +314,19 @@ public class ArmoryScreen extends InGamePopup {
     if hasDetail {
       let parts = new inkText();
       parts.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Regular");
-      parts.SetFontSize(29);
+      parts.SetFontSize(source ? 33 : 29);
       parts.SetText(detail);
       parts.SetAnchor(inkEAnchor.Fill);
-      parts.SetMargin(inkMargin(24.0, 42.0, 20.0, 0.0));
+      parts.SetMargin(inkMargin(source ? width * 0.5 : 24.0, source ? 0.0 : 42.0, 20.0, 0.0));
+      if source {
+        parts.SetHorizontalAlignment(textHorizontalAlignment.Right);
+        parts.SetInteractive(true);
+        parts.RegisterToCallback(n"OnRelease", this, n"OnRow");
+      }
       parts.SetVerticalAlignment(textVerticalAlignment.Center);
       parts.SetWrapping(false, width-44.0);
       parts.SetOverflowPolicy(textOverflowPolicy.DotsEnd);
-      this.Color(parts, n"MainColors.Grey");
+      this.Color(parts, source ? n"MainColors.Blue" : n"MainColors.Grey");
       parts.Reparent(tile);
     }
     tile.RegisterToCallback(n"OnRelease", this, n"OnRow");
@@ -343,8 +349,9 @@ public class ArmoryScreen extends InGamePopup {
     let loadout = Equals(this.actions[i], n"select");
     let selected = loadout && this.values[i] == this.selected;
     let externalButton = this.tiles[i].GetParentWidget() == this.footer || this.tiles[i].GetParentWidget() == this.tools || this.tiles[i].GetParentWidget() == this.previewControls;
-    this.accents[i].SetVisible(loadout ? selected : (externalButton || lit || Equals(this.actions[i], n"source")));
-    this.accents[i].SetOpacity(i == this.hovered ? 0.9 : (lit || selected ? 0.68 : (externalButton ? 0.55 : 0.25)));
+    let persistentFrame = externalButton || Equals(this.actions[i], n"source");
+    this.accents[i].SetVisible(loadout ? selected : (persistentFrame || lit));
+    this.accents[i].SetOpacity(i == this.hovered ? 0.9 : (lit || selected ? 0.68 : (persistentFrame ? 0.55 : 0.25)));
     if externalButton {
       this.texts[i].UnbindProperty(n"tintColor");
       this.texts[i].BindProperty(n"tintColor", lit ? n"MainColors.White" : n"MainColors.Red");
@@ -514,7 +521,9 @@ public class ArmoryScreen extends InGamePopup {
       this.target = this.heading;
       let carried = this.view.carriedWeapons;
       let storedCount = ArraySize(this.view.weapons)-carried;
-      this.Row((this.stored ? Label("InStash") : Label("Carried"))+"   "+ToString(this.stored ? storedCount : carried)+"     >     "+(this.stored ? Label("Carried") : Label("InStash")), n"source");
+      let container = this.stored ? Label("Stash") : Label("Inventory");
+      let count = this.stored ? storedCount : carried;
+      this.Row(container+" ("+ToString(count)+")", n"source", 0, this.stored ? Label("ShowInventory") : Label("ShowStash"));
       this.target = this.body;
       if this.stored { first = carried; }
     }
@@ -536,10 +545,13 @@ public class ArmoryScreen extends InGamePopup {
 
   protected cb func OnRow(e: ref<inkPointerEvent>) -> Bool {
     if e.IsAction(n"click") && !e.IsHandled() {
-      let i = 0;
-      for tile in this.tiles {
-        if tile == e.GetCurrentTarget() { e.Handle(); this.Act(i); return true; }
-        i += 1;
+      let target = e.GetCurrentTarget();
+      if IsDefined(target as inkText) { target = target.GetParentWidget(); }
+      let i = StringToInt(NameToString(target.GetName()));
+      if i >= 0 && i < ArraySize(this.tiles) && this.tiles[i] == target {
+        e.Handle();
+        this.Act(i);
+        return true;
       }
     }
   }

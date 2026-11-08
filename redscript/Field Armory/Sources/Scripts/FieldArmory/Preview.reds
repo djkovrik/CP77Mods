@@ -277,7 +277,7 @@ public class ArmoryPreview extends WardrobeSetPreviewGameController {
       this.appliedOutfit = this.choice;
     } else {
       this.RestoreOutfit();
-    };
+    }
   }
 
   @if(!ModuleExists("EquipmentEx"))
@@ -313,7 +313,7 @@ public class ArmoryPreview extends WardrobeSetPreviewGameController {
     this.AddProviderSlots(slots);
     for placement in this.choice.placements {
       if !ArrayContains(slots, placement) { ArrayPush(slots, placement); }
-    };
+    }
     for slot in slots { this.DressSlot(puppet, ts, slot); }
     this.appliedOutfit = this.choice;
   }
@@ -353,7 +353,7 @@ public class ArmoryPreview extends WardrobeSetPreviewGameController {
   private func AddProviderSlots(out slots: array<TweakDBID>) {
     for slot in OutfitSystem.GetInstance(this.view.access.player.GetGame()).GetOutfitSlots() {
       if !ArrayContains(slots, slot) { ArrayPush(slots, slot); }
-    }
+    };
   }
 
   @if(ModuleExists("EquipmentEx"))

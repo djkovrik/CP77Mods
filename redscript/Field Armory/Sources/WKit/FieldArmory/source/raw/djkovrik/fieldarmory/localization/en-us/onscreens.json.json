@@ -141,6 +141,34 @@
                 {
                   "Type": "localizationPersistenceOnScreenEntry",
                   "Properties": {
+                    "secondaryKey": "FieldArmory-Inventory",
+                    "femaleVariant": "Inventory"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-Stash",
+                    "femaleVariant": "Stash"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-ShowInventory",
+                    "femaleVariant": "Show inventory"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-ShowStash",
+                    "femaleVariant": "Show stash"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
                     "secondaryKey": "FieldArmory-Carried",
                     "femaleVariant": "Carried"
                   }

@@ -63,6 +63,7 @@ public class Loadout {
 public class ArmorySystem extends ScriptableSystem {
   public let screen: wref<ArmoryScreen>;
   public let pending: ref<ArmoryOperation>;
+  public let failTransferNumber: Int32;
 
   public persistent let journal: ref<ApplyJournal>;
   public persistent let sets: array<ref<Loadout>>;

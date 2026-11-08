@@ -141,6 +141,34 @@
                 {
                   "Type": "localizationPersistenceOnScreenEntry",
                   "Properties": {
+                    "secondaryKey": "FieldArmory-Inventory",
+                    "femaleVariant": "Инвентарь"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-Stash",
+                    "femaleVariant": "Тайник"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-ShowInventory",
+                    "femaleVariant": "Показать инвентарь"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-ShowStash",
+                    "femaleVariant": "Показать тайник"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
                     "secondaryKey": "FieldArmory-Carried",
                     "femaleVariant": "При себе"
                   }
