@@ -1,0 +1,5 @@
+Interactions.FieldArmoryLoadouts:
+  $base: Interactions.InteractionChoice
+  name: FieldArmoryLoadouts
+  caption: FieldArmory-Loadouts
+  action: Choice2

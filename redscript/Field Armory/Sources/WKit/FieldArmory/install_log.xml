@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<InstalLog Project="FieldArmory" Build_date="30.10.2026 13:52:26">
+  <Files>
+    <Directory Path="C:\Games\steamapps\common\Cyberpunk 2077\archive">
+      <Directory Path="C:\Games\steamapps\common\Cyberpunk 2077\archive\pc">
+        <Directory Path="C:\Games\steamapps\common\Cyberpunk 2077\archive\pc\mod">
+          <file>C:\Games\steamapps\common\Cyberpunk 2077\archive\pc\mod\FieldArmory.archive</file>
+        </Directory>
+      </Directory>
+    </Directory>
+  </Files>
+</InstalLog>

@@ -1,0 +1,282 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.6.0-nightly.2022-03-24",
+    "WKitJsonVersion": "0.0.1",
+    "GameVersion": 1500,
+    "ExportedDateTime": "2022-03-27T09:06:47.1077346Z",
+    "DataType": "CR2W"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "Type": "JsonResource",
+      "Properties": {
+        "cookingPlatform": "PLATFORM_PC",
+        "root": {
+          "HandleId": "0",
+          "Data": {
+            "Type": "localizationPersistenceOnScreenEntries",
+            "Properties": {
+              "entries": [
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-Name",
+                    "femaleVariant": "Field Armory"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-Loadouts",
+                    "femaleVariant": "Loadouts"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-Manage",
+                    "femaleVariant": "Manage"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-Back",
+                    "femaleVariant": "Back"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-CreateFromCurrent",
+                    "femaleVariant": "Create from equipped gear"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-Equip",
+                    "femaleVariant": "Equip"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-Equipped",
+                    "femaleVariant": "Equipped"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-Unavailable",
+                    "femaleVariant": "Unavailable"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-EmptyList",
+                    "femaleVariant": "No loadouts saved"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-Edit",
+                    "femaleVariant": "Edit loadout"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-NameLabel",
+                    "femaleVariant": "Loadout name"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-Duplicate",
+                    "femaleVariant": "Duplicate loadout"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-Delete",
+                    "femaleVariant": "Delete loadout"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-ConfirmDelete",
+                    "femaleVariant": "Delete this loadout?"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-Save",
+                    "femaleVariant": "Save loadout"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-DiscardChanges",
+                    "femaleVariant": "Discard changes?"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-KeepCurrent",
+                    "femaleVariant": "Keep current"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-Carried",
+                    "femaleVariant": "Carried"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-InStash",
+                    "femaleVariant": "In stash"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-EmptySlot",
+                    "femaleVariant": "Empty"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-WeaponPosition",
+                    "femaleVariant": "Weapon slot"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-RightHand",
+                    "femaleVariant": "Right hand"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-LeftHand",
+                    "femaleVariant": "Left hand"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-CombatGadget",
+                    "femaleVariant": "Combat gadget"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-Healing",
+                    "femaleVariant": "Healing"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-Outfit",
+                    "femaleVariant": "Outfit"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-MissingWeapon",
+                    "femaleVariant": "Weapon missing from inventory and stash"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-PerkRequired",
+                    "femaleVariant": "Dual wield perk required"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-InvalidPair",
+                    "femaleVariant": "These weapons cannot be paired"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-TransferBlocked",
+                    "femaleVariant": "This weapon cannot be moved to the stash"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-UnequipBlocked",
+                    "femaleVariant": "This item cannot be unequipped"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-MissingOutfit",
+                    "femaleVariant": "Saved outfit unavailable"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-MissingAssignment",
+                    "femaleVariant": "Quick slot assignment unavailable"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-StashUnavailable",
+                    "femaleVariant": "Stash unavailable"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-ApplyFailed",
+                    "femaleVariant": "Couldn’t equip loadout"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-EquipmentRestricted",
+                    "femaleVariant": "Equipment change restricted"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "EmbeddedFiles": []
+  }
+}

@@ -1,0 +1,4 @@
+localization:
+  onscreens:
+    en-us: djkovrik\fieldarmory\localization\en-us\onscreens.json
+    ru-ru: djkovrik\fieldarmory\localization\ru-ru\onscreens.json
