@@ -51,7 +51,7 @@
                   "Type": "localizationPersistenceOnScreenEntry",
                   "Properties": {
                     "secondaryKey": "FieldArmory-CreateFromCurrent",
-                    "femaleVariant": "Создать из текущей экипировки"
+                    "femaleVariant": "Создать из экипировки"
                   }
                 },
                 {
@@ -92,22 +92,29 @@
                 {
                   "Type": "localizationPersistenceOnScreenEntry",
                   "Properties": {
+                    "secondaryKey": "FieldArmory-EditAction",
+                    "femaleVariant": "Изменить"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
                     "secondaryKey": "FieldArmory-NameLabel",
-                    "femaleVariant": "Название набора"
+                    "femaleVariant": "Название"
                   }
                 },
                 {
                   "Type": "localizationPersistenceOnScreenEntry",
                   "Properties": {
                     "secondaryKey": "FieldArmory-Duplicate",
-                    "femaleVariant": "Дублировать набор"
+                    "femaleVariant": "Дублировать"
                   }
                 },
                 {
                   "Type": "localizationPersistenceOnScreenEntry",
                   "Properties": {
                     "secondaryKey": "FieldArmory-Delete",
-                    "femaleVariant": "Удалить набор"
+                    "femaleVariant": "Удалить"
                   }
                 },
                 {
@@ -121,21 +128,21 @@
                   "Type": "localizationPersistenceOnScreenEntry",
                   "Properties": {
                     "secondaryKey": "FieldArmory-Save",
-                    "femaleVariant": "Сохранить набор"
+                    "femaleVariant": "Сохранить"
                   }
                 },
                 {
                   "Type": "localizationPersistenceOnScreenEntry",
                   "Properties": {
                     "secondaryKey": "FieldArmory-DiscardChanges",
-                    "femaleVariant": "Отменить изменения"
+                    "femaleVariant": "Отменить"
                   }
                 },
                 {
                   "Type": "localizationPersistenceOnScreenEntry",
                   "Properties": {
                     "secondaryKey": "FieldArmory-PreviewPosition",
-                    "femaleVariant": "Примерка позиции"
+                    "femaleVariant": "Примерка"
                   }
                 },
                 {
@@ -170,14 +177,14 @@
                   "Type": "localizationPersistenceOnScreenEntry",
                   "Properties": {
                     "secondaryKey": "FieldArmory-ShowInventory",
-                    "femaleVariant": "Показать инвентарь"
+                    "femaleVariant": "Инвентарь ›"
                   }
                 },
                 {
                   "Type": "localizationPersistenceOnScreenEntry",
                   "Properties": {
                     "secondaryKey": "FieldArmory-ShowStash",
-                    "femaleVariant": "Показать тайник"
+                    "femaleVariant": "Тайник ›"
                   }
                 },
                 {
@@ -212,14 +219,14 @@
                   "Type": "localizationPersistenceOnScreenEntry",
                   "Properties": {
                     "secondaryKey": "FieldArmory-RightHand",
-                    "femaleVariant": "Правая рука"
+                    "femaleVariant": "Правая"
                   }
                 },
                 {
                   "Type": "localizationPersistenceOnScreenEntry",
                   "Properties": {
                     "secondaryKey": "FieldArmory-LeftHand",
-                    "femaleVariant": "Левая рука"
+                    "femaleVariant": "Левая"
                   }
                 },
                 {

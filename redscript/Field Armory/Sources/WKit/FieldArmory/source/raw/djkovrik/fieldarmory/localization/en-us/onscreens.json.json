@@ -51,7 +51,7 @@
                   "Type": "localizationPersistenceOnScreenEntry",
                   "Properties": {
                     "secondaryKey": "FieldArmory-CreateFromCurrent",
-                    "femaleVariant": "Create from equipped gear"
+                    "femaleVariant": "New from gear"
                   }
                 },
                 {
@@ -92,22 +92,29 @@
                 {
                   "Type": "localizationPersistenceOnScreenEntry",
                   "Properties": {
+                    "secondaryKey": "FieldArmory-EditAction",
+                    "femaleVariant": "Edit"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
                     "secondaryKey": "FieldArmory-NameLabel",
-                    "femaleVariant": "Loadout name"
+                    "femaleVariant": "Name"
                   }
                 },
                 {
                   "Type": "localizationPersistenceOnScreenEntry",
                   "Properties": {
                     "secondaryKey": "FieldArmory-Duplicate",
-                    "femaleVariant": "Duplicate loadout"
+                    "femaleVariant": "Duplicate"
                   }
                 },
                 {
                   "Type": "localizationPersistenceOnScreenEntry",
                   "Properties": {
                     "secondaryKey": "FieldArmory-Delete",
-                    "femaleVariant": "Delete loadout"
+                    "femaleVariant": "Delete"
                   }
                 },
                 {
@@ -121,21 +128,21 @@
                   "Type": "localizationPersistenceOnScreenEntry",
                   "Properties": {
                     "secondaryKey": "FieldArmory-Save",
-                    "femaleVariant": "Save loadout"
+                    "femaleVariant": "Save"
                   }
                 },
                 {
                   "Type": "localizationPersistenceOnScreenEntry",
                   "Properties": {
                     "secondaryKey": "FieldArmory-DiscardChanges",
-                    "femaleVariant": "Discard changes"
+                    "femaleVariant": "Discard"
                   }
                 },
                 {
                   "Type": "localizationPersistenceOnScreenEntry",
                   "Properties": {
                     "secondaryKey": "FieldArmory-PreviewPosition",
-                    "femaleVariant": "Preview slot"
+                    "femaleVariant": "Preview"
                   }
                 },
                 {
@@ -170,14 +177,14 @@
                   "Type": "localizationPersistenceOnScreenEntry",
                   "Properties": {
                     "secondaryKey": "FieldArmory-ShowInventory",
-                    "femaleVariant": "Show inventory"
+                    "femaleVariant": "Inventory ›"
                   }
                 },
                 {
                   "Type": "localizationPersistenceOnScreenEntry",
                   "Properties": {
                     "secondaryKey": "FieldArmory-ShowStash",
-                    "femaleVariant": "Show stash"
+                    "femaleVariant": "Stash ›"
                   }
                 },
                 {
@@ -212,14 +219,14 @@
                   "Type": "localizationPersistenceOnScreenEntry",
                   "Properties": {
                     "secondaryKey": "FieldArmory-RightHand",
-                    "femaleVariant": "Right hand"
+                    "femaleVariant": "Right"
                   }
                 },
                 {
                   "Type": "localizationPersistenceOnScreenEntry",
                   "Properties": {
                     "secondaryKey": "FieldArmory-LeftHand",
-                    "femaleVariant": "Left hand"
+                    "femaleVariant": "Left"
                   }
                 },
                 {

@@ -1,11 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<InstalLog Project="FieldArmory" Build_date="30.10.2026 13:52:26">
+<InstalLog Project="FieldArmory" Build_date="08.11.2026 21:03:31">
   <Files>
     <Directory Path="C:\Games\steamapps\common\Cyberpunk 2077\archive">
       <Directory Path="C:\Games\steamapps\common\Cyberpunk 2077\archive\pc">
         <Directory Path="C:\Games\steamapps\common\Cyberpunk 2077\archive\pc\mod">
           <file>C:\Games\steamapps\common\Cyberpunk 2077\archive\pc\mod\FieldArmory.archive</file>
+          <file>C:\Games\steamapps\common\Cyberpunk 2077\archive\pc\mod\FieldArmory.archive.xl</file>
         </Directory>
+      </Directory>
+    </Directory>
+    <Directory Path="C:\Games\steamapps\common\Cyberpunk 2077\r6">
+      <Directory Path="C:\Games\steamapps\common\Cyberpunk 2077\r6\scripts">
+        <Directory Path="C:\Games\steamapps\common\Cyberpunk 2077\r6\scripts\FieldArmory">
+          <file>C:\Games\steamapps\common\Cyberpunk 2077\r6\scripts\FieldArmory\Access.reds</file>
+          <file>C:\Games\steamapps\common\Cyberpunk 2077\r6\scripts\FieldArmory\Apply.reds</file>
+          <file>C:\Games\steamapps\common\Cyberpunk 2077\r6\scripts\FieldArmory\Inventory.reds</file>
+          <file>C:\Games\steamapps\common\Cyberpunk 2077\r6\scripts\FieldArmory\Loadouts.reds</file>
+          <file>C:\Games\steamapps\common\Cyberpunk 2077\r6\scripts\FieldArmory\Preview.reds</file>
+          <file>C:\Games\steamapps\common\Cyberpunk 2077\r6\scripts\FieldArmory\Screen.reds</file>
+          <file>C:\Games\steamapps\common\Cyberpunk 2077\r6\scripts\FieldArmory\Session.reds</file>
+          <file>C:\Games\steamapps\common\Cyberpunk 2077\r6\scripts\FieldArmory\Wardrobe.reds</file>
+        </Directory>
+      </Directory>
+      <Directory Path="C:\Games\steamapps\common\Cyberpunk 2077\r6\tweaks">
+        <file>C:\Games\steamapps\common\Cyberpunk 2077\r6\tweaks\FieldArmory.yaml</file>
       </Directory>
     </Directory>
   </Files>

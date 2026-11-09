@@ -1,0 +1,4 @@
+djkovrik\fieldarmory\localization\en-us\onscreens.json
+djkovrik\fieldarmory\localization\ru-ru\onscreens.json
+djkovrik\fieldarmory\ui\loadout_menu.inkwidget
+djkovrik\fieldarmory\ui\loadout_preview.inkwidget

@@ -29,6 +29,7 @@ public class ArmoryScreen extends InGamePopup {
   private let editorReturnRow: Int32;
   private let stored: Bool;
   private let heading: ref<inkVerticalPanel>;
+  private let sourceTabs: ref<inkHorizontalPanel>;
   private let body: ref<inkVerticalPanel>;
   private let footer: ref<inkHorizontalPanel>;
   private let previewControls: ref<inkHorizontalPanel>;
@@ -86,6 +87,12 @@ public class ArmoryScreen extends InGamePopup {
     chrome.GetWidgetByPathName(n"wrapper/right/fg").SetOpacity(0.45);
     this.heading = new inkVerticalPanel();
     this.heading.Reparent(this.shell.GetContainerWidget());
+    this.sourceTabs = new inkHorizontalPanel();
+    this.sourceTabs.SetFitToContent(true);
+    this.sourceTabs.SetHAlign(inkEHorizontalAlign.Right);
+    this.sourceTabs.SetVAlign(inkEVerticalAlign.Top);
+    this.sourceTabs.SetMargin(inkMargin(0.0, 20.0, 84.0, 0.0));
+    this.sourceTabs.Reparent(chrome);
     this.MakeScrollArea();
     this.footer = new inkHorizontalPanel();
     this.footer.SetHAlign(inkEHorizontalAlign.Right);
@@ -356,13 +363,12 @@ public class ArmoryScreen extends InGamePopup {
     // fixed for now
     let width: Float = 1130.0;
     let hasDetail: Bool = StrLen(detail) > 0;
-    let source: Bool = Equals(action, n"source");
     let weaponParts: Bool = Equals(action, n"choose") && this.field < 6 && hasDetail;
     let editor = Equals(action, n"name") || Equals(action, n"pick");
     let silhouette = IsDefined(item) || (Equals(action, n"pick") && value >= 6);
     let hand = Equals(action, n"pick") && value < 6;
     let left = silhouette ? 120.0 : (hand ? 285.0 : 24.0);
-    let stacked = hasDetail && !source && !weaponParts && !statusAtRight;
+    let stacked = hasDetail && !weaponParts && !statusAtRight;
     let height = this.target == this.body ? (editor || stacked ? 94.0 : 80.0) : 68.0;
     let column = weaponParts ? width * 0.46 : width * 0.5;
     let top = 4.0;
@@ -371,7 +377,6 @@ public class ArmoryScreen extends InGamePopup {
       else if value == 6 { top = 32.0; }
     }
     let tile = new inkCanvas();
-    if source { tile.SetHAlign(inkEHorizontalAlign.Left); }
     tile.SetSize(width, height);
     tile.SetMargin(inkMargin(0.0, top, 0.0, 6.0));
     tile.SetInteractive(true);
@@ -400,7 +405,7 @@ public class ArmoryScreen extends InGamePopup {
       if StrLen(label) == 0 { focusText = caption; }
     }
     row.SetAnchor(inkEAnchor.Fill);
-    row.SetMargin(inkMargin(left, 0.0, source || weaponParts || statusAtRight ? width-column + 12.0 : 20.0, stacked ? height - 52.0 : 0.0));
+    row.SetMargin(inkMargin(left, 0.0, weaponParts || statusAtRight ? width-column + 12.0 : 20.0, stacked ? height - 52.0 : 0.0));
     row.SetFontSize(37);
     row.SetVerticalAlignment(textVerticalAlignment.Center);
     row.SetWrapping(false, width-44.0);
@@ -434,7 +439,7 @@ public class ArmoryScreen extends InGamePopup {
     if hasDetail {
       let parts = new inkText();
       parts.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Regular");
-      parts.SetFontSize(weaponParts ? 29 : (source ? 35 : 32));
+      parts.SetFontSize(weaponParts ? 29 : 32);
       parts.SetText(detail);
       parts.SetAnchor(inkEAnchor.Fill);
       parts.SetMargin(inkMargin(stacked ? 24.0 : column, stacked ? 42.0 : 0.0, 20.0, 0.0));
@@ -445,7 +450,7 @@ public class ArmoryScreen extends InGamePopup {
       parts.SetVerticalAlignment(textVerticalAlignment.Center);
       parts.SetWrapping(weaponParts, weaponParts ? width-column-20.0 : width-44.0);
       parts.SetOverflowPolicy(textOverflowPolicy.DotsEnd);
-      this.Color(parts, source ? n"MainColors.Blue" : n"MainColors.Grey");
+      this.Color(parts, n"MainColors.Grey");
       parts.Reparent(tile);
       if Equals(action, n"name") {
         this.Color(row, n"MainColors.Grey");
@@ -464,6 +469,11 @@ public class ArmoryScreen extends InGamePopup {
     if i < 0 || i >= ArraySize(this.tiles) { return; }
     let lit = (this.keyboardFocus && i == this.focus) || i == this.hovered;
     let action = this.actions[i];
+    if Equals(action, n"source") {
+      this.tiles[i].SetOpacity(lit ? 1.0 : 0.82);
+      this.accents[i].SetOpacity(this.keyboardFocus && i == this.focus ? 1.0 : 0.0);
+      return;
+    }
     if !IsDefined(this.accents[i]) {
       let button = this.tiles[i].GetControllerByType(n"Codeware.UI.PopupButton") as PopupButton;
       let input = Equals(action, n"back") || Equals(action, n"close") ? n"cancel" : (i == this.focus ? n"proceed" : n"");
@@ -473,9 +483,8 @@ public class ArmoryScreen extends InGamePopup {
     }
 
     let selected = Equals(action, n"select") && this.values[i] == this.selected;
-    let source = Equals(action, n"source");
-    this.accents[i].BindProperty(n"tintColor", selected ? n"MainColors.Red" : (lit || source ? n"MainColors.Blue" : n"MainColors.Grey"));
-    this.accents[i].SetOpacity(lit || selected ? 1.0 : (source ? 0.52 : 0.16));
+    this.accents[i].BindProperty(n"tintColor", selected ? n"MainColors.Red" : (lit ? n"MainColors.Blue" : n"MainColors.Grey"));
+    this.accents[i].SetOpacity(lit || selected ? 1.0 : 0.16);
     this.texts[i].BindProperty(n"tintColor", lit || (Equals(action, n"choose") && this.values[i] == -1) ? n"MainColors.Blue" : n"MainColors.White");
     this.texts[i].SetOpacity(lit || selected ? 1.0 : 0.88);
   }
@@ -544,6 +553,8 @@ public class ArmoryScreen extends InGamePopup {
   }
 
   private func Draw(opt focusPrimary: Bool) {
+    this.sourceTabs.RemoveAllChildren();
+    this.sourceTabs.SetVisible(Equals(this.mode, n"picker") && this.field < 6);
     this.heading.RemoveAllChildren();
     this.body.RemoveAllChildren();
     this.footer.RemoveAllChildren();
@@ -655,16 +666,55 @@ public class ArmoryScreen extends InGamePopup {
     return this.view.heals;
   }
 
+  private func DrawSourceTab(stored: Bool, count: Int32) {
+    let active = Equals(this.stored, stored);
+    let color = active ? n"MainColors.Blue" : n"MainColors.MildRed";
+    let width = stored ? 268.0 : 356.0;
+    let tab = new inkCanvas();
+    tab.SetSize(width, 64.0);
+    tab.SetInteractive(true);
+    tab.SetMargin(inkMargin(stored ? 18.0 : 0.0, 0.0, 0.0, 0.0));
+    tab.Reparent(this.sourceTabs);
+
+    let frame = new inkImage();
+    frame.SetAtlasResource(r"base\\gameplay\\gui\\common\\shapes\\atlas_shapes_sync.inkatlas");
+    frame.SetTexturePart(n"cell_fg");
+    frame.SetNineSliceScale(true);
+    frame.SetAnchor(inkEAnchor.Fill);
+    frame.SetInteractive(false);
+    this.Color(frame, color);
+    frame.Reparent(tab);
+
+    let caption = new inkText();
+    caption.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Medium");
+    caption.SetFontSize(37);
+    caption.SetLetterCase(textLetterCase.UpperCase);
+    caption.SetAnchor(inkEAnchor.Fill);
+    caption.SetHorizontalAlignment(textHorizontalAlignment.Center);
+    caption.SetVerticalAlignment(textVerticalAlignment.Center);
+    caption.SetMargin(inkMargin(8.0, 0.0, 8.0, 5.0));
+    caption.SetText((stored ? Label("Stash") : Label("Inventory")) + " (" + ToString(count) + ")");
+    caption.SetInteractive(false);
+    this.Color(caption, color);
+    caption.Reparent(tab);
+
+    let line = new inkRectangle();
+    line.SetAnchor(inkEAnchor.BottomLeft);
+    line.SetAnchorPoint(Vector2(0.0, 1.0));
+    line.SetSize(width, active ? 5.0 : 2.0);
+    line.SetInteractive(false);
+    this.Color(line, color);
+    line.Reparent(tab);
+    tab.RegisterToCallback(n"OnRelease", this, n"OnRow");
+    this.RegisterAction(tab, n"source", stored ? 1 : 0, frame);
+  }
+
   private func DrawPicker() {
     let first = 0;
     if this.field < 6 {
-      this.target = this.heading;
       let carried = this.view.carriedWeapons;
-      let storedCount = ArraySize(this.view.weapons)-carried;
-      let container = this.stored ? Label("Stash") : Label("Inventory");
-      let count = this.stored ? storedCount : carried;
-      this.Row(container+" ("+ToString(count)+")", n"source", 0, this.stored ? Label("ShowInventory") : Label("ShowStash"));
-      this.target = this.body;
+      this.DrawSourceTab(false, carried);
+      this.DrawSourceTab(true, ArraySize(this.view.weapons) - carried);
       if this.stored { first = carried; }
     }
     let slot = this.FieldLabel(this.field);
@@ -726,14 +776,20 @@ public class ArmoryScreen extends InGamePopup {
     if IsDefined(this.dialog) || !this.IsTopPopup() || e.IsHandled() { return false; }
     if e.IsAction(n"cancel") && (IsDefined(this.draft)||IsNameValid(this.mode)) { e.Handle(); this.Back(); return true; }
     let up = e.IsAction(n"popup_navigate_up");
-    if up || e.IsAction(n"popup_navigate_down") {
+    let left = e.IsAction(n"popup_navigate_left");
+    let across = Equals(this.actions[this.focus], n"source") && (left || e.IsAction(n"popup_navigate_right"));
+    if up || e.IsAction(n"popup_navigate_down") || across {
       let old = this.focus;
       let oldHover = this.hovered;
       this.keyboardFocus = true;
       this.hovered = -1;
       let from = this.editorReturnRow > 0 ? this.editorReturnRow : this.focus;
       this.editorReturnRow = 0;
-      this.focus = (from+ArraySize(this.actions)+(up ? -1 : 1)) % Max(1, ArraySize(this.actions));
+      if across {
+        this.focus = left ? 0 : 1;
+      } else {
+        this.focus = (from+ArraySize(this.actions)+(up ? -1 : 1)) % Max(1, ArraySize(this.actions));
+      }
       if oldHover != old { this.Paint(oldHover); }
       this.Paint(old); this.Paint(this.focus); this.Reveal(this.focus);
       e.Handle(); return true;
@@ -765,6 +821,7 @@ public class ArmoryScreen extends InGamePopup {
     this.GetGameController().PlaySound(n"Button", n"OnPress");
     let action = this.actions[i];
     let value = this.values[i];
+    if Equals(action, n"source") && Equals(this.stored, value == 1) { return; }
     if !Equals(action, n"position") { this.reason = ""; }
 
     switch action {
@@ -795,7 +852,7 @@ public class ArmoryScreen extends InGamePopup {
         this.Choose(value);
         this.ReturnToEditor();
         return;
-      case n"source": this.stored = !this.stored; break;
+      case n"source": this.stored = value == 1; break;
       case n"position":
         this.position = (this.position+1)%3;
         let button = this.tiles[i].GetControllerByType(n"Codeware.UI.PopupButton") as PopupButton;
@@ -810,10 +867,10 @@ public class ArmoryScreen extends InGamePopup {
       case n"equip":
         this.reason = ArmoryOperation.Start(this.access, this.Selected()); break;
     }
-    this.focus = Equals(action, n"select") ? this.selected : 0;
+    this.focus = Equals(action, n"select") ? this.selected : (Equals(action, n"source") ? i : 0);
     let enteringEditor = Equals(action, n"new") || Equals(action, n"edit") || Equals(action, n"copy");
     this.Draw(enteringEditor || Equals(action, n"manage") || Equals(action, n"select"));
-    if Equals(action, n"source") && this.stored {
+    if Equals(action, n"source") && this.stored && this.view.carriedWeapons < ArraySize(this.view.weapons) {
       let match = this.StoredMatch();
       let j = 0;
       while j < ArraySize(this.actions) {
