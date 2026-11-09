@@ -1,1 +1,2 @@
-.reds linguist-language=swift
+# red-cli splits input scripts on CRLF and can discard LF-only source files.
+*.reds linguist-language=swift text eol=crlf
