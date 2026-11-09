@@ -1,0 +1,2 @@
+# red-cli reads source lines with split('\r\n'); LF-only files lose their bodies.
+Sources/Scripts/**/*.reds text eol=crlf
