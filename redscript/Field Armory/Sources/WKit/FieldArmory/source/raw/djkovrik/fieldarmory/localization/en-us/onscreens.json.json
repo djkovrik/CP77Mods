@@ -128,7 +128,21 @@
                   "Type": "localizationPersistenceOnScreenEntry",
                   "Properties": {
                     "secondaryKey": "FieldArmory-DiscardChanges",
-                    "femaleVariant": "Discard changes?"
+                    "femaleVariant": "Discard changes"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-PreviewPosition",
+                    "femaleVariant": "Preview slot"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-ClearSlot",
+                    "femaleVariant": "Clear slot"
                   }
                 },
                 {

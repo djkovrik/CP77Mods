@@ -11,7 +11,7 @@ public class ArmoryScreen extends InGamePopup {
   private let closing: Bool;
   public let preview: wref<ArmoryPreview>;
   private let shell: ref<InMenuPopupContent>;
-  private let tiles: array<wref<inkCanvas>>;
+  private let tiles: array<wref<inkWidget>>;
   private let accents: array<wref<inkImage>>;
   private let panel: ref<inkVerticalPanel>;
   private let draft: ref<Loadout>;
@@ -26,6 +26,7 @@ public class ArmoryScreen extends InGamePopup {
   private let facts: array<CName>;
   private let factListeners: array<Uint32>;
   private let field: Int32;
+  private let editorReturnRow: Int32;
   private let stored: Bool;
   private let heading: ref<inkVerticalPanel>;
   private let body: ref<inkVerticalPanel>;
@@ -75,7 +76,8 @@ public class ArmoryScreen extends InGamePopup {
     listHost.SetChildOrder(inkEChildOrder.Forward);
     this.panel = new inkVerticalPanel();
     this.panel.SetAnchor(inkEAnchor.CenterLeft);
-    this.panel.SetAnchorPoint(Vector2(0.0, 0.5));
+    this.panel.SetAnchorPoint(Vector2(0.0, 0.0));
+    this.panel.SetTranslation(Vector2(-350.0, -520.0));
     this.panel.SetFitToContent(true);
     this.panel.Reparent(listHost);
     this.shell = InMenuPopupContent.Create();
@@ -83,7 +85,6 @@ public class ArmoryScreen extends InGamePopup {
 
     let chrome = this.shell.GetRootCompoundWidget();
     chrome.GetWidgetByPathName(n"wrapper/right/fg").SetOpacity(0.45);
-    this.Color(chrome.GetWidgetByPathName(n"wrapper/right/bg"), n"MainColors.Black");
     this.heading = new inkVerticalPanel();
     this.heading.Reparent(this.shell.GetContainerWidget());
     this.MakeScrollArea();
@@ -115,13 +116,21 @@ public class ArmoryScreen extends InGamePopup {
 
     this.focus = this.selected;
     this.FirstPosition();
-    this.Draw();
+    this.Draw(true);
     this.RevealAfterLayout();
 
     ArmoryOperation.Recover(this.access);
   }
 
+  protected cb func OnAttach() -> Void {
+    super.OnAttach();
+    this.RegisterToGlobalInputCallback(n"OnPreOnPress", this, n"OnConfirmPress");
+    this.RegisterToGlobalInputCallback(n"OnPreOnRelease", this, n"OnConfirmRelease");
+  }
+
   protected cb func OnDetach() -> Void {
+    this.UnregisterFromGlobalInputCallback(n"OnPreOnPress", this, n"OnConfirmPress");
+    this.UnregisterFromGlobalInputCallback(n"OnPreOnRelease", this, n"OnConfirmRelease");
     let ts = GameInstance.GetTransactionSystem(this.access.player.GetGame());
     ts.UnregisterInventoryListener(this.access.player, this.callerListener);
     if IsDefined(this.access.storage) { ts.UnregisterInventoryListener(this.access.storage, this.stashListener); }
@@ -257,6 +266,27 @@ public class ArmoryScreen extends InGamePopup {
     this.viewport.AttachController(this.scroll);
   }
 
+  private func RegisterAction(tile: ref<inkWidget>, action: CName, opt value: Int32, opt frame: ref<inkImage>, opt text: ref<inkText>) {
+    tile.SetName(StringToName(ToString(ArraySize(this.tiles))));
+    tile.RegisterToCallback(n"OnEnter", this, n"OnHover");
+    tile.RegisterToCallback(n"OnLeave", this, n"OnLeaveRow");
+    ArrayPush(this.tiles, tile);
+    ArrayPush(this.accents, frame);
+    ArrayPush(this.actions, action);
+    ArrayPush(this.values, value);
+    ArrayPush(this.texts, text);
+  }
+
+  private func CommandButton(label: String, action: CName) {
+    let button: ref<PopupButton> = PopupButton.Create();
+    button.SetText(label);
+    button.RegisterToCallback(n"OnBtnClick", this, n"OnCommandClick");
+    button.Reparent(this.target, this.GetGameController());
+    let root = button.GetRootWidget();
+    root.SetMargin(inkMargin(0.0, 4.0, 14.0, 6.0));
+    this.RegisterAction(root, action);
+  }
+
   private func Row(label: String, action: CName, opt value: Int32, opt detail: String) {
     let row = new inkText();
     row.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Medium");
@@ -272,20 +302,23 @@ public class ArmoryScreen extends InGamePopup {
       return;
     };
 
-    let button = this.target == this.footer || this.target == this.tools || this.target == this.previewControls;
-    let width = button ? 390.0 : 1130.0;
-    if Equals(action, n"new") { width = 640.0; }
-    if Equals(action, n"manage") || Equals(action, n"equip") { width = 275.0; }
-    if Equals(action, n"position") { width = 430.0; }
-    let hasDetail = StrLen(detail) > 0;
-    let source = Equals(action, n"source");
-    let height = this.target == this.body ? 104.0 : (button ? 78.0 : 68.0);
-    let groupStart = Equals(action, n"pick") && (value == 0 || value == 3 || value == 6);
-    let top = groupStart ? 17.0 : 6.0;
+    // fixed for now
+    let width: Float = 1130.0;
+    let hasDetail: Bool = StrLen(detail) > 0;
+    let source: Bool = Equals(action, n"source");
+    let weaponParts: Bool = Equals(action, n"choose") && this.field < 6 && hasDetail;
+    let stacked = hasDetail && !source && !weaponParts;
+    let height = this.target == this.body ? (stacked ? 94.0 : 74.0) : 68.0;
+    let column = weaponParts ? width * 0.46 : width * 0.5;
+    let top = 4.0;
+    if Equals(action, n"pick") {
+      if value < 3 { top = 18.0; }
+      else if value == 6 { top = 32.0; }
+    }
     let tile = new inkCanvas();
-    tile.SetName(StringToName(ToString(ArraySize(this.tiles))));
+    if source { tile.SetHAlign(inkEHorizontalAlign.Left); }
     tile.SetSize(width, height);
-    tile.SetMargin(inkMargin(0.0, top, button ? 14.0 : 0.0, 6.0));
+    tile.SetMargin(inkMargin(0.0, top, 0.0, 6.0));
     tile.SetInteractive(true);
     tile.SetChildOrder(inkEChildOrder.Forward);
     tile.Reparent(this.target);
@@ -293,53 +326,37 @@ public class ArmoryScreen extends InGamePopup {
     let frame = new inkImage();
     frame.SetAnchor(inkEAnchor.Fill);
     frame.SetAtlasResource(r"base\\gameplay\\gui\\common\\shapes\\atlas_shapes_sync.inkatlas");
-    if button {
-      let backing = new inkImage();
-      backing.SetAnchor(inkEAnchor.Fill);
-      backing.SetAtlasResource(r"base\\gameplay\\gui\\common\\shapes\\atlas_shapes_sync.inkatlas");
-      backing.SetTexturePart(n"cell_bg");
-      backing.SetNineSliceScale(true);
-      this.Color(backing, n"MainColors.Black");
-      backing.Reparent(tile);
-    };
     frame.SetTexturePart(n"cell_fg");
     frame.SetNineSliceScale(true);
-    this.Color(frame, (button || source) ? n"MainColors.Blue" : n"MainColors.Red");
+    frame.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     frame.Reparent(tile);
     row.SetAnchor(inkEAnchor.Fill);
-    row.SetMargin(inkMargin(24.0, 0.0, source ? width * 0.5 : 20.0, hasDetail && !source ? 35.0 : 0.0));
-    row.SetFontSize(button ? 38 : 33);
+    row.SetMargin(inkMargin(24.0, 0.0, source || weaponParts ? width-column + 12.0 : 20.0, stacked ? height - 52.0 : 0.0));
+    row.SetFontSize(37);
     row.SetVerticalAlignment(textVerticalAlignment.Center);
-    if button { row.SetLetterCase(textLetterCase.UpperCase); }
     row.SetWrapping(false, width-44.0);
     row.SetOverflowPolicy(textOverflowPolicy.DotsEnd);
-    this.Color(row, button ? n"MainColors.Red" : n"MainColors.White");
+    row.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     row.Reparent(tile);
     if hasDetail {
       let parts = new inkText();
       parts.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Regular");
-      parts.SetFontSize(source ? 33 : 29);
+      parts.SetFontSize(weaponParts ? 29 : (source ? 35 : 32));
       parts.SetText(detail);
       parts.SetAnchor(inkEAnchor.Fill);
-      parts.SetMargin(inkMargin(source ? width * 0.5 : 24.0, source ? 0.0 : 42.0, 20.0, 0.0));
-      if source {
+      parts.SetMargin(inkMargin(stacked ? 24.0 : column, stacked ? 42.0 : 0.0, 20.0, 0.0));
+      if !stacked {
         parts.SetHorizontalAlignment(textHorizontalAlignment.Right);
         parts.SetInteractive(false);
       }
       parts.SetVerticalAlignment(textVerticalAlignment.Center);
-      parts.SetWrapping(false, width-44.0);
+      parts.SetWrapping(weaponParts, weaponParts ? width-column-20.0 : width-44.0);
       parts.SetOverflowPolicy(textOverflowPolicy.DotsEnd);
       this.Color(parts, source ? n"MainColors.Blue" : n"MainColors.Grey");
       parts.Reparent(tile);
     }
     tile.RegisterToCallback(n"OnRelease", this, n"OnRow");
-    tile.RegisterToCallback(n"OnEnter", this, n"OnHover");
-    tile.RegisterToCallback(n"OnLeave", this, n"OnLeaveRow");
-    ArrayPush(this.tiles, tile);
-    ArrayPush(this.accents, frame);
-    ArrayPush(this.actions, action);
-    ArrayPush(this.values, value);
-    ArrayPush(this.texts, row);
+    this.RegisterAction(tile, action, value, frame, row);
 
     if this.target == this.body { 
       this.contentHeight += height + top + 6.0; 
@@ -349,17 +366,21 @@ public class ArmoryScreen extends InGamePopup {
   private func Paint(i: Int32) {
     if i < 0 || i >= ArraySize(this.tiles) { return; }
     let lit = (this.keyboardFocus && i == this.focus) || i == this.hovered;
-    let loadout = Equals(this.actions[i], n"select");
-    let selected = loadout && this.values[i] == this.selected;
-    let externalButton = this.tiles[i].GetParentWidget() == this.footer || this.tiles[i].GetParentWidget() == this.tools || this.tiles[i].GetParentWidget() == this.previewControls;
-    let persistentFrame = externalButton || Equals(this.actions[i], n"source");
-    this.accents[i].SetVisible(loadout ? selected : (persistentFrame || lit));
-    this.accents[i].SetOpacity(i == this.hovered ? 0.9 : (lit || selected ? 0.68 : (persistentFrame ? 0.55 : 0.25)));
-    if externalButton {
-      this.texts[i].UnbindProperty(n"tintColor");
-      this.texts[i].BindProperty(n"tintColor", lit ? n"MainColors.White" : n"MainColors.Red");
+    let action = this.actions[i];
+    if !IsDefined(this.accents[i]) {
+      let button = this.tiles[i].GetControllerByType(n"Codeware.UI.PopupButton") as PopupButton;
+      let input = Equals(action, n"back") || Equals(action, n"close") ? n"cancel" : (i == this.focus ? n"proceed" : n"");
+      if NotEquals(button.GetInputAction(), input) { button.SetInputAction(input); }
+      this.tiles[i].SetState(lit ? n"Hover" : n"Default");
+      return;
     }
-    this.texts[i].SetOpacity(lit ? 1.0 : (loadout ? 0.72 : 0.88));
+
+    let selected = Equals(action, n"select") && this.values[i] == this.selected;
+    let source = Equals(action, n"source");
+    this.accents[i].BindProperty(n"tintColor", selected ? n"MainColors.Red" : (lit || source ? n"MainColors.Blue" : n"MainColors.Grey"));
+    this.accents[i].SetOpacity(lit || selected ? 1.0 : (source ? 0.52 : 0.16));
+    this.texts[i].BindProperty(n"tintColor", lit || (Equals(action, n"choose") && this.values[i] == -1) ? n"MainColors.Blue" : n"MainColors.White");
+    this.texts[i].SetOpacity(lit || selected ? 1.0 : 0.88);
   }
 
   private func Reveal(i: Int32) {
@@ -372,12 +393,14 @@ public class ArmoryScreen extends InGamePopup {
   protected cb func OnHover(e: ref<inkPointerEvent>) -> Bool {
     let i = StringToInt(NameToString(e.GetCurrentTarget().GetName()));
     if i < 0 || i >= ArraySize(this.tiles) || this.tiles[i] != e.GetCurrentTarget() { return false; }
-    let old = this.focus;
-    if this.hovered != i { this.GetGameController().PlaySound(n"Button", n"OnHover"); }
-    this.keyboardFocus = false;
-    this.focus = i;
+    let old = this.hovered;
+    if old != i { this.GetGameController().PlaySound(n"Button", n"OnHover"); }
     this.hovered = i;
-    this.Paint(old);
+    if this.keyboardFocus {
+      this.keyboardFocus = false;
+      this.Paint(this.focus);
+    }
+    if old != i { this.Paint(old); }
     this.Paint(i);
   }
 
@@ -389,11 +412,14 @@ public class ArmoryScreen extends InGamePopup {
     }
   }
   
-  private func Status(set: ref<Loadout>) -> String {
+  private func Status(set: ref<Loadout>, out available: Bool) -> String {
+    available = false;
+    if !IsDefined(this.access.storage) || !IsDefined(this.view) { return Label("StashUnavailable"); }
     let reason = this.view.Problem(set, false);
     if StrLen(reason) > 0 { return reason; }
     let choice = this.wardrobe.Find(set);
     if IsNameValid(set.wardrobe) && (!IsDefined(choice) || !choice.valid || this.wardrobe.locked) { return Label("MissingOutfit"); }
+    available = true;
     return this.view.Matches(set) && (!IsDefined(choice)||choice.wearing) ? Label("Equipped") : "";
   }
 
@@ -403,26 +429,22 @@ public class ArmoryScreen extends InGamePopup {
     return field == 7 ? Label("Healing") : Label("Outfit");
   }
 
-  private func ItemRow(item: ref<ArmoryItem>, slot: String, action: CName, value: Int32) {
-    let detail = slot+" · "+(item.carried ? Label("Carried") : Label("InStash"));
-    this.Row(item.Title(), action, value, detail);
-  }
-
   private func EditItem(field: Int32, id: ItemID, fallback: String) {
     let slot = this.FieldLabel(field);
     let item = this.view.Find(id);
-    if IsDefined(item) { this.ItemRow(item, slot, n"pick", field); }
-    else { this.PlaceholderRow(field, n"pick", field, fallback); }
-  }
-
-  private func PlaceholderRow(field: Int32, action: CName, value: Int32, status: String) {
-    if field < 6 {
-      this.Row(Label("WeaponPosition")+" "+ToString(1+field%3), action, value, (field < 3 ? Label("RightHand") : Label("LeftHand"))+" · "+status);
+    if IsDefined(item) {
+      this.Row(item.Title(), n"pick", field, slot+" · "+(item.carried ? Label("Carried") : Label("InStash")));
+    } else {
+      this.Row(fallback, n"pick", field, slot);
     }
-    else { this.Row(this.FieldLabel(field), action, value, status); }
   }
 
-  private func Draw() {
+  private func EditorFocus() -> Int32 {
+    if this.field < 6 { return 1 + 2 * (this.field % 3) + (this.field < 3 ? 0 : 1); }
+    return 1 + this.field;
+  }
+
+  private func Draw(opt focusPrimary: Bool) {
     this.heading.RemoveAllChildren();
     this.body.RemoveAllChildren();
     this.footer.RemoveAllChildren();
@@ -442,8 +464,9 @@ public class ArmoryScreen extends InGamePopup {
       if IsDefined(this.draft) {
         this.Row(NameToString(selected.title), n"name", 0, Label("NameLabel"));
         let i = 0;
-        while i < 6 {
+        while i < 3 {
           this.EditItem(i, selected.weapons[i], ItemID.IsValid(selected.weapons[i]) ? Label("MissingWeapon") : Label("EmptySlot"));
+          this.EditItem(i + 3, selected.weapons[i + 3], ItemID.IsValid(selected.weapons[i+3]) ? Label("MissingWeapon") : Label("EmptySlot"));
           i += 1;
         };
  
@@ -453,36 +476,48 @@ public class ArmoryScreen extends InGamePopup {
         if IsDefined(outfit) { this.Row(outfit.Title(), n"pick", 8, Label("Outfit")); }
         else { this.Row(Label("Outfit"), n"pick", 8, IsNameValid(selected.wardrobe) ? Label("MissingOutfit") : Label("KeepCurrent")); }
         this.target = this.footer;
-        this.Row(Label("Save"), n"save");
-        this.Row(Label("DiscardChanges"), n"back");
+        if focusPrimary { this.focus = ArraySize(this.actions); }
+        this.CommandButton(Label("Save"), n"save");
+        this.CommandButton(Label("DiscardChanges"), n"back");
       } else {
         if ArraySize(this.system.sets) == 0 { this.target = this.heading; this.Row(Label("EmptyList"), n""); this.target = this.body; }
+        let selectedAvailable: Bool;
         let i = 0;
         while i < ArraySize(this.system.sets) {
           let preset = this.system.sets[i];
-          this.Row(NameToString(preset.title), n"select", i,this.Status(preset));
+          let available: Bool;
+          let status = this.Status(preset, available);
+          this.Row(NameToString(preset.title), n"select", i, status);
+          if i == this.selected { selectedAvailable = available; }
           i += 1;
         };
 
         this.target = this.footer;
 
         if IsDefined(selected) {
-          this.Row(Label("Equip"), n"equip");
-          this.Row(Label("Manage"), n"manage");
+          if focusPrimary {
+            this.focus = selectedAvailable ? ArraySize(this.actions) : this.selected;
+          }
+          this.CommandButton(Label("Equip"), n"equip");
+          this.CommandButton(Label("Manage"), n"manage");
           if Equals(this.mode, n"manage") {
             this.target = this.tools;
-            this.Row(Label("Edit"), n"edit"); this.Row(Label("Duplicate"), n"copy"); this.Row(Label("Delete"), n"delete");
+            this.CommandButton(Label("Edit"), n"edit"); this.CommandButton(Label("Duplicate"), n"copy"); this.CommandButton(Label("Delete"), n"delete");
           }
         }
         this.target = this.footer;
-        this.Row(Label("CreateFromCurrent"), n"new");
+        this.CommandButton(Label("CreateFromCurrent"), n"new");
       };
     };
 
+    this.target = this.previewControls;
+    if Equals(this.mode, n"picker") || Equals(this.mode, n"manage") {
+      this.CommandButton(Label("Back"), n"back");
+    } else {
+      if !IsDefined(this.draft) { this.CommandButton(GetLocalizedText("UI-ScriptExports-Close"), n"close"); }
+    }
     if IsDefined(selected) {
-      this.target = this.previewControls;
-      if Equals(this.mode, n"picker") { this.Row(Label("Back"), n"back"); }
-      this.Row(this.PositionLabel(), n"position");
+      this.CommandButton(this.PositionLabel(), n"position");
       if IsDefined(this.preview) { this.preview.Select(this.view, selected, this.wardrobe.Find(selected), this.position); }
     } else { 
       if IsDefined(this.preview) { 
@@ -491,17 +526,19 @@ public class ArmoryScreen extends InGamePopup {
     };
 
     let editing = Equals(this.mode, n"edit");
-    this.panel.SetTranslation(Vector2(-350.0, editing ? 200.0 : 0.0));
-    let visibleHeight = editing ? this.contentHeight : MinF(this.contentHeight, 720.0);
+    let visibleHeight = MinF(this.contentHeight, editing ? 1120.0 : 720.0);
     this.viewport.SetSize(1160.0, visibleHeight);
     this.viewport.SetVisible(visibleHeight > 0.0);
-    let width = IsDefined(selected) ? 1280.0 : 690.0;
+    let empty = !IsDefined(selected);
+    // dynamic maybe? kept for the first release
+    let width = empty ? 780.0 : 1280.0;
+    this.heading.SetMargin(inkMargin(0.0, 0.0, 0.0, empty ? 22.0 : 0.0));
     this.panel.GetParentWidget().SetSize(width,0.0);
-    this.shell.GetRootCompoundWidget().GetWidgetByPathName(n"minSize").SetSize(width, 190.0);
+    this.shell.GetRootCompoundWidget().GetWidgetByPathName(n"minSize").SetSize(width, empty ? 220.0 : 190.0);
     this.shell.GetRootCompoundWidget().GetWidgetByPathName(n"wrapper/right").SetSize(width - 40.0, 180.0);
     this.footer.SetVisible(this.footer.GetNumChildren() > 0);
     this.tools.SetVisible(this.tools.GetNumChildren() > 0);
-    this.previewControls.SetVisible(IsDefined(selected));
+    this.previewControls.SetVisible(this.previewControls.GetNumChildren() > 0);
     this.footer.SetMargin(inkMargin(0.0, 14.0, 0.0, 0.0));
     this.previewControls.SetMargin(inkMargin(0.0, Equals(this.mode, n"picker") ? 14.0 : 0.0, 0.0, 0.0));
     this.focus = Clamp(this.focus, 0, Max(0, ArraySize(this.actions)-1));
@@ -510,7 +547,7 @@ public class ArmoryScreen extends InGamePopup {
   }
 
   private func PositionLabel() -> String {
-    return Label("WeaponPosition")+"   "+ToString(this.position+1)+" / 3   >";
+    return Label("PreviewPosition")+"   "+ToString(this.position+1)+" / 3   >";
   }
 
   private func Choices() -> array<ref<ArmoryItem>> {
@@ -532,7 +569,7 @@ public class ArmoryScreen extends InGamePopup {
       if this.stored { first = carried; }
     }
     let slot = this.FieldLabel(this.field);
-    this.PlaceholderRow(this.field, n"choose", -1, this.field < 6 ? Label("EmptySlot") : Label("KeepCurrent"));
+    this.Row(this.field < 6 ? Label("ClearSlot") : Label("KeepCurrent"), n"choose", -1);
     if this.field == 8 {
       let i = 0;
       while i < ArraySize(this.wardrobe.choices) { this.Row(this.wardrobe.choices[i].Title(), n"choose", i, slot); i += 1; }
@@ -541,7 +578,11 @@ public class ArmoryScreen extends InGamePopup {
       let end = this.field < 6 && !this.stored ? this.view.carriedWeapons : ArraySize(rows);
       while first < end {
         let item = rows[first];
-        this.ItemRow(item, slot, n"choose", first);
+        if this.field < 6 {
+          this.Row(item.Name(), n"choose", first, item.PartsLabel());
+        } else {
+          this.Row(item.Name(), n"choose", first);
+        }
         first += 1;
       }
     }
@@ -559,26 +600,65 @@ public class ArmoryScreen extends InGamePopup {
     }
   }
 
+  protected cb func OnCommandClick(widget: wref<inkWidget>) {
+    let i = StringToInt(NameToString(widget.GetName()));
+    if i >= 0 && i < ArraySize(this.tiles) && this.tiles[i] == widget { this.Act(i); }
+  }
+
+  private func TakeConfirm(e: ref<inkPointerEvent>) -> Bool {
+    if this.closing || IsDefined(this.dialog) || !this.IsTopPopup() || e.IsHandled() || e.IsConsumed() { return false; }
+    if !e.IsAction(n"proceed") && (!e.IsAction(n"activate") || e.IsAction(n"click") || e.IsAction(n"mouse_left")) { return false; }
+    e.Handle();
+    e.Consume();
+    return true;
+  }
+
+  protected cb func OnConfirmPress(e: ref<inkPointerEvent>) -> Bool {
+    return this.TakeConfirm(e);
+  }
+
+  protected cb func OnConfirmRelease(e: ref<inkPointerEvent>) -> Bool {
+    if !this.TakeConfirm(e) { return false; }
+    this.Act(this.focus);
+    return true;
+  }
+
   protected cb func OnGlobalReleaseInput(e: ref<inkPointerEvent>) -> Bool {
     if IsDefined(this.dialog) || !this.IsTopPopup() || e.IsHandled() { return false; }
     if e.IsAction(n"cancel") && (IsDefined(this.draft)||IsNameValid(this.mode)) { e.Handle(); this.Back(); return true; }
     let up = e.IsAction(n"popup_navigate_up");
     if up || e.IsAction(n"popup_navigate_down") {
       let old = this.focus;
+      let oldHover = this.hovered;
       this.keyboardFocus = true;
       this.hovered = -1;
-      this.focus = (this.focus+ArraySize(this.actions)+(up ? -1 : 1)) % Max(1, ArraySize(this.actions));
+      let from = this.editorReturnRow > 0 ? this.editorReturnRow : this.focus;
+      this.editorReturnRow = 0;
+      this.focus = (from+ArraySize(this.actions)+(up ? -1 : 1)) % Max(1, ArraySize(this.actions));
+      if oldHover != old { this.Paint(oldHover); }
       this.Paint(old); this.Paint(this.focus); this.Reveal(this.focus);
       e.Handle(); return true;
     }
-    if e.IsAction(n"activate") || e.IsAction(n"proceed") { e.Handle(); this.Act(this.focus); return true; }
     return super.OnGlobalReleaseInput(e);
   }
 
   private func Back() {
-    if Equals(this.mode, n"picker") { this.mode = n"edit"; }
-    else { this.draft = null; this.mode = n""; }
-    this.reason = ""; this.focus = IsDefined(this.draft) ? this.field+1 : this.selected; this.Refresh(); this.Draw(); this.RevealAfterLayout();
+    this.reason = "";
+    this.Refresh();
+    if Equals(this.mode, n"picker") { this.ReturnToEditor(); return; }
+    this.draft = null;
+    this.mode = n"";
+    this.editorReturnRow = 0;
+    this.focus = this.selected;
+    this.Draw(true);
+    this.RevealAfterLayout();
+  }
+
+  private func ReturnToEditor() {
+    this.mode = n"edit";
+    this.editorReturnRow = this.EditorFocus();
+    this.Draw(true);
+    this.RevealAfterLayout();
   }
 
   private func Act(i: Int32) {
@@ -609,24 +689,31 @@ public class ArmoryScreen extends InGamePopup {
         this.dialog = GenericMessageNotification.Show(this.GetGameController(), Label("Delete"), Label("ConfirmDelete")+" "+NameToString(this.Selected().title), GenericMessageNotificationType.YesNo);
         this.dialog.RegisterListener(this, n"OnDelete"); return;
       case n"pick":
+        this.editorReturnRow = 0;
         this.field = value; this.stored = false; this.mode = n"picker";
         break;
-      case n"choose": this.Choose(value); break;
+      case n"choose":
+        this.Choose(value);
+        this.ReturnToEditor();
+        return;
       case n"source": this.stored = !this.stored; break;
       case n"position":
         this.position = (this.position+1)%3;
-        this.texts[i].SetText(this.PositionLabel());
+        let button = this.tiles[i].GetControllerByType(n"Codeware.UI.PopupButton") as PopupButton;
+        button.SetText(this.PositionLabel());
         let set = this.Selected();
         if IsDefined(this.preview) { this.preview.Select(this.view, set, this.wardrobe.Find(set), this.position); }
         return;
       case n"save":
         this.selected = this.system.Save(this.draft); this.Back(); return;
       case n"back": this.Back(); return;
+      case n"close": this.Close(); return;
       case n"equip":
         this.reason = ArmoryOperation.Start(this.access, this.Selected()); break;
     }
-    this.focus = Equals(action, n"select") ? this.selected : (Equals(action, n"choose") ? this.field+1 : 0);
-    this.Draw();
+    this.focus = Equals(action, n"select") ? this.selected : 0;
+    let enteringEditor = Equals(action, n"new") || Equals(action, n"edit") || Equals(action, n"copy");
+    this.Draw(enteringEditor || (Equals(action, n"select") && !IsNameValid(this.mode)));
     if Equals(action, n"source") && this.stored {
       let match = this.StoredMatch();
       let j = 0;
@@ -646,17 +733,27 @@ public class ArmoryScreen extends InGamePopup {
     this.Paint(old); this.Paint(i); this.RevealAfterLayout();
   }
 
+  private func RowToReveal() -> Int32 {
+    if this.editorReturnRow > 0 { return this.editorReturnRow; }
+    if this.focus >= 0 && this.focus < ArraySize(this.actions) && Equals(this.actions[this.focus], n"equip") {
+      return this.selected;
+    }
+    return this.focus;
+  }
+
   private func RevealAfterLayout() {
-    if this.focus < 0 || this.focus >= ArraySize(this.tiles) || this.tiles[this.focus].GetParentWidget() != this.body { return; }
+    let row = this.RowToReveal();
+    if row < 0 || row >= ArraySize(this.tiles) || this.tiles[row].GetParentWidget() != this.body { return; }
     let callback = new ArmoryScrollToFocus();
     callback.screen = this;
-    callback.tile = this.tiles[this.focus];
+    callback.tile = this.tiles[row];
     GameInstance.GetDelaySystem(this.access.player.GetGame()).DelayCallbackNextFrame(callback);
   }
 
   public func RevealCurrent(tile: wref<inkWidget>) {
-    if !this.closing && IsDefined(tile) && this.focus >= 0 && this.focus < ArraySize(this.tiles) && this.tiles[this.focus] == tile {
-      this.Reveal(this.focus);
+    let row = this.RowToReveal();
+    if !this.closing && IsDefined(tile) && row >= 0 && row < ArraySize(this.tiles) && this.tiles[row] == tile {
+      this.Reveal(row);
     }
   }
 
@@ -691,7 +788,6 @@ public class ArmoryScreen extends InGamePopup {
         this.reason = this.view.Problem(this.draft, false);
       } else { this.draft.SetAssignment(this.field == 6 ? EHotkey.RB : EHotkey.DPAD_UP, id); }
     }
-    this.mode = n"edit";
   }
 
   protected cb func OnName(data: ref<inkGameNotificationData>) {
@@ -711,6 +807,7 @@ public class ArmoryScreen extends InGamePopup {
     let result = data as GenericMessageNotificationCloseData;
     if IsDefined(result) && Equals(result.result, GenericMessageNotificationResult.Yes) {
       this.system.Delete(this.selected); this.selected = Max(0, Min(this.selected, ArraySize(this.system.sets) - 1));
+      if ArraySize(this.system.sets) == 0 { this.mode = n""; }
       this.focus = this.selected; this.FirstPosition();
     };
 

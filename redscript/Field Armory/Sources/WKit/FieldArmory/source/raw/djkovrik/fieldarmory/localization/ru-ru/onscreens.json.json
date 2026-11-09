@@ -128,7 +128,21 @@
                   "Type": "localizationPersistenceOnScreenEntry",
                   "Properties": {
                     "secondaryKey": "FieldArmory-DiscardChanges",
-                    "femaleVariant": "Отменить изменения?"
+                    "femaleVariant": "Отменить изменения"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-PreviewPosition",
+                    "femaleVariant": "Примерка позиции"
+                  }
+                },
+                {
+                  "Type": "localizationPersistenceOnScreenEntry",
+                  "Properties": {
+                    "secondaryKey": "FieldArmory-ClearSlot",
+                    "femaleVariant": "Очистить слот"
                   }
                 },
                 {

@@ -5,9 +5,12 @@ public class ArmoryItem {
   public let carried: Bool;
   public let next: ref<ArmoryItem>;
 
+  public func Name() -> String {
+    return GetLocalizedTextByKey(RPGManager.GetItemRecord(this.data.GetID()).DisplayName());
+  }
+
   public func Title() -> String {
-    let id = this.data.GetID();
-    let record = RPGManager.GetItemRecord(id);
+    let record = RPGManager.GetItemRecord(this.data.GetID());
     let text = GetLocalizedTextByKey(record.DisplayName());
     if Equals(record.EquipArea().Type(), gamedataEquipmentArea.Weapon) {
       let parts = this.PartsLabel();
@@ -16,7 +19,7 @@ public class ArmoryItem {
     return text;
   }
 
-  private func PartsLabel() -> String {
+  public func PartsLabel() -> String {
     let slots: array<TweakDBID>;
     this.data.GetUsedSlotsOnItem(slots);
     let text = "";
