@@ -68,6 +68,10 @@ public class ArmoryScreen extends InGamePopup {
 
     let listHost = menu.GetWidgetByPathName(n"listHost") as inkCompoundWidget;
     this.GetGameController().SpawnFromExternal(this.previewHost, r"djkovrik\\fieldarmory\\ui\\loadout_preview.inkwidget", n"Root:FieldArmory.ArmoryPreview");
+    menu.SetChildOrder(inkEChildOrder.Forward);
+    listHost.SetAnchor(inkEAnchor.LeftFillVerticaly);
+    listHost.SetMargin(inkMargin(20.0, 0.0, 0.0, 0.0));
+    listHost.SetInteractive(false);
     listHost.SetChildOrder(inkEChildOrder.Forward);
     this.panel = new inkVerticalPanel();
     this.panel.SetAnchor(inkEAnchor.CenterLeft);
@@ -320,8 +324,7 @@ public class ArmoryScreen extends InGamePopup {
       parts.SetMargin(inkMargin(source ? width * 0.5 : 24.0, source ? 0.0 : 42.0, 20.0, 0.0));
       if source {
         parts.SetHorizontalAlignment(textHorizontalAlignment.Right);
-        parts.SetInteractive(true);
-        parts.RegisterToCallback(n"OnRelease", this, n"OnRow");
+        parts.SetInteractive(false);
       }
       parts.SetVerticalAlignment(textVerticalAlignment.Center);
       parts.SetWrapping(false, width-44.0);
@@ -430,25 +433,25 @@ public class ArmoryScreen extends InGamePopup {
     this.target = this.heading;
     ArrayClear(this.tiles); ArrayClear(this.accents);
     ArrayClear(this.actions); ArrayClear(this.values); ArrayClear(this.texts);
-    let set = this.Selected();
+    let selected = this.Selected();
     this.shell.SetTitle(Equals(this.mode, n"picker") ? this.FieldLabel(this.field) : (IsDefined(this.draft) ? Label("Edit") : Label("Loadouts")));
     if StrLen(this.reason) > 0 { this.Row(this.reason, n""); }
     this.target = this.body;
     if Equals(this.mode, n"picker") { this.DrawPicker(); }
     else {
       if IsDefined(this.draft) {
-        this.Row(NameToString(set.title), n"name", 0, Label("NameLabel"));
+        this.Row(NameToString(selected.title), n"name", 0, Label("NameLabel"));
         let i = 0;
         while i < 6 {
-          this.EditItem(i, set.weapons[i], ItemID.IsValid(set.weapons[i]) ? Label("MissingWeapon") : Label("EmptySlot"));
+          this.EditItem(i, selected.weapons[i], ItemID.IsValid(selected.weapons[i]) ? Label("MissingWeapon") : Label("EmptySlot"));
           i += 1;
         };
  
-        this.EditItem(6, this.view.Assignment(set.gadget, set.gadgetFamily, EHotkey.RB), ItemID.IsValid(set.gadget) ? Label("MissingAssignment") : Label("KeepCurrent"));
-        this.EditItem(7, this.view.Assignment(set.healing, set.healingFamily, EHotkey.DPAD_UP), ItemID.IsValid(set.healing) ? Label("MissingAssignment") : Label("KeepCurrent"));
-        let outfit = this.wardrobe.Find(set);
+        this.EditItem(6, this.view.Assignment(selected.gadget, selected.gadgetFamily, EHotkey.RB), ItemID.IsValid(selected.gadget) ? Label("MissingAssignment") : Label("KeepCurrent"));
+        this.EditItem(7, this.view.Assignment(selected.healing, selected.healingFamily, EHotkey.DPAD_UP), ItemID.IsValid(selected.healing) ? Label("MissingAssignment") : Label("KeepCurrent"));
+        let outfit = this.wardrobe.Find(selected);
         if IsDefined(outfit) { this.Row(outfit.Title(), n"pick", 8, Label("Outfit")); }
-        else { this.Row(Label("Outfit"), n"pick", 8, IsNameValid(set.wardrobe) ? Label("MissingOutfit") : Label("KeepCurrent")); }
+        else { this.Row(Label("Outfit"), n"pick", 8, IsNameValid(selected.wardrobe) ? Label("MissingOutfit") : Label("KeepCurrent")); }
         this.target = this.footer;
         this.Row(Label("Save"), n"save");
         this.Row(Label("DiscardChanges"), n"back");
@@ -463,7 +466,7 @@ public class ArmoryScreen extends InGamePopup {
 
         this.target = this.footer;
 
-        if IsDefined(set) {
+        if IsDefined(selected) {
           this.Row(Label("Equip"), n"equip");
           this.Row(Label("Manage"), n"manage");
           if Equals(this.mode, n"manage") {
@@ -476,11 +479,11 @@ public class ArmoryScreen extends InGamePopup {
       };
     };
 
-    if IsDefined(set) {
+    if IsDefined(selected) {
       this.target = this.previewControls;
       if Equals(this.mode, n"picker") { this.Row(Label("Back"), n"back"); }
       this.Row(this.PositionLabel(), n"position");
-      if IsDefined(this.preview) { this.preview.Select(this.view, set, this.wardrobe.Find(set), this.position); }
+      if IsDefined(this.preview) { this.preview.Select(this.view, selected, this.wardrobe.Find(selected), this.position); }
     } else { 
       if IsDefined(this.preview) { 
         this.preview.Select(this.view, null, null, 0); 
@@ -492,12 +495,13 @@ public class ArmoryScreen extends InGamePopup {
     let visibleHeight = editing ? this.contentHeight : MinF(this.contentHeight, 720.0);
     this.viewport.SetSize(1160.0, visibleHeight);
     this.viewport.SetVisible(visibleHeight > 0.0);
-    let width = IsDefined(set) ? 1280.0 : 690.0;
+    let width = IsDefined(selected) ? 1280.0 : 690.0;
+    this.panel.GetParentWidget().SetSize(width,0.0);
     this.shell.GetRootCompoundWidget().GetWidgetByPathName(n"minSize").SetSize(width, 190.0);
-    this.shell.GetRootCompoundWidget().GetWidgetByPathName(n"wrapper/right").SetSize(width-40.0, 180.0);
+    this.shell.GetRootCompoundWidget().GetWidgetByPathName(n"wrapper/right").SetSize(width - 40.0, 180.0);
     this.footer.SetVisible(this.footer.GetNumChildren() > 0);
     this.tools.SetVisible(this.tools.GetNumChildren() > 0);
-    this.previewControls.SetVisible(IsDefined(set));
+    this.previewControls.SetVisible(IsDefined(selected));
     this.footer.SetMargin(inkMargin(0.0, 14.0, 0.0, 0.0));
     this.previewControls.SetMargin(inkMargin(0.0, Equals(this.mode, n"picker") ? 14.0 : 0.0, 0.0, 0.0));
     this.focus = Clamp(this.focus, 0, Max(0, ArraySize(this.actions)-1));
@@ -546,7 +550,6 @@ public class ArmoryScreen extends InGamePopup {
   protected cb func OnRow(e: ref<inkPointerEvent>) -> Bool {
     if e.IsAction(n"click") && !e.IsHandled() {
       let target = e.GetCurrentTarget();
-      if IsDefined(target as inkText) { target = target.GetParentWidget(); }
       let i = StringToInt(NameToString(target.GetName()));
       if i >= 0 && i < ArraySize(this.tiles) && this.tiles[i] == target {
         e.Handle();
