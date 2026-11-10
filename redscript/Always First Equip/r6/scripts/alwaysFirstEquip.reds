@@ -704,7 +704,9 @@ protected func OnExit(stateContext: ref<StateContext>, scriptInterface: ref<Stat
   if IsDefined(itemObject) {
     this.CreateAndSendFirstEquipEndRequest(scriptInterface, ItemID.GetTDBID(itemObject.GetItemID()));
   };
-  scriptInterface.PushAnimationEvent(n"FirstEquipEnd");
+  if !this.CheckSlotMatchAndCompareRequestType(stateContext, this.stateMachineInstanceData, this.stateMachineInitData, EquipmentManipulationRequestType.Unequip) {
+    scriptInterface.PushAnimationEvent(n"FirstEquipEnd");
+  };
   stateContext.SetConditionBoolParameter(n"firstEquip", false, true);
 }
 
