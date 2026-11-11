@@ -4,7 +4,7 @@ public func SetData(const data: script_ref<WorldMapTooltipData>, menu: ref<World
 
   let vendorName: String = this.GetRealVendorName(data);
   let variant: gamedataMappinVariant = Deref(data).mappin.GetVariant();
-  if NotEquals(vendorName, "") && NotEquals(variant, gamedataMappinVariant.ServicePointRipperdocVariant) {
+  if NotEquals(vendorName, "") && NotEquals(variant, gamedataMappinVariant.ServicePointRipperdocVariant) && NotEquals(variant, gamedataMappinVariant.Zzz21_ServicePointGlamdocVariant) {
     inkTextRef.SetText(this.m_titleText, vendorName);
   };
 }

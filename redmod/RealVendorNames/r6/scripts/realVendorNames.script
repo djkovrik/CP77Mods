@@ -6,7 +6,7 @@ function SetData(const data: ref<WorldMapTooltipData>, menu: WorldMapMenuGameCon
 
   let vendorName: String = this.GetRealVendorName(data);
   let variant: gamedataMappinVariant = data.mappin.GetVariant();
-  if (vendorName != "" && variant != gamedataMappinVariant.ServicePointRipperdocVariant) {
+  if (vendorName != "" && variant != gamedataMappinVariant.ServicePointRipperdocVariant && variant != gamedataMappinVariant.Zzz21_ServicePointGlamdocVariant) {
     inkTextRef.SetText(this.m_titleText, vendorName);
   }
 }
