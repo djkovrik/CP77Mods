@@ -17,6 +17,7 @@ private func AlwaysFirstEquipAction() -> CName = n"AlwaysFirstEquip"
 private func SafeWeaponAction() -> CName = n"SafeWeapon"
 
 public class FirstEquipOperation {
+  public let replayEquippedSlot: Bool;
   public let hotkeyRequested: Bool;
   public let hotkeyCanceled: Bool;
   public let hotkeyDispatched: Bool;
@@ -130,6 +131,13 @@ public class FirstEquipConfig {
   public let excludeArmsCyberware: Bool = true;
 
   // -- Hotkey config
+
+  @runtimeProperty("ModSettings.mod", "First Equip")
+  @runtimeProperty("ModSettings.category", "Mod-First-Equip-Hotkey")
+  @runtimeProperty("ModSettings.category.order", "3")
+  @runtimeProperty("ModSettings.displayName", "Mod-First-Equip-Slot-Hold")
+  @runtimeProperty("ModSettings.description", "Mod-First-Equip-Slot-Hold-Desc")
+  public let replayOnSlotHold: Bool = false;
 
   // Replace true with false if you want to disable slot tracking behavior
   // If enabled then mod tracks slots usage and hotkey press equips weapon from the last used slot,
@@ -316,6 +324,22 @@ public class FirstEquipGlobalInputListener {
 @addField(EquipmentManipulationRequest) public let firstEquipHotkeyConsumed: Bool;
 @addField(DrawItemRequest) public let firstEquipOperation: ref<FirstEquipOperation>;
 @addField(PlayerPuppet) public let firstEquipRequest: ref<FirstEquipOperation>;
+@addField(PlayerPuppet) private let rightFirstEquipActive: Bool;
+@addField(PlayerPuppet) private let leftFirstEquipActive: Bool;
+
+@addMethod(PlayerPuppet)
+public func SetFirstEquipActiveEQ(left: Bool, active: Bool) -> Void {
+  if left {
+    this.leftFirstEquipActive = active;
+  } else {
+    this.rightFirstEquipActive = active;
+  };
+}
+
+@addMethod(PlayerPuppet)
+public func IsFirstEquipActiveEQ() -> Bool {
+  return this.rightFirstEquipActive || this.leftFirstEquipActive;
+}
 
 
 // --- HOTKEY AND CONFIG
@@ -354,6 +378,8 @@ protected cb func OnDetach() -> Bool {
 
 @addMethod(PlayerPuppet)
 public func ResetFirstEquipInputStateEQ() -> Void {
+  this.rightFirstEquipActive = false;
+  this.leftFirstEquipActive = false;
   this.CancelFirstEquipRequestEQ();
   let uiSystemBB: ref<IBlackboard> = GameInstance.GetBlackboardSystem(this.GetGame()).Get(GetAllBlackboardDefs().UI_System);
   if !IsDefined(uiSystemBB) {
@@ -686,6 +712,7 @@ protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<Sta
   let broadcaster: ref<StimBroadcasterComponent>;
   let weapon: ref<WeaponObject>;
   if this.IsRightHandLogic(this.stateMachineInstanceData) || this.IsLeftHandLogic(this.stateMachineInstanceData) {
+    (scriptInterface.executionOwner as PlayerPuppet).SetFirstEquipActiveEQ(this.IsLeftHandLogic(this.stateMachineInstanceData), true);
     weapon = this.GetSlotAttachedItemObject(scriptInterface, this.stateMachineInstanceData) as WeaponObject;
     if IsDefined(weapon) && !WeaponObject.IsFists(weapon.GetItemID()) {
       broadcaster = scriptInterface.executionOwner.GetStimBroadcasterComponent();
@@ -701,6 +728,7 @@ protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<Sta
 protected func OnExit(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
   let mappedInstanceData: InstanceDataMappedToReferenceName = this.GetMappedInstanceData(this.stateMachineInstanceData.referenceName);
   let itemObject: wref<WeaponObject> = scriptInterface.GetTransactionSystem().GetItemInSlot(scriptInterface.executionOwner, TDBID.Create(mappedInstanceData.attachmentSlot)) as WeaponObject;
+  (scriptInterface.executionOwner as PlayerPuppet).SetFirstEquipActiveEQ(this.IsLeftHandLogic(this.stateMachineInstanceData), false);
   if IsDefined(itemObject) {
     this.CreateAndSendFirstEquipEndRequest(scriptInterface, ItemID.GetTDBID(itemObject.GetItemID()));
   };
@@ -1064,6 +1092,7 @@ protected final const func SendEquipmentSystemWeaponManipulationRequest(const sc
   };
   let lastUsedSlot: Int32 = blackboard.GetInt(GetAllBlackboardDefs().UI_System.FirstEqLastUsedSlot);
   let newLastUsedSlot: Int32 = lastUsedSlot;
+  let slotHold: Bool = Equals(equipAnimType, gameEquipAnimationType.FirstEquip);
   switch requestType {
     case EquipmentManipulationAction.RequestWeaponSlot1:
       newLastUsedSlot = 0;
@@ -1078,14 +1107,110 @@ protected final const func SendEquipmentSystemWeaponManipulationRequest(const sc
       newLastUsedSlot = 3;
       break;
     case EquipmentManipulationAction.CycleNextWeaponWheelItem:
+      slotHold = false;
       newLastUsedSlot = GetNextSlotIndex(lastUsedSlot);
       break;
     case EquipmentManipulationAction.CyclePreviousWeaponWheelItem:
+      slotHold = false;
       newLastUsedSlot = GetPreviousSlotIndex(lastUsedSlot);
       break;
+    default:
+      slotHold = false;
   };
   blackboard.SetInt(GetAllBlackboardDefs().UI_System.FirstEqLastUsedSlot, newLastUsedSlot, false);
+  if slotHold && IsDefined(this as UpperBodyTransition) {
+    let player: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
+    if IsDefined(player) && IsDefined(player.firstEquipConfig) && player.firstEquipConfig.replayOnSlotHold {
+      let playerData: ref<EquipmentSystemPlayerData> = EquipmentSystem.GetData(player);
+      if IsDefined(playerData) && playerData.ReplayEquippedSlotEQ(player, newLastUsedSlot) {
+        return;
+      };
+    };
+  };
   wrappedMethod(scriptInterface, requestType, equipAnimType);
+}
+
+@addMethod(EquipmentSystemPlayerData)
+public final func ReplayEquippedSlotEQ(player: ref<PlayerPuppet>, slot: Int32) -> Bool {
+  let right: ref<WeaponObject> = GameObject.GetRightActiveWeapon(player);
+  let left: ref<WeaponObject>;
+  let item: ItemID;
+  let bb: ref<IBlackboard> = player.GetPlayerStateMachineBlackboard();
+  let dual: Bool;
+  let replayRight: Bool;
+  let replayLeft: Bool;
+  let operation: ref<FirstEquipOperation>;
+  let previous: ref<FirstEquipOperation>;
+  if !IsDefined(right) {
+    return false;
+  };
+  if slot == 3 {
+    item = this.GetActiveMeleeWare();
+    if !ItemID.IsValid(item) {
+      item = this.GetItemInEquipSlot(gamedataEquipmentArea.BaseFists, 0);
+    };
+  } else {
+    item = this.GetItemInEquipSlot(gamedataEquipmentArea.WeaponWheel, slot);
+  };
+  if item != right.GetItemID() {
+    return false;
+  };
+  if player.IsFirstEquipActiveEQ() || item != this.GetSlotActiveItem(EquipmentManipulationRequestSlot.Right) {
+    return true;
+  };
+  dual = bb.GetBool(GetAllBlackboardDefs().PlayerStateMachine.IsDualWielding);
+  if bb.GetInt(GetAllBlackboardDefs().PlayerStateMachine.EquipmentRight) != 0
+    || dual && bb.GetInt(GetAllBlackboardDefs().PlayerStateMachine.EquipmentLeft) != 0
+    || bb.GetBool(GetAllBlackboardDefs().PlayerStateMachine.ScenePreventFirstEquip)
+    || bb.GetBool(GetAllBlackboardDefs().PlayerStateMachine.MountedPreventFirstEquip)
+    || !player.firstEquipConfig.playInCombatMode && bb.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat) == EnumInt(gamePSMCombat.InCombat) {
+    return true;
+  };
+  if player.ShouldSkipFirstEquipEQ() {
+    player.SetSkipFirstEquipEQ(false);
+    return true;
+  };
+  replayRight = player.ShouldRunFirstEquipEQ(right, true) && this.CheckWeaponAgainstGameplayRestrictions(item, true);
+  if dual {
+    left = GameObject.GetLeftActiveWeapon(player);
+    replayLeft = IsDefined(left) && player.ShouldRunFirstEquipEQ(left, true) && this.CheckWeaponAgainstGameplayRestrictions(left.GetItemID(), true, true);
+  };
+  if replayRight || replayLeft {
+    player.CancelFirstEquipRequestEQ();
+    operation = new FirstEquipOperation();
+    operation.player = player;
+    operation.requestedItem = item;
+    operation.hotkeyRequested = true;
+    operation.hotkeyDispatched = true;
+    operation.replayEquippedSlot = true;
+    player.firstEquipRequest = operation;
+    previous = this.firstEquipOperation;
+    this.firstEquipOperation = operation;
+    if replayRight {
+      this.RequestEquipmentStateMachine(dual ? EquipmentManipulationRequestType.DualEquip : EquipmentManipulationRequestType.Equip, EquipmentManipulationRequestSlot.Right, gameEquipAnimationType.Default, n"RightHand", n"EqManipulationRight", false, false);
+    };
+    if replayLeft {
+      this.RequestEquipmentStateMachine(EquipmentManipulationRequestType.DualEquip, EquipmentManipulationRequestSlot.Left, gameEquipAnimationType.Default, n"LeftHand", n"EqManipulationLeft", false, false);
+    };
+    this.firstEquipOperation = previous;
+  };
+  return true;
+}
+
+@wrapMethod(EquipmentBaseTransition)
+protected final const func IsProperItemEquipped(const scriptInterface: ref<StateGameScriptInterface>, const stateContext: ref<StateContext>, stateMachineInstanceData: StateMachineInstanceData) -> Bool {
+  let matches: Bool = wrappedMethod(scriptInterface, stateContext, stateMachineInstanceData);
+  let equipped: ref<EquippedDecisions> = this as EquippedDecisions;
+  if matches && IsDefined(equipped) {
+    let request: ref<EquipmentManipulationRequest> = this.GetWeaponManipulationRequest(stateContext, equipped.stateMachineInitData);
+    // Vanilla discards an equip request for the same item while in Equipped.
+    if IsDefined(request) && IsDefined(request.firstEquipOperation) && request.firstEquipOperation.replayEquippedSlot
+      && request.firstEquipOperation.player.IsFirstEquipRequestActiveEQ(request.firstEquipOperation)
+      && request.firstEquipItem == this.GetSlotAttachedItemID(scriptInterface, stateMachineInstanceData) {
+      return false;
+    };
+  };
+  return matches;
 }
 
 @wrapMethod(ReadyEvents)
