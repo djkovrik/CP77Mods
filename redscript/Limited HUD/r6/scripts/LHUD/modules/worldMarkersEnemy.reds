@@ -1,5 +1,6 @@
-import LimitedHudConfig.WorldMarkersModuleConfigCombat
-import LimitedHudConfig.LHUDAddonsColoringConfig
+import LimitedHudConfig.*
+import LimitedHudCommon.LHUDMarkerConfigs
+import LimitedHudCommon.LHUDConfigUpdatedEvent
 import LimitedHudListeners.LHUDBlackboardsListener
 import LimitedHudCommon.LHUDDamagePreviewColors
 import LimitedHudCommon.LHUDArrowAndHpAppearance
@@ -14,32 +15,38 @@ protected cb func OnLHUDEvent(evt: ref<LHUDEvent>) -> Void {
 }
 
 @addField(StealthMappinController)
-private let lhudConfig: ref<WorldMarkersModuleConfigCombat>;
+private let lhudConfigs: ref<LHUDMarkerConfigs>;
 
 @addField(StealthMappinController)
 private let lhudConfigAddons: ref<LHUDAddonsColoringConfig>;
 
+@addMethod(StealthMappinController)
+protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> Void {
+  this.DetermineCurrentVisibility();
+}
+
 @wrapMethod(StealthMappinController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
-  this.lhudConfig = new WorldMarkersModuleConfigCombat();
-  this.lhudConfigAddons = new LHUDAddonsColoringConfig();
+  this.lhudConfigs = LHUDMarkerConfigs.Get();
+  this.lhudConfigAddons = this.lhudConfigs.coloring;
+  this.lhudMarkerOpacity = 1.0;
   this.FetchInitialStateFlags();
   this.DetermineCurrentVisibility();
 }
 
 @addMethod(StealthMappinController)
 public func DetermineCurrentVisibility() -> Void {
-  if this.lhudConfig.IsEnabled {
-    let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && this.lhudConfig.BindToGlobalHotkey;
-    let showForCombat: Bool = this.lhud_isCombatActive && this.lhudConfig.ShowInCombat;
-    let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && this.lhudConfig.ShowOutOfCombat;
-    let showForStealth: Bool = this.lhud_isStealthActive && this.lhudConfig.ShowInStealth;
-    let showForVehicle: Bool = this.lhud_isInVehicle && this.lhudConfig.ShowInVehicle;
-    let showForScanner: Bool = this.lhud_isScannerActive && this.lhudConfig.ShowWithScanner;
-    let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfig.ShowWithWeapon;
-    let showForZoom: Bool = this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
-    let showForArea: Bool = this.lhud_isInDangerZone && this.lhudConfig.ShowInDangerArea;
+  if this.lhudConfigs.combat.IsEnabled {
+    let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && this.lhudConfigs.combat.BindToGlobalHotkey;
+    let showForCombat: Bool = this.lhud_isCombatActive && this.lhudConfigs.combat.ShowInCombat;
+    let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && this.lhudConfigs.combat.ShowOutOfCombat;
+    let showForStealth: Bool = this.lhud_isStealthActive && this.lhudConfigs.combat.ShowInStealth;
+    let showForVehicle: Bool = this.lhud_isInVehicle && this.lhudConfigs.combat.ShowInVehicle;
+    let showForScanner: Bool = this.lhud_isScannerActive && this.lhudConfigs.combat.ShowWithScanner;
+    let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfigs.combat.ShowWithWeapon;
+    let showForZoom: Bool = this.lhud_isZoomActive && this.lhudConfigs.combat.ShowWithZoom;
+    let showForArea: Bool = this.lhud_isInDangerZone && this.lhudConfigs.combat.ShowInDangerArea;
 
     let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom || showForArea;
     this.lhud_isVisibleNow = isVisible;
@@ -47,7 +54,9 @@ public func DetermineCurrentVisibility() -> Void {
     this.lhud_isVisibleNow = true;
   };
 
-  this.OnUpdate();
+  if IsDefined(this.m_mappin) {
+    this.OnUpdate();
+  };
 }
 
 @replaceMethod(StealthMappinController)
@@ -69,6 +78,7 @@ protected cb func OnUpdate() -> Bool {
   this.m_isAggressive = this.m_mappin.IsAggressive();
   this.m_isHiddenByQuest = this.m_mappin.IsHiddenByQuestIn3D();
   this.m_isNCPD = ScriptedPuppet.IsCharacterPolice(this.m_ownerObject);
+  this.ApplyLHUDMarkerOpacity();
   if this.ShouldDisableMappin() {
     inkWidgetRef.SetVisible(this.m_mainArt, false);
     inkWidgetRef.SetVisible(this.m_arrow, false);
@@ -124,21 +134,30 @@ protected cb func OnUpdate() -> Bool {
   this.SetIgnorePriority(!this.m_detectionVisible);
   this.m_lastPercent = percent;
 
-  // Arrows
-  if !this.lhud_isVisibleNow && !this.m_mappin.IsTagged() {
-    inkWidgetRef.SetOpacity(this.m_arrow, 0.0);
-    inkWidgetRef.SetOpacity(this.m_objectMarker, 0.0);
-    inkWidgetRef.SetOpacity(this.m_taggedContainer, 0.0);
-  } else {
-    inkWidgetRef.SetOpacity(this.m_arrow, 1.0);  
-    inkWidgetRef.SetOpacity(this.m_objectMarker, 1.0);  
-    inkWidgetRef.SetOpacity(this.m_taggedContainer, 1.0);  
-  };
-
   // Colors
   if this.lhudConfigAddons.EnableCustomColors {
     this.RefreshTaggedArrowColor();
   };
+}
+
+@addField(StealthMappinController)
+private let lhudMarkerOpacity: Float;
+
+@addMethod(StealthMappinController)
+private final func ApplyLHUDMarkerOpacity() -> Void {
+  let opacity = this.lhudConfigs.combat.IsEnabled ? this.lhudConfigs.combat.Opacity : 1.0;
+  if (!this.lhud_isVisibleNow && !this.m_mappin.IsTagged()) || (this.lhudConfigAddons.EnableCustomColors && Equals(this.lhudConfigAddons.NameplateHpAndArrowAppearance, LHUDArrowAndHpAppearance.Transparent)) {
+    opacity = 0.0;
+  };
+  if opacity == this.lhudMarkerOpacity {
+    return;
+  };
+  this.lhudMarkerOpacity = opacity;
+
+  this.GetWidget(n"objectMarker/objectImage").SetOpacity(opacity);
+  inkWidgetRef.SetOpacity(this.m_taggedContainer, opacity);
+  this.GetWidget(n"Arrow/arrowImage").SetOpacity(opacity);
+  inkWidgetRef.SetOpacity(this.m_levelIcon, opacity);
 }
 
 @wrapMethod(StealthMappinController)
@@ -233,16 +252,16 @@ public final func SetVisualData(puppet: ref<GameObject>, const incomingData: scr
 
 @addMethod(NameplateVisualsLogicController)
 public func DetermineCurrentVisibility() -> Void {
-  if this.lhudConfig.IsEnabled {
-    let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && this.lhudConfig.BindToGlobalHotkey;
-    let showForCombat: Bool = this.lhud_isCombatActive && this.lhudConfig.ShowInCombat;
-    let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && this.lhudConfig.ShowOutOfCombat;
-    let showForStealth: Bool = this.lhud_isStealthActive && this.lhudConfig.ShowInStealth;
-    let showForVehicle: Bool = this.lhud_isInVehicle && this.lhudConfig.ShowInVehicle;
-    let showForScanner: Bool = this.lhud_isScannerActive && this.lhudConfig.ShowWithScanner;
-    let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfig.ShowWithWeapon;
-    let showForZoom: Bool = this.lhud_isZoomActive && this.lhudConfig.ShowWithZoom;
-    let showForArea: Bool = this.lhud_isInDangerZone && this.lhudConfig.ShowInDangerArea;
+  if this.lhudConfigs.combat.IsEnabled {
+    let showForGlobalHotkey: Bool = this.lhud_isGlobalFlagToggled && this.lhudConfigs.combat.BindToGlobalHotkey;
+    let showForCombat: Bool = this.lhud_isCombatActive && this.lhudConfigs.combat.ShowInCombat;
+    let showForOutOfCombat: Bool = this.lhud_isOutOfCombatActive && this.lhudConfigs.combat.ShowOutOfCombat;
+    let showForStealth: Bool = this.lhud_isStealthActive && this.lhudConfigs.combat.ShowInStealth;
+    let showForVehicle: Bool = this.lhud_isInVehicle && this.lhudConfigs.combat.ShowInVehicle;
+    let showForScanner: Bool = this.lhud_isScannerActive && this.lhudConfigs.combat.ShowWithScanner;
+    let showForWeapon: Bool = this.lhud_isWeaponUnsheathed && this.lhudConfigs.combat.ShowWithWeapon;
+    let showForZoom: Bool = this.lhud_isZoomActive && this.lhudConfigs.combat.ShowWithZoom;
+    let showForArea: Bool = this.lhud_isInDangerZone && this.lhudConfigs.combat.ShowInDangerArea;
     let isVisible: Bool = showForGlobalHotkey || showForCombat || showForOutOfCombat || showForStealth || showForVehicle || showForScanner || showForWeapon || showForZoom || showForArea;
     this.lhud_isVisibleNow = isVisible;
   } else {
@@ -253,16 +272,21 @@ public func DetermineCurrentVisibility() -> Void {
 }
 
 @addField(NameplateVisualsLogicController)
-private let lhudConfig: ref<WorldMarkersModuleConfigCombat>;
+private let lhudConfigs: ref<LHUDMarkerConfigs>;
 
 @addField(NameplateVisualsLogicController)
 private let lhudConfigAddons: ref<LHUDAddonsColoringConfig>;
 
+@addMethod(NameplateVisualsLogicController)
+protected cb func OnLHUDConfigUpdatedEvent(evt: ref<LHUDConfigUpdatedEvent>) -> Void {
+  this.DetermineCurrentVisibility();
+}
+
 @wrapMethod(NameplateVisualsLogicController)
 protected cb func OnInitialize() -> Bool {
   wrappedMethod();
-  this.lhudConfig = new WorldMarkersModuleConfigCombat();
-  this.lhudConfigAddons = new LHUDAddonsColoringConfig();
+  this.lhudConfigs = LHUDMarkerConfigs.Get();
+  this.lhudConfigAddons = this.lhudConfigs.coloring;
   this.FetchInitialStateFlags();
   this.DetermineCurrentVisibility();
 }

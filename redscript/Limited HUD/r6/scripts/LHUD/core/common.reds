@@ -396,6 +396,7 @@ public func HasAnyWeaponEquipped_LHUD() -> Bool {
 // Send config refreshing event
 @wrapMethod(PauseMenuGameController)
 protected cb func OnUninitialize() -> Bool {
+  LHUDMarkerConfigs.Get().Refresh();
   GameInstance.GetUISystem(this.GetPlayerControlledObject().GetGame()).QueueEvent(new LHUDConfigUpdatedEvent());
   wrappedMethod();
 }

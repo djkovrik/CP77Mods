@@ -816,6 +816,16 @@ public class WorldMarkersModuleConfigQuest {
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-POI-Tracked")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Tracked-Desc")
   public let AlwaysShowTrackedMarker: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Quest")
+  @runtimeProperty("ModSettings.category.order", "9")
+  @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Opacity")
+  @runtimeProperty("ModSettings.description", "Addons-LHUD-Opacity-Desc")
+  @runtimeProperty("ModSettings.step", "0.1")
+  @runtimeProperty("ModSettings.min", "0.0")
+  @runtimeProperty("ModSettings.max", "1.0")
+  public let Opacity: Float = 1.0;
 }
 
 public class WorldMarkersModuleConfigLoot {
@@ -895,6 +905,16 @@ public class WorldMarkersModuleConfigLoot {
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Area")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Area-Desc")
   public let ShowInDangerArea: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Loot")
+  @runtimeProperty("ModSettings.category.order", "10")
+  @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Opacity")
+  @runtimeProperty("ModSettings.description", "Addons-LHUD-Opacity-Desc")
+  @runtimeProperty("ModSettings.step", "0.1")
+  @runtimeProperty("ModSettings.min", "0.0")
+  @runtimeProperty("ModSettings.max", "1.0")
+  public let Opacity: Float = 1.0;
 }
 
 public class WorldMarkersModuleConfigPOI {
@@ -981,6 +1001,16 @@ public class WorldMarkersModuleConfigPOI {
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-POI-Tracked")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-POI-Tracked-Desc")
   public let AlwaysShowTrackedMarker: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-POI")
+  @runtimeProperty("ModSettings.category.order", "11")
+  @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Opacity")
+  @runtimeProperty("ModSettings.description", "Addons-LHUD-Opacity-Desc")
+  @runtimeProperty("ModSettings.step", "0.1")
+  @runtimeProperty("ModSettings.min", "0.0")
+  @runtimeProperty("ModSettings.max", "1.0")
+  public let Opacity: Float = 1.0;
 }
 
 public class WorldMarkersModuleConfigCombat {
@@ -1053,6 +1083,16 @@ public class WorldMarkersModuleConfigCombat {
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Area")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Area-Desc")
   public let ShowInDangerArea: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Combat")
+  @runtimeProperty("ModSettings.category.order", "12")
+  @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Opacity")
+  @runtimeProperty("ModSettings.description", "Addons-LHUD-Opacity-Desc")
+  @runtimeProperty("ModSettings.step", "0.1")
+  @runtimeProperty("ModSettings.min", "0.0")
+  @runtimeProperty("ModSettings.max", "1.0")
+  public let Opacity: Float = 1.0;
 }
 
 public class WorldMarkersModuleConfigVehicles {
@@ -1103,6 +1143,16 @@ public class WorldMarkersModuleConfigVehicles {
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Area")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Area-Desc")
   public let ShowInDangerArea: Bool = false;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Vehicles")
+  @runtimeProperty("ModSettings.category.order", "13")
+  @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Opacity")
+  @runtimeProperty("ModSettings.description", "Addons-LHUD-Opacity-Desc")
+  @runtimeProperty("ModSettings.step", "0.1")
+  @runtimeProperty("ModSettings.min", "0.0")
+  @runtimeProperty("ModSettings.max", "1.0")
+  public let Opacity: Float = 1.0;
 }
 
 public class WorldMarkersModuleConfigDevices {
@@ -1119,6 +1169,16 @@ public class WorldMarkersModuleConfigDevices {
   @runtimeProperty("ModSettings.displayName", "Mod-LHUD-Show-Scanner")
   @runtimeProperty("ModSettings.description", "Mod-LHUD-Show-Scanner-Desc")
   public let ShowWithScanner: Bool = true;
+
+  @runtimeProperty("ModSettings.mod", "LHUD")
+  @runtimeProperty("ModSettings.category", "Mod-LHUD-Player-Markers-Devices")
+  @runtimeProperty("ModSettings.category.order", "14")
+  @runtimeProperty("ModSettings.displayName", "Addons-LHUD-Opacity")
+  @runtimeProperty("ModSettings.description", "Addons-LHUD-Opacity-Desc")
+  @runtimeProperty("ModSettings.step", "0.1")
+  @runtimeProperty("ModSettings.min", "0.0")
+  @runtimeProperty("ModSettings.max", "1.0")
+  public let Opacity: Float = 1.0;
 }
 
 public class LHUDAddonsConfig {
