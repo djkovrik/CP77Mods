@@ -42,7 +42,7 @@ Additional aliases used by the project skills:
 - `<RED4EXT_ROOT>` = `<GAME_ROOT>\red4ext`
 - `<INPUT_MOD_ROOT>` = `<GAME_ROOT>\r6\input`
 - `<GAME_RESOURCES_ROOT>` = `D:\Games\Modding\CP2077\basegame` (optional; unpacked game resources)
-- `<WOLVENKIT_CLI_ROOT>` = `D:\Games\Modding\CP2077\WolvenKitConsole` (optional; WolvenKit CLI directory)
+- `<WOLVENKIT_CLI_ROOT>` = `D:\Games\Modding\CP2077\WolvenKitConsole` (optional; use WolvenKit CLI 10+ for Cyberpunk 2077 2.5 resources and confirm the executable version with `--version`)
 
 Resolve these aliases recursively from this file; skills must not maintain a second set of machine-specific paths. Check optional source/tool paths before use. A missing reference path does not authorize installing dependencies or changing unrelated game files.
 
@@ -57,8 +57,9 @@ Read the matching local `SKILL.md` before planning, editing, diagnosing, or revi
 | TweakDB record discovery, `.tweak` reference files, TweakXL YAML/RED edits, ScriptableTweak, database mutations, vendors, stats, prerequisites, icon records | [tweak-xl](.agents/skills/tweak-xl/SKILL.md) |
 | `.reds`, game-script signatures/hooks, Codeware scripting, lifecycle/persistence, Ink/virtual lists, redscript compile validation | [redscript](.agents/skills/redscript/SKILL.md) |
 | Official REDmod `.script` sources/annotations, redscript-to-REDmod migration, mod.io package preparation and local binary-patch testing | [redmod](.agents/skills/redmod/SKILL.md) |
+| Quest graphs and conditions, save-aware quest progression, journal objectives, mappins and SMS | [cp2077-quests](.agents/skills/cp2077-quests/SKILL.md) |
 
-Use redscript as the primary approach for scripted behavior, TweakXL for database definitions, and ArchiveXL for resources. REDmod is an auxiliary scripting/packaging approach, usually for mod.io; use its current official sources and compiler for that target. Migration requires checking language and dependency compatibility, especially Codeware; full functional equivalence is not always possible. A new item can require multiple layers. Classify files by their consumer and schema, not just extension or YAML-like syntax.
+For quest work, choose among redscript with Codeware, ArchiveXL patches and direct resource edits according to the task; these approaches have equal standing and can be combined. For other modding work, use redscript as the primary approach for scripted behavior, TweakXL for database definitions, and ArchiveXL for resources. REDmod is an auxiliary scripting/packaging approach, usually for mod.io; use its current official sources and compiler for that target. Migration requires checking language and dependency compatibility, especially Codeware; full functional equivalence is not always possible. A new item can require multiple layers. Classify files by their consumer and schema, not just extension or YAML-like syntax.
 
 ## Other Modding Layers
 
