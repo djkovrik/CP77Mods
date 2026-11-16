@@ -1,0 +1,113 @@
+@module "MetroPocketGuide"
+
+@addField(RegisterFastTravelPointsRequest)
+var pocketMetroUnlocker: weak<MetroStationsUnlocker>;
+
+class MetroStationsUnlocker extends IScriptable {
+  private var player: weak<PlayerPuppet>;
+  private var quests: weak<QuestsSystem>;
+  private var fastTravel: weak<FastTravelSystem>;
+  private var points: array<FastTravelPointData>;
+  private var listener: Uint32;
+  private var listening: Bool;
+  private var pending: Bool;
+  private var complete: Bool;
+
+  public function Initialize(ownerPlayer: PlayerPuppet) {
+    this.player = ownerPlayer;
+    this.quests = GameInstance.GetQuestsSystem(ownerPlayer.GetGame());
+    this.fastTravel = GameInstance.GetScriptableSystemsContainer(ownerPlayer.GetGame()).Get(n"FastTravelSystem") as FastTravelSystem;
+    this.PopulatePoints();
+    this.listener = this.quests.RegisterListener(n"watson_prolog_lock", this, n"OnPrologueChanged");
+    this.listening = true;
+    this.TryUnlock();
+  }
+
+  public function Shutdown() {
+    if (this.listening && this.quests) { this.quests.UnregisterListener(n"watson_prolog_lock", this.listener); }
+    this.listening = false;
+    this.player = NULL;
+    this.quests = NULL;
+    this.fastTravel = NULL;
+  }
+
+  protected event OnPrologueChanged(value: Int32) { if (value <= 0) { this.TryUnlock(); } }
+
+  public function TryUnlock() {
+    if (this.complete || this.pending || !this.player || !this.fastTravel || this.quests.GetFact(n"watson_prolog_lock") > 0) { return; }
+    let scenario: inkMenuScenario = new inkMenuScenario;
+    let handler: inkISystemRequestsHandler = scenario.GetSystemRequestsHandler();
+    if (!handler || handler.IsPreGame()) { return; }
+    if (StatusEffectSystem.ObjectHasStatusEffectWithTag(this.player, n"BlockFastTravel")) { return; }
+    if (this.AllRegistered()) { this.MarkComplete(); return; }
+    let request: RegisterFastTravelPointsRequest = new RegisterFastTravelPointsRequest;
+    request.fastTravelNodes = this.points;
+    request.register = true;
+    request.pocketMetroUnlocker = this;
+    this.pending = true;
+    this.fastTravel.QueueRequest(request);
+  }
+
+  public function RegistrationFinished() {
+    this.pending = false;
+    if (this.player && this.fastTravel && this.AllRegistered()) { this.MarkComplete(); }
+  }
+
+  private function AllRegistered() -> Bool {
+    let index: Int32 = 0;
+    while (index < this.points.Size()) {
+      if (!this.fastTravel.GetFastTravelPoint(this.points[index])) { return false; }
+      index += 1;
+    }
+    return this.points.Size() == 19;
+  }
+
+  private function MarkComplete() {
+    this.complete = true;
+    this.quests.SetFact(n"metro_pocket_guide_unlocked", 1);
+  }
+
+  private function AddPoint(record: TweakDBID, marker: String) {
+    let point: FastTravelPointData = new FastTravelPointData;
+    point.InitializePocketMetroPoint(record, marker);
+    this.points.PushBack(point);
+  }
+
+  private function PopulatePoints() {
+    this.AddPoint(T"FastTravelPoints.wat_nid_metro_ftp_01", "#wat_nid_metro_ftp_01");
+    this.AddPoint(T"FastTravelPoints.wat_lch_metro_ftp_02", "#wat_lch_metro_ftp_02");
+    this.AddPoint(T"FastTravelPoints.wat_lch_metro_ftp_01", "#wat_lch_metro_ftp_01");
+    this.AddPoint(T"FastTravelPoints.wat_lch_metro_ftp_04", "#wat_lch_metro_ftp_09");
+    this.AddPoint(T"FastTravelPoints.wbr_jpn_metro_ftp_01", "#wbr_jpn_metro_ftp_01");
+    this.AddPoint(T"FastTravelPoints.wbr_jpn_metro_ftp_02", "#wbr_jpn_metro_ftp_02");
+    this.AddPoint(T"FastTravelPoints.cct_dtn_metro_ftp_02", "#cct_dtn_metro_ftp_02");
+    this.AddPoint(T"FastTravelPoints.std_arr_metro_ftp_01", "#std_arr_metro_ftp_01");
+    this.AddPoint(T"FastTravelPoints.cct_cpz_metro_ftp_01", "#cct_cpz_metro_ftp_01");
+    this.AddPoint(T"FastTravelPoints.cct_cpz_metro_ftp_03", "#cct_cpz_metro_ftp_15");
+    this.AddPoint(T"FastTravelPoints.hey_spr_metro_ftp_01", "#hey_spr_metro_ftp_01");
+    this.AddPoint(T"FastTravelPoints.hey_gle_metro_ftp_01", "#hey_gle_metro_ftp_01");
+    this.AddPoint(T"FastTravelPoints.hey_gle_metro_ftp_02", "#hey_gle_metro_ftp_02");
+    this.AddPoint(T"FastTravelPoints.hey_rey_metro_ftp_01", "#hey_rey_metro_ftp_01");
+    this.AddPoint(T"FastTravelPoints.std_rcr_metro_ftp_01", "#std_rcr_metro_ftp_05");
+    this.AddPoint(T"FastTravelPoints.wat_lch_metro_ftp_03", "#wat_lch_metro_ftp_08");
+    this.AddPoint(T"FastTravelPoints.wbr_hil_metro_ftp_01", "#wbr_hil_metro_ftp_01");
+    this.AddPoint(T"FastTravelPoints.hey_gle_metro_ftp_03", "#hey_gle_metro_ftp_08");
+    this.AddPoint(T"FastTravelPoints.pac_cvi_metro_ftp_01", "#pac_cvi_metro_ftp_01");
+  }
+}
+
+@addMethod(FastTravelPointData)
+function InitializePocketMetroPoint(record: TweakDBID, marker: String) {
+  let entries: array<CName>;
+  let reference: EntityReference = CreateEntityReference(marker, entries);
+  this.pointRecord = record;
+  this.markerRef = reference.reference;
+  this.isEP1 = false;
+}
+
+@wrapMethod(FastTravelSystem)
+function OnRegisterFastTravelPointsRequest(request: RegisterFastTravelPointsRequest) {
+  OnRegisterFastTravelPointsRequest(request);
+  if (request.pocketMetroUnlocker) { request.pocketMetroUnlocker.RegistrationFinished(); }
+}
+

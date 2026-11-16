@@ -1,0 +1,17 @@
+@module "MetroPocketGuide"
+
+@addMethod(BaseWorldMapMappinController)
+function SelectForRoute() -> Void {
+  this.selectionGlow.SetVisible(true);
+}
+
+@addMethod(BaseWorldMapMappinController)
+function DeselectFromRoute() -> Void {
+  this.selectionGlow.SetVisible(false);
+}
+
+@addMethod(BaseWorldMapMappinController)
+function IsNotSelectedForRoute() -> Bool {
+  return !this.selectionGlow.IsVisible();
+}
+

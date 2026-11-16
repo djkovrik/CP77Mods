@@ -1,0 +1,98 @@
+@module "MetroPocketGuide"
+
+@addMethod(WorldMapMenuGameController)
+function AddMetroPocketGuideLabels() -> Void {
+  let root: inkCompoundWidget = this.GetRootCompoundWidget();
+  let parent: inkCompoundWidget = root.GetWidgetByPathName(n"Content") as inkCompoundWidget;
+
+  let selectionContainer: inkVerticalPanel = new inkVerticalPanel;
+  selectionContainer.SetName(n"selectionLabels");
+  selectionContainer.SetAnchor(inkEAnchor.BottomCenter);
+  selectionContainer.SetFitToContent(true);
+  selectionContainer.SetInteractive(false);
+  selectionContainer.SetAnchorPoint(0.5, 0.5);
+  selectionContainer.SetMargin(0.0, 0.0, 0.0, 348.0);
+  selectionContainer.Reparent(parent);
+
+  let from: inkText = new inkText;
+  from.SetName(n"labelFrom");
+  from.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+  from.SetFontStyle(n"Medium");
+  from.SetFontSize(44);
+  from.SetLetterCase(textLetterCase.OriginalCase);
+  from.SetStyle(R"base\gameplay\gui\common\main_colors.inkstyle");
+  from.BindProperty(n"tintColor", n"MainColors.Blue");
+  from.SetAnchor(inkEAnchor.Fill);
+  from.SetHorizontalAlignment(textHorizontalAlignment.Center);
+  from.SetVerticalAlignment(textVerticalAlignment.Top);
+  from.Reparent(selectionContainer);
+
+  let to: inkText = new inkText;
+  to.SetName(n"labelFrom");
+  to.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+  to.SetFontStyle(n"Medium");
+  to.SetFontSize(44);
+  to.SetLetterCase(textLetterCase.OriginalCase);
+  to.SetStyle(R"base\gameplay\gui\common\main_colors.inkstyle");
+  to.BindProperty(n"tintColor", n"MainColors.Blue");
+  to.SetAnchor(inkEAnchor.Fill);
+  to.SetHorizontalAlignment(textHorizontalAlignment.Center);
+  to.SetVerticalAlignment(textVerticalAlignment.Center);
+  to.Reparent(selectionContainer);
+
+  this.departureLabel = from;
+  this.destinationLabel = to;
+
+  this.SetDepartureInitial();
+  this.SetDestinationInitial();
+}
+
+@addMethod(WorldMapMenuGameController)
+function AddMetroPocketGuideControls() -> Void {
+  let root: inkCompoundWidget = this.GetRootCompoundWidget();
+  let parent: inkCompoundWidget = root.GetWidgetByPathName(n"Content") as inkCompoundWidget;
+  let buttonsContainer: inkCompoundWidget = new inkCanvas;
+  buttonsContainer.SetName(n"buttonsContainer");
+  buttonsContainer.SetAnchor(inkEAnchor.BottomCenter);
+  buttonsContainer.SetFitToContent(true);
+  buttonsContainer.SetInteractive(false);
+  buttonsContainer.SetAnchorPoint(0.5, 1.0);
+  buttonsContainer.SetMargin(0.0, 0.0, 0.0, 220.0);
+  buttonsContainer.Reparent(parent);
+  this.metroButtonsContainer = buttonsContainer;
+
+  this.metroButtonNavigate = PocketMetroNavButton.Create(this, buttonsContainer);
+  this.metroButtonNavigate.SetName(n"buttonNavigate");
+  this.metroButtonNavigate.SetText(GetLocalizedTextByKey(n"PMG-Button-Navigate"));
+
+  this.metroButtonCancel = PocketMetroNavButton.Create(this, buttonsContainer);
+  this.metroButtonCancel.SetName(n"buttonCancel");
+  this.metroButtonCancel.SetText(GetLocalizedTextByKey(n"PMG-Button-Cancel"));
+  this.metroButtonCancel.SetVisible(false);
+
+  this.metroButtonStop = PocketMetroNavButton.Create(this, buttonsContainer);
+  this.metroButtonStop.SetText(GetLocalizedTextByKey(n"PMG-Button-Stop"));
+  this.metroButtonStop.SetName(n"buttonStop");
+  this.metroButtonStop.SetVisible(false);
+
+  this.metroButtonConfirm = PocketMetroNavButton.Create(this, buttonsContainer);
+  this.metroButtonConfirm.SetText(GetLocalizedTextByKey(n"PMG-Button-Confirm"));
+  this.metroButtonConfirm.SetName(n"buttonConfirm");
+  this.metroButtonConfirm.SetVisible(false);
+}
+
+@addMethod(BaseWorldMapMappinController)
+function CreateSelectedMappinGlow() -> Void {
+  let root: inkCompoundWidget = this.GetRootCompoundWidget();
+  let glow: inkImage = new inkImage;
+  glow.SetName(n"hover");
+  glow.SetAtlasResource(R"base\gameplay\gui\metro_pocket_guide_icons.inkatlas");
+  glow.SetTexturePart(n"selection");
+  glow.SetStyle(R"base\gameplay\gui\common\main_colors.inkstyle");
+  glow.BindProperty(n"tintColor", n"MainColors.ActiveBlue");
+  glow.SetAnchor(inkEAnchor.Fill);
+  glow.SetVisible(false);
+  glow.Reparent(root);
+  this.selectionGlow = glow;
+}
+

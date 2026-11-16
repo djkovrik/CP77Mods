@@ -1,0 +1,95 @@
+@module "MetroPocketGuide"
+
+class MetroDirectionChecker extends IScriptable {
+  let keys: array<CName>;
+  let directions: array<LineDirectionData>;
+
+  public function Initialize() {
+    this.keys.Clear();
+    this.directions.Clear();
+    this.PopulateData();
+  }
+
+  public static function GetRecommendedHighlight(activeLines: array<CName>, navigator: PocketMetroNavigator) -> LineDirectionData {
+    if (!navigator) { return NULL; }
+    let env: MetroDirectionChecker = navigator.GetDirectionChecker();
+    if (!env) { return NULL; }
+    let segment: RouteSegment = navigator.GetActiveRouteSegment();
+    return env.FindDirectionData(activeLines, segment);
+  }
+
+  public final function FindDirectionData(activeLines: array<CName>, segment: RouteSegment) -> LineDirectionData {
+    if (!(segment != NULL)) { return NULL; }
+
+    let directionData: LineDirectionData;
+    let activeIndex: Int32;
+    let nextIndex: Int32;
+    let isMovingForward: Bool;
+    let entryIndex1: Int32 = 0;
+    let activeLine: CName;
+    while ((entryIndex1 < activeLines.Size())) {
+      activeLine = activeLines[entryIndex1];
+
+      directionData = this.GetData(activeLine);
+      if ((directionData != NULL) && (directionData.line == segment.line) && directionData.stations.Contains(segment.activeStationId) && directionData.stations.Contains(segment.nextStationId)) {
+        activeIndex = this.IndexOf(directionData.stations, segment.activeStationId);
+        nextIndex = this.IndexOf(directionData.stations, segment.nextStationId);
+        isMovingForward = nextIndex > activeIndex;
+        if ((directionData.moveForward == isMovingForward) || (directionData.line == ModNCartLine.D_GREEN)) {
+
+          return directionData;
+        }
+      }
+
+      entryIndex1 += 1;
+    }
+
+    return NULL;
+  }
+
+  public final function PopulateData() -> Void {
+    let lineA: array<Int32> = [ 1, 2, 3, 7, 9, 10, 14, 8, 15 ];
+    let lineB: array<Int32> = [ 19, 18, 12, 7, 16, 5, 17, 15 ];
+    let lineC: array<Int32> = [ 10, 14, 8, 19 ];
+    let lineD: array<Int32> = [ 6, 5, 4, 9, 10, 14, 13, 11, 12, 18 ];
+    let lineE: array<Int32> = [ 1, 2, 16, 7, 11, 13, 14, 6, 5, 4, 9, 17 ];
+
+    this.PutData(n"ue_metro_show_line_a1", LineDirectionData.Create(n"ButtonHolder/ButtonFlex/ButtonPane/ButtonLineA1", ModNCartLine.A_RED, lineA, false));
+    this.PutData(n"ue_metro_show_line_a2", LineDirectionData.Create(n"ButtonHolder/ButtonFlex/ButtonPane/ButtonLineA2", ModNCartLine.A_RED, lineA, true));
+    this.PutData(n"ue_metro_show_line_b1", LineDirectionData.Create(n"ButtonHolder/ButtonFlex/ButtonPane/ButtonLineB1", ModNCartLine.B_YELLOW, lineB, false));
+    this.PutData(n"ue_metro_show_line_b2", LineDirectionData.Create(n"ButtonHolder/ButtonFlex/ButtonPane/ButtonLineB2", ModNCartLine.B_YELLOW, lineB, true));
+    this.PutData(n"ue_metro_show_line_c1", LineDirectionData.Create(n"ButtonHolder/ButtonFlex/ButtonPane/ButtonLineC1", ModNCartLine.C_CYAN, lineC, false));
+    this.PutData(n"ue_metro_show_line_c2", LineDirectionData.Create(n"ButtonHolder/ButtonFlex/ButtonPane/ButtonLineC2", ModNCartLine.C_CYAN, lineC, true));
+    this.PutData(n"ue_metro_show_line_d1", LineDirectionData.Create(n"ButtonHolder/ButtonFlex/ButtonPane/ButtonLineD", ModNCartLine.D_GREEN, lineD, false));
+    this.PutData(n"ue_metro_show_line_d2", LineDirectionData.Create(n"ButtonHolder/ButtonFlex/ButtonPane/ButtonLineD", ModNCartLine.D_GREEN, lineD, true));
+    this.PutData(n"ue_metro_show_line_e1", LineDirectionData.Create(n"ButtonHolder/ButtonFlex/ButtonPane/ButtonLineE1", ModNCartLine.E_ORANGE, lineE, false));
+    this.PutData(n"ue_metro_show_line_e2", LineDirectionData.Create(n"ButtonHolder/ButtonFlex/ButtonPane/ButtonLineE2", ModNCartLine.E_ORANGE, lineE, true));
+  }
+
+  private final function PutData(key: CName, data: LineDirectionData) -> Void {
+    this.keys.PushBack(key);
+    this.directions.PushBack(data);
+  }
+
+  private final function GetData(key: CName) -> LineDirectionData {
+    let i: Int32 = 0;
+    while (i < this.keys.Size()) {
+      if ((this.keys[i] == key)) { return this.directions[i]; }
+      i += 1;
+    }
+    return NULL;
+  }
+
+  private final function IndexOf(src: array<Int32>, element: Int32) -> Int32 {
+    let count:Int32 = src.Size();
+    let i: Int32 = 0;
+    while (i < count) {
+      if ((src[i] == element)) {
+        return i;
+      }
+      i += 1;
+    }
+    return -1;
+  }
+}
+

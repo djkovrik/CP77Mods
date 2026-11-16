@@ -1,0 +1,55 @@
+@module "MetroPocketGuide"
+
+@addMethod(WorldMapMenuGameController)
+function SetDepartureInitial() -> Void {
+  this.departureLabel.SetText(" ");
+}
+
+@addMethod(WorldMapMenuGameController)
+function SetDepartureAwaitSelection() -> Void {
+  this.departureLabel.SetText(GetLocalizedTextByKey(n"PMG-Select-Departure"));
+}
+
+@addMethod(WorldMapMenuGameController)
+function ShowSelectDepartureLabel() -> Void {
+  this.departureLabel.SetVisible(true);
+  this.pulseDeparture.Start();
+}
+
+@addMethod(WorldMapMenuGameController)
+function DepartureSelected() -> Void {
+  this.pulseDeparture.Stop();
+}
+
+@addMethod(WorldMapMenuGameController)
+function SetDepartureSelected(selectedTitle: String) -> Void {
+  this.departureLabel.SetText(GetLocalizedTextByKey(n"PMG-From") + ": " + GetLocalizedText(selectedTitle));
+}
+
+@addMethod(WorldMapMenuGameController)
+function SetDestinationInitial() -> Void {
+  this.destinationLabel.SetText(" ");
+}
+
+@addMethod(WorldMapMenuGameController)
+function SetDestinationAwaitSelection() -> Void {
+  this.destinationLabel.SetText(GetLocalizedTextByKey(n"PMG-Select-Destination"));
+}
+
+@addMethod(WorldMapMenuGameController)
+function ShowSelectDestinationLabel() -> Void {
+  this.destinationLabel.SetVisible(true);
+  this.pulseDestination.Start();
+}
+
+@addMethod(WorldMapMenuGameController)
+function DestinationSelected() -> Void {
+  this.destinationLabel.SetVisible(true);
+  this.pulseDestination.Stop();
+}
+
+@addMethod(WorldMapMenuGameController)
+function SetDestinationSelected(selectedTitle: String) -> Void {
+  this.destinationLabel.SetText(GetLocalizedTextByKey(n"PMG-To") + ": " + GetLocalizedText(selectedTitle));
+}
+

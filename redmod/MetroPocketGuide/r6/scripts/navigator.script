@@ -1,0 +1,286 @@
+@module "MetroPocketGuide"
+
+class PocketMetroNavigator extends IScriptable {
+  private var player: weak<PlayerPuppet>;
+  private var questsSystem: weak<QuestsSystem>;
+  private var graph: MetroNodesGraph;
+  private var directions: MetroDirectionChecker;
+  private var unlocker: MetroStationsUnlocker;
+  private var hud: PocketMetroRouteHud;
+  private var hudBridge: weak<HotkeyCustomRadioWidgetController>;
+  private var route: array<RoutePoint>;
+  private var departure: ENcartStations;
+  private var destination: ENcartStations;
+  private var currentLine: ModNCartLine;
+  private var activeStation: ENcartStations;
+  private var isMetroRideActive: Bool;
+  private var routeVisible: Bool;
+  private var stationListener: Uint32;
+  private var nextListener: Uint32;
+  private var lineListener: Uint32;
+  private var listening: Bool;
+
+  public static function GetInstance(game: GameInstance) -> PocketMetroNavigator {
+    let player: PlayerPuppet = GameInstance.GetPlayerSystem(game).GetLocalPlayerMainGameObject() as PlayerPuppet;
+    if (!player) { return NULL; }
+    if (!player.pocketMetroNavigator) {
+      player.pocketMetroNavigator = new PocketMetroNavigator;
+      player.pocketMetroNavigator.Initialize(player);
+    }
+    return player.pocketMetroNavigator;
+  }
+
+  public function Initialize(ownerPlayer: PlayerPuppet) {
+    this.player = ownerPlayer;
+    this.questsSystem = GameInstance.GetQuestsSystem(ownerPlayer.GetGame());
+    this.graph = new MetroNodesGraph;
+    this.graph.Initialize();
+    this.directions = new MetroDirectionChecker;
+    this.directions.Initialize();
+    this.stationListener = this.questsSystem.RegisterListener(n"ue_metro_active_station", this, n"OnMetroStationActiveChange");
+    this.nextListener = this.questsSystem.RegisterListener(n"ue_metro_next_station", this, n"OnMetroStationNextChange");
+    this.lineListener = this.questsSystem.RegisterListener(n"ue_metro_track_selected", this, n"OnMetroLineActiveChange");
+    this.listening = true;
+    this.isMetroRideActive = StatusEffectSystem.ObjectHasStatusEffectWithTag(ownerPlayer, n"MetroRide");
+    this.unlocker = new MetroStationsUnlocker;
+    this.unlocker.Initialize(ownerPlayer);
+    this.RequestHudRoot();
+  }
+
+  public function Shutdown() {
+    if (this.listening && this.questsSystem) {
+      this.questsSystem.UnregisterListener(n"ue_metro_active_station", this.stationListener);
+      this.questsSystem.UnregisterListener(n"ue_metro_next_station", this.nextListener);
+      this.questsSystem.UnregisterListener(n"ue_metro_track_selected", this.lineListener);
+    }
+    this.listening = false;
+    this.hudBridge = NULL;
+    if (this.unlocker) { this.unlocker.Shutdown(); }
+    this.Reset();
+    if (this.hud) { this.hud.Dispose(); }
+    this.hud = NULL;
+    this.player = NULL;
+    this.questsSystem = NULL;
+  }
+
+  public function GetDirectionChecker() -> MetroDirectionChecker { return this.directions; }
+  public function GetDeparture() -> ENcartStations { return this.departure; }
+  public function GetDestination() -> ENcartStations { return this.destination; }
+  public function SaveDeparture(station: ENcartStations) { this.departure = station; }
+  public function SaveDestination(station: ENcartStations) { this.destination = station; }
+  public function GetRoute() -> array<RoutePoint> { return this.route; }
+  public function HasActiveRoute() -> Bool { return this.route.Size() > 0; }
+
+  public function CheckStations() { if (this.unlocker) { this.unlocker.TryUnlock(); } }
+
+  public static function IsSelectedAsRoute(target: ENcartStations) -> Bool {
+    let navigator: PocketMetroNavigator = PocketMetroNavigator.GetInstance(GetGameInstance());
+    return navigator && target != ENcartStations.NONE && (target == navigator.departure || target == navigator.destination);
+  }
+
+  public function BuildRoute() -> Bool {
+    if (this.departure == ENcartStations.NONE || this.destination == ENcartStations.NONE || this.departure == this.destination) {
+      return false;
+    }
+    this.route = this.graph.FindRoute(this.departure, this.destination);
+    if (!this.HasActiveRoute()) { this.Reset(); return false; }
+    let first: StationPoint = this.route[0] as StationPoint;
+    this.currentLine = first.line;
+    this.activeStation = this.departure;
+    this.routeVisible = this.isMetroRideActive;
+    this.RefreshHud();
+    return true;
+  }
+
+  public function RequestHudRoot() {
+    if (!this.listening || !this.player) { return; }
+    if (this.player.pocketMetroNavigator != this) { return; }
+    if (!this.hudBridge) { return; }
+    let radioRoot: inkWidget = this.hudBridge.GetRootWidget();
+    if (!radioRoot) { return; }
+    let window: inkCompoundWidget = radioRoot.GetParentWidget() as inkCompoundWidget;
+    if (!window) { return; }
+    let radioContainer: inkCompoundWidget = radioRoot as inkCompoundWidget;
+    if (!radioContainer) { return; }
+    this.MountHud(radioContainer);
+  }
+
+  public function RegisterHudBridge(controller: HotkeyCustomRadioWidgetController, ownerPlayer: PlayerPuppet) {
+    if (!this.listening || !controller || this.player != ownerPlayer) { return; }
+    if (this.player.pocketMetroNavigator != this) { return; }
+    if (this.hudBridge && this.hudBridge != controller) { this.UnregisterHudBridge(this.hudBridge); }
+    this.hudBridge = controller;
+    this.RequestHudRoot();
+  }
+
+  public function UnregisterHudBridge(controller: HotkeyCustomRadioWidgetController) {
+    if (this.hudBridge != controller) { return; }
+    this.hudBridge = NULL;
+    if (this.hud) { this.hud.Dispose(); this.hud = NULL; }
+  }
+
+  public function MountHud(root: inkCompoundWidget) {
+    if (!root || !this.listening || !this.player) { return; }
+    if (this.player.pocketMetroNavigator != this) { return; }
+    if (this.hud) {
+      if (this.hud.IsMountedTo(root)) { return; }
+      this.hud.Dispose();
+      this.hud = NULL;
+    }
+    let routeHud: PocketMetroRouteHud = new PocketMetroRouteHud;
+    if (routeHud.Initialize(root)) {
+      this.hud = routeHud;
+      this.RefreshHud();
+    }
+  }
+
+  public function RefreshHud() {
+    if (this.hud) {
+      if (this.hud.IsReady()) { this.hud.Render(this.route, this.routeVisible); return; }
+    }
+    this.RequestHudRoot();
+  }
+
+  public function SetRouteVisible(visible: Bool) {
+    this.routeVisible = visible && this.HasActiveRoute();
+    if (this.hud) {
+      if (this.hud.IsReady()) { this.hud.SetVisible(this.routeVisible); return; }
+    }
+    this.RequestHudRoot();
+  }
+
+  public function OnMetroEnter() {
+    this.isMetroRideActive = true;
+    this.SetRouteVisible(true);
+  }
+
+  public function OnDirectionScreenClosed() {
+    this.isMetroRideActive = false;
+    if (this.player) { this.isMetroRideActive = StatusEffectSystem.ObjectHasStatusEffectWithTag(this.player, n"MetroRide"); }
+    this.SetRouteVisible(this.isMetroRideActive);
+  }
+
+  public function OnMetroExit() {
+    this.isMetroRideActive = false;
+    if (this.HasActiveRoute() && this.activeStation == this.destination) { this.Reset(); }
+  }
+
+  public function CheckIfShouldDisplayControls() {
+    if (this.isMetroRideActive) { this.SetRouteVisible(true); }
+  }
+
+  protected event OnMetroLineActiveChange(value: Int32) {
+    let line: ModNCartLine = MetroDataHelper.LineName(value);
+    if (line != ModNCartLine.NONE) { this.currentLine = line; }
+  }
+
+  protected event OnMetroStationActiveChange(value: Int32) {
+    let station: ENcartStations = MetroDataHelper.GetStationNameById(value);
+    if (station == ENcartStations.NONE) { return false; }
+    this.activeStation = station;
+    this.UpdateProgress(false);
+  }
+
+  protected event OnMetroStationNextChange(value: Int32) {
+    if (MetroDataHelper.GetStationNameById(value) != ENcartStations.NONE) { this.UpdateProgress(true); }
+  }
+
+  private function UpdateProgress(visited: Bool) {
+    let index: Int32 = 0;
+    let point: RoutePoint;
+    let station: StationPoint;
+    let transfer: LineSwitch;
+    let matches: Bool;
+    while (index < this.route.Size()) {
+      point = this.route[index];
+      station = point as StationPoint;
+      transfer = point as LineSwitch;
+      matches = false;
+      if (point.station == this.activeStation) {
+        if (station) { matches = station.line == this.currentLine; }
+        if (transfer) { matches = (visited ? transfer.to : transfer.from) == this.currentLine; }
+      }
+      if (matches) {
+        point.status = visited ? RoutePointStatus.VISITED : RoutePointStatus.ACTIVE;
+        if (this.hud) { this.hud.UpdateRow(index, visited); }
+      }
+      index += 1;
+    }
+  }
+
+  public function GetActiveRouteSegment() -> RouteSegment {
+    let index: Int32 = 0;
+    let next: RoutePoint;
+    let station: StationPoint;
+    let transfer: LineSwitch;
+    let line: ModNCartLine;
+    while (index + 1 < this.route.Size()) {
+      if (this.route[index].station == this.activeStation) {
+        next = this.route[index+1];
+        station = next as StationPoint;
+        transfer = next as LineSwitch;
+        line = ModNCartLine.NONE;
+        if (station) { line = station.line; }
+        if (transfer) { line = transfer.from; }
+        return RouteSegment.Create(this.route[index].stationId, next.stationId, line);
+      }
+      index += 1;
+    }
+    return NULL;
+  }
+
+  public function Reset() {
+    let oldDeparture: ENcartStations = this.departure;
+    let oldDestination: ENcartStations = this.destination;
+    this.route.Clear();
+    this.departure = ENcartStations.NONE;
+    this.destination = ENcartStations.NONE;
+    this.activeStation = ENcartStations.NONE;
+    this.currentLine = ModNCartLine.NONE;
+    this.routeVisible = false;
+    if (this.player) {
+      let ui: UISystem = GameInstance.GetUISystem(this.player.GetGame());
+      ui.QueueEvent(PocketMetroResetPreviousDestinationEvent.Create(oldDeparture));
+      ui.QueueEvent(PocketMetroResetPreviousDestinationEvent.Create(oldDestination));
+    }
+    this.RefreshHud();
+  }
+}
+
+@addField(PlayerPuppet)
+var pocketMetroNavigator: PocketMetroNavigator;
+
+@wrapMethod(PlayerPuppet)
+event OnGameAttached() {
+  OnGameAttached();
+  if (!this.pocketMetroNavigator) {
+    this.pocketMetroNavigator = new PocketMetroNavigator;
+    this.pocketMetroNavigator.Initialize(this);
+  }
+}
+
+@wrapMethod(PlayerPuppet)
+event OnDetach() {
+  if (this.pocketMetroNavigator) { this.pocketMetroNavigator.Shutdown(); this.pocketMetroNavigator = NULL; }
+  OnDetach();
+}
+
+@wrapMethod(PocketRadio)
+function OnStatusEffectApplied(evt: ApplyStatusEffectEvent, gameplayTags: ref<array<CName>>) {
+  OnStatusEffectApplied(evt, gameplayTags);
+  if (gameplayTags.Contains(n"MetroRide")) {
+    let navigator: PocketMetroNavigator = PocketMetroNavigator.GetInstance(this.m_player.GetGame());
+    if (navigator) { navigator.OnMetroEnter(); }
+  }
+}
+
+@wrapMethod(PocketRadio)
+function OnStatusEffectRemoved(evt: RemoveStatusEffect, gameplayTags: ref<array<CName>>) {
+  OnStatusEffectRemoved(evt, gameplayTags);
+  let navigator: PocketMetroNavigator = PocketMetroNavigator.GetInstance(this.m_player.GetGame());
+  if (navigator) {
+    if (gameplayTags.Contains(n"MetroRide")) { navigator.OnMetroExit(); }
+    if (gameplayTags.Contains(n"BlockFastTravel")) { navigator.CheckStations(); }
+  }
+}
+

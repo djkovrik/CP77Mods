@@ -1,0 +1,95 @@
+@module "MetroPocketGuide"
+
+@addMethod(WorldMapMenuGameController)
+function RefreshFiltersVisibility() -> Void {
+  if (this.routeSelectionEnabled) {
+    inkWidgetRef.SetVisible(this.m_filterSelector, false);
+    inkWidgetRef.SetVisible(this.m_customFilters, false);
+  } else {
+    inkWidgetRef.SetVisible(this.m_filterSelector, true);
+    inkWidgetRef.SetVisible(this.m_customFilters, (this.GetQuickFilter() == gamedataWorldMapFilter.CustomFilter));
+  }
+}
+
+@wrapMethod(WorldMapMenuGameController)
+function PlayCustomFiltersAnimations() -> Void {
+  if (!this.routeSelectionEnabled) {
+    PlayCustomFiltersAnimations();
+  }
+}
+
+@addMethod(WorldMapMenuGameController)
+function SwitchToCustomFiltersForStations() -> Void {
+  let filterGroup: weak<MappinUIFilterGroup_Record> = TweakDBInterface.GetMappinUIFilterGroupRecord(T"WorldMap.CustomFilterGroup");
+  this.m_currentQuickFilterIndex = 3;
+  this.m_currentCustomFilterIndex = 4;
+  this.SetQuickFilterIndicator(this.m_currentQuickFilterIndex);
+  this.SetQuickFilterFromRecord(filterGroup);
+  this.previousCustomFilters.Clear();
+
+  let count: Int32 = this.m_customFiltersList.Size();
+  let enable: Bool;
+  let i: Int32 = 0;
+  while (i < count) {
+    if (this.m_customFiltersList[i].IsFilterEnabled()) {
+      this.previousCustomFilters.PushBack(i);
+    }
+
+    enable = (this.m_customFiltersList[i].GetFilterType() == gamedataWorldMapFilter.FastTravel);
+    this.m_customFiltersList[i].EnableFilter(enable);
+    if (enable) {
+      this.SetCustomFilter(this.m_customFiltersList[i].GetFilterType());
+    } else {
+      this.ClearCustomFilter(this.m_customFiltersList[i].GetFilterType());
+    }
+    i += 1;
+  }
+}
+
+@wrapMethod(WorldMapMenuGameController)
+event OnQuickFilterChanged(filterGroup: weak<MappinUIFilterGroup_Record>) {
+  OnQuickFilterChanged(filterGroup);
+  if (this.routeSelectionEnabled) {
+    inkWidgetRef.SetVisible(this.m_filterSelector, false);
+    inkWidgetRef.SetVisible(this.m_customFilters, false);
+  }
+}
+
+@addMethod(WorldMapMenuGameController)
+function RestorePreviousFiltersState() -> Void {
+  let count: Int32 = this.m_customFiltersList.Size();
+  let enable: Bool;
+  let i: Int32 = 0;
+  while (i < count) {
+    enable = this.previousCustomFilters.Contains(i);
+    this.m_customFiltersList[i].EnableFilter(enable);
+    if (enable) {
+      this.SetCustomFilter(this.m_customFiltersList[i].GetFilterType());
+    } else {
+      this.ClearCustomFilter(this.m_customFiltersList[i].GetFilterType());
+    }
+    i += 1;
+  }
+}
+
+@wrapMethod(WorldMapMenuGameController)
+function CycleQuickFilterPrev() -> Void {
+  if (!this.routeSelectionEnabled) {
+    CycleQuickFilterPrev();
+  }
+}
+
+@wrapMethod(WorldMapMenuGameController)
+function CycleQuickFilterNext() -> Void {
+  if (!this.routeSelectionEnabled) {
+    CycleQuickFilterNext();
+  }
+}
+
+@wrapMethod(WorldMapMenuGameController)
+function CycleWorldMapFilter(cycleNext: Bool) -> Void {
+  if (!this.routeSelectionEnabled) {
+    CycleWorldMapFilter(cycleNext);
+  }
+}
+

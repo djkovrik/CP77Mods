@@ -1,0 +1,290 @@
+@module "MetroPocketGuide"
+
+function PocketMetroText(widgetName: CName, text: String, size: Int32) -> inkText {
+  let widget: inkText = new inkText;
+  widget.SetName(widgetName);
+  widget.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+  widget.SetFontStyle(n"Medium");
+  widget.SetFontSize(size);
+  widget.SetLetterCase(textLetterCase.OriginalCase);
+  widget.SetFitToContent(true);
+  widget.SetInteractive(false);
+  widget.SetStyle(R"base\gameplay\gui\common\main_colors.inkstyle");
+  widget.BindProperty(n"tintColor", n"MainColors.Blue");
+  widget.SetText(text);
+  return widget;
+}
+
+function PocketMetroImage(widgetName: CName, part: CName, width: Float, height: Float) -> inkImage {
+  let widget: inkImage = new inkImage;
+  widget.SetName(widgetName);
+  widget.SetAtlasResource(R"base\gameplay\gui\metro_pocket_guide_icons.inkatlas");
+  widget.SetTexturePart(part);
+  widget.SetSize(Vector2(width, height));
+  widget.SetFitToContent(false);
+  widget.SetInteractive(false);
+  return widget;
+}
+
+function PocketMetroFade(start: Float, end: Float, duration: Float, delay: Float) -> inkAnimTransparency {
+  let alpha: inkAnimTransparency = new inkAnimTransparency;
+  alpha.SetStartTransparency(start);
+  alpha.SetEndTransparency(end);
+  alpha.SetDuration(duration);
+  alpha.SetStartDelay(delay);
+  alpha.SetType(inkanimInterpolationType.Linear);
+  alpha.SetMode(inkanimInterpolationMode.EasyInOut);
+  return alpha;
+}
+
+class PocketMetroRouteRow extends IScriptable {
+  private var root: weak<inkCanvas>;
+  private var icon: weak<inkImage>;
+  private var animation: inkAnimProxy;
+  private var iconAnimation: inkAnimProxy;
+  private var point: RoutePoint;
+
+  public function Initialize(parent: inkCompoundWidget, routePoint: RoutePoint) {
+    this.point = routePoint;
+    let createdRoot: inkCanvas = new inkCanvas;
+    createdRoot.SetName(n"routeRow");
+    createdRoot.SetSize(Vector2(820.0, 74.0));
+    createdRoot.SetSizeRule(inkESizeRule.Fixed);
+    createdRoot.SetInteractive(false);
+    this.root = createdRoot;
+    let station: StationPoint = routePoint as StationPoint;
+    let transfer: LineSwitch = routePoint as LineSwitch;
+    let title: String;
+    if (station) {
+      this.AddLine(createdRoot, station.line, 0.0);
+      let createdIcon: inkImage = PocketMetroImage(n"stationStatus", routePoint.status == RoutePointStatus.NOT_VISITED ? n"station" : n"station-filled", 30.0, 32.0);
+      createdIcon.SetMargin(96.0, 21.0, 0.0, 0.0);
+      createdIcon.SetTintColor(MPGUtils.GetLineHDRColor(station.line));
+      createdIcon.Reparent(createdRoot, -1);
+      this.icon = createdIcon;
+      title = station.stationTitle;
+    } else if (transfer) {
+      this.AddLine(createdRoot, transfer.from, 0.0);
+      let arrow: inkImage = PocketMetroImage(n"transferArrow", n"arrow1", 25.0, 34.0);
+      arrow.SetStyle(R"base\gameplay\gui\common\main_colors.inkstyle");
+      arrow.BindProperty(n"tintColor", n"MainColors.Blue");
+      arrow.SetMargin(98.0, 20.0, 0.0, 0.0);
+      arrow.Reparent(createdRoot, -1);
+      this.AddLine(createdRoot, transfer.to, 153.0);
+      title = transfer.stationTitle;
+    }
+    let text: inkText = PocketMetroText(n"stationName", GetLocalizedText(title), 40);
+    text.BindProperty(n"fontStyle", n"MainColors.BodyFontWeight");
+    text.BindProperty(n"fontSize", n"MainColors.ReadableFontSize");
+    text.SetVAlign(inkEVerticalAlign.Center);
+    text.SetMargin(transfer ? 237.0 : 158.0, 0.0, 0.0, 0.0);
+    text.Reparent(createdRoot, -1);
+    createdRoot.SetOpacity(routePoint.status == RoutePointStatus.VISITED ? 0.2 : 1.0);
+    createdRoot.Reparent(parent, -1);
+  }
+
+  private function AddLine(parent: inkCompoundWidget, line: ModNCartLine, left: Float) {
+    let image: inkImage = PocketMetroImage(n"line", MPGUtils.GetLinePartName(line), 64.0, 46.0);
+    image.SetMargin(left, 14.0, 0.0, 0.0);
+    image.SetTintColor(MPGUtils.GetLineHDRColor(line));
+    image.Reparent(parent, -1);
+  }
+
+  public function Update(visited: Bool) {
+    if (this.animation) { this.animation.Stop(); }
+    if (this.iconAnimation) { this.iconAnimation.Stop(); }
+    if (visited) {
+      if (this.icon) { this.icon.SetTexturePart(n"station-filled"); this.icon.SetOpacity(1.0); }
+      let dim: inkAnimDef = new inkAnimDef;
+      dim.AddInterpolator(PocketMetroFade(this.root.GetOpacity(), 0.2, 0.75, 0.0));
+      this.animation = this.root.PlayAnimation(dim);
+    } else if (this.icon) {
+      let fade: inkAnimDef = new inkAnimDef;
+      fade.AddInterpolator(PocketMetroFade(1.0, 0.1, 0.5, 0.0));
+      this.iconAnimation = this.icon.PlayAnimation(fade);
+      this.iconAnimation.RegisterToCallback(inkanimEventType.OnFinish, this, n"OnIconFaded");
+    } else {
+      this.Blink();
+    }
+  }
+
+  protected event OnIconFaded(proxy: inkAnimProxy) {
+    proxy.UnregisterFromCallback(inkanimEventType.OnFinish, this, n"OnIconFaded");
+    if (!this.icon) { return false; }
+    this.icon.SetTexturePart(n"station-filled");
+    let fade: inkAnimDef = new inkAnimDef;
+    fade.AddInterpolator(PocketMetroFade(0.1, 1.0, 0.5, 0.0));
+    this.iconAnimation = this.icon.PlayAnimation(fade);
+    this.iconAnimation.RegisterToCallback(inkanimEventType.OnFinish, this, n"OnIconShown");
+  }
+
+  protected event OnIconShown(proxy: inkAnimProxy) {
+    proxy.UnregisterFromCallback(inkanimEventType.OnFinish, this, n"OnIconShown");
+    if (this.root) { this.Blink(); }
+  }
+
+  private function Blink() {
+    let blink: inkAnimDef = new inkAnimDef;
+    blink.AddInterpolator(PocketMetroFade(1.0, 0.1, 0.75, 0.0));
+    blink.AddInterpolator(PocketMetroFade(0.1, 1.0, 0.75, 0.75));
+    let options: inkAnimOptions;
+    options.loopCounter = 3;
+    options.loopType = inkanimLoopType.Cycle;
+    this.animation = this.root.PlayAnimationWithOptions(blink, options);
+  }
+
+  public function Dispose() {
+    if (this.animation) { this.animation.Stop(); }
+    if (this.iconAnimation) {
+      this.iconAnimation.UnregisterFromCallback(inkanimEventType.OnFinish, this, n"OnIconFaded");
+      this.iconAnimation.UnregisterFromCallback(inkanimEventType.OnFinish, this, n"OnIconShown");
+      this.iconAnimation.Stop();
+    }
+    this.root = NULL;
+    this.icon = NULL;
+    this.point = NULL;
+  }
+}
+
+class PocketMetroRouteHud extends IScriptable {
+  private var window: weak<inkCompoundWidget>;
+  private var slot: weak<inkCanvas>;
+  private var content: weak<inkVerticalPanel>;
+  private var rows: array<PocketMetroRouteRow>;
+  private var visibility: inkAnimProxy;
+
+  public function Initialize(root: inkCompoundWidget) -> Bool {
+    if (!root) { return false; }
+    this.window = root;
+    let old: inkWidget = this.window.GetWidgetByPathName(n"metroPocketGuideSlot");
+    if (old) { this.window.RemoveChild(old); }
+    let createdSlot: inkCanvas = new inkCanvas;
+    createdSlot.SetName(n"metroPocketGuideSlot");
+    createdSlot.SetAnchor(inkEAnchor.TopLeft);
+    createdSlot.SetAnchorPoint(Vector2(0.0, 0.0));
+    createdSlot.SetHAlign(inkEHorizontalAlign.Left);
+    createdSlot.SetVAlign(inkEVerticalAlign.Top);
+    createdSlot.SetTranslation(60.0, 220.0);
+    createdSlot.SetRenderTransformPivot(Vector2(0.0, 0.0));
+    createdSlot.SetScale(Vector2(1.0, 1.0));
+    createdSlot.SetFitToContent(false);
+    createdSlot.SetSizeRule(inkESizeRule.Fixed);
+    createdSlot.SetSize(820.0, 0.0);
+    createdSlot.SetInteractive(false);
+    this.slot = createdSlot;
+    let createdContent: inkVerticalPanel = new inkVerticalPanel;
+    createdContent.SetName(n"metroPocketGuideWidget");
+    createdContent.SetFitToContent(false);
+    createdContent.SetSizeRule(inkESizeRule.Fixed);
+    createdContent.SetSize(820.0, 0.0);
+    createdContent.SetAnchor(inkEAnchor.TopLeft);
+    createdContent.SetAnchorPoint(Vector2(0.0, 0.0));
+    createdContent.SetHAlign(inkEHorizontalAlign.Left);
+    createdContent.SetVAlign(inkEVerticalAlign.Top);
+    createdContent.SetInteractive(false);
+    createdContent.SetOpacity(0.0);
+    createdContent.Reparent(createdSlot, -1);
+    this.content = createdContent;
+    createdSlot.Reparent(this.window, -1);
+    return true;
+  }
+
+  public function IsReady() -> Bool {
+    if (!this.window || !this.slot || !this.content) { return false; }
+    return true;
+  }
+
+  public function IsMountedTo(root: inkCompoundWidget) -> Bool {
+    if (this.window != root) { return false; }
+    return this.IsReady();
+  }
+
+  public function Render(route: array<RoutePoint>, visible: Bool) {
+    this.Clear();
+    if (!this.slot || !this.content) { return; }
+    let height: Float = 74.0 * Cast<Float>(route.Size());
+    this.slot.SetSize(820.0, height);
+    this.content.SetSize(820.0, height);
+
+    let index: Int32 = 0;
+    let row: PocketMetroRouteRow;
+    while (index < route.Size()) {
+      row = new PocketMetroRouteRow;
+      row.Initialize(this.content, route[index]);
+      this.rows.PushBack(row);
+      index += 1;
+    }
+    this.content.FlagForVisualInvalidation();
+    this.slot.FlagForVisualInvalidation();
+    this.SetVisible(visible);
+  }
+
+  public function UpdateRow(index: Int32, visited: Bool) {
+    if (!this.IsReady()) { return; }
+    if (index >= 0 && index < this.rows.Size()) { this.rows[index].Update(visited); }
+  }
+
+  public function SetVisible(visible: Bool) {
+    if (!this.content) { return; }
+    if (this.visibility) {
+      this.visibility.Stop();
+    }
+    let fade: inkAnimDef = new inkAnimDef;
+    fade.AddInterpolator(PocketMetroFade(this.content.GetOpacity(), visible && this.rows.Size() > 0 ? 1.0 : 0.0, 0.3, 0.0));
+    this.visibility = this.content.PlayAnimation(fade);
+  }
+
+  private function Clear() {
+    let index: Int32 = 0;
+    while (index < this.rows.Size()) { this.rows[index].Dispose(); index += 1; }
+    this.rows.Clear();
+    if (this.content) { this.content.RemoveAllChildren(); }
+  }
+
+  public function Dispose() {
+    this.Clear();
+    if (this.visibility) {
+      this.visibility.Stop();
+    }
+    if (this.window && this.slot) { this.window.RemoveChild(this.slot); }
+    this.window = NULL;
+    this.slot = NULL;
+    this.content = NULL;
+  }
+}
+
+@addField(HotkeyCustomRadioWidgetController)
+var pocketMetroRadioNavigator: weak<PocketMetroNavigator>;
+
+@addMethod(HotkeyCustomRadioWidgetController)
+function PocketMetroBindRadio(player: PlayerPuppet) {
+  if (!player) { return; }
+  let navigator: PocketMetroNavigator = PocketMetroNavigator.GetInstance(player.GetGame());
+  if (this.pocketMetroRadioNavigator && this.pocketMetroRadioNavigator != navigator) {
+    this.pocketMetroRadioNavigator.UnregisterHudBridge(this);
+  }
+  this.pocketMetroRadioNavigator = navigator;
+  if (navigator) { navigator.RegisterHudBridge(this, player); }
+}
+
+@wrapMethod(HotkeyCustomRadioWidgetController)
+event OnInitialize() {
+  OnInitialize();
+  this.PocketMetroBindRadio(this.GetPlayerControlledObject() as PlayerPuppet);
+}
+
+@wrapMethod(gameuiNewPhoneRelatedHUDGameController)
+event OnPlayerAttach(player: GameObject) {
+  OnPlayerAttach(player);
+  let radio: HotkeyCustomRadioWidgetController = this as HotkeyCustomRadioWidgetController;
+  if (radio) {
+    radio.PocketMetroBindRadio(player as PlayerPuppet);
+  }
+}
+
+@addMethod(HotkeyCustomRadioWidgetController)
+event OnUninitialize() {
+  if (this.pocketMetroRadioNavigator) { this.pocketMetroRadioNavigator.UnregisterHudBridge(this); }
+  this.pocketMetroRadioNavigator = NULL;
+}
+

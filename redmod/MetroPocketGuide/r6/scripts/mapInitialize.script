@@ -1,0 +1,88 @@
+@module "MetroPocketGuide"
+
+@addField(WorldMapMenuGameController)
+var metroButtonsContainer: weak<inkWidget>;
+@addField(WorldMapMenuGameController)
+var metroButtonNavigate: PocketMetroNavButton;
+@addField(WorldMapMenuGameController)
+var metroButtonCancel: PocketMetroNavButton;
+@addField(WorldMapMenuGameController)
+var metroButtonStop: PocketMetroNavButton;
+@addField(WorldMapMenuGameController)
+var metroButtonConfirm: PocketMetroNavButton;
+@addField(WorldMapMenuGameController)
+var navigator: weak<PocketMetroNavigator>;
+@addField(WorldMapMenuGameController)
+var routeSelectionEnabled: Bool;
+@addField(WorldMapMenuGameController)
+var previousCustomFilters: array<Int32>;
+@addField(WorldMapMenuGameController)
+var departureLabel: weak<inkText>;
+@addField(WorldMapMenuGameController)
+var destinationLabel: weak<inkText>;
+@addField(WorldMapMenuGameController)
+var pulseDeparture: PulseAnimation;
+@addField(WorldMapMenuGameController)
+var pulseDestination: PulseAnimation;
+@addField(WorldMapMenuGameController)
+var currentHoveredController: weak<BaseWorldMapMappinController>;
+@addField(WorldMapMenuGameController)
+var controlMode: MpgControlMode;
+@addField(BaseWorldMapMappinController)
+var selectionGlow: weak<inkImage>;
+
+@wrapMethod(WorldMapMenuGameController)
+event OnInitialize() {
+  OnInitialize();
+  let game: GameInstance = this.GetPlayerControlledObject().GetGame();
+  this.navigator = PocketMetroNavigator.GetInstance(game);
+  this.navigator.CheckStations();
+  this.AddMetroPocketGuideControls();
+  this.AddMetroPocketGuideLabels();
+  this.pulseDeparture = new PulseAnimation;
+  this.pulseDeparture.Configure(this.departureLabel, 1.0, 0.05, 1.0);
+  this.pulseDestination = new PulseAnimation;
+  this.pulseDestination.Configure(this.destinationLabel, 1.0, 0.05, 1.0);
+  this.InvalidateActiveRouteState();
+}
+
+@wrapMethod(WorldMapMenuGameController)
+event OnUninitialize() {
+  if (this.routeSelectionEnabled) {
+    this.RestorePreviousFiltersState();
+    this.QueuePocketMetroEvent(PocketMetroRouteSelectionDisabledEvent.Create());
+    this.QueuePocketMetroEvent(PocketMetroPlayerMarkerVisibilityEvent.Create(true));
+  }
+  if (this.navigator) {
+    if (!this.navigator.HasActiveRoute()) { this.SelectionCanceled(); }
+    else { this.navigator.CheckIfShouldDisplayControls(); }
+  }
+  if (this.pulseDeparture) { this.pulseDeparture.Stop(); }
+  if (this.pulseDestination) { this.pulseDestination.Stop(); }
+  if (this.metroButtonNavigate) { this.metroButtonNavigate.Dispose(); }
+  if (this.metroButtonCancel) { this.metroButtonCancel.Dispose(); }
+  if (this.metroButtonStop) { this.metroButtonStop.Dispose(); }
+  if (this.metroButtonConfirm) { this.metroButtonConfirm.Dispose(); }
+  this.currentHoveredController = NULL;
+  this.navigator = NULL;
+  OnUninitialize();
+}
+
+@wrapMethod(BaseWorldMapMappinController)
+event OnInitialize() { OnInitialize(); this.CreateSelectedMappinGlow(); }
+
+@wrapMethod(BaseWorldMapMappinController)
+function Update() {
+  Update();
+  if (this.selectionGlow) { this.selectionGlow.SetVisible(PocketMetroNavigator.IsSelectedAsRoute(this.GetMetroStationName())); }
+}
+
+@addMethod(WorldMapMenuGameController)
+function IsLastUsedKBM() -> Bool { return this.m_player.PlayerLastUsedKBM(); }
+@addMethod(WorldMapMenuGameController)
+function IsLastUsedPad() -> Bool { return this.m_player.PlayerLastUsedPad(); }
+
+@addMethod(WorldMapMenuGameController)
+function QueuePocketMetroEvent(evt: Event) {
+  GameInstance.GetUISystem(this.m_player.GetGame()).QueueEvent(evt);
+}

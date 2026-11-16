@@ -1,0 +1,92 @@
+@module "MetroPocketGuide"
+
+class PocketMetroNavButton extends inkLogicController {
+  private var owner: weak<WorldMapMenuGameController>;
+  private var root: weak<inkCanvas>;
+  private var label: weak<inkText>;
+  private var highlight: weak<inkImage>;
+  private var pressed: Bool;
+
+  public static function Create(mapOwner: WorldMapMenuGameController, parent: inkCompoundWidget) -> PocketMetroNavButton {
+    let button: PocketMetroNavButton = new PocketMetroNavButton;
+    button.Initialize(mapOwner, parent);
+    return button;
+  }
+
+  private function Initialize(mapOwner: WorldMapMenuGameController, parent: inkCompoundWidget) {
+    this.owner = mapOwner;
+    let createdRoot: inkCanvas = new inkCanvas;
+    createdRoot.SetSize(Vector2(500.0, 120.0));
+    createdRoot.SetAnchorPoint(Vector2(0.5, 0.5));
+    createdRoot.SetInteractive(true);
+    createdRoot.AttachController(this);
+    this.root = createdRoot;
+    let background: inkImage = new inkImage;
+    background.SetAtlasResource(R"base\gameplay\gui\common\shapes\atlas_shapes_sync.inkatlas");
+    background.SetTexturePart(n"button_big2_bg");
+    background.SetSize(Vector2(500.0, 120.0));
+    background.useNineSliceScale = true;
+    background.SetStyle(R"base\gameplay\gui\common\main_colors.inkstyle");
+    background.BindProperty(n"tintColor", n"MainColors.Fullscreen_PrimaryBackgroundDarkest");
+    background.SetOpacity(0.8);
+    background.SetInteractive(false);
+    background.Reparent(createdRoot);
+    let frame: inkImage = new inkImage;
+    frame.SetAtlasResource(R"base\gameplay\gui\common\shapes\atlas_shapes_sync.inkatlas");
+    frame.SetTexturePart(n"button_big2_fg");
+    frame.SetSize(Vector2(500.0, 120.0));
+    frame.useNineSliceScale = true;
+    frame.SetStyle(R"base\gameplay\gui\common\main_colors.inkstyle");
+    frame.BindProperty(n"tintColor", n"MainColors.Blue");
+    frame.SetOpacity(0.3);
+    frame.SetInteractive(false);
+    frame.Reparent(createdRoot);
+    this.highlight = frame;
+    let icon: inkImage = new inkImage;
+    icon.SetAtlasResource(R"base\open_world\metro\ue_metro\ui\assets\ue_metro_main_atlas.inkatlas");
+    icon.SetTexturePart(n"ncart_logo_simple");
+    icon.SetSize(Vector2(82.0, 44.0));
+    icon.SetMargin(24.0, 35.0, 0.0, 0.0);
+    icon.SetInteractive(false);
+    icon.Reparent(createdRoot);
+    let createdLabel: inkText = PocketMetroText(n"createdLabel", "", 48);
+    createdLabel.SetMargin(125.0, 25.0, 0.0, 0.0);
+    createdLabel.SetLetterCase(textLetterCase.UpperCase);
+    createdLabel.Reparent(createdRoot);
+    this.label = createdLabel;
+    createdRoot.RegisterToCallback(n"OnPress", this, n"OnPress");
+    createdRoot.RegisterToCallback(n"OnRelease", this, n"OnRelease");
+    createdRoot.RegisterToCallback(n"OnEnter", this, n"OnEnter");
+    createdRoot.RegisterToCallback(n"OnLeave", this, n"OnLeave");
+    createdRoot.Reparent(parent);
+  }
+
+  public function SetName(widgetName: CName) { this.root.SetName(widgetName); }
+  public function SetText(text: String) { this.label.SetText(text); }
+  public function SetVisible(visible: Bool) { this.root.SetVisible(visible); this.pressed = false; }
+
+  protected event OnEnter(evt: inkPointerEvent) { this.highlight.SetOpacity(1.0); }
+  protected event OnLeave(evt: inkPointerEvent) { this.pressed = false; this.highlight.SetOpacity(0.3); }
+  protected event OnPress(evt: inkPointerEvent) { if (evt.IsAction(n"click")) { this.pressed = true; } }
+  protected event OnRelease(evt: inkPointerEvent) {
+    if (evt.IsAction(n"click") && this.pressed && this.owner) {
+      this.pressed = false;
+      let buttonName: CName = this.root.GetName();
+      if (buttonName == n"buttonNavigate") { this.owner.HandleNavigateClick(); }
+      else if (buttonName == n"buttonCancel") { this.owner.HandleCancelClick(); }
+      else if (buttonName == n"buttonConfirm") { this.owner.HandleConfirmClick(); }
+      else if (buttonName == n"buttonStop") { this.owner.HandleStopClick(); }
+      evt.Handle();
+    }
+  }
+
+  public function Dispose() {
+    this.root.UnregisterFromCallback(n"OnPress", this, n"OnPress");
+    this.root.UnregisterFromCallback(n"OnRelease", this, n"OnRelease");
+    this.root.UnregisterFromCallback(n"OnEnter", this, n"OnEnter");
+    this.root.UnregisterFromCallback(n"OnLeave", this, n"OnLeave");
+    this.owner = NULL;
+    this.root = NULL;
+  }
+}
+

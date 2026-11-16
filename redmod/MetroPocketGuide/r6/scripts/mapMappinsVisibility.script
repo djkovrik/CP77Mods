@@ -1,0 +1,50 @@
+@module "MetroPocketGuide"
+
+@addField(BaseWorldMapMappinController)
+var routeSelectionEnabled: Bool;
+
+@addMethod(BaseWorldMapMappinController)
+event OnPocketMetroRouteSelectionEnabledEvent(evt: PocketMetroRouteSelectionEnabledEvent) {
+  this.routeSelectionEnabled = true;
+  this.UpdateVisibilityForRouteSelection();
+}
+
+@addMethod(BaseWorldMapMappinController)
+event OnPocketMetroRouteSelectionDisabledEvent(evt: PocketMetroRouteSelectionDisabledEvent) {
+  this.routeSelectionEnabled = false;
+  this.UpdateVisibilityForRouteSelection();
+  this.DeselectFromRoute();
+}
+
+@addMethod(WorldMapPlayerMappinController)
+event OnPocketMetroPlayerMarkerVisibilityEvent(evt: PocketMetroPlayerMarkerVisibilityEvent) {
+  this.GetRootWidget().SetVisible(evt.show);
+  this.GetRootWidget().SetInteractive(evt.show);
+}
+
+@addMethod(BaseWorldMapMappinController)
+event OnPocketMetroResetPreviousDestinationEvent(evt: PocketMetroResetPreviousDestinationEvent) {
+  let destination: ENcartStations = this.GetMetroStationName();
+  if ((destination == evt.destination)) {
+    this.DeselectFromRoute();
+  }
+}
+
+@addMethod(BaseWorldMapMappinController)
+function UpdateVisibilityForRouteSelection() -> Void {
+  let variant: gamedataMappinVariant = this.m_mappin.GetVariant();
+  let shouldShow: Bool;
+  if ((variant == gamedataMappinVariant.Zzz17_NCARTVariant) || (variant == gamedataMappinVariant.FastTravelVariant)) {
+    if (this.routeSelectionEnabled) {
+      shouldShow = (variant == gamedataMappinVariant.Zzz17_NCARTVariant);
+      if (shouldShow) {
+        this.GetRootWidget().SetVisible(true);
+      } else {
+        this.GetRootWidget().SetVisible(false);
+      }
+    } else {
+      this.GetRootWidget().SetVisible(true);
+    }
+  }
+}
+

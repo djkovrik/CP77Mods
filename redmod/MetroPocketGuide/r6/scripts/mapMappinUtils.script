@@ -1,0 +1,15 @@
+@module "MetroPocketGuide"
+
+@addMethod(BaseWorldMapMappinController)
+function GetMetroStationName() -> ENcartStations {
+  let mappin: FastTravelMappin = this.GetMappin() as FastTravelMappin;
+  let stationName: String = "";
+  if ((mappin != NULL)) {
+    stationName = mappin.GetPointData().GetPointDisplayName();
+  } else {
+    stationName = "";
+  }
+
+  return MetroDataHelper.GetStationNameByLocKey(stationName);
+}
+

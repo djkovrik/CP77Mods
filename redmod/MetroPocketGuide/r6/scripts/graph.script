@@ -1,0 +1,388 @@
+@module "MetroPocketGuide"
+
+class MetroNodesGraph extends IScriptable {
+  private let graph: inkHashMap;
+  private let stations: inkHashMap;
+  private let n: Int32 = 44;
+
+  public function Initialize() {
+    this.graph = new inkHashMap;
+    this.stations = new inkHashMap;
+
+    this.PopulateGraph();
+  }
+
+  public final function FindRoute(from: ENcartStations, to: ENcartStations) -> array<RoutePoint> {
+    let env: MetroNodesGraph = this;
+    let path: array<Int32> = env.FindShortestPath(from, to);
+    let prettyPath: array<MetroNode> = env.PrettifyPath(path);
+    let route: array<RoutePoint> = env.BuildRouteDetails(prettyPath);
+    let cleaned: array<RoutePoint> = env.RemoveConnectionStations(route);
+    return cleaned;
+  }
+
+  public final function RemoveConnectionStations(route: array<RoutePoint>) -> array<RoutePoint> {
+    let result: array<RoutePoint>;
+    let indexesToSkip: array<Int32>;
+    let i: Int32 = 0;
+    let count: Int32 = route.Size();
+
+    while (i < count) {
+      if ((route[i].type == RoutePointType.LINE_SWITCH)) {
+        indexesToSkip.PushBack(i - 1);
+        indexesToSkip.PushBack(i + 1);
+      }
+      i += 1;
+    }
+
+    i = 0;
+    while (i < count) {
+      if (!indexesToSkip.Contains(i)) {
+        result.PushBack(route[i]);
+      }
+      i += 1;
+    }
+
+    return result;
+  }
+
+  public final function BuildRouteDetails(path: array<MetroNode>) -> array<RoutePoint> {
+    let tempRoute: array<RoutePoint>;
+    let route: array<RoutePoint>;
+    if ((path.Size() == 0)) { return tempRoute; }
+    let previousLine: ModNCartLine = ModNCartLine.NONE;
+    let currentLine: ModNCartLine = ModNCartLine.NONE;
+    let count: Int32 = path.Size();
+    let i: Int32 = 0;
+    let node: MetroNode;
+    let point: RoutePoint;
+    while (i < count) {
+      node = path[i];
+      previousLine = currentLine;
+      currentLine = node.Line();
+      if ((previousLine != ModNCartLine.NONE) && (previousLine != currentLine)) {
+        tempRoute.PushBack(LineSwitch.Create(node.StationId(), previousLine, currentLine));
+      }
+      tempRoute.PushBack(StationPoint.Create(node.StationId(), node.Line(), (i == 0), (i == count - 1)));
+      i += 1;
+    }
+
+    count = tempRoute.Size();
+    i = 0;
+    while (i < count) {
+      point = tempRoute[i];
+      point.SetIndex(i);
+
+      if ((i == 0)) {
+        point.UpdateStatus(RoutePointStatus.ACTIVE);
+      }
+      route.PushBack(point);
+      i += 1;
+    }
+
+    return route;
+  }
+
+  public final function PrettifyPath(path: array<Int32>) -> array<MetroNode> {
+    let result: array<MetroNode>;
+    let node: MetroNode;
+    let point: Int32;
+    let entryIndex1: Int32 = 0;
+    while ((entryIndex1 < path.Size())) {
+      point = path[entryIndex1];
+
+      node = this.GetNode(point);
+      if ((node != NULL)) { result.PushBack(node); }
+
+      entryIndex1 += 1;
+    }
+
+    return result;
+  }
+
+  public final function FindShortestPath(from: ENcartStations, to: ENcartStations) -> array<Int32> {
+    let startingStationId: Int32 = MetroDataHelper.GetStationIdByName(from);
+    let startingLines: array<ModNCartLine> = MetroDataHelper.GetStationLinesById(startingStationId);
+    let destinationStationId: Int32 = MetroDataHelper.GetStationIdByName(to);
+    let destinationLines: array<ModNCartLine> = MetroDataHelper.GetStationLinesById(destinationStationId);
+    let best: array<Int32>;
+    let candidate: array<Int32>;
+    let start: MetroNode;
+    let end: MetroNode;
+    let destinationIndex: Int32;
+    let startIndex: Int32 = 0;
+    while (startIndex < startingLines.Size()) {
+      start = this.FindNode(startingStationId, startingLines[startIndex]);
+      destinationIndex = 0;
+      while (destinationIndex < destinationLines.Size()) {
+        end = this.FindNode(destinationStationId, destinationLines[destinationIndex]);
+        if (start && end) {
+          candidate = this.BFS(start.Index(), end.Index());
+          if (candidate.Size() > 0 && (best.Size() == 0 || candidate.Size() < best.Size())) {
+            best = candidate;
+          }
+        }
+        destinationIndex += 1;
+      }
+      startIndex += 1;
+    }
+    return best;
+  }
+
+  private final function BFS(from: Int32, to: Int32) -> array<Int32> {
+    let dest: array<Int32> = this.Solve(from);
+    let path: array<Int32> = this.ReconstructPath(from, to, dest);
+    return path;
+  }
+
+  private final function Solve(index: Int32) -> array<Int32> {
+    let queue: MetroNodesQueue = new MetroNodesQueue;
+    queue.Add(index);
+
+    let visited: array<Bool>;
+    let dest: array<Int32>;
+
+    let i: Int32 = 0;
+    while (i < this.n) {
+      visited.PushBack(false);
+      i += 1;
+    }
+
+    visited[index] = true;
+
+    i = 0;
+    while (i < this.n) {
+      dest.PushBack(-1);
+      i += 1;
+    }
+
+    let curr: Int32;
+    let next: Int32;
+    let node: MetroGraphNode;
+    let neighbours: array<Int32>;
+    let neighbourIndex: Int32;
+    while (queue.IsNotEmpty()) {
+      curr = queue.PopLeft();
+      node = this.graph.Get(Cast<Uint64>(curr)) as MetroGraphNode;
+      neighbours = node.GetNeighbours();
+      neighbourIndex = 0;
+      while (neighbourIndex < neighbours.Size()) {
+        next = neighbours[neighbourIndex];
+        if (!visited[next]) {
+          queue.Add(next);
+          visited[next] = true;
+          dest[next] = curr;
+        }
+
+        neighbourIndex += 1;
+      }
+    }
+
+    return dest;
+  }
+
+  private final function ReconstructPath(s: Int32, e: Int32, dest: array<Int32>) -> array<Int32> {
+    let empty: array<Int32>;
+    let path: array<Int32>;
+    let cursor: Int32 = e;
+    while (cursor != -1) {
+      path.PushBack(cursor);
+      cursor = dest[cursor];
+    }
+
+    let reversed: array<Int32> = this.ReverseArray(path);
+    if ((reversed[0] == s)) {
+      return reversed;
+    }
+
+    return empty;
+  }
+
+  private final function ReverseArray(source: array<Int32>) -> array<Int32> {
+    let result: array<Int32>;
+    let i: Int32 = source.Size() - 1;
+    while (i >= 0) {
+      result.PushBack(source[i]);
+      i -= 1;
+    }
+
+    return result;
+  }
+
+  private final function PopulateGraph() -> Void {
+
+    let A1: MetroNode = MetroNode.Create(1, 1, ModNCartLine.A_RED); this.SaveNode(A1);
+    let A2: MetroNode = MetroNode.Create(2, 2, ModNCartLine.A_RED); this.SaveNode(A2);
+    let A3: MetroNode = MetroNode.Create(3, 3, ModNCartLine.A_RED); this.SaveNode(A3);
+    let A7: MetroNode = MetroNode.Create(4, 7, ModNCartLine.A_RED); this.SaveNode(A7);
+    let A9: MetroNode = MetroNode.Create(5, 9, ModNCartLine.A_RED); this.SaveNode(A9);
+    let A10: MetroNode = MetroNode.Create(6, 10, ModNCartLine.A_RED); this.SaveNode(A10);
+    let A14: MetroNode = MetroNode.Create(7, 14, ModNCartLine.A_RED); this.SaveNode(A14);
+    let A8: MetroNode = MetroNode.Create(8, 8, ModNCartLine.A_RED); this.SaveNode(A8);
+    let A15: MetroNode = MetroNode.Create(9, 15, ModNCartLine.A_RED); this.SaveNode(A15);
+
+    let B15: MetroNode = MetroNode.Create(10, 15, ModNCartLine.B_YELLOW); this.SaveNode(B15);
+    let B17: MetroNode = MetroNode.Create(11, 17, ModNCartLine.B_YELLOW); this.SaveNode(B17);
+    let B5: MetroNode = MetroNode.Create(12, 5, ModNCartLine.B_YELLOW); this.SaveNode(B5);
+    let B16: MetroNode = MetroNode.Create(13, 16, ModNCartLine.B_YELLOW); this.SaveNode(B16);
+    let B7: MetroNode = MetroNode.Create(14, 7, ModNCartLine.B_YELLOW); this.SaveNode(B7);
+    let B12: MetroNode = MetroNode.Create(15, 12, ModNCartLine.B_YELLOW); this.SaveNode(B12);
+    let B18: MetroNode = MetroNode.Create(16, 18, ModNCartLine.B_YELLOW); this.SaveNode(B18);
+    let B19: MetroNode = MetroNode.Create(17, 19, ModNCartLine.B_YELLOW); this.SaveNode(B19);
+
+    let C10: MetroNode = MetroNode.Create(18, 10, ModNCartLine.C_CYAN); this.SaveNode(C10);
+    let C14: MetroNode = MetroNode.Create(19, 14, ModNCartLine.C_CYAN); this.SaveNode(C14);
+    let C8: MetroNode = MetroNode.Create(20, 8, ModNCartLine.C_CYAN); this.SaveNode(C8);
+    let C19: MetroNode = MetroNode.Create(21, 19, ModNCartLine.C_CYAN); this.SaveNode(C19);
+
+    let D14: MetroNode = MetroNode.Create(22, 14, ModNCartLine.D_GREEN); this.SaveNode(D14);
+    let D6: MetroNode = MetroNode.Create(23, 6, ModNCartLine.D_GREEN); this.SaveNode(D6);
+    let D5: MetroNode = MetroNode.Create(24, 5, ModNCartLine.D_GREEN); this.SaveNode(D5);
+    let D4: MetroNode = MetroNode.Create(25, 4, ModNCartLine.D_GREEN); this.SaveNode(D4);
+    let D9: MetroNode = MetroNode.Create(26, 9, ModNCartLine.D_GREEN); this.SaveNode(D9);
+    let D10: MetroNode = MetroNode.Create(27, 10, ModNCartLine.D_GREEN); this.SaveNode(D10);
+    let D13: MetroNode = MetroNode.Create(28, 13, ModNCartLine.D_GREEN); this.SaveNode(D13);
+    let D11: MetroNode = MetroNode.Create(29, 11, ModNCartLine.D_GREEN); this.SaveNode(D11);
+    let D12: MetroNode = MetroNode.Create(30, 12, ModNCartLine.D_GREEN); this.SaveNode(D12);
+    let D18: MetroNode = MetroNode.Create(31, 18, ModNCartLine.D_GREEN); this.SaveNode(D18);
+
+    let E1: MetroNode = MetroNode.Create(32, 1, ModNCartLine.E_ORANGE); this.SaveNode(E1);
+    let E2: MetroNode = MetroNode.Create(33, 2, ModNCartLine.E_ORANGE); this.SaveNode(E2);
+    let E16: MetroNode = MetroNode.Create(34, 16, ModNCartLine.E_ORANGE); this.SaveNode(E16);
+    let E7: MetroNode = MetroNode.Create(35, 7, ModNCartLine.E_ORANGE); this.SaveNode(E7);
+    let E11: MetroNode = MetroNode.Create(36, 11, ModNCartLine.E_ORANGE); this.SaveNode(E11);
+    let E13: MetroNode = MetroNode.Create(37, 13, ModNCartLine.E_ORANGE); this.SaveNode(E13);
+    let E14: MetroNode = MetroNode.Create(38, 14, ModNCartLine.E_ORANGE); this.SaveNode(E14);
+    let E6: MetroNode = MetroNode.Create(39, 6, ModNCartLine.E_ORANGE); this.SaveNode(E6);
+    let E5: MetroNode = MetroNode.Create(40, 5, ModNCartLine.E_ORANGE); this.SaveNode(E5);
+    let E4: MetroNode = MetroNode.Create(41, 4, ModNCartLine.E_ORANGE); this.SaveNode(E4);
+    let E9: MetroNode = MetroNode.Create(43, 9, ModNCartLine.E_ORANGE); this.SaveNode(E9);
+    let E17: MetroNode = MetroNode.Create(42, 17, ModNCartLine.E_ORANGE); this.SaveNode(E17);
+
+    let neighbours1: array<Int32> = [ A2.Index(), E1.Index() ];
+    this.graph.Insert(A1.Key(), MetroGraphNode.Create(neighbours1));
+    let neighbours2: array<Int32> = [ A1.Index(), A3.Index(), E2.Index() ];
+    this.graph.Insert(A2.Key(), MetroGraphNode.Create(neighbours2));
+    let neighbours3: array<Int32> = [ A2.Index(), A7.Index() ];
+    this.graph.Insert(A3.Key(), MetroGraphNode.Create(neighbours3));
+    let neighbours4: array<Int32> = [ A3.Index(), A9.Index(), B7.Index(), E7.Index() ];
+    this.graph.Insert(A7.Key(), MetroGraphNode.Create(neighbours4));
+    let neighbours5: array<Int32> = [ A7.Index(), A10.Index(), D9.Index(), E9.Index() ];
+    this.graph.Insert(A9.Key(), MetroGraphNode.Create(neighbours5));
+    let neighbours6: array<Int32> = [ A9.Index(), A14.Index(), C10.Index(), D10.Index() ];
+    this.graph.Insert(A10.Key(), MetroGraphNode.Create(neighbours6));
+    let neighbours7: array<Int32> = [ A10.Index(), A8.Index(), C14.Index(), D14.Index(), E14.Index() ];
+    this.graph.Insert(A14.Key(), MetroGraphNode.Create(neighbours7));
+    let neighbours8: array<Int32> = [ A14.Index(), A15.Index(), C8.Index() ];
+    this.graph.Insert(A8.Key(), MetroGraphNode.Create(neighbours8));
+    let neighbours9: array<Int32> = [ A8.Index(), B15.Index() ];
+    this.graph.Insert(A15.Key(), MetroGraphNode.Create(neighbours9));
+
+    let neighbours10: array<Int32> = [ A15.Index(), B17.Index() ];
+    this.graph.Insert(B15.Key(), MetroGraphNode.Create(neighbours10));
+    let neighbours11: array<Int32> = [ B15.Index(), B5.Index(), E17.Index() ];
+    this.graph.Insert(B17.Key(), MetroGraphNode.Create(neighbours11));
+    let neighbours12: array<Int32> = [ B16.Index(), B17.Index(), D5.Index(), E5.Index() ];
+    this.graph.Insert(B5.Key(), MetroGraphNode.Create(neighbours12));
+    let neighbours13: array<Int32> = [ B7.Index(), B5.Index(), E16.Index() ];
+    this.graph.Insert(B16.Key(), MetroGraphNode.Create(neighbours13));
+    let neighbours14: array<Int32> = [ B12.Index(), B16.Index(), A7.Index(), E7.Index() ];
+    this.graph.Insert(B7.Key(), MetroGraphNode.Create(neighbours14));
+    let neighbours15: array<Int32> = [ B7.Index(), B18.Index(), D12.Index() ];
+    this.graph.Insert(B12.Key(), MetroGraphNode.Create(neighbours15));
+    let neighbours16: array<Int32> = [ B12.Index(), B19.Index(), D18.Index() ];
+    this.graph.Insert(B18.Key(), MetroGraphNode.Create(neighbours16));
+    let neighbours17: array<Int32> = [ B18.Index(), C19.Index() ];
+    this.graph.Insert(B19.Key(), MetroGraphNode.Create(neighbours17));
+
+    let neighbours18: array<Int32> = [ C14.Index(), A10.Index(), D10.Index() ];
+    this.graph.Insert(C10.Key(), MetroGraphNode.Create(neighbours18));
+    let neighbours19: array<Int32> = [ C10.Index(), C8.Index(), A14.Index(), D14.Index(), E14.Index() ];
+    this.graph.Insert(C14.Key(), MetroGraphNode.Create(neighbours19));
+    let neighbours20: array<Int32> = [ C19.Index(), C14.Index(), A8.Index() ];
+    this.graph.Insert(C8.Key(), MetroGraphNode.Create(neighbours20));
+    let neighbours21: array<Int32> = [ C8.Index(), B19.Index() ];
+    this.graph.Insert(C19.Key(), MetroGraphNode.Create(neighbours21));
+
+    let neighbours22: array<Int32> = [ D13.Index(), A14.Index(), C14.Index(), E14.Index() ];
+    this.graph.Insert(D14.Key(), MetroGraphNode.Create(neighbours22));
+    let neighbours23: array<Int32> = [ D5.Index(), E6.Index() ];
+    this.graph.Insert(D6.Key(), MetroGraphNode.Create(neighbours23));
+    let neighbours24: array<Int32> = [ D4.Index(), B5.Index(), E5.Index() ];
+    this.graph.Insert(D5.Key(), MetroGraphNode.Create(neighbours24));
+    let neighbours43: array<Int32> = [ D9.Index(), E4.Index() ];
+    this.graph.Insert(D4.Key(), MetroGraphNode.Create(neighbours43));
+    let neighbours25: array<Int32> = [ D10.Index(), A9.Index(), E9.Index() ];
+    this.graph.Insert(D9.Key(), MetroGraphNode.Create(neighbours25));
+    let neighbours26: array<Int32> = [ D14.Index(), A10.Index(), C10.Index() ];
+    this.graph.Insert(D10.Key(), MetroGraphNode.Create(neighbours26));
+    let neighbours27: array<Int32> = [ D11.Index(), E13.Index() ];
+    this.graph.Insert(D13.Key(), MetroGraphNode.Create(neighbours27));
+    let neighbours28: array<Int32> = [ D12.Index(), E11.Index() ];
+    this.graph.Insert(D11.Key(), MetroGraphNode.Create(neighbours28));
+    let neighbours29: array<Int32> = [ D18.Index(), B12.Index() ];
+    this.graph.Insert(D12.Key(), MetroGraphNode.Create(neighbours29));
+    let neighbours30: array<Int32> = [ D6.Index(), B18.Index() ];
+    this.graph.Insert(D18.Key(), MetroGraphNode.Create(neighbours30));
+
+    let neighbours31: array<Int32> = [ E2.Index(), A1.Index() ];
+    this.graph.Insert(E1.Key(), MetroGraphNode.Create(neighbours31));
+    let neighbours32: array<Int32> = [ E16.Index(), E1.Index(), A2.Index() ];
+    this.graph.Insert(E2.Key(), MetroGraphNode.Create(neighbours32));
+    let neighbours33: array<Int32> = [ E7.Index(), E2.Index(), B16.Index() ];
+    this.graph.Insert(E16.Key(), MetroGraphNode.Create(neighbours33));
+    let neighbours34: array<Int32> = [ E11.Index(), E16.Index(), A7.Index(), B7.Index() ];
+    this.graph.Insert(E7.Key(), MetroGraphNode.Create(neighbours34));
+    let neighbours35: array<Int32> = [ E13.Index(), E7.Index(), D11.Index() ];
+    this.graph.Insert(E11.Key(), MetroGraphNode.Create(neighbours35));
+    let neighbours36: array<Int32> = [ E14.Index(), E11.Index(), D13.Index() ];
+    this.graph.Insert(E13.Key(), MetroGraphNode.Create(neighbours36));
+    let neighbours37: array<Int32> = [ E6.Index(), E13.Index(), A14.Index(), C14.Index(), D14.Index() ];
+    this.graph.Insert(E14.Key(), MetroGraphNode.Create(neighbours37));
+    let neighbours38: array<Int32> = [ E5.Index(), E14.Index(), D6.Index() ];
+    this.graph.Insert(E6.Key(), MetroGraphNode.Create(neighbours38));
+    let neighbours39: array<Int32> = [ E4.Index(), E6.Index(), B5.Index(), D5.Index() ];
+    this.graph.Insert(E5.Key(), MetroGraphNode.Create(neighbours39));
+    let neighbours40: array<Int32> = [ E9.Index(), E5.Index(), D4.Index() ];
+    this.graph.Insert(E4.Key(), MetroGraphNode.Create(neighbours40));
+    let neighbours41: array<Int32> = [ E17.Index(), E4.Index(), A9.Index(), D9.Index() ];
+    this.graph.Insert(E9.Key(), MetroGraphNode.Create(neighbours41));
+    let neighbours42: array<Int32> = [ E9.Index(), B17.Index() ];
+    this.graph.Insert(E17.Key(), MetroGraphNode.Create(neighbours42));
+  }
+
+  private final function SaveNode(node: MetroNode) -> Void {
+    let key: Uint64 = node.Key();
+    this.stations.Insert(key, node);
+  }
+
+  private final function GetNode(uniqueIndex: Int32) -> MetroNode {
+    let key: Uint64 = Cast<Uint64>(uniqueIndex);
+    let station: MetroNode = this.stations.Get(key) as MetroNode;
+    return station;
+  }
+
+  private final function FindNode(stationId: Int32, line: ModNCartLine) -> MetroNode {
+    let values: array<weak<IScriptable>>;
+    let node: MetroNode;
+    let value: weak<IScriptable>;
+    this.stations.GetValues(values);
+
+    let entryIndex5: Int32 = 0;
+    while ((entryIndex5 < values.Size())) {
+      value = values[entryIndex5];
+
+      node = value as MetroNode;
+      if ((node != NULL)) {
+        if ((node.StationId() == stationId) && (node.Line() == line)) {
+          return node;
+        }
+      }
+
+      entryIndex5 += 1;
+    }
+
+    return NULL;
+  }
+}
+

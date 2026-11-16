@@ -1,0 +1,149 @@
+@module "MetroPocketGuide"
+
+@addField(NcartMetroMapController)
+var highlightAnimDef: inkAnimDef;
+
+@addField(NcartMetroMapController)
+var highlightAnimProxy: inkAnimProxy;
+
+@addField(NcartMetroMapController)
+var latestMarkerPath: CName;
+
+@addField(NcartMetroMapController)
+var highlightAnimDuration: Float;
+
+@wrapMethod(NcartMetroMapController)
+event OnInitialize() {
+  OnInitialize();
+  this.highlightAnimDuration = 0.6;
+  this.latestMarkerPath = n"";
+  this.InitializeHighlightAnimation();
+}
+
+@addMethod(NcartMetroMapController)
+event InitializeHighlightAnimation() {
+  this.highlightAnimDef = new inkAnimDef;
+
+  let translationInterpolator: inkAnimTranslation = new inkAnimTranslation;
+  translationInterpolator.SetStartTranslation(Vector2(0.0, 0.0));
+  translationInterpolator.SetEndTranslation(Vector2(-16.0, 0.0));
+  translationInterpolator.SetType(inkanimInterpolationType.Linear);
+  translationInterpolator.SetMode(inkanimInterpolationMode.EasyInOut);
+  translationInterpolator.SetDirection(inkanimInterpolationDirection.FromTo);
+  translationInterpolator.SetDuration(this.highlightAnimDuration);
+  this.highlightAnimDef.AddInterpolator(translationInterpolator);
+
+  let transparencyInterpolator: inkAnimTransparency = new inkAnimTransparency;
+  transparencyInterpolator.SetStartTransparency(1.0);
+  transparencyInterpolator.SetEndTransparency(0.5);
+  transparencyInterpolator.SetType(inkanimInterpolationType.Linear);
+  transparencyInterpolator.SetMode(inkanimInterpolationMode.EasyInOut);
+  transparencyInterpolator.SetDuration(this.highlightAnimDuration);
+  this.highlightAnimDef.AddInterpolator(transparencyInterpolator);
+}
+
+@wrapMethod(NcartMetroMapController)
+event OnStartupAnimationDone(proxy: inkAnimProxy) {
+  OnStartupAnimationDone(proxy);
+  let ownerObject: GameObject = this.GetOwnerEntity() as GameObject;
+  let navigator: PocketMetroNavigator;
+  if (ownerObject) {
+    navigator = PocketMetroNavigator.GetInstance(ownerObject.GetGame());
+  }
+  if ((navigator != NULL)) { navigator.SetRouteVisible(true); }
+  this.HighlightRecommendedSelection(navigator);
+}
+
+@wrapMethod(NcartMetroMapController)
+function HideDirectionPanes() -> Void {
+  let ownerObject: GameObject = this.GetOwnerEntity() as GameObject;
+  let navigator: PocketMetroNavigator;
+  if (ownerObject) { navigator = PocketMetroNavigator.GetInstance(ownerObject.GetGame()); }
+  if ((navigator != NULL)) { navigator.OnDirectionScreenClosed(); }
+  if (this.highlightAnimProxy) { this.highlightAnimProxy.Stop(); }
+  HideDirectionPanes();
+}
+
+@addMethod(NcartMetroMapController)
+function HighlightRecommendedSelection(navigator: PocketMetroNavigator) -> Void {
+  if (this.highlightAnimProxy) { this.highlightAnimProxy.Stop(); this.highlightAnimProxy = NULL; }
+  let allLines: array<CName> = [
+  n"ue_metro_show_line_a1",
+  n"ue_metro_show_line_a2",
+  n"ue_metro_show_line_b1",
+  n"ue_metro_show_line_b2",
+  n"ue_metro_show_line_c1",
+  n"ue_metro_show_line_c2",
+  n"ue_metro_show_line_d1",
+  n"ue_metro_show_line_d2",
+  n"ue_metro_show_line_e1",
+  n"ue_metro_show_line_e2"
+  ];
+
+  let visibleLines: array<CName>;
+
+  let entryIndex1: Int32 = 0;
+  let line: CName;
+  while ((entryIndex1 < allLines.Size())) {
+    line = allLines[entryIndex1];
+
+    if (this.m_questsSystem.GetFact(line) != 0) {
+      visibleLines.PushBack(line);
+    }
+
+    entryIndex1 += 1;
+  }
+
+  let highlightData: LineDirectionData = MetroDirectionChecker.GetRecommendedHighlight(visibleLines, navigator);
+  let root: inkCompoundWidget = this.GetRootCompoundWidget();
+  let parent: inkCompoundWidget;
+  let marker: inkImage;
+  if (!root) { return; }
+
+  if ((this.latestMarkerPath != n"")) {
+    parent = root.GetWidgetByPathName(this.latestMarkerPath) as inkCompoundWidget;
+    if ((parent != NULL)) { parent.RemoveChildByName(n"highlight"); }
+    this.latestMarkerPath = n"";
+  }
+
+  if ((highlightData != NULL)) {
+
+    parent = root.GetWidgetByPathName(highlightData.path) as inkCompoundWidget;
+    if (!(parent != NULL)) {
+
+      return;
+    }
+    if (!this.highlightAnimDef) {
+      this.highlightAnimDuration = 0.6;
+      this.InitializeHighlightAnimation();
+    }
+    marker = this.CreateHighlightMarker();
+    marker.Reparent(parent);
+    this.latestMarkerPath = highlightData.path;
+
+    let options: inkAnimOptions;
+    options.loopInfinite = true;
+    options.loopType = inkanimLoopType.PingPong;
+    if ((this.highlightAnimProxy != NULL)) { this.highlightAnimProxy.Stop(); }
+    this.highlightAnimProxy = marker.PlayAnimationWithOptions(this.highlightAnimDef, options);
+  }
+}
+
+@addMethod(NcartMetroMapController)
+function CreateHighlightMarker() -> inkImage {
+  let icon: inkImage = new inkImage;
+  icon.SetName(n"highlight");
+  icon.SetAtlasResource(R"base\gameplay\gui\metro_pocket_guide_icons.inkatlas");
+  icon.SetTexturePart(n"arrow1");
+  icon.SetFitToContent(false);
+  icon.SetAnchor(inkEAnchor.CenterLeft);
+  icon.SetAnchorPoint(Vector2(0.5, 0.5));
+  icon.SetMargin(inkMargin(-24.0, 0.0, 0.0, 0.0));
+  icon.SetHAlign(inkEHorizontalAlign.Left);
+  icon.SetVAlign(inkEVerticalAlign.Center);
+  icon.SetStyle(R"base\gameplay\gui\common\main_colors.inkstyle");
+  icon.BindProperty(n"tintColor", n"MainColors.Blue");
+  icon.SetSize(Vector2(30.0, 40.0));
+  return icon;
+}
+
