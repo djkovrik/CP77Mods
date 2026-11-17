@@ -781,6 +781,25 @@ protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<Sta
   wrappedMethod(stateContext, scriptInterface);
 }
 
+@wrapMethod(PlayerPuppet)
+protected cb func OnUnmountingEvent(evt: ref<UnmountingEvent>) -> Bool {
+  let result: Bool = wrappedMethod(evt);
+  if NotEquals(evt.relationship.relationshipType, gameMountingRelationshipType.Child)
+    || NotEquals(evt.relationship.otherMountableType, gameMountingObjectType.Puppet)
+    || NotEquals(evt.relationship.slotId.id, n"grapple") && NotEquals(evt.relationship.slotId.id, n"leftShoulder") {
+    return result;
+  };
+  if GameInstance.GetMountingFacility(this.GetGame()).IsMountedToAnything(this.GetEntityID()) {
+    return result;
+  };
+
+  let blackboard: ref<IBlackboard> = this.GetPlayerStateMachineBlackboard();
+  if IsDefined(blackboard) {
+    blackboard.SetBool(GetAllBlackboardDefs().PlayerStateMachine.MountedPreventFirstEquip, false);
+  };
+  return result;
+}
+
 // Interaction
 @wrapMethod(InteractiveDevice)
 protected cb func OnInteractionUsed(evt: ref<InteractionChoiceEvent>) -> Bool {
