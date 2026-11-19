@@ -1,0 +1,2177 @@
+Items.ECraft_Recipe_scope_long_01:
+  $base: Items.w_att_scope_long_01
+  quality: Quality.Common
+  CraftingData: Items.Craftable_Attachment
+Items.ECraft_Recipe_scope_long_01.ecraftScopeRecipe: true
+Items.ECraft_Masamune_long_01_default.ecraftScopePivotX: 0.523
+Items.ECraft_Masamune_long_01_default.ecraftScopePivotY: 0.373
+Items.ECraft_Masamune_long_01_default.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_01_default:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_01_default
+  appearanceName: default
+Items.ECraft_long_01_default:
+  $base: Items.ECraft_Recipe_scope_long_01
+  visualTags: [ default ]
+  iconPath: grandstand_default
+Items.ECraft_long_01_default.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_01_default"
+Items.ECraft_long_01_default_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_01_default
+Items.ECraft_Masamune_long_01_neon1.ecraftScopePivotX: 0.523
+Items.ECraft_Masamune_long_01_neon1.ecraftScopePivotY: 0.373
+Items.ECraft_Masamune_long_01_neon1.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_01_neon1:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_01_neon1
+  appearanceName: default
+Items.ECraft_long_01_neon1:
+  $base: Items.ECraft_Recipe_scope_long_01
+  visualTags: [ neon1 ]
+  iconPath: grandstand_neon1
+Items.ECraft_long_01_neon1.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_01_neon1"
+Items.ECraft_long_01_neon1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_01_neon1
+Items.ECraft_Masamune_long_01_military1.ecraftScopePivotX: 0.523
+Items.ECraft_Masamune_long_01_military1.ecraftScopePivotY: 0.373
+Items.ECraft_Masamune_long_01_military1.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_01_military1:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_01_military1
+  appearanceName: default
+Items.ECraft_long_01_military1:
+  $base: Items.ECraft_Recipe_scope_long_01
+  visualTags: [ military1 ]
+  iconPath: grandstand_military1
+Items.ECraft_long_01_military1.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_01_military1"
+Items.ECraft_long_01_military1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_01_military1
+Items.ECraft_Masamune_long_01_military2.ecraftScopePivotX: 0.523
+Items.ECraft_Masamune_long_01_military2.ecraftScopePivotY: 0.373
+Items.ECraft_Masamune_long_01_military2.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_01_military2:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_01_military2
+  appearanceName: default
+Items.ECraft_long_01_military2:
+  $base: Items.ECraft_Recipe_scope_long_01
+  visualTags: [ military2 ]
+  iconPath: grandstand_military2
+Items.ECraft_long_01_military2.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_01_military2"
+Items.ECraft_long_01_military2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_01_military2
+Items.ECraft_Masamune_long_01_neon2.ecraftScopePivotX: 0.523
+Items.ECraft_Masamune_long_01_neon2.ecraftScopePivotY: 0.373
+Items.ECraft_Masamune_long_01_neon2.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_01_neon2:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_01_neon2
+  appearanceName: default
+Items.ECraft_long_01_neon2:
+  $base: Items.ECraft_Recipe_scope_long_01
+  visualTags: [ neon2 ]
+  iconPath: grandstand_neon2
+Items.ECraft_long_01_neon2.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_01_neon2"
+Items.ECraft_long_01_neon2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_01_neon2
+Items.ECraft_Masamune_long_01_pimp1.ecraftScopePivotX: 0.523
+Items.ECraft_Masamune_long_01_pimp1.ecraftScopePivotY: 0.373
+Items.ECraft_Masamune_long_01_pimp1.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_01_pimp1:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_01_pimp1
+  appearanceName: default
+Items.ECraft_long_01_pimp1:
+  $base: Items.ECraft_Recipe_scope_long_01
+  visualTags: [ pimp1 ]
+  iconPath: grandstand_pimp1
+Items.ECraft_long_01_pimp1.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_01_pimp1"
+Items.ECraft_long_01_pimp1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_01_pimp1
+Items.ECraft_Masamune_long_01_pimp2.ecraftScopePivotX: 0.523
+Items.ECraft_Masamune_long_01_pimp2.ecraftScopePivotY: 0.373
+Items.ECraft_Masamune_long_01_pimp2.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_01_pimp2:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_01_pimp2
+  appearanceName: default
+Items.ECraft_long_01_pimp2:
+  $base: Items.ECraft_Recipe_scope_long_01
+  visualTags: [ pimp2 ]
+  iconPath: grandstand_pimp2
+Items.ECraft_long_01_pimp2.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_01_pimp2"
+Items.ECraft_long_01_pimp2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_01_pimp2
+Items.ECraft_Recipe_scope_long_01.ecraftVariants:
+  - t"Items.ECraft_long_01_default"
+  - t"Items.ECraft_long_01_neon1"
+  - t"Items.ECraft_long_01_military1"
+  - t"Items.ECraft_long_01_military2"
+  - t"Items.ECraft_long_01_neon2"
+  - t"Items.ECraft_long_01_pimp1"
+  - t"Items.ECraft_long_01_pimp2"
+
+Items.w_att_scope_long_02_Craftable.ecraftScopeRecipe: true
+Items.ECraft_Masamune_long_02_default.ecraftScopePivotX: 0.54
+Items.ECraft_Masamune_long_02_default.ecraftScopePivotY: 0.35
+Items.ECraft_Masamune_long_02_default.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_02_default:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_Hidden
+  appearanceName: default
+Items.ECraft_long_02_default:
+  $base: Items.w_att_scope_long_02_Craftable
+  visualTags: [ default ]
+Items.ECraft_long_02_default.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_02_default"
+Items.ECraft_long_02_default_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_02_default
+Items.ECraft_Masamune_long_02_neon1.ecraftScopePivotX: 0.54
+Items.ECraft_Masamune_long_02_neon1.ecraftScopePivotY: 0.35
+Items.ECraft_Masamune_long_02_neon1.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_02_neon1:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_Percipient_neon1
+  appearanceName: default
+Items.ECraft_long_02_neon1:
+  $base: Items.w_att_scope_long_02_Craftable
+  visualTags: [ neon1 ]
+  iconPath: percipient_neon1
+Items.ECraft_long_02_neon1.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_02_neon1"
+Items.ECraft_long_02_neon1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_02_neon1
+Items.ECraft_Masamune_long_02_military1.ecraftScopePivotX: 0.54
+Items.ECraft_Masamune_long_02_military1.ecraftScopePivotY: 0.35
+Items.ECraft_Masamune_long_02_military1.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_02_military1:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_02_military1
+  appearanceName: default
+Items.ECraft_long_02_military1:
+  $base: Items.w_att_scope_long_02_Craftable
+  visualTags: [ military1 ]
+  iconPath: percipient_military1
+Items.ECraft_long_02_military1.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_02_military1"
+Items.ECraft_long_02_military1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_02_military1
+Items.ECraft_Masamune_long_02_military2.ecraftScopePivotX: 0.54
+Items.ECraft_Masamune_long_02_military2.ecraftScopePivotY: 0.35
+Items.ECraft_Masamune_long_02_military2.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_02_military2:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_02_military2
+  appearanceName: default
+Items.ECraft_long_02_military2:
+  $base: Items.w_att_scope_long_02_Craftable
+  visualTags: [ military2 ]
+  iconPath: percipient_military2
+Items.ECraft_long_02_military2.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_02_military2"
+Items.ECraft_long_02_military2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_02_military2
+Items.ECraft_Masamune_long_02_neon2.ecraftScopePivotX: 0.54
+Items.ECraft_Masamune_long_02_neon2.ecraftScopePivotY: 0.35
+Items.ECraft_Masamune_long_02_neon2.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_02_neon2:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_02_neon2
+  appearanceName: default
+Items.ECraft_long_02_neon2:
+  $base: Items.w_att_scope_long_02_Craftable
+  visualTags: [ neon2 ]
+  iconPath: percipient_neon2
+Items.ECraft_long_02_neon2.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_02_neon2"
+Items.ECraft_long_02_neon2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_02_neon2
+Items.ECraft_Masamune_long_02_pimp1.ecraftScopePivotX: 0.54
+Items.ECraft_Masamune_long_02_pimp1.ecraftScopePivotY: 0.35
+Items.ECraft_Masamune_long_02_pimp1.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_02_pimp1:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_02_pimp1
+  appearanceName: default
+Items.ECraft_long_02_pimp1:
+  $base: Items.w_att_scope_long_02_Craftable
+  visualTags: [ pimp1 ]
+  iconPath: percipient_pimp1
+Items.ECraft_long_02_pimp1.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_02_pimp1"
+Items.ECraft_long_02_pimp1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_02_pimp1
+Items.ECraft_Masamune_long_02_pimp2.ecraftScopePivotX: 0.54
+Items.ECraft_Masamune_long_02_pimp2.ecraftScopePivotY: 0.35
+Items.ECraft_Masamune_long_02_pimp2.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_02_pimp2:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_02_pimp2
+  appearanceName: default
+Items.ECraft_long_02_pimp2:
+  $base: Items.w_att_scope_long_02_Craftable
+  visualTags: [ pimp2 ]
+  iconPath: percipient_pimp2
+Items.ECraft_long_02_pimp2.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_02_pimp2"
+Items.ECraft_long_02_pimp2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_02_pimp2
+Items.w_att_scope_long_02_Craftable.ecraftVariants:
+  - t"Items.ECraft_long_02_default"
+  - t"Items.ECraft_long_02_neon1"
+  - t"Items.ECraft_long_02_military1"
+  - t"Items.ECraft_long_02_military2"
+  - t"Items.ECraft_long_02_neon2"
+  - t"Items.ECraft_long_02_pimp1"
+  - t"Items.ECraft_long_02_pimp2"
+
+Items.ECraft_Recipe_scope_long_03:
+  $base: Items.w_att_scope_long_03
+  quality: Quality.Common
+  CraftingData: Items.Craftable_Attachment
+Items.ECraft_Recipe_scope_long_03.ecraftScopeRecipe: true
+Items.ECraft_Masamune_long_03_default.ecraftScopePivotX: 0.523
+Items.ECraft_Masamune_long_03_default.ecraftScopePivotY: 0.365
+Items.ECraft_Masamune_long_03_default.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_03_default:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_03_default
+  appearanceName: default
+Items.ECraft_long_03_default:
+  $base: Items.ECraft_Recipe_scope_long_03
+  visualTags: [ default ]
+  iconPath: clearvue_default
+Items.ECraft_long_03_default.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_03_default"
+Items.ECraft_long_03_default_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_03_default
+Items.ECraft_Masamune_long_03_neon1.ecraftScopePivotX: 0.523
+Items.ECraft_Masamune_long_03_neon1.ecraftScopePivotY: 0.365
+Items.ECraft_Masamune_long_03_neon1.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_03_neon1:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_03_neon1
+  appearanceName: default
+Items.ECraft_long_03_neon1:
+  $base: Items.ECraft_Recipe_scope_long_03
+  visualTags: [ neon1 ]
+  iconPath: clearvue_neon1
+Items.ECraft_long_03_neon1.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_03_neon1"
+Items.ECraft_long_03_neon1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_03_neon1
+Items.ECraft_Masamune_long_03_military1.ecraftScopePivotX: 0.523
+Items.ECraft_Masamune_long_03_military1.ecraftScopePivotY: 0.365
+Items.ECraft_Masamune_long_03_military1.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_03_military1:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_03_military1
+  appearanceName: default
+Items.ECraft_long_03_military1:
+  $base: Items.ECraft_Recipe_scope_long_03
+  visualTags: [ military1 ]
+  iconPath: clearvue_military1
+Items.ECraft_long_03_military1.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_03_military1"
+Items.ECraft_long_03_military1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_03_military1
+Items.ECraft_Masamune_long_03_military2.ecraftScopePivotX: 0.523
+Items.ECraft_Masamune_long_03_military2.ecraftScopePivotY: 0.365
+Items.ECraft_Masamune_long_03_military2.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_03_military2:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_03_military2
+  appearanceName: default
+Items.ECraft_long_03_military2:
+  $base: Items.ECraft_Recipe_scope_long_03
+  visualTags: [ military2 ]
+  iconPath: clearvue_military2
+Items.ECraft_long_03_military2.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_03_military2"
+Items.ECraft_long_03_military2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_03_military2
+Items.ECraft_Masamune_long_03_neon2.ecraftScopePivotX: 0.523
+Items.ECraft_Masamune_long_03_neon2.ecraftScopePivotY: 0.365
+Items.ECraft_Masamune_long_03_neon2.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_03_neon2:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_03_neon2
+  appearanceName: default
+Items.ECraft_long_03_neon2:
+  $base: Items.ECraft_Recipe_scope_long_03
+  visualTags: [ neon2 ]
+  iconPath: clearvue_neon2
+Items.ECraft_long_03_neon2.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_03_neon2"
+Items.ECraft_long_03_neon2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_03_neon2
+Items.ECraft_Masamune_long_03_pimp1.ecraftScopePivotX: 0.523
+Items.ECraft_Masamune_long_03_pimp1.ecraftScopePivotY: 0.365
+Items.ECraft_Masamune_long_03_pimp1.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_03_pimp1:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_03_pimp1
+  appearanceName: default
+Items.ECraft_long_03_pimp1:
+  $base: Items.ECraft_Recipe_scope_long_03
+  visualTags: [ pimp1 ]
+  iconPath: clearvue_pimp1
+Items.ECraft_long_03_pimp1.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_03_pimp1"
+Items.ECraft_long_03_pimp1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_03_pimp1
+Items.ECraft_Masamune_long_03_pimp2.ecraftScopePivotX: 0.523
+Items.ECraft_Masamune_long_03_pimp2.ecraftScopePivotY: 0.365
+Items.ECraft_Masamune_long_03_pimp2.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_03_pimp2:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_03_pimp2
+  appearanceName: default
+Items.ECraft_long_03_pimp2:
+  $base: Items.ECraft_Recipe_scope_long_03
+  visualTags: [ pimp2 ]
+  iconPath: clearvue_pimp2
+Items.ECraft_long_03_pimp2.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_03_pimp2"
+Items.ECraft_long_03_pimp2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_03_pimp2
+Items.ECraft_Recipe_scope_long_03.ecraftVariants:
+  - t"Items.ECraft_long_03_default"
+  - t"Items.ECraft_long_03_neon1"
+  - t"Items.ECraft_long_03_military1"
+  - t"Items.ECraft_long_03_military2"
+  - t"Items.ECraft_long_03_neon2"
+  - t"Items.ECraft_long_03_pimp1"
+  - t"Items.ECraft_long_03_pimp2"
+
+Items.ECraft_Recipe_scope_long_04:
+  $base: Items.w_att_scope_long_04
+  quality: Quality.Common
+  CraftingData: Items.Craftable_Attachment
+Items.ECraft_Recipe_scope_long_04.ecraftScopeRecipe: true
+Items.ECraft_Masamune_long_04_default.ecraftScopePivotX: 0.54
+Items.ECraft_Masamune_long_04_default.ecraftScopePivotY: 0.398
+Items.ECraft_Masamune_long_04_default.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_04_default:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_04_default
+  appearanceName: default
+Items.ECraft_long_04_default:
+  $base: Items.ECraft_Recipe_scope_long_04
+  visualTags: [ default ]
+  iconPath: saika_default
+Items.ECraft_long_04_default.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_04_default"
+Items.ECraft_long_04_default_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_04_default
+Items.ECraft_Masamune_long_04_neon1.ecraftScopePivotX: 0.54
+Items.ECraft_Masamune_long_04_neon1.ecraftScopePivotY: 0.398
+Items.ECraft_Masamune_long_04_neon1.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_04_neon1:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_04_neon1
+  appearanceName: default
+Items.ECraft_long_04_neon1:
+  $base: Items.ECraft_Recipe_scope_long_04
+  visualTags: [ neon1 ]
+  iconPath: saika_neon1
+Items.ECraft_long_04_neon1.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_04_neon1"
+Items.ECraft_long_04_neon1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_04_neon1
+Items.ECraft_Masamune_long_04_military1.ecraftScopePivotX: 0.54
+Items.ECraft_Masamune_long_04_military1.ecraftScopePivotY: 0.398
+Items.ECraft_Masamune_long_04_military1.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_04_military1:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_04_military1
+  appearanceName: default
+Items.ECraft_long_04_military1:
+  $base: Items.ECraft_Recipe_scope_long_04
+  visualTags: [ military1 ]
+  iconPath: saika_military1
+Items.ECraft_long_04_military1.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_04_military1"
+Items.ECraft_long_04_military1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_04_military1
+Items.ECraft_Masamune_long_04_military2.ecraftScopePivotX: 0.54
+Items.ECraft_Masamune_long_04_military2.ecraftScopePivotY: 0.398
+Items.ECraft_Masamune_long_04_military2.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_04_military2:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_04_military2
+  appearanceName: default
+Items.ECraft_long_04_military2:
+  $base: Items.ECraft_Recipe_scope_long_04
+  visualTags: [ military2 ]
+  iconPath: saika_military2
+Items.ECraft_long_04_military2.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_04_military2"
+Items.ECraft_long_04_military2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_04_military2
+Items.ECraft_Masamune_long_04_neon2.ecraftScopePivotX: 0.54
+Items.ECraft_Masamune_long_04_neon2.ecraftScopePivotY: 0.398
+Items.ECraft_Masamune_long_04_neon2.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_04_neon2:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_04_neon2
+  appearanceName: default
+Items.ECraft_long_04_neon2:
+  $base: Items.ECraft_Recipe_scope_long_04
+  visualTags: [ neon2 ]
+  iconPath: saika_neon2
+Items.ECraft_long_04_neon2.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_04_neon2"
+Items.ECraft_long_04_neon2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_04_neon2
+Items.ECraft_Masamune_long_04_pimp1.ecraftScopePivotX: 0.54
+Items.ECraft_Masamune_long_04_pimp1.ecraftScopePivotY: 0.398
+Items.ECraft_Masamune_long_04_pimp1.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_04_pimp1:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_04_pimp1
+  appearanceName: default
+Items.ECraft_long_04_pimp1:
+  $base: Items.ECraft_Recipe_scope_long_04
+  visualTags: [ pimp1 ]
+  iconPath: saika_pimp1
+Items.ECraft_long_04_pimp1.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_04_pimp1"
+Items.ECraft_long_04_pimp1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_04_pimp1
+Items.ECraft_Masamune_long_04_pimp2.ecraftScopePivotX: 0.54
+Items.ECraft_Masamune_long_04_pimp2.ecraftScopePivotY: 0.398
+Items.ECraft_Masamune_long_04_pimp2.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_04_pimp2:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_04_pimp2
+  appearanceName: default
+Items.ECraft_long_04_pimp2:
+  $base: Items.ECraft_Recipe_scope_long_04
+  visualTags: [ pimp2 ]
+  iconPath: saika_pimp2
+Items.ECraft_long_04_pimp2.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_04_pimp2"
+Items.ECraft_long_04_pimp2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_04_pimp2
+Items.ECraft_Recipe_scope_long_04.ecraftVariants:
+  - t"Items.ECraft_long_04_default"
+  - t"Items.ECraft_long_04_neon1"
+  - t"Items.ECraft_long_04_military1"
+  - t"Items.ECraft_long_04_military2"
+  - t"Items.ECraft_long_04_neon2"
+  - t"Items.ECraft_long_04_pimp1"
+  - t"Items.ECraft_long_04_pimp2"
+
+Items.ECraft_Recipe_scope_long_05:
+  $base: Items.w_att_scope_long_05
+  quality: Quality.Common
+  CraftingData: Items.Craftable_Attachment
+Items.ECraft_Recipe_scope_long_05.ecraftScopeRecipe: true
+Items.ECraft_Masamune_long_05_default.ecraftScopePivotX: 0.567
+Items.ECraft_Masamune_long_05_default.ecraftScopePivotY: 0.378
+Items.ECraft_Masamune_long_05_default.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_05_default:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_05_default
+  appearanceName: default
+Items.ECraft_long_05_default:
+  $base: Items.ECraft_Recipe_scope_long_05
+  visualTags: [ default ]
+Items.ECraft_long_05_default.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_05_default"
+Items.ECraft_long_05_default_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_05_default
+Items.ECraft_Masamune_long_05_neon1.ecraftScopePivotX: 0.567
+Items.ECraft_Masamune_long_05_neon1.ecraftScopePivotY: 0.378
+Items.ECraft_Masamune_long_05_neon1.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_05_neon1:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_05_neon1
+  appearanceName: default
+Items.ECraft_long_05_neon1:
+  $base: Items.ECraft_Recipe_scope_long_05
+  visualTags: [ neon1 ]
+Items.ECraft_long_05_neon1.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_05_neon1"
+Items.ECraft_long_05_neon1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_05_neon1
+Items.ECraft_Masamune_long_05_military1.ecraftScopePivotX: 0.567
+Items.ECraft_Masamune_long_05_military1.ecraftScopePivotY: 0.378
+Items.ECraft_Masamune_long_05_military1.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_05_military1:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_05_military1
+  appearanceName: default
+Items.ECraft_long_05_military1:
+  $base: Items.ECraft_Recipe_scope_long_05
+  visualTags: [ military1 ]
+Items.ECraft_long_05_military1.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_05_military1"
+Items.ECraft_long_05_military1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_05_military1
+Items.ECraft_Masamune_long_05_military2.ecraftScopePivotX: 0.567
+Items.ECraft_Masamune_long_05_military2.ecraftScopePivotY: 0.378
+Items.ECraft_Masamune_long_05_military2.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_05_military2:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_05_military2
+  appearanceName: default
+Items.ECraft_long_05_military2:
+  $base: Items.ECraft_Recipe_scope_long_05
+  visualTags: [ military2 ]
+Items.ECraft_long_05_military2.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_05_military2"
+Items.ECraft_long_05_military2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_05_military2
+Items.ECraft_Masamune_long_05_neon2.ecraftScopePivotX: 0.567
+Items.ECraft_Masamune_long_05_neon2.ecraftScopePivotY: 0.378
+Items.ECraft_Masamune_long_05_neon2.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_05_neon2:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_05_neon2
+  appearanceName: default
+Items.ECraft_long_05_neon2:
+  $base: Items.ECraft_Recipe_scope_long_05
+  visualTags: [ neon2 ]
+Items.ECraft_long_05_neon2.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_05_neon2"
+Items.ECraft_long_05_neon2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_05_neon2
+Items.ECraft_Masamune_long_05_pimp1.ecraftScopePivotX: 0.567
+Items.ECraft_Masamune_long_05_pimp1.ecraftScopePivotY: 0.378
+Items.ECraft_Masamune_long_05_pimp1.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_05_pimp1:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_05_pimp1
+  appearanceName: default
+Items.ECraft_long_05_pimp1:
+  $base: Items.ECraft_Recipe_scope_long_05
+  visualTags: [ pimp1 ]
+Items.ECraft_long_05_pimp1.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_05_pimp1"
+Items.ECraft_long_05_pimp1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_05_pimp1
+Items.ECraft_Masamune_long_05_pimp2.ecraftScopePivotX: 0.567
+Items.ECraft_Masamune_long_05_pimp2.ecraftScopePivotY: 0.378
+Items.ECraft_Masamune_long_05_pimp2.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_05_pimp2:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_05_pimp2
+  appearanceName: default
+Items.ECraft_long_05_pimp2:
+  $base: Items.ECraft_Recipe_scope_long_05
+  visualTags: [ pimp2 ]
+Items.ECraft_long_05_pimp2.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_05_pimp2"
+Items.ECraft_long_05_pimp2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_05_pimp2
+Items.ECraft_Recipe_scope_long_05.ecraftVariants:
+  - t"Items.ECraft_long_05_default"
+  - t"Items.ECraft_long_05_neon1"
+  - t"Items.ECraft_long_05_military1"
+  - t"Items.ECraft_long_05_military2"
+  - t"Items.ECraft_long_05_neon2"
+  - t"Items.ECraft_long_05_pimp1"
+  - t"Items.ECraft_long_05_pimp2"
+
+Items.ECraft_Recipe_scope_long_06:
+  $base: Items.w_att_scope_long_06
+  quality: Quality.Common
+  CraftingData: Items.Craftable_Attachment
+Items.ECraft_Recipe_scope_long_06.ecraftScopeRecipe: true
+Items.ECraft_Masamune_long_06_default.ecraftScopePivotX: 0.525
+Items.ECraft_Masamune_long_06_default.ecraftScopePivotY: 0.398
+Items.ECraft_Masamune_long_06_default.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_06_default:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_06_default
+  appearanceName: default
+Items.ECraft_long_06_default:
+  $base: Items.ECraft_Recipe_scope_long_06
+  visualTags: [ default ]
+Items.ECraft_long_06_default.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_06_default"
+Items.ECraft_long_06_default_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_06_default
+Items.ECraft_Masamune_long_06_neon1.ecraftScopePivotX: 0.525
+Items.ECraft_Masamune_long_06_neon1.ecraftScopePivotY: 0.398
+Items.ECraft_Masamune_long_06_neon1.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_06_neon1:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_06_neon1
+  appearanceName: default
+Items.ECraft_long_06_neon1:
+  $base: Items.ECraft_Recipe_scope_long_06
+  visualTags: [ neon1 ]
+Items.ECraft_long_06_neon1.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_06_neon1"
+Items.ECraft_long_06_neon1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_06_neon1
+Items.ECraft_Masamune_long_06_military1.ecraftScopePivotX: 0.525
+Items.ECraft_Masamune_long_06_military1.ecraftScopePivotY: 0.398
+Items.ECraft_Masamune_long_06_military1.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_06_military1:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_06_military1
+  appearanceName: default
+Items.ECraft_long_06_military1:
+  $base: Items.ECraft_Recipe_scope_long_06
+  visualTags: [ military1 ]
+Items.ECraft_long_06_military1.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_06_military1"
+Items.ECraft_long_06_military1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_06_military1
+Items.ECraft_Masamune_long_06_military2.ecraftScopePivotX: 0.525
+Items.ECraft_Masamune_long_06_military2.ecraftScopePivotY: 0.398
+Items.ECraft_Masamune_long_06_military2.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_06_military2:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_06_military2
+  appearanceName: default
+Items.ECraft_long_06_military2:
+  $base: Items.ECraft_Recipe_scope_long_06
+  visualTags: [ military2 ]
+Items.ECraft_long_06_military2.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_06_military2"
+Items.ECraft_long_06_military2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_06_military2
+Items.ECraft_Masamune_long_06_neon2.ecraftScopePivotX: 0.525
+Items.ECraft_Masamune_long_06_neon2.ecraftScopePivotY: 0.398
+Items.ECraft_Masamune_long_06_neon2.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_06_neon2:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_06_neon2
+  appearanceName: default
+Items.ECraft_long_06_neon2:
+  $base: Items.ECraft_Recipe_scope_long_06
+  visualTags: [ neon2 ]
+Items.ECraft_long_06_neon2.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_06_neon2"
+Items.ECraft_long_06_neon2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_06_neon2
+Items.ECraft_Masamune_long_06_pimp1.ecraftScopePivotX: 0.525
+Items.ECraft_Masamune_long_06_pimp1.ecraftScopePivotY: 0.398
+Items.ECraft_Masamune_long_06_pimp1.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_06_pimp1:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_06_pimp1
+  appearanceName: default
+Items.ECraft_long_06_pimp1:
+  $base: Items.ECraft_Recipe_scope_long_06
+  visualTags: [ pimp1 ]
+Items.ECraft_long_06_pimp1.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_06_pimp1"
+Items.ECraft_long_06_pimp1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_06_pimp1
+Items.ECraft_Masamune_long_06_pimp2.ecraftScopePivotX: 0.525
+Items.ECraft_Masamune_long_06_pimp2.ecraftScopePivotY: 0.398
+Items.ECraft_Masamune_long_06_pimp2.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_long_06_pimp2:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_long_06_pimp2
+  appearanceName: default
+Items.ECraft_long_06_pimp2:
+  $base: Items.ECraft_Recipe_scope_long_06
+  visualTags: [ pimp2 ]
+Items.ECraft_long_06_pimp2.ecraftPreviewWeapon: t"Items.ECraft_Masamune_long_06_pimp2"
+Items.ECraft_long_06_pimp2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_long_06_pimp2
+Items.ECraft_Recipe_scope_long_06.ecraftVariants:
+  - t"Items.ECraft_long_06_default"
+  - t"Items.ECraft_long_06_neon1"
+  - t"Items.ECraft_long_06_military1"
+  - t"Items.ECraft_long_06_military2"
+  - t"Items.ECraft_long_06_neon2"
+  - t"Items.ECraft_long_06_pimp1"
+  - t"Items.ECraft_long_06_pimp2"
+
+Items.w_att_scope_short_01_Craftable.ecraftScopeRecipe: true
+Items.ECraft_Copperhead_short_01_default.ecraftScopePivotX: 0.428
+Items.ECraft_Copperhead_short_01_default.ecraftScopePivotY: 0.352
+Items.ECraft_Copperhead_short_01_default.ecraftScopeZoom: 4.0
+Items.ECraft_Copperhead_short_01_default:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_01_default
+  appearanceName: default
+Items.ECraft_short_01_default:
+  $base: Items.w_att_scope_short_01_Craftable
+  visualTags: [ default ]
+  iconPath: gimleteye_default
+Items.ECraft_short_01_default.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_01_default"
+Items.ECraft_short_01_default_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_01_default
+Items.ECraft_Copperhead_short_01_neon1.ecraftScopePivotX: 0.428
+Items.ECraft_Copperhead_short_01_neon1.ecraftScopePivotY: 0.352
+Items.ECraft_Copperhead_short_01_neon1.ecraftScopeZoom: 4.0
+Items.ECraft_Copperhead_short_01_neon1:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_01_neon1
+  appearanceName: default
+Items.ECraft_short_01_neon1:
+  $base: Items.w_att_scope_short_01_Craftable
+  visualTags: [ neon1 ]
+  iconPath: gimleteye_neon1
+Items.ECraft_short_01_neon1.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_01_neon1"
+Items.ECraft_short_01_neon1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_01_neon1
+Items.ECraft_Copperhead_short_01_military1.ecraftScopePivotX: 0.428
+Items.ECraft_Copperhead_short_01_military1.ecraftScopePivotY: 0.352
+Items.ECraft_Copperhead_short_01_military1.ecraftScopeZoom: 4.0
+Items.ECraft_Copperhead_short_01_military1:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_01_military1
+  appearanceName: default
+Items.ECraft_short_01_military1:
+  $base: Items.w_att_scope_short_01_Craftable
+  visualTags: [ military1 ]
+  iconPath: gimleteye_military1
+Items.ECraft_short_01_military1.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_01_military1"
+Items.ECraft_short_01_military1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_01_military1
+Items.ECraft_Copperhead_short_01_military2.ecraftScopePivotX: 0.428
+Items.ECraft_Copperhead_short_01_military2.ecraftScopePivotY: 0.352
+Items.ECraft_Copperhead_short_01_military2.ecraftScopeZoom: 4.0
+Items.ECraft_Copperhead_short_01_military2:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_01_military2
+  appearanceName: default
+Items.ECraft_short_01_military2:
+  $base: Items.w_att_scope_short_01_Craftable
+  visualTags: [ military2 ]
+  iconPath: gimleteye_military2
+Items.ECraft_short_01_military2.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_01_military2"
+Items.ECraft_short_01_military2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_01_military2
+Items.ECraft_Copperhead_short_01_neon2.ecraftScopePivotX: 0.428
+Items.ECraft_Copperhead_short_01_neon2.ecraftScopePivotY: 0.352
+Items.ECraft_Copperhead_short_01_neon2.ecraftScopeZoom: 4.0
+Items.ECraft_Copperhead_short_01_neon2:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_01_neon2
+  appearanceName: default
+Items.ECraft_short_01_neon2:
+  $base: Items.w_att_scope_short_01_Craftable
+  visualTags: [ neon2 ]
+  iconPath: gimleteye_neon2
+Items.ECraft_short_01_neon2.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_01_neon2"
+Items.ECraft_short_01_neon2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_01_neon2
+Items.ECraft_Copperhead_short_01_pimp1.ecraftScopePivotX: 0.428
+Items.ECraft_Copperhead_short_01_pimp1.ecraftScopePivotY: 0.352
+Items.ECraft_Copperhead_short_01_pimp1.ecraftScopeZoom: 4.0
+Items.ECraft_Copperhead_short_01_pimp1:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_01_pimp1
+  appearanceName: default
+Items.ECraft_short_01_pimp1:
+  $base: Items.w_att_scope_short_01_Craftable
+  visualTags: [ pimp1 ]
+  iconPath: gimleteye_pimp1
+Items.ECraft_short_01_pimp1.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_01_pimp1"
+Items.ECraft_short_01_pimp1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_01_pimp1
+Items.ECraft_Copperhead_short_01_pimp2.ecraftScopePivotX: 0.428
+Items.ECraft_Copperhead_short_01_pimp2.ecraftScopePivotY: 0.352
+Items.ECraft_Copperhead_short_01_pimp2.ecraftScopeZoom: 4.0
+Items.ECraft_Copperhead_short_01_pimp2:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_01_pimp2
+  appearanceName: default
+Items.ECraft_short_01_pimp2:
+  $base: Items.w_att_scope_short_01_Craftable
+  visualTags: [ pimp2 ]
+  iconPath: gimleteye_pimp2
+Items.ECraft_short_01_pimp2.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_01_pimp2"
+Items.ECraft_short_01_pimp2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_01_pimp2
+Items.w_att_scope_short_01_Craftable.ecraftVariants:
+  - t"Items.ECraft_short_01_default"
+  - t"Items.ECraft_short_01_neon1"
+  - t"Items.ECraft_short_01_military1"
+  - t"Items.ECraft_short_01_military2"
+  - t"Items.ECraft_short_01_neon2"
+  - t"Items.ECraft_short_01_pimp1"
+  - t"Items.ECraft_short_01_pimp2"
+
+Items.ECraft_Recipe_scope_short_02:
+  $base: Items.w_att_scope_short_02
+  quality: Quality.Common
+  CraftingData: Items.Craftable_Attachment
+Items.ECraft_Recipe_scope_short_02.ecraftScopeRecipe: true
+Items.ECraft_Copperhead_short_02_default.ecraftScopePivotX: 0.42
+Items.ECraft_Copperhead_short_02_default.ecraftScopePivotY: 0.35
+Items.ECraft_Copperhead_short_02_default.ecraftScopeZoom: 3.5
+Items.ECraft_Copperhead_short_02_default:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_02_default
+  appearanceName: default
+Items.ECraft_short_02_default:
+  $base: Items.ECraft_Recipe_scope_short_02
+  visualTags: [ default ]
+  iconPath: hyakume_default
+Items.ECraft_short_02_default.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_02_default"
+Items.ECraft_short_02_default_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_02_default
+Items.ECraft_Copperhead_short_02_neon1.ecraftScopePivotX: 0.42
+Items.ECraft_Copperhead_short_02_neon1.ecraftScopePivotY: 0.35
+Items.ECraft_Copperhead_short_02_neon1.ecraftScopeZoom: 3.5
+Items.ECraft_Copperhead_short_02_neon1:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_02_neon1
+  appearanceName: default
+Items.ECraft_short_02_neon1:
+  $base: Items.ECraft_Recipe_scope_short_02
+  visualTags: [ neon1 ]
+  iconPath: hyakume_neon1
+Items.ECraft_short_02_neon1.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_02_neon1"
+Items.ECraft_short_02_neon1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_02_neon1
+Items.ECraft_Copperhead_short_02_military1.ecraftScopePivotX: 0.42
+Items.ECraft_Copperhead_short_02_military1.ecraftScopePivotY: 0.35
+Items.ECraft_Copperhead_short_02_military1.ecraftScopeZoom: 3.5
+Items.ECraft_Copperhead_short_02_military1:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_02_military1
+  appearanceName: default
+Items.ECraft_short_02_military1:
+  $base: Items.ECraft_Recipe_scope_short_02
+  visualTags: [ military1 ]
+  iconPath: hyakume_military1
+Items.ECraft_short_02_military1.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_02_military1"
+Items.ECraft_short_02_military1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_02_military1
+Items.ECraft_Copperhead_short_02_military2.ecraftScopePivotX: 0.42
+Items.ECraft_Copperhead_short_02_military2.ecraftScopePivotY: 0.35
+Items.ECraft_Copperhead_short_02_military2.ecraftScopeZoom: 3.5
+Items.ECraft_Copperhead_short_02_military2:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_02_military2
+  appearanceName: default
+Items.ECraft_short_02_military2:
+  $base: Items.ECraft_Recipe_scope_short_02
+  visualTags: [ military2 ]
+  iconPath: hyakume_military2
+Items.ECraft_short_02_military2.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_02_military2"
+Items.ECraft_short_02_military2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_02_military2
+Items.ECraft_Copperhead_short_02_neon2.ecraftScopePivotX: 0.42
+Items.ECraft_Copperhead_short_02_neon2.ecraftScopePivotY: 0.35
+Items.ECraft_Copperhead_short_02_neon2.ecraftScopeZoom: 3.5
+Items.ECraft_Copperhead_short_02_neon2:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_02_neon2
+  appearanceName: default
+Items.ECraft_short_02_neon2:
+  $base: Items.ECraft_Recipe_scope_short_02
+  visualTags: [ neon2 ]
+  iconPath: hyakume_neon2
+Items.ECraft_short_02_neon2.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_02_neon2"
+Items.ECraft_short_02_neon2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_02_neon2
+Items.ECraft_Copperhead_short_02_pimp1.ecraftScopePivotX: 0.42
+Items.ECraft_Copperhead_short_02_pimp1.ecraftScopePivotY: 0.35
+Items.ECraft_Copperhead_short_02_pimp1.ecraftScopeZoom: 3.5
+Items.ECraft_Copperhead_short_02_pimp1:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_02_pimp1
+  appearanceName: default
+Items.ECraft_short_02_pimp1:
+  $base: Items.ECraft_Recipe_scope_short_02
+  visualTags: [ pimp1 ]
+  iconPath: hyakume_pimp1
+Items.ECraft_short_02_pimp1.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_02_pimp1"
+Items.ECraft_short_02_pimp1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_02_pimp1
+Items.ECraft_Copperhead_short_02_pimp2.ecraftScopePivotX: 0.42
+Items.ECraft_Copperhead_short_02_pimp2.ecraftScopePivotY: 0.35
+Items.ECraft_Copperhead_short_02_pimp2.ecraftScopeZoom: 3.5
+Items.ECraft_Copperhead_short_02_pimp2:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_02_pimp2
+  appearanceName: default
+Items.ECraft_short_02_pimp2:
+  $base: Items.ECraft_Recipe_scope_short_02
+  visualTags: [ pimp2 ]
+  iconPath: hyakume_pimp2
+Items.ECraft_short_02_pimp2.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_02_pimp2"
+Items.ECraft_short_02_pimp2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_02_pimp2
+Items.ECraft_Recipe_scope_short_02.ecraftVariants:
+  - t"Items.ECraft_short_02_default"
+  - t"Items.ECraft_short_02_neon1"
+  - t"Items.ECraft_short_02_military1"
+  - t"Items.ECraft_short_02_military2"
+  - t"Items.ECraft_short_02_neon2"
+  - t"Items.ECraft_short_02_pimp1"
+  - t"Items.ECraft_short_02_pimp2"
+
+Items.w_att_scope_short_03_Craftable.ecraftScopeRecipe: true
+Items.ECraft_Copperhead_short_03_default.ecraftScopePivotX: 0.429
+Items.ECraft_Copperhead_short_03_default.ecraftScopePivotY: 0.366
+Items.ECraft_Copperhead_short_03_default.ecraftScopeZoom: 4.0
+Items.ECraft_Copperhead_short_03_default:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_03_default
+  appearanceName: default
+
+Items.ECraft_short_03_default:
+  $base: Items.w_att_scope_short_03_Craftable
+  visualTags: [ default ]
+  iconPath: add_vantage_default
+Items.ECraft_short_03_default.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_03_default"
+
+Items.ECraft_short_03_default_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_03_default
+Items.ECraft_Copperhead_short_03_neon1.ecraftScopePivotX: 0.429
+Items.ECraft_Copperhead_short_03_neon1.ecraftScopePivotY: 0.366
+Items.ECraft_Copperhead_short_03_neon1.ecraftScopeZoom: 4.0
+Items.ECraft_Copperhead_short_03_neon1:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_03_neon1
+  appearanceName: default
+
+Items.ECraft_short_03_neon1:
+  $base: Items.w_att_scope_short_03_Craftable
+  visualTags: [ neon1 ]
+  iconPath: add_vantage_neon1
+Items.ECraft_short_03_neon1.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_03_neon1"
+
+Items.ECraft_short_03_neon1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_03_neon1
+Items.ECraft_Copperhead_short_03_frank.ecraftScopePivotX: 0.429
+Items.ECraft_Copperhead_short_03_frank.ecraftScopePivotY: 0.366
+Items.ECraft_Copperhead_short_03_frank.ecraftScopeZoom: 4.0
+Items.ECraft_Copperhead_short_03_frank:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_03_frank
+  appearanceName: default
+Items.ECraft_short_03_frank:
+  $base: Items.w_att_scope_short_03_Craftable
+  visualTags: [ frank ]
+  iconPath: add_vantage_franks
+Items.ECraft_short_03_frank.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_03_frank"
+Items.ECraft_short_03_frank_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_03_frank
+Items.ECraft_Copperhead_short_03_military1.ecraftScopePivotX: 0.429
+Items.ECraft_Copperhead_short_03_military1.ecraftScopePivotY: 0.366
+Items.ECraft_Copperhead_short_03_military1.ecraftScopeZoom: 4.0
+Items.ECraft_Copperhead_short_03_military1:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_03_military1
+  appearanceName: default
+Items.ECraft_short_03_military1:
+  $base: Items.w_att_scope_short_03_Craftable
+  visualTags: [ military1 ]
+  iconPath: add_vantage_military1
+Items.ECraft_short_03_military1.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_03_military1"
+Items.ECraft_short_03_military1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_03_military1
+Items.ECraft_Copperhead_short_03_military2.ecraftScopePivotX: 0.429
+Items.ECraft_Copperhead_short_03_military2.ecraftScopePivotY: 0.366
+Items.ECraft_Copperhead_short_03_military2.ecraftScopeZoom: 4.0
+Items.ECraft_Copperhead_short_03_military2:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_03_military2
+  appearanceName: default
+Items.ECraft_short_03_military2:
+  $base: Items.w_att_scope_short_03_Craftable
+  visualTags: [ military2 ]
+  iconPath: add_vantage_military2
+Items.ECraft_short_03_military2.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_03_military2"
+Items.ECraft_short_03_military2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_03_military2
+Items.ECraft_Copperhead_short_03_neon2.ecraftScopePivotX: 0.429
+Items.ECraft_Copperhead_short_03_neon2.ecraftScopePivotY: 0.366
+Items.ECraft_Copperhead_short_03_neon2.ecraftScopeZoom: 4.0
+Items.ECraft_Copperhead_short_03_neon2:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_03_neon2
+  appearanceName: default
+Items.ECraft_short_03_neon2:
+  $base: Items.w_att_scope_short_03_Craftable
+  visualTags: [ neon2 ]
+  iconPath: add_vantage_neon2
+Items.ECraft_short_03_neon2.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_03_neon2"
+Items.ECraft_short_03_neon2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_03_neon2
+Items.ECraft_Copperhead_short_03_pimp1.ecraftScopePivotX: 0.429
+Items.ECraft_Copperhead_short_03_pimp1.ecraftScopePivotY: 0.366
+Items.ECraft_Copperhead_short_03_pimp1.ecraftScopeZoom: 4.0
+Items.ECraft_Copperhead_short_03_pimp1:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_03_pimp1
+  appearanceName: default
+Items.ECraft_short_03_pimp1:
+  $base: Items.w_att_scope_short_03_Craftable
+  visualTags: [ pimp1 ]
+  iconPath: add_vantage_pimp1
+Items.ECraft_short_03_pimp1.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_03_pimp1"
+Items.ECraft_short_03_pimp1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_03_pimp1
+Items.ECraft_Copperhead_short_03_pimp2.ecraftScopePivotX: 0.429
+Items.ECraft_Copperhead_short_03_pimp2.ecraftScopePivotY: 0.366
+Items.ECraft_Copperhead_short_03_pimp2.ecraftScopeZoom: 4.0
+Items.ECraft_Copperhead_short_03_pimp2:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_03_pimp2
+  appearanceName: default
+Items.ECraft_short_03_pimp2:
+  $base: Items.w_att_scope_short_03_Craftable
+  visualTags: [ pimp2 ]
+  iconPath: add_vantage_pimp2
+Items.ECraft_short_03_pimp2.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_03_pimp2"
+Items.ECraft_short_03_pimp2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_03_pimp2
+Items.w_att_scope_short_03_Craftable.ecraftVariants:
+  - t"Items.ECraft_short_03_default"
+  - t"Items.ECraft_short_03_neon1"
+  - t"Items.ECraft_short_03_frank"
+  - t"Items.ECraft_short_03_military1"
+  - t"Items.ECraft_short_03_military2"
+  - t"Items.ECraft_short_03_neon2"
+  - t"Items.ECraft_short_03_pimp1"
+  - t"Items.ECraft_short_03_pimp2"
+
+Items.ECraft_Recipe_scope_short_04:
+  $base: Items.w_att_scope_short_04
+  quality: Quality.Common
+  CraftingData: Items.Craftable_Attachment
+Items.ECraft_Recipe_scope_short_04.ecraftScopeRecipe: true
+Items.ECraft_Copperhead_short_04_default.ecraftScopePivotX: 0.436
+Items.ECraft_Copperhead_short_04_default.ecraftScopePivotY: 0.336
+Items.ECraft_Copperhead_short_04_default.ecraftScopeZoom: 3.5
+Items.ECraft_Copperhead_short_04_default:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_04_default
+  appearanceName: default
+Items.ECraft_short_04_default:
+  $base: Items.ECraft_Recipe_scope_short_04
+  visualTags: [ default ]
+  iconPath: kanone_mini_default
+Items.ECraft_short_04_default.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_04_default"
+Items.ECraft_short_04_default_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_04_default
+Items.ECraft_Copperhead_short_04_neon1.ecraftScopePivotX: 0.436
+Items.ECraft_Copperhead_short_04_neon1.ecraftScopePivotY: 0.336
+Items.ECraft_Copperhead_short_04_neon1.ecraftScopeZoom: 3.5
+Items.ECraft_Copperhead_short_04_neon1:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_04_neon1
+  appearanceName: default
+Items.ECraft_short_04_neon1:
+  $base: Items.ECraft_Recipe_scope_short_04
+  visualTags: [ neon1 ]
+  iconPath: kanone_mini_neon1
+Items.ECraft_short_04_neon1.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_04_neon1"
+Items.ECraft_short_04_neon1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_04_neon1
+Items.ECraft_Copperhead_short_04_military1.ecraftScopePivotX: 0.436
+Items.ECraft_Copperhead_short_04_military1.ecraftScopePivotY: 0.336
+Items.ECraft_Copperhead_short_04_military1.ecraftScopeZoom: 3.5
+Items.ECraft_Copperhead_short_04_military1:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_04_military1
+  appearanceName: default
+Items.ECraft_short_04_military1:
+  $base: Items.ECraft_Recipe_scope_short_04
+  visualTags: [ military1 ]
+  iconPath: kanone_mini_military1
+Items.ECraft_short_04_military1.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_04_military1"
+Items.ECraft_short_04_military1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_04_military1
+Items.ECraft_Copperhead_short_04_military2.ecraftScopePivotX: 0.436
+Items.ECraft_Copperhead_short_04_military2.ecraftScopePivotY: 0.336
+Items.ECraft_Copperhead_short_04_military2.ecraftScopeZoom: 3.5
+Items.ECraft_Copperhead_short_04_military2:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_04_military2
+  appearanceName: default
+Items.ECraft_short_04_military2:
+  $base: Items.ECraft_Recipe_scope_short_04
+  visualTags: [ military2 ]
+  iconPath: kanone_mini_military2
+Items.ECraft_short_04_military2.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_04_military2"
+Items.ECraft_short_04_military2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_04_military2
+Items.ECraft_Copperhead_short_04_neon2.ecraftScopePivotX: 0.436
+Items.ECraft_Copperhead_short_04_neon2.ecraftScopePivotY: 0.336
+Items.ECraft_Copperhead_short_04_neon2.ecraftScopeZoom: 3.5
+Items.ECraft_Copperhead_short_04_neon2:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_04_neon2
+  appearanceName: default
+Items.ECraft_short_04_neon2:
+  $base: Items.ECraft_Recipe_scope_short_04
+  visualTags: [ neon2 ]
+  iconPath: kanone_mini_neon2
+Items.ECraft_short_04_neon2.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_04_neon2"
+Items.ECraft_short_04_neon2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_04_neon2
+Items.ECraft_Copperhead_short_04_pimp1.ecraftScopePivotX: 0.436
+Items.ECraft_Copperhead_short_04_pimp1.ecraftScopePivotY: 0.336
+Items.ECraft_Copperhead_short_04_pimp1.ecraftScopeZoom: 3.5
+Items.ECraft_Copperhead_short_04_pimp1:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_04_pimp1
+  appearanceName: default
+Items.ECraft_short_04_pimp1:
+  $base: Items.ECraft_Recipe_scope_short_04
+  visualTags: [ pimp1 ]
+  iconPath: kanone_mini_pimp1
+Items.ECraft_short_04_pimp1.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_04_pimp1"
+Items.ECraft_short_04_pimp1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_04_pimp1
+Items.ECraft_Copperhead_short_04_pimp2.ecraftScopePivotX: 0.436
+Items.ECraft_Copperhead_short_04_pimp2.ecraftScopePivotY: 0.336
+Items.ECraft_Copperhead_short_04_pimp2.ecraftScopeZoom: 3.5
+Items.ECraft_Copperhead_short_04_pimp2:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_04_pimp2
+  appearanceName: default
+Items.ECraft_short_04_pimp2:
+  $base: Items.ECraft_Recipe_scope_short_04
+  visualTags: [ pimp2 ]
+  iconPath: kanone_mini_pimp2
+Items.ECraft_short_04_pimp2.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_04_pimp2"
+Items.ECraft_short_04_pimp2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_04_pimp2
+Items.ECraft_Recipe_scope_short_04.ecraftVariants:
+  - t"Items.ECraft_short_04_default"
+  - t"Items.ECraft_short_04_neon1"
+  - t"Items.ECraft_short_04_military1"
+  - t"Items.ECraft_short_04_military2"
+  - t"Items.ECraft_short_04_neon2"
+  - t"Items.ECraft_short_04_pimp1"
+  - t"Items.ECraft_short_04_pimp2"
+
+Items.ECraft_Recipe_scope_short_05:
+  $base: Items.w_att_scope_short_05
+  quality: Quality.Common
+  CraftingData: Items.Craftable_Attachment
+Items.ECraft_Recipe_scope_short_05.ecraftScopeRecipe: true
+Items.ECraft_Copperhead_short_05_default.ecraftScopePivotX: 0.429
+Items.ECraft_Copperhead_short_05_default.ecraftScopePivotY: 0.361
+Items.ECraft_Copperhead_short_05_default.ecraftScopeZoom: 4.0
+Items.ECraft_Copperhead_short_05_default:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_05_default
+  appearanceName: default
+Items.ECraft_short_05_default:
+  $base: Items.ECraft_Recipe_scope_short_05
+  visualTags: [ default ]
+  iconPath: type_2067_default
+Items.ECraft_short_05_default.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_05_default"
+Items.ECraft_short_05_default_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_05_default
+Items.ECraft_Copperhead_short_05_neon1.ecraftScopePivotX: 0.429
+Items.ECraft_Copperhead_short_05_neon1.ecraftScopePivotY: 0.361
+Items.ECraft_Copperhead_short_05_neon1.ecraftScopeZoom: 4.0
+Items.ECraft_Copperhead_short_05_neon1:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_05_neon1
+  appearanceName: default
+Items.ECraft_short_05_neon1:
+  $base: Items.ECraft_Recipe_scope_short_05
+  visualTags: [ neon1 ]
+  iconPath: type_2067_neon1
+Items.ECraft_short_05_neon1.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_05_neon1"
+Items.ECraft_short_05_neon1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_05_neon1
+Items.ECraft_Copperhead_short_05_military1.ecraftScopePivotX: 0.429
+Items.ECraft_Copperhead_short_05_military1.ecraftScopePivotY: 0.361
+Items.ECraft_Copperhead_short_05_military1.ecraftScopeZoom: 4.0
+Items.ECraft_Copperhead_short_05_military1:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_05_military1
+  appearanceName: default
+Items.ECraft_short_05_military1:
+  $base: Items.ECraft_Recipe_scope_short_05
+  visualTags: [ military1 ]
+  iconPath: type_2067_military1
+Items.ECraft_short_05_military1.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_05_military1"
+Items.ECraft_short_05_military1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_05_military1
+Items.ECraft_Copperhead_short_05_military2.ecraftScopePivotX: 0.429
+Items.ECraft_Copperhead_short_05_military2.ecraftScopePivotY: 0.361
+Items.ECraft_Copperhead_short_05_military2.ecraftScopeZoom: 4.0
+Items.ECraft_Copperhead_short_05_military2:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_05_military2
+  appearanceName: default
+Items.ECraft_short_05_military2:
+  $base: Items.ECraft_Recipe_scope_short_05
+  visualTags: [ military2 ]
+  iconPath: type_2067_military2
+Items.ECraft_short_05_military2.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_05_military2"
+Items.ECraft_short_05_military2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_05_military2
+Items.ECraft_Copperhead_short_05_neon2.ecraftScopePivotX: 0.429
+Items.ECraft_Copperhead_short_05_neon2.ecraftScopePivotY: 0.361
+Items.ECraft_Copperhead_short_05_neon2.ecraftScopeZoom: 4.0
+Items.ECraft_Copperhead_short_05_neon2:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_05_neon2
+  appearanceName: default
+Items.ECraft_short_05_neon2:
+  $base: Items.ECraft_Recipe_scope_short_05
+  visualTags: [ neon2 ]
+  iconPath: type_2067_neon2
+Items.ECraft_short_05_neon2.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_05_neon2"
+Items.ECraft_short_05_neon2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_05_neon2
+Items.ECraft_Copperhead_short_05_pimp1.ecraftScopePivotX: 0.429
+Items.ECraft_Copperhead_short_05_pimp1.ecraftScopePivotY: 0.361
+Items.ECraft_Copperhead_short_05_pimp1.ecraftScopeZoom: 4.0
+Items.ECraft_Copperhead_short_05_pimp1:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_05_pimp1
+  appearanceName: default
+Items.ECraft_short_05_pimp1:
+  $base: Items.ECraft_Recipe_scope_short_05
+  visualTags: [ pimp1 ]
+  iconPath: type_2067_pimp1
+Items.ECraft_short_05_pimp1.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_05_pimp1"
+Items.ECraft_short_05_pimp1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_05_pimp1
+Items.ECraft_Copperhead_short_05_pimp2.ecraftScopePivotX: 0.429
+Items.ECraft_Copperhead_short_05_pimp2.ecraftScopePivotY: 0.361
+Items.ECraft_Copperhead_short_05_pimp2.ecraftScopeZoom: 4.0
+Items.ECraft_Copperhead_short_05_pimp2:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_05_pimp2
+  appearanceName: default
+Items.ECraft_short_05_pimp2:
+  $base: Items.ECraft_Recipe_scope_short_05
+  visualTags: [ pimp2 ]
+  iconPath: type_2067_pimp2
+Items.ECraft_short_05_pimp2.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_05_pimp2"
+Items.ECraft_short_05_pimp2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_05_pimp2
+Items.ECraft_Recipe_scope_short_05.ecraftVariants:
+  - t"Items.ECraft_short_05_default"
+  - t"Items.ECraft_short_05_neon1"
+  - t"Items.ECraft_short_05_military1"
+  - t"Items.ECraft_short_05_military2"
+  - t"Items.ECraft_short_05_neon2"
+  - t"Items.ECraft_short_05_pimp1"
+  - t"Items.ECraft_short_05_pimp2"
+
+Items.w_att_scope_short_06_Craftable.ecraftScopeRecipe: true
+Items.ECraft_Copperhead_short_06_default.ecraftScopePivotX: 0.448
+Items.ECraft_Copperhead_short_06_default.ecraftScopePivotY: 0.332
+Items.ECraft_Copperhead_short_06_default.ecraftScopeZoom: 3.5
+Items.ECraft_Copperhead_short_06_default:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_06_default
+  appearanceName: default
+
+Items.ECraft_short_06_default:
+  $base: Items.w_att_scope_short_06_Craftable
+  visualTags: [ default ]
+Items.ECraft_short_06_default.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_06_default"
+
+Items.ECraft_short_06_default_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_06_default
+Items.ECraft_Copperhead_short_06_neon1.ecraftScopePivotX: 0.448
+Items.ECraft_Copperhead_short_06_neon1.ecraftScopePivotY: 0.332
+Items.ECraft_Copperhead_short_06_neon1.ecraftScopeZoom: 3.5
+Items.ECraft_Copperhead_short_06_neon1:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_06_neon1
+  appearanceName: default
+
+Items.ECraft_short_06_neon1:
+  $base: Items.w_att_scope_short_06_Craftable
+  visualTags: [ neon1 ]
+Items.ECraft_short_06_neon1.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_06_neon1"
+
+Items.ECraft_short_06_neon1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_06_neon1
+Items.ECraft_Copperhead_short_06_neon2.ecraftScopePivotX: 0.448
+Items.ECraft_Copperhead_short_06_neon2.ecraftScopePivotY: 0.332
+Items.ECraft_Copperhead_short_06_neon2.ecraftScopeZoom: 3.5
+Items.ECraft_Copperhead_short_06_neon2:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_06_neon2
+  appearanceName: default
+Items.ECraft_short_06_neon2:
+  $base: Items.w_att_scope_short_06_Craftable
+  visualTags: [ neon2 ]
+Items.ECraft_short_06_neon2.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_06_neon2"
+Items.ECraft_short_06_neon2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_06_neon2
+Items.ECraft_Copperhead_short_06_neon3.ecraftScopePivotX: 0.448
+Items.ECraft_Copperhead_short_06_neon3.ecraftScopePivotY: 0.332
+Items.ECraft_Copperhead_short_06_neon3.ecraftScopeZoom: 3.5
+Items.ECraft_Copperhead_short_06_neon3:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_06_neon3
+  appearanceName: default
+Items.ECraft_short_06_neon3:
+  $base: Items.w_att_scope_short_06_Craftable
+  visualTags: [ neon3 ]
+Items.ECraft_short_06_neon3.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_06_neon3"
+Items.ECraft_short_06_neon3_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_06_neon3
+Items.w_att_scope_short_06_Craftable.ecraftVariants:
+  - t"Items.ECraft_short_06_default"
+  - t"Items.ECraft_short_06_neon1"
+  - t"Items.ECraft_short_06_neon2"
+  - t"Items.ECraft_short_06_neon3"
+
+Items.ECraft_Recipe_scope_short_07:
+  $base: Items.w_att_scope_short_07
+  quality: Quality.Common
+  CraftingData: Items.Craftable_Attachment
+Items.ECraft_Recipe_scope_short_07.ecraftScopeRecipe: true
+Items.ECraft_Copperhead_short_07_default.ecraftScopePivotX: 0.432
+Items.ECraft_Copperhead_short_07_default.ecraftScopePivotY: 0.364
+Items.ECraft_Copperhead_short_07_default.ecraftScopeZoom: 4.0
+Items.ECraft_Copperhead_short_07_default:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_07_default
+  appearanceName: default
+Items.ECraft_short_07_default:
+  $base: Items.ECraft_Recipe_scope_short_07
+  visualTags: [ default ]
+Items.ECraft_short_07_default.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_07_default"
+Items.ECraft_short_07_default_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_07_default
+Items.ECraft_Copperhead_short_07_neon1.ecraftScopePivotX: 0.432
+Items.ECraft_Copperhead_short_07_neon1.ecraftScopePivotY: 0.364
+Items.ECraft_Copperhead_short_07_neon1.ecraftScopeZoom: 4.0
+Items.ECraft_Copperhead_short_07_neon1:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_07_neon1
+  appearanceName: default
+Items.ECraft_short_07_neon1:
+  $base: Items.ECraft_Recipe_scope_short_07
+  visualTags: [ neon1 ]
+Items.ECraft_short_07_neon1.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_07_neon1"
+Items.ECraft_short_07_neon1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_07_neon1
+Items.ECraft_Copperhead_short_07_military1.ecraftScopePivotX: 0.432
+Items.ECraft_Copperhead_short_07_military1.ecraftScopePivotY: 0.364
+Items.ECraft_Copperhead_short_07_military1.ecraftScopeZoom: 4.0
+Items.ECraft_Copperhead_short_07_military1:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_07_military1
+  appearanceName: default
+Items.ECraft_short_07_military1:
+  $base: Items.ECraft_Recipe_scope_short_07
+  visualTags: [ military1 ]
+Items.ECraft_short_07_military1.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_07_military1"
+Items.ECraft_short_07_military1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_07_military1
+Items.ECraft_Copperhead_short_07_military2.ecraftScopePivotX: 0.432
+Items.ECraft_Copperhead_short_07_military2.ecraftScopePivotY: 0.364
+Items.ECraft_Copperhead_short_07_military2.ecraftScopeZoom: 4.0
+Items.ECraft_Copperhead_short_07_military2:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_07_military2
+  appearanceName: default
+Items.ECraft_short_07_military2:
+  $base: Items.ECraft_Recipe_scope_short_07
+  visualTags: [ military2 ]
+Items.ECraft_short_07_military2.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_07_military2"
+Items.ECraft_short_07_military2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_07_military2
+Items.ECraft_Copperhead_short_07_neon2.ecraftScopePivotX: 0.432
+Items.ECraft_Copperhead_short_07_neon2.ecraftScopePivotY: 0.364
+Items.ECraft_Copperhead_short_07_neon2.ecraftScopeZoom: 4.0
+Items.ECraft_Copperhead_short_07_neon2:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_07_neon2
+  appearanceName: default
+Items.ECraft_short_07_neon2:
+  $base: Items.ECraft_Recipe_scope_short_07
+  visualTags: [ neon2 ]
+Items.ECraft_short_07_neon2.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_07_neon2"
+Items.ECraft_short_07_neon2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_07_neon2
+Items.ECraft_Copperhead_short_07_pimp1.ecraftScopePivotX: 0.432
+Items.ECraft_Copperhead_short_07_pimp1.ecraftScopePivotY: 0.364
+Items.ECraft_Copperhead_short_07_pimp1.ecraftScopeZoom: 4.0
+Items.ECraft_Copperhead_short_07_pimp1:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_07_pimp1
+  appearanceName: default
+Items.ECraft_short_07_pimp1:
+  $base: Items.ECraft_Recipe_scope_short_07
+  visualTags: [ pimp1 ]
+Items.ECraft_short_07_pimp1.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_07_pimp1"
+Items.ECraft_short_07_pimp1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_07_pimp1
+Items.ECraft_Copperhead_short_07_pimp2.ecraftScopePivotX: 0.432
+Items.ECraft_Copperhead_short_07_pimp2.ecraftScopePivotY: 0.364
+Items.ECraft_Copperhead_short_07_pimp2.ecraftScopeZoom: 4.0
+Items.ECraft_Copperhead_short_07_pimp2:
+  $base: Items.Preset_Copperhead_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Copperhead_short_07_pimp2
+  appearanceName: default
+Items.ECraft_short_07_pimp2:
+  $base: Items.ECraft_Recipe_scope_short_07
+  visualTags: [ pimp2 ]
+Items.ECraft_short_07_pimp2.ecraftPreviewWeapon: t"Items.ECraft_Copperhead_short_07_pimp2"
+Items.ECraft_short_07_pimp2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_short_07_pimp2
+Items.ECraft_Recipe_scope_short_07.ecraftVariants:
+  - t"Items.ECraft_short_07_default"
+  - t"Items.ECraft_short_07_neon1"
+  - t"Items.ECraft_short_07_military1"
+  - t"Items.ECraft_short_07_military2"
+  - t"Items.ECraft_short_07_neon2"
+  - t"Items.ECraft_short_07_pimp1"
+  - t"Items.ECraft_short_07_pimp2"
+
+Items.ECraft_Recipe_scope_sniper_01:
+  $base: Items.w_att_scope_sniper_01
+  quality: Quality.Common
+  CraftingData: Items.Craftable_Attachment
+Items.ECraft_Recipe_scope_sniper_01.ecraftScopeRecipe: true
+Items.ECraft_Masamune_sniper_01_default.ecraftScopePivotX: 0.621
+Items.ECraft_Masamune_sniper_01_default.ecraftScopePivotY: 0.357
+Items.ECraft_Masamune_sniper_01_default.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_sniper_01_default:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_sniper_01_default
+  appearanceName: default
+Items.ECraft_sniper_01_default:
+  $base: Items.ECraft_Recipe_scope_sniper_01
+  visualTags: [ default ]
+  iconPath: kanone_max_default
+Items.ECraft_sniper_01_default.ecraftPreviewWeapon: t"Items.ECraft_Masamune_sniper_01_default"
+Items.ECraft_sniper_01_default_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_sniper_01_default
+Items.ECraft_Masamune_sniper_01_neon1.ecraftScopePivotX: 0.621
+Items.ECraft_Masamune_sniper_01_neon1.ecraftScopePivotY: 0.357
+Items.ECraft_Masamune_sniper_01_neon1.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_sniper_01_neon1:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_sniper_01_neon1
+  appearanceName: default
+Items.ECraft_sniper_01_neon1:
+  $base: Items.ECraft_Recipe_scope_sniper_01
+  visualTags: [ neon1 ]
+  iconPath: kanone_max_neon1
+Items.ECraft_sniper_01_neon1.ecraftPreviewWeapon: t"Items.ECraft_Masamune_sniper_01_neon1"
+Items.ECraft_sniper_01_neon1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_sniper_01_neon1
+Items.ECraft_Masamune_sniper_01_breakthrough.ecraftScopePivotX: 0.621
+Items.ECraft_Masamune_sniper_01_breakthrough.ecraftScopePivotY: 0.357
+Items.ECraft_Masamune_sniper_01_breakthrough.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_sniper_01_breakthrough:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_sniper_01_breakthrough
+  appearanceName: default
+Items.ECraft_sniper_01_breakthrough:
+  $base: Items.ECraft_Recipe_scope_sniper_01
+  visualTags: [ breakthrough ]
+  iconPath: kanone_max_breakthrough
+Items.ECraft_sniper_01_breakthrough.ecraftPreviewWeapon: t"Items.ECraft_Masamune_sniper_01_breakthrough"
+Items.ECraft_sniper_01_breakthrough_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_sniper_01_breakthrough
+Items.ECraft_Masamune_sniper_01_buck.ecraftScopePivotX: 0.621
+Items.ECraft_Masamune_sniper_01_buck.ecraftScopePivotY: 0.357
+Items.ECraft_Masamune_sniper_01_buck.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_sniper_01_buck:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_sniper_01_buck
+  appearanceName: default
+Items.ECraft_sniper_01_buck:
+  $base: Items.ECraft_Recipe_scope_sniper_01
+  visualTags: [ buck ]
+  iconPath: kanone_max_buck
+Items.ECraft_sniper_01_buck.ecraftPreviewWeapon: t"Items.ECraft_Masamune_sniper_01_buck"
+Items.ECraft_sniper_01_buck_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_sniper_01_buck
+Items.ECraft_Masamune_sniper_01_military1.ecraftScopePivotX: 0.621
+Items.ECraft_Masamune_sniper_01_military1.ecraftScopePivotY: 0.357
+Items.ECraft_Masamune_sniper_01_military1.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_sniper_01_military1:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_sniper_01_military1
+  appearanceName: default
+Items.ECraft_sniper_01_military1:
+  $base: Items.ECraft_Recipe_scope_sniper_01
+  visualTags: [ military1 ]
+  iconPath: kanone_max_military1
+Items.ECraft_sniper_01_military1.ecraftPreviewWeapon: t"Items.ECraft_Masamune_sniper_01_military1"
+Items.ECraft_sniper_01_military1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_sniper_01_military1
+Items.ECraft_Masamune_sniper_01_military2.ecraftScopePivotX: 0.621
+Items.ECraft_Masamune_sniper_01_military2.ecraftScopePivotY: 0.357
+Items.ECraft_Masamune_sniper_01_military2.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_sniper_01_military2:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_sniper_01_military2
+  appearanceName: default
+Items.ECraft_sniper_01_military2:
+  $base: Items.ECraft_Recipe_scope_sniper_01
+  visualTags: [ military2 ]
+  iconPath: kanone_max_military2
+Items.ECraft_sniper_01_military2.ecraftPreviewWeapon: t"Items.ECraft_Masamune_sniper_01_military2"
+Items.ECraft_sniper_01_military2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_sniper_01_military2
+Items.ECraft_Masamune_sniper_01_neon2.ecraftScopePivotX: 0.621
+Items.ECraft_Masamune_sniper_01_neon2.ecraftScopePivotY: 0.357
+Items.ECraft_Masamune_sniper_01_neon2.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_sniper_01_neon2:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_sniper_01_neon2
+  appearanceName: default
+Items.ECraft_sniper_01_neon2:
+  $base: Items.ECraft_Recipe_scope_sniper_01
+  visualTags: [ neon2 ]
+  iconPath: kanone_max_neon2
+Items.ECraft_sniper_01_neon2.ecraftPreviewWeapon: t"Items.ECraft_Masamune_sniper_01_neon2"
+Items.ECraft_sniper_01_neon2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_sniper_01_neon2
+Items.ECraft_Masamune_sniper_01_panam.ecraftScopePivotX: 0.621
+Items.ECraft_Masamune_sniper_01_panam.ecraftScopePivotY: 0.357
+Items.ECraft_Masamune_sniper_01_panam.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_sniper_01_panam:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_sniper_01_panam
+  appearanceName: default
+Items.ECraft_sniper_01_panam:
+  $base: Items.ECraft_Recipe_scope_sniper_01
+  visualTags: [ panam ]
+  iconPath: kanone_max_panam
+Items.ECraft_sniper_01_panam.ecraftPreviewWeapon: t"Items.ECraft_Masamune_sniper_01_panam"
+Items.ECraft_sniper_01_panam_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_sniper_01_panam
+Items.ECraft_Masamune_sniper_01_pimp1.ecraftScopePivotX: 0.621
+Items.ECraft_Masamune_sniper_01_pimp1.ecraftScopePivotY: 0.357
+Items.ECraft_Masamune_sniper_01_pimp1.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_sniper_01_pimp1:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_sniper_01_pimp1
+  appearanceName: default
+Items.ECraft_sniper_01_pimp1:
+  $base: Items.ECraft_Recipe_scope_sniper_01
+  visualTags: [ pimp1 ]
+  iconPath: kanone_max_pimp1
+Items.ECraft_sniper_01_pimp1.ecraftPreviewWeapon: t"Items.ECraft_Masamune_sniper_01_pimp1"
+Items.ECraft_sniper_01_pimp1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_sniper_01_pimp1
+Items.ECraft_Masamune_sniper_01_pimp2.ecraftScopePivotX: 0.621
+Items.ECraft_Masamune_sniper_01_pimp2.ecraftScopePivotY: 0.357
+Items.ECraft_Masamune_sniper_01_pimp2.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_sniper_01_pimp2:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_sniper_01_pimp2
+  appearanceName: default
+Items.ECraft_sniper_01_pimp2:
+  $base: Items.ECraft_Recipe_scope_sniper_01
+  visualTags: [ pimp2 ]
+  iconPath: kanone_max_pimp2
+Items.ECraft_sniper_01_pimp2.ecraftPreviewWeapon: t"Items.ECraft_Masamune_sniper_01_pimp2"
+Items.ECraft_sniper_01_pimp2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_sniper_01_pimp2
+Items.ECraft_Masamune_sniper_01_reed.ecraftScopePivotX: 0.621
+Items.ECraft_Masamune_sniper_01_reed.ecraftScopePivotY: 0.357
+Items.ECraft_Masamune_sniper_01_reed.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_sniper_01_reed:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_sniper_01_reed
+  appearanceName: default
+Items.ECraft_sniper_01_reed:
+  $base: Items.ECraft_Recipe_scope_sniper_01
+  visualTags: [ reed ]
+  iconPath: kanone_max_pimp1
+Items.ECraft_sniper_01_reed.ecraftPreviewWeapon: t"Items.ECraft_Masamune_sniper_01_reed"
+Items.ECraft_sniper_01_reed_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_sniper_01_reed
+Items.ECraft_Recipe_scope_sniper_01.ecraftVariants:
+  - t"Items.ECraft_sniper_01_default"
+  - t"Items.ECraft_sniper_01_neon1"
+  - t"Items.ECraft_sniper_01_breakthrough"
+  - t"Items.ECraft_sniper_01_buck"
+  - t"Items.ECraft_sniper_01_military1"
+  - t"Items.ECraft_sniper_01_military2"
+  - t"Items.ECraft_sniper_01_neon2"
+  - t"Items.ECraft_sniper_01_panam"
+  - t"Items.ECraft_sniper_01_pimp1"
+  - t"Items.ECraft_sniper_01_pimp2"
+  - t"Items.ECraft_sniper_01_reed"
+
+Items.ECraft_Recipe_scope_sniper_02:
+  $base: Items.w_att_scope_sniper_02
+  quality: Quality.Common
+  CraftingData: Items.Craftable_Attachment
+Items.ECraft_Recipe_scope_sniper_02.ecraftScopeRecipe: true
+Items.ECraft_Masamune_sniper_02_default.ecraftScopePivotX: 0.608
+Items.ECraft_Masamune_sniper_02_default.ecraftScopePivotY: 0.365
+Items.ECraft_Masamune_sniper_02_default.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_sniper_02_default:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_sniper_02_default
+  appearanceName: default
+Items.ECraft_sniper_02_default:
+  $base: Items.ECraft_Recipe_scope_sniper_02
+  visualTags: [ default ]
+  iconPath: prospecta_default
+Items.ECraft_sniper_02_default.ecraftPreviewWeapon: t"Items.ECraft_Masamune_sniper_02_default"
+Items.ECraft_sniper_02_default_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_sniper_02_default
+Items.ECraft_Masamune_sniper_02_neon1.ecraftScopePivotX: 0.608
+Items.ECraft_Masamune_sniper_02_neon1.ecraftScopePivotY: 0.365
+Items.ECraft_Masamune_sniper_02_neon1.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_sniper_02_neon1:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_sniper_02_neon1
+  appearanceName: default
+Items.ECraft_sniper_02_neon1:
+  $base: Items.ECraft_Recipe_scope_sniper_02
+  visualTags: [ neon1 ]
+  iconPath: prospecta_neon1
+Items.ECraft_sniper_02_neon1.ecraftPreviewWeapon: t"Items.ECraft_Masamune_sniper_02_neon1"
+Items.ECraft_sniper_02_neon1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_sniper_02_neon1
+Items.ECraft_Masamune_sniper_02_military1.ecraftScopePivotX: 0.608
+Items.ECraft_Masamune_sniper_02_military1.ecraftScopePivotY: 0.365
+Items.ECraft_Masamune_sniper_02_military1.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_sniper_02_military1:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_sniper_02_military1
+  appearanceName: default
+Items.ECraft_sniper_02_military1:
+  $base: Items.ECraft_Recipe_scope_sniper_02
+  visualTags: [ military1 ]
+  iconPath: prospecta_military1
+Items.ECraft_sniper_02_military1.ecraftPreviewWeapon: t"Items.ECraft_Masamune_sniper_02_military1"
+Items.ECraft_sniper_02_military1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_sniper_02_military1
+Items.ECraft_Masamune_sniper_02_military2.ecraftScopePivotX: 0.608
+Items.ECraft_Masamune_sniper_02_military2.ecraftScopePivotY: 0.365
+Items.ECraft_Masamune_sniper_02_military2.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_sniper_02_military2:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_sniper_02_military2
+  appearanceName: default
+Items.ECraft_sniper_02_military2:
+  $base: Items.ECraft_Recipe_scope_sniper_02
+  visualTags: [ military2 ]
+  iconPath: prospecta_military2
+Items.ECraft_sniper_02_military2.ecraftPreviewWeapon: t"Items.ECraft_Masamune_sniper_02_military2"
+Items.ECraft_sniper_02_military2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_sniper_02_military2
+Items.ECraft_Masamune_sniper_02_neon2.ecraftScopePivotX: 0.608
+Items.ECraft_Masamune_sniper_02_neon2.ecraftScopePivotY: 0.365
+Items.ECraft_Masamune_sniper_02_neon2.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_sniper_02_neon2:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_sniper_02_neon2
+  appearanceName: default
+Items.ECraft_sniper_02_neon2:
+  $base: Items.ECraft_Recipe_scope_sniper_02
+  visualTags: [ neon2 ]
+  iconPath: prospecta_neon2
+Items.ECraft_sniper_02_neon2.ecraftPreviewWeapon: t"Items.ECraft_Masamune_sniper_02_neon2"
+Items.ECraft_sniper_02_neon2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_sniper_02_neon2
+Items.ECraft_Masamune_sniper_02_pimp1.ecraftScopePivotX: 0.608
+Items.ECraft_Masamune_sniper_02_pimp1.ecraftScopePivotY: 0.365
+Items.ECraft_Masamune_sniper_02_pimp1.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_sniper_02_pimp1:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_sniper_02_pimp1
+  appearanceName: default
+Items.ECraft_sniper_02_pimp1:
+  $base: Items.ECraft_Recipe_scope_sniper_02
+  visualTags: [ pimp1 ]
+  iconPath: prospecta_pimp1
+Items.ECraft_sniper_02_pimp1.ecraftPreviewWeapon: t"Items.ECraft_Masamune_sniper_02_pimp1"
+Items.ECraft_sniper_02_pimp1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_sniper_02_pimp1
+Items.ECraft_Masamune_sniper_02_pimp2.ecraftScopePivotX: 0.608
+Items.ECraft_Masamune_sniper_02_pimp2.ecraftScopePivotY: 0.365
+Items.ECraft_Masamune_sniper_02_pimp2.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_sniper_02_pimp2:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_sniper_02_pimp2
+  appearanceName: default
+Items.ECraft_sniper_02_pimp2:
+  $base: Items.ECraft_Recipe_scope_sniper_02
+  visualTags: [ pimp2 ]
+  iconPath: prospecta_pimp2
+Items.ECraft_sniper_02_pimp2.ecraftPreviewWeapon: t"Items.ECraft_Masamune_sniper_02_pimp2"
+Items.ECraft_sniper_02_pimp2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_sniper_02_pimp2
+Items.ECraft_Recipe_scope_sniper_02.ecraftVariants:
+  - t"Items.ECraft_sniper_02_default"
+  - t"Items.ECraft_sniper_02_neon1"
+  - t"Items.ECraft_sniper_02_military1"
+  - t"Items.ECraft_sniper_02_military2"
+  - t"Items.ECraft_sniper_02_neon2"
+  - t"Items.ECraft_sniper_02_pimp1"
+  - t"Items.ECraft_sniper_02_pimp2"
+
+Items.ECraft_Recipe_scope_sniper_03:
+  $base: Items.w_att_scope_sniper_03
+  quality: Quality.Common
+  CraftingData: Items.Craftable_Attachment
+Items.ECraft_Recipe_scope_sniper_03.ecraftScopeRecipe: true
+Items.ECraft_Masamune_sniper_03_default.ecraftScopePivotX: 0.549
+Items.ECraft_Masamune_sniper_03_default.ecraftScopePivotY: 0.378
+Items.ECraft_Masamune_sniper_03_default.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_sniper_03_default:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_sniper_03_default
+  appearanceName: default
+Items.ECraft_sniper_03_default:
+  $base: Items.ECraft_Recipe_scope_sniper_03
+  visualTags: [ default ]
+Items.ECraft_sniper_03_default.ecraftPreviewWeapon: t"Items.ECraft_Masamune_sniper_03_default"
+Items.ECraft_sniper_03_default_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_sniper_03_default
+Items.ECraft_Masamune_sniper_03_neon1.ecraftScopePivotX: 0.549
+Items.ECraft_Masamune_sniper_03_neon1.ecraftScopePivotY: 0.378
+Items.ECraft_Masamune_sniper_03_neon1.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_sniper_03_neon1:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_sniper_03_neon1
+  appearanceName: default
+Items.ECraft_sniper_03_neon1:
+  $base: Items.ECraft_Recipe_scope_sniper_03
+  visualTags: [ neon1 ]
+Items.ECraft_sniper_03_neon1.ecraftPreviewWeapon: t"Items.ECraft_Masamune_sniper_03_neon1"
+Items.ECraft_sniper_03_neon1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_sniper_03_neon1
+Items.ECraft_Masamune_sniper_03_military1.ecraftScopePivotX: 0.549
+Items.ECraft_Masamune_sniper_03_military1.ecraftScopePivotY: 0.378
+Items.ECraft_Masamune_sniper_03_military1.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_sniper_03_military1:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_sniper_03_military1
+  appearanceName: default
+Items.ECraft_sniper_03_military1:
+  $base: Items.ECraft_Recipe_scope_sniper_03
+  visualTags: [ military1 ]
+Items.ECraft_sniper_03_military1.ecraftPreviewWeapon: t"Items.ECraft_Masamune_sniper_03_military1"
+Items.ECraft_sniper_03_military1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_sniper_03_military1
+Items.ECraft_Masamune_sniper_03_military2.ecraftScopePivotX: 0.549
+Items.ECraft_Masamune_sniper_03_military2.ecraftScopePivotY: 0.378
+Items.ECraft_Masamune_sniper_03_military2.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_sniper_03_military2:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_sniper_03_military2
+  appearanceName: default
+Items.ECraft_sniper_03_military2:
+  $base: Items.ECraft_Recipe_scope_sniper_03
+  visualTags: [ military2 ]
+Items.ECraft_sniper_03_military2.ecraftPreviewWeapon: t"Items.ECraft_Masamune_sniper_03_military2"
+Items.ECraft_sniper_03_military2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_sniper_03_military2
+Items.ECraft_Masamune_sniper_03_neon2.ecraftScopePivotX: 0.549
+Items.ECraft_Masamune_sniper_03_neon2.ecraftScopePivotY: 0.378
+Items.ECraft_Masamune_sniper_03_neon2.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_sniper_03_neon2:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_sniper_03_neon2
+  appearanceName: default
+Items.ECraft_sniper_03_neon2:
+  $base: Items.ECraft_Recipe_scope_sniper_03
+  visualTags: [ neon2 ]
+Items.ECraft_sniper_03_neon2.ecraftPreviewWeapon: t"Items.ECraft_Masamune_sniper_03_neon2"
+Items.ECraft_sniper_03_neon2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_sniper_03_neon2
+Items.ECraft_Masamune_sniper_03_pimp1.ecraftScopePivotX: 0.549
+Items.ECraft_Masamune_sniper_03_pimp1.ecraftScopePivotY: 0.378
+Items.ECraft_Masamune_sniper_03_pimp1.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_sniper_03_pimp1:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_sniper_03_pimp1
+  appearanceName: default
+Items.ECraft_sniper_03_pimp1:
+  $base: Items.ECraft_Recipe_scope_sniper_03
+  visualTags: [ pimp1 ]
+Items.ECraft_sniper_03_pimp1.ecraftPreviewWeapon: t"Items.ECraft_Masamune_sniper_03_pimp1"
+Items.ECraft_sniper_03_pimp1_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_sniper_03_pimp1
+Items.ECraft_Masamune_sniper_03_pimp2.ecraftScopePivotX: 0.549
+Items.ECraft_Masamune_sniper_03_pimp2.ecraftScopePivotY: 0.378
+Items.ECraft_Masamune_sniper_03_pimp2.ecraftScopeZoom: 3.5
+Items.ECraft_Masamune_sniper_03_pimp2:
+  $base: Items.Preset_Masamune_Default
+  slotPartListPreset: []
+  appearanceResourceName: ECraft_Masamune_sniper_03_pimp2
+  appearanceName: default
+Items.ECraft_sniper_03_pimp2:
+  $base: Items.ECraft_Recipe_scope_sniper_03
+  visualTags: [ pimp2 ]
+Items.ECraft_sniper_03_pimp2.ecraftPreviewWeapon: t"Items.ECraft_Masamune_sniper_03_pimp2"
+Items.ECraft_sniper_03_pimp2_Part:
+  $type: ItemPartListElement
+  item: Items.ECraft_sniper_03_pimp2
+Items.ECraft_Recipe_scope_sniper_03.ecraftVariants:
+  - t"Items.ECraft_sniper_03_default"
+  - t"Items.ECraft_sniper_03_neon1"
+  - t"Items.ECraft_sniper_03_military1"
+  - t"Items.ECraft_sniper_03_military2"
+  - t"Items.ECraft_sniper_03_neon2"
+  - t"Items.ECraft_sniper_03_pimp1"
+  - t"Items.ECraft_sniper_03_pimp2"
+
+Items.GradPossibleScopesList.itemPartList:
+  - !append-once Items.ECraft_sniper_01_default_Part
+  - !append-once Items.ECraft_sniper_01_neon1_Part
+  - !append-once Items.ECraft_sniper_01_breakthrough_Part
+  - !append-once Items.ECraft_sniper_01_buck_Part
+  - !append-once Items.ECraft_sniper_01_military1_Part
+  - !append-once Items.ECraft_sniper_01_military2_Part
+  - !append-once Items.ECraft_sniper_01_neon2_Part
+  - !append-once Items.ECraft_sniper_01_panam_Part
+  - !append-once Items.ECraft_sniper_01_pimp1_Part
+  - !append-once Items.ECraft_sniper_01_pimp2_Part
+  - !append-once Items.ECraft_sniper_01_reed_Part
+
+Items.HandgunPossibleScopesList.itemPartList:
+  - !append-once Items.ECraft_short_01_default_Part
+  - !append-once Items.ECraft_short_01_neon1_Part
+  - !append-once Items.ECraft_short_01_military1_Part
+  - !append-once Items.ECraft_short_01_military2_Part
+  - !append-once Items.ECraft_short_01_neon2_Part
+  - !append-once Items.ECraft_short_01_pimp1_Part
+  - !append-once Items.ECraft_short_01_pimp2_Part
+  - !append-once Items.ECraft_short_02_default_Part
+  - !append-once Items.ECraft_short_02_neon1_Part
+  - !append-once Items.ECraft_short_02_military1_Part
+  - !append-once Items.ECraft_short_02_military2_Part
+  - !append-once Items.ECraft_short_02_neon2_Part
+  - !append-once Items.ECraft_short_02_pimp1_Part
+  - !append-once Items.ECraft_short_02_pimp2_Part
+  - !append-once Items.ECraft_short_03_default_Part
+  - !append-once Items.ECraft_short_03_neon1_Part
+  - !append-once Items.ECraft_short_03_frank_Part
+  - !append-once Items.ECraft_short_03_military1_Part
+  - !append-once Items.ECraft_short_03_military2_Part
+  - !append-once Items.ECraft_short_03_neon2_Part
+  - !append-once Items.ECraft_short_03_pimp1_Part
+  - !append-once Items.ECraft_short_03_pimp2_Part
+  - !append-once Items.ECraft_short_04_default_Part
+  - !append-once Items.ECraft_short_04_neon1_Part
+  - !append-once Items.ECraft_short_04_military1_Part
+  - !append-once Items.ECraft_short_04_military2_Part
+  - !append-once Items.ECraft_short_04_neon2_Part
+  - !append-once Items.ECraft_short_04_pimp1_Part
+  - !append-once Items.ECraft_short_04_pimp2_Part
+  - !append-once Items.ECraft_short_05_default_Part
+  - !append-once Items.ECraft_short_05_neon1_Part
+  - !append-once Items.ECraft_short_05_military1_Part
+  - !append-once Items.ECraft_short_05_military2_Part
+  - !append-once Items.ECraft_short_05_neon2_Part
+  - !append-once Items.ECraft_short_05_pimp1_Part
+  - !append-once Items.ECraft_short_05_pimp2_Part
+  - !append-once Items.ECraft_short_06_default_Part
+  - !append-once Items.ECraft_short_06_neon1_Part
+  - !append-once Items.ECraft_short_06_neon2_Part
+  - !append-once Items.ECraft_short_06_neon3_Part
+  - !append-once Items.ECraft_short_07_default_Part
+  - !append-once Items.ECraft_short_07_neon1_Part
+  - !append-once Items.ECraft_short_07_military1_Part
+  - !append-once Items.ECraft_short_07_military2_Part
+  - !append-once Items.ECraft_short_07_neon2_Part
+  - !append-once Items.ECraft_short_07_pimp1_Part
+  - !append-once Items.ECraft_short_07_pimp2_Part
+
+Items.NekomataPossibleScopesList.itemPartList:
+  - !append-once Items.ECraft_sniper_02_default_Part
+  - !append-once Items.ECraft_sniper_02_neon1_Part
+  - !append-once Items.ECraft_sniper_02_military1_Part
+  - !append-once Items.ECraft_sniper_02_military2_Part
+  - !append-once Items.ECraft_sniper_02_neon2_Part
+  - !append-once Items.ECraft_sniper_02_pimp1_Part
+  - !append-once Items.ECraft_sniper_02_pimp2_Part
+  - !append-once Items.ECraft_sniper_03_default_Part
+  - !append-once Items.ECraft_sniper_03_neon1_Part
+  - !append-once Items.ECraft_sniper_03_military1_Part
+  - !append-once Items.ECraft_sniper_03_military2_Part
+  - !append-once Items.ECraft_sniper_03_neon2_Part
+  - !append-once Items.ECraft_sniper_03_pimp1_Part
+  - !append-once Items.ECraft_sniper_03_pimp2_Part
+
+Items.RiflePossibleScopesList.itemPartList:
+  - !append-once Items.ECraft_long_01_default_Part
+  - !append-once Items.ECraft_long_01_neon1_Part
+  - !append-once Items.ECraft_long_01_military1_Part
+  - !append-once Items.ECraft_long_01_military2_Part
+  - !append-once Items.ECraft_long_01_neon2_Part
+  - !append-once Items.ECraft_long_01_pimp1_Part
+  - !append-once Items.ECraft_long_01_pimp2_Part
+  - !append-once Items.ECraft_long_02_default_Part
+  - !append-once Items.ECraft_long_02_neon1_Part
+  - !append-once Items.ECraft_long_02_military1_Part
+  - !append-once Items.ECraft_long_02_military2_Part
+  - !append-once Items.ECraft_long_02_neon2_Part
+  - !append-once Items.ECraft_long_02_pimp1_Part
+  - !append-once Items.ECraft_long_02_pimp2_Part
+  - !append-once Items.ECraft_long_03_default_Part
+  - !append-once Items.ECraft_long_03_neon1_Part
+  - !append-once Items.ECraft_long_03_military1_Part
+  - !append-once Items.ECraft_long_03_military2_Part
+  - !append-once Items.ECraft_long_03_neon2_Part
+  - !append-once Items.ECraft_long_03_pimp1_Part
+  - !append-once Items.ECraft_long_03_pimp2_Part
+  - !append-once Items.ECraft_long_04_default_Part
+  - !append-once Items.ECraft_long_04_neon1_Part
+  - !append-once Items.ECraft_long_04_military1_Part
+  - !append-once Items.ECraft_long_04_military2_Part
+  - !append-once Items.ECraft_long_04_neon2_Part
+  - !append-once Items.ECraft_long_04_pimp1_Part
+  - !append-once Items.ECraft_long_04_pimp2_Part
+  - !append-once Items.ECraft_long_05_default_Part
+  - !append-once Items.ECraft_long_05_neon1_Part
+  - !append-once Items.ECraft_long_05_military1_Part
+  - !append-once Items.ECraft_long_05_military2_Part
+  - !append-once Items.ECraft_long_05_neon2_Part
+  - !append-once Items.ECraft_long_05_pimp1_Part
+  - !append-once Items.ECraft_long_05_pimp2_Part
+  - !append-once Items.ECraft_long_06_default_Part
+  - !append-once Items.ECraft_long_06_neon1_Part
+  - !append-once Items.ECraft_long_06_military1_Part
+  - !append-once Items.ECraft_long_06_military2_Part
+  - !append-once Items.ECraft_long_06_neon2_Part
+  - !append-once Items.ECraft_long_06_pimp1_Part
+  - !append-once Items.ECraft_long_06_pimp2_Part
+  - !append-once Items.ECraft_short_01_default_Part
+  - !append-once Items.ECraft_short_01_neon1_Part
+  - !append-once Items.ECraft_short_01_military1_Part
+  - !append-once Items.ECraft_short_01_military2_Part
+  - !append-once Items.ECraft_short_01_neon2_Part
+  - !append-once Items.ECraft_short_01_pimp1_Part
+  - !append-once Items.ECraft_short_01_pimp2_Part
+  - !append-once Items.ECraft_short_02_default_Part
+  - !append-once Items.ECraft_short_02_neon1_Part
+  - !append-once Items.ECraft_short_02_military1_Part
+  - !append-once Items.ECraft_short_02_military2_Part
+  - !append-once Items.ECraft_short_02_neon2_Part
+  - !append-once Items.ECraft_short_02_pimp1_Part
+  - !append-once Items.ECraft_short_02_pimp2_Part
+  - !append-once Items.ECraft_short_03_default_Part
+  - !append-once Items.ECraft_short_03_neon1_Part
+  - !append-once Items.ECraft_short_03_frank_Part
+  - !append-once Items.ECraft_short_03_military1_Part
+  - !append-once Items.ECraft_short_03_military2_Part
+  - !append-once Items.ECraft_short_03_neon2_Part
+  - !append-once Items.ECraft_short_03_pimp1_Part
+  - !append-once Items.ECraft_short_03_pimp2_Part
+  - !append-once Items.ECraft_short_04_default_Part
+  - !append-once Items.ECraft_short_04_neon1_Part
+  - !append-once Items.ECraft_short_04_military1_Part
+  - !append-once Items.ECraft_short_04_military2_Part
+  - !append-once Items.ECraft_short_04_neon2_Part
+  - !append-once Items.ECraft_short_04_pimp1_Part
+  - !append-once Items.ECraft_short_04_pimp2_Part
+  - !append-once Items.ECraft_short_05_default_Part
+  - !append-once Items.ECraft_short_05_neon1_Part
+  - !append-once Items.ECraft_short_05_military1_Part
+  - !append-once Items.ECraft_short_05_military2_Part
+  - !append-once Items.ECraft_short_05_neon2_Part
+  - !append-once Items.ECraft_short_05_pimp1_Part
+  - !append-once Items.ECraft_short_05_pimp2_Part
+  - !append-once Items.ECraft_short_06_default_Part
+  - !append-once Items.ECraft_short_06_neon1_Part
+  - !append-once Items.ECraft_short_06_neon2_Part
+  - !append-once Items.ECraft_short_06_neon3_Part
+  - !append-once Items.ECraft_short_07_default_Part
+  - !append-once Items.ECraft_short_07_neon1_Part
+  - !append-once Items.ECraft_short_07_military1_Part
+  - !append-once Items.ECraft_short_07_military2_Part
+  - !append-once Items.ECraft_short_07_neon2_Part
+  - !append-once Items.ECraft_short_07_pimp1_Part
+  - !append-once Items.ECraft_short_07_pimp2_Part

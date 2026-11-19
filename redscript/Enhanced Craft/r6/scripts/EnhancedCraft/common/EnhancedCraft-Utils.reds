@@ -1,6 +1,10 @@
 module EnhancedCraft.Common
 
 public class ECraftUtils {
+  public static func IsScopeRecipe(id: TweakDBID) -> Bool {
+    return TweakDBInterface.GetBool(id + t".ecraftScopeRecipe", false);
+  }
+
   // -- Checks if item has iconic flag defined in TweakXL
   public static func IsPresetIconic(id: TweakDBID) -> Bool {
     let isIconic: Bool = TweakDBInterface.GetBool(id + t".isPresetIconic", false);

@@ -12,7 +12,7 @@ private final func OnPressSelectedItem(evt: ref<inkPointerEvent>) -> Void {
     isCraftPress = this.m_Player.PlayerLastUsedKBM();
   };
   this.preserveRecipePreview = false;
-  if IsDefined(this as CraftingLogicController) && isCraftPress && this.isWeaponSelected && IsDefined(this.m_selectedRecipe) && IsDefined(this.m_currentSelected) {
+  if IsDefined(this as CraftingLogicController) && isCraftPress && (this.isWeaponSelected || this.isScopeSelected) && IsDefined(this.m_selectedRecipe) && IsDefined(this.m_currentSelected) {
     recipe = FromVariant<ref<IScriptable>>(this.m_currentSelected.GetData()) as RecipeData;
     this.preserveRecipePreview = IsDefined(recipe) && recipe == this.previewedRecipe;
   };
@@ -34,15 +34,26 @@ protected func UpdateItemPreview(craftableController: ref<CraftableItemLogicCont
 
   this.SetItemButtonHintsHoverOut(null);
   let multiplier: Int32 = this.ecraftConfig.iconicIngredientsMultiplier;
-  this.selectedRecipeVariants = this.m_craftingSystem.GetRecipesData(recipe.id, multiplier, false);
-  this.selectedRecipeVariantsNoIconics = this.m_craftingSystem.GetRecipesData(recipe.id, multiplier, true);
+  let isScope: Bool = ECraftUtils.IsScopeRecipe(recipe.id.GetID());
+  if NotEquals(this.isScopeSelected, isScope) {
+    this.HideButtonHints();
+  };
+  this.isScopeSelected = isScope;
   this.isWeaponSelected = ECraftUtils.IsWeapon(recipe.id.ItemType().Type());
+  this.selectedRecipeVariants = this.m_craftingSystem.GetRecipesData(recipe.id, multiplier, false, isScope);
+  ArrayClear(this.selectedRecipeVariantsNoIconics);
+  if this.isWeaponSelected {
+    this.selectedRecipeVariantsNoIconics = this.m_craftingSystem.GetRecipesData(recipe.id, multiplier, true);
+  };
   this.selectedItemIndex = 0;
   L(s"UpdateItemPreview for \(recipe.label) \(TDBID.ToStringDEBUG(recipe.id.GetID())) \(recipe.id.ItemType().Type()): weapon: \(this.isWeaponSelected), variants: \(ArraySize(this.selectedRecipeVariants))");
   this.RefreshPanelWidgets();
-  if ArraySize(this.selectedRecipeVariants) > 0 && this.isWeaponSelected {
+  if ArraySize(this.selectedRecipeVariants) > 0 && (this.isWeaponSelected || isScope) {
     recipe = this.selectedRecipeVariants[0];
     this.UpdateRecipePreviewPanel(recipe);
+    if isScope {
+      this.m_playerCraftBook.SetRecipeInspected(this.previewedRecipe.id.GetID());
+    };
   } else {
     wrappedMethod(craftableController);
   };
@@ -50,7 +61,17 @@ protected func UpdateItemPreview(craftableController: ref<CraftableItemLogicCont
 
 @wrapMethod(CraftingLogicController)
 private final func UpdateRecipePreviewPanel(selectedRecipe: ref<RecipeData>) -> Void {
+  let previewEvent: ref<CraftingItemPreviewEvent>;
+  let previewWeapon: TweakDBID;
   wrappedMethod(selectedRecipe);
+  if this.isScopeSelected && IsDefined(selectedRecipe) && IsDefined(this.m_selectedItemGameData) {
+    previewWeapon = FromVariant<TweakDBID>(TweakDBInterface.GetFlat(selectedRecipe.id.GetID() + t".ecraftPreviewWeapon"));
+    previewEvent = new CraftingItemPreviewEvent();
+    previewEvent.itemID = ItemID.FromTDBID(previewWeapon);
+    inkWidgetRef.SetVisible(this.m_itemPreviewContainer, false);
+    inkWidgetRef.SetVisible(this.m_weaponPreviewContainer, true);
+    this.QueueEvent(previewEvent);
+  };
   if IsDefined(selectedRecipe) {
     L(s"UpdateRecipePreviewPanel for \(selectedRecipe.label) \(TDBID.ToStringDEBUG(selectedRecipe.id.GetID()))");
   };

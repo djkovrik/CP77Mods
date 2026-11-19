@@ -15,10 +15,9 @@ protected func UpdateItemPreview(craftableController: ref<CraftableItemLogicCont
     return ;
   };
 
-  let recipe: ref<RecipeData> = FromVariant<ref<IScriptable>>(craftableController.GetData()) as RecipeData;
   let player: wref<PlayerPuppet> = this.m_craftingGameController.GetPlayer();
   let event: ref<EnhancedCraftRecipeClicked> = new EnhancedCraftRecipeClicked();
-  event.isWeapon = Equals(recipe.inventoryItem.EquipmentArea, gamedataEquipmentArea.Weapon);
+  event.isWeapon = Equals(recipe.inventoryItem.EquipmentArea, gamedataEquipmentArea.Weapon) && !ECraftUtils.IsScopeRecipe(recipe.id.GetID());
   GameInstance.GetUISystem(player.GetGame()).QueueEvent(event);
   wrappedMethod(craftableController);
 }

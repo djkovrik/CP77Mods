@@ -5,7 +5,7 @@ import EnhancedCraft.Config.ECraftConfig
 @addMethod(CraftingLogicController)
 public func ShowButtonHints() -> Void {
   let lastUsedKBM: Bool =  this.m_craftingGameController.GetPlayer().PlayerLastUsedKBM();
-  if !this.ecraftConfig.randomizerEnabled {
+  if this.isScopeSelected || !this.ecraftConfig.randomizerEnabled {
     this.m_buttonHintsController.AddButtonHint(n"ECraft_Next", GetLocalizedTextByKey(n"Mod-Craft-UI-Next"));
     if lastUsedKBM {
       this.m_buttonHintsController.AddButtonHint(n"ECraft_Prev", GetLocalizedTextByKey(n"Mod-Craft-UI-Previous"));
@@ -16,8 +16,6 @@ public func ShowButtonHints() -> Void {
 // -- Hides displayed button hints
 @addMethod(CraftingLogicController)
 public func HideButtonHints() -> Void {
-  if !this.ecraftConfig.randomizerEnabled {
-    this.m_buttonHintsController.RemoveButtonHint(n"ECraft_Prev");
-    this.m_buttonHintsController.RemoveButtonHint(n"ECraft_Next");
-  };
+  this.m_buttonHintsController.RemoveButtonHint(n"ECraft_Prev");
+  this.m_buttonHintsController.RemoveButtonHint(n"ECraft_Next");
 }

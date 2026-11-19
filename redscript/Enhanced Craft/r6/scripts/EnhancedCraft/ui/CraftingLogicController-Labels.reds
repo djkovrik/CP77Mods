@@ -77,7 +77,6 @@ public func Init(craftingGameController: wref<CraftingMainGameController>) -> Vo
   };
 }
 
-// -- Refresh available skins counter state
 @addMethod(CraftingLogicController)
 public func RefreshSkinsCounter() -> Void {
   let size: Int32 = ArraySize(this.selectedRecipeVariants);
@@ -93,7 +92,7 @@ public func RefreshSkinsCounter() -> Void {
 @addMethod(CraftingLogicController)
 public func RefreshCurrentVariantCounter(current: Int32, total: Int32) -> Void {
   let size: Int32 = ArraySize(this.selectedRecipeVariants);
-  if size > 1 && !this.ecraftConfig.randomizerEnabled {
+  if size > 1 && (this.isScopeSelected || !this.ecraftConfig.randomizerEnabled) {
     this.currentVariantCounter.SetVisible(true);
     this.currentVariantCounter.SetText(s"\(current) / \(total)");
   } else {

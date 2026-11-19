@@ -19,13 +19,12 @@ private func IsWeaponVariantAvailable(variantId: TweakDBID, quality: CName, isIc
 }
 
 @addMethod(CraftingSystem)
-public final func GetRecipesData(itemRecord: ref<Item_Record>, iconicsMultiplier: Int32, skipIconics: Bool) -> array<ref<RecipeData>> {
+public final func GetRecipesData(itemRecord: ref<Item_Record>, iconicsMultiplier: Int32, skipIconics: Bool, opt isScope: Bool) -> array<ref<RecipeData>> {
   let isWeapon: Bool = ECraftUtils.IsWeapon(itemRecord.ItemType().Type());
   let quality: CName = StringToName(itemRecord.Quality().Name());
   let result: array<ref<RecipeData>>;
   let originalRecipe: ref<RecipeData> = this.GetRecipeData(itemRecord);
 
-  let tempRecipeData: ItemRecipe;
   let tempItemCategory: ref<ItemCategory_Record>;
   let newRecipeData: ref<RecipeData>;
 
@@ -37,35 +36,24 @@ public final func GetRecipesData(itemRecord: ref<Item_Record>, iconicsMultiplier
   let currentItemRecord: ref<Item_Record>;
   let isPresetIconic: Bool;
   let i: Int32 = 0;
-  let j: Int32;
 
   while i < ArraySize(variantsArray) {
     currentItemId = variantsArray[i];
     currentItemRecord = TweakDBInterface.GetItemRecord(currentItemId);
-    isPresetIconic = ECraftUtils.IsPresetIconic(currentItemId) && !skipIconics;
-    L(s" -> detected variant: \(TDBID.ToStringDEBUG(currentItemId)) \(currentItemRecord.Quality().Name()), is iconic: \(isPresetIconic)");
-    if isWeapon {
-      if this.IsWeaponVariantAvailable(currentItemId, quality, isPresetIconic) {
-        let listOfIngredients: array<IngredientData>;
-        let tempListOfIngredients: array<wref<RecipeElement_Record>>;
-        tempRecipeData = this.m_playerCraftBook.GetRecipeData(itemRecord.GetID());
+    if IsDefined(currentItemRecord) && (isWeapon || isScope) {
+      isPresetIconic = isWeapon && ECraftUtils.IsPresetIconic(currentItemId) && !skipIconics;
+      if isScope || this.IsWeaponVariantAvailable(currentItemId, quality, isPresetIconic) {
         tempItemCategory = currentItemRecord.ItemCategory();
         newRecipeData = new RecipeData();
-        newRecipeData.label = GetLocalizedItemNameByCName(itemRecord.DisplayName());
+        newRecipeData.label = originalRecipe.label;
         newRecipeData.icon = currentItemRecord.IconPath();
         newRecipeData.iconGender = this.m_itemIconGender;
-        newRecipeData.description = GetLocalizedItemNameByCName(itemRecord.LocalizedDescription());
+        newRecipeData.description = originalRecipe.description;
         newRecipeData.type = LocKeyToString(tempItemCategory.LocalizedCategory());
         newRecipeData.id = currentItemRecord;
-        newRecipeData.amount = tempRecipeData.amount;
+        newRecipeData.amount = originalRecipe.amount;
         newRecipeData.quality = currentItemRecord.Quality().Type();
-        itemRecord.CraftingData().CraftingRecipe(tempListOfIngredients);
-        j = 0;
-        while j < ArraySize(tempListOfIngredients) {
-          ArrayPush(listOfIngredients, this.CreateIngredientData(tempListOfIngredients[j]));
-          j += 1;
-        };
-        newRecipeData.ingredients = listOfIngredients;
+        newRecipeData.ingredients = originalRecipe.ingredients;
         ArrayPush(result, newRecipeData);
         L(s" --> \(TDBID.ToStringDEBUG(currentItemId)) added to weapons");
       } else {

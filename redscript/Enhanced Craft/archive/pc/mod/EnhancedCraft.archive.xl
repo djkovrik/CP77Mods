@@ -13,3 +13,8 @@ localization:
     kr-kr: base\localization\kr-kr\onscreens\ecraft.json
     ar-ar: base\localization\ar-ar\onscreens\ecraft.json
     cz-cz: base\localization\cz-cz\onscreens\ecraft.json
+factories:
+  - ecraft\preview\masamune_hidden_factory.csv
+  - ecraft\preview\masamune_factory.csv
+  - ecraft\preview\copperhead_scopes.csv
+  - ecraft\preview\scope_matrix_factory.csv

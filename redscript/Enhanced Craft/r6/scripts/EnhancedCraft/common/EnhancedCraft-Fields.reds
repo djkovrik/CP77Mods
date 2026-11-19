@@ -12,6 +12,9 @@ public let selectedRecipeVariantsNoIconics: array<ref<RecipeData>>;
 public let isWeaponSelected: Bool;
 
 @addField(CraftingMainLogicController)
+public let isScopeSelected: Bool;
+
+@addField(CraftingMainLogicController)
 public let previewedRecipe: wref<RecipeData>;
 
 @addField(CraftingMainLogicController)
