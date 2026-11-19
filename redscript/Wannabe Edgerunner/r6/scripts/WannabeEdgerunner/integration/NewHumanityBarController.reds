@@ -115,11 +115,11 @@ public class NewHumanityBarController extends inkGameController {
     let showDanger: Bool = this.system.GetHumanityCurrentExact() < Cast<Float>(this.psychosisThreshold);
     let widget: ref<inkWidget>;
     while i <= count {
-      widget = this.SpawnFromExternal(
-        this.barsContainer, 
-        r"base\\gameplay\\gui\\fullscreen\\wannabe_edgerunner_bars.inkwidget", 
-        n"Bar:Edgerunning.Controller.NewHumanityBarItemController" // controller might not be needed
+      widget = this.SpawnFromLocal(
+        this.barsContainer,
+        n"Bar:Edgerunning.Controller.NewHumanityBarItemController"
       );
+      if !IsDefined(widget) { return; };
 
       let rightMargin: Float;
       if ArrayContains(this.barGaps, i) {
