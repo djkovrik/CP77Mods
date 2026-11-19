@@ -1,0 +1,4 @@
+localization:
+  onscreens:
+    en-us: djkovrik\attachmentscompat\localization\en-us\onscreens.json
+    ru-ru: djkovrik\attachmentscompat\localization\ru-ru\onscreens.json
