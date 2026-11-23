@@ -1,755 +1,628 @@
-import Codeware.UI.inkCustomController
+import HUDrag.HUDWidgetsManager.*
 import HUDrag.HUDitorConfig
-import HUDrag.HUDitorWatcher
 
 @if(ModuleExists("FpsCounter"))
 import FpsCounter.FPSCounterChangeStateEvent
 
-@addField(inkGameController) public let huditorWidgetName: wref<inkText>;
+public class HUDitorSurface {
+  public let owner: wref<inkGameController>;
+  public let source: wref<inkCompoundWidget>;
+  public let presentation: wref<inkWidget>;
+  public let content: ref<inkCanvas>;
+  private let window: wref<inkCompoundWidget>;
 
-@addField(inkGameController) public let minimapSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) public let questTrackerSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) public let wantedSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) public let questNotificationsSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) public let itemNotificationsSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) public let vehicleSummonSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) public let weaponRosterSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) public let crouchIndicatorSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) public let dpadSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) public let phoneHotkeySlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) public let healthbarSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) public let staminaBarSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) public let phoneCallAvatarSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) public let phoneControlSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) public let inputHintSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) public let carHudSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) public let autoDriveSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) public let crystalCoatSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) public let vehicleRadioSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) public let vehicleHotkeySlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) public let bossHealthbarSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) public let dialogChoicesSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) public let dialogSubtitlesSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) public let progressBarSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) public let e3CompassSlot: wref<HUDitorCustomSlot>;
-@addField(inkGameController) public let fpsCounterSlot: wref<HUDitorCustomSlot>;
-
-@addMethod(inkGameController)
-protected cb func OnActiveHuditorWidgetChanged(event: ref<SetActiveHUDEditorWidgetEvent>) -> Bool {
-  if this.IsA(n"gameuiRootHudGameController") {
-    this.huditorWidgetName.SetVisible(true);
-    this.huditorWidgetName.SetText(HUDitorTexts.GetWidgetName(event.activeWidget));
-  };
-}
-
-@addMethod(inkGameController)
-protected cb func OnHuditorDisableEvent(event: ref<DisableHUDEditorEvent>) -> Bool {
-  if this.IsA(n"gameuiRootHudGameController") {
-    this.huditorWidgetName.SetVisible(false);
-  };
-}
-
-@addMethod(inkGameController)
-protected cb func OnHuditorSlotEvent(event: ref<HuditorSlotEvent>) -> Bool {
-  if this.IsA(n"gameuiRootHudGameController") {
-    this.phoneHotkeySlot.SetVisible(event.isVisible);
-    this.autoDriveSlot.SetVisible(event.isVisible);
-    this.crystalCoatSlot.SetVisible(event.isVisible);
-    this.vehicleRadioSlot.SetVisible(event.isVisible);
-    this.vehicleHotkeySlot.SetVisible(event.isVisible);
-  };
-}
-
-@addMethod(inkGameController)
-protected cb func OnScannerDetailsAppearedEvent(event: ref<ScannerDetailsAppearedEvent>) -> Bool {
-  if this.IsA(n"gameuiRootHudGameController") {
-    this.minimapSlot.OnScannerDetailsAppearedEvent(event);
-    this.questTrackerSlot.OnScannerDetailsAppearedEvent(event);
-  };
-}
-
-@addMethod(inkGameController)
-private func InitWidgetNameLabel() -> Void {
-  let system: ref<inkSystem> = GameInstance.GetInkSystem();
-  let root: ref<inkCompoundWidget> = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
-  root.RemoveChildByName(n"huditorLabel");
-
-  let label: ref<inkText> = new inkText();
-  label.SetName(n"huditorLabel");
-  label.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-  label.SetFontSize(38);
-  label.SetLetterCase(textLetterCase.OriginalCase);
-  label.SetMargin(inkMargin(0.0, 0.0, 0.0, 20.0));
-  label.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
-  label.BindProperty(n"tintColor", n"MainColors.Yellow");
-  label.SetAnchor(inkEAnchor.BottomCenter);
-  label.SetAnchorPoint(Vector2(0.5, 1.0));
-  label.Reparent(root);
-  this.huditorWidgetName = label;
-}
-
-@addMethod(inkGameController)
-private func CreateCustomSlots() -> Void {
-  let system: ref<inkSystem> = GameInstance.GetInkSystem();
-  let root: ref<inkCompoundWidget> = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
-  let config: ref<HUDitorConfig> = new HUDitorConfig();
-
-  if config.questTrackerEnabled {
-    let questTrackerSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewTracker");
-    questTrackerSlot.SetFitToContent(true);
-    questTrackerSlot.SetInteractive(false);
-    questTrackerSlot.SetAffectsLayoutWhenHidden(false);
-    questTrackerSlot.SetAnchor(inkEAnchor.Centered);
-    questTrackerSlot.SetAnchorPoint(Vector2(0.5, 0.5));
-
-    root.RemoveChildByName(n"NewTracker");
-    questTrackerSlot.Reparent(root, 0);
-    this.questTrackerSlot = questTrackerSlot;
-  };
-
-  if config.minimapEnabled && !config.compatE3CompassEnabled {
-    let minimapSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewMinimap");
-    minimapSlot.SetFitToContent(true);
-    minimapSlot.SetInteractive(false);
-    minimapSlot.SetAffectsLayoutWhenHidden(false);
-    minimapSlot.SetAnchor(inkEAnchor.Centered);
-    minimapSlot.SetAnchorPoint(Vector2(0.5, 0.5));
-
-    root.RemoveChildByName(n"NewMinimap");
-    minimapSlot.Reparent(root, 1);
-    this.minimapSlot = minimapSlot;
-  };
-
-  if config.wantedBarEnabled {
-    let wantedSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewWanted");
-    wantedSlot.SetFitToContent(true);
-    wantedSlot.SetInteractive(false);
-    wantedSlot.SetAffectsLayoutWhenHidden(false);
-    wantedSlot.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
-    wantedSlot.SetAnchor(inkEAnchor.Centered);
-    wantedSlot.SetAnchorPoint(Vector2(0.0, 1.0));
-
-    root.RemoveChildByName(n"NewWanted");
-    wantedSlot.Reparent(root, 2);
-    this.wantedSlot = wantedSlot;
-  };
-
-  if config.questNotificationsEnabled {
-    let questNotificationsSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewQuestNotifications");
-    questNotificationsSlot.SetFitToContent(true);
-    questNotificationsSlot.SetInteractive(false);
-    questNotificationsSlot.SetAffectsLayoutWhenHidden(false);
-    questNotificationsSlot.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
-    questNotificationsSlot.SetAnchor(inkEAnchor.Centered);
-    questNotificationsSlot.SetAnchorPoint(Vector2(1.0, 1.0));
-
-    root.RemoveChildByName(n"NewQuestNotifications");
-    questNotificationsSlot.Reparent(root, 3);
-    this.questNotificationsSlot = questNotificationsSlot;
-  };
-
-  if config.itemNotificationsEnabled {
-    let itemNotificationsSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewItemNotifications");
-    itemNotificationsSlot.SetFitToContent(true);
-    itemNotificationsSlot.SetInteractive(false);
-    itemNotificationsSlot.SetAffectsLayoutWhenHidden(false);
-    itemNotificationsSlot.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
-    itemNotificationsSlot.SetAnchor(inkEAnchor.Centered);
-    itemNotificationsSlot.SetAnchorPoint(Vector2(0.0, 1.0));
-
-    root.RemoveChildByName(n"NewItemNotifications");
-    itemNotificationsSlot.Reparent(root, 4);
-    this.itemNotificationsSlot = itemNotificationsSlot;
-  };
-
-  if config.vehicleSummonEnabled {
-    let vehicleSummonSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewVehicleSummon");
-    vehicleSummonSlot.SetFitToContent(true);
-    vehicleSummonSlot.SetInteractive(false);
-    vehicleSummonSlot.SetAffectsLayoutWhenHidden(false);
-    vehicleSummonSlot.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
-    vehicleSummonSlot.SetAnchor(inkEAnchor.Centered);
-    vehicleSummonSlot.SetAnchorPoint(Vector2(1.0, 0.0));
-
-    root.RemoveChildByName(n"NewVehicleSummon");
-    vehicleSummonSlot.Reparent(root, 5);
-    this.vehicleSummonSlot = vehicleSummonSlot;
-  };
-
-  if config.weaponRosterEnabled {
-    let weaponRosterSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewWeaponRoster");
-    weaponRosterSlot.SetFitToContent(true);
-    weaponRosterSlot.SetInteractive(false);
-    weaponRosterSlot.SetAffectsLayoutWhenHidden(false);
-    weaponRosterSlot.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
-    weaponRosterSlot.SetAnchor(inkEAnchor.Centered);
-    weaponRosterSlot.SetAnchorPoint(Vector2(0.5, 0.5));
-
-    root.RemoveChildByName(n"NewWeaponRoster");
-    weaponRosterSlot.Reparent(root, 6);
-    this.weaponRosterSlot = weaponRosterSlot;
-  };
-
-  if config.crouchIndicatorEnabled {
-    let crouchIndicatorSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewCrouchIndicator");
-    crouchIndicatorSlot.SetFitToContent(true);
-    crouchIndicatorSlot.SetInteractive(false);
-    crouchIndicatorSlot.SetAffectsLayoutWhenHidden(false);
-    crouchIndicatorSlot.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
-    crouchIndicatorSlot.SetAnchor(inkEAnchor.Centered);
-    crouchIndicatorSlot.SetAnchorPoint(Vector2(0.0, 0.0));
-
-    root.RemoveChildByName(n"NewCrouchIndicator");
-    crouchIndicatorSlot.Reparent(root, 7);
-    this.crouchIndicatorSlot = crouchIndicatorSlot;
+  public static func Create(owner: ref<inkGameController>, presentation: ref<inkWidget>, host: ref<inkCompoundWidget>) -> ref<HUDitorSurface> {
+    let source: ref<inkCanvas> = owner.GetRootWidget() as inkCanvas;
+    if !IsDefined(source) || !IsDefined(presentation) || !IsDefined(host) { return null; };
+    let self: ref<HUDitorSurface> = new HUDitorSurface();
+    self.owner = owner;
+    self.source = source;
+    self.presentation = presentation;
+    self.window = host.parentWidget as inkCompoundWidget;
+    self.content = new inkCanvas();
+    self.content.SetName(n"HUDitorSurface");
+    self.content.SetInteractive(false);
+    self.content.SetAffectsLayoutWhenHidden(false);
+    self.content.SetRenderTransformPivot(Vector2(0.0, 0.0));
+    self.content.SetSize(source.GetSize());
+    self.content.SetPadding(source.GetPadding());
+    self.content.SetChildMargin(source.GetChildMargin());
+    self.content.SetChildOrder(source.GetChildOrder());
+    self.content.SetStyle(source.GetStylePath());
+    self.content.SetTintColor(source.GetTintColor());
+    self.content.Reparent(host);
+    self.Adopt();
+    self.Sync();
+    return self;
   }
 
-  if config.dpadEnabled {
-    let dpadSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewDpad");
-    dpadSlot.SetFitToContent(true);
-    dpadSlot.SetInteractive(false);
-    dpadSlot.SetAffectsLayoutWhenHidden(false);
-    dpadSlot.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
-    dpadSlot.SetAnchor(inkEAnchor.Centered);
-    dpadSlot.SetAnchorPoint(Vector2(0.0, 1.0));
+  public func IsValid() -> Bool {
+    return IsDefined(this.owner) && IsDefined(this.source) && IsDefined(this.presentation) && IsDefined(this.presentation.parentWidget) && IsDefined(this.window) && this.owner.GetRootWidget() == this.source;
+  }
 
-    root.RemoveChildByName(n"NewDpad");
-    dpadSlot.Reparent(root, 8);
-    this.dpadSlot = dpadSlot;
-  };
+  public func Adopt() -> Void {
+    let children: array<wref<inkWidget>>;
+    let i: Int32 = 0;
+    while i < this.source.GetNumChildren() {
+      ArrayPush(children, this.source.GetWidgetByIndex(i));
+      i += 1;
+    };
+    for child in children { child.Reparent(this.content); };
+  }
 
-  if config.phoneHotkeyEnabled {
-    let phoneHotkeySlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewPhoneHotkey");
-    phoneHotkeySlot.SetFitToContent(true);
-    phoneHotkeySlot.SetInteractive(false);
-    phoneHotkeySlot.SetAffectsLayoutWhenHidden(false);
-    phoneHotkeySlot.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
-    phoneHotkeySlot.SetAnchor(inkEAnchor.Centered);
-    phoneHotkeySlot.SetAnchorPoint(Vector2(1.0, 1.0));
+  private static func Opacity(widget: ref<inkWidget>, stop: ref<inkWidget>) -> Float {
+    let opacity: Float = 1.0;
+    while IsDefined(widget) && widget != stop {
+      if !widget.IsVisible() { return 0.0; };
+      opacity *= widget.GetOpacity();
+      widget = widget.parentWidget;
+    };
+    return opacity;
+  }
 
-    root.RemoveChildByName(n"NewPhoneHotkey");
-    phoneHotkeySlot.Reparent(root, 9);
-    this.phoneHotkeySlot = phoneHotkeySlot;
-  };
+  public func Sync() -> Void {
+    if !this.IsValid() { this.content.SetVisible(false); return; };
+    let opacity: Float = HUDitorSurface.Opacity(this.source, null) * HUDitorSurface.Opacity(this.presentation.parentWidget, this.window) * this.presentation.GetOpacity();
+    let visible: Bool = opacity > 0.0;
+    if NotEquals(this.content.IsVisible(), visible) { this.content.SetVisible(visible); };
+    if !visible { return; };
+    if this.content.GetOpacity() != opacity { this.content.SetOpacity(opacity); };
+    let origin: Vector2 = HUDitorGeometry.PresentationOrigin(this.presentation);
+    let local: RectF = GetScreenPosition(this.source);
+    let screen: RectF = GetScreenPosition(this.window);
+    let imageScale: Vector2 = HUDitorGeometry.Scale(this.presentation);
+    let scale: Vector2 = HUDitorGeometry.Scale(this.source);
+    let screenScale: Vector2 = HUDitorGeometry.Scale(this.window);
+    if screenScale.X <= 0.0 || screenScale.Y <= 0.0 { return; };
+    let position: Vector2 = Vector2((origin.X + local.Left * imageScale.X - screen.Left) / screenScale.X, (origin.Y + local.Top * imageScale.Y - screen.Top) / screenScale.Y);
+    let current: Vector2 = this.content.GetTranslation();
+    if current.X != position.X || current.Y != position.Y { this.content.SetTranslation(position); };
+    scale.X *= imageScale.X / screenScale.X;
+    scale.Y *= imageScale.Y / screenScale.Y;
+    current = this.content.GetScale();
+    if current.X != scale.X || current.Y != scale.Y { this.content.SetScale(scale); };
+    let size: Vector2 = this.source.GetSize();
+    current = this.content.GetSize();
+    if current.X != size.X || current.Y != size.Y { this.content.SetSize(size); };
+    if NotEquals(this.content.GetState(), this.source.GetState()) { this.content.SetState(this.source.GetState()); };
+  }
 
-  if config.playerHealthbarEnabled {
-    let healthbarSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewHealthBar");
-    healthbarSlot.SetFitToContent(true);
-    healthbarSlot.SetInteractive(false);
-    healthbarSlot.SetAffectsLayoutWhenHidden(false);
-    healthbarSlot.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
-    healthbarSlot.SetAnchor(inkEAnchor.Centered);
-    healthbarSlot.SetAnchorPoint(Vector2(0.0, 0.0));
+  public func ResolvePreviewBase(binding: ref<HUDitorBinding>, out position: Vector2, out scale: Vector2) -> Bool {
+    if binding.owner != this.owner || binding.parent != this.content || !this.IsValid() { return false; };
+    let layout: ref<HUDitorLayout> = binding.layout;
+    if NotEquals(layout.anchor, inkEAnchor.TopLeft) || NotEquals(layout.sizeRule, inkESizeRule.Fixed) || layout.point.X != 0.0 || layout.point.Y != 0.0 { return false; };
+    let origin: Vector2 = HUDitorGeometry.PresentationOrigin(this.presentation);
+    let local: RectF = GetScreenPosition(this.source);
+    let imageScale: Vector2 = HUDitorGeometry.Scale(this.presentation);
+    scale = HUDitorGeometry.Scale(this.source);
+    scale.X *= imageScale.X;
+    scale.Y *= imageScale.Y;
+    let padding: inkMargin = this.content.GetPadding();
+    let childMargin: inkMargin = this.content.GetChildMargin();
+    let translation: Vector2 = binding.source.GetTranslation();
+    let zoom: Vector2 = binding.carrier.GetScale();
+    position = Vector2(origin.X + local.Left * imageScale.X + (layout.margin.left + padding.left + childMargin.left + translation.X * zoom.X) * scale.X, origin.Y + local.Top * imageScale.Y + (layout.margin.top + padding.top + childMargin.top + translation.Y * zoom.Y) * scale.Y);
+    return true;
+  }
 
-    root.RemoveChildByName(n"NewHealthBar");
-    healthbarSlot.Reparent(root, 10);
-    this.healthbarSlot = healthbarSlot;
-  };
-
-  if config.playerStaminabarEnabled {
-    let staminaBarSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewStaminaBar");
-    staminaBarSlot.SetFitToContent(true);
-    staminaBarSlot.SetInteractive(false);
-    staminaBarSlot.SetAffectsLayoutWhenHidden(false);
-    staminaBarSlot.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
-    staminaBarSlot.SetAnchor(inkEAnchor.Centered);
-    staminaBarSlot.SetAnchorPoint(Vector2(0.0, 1.0));
-
-    root.RemoveChildByName(n"NewStaminaBar");
-    staminaBarSlot.Reparent(root, 11);
-    this.staminaBarSlot = staminaBarSlot;
-  };
-
-  if config.incomingCallAvatarEnabled {
-    let phoneCallAvatarSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewPhoneAvatar");
-    phoneCallAvatarSlot.SetFitToContent(true);
-    phoneCallAvatarSlot.SetInteractive(false);
-    phoneCallAvatarSlot.SetAffectsLayoutWhenHidden(false);
-    phoneCallAvatarSlot.SetAnchor(inkEAnchor.Centered);
-    phoneCallAvatarSlot.SetAnchorPoint(Vector2(1.0, 1.0));
-
-    root.RemoveChildByName(n"NewPhoneAvatar");
-    phoneCallAvatarSlot.Reparent(root, 12);
-    this.phoneCallAvatarSlot = phoneCallAvatarSlot;
-  };
-
-  if config.incomingCallButtonEnabled {
-    let phoneControlSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewPhoneControl");
-    phoneControlSlot.SetFitToContent(true);
-    phoneControlSlot.SetInteractive(false);
-    phoneControlSlot.SetAffectsLayoutWhenHidden(false);
-    phoneControlSlot.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
-    phoneControlSlot.SetAnchor(inkEAnchor.Centered);
-    phoneControlSlot.SetAnchorPoint(Vector2(0.5, 0.5));
-
-    root.RemoveChildByName(n"NewPhoneControl");
-    phoneControlSlot.Reparent(root, 13);
-    this.phoneControlSlot = phoneControlSlot;
-  };
-
-  if config.inputHintsEnabled {
-    let inputHintSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewInputHint");
-    inputHintSlot.SetFitToContent(true);
-    inputHintSlot.SetInteractive(false);
-    inputHintSlot.SetAffectsLayoutWhenHidden(false);
-    inputHintSlot.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
-    inputHintSlot.SetAnchor(inkEAnchor.Centered);
-    inputHintSlot.SetAnchorPoint(Vector2(1.0, 0.5));
-
-    root.RemoveChildByName(n"NewInputHint");
-    inputHintSlot.Reparent(root, 14);
-    this.inputHintSlot = inputHintSlot;
-  };
-
-  if config.speedometerEnabled {
-    let carHudSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewCarHud");
-    carHudSlot.SetFitToContent(true);
-    carHudSlot.SetInteractive(false);
-    carHudSlot.SetAffectsLayoutWhenHidden(false);
-    carHudSlot.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
-    carHudSlot.SetAnchor(inkEAnchor.Centered);
-    carHudSlot.SetAnchorPoint(Vector2(0.5, 0.5));
-
-    root.RemoveChildByName(n"NewCarHud");
-    carHudSlot.Reparent(root, 15);
-    this.carHudSlot = carHudSlot;
-  };
-
-  if config.autoDriveEnabled {
-    let autoDriveSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewAutoDrive");
-    autoDriveSlot.SetFitToContent(true);
-    autoDriveSlot.SetInteractive(false);
-    autoDriveSlot.SetAffectsLayoutWhenHidden(false);
-    autoDriveSlot.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
-    autoDriveSlot.SetAnchor(inkEAnchor.Centered);
-    autoDriveSlot.SetAnchorPoint(Vector2(1.0, 0.0));
-
-    root.RemoveChildByName(n"NewAutoDrive");
-    autoDriveSlot.Reparent(root, 16);
-    this.autoDriveSlot = autoDriveSlot;
-  };
-
-  if config.crystalCoatEnabled {
-    let crystalCoatSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewCrystalCoat");
-    crystalCoatSlot.SetFitToContent(true);
-    crystalCoatSlot.SetInteractive(false);
-    crystalCoatSlot.SetAffectsLayoutWhenHidden(false);
-    crystalCoatSlot.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
-    crystalCoatSlot.SetAnchor(inkEAnchor.Centered);
-    crystalCoatSlot.SetAnchorPoint(Vector2(0.0, 1.0));
-
-    root.RemoveChildByName(n"NewCrystalCoat");
-    crystalCoatSlot.Reparent(root, 17);
-    this.crystalCoatSlot = crystalCoatSlot;
-  };
-
-  if config.vehicleRadioEnabled {
-    let vehicleRadioSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewVehicleRadio");
-    vehicleRadioSlot.SetFitToContent(true);
-    vehicleRadioSlot.SetInteractive(false);
-    vehicleRadioSlot.SetAffectsLayoutWhenHidden(false);
-    vehicleRadioSlot.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
-    vehicleRadioSlot.SetAnchor(inkEAnchor.Centered);
-    vehicleRadioSlot.SetAnchorPoint(Vector2(0.0, 0.0));
-
-    root.RemoveChildByName(n"NewVehicleRadio");
-    vehicleRadioSlot.Reparent(root, 18);
-    this.vehicleRadioSlot = vehicleRadioSlot;
-  };
-
-  if config.vehicleHotkeyEnabled {
-    let vehicleHotkeySlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewVehicleHotkey");
-    vehicleHotkeySlot.SetFitToContent(true);
-    vehicleHotkeySlot.SetInteractive(false);
-    vehicleHotkeySlot.SetAffectsLayoutWhenHidden(false);
-    vehicleHotkeySlot.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
-    vehicleHotkeySlot.SetAnchor(inkEAnchor.Centered);
-    vehicleHotkeySlot.SetAnchorPoint(Vector2(1.0, 1.0));
-
-    root.RemoveChildByName(n"NewVehicleHotkey");
-    vehicleHotkeySlot.Reparent(root, 19);
-    this.vehicleHotkeySlot = vehicleHotkeySlot;
-  };
-
-  if config.bossHealthbarEnabled {
-    let bossHealthbarSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewBossHealthbar");
-    bossHealthbarSlot.SetFitToContent(true);
-    bossHealthbarSlot.SetInteractive(false);
-    bossHealthbarSlot.SetAffectsLayoutWhenHidden(false);
-    bossHealthbarSlot.SetMargin(inkMargin(0.0, 60.0, 0.0, 0.0));
-    bossHealthbarSlot.SetAnchor(inkEAnchor.TopCenter);
-    bossHealthbarSlot.SetAnchorPoint(Vector2(0.5, 0.0));
-
-    root.RemoveChildByName(n"NewBossHealthbar");
-    bossHealthbarSlot.Reparent(root, 20);
-    this.bossHealthbarSlot = bossHealthbarSlot;
-  };
-
-  if config.dialogChoicesEnabled {
-    let dialogChoicesSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewDialogChoices");
-    dialogChoicesSlot.SetFitToContent(true);
-    dialogChoicesSlot.SetInteractive(false);
-    dialogChoicesSlot.SetAffectsLayoutWhenHidden(false);
-    dialogChoicesSlot.SetMargin(inkMargin(0.0, 120.0, 0.0, 0.0));
-    dialogChoicesSlot.SetAnchor(inkEAnchor.Centered);
-    dialogChoicesSlot.SetAnchorPoint(Vector2(0.5, 0.5));
-
-    root.RemoveChildByName(n"NewDialogChoices");
-    dialogChoicesSlot.Reparent(root, 21);
-    this.dialogChoicesSlot = dialogChoicesSlot;
-  };
-
-  if config.dialogSubtitlesEnabled {
-    let dialogSubtitlesSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewDialogSubtitles");
-    dialogSubtitlesSlot.SetFitToContent(false);
-    dialogSubtitlesSlot.SetInteractive(false);
-    dialogSubtitlesSlot.SetAffectsLayoutWhenHidden(false);
-    dialogSubtitlesSlot.SetMargin(inkMargin(0.0, 0.0, 0.0, 20.0));
-    dialogSubtitlesSlot.SetAnchor(inkEAnchor.BottomFillHorizontaly);
-    dialogSubtitlesSlot.SetAnchorPoint(Vector2(0.5, 1.0));
-    root.RemoveChildByName(n"NewDialogSubtitles");
-    dialogSubtitlesSlot.Reparent(root, 22);
-    this.dialogSubtitlesSlot = dialogSubtitlesSlot;
-  };
-
-  if config.progressWidgetEnabled {
-    let progressBarSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewProgressBar");
-    progressBarSlot.SetFitToContent(false);
-    progressBarSlot.SetInteractive(false);
-    progressBarSlot.SetAffectsLayoutWhenHidden(false);
-    progressBarSlot.SetAnchor(inkEAnchor.BottomCenter);
-    progressBarSlot.SetAnchorPoint(Vector2(0.5, 1.0));
-    root.RemoveChildByName(n"NewProgressBar");
-    progressBarSlot.Reparent(root, 23);
-    this.progressBarSlot = progressBarSlot;
-  };
-
-  if config.compatE3CompassEnabled {
-    let e3CompassSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewCompass");
-    e3CompassSlot.SetFitToContent(false);
-    e3CompassSlot.SetInteractive(false);
-    e3CompassSlot.SetAffectsLayoutWhenHidden(false);
-    e3CompassSlot.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
-    e3CompassSlot.SetAnchor(inkEAnchor.Centered);
-    e3CompassSlot.SetAnchorPoint(Vector2(0.5, 0.5));
-
-    root.RemoveChildByName(n"NewCompass");
-    e3CompassSlot.Reparent(root, 24);
-    this.e3CompassSlot = e3CompassSlot;
-  };
-
-  if config.fpsCounterEnabled {
-    let fpsCounterSlot: ref<HUDitorCustomSlot> = HUDitorCustomSlot.Create(n"NewFpsCounter");
-    fpsCounterSlot.SetFitToContent(false);
-    fpsCounterSlot.SetInteractive(false);
-    fpsCounterSlot.SetAffectsLayoutWhenHidden(false);
-    fpsCounterSlot.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
-    fpsCounterSlot.SetAnchor(inkEAnchor.Centered);
-    fpsCounterSlot.SetAnchorPoint(Vector2(0.5, 0.5));
-
-    root.RemoveChildByName(n"NewFpsCounter");
-    fpsCounterSlot.Reparent(root, 25);
-    this.fpsCounterSlot = fpsCounterSlot;
-  };
+  public func Dispose() -> Void {
+    if !IsDefined(this.content) { return; };
+    if IsDefined(this.source) && IsDefined(this.owner) {
+      let children: array<wref<inkWidget>>;
+      let i: Int32 = 0;
+      while i < this.content.GetNumChildren() {
+        ArrayPush(children, this.content.GetWidgetByIndex(i));
+        i += 1;
+      };
+      i = 0;
+      for child in children { child.Reparent(this.source, i); i += 1; };
+    };
+    let parent: ref<inkCompoundWidget> = this.content.parentWidget as inkCompoundWidget;
+    if IsDefined(parent) { parent.RemoveChild(this.content); };
+    this.content = null;
+  }
 }
 
-@addMethod(inkGameController)
-private func InitBaseWidgets() -> Void {
-  let config: ref<HUDitorConfig> = new HUDitorConfig();
-  let system: ref<inkSystem> = GameInstance.GetInkSystem();
-  let hudLayer: ref<inkLayerWrapper> = system.GetLayer(n"inkHUDLayer");
+public class HUDitorSurfaces {
+  public let states: array<ref<HUDitorSurface>>;
+  private let root: ref<inkCanvas>;
+  private let updateProxy: ref<inkAnimProxy>;
+  private let disposed: Bool;
 
-  let name: CName;
-  let hintController: wref<InputHintManagerGameController>;
-  let targetWidget: ref<inkCompoundWidget>; 
-  for controller in hudLayer.GetGameControllers() {
-    name = controller.GetClassName();
-    switch name {
-      case n"QuestTrackerGameController":
-        if !config.questTrackerEnabled { break; }
-        targetWidget = controller.GetRootCompoundWidget();
-        targetWidget.SetAnchorPoint(Vector2(1.0, 0.0));
-        targetWidget.Reparent(this.questTrackerSlot.GetRootCompoundWidget());
-        break;
-      case n"gameuiMinimapContainerController":
-        if !config.minimapEnabled { break; }
-        targetWidget = controller.GetRootCompoundWidget();
-        targetWidget.SetAnchorPoint(Vector2(1.0, 0.0));
-        targetWidget.Reparent(this.minimapSlot.GetRootCompoundWidget());
-        break;
-      case n"WantedBarGameController":
-        if !config.wantedBarEnabled { break; }
-        targetWidget = controller.GetRootCompoundWidget();
-        targetWidget.SetAnchorPoint(Vector2(0.0, 1.0));
-        targetWidget.Reparent(this.wantedSlot.GetRootCompoundWidget());
-        break;
-      case n"JournalNotificationQueue":
-        if !config.questNotificationsEnabled { break; }
-        targetWidget = controller.GetRootCompoundWidget();
-        targetWidget.SetAnchorPoint(Vector2(0.0, 1.0));
-        targetWidget.Reparent(this.questNotificationsSlot.GetRootCompoundWidget());
-        break;
-      case n"ItemsNotificationQueue":
-        if !config.itemNotificationsEnabled { break; }
-        targetWidget = controller.GetRootCompoundWidget();
-        targetWidget.SetAnchorPoint(Vector2(0.0, 0.0));
-        targetWidget.Reparent(this.itemNotificationsSlot.GetRootCompoundWidget());
-        break;
-      case n"VehicleSummonWidgetGameController":
-        if !config.vehicleSummonEnabled { break; }
-        targetWidget = controller.GetRootCompoundWidget();
-        targetWidget.SetAnchorPoint(Vector2(1.0, 1.0));
-        targetWidget.Reparent(this.vehicleSummonSlot.GetRootCompoundWidget());
-        break;
-      case n"gameuiWeaponRosterGameController":
-        if !config.weaponRosterEnabled { break; }
-        targetWidget = controller.GetRootCompoundWidget();
-        targetWidget.SetAnchorPoint(Vector2(1.0, 1.0));
-        targetWidget.Reparent(this.weaponRosterSlot.GetRootCompoundWidget());
-        break;
-      case n"CrouchIndicatorGameController":
-        if !config.crouchIndicatorEnabled { break; }
-        targetWidget = controller.GetRootCompoundWidget();
-        targetWidget.SetAnchorPoint(Vector2(1.0, 1.0));
-        targetWidget.Reparent(this.crouchIndicatorSlot.GetRootCompoundWidget());
-        break;
-      case n"HotkeysWidgetController":
-        if !config.dpadEnabled { break; }
-        targetWidget = controller.GetRootCompoundWidget();
-        targetWidget.SetAnchorPoint(Vector2(0.0, 1.0));
-        targetWidget.Reparent(this.dpadSlot.GetRootCompoundWidget());
-        break;
-      case n"HotkeyConsumableWidgetController":
-        if !config.dpadEnabled { break; }
-        targetWidget = controller.GetRootCompoundWidget();
-        targetWidget.SetAnchorPoint(Vector2(0.0, 1.0));
-        targetWidget.Reparent(this.dpadSlot.GetRootCompoundWidget());
-        break;
-      case n"PhoneHotkeyController":
-      if !config.phoneHotkeyEnabled { break; }
-        targetWidget = controller.GetRootCompoundWidget();
-        targetWidget.SetAnchorPoint(Vector2(0.5, 0.5));
-        targetWidget.Reparent(this.phoneHotkeySlot.GetRootCompoundWidget());
-        break;
-      case n"gameuiHudHealthbarGameController":
-        if !config.playerHealthbarEnabled { break; }
-        targetWidget = controller.GetRootCompoundWidget();
-        targetWidget.SetAnchorPoint(Vector2(0.0, 0.0));
-        targetWidget.Reparent(this.healthbarSlot.GetRootCompoundWidget());
-        break;
-      case n"StaminabarWidgetGameController":
-        if !config.playerStaminabarEnabled { break; }
-        targetWidget = controller.GetRootCompoundWidget();
-        targetWidget.SetAnchorPoint(Vector2(0.0, 0.0));
-        targetWidget.Reparent(this.staminaBarSlot.GetRootCompoundWidget());
-        break;
-      case n"gameuiInputHintManagerGameController":
-        if !config.inputHintsEnabled { break; }
-        hintController = controller as InputHintManagerGameController;
-        if !IsDefined(hintController) { break; }
-        if NotEquals(hintController.hintContainerId, n"GameplayInputHelper") { break; }
-        targetWidget = controller.GetRootCompoundWidget();
-        targetWidget.SetAnchorPoint(Vector2(1.0, 0.5));
-        targetWidget.Reparent(this.inputHintSlot.GetRootCompoundWidget());
-        break;
-      case n"hudCarController":
-        if !config.speedometerEnabled { break; }
-        targetWidget = controller.GetRootCompoundWidget();
-        targetWidget.SetAnchorPoint(Vector2(0.0, 1.0));
-        targetWidget.Reparent(this.carHudSlot.GetRootCompoundWidget());
-        break;
-      case n"AutoDriveController":
-        if !config.autoDriveEnabled { break; }
-        targetWidget = controller.GetRootCompoundWidget();
-        targetWidget.SetAnchorPoint(Vector2(0.0, 1.0));
-        targetWidget.Reparent(this.autoDriveSlot.GetRootCompoundWidget());
-        break;
-      case n"vehicleVisualCustomizationHotkeyController":
-        if !config.crystalCoatEnabled { break; }
-        targetWidget = controller.GetRootCompoundWidget();
-        targetWidget.SetAnchorPoint(Vector2(0.0, 1.0));
-        targetWidget.Reparent(this.crystalCoatSlot.GetRootCompoundWidget());
-        break;
-      case n"RadioHotkeyController":
-        if !config.vehicleRadioEnabled { break; }
-        targetWidget = controller.GetRootCompoundWidget();
-        targetWidget.SetAnchorPoint(Vector2(0.0, 1.0));
-        targetWidget.Reparent(this.vehicleRadioSlot.GetRootCompoundWidget());
-        break;
-      case n"BossHealthBarGameController":
-        if !config.bossHealthbarEnabled { break; }
-        targetWidget = controller.GetRootCompoundWidget();
-        targetWidget.SetAnchorPoint(Vector2(0.5, 0.0));
-        targetWidget.Reparent(this.bossHealthbarSlot.GetRootCompoundWidget());
-        break;
-      case n"dialogWidgetGameController":
-        if !config.dialogChoicesEnabled { break; }
-        targetWidget = controller.GetRootCompoundWidget();
-        targetWidget.SetAnchorPoint(Vector2(0.5, 0.5));
-        targetWidget.Reparent(this.dialogChoicesSlot.GetRootCompoundWidget());
-        break;
-      case n"SubtitlesGameController":
-        if !config.dialogSubtitlesEnabled { break; }
-        targetWidget = controller.GetRootCompoundWidget();
-        targetWidget.SetAnchorPoint(Vector2(0.5, 1.0));
-        targetWidget.Reparent(this.dialogSubtitlesSlot.GetRootCompoundWidget());
-        break;
-      case n"HUDProgressBarController":
-        if !config.progressWidgetEnabled { break; }
-        targetWidget = controller.GetRootCompoundWidget();
-        targetWidget.SetAnchorPoint(Vector2(0.5, 1.0));
-        targetWidget.Reparent(this.progressBarSlot.GetRootCompoundWidget());
-        break;
-      case n"IronsightGameController":
-        if !config.compatE3CompassEnabled { break; }
-        targetWidget = controller.GetRootCompoundWidget();
-        targetWidget.Reparent(this.e3CompassSlot.GetRootCompoundWidget());
-        break;
+  public static func Create(window: ref<inkCompoundWidget>) -> ref<HUDitorSurfaces> {
+    let self: ref<HUDitorSurfaces> = new HUDitorSurfaces();
+    self.root = new inkCanvas();
+    self.root.SetName(n"HUDitorSurfaces");
+    self.root.SetInteractive(false);
+    self.root.SetAffectsLayoutWhenHidden(false);
+    self.root.Reparent(window, 0);
+    let animation: ref<inkAnimDef> = new inkAnimDef();
+    let tick: ref<inkAnimTransparency> = new inkAnimTransparency();
+    tick.SetStartTransparency(1.0);
+    tick.SetEndTransparency(1.0);
+    tick.SetDuration(0.016);
+    animation.AddInterpolator(tick);
+    let options: inkAnimOptions;
+    options.loopType = inkanimLoopType.Cycle;
+    options.loopInfinite = true;
+    options.dependsOnTimeDilation = false;
+    self.updateProxy = self.root.PlayAnimationWithOptions(animation, options);
+    self.updateProxy.RegisterToCallback(inkanimEventType.OnEndLoop, self, n"OnLoop");
+    return self;
+  }
+
+  public func Attach(owner: ref<inkGameController>, presentation: ref<inkWidget>) -> Void {
+    for state in this.states {
+      if state.owner == owner && state.presentation == presentation { state.Adopt(); state.Sync(); return; };
+    };
+    let state: ref<HUDitorSurface> = HUDitorSurface.Create(owner, presentation, this.root);
+    if IsDefined(state) { ArrayPush(this.states, state); };
+  }
+
+  public func ResolvePreviewBase(binding: ref<HUDitorBinding>, out position: Vector2, out scale: Vector2) -> Bool {
+    for state in this.states {
+      if state.ResolvePreviewBase(binding, position, scale) { return true; };
+    };
+    return false;
+  }
+
+  public func Prune(manager: ref<HUDWidgetsManager>) -> Void {
+    let i: Int32 = ArraySize(this.states) - 1;
+    while i >= 0 {
+      if !this.states[i].IsValid() {
+        for slot in manager.controllers { slot.ReleaseOwner(this.states[i].owner); };
+        this.states[i].Dispose();
+        ArrayErase(this.states, i);
+      };
+      i -= 1;
     };
   }
 
-  this.QueueEvent(new HuditorInitializedEvent());
+  protected cb func OnLoop(proxy: ref<inkAnimProxy>) -> Bool {
+    if this.disposed { return false; };
+    for state in this.states { state.Sync(); };
+    return true;
+  }
+
+  public func Dispose() -> Void {
+    if this.disposed { return; };
+    this.disposed = true;
+    if IsDefined(this.updateProxy) {
+      this.updateProxy.UnregisterFromCallback(inkanimEventType.OnEndLoop, this, n"OnLoop");
+      this.updateProxy.Stop(true);
+      this.updateProxy = null;
+    };
+    for state in this.states { state.Dispose(); };
+    ArrayClear(this.states);
+    let parent: ref<inkCompoundWidget> = this.root.parentWidget as inkCompoundWidget;
+    if IsDefined(parent) { parent.RemoveChild(this.root); };
+    this.root = null;
+  }
 }
 
-@addMethod(inkGameController)
-private func InitResolutionWatcher() -> Void {
-  let system: ref<HUDitorWatcher> = HUDitorWatcher.Get(GetGameInstance());
-  system.AddTarget(this.huditorWidgetName);
-  
-  if IsDefined(this.minimapSlot) { system.AddTarget(this.minimapSlot.GetRootCompoundWidget()); }
-  if IsDefined(this.questTrackerSlot) { system.AddTarget(this.questTrackerSlot.GetRootCompoundWidget()); }
-  if IsDefined(this.wantedSlot) { system.AddTarget(this.wantedSlot.GetRootCompoundWidget()); }
-  if IsDefined(this.questNotificationsSlot) { system.AddTarget(this.questNotificationsSlot.GetRootCompoundWidget()); }
-  if IsDefined(this.itemNotificationsSlot) { system.AddTarget(this.itemNotificationsSlot.GetRootCompoundWidget()); }
-  if IsDefined(this.vehicleSummonSlot) { system.AddTarget(this.vehicleSummonSlot.GetRootCompoundWidget()); }
-  if IsDefined(this.weaponRosterSlot) { system.AddTarget(this.weaponRosterSlot.GetRootCompoundWidget()); }
-  if IsDefined(this.crouchIndicatorSlot) { system.AddTarget(this.crouchIndicatorSlot.GetRootCompoundWidget()); }
-  if IsDefined(this.dpadSlot) { system.AddTarget(this.dpadSlot.GetRootCompoundWidget()); }
-  if IsDefined(this.phoneHotkeySlot) { system.AddTarget(this.phoneHotkeySlot.GetRootCompoundWidget()); }
-  if IsDefined(this.healthbarSlot) { system.AddTarget(this.healthbarSlot.GetRootCompoundWidget()); }
-  if IsDefined(this.staminaBarSlot) { system.AddTarget(this.staminaBarSlot.GetRootCompoundWidget()); }
-  if IsDefined(this.phoneCallAvatarSlot) { system.AddTarget(this.phoneCallAvatarSlot.GetRootCompoundWidget()); }
-  if IsDefined(this.phoneControlSlot) { system.AddTarget(this.phoneControlSlot.GetRootCompoundWidget()); }
-  if IsDefined(this.inputHintSlot) { system.AddTarget(this.inputHintSlot.GetRootCompoundWidget()); }
-  if IsDefined(this.carHudSlot) { system.AddTarget(this.carHudSlot.GetRootCompoundWidget()); }
-  if IsDefined(this.bossHealthbarSlot) { system.AddTarget(this.bossHealthbarSlot.GetRootCompoundWidget()); }
-  if IsDefined(this.dialogChoicesSlot) { system.AddTarget(this.dialogChoicesSlot.GetRootCompoundWidget()); }
-  if IsDefined(this.dialogSubtitlesSlot) { system.AddTarget(this.dialogSubtitlesSlot.GetRootCompoundWidget()); }
-  if IsDefined(this.progressBarSlot) { system.AddTarget(this.progressBarSlot.GetRootCompoundWidget()); }
-  if IsDefined(this.e3CompassSlot) { system.AddTarget(this.e3CompassSlot.GetRootCompoundWidget()); }
-  if IsDefined(this.fpsCounterSlot) { system.AddTarget(this.fpsCounterSlot.GetRootCompoundWidget()); }
+public class HUDitorLayout {
+  public let anchor: inkEAnchor;
+  public let point: Vector2;
+  public let margin: inkMargin;
+  public let hAlign: inkEHorizontalAlign;
+  public let vAlign: inkEVerticalAlign;
+  public let size: Vector2;
+  public let sizeRule: inkESizeRule;
+  public let coefficient: Float;
+  public let fit: Bool;
+  public let affectsLayout: Bool;
+
+  public static func Capture(widget: ref<inkWidget>) -> ref<HUDitorLayout> {
+    let state: ref<HUDitorLayout> = new HUDitorLayout();
+    state.anchor = widget.GetAnchor();
+    state.point = widget.GetAnchorPoint();
+    state.margin = widget.GetMargin();
+    state.hAlign = widget.GetHAlign();
+    state.vAlign = widget.GetVAlign();
+    state.size = widget.GetSize();
+    state.sizeRule = widget.GetSizeRule();
+    state.coefficient = widget.GetSizeCoefficient();
+    state.fit = widget.GetFitToContent();
+    state.affectsLayout = widget.GetAffectsLayoutWhenHidden();
+    return state;
+  }
+
+  public func Apply(widget: ref<inkWidget>) -> Void {
+    widget.SetAnchor(this.anchor);
+    widget.SetAnchorPoint(this.point);
+    widget.SetMargin(this.margin);
+    widget.SetHAlign(this.hAlign);
+    widget.SetVAlign(this.vAlign);
+    widget.SetSize(this.size);
+    widget.SetSizeRule(this.sizeRule);
+    widget.SetSizeCoefficient(this.coefficient);
+    widget.SetFitToContent(this.fit);
+    widget.SetAffectsLayoutWhenHidden(this.affectsLayout);
+  }
+}
+
+public class HUDitorBinding {
+  public let source: wref<inkWidget>;
+  public let owner: wref<inkGameController>;
+  public let parent: wref<inkCompoundWidget>;
+  public let carrier: ref<inkWidget>;
+  public let ownsCarrier: Bool;
+  public let presentation: wref<inkWidget>;
+  public let presentationTransform: Bool;
+  public let layout: ref<HUDitorLayout>;
+  public let index: Int32;
+  public let committed: Bool;
+  private let contentAnchor: inkEAnchor;
+  private let baseTranslation: Vector2;
+  private let appliedTranslation: Vector2;
+  private let baseScale: Vector2;
+  private let appliedScale: Vector2;
+  private let basePivot: Vector2;
+  private let phoneTransform: Bool;
+  private let phoneIndicatorTransform: Bool;
+
+  public static func Capture(source: ref<inkWidget>, owner: ref<inkGameController>) -> ref<HUDitorBinding> {
+    if !IsDefined(source) || !IsDefined(owner) || !IsDefined(source.parentWidget) { return null; };
+    let binding: ref<HUDitorBinding> = new HUDitorBinding();
+    binding.source = source;
+    binding.owner = owner;
+    binding.parent = source.parentWidget as inkCompoundWidget;
+    if !IsDefined(binding.parent) { return null; };
+    binding.layout = HUDitorLayout.Capture(source);
+    let i: Int32 = 0;
+    while i < binding.parent.GetNumChildren() {
+      if binding.parent.GetWidgetByIndex(i) == source { binding.index = i; break; };
+      i += 1;
+    };
+    return binding;
+  }
+
+  public func Commit() -> Void {
+    if this.committed || !IsDefined(this.source) || !IsDefined(this.parent) { return; };
+    if this.owner.IsA(n"hudCarController") && !IsDefined(this.presentation) { return; };
+    if IsDefined(this.presentation) && this.source == this.owner.GetRootWidget() {
+      this.presentationTransform = true;
+      this.baseTranslation = this.presentation.GetTranslation();
+      this.baseScale = this.presentation.GetScale();
+      this.basePivot = this.presentation.GetRenderTransformPivot();
+      this.appliedTranslation = this.baseTranslation;
+      this.appliedScale = this.baseScale;
+      let scale: Vector2 = HUDitorGeometry.Scale(this.parent);
+      let translation: Vector2 = this.source.GetTranslation();
+      let size: Vector2 = this.presentation.GetSize();
+      if size.X > 0.0 && size.Y > 0.0 {
+        this.presentation.SetRenderTransformPivot(Vector2(translation.X * scale.X / size.X, translation.Y * scale.Y / size.Y));
+      };
+      if this.owner.IsA(n"hudCarController") {
+        this.carrier = this.presentation;
+        this.committed = true;
+        return;
+      };
+    };
+    let phone: ref<NewHudPhoneGameController> = this.owner as NewHudPhoneGameController;
+    this.phoneTransform = IsDefined(phone);
+    this.phoneIndicatorTransform = IsDefined(phone) && this.source == inkWidgetRef.Get(phone.phoneIconElement.slot);
+    let phonePaused: Bool;
+    let resumePhone: Bool = this.SuspendPhoneAnimation(phonePaused);
+    if this.owner.IsA(n"dialogWidgetGameController") && this.source.IsA(n"inkVerticalPanelWidget") {
+      this.carrier = new inkVerticalPanel();
+    } else {
+      this.carrier = new inkCanvas();
+    };
+    this.ownsCarrier = true;
+    this.carrier.SetName(n"HUDitorTransform");
+    this.layout.Apply(this.carrier);
+    this.carrier.SetInteractive(false);
+    this.carrier.SetRenderTransformPivot(Vector2(0.0, 0.0));
+    this.carrier.Reparent(this.parent, this.index);
+    let anchor: inkEAnchor = this.layout.anchor;
+    let horizontal: Bool = Equals(anchor, inkEAnchor.TopFillHorizontaly) || Equals(anchor, inkEAnchor.CenterFillHorizontaly) || Equals(anchor, inkEAnchor.BottomFillHorizontaly) || Equals(anchor, inkEAnchor.Fill);
+    let vertical: Bool = Equals(anchor, inkEAnchor.LeftFillVerticaly) || Equals(anchor, inkEAnchor.CenterFillVerticaly) || Equals(anchor, inkEAnchor.RightFillVerticaly) || Equals(anchor, inkEAnchor.Fill);
+    this.contentAnchor = horizontal ? (vertical ? inkEAnchor.Fill : inkEAnchor.TopFillHorizontaly) : (vertical ? inkEAnchor.LeftFillVerticaly : inkEAnchor.TopLeft);
+    this.source.SetAnchor(this.contentAnchor);
+    this.source.SetAnchorPoint(Vector2(0.0, 0.0));
+    this.source.SetMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    this.source.SetHAlign(inkEHorizontalAlign.Left);
+    this.source.SetVAlign(inkEVerticalAlign.Top);
+    this.source.SetSizeRule(inkESizeRule.Fixed);
+    if this.phoneTransform {
+      this.baseTranslation = this.source.GetTranslation();
+      this.source.SetTranslation(Vector2(0.0, 0.0));
+      this.carrier.SetTranslation(this.baseTranslation);
+      this.appliedTranslation = this.baseTranslation;
+    };
+    if this.phoneIndicatorTransform {
+      this.baseScale = this.source.GetScale();
+      this.appliedScale = this.baseScale;
+      this.basePivot = this.source.GetRenderTransformPivot();
+      this.source.SetRenderTransformPivot(Vector2(0.0, 0.0));
+      this.appliedTranslation = Vector2(0.0, 0.0);
+    };
+    this.source.Reparent(this.carrier as inkCompoundWidget);
+    this.committed = true;
+    if resumePhone { phone.ResumeHUDitorPhoneIconAnim(phonePaused); };
+  }
+
+  public func Apply(translation: Vector2, zoom: Vector2) -> Void {
+    if !this.committed || !IsDefined(this.source) { return; };
+    if this.phoneIndicatorTransform {
+      this.appliedTranslation = translation;
+      this.appliedScale = Vector2(this.baseScale.X * zoom.X, this.baseScale.Y * zoom.Y);
+      this.source.SetTranslation(this.appliedTranslation);
+      this.source.SetScale(this.appliedScale);
+      return;
+    };
+    if this.presentationTransform || this.phoneTransform {
+      let target: ref<inkWidget> = this.carrier;
+      if this.presentationTransform { target = this.presentation; };
+      if !IsDefined(target) { return; };
+      let current: Vector2 = target.GetTranslation();
+      if current.X != this.appliedTranslation.X || current.Y != this.appliedTranslation.Y { this.baseTranslation = current; };
+      let factor: Vector2 = Vector2(1.0, 1.0);
+      if this.presentationTransform {
+        let sourceScale: Vector2 = HUDitorGeometry.Scale(this.parent);
+        let imageScale: Vector2 = HUDitorGeometry.Scale(target.parentWidget);
+        factor = Vector2(sourceScale.X / imageScale.X, sourceScale.Y / imageScale.Y);
+      };
+      this.appliedTranslation = Vector2(this.baseTranslation.X + translation.X * factor.X, this.baseTranslation.Y + translation.Y * factor.Y);
+      target.SetTranslation(this.appliedTranslation);
+      if this.presentationTransform {
+        this.appliedScale = Vector2(this.baseScale.X * zoom.X, this.baseScale.Y * zoom.Y);
+        target.SetScale(this.appliedScale);
+      } else { target.SetScale(zoom); };
+      return;
+    };
+    this.carrier.SetTranslation(translation);
+    this.carrier.SetScale(zoom);
+  }
+
+  private func SuspendPhoneAnimation(out paused: Bool) -> Bool {
+    paused = false;
+    if !this.phoneIndicatorTransform { return false; };
+    let phone: ref<NewHudPhoneGameController> = this.owner as NewHudPhoneGameController;
+    if !IsDefined(phone) || !IsDefined(phone.m_phoneIconAnimProxy) { return false; };
+    paused = phone.m_phoneIconAnimProxy.IsPaused();
+    if !paused && !phone.m_phoneIconAnimProxy.IsPlaying() && !phone.m_phoneIconAnimProxy.IsLoading() { return false; };
+    phone.m_phoneIconAnimProxy.Stop(true);
+    phone.m_phoneIconAnimProxy = null;
+    return true;
+  }
+
+  public func Dispose() -> Void {
+    if !this.committed { return; };
+    if this.presentationTransform && IsDefined(this.presentation) {
+      let current: Vector2 = this.presentation.GetTranslation();
+      if current.X == this.appliedTranslation.X && current.Y == this.appliedTranslation.Y { this.presentation.SetTranslation(this.baseTranslation); };
+      current = this.presentation.GetScale();
+      if current.X == this.appliedScale.X && current.Y == this.appliedScale.Y { this.presentation.SetScale(this.baseScale); };
+      this.presentation.SetRenderTransformPivot(this.basePivot);
+    };
+    if !this.ownsCarrier {
+      this.carrier = null;
+      this.committed = false;
+      return;
+    };
+    let phonePaused: Bool;
+    let resumePhone: Bool;
+    let ownsPhoneSource: Bool = this.phoneIndicatorTransform && IsDefined(this.source) && IsDefined(this.carrier) && IsDefined(this.parent) && this.source.parentWidget == this.carrier && this.carrier.parentWidget == this.parent;
+    if ownsPhoneSource { resumePhone = this.SuspendPhoneAnimation(phonePaused); };
+    if IsDefined(this.source) && IsDefined(this.owner) {
+      if Equals(this.source.GetAnchor(), this.contentAnchor) { this.source.SetAnchor(this.layout.anchor); };
+      let point: Vector2 = this.source.GetAnchorPoint();
+      if point.X == 0.0 && point.Y == 0.0 { this.source.SetAnchorPoint(this.layout.point); };
+      let margin: inkMargin = this.source.GetMargin();
+      if margin.left == 0.0 && margin.top == 0.0 && margin.right == 0.0 && margin.bottom == 0.0 { this.source.SetMargin(this.layout.margin); };
+      if Equals(this.source.GetHAlign(), inkEHorizontalAlign.Left) { this.source.SetHAlign(this.layout.hAlign); };
+      if Equals(this.source.GetVAlign(), inkEVerticalAlign.Top) { this.source.SetVAlign(this.layout.vAlign); };
+      if Equals(this.source.GetSizeRule(), inkESizeRule.Fixed) { this.source.SetSizeRule(this.layout.sizeRule); };
+      if ownsPhoneSource {
+        let translation: Vector2 = this.source.GetTranslation();
+        if translation.X == this.appliedTranslation.X && translation.Y == this.appliedTranslation.Y { this.source.SetTranslation(this.carrier.GetTranslation()); };
+        let scale: Vector2 = this.source.GetScale();
+        if scale.X == this.appliedScale.X && scale.Y == this.appliedScale.Y { this.source.SetScale(this.baseScale); };
+        let pivot: Vector2 = this.source.GetRenderTransformPivot();
+        if pivot.X == 0.0 && pivot.Y == 0.0 { this.source.SetRenderTransformPivot(this.basePivot); };
+      };
+      if this.phoneTransform && !this.phoneIndicatorTransform {
+        let translation: Vector2 = this.source.GetTranslation();
+        if translation.X == 0.0 && translation.Y == 0.0 { this.source.SetTranslation(this.baseTranslation); };
+      };
+      if IsDefined(this.parent) && this.source.parentWidget == this.carrier { this.source.Reparent(this.parent, this.index); };
+    };
+    if IsDefined(this.parent) { this.parent.RemoveChild(this.carrier); };
+    if resumePhone {
+      let phone: ref<NewHudPhoneGameController> = this.owner as NewHudPhoneGameController;
+      if IsDefined(phone) { phone.ResumeHUDitorPhoneIconAnim(phonePaused); };
+    };
+    this.carrier = null;
+    this.ownsCarrier = false;
+    this.committed = false;
+  }
+}
+
+public abstract class HUDitorBindings {
+  public static func Stage(manager: ref<HUDWidgetsManager>, name: CName, source: ref<inkWidget>, owner: ref<inkGameController>) -> Void {
+    if !manager.IsEnabled(name) || !IsDefined(source) { return; };
+    let slot: ref<HUDitorCustomSlot> = manager.FindSlot(name);
+    if !IsDefined(slot) {
+      slot = HUDitorCustomSlot.Create(name, manager);
+      manager.RegisterSlot(slot);
+    };
+    slot.Stage(source, owner, HUDitorBindings.FindPresentation(manager, owner, source));
+  }
+
+  public static func Discover(manager: ref<HUDWidgetsManager>) -> Void {
+    for slot in manager.controllers { slot.Prune(); };
+    let layer: ref<inkLayerWrapper> = GameInstance.GetInkSystem().GetLayer(n"inkHUDLayer");
+    if !IsDefined(layer) || !IsDefined(layer.GetVirtualWindow()) { return; };
+    manager.window = layer.GetVirtualWindow();
+    if IsDefined(manager.surfaces) { manager.surfaces.Prune(manager); };
+    let controllers: array<wref<inkIGameController>> = layer.GetGameControllers();
+    for controller in controllers {
+      if controller.IsA(n"gameuiRootHudGameController") { manager.host = controller as inkGameController; };
+    };
+    if !IsDefined(manager.host) { return; };
+    ArrayClear(manager.presentations);
+    HUDitorBindings.CollectPresentations(layer.GetVirtualWindow(), manager.presentations);
+    if !IsDefined(manager.overlay) {
+      manager.overlay = new HUDitorOverlay();
+      manager.overlay.Initialize(layer.GetVirtualWindow(), manager);
+    };
+    for controller in controllers {
+      let gameController: ref<inkGameController> = controller as inkGameController;
+      if IsDefined(gameController) { HUDitorBindings.DiscoverController(manager, gameController); };
+    };
+    for slot in manager.controllers { slot.Commit(); };
+    let psm: ref<IBlackboard> = GameInstance.GetBlackboardSystem(manager.gameInstance).GetLocalInstanced(manager.player.GetEntityID(), GetAllBlackboardDefs().PlayerStateMachine);
+    if IsDefined(psm) {
+      manager.sceneTier = psm.GetInt(GetAllBlackboardDefs().PlayerStateMachine.SceneTier);
+      manager.visionState = psm.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Vision);
+    };
+    manager.UpdateContext();
+  }
+
+  private static func DiscoverController(manager: ref<HUDWidgetsManager>, controller: ref<inkGameController>) -> Void {
+    let source: ref<inkWidget> = controller.GetRootWidget();
+    if !IsDefined(source) || HUDitorPreview.IsSample(source) { return; };
+    let scanner: ref<scannerDetailsGameController> = controller as scannerDetailsGameController;
+    if IsDefined(scanner) {
+      let scannerBB: ref<IBlackboard> = GameInstance.GetBlackboardSystem(manager.gameInstance).Get(GetAllBlackboardDefs().UI_Scanner);
+      manager.scannerBlocked = EntityID.IsDefined(scannerBB.GetEntityID(GetAllBlackboardDefs().UI_Scanner.ScannedObject)) && !scanner.m_isQuickHackAble;
+    };
+    HUDitorBindings.PrepareSurface(manager, controller);
+    let name: CName = n"";
+    switch controller.GetClassName() {
+      case n"QuestTrackerGameController": name = n"NewTracker"; break;
+      case n"gameuiMinimapContainerController": name = n"NewMinimap"; break;
+      case n"WantedBarGameController": name = n"NewWanted"; break;
+      case n"JournalNotificationQueue": name = n"NewQuestNotifications"; break;
+      case n"ItemsNotificationQueue": name = n"NewItemNotifications"; break;
+      case n"VehicleSummonWidgetGameController": name = n"NewVehicleSummon"; break;
+      case n"gameuiWeaponRosterGameController": name = n"NewWeaponRoster"; break;
+      case n"CrouchIndicatorGameController": name = n"NewCrouchIndicator"; break;
+      case n"gameuiHudHealthbarGameController": name = n"NewHealthBar"; break;
+      case n"StaminabarWidgetGameController": name = n"NewStaminaBar"; break;
+      case n"hudCarController": name = n"NewCarHud"; break;
+      case n"BossHealthBarGameController": name = n"NewBossHealthbar"; break;
+      case n"dialogWidgetGameController": name = n"NewDialogChoices"; break;
+      case n"SubtitlesGameController": name = n"NewDialogSubtitles"; break;
+      case n"HUDProgressBarController": name = n"NewProgressBar"; break;
+      case n"gameuiFPSCounterGameController": name = n"NewFpsCounter"; break;
+      case n"gameuiInputHintManagerGameController":
+        let hints: ref<InputHintManagerGameController> = controller as InputHintManagerGameController;
+        if IsDefined(hints) && Equals(hints.hintContainerId, n"GameplayInputHelper") { name = n"NewInputHint"; };
+        break;
+      case n"NewHudPhoneGameController":
+        let phone: ref<NewHudPhoneGameController> = controller as NewHudPhoneGameController;
+        HUDitorBindings.Stage(manager, n"NewPhoneAvatar", inkWidgetRef.Get(phone.holoAudioCallElement.slot), controller);
+        HUDitorBindings.Stage(manager, n"NewPhoneControl", inkWidgetRef.Get(phone.incomingCallElement.slot), controller);
+        HUDitorBindings.Stage(manager, n"NewPhoneHotkey", inkWidgetRef.Get(phone.phoneIconElement.slot), controller);
+        break;
+      case n"HotkeysWidgetController":
+        let hotkeys: ref<HotkeysWidgetController> = controller as HotkeysWidgetController;
+        HUDitorBindings.Stage(manager, n"NewDpad", inkWidgetRef.Get(hotkeys.m_dpadHintsPanel), controller);
+        HUDitorBindings.Stage(manager, n"NewVehicleRadio", inkWidgetRef.Get(hotkeys.m_radioSlot), controller);
+        HUDitorBindings.Stage(manager, n"NewVehicleHotkey", inkWidgetRef.Get(hotkeys.m_carSlot), controller);
+        break;
+      case n"HotkeyConsumableWidgetController":
+        let vehicle: ref<HotkeyConsumableWidgetController> = controller as HotkeyConsumableWidgetController;
+        HUDitorBindings.Stage(manager, n"NewDpad", inkWidgetRef.Get(vehicle.m_container), controller);
+        HUDitorBindings.Stage(manager, n"NewVehicleRadio", inkWidgetRef.Get(vehicle.m_radioSlot), controller);
+        HUDitorBindings.Stage(manager, n"NewCrystalCoat", inkWidgetRef.Get(vehicle.m_vehicleCustomizationSlot), controller);
+        HUDitorBindings.Stage(manager, n"NewAutoDrive", inkWidgetRef.Get(vehicle.m_autodriveSlot), controller);
+        break;
+      case n"HotkeyCustomRadioWidgetController":
+        let radio: ref<HotkeyCustomRadioWidgetController> = controller as HotkeyCustomRadioWidgetController;
+        HUDitorBindings.Stage(manager, n"NewVehicleRadio", inkWidgetRef.Get(radio.m_radioSlot), controller);
+        break;
+    };
+    if NotEquals(name, n"") { HUDitorBindings.Stage(manager, name, source, controller); };
+  }
+
+  private static func PrepareSurface(manager: ref<HUDWidgetsManager>, owner: ref<inkGameController>) -> Void {
+    let enabled: Bool;
+    switch owner.GetClassName() {
+      case n"HotkeysWidgetController":
+        enabled = manager.IsEnabled(n"NewDpad") || manager.IsEnabled(n"NewVehicleRadio") || manager.IsEnabled(n"NewVehicleHotkey");
+        break;
+      case n"HotkeyConsumableWidgetController":
+        enabled = manager.IsEnabled(n"NewDpad") || manager.IsEnabled(n"NewVehicleRadio") || manager.IsEnabled(n"NewCrystalCoat") || manager.IsEnabled(n"NewAutoDrive");
+        break;
+      case n"HotkeyCustomRadioWidgetController": enabled = manager.IsEnabled(n"NewVehicleRadio"); break;
+      default: return;
+    };
+    if !enabled { return; };
+    let presentation: ref<inkWidget> = HUDitorBindings.FindPresentation(manager, owner, owner.GetRootWidget());
+    if !IsDefined(presentation) { return; };
+    if !IsDefined(manager.surfaces) { manager.surfaces = HUDitorSurfaces.Create(manager.window); };
+    manager.surfaces.Attach(owner, presentation);
+  }
+
+  private static func CollectPresentations(widget: ref<inkWidget>, out images: array<wref<inkWidget>>) -> Void {
+    if Equals(widget.GetName(), n"HUDitorOverlay") || Equals(widget.GetName(), n"HUDitorSurfaces") { return; };
+    let image: ref<inkImage> = widget as inkImage;
+    if IsDefined(image) {
+      ArrayPush(images, image);
+      return;
+    };
+    let compound: ref<inkCompoundWidget> = widget as inkCompoundWidget;
+    if IsDefined(compound) {
+      let i: Int32 = 0;
+      while i < compound.GetNumChildren() {
+        HUDitorBindings.CollectPresentations(compound.GetWidgetByIndex(i), images);
+        i += 1;
+      };
+    };
+  }
+
+  private static func FindPresentation(manager: ref<HUDWidgetsManager>, owner: ref<inkGameController>, source: ref<inkWidget>) -> ref<inkWidget> {
+    let ancestor: ref<inkWidget> = source;
+    while IsDefined(ancestor) {
+      if ancestor == manager.window { return null; };
+      ancestor = ancestor.parentWidget;
+    };
+    let name: CName;
+    switch owner.GetClassName() {
+      case n"QuestTrackerGameController": name = n"quest_list"; break;
+      case n"gameuiMinimapContainerController": name = n"minimap"; break;
+      case n"gameuiHudHealthbarGameController": name = n"player_health_bar"; break;
+      case n"gameuiWeaponRosterGameController": name = n"ammo_counter"; break;
+      case n"WantedBarGameController": name = n"wanted_bar"; break;
+      case n"VehicleSummonWidgetGameController": name = n"vehicle_summon_notification"; break;
+      case n"CrouchIndicatorGameController": name = n"crouch_indicator"; break;
+      case n"StaminabarWidgetGameController": name = n"staminabar"; break;
+      case n"hudCarController": name = n"car hud"; break;
+      case n"BossHealthBarGameController": name = n"boss_healthbar"; break;
+      case n"HUDProgressBarController": name = n"hud_progress_bar"; break;
+      case n"gameuiInputHintManagerGameController": name = n"input_hint"; break;
+      case n"HotkeysWidgetController": name = n"dpad_hint"; break;
+      case n"HotkeyConsumableWidgetController": name = n"dpad_hint_consumables"; break;
+      case n"HotkeyCustomRadioWidgetController": name = n"radio_custom"; break;
+      default: return null;
+    };
+    for image in manager.presentations {
+      if Equals(image.GetName(), name) { return image; };
+    };
+    return null;
+  }
 }
 
 @addMethod(inkGameController)
 protected cb func OnHijackSlotsEvent(evt: ref<HijackSlotsEvent>) -> Bool {
-  if this.IsA(n"gameuiRootHudGameController") {
-    this.InitWidgetNameLabel();
-    this.CreateCustomSlots();
-    this.InitResolutionWatcher();
-    this.InitBaseWidgets();
-  };
+  let manager: ref<HUDWidgetsManager> = HUDWidgetsManager.GetInstance();
+  if this.IsA(n"gameuiRootHudGameController") && IsDefined(manager) { manager.RequestBind(); };
 }
 
-// -- Reparent incoming call parts separately
-@wrapMethod(HoloAudioCallLogicController)
-protected cb func OnInitialize() -> Bool {
-  let wrap: Bool = wrappedMethod();
-  let questSystem: ref<QuestsSystem> = GameInstance.GetQuestsSystem(GetGameInstance());
-  let carHudUnlocked: Bool = questSystem.GetFact(n"unlock_car_hud_dpad") > 0;
-
-  let system: ref<inkSystem> = GameInstance.GetInkSystem();
-  let config: ref<HUDitorConfig> = new HUDitorConfig();
-  let root: ref<inkCompoundWidget> = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
-  let newParent: ref<inkCompoundWidget> = root.GetWidgetByPathName(n"NewPhoneAvatar") as inkCompoundWidget;
-  let targetWidget: ref<inkCompoundWidget>;
-  if config.incomingCallAvatarEnabled && carHudUnlocked { 
-    targetWidget= this.GetRootCompoundWidget();
-    targetWidget.SetAnchorPoint(Vector2(0.5, 0.5));
-    targetWidget.Reparent(newParent, 24);
-  };
-  return wrap;
-}
-
-@wrapMethod(IncomingCallLogicController)
-protected cb func OnInitialize() -> Bool {
-  let wrap: Bool = wrappedMethod();
-  let questSystem: ref<QuestsSystem> = GameInstance.GetQuestsSystem(GetGameInstance());
-  let carHudUnlocked: Bool = questSystem.GetFact(n"unlock_car_hud_dpad") > 0;
-  let system: ref<inkSystem> = GameInstance.GetInkSystem();
-  let config: ref<HUDitorConfig> = new HUDitorConfig();
-  let root: ref<inkCompoundWidget> = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
-  let newParent: ref<inkCompoundWidget> = root.GetWidgetByPathName(n"NewPhoneControl") as inkCompoundWidget;
-  let targetWidget: ref<inkCompoundWidget>;
-  if config.incomingCallAvatarEnabled && carHudUnlocked { 
-    targetWidget= this.GetRootCompoundWidget();
-    targetWidget.SetAnchorPoint(Vector2(0.5, 0.5));
-    targetWidget.Reparent(newParent, 25);
-  };
-  return wrap;
-}
-
-// -- Phone avatar fluff cleanup (kudos to Strahlimeier)
-@wrapMethod(NewHudPhoneGameController)
-private func SetPhoneFunction(newState: EHudPhoneFunction) -> Void {
-  wrappedMethod(newState);
- 
-  // When phone goes inactive, clean up avatar slot
-  if Equals(newState, EHudPhoneFunction.Inactive) {
-    let system: ref<inkSystem> = GameInstance.GetInkSystem();
-    if IsDefined(system) {
-      let hudRoot: ref<inkCompoundWidget> = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
-      if IsDefined(hudRoot) {
-        let phoneAvatarSlot: ref<inkCompoundWidget> = hudRoot.GetWidgetByPathName(n"NewPhoneAvatar") as inkCompoundWidget;
-        if IsDefined(phoneAvatarSlot) {
-          phoneAvatarSlot.RemoveAllChildren();
-        };
-      };
-    };
-  };
-}
-
-// -- FPS Counter hacks
+@if(ModuleExists("FpsCounter"))
 @addMethod(inkHUDGameController)
 protected cb func OnReparentFpsCounterEvent(evt: ref<ReparentFpsCounterEvent>) -> Bool {
-  if this.IsA(n"gameuiFPSCounterGameController") {
-    let system: ref<inkSystem> = GameInstance.GetInkSystem();
-    let hudRoot: ref<inkCompoundWidget> = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
-    let container: ref<inkCompoundWidget> = hudRoot.GetWidgetByPathName(n"NewFpsCounter") as inkCompoundWidget;
-    let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
-    root.Reparent(container, 26);
-  };
+  let manager: ref<HUDWidgetsManager> = HUDWidgetsManager.GetInstance();
+  if IsDefined(manager) && manager.IsEnabled(n"NewFpsCounter") && this.IsA(n"gameuiFPSCounterGameController") { manager.RequestBind(); };
 }
 
 @if(ModuleExists("FpsCounter"))
 @addMethod(inkHUDGameController)
 protected cb func OnHuditorFpsCounterTrack(evt: ref<FPSCounterChangeStateEvent>) -> Bool {
-  if this.IsA(n"gameuiFPSCounterGameController") {
-    let system: ref<inkSystem> = GameInstance.GetInkSystem();
-    let hudRoot: ref<inkCompoundWidget>;
-    let container: ref<inkCompoundWidget>;
-    let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
-    if Equals(root.parentWidget.GetName(), n"HUDMiddleWidget") {
-      hudRoot = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
-      container = hudRoot.GetWidgetByPathName(n"NewFpsCounter") as inkCompoundWidget;
-      root.Reparent(container, 27);
-    };
-  };
-}
-
-// -- Reparent vehicle hotkey
-@addMethod(HotkeysWidgetController)
-protected cb func OnHuditorInitializedEvent(evt: ref<HuditorInitializedEvent>) -> Bool {
-  let config: ref<HUDitorConfig> = new HUDitorConfig();
-  let vehicleSlot: ref<inkWidget>;
-  let system: ref<inkSystem>;
-  let root: ref<inkCompoundWidget>;
-  let newParent: ref<inkCompoundWidget>;
-
-  if config.vehicleHotkeyEnabled {
-    vehicleSlot = this.GetRootCompoundWidget().GetWidget(n"mainCanvas/vehicleSlot");
-    system = GameInstance.GetInkSystem();
-    root = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
-    newParent = root.GetWidgetByPathName(n"NewVehicleHotkey") as inkCompoundWidget;
-    vehicleSlot.Reparent(newParent);
-  };
+  let manager: ref<HUDWidgetsManager> = HUDWidgetsManager.GetInstance();
+  if IsDefined(manager) && manager.IsEnabled(n"NewFpsCounter") && this.IsA(n"gameuiFPSCounterGameController") { manager.RequestBind(); };
 }

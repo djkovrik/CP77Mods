@@ -5,7 +5,7 @@ public class HUDitorConfig {
   @runtimeProperty("ModSettings.mod", "HUDitor")
   @runtimeProperty("ModSettings.category", "UI-Settings-GenaralInput")
   @runtimeProperty("ModSettings.category.order", "0")
-  @runtimeProperty("ModSettings.displayName", "Mod-Dismiss-Hotkey")
+  @runtimeProperty("ModSettings.displayName", "Mod-HUDitor-Hotkey")
   @runtimeProperty("ModSettings.description", "UI-Settings-Bind")
   public let huditorEditor: EInputKey = EInputKey.IK_F7;
 
@@ -82,13 +82,6 @@ public class HUDitorConfig {
   @runtimeProperty("ModSettings.mod", "HUDitor")
   @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")
   @runtimeProperty("ModSettings.category.order", "1")
-  @runtimeProperty("ModSettings.displayName", "Mod-HUDitor-Widget-Phone-Controller")
-  @runtimeProperty("ModSettings.description", "Mod-HUDitor-Toggles-Desc")
-  public let phoneHotkeyEnabled: Bool = true;
-
-  @runtimeProperty("ModSettings.mod", "HUDitor")
-  @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")
-  @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "Mod-HUDitor-Widget-Player-Healthbar")
   @runtimeProperty("ModSettings.description", "Mod-HUDitor-Toggles-Desc")
   public let playerHealthbarEnabled: Bool = true;
@@ -99,6 +92,13 @@ public class HUDitorConfig {
   @runtimeProperty("ModSettings.displayName", "Mod-HUDitor-Widget-Stamina")
   @runtimeProperty("ModSettings.description", "Mod-HUDitor-Toggles-Desc")
   public let playerStaminabarEnabled: Bool = true;
+
+  @runtimeProperty("ModSettings.mod", "HUDitor")
+  @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")
+  @runtimeProperty("ModSettings.category.order", "1")
+  @runtimeProperty("ModSettings.displayName", "Mod-HUDitor-Widget-Phone-Controller")
+  @runtimeProperty("ModSettings.description", "Mod-HUDitor-Toggles-Desc")
+  public let phoneHotkeyEnabled: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "HUDitor")
   @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")
@@ -175,26 +175,13 @@ public class HUDitorConfig {
   @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "Mod-HUDitor-Widget-Dialog-Choices")
   @runtimeProperty("ModSettings.description", "Mod-HUDitor-Toggles-Desc")
-  public let dialogChoicesEnabled: Bool = false;
+  public let dialogChoicesEnabled: Bool = true;
 
   @runtimeProperty("ModSettings.mod", "HUDitor")
   @runtimeProperty("ModSettings.category", "Mod-HUDitor-Toggles")
   @runtimeProperty("ModSettings.category.order", "1")
   @runtimeProperty("ModSettings.displayName", "Mod-HUDitor-Widget-Dialog-Subs")
   @runtimeProperty("ModSettings.description", "Mod-HUDitor-Toggles-Desc")
-  public let dialogSubtitlesEnabled: Bool = false;
+  public let dialogSubtitlesEnabled: Bool = true;
 
-  @runtimeProperty("ModSettings.mod", "HUDitor")
-  @runtimeProperty("ModSettings.category", "Mod-HUDitor-Compatibility")
-  @runtimeProperty("ModSettings.category.order", "2")
-  @runtimeProperty("ModSettings.displayName", "E3 Compass")
-  @runtimeProperty("ModSettings.description", "Mod-HUDitor-Compatibility-Desc")
-  public let compatE3CompassEnabled: Bool = false;
-
-  @runtimeProperty("ModSettings.mod", "HUDitor")
-  @runtimeProperty("ModSettings.category", "Mod-HUDitor-Compatibility")
-  @runtimeProperty("ModSettings.category.order", "2")
-  @runtimeProperty("ModSettings.displayName", "FPS Counter")
-  @runtimeProperty("ModSettings.description", "Mod-HUDitor-Compatibility-Desc")
-  public let fpsCounterEnabled: Bool = false;
 }

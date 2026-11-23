@@ -1,262 +1,265 @@
 {
-   "NewHealthBar":{
-      "translation":{
-         "Y":0.0,
-         "X":0.0
+  "version": 2,
+  "slots": {
+    "NewTracker": {
+      "translation": {
+        "X": 0,
+        "Y": 0
       },
-      "scale":{
-         "Y":0.666667,
-         "X":0.666667
+      "zoom": {
+        "X": 1,
+        "Y": 1
       }
-   },
-   "NewDpad":{
-      "translation":{
-         "Y":0.0,
-         "X":0.0
+    },
+    "NewMinimap": {
+      "translation": {
+        "X": 0,
+        "Y": 0
       },
-      "scale":{
-         "Y":0.666667,
-         "X":0.666667
+      "zoom": {
+        "X": 1,
+        "Y": 1
       }
-   },
-   "NewInputHint":{
-      "translation":{
-         "Y":0.0,
-         "X":0.0
+    },
+    "NewWanted": {
+      "translation": {
+        "X": 0,
+        "Y": 0
       },
-      "scale":{
-         "Y":0.666667,
-         "X":0.666667
+      "zoom": {
+        "X": 1,
+        "Y": 1
       }
-   },
-   "NewPhoneAvatar":{
-      "translation":{
-         "Y":0.0,
-         "X":0.0
+    },
+    "NewQuestNotifications": {
+      "translation": {
+        "X": 0,
+        "Y": 0
       },
-      "scale":{
-         "Y":0.666667,
-         "X":0.666667
+      "zoom": {
+        "X": 1,
+        "Y": 1
       }
-   },
-   "NewPhoneControl":{
-      "translation":{
-         "Y":0.0,
-         "X":0.0
+    },
+    "NewItemNotifications": {
+      "translation": {
+        "X": 0,
+        "Y": 0
       },
-      "scale":{
-         "Y":0.666667,
-         "X":0.666667
+      "zoom": {
+        "X": 1,
+        "Y": 1
       }
-   },
-   "NewWanted":{
-      "translation":{
-         "Y":0.0,
-         "X":0.0
+    },
+    "NewVehicleSummon": {
+      "translation": {
+        "X": 0,
+        "Y": 0
       },
-      "scale":{
-         "Y":0.666667,
-         "X":0.666667
+      "zoom": {
+        "X": 1,
+        "Y": 1
       }
-   },
-   "NewWeaponRoster":{
-      "translation":{
-         "Y":0.0,
-         "X":0.0
+    },
+    "NewWeaponRoster": {
+      "translation": {
+        "X": 0,
+        "Y": 0
       },
-      "scale":{
-         "Y":0.666667,
-         "X":0.666667
+      "zoom": {
+        "X": 1,
+        "Y": 1
       }
-   },
-   "NewCrouchIndicator":{
-      "translation":{
-         "Y":0.0,
-         "X":0.0
+    },
+    "NewCrouchIndicator": {
+      "translation": {
+        "X": 0,
+        "Y": 0
       },
-      "scale":{
-         "Y":0.666667,
-         "X":0.666667
+      "zoom": {
+        "X": 1,
+        "Y": 1
       }
-   },
-   "NewQuestNotifications":{
-      "translation":{
-         "Y":0.0,
-         "X":0.0
+    },
+    "NewDpad": {
+      "translation": {
+        "X": 0,
+        "Y": 0
       },
-      "scale":{
-         "Y":0.666667,
-         "X":0.666667
+      "zoom": {
+        "X": 1,
+        "Y": 1
       }
-   },
-   "NewItemNotifications":{
-      "translation":{
-         "Y":0.0,
-         "X":0.0
+    },
+    "NewHealthBar": {
+      "translation": {
+        "X": 0,
+        "Y": 0
       },
-      "scale":{
-         "Y":0.666667,
-         "X":0.666667
+      "zoom": {
+        "X": 1,
+        "Y": 1
       }
-   },
-   "NewMinimap":{
-      "translation":{
-         "Y":0.0,
-         "X":0.0
+    },
+    "NewStaminaBar": {
+      "translation": {
+        "X": 0,
+        "Y": 0
       },
-      "scale":{
-         "Y":0.666667,
-         "X":0.666667
+      "zoom": {
+        "X": 1,
+        "Y": 1
       }
-   },
-   "NewTracker":{
-      "translation":{
-         "Y":0.0,
-         "X":0.0
+    },
+    "NewInputHint": {
+      "translation": {
+        "X": 0,
+        "Y": 0
       },
-      "scale":{
-         "Y":0.666667,
-         "X":0.666667
+      "zoom": {
+        "X": 1,
+        "Y": 1
       }
-   },
-   "NewStaminaBar":{
-      "translation":{
-         "Y":0.0,
-         "X":0.0
+    },
+    "NewCarHud": {
+      "translation": {
+        "X": 0,
+        "Y": 0
       },
-      "scale":{
-         "Y":0.666667,
-         "X":0.666667
+      "zoom": {
+        "X": 1,
+        "Y": 1
       }
-   },
-   "NewVehicleSummon":{
-      "translation":{
-         "Y":0.0,
-         "X":0.0
+    },
+    "NewAutoDrive": {
+      "translation": {
+        "X": 0,
+        "Y": 0
       },
-      "scale":{
-         "Y":0.666667,
-         "X":0.666667
+      "zoom": {
+        "X": 1,
+        "Y": 1
       }
-   },
-   "NewCarHud":{
-      "translation":{
-         "Y":0.0,
-         "X":0.0
+    },
+    "NewCrystalCoat": {
+      "translation": {
+        "X": 0,
+        "Y": 0
       },
-      "scale":{
-         "Y":0.666667,
-         "X":0.666667
+      "zoom": {
+        "X": 1,
+        "Y": 1
       }
-   },
-   "NewBossHealthbar":{
-      "translation":{
-         "Y":0.0,
-         "X":0.0
+    },
+    "NewVehicleRadio": {
+      "translation": {
+        "X": 0,
+        "Y": 0
       },
-      "scale":{
-         "Y":0.666667,
-         "X":0.666667
+      "zoom": {
+        "X": 1,
+        "Y": 1
       }
-   },
-   "NewDialogChoices":{
-      "translation":{
-         "Y":0.0,
-         "X":0.0
+    },
+    "NewVehicleHotkey": {
+      "translation": {
+        "X": 0,
+        "Y": 0
       },
-      "scale":{
-         "Y":0.666667,
-         "X":0.666667
+      "zoom": {
+        "X": 1,
+        "Y": 1
       }
-   },
-   "NewDialogSubtitles":{
-      "translation":{
-         "Y":0.0,
-         "X":0.0
+    },
+    "NewPhoneHotkey": {
+      "translation": {
+        "X": 0,
+        "Y": 0
       },
-      "scale":{
-         "Y":0.666667,
-         "X":0.666667
+      "zoom": {
+        "X": 1,
+        "Y": 1
       }
-   },
-   "NewCompass":{
-      "translation":{
-         "Y":0.0,
-         "X":0.0
+    },
+    "NewPhoneAvatar": {
+      "translation": {
+        "X": 0,
+        "Y": 0
       },
-      "scale":{
-         "Y":0.666667,
-         "X":0.666667
+      "zoom": {
+        "X": 1,
+        "Y": 1
       }
-   },
-   "NewPhoneHotkey":{
-      "translation":{
-         "Y":0.0,
-         "X":0.0
+    },
+    "NewPhoneControl": {
+      "translation": {
+        "X": 0,
+        "Y": 0
       },
-      "scale":{
-         "Y":0.666667,
-         "X":0.666667
+      "zoom": {
+        "X": 1,
+        "Y": 1
       }
-   },
-   "NewFpsCounter":{
-      "translation":{
-         "Y":0.0,
-         "X":0.0
+    },
+    "NewBossHealthbar": {
+      "translation": {
+        "X": 0,
+        "Y": 0
       },
-      "scale":{
-         "Y":0.666667,
-         "X":0.666667
+      "zoom": {
+        "X": 1,
+        "Y": 1
       }
-   },
-   "NewProgressBar":{
-      "translation":{
-         "Y":0.0,
-         "X":0.0
+    },
+    "NewDialogChoices": {
+      "translation": {
+        "X": 0,
+        "Y": 0
       },
-      "scale":{
-         "Y":0.666667,
-         "X":0.666667
+      "zoom": {
+        "X": 1,
+        "Y": 1
       }
-   },
-   "NewAutoDrive":{
-      "translation":{
-         "Y":0.0,
-         "X":0.0
+    },
+    "NewDialogSubtitles": {
+      "translation": {
+        "X": 0,
+        "Y": 0
       },
-      "scale":{
-         "Y":0.666667,
-         "X":0.666667
+      "zoom": {
+        "X": 1,
+        "Y": 1
       }
-   },
-   "NewCrystalCoat":{
-      "translation":{
-         "Y":0.0,
-         "X":0.0
+    },
+    "NewProgressBar": {
+      "translation": {
+        "X": 0,
+        "Y": 0
       },
-      "scale":{
-         "Y":0.666667,
-         "X":0.666667
+      "zoom": {
+        "X": 1,
+        "Y": 1
       }
-   },
-   "NewVehicleRadio":{
-      "translation":{
-         "Y":0.0,
-         "X":0.0
+    },
+    "NewCompass": {
+      "translation": {
+        "X": 0,
+        "Y": 0
       },
-      "scale":{
-         "Y":0.666667,
-         "X":0.666667
+      "zoom": {
+        "X": 1,
+        "Y": 1
       }
-   },
-   "NewVehicleHotkey":{
-      "translation":{
-         "Y":0.0,
-         "X":0.0
+    },
+    "NewFpsCounter": {
+      "translation": {
+        "X": 0,
+        "Y": 0
       },
-      "scale":{
-         "Y":0.666667,
-         "X":0.666667
+      "zoom": {
+        "X": 1,
+        "Y": 1
       }
-   }
+    }
+  }
 }

@@ -75,9 +75,6 @@ public class HUDitorTexts {
       case n"NewVehicleHotkey":
         nameString = GetLocalizedTextByKey(n"UI-Settings-ButtonMappings-Actions-Vehicle"); 
         break;
-      case n"NewCompass":
-        nameString = "E3 Compass"; 
-        break;
       case n"NewFpsCounter":
         nameString = "FPS Counter"; 
         break;

@@ -1,204 +1,406 @@
-import HUDrag.HUDitorConfig
+import Codeware.UI.ScreenHelper
+import HUDrag.HUDitorWatcher
 import HUDrag.HUDWidgetsManager.*
 
-@addField(inkGameController)
-public let originalOpacity: Float;
-
-@addField(inkGameController)
-public let originalVisibility: Bool;
-
-@addMethod(inkGameController)
-protected cb func OnDisplayPreviewEvent(event: ref<DisplayPreviewEvent>) -> Bool {
-  let config: ref<HUDitorConfig> = new HUDitorConfig();
-  if config.questTrackerEnabled { this.ShowQuestTracker(true); }
-  if config.minimapEnabled && !config.compatE3CompassEnabled { this.ShowMinimap(true); }
-  if config.wantedBarEnabled { this.ShowWantedBar(true); }
-  if config.vehicleSummonEnabled { this.ShowVehicleSummonNotification(true); }
-  if config.weaponRosterEnabled { this.ShowAmmoCounter(true); }
-  if config.crouchIndicatorEnabled { this.ShowCrouchIndicator(true); }
-  if config.dpadEnabled { this.ShowDpad(true); }
-  if config.phoneHotkeyEnabled { this.ShowPhoneHotkey(true); }
-  if config.playerHealthbarEnabled { this.ShowHealthbar(true); }
-  if config.playerStaminabarEnabled { this.ShowStaminaBar(true); }
-  if config.inputHintsEnabled { this.ShowInputHints(true); }
-  if config.bossHealthbarEnabled { this.ShowBossHealthbar(true); }
-  if config.progressWidgetEnabled { this.ShowHudProgressBarController(true); }
-}
-
-// Can't show both notification previews at the same time so moved here to show preview when widget selected
-@addMethod(inkGameController)
-protected cb func OnActiveWidgetChanged(event: ref<SetActiveHUDEditorWidgetEvent>) -> Bool {
-  let widgetName: CName = event.activeWidget;
-  let config: ref<HUDitorConfig> = new HUDitorConfig();
-  if this.IsA(n"JournalNotificationQueue") && Equals(widgetName, n"NewQuestNotifications") && config.questNotificationsEnabled { 
-    this.ShowJournalNotification(); 
-  };
-
-  if this.IsA(n"ItemsNotificationQueue") && Equals(widgetName, n"NewItemNotifications") && config.itemNotificationsEnabled { 
-    this.ShowItemsNotification(); 
-  };
-
-  if this.IsA(n"NewHudPhoneGameController") && Equals(widgetName, n"NewPhoneAvatar") && config.incomingCallAvatarEnabled {
-    this.ShowIncomingPhoneCall(true);
-  };
-
-  if this.IsA(n"NewHudPhoneGameController") && Equals(widgetName, n"NewPhoneControl") && config.incomingCallButtonEnabled {
-    this.ShowIncomingPhoneCall(true);
-  };
-}
-
-@addMethod(inkGameController)
-protected cb func OnHidePreviewEvent(event: ref<HidePreviewEvent>) -> Bool {
-  this.ShowQuestTracker(false);
-  this.ShowMinimap(false);
-  this.ShowWantedBar(false);
-  this.ShowVehicleSummonNotification(false);
-  this.ShowAmmoCounter(false);
-  this.ShowCrouchIndicator(false);
-  this.ShowDpad(false);
-  this.ShowPhoneHotkey(false);
-  this.ShowHealthbar(false);
-  this.ShowStaminaBar(false);
-  this.ShowIncomingPhoneCall(false);
-  this.ShowInputHints(false);
-  this.ShowBossHealthbar(false);
-  this.ShowHudProgressBarController(false);
-}
-
-// Preview helpers
-@addMethod(inkGameController)
-private func ShowQuestTracker(show: Bool) -> Void {
-  if this.IsA(n"QuestTrackerGameController") {
-    if show {
-      this.originalOpacity = this.GetRootWidget().GetOpacity();
-      this.GetRootWidget().SetOpacity(1.0);
-    } else {
-      this.GetRootWidget().SetOpacity(this.originalOpacity);
+public abstract class HUDitorGeometry {
+  public static func Scale(widget: ref<inkWidget>) -> Vector2 {
+    let scale: Vector2 = Vector2(1.0, 1.0);
+    while IsDefined(widget) {
+      let current: Vector2 = widget.GetScale();
+      scale.X *= current.X;
+      scale.Y *= current.Y;
+      widget = widget.parentWidget;
     };
-  };
-}
+    return scale;
+  }
 
-@addMethod(inkGameController)
-private func ShowMinimap(show: Bool) -> Void {
-  if this.IsA(n"gameuiMinimapContainerController") {
-    if show {
-      this.originalOpacity = this.GetRootWidget().GetOpacity();
-      this.GetRootWidget().SetOpacity(1.0);
-    } else {
-      this.GetRootWidget().SetOpacity(this.originalOpacity);
-    };
-  };
-}
-
-@addMethod(inkGameController)
-private func ShowWantedBar(show: Bool) -> Void {
-  if this.IsA(n"WantedBarGameController") {
-    let controller = this as WantedBarGameController;
-    let stars: Int32;
-    if show {
-      stars = 5;
-    } else {
-      stars = 0;
-    }
-    controller.OnWantedDataChange(stars);
-  };
-}
-
-
-@addMethod(inkGameController)
-private func ShowJournalNotification() -> Void {
-  if this.IsA(n"JournalNotificationQueue") {
-    let controller = this as JournalNotificationQueue;
-    let notificationData: gameuiGenericNotificationData;
-    let userData: ref<PhoneMessageNotificationViewData> = new PhoneMessageNotificationViewData();
-    userData.entryHash = -1;
-    userData.threadHash = -1;
-    userData.contactHash = -1;
-    userData.title = "Preview notifications";
-    userData.SMSText = "Will disappear after 10 seconds";
-    userData.action = new GenericNotificationBaseAction();
-    userData.animation = n"notification_phone_MSG";
-    userData.soundEvent = n"PhoneSmsPopup";
-    userData.soundAction = n"OnOpen";
-    notificationData.time = 10.0;
-    notificationData.widgetLibraryItemName = n"notification_message";
-    notificationData.notificationData = userData;
-    controller.AddNewNotificationData(notificationData);
-  };
-}
-
-@addMethod(inkGameController)
-private func ShowItemsNotification() -> Void {
-  if this.IsA(n"ItemsNotificationQueue") {
-    let controller = this as ItemsNotificationQueue;
-    let data: ref<ItemAddedNotificationViewData>;
-    let notificationData: gameuiGenericNotificationData;
-    data = new ItemAddedNotificationViewData();
-    data.animation = n"Item_Received";
-    data.itemRarity = n"epic";
-    data.itemID = ItemID.FromTDBID(t"Items.Pants_03_rich_01");
-    data.title = GetLocalizedText("Story-base-gameplay-gui-widgets-notifications-quest_update-_localizationString19");
-    notificationData.time = 10.0;
-    notificationData.widgetLibraryItemName = controller.m_itemNotification;
-    notificationData.notificationData = data;
-    controller.AddNewNotificationData(notificationData);
-  };
-}
-
-@addMethod(inkGameController)
-private func ShowVehicleSummonNotification(show: Bool) -> Void {
-  if this.IsA(n"VehicleSummonWidgetGameController") {
-    let controller = this as VehicleSummonWidgetGameController;
-    controller.OnVehicleSummonStateChanged(1u);
-    controller.m_rootWidget.SetVisible(show);
-    let textParams: ref<inkTextParams> = new inkTextParams();
-    textParams.AddMeasurement("distance", Cast<Float>(123), EMeasurementUnit.Meter);
-    textParams.AddString("unit", GetLocalizedText(NameToString(MeasurementUtils.GetUnitLocalizationKey(UILocalizationHelper.GetSystemBaseUnit()))));
-    inkTextRef.SetText(controller.m_distanceLabel, "123M", textParams);
-    controller.PlayAnimation(n"intro");
-    let options: inkAnimOptions;
-    options.loopType = inkanimLoopType.Cycle;
-    options.loopCounter = 35u;
-    controller.m_animationCounterProxy = controller.PlayLibraryAnimation(n"counter", options);
-    GameInstance.GetAudioSystem(controller.m_gameInstance).Play(n"ui_jingle_car_call");
-    inkTextRef.SetLocalizedTextScript(controller.m_vehicleNameLabel, "Your vehicle name");
-  };
-}
-
-@addMethod(inkGameController)
-private func ShowAmmoCounter(show: Bool) -> Void {
-  if this.IsA(n"weaponRosterGameController") {
-    let controller: ref<WeaponRosterGameController> = this as WeaponRosterGameController;
-    if show {
-      this.originalVisibility = controller.m_folded;
-      if this.originalVisibility {
-        controller.Unfold();
-      };
-    } else {
-      if this.originalVisibility {
-        controller.Fold();
+  public static func PresentationOrigin(image: ref<inkWidget>) -> Vector2 {
+    let rect: RectF = GetScreenPosition(image);
+    if HUDitorGeometry.Visible(image) { return Vector2(rect.Left, rect.Top); };
+    let parent: ref<inkWidget> = image.parentWidget;
+    if IsDefined(parent) && parent.IsA(n"inkVerticalPanelWidget") {
+      let desired: Vector2 = parent.GetDesiredSize();
+      if desired.X == 0.0 && desired.Y == 0.0 {
+        let anchor: RectF = GetScreenPosition(parent);
+        let size: Vector2 = image.GetDesiredSize();
+        let scale: Vector2 = HUDitorGeometry.Scale(parent);
+        let point: Vector2 = parent.GetAnchorPoint();
+        return Vector2(anchor.Left - size.X * scale.X * point.X, anchor.Top - size.Y * scale.Y * point.Y);
       };
     };
-  };
+    return Vector2(rect.Left, rect.Top);
+  }
+
+  public static func Visible(widget: ref<inkWidget>) -> Bool {
+    while IsDefined(widget) {
+      if !widget.IsVisible() || widget.GetOpacity() <= 0.0 { return false; };
+      widget = widget.parentWidget;
+    };
+    return true;
+  }
+
+  public static func Collect(widget: ref<inkWidget>, out leaves: array<wref<inkWidget>>) -> Void {
+    let compound: ref<inkCompoundWidget> = widget as inkCompoundWidget;
+    if IsDefined(compound) {
+      let i: Int32 = 0;
+      while i < compound.GetNumChildren() {
+        HUDitorGeometry.Collect(compound.GetWidgetByIndex(i), leaves);
+        i += 1;
+      };
+    } else {
+      if !widget.IsA(n"inkMaskWidget") && NotEquals(widget.GetName(), n"sizeHolder") && NotEquals(widget.GetName(), n"min_size") {
+        ArrayPush(leaves, widget);
+      };
+    };
+  }
+
+  public static func Bounds(leaves: array<wref<inkWidget>>, out bounds: RectF) -> Bool {
+    let found: Bool = false;
+    for leaf in leaves {
+      if IsDefined(leaf) && leaf.GetOpacity() > 0.0 && HUDitorGeometry.Visible(leaf) {
+        let rect: RectF = GetScreenPosition(leaf);
+        if rect.Right > rect.Left && rect.Bottom > rect.Top {
+          if !found { bounds = rect; found = true; } else {
+            bounds.Left = MinF(bounds.Left, rect.Left);
+            bounds.Top = MinF(bounds.Top, rect.Top);
+            bounds.Right = MaxF(bounds.Right, rect.Right);
+            bounds.Bottom = MaxF(bounds.Bottom, rect.Bottom);
+          };
+        };
+      };
+    };
+    return found;
+  }
 }
 
-@addMethod(inkGameController)
-private func ShowCrouchIndicator(show: Bool) -> Void {
-  if this.IsA(n"CrouchIndicatorGameController") {
-    if show {
-      this.originalOpacity = this.GetRootWidget().GetOpacity();
-      this.GetRootWidget().SetOpacity(1.0);
-    } else {
-      this.GetRootWidget().SetOpacity(this.originalOpacity);
+public class HUDitorPreview {
+  private let manager: wref<HUDWidgetsManager>;
+  private let slot: wref<HUDitorCustomSlot>;
+  private let generation: Uint32;
+  private let bindings: array<ref<HUDitorBinding>>;
+  private let binding: ref<HUDitorBinding>;
+  private let sample: ref<inkCompoundWidget>;
+  private let tree: ref<HUDitorVisualTree>;
+  private let visual: array<wref<inkWidget>>;
+  private let basePosition: Vector2;
+  private let baseScale: Vector2;
+  private let live: Bool;
+  private let embedded: Bool;
+  private let liveVisible: Bool;
+  private let liveOpacity: Float;
+  private let liveSource: wref<inkWidget>;
+  private let disposed: Bool;
+
+  public static func IsSample(widget: ref<inkWidget>) -> Bool {
+    while IsDefined(widget) {
+      if Equals(widget.GetName(), n"HUDitorSamples") || Equals(widget.GetName(), n"HUDitorSample") { return true; };
+      widget = widget.parentWidget;
     };
-  };
+    return false;
+  }
+
+  public static func Create(slot: ref<HUDitorCustomSlot>, manager: ref<HUDWidgetsManager>, generation: Uint32) -> ref<HUDitorPreview> {
+    let self: ref<HUDitorPreview> = new HUDitorPreview();
+    self.manager = manager;
+    self.slot = slot;
+    self.generation = generation;
+    self.bindings = slot.GetBindings();
+    let name: CName = slot.GetName();
+    for binding in self.bindings {
+      if !IsDefined(self.binding) { self.binding = binding; };
+      if HUDitorGeometry.Visible(binding.source) && (!IsDefined(binding.presentation) || HUDitorGeometry.Visible(binding.presentation)) {
+        self.binding = binding;
+        break;
+      };
+    };
+    self.live = Equals(name, n"NewMinimap") || Equals(name, n"NewFpsCounter");
+    if Equals(name, n"NewTracker") || Equals(name, n"NewInputHint") || Equals(name, n"NewDialogChoices") || Equals(name, n"NewDialogSubtitles") {
+      let leaves: array<wref<inkWidget>>;
+      let bounds: RectF;
+      HUDitorGeometry.Collect(self.binding.source, leaves);
+      self.live = HUDitorGeometry.Bounds(leaves, bounds) && (!IsDefined(self.binding.presentation) || HUDitorGeometry.Visible(self.binding.presentation));
+    };
+    self.RefreshBase();
+    if self.live {
+      for binding in self.bindings {
+        if IsDefined(binding.source) {
+          self.liveSource = binding.source;
+          self.liveVisible = binding.source.IsVisible();
+          self.liveOpacity = binding.source.GetOpacity();
+          binding.source.SetVisible(true);
+          binding.source.SetOpacity(1.0);
+          binding.carrier.SetVisible(true);
+          HUDitorGeometry.Collect(binding.source, self.visual);
+          break;
+        };
+      };
+    } else {
+      self.tree = HUDitorVisualRecipes.Create(name);
+      if !IsDefined(self.tree) || ArraySize(self.tree.widgets) == 0 { return null; };
+      if Equals(name, n"NewVehicleRadio") {
+        self.tree.RefreshRadioAction(self.binding.owner.IsA(n"HotkeyConsumableWidgetController"));
+      };
+      let parent: ref<inkCompoundWidget>;
+      if Equals(name, n"NewDialogChoices") {
+        parent = self.binding.source as inkCompoundWidget;
+      } else {
+        if Equals(name, n"NewDialogSubtitles") {
+          parent = self.binding.owner.GetWidget(n"mainPanel/subtitlesPanel") as inkCompoundWidget;
+        };
+      };
+      if IsDefined(parent) {
+        self.embedded = true;
+        self.sample = self.tree.widgets[0] as inkCompoundWidget;
+        self.sample.SetName(n"HUDitorSample");
+        if Equals(name, n"NewDialogSubtitles") { self.sample.SetHAlign(inkEHorizontalAlign.Center); };
+        self.liveSource = self.binding.source;
+        self.liveVisible = self.liveSource.IsVisible();
+        self.liveOpacity = self.liveSource.GetOpacity();
+        self.sample.Reparent(parent);
+        self.liveSource.SetVisible(true);
+        self.liveSource.SetOpacity(1.0);
+        self.binding.carrier.SetVisible(true);
+      } else {
+        self.sample = new inkCanvas();
+        self.sample.SetName(n"HUDitorSample");
+        self.sample.SetInteractive(false);
+        self.sample.SetAffectsLayoutWhenHidden(false);
+        self.sample.SetRenderTransformPivot(Vector2(0.0, 0.0));
+        self.sample.Reparent(manager.overlay.GetSamplesRoot());
+        self.tree.widgets[0].Reparent(self.sample);
+        for binding in self.bindings {
+          if IsDefined(binding.carrier) { binding.carrier.SetOpacity(0.0); };
+        };
+      };
+      HUDitorGeometry.Collect(self.tree.widgets[0], self.visual);
+    };
+    return self;
+  }
+
+  public func RefreshBase() -> Void {
+    if this.embedded { return; };
+    let screen: Vector2 = ScreenHelper.GetScreenSize(this.manager.gameInstance);
+    let scale: Float = MinF(screen.X / 3840.0, screen.Y / 2160.0);
+    if scale <= 0.0 { scale = 1.0; };
+    this.baseScale = Vector2(scale, scale);
+    this.basePosition = HUDitorPreview.FallbackPosition(this.slot.GetName(), screen, scale);
+    let surfacePosition: Vector2;
+    let surfaceScale: Vector2;
+    if IsDefined(this.manager.surfaces) && this.manager.surfaces.ResolvePreviewBase(this.binding, surfacePosition, surfaceScale) {
+      this.basePosition = surfacePosition;
+      this.baseScale = surfaceScale;
+      return;
+    };
+    let name: CName = this.slot.GetName();
+    if Equals(name, n"NewBossHealthbar") || Equals(name, n"NewVehicleSummon") || Equals(name, n"NewWeaponRoster") || Equals(name, n"NewCrouchIndicator") || Equals(name, n"NewDpad") || Equals(name, n"NewTracker") || Equals(name, n"NewQuestNotifications") || Equals(name, n"NewItemNotifications") || Equals(name, n"NewDialogChoices") || Equals(name, n"NewInputHint") || Equals(name, n"NewStaminaBar") || Equals(name, n"NewCarHud") || Equals(name, n"NewAutoDrive") || Equals(name, n"NewCrystalCoat") || Equals(name, n"NewVehicleRadio") || Equals(name, n"NewVehicleHotkey") || Equals(name, n"NewPhoneHotkey") {
+      let source: ref<inkWidget> = this.binding.source;
+      if !IsDefined(this.binding.presentation) && (this.binding.owner.IsA(n"HotkeysWidgetController") || this.binding.owner.IsA(n"HotkeyConsumableWidgetController") || this.binding.owner.IsA(n"HotkeyCustomRadioWidgetController")) {
+        if !HUDitorGeometry.Visible(this.binding.owner.GetRootWidget()) { return; };
+      };
+      let rect: RectF = GetScreenPosition(source);
+      let point: Vector2 = Vector2(rect.Left, rect.Top);
+      if !IsDefined(this.binding.presentation) && point.X == 0.0 && point.Y == 0.0 && !source.IsVisible() { return; };
+      this.baseScale = HUDitorGeometry.Scale(this.binding.parent);
+      if IsDefined(this.binding.presentation) {
+        let origin: Vector2 = HUDitorGeometry.PresentationOrigin(this.binding.presentation);
+        if !source.visible && point.X == 0.0 && point.Y == 0.0 {
+          let local: Vector2 = source.GetTranslation();
+          point = Vector2(local.X * this.baseScale.X, local.Y * this.baseScale.Y);
+        };
+        if this.binding.presentationTransform {
+          let zoom: Vector2 = this.slot.GetScale();
+          point.X *= zoom.X;
+          point.Y *= zoom.Y;
+        };
+        point.X += origin.X;
+        point.Y += origin.Y;
+      };
+      let offset: Vector2 = this.slot.GetTranslation();
+      this.basePosition = Vector2(point.X - offset.X * this.baseScale.X, point.Y - offset.Y * this.baseScale.Y);
+    };
+  }
+
+  public func UpdateTransform(translation: Vector2, zoom: Vector2) -> Void {
+    if this.disposed || this.generation != this.manager.generation { return; };
+    if IsDefined(this.sample) && !this.embedded {
+      this.sample.SetTranslation(Vector2(this.basePosition.X + translation.X * this.baseScale.X, this.basePosition.Y + translation.Y * this.baseScale.Y));
+      this.sample.SetScale(Vector2(this.baseScale.X * zoom.X, this.baseScale.Y * zoom.Y));
+    };
+  }
+
+  public func SetOpacity(opacity: Float) -> Void {
+    if this.live || this.embedded {
+      for binding in this.bindings { if IsDefined(binding.carrier) { binding.carrier.SetOpacity(opacity); }; };
+    } else {
+      if IsDefined(this.sample) { this.sample.SetOpacity(opacity); };
+    };
+  }
+
+  public func IsLive() -> Bool { return this.live; }
+
+  public func GetBounds(out bounds: RectF) -> Bool {
+    if this.disposed || !HUDitorGeometry.Bounds(this.visual, bounds) { return false; };
+    if this.live && IsDefined(this.binding.presentation) {
+      let origin: Vector2 = HUDitorGeometry.PresentationOrigin(this.binding.presentation);
+      bounds.Left += origin.X;
+      bounds.Right += origin.X;
+      bounds.Top += origin.Y;
+      bounds.Bottom += origin.Y;
+    };
+    return true;
+  }
+
+  public func Dispose() -> Void {
+    if this.disposed { return; };
+    this.disposed = true;
+    if IsDefined(this.liveSource) {
+      if this.liveSource.GetOpacity() == 1.0 { this.liveSource.SetOpacity(this.liveOpacity); };
+      if this.liveSource.IsVisible() { this.liveSource.SetVisible(this.liveVisible); };
+    };
+    for binding in this.bindings { if IsDefined(binding.carrier) { binding.carrier.SetOpacity(1.0); }; };
+    if IsDefined(this.sample) && IsDefined(this.sample.parentWidget) { (this.sample.parentWidget as inkCompoundWidget).RemoveChild(this.sample); };
+    ArrayClear(this.visual);
+    ArrayClear(this.bindings);
+    this.tree = null;
+    this.sample = null;
+  }
+
+  private static func FallbackPosition(name: CName, screen: Vector2, scale: Float) -> Vector2 {
+    switch name {
+      case n"NewTracker": return Vector2(screen.X - 800.0 * scale, 650.0 * scale);
+      case n"NewWanted": return Vector2(screen.X - 700.0 * scale, 70.0 * scale);
+      case n"NewQuestNotifications": return Vector2(80.0 * scale, screen.Y * 0.35);
+      case n"NewItemNotifications": return Vector2(80.0 * scale, screen.Y * 0.56);
+      case n"NewVehicleSummon": return Vector2(screen.X - 1180.0 * scale, 145.0 * scale);
+      case n"NewWeaponRoster": return Vector2(screen.X - 1300.0 * scale, screen.Y - 340.0 * scale);
+      case n"NewCrouchIndicator": return Vector2(screen.X - 230.0 * scale, screen.Y - 250.0 * scale);
+      case n"NewDpad": return Vector2(80.0 * scale, screen.Y - 300.0 * scale);
+      case n"NewHealthBar": return Vector2(80.0 * scale, 110.0 * scale);
+      case n"NewStaminaBar": return Vector2(screen.X * 0.5 - 400.0 * scale, screen.Y - 200.0 * scale);
+      case n"NewInputHint": return Vector2(screen.X - 700.0 * scale, screen.Y - 90.0 * scale);
+      case n"NewCarHud": return Vector2(80.0 * scale, screen.Y - 500.0 * scale);
+      case n"NewAutoDrive": return Vector2(80.0 * scale, screen.Y - 780.0 * scale);
+      case n"NewCrystalCoat": return Vector2(680.0 * scale, screen.Y - 300.0 * scale);
+      case n"NewVehicleRadio": return Vector2(800.0 * scale, screen.Y - 300.0 * scale);
+      case n"NewVehicleHotkey": return Vector2(600.0 * scale, screen.Y - 180.0 * scale);
+      case n"NewPhoneHotkey": return Vector2(80.0 * scale, screen.Y - 140.0 * scale);
+      case n"NewPhoneAvatar": return Vector2(80.0 * scale, 350.0 * scale);
+      case n"NewPhoneControl": return Vector2(80.0 * scale, 900.0 * scale);
+      case n"NewBossHealthbar": return Vector2(screen.X * 0.5 - 300.0 * scale, 150.0 * scale);
+      case n"NewDialogChoices": return Vector2(screen.X * 0.5, screen.Y * 0.6);
+      case n"NewDialogSubtitles": return Vector2(screen.X * 0.5 - 600.0 * scale, screen.Y - 180.0 * scale);
+      case n"NewProgressBar": return Vector2(screen.X * 0.5 - 1000.0 * scale, screen.Y - 1000.0 * scale);
+    };
+    return Vector2(0.0, 0.0);
+  }
+}
+
+public class HUDitorVisualTree {
+  public let widgets: array<ref<inkWidget>>;
+  public let inputs: array<ref<inkInputDisplayController>>;
+
+  public static func Layout(anchor: inkEAnchor, point: Vector2, margin: inkMargin, padding: inkMargin, horizontal: inkEHorizontalAlign, vertical: inkEVerticalAlign, rule: inkESizeRule, coefficient: Float) -> inkWidgetLayout {
+    let layout: inkWidgetLayout;
+    layout.anchor = anchor;
+    layout.anchorPoint = point;
+    layout.margin = margin;
+    layout.padding = padding;
+    layout.HAlign = horizontal;
+    layout.VAlign = vertical;
+    layout.sizeRule = rule;
+    layout.sizeCoefficient = coefficient;
+    return layout;
+  }
+
+  public func Add(widget: ref<inkWidget>, parent: Int32, name: CName, size: Vector2, layout: inkWidgetLayout) -> Void {
+    widget.SetName(name);
+    widget.SetSize(size);
+    widget.SetLayout(layout);
+    widget.SetInteractive(false);
+    widget.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
+    if parent >= 0 { widget.Reparent(this.widgets[parent] as inkCompoundWidget); };
+    ArrayPush(this.widgets, widget);
+  }
+
+  public func Image(index: Int32, atlas: ResRef, part: CName, mirror: inkBrushMirrorType) -> Void {
+    let image: ref<inkImage> = this.widgets[index] as inkImage;
+    image.SetAtlasResource(atlas);
+    image.SetTexturePart(part);
+    image.SetBrushMirrorType(mirror);
+  }
+
+  public func Text(index: Int32, font: String, style: CName, size: Int32, text: String) -> Void {
+    let widget: ref<inkText> = this.widgets[index] as inkText;
+    widget.SetFontFamily(font, style);
+    widget.SetFontSize(size);
+    widget.SetText(text);
+  }
+
+  public func Action(index: Int32, action: CName, height: Float) -> Void {
+    let parent: ref<inkCompoundWidget> = this.widgets[index] as inkCompoundWidget;
+    let canvas: ref<inkCanvas> = new inkCanvas();
+    canvas.SetSize(height, height);
+    canvas.SetInteractive(false);
+    canvas.Reparent(parent);
+    let icon: ref<inkImage> = new inkImage();
+    icon.SetSize(height, height);
+    icon.SetAnchor(inkEAnchor.Centered);
+    icon.SetAnchorPoint(Vector2(0.5, 0.5));
+    icon.SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    icon.SetInteractive(false);
+    icon.Reparent(canvas);
+    let label: ref<inkText> = new inkText();
+    label.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Regular");
+    label.SetFontSize(45);
+    label.SetFitToContent(true);
+    label.SetAnchor(inkEAnchor.Centered);
+    label.SetAnchorPoint(Vector2(0.5, 0.5));
+    label.SetTintColor(icon.GetTintColor());
+    label.SetInteractive(false);
+    label.SetVisible(false);
+    label.Reparent(canvas);
+    let input: ref<inkInputDisplayController> = new inkInputDisplayController();
+    input.iconRef = inkWidgetRef.Create(icon);
+    input.nameRef = inkWidgetRef.Create(label);
+    input.canvasRef = inkWidgetRef.Create(canvas);
+    input.fixedIconHeight = height;
+    input.holdIndicationType = inkInputHintHoldIndicationType.Press;
+    parent.AttachController(input);
+    input.SetInputAction(action);
+    ArrayPush(this.inputs, input);
+  }
+
+  public func RefreshRadioAction(inVehicle: Bool) -> Void {
+    for input in this.inputs {
+      if Equals(input.GetInputAction(), n"VehicleInsideWheel") {
+        input.SetInputAction(inVehicle ? n"VehicleInsideWheel" : n"PocketRadio");
+      };
+    };
+  }
+
+  public func Border(index: Int32, thickness: Float) -> Void {
+    let parent: ref<inkCompoundWidget> = this.widgets[index] as inkCompoundWidget;
+    let i: Int32 = 0;
+    while i < 4 {
+      let edge: ref<inkRectangle> = new inkRectangle();
+      edge.SetInteractive(false);
+      edge.SetTintColor(parent.GetTintColor());
+      if i < 2 {
+        edge.SetAnchor(i == 0 ? inkEAnchor.TopFillHorizontaly : inkEAnchor.BottomFillHorizontaly);
+        edge.SetHeight(thickness);
+      } else {
+        edge.SetAnchor(i == 2 ? inkEAnchor.LeftFillVerticaly : inkEAnchor.RightFillVerticaly);
+        edge.SetWidth(thickness);
+      };
+      edge.Reparent(parent);
+      i += 1;
+    };
+  }
 }
 
 @if(!ModuleExists("CustomQuickslotsConfig"))
 @addMethod(HotkeysWidgetController)
-public func RefreshHUDitor() -> Void {
-  // do nothing
-}
+public func RefreshHUDitor() -> Void {}
 
 @if(ModuleExists("CustomQuickslotsConfig"))
 @addMethod(HotkeysWidgetController)
@@ -206,162 +408,3062 @@ public func RefreshHUDitor() -> Void {
   this.CustomQuickslotsRefreshSlots();
 }
 
-@addMethod(inkGameController)
-private func ShowPhoneHotkey(show: Bool) -> Void {
-  if this.IsA(n"PhoneHotkeyController") {
-    let controller = this as PhoneHotkeyController;
-    if show {
-      this.originalVisibility = controller.GetRootWidget().IsVisible();
-      controller.ToggleVisibility(true, true);
-    } else {
-      controller.ToggleVisibility(this.originalVisibility, true);
+public abstract class HUDitorVisualRecipes {
+  public static func Create(name: CName) -> ref<HUDitorVisualTree> {
+    let tree: ref<HUDitorVisualTree> = new HUDitorVisualTree();
+    switch name {
+      case n"NewTracker": HUDitorVisualRecipes.NewTracker(tree); break;
+      case n"NewWanted": HUDitorVisualRecipes.NewWanted(tree); break;
+      case n"NewQuestNotifications": HUDitorVisualRecipes.NewQuestNotifications(tree); break;
+      case n"NewItemNotifications": HUDitorVisualRecipes.NewItemNotifications(tree); break;
+      case n"NewVehicleSummon": HUDitorVisualRecipes.NewVehicleSummon(tree); break;
+      case n"NewWeaponRoster": HUDitorVisualRecipes.NewWeaponRoster(tree); break;
+      case n"NewCrouchIndicator": HUDitorVisualRecipes.NewCrouchIndicator(tree); break;
+      case n"NewDpad": HUDitorVisualRecipes.NewDpad(tree); break;
+      case n"NewHealthBar": HUDitorVisualRecipes.NewHealthBar(tree); break;
+      case n"NewStaminaBar": HUDitorVisualRecipes.NewStaminaBar(tree); break;
+      case n"NewInputHint": HUDitorVisualRecipes.NewInputHint(tree); break;
+      case n"NewCarHud": HUDitorVisualRecipes.NewCarHud(tree); break;
+      case n"NewAutoDrive": HUDitorVisualRecipes.NewAutoDrive(tree); break;
+      case n"NewCrystalCoat": HUDitorVisualRecipes.NewCrystalCoat(tree); break;
+      case n"NewVehicleRadio": HUDitorVisualRecipes.NewVehicleRadio(tree); break;
+      case n"NewVehicleHotkey": HUDitorVisualRecipes.NewVehicleHotkey(tree); break;
+      case n"NewPhoneHotkey": HUDitorVisualRecipes.NewPhoneHotkey(tree); break;
+      case n"NewPhoneAvatar": HUDitorVisualRecipes.NewPhoneAvatar(tree); break;
+      case n"NewPhoneControl": HUDitorVisualRecipes.NewPhoneControl(tree); break;
+      case n"NewBossHealthbar": HUDitorVisualRecipes.NewBossHealthbar(tree); break;
+      case n"NewDialogChoices": HUDitorVisualRecipes.NewDialogChoices(tree); break;
+      case n"NewDialogSubtitles": HUDitorVisualRecipes.NewDialogSubtitles(tree); break;
+      case n"NewProgressBar": HUDitorVisualRecipes.NewProgressBar(tree); break;
+      default: return null;
     };
-  };
-}
-
-@addMethod(inkGameController)
-private func ShowDpad(show: Bool) -> Void {
-  if this.IsA(n"HotkeysWidgetController") {
-    let controller = this as HotkeysWidgetController;
-    if show {
-      this.originalOpacity = this.GetRootWidget().GetOpacity();
-      this.GetRootWidget().SetOpacity(1.0);
-    } else {
-      this.GetRootWidget().SetOpacity(this.originalOpacity);
-    };
-    controller.RefreshHUDitor();
-  };
-}
-
-
-@addMethod(inkGameController)
-private func ShowHealthbar(show: Bool) -> Void {
-  if this.IsA(n"healthbarWidgetGameController") {
-    let controller = this as healthbarWidgetGameController;
-    if show {
-      controller.ShowRequest();
-    } else {
-      controller.OnUpdateHealthBarVisibility();
-    };
-  };
-}
-
-@addMethod(inkGameController)
-private func ShowStaminaBar(show: Bool) -> Void {
-  if this.IsA(n"StaminabarWidgetGameController") {
-    let controller = this as StaminabarWidgetGameController;
-    controller.UpdateStaminaValue(70.0, 87.7, 11.0, gamedataStatPoolType.Stamina);
-
-    if show {
-      controller.m_RootWidget.SetOpacity(1.0);
-      controller.m_RootWidget.SetVisible(true);
-    } else {
-      controller.m_RootWidget.SetOpacity(0.0);
-      controller.m_RootWidget.SetVisible(false);
-    };
-  };
-}
-
-@addMethod(inkGameController)
-private func ShowInputHints(show: Bool) -> Void {
-  if this.IsA(n"gameuiInputHintManagerGameController") {
-    let controller = this as InputHintManagerGameController;
-    if !IsDefined(controller) { return; }
-    if NotEquals(controller.hintContainerId, n"GameplayInputHelper") { return; }
-    if show {
-      this.originalOpacity = this.GetRootWidget().GetOpacity();
-      this.GetRootWidget().SetOpacity(1.0);
-    } else {
-      this.GetRootWidget().SetOpacity(this.originalOpacity);
-    };
-  };
-}
-
-@addMethod(inkGameController)
-private func ShowBossHealthbar(show: Bool) -> Void {
-  if this.IsA(n"BossHealthBarGameController") {
-    let controller = this as BossHealthBarGameController;
-    controller.m_root.SetVisible(show);
-
-    if show {
-      inkTextRef.SetText(controller.m_bossName, "Boss name here");
-      controller.UpdateHealthValue(75);
-      if IsDefined(controller.m_foldAnimation) {
-        controller.m_foldAnimation.Stop();
-      };
-      controller.m_foldAnimation = this.PlayLibraryAnimation(n"unfold");
-    } else {
-      if IsDefined(controller.m_foldAnimation) {
-        controller.m_foldAnimation.Stop();
-      };
-      controller.m_foldAnimation = this.PlayLibraryAnimation(n"fold");
-    };
-  };
-}
-
-@addField(NewHudPhoneGameController)
-public let huditorPreviewVisible: Bool;
-
-@addMethod(inkGameController)
-private func ShowIncomingPhoneCall(show: Bool) -> Void {
-  if this.IsA(n"NewHudPhoneGameController") {
-    let controller = this as NewHudPhoneGameController;
-
-    if Equals(controller.huditorPreviewVisible, show) {
-      return ;
-    };
-
-    let phoneCallInfo: PhoneCallInformation;
-    phoneCallInfo.callMode = questPhoneCallMode.Video;
-    phoneCallInfo.isAudioCall = false;
-    phoneCallInfo.contactName = n"jackie";
-    phoneCallInfo.isPlayerCalling = true;
-    phoneCallInfo.isPlayerTriggered = true;
-    if show {
-      phoneCallInfo.callPhase = questPhoneCallPhase.IncomingCall;
-    } else {
-      phoneCallInfo.callPhase = questPhoneCallPhase.EndCall;
-    };
-    controller.m_CurrentCallInformation = phoneCallInfo;
-    controller.m_CurrentPhoneCallContact = controller.GetIncomingContact();
-    if show {
-      controller.SetPhoneFunction(EHudPhoneFunction.IncomingCall);
-      controller.incomingCallElement.request = this.AsyncSpawnFromLocal(inkWidgetRef.Get(controller.incomingCallElement.slot), controller.incomingCallElement.libraryID, this, n"OnIncommingCallSpawned");
-      controller.HandleCall();
-    } else {
-      controller.CancelPendingSpawnRequests();
-      controller.SetTalkingTrigger(controller.m_CurrentCallInformation.isPlayerCalling, questPhoneTalkingState.Ended);
-      controller.SetPhoneFunction(EHudPhoneFunction.Inactive);
-      
-      let system: ref<inkSystem> = GameInstance.GetInkSystem();
-      let hudRoot: ref<inkCompoundWidget> = system.GetLayer(n"inkHUDLayer").GetVirtualWindow();
-      let phoneAvatar: ref<inkCompoundWidget> = hudRoot.GetWidgetByPathName(n"NewPhoneAvatar") as inkCompoundWidget;
-      phoneAvatar.RemoveAllChildren();
-    };
-
-    controller.huditorPreviewVisible = show;
-  };
-}
-
-@wrapMethod(IncomingCallLogicController)
-protected cb func OnRingAnimFinished(proxy: ref<inkAnimProxy>) -> Bool {
-  let previewActive: Bool = HUDWidgetsManager.GetInstance().IsActive();
-  if previewActive {
-    this.m_animProxy = this.PlayLibraryAnimation(n"ring");
-    this.m_animProxy.RegisterToCallback(inkanimEventType.OnFinish, this, n"OnRingAnimFinished");
-  } else {
-    wrappedMethod(proxy);
-  };
-}
-
-@addMethod(inkGameController)
-private func ShowHudProgressBarController(show: Bool) -> Void {
-  if this.IsA(n"HUDProgressBarController") {
-    let controller = this as HUDProgressBarController;
-    controller.m_type = SimpleMessageType.Reveal;
-    controller.UpdateRevealType();
-    controller.OnProgressChanged(0.5);
-    controller.UpdateTimerHeader("Tracing your position");
-    controller.m_rootWidget.SetVisible(show);
-  };
+    return tree;
+  }
+  private static func NewTracker(tree: ref<HUDitorVisualTree>) -> Void {
+    HUDitorVisualRecipes.NewTrackerPart0(tree);
+  }
+  private static func NewTrackerPart0(tree: ref<HUDitorVisualTree>) -> Void {
+    tree.Add(new inkCanvas(), -1, n"Root", Vector2(680.0, 210.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[0].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[0].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[0] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[0] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkVerticalPanel(), 0, n"inkVerticalPanelWidget2", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopRight, Vector2(1.0, 0.0), inkMargin(0.0, 0.0, -30.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[1].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[1].SetFitToContent(true);
+    tree.widgets[1].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[1] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[1] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkFlex(), 1, n"QuestTracker", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 110.0, 0.0, -55.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[2].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[2].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[2] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[2] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkVerticalPanel(), 2, n"Fluff", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[3].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[3].SetFitToContent(true);
+    tree.widgets[3].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[3] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[3] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkFlex(), 3, n"AnchorPoint", Vector2(300.0, 20.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(1.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[4].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[4].SetOpacity(0.4);
+    tree.widgets[4].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[4] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[4] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkText(), 4, n"inkTextWidget4", Vector2(100.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 50.0, 22.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Right, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[5].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[5].SetFitToContent(true);
+    tree.widgets[5].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(5, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Regular", 12, GetLocalizedTextByKey(n"Mod-HUDitor-Preview-Objective"));
+    (tree.widgets[5] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[5].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkCanvas(), 4, n"inkCanvasWidget9", Vector2(550.0, 400.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[6].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[6].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[6] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[6] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 6, n"holder_code", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopRight, Vector2(1.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Stretch, 1.0));
+    tree.widgets[7].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[7].SetFitToContent(true);
+    tree.widgets[7].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(7, r"base\\gameplay\\gui\\common\\hud_widget_holder.inkatlas", n"holder_code", inkBrushMirrorType.NoMirror);
+    tree.widgets[7].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkCanvas(), 6, n"inkCanvasWidget64", Vector2(36.0, 36.0), HUDitorVisualTree.Layout(inkEAnchor.TopRight, Vector2(1.0, 0.5), inkMargin(0.0, 70.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[8].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[8].SetOpacity(0.5);
+    tree.widgets[8].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[8] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[8] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 8, n"icon", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.249998, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Right, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[9].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[9].SetFitToContent(true);
+    tree.widgets[9].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(9, r"base\\gameplay\\gui\\common\\hud_widget_holder.inkatlas", n"hud_patch_current", inkBrushMirrorType.NoMirror);
+    tree.widgets[9].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkImage(), 8, n"holder", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Right, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[10].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[10].SetFitToContent(true);
+    tree.widgets[10].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(10, r"base\\gameplay\\gui\\common\\hud_widget_holder.inkatlas", n"hud_patch_frame", inkBrushMirrorType.NoMirror);
+    tree.widgets[10].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkFlex(), 3, n"Title", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(-45.0, 0.0, 45.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[11].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[11].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[11] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[11] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 11, n"shadow", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(-30.0, -5.0, -30.0, -5.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[12].SetTintColor(HDRColor(0.058824, 0.058824, 0.133333, 1.0));
+    tree.widgets[12].SetFitToContent(true);
+    tree.widgets[12].SetOpacity(0.1);
+    tree.widgets[12].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(12, r"base\\gameplay\\gui\\common\\shadow_blobs.inkatlas", n"shadowBlobText", inkBrushMirrorType.NoMirror);
+    (tree.widgets[12] as inkImage).useNineSliceScale = true;
+    (tree.widgets[12] as inkImage).nineSliceScale = inkMargin(0.0, 0.0, 0.0, 0.0);
+    tree.widgets[12].BindProperty(n"tintColor", n"ShadowBlob.BackgroundColour");
+    tree.Add(new inkText(), 11, n"QuestName", Vector2(600.0, 30.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[13].SetTintColor(HDRColor(1.3698, 0.4437, 0.4049, 1.0));
+    tree.widgets[13].SetFitToContent(true);
+    tree.widgets[13].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(13, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Regular", 46, GetLocalizedTextByKey(n"Mod-HUDitor-Preview-Quest"));
+    (tree.widgets[13] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[13].BindProperty(n"tintColor", n"Mappin.IconColor");
+    tree.Add(new inkVerticalPanel(), 3, n"ObjectiveList", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[14].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[14].SetFitToContent(true);
+    tree.widgets[14].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[14] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[14] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkFlex(), 14, n"inkFlexWidget3", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[15].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[15].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[15] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[15] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 15, n"shadow", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(-30.0, -5.0, -30.0, -5.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[16].SetTintColor(HDRColor(0.058824, 0.058824, 0.133333, 1.0));
+    tree.widgets[16].SetFitToContent(true);
+    tree.widgets[16].SetOpacity(0.1);
+    tree.widgets[16].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(16, r"base\\gameplay\\gui\\common\\shadow_blobs.inkatlas", n"shadowBlobText", inkBrushMirrorType.NoMirror);
+    (tree.widgets[16] as inkImage).useNineSliceScale = true;
+    (tree.widgets[16] as inkImage).nineSliceScale = inkMargin(0.0, 0.0, 0.0, 0.0);
+    tree.widgets[16].BindProperty(n"tintColor", n"ShadowBlob.BackgroundColour");
+    tree.Add(new inkHorizontalPanel(), 15, n"list", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(-20.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[17].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[17].SetFitToContent(true);
+    tree.widgets[17].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[17] as inkCompoundWidget).SetChildMargin(inkMargin(20.0, 15.0, 0.0, 0.0));
+    (tree.widgets[17] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkCanvas(), 17, n"iconLayer", Vector2(40.0, 40.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[18].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[18].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[18] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[18] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 18, n"frame", Vector2(40.0, 40.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[19].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[19].SetFitToContent(true);
+    tree.widgets[19].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(19, r"base\\gameplay\\gui\\common\\shapes\\atlas_shapes_sync.inkatlas", n"checkbox_frame", inkBrushMirrorType.NoMirror);
+    tree.widgets[19].BindProperty(n"tintColor", n"Update.Type.mainColor");
+    tree.Add(new inkCanvas(), 18, n"fill", Vector2(550.0, 400.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[20].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[20].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[20] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[20] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.widgets[20].BindProperty(n"tintColor", n"Update.Type.mainColor");
+    tree.Add(new inkImage(), 20, n"exclamationMark", Vector2(28.0, 28.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(10.0, 7.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[21].SetTintColor(HDRColor(0.0, 0.0, 0.0, 1.0));
+    tree.widgets[21].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(21, r"base\\gameplay\\gui\\common\\icons\\mappin_icons.inkatlas", n"quest_excmark", inkBrushMirrorType.NoMirror);
+    tree.widgets[21].BindProperty(n"tintColor", n"MainColors.Black");
+    tree.Add(new inkImage(), 20, n"fillTexture", Vector2(30.0, 30.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(4.0, 4.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[22].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[22].SetFitToContent(true);
+    tree.widgets[22].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(22, r"base\\gameplay\\gui\\common\\shapes\\atlas_shapes_sync.inkatlas", n"checkbox_fill", inkBrushMirrorType.NoMirror);
+    tree.widgets[22].BindProperty(n"tintColor", n"Update.Type.mainColor");
+    tree.Add(new inkText(), 17, n"title", Vector2(100.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, -4.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[23].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[23].SetFitToContent(true);
+    tree.widgets[23].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(23, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Regular", 46, GetLocalizedTextByKey(n"Mod-HUDitor-Preview-Objective"));
+    (tree.widgets[23] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[23].BindProperty(n"tintColor", n"Update.Type.mainColor");
+  }
+  private static func NewWanted(tree: ref<HUDitorVisualTree>) -> Void {
+    HUDitorVisualRecipes.NewWantedPart0(tree);
+  }
+  private static func NewWantedPart0(tree: ref<HUDitorVisualTree>) -> Void {
+    tree.Add(new inkCanvas(), -1, n"Root", Vector2(100.0, 570.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[0].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[0].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[0] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[0] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkVerticalPanel(), 0, n"wanted_levels", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.Fill, Vector2(0.0, 0.0), inkMargin(0.0, 44.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[1].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[1].SetFitToContent(true);
+    tree.widgets[1].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[1] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 26.0, 0.0, 0.0));
+    (tree.widgets[1] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkFlex(), 1, n"bounty_level_5", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Right, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[2].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[2].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[2] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[2] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 2, n"background5", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[3].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[3].SetFitToContent(true);
+    tree.widgets[3].SetOpacity(0.5);
+    tree.widgets[3].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(3, r"base\\gameplay\\gui\\widgets\\wanted\\atlas_wanted_2.inkatlas", n"ultimateStar_socket", inkBrushMirrorType.NoMirror);
+    tree.widgets[3].BindProperty(n"tintColor", n"WantedStars.BackgroundBlue");
+    tree.Add(new inkCanvas(), 2, n"STAR", Vector2(550.0, 400.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[4].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[4].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[4] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[4] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 4, n"star", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[5].SetTintColor(HDRColor(0.301961, 0.690196, 0.647059, 1.0));
+    tree.widgets[5].SetFitToContent(true);
+    tree.widgets[5].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(5, r"base\\gameplay\\gui\\widgets\\wanted\\atlas_wanted_2.inkatlas", n"ultimateStar", inkBrushMirrorType.NoMirror);
+    tree.widgets[5].BindProperty(n"tintColor", n"WantedStars.badgeBody");
+    tree.Add(new inkFlex(), 1, n"bounty_level_4", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Right, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[6].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[6].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[6] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[6] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 6, n"background4", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[7].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[7].SetFitToContent(true);
+    tree.widgets[7].SetOpacity(0.5);
+    tree.widgets[7].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(7, r"base\\gameplay\\gui\\widgets\\wanted\\atlas_wanted_2.inkatlas", n"ultimateStar_socket", inkBrushMirrorType.NoMirror);
+    tree.widgets[7].BindProperty(n"tintColor", n"WantedStars.BackgroundBlue");
+    tree.Add(new inkCanvas(), 6, n"STAR", Vector2(550.0, 400.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[8].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[8].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[8] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[8] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 8, n"star", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[9].SetTintColor(HDRColor(0.301961, 0.690196, 0.647059, 1.0));
+    tree.widgets[9].SetFitToContent(true);
+    tree.widgets[9].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(9, r"base\\gameplay\\gui\\widgets\\wanted\\atlas_wanted_2.inkatlas", n"ultimateStar", inkBrushMirrorType.NoMirror);
+    tree.widgets[9].BindProperty(n"tintColor", n"WantedStars.badgeBody");
+    tree.Add(new inkFlex(), 1, n"bounty_level_3", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Right, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[10].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[10].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[10] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[10] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 10, n"background3", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[11].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[11].SetFitToContent(true);
+    tree.widgets[11].SetOpacity(0.5);
+    tree.widgets[11].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(11, r"base\\gameplay\\gui\\widgets\\wanted\\atlas_wanted_2.inkatlas", n"ultimateStar_socket", inkBrushMirrorType.NoMirror);
+    tree.widgets[11].BindProperty(n"tintColor", n"WantedStars.BackgroundBlue");
+    tree.Add(new inkCanvas(), 10, n"STAR", Vector2(550.0, 400.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[12].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[12].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[12] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[12] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 12, n"star", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[13].SetTintColor(HDRColor(0.301961, 0.690196, 0.647059, 1.0));
+    tree.widgets[13].SetFitToContent(true);
+    tree.widgets[13].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(13, r"base\\gameplay\\gui\\widgets\\wanted\\atlas_wanted_2.inkatlas", n"ultimateStar", inkBrushMirrorType.NoMirror);
+    tree.widgets[13].BindProperty(n"tintColor", n"WantedStars.badgeBody");
+    tree.Add(new inkFlex(), 1, n"bounty_level_2", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Right, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[14].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[14].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[14] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[14] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 14, n"background2", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[15].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[15].SetFitToContent(true);
+    tree.widgets[15].SetOpacity(0.5);
+    tree.widgets[15].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(15, r"base\\gameplay\\gui\\widgets\\wanted\\atlas_wanted_2.inkatlas", n"ultimateStar_socket", inkBrushMirrorType.NoMirror);
+    tree.widgets[15].BindProperty(n"tintColor", n"WantedStars.BackgroundBlue");
+    tree.Add(new inkCanvas(), 14, n"STAR", Vector2(550.0, 400.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[16].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[16].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[16] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[16] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 16, n"star", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[17].SetTintColor(HDRColor(0.301961, 0.690196, 0.647059, 1.0));
+    tree.widgets[17].SetFitToContent(true);
+    tree.widgets[17].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(17, r"base\\gameplay\\gui\\widgets\\wanted\\atlas_wanted_2.inkatlas", n"ultimateStar", inkBrushMirrorType.NoMirror);
+    tree.widgets[17].BindProperty(n"tintColor", n"WantedStars.badgeBody");
+    tree.Add(new inkFlex(), 1, n"bounty_level_1", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Right, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[18].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[18].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[18] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[18] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 18, n"background", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[19].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[19].SetFitToContent(true);
+    tree.widgets[19].SetOpacity(0.5);
+    tree.widgets[19].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(19, r"base\\gameplay\\gui\\widgets\\wanted\\atlas_wanted_2.inkatlas", n"ultimateStar_socket", inkBrushMirrorType.NoMirror);
+    tree.widgets[19].BindProperty(n"tintColor", n"WantedStars.BackgroundBlue");
+    tree.Add(new inkCanvas(), 18, n"STAR", Vector2(550.0, 400.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[20].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[20].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[20] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[20] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 20, n"star", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[21].SetTintColor(HDRColor(0.301961, 0.690196, 0.647059, 1.0));
+    tree.widgets[21].SetFitToContent(true);
+    tree.widgets[21].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(21, r"base\\gameplay\\gui\\widgets\\wanted\\atlas_wanted_2.inkatlas", n"ultimateStar", inkBrushMirrorType.NoMirror);
+    tree.widgets[21].BindProperty(n"tintColor", n"WantedStars.badgeBody");
+  }
+  private static func NewQuestNotifications(tree: ref<HUDitorVisualTree>) -> Void {
+    HUDitorVisualRecipes.NewQuestNotificationsPart0(tree);
+  }
+  private static func NewQuestNotificationsPart0(tree: ref<HUDitorVisualTree>) -> Void {
+    tree.Add(new inkCanvas(), -1, n"Root", Vector2(1000.0, 450.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[0].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[0].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[0] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[0] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkCanvas(), 0, n"PhoneMSG_Canvas", Vector2(734.0, 317.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(10.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[1].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[1].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    (tree.widgets[1] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[1] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkCanvas(), 1, n"Code_corner_canvas", Vector2(31.0, 38.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(4.0, 1.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[2].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[2].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    (tree.widgets[2] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[2] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 2, n"Code_TL", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(218.749908, 475.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[3].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[3].SetFitToContent(true);
+    tree.widgets[3].SetOpacity(0.4);
+    tree.widgets[3].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    tree.Image(3, r"base\\gameplay\\gui\\widgets\\notifications\\notification_assets.inkatlas", n"holder_code", inkBrushMirrorType.NoMirror);
+    tree.widgets[3].BindProperty(n"tintColor", n"Journal.Fluff");
+    tree.Add(new inkCanvas(), 1, n"Connection_canvas", Vector2(245.0, 14.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(56.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[4].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[4].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    (tree.widgets[4] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[4] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 4, n"Connection_fluff", Vector2(244.0, 12.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 1.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[5].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[5].SetFitToContent(true);
+    tree.widgets[5].SetOpacity(0.4);
+    tree.widgets[5].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    tree.Image(5, r"base\\gameplay\\gui\\widgets\\notifications\\notification_assets.inkatlas", n"Fluff_Connection", inkBrushMirrorType.NoMirror);
+    tree.widgets[5].BindProperty(n"tintColor", n"Journal.Fluff");
+    tree.Add(new inkCanvas(), 1, n"Core_Canvas", Vector2(40.0, 40.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(1.0, 43.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[6].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[6].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[6] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[6] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 6, n"Phone_ico", Vector2(31.0, 61.0), HUDitorVisualTree.Layout(inkEAnchor.CenterLeft, Vector2(0.0, 0.5), inkMargin(3.0, 25.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[7].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[7].SetOpacity(0.8);
+    tree.widgets[7].SetRenderTransformPivot(Vector2(0.0, 0.5));
+    tree.Image(7, r"base\\gameplay\\gui\\widgets\\notifications\\notification_assets.inkatlas", n"holder_phone", inkBrushMirrorType.NoMirror);
+    tree.widgets[7].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkImage(), 6, n"Phone_Sig1", Vector2(17.0, 17.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(14.0, 55.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[8].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[8].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(8, r"base\\gameplay\\gui\\widgets\\notifications\\notification_assets.inkatlas", n"holder_phone_sig1", inkBrushMirrorType.NoMirror);
+    tree.widgets[8].BindProperty(n"tintColor", n"Journal.Fluff");
+    tree.Add(new inkImage(), 6, n"Phone_Sig2", Vector2(28.0, 28.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(14.0, 55.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[9].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[9].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(9, r"base\\gameplay\\gui\\widgets\\notifications\\notification_assets.inkatlas", n"holder_phone_sig2", inkBrushMirrorType.NoMirror);
+    tree.widgets[9].BindProperty(n"tintColor", n"Journal.Fluff");
+    tree.Add(new inkImage(), 6, n"Phone_Sig3", Vector2(40.0, 40.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(14.0, 55.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[10].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[10].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(10, r"base\\gameplay\\gui\\widgets\\notifications\\notification_assets.inkatlas", n"holder_phone_sig3", inkBrushMirrorType.NoMirror);
+    tree.widgets[10].BindProperty(n"tintColor", n"Journal.Fluff");
+    tree.Add(new inkVerticalPanel(), 1, n"inkVerticalPanelWidget11", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(75.000023, 30.0, 0.0, 0.0), inkMargin(0.0, -6.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[11].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[11].SetFitToContent(true);
+    tree.widgets[11].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    (tree.widgets[11] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[11] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkHorizontalPanel(), 11, n"inkHorizontalPanelWidget15", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[12].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[12].SetFitToContent(true);
+    tree.widgets[12].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[12] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[12] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkFlex(), 12, n"inkFlexWidget17", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 5.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[13].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[13].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[13] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[13] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkCanvas(), 13, n"inkCanvasWidget19", Vector2(64.0, 64.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[14].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[14].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[14] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[14] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkCanvas(), 14, n"mappinIconContainer", Vector2(64.0, 64.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[15].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[15].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[15] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[15] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 15, n"mappinIcon", Vector2(62.0, 62.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[16].SetTintColor(HDRColor(1.1192, 0.8441, 0.2565, 1.0));
+    tree.widgets[16].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(16, r"base\\gameplay\\gui\\common\\icons\\mappin_icons.inkatlas", n"gang_watch", inkBrushMirrorType.NoMirror);
+    tree.widgets[16].BindProperty(n"tintColor", n"Journal.SubIcon");
+    tree.Add(new inkCanvas(), 14, n"Envelope", Vector2(49.0, 35.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[17].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[17].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[17] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[17] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 17, n"Envelope_Top", Vector2(36.0, 18.0), HUDitorVisualTree.Layout(inkEAnchor.TopCenter, Vector2(0.5, 0.0), inkMargin(1.0, 6.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[18].SetTintColor(HDRColor(1.1192, 0.8441, 0.2565, 1.0));
+    tree.widgets[18].SetFitToContent(true);
+    tree.widgets[18].SetScale(Vector2(0.8, 0.8));
+    tree.widgets[18].SetRenderTransformPivot(Vector2(0.5, 0.0));
+    tree.Image(18, r"base\\gameplay\\gui\\common\\icons\\atlas_common.inkatlas", n"envelelope_top", inkBrushMirrorType.NoMirror);
+    tree.widgets[18].BindProperty(n"tintColor", n"Journal.SubIcon");
+    tree.Add(new inkImage(), 17, n"Envelope_Side_L", Vector2(13.0, 26.0), HUDitorVisualTree.Layout(inkEAnchor.CenterLeft, Vector2(1.0, 0.5), inkMargin(9.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[19].SetTintColor(HDRColor(1.1192, 0.8441, 0.2565, 1.0));
+    tree.widgets[19].SetFitToContent(true);
+    tree.widgets[19].SetScale(Vector2(0.8, 0.8));
+    tree.widgets[19].SetRotation(180.0);
+    tree.widgets[19].SetRenderTransformPivot(Vector2(1.0, 0.5));
+    tree.Image(19, r"base\\gameplay\\gui\\common\\icons\\atlas_common.inkatlas", n"envelelope_side", inkBrushMirrorType.Horizontal);
+    tree.widgets[19].BindProperty(n"tintColor", n"Journal.SubIcon");
+    tree.Add(new inkImage(), 17, n"Envelope_Side_R", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.CenterRight, Vector2(0.0, 0.5), inkMargin(0.0, 0.0, 7.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[20].SetTintColor(HDRColor(1.1192, 0.8441, 0.2565, 1.0));
+    tree.widgets[20].SetFitToContent(true);
+    tree.widgets[20].SetScale(Vector2(0.8, 0.8));
+    tree.widgets[20].SetRotation(180.0);
+    tree.widgets[20].SetRenderTransformPivot(Vector2(0.0, 0.5));
+    tree.Image(20, r"base\\gameplay\\gui\\common\\icons\\atlas_common.inkatlas", n"envelelope_side", inkBrushMirrorType.NoMirror);
+    tree.widgets[20].BindProperty(n"tintColor", n"Journal.SubIcon");
+    tree.Add(new inkImage(), 17, n"Envelope_Bottom", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.BottomCenter, Vector2(0.5, 1.0), inkMargin(1.0, 0.0, 0.0, 6.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[21].SetTintColor(HDRColor(1.1192, 0.8441, 0.2565, 1.0));
+    tree.widgets[21].SetFitToContent(true);
+    tree.widgets[21].SetScale(Vector2(0.8, 0.8));
+    tree.widgets[21].SetRenderTransformPivot(Vector2(0.5, 1.0));
+    tree.Image(21, r"base\\gameplay\\gui\\common\\icons\\atlas_common.inkatlas", n"envelelope_bottom", inkBrushMirrorType.NoMirror);
+    tree.widgets[21].BindProperty(n"tintColor", n"Journal.SubIcon");
+    tree.Add(new inkImage(), 17, n"Envelope_TopOpen", Vector2(36.0, 16.0), HUDitorVisualTree.Layout(inkEAnchor.TopCenter, Vector2(0.5, 0.0), inkMargin(1.0, 7.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[22].SetTintColor(HDRColor(1.1192, 0.8441, 0.2565, 1.0));
+    tree.widgets[22].SetFitToContent(true);
+    tree.widgets[22].SetScale(Vector2(0.8, 0.8));
+    tree.widgets[22].SetRotation(180.0);
+    tree.widgets[22].SetRenderTransformPivot(Vector2(0.5, 0.0));
+    tree.Image(22, r"base\\gameplay\\gui\\common\\icons\\atlas_common.inkatlas", n"envelelope_top", inkBrushMirrorType.NoMirror);
+    tree.widgets[22].BindProperty(n"tintColor", n"Journal.SubIcon");
+    tree.Add(new inkFlex(), 12, n"inkFlexWidget23", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[23].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[23].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[23] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[23] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkText(), 23, n"NAME_msg", Vector2(100.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Fill, Vector2(0.0, 0.0), inkMargin(0.0, 12.0, 0.0, 15.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[24].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[24].SetFitToContent(true);
+    tree.widgets[24].SetRenderTransformPivot(Vector2(0.0, 0.5));
+    tree.Text(24, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Semi-Bold", 42, GetLocalizedTextByKey(n"Mod-HUDitor-Preview-Contact"));
+    (tree.widgets[24] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[24].BindProperty(n"tintColor", n"Journal.TextName");
+    tree.Add(new inkCanvas(), 23, n"Name", Vector2(700.0, 80.0), HUDitorVisualTree.Layout(inkEAnchor.CenterLeft, Vector2(0.0, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[25].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[25].SetRenderTransformPivot(Vector2(0.0, 0.5));
+    (tree.widgets[25] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[25] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkRectangle(), 25, n"SQ_newQuest", Vector2(15.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.LeftFillVerticaly, Vector2(1.0, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[26].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[26].SetRenderTransformPivot(Vector2(1.0, 0.5));
+    tree.widgets[26].BindProperty(n"tintColor", n"Journal.TextName");
+    tree.Add(new inkFlex(), 11, n"SmallSquaresCanvasFlex", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(64.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[27].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[27].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[27] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[27] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 27, n"msg_Window_BG", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Fill, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[28].SetTintColor(HDRColor(0.258824, 0.231373, 0.109804, 1.0));
+    tree.widgets[28].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(28, r"base\\gameplay\\gui\\common\\shapes\\atlas_shapes_sync.inkatlas", n"sorting_drop_bg", inkBrushMirrorType.NoMirror);
+    (tree.widgets[28] as inkImage).useNineSliceScale = true;
+    (tree.widgets[28] as inkImage).nineSliceScale = inkMargin(0.0, 0.0, 0.0, 0.0);
+    tree.widgets[28].BindProperty(n"tintColor", n"MainColors.FaintYellow");
+    tree.Add(new inkImage(), 27, n"msg_Window_FG", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Fill, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[29].SetTintColor(HDRColor(1.1192, 0.8441, 0.2565, 1.0));
+    tree.widgets[29].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(29, r"base\\gameplay\\gui\\common\\shapes\\atlas_shapes_sync.inkatlas", n"sorting_drop_fg", inkBrushMirrorType.NoMirror);
+    (tree.widgets[29] as inkImage).useNineSliceScale = true;
+    (tree.widgets[29] as inkImage).nineSliceScale = inkMargin(0.0, 0.0, 0.0, 0.0);
+    tree.widgets[29].BindProperty(n"tintColor", n"MainColors.Yellow");
+    tree.Add(new inkText(), 27, n"MSGText", Vector2(750.0, 72.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(20.0, 25.0, 20.0, 20.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[30].SetTintColor(HDRColor(1.1192, 0.8441, 0.2565, 1.0));
+    tree.widgets[30].SetFitToContent(true);
+    tree.widgets[30].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(30, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Medium", 50, GetLocalizedTextByKey(n"Mod-HUDitor-Preview-Message"));
+    (tree.widgets[30] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[30].BindProperty(n"tintColor", n"MainColors.Yellow");
+    tree.Add(new inkImage(), 1, n"shadowBlob", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Fill, Vector2(0.5, 0.5), inkMargin(-350.0, -200.0, -400.0, -200.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[31].SetTintColor(HDRColor(0.058824, 0.058824, 0.133333, 1.0));
+    tree.widgets[31].SetFitToContent(true);
+    tree.widgets[31].SetOpacity(0.6);
+    tree.widgets[31].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(31, r"base\\gameplay\\gui\\common\\shadow_blobs.inkatlas", n"shadowBlobSquare_big", inkBrushMirrorType.NoMirror);
+    tree.widgets[31].BindProperty(n"tintColor", n"ShadowBlob.BackgroundColour");
+  }
+  private static func NewItemNotifications(tree: ref<HUDitorVisualTree>) -> Void {
+    HUDitorVisualRecipes.NewItemNotificationsPart0(tree);
+  }
+  private static func NewItemNotificationsPart0(tree: ref<HUDitorVisualTree>) -> Void {
+    tree.Add(new inkCanvas(), -1, n"Root", Vector2(800.0, 424.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[0].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[0].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    (tree.widgets[0] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[0] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.widgets[0].BindProperty(n"tintColor", n"Rarity.mainColor");
+    tree.Add(new inkCanvas(), 0, n"Item_recived_All", Vector2(995.0, 400.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(10.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[1].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[1].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    (tree.widgets[1] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[1] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.widgets[1].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkCanvas(), 1, n"LeftCorner_Ico", Vector2(700.0, 108.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[2].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[2].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[2] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[2] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkCanvas(), 2, n"Code_corner_canvas", Vector2(31.0, 38.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(-10.0, 1.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[3].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[3].SetOpacity(0.4);
+    tree.widgets[3].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    (tree.widgets[3] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[3] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 3, n"Code_TL", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[4].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[4].SetFitToContent(true);
+    tree.widgets[4].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    tree.Image(4, r"base\\gameplay\\gui\\widgets\\notifications\\notification_assets.inkatlas", n"holder_code", inkBrushMirrorType.NoMirror);
+    tree.widgets[4].BindProperty(n"tintColor", n"NewItem.Fluff");
+    tree.Add(new inkCanvas(), 2, n"Connection_canvas", Vector2(245.0, 14.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(56.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[5].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[5].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    (tree.widgets[5] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[5] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 5, n"Connection_fluff", Vector2(245.0, 14.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 1.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[6].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[6].SetFitToContent(true);
+    tree.widgets[6].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    tree.Image(6, r"base\\gameplay\\gui\\widgets\\notifications\\notification_assets.inkatlas", n"Fluff_Connection", inkBrushMirrorType.NoMirror);
+    tree.widgets[6].BindProperty(n"tintColor", n"NewItem.Fluff");
+    tree.Add(new inkCanvas(), 2, n"Core_Canvas", Vector2(40.0, 40.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(-14.0, 58.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[7].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[7].SetOpacity(0.4);
+    tree.widgets[7].SetRotation(45.0);
+    tree.widgets[7].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[7] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[7] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 7, n"HolderItem", Vector2(55.0, 55.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[8].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[8].SetFitToContent(true);
+    tree.widgets[8].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(8, r"base\\gameplay\\gui\\widgets\\notifications\\notification_assets.inkatlas", n"ico_inventory", inkBrushMirrorType.NoMirror);
+    tree.widgets[8].BindProperty(n"tintColor", n"NewItem.Fluff");
+    tree.Add(new inkImage(), 7, n"HolderItemCanvas", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[9].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[9].SetFitToContent(true);
+    tree.widgets[9].SetOpacity(0.8);
+    tree.widgets[9].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(9, r"base\\gameplay\\gui\\common\\hud_widget_holder.inkatlas", n"holder_rombus", inkBrushMirrorType.NoMirror);
+    tree.widgets[9].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkCanvas(), 2, n"NewItemReceived", Vector2(1000.0, 72.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.5), inkMargin(77.0, 77.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[10].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[10].SetRenderTransformPivot(Vector2(0.0, 0.5));
+    (tree.widgets[10] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[10] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkText(), 10, n"New_Item", Vector2(600.0, 50.0), HUDitorVisualTree.Layout(inkEAnchor.CenterLeft, Vector2(0.0, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[11].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[11].SetRenderTransformPivot(Vector2(0.0, 0.5));
+    tree.Text(11, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Medium", 50, GetLocalizedTextByKey(n"Mod-HUDitor-Preview-Item"));
+    (tree.widgets[11] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[11].BindProperty(n"tintColor", n"NewItem.TextInfo");
+    tree.Add(new inkHorizontalPanel(), 1, n"L_R", Vector2(500.0, 194.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(80.0, 132.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[12].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[12].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    (tree.widgets[12] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[12] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkCanvas(), 12, n"Plate", Vector2(863.0, 163.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[13].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[13].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    (tree.widgets[13] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[13] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkFlex(), 13, n"inkFlexWidget9", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[14].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[14].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[14] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[14] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 14, n"Plate_BG", Vector2(1050.0, 163.0), HUDitorVisualTree.Layout(inkEAnchor.Fill, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[15].SetTintColor(HDRColor(0.054902, 0.054902, 0.090196, 1.0));
+    tree.widgets[15].SetOpacity(0.1332);
+    tree.widgets[15].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    tree.Image(15, r"base\\gameplay\\gui\\widgets\\notifications\\notification_assets.inkatlas", n"item_cell_bg", inkBrushMirrorType.NoMirror);
+    (tree.widgets[15] as inkImage).useNineSliceScale = true;
+    (tree.widgets[15] as inkImage).nineSliceScale = inkMargin(0.0, 0.0, 0.0, 0.0);
+    tree.widgets[15].BindProperty(n"tintColor", n"NewItem.PlateBg");
+    tree.Add(new inkFlex(), 14, n"plate_glow_FLEX", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[16].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[16].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[16] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[16] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 16, n"Plate_FG", Vector2(400.0, 163.0), HUDitorVisualTree.Layout(inkEAnchor.Fill, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[17].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[17].SetOpacity(0.13);
+    tree.widgets[17].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    tree.Image(17, r"base\\gameplay\\gui\\widgets\\notifications\\notification_assets.inkatlas", n"item_cell_fg", inkBrushMirrorType.NoMirror);
+    (tree.widgets[17] as inkImage).useNineSliceScale = true;
+    (tree.widgets[17] as inkImage).nineSliceScale = inkMargin(0.0, 0.0, 0.0, 0.0);
+    tree.widgets[17].BindProperty(n"tintColor", n"NewItem.PlateFg");
+    tree.Add(new inkImage(), 14, n"Item_Icon", Vector2(160.0, 160.0), HUDitorVisualTree.Layout(inkEAnchor.CenterLeft, Vector2(0.0, 0.5), inkMargin(77.0, 0.0, 50.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[18].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[18].SetFitToContent(true);
+    tree.widgets[18].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(18, r"base\\gameplay\\gui\\widgets\\ammo_counter\\atlas_ammo_counter.inkatlas", n"guillotine", inkBrushMirrorType.NoMirror);
+    tree.Add(new inkCanvas(), 1, n"PerkScCanvas", Vector2(317.0, 65.0), HUDitorVisualTree.Layout(inkEAnchor.BottomRight, Vector2(1.0, 1.0), inkMargin(0.0, 0.0, 360.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[19].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[19].SetRenderTransformPivot(Vector2(1.0, 1.0));
+    (tree.widgets[19] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[19] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkCanvas(), 1, n"NAME", Vector2(450.0, 120.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(82.0, 320.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[20].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[20].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[20] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[20] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkText(), 20, n"WeaponName", Vector2(428.0, 92.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[21].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[21].SetFitToContent(true);
+    tree.widgets[21].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    tree.Text(21, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Medium", 38, GetLocalizedTextByKey(n"Mod-HUDitor-Preview-Item"));
+    (tree.widgets[21] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[21].BindProperty(n"tintColor", n"MainColors.White");
+    tree.Add(new inkImage(), 0, n"shadowBlob", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Fill, Vector2(0.5, 0.5), inkMargin(-350.0, -100.0, 0.0, -100.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[22].SetTintColor(HDRColor(0.058824, 0.058824, 0.133333, 1.0));
+    tree.widgets[22].SetFitToContent(true);
+    tree.widgets[22].SetOpacity(0.6);
+    tree.widgets[22].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(22, r"base\\gameplay\\gui\\common\\shadow_blobs.inkatlas", n"shadowBlobSquare_big", inkBrushMirrorType.NoMirror);
+    tree.widgets[22].BindProperty(n"tintColor", n"ShadowBlob.BackgroundColour");
+  }
+  private static func NewVehicleSummon(tree: ref<HUDitorVisualTree>) -> Void {
+    HUDitorVisualRecipes.NewVehicleSummonPart0(tree);
+  }
+  private static func NewVehicleSummonPart0(tree: ref<HUDitorVisualTree>) -> Void {
+    tree.Add(new inkCanvas(), -1, n"Root", Vector2(450.0, 80.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[0].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[0].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[0] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[0] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkCanvas(), 0, n"vehicle_summon", Vector2(450.0, 80.0), HUDitorVisualTree.Layout(inkEAnchor.TopRight, Vector2(1.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[1].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[1].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[1] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[1] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkCanvas(), 1, n"ProvidedBy", Vector2(450.0, 80.0), HUDitorVisualTree.Layout(inkEAnchor.TopRight, Vector2(1.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[2].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[2].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    (tree.widgets[2] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[2] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 2, n"logo", Vector2(114.0, 115.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.5), inkMargin(77.0, 54.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[3].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[3].SetFitToContent(true);
+    tree.widgets[3].SetScale(Vector2(0.6, 0.6));
+    tree.widgets[3].SetRenderTransformPivot(Vector2(0.0, 0.5));
+    tree.Image(3, r"base\\gameplay\\gui\\common\\icons\\weapon_manufacturers.inkatlas", n"thorton", inkBrushMirrorType.NoMirror);
+    tree.widgets[3].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkCanvas(), 1, n"NaviCube", Vector2(450.0, 80.0), HUDitorVisualTree.Layout(inkEAnchor.TopRight, Vector2(1.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[4].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[4].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[4] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[4] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkCanvas(), 4, n"beauty_Rectangles", Vector2(450.0, 40.0), HUDitorVisualTree.Layout(inkEAnchor.TopFillHorizontaly, Vector2(0.0, 0.5), inkMargin(0.0, 0.0, 0.0, 130.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[5].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[5].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[5] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[5] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkRectangle(), 5, n"rectangle_big", Vector2(40.0, 4.0), HUDitorVisualTree.Layout(inkEAnchor.CenterLeft, Vector2(0.0, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[6].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[6].SetRenderTransformPivot(Vector2(1.0, 0.5));
+    tree.widgets[6].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkRectangle(), 5, n"rectangle_medium", Vector2(60.0, 3.0), HUDitorVisualTree.Layout(inkEAnchor.CenterLeft, Vector2(0.0, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[7].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[7].SetRenderTransformPivot(Vector2(1.0, 0.5));
+    tree.widgets[7].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkRectangle(), 5, n"rectangle_thin", Vector2(80.0, 2.0), HUDitorVisualTree.Layout(inkEAnchor.CenterLeft, Vector2(0.0, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[8].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[8].SetRenderTransformPivot(Vector2(1.0, 0.5));
+    tree.widgets[8].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkCanvas(), 4, n"square_group", Vector2(100.0, 11.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(40.0, 47.0, 0.0, 30.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[9].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[9].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[9] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[9] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkRectangle(), 9, n"Square", Vector2(11.0, 11.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[10].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[10].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[10].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkRectangle(), 9, n"line_Square_bottom_small", Vector2(100.0, 11.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[11].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[11].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[11].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkCanvas(), 9, n"Square_border", Vector2(37.0, 37.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[12].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[12].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[12] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[12] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Border(12, 2.0);
+    tree.widgets[12].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkRectangle(), 4, n"Square_Corner_01", Vector2(4.0, 4.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[13].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[13].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[13].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkRectangle(), 4, n"Square_Corner_02", Vector2(4.0, 4.0), HUDitorVisualTree.Layout(inkEAnchor.TopRight, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[14].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[14].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[14].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkRectangle(), 4, n"Square_Corner_03", Vector2(4.0, 4.0), HUDitorVisualTree.Layout(inkEAnchor.BottomLeft, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[15].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[15].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[15].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkRectangle(), 4, n"Square_Corner_04", Vector2(4.0, 4.0), HUDitorVisualTree.Layout(inkEAnchor.BottomRight, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[16].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[16].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[16].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkRectangle(), 4, n"box", Vector2(64.0, 64.0), HUDitorVisualTree.Layout(inkEAnchor.Fill, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[17].SetTintColor(HDRColor(0.301961, 0.690196, 0.647059, 1.0));
+    tree.widgets[17].SetOpacity(0.05);
+    tree.widgets[17].SetRenderTransformPivot(Vector2(0.0, 0.5));
+    tree.widgets[17].BindProperty(n"tintColor", n"MainColors.DarkBlue");
+    tree.Add(new inkHorizontalPanel(), 4, n"car_distance_holder", Vector2(450.0, 80.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[18].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[18].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[18] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[18] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkHorizontalPanel(), 18, n"nameAndIcon", Vector2(310.0, 150.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.0), inkMargin(12.0, -14.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[19].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[19].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[19] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 5.0, 0.0));
+    (tree.widgets[19] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 19, n"typeIcon", Vector2(54.0, 54.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(-2.0, 39.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[20].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[20].SetScale(Vector2(0.9, 0.9));
+    tree.widgets[20].SetRenderTransformPivot(Vector2(0.0, 0.5));
+    tree.Image(20, r"base\\gameplay\\gui\\common\\icons\\mappin_icons.inkatlas", n"motorcycle", inkBrushMirrorType.NoMirror);
+    tree.widgets[20].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkText(), 19, n"vehicleName", Vector2(290.0, 75.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(1.0, 55.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[21].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[21].SetFitToContent(true);
+    tree.widgets[21].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    tree.Text(21, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Medium", 22, GetLocalizedTextByKey(n"Mod-HUDitor-Preview-Vehicle"));
+    (tree.widgets[21] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[21].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkVerticalPanel(), 18, n"MeterAway", Vector2(130.0, 60.0), HUDitorVisualTree.Layout(inkEAnchor.CenterRight, Vector2(0.0, 0.0), inkMargin(-10.0, 0.0, 10.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Right, inkEVerticalAlign.Center, inkESizeRule.Stretch, 1.0));
+    tree.widgets[22].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[22].SetFitToContent(true);
+    tree.widgets[22].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[22] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[22] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkText(), 22, n"Dist", Vector2(130.0, 63.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Right, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[23].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[23].SetFitToContent(true);
+    tree.widgets[23].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    tree.Text(23, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Medium", 38, GetLocalizedTextByKey(n"Mod-HUDitor-Preview-Distance"));
+    (tree.widgets[23] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[23].BindProperty(n"tintColor", n"MainColors.Blue");
+    tree.Add(new inkCanvas(), 4, n"signal", Vector2(40.0, 40.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(1.0, 1.0), inkMargin(51.0, 51.0, 64.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[24].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[24].SetOpacity(0.7);
+    tree.widgets[24].SetScale(Vector2(0.8, 0.8));
+    tree.widgets[24].SetRotation(230.0);
+    tree.widgets[24].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[24] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[24] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 24, n"Phone_Sig1", Vector2(17.0, 17.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[25].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[25].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(25, r"base\\gameplay\\gui\\common\\hud_widget_holder.inkatlas", n"holder_phone_big_sig1", inkBrushMirrorType.NoMirror);
+    tree.widgets[25].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkImage(), 24, n"Phone_Sig2", Vector2(28.0, 28.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[26].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[26].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(26, r"base\\gameplay\\gui\\common\\hud_widget_holder.inkatlas", n"holder_phone_big_sig2", inkBrushMirrorType.NoMirror);
+    tree.widgets[26].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkImage(), 24, n"Phone_Sig3", Vector2(40.0, 40.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[27].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[27].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(27, r"base\\gameplay\\gui\\common\\hud_widget_holder.inkatlas", n"holder_phone_big_sig3", inkBrushMirrorType.NoMirror);
+    tree.widgets[27].BindProperty(n"tintColor", n"MainColors.Red");
+  }
+  private static func NewWeaponRoster(tree: ref<HUDitorVisualTree>) -> Void {
+    HUDitorVisualRecipes.NewWeaponRosterPart0(tree);
+  }
+  private static func NewWeaponRosterPart0(tree: ref<HUDitorVisualTree>) -> Void {
+    tree.Add(new inkCanvas(), -1, n"Root", Vector2(1100.0, 200.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[0].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[0].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[0] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[0] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.widgets[0].BindProperty(n"tintColor", n"None");
+    tree.Add(new inkHorizontalPanel(), 0, n"weapon_on_foot", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.BottomRight, Vector2(1.0, 1.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[1].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[1].SetFitToContent(true);
+    tree.widgets[1].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[1] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[1] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkVerticalPanel(), 1, n"ammo_counter", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.BottomRight, Vector2(1.0, 1.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[2].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[2].SetFitToContent(true);
+    tree.widgets[2].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[2] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[2] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkHorizontalPanel(), 2, n"additional_info", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 25.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Right, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[3].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[3].SetFitToContent(true);
+    tree.widgets[3].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[3] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[3] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkFlex(), 3, n"smartlink_OFF", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[4].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[4].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[4] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[4] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkText(), 4, n"fluffOff", Vector2(100.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[5].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[5].SetFitToContent(true);
+    tree.widgets[5].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(5, "base\\gameplay\\gui\\fonts\\orbitron\\orbitron.inkfontfamily", n"Medium", 16, "");
+    (tree.widgets[5] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[5].BindProperty(n"tintColor", n"MainColors.Blue");
+    tree.Add(new inkText(), 3, n"left_weapon_name", Vector2(100.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(25.0, 0.0, 25.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[6].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[6].SetFitToContent(true);
+    tree.widgets[6].SetOpacity(0.4);
+    tree.widgets[6].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(6, "base\\gameplay\\gui\\fonts\\orbitron\\orbitron.inkfontfamily", n"Medium", 16, "");
+    (tree.widgets[6] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[6].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkText(), 3, n"right_weapon_name", Vector2(100.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(25.0, 0.0, 25.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[7].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[7].SetFitToContent(true);
+    tree.widgets[7].SetOpacity(0.4);
+    tree.widgets[7].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(7, "base\\gameplay\\gui\\fonts\\orbitron\\orbitron.inkfontfamily", n"Medium", 16, "");
+    (tree.widgets[7] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[7].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkHorizontalPanel(), 2, n"weapon_wrapper", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.BottomRight, Vector2(1.0, 1.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[8].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[8].SetFitToContent(true);
+    tree.widgets[8].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[8] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[8] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkHorizontalPanel(), 8, n"ammo_wrapper", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Top, inkESizeRule.Stretch, 1.0));
+    tree.widgets[9].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[9].SetFitToContent(true);
+    tree.widgets[9].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[9] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[9] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkText(), 9, n"left_ammo_current", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, -6.0, 20.0, 5.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 0.0));
+    tree.widgets[10].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[10].SetFitToContent(true);
+    tree.widgets[10].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(10, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Medium", 80, "30");
+    (tree.widgets[10] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[10].BindProperty(n"tintColor", n"MainColors.Blue");
+    tree.Add(new inkText(), 9, n"left_ammo_all", Vector2(35.0, 13.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 25.0, 5.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Right, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[11].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[11].SetFitToContent(true);
+    tree.widgets[11].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(11, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Medium", 60, "180");
+    (tree.widgets[11] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[11].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkRectangle(), 9, n"Separator", Vector2(4.0, 54.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 16.0, 17.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[12].SetTintColor(HDRColor(1.3698, 0.4437, 0.4049, 1.0));
+    tree.widgets[12].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[12].BindProperty(n"tintColor", n"MainColors.ActiveRed");
+    tree.Add(new inkText(), 9, n"right_ammo_current", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, -6.0, 20.0, 5.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 0.0));
+    tree.widgets[13].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[13].SetFitToContent(true);
+    tree.widgets[13].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(13, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Medium", 80, "30");
+    (tree.widgets[13] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[13].BindProperty(n"tintColor", n"MainColors.Blue");
+    tree.Add(new inkText(), 9, n"right_ammo_all", Vector2(35.0, 13.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 25.0, 5.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Right, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[14].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[14].SetFitToContent(true);
+    tree.widgets[14].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(14, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Medium", 60, "180");
+    (tree.widgets[14] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[14].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkVerticalPanel(), 8, n"left_weapon_holder", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 10.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[15].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[15].SetFitToContent(true);
+    tree.widgets[15].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[15] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 6.0));
+    (tree.widgets[15] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 15, n"left_weapon_icon", Vector2(189.0, 47.0), HUDitorVisualTree.Layout(inkEAnchor.CenterLeft, Vector2(0.0, 0.5), inkMargin(0.0, 0.0, -5.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Right, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[16].SetTintColor(HDRColor(1.3698, 0.4437, 0.4049, 1.0));
+    tree.widgets[16].SetFitToContent(true);
+    tree.widgets[16].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(16, r"base\\gameplay\\gui\\widgets\\ammo_counter\\atlas_ammo_counter.inkatlas", n"guillotine", inkBrushMirrorType.Horizontal);
+    tree.widgets[16].BindProperty(n"tintColor", n"MainColors.ActiveRed");
+    tree.Add(new inkVerticalPanel(), 8, n"right_weapon_holder", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 10.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[17].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[17].SetFitToContent(true);
+    tree.widgets[17].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[17] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 6.0));
+    (tree.widgets[17] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 17, n"right_weapon_icon", Vector2(189.0, 47.0), HUDitorVisualTree.Layout(inkEAnchor.CenterLeft, Vector2(0.0, 0.5), inkMargin(0.0, 0.0, 30.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Right, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[18].SetTintColor(HDRColor(1.3698, 0.4437, 0.4049, 1.0));
+    tree.widgets[18].SetFitToContent(true);
+    tree.widgets[18].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(18, r"base\\gameplay\\gui\\widgets\\ammo_counter\\atlas_ammo_counter.inkatlas", n"guillotine", inkBrushMirrorType.Horizontal);
+    tree.widgets[18].BindProperty(n"tintColor", n"MainColors.ActiveRed");
+  }
+  private static func NewCrouchIndicator(tree: ref<HUDitorVisualTree>) -> Void {
+    HUDitorVisualRecipes.NewCrouchIndicatorPart0(tree);
+  }
+  private static func NewCrouchIndicatorPart0(tree: ref<HUDitorVisualTree>) -> Void {
+    tree.Add(new inkCanvas(), -1, n"Root", Vector2(154.0, 174.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[0].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[0].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[0] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[0] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.widgets[0].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkHorizontalPanel(), 0, n"ammo_counter_and_the_holder", Vector2(150.0, 150.0), HUDitorVisualTree.Layout(inkEAnchor.BottomRight, Vector2(1.0, 0.7), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[1].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[1].SetFitToContent(true);
+    tree.widgets[1].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[1] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[1] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 1, n"crouchState", Vector2(79.0, 232.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(0.0, -58.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Right, inkEVerticalAlign.Center, inkESizeRule.Stretch, 1.0));
+    tree.widgets[2].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[2].SetOpacity(0.8);
+    tree.widgets[2].SetScale(Vector2(0.5, 0.5));
+    tree.widgets[2].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(2, r"base\\gameplay\\gui\\widgets\\ammo_counter\\crouch_state_atlas.inkatlas", n"stand", inkBrushMirrorType.NoMirror);
+    tree.widgets[2].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkVerticalPanel(), 1, n"holder", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopRight, Vector2(1.0, 0.0), inkMargin(0.0, 16.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Top, inkESizeRule.Stretch, 1.0));
+    tree.widgets[3].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[3].SetFitToContent(true);
+    tree.widgets[3].SetOpacity(0.4);
+    tree.widgets[3].SetRenderTransformPivot(Vector2(1.0, 0.0));
+    (tree.widgets[3] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[3] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 3, n"holder_code", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 2.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Stretch, 1.0));
+    tree.widgets[4].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[4].SetFitToContent(true);
+    tree.widgets[4].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(4, r"base\\gameplay\\gui\\common\\hud_widget_holder.inkatlas", n"holder_code", inkBrushMirrorType.NoMirror);
+    tree.widgets[4].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkFlex(), 3, n"holder_core", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 10.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[5].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[5].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[5] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[5] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 5, n"holder_circle", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[6].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[6].SetFitToContent(true);
+    tree.widgets[6].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(6, r"base\\gameplay\\gui\\common\\hud_widget_holder.inkatlas", n"hud_patch_frame", inkBrushMirrorType.NoMirror);
+    tree.widgets[6].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkImage(), 5, n"holder_core", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Stretch, 1.0));
+    tree.widgets[7].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[7].SetFitToContent(true);
+    tree.widgets[7].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(7, r"base\\gameplay\\gui\\common\\hud_widget_holder.inkatlas", n"hud_patch_current", inkBrushMirrorType.NoMirror);
+    tree.widgets[7].BindProperty(n"tintColor", n"MainColors.Red");
+  }
+  private static func NewDpad(tree: ref<HUDitorVisualTree>) -> Void {
+    HUDitorVisualRecipes.NewDpadPart0(tree);
+  }
+  private static func NewDpadPart0(tree: ref<HUDitorVisualTree>) -> Void {
+    tree.Add(new inkFlex(), -1, n"HotkeyMainFlex", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[0].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[0].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    (tree.widgets[0] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[0] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkVerticalPanel(), 0, n"wrapper_Dpad_Up", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.BottomCenter, Vector2(0.5, 1.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[1].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[1].SetFitToContent(true);
+    tree.widgets[1].SetRenderTransformPivot(Vector2(0.5, 0.0));
+    (tree.widgets[1] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 17.0, 0.0, 0.0));
+    (tree.widgets[1] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkFlex(), 1, n"item_wrapper_Dpad_Up", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[2].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[2].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[2] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[2] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 2, n"BGG", Vector2(120.0, 113.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[3].SetTintColor(HDRColor(0.054902, 0.054902, 0.090196, 1.0));
+    tree.widgets[3].SetOpacity(0.85);
+    tree.widgets[3].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(3, r"base\\gameplay\\gui\\widgets\\phone\\new_phone_assets.inkatlas", n"itemSlot_bg", inkBrushMirrorType.NoMirror);
+    tree.widgets[3].BindProperty(n"tintColor", n"DpadDefault.background");
+    tree.Add(new inkImage(), 2, n"fg", Vector2(123.0, 116.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[4].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[4].SetOpacity(0.8);
+    tree.widgets[4].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(4, r"base\\gameplay\\gui\\widgets\\phone\\new_phone_assets.inkatlas", n"itemSlot_fg", inkBrushMirrorType.NoMirror);
+    tree.widgets[4].BindProperty(n"tintColor", n"DpadDefault.borderColor");
+    tree.Add(new inkImage(), 2, n"decor", Vector2(122.0, 113.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[5].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[5].SetOpacity(0.1);
+    tree.widgets[5].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(5, r"base\\gameplay\\gui\\widgets\\phone\\new_phone_assets.inkatlas", n"itemSlot_dec", inkBrushMirrorType.NoMirror);
+    tree.widgets[5].BindProperty(n"tintColor", n"DpadDefault.borderColor");
+    tree.Add(new inkCanvas(), 2, n"itemSlot", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[6].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[6].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[6] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[6] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkCanvas(), 2, n"onUseGlow", Vector2(119.0, 116.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Bottom, inkESizeRule.Fixed, 1.0));
+    tree.widgets[7].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[7].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[7] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[7] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkCanvas(), 2, n"chargebarSize", Vector2(119.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Bottom, inkESizeRule.Fixed, 1.0));
+    tree.widgets[8].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[8].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[8] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[8] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkHorizontalPanel(), 1, n"inputDisplayController", Vector2(40.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[9].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[9].SetFitToContent(true);
+    tree.widgets[9].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[9] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[9] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkCanvas(), 9, n"container", Vector2(75.0, 75.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[10].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[10].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[10] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[10] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkCanvas(), 10, n"holdContainer", Vector2(75.0, 75.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[11].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[11].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[11] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[11] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkCanvas(), 10, n"inputRoot", Vector2(64.0, 64.0), HUDitorVisualTree.Layout(inkEAnchor.Fill, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[12].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[12].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[12] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[12] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Action(12, n"UseConsumable", 64.0);
+    tree.Add(new inkFlex(), 0, n"HotkeyMainFlex", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[13].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[13].SetTranslation(Vector2(170.0, 0.0));
+    tree.widgets[13].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    (tree.widgets[13] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[13] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkVerticalPanel(), 13, n"wrapper_RB", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.BottomCenter, Vector2(0.5, 1.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[14].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[14].SetFitToContent(true);
+    tree.widgets[14].SetRenderTransformPivot(Vector2(0.5, 0.0));
+    (tree.widgets[14] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 17.0, 0.0, 0.0));
+    (tree.widgets[14] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkFlex(), 14, n"item_wrapper", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[15].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[15].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[15] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[15] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 15, n"bg", Vector2(120.0, 113.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[16].SetTintColor(HDRColor(0.054902, 0.054902, 0.090196, 1.0));
+    tree.widgets[16].SetFitToContent(true);
+    tree.widgets[16].SetOpacity(0.85);
+    tree.widgets[16].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(16, r"base\\gameplay\\gui\\widgets\\phone\\new_phone_assets.inkatlas", n"itemSlot_bg", inkBrushMirrorType.NoMirror);
+    tree.widgets[16].BindProperty(n"tintColor", n"DpadDefault.background");
+    tree.Add(new inkImage(), 15, n"fg", Vector2(123.0, 116.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[17].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[17].SetFitToContent(true);
+    tree.widgets[17].SetOpacity(0.8);
+    tree.widgets[17].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(17, r"base\\gameplay\\gui\\widgets\\phone\\new_phone_assets.inkatlas", n"itemSlot_fg", inkBrushMirrorType.NoMirror);
+    tree.widgets[17].BindProperty(n"tintColor", n"DpadDefault.borderColor");
+    tree.Add(new inkImage(), 15, n"decor", Vector2(122.0, 113.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[18].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[18].SetFitToContent(true);
+    tree.widgets[18].SetOpacity(0.1);
+    tree.widgets[18].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(18, r"base\\gameplay\\gui\\widgets\\phone\\new_phone_assets.inkatlas", n"itemSlot_dec", inkBrushMirrorType.NoMirror);
+    tree.widgets[18].BindProperty(n"tintColor", n"DpadDefault.borderColor");
+    tree.Add(new inkCanvas(), 15, n"itemSlot", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[19].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[19].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[19] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[19] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkCanvas(), 15, n"chargebarSize", Vector2(119.0, 116.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Bottom, inkESizeRule.Fixed, 1.0));
+    tree.widgets[20].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[20].SetRenderTransformPivot(Vector2(0.5, 1.0));
+    (tree.widgets[20] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[20] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkHorizontalPanel(), 14, n"inputDisplayController", Vector2(64.0, 69.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[21].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[21].SetFitToContent(true);
+    tree.widgets[21].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[21] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[21] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkCanvas(), 21, n"container", Vector2(75.0, 75.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[22].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[22].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[22] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[22] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkCanvas(), 22, n"holdContainer", Vector2(75.0, 75.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[23].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[23].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[23] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[23] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkCanvas(), 22, n"inputRoot", Vector2(64.0, 64.0), HUDitorVisualTree.Layout(inkEAnchor.Fill, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[24].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[24].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[24] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[24] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Action(24, n"UseCombatGadget", 64.0);
+    tree.Add(new inkFlex(), 0, n"HotkeyMainFlex", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[25].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[25].SetTranslation(Vector2(340.0, 0.0));
+    tree.widgets[25].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    (tree.widgets[25] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[25] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkVerticalPanel(), 25, n"wrapper_RB", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.BottomCenter, Vector2(0.5, 1.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[26].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[26].SetFitToContent(true);
+    tree.widgets[26].SetRenderTransformPivot(Vector2(0.5, 0.0));
+    (tree.widgets[26] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 17.0, 0.0, 0.0));
+    (tree.widgets[26] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkFlex(), 26, n"item_wrapper", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[27].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[27].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[27] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[27] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 27, n"bg", Vector2(120.0, 113.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[28].SetTintColor(HDRColor(0.054902, 0.054902, 0.090196, 1.0));
+    tree.widgets[28].SetFitToContent(true);
+    tree.widgets[28].SetOpacity(0.85);
+    tree.widgets[28].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(28, r"base\\gameplay\\gui\\widgets\\phone\\new_phone_assets.inkatlas", n"itemSlot_bg", inkBrushMirrorType.NoMirror);
+    tree.widgets[28].BindProperty(n"tintColor", n"DpadDefault.background");
+    tree.Add(new inkImage(), 27, n"fg", Vector2(123.0, 116.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[29].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[29].SetFitToContent(true);
+    tree.widgets[29].SetOpacity(0.8);
+    tree.widgets[29].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(29, r"base\\gameplay\\gui\\widgets\\phone\\new_phone_assets.inkatlas", n"itemSlot_fg", inkBrushMirrorType.NoMirror);
+    tree.widgets[29].BindProperty(n"tintColor", n"DpadDefault.borderColor");
+    tree.Add(new inkImage(), 27, n"decor", Vector2(122.0, 113.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[30].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[30].SetFitToContent(true);
+    tree.widgets[30].SetOpacity(0.1);
+    tree.widgets[30].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(30, r"base\\gameplay\\gui\\widgets\\phone\\new_phone_assets.inkatlas", n"itemSlot_dec", inkBrushMirrorType.NoMirror);
+    tree.widgets[30].BindProperty(n"tintColor", n"DpadDefault.borderColor");
+    tree.Add(new inkCanvas(), 27, n"itemSlot", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[31].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[31].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[31] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[31] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkCanvas(), 27, n"chargebarSize", Vector2(119.0, 116.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Bottom, inkESizeRule.Fixed, 1.0));
+    tree.widgets[32].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[32].SetRenderTransformPivot(Vector2(0.5, 1.0));
+    (tree.widgets[32] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[32] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkCanvas(), 26, n"buttonHints", Vector2(75.0, 75.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[33].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[33].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[33] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[33] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Action(33, n"IconicCyberware", 64.0);
+  }
+  private static func NewHealthBar(tree: ref<HUDitorVisualTree>) -> Void {
+    HUDitorVisualRecipes.NewHealthBarPart0(tree);
+    HUDitorVisualRecipes.NewHealthBarPart1(tree);
+  }
+  private static func NewHealthBarPart0(tree: ref<HUDitorVisualTree>) -> Void {
+    tree.Add(new inkVerticalPanel(), -1, n"Root", Vector2(8.0, 8.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[0].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[0].SetFitToContent(true);
+    tree.widgets[0].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[0] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[0] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.widgets[0].BindProperty(n"tintColor", n"None");
+    tree.Add(new inkCanvas(), 0, n"inkCanvasWidget5", Vector2(550.0, 15.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[1].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[1].SetOpacity(0.4);
+    tree.widgets[1].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[1] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[1] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkText(), 1, n"hpbar_fluff", Vector2(200.0, 13.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(74.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Stretch, 1.0));
+    tree.widgets[2].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[2].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(2, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Medium", 11, "");
+    (tree.widgets[2] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[2].BindProperty(n"tintColor", n"MainColors.PanelRed");
+    tree.Add(new inkHorizontalPanel(), 0, n"buffsHolder", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[3].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[3].SetFitToContent(true);
+    tree.widgets[3].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[3] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[3] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.widgets[3].BindProperty(n"tintColor", n"None");
+    tree.Add(new inkVerticalPanel(), 3, n"holder", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopRight, Vector2(1.0, 0.0), inkMargin(-10.0, -14.0, 0.0, 0.0), inkMargin(0.0, 0.0, 30.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[4].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[4].SetFitToContent(true);
+    tree.widgets[4].SetOpacity(0.4);
+    tree.widgets[4].SetRenderTransformPivot(Vector2(1.0, 0.0));
+    (tree.widgets[4] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[4] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 4, n"holder_code", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 2.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Stretch, 1.0));
+    tree.widgets[5].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[5].SetFitToContent(true);
+    tree.widgets[5].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(5, r"base\\gameplay\\gui\\common\\hud_widget_holder.inkatlas", n"holder_code", inkBrushMirrorType.NoMirror);
+    tree.widgets[5].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkFlex(), 4, n"holder_core", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 10.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[6].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[6].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[6] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[6] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 6, n"holder_circle", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[7].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[7].SetFitToContent(true);
+    tree.widgets[7].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(7, r"base\\gameplay\\gui\\common\\hud_widget_holder.inkatlas", n"hud_patch_frame", inkBrushMirrorType.NoMirror);
+    tree.widgets[7].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkImage(), 6, n"holder_core", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Stretch, 1.0));
+    tree.widgets[8].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[8].SetFitToContent(true);
+    tree.widgets[8].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(8, r"base\\gameplay\\gui\\common\\hud_widget_holder.inkatlas", n"hud_patch_current", inkBrushMirrorType.NoMirror);
+    tree.widgets[8].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkCanvas(), 3, n"icon_holder", Vector2(61.0, 61.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 24.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[9].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[9].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[9] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[9] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 9, n"level_up_arrow", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(31.111101, 29.722231, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[10].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[10].SetFitToContent(true);
+    tree.widgets[10].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(10, r"base\\gameplay\\gui\\widgets\\healthbar\\atlas_nameplate.inkatlas", n"pointer", inkBrushMirrorType.Vertical);
+    tree.widgets[10].BindProperty(n"tintColor", n"MainColors.PanelWhite");
+    tree.Add(new inkText(), 9, n"level_numer_increase", Vector2(62.0, 62.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(-2.0, 2.0, -3.0, 2.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[11].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[11].SetFitToContent(true);
+    tree.widgets[11].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(11, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Regular", 35, "");
+    (tree.widgets[11] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[11].BindProperty(n"tintColor", n"MainColors.PanelBlue");
+    tree.Add(new inkText(), 9, n"level_numer", Vector2(62.0, 62.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(-2.0, 2.0, -3.0, 2.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[12].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[12].SetFitToContent(true);
+    tree.widgets[12].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(12, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Regular", 35, "50");
+    (tree.widgets[12] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[12].BindProperty(n"tintColor", n"MainColors.PanelBlue");
+    tree.Add(new inkImage(), 9, n"frame", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[13].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[13].SetFitToContent(true);
+    tree.widgets[13].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(13, r"base\\gameplay\\gui\\widgets\\healthbar\\hpbar_anim.inkatlas", n"level_frame", inkBrushMirrorType.NoMirror);
+    tree.widgets[13].BindProperty(n"tintColor", n"MainColors.PanelBlue");
+    tree.Add(new inkImage(), 9, n"full_frame", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[14].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[14].SetFitToContent(true);
+    tree.widgets[14].SetScale(Vector2(0.8, 0.8));
+    tree.widgets[14].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(14, r"base\\gameplay\\gui\\widgets\\healthbar\\hpbar_anim.inkatlas", n"level_frame_full", inkBrushMirrorType.NoMirror);
+    tree.widgets[14].BindProperty(n"tintColor", n"MainColors.PanelBlue");
+    tree.Add(new inkVerticalPanel(), 3, n"barsLayout", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(9.0, 14.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[15].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[15].SetFitToContent(true);
+    tree.widgets[15].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[15] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, -5.0, 0.0, 0.0));
+    (tree.widgets[15] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkCanvas(), 15, n"xpBar", Vector2(530.0, 12.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 12.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[16].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[16].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[16] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[16] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkCanvas(), 16, n"dot", Vector2(8.0, 8.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[17].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[17].SetTranslation(Vector2(0.0, 2.0));
+    tree.widgets[17].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[17] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[17] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkHorizontalPanel(), 16, n"flugg_stripes_exp", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.CenterFillHorizontaly, Vector2(0.0, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[18].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[18].SetFitToContent(true);
+    tree.widgets[18].SetOpacity(0.125);
+    tree.widgets[18].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[18] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[18] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkRectangle(), 18, n"bar", Vector2(1.0, 8.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Stretch, 1.0));
+    tree.widgets[19].SetTintColor(HDRColor(0.498039, 0.886275, 0.843137, 1.0));
+    tree.widgets[19].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[19].BindProperty(n"tintColor", n"PlayerHealthBar.expBarColor");
+    tree.Add(new inkHorizontalPanel(), 16, n"exp_bar_cotianer", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopFillHorizontaly, Vector2(0.0, 0.0), inkMargin(0.0, 2.0, -6.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[20].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[20].SetFitToContent(true);
+    tree.widgets[20].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[20] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[20] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkRectangle(), 20, n"exp_bar_full", Vector2(64.0, 8.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 4.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Center, inkESizeRule.Stretch, 0.5));
+    tree.widgets[21].SetTintColor(HDRColor(0.498039, 0.886275, 0.843137, 1.0));
+    tree.widgets[21].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[21].BindProperty(n"tintColor", n"PlayerHealthBar.expBarColor");
+    tree.Add(new inkCanvas(), 20, n"textpos", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[22].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[22].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[22] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[22] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkHorizontalPanel(), 22, n"xp_text", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.CenterLeft, Vector2(0.0, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[23].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[23].SetFitToContent(true);
+    tree.widgets[23].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[23] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[23] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkCanvas(), 20, n"spacer", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Top, inkESizeRule.Stretch, 0.5));
+    tree.widgets[24].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[24].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[24] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[24] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkCanvas(), 20, n"xp_gaining_arrows", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[25].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[25].SetRenderTransformPivot(Vector2(1.0, 1.0));
+    (tree.widgets[25] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[25] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkFlex(), 15, n"health", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 10.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[26].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[26].SetFitToContent(true);
+    tree.widgets[26].SetRenderTransformPivot(Vector2(0.0, 0.5));
+    (tree.widgets[26] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[26] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkFlex(), 26, n"health_bar_holder", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[27].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[27].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[27] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[27] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkFlex(), 27, n"wrapper", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[28].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[28].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[28] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[28] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkMask(), 28, n"mask", Vector2(530.0, 24.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[29].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[29].SetOpacity(0.01);
+    tree.widgets[29].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[29] as inkMask).textureAtlas *= r"base\\gameplay\\gui\\widgets\\healthbar\\hpbar_anim.inkatlas";
+    (tree.widgets[29] as inkMask).texturePart = n"hpbar_0100";
+    tree.Add(new inkRectangle(), 28, n"bg", Vector2(530.0, 24.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[30].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[30].SetOpacity(0.25);
+    tree.widgets[30].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[30].BindProperty(n"tintColor", n"PlayerHealthBar.bgBar");
+    tree.Add(new inkHorizontalPanel(), 28, n"bar", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[31].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[31].SetFitToContent(true);
+    tree.widgets[31].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[31] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[31] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkRectangle(), 31, n"full", Vector2(530.0, 24.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[32].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[32].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[32].BindProperty(n"tintColor", n"PlayerHealthBar.hpBar");
+    tree.Add(new inkRectangle(), 31, n"changeP", Vector2(0.0, 24.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[33].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[33].SetOpacity(0.25);
+    tree.widgets[33].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[33].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkCanvas(), 27, n"absolute_position", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, -2.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[34].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[34].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[34] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[34] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 34, n"changeN", Vector2(20.0, 24.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[35].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[35].SetScale(Vector2(1.0, 2.6));
+    tree.widgets[35].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(35, r"base\\gameplay\\gui\\widgets\\healthbar\\atlas_nameplate.inkatlas", n"negative_flash", inkBrushMirrorType.NoMirror);
+    tree.widgets[35].BindProperty(n"tintColor", n"MainColors.Blue");
+    tree.Add(new inkCanvas(), 27, n"absolute_position_damage_preview", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, -2.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[36].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[36].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[36] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[36] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkRectangle(), 36, n"damage_preview_overclock", Vector2(1.0, 30.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(1.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[37].SetTintColor(HDRColor(1.3698, 0.4437, 0.4049, 1.0));
+    tree.widgets[37].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[37].BindProperty(n"tintColor", n"MainColors.ActiveRed");
+    tree.Add(new inkCanvas(), 27, n"use_feedback", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[38].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[38].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[38] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[38] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkCanvas(), 26, n"Progressbar_Change_Flash", Vector2(550.0, 400.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[39].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[39].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[39] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[39] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkFlex(), 15, n"quickhacks", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(11.0, 6.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[40].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[40].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[40] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[40] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkHorizontalPanel(), 40, n"barsContainer", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(-10.0, 14.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[41].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[41].SetFitToContent(true);
+    tree.widgets[41].SetScale(Vector2(1.6, 1.6));
+    tree.widgets[41].SetRenderTransformPivot(Vector2(0.0, 0.5));
+    (tree.widgets[41] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 3.0, 0.0));
+    (tree.widgets[41] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkCanvas(), 41, n"quickhackBar3", Vector2(6.0, 19.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[42].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[42].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[42] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[42] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 42, n"full", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[43].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[43].SetFitToContent(true);
+    tree.widgets[43].SetOpacity(0.55);
+    tree.widgets[43].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(43, r"base\\gameplay\\gui\\widgets\\healthbar\\hpbar_anim.inkatlas", n"memorybar", inkBrushMirrorType.NoMirror);
+    tree.widgets[43].BindProperty(n"tintColor", n"QuickhacksBar.mainColor");
+    tree.Add(new inkCanvas(), 42, n"empty", Vector2(6.0, 19.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[44].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[44].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[44] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[44] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkRectangle(), 44, n"rect", Vector2(6.0, 19.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[45].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[45].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    tree.widgets[45].BindProperty(n"tintColor", n"QuickhacksBar.mainColor");
+    tree.Add(new inkMask(), 44, n"mask", Vector2(6.0, 19.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[46].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[46].SetOpacity(0.01);
+    tree.widgets[46].SetRenderTransformPivot(Vector2(0.5, 1.0));
+    (tree.widgets[46] as inkMask).textureAtlas *= r"base\\gameplay\\gui\\widgets\\healthbar\\hpbar_anim.inkatlas";
+    (tree.widgets[46] as inkMask).texturePart = n"memorybar";
+    tree.Add(new inkCanvas(), 41, n"quickhackBar3", Vector2(6.0, 19.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[47].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[47].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[47] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[47] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 47, n"full", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[48].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[48].SetFitToContent(true);
+    tree.widgets[48].SetOpacity(0.55);
+    tree.widgets[48].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(48, r"base\\gameplay\\gui\\widgets\\healthbar\\hpbar_anim.inkatlas", n"memorybar", inkBrushMirrorType.NoMirror);
+    tree.widgets[48].BindProperty(n"tintColor", n"QuickhacksBar.mainColor");
+    tree.Add(new inkCanvas(), 47, n"empty", Vector2(6.0, 19.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[49].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[49].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[49] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[49] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkRectangle(), 49, n"rect", Vector2(6.0, 19.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[50].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[50].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    tree.widgets[50].BindProperty(n"tintColor", n"QuickhacksBar.mainColor");
+    tree.Add(new inkMask(), 49, n"mask", Vector2(6.0, 19.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[51].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[51].SetOpacity(0.01);
+    tree.widgets[51].SetRenderTransformPivot(Vector2(0.5, 1.0));
+    (tree.widgets[51] as inkMask).textureAtlas *= r"base\\gameplay\\gui\\widgets\\healthbar\\hpbar_anim.inkatlas";
+    (tree.widgets[51] as inkMask).texturePart = n"memorybar";
+    tree.Add(new inkCanvas(), 41, n"quickhackBar3", Vector2(6.0, 19.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[52].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[52].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[52] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[52] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 52, n"full", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[53].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[53].SetFitToContent(true);
+    tree.widgets[53].SetOpacity(0.55);
+  }
+  private static func NewHealthBarPart1(tree: ref<HUDitorVisualTree>) -> Void {
+    tree.widgets[53].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(53, r"base\\gameplay\\gui\\widgets\\healthbar\\hpbar_anim.inkatlas", n"memorybar", inkBrushMirrorType.NoMirror);
+    tree.widgets[53].BindProperty(n"tintColor", n"QuickhacksBar.mainColor");
+    tree.Add(new inkCanvas(), 52, n"empty", Vector2(6.0, 19.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[54].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[54].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[54] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[54] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkRectangle(), 54, n"rect", Vector2(6.0, 19.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[55].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[55].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    tree.widgets[55].BindProperty(n"tintColor", n"QuickhacksBar.mainColor");
+    tree.Add(new inkMask(), 54, n"mask", Vector2(6.0, 19.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[56].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[56].SetOpacity(0.01);
+    tree.widgets[56].SetRenderTransformPivot(Vector2(0.5, 1.0));
+    (tree.widgets[56] as inkMask).textureAtlas *= r"base\\gameplay\\gui\\widgets\\healthbar\\hpbar_anim.inkatlas";
+    (tree.widgets[56] as inkMask).texturePart = n"memorybar";
+    tree.Add(new inkCanvas(), 41, n"quickhackBar3", Vector2(6.0, 19.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[57].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[57].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[57] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[57] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 57, n"full", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[58].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[58].SetFitToContent(true);
+    tree.widgets[58].SetOpacity(0.55);
+    tree.widgets[58].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(58, r"base\\gameplay\\gui\\widgets\\healthbar\\hpbar_anim.inkatlas", n"memorybar", inkBrushMirrorType.NoMirror);
+    tree.widgets[58].BindProperty(n"tintColor", n"QuickhacksBar.mainColor");
+    tree.Add(new inkCanvas(), 57, n"empty", Vector2(6.0, 19.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[59].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[59].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[59] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[59] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkRectangle(), 59, n"rect", Vector2(6.0, 19.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[60].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[60].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    tree.widgets[60].BindProperty(n"tintColor", n"QuickhacksBar.mainColor");
+    tree.Add(new inkMask(), 59, n"mask", Vector2(6.0, 19.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[61].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[61].SetOpacity(0.01);
+    tree.widgets[61].SetRenderTransformPivot(Vector2(0.5, 1.0));
+    (tree.widgets[61] as inkMask).textureAtlas *= r"base\\gameplay\\gui\\widgets\\healthbar\\hpbar_anim.inkatlas";
+    (tree.widgets[61] as inkMask).texturePart = n"memorybar";
+    tree.Add(new inkCanvas(), 3, n"healthNumberContainer", Vector2(190.0, 120.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[62].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[62].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[62] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[62] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkVerticalPanel(), 62, n"hpTextVert", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(16.0, 23.0, 8.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Right, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[63].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[63].SetFitToContent(true);
+    tree.widgets[63].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[63] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[63] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkHorizontalPanel(), 63, n"hp_number_holder", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, -15.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[64].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[64].SetFitToContent(true);
+    tree.widgets[64].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[64] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[64] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkText(), 64, n"percentText", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopRight, Vector2(0.0, 0.0), inkMargin(0.0, -1.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[65].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[65].SetFitToContent(true);
+    tree.widgets[65].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(65, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Regular", 60, "350");
+    (tree.widgets[65] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[65].BindProperty(n"tintColor", n"PlayerHealthBar.hpTextColor");
+  }
+  private static func NewStaminaBar(tree: ref<HUDitorVisualTree>) -> Void {
+    HUDitorVisualRecipes.NewStaminaBarPart0(tree);
+  }
+  private static func NewStaminaBarPart0(tree: ref<HUDitorVisualTree>) -> Void {
+    tree.Add(new inkCanvas(), -1, n"Root", Vector2(800.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[0].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[0].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[0] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[0] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 0, n"glow", Vector2(1200.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[1].SetTintColor(HDRColor(1.1192, 0.8441, 0.2565, 1.0));
+    tree.widgets[1].SetOpacity(0.05);
+    tree.widgets[1].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(1, r"base\\gameplay\\gui\\common\\shadow_blobs.inkatlas", n"shadowBlobText", inkBrushMirrorType.NoMirror);
+    tree.widgets[1].BindProperty(n"tintColor", n"StaminaBar.BarColor");
+    tree.Add(new inkFlex(), 0, n"staminaMain", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[2].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[2].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[2] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[2] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 2, n"icon2", Vector2(21.0, 31.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(-35.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[3].SetTintColor(HDRColor(1.331, 1.0038, 0.305, 1.0));
+    tree.widgets[3].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(3, r"base\\gameplay\\gui\\common\\stamina_oxygen_bar\\stamina_oxygen_bar.inkatlas", n"stamina", inkBrushMirrorType.NoMirror);
+    tree.widgets[3].BindProperty(n"tintColor", n"StaminaBar.CapColor");
+    tree.Add(new inkImage(), 2, n"icon", Vector2(21.0, 31.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(-35.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[4].SetTintColor(HDRColor(1.1192, 0.8441, 0.2565, 1.0));
+    tree.widgets[4].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(4, r"base\\gameplay\\gui\\common\\stamina_oxygen_bar\\stamina_oxygen_bar.inkatlas", n"stamina", inkBrushMirrorType.NoMirror);
+    tree.widgets[4].BindProperty(n"tintColor", n"StaminaBar.BarColor");
+    tree.Add(new inkFlex(), 2, n"wrapper", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[5].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[5].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[5] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[5] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkRectangle(), 5, n"bg", Vector2(700.0, 10.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(5.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[6].SetTintColor(HDRColor(0.258824, 0.231373, 0.109804, 1.0));
+    tree.widgets[6].SetOpacity(0.3);
+    tree.widgets[6].SetShear(Vector2(0.5, 0.0));
+    tree.widgets[6].SetRenderTransformPivot(Vector2(1.0, 0.5));
+    tree.widgets[6].BindProperty(n"tintColor", n"StaminaBar.BgColor");
+    tree.Add(new inkHorizontalPanel(), 5, n"logic", Vector2(240.0, 28.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(-1.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[7].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[7].SetFitToContent(true);
+    tree.widgets[7].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[7] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[7] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkRectangle(), 7, n"full", Vector2(700.0, 10.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[8].SetTintColor(HDRColor(1.1192, 0.8441, 0.2565, 1.0));
+    tree.widgets[8].SetTranslation(Vector2(6.0, 0.0));
+    tree.widgets[8].SetShear(Vector2(0.5, 0.0));
+    tree.widgets[8].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[8].BindProperty(n"tintColor", n"StaminaBar.BarColor");
+    tree.Add(new inkRectangle(), 7, n"barcap", Vector2(6.0, 10.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[9].SetTintColor(HDRColor(1.331, 1.0038, 0.305, 1.0));
+    tree.widgets[9].SetShear(Vector2(0.5, 0.0));
+    tree.widgets[9].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[9].BindProperty(n"tintColor", n"StaminaBar.CapColor");
+    tree.Add(new inkCanvas(), 5, n"border", Vector2(100.0, 12.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(5.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[10].SetTintColor(HDRColor(1.331, 1.0038, 0.305, 1.0));
+    tree.widgets[10].SetOpacity(0.5);
+    tree.widgets[10].SetShear(Vector2(0.5, 0.0));
+    tree.widgets[10].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[10] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[10] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Border(10, 2.0);
+    tree.widgets[10].BindProperty(n"tintColor", n"StaminaBar.BorderColor");
+    tree.Add(new inkRectangle(), 5, n"changeNBlue", Vector2(5.0, 15.0), HUDitorVisualTree.Layout(inkEAnchor.BottomLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[11].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[11].SetShear(Vector2(0.5, 0.0));
+    tree.widgets[11].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[11].BindProperty(n"tintColor", n"StaminaBar.ChangeBar");
+  }
+  private static func NewInputHint(tree: ref<HUDitorVisualTree>) -> Void {
+    HUDitorVisualRecipes.NewInputHintPart0(tree);
+  }
+  private static func NewInputHintPart0(tree: ref<HUDitorVisualTree>) -> Void {
+    tree.Add(new inkFlex(), -1, n"inkFlexWidget6", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[0].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[0].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[0] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[0] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkHorizontalPanel(), 0, n"hint", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[1].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[1].SetFitToContent(true);
+    tree.widgets[1].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[1] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[1] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkHorizontalPanel(), 1, n"wrapper", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(20.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Right, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[2].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[2].SetFitToContent(true);
+    tree.widgets[2].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[2] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[2] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkText(), 2, n"label", Vector2(700.0, 48.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Right, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[3].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[3].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(3, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Medium", 44, GetLocalizedTextByKey(n"Mod-HUDitor-Preview-Hint"));
+    (tree.widgets[3] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[3].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkHorizontalPanel(), 1, n"keys", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(20.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Right, inkEVerticalAlign.Center, inkESizeRule.Stretch, 1.0));
+    tree.widgets[4].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[4].SetFitToContent(true);
+    tree.widgets[4].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[4] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[4] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Action(4, n"Choice1", 64.0);
+  }
+  private static func NewCarHud(tree: ref<HUDitorVisualTree>) -> Void {
+    HUDitorVisualRecipes.NewCarHudPart0(tree);
+  }
+  private static func NewCarHudPart0(tree: ref<HUDitorVisualTree>) -> Void {
+    tree.Add(new inkCanvas(), -1, n"root", Vector2(420.0, 120.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[0].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[0].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[0] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[0] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkCanvas(), 0, n"maindashcontainer", Vector2(256.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.BottomLeft, Vector2(0.0, 1.0), inkMargin(-30.0, 0.0, 0.0, -20.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[1].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[1].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[1] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[1] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkText(), 1, n"flufftext", Vector2(100.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(156.0, -38.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Right, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[2].SetTintColor(HDRColor(0.682353, 0.231373, 0.211765, 1.0));
+    tree.widgets[2].SetOpacity(0.4);
+    tree.widgets[2].SetScale(Vector2(0.6, 0.6));
+    tree.widgets[2].SetRenderTransformPivot(Vector2(0.0, 0.5));
+    tree.Text(2, "base\\gameplay\\gui\\fonts\\orbitron\\orbitron.inkfontfamily", n"Medium", 16, "");
+    (tree.widgets[2] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[2].BindProperty(n"tintColor", n"MainColors.MildRed");
+    tree.Add(new inkCanvas(), 1, n"dynamic", Vector2(370.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.BottomLeft, Vector2(0.0, 1.0), inkMargin(0.0, 0.0, 0.0, 80.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[3].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[3].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[3] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[3] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkText(), 3, n"zeroes", Vector2(100.0, 70.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(38.0, 56.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[4].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[4].SetOpacity(0.03);
+    tree.widgets[4].SetRenderTransformPivot(Vector2(0.0, 0.5));
+    tree.Text(4, "base\\gameplay\\gui\\fonts\\digital_readout\\digitalreadout.inkfontfamily", n"Regular", 70, "888");
+    (tree.widgets[4] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[4].BindProperty(n"tintColor", n"MainColors.Blue");
+    tree.Add(new inkHorizontalPanel(), 3, n"rpm_full", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(151.0, 65.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[5].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[5].SetFitToContent(true);
+    tree.widgets[5].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[5] as inkCompoundWidget).SetChildMargin(inkMargin(3.0, 0.0, 0.0, 0.0));
+    (tree.widgets[5] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 5, n"rpm_full_1", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[6].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[6].SetFitToContent(true);
+    tree.widgets[6].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(6, r"base\\gameplay\\gui\\widgets\\vehicle\\vcar\\car_hud.inkatlas", n"rpm_full", inkBrushMirrorType.NoMirror);
+    tree.widgets[6].BindProperty(n"tintColor", n"MainColors.Blue");
+    tree.Add(new inkImage(), 5, n"rpm_full_2", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(5.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[7].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[7].SetFitToContent(true);
+    tree.widgets[7].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(7, r"base\\gameplay\\gui\\widgets\\vehicle\\vcar\\car_hud.inkatlas", n"rpm_full", inkBrushMirrorType.NoMirror);
+    tree.widgets[7].BindProperty(n"tintColor", n"MainColors.Blue");
+    tree.Add(new inkImage(), 5, n"rpm_full_3", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(5.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[8].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[8].SetFitToContent(true);
+    tree.widgets[8].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(8, r"base\\gameplay\\gui\\widgets\\vehicle\\vcar\\car_hud.inkatlas", n"rpm_full", inkBrushMirrorType.NoMirror);
+    tree.widgets[8].BindProperty(n"tintColor", n"MainColors.Blue");
+    tree.Add(new inkImage(), 5, n"rpm_full_4", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(5.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[9].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[9].SetFitToContent(true);
+    tree.widgets[9].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(9, r"base\\gameplay\\gui\\widgets\\vehicle\\vcar\\car_hud.inkatlas", n"rpm_full", inkBrushMirrorType.NoMirror);
+    tree.widgets[9].BindProperty(n"tintColor", n"MainColors.Blue");
+    tree.Add(new inkImage(), 5, n"rpm_full_5", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(5.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[10].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[10].SetFitToContent(true);
+    tree.widgets[10].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(10, r"base\\gameplay\\gui\\widgets\\vehicle\\vcar\\car_hud.inkatlas", n"rpm_full", inkBrushMirrorType.NoMirror);
+    tree.widgets[10].BindProperty(n"tintColor", n"MainColors.Blue");
+    tree.Add(new inkImage(), 5, n"rpm_full_6", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(5.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[11].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[11].SetFitToContent(true);
+    tree.widgets[11].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(11, r"base\\gameplay\\gui\\widgets\\vehicle\\vcar\\car_hud.inkatlas", n"rpm_full", inkBrushMirrorType.NoMirror);
+    tree.widgets[11].BindProperty(n"tintColor", n"MainColors.Blue");
+    tree.Add(new inkImage(), 5, n"rpm_full_7", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(5.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[12].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[12].SetFitToContent(true);
+    tree.widgets[12].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(12, r"base\\gameplay\\gui\\widgets\\vehicle\\vcar\\car_hud.inkatlas", n"rpm_full", inkBrushMirrorType.NoMirror);
+    tree.widgets[12].BindProperty(n"tintColor", n"MainColors.Blue");
+    tree.Add(new inkImage(), 5, n"rpm_full_8", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(4.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[13].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[13].SetFitToContent(true);
+    tree.widgets[13].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(13, r"base\\gameplay\\gui\\widgets\\vehicle\\vcar\\car_hud.inkatlas", n"rpm_full", inkBrushMirrorType.NoMirror);
+    tree.widgets[13].BindProperty(n"tintColor", n"MainColors.Blue");
+    tree.Add(new inkText(), 3, n"speed_text", Vector2(100.0, 70.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(38.0, 56.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[14].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[14].SetRenderTransformPivot(Vector2(0.0, 0.5));
+    tree.Text(14, "base\\gameplay\\gui\\fonts\\digital_readout\\digitalreadout.inkfontfamily", n"Regular", 70, "120");
+    (tree.widgets[14] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[14].BindProperty(n"tintColor", n"MainColors.Blue");
+    tree.Add(new inkText(), 3, n"mph_text", Vector2(100.0, 40.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(38.0, 27.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[15].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[15].SetOpacity(0.4);
+    tree.widgets[15].SetRenderTransformPivot(Vector2(0.0, 0.5));
+    tree.Text(15, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Medium", 26, GetLocalizedTextByKey(n"Mod-HUDitor-Preview-SpeedUnit"));
+    (tree.widgets[15] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[15].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkHorizontalPanel(), 1, n"main", Vector2(0.0, 1.0), HUDitorVisualTree.Layout(inkEAnchor.BottomLeft, Vector2(0.0, 1.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[16].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[16].SetFitToContent(true);
+    tree.widgets[16].SetRenderTransformPivot(Vector2(0.0, 0.5));
+    (tree.widgets[16] as inkCompoundWidget).SetChildMargin(inkMargin(156.0, 0.0, 0.0, 68.0));
+    (tree.widgets[16] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkVerticalPanel(), 16, n"maindash", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.BottomLeft, Vector2(0.0, 1.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[17].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[17].SetFitToContent(true);
+    tree.widgets[17].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[17] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[17] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 17, n"rpm_empty", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 5.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Right, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[18].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[18].SetFitToContent(true);
+    tree.widgets[18].SetOpacity(0.2);
+    tree.widgets[18].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(18, r"base\\gameplay\\gui\\widgets\\vehicle\\vcar\\car_hud.inkatlas", n"rpm_empty", inkBrushMirrorType.NoMirror);
+    tree.widgets[18].BindProperty(n"tintColor", n"MainColors.Blue");
+  }
+  private static func NewAutoDrive(tree: ref<HUDitorVisualTree>) -> Void {
+    HUDitorVisualRecipes.NewAutoDrivePart0(tree);
+  }
+  private static func NewAutoDrivePart0(tree: ref<HUDitorVisualTree>) -> Void {
+    tree.Add(new inkCanvas(), -1, n"Root", Vector2(675.0, 200.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[0].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[0].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[0] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[0] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkCanvas(), 0, n"inputHint", Vector2(225.0, 110.0), HUDitorVisualTree.Layout(inkEAnchor.CenterLeft, Vector2(0.0, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[1].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[1].SetRenderTransformPivot(Vector2(0.0, 0.5));
+    (tree.widgets[1] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[1] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkHorizontalPanel(), 1, n"inputDisplayController", Vector2(50.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.CenterLeft, Vector2(0.0, 0.5), inkMargin(27.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[2].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[2].SetFitToContent(true);
+    tree.widgets[2].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[2] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[2] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkCanvas(), 2, n"container", Vector2(75.0, 75.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[3].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[3].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[3] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[3] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkCanvas(), 3, n"holdContainer", Vector2(75.0, 75.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[4].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[4].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[4] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[4] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkCanvas(), 3, n"inputRoot", Vector2(64.0, 64.0), HUDitorVisualTree.Layout(inkEAnchor.Fill, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[5].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[5].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[5] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[5] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Action(5, n"HoldAutodrive", 64.0);
+    tree.Add(new inkFlex(), 2, n"icon_wrapper", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[6].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[6].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[6] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[6] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 6, n"bg", Vector2(84.0, 82.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[7].SetTintColor(HDRColor(0.054902, 0.054902, 0.090196, 1.0));
+    tree.widgets[7].SetFitToContent(true);
+    tree.widgets[7].SetOpacity(0.85);
+    tree.widgets[7].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(7, r"base\\gameplay\\gui\\widgets\\phone\\new_phone_assets.inkatlas", n"quickSlot_bg", inkBrushMirrorType.NoMirror);
+    tree.widgets[7].BindProperty(n"tintColor", n"DpadDefault.background");
+    tree.Add(new inkCanvas(), 6, n"itemSlot", Vector2(84.0, 82.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[8].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[8].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[8] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[8] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 6, n"icon", Vector2(64.0, 64.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[9].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[9].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(9, r"base\\gameplay\\gui\\widgets\\autodrive\\autodrive.inkatlas", n"wheel", inkBrushMirrorType.NoMirror);
+    tree.widgets[9].BindProperty(n"tintColor", n"DpadDefault.iconColor");
+    tree.Add(new inkImage(), 6, n"decor", Vector2(84.0, 82.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[10].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[10].SetFitToContent(true);
+    tree.widgets[10].SetOpacity(0.1);
+    tree.widgets[10].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(10, r"base\\gameplay\\gui\\widgets\\phone\\new_phone_assets.inkatlas", n"quickSlot_dec", inkBrushMirrorType.NoMirror);
+    tree.widgets[10].BindProperty(n"tintColor", n"DpadDefault.borderColor");
+    tree.Add(new inkImage(), 6, n"fg", Vector2(84.0, 82.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[11].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[11].SetFitToContent(true);
+    tree.widgets[11].SetOpacity(0.8);
+    tree.widgets[11].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(11, r"base\\gameplay\\gui\\widgets\\phone\\new_phone_assets.inkatlas", n"quickSlot_fg", inkBrushMirrorType.NoMirror);
+    tree.widgets[11].BindProperty(n"tintColor", n"DpadDefault.borderColor");
+    tree.Add(new inkCanvas(), 0, n"content", Vector2(450.0, 200.0), HUDitorVisualTree.Layout(inkEAnchor.CenterRight, Vector2(1.0, 0.5), inkMargin(0.0, -3.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[12].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[12].SetRenderTransformPivot(Vector2(0.0, 0.5));
+    (tree.widgets[12] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[12] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkVerticalPanel(), 12, n"vertical", Vector2(450.0, 200.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[13].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[13].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[13] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[13] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkCanvas(), 13, n"headers", Vector2(600.0, 42.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 10.0, 0.0, 10.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[14].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[14].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[14] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[14] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkHorizontalPanel(), 14, n"counters", Vector2(600.0, 42.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[15].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[15].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[15] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 20.0, 0.0));
+    (tree.widgets[15] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkHorizontalPanel(), 15, n"distance", Vector2(146.0, 42.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[16].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[16].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[16] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[16] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 16, n"distanceIcon", Vector2(42.0, 42.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[17].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[17].SetOpacity(0.8);
+    tree.widgets[17].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(17, r"base\\gameplay\\gui\\common\\icons\\mappin_icons.inkatlas", n"dynamic_event", inkBrushMirrorType.NoMirror);
+    tree.widgets[17].BindProperty(n"tintColor", n"MainColors.Blue");
+    tree.Add(new inkText(), 16, n"distanceCounter", Vector2(100.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(5.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[18].SetTintColor(HDRColor(0.1583, 1.3033, 1.4142, 1.0));
+    tree.widgets[18].SetFitToContent(true);
+    tree.widgets[18].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(18, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Medium", 30, GetLocalizedTextByKey(n"Mod-HUDitor-Preview-Distance"));
+    (tree.widgets[18] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[18].BindProperty(n"tintColor", n"MainColors.ActiveBlue");
+    tree.Add(new inkHorizontalPanel(), 15, n"time", Vector2(146.0, 42.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[19].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[19].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[19] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[19] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 19, n"timeIcon", Vector2(42.0, 42.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[20].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[20].SetOpacity(0.8);
+    tree.widgets[20].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(20, r"base\\gameplay\\gui\\common\\icons\\mappin_icons.inkatlas", n"stopwatch", inkBrushMirrorType.NoMirror);
+    tree.widgets[20].BindProperty(n"tintColor", n"MainColors.Blue");
+    tree.Add(new inkText(), 19, n"timeCounter", Vector2(100.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(5.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[21].SetTintColor(HDRColor(0.1583, 1.3033, 1.4142, 1.0));
+    tree.widgets[21].SetFitToContent(true);
+    tree.widgets[21].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(21, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Medium", 30, "00:30");
+    (tree.widgets[21] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[21].BindProperty(n"tintColor", n"MainColors.ActiveBlue");
+    tree.Add(new inkCanvas(), 13, n"autodriveFrame", Vector2(450.0, 80.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[22].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[22].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[22] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[22] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 22, n"autoDriveIcon", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.CenterLeft, Vector2(0.0, 0.5), inkMargin(23.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[23].SetTintColor(HDRColor(0.0, 0.0, 0.0, 1.0));
+    tree.widgets[23].SetFitToContent(true);
+    tree.widgets[23].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(23, r"base\\gameplay\\gui\\widgets\\autodrive\\autodrive.inkatlas", n"logo", inkBrushMirrorType.NoMirror);
+    tree.widgets[23].BindProperty(n"tintColor", n"MainColors.Black");
+    tree.Add(new inkHorizontalPanel(), 22, n"fluff", Vector2(115.0, 50.0), HUDitorVisualTree.Layout(inkEAnchor.CenterLeft, Vector2(0.0, 0.5), inkMargin(310.0, 0.0, 25.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[24].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[24].SetOpacity(0.8);
+    tree.widgets[24].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[24] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 15.0, 0.0));
+    (tree.widgets[24] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 24, n"fluff1", Vector2(50.0, 50.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[25].SetTintColor(HDRColor(0.458824, 0.458824, 0.458824, 1.0));
+    tree.widgets[25].SetOpacity(0.7);
+    tree.widgets[25].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(25, r"base\\gameplay\\gui\\common\\icons\\atlas_common.inkatlas", n"icon_cyberware", inkBrushMirrorType.NoMirror);
+    tree.widgets[25].BindProperty(n"tintColor", n"MainColors.DarkGrey");
+    tree.Add(new inkImage(), 24, n"fluff2", Vector2(50.0, 50.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[26].SetTintColor(HDRColor(0.458824, 0.458824, 0.458824, 1.0));
+    tree.widgets[26].SetOpacity(0.7);
+    tree.widgets[26].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(26, r"base\\gameplay\\gui\\common\\icons\\atlas_common.inkatlas", n"fluff2_protocol_small", inkBrushMirrorType.NoMirror);
+    tree.widgets[26].BindProperty(n"tintColor", n"MainColors.DarkGrey");
+    tree.Add(new inkImage(), 22, n"autodrive_frame", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Fill, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[27].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[27].SetFitToContent(true);
+    tree.widgets[27].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(27, r"base\\gameplay\\gui\\common\\shapes\\atlas_shapes_sync.inkatlas", n"cell_fg", inkBrushMirrorType.NoMirror);
+    (tree.widgets[27] as inkImage).useNineSliceScale = true;
+    (tree.widgets[27] as inkImage).nineSliceScale = inkMargin(0.0, 0.0, 0.0, 0.0);
+    tree.widgets[27].BindProperty(n"tintColor", n"MainColors.Blue");
+    tree.Add(new inkImage(), 22, n"background", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Fill, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[28].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[28].SetFitToContent(true);
+    tree.widgets[28].SetOpacity(0.7);
+    tree.widgets[28].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(28, r"base\\gameplay\\gui\\common\\shapes\\atlas_shapes_sync.inkatlas", n"cell_bg", inkBrushMirrorType.NoMirror);
+    (tree.widgets[28] as inkImage).useNineSliceScale = true;
+    (tree.widgets[28] as inkImage).nineSliceScale = inkMargin(0.0, 0.0, 0.0, 0.0);
+    tree.widgets[28].BindProperty(n"tintColor", n"MainColors.Blue");
+    tree.Add(new inkMask(), 22, n"mask", Vector2(450.0, 80.0), HUDitorVisualTree.Layout(inkEAnchor.Fill, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[29].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[29].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[29] as inkMask).textureAtlas *= r"base\\gameplay\\gui\\common\\shapes\\atlas_shapes_sync.inkatlas";
+    (tree.widgets[29] as inkMask).texturePart = n"mask_rect";
+  }
+  private static func NewCrystalCoat(tree: ref<HUDitorVisualTree>) -> Void {
+    HUDitorVisualRecipes.NewCrystalCoatPart0(tree);
+  }
+  private static func NewCrystalCoatPart0(tree: ref<HUDitorVisualTree>) -> Void {
+    tree.Add(new inkFlex(), -1, n"holder", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[0].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[0].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[0] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[0] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkVerticalPanel(), 0, n"dPadRight_wrapper", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[1].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[1].SetFitToContent(true);
+    tree.widgets[1].SetRenderTransformPivot(Vector2(0.5, 0.0));
+    (tree.widgets[1] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 17.0, 0.0, 0.0));
+    (tree.widgets[1] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkHorizontalPanel(), 1, n"inputDisplayController", Vector2(40.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[2].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[2].SetFitToContent(true);
+    tree.widgets[2].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[2] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[2] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkCanvas(), 2, n"container", Vector2(75.0, 75.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[3].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[3].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[3] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[3] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkCanvas(), 3, n"holdContainer", Vector2(75.0, 75.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[4].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[4].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[4] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[4] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkCanvas(), 3, n"inputRoot", Vector2(64.0, 64.0), HUDitorVisualTree.Layout(inkEAnchor.Fill, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[5].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[5].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[5] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[5] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Action(5, n"VehicleVisualCustomization", 64.0);
+    tree.Add(new inkFlex(), 2, n"item_wrapper", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[6].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[6].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[6] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[6] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 6, n"bg", Vector2(84.0, 82.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[7].SetTintColor(HDRColor(0.054902, 0.054902, 0.090196, 1.0));
+    tree.widgets[7].SetFitToContent(true);
+    tree.widgets[7].SetOpacity(0.85);
+    tree.widgets[7].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(7, r"base\\gameplay\\gui\\widgets\\phone\\new_phone_assets.inkatlas", n"quickSlot_bg", inkBrushMirrorType.NoMirror);
+    tree.widgets[7].BindProperty(n"tintColor", n"DpadDefault.background");
+    tree.Add(new inkCanvas(), 6, n"itemSlot", Vector2(84.0, 82.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[8].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[8].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[8] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[8] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 6, n"icon", Vector2(64.0, 64.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[9].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[9].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(9, r"base\\gameplay\\gui\\common\\icons\\mappin_icons.inkatlas", n"car_mod", inkBrushMirrorType.NoMirror);
+    tree.widgets[9].BindProperty(n"tintColor", n"DpadDefault.iconColor");
+    tree.Add(new inkImage(), 6, n"decor", Vector2(84.0, 82.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[10].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[10].SetFitToContent(true);
+    tree.widgets[10].SetOpacity(0.1);
+    tree.widgets[10].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(10, r"base\\gameplay\\gui\\widgets\\phone\\new_phone_assets.inkatlas", n"quickSlot_dec", inkBrushMirrorType.NoMirror);
+    tree.widgets[10].BindProperty(n"tintColor", n"DpadDefault.borderColor");
+    tree.Add(new inkImage(), 6, n"fg", Vector2(84.0, 82.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[11].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[11].SetFitToContent(true);
+    tree.widgets[11].SetOpacity(0.8);
+    tree.widgets[11].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(11, r"base\\gameplay\\gui\\widgets\\phone\\new_phone_assets.inkatlas", n"quickSlot_fg", inkBrushMirrorType.NoMirror);
+    tree.widgets[11].BindProperty(n"tintColor", n"DpadDefault.borderColor");
+    tree.Add(new inkImage(), 6, n"questMarker", Vector2(48.0, 48.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(0.0, -19.0, -27.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Right, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[12].SetTintColor(HDRColor(1.331, 1.0038, 0.305, 1.0));
+    tree.widgets[12].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(12, r"base\\gameplay\\gui\\common\\icons\\mappin_icons.inkatlas", n"quest", inkBrushMirrorType.NoMirror);
+    tree.widgets[12].BindProperty(n"tintColor", n"MainColors.ActiveYellow");
+  }
+  private static func NewVehicleRadio(tree: ref<HUDitorVisualTree>) -> Void {
+    HUDitorVisualRecipes.NewVehicleRadioPart0(tree);
+  }
+  private static func NewVehicleRadioPart0(tree: ref<HUDitorVisualTree>) -> Void {
+    tree.Add(new inkFlex(), -1, n"holder", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[0].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[0].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[0] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[0] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkVerticalPanel(), 0, n"dPadRight_wrapper", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[1].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[1].SetFitToContent(true);
+    tree.widgets[1].SetRenderTransformPivot(Vector2(0.5, 0.0));
+    (tree.widgets[1] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 17.0, 0.0, 0.0));
+    (tree.widgets[1] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkHorizontalPanel(), 1, n"inputDisplayController", Vector2(40.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[2].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[2].SetFitToContent(true);
+    tree.widgets[2].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[2] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[2] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkCanvas(), 2, n"container", Vector2(75.0, 75.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[3].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[3].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[3] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[3] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkCanvas(), 3, n"holdContainer", Vector2(75.0, 75.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[4].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[4].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[4] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[4] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkCanvas(), 3, n"inputRoot", Vector2(64.0, 64.0), HUDitorVisualTree.Layout(inkEAnchor.Fill, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[5].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[5].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[5] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[5] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Action(5, n"VehicleInsideWheel", 64.0);
+    tree.Add(new inkFlex(), 2, n"item_wrapper", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[6].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[6].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[6] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[6] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 6, n"bg", Vector2(84.0, 82.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[7].SetTintColor(HDRColor(0.054902, 0.054902, 0.090196, 1.0));
+    tree.widgets[7].SetFitToContent(true);
+    tree.widgets[7].SetOpacity(0.85);
+    tree.widgets[7].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(7, r"base\\gameplay\\gui\\widgets\\phone\\new_phone_assets.inkatlas", n"quickSlot_bg", inkBrushMirrorType.NoMirror);
+    tree.widgets[7].BindProperty(n"tintColor", n"DpadDefault.background");
+    tree.Add(new inkCanvas(), 6, n"itemSlot", Vector2(84.0, 82.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[8].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[8].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[8] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[8] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 6, n"icon", Vector2(64.0, 64.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[9].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[9].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(9, r"base\\gameplay\\gui\\widgets\\phone\\new_phone_assets.inkatlas", n"radio_icon", inkBrushMirrorType.NoMirror);
+    tree.widgets[9].BindProperty(n"tintColor", n"DpadDefault.iconColor");
+    tree.Add(new inkImage(), 6, n"decor", Vector2(84.0, 82.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[10].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[10].SetFitToContent(true);
+    tree.widgets[10].SetOpacity(0.1);
+    tree.widgets[10].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(10, r"base\\gameplay\\gui\\widgets\\phone\\new_phone_assets.inkatlas", n"quickSlot_dec", inkBrushMirrorType.NoMirror);
+    tree.widgets[10].BindProperty(n"tintColor", n"DpadDefault.borderColor");
+    tree.Add(new inkImage(), 6, n"fg", Vector2(84.0, 82.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[11].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[11].SetFitToContent(true);
+    tree.widgets[11].SetOpacity(0.8);
+    tree.widgets[11].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(11, r"base\\gameplay\\gui\\widgets\\phone\\new_phone_assets.inkatlas", n"quickSlot_fg", inkBrushMirrorType.NoMirror);
+    tree.widgets[11].BindProperty(n"tintColor", n"DpadDefault.borderColor");
+    tree.Add(new inkHorizontalPanel(), 6, n"Radiowaves", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.CenterLeft, Vector2(0.0, 0.0), inkMargin(6.0, 0.0, 0.0, 17.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Bottom, inkESizeRule.Fixed, 1.0));
+    tree.widgets[12].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[12].SetFitToContent(true);
+    tree.widgets[12].SetRenderTransformPivot(Vector2(0.5, 1.0));
+    (tree.widgets[12] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 6.0, 0.0));
+    (tree.widgets[12] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.widgets[12].BindProperty(n"tintColor", n"ContactListItem.fontColor");
+    tree.Add(new inkRectangle(), 12, n"IconPart1", Vector2(6.0, 48.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Bottom, inkESizeRule.Fixed, 1.0));
+    tree.widgets[13].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[13].SetOpacity(0.3);
+    tree.widgets[13].SetScale(Vector2(1.0, 0.6));
+    tree.widgets[13].SetRenderTransformPivot(Vector2(0.5, 1.0));
+    tree.widgets[13].BindProperty(n"tintColor", n"DpadDefault.iconColor");
+    tree.Add(new inkRectangle(), 12, n"IconPart2", Vector2(6.0, 48.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Bottom, inkESizeRule.Fixed, 1.0));
+    tree.widgets[14].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[14].SetOpacity(0.3);
+    tree.widgets[14].SetScale(Vector2(1.0, 0.9));
+    tree.widgets[14].SetRenderTransformPivot(Vector2(0.5, 1.0));
+    tree.widgets[14].BindProperty(n"tintColor", n"DpadDefault.iconColor");
+    tree.Add(new inkRectangle(), 12, n"IconPart3", Vector2(6.0, 48.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Bottom, inkESizeRule.Fixed, 1.0));
+    tree.widgets[15].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[15].SetOpacity(0.3);
+    tree.widgets[15].SetScale(Vector2(1.0, 0.3));
+    tree.widgets[15].SetRenderTransformPivot(Vector2(0.5, 1.0));
+    tree.widgets[15].BindProperty(n"tintColor", n"DpadDefault.iconColor");
+    tree.Add(new inkRectangle(), 12, n"IconPart4", Vector2(6.0, 48.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Bottom, inkESizeRule.Fixed, 1.0));
+    tree.widgets[16].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[16].SetOpacity(0.3);
+    tree.widgets[16].SetScale(Vector2(1.0, 0.5));
+    tree.widgets[16].SetRenderTransformPivot(Vector2(0.5, 1.0));
+    tree.widgets[16].BindProperty(n"tintColor", n"DpadDefault.iconColor");
+  }
+  private static func NewVehicleHotkey(tree: ref<HUDitorVisualTree>) -> Void {
+    HUDitorVisualRecipes.NewVehicleHotkeyPart0(tree);
+  }
+  private static func NewVehicleHotkeyPart0(tree: ref<HUDitorVisualTree>) -> Void {
+    tree.Add(new inkFlex(), -1, n"holder", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[0].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[0].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[0] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[0] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkVerticalPanel(), 0, n"dPadRight_wrapper", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[1].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[1].SetFitToContent(true);
+    tree.widgets[1].SetRenderTransformPivot(Vector2(0.5, 0.0));
+    (tree.widgets[1] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 17.0, 0.0, 0.0));
+    (tree.widgets[1] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkHorizontalPanel(), 1, n"inputDisplayController", Vector2(40.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[2].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[2].SetFitToContent(true);
+    tree.widgets[2].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[2] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[2] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkCanvas(), 2, n"container", Vector2(75.0, 75.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[3].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[3].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[3] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[3] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkCanvas(), 3, n"holdContainer", Vector2(75.0, 75.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[4].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[4].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[4] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[4] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkCanvas(), 3, n"inputRoot", Vector2(64.0, 64.0), HUDitorVisualTree.Layout(inkEAnchor.Fill, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[5].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[5].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[5] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[5] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Action(5, n"CallVehicle", 64.0);
+    tree.Add(new inkFlex(), 2, n"item_wrapper", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[6].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[6].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[6] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[6] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 6, n"bg", Vector2(84.0, 82.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[7].SetTintColor(HDRColor(0.054902, 0.054902, 0.090196, 1.0));
+    tree.widgets[7].SetFitToContent(true);
+    tree.widgets[7].SetOpacity(0.85);
+    tree.widgets[7].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(7, r"base\\gameplay\\gui\\widgets\\phone\\new_phone_assets.inkatlas", n"quickSlot_bg", inkBrushMirrorType.NoMirror);
+    tree.widgets[7].BindProperty(n"tintColor", n"DpadDefault.background");
+    tree.Add(new inkCanvas(), 6, n"itemSlot", Vector2(84.0, 82.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[8].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[8].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[8] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[8] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 6, n"icon", Vector2(64.0, 64.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[9].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[9].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(9, r"base\\gameplay\\gui\\common\\icons\\mappin_icons.inkatlas", n"car", inkBrushMirrorType.NoMirror);
+    tree.widgets[9].BindProperty(n"tintColor", n"DpadDefault.iconColor");
+    tree.Add(new inkImage(), 6, n"decor", Vector2(84.0, 82.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[10].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[10].SetFitToContent(true);
+    tree.widgets[10].SetOpacity(0.1);
+    tree.widgets[10].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(10, r"base\\gameplay\\gui\\widgets\\phone\\new_phone_assets.inkatlas", n"quickSlot_dec", inkBrushMirrorType.NoMirror);
+    tree.widgets[10].BindProperty(n"tintColor", n"DpadDefault.borderColor");
+    tree.Add(new inkImage(), 6, n"fg", Vector2(84.0, 82.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[11].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[11].SetFitToContent(true);
+    tree.widgets[11].SetOpacity(0.8);
+    tree.widgets[11].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(11, r"base\\gameplay\\gui\\widgets\\phone\\new_phone_assets.inkatlas", n"quickSlot_fg", inkBrushMirrorType.NoMirror);
+    tree.widgets[11].BindProperty(n"tintColor", n"DpadDefault.borderColor");
+  }
+  private static func NewPhoneHotkey(tree: ref<HUDitorVisualTree>) -> Void {
+    HUDitorVisualRecipes.NewPhoneHotkeyPart0(tree);
+  }
+  private static func NewPhoneHotkeyPart0(tree: ref<HUDitorVisualTree>) -> Void {
+    tree.Add(new inkCanvas(), -1, n"HotkeyMainFlex", Vector2(225.0, 110.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[0].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[0].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[0] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[0] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkHorizontalPanel(), 0, n"inputDisplayController", Vector2(50.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(27.0, 17.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[1].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[1].SetFitToContent(true);
+    tree.widgets[1].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[1] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[1] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkCanvas(), 1, n"container", Vector2(75.0, 75.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[2].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[2].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[2] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[2] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkCanvas(), 2, n"holdContainer", Vector2(75.0, 75.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[3].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[3].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[3] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[3] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkCanvas(), 2, n"inputRoot", Vector2(64.0, 64.0), HUDitorVisualTree.Layout(inkEAnchor.Fill, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[4].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[4].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[4] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[4] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Action(4, n"PhoneInteract", 64.0);
+    tree.Add(new inkFlex(), 1, n"item_wrapper_Dpad_Down", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[5].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[5].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[5] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[5] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkCanvas(), 5, n"itemSlot", Vector2(84.0, 82.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[6].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[6].SetRenderTransformPivot(Vector2(0.5, 1.0));
+    (tree.widgets[6] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[6] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 6, n"decor", Vector2(84.0, 82.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[7].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[7].SetFitToContent(true);
+    tree.widgets[7].SetOpacity(0.1);
+    tree.widgets[7].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(7, r"base\\gameplay\\gui\\widgets\\phone\\new_phone_assets.inkatlas", n"quickSlot_dec", inkBrushMirrorType.NoMirror);
+    tree.widgets[7].BindProperty(n"tintColor", n"DpadDefault.borderColor");
+    tree.Add(new inkImage(), 6, n"bg", Vector2(84.0, 82.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[8].SetTintColor(HDRColor(0.054902, 0.054902, 0.090196, 1.0));
+    tree.widgets[8].SetFitToContent(true);
+    tree.widgets[8].SetOpacity(0.85);
+    tree.widgets[8].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(8, r"base\\gameplay\\gui\\widgets\\phone\\new_phone_assets.inkatlas", n"quickSlot_bg", inkBrushMirrorType.NoMirror);
+    tree.widgets[8].BindProperty(n"tintColor", n"DpadDefault.background");
+    tree.Add(new inkImage(), 5, n"icon", Vector2(29.0, 51.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(11.0, 2.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[9].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[9].SetFitToContent(true);
+    tree.widgets[9].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(9, r"base\\gameplay\\gui\\widgets\\phone\\new_phone_assets.inkatlas", n"phoneIcon", inkBrushMirrorType.NoMirror);
+    tree.widgets[9].BindProperty(n"tintColor", n"DpadDefault.iconColor");
+    tree.Add(new inkCanvas(), 5, n"Ico_small", Vector2(84.0, 82.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[10].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[10].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[10] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[10] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 5, n"fg", Vector2(84.0, 82.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[11].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[11].SetFitToContent(true);
+    tree.widgets[11].SetOpacity(0.8);
+    tree.widgets[11].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(11, r"base\\gameplay\\gui\\widgets\\phone\\new_phone_assets.inkatlas", n"quickSlot_fg", inkBrushMirrorType.NoMirror);
+    tree.widgets[11].BindProperty(n"tintColor", n"DpadDefault.borderColor");
+    tree.Add(new inkCanvas(), 0, n"CounterHolder", Vector2(550.0, 400.0), HUDitorVisualTree.Layout(inkEAnchor.Fill, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[12].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[12].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[12] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[12] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkFlex(), 12, n"CounterCanvas", Vector2(25.0, 25.0), HUDitorVisualTree.Layout(inkEAnchor.TopRight, Vector2(0.5, 0.5), inkMargin(0.0, 22.0, 29.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[13].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[13].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[13] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[13] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 13, n"counterBg", Vector2(39.0, 36.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[14].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[14].SetFitToContent(true);
+    tree.widgets[14].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(14, r"base\\gameplay\\gui\\widgets\\phone\\new_phone_assets.inkatlas", n"counterLabel", inkBrushMirrorType.NoMirror);
+    (tree.widgets[14] as inkImage).useNineSliceScale = true;
+    (tree.widgets[14] as inkImage).nineSliceScale = inkMargin(0.0, 0.0, 0.0, 0.0);
+    tree.widgets[14].BindProperty(n"tintColor", n"PhoneIndicator.sms_counter_color");
+    tree.Add(new inkText(), 13, n"messageCounter", Vector2(10.0, 10.0), HUDitorVisualTree.Layout(inkEAnchor.TopRight, Vector2(0.0, 0.0), inkMargin(5.0, -5.0, 5.0, -5.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[15].SetTintColor(HDRColor(0.0, 0.0, 0.0, 1.0));
+    tree.widgets[15].SetFitToContent(true);
+    tree.widgets[15].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(15, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Semi-Bold", 40, "1");
+    (tree.widgets[15] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[15].BindProperty(n"tintColor", n"MainColors.Black");
+  }
+  private static func NewPhoneAvatar(tree: ref<HUDitorVisualTree>) -> Void {
+    HUDitorVisualRecipes.NewPhoneAvatarPart0(tree);
+  }
+  private static func NewPhoneAvatarPart0(tree: ref<HUDitorVisualTree>) -> Void {
+    tree.Add(new inkCanvas(), -1, n"Root", Vector2(525.0, 550.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[0].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[0].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[0] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[0] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.widgets[0].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkCanvas(), 0, n"4K", Vector2(550.0, 400.0), HUDitorVisualTree.Layout(inkEAnchor.Fill, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[1].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[1].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[1] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[1] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkHorizontalPanel(), 1, n"layout", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[2].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[2].SetFitToContent(true);
+    tree.widgets[2].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[2] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[2] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkVerticalPanel(), 2, n"holder", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[3].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[3].SetOpacity(0.4);
+    tree.widgets[3].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[3] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[3] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.widgets[3].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkFlex(), 3, n"holderCode", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 2.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[4].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[4].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[4] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[4] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 4, n"holderCode", Vector2(31.0, 38.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[5].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[5].SetFitToContent(true);
+    tree.widgets[5].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(5, r"base\\gameplay\\gui\\common\\hud_widget_holder.inkatlas", n"holder_code", inkBrushMirrorType.NoMirror);
+    tree.widgets[5].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkHorizontalPanel(), 3, n"connectionStatus", Vector2(50.0, 50.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(64.0, -44.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[6].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[6].SetFitToContent(true);
+    tree.widgets[6].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[6] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[6] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkText(), 6, n"connectionStatusText", Vector2(100.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[7].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[7].SetFitToContent(true);
+    tree.widgets[7].SetOpacity(0.1);
+    tree.widgets[7].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(7, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Regular", 20, GetLocalizedTextByKey(n"Mod-HUDitor-Preview-Incoming"));
+    (tree.widgets[7] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[7].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkVerticalPanel(), 2, n"rightColumn", Vector2(300.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Stretch, 1.0));
+    tree.widgets[8].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[8].SetFitToContent(true);
+    tree.widgets[8].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[8] as inkCompoundWidget).SetChildMargin(inkMargin(30.0, -2.0, 0.0, 0.0));
+    (tree.widgets[8] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkFlex(), 8, n"phoneAvatarDisplay", Vector2(550.0, 400.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[9].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[9].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[9] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[9] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkVerticalPanel(), 9, n"avatarGroup", Vector2(450.0, 450.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[10].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[10].SetFitToContent(true);
+    tree.widgets[10].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[10] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[10] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkFlex(), 10, n"holocall_holder", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[11].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[11].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[11] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[11] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkVerticalPanel(), 11, n"inkVerticalPanelWidget7", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 6.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[12].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[12].SetFitToContent(true);
+    tree.widgets[12].SetScale(Vector2(1.0, 0.94));
+    tree.widgets[12].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[12] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[12] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkHorizontalPanel(), 12, n"horizontal connection", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[13].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[13].SetFitToContent(true);
+    tree.widgets[13].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[13] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[13] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkText(), 13, n"contactNameText", Vector2(450.0, 50.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[14].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[14].SetFitToContent(true);
+    tree.widgets[14].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(14, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Semi-Bold", 49, GetLocalizedTextByKey(n"Mod-HUDitor-Preview-Contact"));
+    (tree.widgets[14] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[14].BindProperty(n"tintColor", n"MainColors.Blue");
+    tree.Add(new inkImage(), 13, n"batteryImage", Vector2(26.0, 26.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(10.0, 14.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[15].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[15].SetFitToContent(true);
+    tree.widgets[15].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(15, r"base\\gameplay\\gui\\widgets\\phone\\atlas_phone.inkatlas", n"icon_battery", inkBrushMirrorType.NoMirror);
+    tree.widgets[15].BindProperty(n"tintColor", n"MainColors.Blue");
+    tree.Add(new inkFlex(), 12, n"inkFlexWidget9", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 4.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 0.0));
+    tree.widgets[16].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[16].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[16] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[16] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkRectangle(), 16, n"HRec", Vector2(450.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[17].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[17].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Add(new inkCanvas(), 16, n"audioWaveformHolder", Vector2(126.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[18].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[18].SetRenderTransformPivot(Vector2(0.0, 1.0));
+    (tree.widgets[18] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[18] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.widgets[18].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkFlex(), 16, n"HolocallHolderForMinimizedWidget", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[19].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[19].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    (tree.widgets[19] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[19] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 19, n"bg_dots", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Fill, Vector2(0.5, 0.5), inkMargin(20.0, -14.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[20].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[20].SetFitToContent(true);
+    tree.widgets[20].SetOpacity(0.2);
+    tree.widgets[20].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(20, r"base\\gameplay\\gui\\widgets\\minimap\\atlas_minimap.inkatlas", n"gridRect", inkBrushMirrorType.NoMirror);
+    tree.widgets[20].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkImage(), 19, n"bg_dots", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Fill, Vector2(0.5, 0.5), inkMargin(60.0, -14.0, 10.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[21].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[21].SetFitToContent(true);
+    tree.widgets[21].SetOpacity(0.2);
+    tree.widgets[21].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(21, r"base\\gameplay\\gui\\widgets\\minimap\\atlas_minimap.inkatlas", n"gridRect", inkBrushMirrorType.NoMirror);
+    tree.widgets[21].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkImage(), 19, n"avatarPortrait", Vector2(450.0, 450.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[22].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[22].SetFitToContent(true);
+    tree.widgets[22].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(22, r"base\\gameplay\\gui\\common\\icons\\avatars\\avatars0.inkatlas", n"bryce", inkBrushMirrorType.NoMirror);
+    tree.Add(new inkMask(), 19, n"FrameMask", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[23].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[23].SetFitToContent(true);
+    tree.widgets[23].SetOpacity(0.01);
+    tree.widgets[23].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[23] as inkMask).textureAtlas *= r"base\\gameplay\\gui\\widgets\\phone\\atlas_phone.inkatlas";
+    (tree.widgets[23] as inkMask).texturePart = n"frame_mask";
+    tree.Add(new inkFlex(), 19, n"contactName", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[24].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[24].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[24] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[24] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkFlex(), 24, n"inkFlexWidget2", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Bottom, inkESizeRule.Fixed, 1.0));
+    tree.widgets[25].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[25].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[25] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[25] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkFlex(), 25, n"inkFlexWidget3", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[26].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[26].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[26] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[26] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkRectangle(), 26, n"bg", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 5.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[27].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[27].SetOpacity(0.2);
+    tree.widgets[27].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[27].BindProperty(n"tintColor", n"MainColors.PanelRed");
+    tree.Add(new inkImage(), 19, n"contactFrame", Vector2(450.0, 450.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[28].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[28].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(28, r"base\\gameplay\\gui\\widgets\\phone\\atlas_phone.inkatlas", n"frame_main", inkBrushMirrorType.NoMirror);
+    (tree.widgets[28] as inkImage).useNineSliceScale = true;
+    (tree.widgets[28] as inkImage).nineSliceScale = inkMargin(0.0, 20.0, 0.0, 70.0);
+    tree.widgets[28].BindProperty(n"tintColor", n"MainColors.Red");
+  }
+  private static func NewPhoneControl(tree: ref<HUDitorVisualTree>) -> Void {
+    HUDitorVisualRecipes.NewPhoneControlPart0(tree);
+  }
+  private static func NewPhoneControlPart0(tree: ref<HUDitorVisualTree>) -> Void {
+    tree.Add(new inkCanvas(), -1, n"PhoneCall", Vector2(1000.0, 350.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[0].SetTintColor(HDRColor(0.0, 0.0, 0.0, 1.0));
+    tree.widgets[0].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    (tree.widgets[0] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[0] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkCanvas(), 0, n"PhoneCalling_Canvas", Vector2(1000.0, 350.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 5.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[1].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[1].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    (tree.widgets[1] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[1] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkCanvas(), 1, n"Code_corner_canvas", Vector2(31.0, 38.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(12.0, -26.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[2].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[2].SetOpacity(0.4);
+    tree.widgets[2].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    (tree.widgets[2] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[2] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 2, n"Code_TL", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[3].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[3].SetFitToContent(true);
+    tree.widgets[3].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    tree.Image(3, r"base\\gameplay\\gui\\common\\hud_widget_holder.inkatlas", n"holder_code", inkBrushMirrorType.NoMirror);
+    tree.widgets[3].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkFlex(), 1, n"ContactAddedCanv", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.5), inkMargin(192.0, 50.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[4].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[4].SetRenderTransformPivot(Vector2(0.0, 0.5));
+    (tree.widgets[4] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[4] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkFlex(), 1, n"top_holder", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(210.0, 54.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[5].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[5].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[5] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[5] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkVerticalPanel(), 5, n"inkVerticalPanelWidget2", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[6].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[6].SetFitToContent(true);
+    tree.widgets[6].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[6] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, -2.0));
+    (tree.widgets[6] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkText(), 6, n"fluff_name-l", Vector2(100.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopRight, Vector2(0.0, 0.0), inkMargin(4.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[7].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[7].SetFitToContent(true);
+    tree.widgets[7].SetOpacity(0.1);
+    tree.widgets[7].SetRenderTransformPivot(Vector2(0.0, 0.5));
+    tree.Text(7, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Medium", 20, GetLocalizedTextByKey(n"Mod-HUDitor-Preview-Incoming"));
+    (tree.widgets[7] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[7].BindProperty(n"tintColor", n"MainColors.Blue");
+    tree.Add(new inkText(), 6, n"contact_name", Vector2(100.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[8].SetTintColor(HDRColor(0.1583, 1.3033, 1.4142, 1.0));
+    tree.widgets[8].SetFitToContent(true);
+    tree.widgets[8].SetOpacity(0.5);
+    tree.widgets[8].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(8, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Semi-Bold", 50, GetLocalizedTextByKey(n"Mod-HUDitor-Preview-Contact"));
+    (tree.widgets[8] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[8].BindProperty(n"tintColor", n"MainColors.ActiveBlue");
+    tree.Add(new inkText(), 6, n"incoming_call", Vector2(200.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 6.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[9].SetTintColor(HDRColor(0.682353, 0.231373, 0.211765, 1.0));
+    tree.widgets[9].SetFitToContent(true);
+    tree.widgets[9].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(9, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Semi-Bold", 44, GetLocalizedTextByKey(n"Mod-HUDitor-Preview-Incoming"));
+    (tree.widgets[9] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[9].BindProperty(n"tintColor", n"MainColors.MildRed");
+    tree.Add(new inkHorizontalPanel(), 6, n"inputHints", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 12.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[10].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[10].SetFitToContent(true);
+    tree.widgets[10].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[10] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 50.0, 0.0));
+    (tree.widgets[10] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkHorizontalPanel(), 10, n"inputAnswer", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[11].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[11].SetFitToContent(true);
+    tree.widgets[11].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[11] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[11] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkHorizontalPanel(), 11, n"inputDisplayController", Vector2(40.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[12].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[12].SetFitToContent(true);
+    tree.widgets[12].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[12] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[12] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkCanvas(), 12, n"inputRoot", Vector2(64.0, 64.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[13].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[13].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[13] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[13] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Action(13, n"PhoneInteract", 64.0);
+    tree.Add(new inkText(), 11, n"text", Vector2(100.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(18.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[14].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[14].SetFitToContent(true);
+    tree.widgets[14].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(14, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Semi-Bold", 42, GetLocalizedTextByKey(n"Mod-HUDitor-Preview-Answer"));
+    (tree.widgets[14] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[14].BindProperty(n"tintColor", n"MainColors.Blue");
+    tree.Add(new inkHorizontalPanel(), 10, n"inputReject", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[15].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[15].SetFitToContent(true);
+    tree.widgets[15].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[15] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[15] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkHorizontalPanel(), 15, n"inputDisplayController", Vector2(40.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[16].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[16].SetFitToContent(true);
+    tree.widgets[16].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[16] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[16] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkCanvas(), 16, n"inputRoot", Vector2(64.0, 64.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[17].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[17].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[17] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[17] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Action(17, n"PhoneReject", 64.0);
+    tree.Add(new inkText(), 15, n"text", Vector2(100.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(18.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[18].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[18].SetFitToContent(true);
+    tree.widgets[18].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(18, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Semi-Bold", 42, GetLocalizedTextByKey(n"Mod-HUDitor-Preview-Decline"));
+    (tree.widgets[18] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[18].BindProperty(n"tintColor", n"MainColors.Blue");
+    tree.Add(new inkCanvas(), 0, n"contactAvatar", Vector2(63.0, 154.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(100.0, 50.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[19].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[19].SetScale(Vector2(0.7, 0.7));
+    tree.widgets[19].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[19] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[19] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkFlex(), 19, n"AvatarFolder", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[20].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[20].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    (tree.widgets[20] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[20] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 20, n"bigAvatar", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[21].SetTintColor(HDRColor(1.3698, 0.4437, 0.4049, 1.0));
+    tree.widgets[21].SetFitToContent(true);
+    tree.widgets[21].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    tree.Image(21, r"base\\gameplay\\gui\\fullscreen\\phone_quest_menu\\messenger.inkatlas", n"avatar_big", inkBrushMirrorType.NoMirror);
+    tree.widgets[21].BindProperty(n"tintColor", n"MainColors.ActiveRed");
+    tree.Add(new inkCanvas(), 20, n"Avatar_holder", Vector2(75.0, 155.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(-70.0, -32.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[22].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[22].SetScale(Vector2(0.256, 0.4));
+    tree.widgets[22].SetShear(Vector2(0.0, 0.65));
+    tree.widgets[22].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[22] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[22] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkImage(), 22, n"avatar_dummy", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[23].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[23].SetFitToContent(true);
+    tree.widgets[23].SetOpacity(0.8);
+    tree.widgets[23].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(23, r"base\\gameplay\\gui\\common\\icons\\avatars\\avatars1.inkatlas", n"restricted", inkBrushMirrorType.NoMirror);
+    tree.Add(new inkImage(), 19, n"smallAvatar3", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(84.096695, -140.886353, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[24].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[24].SetFitToContent(true);
+    tree.widgets[24].SetOpacity(0.02);
+    tree.widgets[24].SetScale(Vector2(0.5, 0.5));
+    tree.widgets[24].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(24, r"base\\gameplay\\gui\\fullscreen\\phone_quest_menu\\messenger.inkatlas", n"avatar_big", inkBrushMirrorType.NoMirror);
+    tree.widgets[24].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkImage(), 19, n"smallAvatar2", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(46.774895, -120.692635, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[25].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[25].SetFitToContent(true);
+    tree.widgets[25].SetOpacity(0.1);
+    tree.widgets[25].SetScale(Vector2(0.5, 0.5));
+    tree.widgets[25].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(25, r"base\\gameplay\\gui\\fullscreen\\phone_quest_menu\\messenger.inkatlas", n"avatar_big", inkBrushMirrorType.NoMirror);
+    tree.widgets[25].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkImage(), 19, n"smallAvatar1", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(40.714272, -21.558433, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[26].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[26].SetFitToContent(true);
+    tree.widgets[26].SetOpacity(0.5);
+    tree.widgets[26].SetScale(Vector2(0.5, 0.5));
+    tree.widgets[26].SetRenderTransformPivot(Vector2(0.0, 0.0));
+    tree.Image(26, r"base\\gameplay\\gui\\fullscreen\\phone_quest_menu\\messenger.inkatlas", n"avatar_big", inkBrushMirrorType.NoMirror);
+    tree.widgets[26].BindProperty(n"tintColor", n"MainColors.Red");
+  }
+  private static func NewBossHealthbar(tree: ref<HUDitorVisualTree>) -> Void {
+    HUDitorVisualRecipes.NewBossHealthbarPart0(tree);
+  }
+  private static func NewBossHealthbarPart0(tree: ref<HUDitorVisualTree>) -> Void {
+    tree.Add(new inkCanvas(), -1, n"Root", Vector2(600.0, 39.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[0].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[0].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[0] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[0] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkHorizontalPanel(), 0, n"title", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(-235.0, 175.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[1].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[1].SetFitToContent(true);
+    tree.widgets[1].SetRenderTransformPivot(Vector2(0.0, 0.5));
+    (tree.widgets[1] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[1] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkHorizontalPanel(), 1, n"title_holder", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, -13.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[2].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[2].SetFitToContent(true);
+    tree.widgets[2].SetRenderTransformPivot(Vector2(0.0, 0.5));
+    (tree.widgets[2] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[2] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkText(), 2, n"boss_health", Vector2(100.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[3].SetTintColor(HDRColor(1.3698, 0.4437, 0.4049, 1.0));
+    tree.widgets[3].SetFitToContent(true);
+    tree.widgets[3].SetRenderTransformPivot(Vector2(0.0, 0.5));
+    tree.Text(3, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Medium", 38, GetLocalizedTextByKey(n"Mod-HUDitor-Preview-Boss"));
+    (tree.widgets[3] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[3].BindProperty(n"tintColor", n"MainColors.ActiveRed");
+    tree.Add(new inkFlex(), 0, n"healthMain", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(-230.0, 200.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[4].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[4].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[4] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[4] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkFlex(), 4, n"wrapper", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[5].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[5].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[5] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[5] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkRectangle(), 5, n"bg", Vector2(610.0, 10.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(5.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[6].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[6].SetOpacity(0.1);
+    tree.widgets[6].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[6].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkHorizontalPanel(), 5, n"logic", Vector2(120.0, 14.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[7].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[7].SetFitToContent(true);
+    tree.widgets[7].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[7] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[7] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkRectangle(), 7, n"full", Vector2(610.0, 10.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(-1.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[8].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[8].SetTranslation(Vector2(6.0, 0.0));
+    tree.widgets[8].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[8].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkRectangle(), 7, n"changeP", Vector2(1.0, 10.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[9].SetTintColor(HDRColor(0.682353, 0.231373, 0.211765, 1.0));
+    tree.widgets[9].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[9].BindProperty(n"tintColor", n"MainColors.MildRed");
+    tree.Add(new inkHorizontalPanel(), 4, n"dividers", Vector2(613.0, 10.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(2.0, -1.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[10].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[10].SetScale(Vector2(1.0, 1.1));
+    tree.widgets[10].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[10] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[10] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkRectangle(), 10, n"divider", Vector2(3.0, 11.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[11].SetTintColor(HDRColor(0.054902, 0.054902, 0.090196, 1.0));
+    tree.widgets[11].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[11].BindProperty(n"tintColor", n"MainColors.Fullscreen_PrimaryBackgroundDarkest");
+    tree.Add(new inkRectangle(), 10, n"divider", Vector2(3.0, 11.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(58.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[12].SetTintColor(HDRColor(0.054902, 0.054902, 0.090196, 1.0));
+    tree.widgets[12].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[12].BindProperty(n"tintColor", n"MainColors.Fullscreen_PrimaryBackgroundDarkest");
+    tree.Add(new inkRectangle(), 10, n"divider", Vector2(3.0, 11.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(363.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[13].SetTintColor(HDRColor(0.054902, 0.054902, 0.090196, 1.0));
+    tree.widgets[13].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[13].BindProperty(n"tintColor", n"MainColors.Fullscreen_PrimaryBackgroundDarkest");
+    tree.Add(new inkRectangle(), 10, n"divider", Vector2(3.0, 11.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(180.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[14].SetTintColor(HDRColor(0.054902, 0.054902, 0.090196, 1.0));
+    tree.widgets[14].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[14].BindProperty(n"tintColor", n"MainColors.Fullscreen_PrimaryBackgroundDarkest");
+    tree.Add(new inkVerticalPanel(), 0, n"percent", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(-235.0, 238.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Right, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[15].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[15].SetFitToContent(true);
+    tree.widgets[15].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[15] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[15] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkHorizontalPanel(), 15, n"percent_holder", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[16].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[16].SetFitToContent(true);
+    tree.widgets[16].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[16] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[16] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkText(), 16, n"percentText", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopRight, Vector2(0.0, 0.0), inkMargin(0.0, -7.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[17].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[17].SetFitToContent(true);
+    tree.widgets[17].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(17, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Medium", 38, "100");
+    (tree.widgets[17] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[17].BindProperty(n"tintColor", n"MainColors.Red");
+    tree.Add(new inkText(), 16, n"percentSign", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopRight, Vector2(0.0, 0.0), inkMargin(0.0, -7.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[18].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[18].SetFitToContent(true);
+    tree.widgets[18].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(18, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Medium", 38, "%");
+    (tree.widgets[18] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[18].BindProperty(n"tintColor", n"MainColors.Red");
+  }
+  private static func NewDialogChoices(tree: ref<HUDitorVisualTree>) -> Void {
+    HUDitorVisualRecipes.NewDialogChoicesPart0(tree);
+  }
+  private static func NewDialogChoicesPart0(tree: ref<HUDitorVisualTree>) -> Void {
+    tree.Add(new inkHorizontalPanel(), -1, n"item", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[0].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[0].SetFitToContent(true);
+    tree.widgets[0].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[0] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 7.0));
+    (tree.widgets[0] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkFlex(), 0, n"interactionsInput", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[1].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[1].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[1] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[1] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkHorizontalPanel(), 1, n"wrapper", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[2].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[2].SetFitToContent(true);
+    tree.widgets[2].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[2] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 5.0, 0.0));
+    (tree.widgets[2] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkHorizontalPanel(), 2, n"inputDisplayController", Vector2(40.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[3].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[3].SetFitToContent(true);
+    tree.widgets[3].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[3] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[3] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkCanvas(), 3, n"inputRoot", Vector2(64.0, 64.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[4].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[4].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[4] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[4] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Action(4, n"ChoiceApply", 64.0);
+    tree.Add(new inkVerticalPanel(), 2, n"arrow_wrapper", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[5].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[5].SetFitToContent(true);
+    tree.widgets[5].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[5] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[5] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkShape(), 5, n"uparrow", Vector2(9.014309, 4.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[6].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[6].SetScale(Vector2(2.0, 2.0));
+    tree.widgets[6].SetRotation(180.0);
+    tree.widgets[6].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[6] as inkShape).SetShapeResource(r"base\\gameplay\\gui\\widgets\\shapes\\shapes.inkshapecollection");
+    (tree.widgets[6] as inkShape).ChangeShape(n"arrow_down");
+    tree.widgets[6].BindProperty(n"tintColor", n"MainColors.Blue");
+    tree.Add(new inkShape(), 5, n"downarrow", Vector2(9.014309, 4.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(1.0, 10.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[7].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[7].SetScale(Vector2(2.0, 2.0));
+    tree.widgets[7].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[7] as inkShape).SetShapeResource(r"base\\gameplay\\gui\\widgets\\shapes\\shapes.inkshapecollection");
+    (tree.widgets[7] as inkShape).ChangeShape(n"arrow_down");
+    tree.widgets[7].BindProperty(n"tintColor", n"MainColors.Blue");
+    tree.Add(new inkHorizontalPanel(), 0, n"mainContent", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(10.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[8].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[8].SetFitToContent(true);
+    tree.widgets[8].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[8] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[8] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkFlex(), 8, n"textFlex", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[9].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[9].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[9] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[9] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkRectangle(), 9, n"thinVerticalLine", Vector2(3.0, 20.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 15.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[10].SetTintColor(HDRColor(1.1192, 0.8441, 0.2565, 1.0));
+    tree.widgets[10].SetOpacity(0.33);
+    tree.widgets[10].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[10].BindProperty(n"tintColor", n"Choice.fontColor");
+    tree.Add(new inkShape(), 9, n"selectedBg", Vector2(88.0, 88.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[11].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[11].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[11] as inkShape).SetShapeResource(r"engine\\ink\\shapes\\fallback.inkshapecollection");
+    (tree.widgets[11] as inkShape).ChangeShape(n"dialogItem");
+    tree.widgets[11].BindProperty(n"tintColor", n"Choice.fontColor");
+    tree.Add(new inkHorizontalPanel(), 9, n"active_text_wrapper", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 10.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[12].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[12].SetFitToContent(true);
+    tree.widgets[12].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[12] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[12] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkHorizontalPanel(), 12, n"captionImageHorz_primary", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(30.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[13].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[13].SetFitToContent(true);
+    tree.widgets[13].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[13] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 5.0, 0.0));
+    (tree.widgets[13] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkText(), 12, n"activeItemText", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(10.0, 0.0, 30.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[14].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[14].SetFitToContent(true);
+    tree.widgets[14].SetTranslation(Vector2(0.5, 0.5));
+    tree.widgets[14].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(14, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Semi-Bold", 50, GetLocalizedTextByKey(n"Mod-HUDitor-Preview-Choice"));
+    (tree.widgets[14] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[14].BindProperty(n"tintColor", n"Choice.fontColor");
+    tree.Add(new inkHorizontalPanel(), 8, n"captionImageHorz_secondary", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[15].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[15].SetFitToContent(true);
+    tree.widgets[15].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[15] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 5.0, 0.0));
+    (tree.widgets[15] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+  }
+  private static func NewDialogSubtitles(tree: ref<HUDitorVisualTree>) -> Void {
+    HUDitorVisualRecipes.NewDialogSubtitlesPart0(tree);
+  }
+  private static func NewDialogSubtitlesPart0(tree: ref<HUDitorVisualTree>) -> Void {
+    tree.Add(new inkFlex(), -1, n"subitleContainer", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[0].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[0].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[0] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[0] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkImage(), 0, n"shadowblob", Vector2(32.0, 150.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(-34.0, -16.0, -34.0, -16.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Stretch, 1.0));
+    tree.widgets[1].SetTintColor(HDRColor(0.058824, 0.058824, 0.133333, 1.0));
+    tree.widgets[1].SetFitToContent(true);
+    tree.widgets[1].SetRenderTransformPivot(Vector2(0.5, 0.0));
+    tree.Image(1, r"base\\gameplay\\gui\\common\\shadow_blobs.inkatlas", n"shadowBlobText", inkBrushMirrorType.NoMirror);
+    (tree.widgets[1] as inkImage).useNineSliceScale = true;
+    (tree.widgets[1] as inkImage).nineSliceScale = inkMargin(0.0, 0.0, 0.0, 0.0);
+    tree.widgets[1].BindProperty(n"tintColor", n"ShadowBlob.BackgroundColour");
+    tree.Add(new inkHorizontalPanel(), 0, n"Line", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.TopCenter, Vector2(0.5, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[2].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[2].SetFitToContent(true);
+    tree.widgets[2].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[2] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[2] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkFlex(), 2, n"speakerFlex", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[3].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[3].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[3] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[3] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkText(), 3, n"speakerName", Vector2(100.0, 13.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 20.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Right, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[4].SetTintColor(HDRColor(1.3698, 0.4437, 0.4049, 1.0));
+    tree.widgets[4].SetFitToContent(true);
+    tree.widgets[4].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(4, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Semi-Bold", 52, GetLocalizedTextByKey(n"Mod-HUDitor-Preview-Contact"));
+    (tree.widgets[4] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    (tree.widgets[4] as inkText).SetWrapping(false, 700.0);
+    tree.widgets[4].BindProperty(n"tintColor", n"MainColors.SubtitleRed");
+    tree.Add(new inkFlex(), 2, n"subtitleFlex", Vector2(100.0, 100.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[5].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[5].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[5] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[5] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkText(), 5, n"subtitle", Vector2(100.0, 13.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[6].SetTintColor(HDRColor(0.368627, 0.964706, 1.0, 1.0));
+    tree.widgets[6].SetFitToContent(true);
+    tree.widgets[6].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(6, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Semi-Bold", 52, GetLocalizedTextByKey(n"Mod-HUDitor-Preview-Subtitle"));
+    (tree.widgets[6] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    (tree.widgets[6] as inkText).SetWrapping(false, 1600.0);
+    tree.widgets[6].BindProperty(n"tintColor", n"MainColors.SubtitleBlue");
+  }
+  private static func NewProgressBar(tree: ref<HUDitorVisualTree>) -> Void {
+    HUDitorVisualRecipes.NewProgressBarPart0(tree);
+  }
+  private static func NewProgressBarPart0(tree: ref<HUDitorVisualTree>) -> Void {
+    tree.Add(new inkCanvas(), -1, n"Root", Vector2(2000.0, 600.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Left, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[0].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[0].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[0] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[0] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.widgets[0].BindProperty(n"tintColor", n"Bar.Red");
+    tree.Add(new inkCanvas(), 0, n"wrapper", Vector2(2000.0, 600.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(0.5, 0.5), inkMargin(0.588235, 0.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[1].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[1].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[1] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[1] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkCanvas(), 1, n"Quickhack_Elements_Canvas", Vector2(1000.0, 72.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.0, 0.5), inkMargin(600.0, 280.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[2].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[2].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[2] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[2] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkText(), 2, n"Attention_Flex_TEXT", Vector2(870.0, 50.0), HUDitorVisualTree.Layout(inkEAnchor.CenterLeft, Vector2(0.0, 0.5), inkMargin(22.0, 4.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Top, inkESizeRule.Fixed, 1.0));
+    tree.widgets[3].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[3].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(3, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Semi-Bold", 40, GetLocalizedTextByKey(n"Mod-HUDitor-Preview-Tracing"));
+    (tree.widgets[3] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[3].BindProperty(n"tintColor", n"Bar.Red");
+    tree.Add(new inkCanvas(), 2, n"loading_Canvas", Vector2(1200.0, 266.0), HUDitorVisualTree.Layout(inkEAnchor.TopLeft, Vector2(0.5, 0.5), inkMargin(620.0, 38.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[4].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[4].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[4] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[4] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkHorizontalPanel(), 4, n"loading_text_Panel", Vector2(0.0, 0.0), HUDitorVisualTree.Layout(inkEAnchor.CenterLeft, Vector2(0.0, 0.5), inkMargin(4.0, 66.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[5].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[5].SetFitToContent(true);
+    tree.widgets[5].SetRenderTransformPivot(Vector2(0.0, 0.5));
+    (tree.widgets[5] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 5.0, 0.0));
+    (tree.widgets[5] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Forward);
+    tree.Add(new inkText(), 5, n"LOADING_text", Vector2(100.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(1.0, 0.5), inkMargin(0.0, -6.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[6].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[6].SetFitToContent(true);
+    tree.widgets[6].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(6, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Semi-Bold", 25, GetLocalizedTextByKey(n"Mod-HUDitor-Preview-Tracing"));
+    (tree.widgets[6] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[6].BindProperty(n"tintColor", n"Bar.Red");
+    tree.Add(new inkText(), 5, n"LOADING_Percentage_text", Vector2(100.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(1.0, 0.5), inkMargin(0.0, -6.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[7].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[7].SetFitToContent(true);
+    tree.widgets[7].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(7, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Semi-Bold", 25, "50");
+    (tree.widgets[7] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[7].BindProperty(n"tintColor", n"Bar.Red");
+    tree.Add(new inkText(), 5, n"LOADING_PRCT_text", Vector2(100.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.Centered, Vector2(1.0, 0.5), inkMargin(0.0, -6.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[8].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[8].SetFitToContent(true);
+    tree.widgets[8].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(8, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Semi-Bold", 25, "%");
+    (tree.widgets[8] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[8].BindProperty(n"tintColor", n"Bar.Red");
+    tree.Add(new inkText(), 4, n"inkTextWidget11", Vector2(100.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.CenterRight, Vector2(1.0, 0.5), inkMargin(0.0, 62.896664, 222.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[9].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[9].SetFitToContent(true);
+    tree.widgets[9].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Text(9, "base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily", n"Medium", 14, GetLocalizedTextByKey(n"Mod-HUDitor-Preview-Sample"));
+    (tree.widgets[9] as inkText).SetHorizontalAlignment(textHorizontalAlignment.Left);
+    tree.widgets[9].BindProperty(n"tintColor", n"Bar.Red");
+    tree.Add(new inkCanvas(), 1, n"Personal_Link_Main_Elements_Canvas", Vector2(1002.0, 266.0), HUDitorVisualTree.Layout(inkEAnchor.TopCenter, Vector2(0.5, 0.5), inkMargin(100.0, 160.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[10].SetTintColor(HDRColor(1.0, 1.0, 1.0, 1.0));
+    tree.widgets[10].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    (tree.widgets[10] as inkCompoundWidget).SetChildMargin(inkMargin(0.0, 0.0, 0.0, 0.0));
+    (tree.widgets[10] as inkCompoundWidget).SetChildOrder(inkEChildOrder.Backward);
+    tree.Add(new inkRectangle(), 10, n"Process_Bar_H_1_Line", Vector2(996.0, 3.0), HUDitorVisualTree.Layout(inkEAnchor.CenterLeft, Vector2(0.0, 0.0), inkMargin(2.0, 72.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[11].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[11].SetOpacity(0.4);
+    tree.widgets[11].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[11].BindProperty(n"tintColor", n"Bar.Red");
+    tree.Add(new inkRectangle(), 10, n"Process_Bar_H_2_Line", Vector2(996.0, 3.0), HUDitorVisualTree.Layout(inkEAnchor.CenterLeft, Vector2(0.0, 0.5), inkMargin(2.0, 84.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[12].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[12].SetOpacity(0.4);
+    tree.widgets[12].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[12].BindProperty(n"tintColor", n"Bar.Red");
+    tree.Add(new inkRectangle(), 10, n"Process_Bar_H_3_Line", Vector2(995.0, 3.0), HUDitorVisualTree.Layout(inkEAnchor.CenterLeft, Vector2(0.0, 0.0), inkMargin(3.0, 160.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[13].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[13].SetOpacity(0.4);
+    tree.widgets[13].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[13].BindProperty(n"tintColor", n"Bar.Red");
+    tree.Add(new inkRectangle(), 10, n"Process_Bar_V_1_Line", Vector2(3.0, 91.0), HUDitorVisualTree.Layout(inkEAnchor.CenterLeft, Vector2(0.0, 0.0), inkMargin(0.0, 72.0, 200.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[14].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[14].SetOpacity(0.4);
+    tree.widgets[14].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[14].BindProperty(n"tintColor", n"Bar.Red");
+    tree.Add(new inkRectangle(), 10, n"Process_Bar_V_3_Line", Vector2(3.0, 40.0), HUDitorVisualTree.Layout(inkEAnchor.CenterLeft, Vector2(0.0, 1.0), inkMargin(900.0, 160.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[15].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[15].SetOpacity(0.4);
+    tree.widgets[15].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[15].BindProperty(n"tintColor", n"Bar.Red");
+    tree.Add(new inkRectangle(), 10, n"Process_Bar_V_4_Line", Vector2(3.0, 91.0), HUDitorVisualTree.Layout(inkEAnchor.CenterLeft, Vector2(0.0, 0.0), inkMargin(998.0, 72.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[16].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[16].SetOpacity(0.4);
+    tree.widgets[16].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[16].BindProperty(n"tintColor", n"Bar.Red");
+    tree.Add(new inkRectangle(), 10, n"Process_Bar_Main_Line", Vector2(996.0, 9.0), HUDitorVisualTree.Layout(inkEAnchor.CenterLeft, Vector2(0.0, 0.5), inkMargin(2.0, 78.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[17].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[17].SetRenderTransformPivot(Vector2(0.0, 0.5));
+    tree.widgets[17].BindProperty(n"tintColor", n"Bar.ProgressLine");
+    tree.Add(new inkRectangle(), 10, n"Process_Bar_Extra_Line", Vector2(0.0, 6.0), HUDitorVisualTree.Layout(inkEAnchor.CenterLeft, Vector2(0.0, 0.5), inkMargin(2.0, 78.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[18].SetTintColor(HDRColor(1.331, 1.0038, 0.305, 1.0));
+    tree.widgets[18].SetRenderTransformPivot(Vector2(0.0, 0.5));
+    tree.widgets[18].BindProperty(n"tintColor", n"MainColors.ActiveYellow");
+    tree.Add(new inkImage(), 10, n"Protocol_Icon", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.CenterLeft, Vector2(0.5, 0.5), inkMargin(950.390686, 133.009781, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[19].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[19].SetFitToContent(true);
+    tree.widgets[19].SetOpacity(0.2);
+    tree.widgets[19].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(19, r"base\\gameplay\\gui\\quests\\assets\\personal_link.inkatlas", n"Protocol_Text", inkBrushMirrorType.NoMirror);
+    tree.widgets[19].BindProperty(n"tintColor", n"Bar.Red");
+    tree.Add(new inkImage(), 10, n"Protocol_Image", Vector2(32.0, 32.0), HUDitorVisualTree.Layout(inkEAnchor.CenterLeft, Vector2(0.5, 0.5), inkMargin(950.058838, 103.666672, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Center, inkEVerticalAlign.Center, inkESizeRule.Fixed, 1.0));
+    tree.widgets[20].SetTintColor(HDRColor(1.1761, 0.3809, 0.3476, 1.0));
+    tree.widgets[20].SetFitToContent(true);
+    tree.widgets[20].SetOpacity(0.2);
+    tree.widgets[20].SetScale(Vector2(0.76, 0.7));
+    tree.widgets[20].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.Image(20, r"base\\gameplay\\gui\\quests\\assets\\personal_link.inkatlas", n"protocol_icon_alone", inkBrushMirrorType.NoMirror);
+    tree.widgets[20].BindProperty(n"tintColor", n"Bar.Red");
+    tree.Add(new inkRectangle(), 10, n"uploadBG", Vector2(1000.0, 90.0), HUDitorVisualTree.Layout(inkEAnchor.CenterLeft, Vector2(0.0, 0.0), inkMargin(0.0, 72.0, 0.0, 0.0), inkMargin(0.0, 0.0, 0.0, 0.0), inkEHorizontalAlign.Fill, inkEVerticalAlign.Fill, inkESizeRule.Fixed, 1.0));
+    tree.widgets[21].SetTintColor(HDRColor(0.054902, 0.054902, 0.090196, 1.0));
+    tree.widgets[21].SetOpacity(0.61);
+    tree.widgets[21].SetRenderTransformPivot(Vector2(0.5, 0.5));
+    tree.widgets[21].BindProperty(n"tintColor", n"Bar.BgColor");
+  }
 }

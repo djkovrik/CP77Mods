@@ -9,21 +9,40 @@ public let hudWidgetsManager: wref<HUDWidgetsManager>;
 
 public class HUDWidgetsManager {
   public let gameInstance: GameInstance;
-  public let puppetId: EntityID;
+  public let player: wref<PlayerPuppet>;
+  public let listener: wref<HUDitorInputListener>;
+  public let host: wref<inkGameController>;
+  public let window: wref<inkCompoundWidget>;
+  public let uiController: wref<inkGameController>;
   public let isActive: Bool;
+  public let disposed: Bool;
+  public let ready: Bool;
+  public let generation: Uint32;
   public let activeWidget: CName;
   public let currentIndex: Int32;
-  public let maxIndex: Int32;
   public let slots: array<CName>;
+  public let available: array<ref<HUDitorCustomSlot>>;
+  public let controllers: array<ref<HUDitorCustomSlot>>;
+  public let overlay: ref<HUDitorOverlay>;
+  public let surfaces: ref<HUDitorSurfaces>;
+  public let presentations: array<wref<inkWidget>>;
+  public let sceneTier: Int32;
+  public let visionState: Int32;
+  public let scannerBlocked: Bool;
+  private let unlockListener: Uint32;
+  private let delayId: DelayID;
+  private let bindPending: Bool;
+  private let bindRequestId: Uint32;
+  private let initialAttempts: Int32;
 
-  private func Initialize(gameInstance: GameInstance, puppetId: EntityID, hudGameController: ref<inkGameController>) {
+  private func Initialize(player: ref<PlayerPuppet>) -> Void {
     let config: ref<HUDitorConfig> = new HUDitorConfig();
-    this.gameInstance = gameInstance;
-    this.puppetId = puppetId;
-    this.SetHUDEditorListener(hudGameController);
-    this.currentIndex = 0;
+    this.player = player;
+    this.gameInstance = player.GetGame();
+    this.currentIndex = -1;
+    this.delayId = GetInvalidDelayID();
     if config.questTrackerEnabled { ArrayPush(this.slots, n"NewTracker"); }
-    if config.minimapEnabled && !config.compatE3CompassEnabled { ArrayPush(this.slots, n"NewMinimap"); }
+    if config.minimapEnabled { ArrayPush(this.slots, n"NewMinimap"); }
     if config.wantedBarEnabled { ArrayPush(this.slots, n"NewWanted"); }
     if config.questNotificationsEnabled { ArrayPush(this.slots, n"NewQuestNotifications"); }
     if config.itemNotificationsEnabled { ArrayPush(this.slots, n"NewItemNotifications"); }
@@ -46,68 +65,173 @@ public class HUDWidgetsManager {
     if config.dialogChoicesEnabled { ArrayPush(this.slots, n"NewDialogChoices"); }
     if config.dialogSubtitlesEnabled { ArrayPush(this.slots, n"NewDialogSubtitles"); }
     if config.progressWidgetEnabled { ArrayPush(this.slots, n"NewProgressBar"); }
-    if config.compatE3CompassEnabled { ArrayPush(this.slots, n"NewCompass"); }
-    if config.fpsCounterEnabled { ArrayPush(this.slots, n"NewFpsCounter"); }
-    this.maxIndex = ArraySize(this.slots) - 1;
+    this.InitializeFpsCounter();
+    this.unlockListener = GameInstance.GetQuestsSystem(this.gameInstance).RegisterListener(n"unlock_car_hud_dpad", this, n"OnHUDitorUnlock");
+    this.RequestBind();
   }
 
-  public static func CreateInstance(puppet: ref<gamePuppet>, hudGameController: ref<inkGameController>) {
-    let instance: ref<HUDWidgetsManager> = new HUDWidgetsManager();
-    let gameInstance: GameInstance = puppet.GetGame();
-    let puppetEntityId: EntityID = puppet.GetEntityID();
-    instance.Initialize(gameInstance, puppetEntityId, hudGameController);
+  @if(ModuleExists("FpsCounter"))
+  private func InitializeFpsCounter() -> Void {
+    ArrayPush(this.slots, n"NewFpsCounter");
+  }
 
-    let player: wref<PlayerPuppet> = GetPlayer(gameInstance);
+  @if(!ModuleExists("FpsCounter"))
+  private func InitializeFpsCounter() -> Void {}
+
+  public static func CreateInstance(player: ref<PlayerPuppet>, hudGameController: ref<inkGameController>) -> ref<HUDWidgetsManager> {
+    let previous: ref<HUDWidgetsManager> = HUDWidgetsManager.GetInstance();
+    if IsDefined(previous) { previous.Dispose(); };
+    let instance: ref<HUDWidgetsManager> = new HUDWidgetsManager();
+    instance.uiController = hudGameController;
     player.hudWidgetsManager = instance;
     GetAllBlackboardDefs().hudWidgetsManager = instance;
+    instance.Initialize(player);
+    return instance;
   }
 
   public static func GetInstance() -> wref<HUDWidgetsManager> {
     return GetAllBlackboardDefs().hudWidgetsManager;
   }
 
-  public func GetPlayerPuppet() -> wref<PlayerPuppet> {
-    return GameInstance.FindEntityByID(this.gameInstance, this.puppetId) as PlayerPuppet;
-  }
+  public func GetPlayerPuppet() -> wref<PlayerPuppet> { return this.player; }
+  public func IsActive() -> Bool { return this.isActive && !this.disposed; }
+  public func IsEnabled(name: CName) -> Bool { return !this.disposed && ArrayContains(this.slots, name); }
 
-  public func IsActive() -> Bool {
-    return this.isActive;
-  }
-
-  public func SwitchToNextWidget() -> Void {
-    this.currentIndex = this.currentIndex + 1;
-    if this.currentIndex > this.maxIndex { this.currentIndex = 0; };
-  }
-
-  public func SwitchToPrevWidget() -> Void {
-    this.currentIndex = this.currentIndex - 1;
-    if this.currentIndex < 0 { this.currentIndex = this.maxIndex; };
-  }
-
-  public func GetActiveWidget() -> CName {
-    if ArraySize(this.slots) > 0 && this.currentIndex >= 0 && this.currentIndex < ArraySize(this.slots) {
-      return this.slots[this.currentIndex];
+  public func FindSlot(name: CName) -> ref<HUDitorCustomSlot> {
+    for slot in this.controllers {
+      if Equals(slot.GetName(), name) { return slot; };
     };
-
-    return n"";
+    return null;
   }
 
-  public func GetSlots() -> array<CName> {
-    return this.slots;
+  public func RegisterSlot(slot: ref<HUDitorCustomSlot>) -> Void {
+    if !IsDefined(this.FindSlot(slot.GetName())) { ArrayPush(this.controllers, slot); };
   }
 
-  public func SetHUDEditorListener(hudGameController: ref<inkGameController>) -> Void {
-    let player: wref<PlayerPuppet> = this.GetPlayerPuppet();
-    player.RegisterInputListener(hudGameController, n"ToggleSprint");
-    player.RegisterInputListener(hudGameController, n"UI_Unequip");
-    player.RegisterInputListener(hudGameController, n"HUDitor_Editor");
-    player.RegisterInputListener(hudGameController, n"world_map_filter_navigation_down");
-    player.RegisterInputListener(hudGameController, n"back");
-    player.RegisterInputListener(hudGameController, n"cancel");
-    player.RegisterInputListener(hudGameController, n"right_button");
-    player.RegisterInputListener(hudGameController, n"left_button");
-    player.RegisterInputListener(hudGameController, n"CameraMouseX");
-    player.RegisterInputListener(hudGameController, n"CameraMouseY");
-    player.RegisterInputListener(hudGameController, n"click");
+  public func RefreshAvailable() -> Void {
+    if this.isActive { return; };
+    let driving: Bool = VehicleComponent.IsDriver(this.gameInstance, this.player);
+    ArrayClear(this.available);
+    for name in this.slots {
+      if !driving || NotEquals(name, n"NewVehicleHotkey") {
+        let slot: ref<HUDitorCustomSlot> = this.FindSlot(name);
+        if IsDefined(slot) && slot.IsReady() { ArrayPush(this.available, slot); };
+      };
+    };
+    this.ready = ArraySize(this.available) > 0;
+  }
+
+  public func Select(index: Int32) -> Void {
+    let count: Int32 = ArraySize(this.available);
+    if !this.IsActive() || count == 0 { return; };
+    if this.currentIndex >= 0 && this.currentIndex < count { this.available[this.currentIndex].SetSelected(false); };
+    if index < 0 { index = count - 1; };
+    if index >= count { index = 0; };
+    this.currentIndex = index;
+    this.activeWidget = this.available[index].GetName();
+    this.available[index].SetSelected(true);
+    this.overlay.Select(this.available[index]);
+    if IsDefined(this.listener) { this.listener.ResetCursor(); };
+  }
+
+  public func SwitchToNextWidget() -> Void { this.Select(this.currentIndex + 1); }
+  public func SwitchToPrevWidget() -> Void { this.Select(this.currentIndex - 1); }
+  public func GetActiveWidget() -> CName { return this.activeWidget; }
+
+  public func Begin() -> Bool {
+    if this.disposed || this.isActive || ArraySize(this.slots) == 0 { return false; };
+    this.Bind();
+    this.RefreshAvailable();
+    if !this.ready || !IsDefined(this.overlay) { this.RequestBind(); return false; };
+    this.generation += 1u;
+    this.isActive = true;
+    for slot in this.available {
+      slot.BeginPreview(this.generation);
+    };
+    this.currentIndex = -1;
+    this.overlay.Show(true);
+    this.Select(0);
+    return true;
+  }
+
+  public func End() -> Void {
+    if !this.isActive { return; };
+    this.isActive = false;
+    this.generation += 1u;
+    for slot in this.controllers { slot.EndPreview(); };
+    if IsDefined(this.overlay) { this.overlay.Show(false); };
+    this.currentIndex = -1;
+    this.activeWidget = n"";
+    this.RequestBind();
+  }
+
+  public func UpdateContext() -> Void {
+    for slot in this.controllers { slot.RefreshContext(); };
+  }
+
+  public func Reset() -> Void {
+    for slot in this.controllers { slot.Reset(); };
+  }
+
+  protected cb func OnHUDitorUnlock(value: Int32) -> Bool {
+    if value > 0 { this.RequestBind(); };
+  }
+
+  public func RequestBind() -> Void {
+    if this.disposed || this.bindPending || ArraySize(this.slots) == 0 { return; };
+    if GameInstance.GetQuestsSystem(this.gameInstance).GetFact(n"unlock_car_hud_dpad") <= 0 { return; };
+    let callback: ref<HUDitorDelayedInitCallback> = new HUDitorDelayedInitCallback();
+    callback.manager = this;
+    this.bindRequestId += 1u;
+    callback.requestId = this.bindRequestId;
+    this.bindPending = true;
+    this.delayId = GameInstance.GetDelaySystem(this.gameInstance).DelayCallback(callback, 0.1, false);
+  }
+
+  public func QueueBind(requestId: Uint32) -> Void {
+    if this.disposed || !this.bindPending || requestId != this.bindRequestId || !IsDefined(this.uiController) { return; };
+    let evt: ref<HUDitorBindEvent> = new HUDitorBindEvent();
+    evt.manager = this;
+    evt.requestId = requestId;
+    this.uiController.QueueEvent(evt);
+  }
+
+  public func ApplyBind(requestId: Uint32) -> Void {
+    if this.disposed || !this.bindPending || requestId != this.bindRequestId { return; };
+    this.Bind();
+  }
+
+  public func Bind() -> Void {
+    GameInstance.GetDelaySystem(this.gameInstance).CancelCallback(this.delayId);
+    this.bindPending = false;
+    this.bindRequestId += 1u;
+    this.delayId = GetInvalidDelayID();
+    if this.disposed || this.isActive { return; };
+    HUDitorBindings.Discover(this);
+    this.RefreshAvailable();
+    this.initialAttempts += 1;
+    if !this.ready && this.initialAttempts < 20 { this.RequestBind(); };
+  }
+
+  public func Dispose() -> Void {
+    if this.disposed { return; };
+    if IsDefined(this.listener) { this.listener.Close(); } else { this.End(); };
+    if IsDefined(this.player) && IsDefined(this.listener) { this.player.UnregisterInputListener(this.listener); };
+    this.disposed = true;
+    this.generation += 1u;
+    GameInstance.GetDelaySystem(this.gameInstance).CancelCallback(this.delayId);
+    this.delayId = GetInvalidDelayID();
+    this.bindPending = false;
+    GameInstance.GetQuestsSystem(this.gameInstance).UnregisterListener(n"unlock_car_hud_dpad", this.unlockListener);
+    for slot in this.controllers { slot.Dispose(); };
+    ArrayClear(this.controllers);
+    ArrayClear(this.available);
+    if IsDefined(this.surfaces) { this.surfaces.Dispose(); };
+    this.surfaces = null;
+    if IsDefined(this.overlay) { this.overlay.Dispose(); };
+    this.overlay = null;
+    this.ready = false;
+    if IsDefined(this.player) && this.player.hudWidgetsManager == this { this.player.hudWidgetsManager = null; };
+    if GetAllBlackboardDefs().hudWidgetsManager == this { GetAllBlackboardDefs().hudWidgetsManager = null; };
   }
 }

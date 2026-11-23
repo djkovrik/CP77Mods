@@ -1,44 +1,83 @@
-import HUDrag.HUDitorConfig
+import HUDrag.HUDWidgetsManager.*
 
-// Called when gameplay actually starts & widgets are loaded
-@addField(PhoneHotkeyController)
-private let huditorDelayId: DelayID;
+public class HUDitorDelayedInitCallback extends DelayCallback {
+  public let manager: wref<HUDWidgetsManager>;
+  public let requestId: Uint32;
+  public func Call() -> Void {
+    if IsDefined(this.manager) && !this.manager.disposed { this.manager.QueueBind(this.requestId); };
+  }
+}
+
+@addMethod(inkGameController)
+protected cb func OnHUDitorBindEvent(evt: ref<HUDitorBindEvent>) -> Bool {
+  if IsDefined(evt.manager) && evt.manager.uiController == this {
+    evt.manager.ApplyBind(evt.requestId);
+  };
+}
 
 @wrapMethod(PhoneHotkeyController)
 protected cb func OnPlayerAttach(player: ref<GameObject>) -> Bool {
   wrappedMethod(player);
-
-  let delaySystem: ref<DelaySystem> = GameInstance.GetDelaySystem(player.GetGame());
-  let uiSystem: ref<UISystem> = GameInstance.GetUISystem(player.GetGame());
-  let questSystem: ref<QuestsSystem> = GameInstance.GetQuestsSystem(player.GetGame());
-  let delayCallback: ref<HUDitorDelayedInitCallback> = new HUDitorDelayedInitCallback();
-  let carHudUnlocked: Bool = questSystem.GetFact(n"unlock_car_hud_dpad") > 0;
-
-  if carHudUnlocked {
-    delayCallback.uiSystem = uiSystem;
-    delaySystem.CancelCallback(this.huditorDelayId);
-    this.huditorDelayId = delaySystem.DelayCallback(delayCallback, 0.1, false);
-  };
-}
-
-public class HUDitorDelayedInitCallback extends DelayCallback {
-  public let uiSystem: wref<UISystem>;
-
-  public func Call() -> Void {
-    let cfg: ref<HUDitorConfig> = new HUDitorConfig();
-    this.uiSystem.QueueEvent(new HijackSlotsEvent());
-    this.uiSystem.QueueEvent(new GameSessionInitializedEvent());
-    if cfg.fpsCounterEnabled {
-      this.uiSystem.QueueEvent(new ReparentFpsCounterEvent());
-    };
-  }
+  let manager: ref<HUDWidgetsManager> = HUDWidgetsManager.GetInstance();
+  if IsDefined(manager) { manager.RequestBind(); };
 }
 
 @wrapMethod(scannerDetailsGameController)
 protected cb func OnScannedObjectChanged(value: EntityID) -> Bool {
   wrappedMethod(value);
-  let evt: ref<ScannerDetailsAppearedEvent> = new ScannerDetailsAppearedEvent();
-  evt.isVisible = EntityID.IsDefined(value);
-  evt.isHackable = this.m_isQuickHackAble;
-  GameInstance.GetUISystem(this.m_player.GetGame()).QueueEvent(evt);
+  let manager: ref<HUDWidgetsManager> = HUDWidgetsManager.GetInstance();
+  if IsDefined(manager) { manager.scannerBlocked = EntityID.IsDefined(value) && !this.m_isQuickHackAble; manager.UpdateContext(); };
+}
+
+@wrapMethod(PlayerPuppet)
+protected cb func OnSceneTierChange(newState: Int32) -> Bool {
+  wrappedMethod(newState);
+  if IsDefined(this.hudWidgetsManager) { this.hudWidgetsManager.sceneTier = newState; this.hudWidgetsManager.UpdateContext(); };
+}
+
+@wrapMethod(PlayerPuppet)
+protected cb func OnVisionStateChange(newState: Int32) -> Bool {
+  wrappedMethod(newState);
+  if IsDefined(this.hudWidgetsManager) { this.hudWidgetsManager.visionState = newState; this.hudWidgetsManager.UpdateContext(); };
+}
+
+@wrapMethod(NewHudPhoneGameController)
+protected cb func OnPlayerAttach(playerPuppet: ref<GameObject>) -> Bool {
+  wrappedMethod(playerPuppet);
+  let manager: ref<HUDWidgetsManager> = HUDWidgetsManager.GetInstance();
+  if IsDefined(manager) { manager.RequestBind(); };
+}
+
+@addMethod(NewHudPhoneGameController)
+public func ResumeHUDitorPhoneIconAnim(paused: Bool) -> Void {
+  this.PlayPhoneIconAnim(gameuiActivePhoneElement.None, true);
+  if paused && IsDefined(this.m_phoneIconAnimProxy) { this.m_phoneIconAnimProxy.Pause(); };
+}
+
+@wrapMethod(HotkeysWidgetController)
+protected cb func OnPlayerAttach(player: ref<GameObject>) -> Bool {
+  wrappedMethod(player);
+  let manager: ref<HUDWidgetsManager> = HUDWidgetsManager.GetInstance();
+  if IsDefined(manager) { manager.RequestBind(); };
+}
+
+@wrapMethod(HotkeyConsumableWidgetController)
+protected cb func OnPlayerAttach(player: ref<GameObject>) -> Bool {
+  wrappedMethod(player);
+  let manager: ref<HUDWidgetsManager> = HUDWidgetsManager.GetInstance();
+  if IsDefined(manager) { manager.RequestBind(); };
+}
+
+@wrapMethod(hudCarController)
+protected cb func OnPlayerAttach(playerPuppet: ref<GameObject>) -> Bool {
+  wrappedMethod(playerPuppet);
+  let manager: ref<HUDWidgetsManager> = HUDWidgetsManager.GetInstance();
+  if IsDefined(manager) { manager.RequestBind(); };
+}
+
+@wrapMethod(HotkeyCustomRadioWidgetController)
+protected cb func OnInitialize() -> Bool {
+  wrappedMethod();
+  let manager: ref<HUDWidgetsManager> = HUDWidgetsManager.GetInstance();
+  if IsDefined(manager) { manager.RequestBind(); };
 }
