@@ -7,21 +7,53 @@ CombatAwareness.Readiness:
 
 CombatAwareness.ThreatDetection:
   $base: CombatAwareness.Readiness
+  uiData:
+    $type: StatusEffectUIData
+    displayName: LocKey#Mod-CombatAwareness-ThreatDetection
+    description: LocKey#Mod-CombatAwareness-ThreatDetection-Desc
+    iconPath: perks_sensory_protocol
 
 CombatAwareness.InitiativeReaction:
   $base: CombatAwareness.Readiness
+  uiData:
+    $type: StatusEffectUIData
+    displayName: LocKey#Mod-CombatAwareness-InitiativeReaction
+    description: LocKey#Mod-CombatAwareness-InitiativeReaction-Desc
+    iconPath: reflex_recorder
 
 CombatAwareness.PrecisionAttack:
   $base: CombatAwareness.Readiness
 
+CombatAwareness.SpotWeaknessUI:
+  $type: StatusEffectUIData
+  displayName: LocKey#Mod-CombatAwareness-SpotWeakness
+  description: LocKey#Mod-CombatAwareness-SpotWeakness-Desc
+  iconPath: perks_knife
+
 CombatAwareness.SpotWeakness:
   $base: CombatAwareness.Readiness
+  uiData: CombatAwareness.SpotWeaknessUI
 
 CombatAwareness.DamageDeflection:
   $base: CombatAwareness.Readiness
+  uiData:
+    $type: StatusEffectUIData
+    displayName: LocKey#Mod-CombatAwareness-DamageDeflection
+    description: LocKey#Mod-CombatAwareness-DamageDeflection-Desc
+    iconPath: armor_boost
 
 CombatAwareness.FumbleRecovery:
   $base: CombatAwareness.Readiness
+  uiData:
+    $type: StatusEffectUIData
+    displayName: LocKey#Mod-CombatAwareness-FumbleRecovery
+    description: LocKey#Mod-CombatAwareness-FumbleRecovery-Desc
+    iconPath: perks_reload
 
 CombatAwareness.PreparedScript:
   $base: CombatAwareness.Readiness
+  uiData:
+    $type: StatusEffectUIData
+    displayName: LocKey#Mod-CombatAwareness-PreparedScript
+    description: LocKey#Mod-CombatAwareness-PreparedScript-Desc
+    iconPath: memory_replenishment
