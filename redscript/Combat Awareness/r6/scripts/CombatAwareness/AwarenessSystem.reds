@@ -5,6 +5,8 @@ public class AwarenessSystem extends ScriptableSystem {
   public persistent let spent: Int32;
 
   public let player: wref<PlayerPuppet>;
+  private let pending: ref<ApplyLayout>;
+  private let layoutTimer: DelayID;
 
   public static func Get(gi: GameInstance) -> ref<AwarenessSystem> {
     return GameInstance.GetScriptableSystemsContainer(gi).Get(n"CombatAwareness.AwarenessSystem") as AwarenessSystem;
@@ -16,6 +18,7 @@ public class AwarenessSystem extends ScriptableSystem {
   }
 
   private func OnPlayerDetach(request: ref<PlayerDetachRequest>) -> Void {
+    this.Interrupt();
     this.player = null;
   }
 
@@ -27,6 +30,8 @@ public class AwarenessSystem extends ScriptableSystem {
     if !IsDefined(this.player) { 
       return; 
     }
+
+    this.Interrupt();
 
     if Training.Total(this.layout) > Training.Budget() { 
       this.layout = 0; 
@@ -40,12 +45,36 @@ public class AwarenessSystem extends ScriptableSystem {
       return; 
     }
 
-    if mask == this.layout {
-       return; 
+    this.Interrupt();
+    
+    if mask == this.layout { 
+      return; 
     }
+    
+    if this.player.IsInCombat() {
+      let request: ref<ApplyLayout> = new ApplyLayout();
+      request.layout = mask;
+      this.pending = request;
+      this.layoutTimer = GameInstance.GetDelaySystem(this.GetGameInstance()).DelayScriptableSystemRequest(this.GetClassName(), request, 2.0, true);
+    } else {
+      this.layout = mask;
+      this.Sync();
+    };
+  }
 
-    this.layout = mask;
-    this.Sync();
+  public func Interrupt() -> Void {
+    if IsDefined(this.pending) {
+      GameInstance.GetDelaySystem(this.GetGameInstance()).CancelDelay(this.layoutTimer);
+      this.pending = null;
+    }
+  }
+
+  private func OnApplyLayout(request: ref<ApplyLayout>) -> Void {
+    if this.pending == request {
+      this.pending = null;
+      this.layout = request.layout;
+      this.Sync();
+    }
   }
 
   private func Available(slot: Int32) -> Bool {
