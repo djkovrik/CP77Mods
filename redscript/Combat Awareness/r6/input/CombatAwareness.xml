@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<bindings>
+    <context name="CombatAwarenessPrepare">
+        <action name="CA_Prepare" map="CA_Preparation_Button"/>
+    </context>
+    <context name="CombatAwarenessStudy">
+        <action name="CA_Study" map="CA_Study_Button"/>
+    </context>
+
+    <context name="UI_DPad_Wheel" append="true">
+        <include name="CombatAwarenessPrepare" />
+    </context>
+
+    <context name="VisionActions" append="true">
+        <include name="CombatAwarenessStudy" />
+    </context>
+	
+    <context name="UI_QuickHackPanel" append="true">
+        <include name="CombatAwarenessStudy" />
+    </context>
+
+    <mapping name="CA_Preparation_Button" type="Button">
+        <button id="IK_G"/>
+        <button id="IK_Pad_LeftThumb"/>
+    </mapping>
+
+    <mapping name="CA_Study_Button" type="Button">
+        <button id="IK_G"/>
+        <button id="IK_Pad_LeftThumb"/>
+    </mapping>
+</bindings>

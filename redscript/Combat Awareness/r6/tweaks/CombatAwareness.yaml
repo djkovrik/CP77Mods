@@ -1,0 +1,27 @@
+CombatAwareness.Readiness:
+  $type: StatusEffect
+  duration: BaseStats.InfiniteDuration
+  statusEffectType: BaseStatusEffectTypes.PassiveBuff
+  gameplayTags: [Buff, CombatAwareness]
+  savable: false
+
+CombatAwareness.ThreatDetection:
+  $base: CombatAwareness.Readiness
+
+CombatAwareness.InitiativeReaction:
+  $base: CombatAwareness.Readiness
+
+CombatAwareness.PrecisionAttack:
+  $base: CombatAwareness.Readiness
+
+CombatAwareness.SpotWeakness:
+  $base: CombatAwareness.Readiness
+
+CombatAwareness.DamageDeflection:
+  $base: CombatAwareness.Readiness
+
+CombatAwareness.FumbleRecovery:
+  $base: CombatAwareness.Readiness
+
+CombatAwareness.PreparedScript:
+  $base: CombatAwareness.Readiness
