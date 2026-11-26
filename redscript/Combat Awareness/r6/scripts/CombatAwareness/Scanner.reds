@@ -56,8 +56,6 @@ protected cb func OnPlayerAttach(player: ref<GameObject>) -> Bool {
     this.caReadout.SetVisible(false);
     this.caHint = this.SpawnFromExternal(root, r"base\\gameplay\\gui\\common\\buttonhints.inkwidget", n"ButtonHintListItem");
 
-    GameInstance.GetDelaySystem(player.GetGame()).CancelCallback(this.caTimer);
-    
     if IsDefined(this.caHint) {
       this.caHint.SetFitToContent(true);
       this.caHint.SetVisible(false);
@@ -72,6 +70,7 @@ protected cb func OnPlayerAttach(player: ref<GameObject>) -> Bool {
 @addMethod(scannerDetailsGameController)
 protected cb func OnPlayerDetach(player: ref<GameObject>) -> Bool {
   player.UnregisterInputListener(this, n"CA_Study");
+  GameInstance.GetDelaySystem(player.GetGame()).CancelCallback(this.caTimer);
   
   if IsDefined(this.caHint) {
     this.caHint.SetVisible(false);
@@ -94,9 +93,8 @@ protected cb func OnUnitialize() -> Bool {
   if IsDefined(this.caHintParent) { this.caHintParent.RemoveChild(this.caHint); };
   if IsDefined(this.m_player) {
     this.m_player.UnregisterInputListener(this, n"CA_Study");
+    GameInstance.GetDelaySystem(this.m_player.GetGame()).CancelCallback(this.caTimer);
   };
-
-  GameInstance.GetDelaySystem(this.m_player.GetGame()).CancelCallback(this.caTimer);
 
   return wrappedMethod();
 }

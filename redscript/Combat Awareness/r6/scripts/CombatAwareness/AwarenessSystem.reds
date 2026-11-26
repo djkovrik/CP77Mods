@@ -38,9 +38,11 @@ public class AwarenessSystem extends ScriptableSystem {
   }
 
   private func OnPlayerDetach(request: ref<PlayerDetachRequest>) -> Void {
-    this.Interrupt();
-    this.CancelReactionTimer();
-    this.player = null;
+    if request.owner == this.player {
+      this.Interrupt();
+      this.CancelReactionTimer();
+      this.player = null;
+    };
   }
 
   public func OnRestored(saveVersion: Int32, gameVersion: Int32) -> Void {
@@ -283,6 +285,8 @@ public class AwarenessSystem extends ScriptableSystem {
           return;
         }
 
+        ArrayClear(this.reports);
+        this.reportRevision += 1;
         this.spent = 0;
         this.detected = false;
         this.reactionEnd = 0.0;
