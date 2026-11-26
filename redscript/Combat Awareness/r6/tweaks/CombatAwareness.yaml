@@ -38,43 +38,43 @@ CombatAwareness.SpreadAdsDefaultX:
   $type: ConstantStatModifier
   statType: BaseStats.SpreadAdsDefaultX
   modifierType: Multiplier
-  value: 0.5
+  value: 0.75
 
 CombatAwareness.SpreadAdsDefaultY:
   $type: ConstantStatModifier
   statType: BaseStats.SpreadAdsDefaultY
   modifierType: Multiplier
-  value: 0.5
+  value: 0.75
 
 CombatAwareness.SpreadAdsMinX:
   $type: ConstantStatModifier
   statType: BaseStats.SpreadAdsMinX
   modifierType: Multiplier
-  value: 0.5
+  value: 0.75
 
 CombatAwareness.SpreadAdsMinY:
   $type: ConstantStatModifier
   statType: BaseStats.SpreadAdsMinY
   modifierType: Multiplier
-  value: 0.5
+  value: 0.75
 
 CombatAwareness.SpreadAdsMaxX:
   $type: ConstantStatModifier
   statType: BaseStats.SpreadAdsMaxX
   modifierType: Multiplier
-  value: 0.5
+  value: 0.75
 
 CombatAwareness.SpreadAdsMaxY:
   $type: ConstantStatModifier
   statType: BaseStats.SpreadAdsMaxY
   modifierType: Multiplier
-  value: 0.5
+  value: 0.75
 
 CombatAwareness.SpreadAdsChangePerShot:
   $type: ConstantStatModifier
   statType: BaseStats.SpreadAdsChangePerShot
   modifierType: Multiplier
-  value: 0.5
+  value: 0.75
 
 CombatAwareness.PrecisionAttackUI:
   $type: StatusEffectUIData
@@ -91,6 +91,7 @@ CombatAwareness.PrecisionAttack:
         - $base: Perks.ApplyStatGroupOnWeapon
           effectorClassName: ApplyStatGroupEffector
           prereqRecord: Prereqs.AlwaysTruePrereq
+          reapplyOnWeaponChange: true
           statGroup:
             $type: StatModifierGroup
             statModifiers:
@@ -139,4 +140,6 @@ CombatAwareness.PreparedScript:
 CombatAwareness.StudiedTargetMappin:
   $type: MappinDefinition
   possibleVariants: [Mappins.AimVariant]
-
+  showInWorld: true
+  showOnMap: false
+  showOnMinimap: false
