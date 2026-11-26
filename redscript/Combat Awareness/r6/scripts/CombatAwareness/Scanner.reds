@@ -13,10 +13,28 @@ private let caHintKey: CName;
 private let caHintParent: wref<inkCompoundWidget>;
 
 @addField(scannerDetailsGameController)
+private let caObserver: ref<ScannerObservation>;
+
+@addField(scannerDetailsGameController)
+private let caTimer: DelayID;
+
+@addField(scannerDetailsGameController)
 private let caSubject: EntityID;
 
 @addField(scannerDetailsGameController)
+private let caYaw: Float;
+
+@addField(scannerDetailsGameController)
 private let caLastText: String;
+
+@addField(scannerDetailsGameController)
+private let caReportSubject: EntityID;
+
+@addField(scannerDetailsGameController)
+private let caReportRevision: Int32;
+
+@addField(scannerDetailsGameController)
+private let caReported: Bool;
 
 @wrapMethod(QuickhacksListGameController)
 protected cb func OnInitialize() -> Bool {
@@ -37,6 +55,9 @@ protected cb func OnPlayerAttach(player: ref<GameObject>) -> Bool {
     this.caReadout.SetTintColor(HDRColor(0.65, 0.95, 1.0, 1.0));
     this.caReadout.SetVisible(false);
     this.caHint = this.SpawnFromExternal(root, r"base\\gameplay\\gui\\common\\buttonhints.inkwidget", n"ButtonHintListItem");
+
+    GameInstance.GetDelaySystem(player.GetGame()).CancelCallback(this.caTimer);
+    
     if IsDefined(this.caHint) {
       this.caHint.SetFitToContent(true);
       this.caHint.SetVisible(false);
@@ -60,6 +81,7 @@ protected cb func OnPlayerDetach(player: ref<GameObject>) -> Bool {
   this.caHintParent = null;
   this.caHintKey = n"";
   this.caSubject = EntityID();
+  this.caReportSubject = EntityID();
   this.caLastText = "";
 
   if IsDefined(this.caReadout) { 
@@ -73,6 +95,8 @@ protected cb func OnUnitialize() -> Bool {
   if IsDefined(this.m_player) {
     this.m_player.UnregisterInputListener(this, n"CA_Study");
   };
+
+  GameInstance.GetDelaySystem(this.m_player.GetGame()).CancelCallback(this.caTimer);
 
   return wrappedMethod();
 }
@@ -134,21 +158,68 @@ public final func CAObserve() -> Void {
   if !IsDefined(this.caReadout) || !IsDefined(this.m_player) { 
     return; 
   };
+  
+  let delays = GameInstance.GetDelaySystem(this.m_player.GetGame());
+  delays.CancelCallback(this.caTimer);
 
   let text: String;
   let hint: CName;
+  let previous = this.caSubject;
   let target = this.CACardTarget();
+
   if IsDefined(target) {
     this.caSubject = target.GetEntityID();
     let npc = target as NPCPuppet;
+    let camera = target as SurveillanceCamera;
     let system = AwarenessSystem.Get(this.m_player.GetGame());
-    
+    let recon = system.Ready(0);
+
     if Training.CanStudy(npc, this.m_player) {
       let selected: Bool = system.studied == this.caSubject;
       hint = selected ? n"Mod-CombatAwareness-ClearStudy" : n"Mod-CombatAwareness-Study";
       if selected { 
         text = AwarenessUI.Text("Studied"); 
       };
+
+      if recon {
+        let link = npc.GetDeviceLink();
+        let key = "Offline";
+        if IsDefined(link) && link.IsConnected() && !link.AreOutgoingEventsSuppressed() {
+          let net = link.GetSecuritySystem();
+          if IsDefined(net) && !net.IsRestarting() && !net.IsUnpowered() && !net.IsDisabled() {
+            key = StatusEffectSystem.ObjectHasStatusEffectWithTag(npc, n"CommsNoiseJam") ? "Jammed" : "Connected";
+          };
+        };
+
+        if IsStringValid(text) { text += "  ·  "; };
+        text += AwarenessUI.Text(key);
+      };
+    };
+
+    if IsDefined(camera) && recon {
+      let rotation = camera.GetRotationFromSlotRotation();
+      let yaw = rotation.Yaw;
+      if previous == this.caSubject {
+        let delta = AngleNormalize180(yaw - this.caYaw);
+        text = AwarenessUI.Text(AbsF(delta) < 0.15 ? "Stationary" : (delta > 0.0 ? "TurnLeft" : "TurnRight"));
+      };
+      this.caYaw = yaw;
+    };
+
+    if (IsDefined(npc) || IsDefined(camera)) && recon {
+      if this.caReportSubject != this.caSubject || this.caReportRevision != system.reportRevision {
+        this.caReportSubject = this.caSubject;
+        this.caReportRevision = system.reportRevision;
+        this.caReported = system.HasReport(this.caSubject);
+      };
+      if this.caReported {
+        if IsStringValid(text) { text += "  ·  "; };
+        text += AwarenessUI.Text("Sent");
+      };
+    };
+    if IsDefined(npc) || IsDefined(camera) {
+      if !IsDefined(this.caObserver) { this.caObserver = new ScannerObservation(); this.caObserver.hud = this; };
+      this.caTimer = delays.DelayCallback(this.caObserver, 0.4);
     };
   } else {
     this.caSubject = EntityID();
@@ -162,6 +233,7 @@ public final func CAObserve() -> Void {
   this.caReadout.SetVisible(IsStringValid(text));
   this.CAUpdateHint(hint);
 }
+
 
 @addMethod(scannerDetailsGameController)
 private final func CAUpdateHint(key: CName) -> Void {

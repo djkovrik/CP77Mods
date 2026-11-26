@@ -21,3 +21,16 @@ protected cb func OnPlayerDetectionChangedEvent(evt: ref<PlayerDetectionChangedE
 
   return result;
 }
+
+@wrapMethod(SensorDevice)
+protected cb func OnOnDetectedEvent(evt: ref<OnDetectedEvent>) -> Bool {
+  if IsDefined(this as SurveillanceCamera) && evt.isVisible && evt.target.IsPlayer() && !this.m_playerDetected
+    && this.CACanDetectPlayer(evt.target) {
+    let system = AwarenessSystem.Get(this.GetGame());
+    system.Contact(this);
+    if system.Ready(0) && !this.m_isPLAYERSAFETargetLock {
+      ReconSignal.Show(system, this, "Detecting");
+    };
+  };
+  return wrappedMethod(evt);
+}

@@ -8,14 +8,16 @@ public class AwarenessSystem extends ScriptableSystem {
   private persistent let anchor: Vector4;
   private persistent let anchorSource: EntityID;
   private persistent let hasPost: Bool;
+  private persistent let reports: array<EntityID>;
 
   public let player: wref<PlayerPuppet>;
+  public let reportRevision: Int32;
+  public let scannerHintRow: wref<inkCompoundWidget>;
   private let pending: ref<ApplyLayout>;
   private let layoutTimer: DelayID;
   private let enteringAway: Bool;
   private let lastContact: EntityID;
   private let lastContactAway: Bool;
-  public let scannerHintRow: wref<inkCompoundWidget>;
 
   public static func Get(gi: GameInstance) -> ref<AwarenessSystem> {
     return GameInstance.GetScriptableSystemsContainer(gi).Get(n"CombatAwareness.AwarenessSystem") as AwarenessSystem;
@@ -59,6 +61,8 @@ public class AwarenessSystem extends ScriptableSystem {
 
   private func Restore() -> Void {
     this.Interrupt();
+
+    this.reportRevision += 1;
 
     let empty: EntityID;
     this.lastContact = empty;
@@ -174,6 +178,21 @@ public class AwarenessSystem extends ScriptableSystem {
     this.enteringAway = this.hasPost 
       && IsDefined(this.player) 
       && Vector4.Distance(this.player.GetWorldPosition(), this.anchor) > 18.0; // hardcoded for now
+  }
+
+  public func HasReport(source: EntityID) -> Bool {
+    return ArrayContains(this.reports, source);
+  }
+
+  public func RecordReport(source: EntityID) -> Bool {
+    if this.HasReport(source) { 
+      return false; 
+    }
+
+    ArrayPush(this.reports, source);
+    this.reportRevision += 1;
+
+    return true;
   }
 
   public func Contact(source: ref<GameObject>) -> Void {
