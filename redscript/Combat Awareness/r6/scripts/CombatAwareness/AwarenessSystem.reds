@@ -3,10 +3,17 @@ module CombatAwareness
 public class AwarenessSystem extends ScriptableSystem {
   public persistent let layout: Int32;
   public persistent let spent: Int32;
+  private persistent let group: CName;
+  private persistent let anchor: Vector4;
+  private persistent let anchorSource: EntityID;
+  private persistent let hasPost: Bool;
 
   public let player: wref<PlayerPuppet>;
   private let pending: ref<ApplyLayout>;
   private let layoutTimer: DelayID;
+  private let enteringAway: Bool;
+  private let lastContact: EntityID;
+  private let lastContactAway: Bool;
 
   public static func Get(gi: GameInstance) -> ref<AwarenessSystem> {
     return GameInstance.GetScriptableSystemsContainer(gi).Get(n"CombatAwareness.AwarenessSystem") as AwarenessSystem;
@@ -27,11 +34,15 @@ public class AwarenessSystem extends ScriptableSystem {
   }
 
   private func Restore() -> Void {
+    this.Interrupt();
+
+    let empty: EntityID;
+    this.lastContact = empty;
+    this.enteringAway = false;
+
     if !IsDefined(this.player) { 
       return; 
     }
-
-    this.Interrupt();
 
     if Training.Total(this.layout) > Training.Budget() { 
       this.layout = 0; 
@@ -128,5 +139,66 @@ public class AwarenessSystem extends ScriptableSystem {
   private func Sync() -> Void {
     let i = 0;
     while i < 7 { this.SyncSlot(i); i += 1; };
+  }
+
+  public func EnterCombat() -> Void {
+    this.enteringAway = this.hasPost 
+      && IsDefined(this.player) 
+      && Vector4.Distance(this.player.GetWorldPosition(), this.anchor) > 18.0; // hardcoded for now
+  }
+
+  public func Contact(source: ref<GameObject>) -> Void {
+    if !IsDefined(source) || !IsDefined(this.player) { 
+      return; 
+    };
+
+    let mayStart: Bool = this.enteringAway || !this.player.IsInCombat();
+    this.enteringAway = false;
+
+    let away: Bool = mayStart 
+      && this.hasPost 
+      && Vector4.DistanceSquared(this.player.GetWorldPosition(), this.anchor) > 324.0;
+
+    if this.lastContact == source.GetEntityID() && Equals(this.lastContactAway, away) {
+       return ; 
+    };
+
+    this.lastContact = source.GetEntityID();
+    this.lastContactAway = away;
+
+    let pos = source.GetWorldPosition();
+    let squad: CName;
+
+    if IsDefined(source as NPCPuppet) { 
+      squad = AISquadHelper.GetSquadName(source); 
+    };
+
+    let sourceDistance = Vector4.Distance(pos, this.anchor);
+    let knownSquads = IsNameValid(squad) && IsNameValid(this.group);
+
+    if away 
+      && source.GetEntityID() != this.anchorSource
+      && (knownSquads ? NotEquals(squad, this.group) 
+      && sourceDistance > 18.0 : sourceDistance > 90.0) {
+        if this.player.IsBeingRevealed() || PreventionSystem.IsChasingPlayer(this.GetGameInstance()) {
+          this.lastContactAway = false;
+          return;
+        }
+
+        this.spent = 0;
+        this.hasPost = false;
+        this.Sync();
+    };
+
+    if !this.hasPost {
+      this.hasPost = true;
+      this.anchor = pos;
+      this.anchorSource = source.GetEntityID();
+      this.group = squad;
+    } else {
+      if !IsNameValid(this.group) && IsNameValid(squad) { 
+        this.group = squad; 
+      };
+    };
   }
 }
