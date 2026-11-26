@@ -1,4 +1,4 @@
-// RevisedBackpack v0.9.17
+// RevisedBackpack v0.9.18
 module RevisedBackpack
 
 import Codeware.UI.HubTextInput
@@ -101,7 +101,6 @@ public class RevisedItemWrapper {
     return this.ammo;
   }
 }
-
 public abstract class RevisedCategoryPredicate {
   public func Check(item: ref<RevisedItemWrapper>) -> Bool;
 }
@@ -325,14 +324,12 @@ public class RevisedBackpackOutfitCooldownResetCallback extends DelayCallback {
 }
 public class RevisedBackpackFilterDebounceCallback extends DelayCallback {
   public let m_controller: wref<RevisedBackpackFiltersController>;
-
   public func Call() -> Void {
     if IsDefined(this.m_controller) {
       this.m_controller.ApplyFilters();
     };
   }
 }
-
 public class RevisedBackpackTemplateClassifier extends inkVirtualItemTemplateClassifier {}
 public class RevisedCustomEventBackpackOpened extends CallbackSystemEvent {
   public let opened: Bool;
@@ -394,7 +391,6 @@ public class RevisedBackpackAmmoHoverOutEvent extends Event {
     return evt;
   }
 }
-
 public class RevisedBackpackCustomFontSize extends ScriptableService {
   private let backpackFontSize: Int32 = 36;
   private cb func OnLoad() {
@@ -682,16 +678,13 @@ public final func AttachPlayer(player: wref<PlayerPuppet>) -> Void {
     this.revisedBackpackSystem = null;
   };
 }
-
 @addMethod(UIInventoryItemsManager)
 public final func IsCustomJunk(itemId: ItemID) -> Bool {
   if !ItemID.IsValid(itemId) || !IsDefined(this.revisedBackpackSystem) {
     return false;
   };
-
   return this.revisedBackpackSystem.IsAddedToJunk(itemId);
 }
-
 @wrapMethod(UIInventoryItem)
 public final func IsJunk() -> Bool {
   let wrapped: Bool = wrappedMethod();
@@ -699,10 +692,8 @@ public final func IsJunk() -> Bool {
   if IsDefined(this.m_manager) {
     isCustomJunk = this.m_manager.IsCustomJunk(this.ID);
   };
-
   return wrapped || isCustomJunk;
 }
-
 @wrapMethod(FullscreenVendorGameController)
 private final func PopulatePlayerInventory() -> Void {
   wrappedMethod();
@@ -759,9 +750,15 @@ public final func GetItemSlotIndexRev(owner: ref<GameObject>, itemId: ItemID) ->
 @wrapMethod(CraftingSystem)
 public final const func CanItemBeDisassembled(itemData: wref<gameItemData>) -> Bool {
   let wrapped: Bool = wrappedMethod(itemData);
+  if wrapped || !IsDefined(itemData) {
+    return wrapped;
+  };
+  if !itemData.HasTag(n"IconicWeapon") || itemData.HasTag(n"Quest") || itemData.HasTag(n"UnequipBlocked") {
+    return false;
+  };
   let settings: ref<RevisedBackpackSettings> = new RevisedBackpackSettings();
-  let modded: Bool = settings.allowIconicsDisassemble;
-  return wrapped || modded;
+  return settings.allowIconicsDisassemble
+    && IsDefined(ItemActionsHelper.GetDisassembleAction(itemData.GetID()));
 }
 class InsertBetterBackpackMenuItem extends ScriptableService {
   private cb func OnLoad() {
@@ -1126,19 +1123,16 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     if !backpackItem || !ItemID.IsValid(itemID) || !IsDefined(this.m_uiInventorySystem) {
       return;
     };
-
     playerItem = this.m_uiInventorySystem.GetPlayerItem(itemID);
     if !IsDefined(playerItem) {
       this.RefreshUINextFrame();
       return;
     };
-
     itemData = playerItem.GetItemData();
     if !IsDefined(itemData) || !itemData.HasTag(n"CraftingPart") {
       this.RefreshUINextFrame();
     };
   }
-
   private final func TryToSelectNextItem() -> Void {
     this.Log("TryToSelectNextItem");
     let selectedItems: Int32 = ArraySize(this.m_selectedItems);
@@ -1290,12 +1284,10 @@ public class RevisedBackpackController extends gameuiMenuGameController {
       let shouldSkipItem: Bool = false;
       wrappedItem = null;
       uiInventoryItem = values[i] as UIInventoryItem;
-
       if IsDefined(uiInventoryItem) {
         if ItemID.HasFlag(uiInventoryItem.GetID(), gameEItemIDFlag.Preview) || uiInventoryItem.HasAnyTag(tagsToFilterOut)  {
           shouldSkipItem = true;
         };
-
         if ArrayContains(this.m_itemDropQueueItems, uiInventoryItem.ID) {
           quantity = uiInventoryItem.GetQuantity(true);
           dropItem = this.GetDropQueueItem(uiInventoryItem.ID);
@@ -1305,21 +1297,17 @@ public class RevisedBackpackController extends gameuiMenuGameController {
             uiInventoryItem.SetQuantity(quantity - dropItem.quantity);
           };
         };
-
         if uiInventoryItem.IsJunk() {
           ArrayPush(this.m_junkItems, uiInventoryItem);
         };
-
         if !shouldSkipItem {
           wrappedItem = this.BuildWrappedItem(uiInventoryItem);
           ArrayPush(wrappedItems, wrappedItem);
         };
-
         if IsDefined(wrappedItem) && wrappedItem.GetCustomJunkFlag() {
           ArrayPush(this.m_customJunkItems, wrappedItem);
         };
       };
-
       i += 1;
     };
     this.itemsListDataSource.Reset(wrappedItems);
@@ -2134,7 +2122,6 @@ public class RevisedBackpackController extends gameuiMenuGameController {
         ammo = weaponRecord.Ammo().GetID();
       };
     };
-
     let dps: Float = 0.0;
     let dpsStat: wref<UIInventoryItemStat> = uiInventoryItem.GetPrimaryStat();
     if uiInventoryItem.IsWeapon() && Equals(dpsStat.Type, gamedataStatType.EffectiveDPS) {
@@ -2164,7 +2151,6 @@ public class RevisedBackpackController extends gameuiMenuGameController {
       searchText += UTF8StrLower(GetLocalizedText(UIItemsHelper.GetItemTypeKey(weaponRecord.ItemType().Type(), weaponRecord.Evolution().Type())));
     };
     searchText += UTF8StrLower(GetLocalizedTextByKey(itemRecord.LocalizedDescription()));
-
     let wrappedItem: ref<RevisedItemWrapper> = new RevisedItemWrapper();
     wrappedItem.id = itemTdbid;
     wrappedItem.data = data;
@@ -2200,7 +2186,6 @@ public class RevisedBackpackController extends gameuiMenuGameController {
     wrappedItem.customJunk = this.m_system.IsAddedToJunk(itemId);
     wrappedItem.questTagToggleable = RevisedBackpackUtils.CanToggleQuestTag(data);
     wrappedItem.customJunkToggleable = RevisedBackpackUtils.CanToggleCustomJunk(uiInventoryItem, wrappedItem.isQuest);
-    
     return wrappedItem;
   }
   private final func BuildTypeLabel(data: ref<gameItemData>, equipArea: gamedataEquipmentArea, id: TweakDBID, type: gamedataItemType, evolution: gamedataWeaponEvolution) -> String {
@@ -2695,12 +2680,10 @@ public class RevisedBackpackDataView extends ScriptableDataView {
       this.Filter();
     };
   }
-  
   public final func SetFilters(event: ref<RevisedFilteringEvent>) -> Void {
     if !IsDefined(event) {
       return;
     };
-
     this.m_skipCustomFilters = event.filtersReset;
     this.m_filtering = event;
     this.m_nameQueryLower = UTF8StrLower(event.nameQuery);
@@ -2708,40 +2691,33 @@ public class RevisedBackpackDataView extends ScriptableDataView {
     this.Log(s"SetFilters with [\(event.nameQuery)] and [\(event.typeQuery)] and ammo \(TDBID.ToStringDEBUG(event.ammo)) and tiers \(ArraySize(event.tiers))");
     this.Filter();
   }
-
   public func FilterItem(data: ref<IScriptable>) -> Bool {
     let itemWrapper: ref<RevisedItemWrapper> = data as RevisedItemWrapper;
     if !IsDefined(itemWrapper) || !IsDefined(this.m_selectedCategory) || !IsDefined(this.m_selectedCategory.predicate) {
       return false;
     };
-
     let name: String = itemWrapper.nameLabel;
     let nameNotEmpty: Bool = NotEquals(name, "");
     let predicate: Bool = this.m_selectedCategory.predicate.Check(itemWrapper);
     if this.m_skipCustomFilters {
       return nameNotEmpty && predicate;
     };
-
     if !IsDefined(this.m_filtering) {
       return nameNotEmpty && predicate;
     };
-
     let nameSearchMatched: Bool = true;
     if NotEquals(this.m_nameQueryLower, "") {
       nameSearchMatched = StrContains(itemWrapper.searchText, this.m_nameQueryLower);
     };
-
     let typeSearchMatched: Bool = true;
     if NotEquals(this.m_typeQueryLower, "") {
       typeSearchMatched = StrContains(itemWrapper.typeSearchText, this.m_typeQueryLower);
     };
-
     let tierMatched: Bool = ArrayContains(this.m_filtering.tiers, itemWrapper.tier);
     let ammoMatched: Bool = true;
     if NotEquals(this.m_filtering.ammo, t"") && !this.m_skipAmmoFilter {
       ammoMatched = Equals(this.m_filtering.ammo, itemWrapper.ammo);
     };
-
     return nameNotEmpty && predicate && nameSearchMatched && typeSearchMatched && tierMatched && ammoMatched;
   }
   public final func RefreshList() -> Void {
@@ -3020,7 +2996,6 @@ public class RevisedBackpackFiltersController extends inkLogicController {
     if IsDefined(this.m_delaySystem) {
       this.m_delaySystem.CancelCallback(this.m_debounceCalbackId);
     };
-
     if IsDefined(this.m_animProxy) {
       if this.m_animProxy.IsPlaying() {
         this.m_animProxy.Stop();
@@ -3089,7 +3064,6 @@ public class RevisedBackpackFiltersController extends inkLogicController {
       this.ApplyFilters();
       return;
     };
-
     callback.m_controller = this;
     this.m_delaySystem.CancelCallback(this.m_debounceCalbackId);
     this.m_debounceCalbackId = this.m_delaySystem.DelayCallback(callback, 0.2, false);
@@ -3589,22 +3563,18 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     this.RegisterToCallback(n"OnHold", this, n"OnHold");
     this.RegisterToCallback(n"OnPress", this, n"OnPressed");
   }
-
   protected cb func OnUninitialize() -> Bool {
     if IsDefined(this.m_shadow) {
       this.m_shadow.SetVisible(false);
     };
-
     if IsDefined(this.m_item) {
       this.QueueEvent(RevisedBackpackItemHoverOutEvent.Create(this.m_item));
     };
   }
-
   protected cb func OnHoverOver(evt: ref<inkPointerEvent>) -> Bool {
     if !IsDefined(this.m_item) || !IsDefined(evt) || !IsDefined(evt.GetTarget()) {
       return false;
     };
-
     if IsDefined(this.m_shadow) {
       this.m_shadow.SetVisible(true);
     };
@@ -3613,17 +3583,14 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     this.QueueEvent(RevisedBackpackItemHoverOverEvent.Create(this.m_item, isName, target));
     this.SetIsNew(false);
   }
-
   protected cb func OnHoverOut(evt: ref<inkPointerEvent>) -> Bool {
     if IsDefined(this.m_shadow) {
       this.m_shadow.SetVisible(false);
     };
-
     if IsDefined(this.m_item) {
       this.QueueEvent(RevisedBackpackItemHoverOutEvent.Create(this.m_item));
     };
   }
-
   protected cb func OnRelease(evt: ref<inkPointerEvent>) -> Bool {
     let displayReleaseEvent: ref<RevisedItemDisplayReleaseEvent>;
     let toggleQuestTagEvent: ref<RevisedToggleQuestTagEvent>;
@@ -3633,12 +3600,10 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     if !IsDefined(this.m_item) || !IsDefined(evt) {
       return false;
     };
-
     target = evt.GetTarget();
     if IsDefined(target) {
       targetName = target.GetName();
     };
-
     if evt.IsAction(n"click") && Equals(targetName, n"quest") && this.CanToggleQuestTag() {
       toggleQuestTagEvent = new RevisedToggleQuestTagEvent();
       toggleQuestTagEvent.itemData = this.m_item.data;
@@ -3665,7 +3630,6 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     if !IsDefined(this.m_item) || !IsDefined(evt) {
       return false;
     };
-
     if evt.GetHoldProgress() >= 1.0 {
       displayHoldEvent = new RevisedItemDisplayHoldEvent();
       displayHoldEvent.itemData = this.m_item.data;
@@ -3679,7 +3643,6 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     if !IsDefined(evt) {
       return false;
     };
-
     let pressEvent: ref<RevisedItemDisplayPressEvent> = new RevisedItemDisplayPressEvent();
     pressEvent.display = this;
     pressEvent.actionName = evt.GetActionName();
@@ -3695,14 +3658,12 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     if !IsDefined(this.m_item) {
       return;
     };
-
     this.Log(s"SetSelected \(this.GetNameLabel()): \(selected)");
     this.m_item.SetSelectedFlag(selected);
     if IsDefined(this.m_selection) {
       this.m_selection.SetVisible(this.m_item.GetSelectedFlag());
     };
   }
-
   public final func GetIsNew() -> Bool {
     return this.m_item.GetNewFlag();
   }
@@ -3751,7 +3712,6 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
     if !IsDefined(this.m_item) || !IsDefined(this.m_item.inventoryItem) || !IsDefined(this.m_item.data) {
       return;
     };
-
     let label: String = this.m_item.nameLabel;
     let quantity: Int32 = this.m_item.inventoryItem.GetQuantity();
     if quantity > 1 { label += s" (\(quantity))"; }
@@ -3778,10 +3738,8 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
       this.m_questContainer.SetOpacity(0.1);
     };
     this.UpdateCustomJunkToggleableState();
-
     // this.Log(s"RefreshView for \(this.m_item.nameLabel), selected \(this.m_item.GetSelectedFlag()), custom junk \(this.m_item.GetCustomJunkFlag())))");
   }
-
   private final func UpdateCustomJunkToggleableState() -> Void {
     if this.CanToggleCustomJunk() {
       this.m_customJunkContainer.SetOpacity(1.0);
@@ -3789,7 +3747,6 @@ public class RevisedBackpackItemController extends inkVirtualCompoundItemControl
       this.m_customJunkContainer.SetOpacity(0.1);
     };
   }
-
   private final func Log(str: String) -> Void {
     if RevisedBackpackUtils.ShowRevisedBackpackLogs() {
       ModLog(n"RevisedItemController", str);
@@ -4032,9 +3989,7 @@ public class RevisedBackpackSortController extends inkLogicController {
 public class RevisedBackpackSystem extends ScriptableSystem {
   private persistent let customJunk: array<ItemID>;
   private let customJunkHashes: array<Uint64>;
-
   private let categories: array<ref<RevisedBackpackCategory>>;
-  
   public static func GetInstance(gi: GameInstance) -> ref<RevisedBackpackSystem> {
     return GameInstance.GetScriptableSystemsContainer(gi).Get(n"RevisedBackpack.RevisedBackpackSystem") as RevisedBackpackSystem;
   }
@@ -4062,46 +4017,37 @@ public class RevisedBackpackSystem extends ScriptableSystem {
     if !ItemID.IsValid(itemId) {
       return false;
     };
-
     if ArraySize(this.customJunk) > 0 && Equals(ArraySize(this.customJunkHashes), 0) {
       this.RebuildCustomJunkCache();
     };
-
     return ArrayContains(this.customJunkHashes, ItemID.GetCombinedHash(itemId));
   }
-
   public final func AddToJunk(itemId: ItemID) -> Bool {
     let hash: Uint64;
     if !ItemID.IsValid(itemId) {
       return false;
     };
-
     if this.IsAddedToJunk(itemId) {
       return false;
     };
-
     hash = ItemID.GetCombinedHash(itemId);
     ArrayPush(this.customJunk, itemId);
     ArrayPush(this.customJunkHashes, hash);
     return true;
   }
-
   public final func RemoveFromJunk(itemId: ItemID) -> Bool {
     let hash: Uint64;
     if !ItemID.IsValid(itemId) {
       return false;
     };
-
     if !this.IsAddedToJunk(itemId)  {
       return false;
     };
-
     hash = ItemID.GetCombinedHash(itemId);
     ArrayRemove(this.customJunk, itemId);
     ArrayRemove(this.customJunkHashes, hash);
     return true;
   }
-
   public final func HasCustomJunk() -> Bool {
     return ArraySize(this.customJunk) > 0;
   }
@@ -4124,16 +4070,13 @@ public class RevisedBackpackSystem extends ScriptableSystem {
         };
       }
     };
-
     this.customJunk = updated;
     this.customJunkHashes = updatedHashes;
   }
-
   public final func ClearCustomJunk() -> Void {
     ArrayClear(this.customJunk);
     ArrayClear(this.customJunkHashes);
   }
-
   private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
     this.Log("OnInitialize, can access game systems");
     this.RebuildCustomJunkCache();
@@ -4141,7 +4084,6 @@ public class RevisedBackpackSystem extends ScriptableSystem {
       this.FillDefaultCategories();
     };
   }
-
   private final func RebuildCustomJunkCache() -> Void {
     let hash: Uint64;
     ArrayClear(this.customJunkHashes);
@@ -4154,7 +4096,6 @@ public class RevisedBackpackSystem extends ScriptableSystem {
       };
     };
   }
-
   private final func FillDefaultCategories() -> Void {
     let newCategories: array<ref<RevisedBackpackCategory>> = RevisedBackpackDefaultConfig.Categories();
     this.AddNewCategories(newCategories);
@@ -4659,7 +4600,6 @@ public abstract class RevisedBackpackUtils {
   public final static func CanToggleCustomJunk(uiInventoryItem: ref<UIInventoryItem>) -> Bool {
     return RevisedBackpackUtils.CanToggleCustomJunk(uiInventoryItem, uiInventoryItem.IsQuestItem());
   }
-
   public final static func CanToggleCustomJunk(uiInventoryItem: ref<UIInventoryItem>, isQuestItem: Bool) -> Bool {
     let data: ref<gameItemData> = uiInventoryItem.GetRealItemData();
     return RevisedBackpackUtils.CanToggleQuestTag(data) 

@@ -8,7 +8,14 @@ public final func GetItemSlotIndexRev(owner: ref<GameObject>, itemId: ItemID) ->
 @wrapMethod(CraftingSystem)
 public final const func CanItemBeDisassembled(itemData: wref<gameItemData>) -> Bool {
   let wrapped: Bool = wrappedMethod(itemData);
+  if wrapped || !IsDefined(itemData) {
+    return wrapped;
+  };
+  if !itemData.HasTag(n"IconicWeapon") || itemData.HasTag(n"Quest") || itemData.HasTag(n"UnequipBlocked") {
+    return false;
+  };
+
   let settings: ref<RevisedBackpackSettings> = new RevisedBackpackSettings();
-  let modded: Bool = settings.allowIconicsDisassemble;
-  return wrapped || modded;
+  return settings.allowIconicsDisassemble
+    && IsDefined(ItemActionsHelper.GetDisassembleAction(itemData.GetID()));
 }
