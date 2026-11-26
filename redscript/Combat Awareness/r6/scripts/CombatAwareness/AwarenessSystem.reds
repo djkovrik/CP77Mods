@@ -3,6 +3,7 @@ module CombatAwareness
 public class AwarenessSystem extends ScriptableSystem {
   public persistent let layout: Int32;
   public persistent let spent: Int32;
+  public persistent let studied: EntityID;
   private persistent let group: CName;
   private persistent let anchor: Vector4;
   private persistent let anchorSource: EntityID;
@@ -14,6 +15,7 @@ public class AwarenessSystem extends ScriptableSystem {
   private let enteringAway: Bool;
   private let lastContact: EntityID;
   private let lastContactAway: Bool;
+  public let scannerHintRow: wref<inkCompoundWidget>;
 
   public static func Get(gi: GameInstance) -> ref<AwarenessSystem> {
     return GameInstance.GetScriptableSystemsContainer(gi).Get(n"CombatAwareness.AwarenessSystem") as AwarenessSystem;
@@ -33,6 +35,28 @@ public class AwarenessSystem extends ScriptableSystem {
     this.Restore();
   }
 
+  private func StudiedNPC() -> ref<NPCPuppet> {
+    if !EntityID.IsDefined(this.studied) { return null; };
+    return GameInstance.FindEntityByID(this.GetGameInstance(), this.studied) as NPCPuppet;
+  }
+
+  public func ToggleStudy(target: ref<NPCPuppet>) -> Void {
+    if this.studied == target.GetEntityID() {
+      target.CAHideStudyMarker();
+      this.studied = EntityID();
+      return;
+    };
+
+    let old: ref<NPCPuppet> = this.StudiedNPC();
+    if IsDefined(old) { 
+      old.CAHideStudyMarker(); 
+    };
+
+    this.Contact(target);
+    this.studied = target.GetEntityID();
+    target.CAShowStudyMarker();
+  }
+
   private func Restore() -> Void {
     this.Interrupt();
 
@@ -42,7 +66,12 @@ public class AwarenessSystem extends ScriptableSystem {
 
     if !IsDefined(this.player) { 
       return; 
-    }
+    };
+
+    let target = this.StudiedNPC();
+    if IsDefined(target) { 
+      target.CAShowStudyMarker(); 
+    };
 
     if Training.Total(this.layout) > Training.Budget() { 
       this.layout = 0; 

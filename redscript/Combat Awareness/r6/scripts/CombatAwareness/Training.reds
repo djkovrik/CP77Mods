@@ -4,6 +4,10 @@ module CombatAwareness
 public abstract class Training {
 
   public static func CanStudy(npc: ref<NPCPuppet>, player: ref<GameObject>) -> Bool {
+    if !IsDefined(npc) || !npc.IsActive() || !IsDefined(player) { 
+      return false; 
+    }
+
     let attitude: EAIAttitude = npc.GetAttitudeTowards(player);
     return Equals(attitude, EAIAttitude.AIA_Hostile) || (npc.IsAggressive() && NotEquals(attitude, EAIAttitude.AIA_Friendly));
   }
