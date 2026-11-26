@@ -78,9 +78,21 @@ protected cb func OnCustomBarHoverOutEvent(evt: ref<CustomBarHoverOutEvent>) -> 
   this.m_TooltipsManager.HideTooltips();
 }
 
+@addField(RipperdocBarTooltip)
+private let weDefaultArmorDescription: String;
+
+@addField(RipperdocBarTooltip)
+private let weArmorDescriptionCached: Bool;
+
 @wrapMethod(RipperdocBarTooltip)
 public func SetData(tooltipData: ref<ATooltipData>) -> Void {
   let alternateTooltipData: ref<RipperdocBarTooltipTooltipData> = tooltipData as RipperdocBarTooltipTooltipData;
+  let descText: ref<inkText> = inkWidgetRef.Get(this.m_armorDescription) as inkText;
+  // The first hover can be Humanity; vanilla SetData never restores this shared text.
+  if !this.weArmorDescriptionCached && IsDefined(descText) {
+    this.weDefaultArmorDescription = descText.GetText();
+    this.weArmorDescriptionCached = true;
+  };
   let root: ref<inkCompoundWidget> = this.GetRootCompoundWidget();
   root.GetWidgetByPathName(n"main/content/categories/stats").SetVisible(true);
   root.GetWidgetByPathName(n"main/content/categories/perks").SetVisible(true);
@@ -105,7 +117,6 @@ public func SetData(tooltipData: ref<ATooltipData>) -> Void {
     if NotEquals(alternateTooltipData.humanityAdditionalDesc, "") {
       description = description + alternateTooltipData.humanityAdditionalDesc;
     };
-    let descText: ref<inkText> = inkWidgetRef.Get(this.m_armorDescription) as inkText;
     descText.SetText(description);
     // Hide other stuff
     root.GetWidgetByPathName(n"main/content/categories/stats").SetVisible(false);
@@ -133,7 +144,6 @@ public func SetData(tooltipData: ref<ATooltipData>) -> Void {
     let description: String = GetLocalizedTextByKey(n"Mod-Edg-Humanity-Threshold-Popup");
     let params: ref<inkTextParams> = new inkTextParams();
     params.AddString("chance", IntToString(alternateTooltipData.psychosisChance));
-    let descText: ref<inkText> = inkWidgetRef.Get(this.m_armorDescription) as inkText;
     descText.SetText(description, params);
     // Hide other stuff
     root.GetWidgetByPathName(n"main/content/categories/stats").SetVisible(false);
@@ -142,6 +152,9 @@ public func SetData(tooltipData: ref<ATooltipData>) -> Void {
     return ;
   };
 
+  if this.weArmorDescriptionCached && IsDefined(descText) {
+    descText.SetText(this.weDefaultArmorDescription);
+  };
   wrappedMethod(tooltipData);
 }
 
