@@ -214,7 +214,9 @@ public class AwarenessSystem extends ScriptableSystem {
       this.SetEffect(window, false);
     };
 
-    this.SetEffect(id, wanted);
+    if this.SetEffect(id, wanted) && slot == 6 && EntityID.IsDefined(this.studied) {
+      QuickhackModule.RequestRefreshQuickhackMenu(this.GetGameInstance(), this.studied);
+    };
   }
 
   private func Sync() -> Void {

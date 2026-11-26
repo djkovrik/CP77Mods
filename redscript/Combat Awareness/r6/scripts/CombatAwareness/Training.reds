@@ -2,6 +2,8 @@ module CombatAwareness
 
 public abstract class Training {
 
+  public static func KnockdownRecoveryRate() -> Float = 2.0;
+
   public static func EmergencyReloadRate() -> Float = 2.0;
 
   public static func ReactionWindow() -> TweakDBID = t"CombatAwareness.InitiativeReactionWindow";
@@ -29,6 +31,21 @@ public abstract class Training {
     }
     
     return TDBID.None();
+  }
+
+  public static func Slot(id: TweakDBID) -> Int32 {
+    switch id {
+      case t"CombatAwareness.ThreatDetection": return 0;
+      case t"CombatAwareness.InitiativeReaction": return 1;
+      case t"CombatAwareness.InitiativeReactionWindow": return 1;
+      case t"CombatAwareness.PrecisionAttack": return 2;
+      case t"CombatAwareness.SpotWeakness": return 3;
+      case t"CombatAwareness.DamageDeflection": return 4;
+      case t"CombatAwareness.FumbleRecovery": return 5;
+      case t"CombatAwareness.PreparedScript": return 6;
+    };
+
+    return -1;
   }
 
   public static func Cost(slot: Int32) -> Int32 {

@@ -122,6 +122,13 @@ protected cb func OnScannedObjectChanged(value: EntityID) -> Bool {
   return result;
 }
 
+@wrapMethod(scannerDetailsGameController)
+protected cb func OnScanningStateChanged(value: Variant) -> Bool {
+  let result: Bool = wrappedMethod(value);
+  this.CAObserve();
+  return result;
+}
+
 @addMethod(scannerDetailsGameController)
 private final func CACardTarget() -> ref<GameObject> {
   if !IsDefined(this.m_player) 
@@ -145,6 +152,9 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
     if Training.CanStudy(target, this.m_player) {
       let system = AwarenessSystem.Get(this.m_player.GetGame());
       system.ToggleStudy(target);
+      if system.Ready(6) {
+        QuickhackModule.RequestRefreshQuickhackMenu(this.m_player.GetGame(), target.GetEntityID());
+      };
       this.CAObserve();
       return true;
     };
