@@ -1,7 +1,12 @@
 module CombatAwareness
 
-
 public abstract class Training {
+
+  public static func EmergencyReloadRate() -> Float = 2.0;
+
+  public static func ReactionWindow() -> TweakDBID = t"CombatAwareness.InitiativeReactionWindow";
+  
+  public static func ReactionSeconds() -> Float = TweakDBInterface.GetFloat(t"CombatAwareness.ReactionDuration.value", 3.0);
 
   public static func CanStudy(npc: ref<NPCPuppet>, player: ref<GameObject>) -> Bool {
     if !IsDefined(npc) || !npc.IsActive() || !IsDefined(player) { 

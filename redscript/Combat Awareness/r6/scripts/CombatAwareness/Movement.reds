@@ -31,6 +31,11 @@ protected final func LeapToTarget(stateContext: ref<StateContext>, scriptInterfa
 }
 
 @addMethod(DodgeEvents)
-private final func CAApplyManeuver(ctx: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>, ground: Bool) -> Void {
-  AwarenessSystem.Get(scriptInterface.GetGame()).Interrupt();
+private final func CAApplyManeuver(ctx: ref<StateContext>, si: ref<StateGameScriptInterface>, ground: Bool) -> Void {
+  let system: ref<AwarenessSystem> = AwarenessSystem.Get(si.GetGame());
+  system.Interrupt();
+  let impulse = ctx.GetTemporaryVectorParameter(n"impulse");
+  if ground && impulse.valid && system.Maneuver() {
+    this.AddImpulse(ctx, impulse.value * 1.23);
+  };
 }

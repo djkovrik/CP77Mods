@@ -4,20 +4,29 @@ public class AwarenessSystem extends ScriptableSystem {
   public persistent let layout: Int32;
   public persistent let spent: Int32;
   public persistent let studied: EntityID;
+
   private persistent let group: CName;
   private persistent let anchor: Vector4;
   private persistent let anchorSource: EntityID;
   private persistent let hasPost: Bool;
   private persistent let reports: array<EntityID>;
+  private persistent let detected: Bool;
+  private persistent let reactionEnd: Float;
+  private persistent let episode: Int32;
 
   public let player: wref<PlayerPuppet>;
   public let reportRevision: Int32;
   public let scannerHintRow: wref<inkCompoundWidget>;
+
   private let pending: ref<ApplyLayout>;
   private let layoutTimer: DelayID;
+  private let reactionRequest: ref<CloseReaction>;
+  private let reactionTimer: DelayID;
   private let enteringAway: Bool;
   private let lastContact: EntityID;
   private let lastContactAway: Bool;
+  private let amplifiedShot: ref<PreparedShot>;
+  private let deflectedShot: ref<PreparedShot>;
 
   public static func Get(gi: GameInstance) -> ref<AwarenessSystem> {
     return GameInstance.GetScriptableSystemsContainer(gi).Get(n"CombatAwareness.AwarenessSystem") as AwarenessSystem;
@@ -30,6 +39,7 @@ public class AwarenessSystem extends ScriptableSystem {
 
   private func OnPlayerDetach(request: ref<PlayerDetachRequest>) -> Void {
     this.Interrupt();
+    this.CancelReactionTimer();
     this.player = null;
   }
 
@@ -61,6 +71,7 @@ public class AwarenessSystem extends ScriptableSystem {
 
   private func Restore() -> Void {
     this.Interrupt();
+    this.CancelReactionTimer();
 
     this.reportRevision += 1;
 
@@ -68,11 +79,14 @@ public class AwarenessSystem extends ScriptableSystem {
     this.lastContact = empty;
     this.enteringAway = false;
 
+    this.amplifiedShot = null;
+    this.deflectedShot = null;
+
     if !IsDefined(this.player) { 
       return; 
     };
-
     let target = this.StudiedNPC();
+
     if IsDefined(target) { 
       target.CAShowStudyMarker(); 
     };
@@ -81,7 +95,21 @@ public class AwarenessSystem extends ScriptableSystem {
       this.layout = 0; 
     };
 
+    if this.reactionEnd > 0.0 {
+      let remaining = this.reactionEnd - this.Now();
+      if remaining > 0.0 {
+        this.ScheduleReaction(MinF(remaining, Training.ReactionSeconds()));
+      } else {
+        this.reactionEnd = 0.0;
+        this.Spend(1);
+      };
+    };
+
     this.Sync();
+  }
+
+  private func Now() -> Float {
+    return EngineTime.ToFloat(GameInstance.GetTimeSystem(this.GetGameInstance()).GetSimTime());
   }
 
   public func Confirm(mask: Int32) -> Void {
@@ -134,6 +162,10 @@ public class AwarenessSystem extends ScriptableSystem {
       return false ; 
     };
 
+    if slot == 1 && this.reactionEnd > 0.0 { 
+      return this.Now() < this.reactionEnd; 
+    };
+
     return StatusEffectSystem.ObjectHasStatusEffect(this.player, Training.Record(slot));
   }
 
@@ -166,6 +198,22 @@ public class AwarenessSystem extends ScriptableSystem {
 
     let id: TweakDBID = Training.Record(slot);
     let wanted: Bool = this.Available(slot);
+
+    if slot == 1 {
+      let window = Training.ReactionWindow();
+      if this.reactionEnd > 0.0 {
+        this.SetEffect(id, false);
+        let remaining = this.reactionEnd - this.Now();
+        let showWindow = wanted && remaining > 0.0;
+        this.SetEffect(window, showWindow);
+        if showWindow {
+          GameInstance.GetStatusEffectSystem(this.GetGameInstance()).SetStatusEffectRemainingDuration(this.player.GetEntityID(), window,remaining);
+        };
+        return;
+      };
+      this.SetEffect(window, false);
+    };
+
     this.SetEffect(id, wanted);
   }
 
@@ -234,7 +282,13 @@ public class AwarenessSystem extends ScriptableSystem {
         }
 
         this.spent = 0;
+        this.detected = false;
+        this.reactionEnd = 0.0;
+        this.CancelReactionTimer();
+        this.episode += 1;
         this.hasPost = false;
+        this.amplifiedShot =null;
+        this.deflectedShot = null;
         this.Sync();
     };
 
@@ -248,5 +302,91 @@ public class AwarenessSystem extends ScriptableSystem {
         this.group = squad; 
       };
     };
+  }
+
+  public func Detect(source: ref<GameObject>) -> Void {
+    if !IsDefined(this.player) { 
+      return; 
+    }
+
+    this.Contact(source);
+
+    if this.detected { 
+      return; 
+    }
+
+    this.detected = true;
+
+    if this.Ready(1) {
+      this.ScheduleReaction(Training.ReactionSeconds());
+      this.SyncSlot(1);
+    } else {
+      this.Spend(1);
+    };
+  }
+
+  private func ScheduleReaction(seconds: Float) -> Void {
+    let request: ref<CloseReaction> = new CloseReaction();
+    request.episode = this.episode;
+    this.reactionRequest = request;
+    this.reactionEnd = this.Now() + seconds;
+    this.reactionTimer = GameInstance.GetDelaySystem(this.GetGameInstance()).DelayScriptableSystemRequest(this.GetClassName(), request, seconds, true);
+  }
+
+  private func CancelReactionTimer() -> Void {
+    if IsDefined(this.reactionRequest) {
+      GameInstance.GetDelaySystem(this.GetGameInstance()).CancelDelay(this.reactionTimer);
+      this.reactionRequest = null;
+    };
+  }
+
+  private func OnCloseReaction(request: ref<CloseReaction>) -> Void {
+    if this.reactionRequest == request && request.episode == this.episode {
+      this.reactionRequest = null;
+      this.reactionEnd = 0.0;
+      this.Spend(1);
+    };
+  }
+
+  public func Maneuver() -> Bool {
+    if this.reactionEnd <= 0.0 || !this.Ready(1) { return false; };
+    this.reactionEnd = 0.0;
+    this.CancelReactionTimer();
+    this.Spend(1);
+    return true;
+  }
+
+  public func Amplify(hit: ref<gameHitEvent>) -> Bool {
+    if IsDefined(this.amplifiedShot) { 
+      return this.amplifiedShot.Matches(hit); 
+    };
+
+    if hit.target.GetEntityID() != this.studied || !this.Ready(3) { 
+      return false; 
+    };
+
+    this.amplifiedShot = PreparedShot.FromHit(hit);
+    this.Spend(3);
+
+    return true;
+  }
+
+  public func Deflect(hit: ref<gameHitEvent>) -> Bool {
+    if IsDefined(this.deflectedShot) { 
+      return this.deflectedShot.Matches(hit); 
+    }
+
+    if (this.spent & Training.Bit(4)) != 0 { 
+      return false;
+    }
+
+    let ready = this.Ready(4);
+    this.Spend(4);
+
+    if ready {
+      this.deflectedShot = PreparedShot.FromHit(hit);
+    };
+
+    return ready;
   }
 }
