@@ -153,7 +153,7 @@ public class HUDitorCustomSlot extends inkCustomController {
       allowed = this.manager.sceneTier <= 2 && this.manager.visionState < 1;
     };
     for binding in this.bindings {
-      if binding.ownsCarrier && IsDefined(binding.carrier) { binding.carrier.SetVisible(allowed); };
+      binding.SetContextVisible(allowed);
     };
   }
 

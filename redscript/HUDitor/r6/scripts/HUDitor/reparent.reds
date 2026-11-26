@@ -249,6 +249,9 @@ public class HUDitorBinding {
   public let ownsCarrier: Bool;
   public let presentation: wref<inkWidget>;
   public let presentationTransform: Bool;
+  public let minimapPresentation: Bool;
+  private let contextHidden: Bool;
+  private let contextVisible: Bool;
   public let layout: ref<HUDitorLayout>;
   public let index: Int32;
   public let committed: Bool;
@@ -278,8 +281,10 @@ public class HUDitorBinding {
   }
 
   public func Commit() -> Void {
-    if this.committed || !IsDefined(this.source) || !IsDefined(this.parent) { return; };
-    if this.owner.IsA(n"hudCarController") && !IsDefined(this.presentation) { return; };
+    if this.committed || !IsDefined(this.source) || !IsDefined(this.parent) || !IsDefined(this.owner) { return; };
+    this.minimapPresentation = this.owner.IsA(n"gameuiMinimapContainerController");
+    if (this.owner.IsA(n"hudCarController") || this.minimapPresentation) && !IsDefined(this.presentation) { return; };
+    if this.minimapPresentation && this.source != this.owner.GetRootWidget() { return; };
     if IsDefined(this.presentation) && this.source == this.owner.GetRootWidget() {
       this.presentationTransform = true;
       this.baseTranslation = this.presentation.GetTranslation();
@@ -293,7 +298,8 @@ public class HUDitorBinding {
       if size.X > 0.0 && size.Y > 0.0 {
         this.presentation.SetRenderTransformPivot(Vector2(translation.X * scale.X / size.X, translation.Y * scale.Y / size.Y));
       };
-      if this.owner.IsA(n"hudCarController") {
+
+      if this.owner.IsA(n"hudCarController") || this.minimapPresentation {
         this.carrier = this.presentation;
         this.committed = true;
         return;
@@ -376,6 +382,30 @@ public class HUDitorBinding {
     this.carrier.SetScale(zoom);
   }
 
+  public func SetContextVisible(visible: Bool) -> Void {
+    if !this.committed || !IsDefined(this.carrier) { return; };
+    if this.ownsCarrier {
+      this.carrier.SetVisible(visible);
+    } else {
+      if this.minimapPresentation {
+        if !visible {
+          if !this.contextHidden { 
+            this.contextVisible = this.carrier.IsVisible(); 
+          };
+          this.contextHidden = true;
+          this.carrier.SetVisible(false);
+        } else {
+          if this.contextHidden {
+            if !this.carrier.IsVisible() { 
+              this.carrier.SetVisible(this.contextVisible); 
+            };
+            this.contextHidden = false;
+          };
+        };
+      };
+    };
+  }
+
   private func SuspendPhoneAnimation(out paused: Bool) -> Bool {
     paused = false;
     if !this.phoneIndicatorTransform { return false; };
@@ -390,6 +420,7 @@ public class HUDitorBinding {
 
   public func Dispose() -> Void {
     if !this.committed { return; };
+    if this.minimapPresentation { this.SetContextVisible(true); };
     if this.presentationTransform && IsDefined(this.presentation) {
       let current: Vector2 = this.presentation.GetTranslation();
       if current.X == this.appliedTranslation.X && current.Y == this.appliedTranslation.Y { this.presentation.SetTranslation(this.baseTranslation); };

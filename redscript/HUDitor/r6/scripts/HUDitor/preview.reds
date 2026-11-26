@@ -89,6 +89,10 @@ public class HUDitorPreview {
   private let liveVisible: Bool;
   private let liveOpacity: Float;
   private let liveSource: wref<inkWidget>;
+  private let liveCarrier: wref<inkWidget>;
+  private let liveCarrierVisible: Bool;
+  private let liveCarrierOpacity: Float;
+  private let appliedCarrierOpacity: Float;
   private let disposed: Bool;
 
   public static func IsSample(widget: ref<inkWidget>) -> Bool {
@@ -123,12 +127,18 @@ public class HUDitorPreview {
     self.RefreshBase();
     if self.live {
       for binding in self.bindings {
-        if IsDefined(binding.source) {
+        if binding.committed && IsDefined(binding.source) && IsDefined(binding.carrier) {
           self.liveSource = binding.source;
           self.liveVisible = binding.source.IsVisible();
           self.liveOpacity = binding.source.GetOpacity();
           binding.source.SetVisible(true);
           binding.source.SetOpacity(1.0);
+          if binding.minimapPresentation {
+            self.liveCarrier = binding.carrier;
+            self.liveCarrierVisible = binding.carrier.IsVisible();
+            self.liveCarrierOpacity = binding.carrier.GetOpacity();
+            self.appliedCarrierOpacity = self.liveCarrierOpacity;
+          };
           binding.carrier.SetVisible(true);
           HUDitorGeometry.Collect(binding.source, self.visual);
           break;
@@ -229,6 +239,9 @@ public class HUDitorPreview {
   }
 
   public func SetOpacity(opacity: Float) -> Void {
+    if IsDefined(this.liveCarrier) { 
+      this.appliedCarrierOpacity = opacity; 
+    };
     if this.live || this.embedded {
       for binding in this.bindings { if IsDefined(binding.carrier) { binding.carrier.SetOpacity(opacity); }; };
     } else {
@@ -257,7 +270,19 @@ public class HUDitorPreview {
       if this.liveSource.GetOpacity() == 1.0 { this.liveSource.SetOpacity(this.liveOpacity); };
       if this.liveSource.IsVisible() { this.liveSource.SetVisible(this.liveVisible); };
     };
-    for binding in this.bindings { if IsDefined(binding.carrier) { binding.carrier.SetOpacity(1.0); }; };
+    for binding in this.bindings {
+      if IsDefined(binding.carrier) && !binding.minimapPresentation { 
+        binding.carrier.SetOpacity(1.0); 
+      };
+    };
+    if IsDefined(this.liveCarrier) {
+      if this.liveCarrier.GetOpacity() == this.appliedCarrierOpacity { 
+        this.liveCarrier.SetOpacity(this.liveCarrierOpacity); 
+      };
+      if this.liveCarrier.IsVisible() { 
+        this.liveCarrier.SetVisible(this.liveCarrierVisible); 
+      };
+    };
     if IsDefined(this.sample) && IsDefined(this.sample.parentWidget) { (this.sample.parentWidget as inkCompoundWidget).RemoveChild(this.sample); };
     ArrayClear(this.visual);
     ArrayClear(this.bindings);
