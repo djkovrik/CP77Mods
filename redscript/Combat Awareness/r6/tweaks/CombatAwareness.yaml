@@ -21,8 +21,86 @@ CombatAwareness.InitiativeReaction:
     description: LocKey#Mod-CombatAwareness-InitiativeReaction-Desc
     iconPath: reflex_recorder
 
+CombatAwareness.ReactionDuration:
+  $type: ConstantStatModifier
+  statType: BaseStats.MaxDuration
+  modifierType: Additive
+  value: 3.0
+
+CombatAwareness.InitiativeReactionWindow:
+  $base: CombatAwareness.InitiativeReaction
+  duration:
+    $type: StatModifierGroup
+    statModifiers:
+      - CombatAwareness.ReactionDuration
+
+CombatAwareness.SpreadAdsDefaultX:
+  $type: ConstantStatModifier
+  statType: BaseStats.SpreadAdsDefaultX
+  modifierType: Multiplier
+  value: 0.5
+
+CombatAwareness.SpreadAdsDefaultY:
+  $type: ConstantStatModifier
+  statType: BaseStats.SpreadAdsDefaultY
+  modifierType: Multiplier
+  value: 0.5
+
+CombatAwareness.SpreadAdsMinX:
+  $type: ConstantStatModifier
+  statType: BaseStats.SpreadAdsMinX
+  modifierType: Multiplier
+  value: 0.5
+
+CombatAwareness.SpreadAdsMinY:
+  $type: ConstantStatModifier
+  statType: BaseStats.SpreadAdsMinY
+  modifierType: Multiplier
+  value: 0.5
+
+CombatAwareness.SpreadAdsMaxX:
+  $type: ConstantStatModifier
+  statType: BaseStats.SpreadAdsMaxX
+  modifierType: Multiplier
+  value: 0.5
+
+CombatAwareness.SpreadAdsMaxY:
+  $type: ConstantStatModifier
+  statType: BaseStats.SpreadAdsMaxY
+  modifierType: Multiplier
+  value: 0.5
+
+CombatAwareness.SpreadAdsChangePerShot:
+  $type: ConstantStatModifier
+  statType: BaseStats.SpreadAdsChangePerShot
+  modifierType: Multiplier
+  value: 0.5
+
+CombatAwareness.PrecisionAttackUI:
+  $type: StatusEffectUIData
+  displayName: LocKey#Mod-CombatAwareness-PrecisionAttack
+  description: LocKey#Mod-CombatAwareness-PrecisionAttack-Desc
+  iconPath: perks_aim
+
 CombatAwareness.PrecisionAttack:
   $base: CombatAwareness.Readiness
+  uiData: CombatAwareness.PrecisionAttackUI
+  packages:
+    - $type: GameplayLogicPackage
+      effectors:
+        - $base: Perks.ApplyStatGroupOnWeapon
+          effectorClassName: ApplyStatGroupEffector
+          prereqRecord: Prereqs.AlwaysTruePrereq
+          statGroup:
+            $type: StatModifierGroup
+            statModifiers:
+              - CombatAwareness.SpreadAdsDefaultX
+              - CombatAwareness.SpreadAdsDefaultY
+              - CombatAwareness.SpreadAdsMinX
+              - CombatAwareness.SpreadAdsMinY
+              - CombatAwareness.SpreadAdsMaxX
+              - CombatAwareness.SpreadAdsMaxY
+              - CombatAwareness.SpreadAdsChangePerShot
 
 CombatAwareness.SpotWeaknessUI:
   $type: StatusEffectUIData
@@ -57,3 +135,8 @@ CombatAwareness.PreparedScript:
     displayName: LocKey#Mod-CombatAwareness-PreparedScript
     description: LocKey#Mod-CombatAwareness-PreparedScript-Desc
     iconPath: memory_replenishment
+
+CombatAwareness.StudiedTargetMappin:
+  $type: MappinDefinition
+  possibleVariants: [Mappins.AimVariant]
+
