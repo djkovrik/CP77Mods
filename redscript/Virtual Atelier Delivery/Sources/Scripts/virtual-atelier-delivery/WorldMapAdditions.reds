@@ -41,6 +41,7 @@ private let spawner: ref<AtelierDropPointsSpawner>;
 
 @wrapMethod(DropPointSystem)
 private func OnRestored(saveVersion: Int32, gameVersion: Int32) -> Void {
+  this.VADPruneSavedDropPoints();
   wrappedMethod(saveVersion, gameVersion);
   this.spawner = AtelierDropPointsSpawner.Get(GetGameInstance());
 }
