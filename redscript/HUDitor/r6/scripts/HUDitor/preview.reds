@@ -25,7 +25,8 @@ public abstract class HUDitorGeometry {
         let size: Vector2 = image.GetDesiredSize();
         let scale: Vector2 = HUDitorGeometry.Scale(parent);
         let point: Vector2 = parent.GetAnchorPoint();
-        return Vector2(anchor.Left - size.X * scale.X * point.X, anchor.Top - size.Y * scale.Y * point.Y);
+        let translation: Vector2 = image.GetTranslation();
+        return Vector2(anchor.Left + (translation.X - size.X * point.X) * scale.X, anchor.Top + (translation.Y - size.Y * point.Y) * scale.Y);
       };
     };
     return Vector2(rect.Left, rect.Top);
@@ -118,7 +119,7 @@ public class HUDitorPreview {
       };
     };
     self.live = Equals(name, n"NewMinimap") || Equals(name, n"NewFpsCounter");
-    if Equals(name, n"NewTracker") || Equals(name, n"NewInputHint") || Equals(name, n"NewDialogChoices") || Equals(name, n"NewDialogSubtitles") {
+    if Equals(name, n"NewHealthBar") || Equals(name, n"NewTracker") || Equals(name, n"NewInputHint") || Equals(name, n"NewDialogChoices") || Equals(name, n"NewDialogSubtitles") {
       let leaves: array<wref<inkWidget>>;
       let bounds: RectF;
       HUDitorGeometry.Collect(self.binding.source, leaves);
@@ -202,7 +203,7 @@ public class HUDitorPreview {
       return;
     };
     let name: CName = this.slot.GetName();
-    if Equals(name, n"NewBossHealthbar") || Equals(name, n"NewVehicleSummon") || Equals(name, n"NewWeaponRoster") || Equals(name, n"NewCrouchIndicator") || Equals(name, n"NewDpad") || Equals(name, n"NewTracker") || Equals(name, n"NewQuestNotifications") || Equals(name, n"NewItemNotifications") || Equals(name, n"NewDialogChoices") || Equals(name, n"NewInputHint") || Equals(name, n"NewStaminaBar") || Equals(name, n"NewCarHud") || Equals(name, n"NewAutoDrive") || Equals(name, n"NewCrystalCoat") || Equals(name, n"NewVehicleRadio") || Equals(name, n"NewVehicleHotkey") || Equals(name, n"NewPhoneHotkey") {
+    if Equals(name, n"NewHealthBar") || Equals(name, n"NewBossHealthbar") || Equals(name, n"NewVehicleSummon") || Equals(name, n"NewWeaponRoster") || Equals(name, n"NewCrouchIndicator") || Equals(name, n"NewDpad") || Equals(name, n"NewTracker") || Equals(name, n"NewQuestNotifications") || Equals(name, n"NewItemNotifications") || Equals(name, n"NewDialogChoices") || Equals(name, n"NewInputHint") || Equals(name, n"NewStaminaBar") || Equals(name, n"NewCarHud") || Equals(name, n"NewAutoDrive") || Equals(name, n"NewCrystalCoat") || Equals(name, n"NewVehicleRadio") || Equals(name, n"NewVehicleHotkey") || Equals(name, n"NewPhoneHotkey") {
       let source: ref<inkWidget> = this.binding.source;
       if !IsDefined(this.binding.presentation) && (this.binding.owner.IsA(n"HotkeysWidgetController") || this.binding.owner.IsA(n"HotkeyConsumableWidgetController") || this.binding.owner.IsA(n"HotkeyCustomRadioWidgetController")) {
         if !HUDitorGeometry.Visible(this.binding.owner.GetRootWidget()) { return; };
@@ -363,10 +364,7 @@ public class HUDitorVisualTree {
 
   public func Action(index: Int32, action: CName, height: Float) -> Void {
     let parent: ref<inkCompoundWidget> = this.widgets[index] as inkCompoundWidget;
-    let canvas: ref<inkCanvas> = new inkCanvas();
-    canvas.SetSize(height, height);
-    canvas.SetInteractive(false);
-    canvas.Reparent(parent);
+    let canvas: ref<inkCompoundWidget> = parent;
     let icon: ref<inkImage> = new inkImage();
     icon.SetSize(height, height);
     icon.SetAnchor(inkEAnchor.Centered);
