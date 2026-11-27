@@ -40,6 +40,12 @@ public class HUDitorSurface {
     return IsDefined(this.owner) && IsDefined(this.source) && IsDefined(this.presentation) && IsDefined(this.presentation.parentWidget) && IsDefined(this.window) && this.owner.GetRootWidget() == this.source;
   }
 
+  public func ScreenScale() -> Vector2 {
+    let image: Vector2 = HUDitorGeometry.Scale(this.presentation);
+    let content: Vector2 = HUDitorGeometry.Scale(this.source);
+    return Vector2(image.X * content.X, image.Y * content.Y);
+  }
+
   public func Adopt() -> Void {
     let children: array<wref<inkWidget>>;
     let i: Int32 = 0;
@@ -160,10 +166,15 @@ public class HUDitorSurfaces {
   }
 
   public func ResolvePreviewBase(binding: ref<HUDitorBinding>, out position: Vector2, out scale: Vector2) -> Bool {
+    let state: ref<HUDitorSurface> = this.FindSurface(binding);
+    return IsDefined(state) && state.ResolvePreviewBase(binding, position, scale);
+  }
+
+  public func FindSurface(binding: ref<HUDitorBinding>) -> ref<HUDitorSurface> {
     for state in this.states {
-      if state.ResolvePreviewBase(binding, position, scale) { return true; };
+      if state.owner == binding.owner && state.content == binding.parent { return state; };
     };
-    return false;
+    return null;
   }
 
   public func Prune(manager: ref<HUDWidgetsManager>) -> Void {
@@ -241,6 +252,127 @@ public class HUDitorLayout {
   }
 }
 
+public class HUDitorPhoneLayout {
+  public let phone: wref<NewHudPhoneGameController>;
+  public let source: wref<inkWidget>;
+  public let carrier: wref<inkWidget>;
+  public let home: Vector2;
+  public let offset: Vector2;
+  public let nativeScale: Vector2;
+  public let zoom: Vector2;
+  public let vehicle: wref<HUDitorBinding>;
+  public let vehicleSurface: wref<HUDitorSurface>;
+  public let avatar: wref<HUDitorBinding>;
+  private let phoneCenter: Vector2;
+  private let vehicleCenter: Vector2;
+
+  public static func Create(phone: ref<NewHudPhoneGameController>, source: ref<inkWidget>, carrier: ref<inkWidget>) -> ref<HUDitorPhoneLayout> {
+    let layout: ref<HUDitorPhoneLayout> = new HUDitorPhoneLayout();
+    layout.phone = phone;
+    layout.source = source;
+    layout.carrier = carrier;
+    layout.zoom = Vector2(1.0, 1.0);
+    layout.nativeScale = source.GetScale();
+    layout.phoneCenter = Vector2(148.0, 60.0);
+    layout.vehicleCenter = Vector2(121.0, 60.0);
+    phone.huditorPhoneLayout = layout;
+    return layout;
+  }
+
+  private static func FrameCenter(content: ref<inkCompoundWidget>, path: CName, pivot: ref<inkWidget>, fallback: Vector2) -> Vector2 {
+    if !IsDefined(content) || !IsDefined(pivot) { return fallback; };
+    let frame: ref<inkWidget> = content.GetWidgetByPathName(path);
+    if !IsDefined(frame) || !HUDitorGeometry.Visible(frame) { return fallback; };
+    let rect: RectF = GetScreenPosition(frame);
+    if rect.Right <= rect.Left || rect.Bottom <= rect.Top { return fallback; };
+    return WidgetUtils.GlobalToLocal(pivot, Vector2((rect.Left + rect.Right) * 0.5, (rect.Top + rect.Bottom) * 0.5));
+  }
+
+  private func Destination(element: gameuiActivePhoneElement) -> Vector2 {
+    if Equals(element, gameuiActivePhoneElement.None) { return this.home; };
+    let call: Bool = Equals(element, gameuiActivePhoneElement.Call) || Equals(element, gameuiActivePhoneElement.IncomingCall);
+    let avatarZoom: Vector2 = Vector2(1.0, 1.0);
+    if call && IsDefined(this.avatar) && this.avatar.committed { avatarZoom = this.avatar.carrier.GetScale(); };
+    if this.zoom.X != 1.0 || this.zoom.Y != 1.0 || avatarZoom.X != 1.0 || avatarZoom.Y != 1.0 {
+      this.phoneCenter = HUDitorPhoneLayout.FrameCenter(this.phone.phoneIconElement.widget as inkCompoundWidget, n"inputDisplayController/item_wrapper_Dpad_Down/itemSlot", this.source, this.phoneCenter);
+    };
+    let center: Vector2 = Vector2(this.phoneCenter.X * this.nativeScale.X, this.phoneCenter.Y * this.nativeScale.Y);
+    let target: Vector2 = Vector2(center.X * (1.0 - this.zoom.X), center.Y * (1.0 - this.zoom.Y));
+    if Equals(element, gameuiActivePhoneElement.InVehicle) && IsDefined(this.vehicle) && this.vehicle.committed {
+      let position: Vector2 = this.vehicle.carrier.GetTranslation();
+      let vehicleZoom: Vector2 = this.vehicle.carrier.GetScale();
+      if vehicleZoom.X != 1.0 || vehicleZoom.Y != 1.0 {
+        let hotkeys: ref<HotkeysWidgetController> = this.vehicle.owner as HotkeysWidgetController;
+        if IsDefined(hotkeys) {
+          this.vehicleCenter = HUDitorPhoneLayout.FrameCenter(hotkeys.m_car as inkCompoundWidget, n"dPadRight_wrapper/inputDisplayController/item_wrapper/itemSlot", this.vehicle.carrier, this.vehicleCenter);
+        };
+        position.X += (vehicleZoom.X - 1.0) * this.vehicleCenter.X;
+        position.Y += (vehicleZoom.Y - 1.0) * this.vehicleCenter.Y;
+      };
+      if position.X == 0.0 && position.Y == 0.0 { return target; };
+      let vehicleScale: Vector2;
+      if IsDefined(this.vehicleSurface) && this.vehicleSurface.IsValid() {
+        vehicleScale = this.vehicleSurface.ScreenScale();
+      } else {
+        vehicleScale = HUDitorGeometry.Scale(this.vehicle.parent);
+      };
+      let phoneScale: Vector2 = HUDitorGeometry.Scale(this.carrier.parentWidget);
+      if phoneScale.X > 0.0 && phoneScale.Y > 0.0 {
+        target.X += position.X * vehicleScale.X / phoneScale.X;
+        target.Y += position.Y * vehicleScale.Y / phoneScale.Y;
+      };
+    };
+    if call && IsDefined(this.avatar) && this.avatar.committed {
+      let base: Vector2 = this.avatar.PhoneBaseTranslation();
+      let position: Vector2 = this.avatar.carrier.GetTranslation();
+      target.X += position.X - base.X;
+      target.Y += position.Y - base.Y;
+      let marker: ref<inkWidget> = inkWidgetRef.Get(this.phone.callMarker);
+      if IsDefined(marker) && (avatarZoom.X != 1.0 || avatarZoom.Y != 1.0) {
+        let dock: inkMargin = marker.GetMargin();
+        let origin: inkMargin = this.avatar.carrier.GetMargin();
+        let adjustment: Vector2 = marker.GetTranslation();
+        target.X += (avatarZoom.X - 1.0) * (dock.left + adjustment.X + center.X - origin.left - base.X);
+        target.Y += (avatarZoom.Y - 1.0) * (dock.top + adjustment.Y + center.Y - origin.top - base.Y);
+      };
+    };
+    return target;
+  }
+
+  public func PrepareTransition(element: gameuiActivePhoneElement) -> Void {
+    if !IsDefined(this.source) || !IsDefined(this.carrier) || this.source.parentWidget != this.carrier { return; };
+    let next: Vector2 = this.Destination(element);
+    if next.X == this.offset.X && next.Y == this.offset.Y && !IsDefined(this.phone.m_phoneIconAnimProxy) { return; };
+    let start: Vector2 = this.carrier.GetTranslation();
+    if IsDefined(this.phone.m_phoneIconAnimProxy) {
+      this.phone.m_phoneIconAnimProxy.Stop();
+      this.phone.m_phoneIconAnimProxy = null;
+    };
+    this.carrier.SetTranslation(Vector2(start.X + this.offset.X - next.X, start.Y + this.offset.Y - next.Y));
+    this.source.SetTranslation(next);
+    this.offset = next;
+  }
+
+  public func Refresh(redock: Bool) -> Void {
+    if !IsDefined(this.source) || !IsDefined(this.carrier) || this.source.parentWidget != this.carrier { return; };
+    if redock {
+      let paused: Bool = IsDefined(this.phone.m_phoneIconAnimProxy) && this.phone.m_phoneIconAnimProxy.IsPaused();
+      this.phone.ResumeHUDitorPhoneIconAnim(paused);
+      return;
+    };
+    let element: gameuiActivePhoneElement = this.phone.GetTopmostActivePhoneElement();
+    let next: Vector2 = this.Destination(element);
+    if next.X == this.offset.X && next.Y == this.offset.Y { return; };
+    let proxy: ref<inkAnimProxy> = this.phone.m_phoneIconAnimProxy;
+    if IsDefined(proxy) && (proxy.IsPlaying() || proxy.IsPaused() || proxy.IsLoading()) {
+      this.phone.ResumeHUDitorPhoneIconAnim(proxy.IsPaused());
+    } else {
+      this.source.SetTranslation(next);
+      this.offset = next;
+    };
+  }
+}
+
 public class HUDitorBinding {
   public let source: wref<inkWidget>;
   public let owner: wref<inkGameController>;
@@ -263,6 +395,9 @@ public class HUDitorBinding {
   private let basePivot: Vector2;
   private let phoneTransform: Bool;
   private let phoneIndicatorTransform: Bool;
+  public let phoneLayout: ref<HUDitorPhoneLayout>;
+
+  public func PhoneBaseTranslation() -> Vector2 { return this.baseTranslation; }
 
   public static func Capture(source: ref<inkWidget>, owner: ref<inkGameController>) -> ref<HUDitorBinding> {
     if !IsDefined(source) || !IsDefined(owner) || !IsDefined(source.parentWidget) { return null; };
@@ -308,6 +443,7 @@ public class HUDitorBinding {
     let phone: ref<NewHudPhoneGameController> = this.owner as NewHudPhoneGameController;
     this.phoneTransform = IsDefined(phone);
     this.phoneIndicatorTransform = IsDefined(phone) && this.source == inkWidgetRef.Get(phone.phoneIconElement.slot);
+    if this.phoneTransform { this.baseTranslation = this.source.GetTranslation(); };
     let phonePaused: Bool;
     let resumePhone: Bool = this.SuspendPhoneAnimation(phonePaused);
     if this.owner.IsA(n"dialogWidgetGameController") && this.source.IsA(n"inkVerticalPanelWidget") {
@@ -332,7 +468,6 @@ public class HUDitorBinding {
     this.source.SetVAlign(inkEVerticalAlign.Top);
     this.source.SetSizeRule(inkESizeRule.Fixed);
     if this.phoneTransform {
-      this.baseTranslation = this.source.GetTranslation();
       this.source.SetTranslation(Vector2(0.0, 0.0));
       this.carrier.SetTranslation(this.baseTranslation);
       this.appliedTranslation = this.baseTranslation;
@@ -346,15 +481,20 @@ public class HUDitorBinding {
     };
     this.source.Reparent(this.carrier as inkCompoundWidget);
     this.committed = true;
+    if this.phoneIndicatorTransform { this.phoneLayout = HUDitorPhoneLayout.Create(phone, this.source, this.carrier); };
     if resumePhone { phone.ResumeHUDitorPhoneIconAnim(phonePaused); };
   }
 
   public func Apply(translation: Vector2, zoom: Vector2) -> Void {
     if !this.committed || !IsDefined(this.source) { return; };
     if this.phoneIndicatorTransform {
-      this.appliedTranslation = translation;
+      let currentScale: Vector2 = this.source.GetScale();
+      if currentScale.X != this.appliedScale.X { this.baseScale.X = currentScale.X; };
+      if currentScale.Y != this.appliedScale.Y { this.baseScale.Y = currentScale.Y; };
+      this.phoneLayout.nativeScale = this.baseScale;
+      this.phoneLayout.home = translation;
+      this.phoneLayout.zoom = zoom;
       this.appliedScale = Vector2(this.baseScale.X * zoom.X, this.baseScale.Y * zoom.Y);
-      this.source.SetTranslation(this.appliedTranslation);
       this.source.SetScale(this.appliedScale);
       return;
     };
@@ -436,7 +576,14 @@ public class HUDitorBinding {
     let phonePaused: Bool;
     let resumePhone: Bool;
     let ownsPhoneSource: Bool = this.phoneIndicatorTransform && IsDefined(this.source) && IsDefined(this.carrier) && IsDefined(this.parent) && this.source.parentWidget == this.carrier && this.carrier.parentWidget == this.parent;
-    if ownsPhoneSource { resumePhone = this.SuspendPhoneAnimation(phonePaused); };
+    let phoneTranslation: Vector2;
+    if ownsPhoneSource {
+      phoneTranslation = this.carrier.GetTranslation();
+      resumePhone = this.SuspendPhoneAnimation(phonePaused);
+    };
+    if IsDefined(this.phoneLayout) && IsDefined(this.phoneLayout.phone) && this.phoneLayout.phone.huditorPhoneLayout == this.phoneLayout {
+      this.phoneLayout.phone.huditorPhoneLayout = null;
+    };
     if IsDefined(this.source) && IsDefined(this.owner) {
       if Equals(this.source.GetAnchor(), this.contentAnchor) { this.source.SetAnchor(this.layout.anchor); };
       let point: Vector2 = this.source.GetAnchorPoint();
@@ -448,7 +595,7 @@ public class HUDitorBinding {
       if Equals(this.source.GetSizeRule(), inkESizeRule.Fixed) { this.source.SetSizeRule(this.layout.sizeRule); };
       if ownsPhoneSource {
         let translation: Vector2 = this.source.GetTranslation();
-        if translation.X == this.appliedTranslation.X && translation.Y == this.appliedTranslation.Y { this.source.SetTranslation(this.carrier.GetTranslation()); };
+        if translation.X == this.phoneLayout.offset.X && translation.Y == this.phoneLayout.offset.Y { this.source.SetTranslation(phoneTranslation); };
         let scale: Vector2 = this.source.GetScale();
         if scale.X == this.appliedScale.X && scale.Y == this.appliedScale.Y { this.source.SetScale(this.baseScale); };
         let pivot: Vector2 = this.source.GetRenderTransformPivot();
@@ -467,6 +614,7 @@ public class HUDitorBinding {
     };
     this.carrier = null;
     this.ownsCarrier = false;
+    this.phoneLayout = null;
     this.committed = false;
   }
 }
@@ -504,6 +652,7 @@ public abstract class HUDitorBindings {
       if IsDefined(gameController) { HUDitorBindings.DiscoverController(manager, gameController); };
     };
     for slot in manager.controllers { slot.Commit(); };
+    manager.RefreshPhoneLayout();
     let psm: ref<IBlackboard> = GameInstance.GetBlackboardSystem(manager.gameInstance).GetLocalInstanced(manager.player.GetEntityID(), GetAllBlackboardDefs().PlayerStateMachine);
     if IsDefined(psm) {
       manager.sceneTier = psm.GetInt(GetAllBlackboardDefs().PlayerStateMachine.SceneTier);

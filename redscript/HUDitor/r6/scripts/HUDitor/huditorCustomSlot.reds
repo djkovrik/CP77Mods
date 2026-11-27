@@ -37,6 +37,12 @@ public class HUDitorCustomSlot extends inkCustomController {
   public func GetScale() -> Vector2 { return this.zoom; }
   public func GetTranslation() -> Vector2 { return this.translation; }
   public func GetBindings() -> array<ref<HUDitorBinding>> { return this.bindings; }
+  public func FindBinding(opt owner: ref<inkGameController>) -> ref<HUDitorBinding> {
+    for binding in this.bindings {
+      if binding.committed && IsDefined(binding.source) && IsDefined(binding.owner) && (!IsDefined(owner) || binding.owner == owner) { return binding; };
+    };
+    return null;
+  }
   public func GetPreview() -> ref<HUDitorPreview> { return this.preview; }
 
   public func IsReady() -> Bool {

@@ -203,6 +203,20 @@ public class HUDitorPreview {
       return;
     };
     let name: CName = this.slot.GetName();
+    if IsDefined(this.binding.phoneLayout) && IsDefined(this.binding.phoneLayout.phone) {
+      let marker: ref<inkWidget> = inkWidgetRef.Get(this.binding.phoneLayout.phone.phoneIconMarker);
+      if IsDefined(marker) {
+        let rect: RectF = GetScreenPosition(marker);
+        if rect.Left != 0.0 || rect.Top != 0.0 {
+          this.basePosition = Vector2(rect.Left, rect.Top);
+          this.baseScale = HUDitorGeometry.Scale(this.binding.parent);
+        } else {
+          let margin: inkMargin = marker.GetMargin();
+          this.basePosition = Vector2(margin.left * scale, screen.Y - margin.bottom * scale);
+        };
+      };
+      return;
+    };
     if Equals(name, n"NewHealthBar") || Equals(name, n"NewBossHealthbar") || Equals(name, n"NewVehicleSummon") || Equals(name, n"NewWeaponRoster") || Equals(name, n"NewCrouchIndicator") || Equals(name, n"NewDpad") || Equals(name, n"NewTracker") || Equals(name, n"NewQuestNotifications") || Equals(name, n"NewItemNotifications") || Equals(name, n"NewDialogChoices") || Equals(name, n"NewInputHint") || Equals(name, n"NewStaminaBar") || Equals(name, n"NewCarHud") || Equals(name, n"NewAutoDrive") || Equals(name, n"NewCrystalCoat") || Equals(name, n"NewVehicleRadio") || Equals(name, n"NewVehicleHotkey") || Equals(name, n"NewPhoneHotkey") {
       let source: ref<inkWidget> = this.binding.source;
       if !IsDefined(this.binding.presentation) && (this.binding.owner.IsA(n"HotkeysWidgetController") || this.binding.owner.IsA(n"HotkeyConsumableWidgetController") || this.binding.owner.IsA(n"HotkeyCustomRadioWidgetController")) {
@@ -235,7 +249,12 @@ public class HUDitorPreview {
     if this.disposed || this.generation != this.manager.generation { return; };
     if IsDefined(this.sample) && !this.embedded {
       this.sample.SetTranslation(Vector2(this.basePosition.X + translation.X * this.baseScale.X, this.basePosition.Y + translation.Y * this.baseScale.Y));
-      this.sample.SetScale(Vector2(this.baseScale.X * zoom.X, this.baseScale.Y * zoom.Y));
+      let scale: Vector2 = Vector2(this.baseScale.X * zoom.X, this.baseScale.Y * zoom.Y);
+      if IsDefined(this.binding.phoneLayout) {
+        scale.X *= this.binding.phoneLayout.nativeScale.X;
+        scale.Y *= this.binding.phoneLayout.nativeScale.Y;
+      };
+      this.sample.SetScale(scale);
     };
   }
 

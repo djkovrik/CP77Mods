@@ -5,6 +5,14 @@ import Codeware.UI.VirtualResolutionWatcher
 public class HUDitorResolutionWatcher extends VirtualResolutionWatcher {
   private let manager: wref<HUDWidgetsManager>;
 
+  public func Initialize(game: GameInstance) -> Void {
+    if this.m_initialized { return; };
+    super.Initialize(game);
+    this.Register(n"/gameplay/hud");
+    this.Register(n"/accessibility/interface");
+    this.Register(n"/interface/hudSafezones");
+  }
+
   public func SetManager(manager: ref<HUDWidgetsManager>) -> Void {
     this.manager = manager;
     if IsDefined(manager) && IsDefined(manager.overlay) { manager.overlay.RequestBaseRefresh(); };
@@ -16,8 +24,13 @@ public class HUDitorResolutionWatcher extends VirtualResolutionWatcher {
 
   protected cb func OnVarModified(groupPath: CName, varName: CName, varType: ConfigVarType, reason: ConfigChangeReason) -> Void {
     super.OnVarModified(groupPath, varName, varType, reason);
-    if IsDefined(this.manager) && !this.manager.disposed && IsDefined(this.manager.overlay) {
-      this.manager.overlay.RequestBaseRefresh();
+    if !IsDefined(this.manager) || this.manager.disposed { return; };
+    if Equals(groupPath, n"/video/display") {
+      if IsDefined(this.manager.overlay) { this.manager.overlay.RequestBaseRefresh(); };
+      return;
+    };
+    if Equals(reason, ConfigChangeReason.Accepted) && (Equals(varName, n"HudScaling") || Equals(varName, n"HudScaling_Alt") || Equals(varName, n"HudSafezoneHor")) {
+      this.manager.RequestPhoneGeometryRefresh();
     };
   }
 }

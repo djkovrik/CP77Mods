@@ -32,6 +32,7 @@ public class HUDWidgetsManager {
   private let unlockListener: Uint32;
   private let delayId: DelayID;
   private let bindPending: Bool;
+  private let phoneGeometryChanged: Bool;
   private let bindRequestId: Uint32;
   private let initialAttempts: Int32;
 
@@ -158,6 +159,7 @@ public class HUDWidgetsManager {
     if !this.isActive { return; };
     this.isActive = false;
     this.generation += 1u;
+    this.RefreshPhoneLayout();
     for slot in this.controllers { slot.EndPreview(); };
     if IsDefined(this.overlay) { this.overlay.Show(false); };
     this.currentIndex = -1;
@@ -171,6 +173,33 @@ public class HUDWidgetsManager {
 
   public func Reset() -> Void {
     for slot in this.controllers { slot.Reset(); };
+    this.RefreshPhoneLayout();
+  }
+
+  public func RefreshPhoneLayout() -> Void {
+    let indicator: ref<HUDitorCustomSlot> = this.FindSlot(n"NewPhoneHotkey");
+    if !IsDefined(indicator) { return; };
+    let vehicle: ref<HUDitorCustomSlot> = this.FindSlot(n"NewVehicleHotkey");
+    let avatar: ref<HUDitorCustomSlot> = this.FindSlot(n"NewPhoneAvatar");
+    let vehicleBinding: ref<HUDitorBinding>;
+    if IsDefined(vehicle) { vehicleBinding = vehicle.FindBinding(); };
+    let surface: ref<HUDitorSurface>;
+    if IsDefined(vehicleBinding) && IsDefined(this.surfaces) { surface = this.surfaces.FindSurface(vehicleBinding); };
+    for binding in indicator.GetBindings() {
+      let layout: ref<HUDitorPhoneLayout> = binding.phoneLayout;
+      if IsDefined(layout) && IsDefined(layout.phone) && IsDefined(layout.source) {
+        layout.vehicle = vehicleBinding;
+        layout.vehicleSurface = surface;
+        if IsDefined(avatar) { layout.avatar = avatar.FindBinding(binding.owner); } else { layout.avatar = null; };
+        layout.Refresh(this.phoneGeometryChanged);
+      };
+    };
+    this.phoneGeometryChanged = false;
+  }
+
+  public func RequestPhoneGeometryRefresh() -> Void {
+    this.phoneGeometryChanged = true;
+    this.RequestBind();
   }
 
   protected cb func OnHUDitorUnlock(value: Int32) -> Bool {

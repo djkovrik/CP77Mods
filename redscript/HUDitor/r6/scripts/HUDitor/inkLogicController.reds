@@ -48,9 +48,33 @@ protected cb func OnPlayerAttach(playerPuppet: ref<GameObject>) -> Bool {
   if IsDefined(manager) { manager.RequestBind(); };
 }
 
+@addField(NewHudPhoneGameController)
+public let huditorPhoneLayout: wref<HUDitorPhoneLayout>;
+
+@wrapMethod(NewHudPhoneGameController)
+private final func PlayPhoneIconAnim(element: gameuiActivePhoneElement, opt deactivation: Bool) -> Void {
+  if IsDefined(this.huditorPhoneLayout) {
+    let destination: gameuiActivePhoneElement = this.GetTopmostActivePhoneElement();
+    if EnumInt(destination) >= EnumInt(element) {
+      this.huditorPhoneLayout.PrepareTransition(deactivation ? destination : element);
+    };
+  };
+  wrappedMethod(element, deactivation);
+}
+
+@wrapMethod(NewHudPhoneGameController)
+protected cb func OnResolutionChanged() -> Bool {
+  let result: Bool = wrappedMethod();
+  if IsDefined(this.huditorPhoneLayout) {
+    let manager: ref<HUDWidgetsManager> = HUDWidgetsManager.GetInstance();
+    if IsDefined(manager) { manager.RequestPhoneGeometryRefresh(); };
+  };
+  return result;
+}
+
 @addMethod(NewHudPhoneGameController)
 public func ResumeHUDitorPhoneIconAnim(paused: Bool) -> Void {
-  this.PlayPhoneIconAnim(gameuiActivePhoneElement.None, true);
+  this.PlayPhoneIconAnim(this.GetTopmostActivePhoneElement());
   if paused && IsDefined(this.m_phoneIconAnimProxy) { this.m_phoneIconAnimProxy.Pause(); };
 }
 
